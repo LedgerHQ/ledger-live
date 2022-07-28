@@ -4,8 +4,8 @@ import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { useSelector } from "react-redux";
 import { useBanner } from "../../components/banners/hooks";

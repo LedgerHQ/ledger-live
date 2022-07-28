@@ -4,16 +4,29 @@ import type {
   TransactionRaw,
   FeeItems,
   FeeItemsRaw,
+  TransactionStatusRaw,
+  TransactionStatus,
+  BitcoinAccount,
 } from "./types";
-import type { Account } from "../../types";
 import { bitcoinPickingStrategy } from "./types";
 import { getEnv } from "../../env";
 import {
+  formatTransactionStatusCommon,
   fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
+  toTransactionStatusRawCommon,
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
+import type { Account } from "@ledgerhq/types-live";
+import {
+  fromBitcoinInputRaw,
+  fromBitcoinOutputRaw,
+  toBitcoinInputRaw,
+  toBitcoinOutputRaw,
+} from "./serialization";
+import { formatInput, formatOutput } from "./account";
 
 const fromFeeItemsRaw = (fir: FeeItemsRaw): FeeItems => ({
   items: fir.items.map((fi) => ({
@@ -64,6 +77,60 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
+const fromTransactionStatusRaw = (
+  tr: TransactionStatusRaw
+): TransactionStatus => {
+  const common = fromTransactionStatusRawCommon(tr);
+  return {
+    ...common,
+    txInputs: tr.txInputs ? tr.txInputs.map(fromBitcoinInputRaw) : undefined,
+    txOutputs: tr.txOutputs
+      ? tr.txOutputs.map(fromBitcoinOutputRaw)
+      : undefined,
+  };
+};
+
+const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
+  const common = toTransactionStatusRawCommon(t);
+  return {
+    ...common,
+    txInputs: t.txInputs ? t.txInputs.map(toBitcoinInputRaw) : undefined,
+    txOutputs: t.txOutputs ? t.txOutputs.map(toBitcoinOutputRaw) : undefined,
+  };
+};
+
+export const formatTransactionStatus = (
+  t: Transaction,
+  ts: TransactionStatus,
+  mainAccount: Account
+): string => {
+  let str = "";
+  const txInputs = ts.txInputs || [];
+  const txOutputs = ts.txOutputs || [];
+  const n = getEnv("DEBUG_UTXO_DISPLAY");
+  const displayAll = txInputs.length <= n;
+  str +=
+    `\nTX INPUTS (${txInputs.length}):\n` +
+    txInputs
+      .slice(0, displayAll ? txInputs.length : n)
+      .map((o) => formatInput(mainAccount as BitcoinAccount, o))
+      .join("\n");
+
+  if (!displayAll) {
+    str += "\n...";
+  }
+
+  str +=
+    `\nTX OUTPUTS (${txOutputs.length}):\n` +
+    txOutputs
+      .map((o) => formatOutput(mainAccount as BitcoinAccount, o))
+      .join("\n");
+
+  str += formatTransactionStatusCommon(t, ts, mainAccount);
+
+  return str;
+};
+
 const formatNetworkInfo = (
   networkInfo:
     | {
@@ -80,7 +147,7 @@ const formatNetworkInfo = (
 
 export const formatTransaction = (t: Transaction, account: Account): string => {
   const n = getEnv("DEBUG_UTXO_DISPLAY");
-  const { excludeUTXOs, strategy, pickUnconfirmedRBF } = t.utxoStrategy;
+  const { excludeUTXOs, strategy } = t.utxoStrategy;
   const displayAll = excludeUTXOs.length <= n;
   return `
 SEND ${
@@ -99,7 +166,7 @@ ${[
   Object.keys(bitcoinPickingStrategy).find(
     (k) => bitcoinPickingStrategy[k] === strategy
   ),
-  pickUnconfirmedRBF && "pick-unconfirmed",
+  "pick-unconfirmed",
   t.rbf && "RBF-enabled",
 ]
   .filter(Boolean)
@@ -113,4 +180,7 @@ export default {
   fromTransactionRaw,
   toTransactionRaw,
   formatTransaction,
+  formatTransactionStatus,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
 };

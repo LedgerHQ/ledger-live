@@ -228,6 +228,7 @@
       "kyc" : "고객확인제도"
     },
     "form" : {
+      "changeCTA" : "변경",
       "ratesDrawer" : {
         "title" : "요율",
         "quote" : "호가",
@@ -267,11 +268,25 @@
           "complete" : "고객확인제도 완료",
           "update" : "고객확인제도 업데이트",
           "rejected" : "고객확인제도가 거부되었습니다. 인증을 다시 시작하세요",
+          "rejectedContactProviderSupport" : "고객확인제도가 거부되었습니다. {{providerName}}지원팀에 문의해 주세요.",
+          "updateRequired" : "고객확인제도를 완료하거나 업데이트하세요",
           "status" : {
             "pending" : "고객확인제도 대기 중",
             "approved" : "고객확인제도 승인됨",
-            "closed" : "고객확인제도 거부됨"
+            "closed" : "고객확인제도 거부됨",
+            "upgradeRequired" : "고객확인제도 불충분"
           }
+        },
+        "login" : {
+          "required" : "이 공급자로 로그인해야 합니다.",
+          "complete" : "로그인"
+        },
+        "mfa" : {
+          "required" : "이 공급자와 다중인증(MFA)을 설정해야 합니다.",
+          "complete" : "다중인증(MFA) 설정"
+        },
+        "withdrawalsBlockedError" : {
+          "message" : "고객님의 출금이 {{providerName}}에 의해 차단되었습니다.\n\n 자세한 내용은 해당 지원팀에 문의하세요."
         }
       }
     },
@@ -346,6 +361,7 @@
     "title" : "스왑",
     "titleCrypto" : "{{currency}} 스왑",
     "whatIsSwap" : "스왑이란",
+    "decentralizedSwapAvailable" : "일부 거래 경우 탈중앙화 스왑을 고려해볼 수 있습니다. <0>파라스왑</0>과 <1>1inch</1>에 대해 살펴보세요.",
     "paraswap" : {
       "cta" : " 확인해 보세요",
       "description" : "Paraswap을 찾으세요? 찾기 탭으로 이동했습니다."
@@ -482,9 +498,9 @@
       "subtitle" : "Wyre로 스왑 하시려면 Ledger Live를 최신 버전으로 업데이트하고 다시 신원 인증을 해 주세요",
       "cta" : "인증 리셋"
     },
-    "resetKYCModal" : {
-      "title" : "고객확인제도 삭제",
-      "subtitle" : "고객확인제도를 삭제하여 컴퓨터에 로컬 저장된 모든 토큰을 제거하세요. 고객확인제도를 다시 제출해야 파트너가 제공하는 서비스를 이용할 수 있습니다.",
+    "resetThirdPartyDataModal" : {
+      "title" : "타사 로컬 데이터 삭제",
+      "subtitle" : "타사 로컬 데이터 삭제 고객확인제도를 다시 제출하거나 다시 로그인해야 파트너가 제공하는 서비스를 이용할 수 있습니다.",
       "cta" : "확인"
     },
     "modal" : {
@@ -1283,7 +1299,8 @@
         "description" : "설명",
         "tokenAddress" : "토큰 주소",
         "tokenId" : "토큰 ID",
-        "quantity" : "수량"
+        "quantity" : "수량",
+        "floorPrice" : "가격 하한선"
       }
     },
     "collections" : {
@@ -1331,6 +1348,14 @@
       "link" : "자산(ASA)은 어떻게 운영되나요?",
       "seeTokens" : "ASA 보기 ({{tokenCount}})",
       "hideTokens" : "ASA 숨기기 ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "자산",
+      "cta" : "자산 추가",
+      "placeholder" : "{{currencyName}} 계정에 자산을 추가할 수 있습니다.",
+      "link" : "스텔라 자산에 대해 자세히 알아보기",
+      "seeTokens" : "자산 표시({{tokenCount}})",
+      "hideTokens" : "자산 숨기기({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1518,7 +1543,8 @@
       "fees" : "수수료",
       "provider" : "공급자",
       "payoutNetworkFees" : "지불금 비용",
-      "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다"
+      "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
+      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -1978,6 +2004,13 @@
       }
     }
   },
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "스테이킹 보상은 총 잔액에 포함되지 않습니다."
+      }
+    }
+  },
   "tron" : {
     "voting" : {
       "emptyState" : {
@@ -2068,10 +2101,10 @@
     "replaceable" : "대체 가능",
     "cannotSelect" : {
       "unconfirmed" : "대체 가능한 미검증 트랜잭션의 코인은 선택할 수 없습니다.",
+      "pending" : "트랜잭션이 보류 중인 코인을 선택할 수 없습니다. (출력 값을 변경하는 경우 제외)",
       "last" : "하나 이상을 선택해야 합니다"
     },
     "pending" : "대기 중",
-    "pickUnconfirmedRBF" : "대체 가능한 미검증 트랜잭션의 코인을 포함합니다.",
     "pickingStrategy" : "UTXO 선정 전략",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "가장 오래된 코인 먼저(FIFO)",
@@ -2558,6 +2591,31 @@
       }
     }
   },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "자산 추가",
+      "steps" : {
+        "assets" : {
+          "title" : "자산",
+          "info" : "자산을 추가하려면 최소 수수료로 트랜잭션을 전송해야 합니다. 이 사항은 사용자의 트랜잭션 내역에 표시됩니다.",
+          "selectLabel" : "자산 선택",
+          "disabledTooltip" : "이미 스텔라 계정에 있는 자산입니다."
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "success" : {
+            "title" : "{{token}} 자산이 추가되었습니다",
+            "text" : "이제 스텔라 계정에서 <0>{{token}}</0> 자산을 보내고 받을 수 있습니다.",
+            "cta" : "세부사항 보기"
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요.",
@@ -2844,8 +2902,8 @@
       "softResetTitle" : "캐시 삭제",
       "softResetDesc" : "블록 체인과 강제로 동기화하려면 Ledger Live 캐시를 지우세요.",
       "softReset" : "제거",
-      "resetKYC" : "고객확인제도 데이터 리셋",
-      "resetKYCDesc" : "타사 트랜잭션 공급자에 액세스 하시려면 로컬에 저장된 고객확인제도 데이터를 모두 삭제하세요.",
+      "resetThirdPartyData" : "타사 데이터 재설정",
+      "resetThirdPartyDataDesc" : "타사 트랜잭션 공급자에 액세스하는 데 사용되는 모든 타사 로컬 데이터를 삭제합니다.",
       "hardResetTitle" : "Ledger Live 리셋",
       "hardResetDesc" : "계정, 트랜잭션 내역, 설정을 포함하여 컴퓨터에 저장된 모든 Ledger Live 데이터를 삭제합니다.",
       "hardReset" : "재설정",
@@ -3722,7 +3780,20 @@
         "MEMO_HASH" : "메모 해시",
         "MEMO_RETURN" : "메모 반환"
       },
-      "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요"
+      "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요",
+      "fee" : "수수료",
+      "feeInfoText" : "스텔라 네트워크 상의 트랜잭션에는 최소 거래 수수료 0.00001 XLM이 필요합니다",
+      "suggested" : "추천",
+      "recommendedFee" : "권장 수수료",
+      "recommenndedFeeInfo" : "권장 수수료보다 낮은 수수료로도 여전히 트랜잭션 제출이 가능하지만 거래가 체결되지 않을 수 있습니다.",
+      "networkCongestion" : "네트워크 혼잡",
+      "networkCongestionLevel" : {
+        "LOW" : "낮음",
+        "MEDIUM" : "Medium",
+        "HIGH" : "높음"
+      },
+      "assetCode" : "자산 코드",
+      "assetIssuer" : "자산 발행인"
     },
     "cosmos" : {
       "memo" : "메모",
@@ -4275,14 +4346,8 @@
     "FeeTooHigh" : {
       "title" : "네트워크 수수료가 금액의 10%를 넘습니다"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "메모 형식이 잘못되었습니다"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "금액은 {{minAmountFromFormatted}} 이상이어야 합니다"
@@ -4342,7 +4407,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "이전 트랜잭션이 아직 처리되지 않았습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "SolanaTxConfirmationTimeout" : {
@@ -4350,6 +4415,47 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "사용 가능한 토큰 수를 초과했습니다"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "전송할 수 있는 최소 금액은 {{amount}} ADA입니다"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "수수료 지불에 필요한 충분한 자금이 있는지 반드시 확인해 주세요"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "메모 형식이 잘못되었습니다"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "이 수령인은 아직 {{assetCode}}에 대한 트러스트라인(trustline)이 없습니다."
+    },
+    "StellarAssetRequired" : {
+      "title" : "트러스트라인 추가 전 스텔라 자산을 선택해야 합니다."
+    },
+    "StellarAssetNotFound" : {
+      "title" : "선택한 스텔라 자산을 찾을 수 없습니다."
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 수수료를 지불할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "권장 수수료 대비 선택 수수료가 낮습니다"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "최소 트랜잭션 수수료는 0.00001 XLM입니다"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 신규 트러스트라인을 추가할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "스텔라 계정이 없습니다"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
     }
   },
   "cryptoOrg" : {
@@ -4376,6 +4482,20 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ledger 장치에서 귀하의 {{name}} 주소를 확인할 수 없습니다. 사용은 본인의 책임입니다."
+    },
+    "send" : {
+      "memo" : {
+        "label" : "메모(선택)",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "자산 선택"
+    },
+    "selectAccount" : {
+      "title" : "계정 선택"
     }
   }
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { NavigatorName, ScreenName } from "../../const";

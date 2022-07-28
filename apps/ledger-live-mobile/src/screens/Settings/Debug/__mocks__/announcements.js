@@ -3,8 +3,8 @@ import Prando from "prando";
 import type {
   AnnouncementsApi,
   RawAnnouncement,
-} from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider/types";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+} from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 const announcementsPool: RawAnnouncement[] = [
   {

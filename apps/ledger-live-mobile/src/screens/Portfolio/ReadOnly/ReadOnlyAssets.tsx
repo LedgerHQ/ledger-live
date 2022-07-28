@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import ReadOnlyAccountRow from "../../Accounts/ReadOnly/ReadOnlyAccountRow";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import { CryptoCurrency } from "@ledgerhq/live-common/src/types";
 
 type ListProps = {
   assets: CryptoCurrency[];
@@ -13,7 +13,11 @@ const ReadOnlyAssetsList = ({ assets }: ListProps) => {
   const navigation = useNavigation();
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
-      <ReadOnlyAccountRow navigation={navigation} currency={item} />
+      <ReadOnlyAccountRow
+        navigation={navigation}
+        currency={item}
+        screen="Assets"
+      />
     ),
     [navigation],
   );

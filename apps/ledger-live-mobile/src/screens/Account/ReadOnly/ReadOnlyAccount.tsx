@@ -7,8 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getCryptoCurrencyById,
   getTokenById,
-} from "@ledgerhq/live-common/lib/currencies";
-import { Currency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/currencies/index";
+import { Currency } from "@ledgerhq/live-common/types/index";
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
@@ -26,6 +26,7 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../reducers/settings";
+import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 type RouteParams = {
   currencyId: string;
@@ -105,7 +106,7 @@ function ReadOnlyAccount({ route }: Props) {
     </Box>,
     <Box mt={8} mx={6}>
       {hasOrderedNano ? (
-        <SetupDeviceBanner />
+        <SetupDeviceBanner screen="Assets" />
       ) : (
         <BuyDeviceBanner
           style={{
@@ -116,6 +117,12 @@ function ReadOnlyAccount({ route }: Props) {
           buttonLabel={t("buyDevice.bannerButtonTitle")}
           buttonSize="small"
           event="button_clicked"
+          eventProperties={{
+            button: "Discover the Nano",
+            screen: "Account",
+            currency: currency.name,
+          }}
+          screen="Account"
           {...IMAGE_PROPS_BIG_NANO}
         />
       )}
@@ -125,9 +132,16 @@ function ReadOnlyAccount({ route }: Props) {
   const renderItem = useCallback(({ item }: any) => item, []);
   const keyExtractor = useCallback((_: any, index: any) => String(index), []);
 
+  const previousRoute = usePreviousRouteName();
+
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
-      <TrackScreen category="Account" currency={currency} operationsSize={0} />
+      <TrackScreen
+        category="Account"
+        currency={currency}
+        operationsSize={0}
+        source={previousRoute}
+      />
       <FlatList
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}

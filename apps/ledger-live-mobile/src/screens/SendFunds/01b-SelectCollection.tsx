@@ -12,10 +12,10 @@ import {
   nftsByCollections,
   useNftCollectionMetadata,
   useNftMetadata,
-} from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/nft/index";
 import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { Account, ProtoNFT } from "@ledgerhq/live-common/types/index";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import LoadingFooter from "../../components/LoadingFooter";
 import NftMedia from "../../components/Nft/NftMedia";

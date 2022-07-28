@@ -2,10 +2,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 
-import type {
-  Account,
-  AccountLikeArray,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLikeArray } from "@ledgerhq/types-live";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 

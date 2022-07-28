@@ -3,7 +3,8 @@
 import "./polyfill";
 import "./live-common-setup";
 import "../e2e/e2e-bridge-setup";
-import "react-native-gesture-handler";
+// $FlowFixMe
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, {
   Component,
   useCallback,
@@ -14,7 +15,6 @@ import React, {
 import { connect, useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
-  View,
   Text,
   Linking,
   Appearance,
@@ -31,20 +31,19 @@ import {
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
-import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
-import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
-import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
-
-import { NftMetadataProvider } from "@ledgerhq/live-common/lib/nft";
-import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
-import { GlobalCatalogProvider } from "@ledgerhq/live-common/lib/platform/providers/GlobalCatalogProvider";
-import { RampCatalogProvider } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
+import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
+import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
+import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { GlobalCatalogProvider } from "@ledgerhq/live-common/platform/providers/GlobalCatalogProvider/index";
+import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import {
   RemoteLiveAppProvider,
   useRemoteLiveAppContext,
-} from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
-import { LocalLiveAppProvider } from "@ledgerhq/live-common/src/platform/providers/LocalLiveAppProvider";
+} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
@@ -70,10 +69,12 @@ import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
+/* eslint-disable import/named */
 import WalletConnectProvider, {
   // $FlowFixMe
   context as _wcContext,
 } from "./screens/WalletConnect/Provider";
+/* eslint-enable import/named */
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
 import RootNavigator from "./components/RootNavigator";
@@ -194,7 +195,7 @@ function App({ importDataString }: AppProps) {
   });
 
   return (
-    <View style={styles.root}>
+    <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
       <ExperimentalHeader />
 
@@ -205,7 +206,7 @@ function App({ importDataString }: AppProps) {
       <FeatureToggle feature="ratings">
         <RatingsModal />
       </FeatureToggle>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -236,7 +237,7 @@ const linkingOptions = {
       Linking.removeEventListener("url", onReceiveURL);
     };
   },
-  prefixes: ["ledgerlive://"],
+  prefixes: ["ledgerlive://", "https://ledger.com"],
   config: {
     screens: {
       [NavigatorName.Base]: {
@@ -383,12 +384,19 @@ const linkingOptionsOnboarding = {
   },
 };
 
+const platformManifestFilterParams = {
+  private: true,
+  branches: undefined, // will override & having it to undefined makes all branches valid
+};
+
 const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
-  const removeLiveAppState = useRemoteLiveAppContext();
-  const filteredManifests = useFilteredManifests();
+  const { state: remoteLiveAppState } = useRemoteLiveAppContext();
+  const liveAppProviderInitialized =
+    !!remoteLiveAppState.value || !!remoteLiveAppState.error;
+  const filteredManifests = useFilteredManifests(platformManifestFilterParams);
 
   const linking = useMemo(
     () => ({
@@ -404,6 +412,16 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
            *  - checking that a manifest exists
            *  - adding "name" search param
            * */
+          if (!liveAppProviderInitialized) {
+            /**
+             * The provider isn't initialized yet so the manifest will possibly
+             * not be found.
+             * We redirect because this scenario happens when deep linking
+             * triggers a cold app start. The platform app screen will show an
+             * error in case the app isn't found.
+             */
+            return getStateFromPath(path, config);
+          }
           const manifest = filteredManifests.find(
             m => m.id.toLowerCase() === platform.toLowerCase(),
           );
@@ -420,33 +438,16 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
       wcContext.initDone,
       wcContext.session.session,
       filteredManifests,
+      liveAppProviderInitialized,
     ],
   );
 
   const [isReady, setIsReady] = React.useState(false);
 
   useEffect(() => {
-    if (!wcContext.initDone) {
-      return;
-    }
-    if (
-      removeLiveAppState.isLoading &&
-      !removeLiveAppState.lastUpdateTime &&
-      !removeLiveAppState.error
-    )
-      /**
-       * Ensure that the list of manifests has been loaded once so that the
-       * deep linking logic to platform apps works in the scenario where the app
-       * was not previously running.
-       *  */
-      return;
+    if (!wcContext.initDone) return;
     setIsReady(true);
-  }, [
-    wcContext.initDone,
-    removeLiveAppState.isLoading,
-    removeLiveAppState.lastUpdateTime,
-    removeLiveAppState.error,
-  ]);
+  }, [wcContext.initDone]);
 
   React.useEffect(
     () => () => {

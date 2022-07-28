@@ -1,12 +1,12 @@
 import { of } from "rxjs";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import {
   getDerivationModesForCurrency,
   runDerivationScheme,
   getDerivationScheme,
-} from "@ledgerhq/live-common/lib/derivation";
-import { setEnv, getEnv } from "@ledgerhq/live-common/lib/env";
-import { getAccountPlaceholderName } from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/derivation";
+import { setEnv, getEnv } from "@ledgerhq/live-common/env";
+import { getAccountPlaceholderName } from "@ledgerhq/live-common/account/index";
 export default {
   args: [],
   job: () =>

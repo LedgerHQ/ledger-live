@@ -8,15 +8,17 @@ import { log } from "@ledgerhq/logs";
 import type {
   AccountRawLike,
   AccountRaw,
-  TransactionStatus,
-  TransactionStatusRaw,
-  TransactionRaw,
   SyncConfig,
   ScanAccountEventRaw,
   SignOperationEventRaw,
   SignedOperationRaw,
   OperationRaw,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/types-live";
+import type {
+  TransactionStatus,
+  TransactionStatusRaw,
+  TransactionRaw,
+} from "@ledgerhq/live-common/generated/types";
 import {
   fromTransactionRaw,
   toTransactionRaw,
@@ -24,7 +26,7 @@ import {
   fromSignedOperationRaw,
   toSignOperationEventRaw,
   formatTransaction,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import {
   fromAccountRaw,
   fromAccountLikeRaw,
@@ -32,15 +34,19 @@ import {
   toOperationRaw,
   formatOperation,
   formatAccount,
-} from "@ledgerhq/live-common/lib/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import { toScanAccountEventRaw } from "@ledgerhq/live-common/lib/bridge";
-import * as bridgeImpl from "@ledgerhq/live-common/lib/bridge/impl";
+} from "@ledgerhq/live-common/account/index";
+import { startSpan } from "@ledgerhq/live-common/performance";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { toScanAccountEventRaw } from "@ledgerhq/live-common/bridge/index";
+import * as bridgeImpl from "@ledgerhq/live-common/bridge/impl";
 
 const cmdCurrencyPreload = ({ currencyId }: { currencyId: string }): Observable<mixed> => {
   const currency = getCryptoCurrencyById(currencyId);
   return from(bridgeImpl.getCurrencyBridge(currency).preload(currency));
 };
+cmdCurrencyPreload.inferSentryTransaction = ({ currencyId }) => ({
+  tags: { currencyId },
+});
 
 const cmdCurrencyScanAccounts = (o: {
   currencyId: string,
@@ -57,6 +63,9 @@ const cmdCurrencyScanAccounts = (o: {
     })
     .pipe(map(toScanAccountEventRaw));
 };
+cmdCurrencyScanAccounts.inferSentryTransaction = ({ currencyId }) => ({
+  tags: { currencyId },
+});
 
 const cmdAccountReceive = (o: {
   account: AccountRaw,
@@ -84,16 +93,24 @@ const cmdAccountSync = (o: {
   syncConfig: SyncConfig,
 }): Observable<AccountRaw> => {
   accountsCache[o.account.id] = o.account;
+  const span = startSpan("sync", "fromAccountRaw");
   const account = fromAccountRaw(o.account);
+  span.finish();
   const bridge = bridgeImpl.getAccountBridge(account, null);
   return bridge.sync(account, o.syncConfig).pipe(
     map(f => {
+      const span = startSpan("sync", "toAccountRaw");
       const fromCache = accountsCache[o.account.id];
       const latestAccount = fromCache === o.account ? account : fromAccountRaw(fromCache);
-      return toAccountRaw(f(latestAccount));
+      const r = toAccountRaw(f(latestAccount));
+      span.finish();
+      return r;
     }),
   );
 };
+cmdAccountSync.inferSentryTransaction = ({ account }) => ({
+  tags: { currencyId: account.currencyId },
+});
 
 const cmdAccountPrepareTransaction = (o: {
   account: AccountRaw,
@@ -115,7 +132,7 @@ const cmdAccountGetTransactionStatus = (o: {
   return from(
     bridge
       .getTransactionStatus(account, transaction)
-      .then((raw: TransactionStatus) => toTransactionStatusRaw(raw)),
+      .then((raw: TransactionStatus) => toTransactionStatusRaw(raw, account.currency.family)),
   );
 };
 
@@ -140,6 +157,9 @@ const cmdAccountSignOperation = (o: {
     }),
   );
 };
+cmdAccountSignOperation.inferSentryTransaction = ({ account }) => ({
+  tags: { currencyId: account.currencyId },
+});
 
 const cmdAccountBroadcast = (o: {
   account: AccountRaw,
@@ -158,6 +178,9 @@ const cmdAccountBroadcast = (o: {
     }),
   );
 };
+cmdAccountBroadcast.inferSentryTransaction = ({ account }) => ({
+  tags: { currencyId: account.currencyId },
+});
 
 const cmdAccountEstimateMaxSpendable = (o: {
   account: AccountRawLike,

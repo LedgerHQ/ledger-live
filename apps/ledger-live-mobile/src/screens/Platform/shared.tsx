@@ -1,13 +1,17 @@
 import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
-import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
-import { LiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/types";
-import { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import {
+  FilterParams,
+  filterPlatformApps,
+} from "@ledgerhq/live-common/lib/platform/filters";
+import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
+import type { LiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/types";
+import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
 import { useMemo } from "react";
 
 const defaultArray: LiveAppManifest[] = [];
 
-export const useFilteredManifests = () => {
+export const useFilteredManifests = (filterParamsOverride?: FilterParams) => {
   const { state } = useRemoteLiveAppContext();
   const manifests = state?.value?.liveAppByIndex || defaultArray;
   const experimental = useEnv("PLATFORM_EXPERIMENTAL_APPS");
@@ -21,9 +25,10 @@ export const useFilteredManifests = () => {
 
     // TODO improve types, mismatch between LiveAppManifest & AppManifest
     return filterPlatformApps(Array.from(manifests.values()) as AppManifest[], {
-      version: "0.0.1",
+      version: getPlatformVersion(),
       platform: "mobile",
       branches,
+      ...(filterParamsOverride ?? {}),
     });
-  }, [manifests, experimental]);
+  }, [manifests, experimental, filterParamsOverride]);
 };

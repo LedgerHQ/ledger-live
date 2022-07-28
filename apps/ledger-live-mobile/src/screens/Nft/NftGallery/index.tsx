@@ -9,9 +9,9 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { ProtoNFT } from "@ledgerhq/live-common/types/index";
 import Animated, { Value, event } from "react-native-reanimated";
-import { nftsByCollections } from "@ledgerhq/live-common/lib/nft";
+import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import LoadingFooter from "../../../components/LoadingFooter";

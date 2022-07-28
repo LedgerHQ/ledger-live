@@ -1,8 +1,8 @@
 import { from } from "rxjs";
 import { filter, map, mergeMap } from "rxjs/operators";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-import { listApps } from "@ledgerhq/live-common/lib/apps/hw";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { listApps } from "@ledgerhq/live-common/apps/hw";
 import { deviceOpt } from "../scan";
 export default {
   description: "List apps that can be installed on the device",

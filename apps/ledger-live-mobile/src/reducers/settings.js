@@ -7,20 +7,18 @@ import {
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
   listSupportedFiats,
-} from "@ledgerhq/live-common/lib/currencies";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
+} from "@ledgerhq/live-common/currencies/index";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { createSelector } from "reselect";
+import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type {
-  CryptoCurrency,
-  Currency,
+  DeviceModelInfo,
   AccountLike,
-} from "@ledgerhq/live-common/lib/types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
-import Config from "react-native-config";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
-import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
+  PortfolioRange,
+} from "@ledgerhq/types-live";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
 import { SLIDES } from "../components/Carousel/shared";
@@ -104,6 +102,8 @@ export type SettingsState = {
   marketRequestParams: MarketListRequestParams,
   marketCounterCurrency: ?string,
   marketFilterByStarredAccounts: boolean,
+  sensitiveAnalytics: boolean,
+  firstConnectionHasDevice: boolean,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -158,6 +158,8 @@ export const INITIAL_STATE: SettingsState = {
   },
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,
+  sensitiveAnalytics: false,
+  firstConnectionHasDevice: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -436,6 +438,14 @@ const handlers: Object = {
     ...state,
     marketFilterByStarredAccounts: payload,
   }),
+  SET_SENSITIVE_ANALYTICS: (state: SettingsState, action) => ({
+    ...state,
+    sensitiveAnalytics: action.enabled,
+  }),
+  SET_FIRST_CONNECTION_HAS_DEVICE: (state: SettingsState, payload) => ({
+    ...state,
+    firstConnectionHasDevice: payload,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -638,3 +648,9 @@ export const marketCounterCurrencySelector = (state: State) =>
 
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
+
+export const sensitiveAnalyticsSelector = (state: State) =>
+  state.settings.sensitiveAnalytics;
+
+export const firstConnectionHasDeviceSelector = (state: State) =>
+  state.settings.firstConnectionHasDevice;

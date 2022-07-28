@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { CurrenciesData } from "../../../types";
+import type { CurrenciesData } from "@ledgerhq/types-live";
 import type { NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./litecoin.scanAccounts.1";
@@ -47,7 +47,6 @@ const dataset: CurrenciesData<Transaction> = {
             rbf: false,
             utxoStrategy: {
               strategy: 0,
-              pickUnconfirmedRBF: false,
               excludeUTXOs: [],
             },
           }),
@@ -70,7 +69,6 @@ const dataset: CurrenciesData<Transaction> = {
             rbf: false,
             utxoStrategy: {
               strategy: 0,
-              pickUnconfirmedRBF: false,
               excludeUTXOs: [],
             },
           }),
@@ -93,7 +91,6 @@ const dataset: CurrenciesData<Transaction> = {
             rbf: false,
             utxoStrategy: {
               strategy: 0,
-              pickUnconfirmedRBF: false,
               excludeUTXOs: [],
             },
           }),

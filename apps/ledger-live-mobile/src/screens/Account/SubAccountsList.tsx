@@ -8,10 +8,10 @@ import {
   Account,
   SubAccount,
   TokenAccount,
-} from "@ledgerhq/live-common/lib/types";
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
-import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/types/index";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { listSubAccounts } from "@ledgerhq/live-common/account/index";
+import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { DropdownMedium, DropupMedium } from "@ledgerhq/native-ui/assets/icons";
 import { NavigatorName, ScreenName } from "../../const";

@@ -3,16 +3,16 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { useDispatch as useReduxDispatch } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/generated/types";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../analytics";
 import SelectDeviceComp from "../components/SelectDevice";
 import NavigationScrollView from "../components/NavigationScrollView";
-import { setLastConnectedDevice } from "../actions/settings";
+import { setLastConnectedDevice, setReadOnlyMode } from "../actions/settings";
 import SkipSelectDevice from "./SkipSelectDevice";
 
 const forceInset = { bottom: "always" };
@@ -44,6 +44,7 @@ export default function SelectDevice({ navigation, route }: Props) {
   const onSelect = useCallback(
     (device: Device) => {
       dispatchRedux(setLastConnectedDevice(device));
+      dispatchRedux(setReadOnlyMode(false));
       onNavigate(device);
     },
     [dispatchRedux, onNavigate],

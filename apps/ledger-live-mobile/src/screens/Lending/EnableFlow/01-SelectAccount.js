@@ -5,20 +5,17 @@ import React, { useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import type {
-  Account,
-  AccountLike,
-  TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
 import {
   getAccountName,
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import { subAccountByCurrencyOrderedScreenSelector } from "../../../reducers/accounts";
 import { rgba } from "../../../colors";

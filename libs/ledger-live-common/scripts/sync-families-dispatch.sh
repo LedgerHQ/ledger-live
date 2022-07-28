@@ -14,7 +14,6 @@ cli-transaction.ts \
 specs.ts \
 speculos-deviceActions.ts \
 deviceTransactionConfig.ts \
-test-dataset.ts \
 mock.ts \
 account.ts \
 exchange.ts \
@@ -97,6 +96,8 @@ genTypesFile () {
   for family in $families; do
     echo 'import { Transaction as '$family'Transaction } from "../families/'$family'/types";'
     echo 'import { TransactionRaw as '$family'TransactionRaw } from "../families/'$family'/types";'
+    echo 'import { TransactionStatus as '$family'TransactionStatus } from "../families/'$family'/types";'
+    echo 'import { TransactionStatusRaw as '$family'TransactionStatusRaw } from "../families/'$family'/types";'
   done
   echo
   echo 'export type Transaction ='
@@ -106,6 +107,14 @@ genTypesFile () {
   echo 'export type TransactionRaw ='
   for family in $families; do
     echo '  | '$family'TransactionRaw'
+  done
+  echo 'export type TransactionStatus ='
+  for family in $families; do
+    echo '  | '$family'TransactionStatus'
+  done
+  echo 'export type TransactionStatusRaw ='
+  for family in $families; do
+    echo '  | '$family'TransactionStatusRaw'
   done
 }
 

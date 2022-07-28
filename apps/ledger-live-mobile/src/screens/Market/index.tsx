@@ -21,10 +21,10 @@ import {
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
-import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
+import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
+import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
-import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import {

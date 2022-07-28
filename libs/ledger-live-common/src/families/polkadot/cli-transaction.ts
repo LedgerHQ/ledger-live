@@ -3,12 +3,14 @@ import { map } from "rxjs/operators";
 import { getValidators } from "./validators";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction, AccountLike, Account } from "../../types";
+import type { Transaction } from "../../generated/types";
 import { getCryptoCurrencyById, formatCurrencyUnit } from "../../currencies";
 import {
   SidecarValidatorsParamAddresses,
   SidecarValidatorsParamStatus,
 } from "./api/sidecar.types";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { PolkadotAccount } from "./types";
 const options = [
   {
     name: "mode",
@@ -152,7 +154,10 @@ function inferTransactions(
     invariant(transaction.family === "polkadot", "polkadot family");
 
     if (isAccountType(account)) {
-      invariant(account.polkadotResources, "unactivated account");
+      invariant(
+        (account as PolkadotAccount).polkadotResources,
+        "unactivated account"
+      );
     }
 
     const validators: string[] = opts["validator"] || [];
@@ -165,7 +170,7 @@ function inferTransactions(
       era: opts.era || null,
       rewardDestination: opts.rewardDestination || null,
       numSlashingSpans: isAccountType(account)
-        ? account.polkadotResources?.numSlashingSpans
+        ? (account as PolkadotAccount).polkadotResources?.numSlashingSpans
         : null,
     };
   });

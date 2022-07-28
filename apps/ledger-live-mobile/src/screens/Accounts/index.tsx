@@ -2,14 +2,14 @@ import React, { useCallback, useState, useEffect, memo } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/lib/currencies";
+import { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 
-import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { Trans, useTranslation } from "react-i18next";
-import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
+import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector, isUpToDateSelector } from "../../reducers/accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";

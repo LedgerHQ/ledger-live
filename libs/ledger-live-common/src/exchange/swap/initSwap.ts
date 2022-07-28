@@ -1,29 +1,30 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { log } from "@ledgerhq/logs";
-import { from } from "rxjs";
-import secp256k1 from "secp256k1";
-import invariant from "invariant";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
-import { delay } from "../../promise";
-import Exchange from "../hw-app-exchange/Exchange";
-import { mockInitSwap } from "./mock";
-import perFamily from "../../generated/exchange";
+import { log } from "@ledgerhq/logs";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import { from, Observable } from "rxjs";
+import secp256k1 from "secp256k1";
+import { getCurrencyExchangeConfig } from "../";
 import {
   getAccountCurrency,
-  getMainAccount,
   getAccountUnit,
+  getMainAccount,
 } from "../../account";
-import network from "../../network";
 import { getAccountBridge } from "../../bridge";
-import { BigNumber } from "bignumber.js";
-import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
-import type { SwapRequestEvent, InitSwapInput } from "./types";
-import { Observable } from "rxjs";
-import { withDevice } from "../../hw/deviceAccess";
-import { getProviderNameAndSignature, getSwapAPIBaseURL } from "./";
-import { getCurrencyExchangeConfig } from "../";
 import { getEnv } from "../../env";
-import { RateTypes, ExchangeTypes } from "../hw-app-exchange/Exchange";
+import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
+import perFamily from "../../generated/exchange";
+import { withDevice } from "../../hw/deviceAccess";
+import network from "../../network";
+import { delay } from "../../promise";
+import Exchange, {
+  ExchangeTypes,
+  RateTypes,
+} from "../hw-app-exchange/Exchange";
+import { getProviderConfig, getSwapAPIBaseURL } from "./";
+import { mockInitSwap } from "./mock";
+import type { InitSwapInput, SwapRequestEvent } from "./types";
 
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
@@ -32,14 +33,15 @@ const withDevicePromise = (deviceId, fn) =>
 // throw if TransactionStatus have errors
 // you get at the end a final Transaction to be done (it's not yet signed, nor broadcasted!) and a swapId
 const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
+  let swapId;
   let { transaction } = input;
   const { exchange, exchangeRate, deviceId, userId } = input;
+
   if (getEnv("MOCK")) return mockInitSwap(exchange, exchangeRate, transaction);
   return new Observable((o) => {
     let unsubscribed = false;
 
     const confirmSwap = async () => {
-      let swapId;
       let ignoreTransportError;
       log("swap", `attempt to connect to ${deviceId}`);
       await withDevicePromise(deviceId, async (transport) => {
@@ -70,34 +72,45 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         // NB Added the try/catch because of the API stability issues.
         let res;
 
+        const swapProviderConfig = getProviderConfig(provider);
+
+        const { needsBearerToken } = swapProviderConfig;
+
+        const headers = {
+          EquipmentId: getEnv("USER_ID"),
+          ...(needsBearerToken ? { Authorization: `Bearer ${userId}` } : {}),
+          ...(userId ? { userId } : {}), // NB: only for Wyre AFAIK
+        };
+
+        const data = {
+          provider,
+          amountFrom: apiAmount.toString(),
+          from: refundCurrency.id,
+          to: payoutCurrency.id,
+          address: payoutAccount.freshAddress,
+          refundAddress: refundAccount.freshAddress,
+          deviceTransactionId,
+          ...(rateId && ratesFlag === RateTypes.Fixed
+            ? {
+                rateId,
+              }
+            : {}), // NB float rates dont need rate ids.
+        };
+
         try {
           res = await network({
             method: "POST",
             url: `${getSwapAPIBaseURL()}/swap`,
-            headers: {
-              EquipmentId: getEnv("USER_ID"),
-              ...(userId ? { userId } : {}),
-            },
-            data: {
-              provider,
-              amountFrom: apiAmount,
-              from: refundCurrency.id,
-              to: payoutCurrency.id,
-              address: payoutAccount.freshAddress,
-              refundAddress: refundAccount.freshAddress,
-              deviceTransactionId,
-              ...(rateId
-                ? {
-                    rateId,
-                  }
-                : {}), // NB float rates dont need rate ids.
-            },
+            headers,
+            data,
           });
+
           if (unsubscribed || !res || !res.data) return;
         } catch (e) {
           o.next({
             type: "init-swap-error",
             error: new SwapGenericAPIError(),
+            swapId,
           });
           o.complete();
           return;
@@ -105,9 +118,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
         const swapResult = res.data;
         swapId = swapResult.swapId;
-        const providerNameAndSignature = getProviderNameAndSignature(
-          swapResult.provider
-        );
+
         const accountBridge = getAccountBridge(refundAccount);
         transaction = accountBridge.updateTransaction(transaction, {
           recipient: swapResult.payinAddress,
@@ -157,10 +168,12 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         }
 
         // Prepare swap app to receive the tx to forward.
-        await swap.setPartnerKey(providerNameAndSignature.nameAndPubkey);
+        await swap.setPartnerKey(swapProviderConfig.nameAndPubkey);
         if (unsubscribed) return;
-        await swap.checkPartner(providerNameAndSignature.signature);
+
+        await swap.checkPartner(swapProviderConfig.signature);
         if (unsubscribed) return;
+
         await swap.processTransaction(
           Buffer.from(swapResult.binaryPayload, "hex"),
           estimatedFees
@@ -304,6 +317,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         o.next({
           type: "init-swap-error",
           error: e,
+          swapId,
         });
         o.complete();
         unsubscribed = true;

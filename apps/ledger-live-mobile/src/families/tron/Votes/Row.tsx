@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { Linking, TouchableOpacity } from "react-native";
 
-import { getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
+import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
 
-import { ExplorerView } from "@ledgerhq/live-common/lib/types";
+import { ExplorerView } from "@ledgerhq/live-common/types/index";
 
 import { Box, BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";

@@ -1,7 +1,7 @@
-import { $ElementType } from "utility-types";
+import mapValues from "lodash/mapValues";
 // set and get environment & config variables
 import { Subject } from "rxjs";
-import mapValues from "lodash/mapValues";
+import { $ElementType } from "utility-types";
 type EnvDef<V> = {
   desc: string;
   def: V;
@@ -104,6 +104,11 @@ const envDefinitions = {
     parser: intParser,
     def: 200,
     desc: "Limit of operation that Horizon will fetch per page",
+  },
+  API_STELLAR_HORIZON_STATIC_FEE: {
+    def: false,
+    parser: boolParser,
+    desc: "Static fee for Stellar account",
   },
   API_TEZOS_BAKER: {
     parser: stringParser,
@@ -400,6 +405,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
   },
+  MOCK_SWAP_CHECK_QUOTE: {
+    def: "",
+    parser: stringParser,
+    desc: "mock the server response for the exchange check quote, options are 'RATE_VALID', 'KYC_FAILED', 'KYC_PENDING', 'KYC_UNDEFINED', 'KYC_UPGRADE_REQUIRED', 'MFA_REQUIRED', 'OVER_TRADE_LIMIT', 'UNKNOW_USER' or 'UNKNOWN_ERROR'.",
+  },
+  MOCK_SWAP_WIDGET_BASE_URL: {
+    def: "",
+    parser: stringParser,
+    desc: "mock the FTX swap widget base url",
+  },
   /**
    * Note: the mocked cryptoassets config and test partner are signed with the
    * Ledger test private key
@@ -408,6 +423,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
+  },
+  MOCK_REMOTE_LIVE_MANIFEST: {
+    def: "",
+    parser: stringParser,
+    desc: "mock remote live app manifest",
   },
   NFT_CURRENCIES: {
     def: "ethereum,polygon",
@@ -533,6 +553,11 @@ const envDefinitions = {
     def: 2,
     parser: intParser,
     desc: "version used for ledger status api",
+  },
+  TEZOS_MAX_TX_QUERIES: {
+    def: 100,
+    parser: intParser,
+    desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
   PLATFORM_DEBUG: {
     def: false,

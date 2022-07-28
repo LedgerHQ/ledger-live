@@ -91,6 +91,7 @@ src/generated/
 
 # CocoaPods
 /ios/Pods/
+/vendor/bundle/
 
 # Detox
 artifacts/

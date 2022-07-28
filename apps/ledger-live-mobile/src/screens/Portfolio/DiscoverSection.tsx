@@ -1,10 +1,11 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
-import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
+import { usePlatformApp } from "@ledgerhq/live-common/platform/PlatformAppProvider/index";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
+import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { ScrollView, TouchableOpacity } from "react-native";
-import { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useNavigation } from "@react-navigation/native";
 import AppIcon from "../Platform/AppIcon";
 import { useBanner } from "../../components/banners/hooks";
@@ -22,7 +23,7 @@ function DiscoverSection() {
     const branches = ["stable", ...(experimental ? ["experimental"] : [])];
 
     return filterPlatformApps(Array.from(manifests.values()), {
-      version: "0.0.1",
+      version: getPlatformVersion(),
       platform: "mobile",
       branches,
     });

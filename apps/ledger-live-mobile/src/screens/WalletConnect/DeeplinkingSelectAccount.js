@@ -6,12 +6,9 @@ import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { Trans } from "react-i18next";
-import type {
-  Account,
-  AccountLikeArray,
-} from "@ledgerhq/live-common/lib/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import type { Account, AccountLikeArray } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   flattenAccountsEnforceHideEmptyTokenSelector,
   accountsSelector,
@@ -27,9 +24,10 @@ import KeyboardView from "../../components/KeyboardView";
 import PlusIcon from "../../icons/Plus";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
+/* eslint-disable import/named */
 // $FlowFixMe
 import { connect as WCconnect } from "./Provider";
-
+/* eslint-enable import/named */
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 const forceInset = { bottom: "always" };
 

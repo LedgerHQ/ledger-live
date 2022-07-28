@@ -1,7 +1,8 @@
 /* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { Operation, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import type { Operation } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";

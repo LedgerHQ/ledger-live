@@ -4,7 +4,12 @@ import invariant from "invariant";
 import bchaddrjs from "bchaddrjs";
 import sample from "lodash/sample";
 import { log } from "@ledgerhq/logs";
-import type { BitcoinOutput, BitcoinResources, Transaction } from "./types";
+import type {
+  BitcoinAccount,
+  BitcoinOutput,
+  BitcoinResources,
+  Transaction,
+} from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
@@ -176,7 +181,7 @@ const bitcoinLikeMutations = ({
     transaction: ({ account, bridge, siblings, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
-      const { bitcoinResources } = account;
+      const { bitcoinResources } = account as BitcoinAccount;
       invariant(bitcoinResources, "bitcoin resources");
       const transaction = bridge.createTransaction(account);
       const utxo = sample(
@@ -211,7 +216,8 @@ const bitcoinLikeMutations = ({
     recoverBadTransactionStatus,
     test: ({ accountBeforeTransaction, account, operation, transaction }) => {
       const utxo = (
-        accountBeforeTransaction.bitcoinResources?.utxos || []
+        (accountBeforeTransaction as BitcoinAccount).bitcoinResources?.utxos ||
+        []
       ).find(
         (utxo) =>
           !transaction.utxoStrategy.excludeUTXOs.some(
@@ -223,7 +229,7 @@ const bitcoinLikeMutations = ({
         senders: [(utxo as BitcoinOutput).address],
       });
       expect(
-        account.bitcoinResources?.utxos.find(
+        (account as BitcoinAccount).bitcoinResources?.utxos.find(
           (u) =>
             u.hash === (utxo as BitcoinOutput).hash &&
             u.outputIndex === (utxo as BitcoinOutput).outputIndex
@@ -248,7 +254,6 @@ const bitcoinLikeMutations = ({
           {
             utxoStrategy: {
               ...transaction.utxoStrategy,
-              pickUnconfirmedRBF: true,
             },
           },
           {
@@ -260,7 +265,7 @@ const bitcoinLikeMutations = ({
     recoverBadTransactionStatus,
     test: ({ account }) => {
       expect(
-        account.bitcoinResources?.utxos
+        (account as BitcoinAccount).bitcoinResources?.utxos
           .filter(
             (u) => u.blockHeight && u.blockHeight < account.blockHeight - 10
           ) // Exclude pending UTXOs and the Utxos just written into new block (10 blocks time)

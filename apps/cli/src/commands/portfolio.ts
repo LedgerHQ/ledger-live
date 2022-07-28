@@ -5,26 +5,28 @@ import { from } from "rxjs";
 import { reduce, concatMap, map } from "rxjs/operators";
 import type {
   Account,
-  Currency,
   PortfolioRange,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/types-live";
+import type {
+  Currency
+} from "@ledgerhq/types-cryptoassets";
 import {
   flattenAccounts,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
-import { getPortfolio } from "@ledgerhq/live-common/lib/portfolio/v2";
-import { getRanges } from "@ledgerhq/live-common/lib/portfolio/v2/range";
+} from "@ledgerhq/live-common/account/index";
+import { getPortfolio } from "@ledgerhq/live-common/portfolio/v2/index";
+import { getRanges } from "@ledgerhq/live-common/portfolio/v2/range";
 import {
   formatCurrencyUnit,
   findCurrencyByTicker,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import {
   initialState,
   loadCountervalues,
   inferTrackingPairForAccounts,
-} from "@ledgerhq/live-common/lib/countervalues/logic";
+} from "@ledgerhq/live-common/countervalues/logic";
 
 function asPortfolioRange(period: string): PortfolioRange {
   const ranges = getRanges();

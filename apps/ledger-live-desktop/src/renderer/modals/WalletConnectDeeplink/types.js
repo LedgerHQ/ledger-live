@@ -1,5 +1,5 @@
 // @flow
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/types-live";
 // $FlowFixMe
 import { STATUS } from "~/renderer/screens/WalletConnect/Provider";
 

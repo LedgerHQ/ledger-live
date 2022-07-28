@@ -1,3 +1,8 @@
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency, getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -7,15 +12,10 @@ import {
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
 import network from "../../network";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-  Transaction,
-  Unit,
-} from "../../types";
-import { getSwapAPIBaseURL, getSwapAPIError } from "./";
+import type { Transaction } from "../../generated/types";
+import { getAvailableProviders, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
-import type { Exchange, GetExchangeRates } from "./types";
+import type { CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
@@ -40,6 +40,7 @@ const getExchangeRates: GetExchangeRates = async (
     from,
     to,
     amountFrom: apiAmount.toString(),
+    providers: usesV3 ? getAvailableProviders() : undefined,
   };
   const res = await network({
     method: "POST",
@@ -122,7 +123,7 @@ const inferError = (
     errorCode?: number;
     errorMessage?: string;
   }
-): Error | undefined => {
+): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage } =
     responseData;
@@ -157,6 +158,7 @@ const inferError = (
             showCode: true,
           }
         ),
+        amount: new BigNumber(amount),
       });
     }
   }

@@ -1,7 +1,7 @@
-import startExchange from "@ledgerhq/live-common/lib/exchange/platform/startExchange";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/startExchange";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
+import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

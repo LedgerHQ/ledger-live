@@ -6,11 +6,11 @@ import {
   setEnvUnsafe,
   isEnvDefault,
   changes,
-} from "@ledgerhq/live-common/lib/env";
-import type { EnvName } from "@ledgerhq/live-common/lib/env";
+} from "@ledgerhq/live-common/env";
+import type { EnvName } from "@ledgerhq/live-common/env";
 
 import logger from "./logger";
-import { FeatureId } from "@ledgerhq/live-common/lib/types";
+import { FeatureId } from "@ledgerhq/live-common/types/index";
 
 export type FeatureCommon = {
   name: EnvName,

@@ -2,21 +2,20 @@
 
 import type { Observable } from "rxjs";
 import { from } from "rxjs";
-import type { SellRequestEvent } from "@ledgerhq/live-common/lib/exchange/sell/types";
+import type { SellRequestEvent } from "@ledgerhq/live-common/exchange/sell/types";
 import type {
   AccountRaw,
   AccountRawLike,
   TransactionStatusRaw,
   TransactionRaw,
-} from "@ledgerhq/live-common/lib/types";
-import { fromTransactionRaw } from "@ledgerhq/live-common/lib/transaction";
-import checkSignatureAndPrepare from "@ledgerhq/live-common/lib/exchange/sell/checkSignatureAndPrepare";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+} from "@ledgerhq/types-live";
 import {
-  fromAccountRaw,
-  fromAccountLikeRaw,
-} from "@ledgerhq/live-common/lib/account/serialization";
-import { fromTransactionStatusRaw } from "@ledgerhq/live-common/lib/transaction/status";
+  fromTransactionRaw,
+  fromTransactionStatusRaw,
+} from "@ledgerhq/live-common/transaction/index";
+import checkSignatureAndPrepare from "@ledgerhq/live-common/exchange/sell/checkSignatureAndPrepare";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import { fromAccountRaw, fromAccountLikeRaw } from "@ledgerhq/live-common/account/serialization";
 type Input = {
   parentAccount: ?AccountRaw,
   account: AccountRawLike,
@@ -36,13 +35,14 @@ const cmd = ({
   parentAccount,
   status,
 }: Input): Observable<SellRequestEvent> => {
+  const acc = fromAccountLikeRaw(account);
   return withDevice(deviceId)(transport =>
     from(
       checkSignatureAndPrepare(transport, {
         binaryPayload,
-        account: fromAccountLikeRaw(account),
+        account: acc,
         parentAccount: parentAccount ? fromAccountRaw(parentAccount) : undefined,
-        status: fromTransactionStatusRaw(status),
+        status: fromTransactionStatusRaw(status, acc.currency.family),
         payloadSignature,
         transaction: fromTransactionRaw(transaction),
       }),

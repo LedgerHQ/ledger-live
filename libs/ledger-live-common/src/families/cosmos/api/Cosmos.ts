@@ -1,8 +1,9 @@
 import { getEnv } from "../../../env";
 import BigNumber from "bignumber.js";
 import network from "../../../network";
-import { CryptoCurrency, Operation } from "../../../types";
 import { patchOperationWithHash } from "../../../operation";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 
 const defaultEndpoint = getEnv(
   "API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"
@@ -127,6 +128,10 @@ const getDelegations = async (
     method: "GET",
     url: `${defaultEndpoint}/cosmos/staking/v1beta1/delegations/${address}`,
   });
+
+  data1.delegation_responses = data1.delegation_responses.filter(
+    (d) => d.balance.amount !== "0"
+  );
 
   let status = "unbonded";
   const statusMap = {

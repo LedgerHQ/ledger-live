@@ -2,8 +2,7 @@ import { findCryptoCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import "../../__tests__/test-helpers/setup";
 import BigNumber from "bignumber.js";
 import { encodeAccountId, toNFTRaw } from "../../account";
-import { Operation } from "../../types";
-import { ProtoNFT } from "../../types/nft";
+import { ProtoNFT, Operation } from "@ledgerhq/types-live";
 import { mergeNfts } from "../../bridge/jsHelpers";
 import {
   encodeNftId,
@@ -13,6 +12,7 @@ import {
   nftsFromOperations,
 } from "../../nft";
 import { Transaction } from "./types";
+import { encodeERC1155OperationId } from "../../nft/nftOperationId";
 
 describe("nft merging", () => {
   const makeNFT = (
@@ -92,18 +92,21 @@ describe("nft merging", () => {
 describe("OpenSea lazy minting bs", () => {
   test("should have a correct on-chain nft amount even with OpenSea lazy minting", () => {
     const makeNftOperation = (
-      type: Operation["type"],
-      value: string | number,
-      dateOrder: number
+      params: [Operation["type"], number],
+      index: number
     ): Operation => {
+      const [type, value] = params;
+
       if (!["NFT_IN", "NFT_OUT"].includes(type)) {
         return {} as Operation;
       }
 
-      const id = encodeAccountId({
+      const now = Date.now() + index;
+      const currencyId = "polygon";
+      const accountId = encodeAccountId({
         type: "type",
-        currencyId: "polygon",
         xpubOrAddress: "0xbob",
+        currencyId,
         derivationMode: "",
         version: "1",
       });
@@ -112,11 +115,12 @@ describe("OpenSea lazy minting bs", () => {
       const contract = "0x0000000000000000000000000000000000000000";
       const fee = new BigNumber(0);
       const tokenId = "42069";
-      const hash = "FaKeHasH";
-      const date = new Date(Date.now() + dateOrder ?? 0);
+      const hash = "FaKeHasH" + now;
+      const date = new Date(now);
+      const nftId = encodeNftId(accountId, contract, tokenId, currencyId);
 
       return {
-        id,
+        id: encodeERC1155OperationId(nftId, hash, type),
         hash,
         senders: [sender],
         recipients: [receiver],
@@ -126,20 +130,22 @@ describe("OpenSea lazy minting bs", () => {
         tokenId,
         value: new BigNumber(value),
         type,
-        accountId: id,
+        accountId,
         date,
       } as Operation;
     };
 
     // scenario with bob lazy minting 10 NFTs
-    const ops = [
-      makeNftOperation("NFT_OUT", 5, 0), // lazy mint sending 5 NFT
-      makeNftOperation("NFT_IN", 1, 1), // receiving 1 of them back
-      makeNftOperation("NFT_IN", 2, 2), // receiving 2 of them back
-      makeNftOperation("NFT_OUT", 2, 3), // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 1/2 (off-chain)
-      makeNftOperation("NFT_OUT", 3, 4), // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 2/2 (on-chain)
-      makeNftOperation("NFT_IN", 1, 5), // receiving 1 back
-    ];
+    const ops = (
+      [
+        ["NFT_OUT", 5], // lazy mint sending 5 NFT
+        ["NFT_IN", 1], // receiving 1 of them back
+        ["NFT_IN", 2], // receiving 2 of them back
+        ["NFT_OUT", 2], // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 1/2 (off-chain)
+        ["NFT_OUT", 3], // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 2/2 (on-chain)
+        ["NFT_IN", 1], // receiving 1 back
+      ] as [Operation["type"], number][]
+    ).map((params, i) => makeNftOperation(params, i));
 
     // What happened for bob:
     //

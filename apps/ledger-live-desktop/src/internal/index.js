@@ -1,22 +1,22 @@
 // @flow
-import * as Sentry from "@sentry/node";
+import { getSentryIfAvailable } from "../sentry/internal";
 import { unsubscribeSetup } from "./live-common-setup";
-import { setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
+import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { serializeError } from "@ledgerhq/errors";
-import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { log } from "@ledgerhq/logs";
 import logger from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-internal";
 
 import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
-import sentry from "~/sentry/internal";
+import sentry, { setTags } from "~/sentry/internal";
 
 process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
   unsubscribeAllCommands();
-  Sentry.close(2000);
+  getSentryIfAvailable()?.close(2000);
 });
 
 logger.add(new LoggerTransport());
@@ -41,6 +41,12 @@ const defers = {};
 let sentryEnabled = process.env.INITIAL_SENTRY_ENABLED !== "false";
 const userId = process.env.SENTRY_USER_ID || "";
 sentry(() => Boolean(userId) && sentryEnabled, userId);
+
+const { INITIAL_SENTRY_TAGS } = process.env;
+if (INITIAL_SENTRY_TAGS) {
+  const parsed = JSON.parse(INITIAL_SENTRY_TAGS);
+  if (parsed) setTags(parsed);
+}
 
 process.on("message", m => {
   switch (m.type) {
@@ -74,6 +80,11 @@ process.on("message", m => {
       break;
     }
 
+    case "set-sentry-tags": {
+      setTags(JSON.parse(m.tagsJSON));
+      break;
+    }
+
     case "internalCrashTest": {
       logger.critical(new Error("CrashTestInternal"));
       break;
@@ -90,7 +101,6 @@ process.on("message", m => {
 
     case "init": {
       const { hydratedPerCurrency } = m;
-
       // hydrate all
       log("init", `hydrate currencies ${Object.keys(hydratedPerCurrency).join(", ")}`);
       Object.keys(hydratedPerCurrency).forEach(currencyId => {
@@ -99,7 +109,6 @@ process.on("message", m => {
         const data = serialized && JSON.parse(serialized);
         getCurrencyBridge(currency).hydrate(data, currency);
       });
-
       break;
     }
 

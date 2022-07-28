@@ -1,7 +1,7 @@
 // @flow
-import type { Transaction } from "@ledgerhq/live-common/lib/families/solana/types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import type { Account, Operation, TransactionStatus } from "@ledgerhq/live-common/lib/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/solana/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";
 import type { Step } from "~/renderer/components/Stepper";
 

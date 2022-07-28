@@ -2,11 +2,11 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { PortfolioRange } from "@ledgerhq/types-live";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 
 export type CurrencySettings = {
@@ -239,6 +239,16 @@ export const setMarketCounterCurrency = (currency: string) => ({
 
 export const setMarketFilterByStarredAccounts = (payload: boolean) => ({
   type: "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
+  payload,
+});
+
+export const setSensitiveAnalytics = (enabled: boolean) => ({
+  type: "SET_SENSITIVE_ANALYTICS",
+  enabled,
+});
+
+export const setFirstConnectionHasDevice = (payload: boolean) => ({
+  type: "SET_FIRST_CONNECTION_HAS_DEVICE",
   payload,
 });
 

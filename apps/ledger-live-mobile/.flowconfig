@@ -43,6 +43,9 @@ node_modules/warning/.*
 .*/node_modules/@ledgerhq/react-native-hw-transport-ble/lib/BleTransport.js
 .*/node_modules/@ledgerhq/live-common/src/families/tezos/bridge/js.ts
 
+.*/**/*.tsx
+.*/**/*.ts
+
 [include]
 ../../node_modules/.pnpm
 
@@ -68,12 +71,16 @@ munge_underscores=true
 
 module.name_mapper='^react-native/\(.*\)$' -> '<PROJECT_ROOT>/node_modules/react-native/\1'
 module.name_mapper='^@?[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> '<PROJECT_ROOT>/node_modules/react-native/Libraries/Image/RelativeImageStub'
-module.name_mapper='^@ledgerhq/live-common/\(.*\)' ->'<PROJECT_ROOT>/../../libs/ledger-live-common/\1'
+module.name_mapper='^@ledgerhq/live-common' ->'<PROJECT_ROOT>/../../libs/ledger-live-common/lib'
+module.name_mapper='^@ledgerhq/live-common/\(.*\)' ->'<PROJECT_ROOT>/../../libs/ledger-live-common/lib/\1'
 
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe
 suppress_type=$FlowFixMeProps
 suppress_type=$FlowFixMeState
+
+; Fixes server init loop on pnpm run flow command
+sharedmemory.hash_table_pow=21
 
 [lints]
 sketchy-null-number=warn

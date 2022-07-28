@@ -1,17 +1,13 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { Transaction, AccountLike } from "../../types";
+import type { Transaction } from "../../generated/types";
 import { bitcoinPickingStrategy } from "./types";
+import type { AccountLike } from "@ledgerhq/types-live";
 const options = [
   {
     name: "feePerByte",
     type: String,
     desc: "how much fee per byte",
-  },
-  {
-    name: "pickUnconfirmedRBF",
-    type: Boolean,
-    desc: "also pick unconfirmed replaceable txs",
   },
   {
     name: "excludeUTXO",
@@ -52,7 +48,6 @@ function inferTransactions(
       rbf: opts.rbf || false,
       utxoStrategy: {
         strategy: bitcoinPickingStrategy[opts["bitcoin-pick-strategy"]] || 0,
-        pickUnconfirmedRBF: opts.pickUnconfirmedRBF || false,
         excludeUTXOs: (opts.excludeUTXO || []).map((str) => {
           const [hash, index] = str.split("@");
           invariant(

@@ -1,5 +1,5 @@
 // @flow
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { track } from "../../analytics/segment";
 
 /**
@@ -120,4 +120,20 @@ export function platformCompleteExchangeSuccess(manifest: AppManifest) {
 // Failed to complete an Exchange
 export function platformCompleteExchangeFail(manifest: AppManifest) {
   track("Platform complete Exchange Nonce fail", getEventData(manifest));
+}
+
+export function platformSignMessageRequested(manifest: AppManifest) {
+  track("Platform sign message requested", getEventData(manifest));
+}
+
+export function platformSignMessageSuccess(manifest: AppManifest) {
+  track("Platform sign message success", getEventData(manifest));
+}
+
+export function platformSignMessageFail(manifest: AppManifest) {
+  track("Platform sign message fail", getEventData(manifest));
+}
+
+export function platformSignMessageUserRefused(manifest: AppManifest) {
+  track("Platform sign message user refused", getEventData(manifest));
 }

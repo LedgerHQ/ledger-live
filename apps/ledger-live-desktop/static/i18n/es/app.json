@@ -228,6 +228,7 @@
       "kyc" : "KYC"
     },
     "form" : {
+      "changeCTA" : "Cambiar",
       "ratesDrawer" : {
         "title" : "Tasa",
         "quote" : "Cotización",
@@ -267,11 +268,25 @@
           "complete" : "Completa tu KYC",
           "update" : "Actualiza tu KYC",
           "rejected" : "KYC rechazado, vuelve a iniciar la verificación",
+          "rejectedContactProviderSupport" : "KYC rechazado, ponte en contacto con el soporte de {{providerName}}",
+          "updateRequired" : "Completa o actualiza tu KYC",
           "status" : {
             "pending" : "KYC pendiente",
             "approved" : "KYC aprobado",
-            "closed" : "KYC rechazado"
+            "closed" : "KYC rechazado",
+            "upgradeRequired" : "KYC insuficiente"
           }
+        },
+        "login" : {
+          "required" : "Necesitas iniciar sesión con este proveedor",
+          "complete" : "Inicia sesión"
+        },
+        "mfa" : {
+          "required" : "Necesitas configurar la MFA con este proveedor",
+          "complete" : "Configurar la MFA"
+        },
+        "withdrawalsBlockedError" : {
+          "message" : "{{providerName}} ha bloqueado tu retiro.\n\n Para obtener más información, ponte en contacto con su equipo de soporte."
         }
       }
     },
@@ -346,6 +361,7 @@
     "title" : "Permutar",
     "titleCrypto" : "Permutar {{currency}}",
     "whatIsSwap" : "Qué es la permuta",
+    "decentralizedSwapAvailable" : "Para determinadas transacciones, quizás deberías considerar la opción de usar la permuta descentralizada. Descubre <0>ParaSwap</0> y <1>1inch</1>.",
     "paraswap" : {
       "cta" : " Échale un vistazo",
       "description" : "¿Buscas Paraswap? Está en a la pestaña Discover."
@@ -482,9 +498,9 @@
       "subtitle" : "Actualiza Ledger Live a la última versión y vuelve a verificar tu identidad para permutar con Wyre",
       "cta" : "Restablece la verificación"
     },
-    "resetKYCModal" : {
-      "title" : "Elimina tu KYC",
-      "subtitle" : "Elimina tu KYC para eliminar todos los tokens almacenados de forma local en tu PC. Deberás volver a enviar tu KYC para acceder a los servicios ofrecidos por nuestros socios.",
+    "resetThirdPartyDataModal" : {
+      "title" : "Eliminar los datos locales de terceros",
+      "subtitle" : "Elimina los datos locales de terceros. Es posible que tengas que volver a realizar el KYC o iniciar sesión de nuevo para acceder a los servicios proporcionados por nuestros socios.",
       "cta" : "Confirmar"
     },
     "modal" : {
@@ -1283,7 +1299,8 @@
         "description" : "Descripción",
         "tokenAddress" : "Dirección del token",
         "tokenId" : "ID de token",
-        "quantity" : "Cantidad"
+        "quantity" : "Cantidad",
+        "floorPrice" : "Precio base"
       }
     },
     "collections" : {
@@ -1331,6 +1348,14 @@
       "link" : "¿Cómo funcionan los activos (ASA)?",
       "seeTokens" : "Mostrar ASA ({{tokenCount}})",
       "hideTokens" : "Ocultar ASA ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "Activos",
+      "cta" : "Añadir activo",
+      "placeholder" : "Puedes agregar activos a tu cuenta de {{currencyName}}.",
+      "link" : "Más información sobre los activos Stellar",
+      "seeTokens" : "Mostrar activos ({{tokenCount}})",
+      "hideTokens" : "Ocultar activos ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1518,7 +1543,8 @@
       "fees" : "Tarifas",
       "provider" : "Proveedor",
       "payoutNetworkFees" : "Tarifas de pago",
-      "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo"
+      "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
+      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -1978,6 +2004,13 @@
       }
     }
   },
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "El saldo total no incluye las recompensas de participación"
+      }
+    }
+  },
   "tron" : {
     "voting" : {
       "emptyState" : {
@@ -2068,10 +2101,10 @@
     "replaceable" : "reemplazable",
     "cannotSelect" : {
       "unconfirmed" : "No puedes seleccionar monedas de transacciones reemplazables y no confirmadas.",
+      "pending" : "No puedes seleccionar monedas de transacciones pendientes (excepto la salida de cambio).",
       "last" : "Debes seleccionar al menos una"
     },
     "pending" : "pendiente",
-    "pickUnconfirmedRBF" : "Incluye monedas de transacciones reemplazables y no confirmadas.",
     "pickingStrategy" : "Estrategia de selección UTXO",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Las monedas más antiguas primero (FIFO)",
@@ -2558,6 +2591,31 @@
       }
     }
   },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "Añadir activo",
+      "steps" : {
+        "assets" : {
+          "title" : "Activo",
+          "info" : "Añadir un activo requiere enviar una transacción con tarifas mínimas. Esto aparecerá en tu historial de transacciones.",
+          "selectLabel" : "Elige un activo",
+          "disabledTooltip" : "Ya tienes este activo en tu cuenta de Stellar."
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación",
+          "success" : {
+            "title" : "Activo {{token}} añadido con éxito",
+            "text" : "Ya puedes recibir y enviar activos <0>{{token}}</0> en tu cuenta de Stellar.",
+            "cta" : "Ver detalles"
+          },
+          "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+        }
+      }
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo.",
@@ -2844,8 +2902,8 @@
       "softResetTitle" : "Borrar caché",
       "softResetDesc" : "Borra la caché de Ledger Live para forzar una nueva sincronización con la cadena de bloques.",
       "softReset" : "Borrar",
-      "resetKYC" : "Restablecer datos de KYC",
-      "resetKYCDesc" : "Borra todos tus datos de KYC almacenados localmente que se utilizan para acceder a un proveedor de transacciones de terceros.",
+      "resetThirdPartyData" : "Restablecer datos de terceros",
+      "resetThirdPartyDataDesc" : "Borra todos los datos locales de terceros que se usan para acceder al proveedor de transacciones de terceros.",
       "hardResetTitle" : "Restablecer Ledger Live",
       "hardResetDesc" : "Borrar todos los datos de Ledger Live almacenados en tu PC, incluidas tus cuentas, historial de transacciones y ajustes.",
       "hardReset" : "Restablecer",
@@ -3722,7 +3780,20 @@
         "MEMO_HASH" : "Memo Hash",
         "MEMO_RETURN" : "Devolución de memo"
       },
-      "memoWarningText" : "Al utilizar un Memo, confirma cuidadosamente con el receptor el tipo a utilizar"
+      "memoWarningText" : "Al utilizar un Memo, confirma cuidadosamente con el receptor el tipo a utilizar",
+      "fee" : "Tarifas",
+      "feeInfoText" : "Las transacciones en la red de Stellar requieren una tarifa mínima de transacción de 0,00001 XLM.",
+      "suggested" : "Sugerida",
+      "recommendedFee" : "Tarifa recomendada",
+      "recommenndedFeeInfo" : "Puedes enviar esta transacción con una tarifa inferior a la recomendada, pero es posible que no se complete.",
+      "networkCongestion" : "congestión de la red",
+      "networkCongestionLevel" : {
+        "LOW" : "Baja",
+        "MEDIUM" : "Media",
+        "HIGH" : "Alta"
+      },
+      "assetCode" : "Código del activo",
+      "assetIssuer" : "Emisor del activo"
     },
     "cosmos" : {
       "memo" : "Memo",
@@ -4275,14 +4346,8 @@
     "FeeTooHigh" : {
       "title" : "Las tarifas de red superan el 10% del importe"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "El formato de Memo es incorrecto"
-    },
     "SourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para enviar {{currencyName}}"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Es posible que sea necesario un Memo al enviar a este receptor"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "El importe debe ser de al menos {{minAmountFromFormatted}}"
@@ -4342,7 +4407,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Asegúrate de que tu saldo restante es suficiente para cubrir las tarifas de transacciones futuras"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Tu transacción anterior todavía no se ha procesado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
     },
     "SolanaTxConfirmationTimeout" : {
@@ -4350,6 +4415,47 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "Has superado la cantidad de tokens disponibles"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "Tienes que enviar un mínimo de {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Asegúrate de tener fondos suficientes para pagar las tarifas"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "El formato de Memo es incorrecto"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Es posible que sea necesario un Memo al enviar a este receptor"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Este receptor aún no tiene ninguna trustline para {{assetCode}}."
+    },
+    "StellarAssetRequired" : {
+      "title" : "Hay que seleccionar un activo Stellar para poder añadir una trustline."
+    },
+    "StellarAssetNotFound" : {
+      "title" : "No se ha podido encontrar el activo Stellar seleccionado."
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Fondos insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes para cubrir la tarifa de transacción."
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "La tarifa seleccionada es inferior a la tarifa recomendada."
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "La tarifa mínima de transacción es de 0,00001 XLM."
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Fondos insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes para cubrir la nueva trustline."
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "La cuenta de Stellar no existe."
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Desactiva la multifirma para realizar transacciones de Stellar."
     }
   },
   "cryptoOrg" : {
@@ -4376,6 +4482,20 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "No se puede confirmar tu dirección {{name}} en tu dispositivo Ledger. Si lo usas es bajo tu propio riesgo."
+    },
+    "send" : {
+      "memo" : {
+        "label" : "Memo (opcional)",
+        "characterCount" : "{{memoLength}}/{{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "elige un activo"
+    },
+    "selectAccount" : {
+      "title" : "elige una cuenta"
     }
   }
 }

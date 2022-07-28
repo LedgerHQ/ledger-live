@@ -3,14 +3,13 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type {
-  Account,
-  AccountLike,
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
-import { accountWithMandatoryTokens } from "@ledgerhq/live-common/lib/account/helpers";
+import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { accountsSelector } from "../../reducers/accounts";
@@ -126,9 +125,9 @@ export default function SelectAccount({ navigation, route }: Props) {
     () =>
       allAccounts.filter(
         account =>
-          (account.type === "TokenAccount"
-            ? account.token.id
-            : account.currency.id) === currency.id,
+          (account?.type === "TokenAccount"
+            ? account?.token.id
+            : account?.currency.id) === currency.id,
       ),
     [allAccounts, currency.id],
   );

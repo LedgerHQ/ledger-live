@@ -44,12 +44,14 @@ jobs:
         run: pnpm changeset pre exit
 
       - name: versioning
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
       - name: commit
         run: |
           git add .
-          git commit -m ":fire: hotfix release"
+          git commit -m ":fire: hotfix release [skip ci]"
 
       - name: push changes
         run: |

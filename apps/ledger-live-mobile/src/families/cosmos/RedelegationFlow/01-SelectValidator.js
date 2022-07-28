@@ -1,19 +1,20 @@
 // @flow
 import invariant from "invariant";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet, SectionList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import type { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
+import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import ValidatorRow from "../shared/ValidatorRow";
 import ValidatorHead from "../shared/ValidatorHead";
 
@@ -67,7 +68,9 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
     "transaction src validator required",
   );
 
-  const validators = useLedgerFirstShuffledValidatorsCosmos();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const validators = useLedgerFirstShuffledValidatorsCosmos(searchQuery);
 
   const validatorSrc = useMemo(
     () =>
@@ -164,7 +167,12 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
           </LText>
         </View>
       )}
+      <SelectValidatorSearchBox
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
       <SectionList
+        style={[styles.section]}
         sections={sections}
         keyExtractor={(item, index) => item + index}
         renderItem={renderItem}
@@ -181,7 +189,6 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   noResult: {
     flex: 1,
@@ -192,6 +199,9 @@ const styles = StyleSheet.create({
     height: 32,
     fontSize: 14,
     lineHeight: 32,
+  },
+  section: {
+    paddingHorizontal: 16,
   },
 });
 

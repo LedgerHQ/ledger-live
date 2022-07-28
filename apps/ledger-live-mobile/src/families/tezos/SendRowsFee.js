@@ -1,7 +1,7 @@
 /* @flow */
 import React from "react";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/tezos/types";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/families/tezos/types";
 
 import TezosFeeRow from "./TezosFeeRow";
 

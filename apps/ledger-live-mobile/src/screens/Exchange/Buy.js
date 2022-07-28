@@ -7,12 +7,12 @@ import { useTheme } from "@react-navigation/native";
 import {
   currenciesByMarketcap,
   findCryptoCurrencyByKeyword,
-} from "@ledgerhq/live-common/lib/currencies";
-import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+} from "@ledgerhq/live-common/currencies/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/types-cryptoassets";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
 import BigSpinner from "../../icons/BigSpinner";

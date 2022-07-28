@@ -6,9 +6,9 @@ import SafeAreaView from "react-native-safe-area-view";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
-import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+} from "@ledgerhq/types-cryptoassets";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 
 import { useTheme } from "@react-navigation/native";
 import { track } from "../../analytics/segment";

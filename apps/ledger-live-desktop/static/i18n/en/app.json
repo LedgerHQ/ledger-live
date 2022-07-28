@@ -228,6 +228,7 @@
       "kyc": "KYC"
     },
     "form": {
+      "changeCTA": "Change",
       "ratesDrawer": {
         "title": "Rate",
         "quote": "Quote",
@@ -267,11 +268,25 @@
           "complete": "Complete KYC",
           "update": "Refresh KYC",
           "rejected": "KYC rejected, start the verification again",
+          "rejectedContactProviderSupport": "KYC rejected, please contact {{providerName}} support",
+          "updateRequired": "Complete or update your KYC",
           "status": {
             "pending": "KYC pending",
             "approved": "KYC approved",
-            "closed": "KYC rejected"
+            "closed": "KYC rejected",
+            "upgradeRequired": "KYC insufficient"
           }
+        },
+        "login": {
+          "required": "You need to login with this provider",
+          "complete": "Login"
+        },
+        "mfa": {
+          "required": "You need to set up MFA with this provider",
+          "complete": "Set up MFA"
+        },
+        "withdrawalsBlockedError": {
+          "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
         }
       }
     },
@@ -346,6 +361,7 @@
     "title": "Swap",
     "titleCrypto": "Swap {{currency}}",
     "whatIsSwap": "What is Swap",
+    "decentralizedSwapAvailable": "For some transactions you may consider using decentralised SWAP. Discover <0>ParaSwap</0> and <1>1inch</1>.",
     "paraswap": {
       "cta": " Check it out",
       "description": "Looking for Paraswap? It has been moved to the Discover tab."
@@ -482,9 +498,9 @@
       "subtitle": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre",
       "cta": "Reset verification"
     },
-    "resetKYCModal": {
-      "title": "Delete your KYC",
-      "subtitle": "Delete your KYC to erase all tokens stored locally on your computer. You will have to resubmit your KYC to access services provided by our partners.",
+    "resetThirdPartyDataModal": {
+      "title": "Delete your local third party data",
+      "subtitle": "Delete your local third party data. You may have to resubmit your KYC and/or login again to access services provided by our partners.",
       "cta": "Confirm"
     },
     "modal": {
@@ -1283,7 +1299,8 @@
         "description": "Description",
         "tokenAddress": "Token Address",
         "tokenId": "Token ID",
-        "quantity": "Quantity"
+        "quantity": "Quantity",
+        "floorPrice": "Floor Price"
       }
     },
     "collections": {
@@ -1331,6 +1348,14 @@
       "link": "How Assets (ASA) works?",
       "seeTokens": "Show ASA ({{tokenCount}})",
       "hideTokens": "Hide ASA ({{tokenCount}})"
+    },
+    "stellar": {
+      "title": "Assets",
+      "cta": "Add asset",
+      "placeholder": "You can add assets to your {{currencyName}} account.",
+      "link": "Learn more about Stellar assets",
+      "seeTokens": "Show assets ({{tokenCount}})",
+      "hideTokens": "Hide assets ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -1518,7 +1543,8 @@
       "fees": "Fees",
       "provider": "Provider",
       "payoutNetworkFees": "Payout fees",
-      "payoutNetworkFeesTooltip": "This amount will not be shown on your device"
+      "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+      "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2": {
       "amountSent": "Amount to send",
@@ -1978,6 +2004,13 @@
       }
     }
   },
+  "cardano": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Total balance doesn't include staking rewards"
+      }
+    }
+  },
   "tron": {
     "voting": {
       "emptyState": {
@@ -2068,10 +2101,10 @@
     "replaceable": "replaceable",
     "cannotSelect": {
       "unconfirmed": "You cannot select coins from unconfirmed, replaceable transactions.",
+      "pending": "You cannot select coins from pending transactions. (except your change output)",
       "last": "You need at least one selected"
     },
     "pending": "pending",
-    "pickUnconfirmedRBF": "Include coins from unconfirmed, replaceable transactions.",
     "pickingStrategy": "UTXO picking strategy",
     "pickingStrategyLabels": {
       "DEEP_OUTPUTS_FIRST": "Oldest coins first (FIFO)",
@@ -2566,6 +2599,31 @@
       }
     }
   },
+  "stellar": {
+    "addAsset": {
+      "title": "Add asset",
+      "steps": {
+        "assets": {
+          "title": "Asset",
+          "info": "Adding an asset requires sending a transaction with minimum fees. This will appear in your transaction history",
+          "selectLabel": "Choose an asset",
+          "disabledTooltip": "You already have this asset on your Stellar account"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "{{token}} asset successfully added",
+            "text": "You can now receive and send <0>{{token}}</0> assets on your Stellar account.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    }
+  },
   "solana": {
     "common": {
       "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
@@ -2852,8 +2910,8 @@
       "softResetTitle": "Clear cache",
       "softResetDesc": "Clear the Ledger Live cache to force resynchronization with the blockchain.",
       "softReset": "Clear",
-      "resetKYC": "Reset KYC data",
-      "resetKYCDesc": "Erase all your Know your Customer data stored locally used to access third-party transaction provider.",
+      "resetThirdPartyData": "Reset third party data",
+      "resetThirdPartyDataDesc": "Erase all your local third party data, used to access third-party transaction provider.",
       "hardResetTitle": "Reset Ledger Live",
       "hardResetDesc": "Erase all Ledger Live data stored on your computer, including your accounts, transaction histories and settings.",
       "hardReset": "Reset",
@@ -3733,7 +3791,20 @@
         "MEMO_HASH": "Memo Hash",
         "MEMO_RETURN": "Memo Return"
       },
-      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
+      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient",
+      "fee": "Fees",
+      "feeInfoText": "Transaction on the Stellar network require a minimum transaction fee of 0.00001 XLM",
+      "suggested": "Suggested",
+      "recommendedFee": "Recommended fee",
+      "recommenndedFeeInfo": "You can still submit this transaction with lower fee than recommended but it may not be completed",
+      "networkCongestion": "network congestion",
+      "networkCongestionLevel": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High"
+      },
+      "assetCode": "Asset code",
+      "assetIssuer": "Asset issuer"
     },
     "cosmos": {
       "memo": "Memo",
@@ -4286,14 +4357,8 @@
     "FeeTooHigh": {
       "title": "Network fees are above 10% of the amount"
     },
-    "StellarWrongMemoFormat": {
-      "title": "Memo format is wrong"
-    },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
-    },
-    "StellarMemoRecommended": {
-      "title": "A memo may be required when sending to this recipient"
     },
     "SwapExchangeRateAmountTooLow": {
       "title": "Amount must be at least {{minAmountFromFormatted}}"
@@ -4361,6 +4426,47 @@
     },
     "NotEnoughNftOwned": {
       "title": "You have exceeded the number of available tokens"
+    },
+    "CardanoMinAmountError": {
+      "title": "Minimum sendable amount is {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds": {
+      "title": "Please ensure you have enough funds to pay for fees"
+    },
+    "StellarWrongMemoFormat": {
+      "title": "Memo format is wrong"
+    },
+    "StellarMemoRecommended": {
+      "title": "A memo may be required when sending to this recipient"
+    },
+    "StellarAssetNotAccepted": {
+      "title": "This recipient doesn't have a trustline to {{assetCode}} yet"
+    },
+    "StellarAssetRequired": {
+      "title": "A Stellar asset should be selected before adding a trustline"
+    },
+    "StellarAssetNotFound": {
+      "title": "Selected Stellar asset could not be found"
+    },
+    "StellarNotEnoughNativeBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the transaction fee"
+    },
+    "StellarFeeSmallerThanRecommended": {
+      "title": "The selected fee is lower than the recommended fee"
+    },
+    "StellarFeeSmallerThanBase": {
+      "title": "The minimum transaction fee is 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the new trustline"
+    },
+    "StellarMuxedAccountNotExist": {
+      "title": "Stellar account does not exist"
+    },
+    "StellarSourceHasMultiSign": {
+      "title": "Please disable multisign to make Stellar transactions"
     }
   },
   "cryptoOrg": {
@@ -4387,6 +4493,20 @@
     },
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+    },
+    "send": {
+      "memo": {
+        "label": "Memo (optional)",
+        "characterCount": "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers": {
+    "selectCurrency": {
+      "title": "choose asset"
+    },
+    "selectAccount": {
+      "title": "choose account"
     }
   }
 }

@@ -228,6 +228,7 @@
       "kyc" : "本人確認手続き"
     },
     "form" : {
+      "changeCTA" : "変更",
       "ratesDrawer" : {
         "title" : "レート",
         "quote" : "見積もり",
@@ -267,11 +268,25 @@
           "complete" : "KYC（本人確認）を完了",
           "update" : "KYC（本人確認）を更新",
           "rejected" : "KYCが却下されたため、承認申請をやり直す必要があります。",
+          "rejectedContactProviderSupport" : "KYCが拒否されました。{{providerName}}サポートにお問い合わせください。",
+          "updateRequired" : "KYC（本人確認手続き）を完了または更新する",
           "status" : {
             "pending" : "KYC（本人確認）申請中",
             "approved" : "KYC（本人確認）承認済み",
-            "closed" : "KYC（本人確認）却下"
+            "closed" : "KYC（本人確認）却下",
+            "upgradeRequired" : "KYC（本人確認手続き）未完了"
           }
+        },
+        "login" : {
+          "required" : "このプロバイダーでログインする必要があります",
+          "complete" : "ログイン"
+        },
+        "mfa" : {
+          "required" : "このプロバイダーでMFA（多要素認証）を設定する必要があります",
+          "complete" : "MFAを設定"
+        },
+        "withdrawalsBlockedError" : {
+          "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
         }
       }
     },
@@ -346,6 +361,7 @@
     "title" : "スワップ",
     "titleCrypto" : "スワップ{{currency}}",
     "whatIsSwap" : "スワップとは",
+    "decentralizedSwapAvailable" : "一部のトランザクションでは、分散型スワップの使用を検討することができます。<0>ParaSwapと<1>1inch</1>の詳細をチェック",
     "paraswap" : {
       "cta" : " 確認する",
       "description" : "Paraswapをお探しですか？この項目は「Discover」タブに移動されました。"
@@ -482,9 +498,9 @@
       "subtitle" : "Wyreでスワップを実行するには、Ledger Liveを最新バージョンにアップデートし、本人確認を再度行ってください",
       "cta" : "認証をリセット"
     },
-    "resetKYCModal" : {
-      "title" : "KYC（本人確認）を削除",
-      "subtitle" : "KYC（本人確認）を削除すると、コンピューター上にローカルで保有しているすべてのトークンが消去されます。Ledgerのパートナーが提供するサービスにアクセスするには、KYC（本人確認）を再提出する必要があります。",
+    "resetThirdPartyDataModal" : {
+      "title" : "ローカルのサードパーティーのデータを削除",
+      "subtitle" : "ローカルのサードパーティーのデータを削除します。弊社のパートナーが提供するサービスにアクセスするには、KYC（本人確認）の再提出や再度ログインが必要になる場合があります。",
       "cta" : "確認"
     },
     "modal" : {
@@ -1283,7 +1299,8 @@
         "description" : "説明",
         "tokenAddress" : "トークンアドレス",
         "tokenId" : "トークンID",
-        "quantity" : "数量"
+        "quantity" : "数量",
+        "floorPrice" : "フロア価格"
       }
     },
     "collections" : {
@@ -1331,6 +1348,14 @@
       "link" : "ASA(資産)の仕組みとは？",
       "seeTokens" : "ASAを表示({{tokenCount}})",
       "hideTokens" : "ASAを非表示({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "資産",
+      "cta" : "資産を追加",
+      "placeholder" : "{{currencyName}}アカウントに資産を追加できます。",
+      "link" : "Stellar資産の詳細",
+      "seeTokens" : "資産を表示 ({{tokenCount}})",
+      "hideTokens" : "資産を非表示 ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1518,7 +1543,8 @@
       "fees" : "手数料",
       "provider" : "プロバイダー",
       "payoutNetworkFees" : "ペイアウト手数料",
-      "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。"
+      "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
+      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2" : {
       "amountSent" : "送付額",
@@ -1842,7 +1868,7 @@
     "steps" : {
       "chooseAccount" : {
         "title" : "アカウント",
-        "label" : "引き落としアカウント",
+        "label" : "受取アカウント",
         "parentAccount" : "1. {{currencyName}}アカウントを選択",
         "token" : "2. トークンを選択する",
         "verifyTokenType" : "<0>{{token}}</0>が<0>{{tokenType}}</0>トークンであることを確認してください。{{currency}}アカウント他の暗号資産を送信すると失われる可能性があります。",
@@ -1978,6 +2004,13 @@
       }
     }
   },
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "合計残高にはステーキング報酬は含まれません"
+      }
+    }
+  },
   "tron" : {
     "voting" : {
       "emptyState" : {
@@ -2068,10 +2101,10 @@
     "replaceable" : "置き換え可能",
     "cannotSelect" : {
       "unconfirmed" : "未確認で変更可能なトランザクションのコインは選択できません。",
+      "pending" : "保留中のトランザクションからはコインを選択できません。(アウトプット変更を除く)",
       "last" : "1人以上のバリデーターを選択する必要があります。"
     },
     "pending" : "保留状態",
-    "pickUnconfirmedRBF" : "未確認で変更可能なトランザクションのコインを含む",
     "pickingStrategy" : "UTXOピッキング戦略",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "先入れ先出し方式(FIFO)",
@@ -2558,6 +2591,31 @@
       }
     }
   },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "資産を追加",
+      "steps" : {
+        "assets" : {
+          "title" : "資産",
+          "info" : "資産を追加するには、最少額の手数料でトランザクションを送信する必要があります。これは取引履歴に表示されます",
+          "selectLabel" : "資産を選択",
+          "disabledTooltip" : "すでに、Stellarアカウントに資産を所有しています"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "{{token}}資産が正常に追加されました",
+            "text" : "Stellarアカウントで<0>{{token}}</0>資産の受け取りや、送付が可能になりました。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。",
@@ -2844,8 +2902,8 @@
       "softResetTitle" : "Cacheを削除する",
       "softResetDesc" : "Ledger LiveのCacheを削除し、ブロックチェーンと再同期する。",
       "softReset" : "クリア",
-      "resetKYC" : "KYC（本人確認）データをリセット",
-      "resetKYCDesc" : "ローカルに保存されている、サードパーティの取引プロバイダーへのアクセスに使用されるKYC（本人確認）データをすべて消去します。",
+      "resetThirdPartyData" : "サードパーティーのデータをリセット",
+      "resetThirdPartyDataDesc" : "サードパーティーのトランザクションプロバイダーへのアクセスに使用される、ローカルのサードパーティーのデータをすべて消去します。",
       "hardResetTitle" : "Ledger Liveをリセットします",
       "hardResetDesc" : "お使いのコンピューターに保存された、アカウント、取引履歴、設定などのLedger Liveデータすべてを削除する。",
       "hardReset" : "リセット",
@@ -3722,7 +3780,20 @@
         "MEMO_HASH" : "メモのハッシュ",
         "MEMO_RETURN" : "メモリターン"
       },
-      "memoWarningText" : "Memo(メモ)を使用する場合は、受取先とタイプを確認してください。"
+      "memoWarningText" : "Memo(メモ)を使用する場合は、受取先とタイプを確認してください。",
+      "fee" : "手数料",
+      "feeInfoText" : "Stellarネットワークでの取引には、最低0.00001 XLMの取引手数料が必要です",
+      "suggested" : "提案済み",
+      "recommendedFee" : "推奨手数料",
+      "recommenndedFeeInfo" : "このトランザクションを推奨手数料より低額で提出可能ですが、完了しない場合があります",
+      "networkCongestion" : "ネットワーク混雑",
+      "networkCongestionLevel" : {
+        "LOW" : "低速",
+        "MEDIUM" : "標準",
+        "HIGH" : "高速"
+      },
+      "assetCode" : "資産コード",
+      "assetIssuer" : "資産発行者"
     },
     "cosmos" : {
       "memo" : "メモ",
@@ -4275,14 +4346,8 @@
     "FeeTooHigh" : {
       "title" : "ネットワーク手数料が10%を超えています。"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "メモのフォーマットに誤りがあります。"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "この受取先に送付するには、Memoが必要な場合があります。"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "{{minAmountFromFormatted}} 以上の数量でなければなりません。"
@@ -4342,7 +4407,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "今後のトランザクション手数料に十分な残高を確保してください"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "前回のトランザクションはまだ処理されていません。しばらく待ってから、トランザクション履歴を確認した上でもう一度やり直してください。"
     },
     "SolanaTxConfirmationTimeout" : {
@@ -4350,6 +4415,47 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "利用可能なトークン数を超えています"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "送付可能な最低金額は、{{amount}} ADAです"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "お支払いに十分な資金があることをご確認ください"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "メモのフォーマットに誤りがあります。"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "この受取先に送付するには、Memoが必要な場合があります。"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "この受取人にはまだ{{assetCode}}へのトラストラインがありません"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Stellar資産はトラストライン追加前に選択する必要があります"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "選択されたStellar資産が見つかりませんでした"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントにトランザクション手数料をカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "選択された手数料は推奨手数料を下回っています"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低トランザクション手数料は0.00001 XLMです"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに新しいトラストラインをカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellarアカウントが存在しません"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     }
   },
   "cryptoOrg" : {
@@ -4376,6 +4482,20 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイス上で確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    },
+    "send" : {
+      "memo" : {
+        "label" : "メモ (任意)",
+        "characterCount" : "{{memoLength}}/ {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "資産を選択"
+    },
+    "selectAccount" : {
+      "title" : "アカウントを選択"
     }
   }
 }

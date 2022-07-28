@@ -1,4 +1,7 @@
-import type { PortfolioRangeConfig, PortfolioRange } from "./types";
+import type {
+  PortfolioRangeConfig,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
 
 export const hourIncrement = 60 * 60 * 1000;
 export const dayIncrement = 24 * hourIncrement;

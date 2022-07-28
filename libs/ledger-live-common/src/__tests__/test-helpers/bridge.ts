@@ -1,22 +1,13 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { Observable, defer, from } from "rxjs";
 import { reduce, filter, map } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
-import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
-import type {
-  Account,
-  Transaction,
-  AccountBridge,
-  SyncConfig,
-  DatasetTest,
-  CurrenciesData,
-  CryptoCurrency,
-  AccountLike,
-  SubAccount,
-  AccountRawLike,
-} from "../../types";
+import {
+  InvalidAddress,
+  RecipientRequired,
+  AmountRequired,
+} from "@ledgerhq/errors";
 import {
   fromAccountRaw,
   toAccountRaw,
@@ -35,6 +26,19 @@ import {
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
 import { implicitMigration } from "../../migrations/accounts";
+import type {
+  Account,
+  AccountBridge,
+  AccountLike,
+  AccountRawLike,
+  SubAccount,
+  SyncConfig,
+  DatasetTest,
+  CurrenciesData,
+  TransactionCommon,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 const warnDev = process.env.CI
   ? (..._args) => {}
   : (...msg) => console.warn(...msg);
@@ -57,7 +61,7 @@ const defaultSyncConfig = {
   paginationConfig: {},
   blacklistedTokenIds: ["ethereum/erc20/ampleforth", "ethereum/erc20/steth"],
 };
-export function syncAccount<T extends Transaction>(
+export function syncAccount<T extends TransactionCommon>(
   bridge: AccountBridge<T>,
   account: Account,
   syncConfig: SyncConfig = defaultSyncConfig
@@ -68,10 +72,9 @@ export function syncAccount<T extends Transaction>(
     .toPromise();
 }
 
-export function testBridge<T extends Transaction>(
-  family: string,
+export function testBridge<T extends TransactionCommon>(
   data: DatasetTest<T>
-) {
+): void {
   // covers all bridges through many different accounts
   // to test the common shared properties of bridges.
   const accountsRelated: Array<{
@@ -119,7 +122,7 @@ export function testBridge<T extends Transaction>(
     );
   });
   const accountsFoundInScanAccountsMap = {};
-  const preloadObservables: Array<Observable<any>> = [];
+
   currenciesRelated.map(({ currencyData, currency }) => {
     const bridge = getCurrencyBridge(currency);
 
@@ -211,16 +214,6 @@ export function testBridge<T extends Transaction>(
         describe("scanAccounts", () => {
           scanAccounts.forEach((sa) => {
             // we start running the scan accounts in parallel!
-            preloadObservables.push(
-              defer(() =>
-                from(
-                  scanAccountsCached(sa.apdus).then(
-                    () => null,
-                    () => {}
-                  )
-                )
-              )
-            );
             test(sa.name, async () => {
               const accounts = await scanAccountsCached(sa.apdus);
               accounts.forEach((a) => {
@@ -632,6 +625,13 @@ export function testBridge<T extends Transaction>(
             const status = await bridge.getTransactionStatus(account, t);
             expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
           });
+          makeTest("Default empty amount has an amount error", async () => {
+            const account = await getSynced();
+            const t = { ...bridge.createTransaction(account) };
+            const status = await bridge.getTransactionStatus(account, t);
+            expect(status.errors.amount).toBeInstanceOf(AmountRequired);
+          });
+
           const accountDataTest = accountData.test;
 
           if (accountDataTest) {
@@ -672,10 +672,13 @@ export function testBridge<T extends Transaction>(
                   errors && expect(s.errors).toMatchObject(errors);
                   warnings && expect(s.warnings).toMatchObject(warnings);
                   // now we match rest of fields but using the raw version for better readability
-                  const restRaw: Record<string, any> = toTransactionStatusRaw({
-                    ...s,
-                    ...es,
-                  });
+                  const restRaw: Record<string, any> = toTransactionStatusRaw(
+                    {
+                      ...s,
+                      ...es,
+                    },
+                    account.currency.family
+                  );
                   delete restRaw.errors;
                   delete restRaw.warnings;
 
@@ -685,7 +688,12 @@ export function testBridge<T extends Transaction>(
                     }
                   }
 
-                  expect(toTransactionStatusRaw(s)).toMatchObject(restRaw);
+                  expect(
+                    toTransactionStatusRaw(
+                      s as TransactionStatusCommon,
+                      account.currency.family
+                    )
+                  ).toMatchObject(restRaw);
                 }
 
                 if (testFn) {
@@ -707,12 +715,12 @@ export function testBridge<T extends Transaction>(
 
                   const obj = subAccountId
                     ? {
-                        transaction: t as Transaction,
+                        transaction: t as TransactionCommon,
                         account: inferSubAccount() as AccountLike,
                         parentAccount: account,
                       }
                     : {
-                        transaction: t as Transaction,
+                        transaction: t as TransactionCommon,
                         account: account as AccountLike,
                       };
 
@@ -769,7 +777,4 @@ export function testBridge<T extends Transaction>(
         });
       });
     });
-  return {
-    preloadObservables,
-  };
 }

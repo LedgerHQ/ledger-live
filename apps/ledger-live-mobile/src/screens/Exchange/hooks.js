@@ -1,20 +1,17 @@
 // @flow
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import {
   listCryptoCurrencies,
   listTokens,
-} from "@ledgerhq/live-common/lib/currencies";
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
-import { RampCatalogEntry } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/types";
+} from "@ledgerhq/live-common/currencies/index";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import type {
-  Account,
-  SubAccount,
-} from "@ledgerhq/live-common/lib/types/account";
+} from "@ledgerhq/types-cryptoassets";
+import type { Account, SubAccount } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";

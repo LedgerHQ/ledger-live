@@ -5,7 +5,7 @@ import {
   toTransactionStatusRaw,
   formatTransactionStatus,
   formatTransaction,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import type { InferTransactionsOpts } from "../transaction";
@@ -18,12 +18,12 @@ const getTransactionStatusFormatters = {
     "\n" +
     "STATUS " +
     formatTransactionStatus(transaction, status, account),
-  json: ({ status, transaction }) =>
+  json: ({ status, transaction, account }) =>
     "TRANSACTION " +
     JSON.stringify(toTransactionRaw(transaction)) +
     "\n" +
     "STATUS " +
-    JSON.stringify(toTransactionStatusRaw(status)),
+    JSON.stringify(toTransactionStatusRaw(status, account.currency.family)),
 };
 export default {
   description:

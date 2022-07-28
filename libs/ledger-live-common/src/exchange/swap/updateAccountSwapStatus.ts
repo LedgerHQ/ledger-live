@@ -1,11 +1,11 @@
+import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
-import type { SubAccount, Account } from "../../types";
+import type { SubAccount, Account } from "@ledgerhq/types-live";
 import type {
-  UpdateAccountSwapStatus,
   SwapOperation,
   SwapStatusRequest,
+  UpdateAccountSwapStatus,
 } from "./types";
-import { operationStatusList } from "./";
 
 const maybeGetUpdatedSwapHistory = async (
   swapHistory: SwapOperation[] | null | undefined
@@ -16,7 +16,7 @@ const maybeGetUpdatedSwapHistory = async (
 
   if (swapHistory) {
     for (const { provider, swapId, status } of swapHistory) {
-      if (operationStatusList.pending.includes(status)) {
+      if (isSwapOperationPending(status)) {
         pendingSwapIds.push({
           provider,
           swapId,

@@ -11,20 +11,22 @@ import {
   getAccountUnit,
   getAccountName,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import type {
   Account,
   TokenAccount,
   AccountLikeArray,
+} from "@ledgerhq/types-live";
+import type {
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/types-cryptoassets";
 import type {
   SwapTransaction,
   ExchangeRate,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+} from "@ledgerhq/live-common/exchange/swap/types";
+import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";
 
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";

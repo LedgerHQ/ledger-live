@@ -19,7 +19,7 @@ export default (app: Probot) => {
       ref: "develop",
       inputs: {
         number: `${data.number}`,
-        login: `${payload.issue.user.login}`,
+        login: `${payload.comment.user.login}`,
       },
     });
   });

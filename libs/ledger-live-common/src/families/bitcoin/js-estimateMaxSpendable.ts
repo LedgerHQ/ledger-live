@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import type { AccountLike, Account } from "../../types";
 import type { Transaction } from "./types";
 import { getMainAccount } from "../../account";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -30,7 +30,6 @@ const estimateMaxSpendable = async ({
     walletAccount,
     feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     transaction?.utxoStrategy?.excludeUTXOs || [],
-    transaction?.utxoStrategy?.pickUnconfirmedRBF || false,
     transaction ? [transaction.recipient] : []
   );
   return maxSpendable.lt(0) ? new BigNumber(0) : maxSpendable;

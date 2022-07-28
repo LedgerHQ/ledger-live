@@ -1,16 +1,10 @@
 // @flow
-import React, { useMemo } from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
-import type {
-  CryptoCurrency,
-  AccountLike,
-} from "@ledgerhq/live-common/lib/types";
-import {
-  useCurrenciesByMarketcap,
-  findCryptoCurrencyById,
-} from "@ledgerhq/live-common/lib/currencies";
-
+import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike } from "@ledgerhq/types-live";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -28,7 +22,7 @@ type Props = {
 };
 
 type RouteParams = {
-  currencies: string[],
+  currencies: Currency[],
   allowAddAccount?: boolean,
   accounts: AccountLike[],
 };
@@ -50,37 +44,42 @@ export default function RequestAccountsSelectCrypto({
   const { colors } = useTheme();
   const { currencies } = route.params;
 
-  const cryptoCurrencies = useMemo(
-    () => currencies.map(findCryptoCurrencyById).filter(Boolean),
-    [currencies],
+  const sortedCryptoCurrencies = useCurrenciesByMarketcap(currencies);
+
+  const onPressCurrency = useCallback(
+    (currency: CryptoCurrency) => {
+      navigation.navigate(ScreenName.RequestAccountsSelectAccount, {
+        ...route.params,
+        currency,
+      });
+    },
+    [navigation, route.params],
   );
 
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
+  const renderItem = useCallback(
+    ({ item }) => <CurrencyRow currency={item} onPress={onPressCurrency} />,
+    [onPressCurrency],
+  );
 
-  const onPressCurrency = (currency: CryptoCurrency) => {
-    navigation.navigate(ScreenName.RequestAccountsSelectAccount, {
-      ...route.params,
-      currency,
-    });
-  };
-
-  const renderList = items => (
-    <FlatList
-      contentContainerStyle={styles.list}
-      data={items}
-      renderItem={({ item }) => (
-        <CurrencyRow currency={item} onPress={onPressCurrency} />
-      )}
-      keyExtractor={keyExtractor}
-      showsVerticalScrollIndicator={false}
-      keyboardDismissMode="on-drag"
-    />
+  const renderList = useCallback(
+    items => (
+      <FlatList
+        initialNumToRender={20}
+        contentContainerStyle={styles.list}
+        data={items}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+      />
+    ),
+    [renderItem],
   );
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="RequestAccounts" name="SelectCrypto" />
-      <KeyboardView style={{ flex: 1 }}>
+      <KeyboardView>
         <View style={styles.searchContainer}>
           <FilteredSearchBar
             keys={SEARCH_KEYS}

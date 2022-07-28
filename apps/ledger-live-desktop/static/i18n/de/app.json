@@ -81,7 +81,7 @@
     "selectValidatorNoOption" : "Kein passendes Konto zu \"{{accountName}}\" gefunden",
     "selectNoResults" : "Keine Ergebnisse gefunden zu \"{{query}}\"",
     "sortBy" : "Sortieren nach",
-    "save" : "Sparen Sie",
+    "save" : "Speichern",
     "lock" : "Sperren",
     "showMore" : "Mehr anzeigen",
     "back" : "Zurück",
@@ -228,6 +228,7 @@
       "kyc" : "KYC"
     },
     "form" : {
+      "changeCTA" : "Änderung",
       "ratesDrawer" : {
         "title" : "Kurs",
         "quote" : "Preis",
@@ -255,7 +256,7 @@
         "currencyDisabledTooltip" : "Diese Währung ist für swap noch nicht verfügbar"
       },
       "to" : {
-        "title" : "Bis"
+        "title" : "An"
       },
       "notAvailable" : {
         "title" : "Swap ist in Ihrem Land noch nicht verfügbar",
@@ -267,11 +268,25 @@
           "complete" : "Vervollständigen Sie Ihr KYC",
           "update" : "KYC aktualisieren",
           "rejected" : "KYC abgelehnt, erneute Überprüfung starten",
+          "rejectedContactProviderSupport" : "KYC-Prüfung abgelehnt, bitte wenden Sie sich an den {{providerName}} Support",
+          "updateRequired" : "Vervollständigen oder aktualisieren Sie Ihr KYC",
           "status" : {
             "pending" : "KYC ausstehend",
             "approved" : "KYC genehmigt",
-            "closed" : "KYC abgelehnt"
+            "closed" : "KYC abgelehnt",
+            "upgradeRequired" : "KYC unzureichend"
           }
+        },
+        "login" : {
+          "required" : "Sie müssen sich bei diesem Anbieter anmelden",
+          "complete" : "Anmeldename"
+        },
+        "mfa" : {
+          "required" : "Sie müssen bei diesem Anbieter eine Multi-Faktor-Authentifizierung (MFA) einrichten",
+          "complete" : "MFA einrichten"
+        },
+        "withdrawalsBlockedError" : {
+          "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
         }
       }
     },
@@ -346,6 +361,7 @@
     "title" : "Umtauschen",
     "titleCrypto" : "{{currency}} tauschen",
     "whatIsSwap" : "Was bedeutet Swap?",
+    "decentralizedSwapAvailable" : "Für einige Transaktionen können Sie den dezentralen Umtausch verwenden. Entdecken-Tab <0>ParaSwap</0> und <1>1inch</1>.",
     "paraswap" : {
       "cta" : " Mehr erfahren",
       "description" : "Suchen Sie nach Paraswap? Es wurde auf die Registerkarte Entdecken verschoben."
@@ -453,7 +469,7 @@
         "currency" : "Krypto-Vermögenswert"
       },
       "to" : {
-        "title" : "Bis",
+        "title" : "An",
         "account" : "Konto",
         "amount" : "Zu erhaltender Betrag",
         "currency" : "Krypto-Vermögenswert",
@@ -482,9 +498,9 @@
       "subtitle" : "Bitte aktualisieren Sie Ledger Live auf die neueste Version, und verifizieren Sie Ihre Identität erneut, um mit wyre zu tauschen",
       "cta" : "Verifizierung zurücksetzen"
     },
-    "resetKYCModal" : {
-      "title" : "Löschen Sie Ihr KYC",
-      "subtitle" : "Löschen Sie Ihr KYC, um alle Token zu löschen, die lokal auf Ihrem Computer gespeichert sind. Sie müssen Ihr KYC erneut einreichen, um auf Dienste unserer Partner zuzugreifen.",
+    "resetThirdPartyDataModal" : {
+      "title" : "Ihre lokalen Drittanbieterdaten löschen",
+      "subtitle" : "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
       "cta" : "Bestätigen"
     },
     "modal" : {
@@ -493,7 +509,7 @@
         "summary" : {
           "title" : "Zusammenfassung",
           "from" : "Von",
-          "to" : "Bis",
+          "to" : "An",
           "toExchange" : "Zu sendender Betrag",
           "toReceive" : "Zu erhaltender Betrag",
           "terms" : "Allgemeine Geschäftsbedingungen",
@@ -543,7 +559,7 @@
       "from" : "Von",
       "fromAddress" : "Ursprungsadresse",
       "fromAddress_plural" : "Ursprungsadressen",
-      "to" : "Bis",
+      "to" : "An",
       "toProvider" : "Adresse des Anbieters",
       "initialAmount" : "Anfangsbetrag",
       "creditedAmount" : "Gutschrift"
@@ -1283,7 +1299,8 @@
         "description" : "Beschreibung",
         "tokenAddress" : "TOKEN-Adresse",
         "tokenId" : "Token ID",
-        "quantity" : "Menge"
+        "quantity" : "Menge",
+        "floorPrice" : "Tiefstpreis"
       }
     },
     "collections" : {
@@ -1331,6 +1348,14 @@
       "link" : "Wie funktionieren ASA-Vermögenswerte?",
       "seeTokens" : "ASA anzeigen ({{tokenCount}})",
       "hideTokens" : "ASA ausblenden ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "Vermögenswerte",
+      "cta" : "Wert hinzufügen",
+      "placeholder" : "Sie können Vermögenswerte zu Ihrem {{currencyName}} Konto hinzufügen.",
+      "link" : "Erfahren Sie mehr über Stellar Vermögenswerte",
+      "seeTokens" : "Vermögenswerte ({{tokenCount}}) anzeigen",
+      "hideTokens" : "Vermögenswerte ({{tokenCount}})verbergen"
     }
   },
   "subAccounts" : {
@@ -1441,7 +1466,7 @@
     "fees" : "Gebühr",
     "noFees" : "Keine Gebühr",
     "from" : "Von",
-    "to" : "Bis",
+    "to" : "An",
     "identifier" : "Transaktions-ID",
     "viewOperation" : "Im Explorer ansehen",
     "showMore" : "Mehr {{recipients}} anzeigen",
@@ -1518,7 +1543,8 @@
       "fees" : "Gebühren",
       "provider" : "Anbieter",
       "payoutNetworkFees" : "Auszahlungsgebühren",
-      "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt"
+      "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
+      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -1889,7 +1915,7 @@
         "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
         "subaccountsWarning" : "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
         "from" : "Von",
-        "to" : "Bis",
+        "to" : "An",
         "selectAccountDebit" : "Zu belastendes Konto",
         "recipientAddress" : "Adresse des Empfängers",
         "amount" : "Betrag",
@@ -1975,6 +2001,13 @@
         "description2" : "Der Elrond eGold (EGLD) Token ist nativ im Elrond Netzwerk und wird für alle Transaktionen verwendet staken, intelligente Verträge, Governance und Validator-Belohnungen.",
         "description3" : "Wir arbeiten aktiv mit dem Elrond Team zusammen, um mehr Funktionalitäten wie Staking, native ESDT (Elrond Standard Digital Token) Unterstützung und mehr hinzuzufügen.",
         "website" : "Die Internet Scale Blockchain"
+      }
+    }
+  },
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Der Gesamtkontostand enthält keine Stakingprämien"
       }
     }
   },
@@ -2068,10 +2101,10 @@
     "replaceable" : "Ersetzbar",
     "cannotSelect" : {
       "unconfirmed" : "Sie können keine Coins aus unbestätigten, austauschbaren Transaktionen auswählen.",
+      "pending" : "Sie können keine Coins aus schwebenden Transaktionen auswählen. (außer Ihrer Wechselgeldausgabe)",
       "last" : "Sie benötigen mindestens eine ausgewählte Transaktion"
     },
     "pending" : "Ausstehend",
-    "pickUnconfirmedRBF" : "Inklusive Coins von nicht bestätigten und austauschbaren Transaktionen.",
     "pickingStrategy" : "UTXO Auswahlstrategie",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Älteste Coins zuerst (FIFO)",
@@ -2558,6 +2591,31 @@
       }
     }
   },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "Wert hinzufügen",
+      "steps" : {
+        "assets" : {
+          "title" : "Vermögenswert",
+          "info" : "Das Hinzufügen eines Vermögenswerts erfordert das Senden einer Transaktion mit Mindestgebühren. Dies wird in Ihrem Transaktionsverlauf angezeigt",
+          "selectLabel" : "Wählen Sie einen Vermögenswert aus",
+          "disabledTooltip" : "Sie haben bereits diesen Vermögenswert in Ihrem Stellar-Konto"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "{{token}}-Vermögenswert erfolgreich hinzugefügt",
+            "text" : "Sie können jetzt <0>{{token}}</0> Vermögenswerte auf Ihrem Stellar-Konto empfangen und senden.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen.",
@@ -2769,7 +2827,7 @@
       "display" : "Allgemeines",
       "currencies" : "Kryptowährungen",
       "help" : "Hilfe",
-      "about" : "Über uns",
+      "about" : "Über diese App",
       "experimental" : "Experimentelle Funktionen",
       "accounts" : "Konten",
       "developer" : "Entwickler"
@@ -2844,8 +2902,8 @@
       "softResetTitle" : "Cache löschen",
       "softResetDesc" : "Löschen Sie den Ledger Live-Cache, um eine erneute Synchronisierung mit der Blockchain zu erzwingen.",
       "softReset" : "Leeren",
-      "resetKYC" : "KYC-Daten zurücksetzen",
-      "resetKYCDesc" : "Löschen Sie alle lokal gespeicherten Know-your-Customer-Daten, die für den Zugriff auf Drittanbieter-Transaktionen verwendet werden.",
+      "resetThirdPartyData" : "Drittanbieterdaten zurücksetzen",
+      "resetThirdPartyDataDesc" : "Löschen Sie alle lokalen Drittanbieterdaten, die für den Zugriff auf Transaktionsservices von Drittanbietern verwendet wurden.",
       "hardResetTitle" : "Ledger Live zurücksetzen",
       "hardResetDesc" : "Löschen Sie alle auf Ihrem Computer gespeicherten Ledger Live-Daten, einschließlich Ihrer Konten, Transaktionshistorien und Einstellungen.",
       "hardReset" : "Zurücksetzen",
@@ -2945,7 +3003,7 @@
     "exportLogs" : {
       "title" : "Protokolle speichern",
       "desc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
-      "btn" : "Sparen Sie"
+      "btn" : "Speichern"
     },
     "accounts" : {
       "hideEmptyTokens" : {
@@ -3020,7 +3078,7 @@
     "desc" : "Wählen Sie die Konten aus, für die der Verlauf gespeichert werden soll",
     "descSuccess" : "Die CSV-Datei Ihres Verlaufs wurde erfolgreich im gewählten Ordner gespeichert",
     "titleSuccess" : "Verlauf erfolgreich gespeichert",
-    "cta" : "Sparen Sie",
+    "cta" : "Speichern",
     "ctaSuccess" : "Fertig",
     "noAccounts" : "Keine Konten zum Exportieren",
     "selectedAccounts" : "Einzuschließende Konten",
@@ -3722,7 +3780,20 @@
         "MEMO_HASH" : "Memo Hash",
         "MEMO_RETURN" : "Memo-Rückgabe"
       },
-      "memoWarningText" : "Wenn Sie ein Memo verwenden, überprüfen Sie sorgfältig den verwendeten Typ mit dem Empfänger"
+      "memoWarningText" : "Wenn Sie ein Memo verwenden, überprüfen Sie sorgfältig den verwendeten Typ mit dem Empfänger",
+      "fee" : "Gebühren",
+      "feeInfoText" : "Für Transaktionen im Stellar-Netzwerk wird eine Mindesttransaktionsgebühr von 0,00001 XLM erhoben.",
+      "suggested" : "Empfohlen",
+      "recommendedFee" : "Empfohlene Gebühren",
+      "recommenndedFeeInfo" : "Die Transaktion kann auch mit einer niedrigeren Gebühr als der empfohlenen eingereicht werden, aber sie wird möglicherweise nicht abgeschlossen.",
+      "networkCongestion" : "Netzüberlastung",
+      "networkCongestionLevel" : {
+        "LOW" : "Niedrig",
+        "MEDIUM" : "Medium",
+        "HIGH" : "Hoch"
+      },
+      "assetCode" : "Vermögenswerte-Code",
+      "assetIssuer" : "Emittent der Vermögenswerte"
     },
     "cosmos" : {
       "memo" : "Memo",
@@ -4275,14 +4346,8 @@
     "FeeTooHigh" : {
       "title" : "Die Netzwerkgebühren liegen über 10 % des Betrags"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo-Format ist falsch"
-    },
     "SourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Beim Senden an diesen Empfänger kann ein Memo erforderlich sein"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "Betrag muss größer sein als {{minAmountFromFormatted}}"
@@ -4342,7 +4407,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Stellen Sie sicher, dass Ihr Guthaben zur Deckung künftiger Transaktionsgebühren ausreicht"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Ihre vorherige Transaktion wurde noch nicht verarbeitet. Bitte warten Sie einen Moment und prüfen Sie vor einem erneuten Versuch zunächst den Transaktionsverlauf."
     },
     "SolanaTxConfirmationTimeout" : {
@@ -4350,6 +4415,47 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "Sie haben die Anzahl der verfügbaren Token überschritten"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "Der Mindestbetrag, der versendet werden kann, ist {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Bitte vergewissern Sie sich, dass Sie ausreichend Geld für die Bezahlung der Gebühren haben"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo-Format ist falsch"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Beim Senden an diesen Empfänger kann ein Memo erforderlich sein"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Dieser Empfänger hat noch keine Trustline zu {{assetCode}}"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Vor dem Hinzufügen einer Trustline sollte ein Stellar-Vermögenswert ausgewählt werden"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Der ausgewählte Stellar-Vermögenswert konnte nicht gefunden werden"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
+      "description" : "Bitte vergewissern Sie sich, dass das Konto ausreichend gedeckt ist, um die Transaktionsgebühr zu decken."
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Die gewählte Gebühr ist niedriger als die empfohlene Gebühr"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Die Mindesttransaktionsgebühr beträgt 0,00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
+      "description" : "Vergewissern Sie sich, dass das Konto genügend Deckung für die neue Trustline aufweist."
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar-Konto existiert nicht"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
     }
   },
   "cryptoOrg" : {
@@ -4376,6 +4482,20 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
+    },
+    "send" : {
+      "memo" : {
+        "label" : "Memo (Optional)",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "Vermögenswert auswählen"
+    },
+    "selectAccount" : {
+      "title" : "Konto auswählen"
     }
   }
 }

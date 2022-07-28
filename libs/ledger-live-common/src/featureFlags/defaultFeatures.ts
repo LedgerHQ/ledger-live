@@ -1,4 +1,4 @@
-import { DefaultFeatures } from "./types";
+import type { DefaultFeatures } from "@ledgerhq/types-live";
 
 export const defaultFeatures: DefaultFeatures = {
   learn: {
@@ -60,5 +60,8 @@ export const defaultFeatures: DefaultFeatures = {
         "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
       support_email: "support@ledger.com",
     },
+  },
+  counterValue: {
+    enabled: false,
   },
 };

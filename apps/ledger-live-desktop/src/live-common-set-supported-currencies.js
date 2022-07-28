@@ -1,8 +1,8 @@
 // @flow
-import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
-import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
+import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
-setPlatformVersion("0.0.1");
+setPlatformVersion("1.0.0");
 
 setSupportedCurrencies([
   "bitcoin",

@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { deviceOpt } from "../scan";
 import { from } from "rxjs";
 import invariant from "invariant";
 import Btc from "@ledgerhq/hw-app-btc";
-import network from "@ledgerhq/live-common/lib/network";
-import { findCurrencyExplorer } from "@ledgerhq/live-common/lib/api/Ledger";
+import network from "@ledgerhq/live-common/network";
+import { findCurrencyExplorer } from "@ledgerhq/live-common/api/Ledger";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const command = async (transport, currencyId, hash) => {
@@ -41,7 +41,9 @@ const command = async (transport, currencyId, hash) => {
   );
   const outHash = await btc.getTrustedInput(0, tx, [currency.id]);
   const ouHash = outHash.substring(8, 72);
-  const finalOut = Buffer.from(ouHash, "hex").reverse().toString("hex");
+  const finalOut = Buffer.from(ouHash, "hex")
+    .reverse()
+    .toString("hex");
   return {
     inHash: hash,
     finalOut,

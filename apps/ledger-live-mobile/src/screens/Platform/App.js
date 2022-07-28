@@ -2,11 +2,18 @@
 
 import React, { useEffect } from "react";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/LocalLiveAppProvider";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
+import {
+  useRemoteLiveAppContext,
+  useRemoteLiveAppManifest,
+} from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
 import type { StackScreenProps } from "@react-navigation/stack";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import TrackScreen from "../../analytics/TrackScreen";
 import WebPlatformPlayer from "../../components/WebPlatformPlayer";
+import GenericErrorView from "../../components/GenericErrorView";
+
+const appManifestNotFoundError = new Error("App not found");
 
 const PlatformApp = ({ route }: StackScreenProps) => {
   const { dark } = useTheme();
@@ -14,6 +21,7 @@ const PlatformApp = ({ route }: StackScreenProps) => {
   const { setParams } = useNavigation();
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
+  const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const manifest = localManifest || remoteManifest;
   useEffect(() => {
     manifest?.name && setParams({ name: manifest.name });
@@ -31,7 +39,15 @@ const PlatformApp = ({ route }: StackScreenProps) => {
         }}
       />
     </>
-  ) : null;
+  ) : (
+    <Flex flex={1} p={10} justifyContent="center" alignItems="center">
+      {remoteLiveAppState.isLoading ? (
+        <InfiniteLoader />
+      ) : (
+        <GenericErrorView error={appManifestNotFoundError} />
+      )}
+    </Flex>
+  );
 };
 
 export default PlatformApp;

@@ -1,12 +1,12 @@
 import {
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { Transaction } from "@ledgerhq/live-common/lib/families/solana/types";
+} from "@ledgerhq/live-common/account/index";
+import { Transaction } from "@ledgerhq/live-common/families/solana/types";
 import {
   AccountLike,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";

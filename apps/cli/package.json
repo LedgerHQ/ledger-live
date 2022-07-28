@@ -1,10 +1,13 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.0.1",
+  "version": "22.1.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
-    "url": "git://github.com/LedgerHQ/ledger-live-common"
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "bin": {
     "ledger-live": "./bin/index.js"
@@ -58,6 +61,8 @@
     "ws": "^8.6.0"
   },
   "devDependencies": {
+    "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/command-line-args": "^5.2.0",
     "@types/lodash": "^4.14.177",
     "@types/node": "^17.0.15",

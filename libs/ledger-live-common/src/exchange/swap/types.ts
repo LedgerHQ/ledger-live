@@ -1,14 +1,16 @@
-import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike } from "../../types/account";
 import type {
-  AccountRawLike,
-  AccountRaw,
-  Operation,
-  Transaction,
   CryptoCurrency,
   TokenCurrency,
-  TransactionRaw,
-} from "../../types";
+} from "@ledgerhq/types-cryptoassets";
+import {
+  Account,
+  AccountLike,
+  AccountRaw,
+  AccountRawLike,
+  Operation,
+} from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import type { Transaction, TransactionRaw } from "../../generated/types";
 
 /// v3 changes here, move me to another folder soon
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
@@ -81,6 +83,39 @@ export type AvailableProviderV3 = {
   pairs: Array<{ from: string; to: string; tradeMethod: string }>;
 };
 
+type CheckQuoteOkStatus = {
+  codeName: "RATE_VALID";
+};
+
+type ValidCheckQuoteErrorCodes =
+  | "UNKNOW_USER"
+  | "KYC_UNDEFINED"
+  | "KYC_PENDING"
+  | "KYC_FAILED"
+  | "KYC_UPGRADE_REQUIRED"
+  | "OVER_TRADE_LIMIT"
+  | "UNKNOWN_ERROR"
+  | "WITHDRAWALS_BLOCKED"
+  | "MFA_REQUIRED"
+  | "RATE_NOT_FOUND";
+
+type CheckQuoteErrorStatus = {
+  codeName: ValidCheckQuoteErrorCodes;
+  error: string;
+  description: string;
+};
+
+export type CheckQuoteStatus = CheckQuoteOkStatus | CheckQuoteErrorStatus;
+
+export type CheckQuote = ({
+  provider,
+  quoteId,
+  bearerToken,
+}: {
+  provider: string;
+  quoteId: string;
+  bearerToken: string;
+}) => Promise<CheckQuoteStatus>;
 export type AvailableProvider = AvailableProviderV2 | AvailableProviderV3;
 export type GetExchangeRates = (
   arg0: Exchange,
@@ -93,6 +128,7 @@ export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;
 };
+
 type ValidSwapStatus =
   | "pending"
   | "onhold"
@@ -108,7 +144,31 @@ export type SwapStatus = {
   swapId: string;
   status: ValidSwapStatus;
 };
-export type GetStatus = (arg0: SwapStatusRequest) => Promise<SwapStatus>;
+
+// -----
+// Related to Swap state API call (accepted or cancelled)
+
+type SwapStateRequest = {
+  provider: string;
+  swapId: string;
+};
+
+export type SwapStateAcceptedRequest = SwapStateRequest & {
+  transactionId: string;
+};
+
+export type SwapStateCancelledRequest = SwapStateRequest;
+
+export type PostSwapAccepted = (
+  arg0: SwapStateAcceptedRequest
+) => Promise<null>;
+
+export type PostSwapCancelled = (
+  arg0: SwapStateCancelledRequest
+) => Promise<null>;
+
+// -----
+
 export type UpdateAccountSwapStatus = (
   arg0: Account
 ) => Promise<Account | null | undefined>;
@@ -125,6 +185,7 @@ export type SwapRequestEvent =
   | {
       type: "init-swap-error";
       error: Error;
+      swapId: string;
     }
   | {
       type: "init-swap-result";
@@ -203,3 +264,7 @@ export type InitSwapInputRaw = {
   deviceId: string;
   userId?: string;
 };
+
+export interface CustomMinOrMaxError extends Error {
+  amount: BigNumber;
+}

@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-mobile-app:
-    name: "Ledger Live Mobile Tests"
+  codecheck:
+    name: "Ledger Live Mobile CodeCheck"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -40,6 +40,8 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
-        run: pnpm lint --filter="live-mobile"
-      - name: Run code checkers
-        run: pnpm typecheck --filter="live-mobile"
+        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+      - name: Run flow
+        run: pnpm mobile flow
+      # - name: Run code checkers
+      #   run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:9080" --token="yolo" --team="foo"

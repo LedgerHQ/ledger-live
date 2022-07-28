@@ -1,35 +1,27 @@
-import { $Shape } from "utility-types";
-import type {
-  TX,
-  Currency,
-  Input as WalletInput,
-  Output as WalletOutput,
-} from "./wallet-btc";
+import type { Currency, Output as WalletOutput } from "./wallet-btc";
 import { DerivationModes as WalletDerivationModes } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type {
-  Account,
-  Operation,
-  OperationType,
-  DerivationMode,
-} from "../../types";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { findCurrencyExplorer } from "../../api/Ledger";
 import { encodeAccountId } from "../../account";
-import { encodeOperationId } from "../../operation";
 import {
   isSegwitDerivationMode,
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
+  DerivationMode,
 } from "../../derivation";
-import { BitcoinOutput } from "./types";
+import { BitcoinAccount, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { getAddressWithBtcInstance } from "./hw-getAddress";
+import { mapTxToOperations } from "./logic";
+import { Account, Operation } from "@ledgerhq/types-live";
+import { decodeAccountId } from "../../account/accountId";
+import { startSpan } from "../../performance";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (
@@ -53,7 +45,10 @@ const toWalletNetwork = (currencyId: string): "testnet" | "mainnet" => {
 };
 
 // Map wallet-btc's Output to LL's BitcoinOutput
-const fromWalletUtxo = (utxo: WalletOutput): BitcoinOutput => {
+const fromWalletUtxo = (
+  utxo: WalletOutput,
+  changeAddresses: Set<string>
+): BitcoinOutput => {
   return {
     hash: utxo.output_hash,
     outputIndex: utxo.output_index,
@@ -61,7 +56,7 @@ const fromWalletUtxo = (utxo: WalletOutput): BitcoinOutput => {
     address: utxo.address,
     value: new BigNumber(utxo.value),
     rbf: utxo.rbf,
-    isChange: false, // wallet-btc limitation: doesn't provide it
+    isChange: changeAddresses.has(utxo.address),
   };
 };
 
@@ -86,165 +81,8 @@ const deduplicateOperations = (
   return out;
 };
 
-const mapTxToOperations = (
-  tx: TX,
-  currencyId: string,
-  accountId: string,
-  accountAddresses: Set<string>,
-  changeAddresses: Set<string>
-): $Shape<Operation[]> => {
-  const operations: Operation[] = [];
-  const txId = tx.id;
-  const fee = new BigNumber(tx.fees);
-  const blockHeight = tx.block?.height;
-  const blockHash = tx.block?.hash;
-  const date = new Date(tx.block?.time || tx.received_at);
-  const senders = new Set<string>();
-  const recipients: string[] = [];
-  let type: OperationType = "OUT";
-  let value = new BigNumber(0);
-  const hasFailed = false;
-  const accountInputs: WalletInput[] = [];
-  const accountOutputs: WalletOutput[] = [];
-  const syncReplaceAddress = perCoinLogic[currencyId]?.syncReplaceAddress;
-
-  for (const input of tx.inputs) {
-    if (input.address) {
-      senders.add(
-        syncReplaceAddress ? syncReplaceAddress(input.address) : input.address
-      );
-
-      if (input.value) {
-        if (accountAddresses.has(input.address)) {
-          // This address is part of the account
-          value = value.plus(input.value);
-          accountInputs.push(input);
-        }
-      }
-    }
-  }
-
-  // All inputs of a same transaction have the same sequence
-  const transactionSequenceNumber =
-    (accountInputs.length > 0 && accountInputs[0].sequence) || undefined;
-
-  const hasSpentNothing = value.eq(0);
-  // Change output is always the last one
-  const changeOutputIndex = tx.outputs
-    .map((o) => o.output_index)
-    .reduce((p, c) => (p > c ? p : c));
-
-  for (const output of tx.outputs) {
-    if (output.address) {
-      if (!accountAddresses.has(output.address)) {
-        // The output doesn't belong to this account
-        if (
-          accountInputs.length > 0 && // It's a SEND operation
-          (tx.outputs.length === 1 || // The transaction has only 1 output
-            output.output_index < changeOutputIndex) // The output isn't the change output
-        ) {
-          recipients.push(
-            syncReplaceAddress
-              ? syncReplaceAddress(output.address)
-              : output.address
-          );
-        }
-      } else {
-        // The output belongs to this account
-        accountOutputs.push(output);
-
-        if (!changeAddresses.has(output.address)) {
-          // The output isn't a change output of this account
-          recipients.push(
-            syncReplaceAddress
-              ? syncReplaceAddress(output.address)
-              : output.address
-          );
-        } else {
-          // The output is a change output of this account,
-          // we count it as a recipient only in some special cases
-          if (
-            (recipients.length === 0 &&
-              output.output_index >= changeOutputIndex) ||
-            hasSpentNothing
-          ) {
-            recipients.push(
-              syncReplaceAddress
-                ? syncReplaceAddress(output.address)
-                : output.address
-            );
-          }
-        }
-      }
-    }
-  }
-
-  if (accountInputs.length > 0) {
-    // It's a SEND operation
-    for (const output of accountOutputs) {
-      if (changeAddresses.has(output.address)) {
-        value = value.minus(output.value);
-      }
-    }
-
-    type = "OUT";
-    operations.push({
-      id: encodeOperationId(accountId, txId, type),
-      hash: txId,
-      type,
-      value,
-      fee,
-      senders: Array.from(senders),
-      recipients,
-      blockHeight,
-      blockHash,
-      transactionSequenceNumber,
-      accountId,
-      date,
-      hasFailed,
-      extra: {},
-    });
-  }
-
-  if (accountOutputs.length > 0) {
-    // It's a RECEIVE operation
-    const filterChangeAddresses = !!accountInputs.length;
-    let accountOutputCount = 0;
-    let finalAmount = new BigNumber(0);
-
-    for (const output of accountOutputs) {
-      if (!filterChangeAddresses || !changeAddresses.has(output.address)) {
-        finalAmount = finalAmount.plus(output.value);
-        accountOutputCount += 1;
-      }
-    }
-
-    if (accountOutputCount > 0) {
-      value = finalAmount;
-      type = "IN";
-      operations.push({
-        id: encodeOperationId(accountId, txId, type),
-        hash: txId,
-        type,
-        value,
-        fee,
-        senders: Array.from(senders),
-        recipients,
-        blockHeight,
-        blockHash,
-        transactionSequenceNumber,
-        accountId,
-        date,
-        hasFailed,
-        extra: {},
-      });
-    }
-  }
-
-  return operations;
-};
-
 const getAccountShape: GetAccountShape = async (info) => {
+  let span;
   const {
     transport,
     currency,
@@ -259,7 +97,9 @@ const getAccountShape: GetAccountShape = async (info) => {
   const rootPath = derivationPath.split("/", 2).join("/");
   const accountPath = `${rootPath}/${index}'`;
 
-  const paramXpub = initialAccount?.xpub;
+  const paramXpub = initialAccount
+    ? decodeAccountId(initialAccount.id).xpubOrAddress
+    : undefined;
 
   let generatedXpub;
   if (!paramXpub) {
@@ -289,7 +129,9 @@ const getAccountShape: GetAccountShape = async (info) => {
   });
 
   const walletNetwork = toWalletNetwork(currency.id);
-  const walletDerivationMode = toWalletDerivationMode(derivationMode);
+  const walletDerivationMode = toWalletDerivationMode(
+    derivationMode as DerivationMode
+  );
   const explorer = findCurrencyExplorer(currency);
   if (!explorer) {
     throw new Error(`No explorer found for currency ${currency.name}`);
@@ -298,8 +140,9 @@ const getAccountShape: GetAccountShape = async (info) => {
     throw new Error(`Unsupported explorer version ${explorer.version}`);
   }
 
+  span = startSpan("sync", "generateAccount");
   const walletAccount =
-    initialAccount?.bitcoinResources?.walletAccount ||
+    (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
     (await wallet.generateAccount({
       xpub,
       path: rootPath,
@@ -312,6 +155,7 @@ const getAccountShape: GetAccountShape = async (info) => {
       storage: "mock",
       storageParams: [],
     }));
+  span.finish();
 
   const oldOperations = initialAccount?.operations || [];
   await wallet.syncAccount(walletAccount);
@@ -319,22 +163,29 @@ const getAccountShape: GetAccountShape = async (info) => {
   const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
   const blockHeight = currentBlock?.height;
 
+  span = startSpan("sync", "getAccountTransactions");
   // @ts-expect-error return from wallet-btc should be typed
   const { txs: transactions } = await wallet.getAccountTransactions(
     walletAccount
   );
+  span.finish();
 
+  span = startSpan("sync", "getXpubAddresses");
   const accountAddresses: Set<string> = new Set<string>();
   const accountAddressesWithInfo = await walletAccount.xpub.getXpubAddresses();
   accountAddressesWithInfo.forEach((a) => accountAddresses.add(a.address));
+  span.finish();
 
+  span = startSpan("sync", "getUniquesAddresses");
   const changeAddresses: Set<string> = new Set<string>();
   const changeAddressesWithInfo =
     await walletAccount.xpub.storage.getUniquesAddresses({
       account: 1,
     });
   changeAddressesWithInfo.forEach((a) => changeAddresses.add(a.address));
+  span.finish();
 
+  span = startSpan("sync", "mapTxToOperations");
   const newOperations = transactions
     ?.map((tx) =>
       mapTxToOperations(
@@ -346,10 +197,18 @@ const getAccountShape: GetAccountShape = async (info) => {
       )
     )
     .flat();
+  span.finish();
+
+  span = startSpan("sync", "unify operations");
   const newUniqueOperations = deduplicateOperations(newOperations);
   const operations = mergeOps(oldOperations, newUniqueOperations);
+  span.finish();
+
+  span = startSpan("sync", "gather utxos");
   const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
-  const utxos = rawUtxos.map(fromWalletUtxo);
+  const utxos = rawUtxos.map((utxo) => fromWalletUtxo(utxo, changeAddresses));
+  span.finish();
+
   return {
     id: accountId,
     xpub,
@@ -370,36 +229,35 @@ const getAccountShape: GetAccountShape = async (info) => {
 const postSync = (initial: Account, synced: Account) => {
   log("bitcoin/postSync", "bitcoinResources");
   const perCoin = perCoinLogic[synced.currency.id];
-
+  const syncedBtc = synced as BitcoinAccount;
   if (perCoin) {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
     if (postBuildBitcoinResources) {
-      synced.bitcoinResources = postBuildBitcoinResources(
-        synced,
-        synced.bitcoinResources
+      syncedBtc.bitcoinResources = postBuildBitcoinResources(
+        syncedBtc,
+        syncedBtc.bitcoinResources
       );
     }
 
     if (syncReplaceAddress) {
-      synced.freshAddress = syncReplaceAddress(synced.freshAddress);
-      synced.freshAddresses = synced.freshAddresses.map((a) => ({
+      syncedBtc.freshAddress = syncReplaceAddress(syncedBtc.freshAddress);
+      syncedBtc.freshAddresses = syncedBtc.freshAddresses.map((a) => ({
         ...a,
         address: syncReplaceAddress(a.address),
       }));
-      if (synced.bitcoinResources) {
-        synced.bitcoinResources.utxos = synced.bitcoinResources?.utxos.map(
-          (u) => ({
+      if (syncedBtc.bitcoinResources) {
+        syncedBtc.bitcoinResources.utxos =
+          syncedBtc.bitcoinResources?.utxos.map((u) => ({
             ...u,
             address: u.address && syncReplaceAddress(u.address),
-          })
-        );
+          }));
       }
     }
   }
 
   log("bitcoin/postSync", "bitcoinResources DONE");
-  return synced;
+  return syncedBtc;
 };
 
 const getAddressFn = (transport) => {

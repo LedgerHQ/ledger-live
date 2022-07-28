@@ -1,10 +1,11 @@
 import { RecipientRequired } from "@ledgerhq/errors";
 import { makeLRUCache } from "./../../cache";
-import type { Account, CryptoCurrency } from "./../../types";
 import type { Transaction } from "./types";
 import getFeesForTransaction from "./js-getFeesForTransaction";
 import { isValidRecipient } from "./logic";
 import { Currency, isTaprootAddress } from "./wallet-btc";
+import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const getCacheKeyForCalculateFees = ({
   a,
@@ -15,9 +16,9 @@ const getCacheKeyForCalculateFees = ({
 }) =>
   `${a.id}_${a.blockHeight || 0}_${t.amount.toString()}_${String(
     t.useAllAmount
-  )}_${t.recipient}_${t.feePerByte ? t.feePerByte.toString() : ""}_${
-    t.utxoStrategy.pickUnconfirmedRBF ? 1 : 0
-  }_${t.utxoStrategy.strategy}_${String(t.rbf)}_${t.utxoStrategy.excludeUTXOs
+  )}_${t.recipient}_${t.feePerByte ? t.feePerByte.toString() : ""}_${0}_${
+    t.utxoStrategy.strategy
+  }_${String(t.rbf)}_${t.utxoStrategy.excludeUTXOs
     .map(({ hash, outputIndex }) => `${hash}@${outputIndex}`)
     .join("+")}`;
 

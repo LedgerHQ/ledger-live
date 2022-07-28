@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/icons";
 
-import type { PolkadotValidator } from "@ledgerhq/live-common/lib/families/polkadot/types";
+import type { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 
 import { useTheme } from "styled-components/native";
 import CheckBox from "../../../components/CheckBox";

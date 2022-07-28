@@ -1,8 +1,8 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
-import { getAccountDelegationSync, isAccountDelegating } from "@ledgerhq/live-common/lib/families/tezos/bakers";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import { getAccountDelegationSync, isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
+import { Account } from "@ledgerhq/live-common/types/index";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 
