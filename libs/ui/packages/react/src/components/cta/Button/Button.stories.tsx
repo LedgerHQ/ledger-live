@@ -48,7 +48,7 @@ export default {
   },
 };
 
-export const Overview = ((args) => {
+export const Overview = ((args: StoryTemplate<ButtonProps>) => {
   const templateProps = { Icon: PlusMedium, children: "Try me", onClick: () => {} };
   const propsArr = [
     { ...templateProps, Icon: undefined },
