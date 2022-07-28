@@ -10,11 +10,15 @@ const GraphCardContainer = ({
   showGraphCard,
   areAccountsEmpty,
   counterValueCurrency,
+  currentPositionY,
+  graphCardEndPosition,
 }: {
   portfolio: Portfolio;
   showGraphCard: boolean;
   areAccountsEmpty: boolean;
   counterValueCurrency: Currency;
+  currentPositionY: SharedValue<number>;
+  graphCardEndPosition: number;
 }) => {
   const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(
     currenciesSelector,
@@ -29,6 +33,8 @@ const GraphCardContainer = ({
           areAccountsEmpty={areAccountsEmpty}
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
         />
       )}
     </>

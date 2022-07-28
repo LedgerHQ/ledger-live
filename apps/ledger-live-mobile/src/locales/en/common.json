@@ -1609,7 +1609,8 @@
     "topGainers": {
       "title": "Market gainers (24H)",
       "seeMarket": "See all"
-    }
+    },
+    "walletBalance": "Wallet balance"
   },
   "addAccountsModal": {
     "ctaAdd": "Add accounts",

@@ -10,6 +10,7 @@ import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import Svg, { Path, Defs } from "react-native-svg";
 import { useTheme } from "styled-components/native";
+import DefGraph from "./DefGrad";
 import BarInteraction from "./BarInteraction";
 import type { Item, ItemArray } from "./types";
 
@@ -23,6 +24,7 @@ type Props = {
   mapValue: Item => number,
   shape?: string,
   verticalRangeRatio?: number,
+  fill: string,
 };
 
 const STROKE_WIDTH = 2;
@@ -38,11 +40,11 @@ function Graph({
   mapValue,
   onItemHover,
   verticalRangeRatio = 2,
+  fill,
 }: Props) {
   const { colors } = useTheme();
 
   const color = initialColor || colors.primary.c80;
-  const backgroundColor = colors.background.main;
 
   const maxY = mapValue(maxBy(data, mapValue));
   const minY = mapValue(minBy(data, mapValue));
@@ -66,9 +68,7 @@ function Graph({
     .x(d => x(d.date))
     .y0(d => yExtractor(d))
     .y1(
-      d =>
-        yExtractor(d) +
-        Math.min((maxY - minY) / verticalRangeRatio, height + 5),
+      d => yExtractor(d) + Math.min((maxY - minY) / verticalRangeRatio, height),
     )
     .curve(curve)(data);
 
@@ -85,7 +85,10 @@ function Graph({
       viewBox={`0 -10 ${width} ${height + 20}`}
       preserveAspectRatio="none"
     >
-      <Path d={area} fill={backgroundColor} />
+      <Defs>
+        <DefGraph height={height} color={color} />
+      </Defs>
+      <Path d={area} fill={fill || "url(#grad)"} />
       <Path d={line} stroke={color} strokeWidth={STROKE_WIDTH} fill="none" />
     </Svg>
   );
