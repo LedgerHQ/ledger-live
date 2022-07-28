@@ -27,6 +27,7 @@ import quitApp from "./quitApp";
 import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
 import manager from "../manager";
+import getVersion from "./getVersion";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -263,7 +264,8 @@ const cmd = ({
           dependencies,
           requireLatestFirmware,
         }: any) =>
-          defer(() => from(getAppAndVersion(transport))).pipe(
+          defer(() => from(getVersion(transport))).pipe(
+            concatMap(() => from(getAppAndVersion(transport))),
             concatMap((appAndVersion): Observable<ConnectAppEvent> => {
               timeoutSub.unsubscribe();
 
