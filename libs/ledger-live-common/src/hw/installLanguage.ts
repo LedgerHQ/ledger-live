@@ -129,7 +129,7 @@ export default function installLanguage({
                   })
                 );
               }
-              
+
               return throwError(e);
             })
           )
@@ -146,18 +146,12 @@ export default function installLanguage({
 }
 
 const uninstallAllLanguages = async (transport: Transport) => {
-  // TODO: in a future FW version, this will be a single apdu
-  for (const id of Object.values(languageIds)) {
-    // do we want to reflect this on the UI? do we need to emit events here
-    // what about error handling, maybe unhandled promise rejection might happen
-    // at least try catch
-    await transport.send(
-      0xe0,
-      0x33,
-      id,
-      0x00,
-      undefined,
-      [0x9000, 0x5501] // Expected responses when uninstalling.
-    );
-  }
+  await transport.send(
+    0xe0,
+    0x33,
+    0xff,
+    0x00,
+    undefined,
+    [0x9000, 0x5501] // Expected responses when uninstalling.
+  );
 };

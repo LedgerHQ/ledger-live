@@ -8,7 +8,7 @@ const deviceVersionRangesForBootloaderVersion: {
   [key in DeviceModelId]?: string;
 } = {
   nanoS: ">=2.0.0",
-  nanoX: ">=2.0.0 || 2.1.0-lo2", // TODO: remove pre-release version
+  nanoX: ">=2.0.0 || 2.1.0-lo2 || 2.1.0-lo4", // TODO: remove pre-release version
   nanoSP: ">=1.0.0",
 };
 export const isBootloaderVersionSupported = (
@@ -25,7 +25,7 @@ export const isBootloaderVersionSupported = (
 const deviceVersionRangesForHardwareVersion: {
   [key in DeviceModelId]?: string;
 } = {
-  nanoX: ">=2.0.0 || 2.1.0-lo2", // TODO: remove pre-release version
+  nanoX: ">=2.0.0 || 2.1.0-lo2 || 2.1.0-lo4", // TODO: remove pre-release version
 };
 export const isHardwareVersionSupported = (
   seVersion: string,
