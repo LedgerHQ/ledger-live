@@ -18,7 +18,7 @@ const DescriptionText = styled(Text).attrs(() => ({}))``;
 // TODO: use proper button styling once all styles are covered in the design sys
 const ArrowButton = styled(Button).attrs(() => ({
   variant: "main",
-  size: "medium",
+  size: "small",
   Icon: Icons.ArrowRightRegular,
   iconButton: true,
 }))`
