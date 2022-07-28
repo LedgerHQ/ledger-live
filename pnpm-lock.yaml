@@ -43,6 +43,8 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/live-common': workspace:^
       '@ledgerhq/logs': workspace:^
+      '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@types/command-line-args': ^5.2.0
       '@types/lodash': ^4.14.177
       '@types/node': ^17.0.15
@@ -100,6 +102,8 @@ importers:
     optionalDependencies:
       '@ledgerhq/hw-transport-node-ble': link:../../libs/ledgerjs/packages/hw-transport-node-ble
     devDependencies:
+      '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@types/command-line-args': 5.2.0
       '@types/lodash': 4.14.182
       '@types/node': 17.0.32
@@ -133,20 +137,23 @@ importers:
       '@ledgerhq/live-common': workspace:^
       '@ledgerhq/logs': workspace:^
       '@ledgerhq/react-ui': workspace:^
+      '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@mapbox/node-pre-gyp': ^1.0.8
       '@octokit/rest': ^18.12.0
       '@playwright/test': 1.22.2
       '@polkadot/react-identicon': 0.89.2
       '@sentry/cli': ^2.5.0
       '@sentry/electron': ^3.0.7
-      '@sentry/node': ^7.7.0
-      '@sentry/tracing': ^7.7.0
+      '@sentry/node': 6.19.2
+      '@sentry/tracing': 6.19.2
       '@storybook/addon-actions': ^6.3.12
       '@storybook/addon-essentials': ^6.3.12
       '@storybook/addon-links': ^6.3.12
       '@storybook/react': ^6.3.12
       '@tippyjs/react': ^4.2.6
       '@trust/keyto': ^1.0.1
+      '@types/jest': ^28.1.6
       '@types/react': ^17.0.30
       '@types/react-redux': ^7.1.24
       '@types/react-router-dom': ^5.3.2
@@ -299,10 +306,12 @@ importers:
       '@ledgerhq/live-common': link:../../libs/ledger-live-common
       '@ledgerhq/logs': link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/react-ui': link:../../libs/ui/packages/react
+      '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@polkadot/react-identicon': 0.89.2_fane7jikarojcev26y27hpbhu4
       '@sentry/electron': 3.0.7
-      '@sentry/node': 7.7.0
-      '@sentry/tracing': 7.7.0
+      '@sentry/node': 6.19.2
+      '@sentry/tracing': 6.19.2
       '@tippyjs/react': 4.2.6_sfoxds7t5ydpegc3knd667wn6m
       '@trust/keyto': 1.0.1
       '@xstate/inspect': 0.4.1_ws@7.5.7
@@ -407,6 +416,7 @@ importers:
       '@storybook/addon-essentials': 6.4.22_c57hefgs72pomik4isnd7nd66i
       '@storybook/addon-links': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
       '@storybook/react': 6.4.22_u6q72u2kfwa6v3dpkdl7a24zzm
+      '@types/jest': 28.1.6
       '@types/react': 17.0.45
       '@types/react-redux': 7.1.24_@types+react@17.0.45
       '@types/react-router-dom': 5.3.3_@types+react@17.0.45
@@ -493,6 +503,8 @@ importers:
       '@ledgerhq/react-native-hid': workspace:^
       '@ledgerhq/react-native-hw-transport-ble': workspace:^
       '@ledgerhq/react-native-passcode-auth': ^2.1.0
+      '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@polkadot/reactnative-identicon': 2.2.1
       '@polkadot/x-randomvalues': 9.1.1
       '@react-native-async-storage/async-storage': ^1.15.17
@@ -694,6 +706,8 @@ importers:
       '@ledgerhq/react-native-hid': link:../../libs/ledgerjs/packages/react-native-hid
       '@ledgerhq/react-native-hw-transport-ble': link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
       '@ledgerhq/react-native-passcode-auth': 2.1.0
+      '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@polkadot/reactnative-identicon': 2.2.1_zqxy7fpkavjkgz5xll7ed4r6rq
       '@polkadot/x-randomvalues': 9.1.1
       '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.2
@@ -919,6 +933,9 @@ importers:
       '@ledgerhq/json-bignumber': ^1.1.0
       '@ledgerhq/live-app-sdk': ^0.7.0
       '@ledgerhq/logs': workspace:^
+      '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-devices': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@polkadot/types': 8.5.1
       '@polkadot/types-known': 8.5.1
       '@polkadot/util': 9.2.1
@@ -1166,6 +1183,9 @@ importers:
       xstate: 4.32.0
       zcash-bitcore-lib: 0.13.20-rc3
     devDependencies:
+      '@ledgerhq/types-cryptoassets': link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-devices': link:../ledgerjs/packages/types-devices
+      '@ledgerhq/types-live': link:../ledgerjs/packages/types-live
       '@svgr/core': 5.5.0
       '@testing-library/react-hooks': 4.0.1_rmfdlrtvj5fy7r2bxuk4wb2wvq
       '@types/bs58': 4.0.1
@@ -1260,6 +1280,7 @@ importers:
 
   libs/ledgerjs/packages/cryptoassets:
     specifiers:
+      '@ledgerhq/types-cryptoassets': workspace:^
       '@types/jest': '*'
       '@types/node': '*'
       documentation: 13.2.4
@@ -1273,6 +1294,7 @@ importers:
     dependencies:
       invariant: 2.2.4
     devDependencies:
+      '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
       '@types/jest': 27.5.0
       '@types/node': 17.0.32
       documentation: 13.2.4
@@ -2286,6 +2308,7 @@ importers:
   libs/ledgerjs/packages/types-live:
     specifiers:
       '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-devices': workspace:^
       '@types/jest': '*'
       '@types/node': '*'
       bignumber.js: '9'
@@ -2298,10 +2321,11 @@ importers:
       ts-node: ^10.4.0
       typescript: ^4
     dependencies:
-      '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
       bignumber.js: 9.0.2
       rxjs: 6.6.7
     devDependencies:
+      '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
+      '@ledgerhq/types-devices': link:../types-devices
       '@types/jest': 27.5.0
       '@types/node': 17.0.32
       documentation: 13.2.4
@@ -11219,16 +11243,6 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/core/7.7.0:
-    resolution: {integrity: sha512-Z15ACiuiFINFcK4gbMrnejLn4AVjKBPJOWKrrmpIe8mh+Y9diOuswt5mMUABs+jhpZvqht3PBLLGBL0WMsYMYA==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/hub': 7.7.0
-      '@sentry/types': 7.7.0
-      '@sentry/utils': 7.7.0
-      tslib: 1.14.1
-    dev: false
-
   /@sentry/electron/3.0.7:
     resolution: {integrity: sha512-Rahi1jgvjHnx1jGkkPPvDCxSCAME7xc2eBcFCLb4R/WDuNblR7tgJUuAtzv9JpxUgRHy1oLNct0wcvIu1mcXoA==}
     dependencies:
@@ -11267,15 +11281,6 @@ packages:
     dependencies:
       '@sentry/types': 7.6.0
       '@sentry/utils': 7.6.0
-      tslib: 1.14.1
-    dev: false
-
-  /@sentry/hub/7.7.0:
-    resolution: {integrity: sha512-6gydK234+a0nKhBRDdIJ7Dp42CaiW2juTiHegUVDq+482balVzbZyEAmESCmuzKJhx5BhlCElVxs/cci1NjMpg==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/types': 7.7.0
-      '@sentry/utils': 7.7.0
       tslib: 1.14.1
     dev: false
 
@@ -11339,22 +11344,6 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/node/7.7.0:
-    resolution: {integrity: sha512-i62x23NHEhLe6CJ6l9E30uRCUMm0VMz9aUmmrjW+9uxS1mZhHTG2kpbU16ozyh9KTLswKDOSE75Z+MzQpGSQ/Q==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/core': 7.7.0
-      '@sentry/hub': 7.7.0
-      '@sentry/types': 7.7.0
-      '@sentry/utils': 7.7.0
-      cookie: 0.4.2
-      https-proxy-agent: 5.0.1
-      lru_map: 0.3.3
-      tslib: 1.14.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /@sentry/react-native/4.1.3_zqxy7fpkavjkgz5xll7ed4r6rq:
     resolution: {integrity: sha512-78701QuJ6E0C7SKN7B/S3BMWHe/OFg9TJKFjq4oZ35/g27HE1OuMobTgnfxFgaPh4qwV6qpwRO02kRwMaY1HEw==}
     peerDependencies:
@@ -11394,6 +11383,17 @@ packages:
       tslib: 1.14.1
     dev: false
 
+  /@sentry/tracing/6.19.2:
+    resolution: {integrity: sha512-rGoPpP1JIAxdq5bzrww0XuNVr6yn7RN6/wUcaxf6CAvklKvDx+q28WTGlZLGTZ/3un8Rv6i1FZFZOXizgnVnrg==}
+    engines: {node: '>=6'}
+    dependencies:
+      '@sentry/hub': 6.19.2
+      '@sentry/minimal': 6.19.2
+      '@sentry/types': 6.19.2
+      '@sentry/utils': 6.19.2
+      tslib: 1.14.1
+    dev: false
+
   /@sentry/tracing/7.6.0:
     resolution: {integrity: sha512-ydlIk8FpuXiQm3Y0cLwXMOUYv5UtniP8ylWw3ix0sF5sTpJWSaC/g8P8yrzkYV+pm28kde5qfE3nocGhpwxZcA==}
     engines: {node: '>=8'}
@@ -11401,16 +11401,6 @@ packages:
       '@sentry/hub': 7.6.0
       '@sentry/types': 7.6.0
       '@sentry/utils': 7.6.0
-      tslib: 1.14.1
-    dev: false
-
-  /@sentry/tracing/7.7.0:
-    resolution: {integrity: sha512-HNmvTwemuc21q/K6HXsSp9njkne6N1JQ71TB+QGqYU5VtxsVgYSUhhYqV6WcHz7LK4Hj6TvNFoeu69/rO0ysgw==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/hub': 7.7.0
-      '@sentry/types': 7.7.0
-      '@sentry/utils': 7.7.0
       tslib: 1.14.1
     dev: false
 
@@ -11426,11 +11416,6 @@ packages:
 
   /@sentry/types/7.6.0:
     resolution: {integrity: sha512-POimbDwr9tmHSKksJTXe5VQpvjkFO4/UWUptigwqf8684rkS7Ie2BT2uyp5GD2EgYFf0BwUOWi98FTYTvUGT+Q==}
-    engines: {node: '>=8'}
-    dev: false
-
-  /@sentry/types/7.7.0:
-    resolution: {integrity: sha512-4x8O7uerSGLnYC10krHl9t8h7xXHn5FextqKYbTCXCnx2hC8D+9lz8wcbQAFo0d97wiUYqI8opmEgFVGx7c5hQ==}
     engines: {node: '>=8'}
     dev: false
 
@@ -11455,14 +11440,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       '@sentry/types': 7.6.0
-      tslib: 1.14.1
-    dev: false
-
-  /@sentry/utils/7.7.0:
-    resolution: {integrity: sha512-fD+ROSFpeJlK7bEvUT2LOW7QqgjBpXJwVISKZ0P2fuzclRC3KoB2pbZgBM4PXMMTiSzRGWhvfRRjBiBvQJBBJQ==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/types': 7.7.0
       tslib: 1.14.1
     dev: false
 
@@ -15427,6 +15404,13 @@ packages:
     dependencies:
       jest-matcher-utils: 27.5.1
       pretty-format: 27.5.1
+    dev: true
+
+  /@types/jest/28.1.6:
+    resolution: {integrity: sha512-0RbGAFMfcBJKOmqRazM8L98uokwuwD5F8rHrv/ZMbrZBwVOWZUyPG6VFNscjYr/vjM3Vu4fRrCPbOs42AfemaQ==}
+    dependencies:
+      jest-matcher-utils: 28.1.1
+      pretty-format: 28.1.1
     dev: true
 
   /@types/js-yaml/4.0.5:
