@@ -83,6 +83,7 @@ const AccountRow = ({
         params: {
           screen: ScreenName.Account,
           params: {
+            currencyId: currency.id,
             accountId,
             isForwardedFromAccounts: true,
           },
@@ -94,13 +95,22 @@ const AccountRow = ({
         params: {
           screen: ScreenName.Account,
           params: {
+            currencyId: currency.id,
             parentId: account?.parentId,
             accountId: account.id,
           },
         },
       });
     }
-  }, [account, accountId, navigation, navigationParams]);
+  }, [
+    account.id,
+    account?.parentId,
+    account.type,
+    accountId,
+    currency.id,
+    navigation,
+    navigationParams,
+  ]);
 
   return (
     <AccountRowLayout
