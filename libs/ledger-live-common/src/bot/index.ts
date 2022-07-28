@@ -201,14 +201,6 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         (s.mutations && s.mutations.every((r) => !r.mutation)))
   );
 
-  const specsWithoutOperations = results.filter(
-    (s) =>
-      !s.fatalError &&
-      !specsWithoutFunds.includes(s) &&
-      s.mutations &&
-      s.mutations.every((r) => !r.operation)
-  );
-
   const fullySuccessfulSpecs = results.filter(
     (s) =>
       !s.fatalError &&
@@ -223,6 +215,15 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       s.mutations &&
       !specsWithoutFunds.includes(s) &&
       s.mutations.some((r) => r.mutation && !r.operation)
+  );
+
+  const specsWithoutOperations = results.filter(
+    (s) =>
+      !s.fatalError &&
+      !specsWithoutFunds.includes(s) &&
+      !specsWithErrors.includes(s) &&
+      s.mutations &&
+      s.mutations.every((r) => !r.operation)
   );
 
   const withoutFunds = specsWithoutFunds
@@ -301,7 +302,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   }
 
   if (withoutFunds.length) {
-    const missingFundsWarn = `> ⚠️ ${
+    const missingFundsWarn = `> 💰 ${
       withoutFunds.length
     } specs may miss funds: _${withoutFunds.join(", ")}_\n`;
     body += missingFundsWarn;
