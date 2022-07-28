@@ -1,26 +1,16 @@
 import React from "react";
 
-import type { State } from "@ledgerhq/live-common/apps/index";
-import styled, { useTheme } from "styled-components/native";
-
-import { Box, ProgressLoader, Icons } from "@ledgerhq/native-ui";
-
+import { useTheme } from "styled-components/native";
+import { ProgressLoader } from "@ledgerhq/native-ui";
 import { useAppInstallProgress } from "@ledgerhq/live-common/apps/react";
 
 type Props = {
-  state: State,
-  name: string,
-  installing: boolean,
-  updating: boolean,
-  size: number,
+  state: State;
+  name: string;
+  installing: boolean;
+  updating: boolean;
+  size: number;
 };
-
-const StopIcon = styled(Box).attrs((p: {size: number; color: string}) => ({
-  width: p.size,
-  height: p.size,
-  borderRadius: p.size / 20,
-  backgroundColor: p.color,
-}))``;
 
 export default function AppProgressButton({
   state,
@@ -31,23 +21,22 @@ export default function AppProgressButton({
 }: Props) {
   const { colors } = useTheme();
   const progress = useAppInstallProgress(state, name);
+  const { currentAppOp } = state;
+  const isPrimary = updating || installing;
+  const isCurrentAppOp = currentAppOp?.name === name;
 
-  const color = updating || installing ? colors.primary.c80 : colors.error.c100;
+  const mainColor = isPrimary ? colors.primary.c80 : colors.error.c100;
+  const secondaryColor = isPrimary ? colors.primary.c30 : colors.error.c30;
 
   return (
     <ProgressLoader
       onPress={() => {}}
       progress={progress}
-      infinite={!installing && !updating}
+      infinite={!progress && isCurrentAppOp}
       radius={size / 2}
       strokeWidth={2}
-      mainColor={color}
-    >
-      {installing || updating ? (
-        <StopIcon size={size / 4.8} color={color} />
-      ) : (
-        <Icons.TrashMedium size={size * 0.375} color={color} />
-      )}
-    </ProgressLoader>
+      mainColor={mainColor}
+      secondaryColor={secondaryColor}
+    />
   );
 }
