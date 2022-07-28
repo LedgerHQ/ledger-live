@@ -1072,7 +1072,7 @@
     "hideCTA": "Hide token"
   },
   "syncOnboarding": {
-    "pairing": {
+    "connection": {
       "searching": {
         "title": "Connect {{deviceModelName}} to your computer"
       },
