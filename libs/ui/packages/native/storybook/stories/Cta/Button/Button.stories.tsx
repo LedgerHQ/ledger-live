@@ -1,9 +1,9 @@
-import { storiesOf } from "../storiesOf";
+import { storiesOf } from "../../storiesOf";
 import { select, boolean, text } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import React from "react";
-import Button, { PromisableButton } from "../../../src/components/cta/Button";
-import Info from "../../../src/icons/Info";
+import Button, { PromisableButton } from "../../../../src/components/cta/Button";
+import Info from "../../../../src/icons/Info";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -43,5 +43,5 @@ const Promisable = (): JSX.Element => (
 );
 
 storiesOf((story) =>
-  story("Button", module).add("Regular", Regular).add("PromisableButton", Promisable),
+  story("CTA/Button", module).add("Regular", Regular).add("PromisableButton", Promisable),
 );
