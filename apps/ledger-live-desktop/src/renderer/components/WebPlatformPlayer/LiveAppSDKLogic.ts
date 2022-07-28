@@ -36,6 +36,8 @@ import { track } from "~/renderer/analytics/segment";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
+import { OperationDetails } from "~/renderer/drawers/OperationDetails";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 const tracking = trackingWrapper(track);
 
@@ -214,13 +216,11 @@ export const broadcastTransactionLogic = async (
     icon: "info",
     callback: () => {
       tracking.platformBroadcastOperationDetailsClick(manifest);
-      dispatch(
-        openModal("MODAL_OPERATION_DETAILS", {
-          operationId: optimisticOperation.id,
-          accountId: account.id,
-          parentId: null,
-        }),
-      );
+      setDrawer(OperationDetails, {
+        operationId: optimisticOperation.id,
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+      });
     },
   });
 
