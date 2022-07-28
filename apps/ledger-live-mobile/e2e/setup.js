@@ -1,24 +1,28 @@
 import { execSync } from "child_process";
 import * as bridge from "./bridge/server";
 
-beforeAll(() => {
+beforeAll(async () => {
   bridge.init();
-  setupDemoModeForScreenshots();
+  setDemoMode();
+  await device.launchApp({
+    languageAndLocale: {
+      language: "en-US",
+      locale: "en-US",
+    },
+  });
 });
 
-afterAll(() => {
+afterAll(async () => {
   bridge.close();
 });
 
-function setupDemoModeForScreenshots() {
-  // set app to demo mode for screenshots
+// NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Screenshots.md
+async function setDemoMode() {
   if (device.getPlatform() === "ios") {
     execSync(
       'xcrun simctl status_bar "iPhone 11 Pro" override --time "12:00" --batteryState charged --batteryLevel 100 --wifiBars 3 --cellularMode active --cellularBars 4',
     );
-  }
-
-  if (device.getPlatform() === "android") {
+  } else {
     // enter demo mode
     execSync("adb shell settings put global sysui_demo_allowed 1");
     // display time 12:00

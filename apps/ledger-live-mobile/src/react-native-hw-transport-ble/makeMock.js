@@ -51,6 +51,7 @@ export default (opts: Opts) => {
             descriptor: createTransportDeviceMock(
               msg.payload.id,
               msg.payload.name,
+              msg.payload.serviceUUID,
             ),
           });
         });

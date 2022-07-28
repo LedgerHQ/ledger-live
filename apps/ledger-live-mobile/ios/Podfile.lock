@@ -121,7 +121,7 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
-  - GoogleDataTransport (9.1.4):
+  - GoogleDataTransport (9.2.0):
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
@@ -157,7 +157,7 @@ PODS:
   - OpenSSL-Universal (1.1.1100)
   - PasscodeAuth (2.1.0):
     - React
-  - PromisesObjC (2.1.0)
+  - PromisesObjC (2.1.1)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
     - DoubleConversion
@@ -921,7 +921,7 @@ SPEC CHECKSUMS:
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 476ee3e89abb49e07f822b48323c51c57124b572
-  GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
+  GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   hermes-engine: 84e3af1ea01dd7351ac5d8689cbbea1f9903ffc3
   InputMask: 71d291dc54d2deaeac6512afb6ec2304228c0bb7
@@ -933,7 +933,7 @@ SPEC CHECKSUMS:
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   PasscodeAuth: 667f2bfb0e78f652c11db4793d8077c189ce300e
-  PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
+  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   RCT-Folly: 4d8508a426467c48885f1151029bc15fa5d7b3b8
   RCTRequired: 3e917ea5377751094f38145fdece525aa90545a0
   RCTTypeSafety: c43c072a4bd60feb49a9570b0517892b4305c45e

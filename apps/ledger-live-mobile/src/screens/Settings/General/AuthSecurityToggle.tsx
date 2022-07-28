@@ -31,7 +31,7 @@ export default function AuthSecurityToggle() {
         <Switch
           checked={!!privacy}
           onChange={onValueChange}
-          testID="password-settings-toggle"
+          testID="password-settings-switch"
         />
       </SettingsRow>
       {privacy ? <BiometricsRow /> : null}

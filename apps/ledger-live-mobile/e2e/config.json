@@ -2,10 +2,14 @@
   "globalSetup": "./global-setup.js",
   "globalTeardown": "./global-teardown.js",
   "setupFilesAfterEnv": ["./setup.js"],
+  "maxWorkers": 1,
   "testEnvironment": "./environment",
   "testRunner": "jest-circus/runner",
-  "testTimeout": 300000,
-  "testRegex": "\\.spec\\.js$",
+  "testTimeout": 120000,
+  "testRegex": "\\.spec\\.ts$",
+  "transform": {
+    "\\.(j|t)sx?$": "ts-jest"
+  },
   "reporters": ["detox/runners/jest/streamlineReporter"],
   "verbose": true
 }

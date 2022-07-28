@@ -1,7 +1,7 @@
-const detox = require("detox");
+import detox from "detox";
 
 async function globalTeardown() {
   await detox.globalCleanup();
 }
 
-module.exports = globalTeardown;
+export default globalTeardown;

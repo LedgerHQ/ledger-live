@@ -59,7 +59,7 @@ export function addDevices(
   deviceNames.forEach((name, i) => {
     postMessage({
       type: "add",
-      payload: { id: `mock_${i + 1}`, name },
+      payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
     });
   });
   return deviceNames;

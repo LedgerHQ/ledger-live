@@ -10,9 +10,16 @@ export default class OnboardingSteps {
     await testHelpers.tapByText("Get started");
   }
 
+  static async DoIOwnDevice(answer = true) {
+    answer
+      ? await testHelpers.tapByText("Yes, I do")
+      : await testHelpers.tapByText("Not yet");
+  }
+
   // change to tap by text
   static async chooseToSetupLedger() {
-    await testHelpers.tapByText("SET UP MY LEDGER");
+    await testHelpers.tapByText("Set up my Ledger");
+    await testHelpers.tapByText("Continue");
     // await testHelpers.tap("Onboarding PostWelcome - Selection|SetupLedger");
   }
 
