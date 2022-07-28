@@ -43,6 +43,9 @@ yarn upgrade-interactive -i --latest
 |@ledgerhq/logs          | logs                           | weekly                           |
 |@polkadot/types         | Polkadot coin integration      | monthly                          |
 |@polkadot/types-known   | Polkadot coin integration      | monthly                          |
+|@polkadot/util          | Polkadot coin integration      | monthly                          |
+|@polkadot/util-crypto   | Polkadot coin integration      | monthly                          |
+|@polkadot/wasm-crypto   | Polkadot coin integration      | **BLOCKED BY LLM (ticket missing)**                          |
 |@solana/spl-token       | Solana coin integration        | monthly                          |
 |@solana/web3.js         | Solana coin integration        | **BLOCKED BY LLM because of BigInt in RN (ticket missing)**                               |
 |@taquito/ledger-signer  | Tezos coin integration         | **BLOCKED BY LLM (ticket missing)**                               |
@@ -109,3 +112,4 @@ yarn upgrade-interactive -i --latest
 |@stricahq/typhonjs      | Cardano coin integration       | monthly                          |
 |@stricahq/bip32ed25519  | Cardano coin integration       | stable                           |
 |@cardano-foundation/ledgerjs-hw-app-cardano| Cardano coin integration| stable               |
+
