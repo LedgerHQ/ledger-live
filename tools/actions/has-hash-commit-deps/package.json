@@ -1,6 +1,6 @@
 {
   "name": "has-hash-commit-deps",
-  "version": "1.0.1-next.0",
+  "version": "1.0.1",
   "description": "checks if any dependencies is from a git repository",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
