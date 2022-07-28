@@ -29,6 +29,8 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { useProviders } from "../exchange/Swap2/Form";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 type Props = {
   isAvailable: boolean,
   cryptoChange: ValueChange,
@@ -54,6 +56,9 @@ export default function AssetBalanceSummaryHeader({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
+
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   const cvUnit = counterValue.units[0];
   const data = useMemo(
@@ -100,14 +105,28 @@ export default function AssetBalanceSummaryHeader({
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        mode: "onRamp",
-        currencyId: currency.id,
-      },
-    });
-  }, [currency, history]);
+    // PTX smart routing redirect to live app or to native implementation
+    if (ptxSmartRouting?.enabled) {
+      const params = {
+        currency: currency?.id,
+        mode: "buy", // buy or sell
+      };
+
+      history.push({
+        // replace 'multibuy' in case live app id changes
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+        state: params,
+      });
+    } else {
+      history.push({
+        pathname: "/exchange",
+        state: {
+          mode: "onRamp",
+          currencyId: currency.id,
+        },
+      });
+    }
+  }, [currency.id, history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
     setTrackingSource("asset header actions");

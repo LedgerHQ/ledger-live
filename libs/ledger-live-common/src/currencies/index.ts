@@ -33,6 +33,7 @@ import {
   getAbandonSeedAddress,
 } from "@ledgerhq/cryptoassets";
 export * from "./support";
+export * from "./helpers";
 import { parseCurrencyUnit } from "./parseCurrencyUnit";
 import { chopCurrencyUnitDecimals } from "./chopCurrencyUnitDecimals";
 import {

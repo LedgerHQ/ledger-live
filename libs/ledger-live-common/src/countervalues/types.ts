@@ -4,6 +4,8 @@ import type { Currency } from "../types";
 export type CountervaluesSettings = {
   trackingPairs: TrackingPair[];
   autofillGaps: boolean;
+  // throw exception in "loadCountervalues" if ANY error occurs (for test purpose)
+  disableAutoRecoverErrors?: boolean;
 };
 // This is the internal state of countervalues.
 export type CounterValuesState = {

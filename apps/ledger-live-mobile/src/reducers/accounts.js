@@ -8,6 +8,7 @@ import type {
   AccountLike,
   CryptoCurrency,
   TokenCurrency,
+  SubAccount,
 } from "@ledgerhq/live-common/types/index";
 import {
   makeCompoundSummaryForAccount,
@@ -24,6 +25,7 @@ import {
   withoutToken,
   clearAccount,
   nestedSortAccounts,
+  makeEmptyTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import type { State } from "./index.js";
 import accountModel from "../logic/accountModel";
@@ -158,13 +160,29 @@ export const cryptoCurrenciesSelector = createSelector(
 );
 
 // $FlowFixMe
-export const accountsByCryptoCurrencySelector = createSelector(
+export const accountsTuplesByCurrencySelector = createSelector(
   accountsSelector,
-  (_, { currencies }) => currencies,
-  (accounts, currencies): Account[] =>
-    currencies && currencies.length
-      ? accounts.filter(a => currencies.includes(a.currency.id))
-      : accounts,
+  (_, { currency }) => currency,
+  (accounts, currency): AccountLike[] => {
+    if (currency.type === "TokenCurrency") {
+      return accounts
+        .filter(account => account.currency.id === currency.parentCurrency.id)
+        .map(account => ({
+          account,
+          subAccount:
+            (account.subAccounts &&
+              account.subAccounts.find(
+                (subAcc: SubAccount) =>
+                  subAcc.type === "TokenAccount" &&
+                  subAcc.token.id === currency.id,
+              )) ||
+            makeEmptyTokenAccount(account, currency),
+        }));
+    }
+    return accounts
+      .filter(account => account.currency.id === currency.id)
+      .map(account => ({ account, subAccount: null }));
+  },
 );
 
 // $FlowFixMe
@@ -181,17 +199,19 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
       : accounts,
 );
 
+const emptyArray = [];
+
 export const accountsByCryptoCurrencyScreenSelector = (
   currency: CryptoCurrency,
 ) => (state: any) => {
-  if (!currency) return [];
-  return accountsByCryptoCurrencySelector(state, { currencies: [currency.id] });
+  if (!currency) return emptyArray;
+  return accountsTuplesByCurrencySelector(state, { currency });
 };
 
 export const flattenAccountsByCryptoCurrencyScreenSelector = (
   currency?: CryptoCurrency,
 ) => (state: any) => {
-  if (!currency) return [];
+  if (!currency) return emptyArray;
   return flattenAccountsByCryptoCurrencySelector(state, {
     currencies: [currency.id],
   });

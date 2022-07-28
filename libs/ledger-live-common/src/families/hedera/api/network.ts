@@ -23,6 +23,7 @@ export async function buildUnsignedTransaction({
   return new hedera.TransferTransaction()
     .setNodeAccountIds([new AccountId(3)])
     .setTransactionId(hedera.TransactionId.generate(accountId))
+    .setTransactionMemo(transaction.memo ?? "")
     .addHbarTransfer(accountId, hbarAmount.negated())
     .addHbarTransfer(transaction.recipient, hbarAmount)
     .freeze();

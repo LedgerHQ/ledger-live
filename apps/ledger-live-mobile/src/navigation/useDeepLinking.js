@@ -2,7 +2,8 @@
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { filterPlatformApps } from "@ledgerhq/live-common/platform/PlatformAppProvider/helpers";
+import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
+import { getPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
 import { NavigatorName, ScreenName } from "../const";
 
 function getSettingsScreen(pathname) {
@@ -46,7 +47,7 @@ export function useDeepLinkHandler() {
     const branches = ["stable", "soon"];
 
     return filterPlatformApps(Array.from(manifests.values()), {
-      version: "0.0.1",
+      version: getPlatformVersion(),
       platform: "mobile",
       branches,
     });
