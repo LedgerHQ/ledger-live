@@ -25,7 +25,10 @@ import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
-import { FabAccountActions } from "../../components/FabActions";
+import {
+  FabAccountActions,
+  FabAccountMainActionsComponent,
+} from "../../components/FabActions";
 
 const renderAccountSummary = (
   account: AccountLike,
@@ -139,6 +142,10 @@ export function getListHeaderComponents({
           />
         </Box>
       ),
+      <FabAccountMainActionsComponent
+        account={account}
+        parentAccount={parentAccount}
+      ></FabAccountMainActionsComponent>,
       ...(!empty
         ? [
             <Box py={3} mb={8}>
