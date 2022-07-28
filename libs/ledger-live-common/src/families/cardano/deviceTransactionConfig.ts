@@ -4,12 +4,7 @@ import { formatCurrencyUnit } from "../../currencies";
 import { DeviceTransactionField } from "../../transaction";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
-import {
-  CardanoAccount,
-  CardanoResources,
-  Transaction,
-  TransactionStatus,
-} from "./types";
+import { CardanoAccount, Transaction, TransactionStatus } from "./types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { decodeTokenName } from "./logic";
 
