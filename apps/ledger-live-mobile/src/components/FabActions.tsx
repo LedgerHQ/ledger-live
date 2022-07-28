@@ -1,15 +1,11 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import {
-  filterRampCatalogEntries,
-  getAllSupportedCryptoCurrencyIds,
-} from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 
 import {
   AccountLike,
@@ -30,6 +26,7 @@ import useActions from "../screens/Account/hooks/useActions";
 import { QuickActionList } from "../../../../libs/ui/packages/native/lib";
 import { Linking } from "react-native";
 import { QuickActionButtonProps } from "../../../../libs/ui/packages/native/lib/components/cta/QuickAction/QuickActionButton";
+import { useTheme } from "styled-components";
 
 type FabAccountActionsProps = {
   account: AccountLike;
@@ -47,8 +44,10 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
   account,
   parentAccount,
 }: FabAccountActionsProps) => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
-  const { mainActions } = useActions({ account, parentAccount });
+
+  const { mainActions } = useActions({ account, parentAccount, colors });
 
   const onNavigate = useCallback(
     (name: string, options?: any) => {
@@ -68,17 +67,11 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
 
   const onPress = useCallback(
     (data: ActionButton) => {
-      const { navigationParams, confirmModalProps, linkUrl } = data;
-      if (!confirmModalProps) {
-        //setInfoModalProps();
-        if (linkUrl) {
-          Linking.openURL(linkUrl);
-        } else if (navigationParams) {
-          onNavigate(...navigationParams);
-        }
-      } else {
-        // setInfoModalProps(data);
-        // setIsModalInfoOpened(true);
+      const { navigationParams, linkUrl } = data;
+      if (linkUrl) {
+        Linking.openURL(linkUrl);
+      } else if (navigationParams) {
+        onNavigate(...navigationParams);
       }
     },
     [onNavigate],
@@ -92,35 +85,13 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
     };
   });
 
-  //
-  // const [infoModalProps, setInfoModalProps] = useState<
-  //   ActionButtonEventProps | undefined
-  //   >();
-  // const [isModalInfoOpened, setIsModalInfoOpened] = useState();
-  //
-  //
-  //
-  // const onContinue = useCallback(() => {
-  //   setIsModalInfoOpened(false);
-  //   onPress({ ...infoModalProps, confirmModalProps: undefined });
-  // }, [infoModalProps, onPress]);
-  //
-  // const onClose = useCallback(() => {
-  //   setIsModalInfoOpened();
-  // }, []);
-  //
-  // const onChoiceSelect = useCallback(({ navigationParams, linkUrl }) => {
-  //   if (linkUrl) {
-  //     Linking.openURL(linkUrl);
-  //   } else if (navigationParams) {
-  //     onNavigate(...navigationParams);
-  //   }
-  // }, []);
-
   return (
-    <>
-      <QuickActionList data={quickActions}></QuickActionList>
-    </>
+    <QuickActionList
+      data={quickActions}
+      numColumns={
+        quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
+      }
+    ></QuickActionList>
   );
 };
 
@@ -128,100 +99,16 @@ export const FabAccountActionsComponent: React.FC<FabAccountActionsProps> = ({
   account,
   parentAccount,
 }: FabAccountActionsProps) => {
-  // const { colors } = useTheme();
-  // const { t } = useTranslation();
-  //
-  // const currency = getAccountCurrency(account);
-  // const swapSelectableCurrencies = useSelector(
-  //   swapSelectableCurrenciesSelector,
-  // );
-  // const availableOnSwap =
-  //   swapSelectableCurrencies.includes(currency.id) && account.balance.gt(0);
-  // const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  //
-  // const rampCatalog = useRampCatalog();
-  //
-  // const [canBeBought, canBeSold] = useMemo(() => {
-  //   if (!rampCatalog.value || !currency) {
-  //     return [false, false];
-  //   }
-  //
-  //   const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-  //     rampCatalog.value.onRamp,
-  //   );
-  //   const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-  //     rampCatalog.value.offRamp,
-  //   );
-  //
-  //   return [
-  //     allBuyableCryptoCurrencyIds.includes(currency.id),
-  //     allSellableCryptoCurrencyIds.includes(currency.id),
-  //   ];
-  // }, [rampCatalog.value, currency]);
-  //
-  // const actionButtonSwap: ActionButton = {
-  //   navigationParams: [
-  //     NavigatorName.Swap,
-  //     {
-  //       screen: ScreenName.Swap,
-  //       params: {
-  //         defaultAccount: account,
-  //         defaultParentAccount: parentAccount,
-  //       },
-  //     },
-  //   ],
-  //   label: t("transfer.swap.main.header", { currency: currency.name }),
-  //   Icon: iconSwap,
-  //   event: "Swap Crypto Account Button",
-  //   eventProperties: { currencyName: currency.name },
-  // };
-  //
-  // const actionButtonBuy: ActionButton = {
-  //   navigationParams: [
-  //     NavigatorName.Exchange,
-  //     {
-  //       screen: ScreenName.ExchangeBuy,
-  //       params: {
-  //         defaultCurrencyId: currency && currency.id,
-  //         defaultAccountId: account && account.id,
-  //       },
-  //     },
-  //   ],
-  //   label: t("account.buy"),
-  //   Icon: iconBuy,
-  //   event: "Buy Crypto Account Button",
-  //   eventProperties: {
-  //     currencyName: currency.name,
-  //   },
-  // };
-  //
-  // const actionButtonSell: ActionButton = {
-  //   navigationParams: [
-  //     NavigatorName.Exchange,
-  //     {
-  //       screen: ScreenName.ExchangeSell,
-  //       params: {
-  //         defaultCurrencyId: currency && currency.id,
-  //         defaultAccountId: account && account.id,
-  //       },
-  //     },
-  //   ],
-  //   label: t("account.sell"),
-  //   Icon: iconSell,
-  //   event: "Sell Crypto Account Button",
-  //   eventProperties: {
-  //     currencyName: currency.name,
-  //   },
-  // };
-
-  const { mainActions, secondaryActions } = useActions({
+  const { colors } = useTheme();
+  const { secondaryActions } = useActions({
     account,
     parentAccount,
+    colors,
   });
 
   return (
     <FabAccountButtonBar
-      buttons={mainActions.concat(secondaryActions)}
+      buttons={secondaryActions}
       account={account}
       parentAccount={parentAccount}
     />
