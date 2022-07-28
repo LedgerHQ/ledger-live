@@ -820,8 +820,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Ledger Live'ı sevdiniz mi?",
-      "description" : "İster sevmiş ister daha iyi olabileceğini düşünüyor olun. Geri bildiriminiz bizim için gerçekten çok önemli.",
+      "title" : "How do you like our app?",
+      "description" : "Your feedback is important for improving Ledger Live.",
       "cta" : {
         "enjoy" : "Harika",
         "disappointed" : "Beğenmedim",
@@ -838,7 +838,8 @@
     },
     "disappointed" : {
       "title" : "Sizin için daha iyi bir ürün geliştirmemize yardımcı olun",
-      "description" : "Daha iyisini yapmak istiyoruz ve samimi geri bildiriminiz, neyi geliştirmemiz gerektiğini bilmemize yardımcı oluyor.",
+      "description" : "If you need more assistance or would like us to get back to you, please use our live chat",
+      "here" : "here",
       "cta" : {
         "sendFeedback" : "Geri bildirim gönder",
         "notNow" : "Şimdi değil"
@@ -930,9 +931,9 @@
         "title" : "Kazanın",
         "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
       },
-      "mint": {
-        "title": "Mintleyin",
-        "desc": "[ L ] Market’teki özel iş birlikleri kapsamında NFT’ler mintleyin"
+      "mint" : {
+        "title" : "Mintleyin",
+        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mintleyin"
       }
     },
     "comingSoon" : "Çok yakında",
@@ -1004,6 +1005,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Cihazınızı seçin"
     },
@@ -3259,7 +3261,9 @@
     "newVersion" : "{{deviceName}} cihazınız için {{version}} güncellemesi mevcut",
     "drawerUpdate" : {
       "title" : "Donanım Yazılımı Güncellemesi",
-      "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın"
+      "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın",
+      "pleaseConnectUsbTitle" : "USB cable needed",
+      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3378,6 +3382,13 @@
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Tekrar denemeden önce, işleminizin gerçekleşmediğinden emin olmak için birkaç dakika sonra yeniden kontrol edin."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Total balance doesn't include staking rewards"
       }
     }
   },
