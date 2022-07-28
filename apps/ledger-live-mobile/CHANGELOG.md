@@ -1,5 +1,245 @@
 # live-mobile
 
+## 3.5.0-next.13
+
+### Patch Changes
+
+- [#699](https://github.com/LedgerHQ/ledger-live/pull/699) [`957d942a4`](https://github.com/LedgerHQ/ledger-live/commit/957d942a48e98a4f834a2d566cf75e658d6f8c29) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Reborn analytics
+
+## 3.5.0-next.12
+
+### Minor Changes
+
+- [#728](https://github.com/LedgerHQ/ledger-live/pull/728) [`b0053cced`](https://github.com/LedgerHQ/ledger-live/commit/b0053cced9accefe8ecbf0983934e18fcc75bad6) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Learn page add a close button to allow back navigation
+
+## 3.5.0-next.11
+
+### Minor Changes
+
+- [#731](https://github.com/LedgerHQ/ledger-live/pull/731) [`0e115ae5c`](https://github.com/LedgerHQ/ledger-live/commit/0e115ae5cd7ddcc728d9f435dc4084cedb53beed) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Update UI for manager app install/uninstall buttons
+
+### Patch Changes
+
+- Updated dependencies [[`0e115ae5c`](https://github.com/LedgerHQ/ledger-live/commit/0e115ae5cd7ddcc728d9f435dc4084cedb53beed)]:
+  - @ledgerhq/live-common@25.1.0-next.1
+
+## 3.5.0-next.10
+
+### Patch Changes
+
+- [#767](https://github.com/LedgerHQ/ledger-live/pull/767) [`b80857e94`](https://github.com/LedgerHQ/ledger-live/commit/b80857e94c8050be2443d2d53525a920fa74b74e) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Disable ftx ftxus temporary as a swap provider before official mobile release
+
+## 3.5.0-next.9
+
+### Minor Changes
+
+- [#740](https://github.com/LedgerHQ/ledger-live/pull/740) [`709020dd7`](https://github.com/LedgerHQ/ledger-live/commit/709020dd74a228afca1d592264d42cfb7469e746) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fixed incorrect value for used space in Manager
+
+## 3.5.0-next.8
+
+### Minor Changes
+
+- [#389](https://github.com/LedgerHQ/ledger-live/pull/389) [`d4a71a6d8`](https://github.com/LedgerHQ/ledger-live/commit/d4a71a6d890d85f1ff36641949e3a8396d0a8eb9) Thanks [@laure-lebon](https://github.com/laure-lebon)! - Fix wrong gas Price Polygon
+
+* [#104](https://github.com/LedgerHQ/ledger-live/pull/104) [`6adbe47e2`](https://github.com/LedgerHQ/ledger-live/commit/6adbe47e2d3037a9a53e5a59b4198f265f644bdf) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support of memo for Hedera on LLM
+
+- [`8d0dc4733`](https://github.com/LedgerHQ/ledger-live/commit/8d0dc4733143af138de9b1db2fb20d6aab78f1c0) Thanks [@Justkant](https://github.com/Justkant)! - feat: add ERC20 token support to the Platform API
+
+* [#104](https://github.com/LedgerHQ/ledger-live/pull/104) [`6adbe47e2`](https://github.com/LedgerHQ/ledger-live/commit/6adbe47e2d3037a9a53e5a59b4198f265f644bdf) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - LIVE-1004 Hedera integration on LLM
+
+- [`8d0dc4733`](https://github.com/LedgerHQ/ledger-live/commit/8d0dc4733143af138de9b1db2fb20d6aab78f1c0) Thanks [@Justkant](https://github.com/Justkant)! - Add Searching bar for validators list of ATOM and SOL
+
+* [`8d0dc4733`](https://github.com/LedgerHQ/ledger-live/commit/8d0dc4733143af138de9b1db2fb20d6aab78f1c0) Thanks [@Justkant](https://github.com/Justkant)! - Add support of Stellar assets (tokens)
+
+- [#703](https://github.com/LedgerHQ/ledger-live/pull/703) [`aabfe4950`](https://github.com/LedgerHQ/ledger-live/commit/aabfe495061dbf7169945e77c7adb5fdccef6114) Thanks [@mehulcs](https://github.com/mehulcs)! - Rewards balance info banner for Cardanno currency
+
+### Patch Changes
+
+- [#633](https://github.com/LedgerHQ/ledger-live/pull/633) [`50fd2243e`](https://github.com/LedgerHQ/ledger-live/commit/50fd2243e0c867c71da2b51387de2f9dc0b32f18) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Integration of storyly-react-native (Storyly SDK)
+
+* [#718](https://github.com/LedgerHQ/ledger-live/pull/718) [`14245392b`](https://github.com/LedgerHQ/ledger-live/commit/14245392b30d6ece427bdcbe5bce3aab6ec80dd4) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix the error wording for users trying to update the firmware via bluetooth
+
+- [#374](https://github.com/LedgerHQ/ledger-live/pull/374) [`111160df7`](https://github.com/LedgerHQ/ledger-live/commit/111160df73e426a4a659f0717fcd976dea8f2e94) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix 2 firmware update banners being displayed on the wallet screen
+
+* [#435](https://github.com/LedgerHQ/ledger-live/pull/435) [`8319ff45a`](https://github.com/LedgerHQ/ledger-live/commit/8319ff45a8dbcdac691097d2ad2039430d18ab87) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - - Upgraded `react-native` to `0.68.2`, following [this guide](https://react-native-community.github.io/upgrade-helper/?from=0.67.3&to=0.68.2) and picked what works for us:
+  - we don't upgrade Flipper as it crashes on runtime
+  - we don't upgrade gradle as it builds fine like this and v7 didn't work out of the box
+  - we don't keep `react-native-gradle-plugin` as it's only necessary for the new architecture..
+  - we don't change `AppDelegate.m` to the new `AppDelegate.mm` as it's only useful for the new RN arch which we aren't using yet + it was a pain to migrate the existing config (Firebase, Flipper, splash screen)
+  - Upgraded `react-native-reanimated` to `2.8.0`
+  - Upgraded `lottie-react-native` to `5.1.3` as it was not building on iOS without upgrading -> I tested the device lotties in the "Debug Lottie" menu and it seems to work fine.
+  - Upgraded `react-native-gesture-handler` to `2.5.0` & [Migrating off RNGHEnabledRootView](https://docs.swmansion.com/react-native-gesture-handler/docs/guides/migrating-off-rnghenabledroot) as its setup on Android (in `MainActivity.java`) might conflict with react-native stuff later on
+  - Fixed an issue in the portfolio where if there was no assets, scrolling was crashing the app on iOS. This is a mysterious issue and the logs are similar to this issue https://github.com/software-mansion/react-native-reanimated/issues/2285, for now it has been solved by removing the animation of a border width (border which anyway was invisible so the animation was pointless).
+
+- [#586](https://github.com/LedgerHQ/ledger-live/pull/586) [`37598e481`](https://github.com/LedgerHQ/ledger-live/commit/37598e4816139a280236437e3b8c001c05fcbcd3) Thanks [@Justkant](https://github.com/Justkant)! - fix: Inline app install not working [LIVE-2851]
+
+* [#711](https://github.com/LedgerHQ/ledger-live/pull/711) [`afa1ca628`](https://github.com/LedgerHQ/ledger-live/commit/afa1ca628003b6df3f922b6cc9bdb0293e0fffd5) Thanks [@Justkant](https://github.com/Justkant)! - fix: requestAccount to show all accounts
+
+- [`8d0dc4733`](https://github.com/LedgerHQ/ledger-live/commit/8d0dc4733143af138de9b1db2fb20d6aab78f1c0) Thanks [@Justkant](https://github.com/Justkant)! - Log experimental and feature flags in Sentry error reports.
+
+* [`8d0dc4733`](https://github.com/LedgerHQ/ledger-live/commit/8d0dc4733143af138de9b1db2fb20d6aab78f1c0) Thanks [@Justkant](https://github.com/Justkant)! - #### Replace [webpack](https://webpack.js.org/) with [vite.js](https://vitejs.dev/) to speed up the ledger live desktop development process.
+
+  To fully embrace the "bundleless" vite.js approach, it is necessary to transpile our packages contained in the monorepository to the ESM format, and [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) have been added to silently map to commonjs or esm depending on the need.
+
+  #### 🔥 BREAKING CHANGES for `@ledgerhq/live-common`, `@ledgerhq/devices` and `@ledgerhq/hw-app-btc` consumers.
+
+  As highlighted [here](https://github.com/nodejs/node#39994), it is not possible to target folders directly when using subpath exports.
+
+  The workaround is to suffix the call with `/index` (or `/`).
+
+  For instance…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies";
+  ```
+
+  …must be rewritten to…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/index;";
+  ```
+
+  …or:
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/;";
+  ```
+
+- [#737](https://github.com/LedgerHQ/ledger-live/pull/737) [`8ee5ab993`](https://github.com/LedgerHQ/ledger-live/commit/8ee5ab9937b2abba6837684933dde266a09811cd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix missing import in NFTViewer
+
+- Updated dependencies [[`f10d01171`](https://github.com/LedgerHQ/ledger-live/commit/f10d01171f4c0869d1d82e6cc5402da9ca80990b), [`aa2794813`](https://github.com/LedgerHQ/ledger-live/commit/aa2794813c05b1b39272814cc803cd662662584c), [`8afb69530`](https://github.com/LedgerHQ/ledger-live/commit/8afb69530292fa1f41f2fc78b38639134b1fe16f), [`331794cfb`](https://github.com/LedgerHQ/ledger-live/commit/331794cfbdb901f9224fed759c57f419861ec364)]:
+  - @ledgerhq/live-common@25.0.1-next.0
+
+## 3.5.0-next.7
+
+### Patch Changes
+
+- [#711](https://github.com/LedgerHQ/ledger-live/pull/711) [`afa1ca628`](https://github.com/LedgerHQ/ledger-live/commit/afa1ca628003b6df3f922b6cc9bdb0293e0fffd5) Thanks [@Justkant](https://github.com/Justkant)! - fix: requestAccount to show all accounts
+
+## 3.5.0-next.6
+
+### Minor Changes
+
+- [#624](https://github.com/LedgerHQ/ledger-live/pull/624) [`947c33140`](https://github.com/LedgerHQ/ledger-live/commit/947c33140e906ca35bf1fbfdf7831e28fe99dd67) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add Searching bar for validators list of ATOM and SOL
+
+### Patch Changes
+
+- Updated dependencies [[`947c33140`](https://github.com/LedgerHQ/ledger-live/commit/947c33140e906ca35bf1fbfdf7831e28fe99dd67)]:
+  - @ledgerhq/live-common@25.0.0-next.6
+
+## 3.5.0-next.5
+
+### Patch Changes
+
+- Updated dependencies [[`816f2b7e9`](https://github.com/LedgerHQ/ledger-live/commit/816f2b7e942967bf0ed670dc43464521bd0b5d01)]:
+  - @ledgerhq/live-common@25.0.0-next.5
+
+## 3.5.0-next.4
+
+### Minor Changes
+
+- [#104](https://github.com/LedgerHQ/ledger-live/pull/104) [`6adbe47e2`](https://github.com/LedgerHQ/ledger-live/commit/6adbe47e2d3037a9a53e5a59b4198f265f644bdf) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support of memo for Hedera on LLM
+
+* [#104](https://github.com/LedgerHQ/ledger-live/pull/104) [`6adbe47e2`](https://github.com/LedgerHQ/ledger-live/commit/6adbe47e2d3037a9a53e5a59b4198f265f644bdf) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - LIVE-1004 Hedera integration on LLM
+
+### Patch Changes
+
+- Updated dependencies [[`6adbe47e2`](https://github.com/LedgerHQ/ledger-live/commit/6adbe47e2d3037a9a53e5a59b4198f265f644bdf)]:
+  - @ledgerhq/live-common@25.0.0-next.4
+
+## 3.5.0-next.3
+
+### Minor Changes
+
+- [#81](https://github.com/LedgerHQ/ledger-live/pull/81) [`76b2825e8`](https://github.com/LedgerHQ/ledger-live/commit/76b2825e84730e9d5a2f7906abd7c00a191de4db) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - feat: add ERC20 token support to the Platform API
+
+### Patch Changes
+
+- Updated dependencies [[`76b2825e8`](https://github.com/LedgerHQ/ledger-live/commit/76b2825e84730e9d5a2f7906abd7c00a191de4db)]:
+  - @ledgerhq/live-common@25.0.0-next.3
+
+## 3.5.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`345706e24`](https://github.com/LedgerHQ/ledger-live/commit/345706e24e91ba4c397d4a6ffc1b2b174a0ddc84)]:
+  - @ledgerhq/live-common@25.0.0-next.2
+
+## 3.5.0-next.1
+
+### Minor Changes
+
+- [#471](https://github.com/LedgerHQ/ledger-live/pull/471) [`03da88df2`](https://github.com/LedgerHQ/ledger-live/commit/03da88df2f9c06c054081dcbf34226cb440809c0) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support of Stellar assets (tokens)
+
+### Patch Changes
+
+- Updated dependencies [[`03da88df2`](https://github.com/LedgerHQ/ledger-live/commit/03da88df2f9c06c054081dcbf34226cb440809c0)]:
+  - @ledgerhq/live-common@25.0.0-next.1
+
+## 3.5.0-next.0
+
+### Minor Changes
+
+- [#389](https://github.com/LedgerHQ/ledger-live/pull/389) [`d4a71a6d8`](https://github.com/LedgerHQ/ledger-live/commit/d4a71a6d890d85f1ff36641949e3a8396d0a8eb9) Thanks [@laure-lebon](https://github.com/laure-lebon)! - Fix wrong gas Price Polygon
+
+### Patch Changes
+
+- [#633](https://github.com/LedgerHQ/ledger-live/pull/633) [`50fd2243e`](https://github.com/LedgerHQ/ledger-live/commit/50fd2243e0c867c71da2b51387de2f9dc0b32f18) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Integration of storyly-react-native (Storyly SDK)
+
+* [#374](https://github.com/LedgerHQ/ledger-live/pull/374) [`111160df7`](https://github.com/LedgerHQ/ledger-live/commit/111160df73e426a4a659f0717fcd976dea8f2e94) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix 2 firmware update banners being displayed on the wallet screen
+
+- [#435](https://github.com/LedgerHQ/ledger-live/pull/435) [`8319ff45a`](https://github.com/LedgerHQ/ledger-live/commit/8319ff45a8dbcdac691097d2ad2039430d18ab87) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - - Upgraded `react-native` to `0.68.2`, following [this guide](https://react-native-community.github.io/upgrade-helper/?from=0.67.3&to=0.68.2) and picked what works for us:
+  - we don't upgrade Flipper as it crashes on runtime
+  - we don't upgrade gradle as it builds fine like this and v7 didn't work out of the box
+  - we don't keep `react-native-gradle-plugin` as it's only necessary for the new architecture..
+  - we don't change `AppDelegate.m` to the new `AppDelegate.mm` as it's only useful for the new RN arch which we aren't using yet + it was a pain to migrate the existing config (Firebase, Flipper, splash screen)
+  - Upgraded `react-native-reanimated` to `2.8.0`
+  - Upgraded `lottie-react-native` to `5.1.3` as it was not building on iOS without upgrading -> I tested the device lotties in the "Debug Lottie" menu and it seems to work fine.
+  - Upgraded `react-native-gesture-handler` to `2.5.0` & [Migrating off RNGHEnabledRootView](https://docs.swmansion.com/react-native-gesture-handler/docs/guides/migrating-off-rnghenabledroot) as its setup on Android (in `MainActivity.java`) might conflict with react-native stuff later on
+  - Fixed an issue in the portfolio where if there was no assets, scrolling was crashing the app on iOS. This is a mysterious issue and the logs are similar to this issue https://github.com/software-mansion/react-native-reanimated/issues/2285, for now it has been solved by removing the animation of a border width (border which anyway was invisible so the animation was pointless).
+
+* [#586](https://github.com/LedgerHQ/ledger-live/pull/586) [`37598e481`](https://github.com/LedgerHQ/ledger-live/commit/37598e4816139a280236437e3b8c001c05fcbcd3) Thanks [@Justkant](https://github.com/Justkant)! - fix: Inline app install not working [LIVE-2851]
+
+- [#386](https://github.com/LedgerHQ/ledger-live/pull/386) [`8917ca143`](https://github.com/LedgerHQ/ledger-live/commit/8917ca1436e780e3a52f66f968f8224ad35362b4) Thanks [@gre](https://github.com/gre)! - Log experimental and feature flags in Sentry error reports.
+
+* [#364](https://github.com/LedgerHQ/ledger-live/pull/364) [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8) Thanks [@elbywan](https://github.com/elbywan)! - #### Replace [webpack](https://webpack.js.org/) with [vite.js](https://vitejs.dev/) to speed up the ledger live desktop development process.
+
+  To fully embrace the "bundleless" vite.js approach, it is necessary to transpile our packages contained in the monorepository to the ESM format, and [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) have been added to silently map to commonjs or esm depending on the need.
+
+  #### 🔥 BREAKING CHANGES for `@ledgerhq/live-common`, `@ledgerhq/devices` and `@ledgerhq/hw-app-btc` consumers.
+
+  As highlighted [here](https://github.com/nodejs/node#39994), it is not possible to target folders directly when using subpath exports.
+
+  The workaround is to suffix the call with `/index` (or `/`).
+
+  For instance…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies";
+  ```
+
+  …must be rewritten to…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/index;";
+  ```
+
+  …or:
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/;";
+  ```
+
+* Updated dependencies [[`2de4b99c0`](https://github.com/LedgerHQ/ledger-live/commit/2de4b99c0c36766474d5ea037615f9f69942e905), [`7c15869a7`](https://github.com/LedgerHQ/ledger-live/commit/7c15869a7a2cf74f849f8cf0fe13b66133ff673a), [`e4b7dc326`](https://github.com/LedgerHQ/ledger-live/commit/e4b7dc32664d32b43dfae2821c29715ae94a6ab4), [`203b927b4`](https://github.com/LedgerHQ/ledger-live/commit/203b927b4e5bca3402c85a88c536d519adb18c5f), [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8)]:
+  - @ledgerhq/live-common@25.0.0-next.0
+  - @ledgerhq/errors@6.10.1-next.0
+  - @ledgerhq/devices@7.0.0-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.2-next.0
+  - @ledgerhq/hw-transport@6.27.2-next.0
+  - @ledgerhq/hw-transport-http@6.27.2-next.0
+  - @ledgerhq/react-native-hid@6.28.4-next.0
+  - @ledgerhq/native-ui@0.8.2-next.0
+
 ## 3.4.1
 
 ### Patch Changes

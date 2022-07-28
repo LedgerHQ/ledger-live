@@ -1,10 +1,13 @@
+import type { Operation } from "../../types";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { fetchAccount, fetchOperations } from "./api";
+import { buildSubAccounts } from "./tokens";
+import { inferSubOperations } from "../../account";
 
-const getAccountShape: GetAccountShape = async (info) => {
-  const { address, initialAccount, currency, derivationMode } = info;
+const getAccountShape: GetAccountShape = async (info, syncConfig) => {
+  const { address, currency, initialAccount, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -12,23 +15,62 @@ const getAccountShape: GetAccountShape = async (info) => {
     xpubOrAddress: address,
     derivationMode,
   });
-  const oldOperations = initialAccount?.operations || [];
-  const startAt = oldOperations.length
-    ? (oldOperations[0].blockHeight || 0) + 1
-    : 0;
-  const { blockHeight, balance, spendableBalance } = await fetchAccount(
+  const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(
     address
   );
-  const newOperations = await fetchOperations(accountId, address, startAt);
-  const operations = mergeOps(oldOperations, newOperations);
+
+  const oldOperations = initialAccount?.operations || [];
+  const lastPagingToken = oldOperations[0]?.extra?.pagingToken || 0;
+
+  const newOperations =
+    (await fetchOperations({
+      accountId,
+      addr: address,
+      order: "asc",
+      cursor: lastPagingToken,
+    })) || [];
+
+  const allOperations = mergeOps(oldOperations, newOperations);
+  const assetOperations: Operation[] = [];
+
+  allOperations.forEach((op) => {
+    if (
+      op?.extra?.assetCode &&
+      op?.extra?.assetIssuer &&
+      !["OPT_IN", "OPT_OUT"].includes(op.type)
+    ) {
+      assetOperations.push(op);
+    }
+  });
+
+  const subAccounts =
+    buildSubAccounts({
+      currency,
+      accountId,
+      assets,
+      syncConfig,
+      operations: assetOperations,
+    }) || [];
+
   const shape = {
     id: accountId,
     balance,
     spendableBalance,
-    operationsCount: operations.length,
+    operationsCount: allOperations.length,
     blockHeight,
+    subAccounts,
   };
-  return { ...shape, operations };
+  return {
+    ...shape,
+    operations: allOperations.map((op) => {
+      const subOperations = inferSubOperations(op.hash, subAccounts);
+
+      return {
+        ...op,
+        subOperations,
+      };
+    }),
+  };
 };
 
 export const sync = makeSync({ getAccountShape });

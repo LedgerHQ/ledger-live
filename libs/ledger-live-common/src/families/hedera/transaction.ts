@@ -29,6 +29,7 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
   return {
     ...common,
     family: tr.family,
+    memo: tr.memo,
   };
 }
 
@@ -38,6 +39,7 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
   return {
     ...common,
     family: t.family,
+    memo: t.memo,
   };
 }
 

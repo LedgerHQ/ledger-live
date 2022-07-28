@@ -36,7 +36,8 @@ type CountervaluesJobs = {
 };
 
 export const fetchLatest = async (
-  pairs: TrackingPair[]
+  pairs: TrackingPair[],
+  disableAutoRecoverErrors?: boolean
 ): Promise<Array<number | null | undefined>> => {
   // a module can override as well. but as latest is a "one api" call,
   // we need to segment the pairs in diff modules
@@ -88,6 +89,7 @@ export const fetchLatest = async (
             }
           })
           .catch((e) => {
+            if (disableAutoRecoverErrors) throw e;
             log("error", "latest fetch issue: " + String(e));
           })
       )

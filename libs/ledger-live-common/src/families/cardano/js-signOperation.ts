@@ -83,11 +83,18 @@ const buildOptimisticOperation = (
     const memoMetadata = auxiliaryData.metadata.find(
       (m) => m.label === MEMO_LABEL
     );
-    if (memoMetadata && Array.isArray(memoMetadata.data)) {
-      memo = memoMetadata.data.join(", ");
+    if (memoMetadata && memoMetadata.data instanceof Map) {
+      const msg = memoMetadata.data.get("msg");
+      if (Array.isArray(msg) && msg.length) {
+        memo = msg.join(", ");
+      }
     }
   }
 
+  const extra = {};
+  if (memo) {
+    extra["memo"] = memo;
+  }
   const op: Operation = {
     id: encodeOperationId(account.id, transactionHash, opType),
     hash: transactionHash,
@@ -100,9 +107,7 @@ const buildOptimisticOperation = (
     recipients: transaction.getOutputs().map((o) => o.address.getBech32()),
     accountId: account.id,
     date: new Date(),
-    extra: {
-      memo,
-    },
+    extra: extra,
   };
 
   const tokenAccount = t.subAccountId

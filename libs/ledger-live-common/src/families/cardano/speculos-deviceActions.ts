@@ -40,6 +40,21 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
         expectedValue(account.unit, status.amount),
     },
     {
+      title: "Asset fingerprint",
+      button: "LRlr",
+    },
+    {
+      title: "Token amount",
+      button: "LRlr",
+    },
+    {
+      title: "Confirm",
+    },
+    {
+      title: "output?",
+      button: "Rr",
+    },
+    {
       title: "Transaction fee",
       button: "LRlr",
       ignoreAssertionFailure: true,

@@ -62,6 +62,8 @@ export default function SelectDevice({
   const handleOnSelect = useCallback(
     deviceInfo => {
       const { modelId, wired } = deviceInfo;
+
+      dispatch(setLastConnectedDevice(deviceInfo));  
       if (wired) {
         track("Device selection", {
           modelId,
@@ -69,7 +71,6 @@ export default function SelectDevice({
         });
         // Nb consider a device selection enough to show the fw update banner in portfolio
         dispatch(setHasConnectedDevice(true));
-        dispatch(setLastConnectedDevice(deviceInfo));
         onSelect(deviceInfo);
         dispatch(setReadOnlyMode(false));
       } else {

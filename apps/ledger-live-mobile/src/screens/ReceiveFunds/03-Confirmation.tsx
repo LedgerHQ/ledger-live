@@ -32,6 +32,7 @@ import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import { usePreviousRouteName } from "../../helpers/routeHooks";
 import PreventNativeBack from "../../components/PreventNativeBack";
+import byFamily from "../../generated/Confirmation";
 
 type Props = {
   account?: (TokenAccount | Account),
@@ -154,6 +155,11 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   }, [routerRoute.name])
 
   if (!account || !currency || !mainAccount) return null;
+
+    // check for coin specific UI
+  const CustomConfirmation = byFamily[currency.family];
+  if (CustomConfirmation)
+    return <CustomConfirmation {...{ navigation, route }} />;
 
   return (
     <Flex flex={1} mb={9}>

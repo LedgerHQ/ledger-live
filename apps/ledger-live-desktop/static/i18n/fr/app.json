@@ -237,7 +237,7 @@
       "details" : {
         "label" : {
           "provider" : "Prestataire",
-          "rate" : "Prix",
+          "rate" : "Taux",
           "fees" : "Frais de réseau",
           "target" : "Compte bénéficiaire"
         },
@@ -265,7 +265,7 @@
       "providers" : {
         "kyc" : {
           "required" : "Vous devez passer la vérification d’identité.",
-          "complete" : "Vérification",
+          "complete" : "Vérifier",
           "update" : "Actualiser",
           "rejected" : "Vérification d’identité rejetée, merci de recommencer.",
           "rejectedContactProviderSupport" : "Vérification rejetée, contactez l’assistance de {{providerName}}",
@@ -274,19 +274,19 @@
             "pending" : "En attente",
             "approved" : "Approuvé",
             "closed" : "Rejeté",
-            "upgradeRequired" : "Vérification d’identité incomplète"
+            "upgradeRequired" : "Incomplet"
           }
         },
         "login" : {
           "required" : "Connectez-vous pour utiliser ce prestataire.",
-          "complete" : "Se connecter"
+          "complete" : "Me connecter"
         },
         "mfa" : {
           "required" : "Configurez une authentification multifactorielle pour utiliser ce prestataire.",
           "complete" : "Configurer une MFA"
         },
         "withdrawalsBlockedError" : {
-          "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour plus d’informations, contactez leur service d’assistance."
+          "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour en savoir plus, contactez leur service d’assistance."
         }
       }
     },
@@ -1348,6 +1348,14 @@
       "link" : "Fonctionnement des ASA",
       "seeTokens" : "Afficher les ASA ({{tokenCount}})",
       "hideTokens" : "Masquer les ASA ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "Actifs",
+      "cta" : "Ajouter un actif",
+      "placeholder" : "Vous pouvez ajouter des actifs à votre compte {{currencyName}}.",
+      "link" : "En savoir plus sur les actifs Stellar",
+      "seeTokens" : "Afficher les actifs ({{tokenCount}})",
+      "hideTokens" : "Masquer les actifs ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1996,6 +2004,13 @@
       }
     }
   },
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Le solde total ne comprend pas les récompenses de staking"
+      }
+    }
+  },
   "tron" : {
     "voting" : {
       "emptyState" : {
@@ -2570,6 +2585,31 @@
           },
           "pending" : {
             "title" : "Diffusion de la transaction..."
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    }
+  },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "Ajouter un actif",
+      "steps" : {
+        "assets" : {
+          "title" : "Actif",
+          "info" : "L’ajout d’un actif nécessite l’émission d’une transaction accompagnée de frais de transaction minimaux. Elle apparaîtra dans votre historique des transactions.",
+          "selectLabel" : "Choisir un actif",
+          "disabledTooltip" : "Cet actif est déjà dans votre compte Stellar."
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "Actif {{token}} bien ajouté",
+            "text" : "Vous pouvez maintenant recevoir et envoyer des <0>{{token}}</0> sur votre compte Stellar.",
+            "cta" : "Voir les détails"
           },
           "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
         }
@@ -3166,7 +3206,7 @@
         "title" : "Bienvenue sur Ledger",
         "description" : "Gérez vos cryptos en toute sécurité depuis votre ordinateur.",
         "cta" : "Commencer",
-        "noDevice" : "Pas encore de wallet Ledger ? <0>Achetez un Ledger Nano X</0>.",
+        "noDevice" : "Pas encore d’appareil ? <0>Achetez un Ledger Nano X</0>.",
         "languageWarning" : {
           "title" : "Commencez en {{language}}.",
           "desc" : "Nous ajoutons des langues supplémentaires afin de faciliter vos premiers pas avec Ledger. L’expérience Ledger sera bientôt entièrement disponible dans plusieurs langues.",
@@ -3452,7 +3492,7 @@
         },
         "validateTransactions" : {
           "title" : "Validez vos transactions",
-          "description" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de vos cryptos avec votre Nano."
+          "description" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction en cryptos avec votre Nano."
         },
         "setUpNanoWallet" : {
           "title" : "Configurez votre Nano",
@@ -3740,7 +3780,20 @@
         "MEMO_HASH" : "Hash du mémo",
         "MEMO_RETURN" : "Retour du mémo"
       },
-      "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire."
+      "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire.",
+      "fee" : "Frais",
+      "feeInfoText" : "Des frais de transaction minimaux de 0,00001 XLM sont nécessaires pour effectuer une transaction sur Stellar.",
+      "suggested" : "Suggérés",
+      "recommendedFee" : "Frais recommandés",
+      "recommenndedFeeInfo" : "Vous pouvez émettre cette transaction avec des frais inférieurs à ceux recommandés, mais elle ne sera peut être pas traitée.",
+      "networkCongestion" : "Activité sur le réseau",
+      "networkCongestionLevel" : {
+        "LOW" : "Basse",
+        "MEDIUM" : "Moyenne",
+        "HIGH" : "Élevée"
+      },
+      "assetCode" : "Code de l’actif",
+      "assetIssuer" : "Émetteur de l’actif"
     },
     "cosmos" : {
       "memo" : "Mémo",
@@ -4293,14 +4346,8 @@
     "FeeTooHigh" : {
       "title" : "Les frais de réseau représentent plus de 10% du montant"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Format du mémo incorrect"
-    },
     "SourceHasMultiSign" : {
       "title" : "Désactivez la multisignature pour envoyer des {{currencyName}}."
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Un mémo peut être requis lors de l’envoi à ce bénéficiaire."
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "Le montant doit être d’au moins {{minAmountFromFormatted}}"
@@ -4368,6 +4415,47 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "Nombre de tokens disponibles insuffisant"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "Montant minimal pouvant être envoyé : {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Format du mémo incorrect"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Un mémo peut être requis lors de l’envoi à ce bénéficiaire."
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Ce bénéficiaire n’a pas encore de trustline avec {{assetCode}}"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Sélectionnez un actif Stellar avant d’ajouter une trustline"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "L’actif Stellar sélectionné n’a pas été trouvé"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Solde insuffisant",
+      "description" : "Veuillez vérifier que vous avez assez de fonds sur votre compte pour couvrir les frais de transaction."
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Frais définis inférieurs au montant recommandé"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Les frais de transaction minimaux sont de 0,00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Solde insuffisant",
+      "description" : "Veuillez vérifier que vous avez assez de fonds sur votre compte pour ajouter cette nouvelle trustline."
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Ce compte Stellar n’existe pas"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
     }
   },
   "cryptoOrg" : {
@@ -4394,6 +4482,20 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
+    },
+    "send" : {
+      "memo" : {
+        "label" : "Mémo (facultatif)",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "Choisir un actif"
+    },
+    "selectAccount" : {
+      "title" : "Choisir un compte"
     }
   }
 }

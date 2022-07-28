@@ -104,7 +104,7 @@ export type SettingsState = {
   marketCounterCurrency: ?string,
   marketFilterByStarredAccounts: boolean,
   sensitiveAnalytics: boolean,
-  firstConnectionHasDevice: boolean,
+  firstConnectionHasDevice: boolean | null,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -160,7 +160,7 @@ export const INITIAL_STATE: SettingsState = {
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
-  firstConnectionHasDevice: false,
+  firstConnectionHasDevice: null,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;

@@ -30,10 +30,13 @@ const estimateMaxSpendable = async ({
     return account.balance;
   }
 
+  const dummyRecipient =
+    "addr_test1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq0uk53y";
   const a = getMainAccount(account, parentAccount);
-  const t = {
+  const t: Transaction = {
     ...createTransaction(),
     ...transaction,
+    recipient: dummyRecipient,
     // amount field will not be used to build a transaction when useAllAmount is true
     amount: new BigNumber(0),
     useAllAmount: true,
