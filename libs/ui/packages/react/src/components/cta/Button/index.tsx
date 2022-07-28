@@ -288,16 +288,16 @@ export const buttonSizeStyle: {
   };
 } = {
   small: {
-    padding: "0 20px",
-    height: "40px",
+    padding: "0 1.8em",
+    height: "36px",
   },
   medium: {
-    padding: "0 24px",
-    height: "48px",
+    padding: "0 2em",
+    height: "44px",
   },
   large: {
-    padding: "0 28px",
-    height: "56px",
+    padding: "0 2.2em",
+    height: "52px",
   },
 };
 
