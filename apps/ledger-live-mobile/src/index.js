@@ -46,7 +46,7 @@ import {
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 
 import logger from "./logger";
-import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
+import { saveAccounts, saveBle, saveSettings, saveCountervalues, savePostOnboardingState } from "./db";
 import {
   exportSelector as settingsExportSelector,
   hasCompletedOnboardingSelector,
@@ -102,6 +102,7 @@ import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
+import { postOnboardingSelector } from "./reducers/postOnboarding";
 
 const themes = {
   light: lightTheme,
@@ -157,6 +158,11 @@ function App({ importDataString }: AppProps) {
     return null;
   }, []);
 
+  const getPostOnboardingStateChanged = useCallback(
+    (a, b) => a.postOnboarding !== b.postOnboarding,
+    [],
+  );
+
   const rawState = useCountervaluesExport();
   const trackingPairs = useTrackingPairs();
   const pairIds = useMemo(() => trackingPairs.map(p => pairId(p)), [
@@ -192,6 +198,13 @@ function App({ importDataString }: AppProps) {
     throttle: 500,
     getChangesStats: (a, b) => a.ble !== b.ble,
     lense: bleSelector,
+  });
+
+  useDBSaveEffect({
+    save: savePostOnboardingState,
+    throttle: 500,
+    getChangesStats: getPostOnboardingStateChanged,
+    lense: postOnboardingSelector,
   });
 
   return (

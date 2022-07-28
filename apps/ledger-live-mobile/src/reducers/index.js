@@ -6,11 +6,13 @@ import settings from "./settings";
 import appstate from "./appstate";
 import ble from "./ble";
 import ratings from "./ratings";
+import postOnboarding from "./postOnboarding";
 import type { AccountsState } from "./accounts";
 import type { SettingsState } from "./settings";
 import type { AppState } from "./appstate";
 import type { BleState } from "./ble";
 import type { RatingsState } from "./ratings";
+import type { POState as PostOnboardingState } from "./postOnboarding";
 
 export type State = {
   accounts: AccountsState,
@@ -18,6 +20,7 @@ export type State = {
   appstate: AppState,
   ble: BleState,
   ratings: RatingsState,
+  postOnboarding: PostOnboardingState,
 };
 
 // $FlowFixMe
@@ -27,6 +30,7 @@ const appReducer = combineReducers({
   appstate,
   ble,
   ratings,
+  postOnboarding,
 });
 
 const rootReducer = (state: State, action: *) => {

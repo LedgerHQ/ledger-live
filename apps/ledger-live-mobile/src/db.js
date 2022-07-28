@@ -236,3 +236,11 @@ async function migrateAccountsIfNecessary(): Promise<void> {
     log("db", "done migrateAccountsIfNecessary");
   }
 }
+
+export async function getPostOnboardingState(): Promise<*> {
+  return store.get("postOnboarding");
+}
+
+export async function savePostOnboardingState(obj: *): Promise<void> {
+  await store.save("postOnboarding", obj);
+}

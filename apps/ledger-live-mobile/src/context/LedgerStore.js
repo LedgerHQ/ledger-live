@@ -3,12 +3,19 @@ import React, { Component } from "react";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, compose } from "redux";
-import { getAccounts, getCountervalues, getSettings, getBle } from "../db";
+import {
+  getAccounts,
+  getCountervalues,
+  getSettings,
+  getBle,
+  getPostOnboardingState,
+} from "../db";
 import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
 import { INITIAL_STATE, supportedCountervalues } from "../reducers/settings";
+import { importPostOnboardingState } from "../actions/postOnboarding";
 
 // $FlowFixMe
 export const store = createStore(
@@ -65,6 +72,9 @@ export default class LedgerStoreProvider extends Component<
 
     const accountsData = await getAccounts();
     store.dispatch(importAccounts(accountsData));
+
+    const postOnboardingState = await getPostOnboardingState();
+    store.dispatch(importPostOnboardingState(postOnboardingState));
 
     const initialCountervalues = await getCountervalues();
 

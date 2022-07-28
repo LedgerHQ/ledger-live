@@ -12,7 +12,7 @@ type Props = {
   children?: ReactNode;
 };
 
-const getFeature = (key: FeatureId) => {
+export const getFeature = (key: FeatureId) => {
   try {
     const value = remoteConfig().getValue(formatFeatureId(key));
     const feature = JSON.parse(value.asString());

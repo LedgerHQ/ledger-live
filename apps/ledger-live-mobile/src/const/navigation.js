@@ -375,6 +375,8 @@ export const ScreenName = {
 
   // hedera
   HederaEditMemo: "HederaEditMemo",
+
+  PostOnboardingHub: "PostOnboardingHub",
 };
 
 export const NavigatorName = {

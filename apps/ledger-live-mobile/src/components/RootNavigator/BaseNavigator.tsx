@@ -80,6 +80,7 @@ import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
 import Learn from "../../screens/Learn";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
+import PostOnboarding from "../../screens/PostOnboarding";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -594,6 +595,15 @@ export default function BaseNavigator() {
           />
         );
       })}
+      <Stack.Screen
+        name={ScreenName.PostOnboardingHub}
+        component={PostOnboarding}
+        options={{
+          headerLeft: () => null,
+          title: "",
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }
