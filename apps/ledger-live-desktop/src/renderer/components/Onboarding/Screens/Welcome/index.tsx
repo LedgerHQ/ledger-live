@@ -17,8 +17,7 @@ import validateTransactions from "./assets/validateTransactions.png";
 
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 
-import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-import { languageSelector } from "~/renderer/reducers/settings";
+import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
 
 const stepLogos = [accessCrypto, ownPrivateKey, stayOffline, validateTransactions, setupNano];
 registerAssets(stepLogos);
