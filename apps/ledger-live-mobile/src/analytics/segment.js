@@ -78,8 +78,8 @@ const extraProperties = store => {
     devicesCount: devices.length,
     firstConnectionHasDevice,
     // $FlowFixMe
+    ...(satisfaction ? { satisfaction } : {}),
     ...deviceInfo,
-    ...(satisfaction && { satisfaction }),
   };
 };
 

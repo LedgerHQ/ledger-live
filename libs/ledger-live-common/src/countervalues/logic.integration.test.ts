@@ -1,5 +1,13 @@
+import "../__tests__/test-helpers/setup";
 import { initialState, loadCountervalues, calculate } from "./logic";
-import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "../currencies";
+import {
+  getFiatCurrencyByTicker,
+  getCryptoCurrencyById,
+  findCurrencyByTicker,
+} from "../currencies";
+import { getBTCValues } from "../countervalues/mock";
+import { Currency } from "@ledgerhq/cryptoassets";
+
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const usd = getFiatCurrencyByTicker("USD");
 const now = Date.now();
@@ -17,6 +25,7 @@ describe("API sanity", () => {
         },
       ],
       autofillGaps: false,
+      disableAutoRecoverErrors: true,
     });
 
     for (let i = 0; i < 7; i++) {
@@ -40,6 +49,7 @@ describe("API sanity", () => {
         },
       ],
       autofillGaps: true,
+      disableAutoRecoverErrors: true,
     });
     const currentValue = calculate(state, {
       disableRounding: true,
@@ -58,5 +68,65 @@ describe("API sanity", () => {
       });
       expect(value).not.toEqual(currentValue);
     }
+  });
+});
+
+describe("extreme cases", () => {
+  test("all tickers against USD", async () => {
+    const currencies = Object.keys(getBTCValues())
+      .filter((t) => t !== "USD")
+      .map(findCurrencyByTicker)
+      .filter(Boolean) as Currency[];
+    const state = await loadCountervalues(initialState, {
+      trackingPairs: currencies.map((from) => ({
+        from,
+        to: usd,
+        startDate: new Date(),
+      })),
+      autofillGaps: true,
+      disableAutoRecoverErrors: true,
+    });
+
+    const currenciesWithCVs = currencies
+      .map((from) =>
+        calculate(state, {
+          date: new Date(),
+          from,
+          to: usd,
+          value: 1000000,
+        })
+      )
+      .filter((v) => v && v > 0);
+
+    expect(currenciesWithCVs.length).toBeGreaterThan(0);
+  });
+
+  test("all tickers against BTC", async () => {
+    const currencies = Object.keys(getBTCValues())
+      .filter((t) => t !== "BTC")
+      .map(findCurrencyByTicker)
+      .filter(Boolean) as Currency[];
+    const state = await loadCountervalues(initialState, {
+      trackingPairs: currencies.map((from) => ({
+        from,
+        to: bitcoin,
+        startDate: new Date(),
+      })),
+      autofillGaps: true,
+      disableAutoRecoverErrors: true,
+    });
+
+    const currenciesWithCVs = currencies
+      .map((from) =>
+        calculate(state, {
+          date: new Date(),
+          from,
+          to: bitcoin,
+          value: 1000000,
+        })
+      )
+      .filter((v) => v && v > 0);
+
+    expect(currenciesWithCVs.length).toBeGreaterThan(0);
   });
 });

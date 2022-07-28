@@ -8,7 +8,6 @@ import Config from "react-native-config";
 import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { accountsSelector } from "../../reducers/accounts";
-import { languageSelector } from "../../reducers/settings";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
 import { track, TrackScreen } from "../../analytics";
@@ -24,7 +23,6 @@ export default function Settings({ navigation }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
   const { handleSettingsRateApp } = useRatings();
-  const currAppLanguage = useSelector(languageSelector);
 
   const [debugVisible, setDebugVisible] = useState(
     Config.FORCE_DEBUG_VISIBLE || false,
@@ -108,16 +106,14 @@ export default function Settings({ navigation }: Props) {
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
       />
-      {currAppLanguage === "en" ? (
-        <FeatureToggle feature="ratings">
-          <SettingsCard
-            title={t("settings.about.liveReview.title")}
-            desc={t("settings.about.liveReview.desc")}
-            Icon={Icons.StarMedium}
-            onClick={handleSettingsRateApp}
-          />
-        </FeatureToggle>
-      ) : null}
+      <FeatureToggle feature="ratings">
+        <SettingsCard
+          title={t("settings.about.liveReview.title")}
+          desc={t("settings.about.liveReview.desc")}
+          Icon={Icons.StarMedium}
+          onClick={handleSettingsRateApp}
+        />
+      </FeatureToggle>
       <SettingsCard
         title={t("settings.developer.title")}
         desc={t("settings.developer.desc")}

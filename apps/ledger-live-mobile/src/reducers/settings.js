@@ -104,7 +104,7 @@ export type SettingsState = {
   marketCounterCurrency: ?string,
   marketFilterByStarredAccounts: boolean,
   sensitiveAnalytics: boolean,
-  firstConnectionHasDevice: boolean,
+  firstConnectionHasDevice: boolean | null,
   notifications: {
     allowed: boolean,
     transactions: boolean,

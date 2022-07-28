@@ -7,6 +7,8 @@ import bep20tokens from "../data/bep20";
 import polygonTokens from "../data/polygon-erc20";
 import asatokens from "../data/asa";
 import esdttokens from "../data/esdt";
+import cardanoNativeTokens from "../data/cardanoNative";
+import stellarTokens from "../data/stellar";
 //import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -24,6 +26,8 @@ addTokens(trc20tokens.map(convertTRONTokens("trc20")));
 addTokens(bep20tokens.map(convertBEP20));
 addTokens(asatokens.map(convertAlgorandASATokens));
 addTokens(esdttokens.map(convertElrondESDTTokens));
+addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
+addTokens(stellarTokens.map(convertStellarTokens));
 //addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
   withDelisted: boolean;
@@ -367,6 +371,64 @@ function convertSplTokens([
         name,
         code: symbol,
         magnitude: decimals,
+      },
+    ],
+  };
+}
+
+function convertCardanoNativeTokens([
+  parentCurrencyId,
+  policyId,
+  assetName,
+  name,
+  ticker,
+  decimals,
+  delisted,
+]): TokenCurrency {
+  const assetId = policyId + assetName;
+  return {
+    type: "TokenCurrency",
+    id: `${parentCurrencyId}/native/${assetId}`,
+    // Tracking and accounting of native tokens is natively supported by cardano ledger.
+    // As there's no contract for native tokens, using unique assetId in place of contractAddress
+    contractAddress: assetId,
+    parentCurrency: getCryptoCurrencyById(parentCurrencyId),
+    tokenType: "native",
+    name,
+    ticker,
+    delisted,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude: decimals,
+      },
+    ],
+  };
+}
+
+function convertStellarTokens([
+  assetCode,
+  assetIssuer,
+  assetType,
+  name,
+  precision,
+  enableCountervalues,
+]): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id: `stellar/asset/${assetCode}:${assetIssuer}`,
+    contractAddress: assetIssuer,
+    parentCurrency: getCryptoCurrencyById("stellar"),
+    tokenType: assetType,
+    name,
+    ticker: assetCode,
+    disableCountervalue: !enableCountervalues,
+    units: [
+      {
+        name,
+        code: assetCode,
+        magnitude: precision,
       },
     ],
   };
