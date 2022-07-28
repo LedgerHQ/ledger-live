@@ -43,7 +43,7 @@ type Props = {
 };
 
 export function Operations({ navigation, route }: Props) {
-  const { accountsIds } = route.params;
+  const accountsIds = route?.params?.accountsIds;
   const [opCount, setOpCount] = useState(50);
 
   function onEndReached() {
@@ -52,7 +52,10 @@ export function Operations({ navigation, route }: Props) {
 
   const accountsFromState = useSelector(accountsSelector);
   const accountsFiltered = useMemo(
-    () => accountsFromState.filter(account => accountsIds.includes(account.id)),
+    () =>
+      accountsIds
+        ? accountsFromState.filter(account => accountsIds.includes(account.id))
+        : accountsFromState,
     [accountsFromState, accountsIds],
   );
   const allAccounts: AccountLikeArray = useSelector(flattenAccountsSelector);
