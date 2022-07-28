@@ -283,9 +283,9 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   if (fullySuccessfulSpecs.length) {
     const msg = `> ✅ ${
       fullySuccessfulSpecs.length
-    } specs are successful: *${fullySuccessfulSpecs
+    } specs are successful: _${fullySuccessfulSpecs
       .map((o) => o.spec.name)
-      .join(", ")}*\n`;
+      .join(", ")}_\n`;
     body += msg;
     slackBody += msg;
   }
@@ -293,9 +293,9 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   if (specsWithErrors.length) {
     const msg = `> ❌ ${
       specsWithErrors.length
-    } specs have problems: *${specsWithErrors
+    } specs have problems: _${specsWithErrors
       .map((o) => o.spec.name)
-      .join(", ")}*\n`;
+      .join(", ")}_\n`;
     body += msg;
     slackBody += msg;
   }
@@ -303,7 +303,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   if (withoutFunds.length) {
     const missingFundsWarn = `> ⚠️ ${
       withoutFunds.length
-    } specs may miss funds: *${withoutFunds.join(", ")}*\n`;
+    } specs may miss funds: _${withoutFunds.join(", ")}_\n`;
     body += missingFundsWarn;
     slackBody += missingFundsWarn;
   }
