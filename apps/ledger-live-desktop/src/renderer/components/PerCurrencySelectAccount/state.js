@@ -6,7 +6,7 @@ import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type AccountTuple = {
-  account: ?Account,
+  account: Account,
   subAccount: ?SubAccount,
 };
 

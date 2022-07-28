@@ -1,10 +1,14 @@
 /* @flow */
 
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
+import type { Node } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { accountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
@@ -13,12 +17,21 @@ import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
 import KeyboardView from "../../components/KeyboardView";
-import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
+import { formatSearchResultsTuples } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 import { NavigatorName, ScreenName } from "../../const";
 import Button from "../../components/Button";
 
-const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
+const SEARCH_KEYS = [
+  "account.name",
+  "account.unit.code",
+  "account.token.name",
+  "account.token.ticker",
+  "subAccount.name",
+  "subAccount.unit.code",
+  "subAccount.token.name",
+  "subAccount.token.ticker",
+];
 
 type Props = {
   navigation: any,
@@ -27,26 +40,77 @@ type Props = {
 
 type RouteParams = {
   currencies: string[],
-  currency: CryptoCurrency,
+  currency: CryptoCurrency | TokenCurrency,
   allowAddAccount?: boolean,
 
-  onSuccess: (account: Account) => void,
+  onSuccess: (account: AccountLike, parentAccount: Account) => void,
   onError: (error: Error) => void,
+};
+
+const keyExtractor = item => item.account.id;
+
+const Item = ({
+  item: result,
+  onSelect,
+}: {
+  item: SearchResult,
+  onSelect: (account: AccountLike, parentAccount: Account) => void,
+}) => {
+  const { account, parentAccount, match } = result;
+
+  const onPress = useCallback(() => onSelect(account, parentAccount), [
+    account,
+    onSelect,
+    parentAccount,
+  ]);
+
+  return (
+    <View>
+      <AccountCard
+        disabled={!match}
+        account={account}
+        style={styles.card}
+        onPress={onPress}
+      />
+    </View>
+  );
+};
+
+const List = ({
+  items,
+  renderItem,
+  renderFooter,
+}: {
+  items: AccountLike[],
+  renderItem: ({ item: AccountLike }) => Node,
+  renderFooter: () => Node,
+}) => {
+  const formatedList = useMemo(() => formatSearchResultsTuples(items), [items]);
+  return (
+    <>
+      <FlatList
+        data={formatedList}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+        ListFooterComponent={renderFooter}
+      />
+    </>
+  );
 };
 
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { currency, allowAddAccount, onSuccess, onError } = route.params;
 
-  const accounts: Account[] = useSelector(
+  const accounts: AccountLike[] = useSelector(
     accountsByCryptoCurrencyScreenSelector(currency),
   );
 
-  const keyExtractor = item => item.account.id;
-
   const onSelect = useCallback(
-    (account: Account) => {
-      onSuccess(account);
+    (account: AccountLike, parentAccount: Account) => {
+      onSuccess(account, parentAccount);
       const n = navigation.getParent() || navigation;
       n.pop();
     },
@@ -54,21 +118,7 @@ function SelectAccount({ navigation, route }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item: result }: { item: SearchResult }) => {
-      const { account } = result;
-
-      return (
-        <View>
-          <AccountCard
-            disabled={!result.match}
-            account={account}
-            style={styles.card}
-            // $FlowFixMe
-            onPress={() => onSelect(account)}
-          />
-        </View>
-      );
-    },
+    ({ item }) => <Item item={item} onSelect={onSelect} />,
     [onSelect],
   );
 
@@ -109,29 +159,27 @@ function SelectAccount({ navigation, route }: Props) {
   );
 
   const renderList = useCallback(
-    items => {
-      // $FlowFixMe
-      const formatedList = formatSearchResults(items, accounts);
-      return (
-        <>
-          <FlatList
-            data={formatedList}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            showsVerticalScrollIndicator={false}
-            keyboardDismissMode="on-drag"
-            ListFooterComponent={renderFooter}
-          />
-        </>
-      );
-    },
-    [accounts, renderFooter, renderItem],
+    items => (
+      <List items={items} renderItem={renderItem} renderFooter={renderFooter} />
+    ),
+    [renderFooter, renderItem],
+  );
+
+  const renderEmptySearch = useCallback(
+    () => (
+      <View style={styles.emptyResults}>
+        <LText style={styles.emptyText} color="fog">
+          <Trans i18nKey="transfer.receive.noAccount" />
+        </LText>
+      </View>
+    ),
+    [],
   );
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="RequestAccount" name="SelectAccount" />
-      <KeyboardView style={{ flex: 1 }}>
+      <KeyboardView>
         <View style={styles.searchContainer}>
           {accounts.length > 0 ? (
             <FilteredSearchBar
@@ -139,13 +187,7 @@ function SelectAccount({ navigation, route }: Props) {
               inputWrapperStyle={styles.card}
               list={accounts}
               renderList={renderList}
-              renderEmptySearch={() => (
-                <View style={styles.emptyResults}>
-                  <LText style={styles.emptyText} color="fog">
-                    <Trans i18nKey="transfer.receive.noAccount" />
-                  </LText>
-                </View>
-              )}
+              renderEmptySearch={renderEmptySearch}
             />
           ) : (
             renderFooter()

@@ -3,26 +3,36 @@ import {
   AmountRequired,
   NotEnoughBalance,
   FeeNotLoaded,
-  InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughSpendableBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   RecipientRequired,
+  InvalidAddress,
 } from "@ledgerhq/errors";
 import {
   StellarWrongMemoFormat,
-  SourceHasMultiSign,
   AccountAwaitingSendPendingOperations,
+  StellarAssetRequired,
+  StellarAssetNotAccepted,
+  StellarAssetNotFound,
+  StellarNotEnoughNativeBalance,
+  StellarFeeSmallerThanRecommended,
+  StellarFeeSmallerThanBase,
+  StellarNotEnoughNativeBalanceToAddTrustline,
+  StellarMuxedAccountNotExist,
+  StellarSourceHasMultiSign,
 } from "../../errors";
+import { findSubAccountById } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import {
   isAddressValid,
-  checkRecipientExist,
   isAccountMultiSign,
   isMemoValid,
+  getRecipientAccount,
 } from "./logic";
+import { BASE_RESERVE, MIN_BALANCE } from "./api";
 
 const getTransactionStatus = async (
   a: Account,
@@ -38,22 +48,13 @@ const getTransactionStatus = async (
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!t.useAllAmount;
 
+  const destinationNotExistMessage =
+    new NotEnoughBalanceBecauseDestinationNotCreated("", {
+      minimalAmount: `${MIN_BALANCE} XLM`,
+    });
+
   if (a.pendingOperations.length > 0) {
     throw new AccountAwaitingSendPendingOperations();
-  }
-
-  if (!t.recipient) {
-    errors.recipient = new RecipientRequired("");
-  } else if (a.freshAddress === t.recipient) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  } else if (!isAddressValid(t.recipient)) {
-    errors.recipient = new InvalidAddress("");
-  }
-
-  if (await isAccountMultiSign(a)) {
-    errors.recipient = new SourceHasMultiSign("", {
-      currencyName: a.currency.name,
-    });
   }
 
   if (!t.fees || !t.baseReserve) {
@@ -62,57 +63,148 @@ const getTransactionStatus = async (
 
   const estimatedFees = !t.fees ? new BigNumber(0) : t.fees;
   const baseReserve = !t.baseReserve ? new BigNumber(0) : t.baseReserve;
-  let amount = !useAllAmount
-    ? t.amount
-    : a.balance.minus(baseReserve).minus(estimatedFees);
-  let totalSpent = !useAllAmount
-    ? amount.plus(estimatedFees)
-    : a.balance.minus(baseReserve);
+  const isAssetPayment = t.subAccountId && t.assetCode && t.assetIssuer;
+  const nativeBalance = a.balance;
+  const nativeAmountAvailable = a.spendableBalance.minus(estimatedFees);
 
-  if (totalSpent.gt(a.balance.minus(baseReserve))) {
-    errors.amount = new NotEnoughSpendableBalance(undefined, {
-      minimumAmount: formatCurrencyUnit(a.currency.units[0], baseReserve, {
-        disableRounding: true,
-        showCode: true,
-      }),
-    });
+  let amount = new BigNumber(0);
+  let maxAmount = new BigNumber(0);
+  let totalSpent = new BigNumber(0);
+
+  // Enough native balance to cover transaction (with required reserve + fees)
+  if (!errors.amount && nativeAmountAvailable.lt(0)) {
+    errors.amount = new StellarNotEnoughNativeBalance();
   }
 
-  if (
-    !errors.amount &&
-    amount.plus(estimatedFees).plus(baseReserve).gt(a.balance)
-  ) {
-    errors.amount = new NotEnoughBalance();
+  // Entered fee is smaller than base fee
+  if (estimatedFees.lt(t.networkInfo?.baseFee || 0)) {
+    errors.transaction = new StellarFeeSmallerThanBase();
+    // Entered fee is smaller than recommended
+  } else if (estimatedFees.lt(t.networkInfo?.fees || 0)) {
+    warnings.transaction = new StellarFeeSmallerThanRecommended();
   }
 
-  if (
-    !errors.recipient &&
-    !errors.amount &&
-    (amount.lt(0) || totalSpent.gt(a.balance))
-  ) {
-    errors.amount = new NotEnoughBalance();
-    totalSpent = new BigNumber(0);
-    amount = new BigNumber(0);
-  }
+  // Operation specific checks
+  if (t.mode === "changeTrust") {
+    // Check asset provided
+    if (!t.assetCode || !t.assetIssuer) {
+      // This is unlikely
+      errors.transaction = new StellarAssetRequired("");
+    }
 
-  if (!errors.amount && amount.eq(0)) {
-    errors.amount = new AmountRequired();
-  }
+    // Has enough native balance to add new trustline
+    if (nativeAmountAvailable.minus(BASE_RESERVE).lt(0)) {
+      errors.amount = new StellarNotEnoughNativeBalanceToAddTrustline();
+    }
+  } else {
+    // Payment
+    // Check recipient address
+    if (!t.recipient) {
+      errors.recipient = new RecipientRequired("");
+    } else if (!isAddressValid(t.recipient)) {
+      errors.recipient = new InvalidAddress("");
+    } else if (a.freshAddress === t.recipient) {
+      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    }
 
-  // if amount < 1.0 you can't send to an empty address
-  if (
-    !errors.recipient &&
-    t.recipient &&
-    !errors.amount &&
-    !(await checkRecipientExist({
+    const recipientAccount = await getRecipientAccount({
       account: a,
       recipient: t.recipient,
-    })) &&
-    amount.lt(10000000)
-  ) {
-    errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-      minimalAmount: "1 XLM",
     });
+
+    // Check recipient account
+    if (!recipientAccount?.id && !errors.recipient && !warnings.recipient) {
+      if (recipientAccount?.isMuxedAccount) {
+        errors.recipient = new StellarMuxedAccountNotExist();
+      } else {
+        if (isAssetPayment) {
+          errors.recipient = destinationNotExistMessage;
+        } else {
+          warnings.recipient = destinationNotExistMessage;
+        }
+      }
+    }
+
+    // Asset payment
+    if (isAssetPayment) {
+      const asset = findSubAccountById(a, t.subAccountId || "") as TokenAccount;
+
+      if (asset === null) {
+        // This is unlikely
+        throw new StellarAssetNotFound();
+      }
+
+      // Check recipient account accepts asset
+      if (
+        recipientAccount?.id &&
+        !errors.recipient &&
+        !warnings.recipient &&
+        !recipientAccount.assetIds.includes(`${t.assetCode}:${t.assetIssuer}`)
+      ) {
+        errors.recipient = new StellarAssetNotAccepted("", {
+          assetCode: t.assetCode,
+        });
+      }
+
+      const assetBalance = asset?.balance || new BigNumber(0);
+
+      maxAmount = asset?.spendableBalance || assetBalance;
+      amount = useAllAmount ? maxAmount : t.amount;
+      totalSpent = amount;
+
+      if (!errors.amount && amount.gt(assetBalance)) {
+        errors.amount = new NotEnoughBalance();
+      }
+    } else {
+      // Native payment
+      maxAmount = nativeAmountAvailable;
+      amount = useAllAmount ? maxAmount : t.amount || 0;
+
+      if (amount.gt(maxAmount)) {
+        errors.amount = new NotEnoughBalance();
+      }
+
+      totalSpent = useAllAmount
+        ? nativeAmountAvailable
+        : t.amount.plus(estimatedFees);
+
+      // Need to send at least 1 XLM to create an account
+      if (
+        !errors.recipient &&
+        !recipientAccount?.id &&
+        !errors.amount &&
+        amount.lt(10000000)
+      ) {
+        errors.amount = destinationNotExistMessage;
+      }
+
+      if (totalSpent.gt(nativeBalance.minus(baseReserve))) {
+        errors.amount = new NotEnoughSpendableBalance(undefined, {
+          minimumAmount: formatCurrencyUnit(a.currency.units[0], baseReserve, {
+            disableRounding: true,
+            showCode: true,
+          }),
+        });
+      }
+
+      if (
+        !errors.recipient &&
+        !errors.amount &&
+        (amount.lt(0) || totalSpent.gt(nativeBalance))
+      ) {
+        errors.amount = new NotEnoughBalance();
+        totalSpent = new BigNumber(0);
+        amount = new BigNumber(0);
+      }
+
+      if (!errors.amount && amount.eq(0)) {
+        errors.amount = new AmountRequired();
+      }
+    }
+  }
+
+  if (await isAccountMultiSign(a)) {
+    errors.recipient = new StellarSourceHasMultiSign();
   }
 
   if (t.memoType && t.memoValue && !isMemoValid(t.memoType, t.memoValue)) {

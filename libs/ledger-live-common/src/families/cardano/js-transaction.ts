@@ -46,7 +46,7 @@ export const prepareTransaction = async (
   try {
     transaction = await buildTransaction(a, t);
   } catch (error) {
-    return { ...t, fees: new BigNumber(0), amount: new BigNumber(0) };
+    return { ...t, fees: new BigNumber(0), amount: t.amount };
   }
 
   const transactionFees = transaction.getFee();

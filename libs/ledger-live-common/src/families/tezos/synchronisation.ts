@@ -12,6 +12,7 @@ import { areAllOperationsLoaded, decodeAccountId } from "../../account";
 import type { Operation, Account } from "@ledgerhq/types-live";
 import api from "./api/tzkt";
 import type { APIOperation } from "./api/tzkt";
+import { getEnv } from "../../env";
 
 function reconciliatePublicKey(
   publicKey: string | undefined,
@@ -272,14 +273,13 @@ const txToOp =
     };
   };
 
-const fetchAllTransactions = async (
+export const fetchAllTransactions = async (
   address: string,
   lastId?: number
 ): Promise<APIOperation[]> => {
   let txs: APIOperation[] = [];
-  let maxIteration = 20; // safe limit
+  let maxIteration = getEnv("TEZOS_MAX_TX_QUERIES");
   do {
-    // FIXME not sure what is going on here
     const r = await api.getAccountOperations(address, { lastId, sort: 0 });
     if (r.length === 0) return txs;
     txs = txs.concat(r);

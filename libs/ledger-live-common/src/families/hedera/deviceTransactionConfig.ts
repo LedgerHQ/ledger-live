@@ -39,6 +39,14 @@ function getDeviceTransactionConfig({
     });
   }
 
+  if (transaction.memo) {
+    fields.push({
+      type: "text",
+      label: "Memo",
+      value: transaction.memo,
+    });
+  }
+
   return fields;
 }
 

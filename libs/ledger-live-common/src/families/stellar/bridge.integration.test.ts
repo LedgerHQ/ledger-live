@@ -111,11 +111,15 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
+                  baseFee: "100",
                   baseReserve: "1500000",
                 },
                 fees: "100",
                 memoType: null,
                 memoValue: null,
+                mode: "send",
+                assetCode: "",
+                assetIssuer: "",
               }),
               expectedStatus: {
                 errors: {
@@ -166,18 +170,22 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
+                  baseFee: "100",
                   baseReserve: "1500000",
                 },
                 fees: "100",
                 memoType: null,
                 memoValue: null,
+                mode: "send",
+                assetCode: "",
+                assetIssuer: "",
               }),
               expectedStatus: (account) => ({
                 errors: {},
                 warnings: {},
                 estimatedFees: new BigNumber("100"),
-                amount: account.balance.minus("1500000").minus("100"),
-                totalSpent: account.balance.minus("1500000"),
+                amount: account.spendableBalance.minus("100"),
+                totalSpent: account.spendableBalance.minus("100"),
               }),
             },
             {

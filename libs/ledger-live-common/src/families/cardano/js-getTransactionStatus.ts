@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import {
-  NotEnoughBalance,
   RecipientRequired,
   FeeNotLoaded,
   InvalidAddress,
@@ -15,7 +14,7 @@ import type {
 } from "./types";
 import { isValidAddress } from "./logic";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { CardanoMinAmountError } from "./errors";
+import { CardanoMinAmountError, CardanoNotEnoughFunds } from "./errors";
 import { AccountAwaitingSendPendingOperations } from "../../errors";
 import { getNetworkParameters } from "./networks";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
@@ -91,17 +90,18 @@ const getTransactionStatus = async (
 
   if (!amount.gt(0)) {
     errors.amount = useAllAmount
-      ? new NotEnoughBalance()
+      ? new CardanoNotEnoughFunds()
       : new AmountRequired();
   } else if (!t.subAccountId && amount.lt(minTransactionAmount)) {
     errors.amount = new CardanoMinAmountError("", {
       amount: minTransactionAmount.div(1e6).toString(),
     });
   } else if (
-    (tokenAccount && totalSpent.gt(tokenAccount.balance)) ||
-    totalSpent.gt(a.balance)
+    tokenAccount
+      ? totalSpent.gt(tokenAccount.balance)
+      : totalSpent.gt(a.balance)
   ) {
-    errors.amount = new NotEnoughBalance();
+    errors.amount = new CardanoNotEnoughFunds();
   } else {
     try {
       await buildTransaction(a, t);
@@ -110,7 +110,7 @@ const getTransactionStatus = async (
         e.message.toLowerCase() === "not enough ada" ||
         e.message.toLowerCase() === "not enough tokens"
       ) {
-        errors.amount = new NotEnoughBalance();
+        errors.amount = new CardanoNotEnoughFunds();
       }
       throw e;
     }

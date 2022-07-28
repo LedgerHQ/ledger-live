@@ -10,16 +10,27 @@ export type ExtraDeviceTransactionField =
   | {
       type: "stellar.network";
       label: string;
+    }
+  | {
+      type: "stellar.assetCode";
+      label: string;
+    }
+  | {
+      type: "stellar.assetIssuer";
+      label: string;
     };
 
 function getDeviceTransactionConfig({
   status: { amount, estimatedFees },
+  transaction,
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField | ExtraDeviceTransactionField> {
+  const { assetCode, assetIssuer } = transaction;
+
   const fields: Array<DeviceTransactionField | ExtraDeviceTransactionField> = [
     {
       type: "stellar.network",
@@ -31,6 +42,17 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "amount",
       label: "Amount",
+    });
+  }
+
+  if (assetCode && assetIssuer) {
+    fields.push({
+      type: "stellar.assetCode",
+      label: "Asset",
+    });
+    fields.push({
+      type: "stellar.assetIssuer",
+      label: "Asset issuer",
     });
   }
 

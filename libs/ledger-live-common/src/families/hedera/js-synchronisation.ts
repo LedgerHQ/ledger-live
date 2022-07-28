@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import { getDerivationScheme, runDerivationScheme } from "../../derivation";
+import { BigNumber } from "bignumber.js";
 import type {
   GetAccountShape,
   IterateResultBuilder,
@@ -32,14 +33,15 @@ const getAccountShape: GetAccountShape = async (
 
   // grab latest operation's consensus timestamp for incremental sync
   const oldOperations = initialAccount?.operations ?? [];
-  const latestOperationTimestamp =
-    oldOperations[0]?.extra?.consensus_timestamp ?? 0;
+  const latestOperationTimestamp = oldOperations[0]
+    ? Math.floor(oldOperations[0].date.getTime() / 1000)
+    : 0;
 
   // merge new operations w/ previously synced ones
   const newOperations = await getOperationsForAccount(
     liveAccountId,
     address,
-    latestOperationTimestamp
+    new BigNumber(latestOperationTimestamp).toString()
   );
   const operations = mergeOps(oldOperations, newOperations);
 

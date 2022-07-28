@@ -6,6 +6,7 @@ export type FeatureId =
   | "ratings"
   | "counterValue"
   | "buyDeviceFromLive"
+  | "ptxSmartRouting"
   | string;
 
 /**  We use objects instead of direct booleans for potential future improvements

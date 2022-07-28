@@ -201,6 +201,14 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         (s.mutations && s.mutations.every((r) => !r.mutation)))
   );
 
+  const specsWithoutOperations = results.filter(
+    (s) =>
+      !s.fatalError &&
+      !specsWithoutFunds.includes(s) &&
+      s.mutations &&
+      s.mutations.every((r) => !r.operation)
+  );
+
   const withoutFunds = specsWithoutFunds
     .filter(
       (s) =>
@@ -212,6 +220,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         )
     )
     .map((s) => s.spec.name);
+
   const { GITHUB_RUN_ID, GITHUB_WORKFLOW } = process.env;
 
   let body = "";
@@ -336,11 +345,19 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   if (withoutFunds.length) {
     const missingFundsWarn = `> ⚠️ ${
       withoutFunds.length
-    } specs don't have enough funds! (${withoutFunds.join(
-      ", "
-    )}) _(aren't covered by testnet neither)_`;
+    } specs may miss funds: **${withoutFunds.join(", ")}**\n`;
     body += missingFundsWarn;
     slackBody += missingFundsWarn;
+  }
+
+  if (specsWithoutOperations.length) {
+    const warn = `> ⚠️ ${
+      specsWithoutOperations.length
+    } specs may have issues: **${specsWithoutOperations
+      .map((o) => o.spec.name)
+      .join(", ")}**\n`;
+    body += warn;
+    slackBody += warn;
   }
 
   body += "<details>\n";

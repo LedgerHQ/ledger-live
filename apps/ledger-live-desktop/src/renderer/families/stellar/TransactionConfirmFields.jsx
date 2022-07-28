@@ -1,8 +1,8 @@
 // @flow
-
 import invariant from "invariant";
 import React from "react";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import styled from "styled-components";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
 import type { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
@@ -20,6 +20,13 @@ const addressStyle = {
   textAlign: "right",
   maxWidth: "70%",
 };
+
+const WrappedAssetIssuer = styled(Text)`
+  word-break: break-all;
+  text-align: right;
+  flex: 1;
+  padding-left: 20px;
+`;
 
 const StellarMemoField = ({ transaction }: { transaction: Transaction }) => {
   invariant(transaction.family === "stellar", "stellar transaction");
@@ -42,9 +49,35 @@ const StellarNetworkField = ({ field }: FieldComponentProps) => (
   </TransactionConfirmField>
 );
 
+const StellarAssetCodeField = ({ transaction, field }: FieldComponentProps) => {
+  invariant(transaction.family === "stellar", "stellar transaction");
+
+  return (
+    <TransactionConfirmField label={field.label}>
+      <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+        {transaction.assetCode}
+      </Text>
+    </TransactionConfirmField>
+  );
+};
+
+const StellarAssetIssuerField = ({ transaction, field }: FieldComponentProps) => {
+  invariant(transaction.family === "stellar", "stellar transaction");
+
+  return (
+    <TransactionConfirmField label={field.label}>
+      <WrappedAssetIssuer ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+        {transaction.assetIssuer}
+      </WrappedAssetIssuer>
+    </TransactionConfirmField>
+  );
+};
+
 const fieldComponents = {
   "stellar.memo": StellarMemoField,
   "stellar.network": StellarNetworkField,
+  "stellar.assetCode": StellarAssetCodeField,
+  "stellar.assetIssuer": StellarAssetIssuerField,
 };
 
 export default {

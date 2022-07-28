@@ -1,14 +1,45 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import byFamily from "../generated/platformAdapter";
 import type { Transaction } from "../generated/types";
-import type {
+import { isTokenAccount, isSubAccount } from "../account";
+import {
   PlatformAccount,
   PlatformCurrency,
   PlatformTransaction,
+  PlatformCurrencyType,
+  PlatformTokenStandard,
+  PlatformSupportedCurrency,
 } from "./types";
 
-export function accountToPlatformAccount(account: Account): PlatformAccount {
+export function accountToPlatformAccount(
+  account: AccountLike,
+  parentAccount?: Account
+): PlatformAccount {
+  if (isSubAccount(account)) {
+    if (!parentAccount) {
+      throw new Error("No 'parentAccount' account provided for token account");
+    }
+
+    return {
+      id: account.id,
+      balance: account.balance,
+      address: parentAccount.freshAddress,
+      blockHeight: parentAccount.blockHeight,
+      lastSyncDate: parentAccount.lastSyncDate,
+      ...(isTokenAccount(account)
+        ? {
+            name: `${parentAccount.name} (${account.token.ticker})`,
+            currency: account.token.id,
+            spendableBalance: account.spendableBalance,
+          }
+        : {
+            name: account.name,
+            currency: account.currency.id,
+            spendableBalance: parentAccount.spendableBalance,
+          }),
+    };
+  }
+
   return {
     id: account.id,
     name: account.name,
@@ -20,11 +51,34 @@ export function accountToPlatformAccount(account: Account): PlatformAccount {
     lastSyncDate: account.lastSyncDate,
   };
 }
+
 export function currencyToPlatformCurrency(
-  currency: CryptoCurrency
+  currency: PlatformSupportedCurrency
 ): PlatformCurrency {
+  if (currency.type === "TokenCurrency") {
+    if (currency.parentCurrency.family !== "ethereum") {
+      throw new Error("Only ERC20 tokens are supported");
+    }
+
+    return {
+      type: PlatformCurrencyType.TokenCurrency,
+      standard: PlatformTokenStandard.ERC20,
+      id: currency.id,
+      ticker: currency.ticker,
+      contract: currency.contractAddress,
+      name: currency.name,
+      parent: currency.parentCurrency.id,
+      color: currency.parentCurrency.color,
+      units: currency.units.map((unit) => ({
+        name: unit.name,
+        code: unit.code,
+        magnitude: unit.magnitude,
+      })),
+    };
+  }
+
   return {
-    type: currency.type,
+    type: PlatformCurrencyType.CryptoCurrency,
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,

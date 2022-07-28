@@ -7,10 +7,7 @@ import type { WCPayloadTransaction } from "./index";
 import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
 import { emptyHistoryCache } from "../account";
 import { setEnv } from "../env";
-import { setPlatformVersion } from "../platform/version";
 import type { Account } from "@ledgerhq/types-live";
-
-setPlatformVersion("0.0.1");
 
 describe("walletconnect", () => {
   const account: Account = {

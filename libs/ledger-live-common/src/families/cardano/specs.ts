@@ -9,10 +9,15 @@ import invariant from "invariant";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
 import { parseCurrencyUnit } from "../../currencies";
+import { SubAccount } from "@ledgerhq/types-live";
 
 const currency = getCryptoCurrencyById("cardano");
 const minBalanceRequired = parseCurrencyUnit(currency.units[0], "2.2");
 const minBalanceRequiredForMaxSend = parseCurrencyUnit(currency.units[0], "1");
+const minSpendableRequiredForTokenTx = parseCurrencyUnit(
+  currency.units[0],
+  "3"
+);
 
 const cardano: AppSpec<Transaction> = {
   name: "cardano",
@@ -34,7 +39,12 @@ const cardano: AppSpec<Transaction> = {
 
         const updates = [
           { recipient },
-          { amount: new BigNumber(account.balance.dividedBy(2)).dp(0, 1) },
+          {
+            amount: new BigNumber(account.balance.dividedBy(2)).dp(
+              0,
+              BigNumber.ROUND_CEIL
+            ),
+          },
           { memo: "LedgerLiveBot" },
         ];
 
@@ -88,6 +98,48 @@ const cardano: AppSpec<Transaction> = {
         expect(operation.value).toEqual(
           accountBeforeTransaction.balance.minus(requiredAdaForTokens)
         );
+      },
+    },
+    {
+      name: "move ~10% token",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(
+          maxSpendable.gte(minSpendableRequiredForTokenTx),
+          "balance is too low"
+        );
+        const sibling = pickSiblings(siblings, 3);
+        const recipient = sibling.freshAddress;
+        const transaction = bridge.createTransaction(account);
+
+        const subAccount = account.subAccounts?.find((subAccount) =>
+          subAccount.balance.gt(1)
+        ) as SubAccount;
+        invariant(subAccount, "No token account with balance");
+
+        const updates = [
+          { subAccountId: subAccount.id },
+          { recipient },
+          {
+            amount: new BigNumber(subAccount.balance.dividedBy(10)).dp(
+              0,
+              BigNumber.ROUND_CEIL
+            ),
+          },
+        ];
+
+        return {
+          transaction,
+          updates,
+        };
+      },
+      test: ({ operation, transaction }): void => {
+        expect(operation.subOperations).toBeTruthy();
+        expect(operation.subOperations?.length).toEqual(1);
+
+        const subOperation =
+          operation.subOperations && operation.subOperations[0];
+        expect(subOperation?.value).toEqual(transaction.amount);
       },
     },
   ],

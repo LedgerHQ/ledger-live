@@ -47,6 +47,9 @@ const createTransaction = (): Transaction => ({
   memoValue: null,
   memoType: null,
   useAllAmount: false,
+  mode: "send",
+  assetCode: "",
+  assetIssuer: "",
 });
 
 const updateTransaction = (t, patch) => {

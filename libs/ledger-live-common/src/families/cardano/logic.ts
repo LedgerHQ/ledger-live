@@ -449,3 +449,13 @@ export function isHexString(value: string): boolean {
   const regExp = /^[0-9a-fA-F]+$/;
   return regExp.test(value);
 }
+
+export function decodeTokenName(assetName: string): string {
+  if (assetName.length > 0) {
+    const bytes = [...Buffer.from(assetName, "hex")];
+    if (bytes.filter((byte) => byte <= 32 || byte >= 127).length === 0) {
+      return String.fromCharCode(...bytes);
+    }
+  }
+  return assetName;
+}
