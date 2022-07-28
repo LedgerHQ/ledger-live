@@ -202,7 +202,7 @@ const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<Lan
     method: "GET",
     url: URL.format({
       // TODO use the production key
-      pathname: `https://appstore.api.aws.stg.ldg-tech.com/api/language-package`,
+      pathname: `${getEnv("MANAGER_API_BASE")}/language-package`,
       query: {
         livecommonversion,
       },

@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Trans } from "react-i18next";
 
 import { State, AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { App, DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { App, DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -20,8 +20,8 @@ import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
 import { Divider } from "@ledgerhq/native-ui";
 import DeviceLanguage from "./DeviceLanguage";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const illustrations = {
   nanoS: NanoS,
@@ -101,6 +101,8 @@ const DeviceCard = ({
         : false,
     [deviceInfo.seVersion, deviceModel.id],
   );
+
+  console.log({ isLocalizationSupported})
 
   return (
     <BorderCard>
