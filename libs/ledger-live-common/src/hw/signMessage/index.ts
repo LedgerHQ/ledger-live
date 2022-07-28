@@ -19,6 +19,13 @@ export const prepareMessageToSign = (
   { currency, freshAddressPath, derivationMode }: Account,
   message: string
 ): MessageData | null => {
+  let parsedMessage;
+  try {
+    parsedMessage = JSON.parse(message);
+  } catch (e) {
+    parsedMessage = message;
+  }
+
   if (!perFamily[currency.family]) {
     throw new Error("Crypto does not support signMessage");
   }
@@ -27,7 +34,7 @@ export const prepareMessageToSign = (
     currency: currency,
     path: freshAddressPath,
     derivationMode: derivationMode,
-    message: message,
+    message: parsedMessage,
     rawMessage: "0x" + Buffer.from(message).toString("hex"),
   };
 };
