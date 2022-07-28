@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.5.0-next.11
+
+### Minor Changes
+
+- [#731](https://github.com/LedgerHQ/ledger-live/pull/731) [`0e115ae5c`](https://github.com/LedgerHQ/ledger-live/commit/0e115ae5cd7ddcc728d9f435dc4084cedb53beed) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Update UI for manager app install/uninstall buttons
+
+### Patch Changes
+
+- Updated dependencies [[`0e115ae5c`](https://github.com/LedgerHQ/ledger-live/commit/0e115ae5cd7ddcc728d9f435dc4084cedb53beed)]:
+  - @ledgerhq/live-common@25.1.0-next.1
+
 ## 3.5.0-next.10
 
 ### Patch Changes
