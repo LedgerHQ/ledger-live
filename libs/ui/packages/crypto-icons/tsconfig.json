@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "esnext",
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "outDir": ".",
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "react",
+    "native"
+  ]
+}
