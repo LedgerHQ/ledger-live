@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 import { NativeModules } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import {
-  BackgroundEvent,
+  FwUpdateBackgroundEvent,
   nextBackgroundEventSelector,
 } from "../../reducers/appstate";
 import {
@@ -22,6 +23,7 @@ import FirmwareUpdatedStep from "./FirmwareUpdatedStep";
 import ConfirmPinStep from "./ConfirmPinStep";
 import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
+import PromptDeviceLanguageStep from "./PromptDeviceLanguageStep";
 import { track } from "../../analytics";
 import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
 import {
@@ -45,13 +47,21 @@ type FwUpdateStep =
   | "flashingMcu"
   | "confirmPin"
   | "confirmUpdate"
-  | "firmwareUpdated";
+  | "firmwareUpdated"
+  | "promptLanguageChange";
+// | "reinstallLanguage"; TODO: part of FAT-129
+
 type FwUpdateState = {
   step: FwUpdateStep;
   progress?: number;
   error?: Error;
   installing?: string | null;
+  updatedDeviceInfo?: DeviceInfo;
 };
+
+export type FwUpdateForegroundEvent =
+  | { type: "reset"; wired: boolean }
+  | { type: "languagePromptDismissed" };
 
 export default function FirmwareUpdate({
   device,
@@ -70,7 +80,7 @@ export default function FirmwareUpdate({
   const fwUpdateStateReducer = useCallback(
     (
       state: FwUpdateState,
-      event: BackgroundEvent | { type: "reset"; wired: boolean },
+      event: FwUpdateBackgroundEvent | FwUpdateForegroundEvent,
     ): FwUpdateState => {
       switch (event.type) {
         case "confirmPin":
@@ -97,6 +107,11 @@ export default function FirmwareUpdate({
             installing: event.installing,
           };
         case "firmwareUpdated":
+          return {
+            step: "promptLanguageChange",
+            updatedDeviceInfo: event.updatedDeviceInfo,
+          };
+        case "languagePromptDismissed":
           return { step: "firmwareUpdated" };
         case "error":
           return { step: "error", error: event.error };
@@ -125,7 +140,7 @@ export default function FirmwareUpdate({
     installing: undefined,
   });
 
-  const { step, progress, error, installing } = state;
+  const { step, progress, error, installing, updatedDeviceInfo } = state;
 
   const onReset = useCallback(() => {
     dispatchEvent({ type: "reset", wired: device.wired });
@@ -202,6 +217,14 @@ export default function FirmwareUpdate({
       )}
       {step === "flashingMcu" && (
         <FlashMcuStep progress={progress} installing={installing} />
+      )}
+      {step === "promptLanguageChange" && (
+        <PromptDeviceLanguageStep
+          dispatchEvent={dispatchEvent}
+          updatedDeviceInfo={updatedDeviceInfo}
+          oldDeviceInfo={deviceInfo}
+          device={device}
+        />
       )}
       {step === "firmwareUpdated" && (
         <FirmwareUpdatedStep onReinstallApps={onCloseAndReinstall} />

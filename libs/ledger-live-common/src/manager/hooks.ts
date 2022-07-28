@@ -7,15 +7,9 @@ import { getProviderId } from "./provider";
 import ManagerAPI from "../api/Manager";
 import { Language } from "../types/languages";
 
-async function hasOudatedApps({
-  deviceInfo,
-  apps,
-}: DeviceModelInfo): Promise<boolean> {
+async function hasOudatedApps({ deviceInfo, apps }: DeviceModelInfo): Promise<boolean> {
   const provider = getProviderId(deviceInfo);
-  const deviceVersion = await ManagerAPI.getDeviceVersion(
-    deviceInfo.targetId,
-    provider
-  );
+  const deviceVersion = await ManagerAPI.getDeviceVersion(deviceInfo.targetId, provider);
   const firmware = await ManagerAPI.getCurrentFirmware({
     deviceId: deviceVersion.id,
     version: deviceInfo.version,
@@ -32,9 +26,7 @@ async function hasOudatedApps({
   });
 }
 
-export function useManagerBlueDot(
-  dmi: DeviceModelInfo | null | undefined
-): boolean {
+export function useManagerBlueDot(dmi: DeviceModelInfo | null | undefined): boolean {
   const [display, setDisplay] = useState(!dmi);
   const forceProvider = useEnv("FORCE_PROVIDER");
   useEffect(() => {
@@ -50,10 +42,7 @@ export function useManagerBlueDot(
     }
 
     const { deviceInfo } = dmi;
-    Promise.all([
-      manager.getLatestFirmwareForDevice(deviceInfo),
-      hasOudatedApps(dmi),
-    ])
+    Promise.all([manager.getLatestFirmwareForDevice(deviceInfo), hasOudatedApps(dmi)])
       .then(([fw, outdatedApp]) => {
         if (cancelled) return;
 
@@ -73,14 +62,18 @@ export function useManagerBlueDot(
   return display;
 }
 
-export const useAvailableLanguagesForDevice = (deviceInfo?: DeviceInfo): Language[] => {
+export const useAvailableLanguagesForDevice = (deviceInfo?: DeviceInfo) => {
   const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (deviceInfo) {
-      manager.getAvailableLanguagesDevice(deviceInfo).then(setAvailableLanguages);
+      manager
+        .getAvailableLanguagesDevice(deviceInfo)
+        .then(setAvailableLanguages)
+        .finally(() => setLoaded(true));
     }
   }, [deviceInfo, setAvailableLanguages]);
 
-  return availableLanguages;
+  return { availableLanguages, loaded };
 };
