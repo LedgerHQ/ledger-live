@@ -917,7 +917,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/json-bignumber': ^1.1.0
-      '@ledgerhq/live-app-sdk': ^0.6.1
+      '@ledgerhq/live-app-sdk': ^0.7.0
       '@ledgerhq/logs': workspace:^
       '@polkadot/types': 8.5.1
       '@polkadot/types-known': 8.5.1
@@ -1006,6 +1006,7 @@ importers:
       leb128: ^0.0.5
       lodash: ^4.17.21
       lru-cache: 5.1.1
+      minimatch: ^5.1.0
       numeral: ^2.0.6
       object-hash: ^2.2.0
       performance-now: ^2.1.0
@@ -1078,7 +1079,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': link:../ledgerjs/packages/hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/json-bignumber': 1.1.0
-      '@ledgerhq/live-app-sdk': 0.6.1
+      '@ledgerhq/live-app-sdk': 0.7.0
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
       '@polkadot/types': 8.5.1
       '@polkadot/types-known': 8.5.1
@@ -1137,6 +1138,7 @@ importers:
       leb128: 0.0.5
       lodash: 4.17.21
       lru-cache: 5.1.1
+      minimatch: 5.1.0
       numeral: 2.0.6
       object-hash: 2.2.0
       performance-now: 2.1.0
@@ -9098,8 +9100,8 @@ packages:
       bignumber.js: 9.0.2
     dev: false
 
-  /@ledgerhq/live-app-sdk/0.6.1:
-    resolution: {integrity: sha512-pGSNsTIg/K3P5xrj9n50Lmb6/sILh/7XrZjMsJA5HDTOYfbhWuYNOXtmDgaSjEO5vkI2YrU2I49VoE2XbwpEwg==}
+  /@ledgerhq/live-app-sdk/0.7.0:
+    resolution: {integrity: sha512-gmIFEKnXHtNXbD3dAK9mkLkE2yFX6/M1HwGoTTd0VEOl5ZLgKiKGaaXVcDpjLwVBvhegfRmSlDlpjCV3OLw74g==}
     dependencies:
       bignumber.js: 9.0.2
       json-rpc-2.0: 1.1.0
@@ -35186,6 +35188,13 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
+
+  /minimatch/5.1.0:
+    resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: false
 
   /minimist-options/4.1.0:
     resolution: {integrity: sha512-Q4r8ghd80yhO/0j1O3B2BjweX3fiHg9cdOwjJd2J76Q135c+NDxGCqdYKQ1SKBuFfgWbAUzBfvYjPUEeNgqN1A==}

@@ -84,7 +84,7 @@ type Props = {
   config?: WebPlatformPlayerConfig;
 };
 
-export default function WebPlatformPlayer({ manifest, onClose, inputs, config }: Props) {
+export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, config }: Props) {
   const theme = useTheme("colors.palette");
 
   const targetRef: { current: null | WebviewTag } = useRef(null);

@@ -4,13 +4,14 @@ import { TFunction } from "react-i18next";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import {
   Account,
+  AccountLike,
   Operation,
   SignedOperation,
-  Transaction,
 } from "@ledgerhq/live-common/types/index";
 import {
   addPendingOperation,
   getMainAccount,
+  isAccount,
   isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -43,8 +44,23 @@ import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index
 type WebPlatformContext = {
   manifest: AppManifest;
   dispatch: Dispatch;
-  accounts: Array<Account>;
+  accounts: AccountLike[];
 };
+
+function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Account | null {
+  if (isAccount(account)) {
+    return null;
+  }
+
+  const parentAccount = fromAccounts.find(a => a.id === account.parentId);
+  if (!parentAccount) {
+    throw new Error("subaccount has no parent account");
+  }
+  if (!isAccount(parentAccount)) {
+    throw new Error("parentAccount is not of type Account");
+  }
+  return parentAccount;
+}
 
 export const receiveOnAccountLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
@@ -90,7 +106,7 @@ export type RequestAccountParams = {
 };
 export const requestAccountLogic = async (
   { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch">,
-  { currencies, allowAddAccount, includeTokens }: RequestAccountParams, // TODO-STP: Check allowAddAccount
+  { currencies, includeTokens }: RequestAccountParams,
 ) => {
   tracking.platformRequestAccountRequested(manifest);
   const { account, parentAccount } = await selectAccountAndCurrency(currencies, includeTokens);
@@ -115,9 +131,7 @@ export const signTransactionLogic = (
     return Promise.reject(new Error("Account required"));
   }
 
-  const parentAccount = isTokenAccount(account)
-    ? accounts.find(a => a.id === account.parentId)
-    : undefined;
+  const parentAccount = isTokenAccount(account) ? getParentAccount(account, accounts) : null;
 
   if (
     (isTokenAccount(account) ? parentAccount?.currency.family : account.currency.family) !==
@@ -159,7 +173,7 @@ export const broadcastTransactionLogic = async (
   pushToast: (data: ToastData) => void,
   t: TFunction,
 ) => {
-  const account: Account | undefined = accounts.find(account => account.id === accountId);
+  const account = accounts.find(account => account.id === accountId);
   if (!account) {
     tracking.platformBroadcastFail(manifest);
     return Promise.reject(new Error("Account required"));
@@ -170,12 +184,11 @@ export const broadcastTransactionLogic = async (
     return Promise.reject(new Error("Transaction required"));
   }
 
-  const parentAccount = isTokenAccount(account)
-    ? accounts.find(a => a.id === account.parentId)
-    : null;
+  const parentAccount = isTokenAccount(account) ? getParentAccount(account, accounts) : null;
 
   const signedOperation = deserializePlatformSignedTransaction(signedTransaction, accountId);
   const bridge = getAccountBridge(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount);
 
   let optimisticOperation: Operation = signedOperation.operation;
 
@@ -183,7 +196,7 @@ export const broadcastTransactionLogic = async (
   if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
     try {
       optimisticOperation = await bridge.broadcast({
-        account,
+        account: mainAccount,
         signedOperation,
       });
       tracking.platformBroadcastSuccess(manifest);
@@ -280,13 +293,13 @@ export const completeExchangeLogic = (
     return null;
   }
 
-  let fromParentAccount: Account | undefined;
+  let fromParentAccount: Account | null = null;
   if (isTokenAccount(fromAccount)) {
-    fromParentAccount = accounts.find(a => a.id === fromAccount.parentId);
+    fromParentAccount = getParentAccount(fromAccount, accounts);
   }
-  let toParentAccount: Account | undefined;
+  let toParentAccount: Account | null = null;
   if (toAccount && isTokenAccount(toAccount)) {
-    toParentAccount = accounts.find(a => a.id === toAccount.parentId);
+    toParentAccount = getParentAccount(toAccount, accounts);
   }
 
   const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
@@ -345,7 +358,11 @@ export const signMessageLogic = (
 
   let formattedMessage: MessageData | null;
   try {
-    formattedMessage = prepareMessageToSign(account, message);
+    if (isAccount(account)) {
+      formattedMessage = prepareMessageToSign(account, message);
+    } else {
+      throw new Error("account provided should be the main one");
+    }
   } catch (error) {
     tracking.platformSignMessageFail(manifest);
     return Promise.reject(error);
@@ -366,7 +383,7 @@ export const signMessageLogic = (
         },
         onClose: () => {
           tracking.platformSignMessageUserRefused(manifest);
-          reject(new UserRefusedOnDevice());
+          reject(UserRefusedOnDevice());
         },
       }),
     );
