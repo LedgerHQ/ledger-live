@@ -31,7 +31,6 @@ const AssetScreen = ({ route }: Props) => {
     () => accounts.filter(a => getAccountCurrency(a).id === currencyId),
     [accounts, currencyId],
   );
-  console.log(cryptoAccounts.length, cryptoAccounts.map(a => a.currency.name));
 
   const data = useMemo(
     () => [<OperationsHistorySection accounts={cryptoAccounts} />],
