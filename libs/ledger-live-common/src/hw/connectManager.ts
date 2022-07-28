@@ -1,20 +1,16 @@
 import { Observable, concat, from, of, throwError } from "rxjs";
 import { concatMap, catchError, delay } from "rxjs/operators";
-import {
-  TransportStatusError,
-  DeviceOnDashboardExpected,
-} from "@ledgerhq/errors";
+import { TransportStatusError, DeviceOnDashboardExpected } from "@ledgerhq/errors";
 import type { DeviceInfo } from "../types/manager";
 import type { ListAppsEvent } from "../apps";
 import { listApps } from "../apps/hw";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import getAppAndVersion from "./getAppAndVersion";
-import appSupportsQuitApp from "../appSupportsQuitApp";
 import { isDashboardName } from "./isDashboardName";
 import { DeviceNotOnboarded } from "../errors";
-import type { AppAndVersion } from "./connectApp";
-import quitApp from "./quitApp";
+import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
+
 export type Input = {
   devicePath: string;
   managerRequest:
@@ -24,13 +20,9 @@ export type Input = {
     | null
     | undefined;
 };
+
 export type ConnectManagerEvent =
-  | {
-      type: "appDetected";
-    }
-  | {
-      type: "unresponsiveDevice";
-    }
+  | AttemptToQuitAppEvent
   | {
       type: "osu";
       deviceInfo: DeviceInfo;
@@ -45,27 +37,7 @@ export type ConnectManagerEvent =
     }
   | ListAppsEvent;
 
-const attemptToQuitApp = (
-  transport,
-  appAndVersion?: AppAndVersion
-): Observable<ConnectManagerEvent> =>
-  appAndVersion && appSupportsQuitApp(appAndVersion)
-    ? from(quitApp(transport)).pipe(
-        concatMap(() =>
-          of(<ConnectManagerEvent>{
-            type: "unresponsiveDevice",
-          })
-        ),
-        catchError((e) => throwError(e))
-      )
-    : of({
-        type: "appDetected",
-      });
-
-const cmd = ({
-  devicePath,
-  managerRequest,
-}: Input): Observable<ConnectManagerEvent> =>
+const cmd = ({ devicePath, managerRequest }: Input): Observable<ConnectManagerEvent> =>
   withDevice(devicePath)((transport) =>
     Observable.create((o) => {
       const timeoutSub = of({
@@ -114,8 +86,7 @@ const cmd = ({
             ) {
               return from(getAppAndVersion(transport)).pipe(
                 concatMap((appAndVersion) => {
-                  return !managerRequest?.autoQuitAppDisabled &&
-                    !isDashboardName(appAndVersion.name)
+                  return !managerRequest?.autoQuitAppDisabled && !isDashboardName(appAndVersion.name)
                     ? attemptToQuitApp(transport, appAndVersion)
                     : of({
                         type: "appDetected",

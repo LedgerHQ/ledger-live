@@ -65,7 +65,7 @@ const Manager = ({
   const reduxDispatch = useDispatch();
 
   const { apps, currentError, installQueue, uninstallQueue } = state;
-  const blockNavigation = installQueue.length + uninstallQueue.length > 0;
+  const pendingInstalls = installQueue.length + uninstallQueue.length > 0;
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const latestFirmware = useLatestFirmware(deviceInfo);
@@ -100,7 +100,7 @@ const Manager = ({
   }, [setError, currentError]);
 
   // send informations to main router in order to lock navigation
-  useLockNavigation(blockNavigation, setQuitManagerAction, navigation);
+  useLockNavigation(pendingInstalls, setQuitManagerAction, navigation);
 
   // Save last seen device
   useEffect(() => {
@@ -176,6 +176,7 @@ const Manager = ({
       <AppsScreen
         state={state}
         dispatch={dispatch}
+        device={device}
         navigation={navigation}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
@@ -183,7 +184,7 @@ const Manager = ({
         managerTabs={MANAGER_TABS}
         deviceId={deviceId}
         initialDeviceName={deviceName}
-        blockNavigation={blockNavigation}
+        pendingInstalls={pendingInstalls}
         deviceInfo={deviceInfo}
         searchQuery={searchQuery}
         updateModalOpened={updateModalOpened}
