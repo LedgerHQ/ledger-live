@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.10
+
+### Patch Changes
+
+- [#767](https://github.com/LedgerHQ/ledger-live/pull/767) [`b80857e94`](https://github.com/LedgerHQ/ledger-live/commit/b80857e94c8050be2443d2d53525a920fa74b74e) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Disable ftx ftxus temporary as a swap provider before official mobile release
+
 ## 3.5.0-next.9
 
 ### Minor Changes
