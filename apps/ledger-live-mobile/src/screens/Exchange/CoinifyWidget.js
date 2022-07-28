@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { WebView } from "react-native-webview";
 import querystring from "querystring";
 import { ActivityIndicator, Linking, StyleSheet, View } from "react-native";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getMainAccount,

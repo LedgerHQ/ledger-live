@@ -1,7 +1,10 @@
-import type { CryptoCurrency } from "./currencies";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 // FIXME we need to clearly differentiate what is API types and what is our inner own type
 export type Id = number;
+/**
+ *
+ */
 export type LedgerScriptParams = {
   firmware: string;
   firmwareKey: string;
@@ -11,6 +14,10 @@ export type LedgerScriptParams = {
   hash: string;
   perso: string;
 };
+
+/**
+ *
+ */
 export type DeviceInfo = {
   mcuVersion: string;
   // the raw mcu version
@@ -33,6 +40,10 @@ export type DeviceInfo = {
   seTargetId?: number;
   onboarded?: boolean;
 };
+
+/**
+ *
+ */
 export type DeviceModelInfo = {
   modelId: DeviceModelId;
   deviceInfo: DeviceInfo;
@@ -41,6 +52,10 @@ export type DeviceModelInfo = {
     version: string;
   }>;
 };
+
+/**
+ *
+ */
 export type DeviceVersion = {
   id: Id;
   name: string;
@@ -56,6 +71,10 @@ export type DeviceVersion = {
   date_creation: string;
   date_last_modified: string;
 };
+
+/**
+ *
+ */
 export type McuVersion = {
   id: Id;
   mcu: Id;
@@ -68,11 +87,19 @@ export type McuVersion = {
   date_creation: string;
   date_last_modified: string;
 };
+
+/**
+ *
+ */
 export enum SeedPhraseType {
   Twelve = "12-words",
   Eighteen = "18-words",
   TwentyFour = "24-words",
 }
+
+/**
+ *
+ */
 export type FirmwareInfo = {
   isBootloader: boolean;
   rawVersion: string; // if SE seVersion, if BL blVersion
@@ -99,10 +126,18 @@ type BaseFirmware = {
   device_versions: Array<Id>;
   providers: Array<Id>;
 };
+
+/**
+ *
+ */
 export type OsuFirmware = BaseFirmware & {
   next_se_firmware_final_version: Id;
   previous_se_firmware_final_version: Array<Id>;
 };
+
+/**
+ *
+ */
 export type FinalFirmware = BaseFirmware & {
   version: string;
   se_firmware: Id;
@@ -112,11 +147,19 @@ export type FinalFirmware = BaseFirmware & {
   bytes?: number;
   updateAvailable?: FirmwareUpdateContext | null | undefined;
 };
+
+/**
+ *
+ */
 export type FirmwareUpdateContext = {
   osu: OsuFirmware;
   final: FinalFirmware;
   shouldFlashMCU: boolean;
 };
+
+/**
+ *
+ */
 export type ApplicationVersion = {
   id: Id;
   name: string;
@@ -144,6 +187,10 @@ export type ApplicationVersion = {
   // DEPRECATED because not serializable
   currency?: CryptoCurrency;
 };
+
+/**
+ *
+ */
 export type Application = {
   id: Id;
   name: string;
@@ -161,14 +208,19 @@ export type Application = {
   sourceURL: string | null | undefined;
   compatibleWalletsJSON: string | null | undefined;
 };
+
+/**
+ *
+ */
 export enum AppType {
   app = "app",
   plugin = "plugin",
   tool = "tool",
   swap = "swap",
 }
-// App is higher level on top of Application and ApplicationVersion
-// with all fields Live needs and in normalized form (but still serializable)
+
+/** App is higher level on top of Application and ApplicationVersion
+with all fields Live needs and in normalized form (but still serializable) */
 export type App = {
   id: Id;
   name: string;
@@ -201,6 +253,10 @@ export type App = {
   isDevTools: boolean;
   type: AppType;
 };
+
+/**
+ *
+ */
 export type Category = {
   id: Id;
   name: string;
@@ -210,6 +266,10 @@ export type Category = {
   date_creation: string;
   date_last_modified: string;
 };
+
+/**
+ *
+ */
 export type SocketEvent =
   | {
       type: "bulk-progress";

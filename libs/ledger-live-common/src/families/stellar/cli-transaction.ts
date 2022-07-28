@@ -1,11 +1,11 @@
-import invariant from "invariant";
-import { getAccountCurrency } from "../../account";
 import type {
-  Transaction,
   AccountLike,
   Account,
   AccountLikeArray,
-} from "../../types";
+} from "@ledgerhq/types-live";
+import invariant from "invariant";
+import type { Transaction } from "../../generated/types";
+import { getAccountCurrency } from "../../account";
 import { getAssetIdFromTokenId } from "./tokens";
 
 const options = [

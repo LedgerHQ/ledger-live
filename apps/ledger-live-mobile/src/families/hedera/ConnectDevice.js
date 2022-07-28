@@ -1,7 +1,6 @@
 // @flow
 import { useSelector } from "react-redux";
-
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 

@@ -1,6 +1,6 @@
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import BigNumber from "bignumber.js";
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
 // NOTE: Hedera declares stable fees in USD

@@ -14,7 +14,8 @@ import type {
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
-import type { Currency, Unit, Operation, Account } from "@ledgerhq/live-common/types/index";
+import type { Operation, Account } from "@ledgerhq/types-live";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";

@@ -13,7 +13,8 @@ import { Trans } from "react-i18next";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/ValidatorRow";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
   CosmosDelegation,
   CosmosValidatorItem,

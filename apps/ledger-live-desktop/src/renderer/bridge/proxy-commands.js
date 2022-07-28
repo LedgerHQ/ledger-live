@@ -8,15 +8,17 @@ import { log } from "@ledgerhq/logs";
 import type {
   AccountRawLike,
   AccountRaw,
-  TransactionStatus,
-  TransactionStatusRaw,
-  TransactionRaw,
   SyncConfig,
   ScanAccountEventRaw,
   SignOperationEventRaw,
   SignedOperationRaw,
   OperationRaw,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-live";
+import type {
+  TransactionStatus,
+  TransactionStatusRaw,
+  TransactionRaw,
+} from "@ledgerhq/live-common/generated/types";
 import {
   fromTransactionRaw,
   toTransactionRaw,
@@ -130,7 +132,7 @@ const cmdAccountGetTransactionStatus = (o: {
   return from(
     bridge
       .getTransactionStatus(account, transaction)
-      .then((raw: TransactionStatus) => toTransactionStatusRaw(raw)),
+      .then((raw: TransactionStatus) => toTransactionStatusRaw(raw, account.currency.family)),
   );
 };
 

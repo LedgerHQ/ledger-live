@@ -1,20 +1,24 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import type {
-  AccountLike,
-  AccountLikeArray,
-  Account,
-  Unit,
-  SubAccount,
-  TokenCurrency,
-  TokenAccount,
-  ChildAccount,
-} from "../types";
 import { getEnv } from "../env";
 import { encodeTokenAccountId } from "./accountId";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import { isAccountDelegating } from "../families/tezos/bakers";
-import { initialBitcoinResourcesValue } from "../families/bitcoin/types";
+import {
+  BitcoinAccount,
+  initialBitcoinResourcesValue,
+} from "../families/bitcoin/types";
+import type {
+  Account,
+  AccountLike,
+  AccountLikeArray,
+  SubAccount,
+  TokenAccount,
+  ChildAccount,
+} from "@ledgerhq/types-live";
+import { TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { TronAccount } from "../families/tron/types";
+import { CosmosAccount } from "../families/cosmos/types";
 
 // by convention, a main account is the top level account
 // in case of an Account is the account itself
@@ -87,14 +91,12 @@ export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
 };
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
-  if (
-    a.type === "Account" &&
-    a.currency.id === "tron" &&
-    a.tronResources &&
+  if (a.type === "Account" && a.currency.family === "tron") {
+    const tronAcc = a as TronAccount;
     // FIXME: here we compared a BigNumber to a number, would always return false
-    a.tronResources.bandwidth.freeLimit.eq(0)
-  ) {
-    return true;
+    return (
+      tronAcc.tronResources && tronAcc.tronResources.bandwidth.freeLimit.eq(0)
+    );
   }
 
   const hasSubAccounts =
@@ -149,16 +151,17 @@ export function clearAccount<T extends AccountLike>(account: T): T {
       (account as Account).subAccounts &&
       (account as Account).subAccounts?.map(clearAccount),
   };
-  if (copy.tronResources) {
-    copy.tronResources = {
-      ...copy.tronResources,
+
+  if (copy.currency.family === "tron") {
+    const tronAcc = copy as TronAccount;
+    tronAcc.tronResources = {
+      ...tronAcc.tronResources,
       cacheTransactionInfoById: {},
     };
   }
-  if (copy.bitcoinResources) {
-    copy.bitcoinResources = initialBitcoinResourcesValue;
+  if (copy.currency.family === "bitcoin") {
+    (copy as BitcoinAccount).bitcoinResources = initialBitcoinResourcesValue;
   }
-  delete copy.balanceHistory;
   delete copy.nfts;
   return copy as T;
 }
@@ -240,15 +243,16 @@ export const getVotesCount = (
   const mainAccount = getMainAccount(account, parentAccount);
 
   // FIXME find a way to make it per family?
-  if (mainAccount.currency.id === "tezos") {
-    return isAccountDelegating(account) ? 1 : 0;
-  } else if (mainAccount.tronResources) {
-    return mainAccount.tronResources.votes.length;
-  } else if (mainAccount.cosmosResources) {
-    return mainAccount.cosmosResources.delegations.length;
+  switch (mainAccount.currency.family) {
+    case "tezos":
+      return isAccountDelegating(account) ? 1 : 0;
+    case "tron":
+      return (mainAccount as TronAccount).tronResources.votes.length;
+    case "cosmos":
+      return (mainAccount as CosmosAccount).cosmosResources.delegations.length;
+    default:
+      return 0;
   }
-
-  return 0;
 };
 
 export const makeEmptyTokenAccount = (

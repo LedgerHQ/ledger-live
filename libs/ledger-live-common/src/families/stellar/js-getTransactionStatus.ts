@@ -24,7 +24,7 @@ import {
 } from "../../errors";
 import { findSubAccountById } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import type { Account, TokenAccount } from "../../types";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import {
   isAddressValid,

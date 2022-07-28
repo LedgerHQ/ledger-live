@@ -1,10 +1,7 @@
 import { BigNumber } from "bignumber.js";
-
-import type { AccountLike, Account } from "../../types";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
-
-import type { Transaction } from "./types";
-
+import type { CardanoAccount, Transaction } from "./types";
 import { createTransaction } from "./js-transaction";
 import {
   address as TyphonAddress,
@@ -43,7 +40,7 @@ const estimateMaxSpendable = async ({
   };
   let typhonTransaction;
   try {
-    typhonTransaction = await buildTransaction(a, t);
+    typhonTransaction = await buildTransaction(a as CardanoAccount, t);
   } catch (error) {
     return new BigNumber(0);
   }

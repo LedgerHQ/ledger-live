@@ -1,5 +1,5 @@
 import { patchOperationWithHash } from "../../operation";
-import type { Operation, SignedOperation } from "../../types";
+import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { broadcastTransaction as apiBroadcast } from "./api";
 
 /**

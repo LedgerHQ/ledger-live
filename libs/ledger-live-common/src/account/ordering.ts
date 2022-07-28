@@ -1,12 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import type {
-  AccountLike,
-  Account,
-  TokenCurrency,
-  CryptoCurrency,
-} from "../types";
 import { flattenAccounts, getAccountCurrency } from "./helpers";
 import type { FlattenAccountsOptions } from "./helpers";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 type AccountComparator = (a: AccountLike, b: AccountLike) => number;
 
 const sortNameLense = (a: AccountLike): string => {

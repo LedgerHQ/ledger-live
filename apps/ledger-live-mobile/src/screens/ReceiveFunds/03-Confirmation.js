@@ -8,11 +8,7 @@ import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
 import ReactNativeModal from "react-native-modal";
-import type {
-  Account,
-  TokenAccount,
-  AccountLike,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,

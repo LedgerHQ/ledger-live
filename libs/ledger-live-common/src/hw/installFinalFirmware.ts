@@ -1,10 +1,10 @@
 import Transport from "@ledgerhq/hw-transport";
-import type { DeviceInfo, FinalFirmware } from "../types/manager";
 import { Observable, from, concat, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../api/Manager";
 import getDeviceInfo from "./getDeviceInfo";
 import { getProviderId } from "../manager";
+import type { DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 export const fetchNextFirmware = (
   deviceInfo: DeviceInfo
 ): Observable<FinalFirmware> =>

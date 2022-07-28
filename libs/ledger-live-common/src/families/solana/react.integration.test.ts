@@ -4,7 +4,7 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { setEnv } from "../../env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
-import type { Account, CurrencyBridge } from "../../types";
+import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { getCurrentSolanaPreloadData } from "./js-preload-data";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";

@@ -7,7 +7,7 @@ import StellarSdk, {
 } from "stellar-sdk";
 import { getEnv } from "../../../env";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
-import type { Account, Operation } from "../../../types";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import type { NetworkInfo } from "../types";
 import {
   getAccountSpendableBalance,

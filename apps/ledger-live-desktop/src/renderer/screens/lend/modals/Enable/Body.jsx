@@ -13,7 +13,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 
-import type { Account, AccountLike, Operation } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";
 import type { StepId, StepProps, St } from "./types";
 import TrackPage from "~/renderer/analytics/TrackPage";

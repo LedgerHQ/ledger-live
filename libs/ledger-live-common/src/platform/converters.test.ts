@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
 
 import { getPlatformTransactionSignFlowInfos } from "./converters";
-import type { Transaction } from "../types";
+import type { Transaction } from "../generated/types";
 import type { PlatformTransaction } from "./types";
 
 describe("getPlatformTransactionSignFlowInfos", () => {

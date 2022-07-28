@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "../../currencies";
 import type { DeviceTransactionField } from "../../transaction";
-import type { Account, AccountLike } from "../../types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type {
   CommandDescriptor,
   StakeCreateAccountCommand,

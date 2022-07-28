@@ -6,7 +6,7 @@ import {
   findCurrencyByTicker,
 } from "../currencies";
 import { getBTCValues } from "../countervalues/mock";
-import { Currency } from "@ledgerhq/cryptoassets";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const usd = getFiatCurrencyByTicker("USD");

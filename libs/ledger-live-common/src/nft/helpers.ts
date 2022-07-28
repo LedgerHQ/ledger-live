@@ -9,10 +9,10 @@ import type {
   Operation,
   ProtoNFT,
   NFT,
-  CryptoCurrency,
   NFTCollectionMetadataResponse,
-} from "../types";
+} from "@ledgerhq/types-live";
 import { API, apiForCurrency } from "../api/Ethereum";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const nftsFromOperations = (ops: Operation[]): ProtoNFT[] => {
   const nftsMap = ops

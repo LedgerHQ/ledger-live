@@ -2,12 +2,12 @@ import { NotEnoughBalance } from "@ledgerhq/errors";
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import BigNumber from "bignumber.js";
-import type { DatasetTest } from "../../types";
 import { cardanoRawAccount1 } from "./datasets/rawAccount.1";
 import { cardanoScanAccounts } from "./datasets/scanAccounts";
 import { CardanoMinAmountError } from "./errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
+import type { DatasetTest } from "@ledgerhq/types-live";
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],

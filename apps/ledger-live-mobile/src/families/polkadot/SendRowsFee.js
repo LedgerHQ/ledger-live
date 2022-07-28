@@ -1,10 +1,8 @@
 // @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type {
-  AccountLike,
-  Transaction,
-} from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Trans } from "react-i18next";
 
 import {

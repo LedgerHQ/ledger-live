@@ -23,6 +23,9 @@
   "dependencies": {
     "invariant": "2"
   },
+  "devDependencies": {
+    "@ledgerhq/types-cryptoassets": "workspace:^"
+  },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",

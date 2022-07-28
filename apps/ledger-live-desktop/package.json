@@ -58,6 +58,8 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
     "@polkadot/react-identicon": "0.89.2",
     "@sentry/electron": "^3.0.7",
     "@sentry/node": "6.19.2",

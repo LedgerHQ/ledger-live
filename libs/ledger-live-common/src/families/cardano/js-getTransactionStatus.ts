@@ -5,8 +5,13 @@ import {
   InvalidAddress,
   AmountRequired,
 } from "@ledgerhq/errors";
-import type { Account, TransactionStatus } from "../../types";
-import type { CardanoResources, Token, Transaction } from "./types";
+import type {
+  CardanoAccount,
+  CardanoResources,
+  Token,
+  Transaction,
+  TransactionStatus,
+} from "./types";
 import { isValidAddress } from "./logic";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { CardanoMinAmountError, CardanoNotEnoughFunds } from "./errors";
@@ -17,7 +22,7 @@ import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import { buildTransaction } from "./js-buildTransaction";
 
 const getTransactionStatus = async (
-  a: Account,
+  a: CardanoAccount,
   t: Transaction
 ): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};

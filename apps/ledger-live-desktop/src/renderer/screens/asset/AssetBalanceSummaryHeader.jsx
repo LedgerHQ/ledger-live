@@ -1,12 +1,7 @@
 // @flow
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import type {
-  Currency,
-  CryptoCurrency,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/live-common/types/index";
+import type { Currency, CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import type {
   ValueChange,
   BalanceHistoryWithCountervalue,
