@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.9
+
+### Minor Changes
+
+- [#740](https://github.com/LedgerHQ/ledger-live/pull/740) [`709020dd7`](https://github.com/LedgerHQ/ledger-live/commit/709020dd74a228afca1d592264d42cfb7469e746) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fixed incorrect value for used space in Manager
+
 ## 3.5.0-next.8
 
 ### Minor Changes
