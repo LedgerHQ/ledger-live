@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.12
+
+### Minor Changes
+
+- [#728](https://github.com/LedgerHQ/ledger-live/pull/728) [`b0053cced`](https://github.com/LedgerHQ/ledger-live/commit/b0053cced9accefe8ecbf0983934e18fcc75bad6) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Learn page add a close button to allow back navigation
+
 ## 3.5.0-next.11
 
 ### Minor Changes
