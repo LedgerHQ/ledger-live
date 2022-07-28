@@ -76,7 +76,7 @@ function Delta({
     <View style={[styles.root, style]}>
       {percent ? <ArrowIcon size={16} color={color} /> : null}
       <View style={percent ? styles.content : null}>
-        <Text fontWeight={"semibold"} variant={"large"} color={color}>
+        <Text variant={"body"} fontWeight={"medium"} color={color}>
           {unit && absDelta !== 0 ? (
             <CurrencyUnitValue
               before={`(${sign}`}

@@ -101,19 +101,7 @@ function GraphCard({
         marginTop={40}
         marginBottom={40}
       >
-        <Flex>
-          <Flex flexDirection={"row"} alignItems={"center"} mb={1}>
-            <Text
-              variant={"small"}
-              fontWeight={"semiBold"}
-              color={"neutral.c70"}
-              textTransform={"uppercase"}
-              mr={2}
-            >
-              {t("tabs.portfolio")}
-            </Text>
-            {!areAccountsEmpty && <DiscreetModeButton size={20} />}
-          </Flex>
+        <Flex alignItems="center">
           {areAccountsEmpty ? (
             <Text variant={"h3"} color={"neutral.c100"}>
               <CurrencyUnitValue unit={unit} value={0} />
@@ -169,20 +157,6 @@ function GraphCard({
             </>
           )}
         </Flex>
-        {!areAccountsEmpty ? (
-          <Flex>
-            <TouchableOpacity onPress={onPieChartButtonpress}>
-              <BoxedIcon
-                Icon={PieChartMedium}
-                variant={"circle"}
-                iconSize={20}
-                size={48}
-                badgeSize={30}
-                iconColor={"neutral.c100"}
-              />
-            </TouchableOpacity>
-          </Flex>
-        ) : null}
       </Flex>
 
       <Graph
