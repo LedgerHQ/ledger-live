@@ -11,6 +11,7 @@ import {
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import Text from "~/renderer/components/Text";
 
 type OperationDetailsExtraProps = {
   operation: Operation,
@@ -19,14 +20,19 @@ type OperationDetailsExtraProps = {
   account: Account,
 };
 
-const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = ({ extra, operation, type, account }: OperationDetailsExtraProps) => {
   const { stakeValue } = extra;
+  const { avalanchePChainResources } = account;
+  const { delegations } = avalanchePChainResources;
+  const delegation = delegations.find(d => d.txID === operation.hash);
+  const validatorNode = delegation?.nodeID;
 
+  //TODO: test this on testnet
   switch (type) {
     case "DELEGATE":
       return (
         <>
-          <OpDetailsSection>
+          {stakeValue && <OpDetailsSection>
             <OpDetailsTitle>
               <Trans i18nKey={`operation.type.${type}`} />
             </OpDetailsTitle>
@@ -41,7 +47,19 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
                 />
               </Box>
             </OpDetailsData>
-          </OpDetailsSection>
+          </OpDetailsSection>}
+          {validatorNode && (
+            <OpDetailsSection>
+              <OpDetailsTitle>
+                <Trans i18nKey="avalanchepchain.delegation.validator" />
+              </OpDetailsTitle>
+              <OpDetailsData>
+                <Box>
+                  <Text ff="Inter|SemiBold">{validatorNode}</Text>
+                </Box>
+              </OpDetailsData>
+            </OpDetailsSection>
+          )}
         </>
       );
     default:
