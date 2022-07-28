@@ -620,7 +620,6 @@ importers:
       react-native-gesture-handler: ^2.5.0
       react-native-keychain: ^7.0.0
       react-native-level-fs: ^3.0.0
-      react-native-linear-gradient: ^2.6.2
       react-native-localize: ^2.2.1
       react-native-modal: ^13.0.0
       react-native-navigation-bar-color: ^2.0.1
@@ -776,7 +775,6 @@ importers:
       react-native-gesture-handler: 2.5.0_mk7ksnag22facomrynqrp7v6gy
       react-native-keychain: 7.0.0
       react-native-level-fs: 3.0.1_asyncstorage-down@4.2.0
-      react-native-linear-gradient: 2.6.2_zqxy7fpkavjkgz5xll7ed4r6rq
       react-native-localize: 2.2.1_zqxy7fpkavjkgz5xll7ed4r6rq
       react-native-modal: 13.0.1_zqxy7fpkavjkgz5xll7ed4r6rq
       react-native-navigation-bar-color: 2.0.1
@@ -20408,7 +20406,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
+      styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -21700,7 +21698,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -25638,7 +25636,7 @@ packages:
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 7.32.0
-      eslint-plugin-import: 2.26.0_eslint@7.32.0
+      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
       object.assign: 4.1.2
       object.entries: 1.1.5
     dev: true
@@ -25655,7 +25653,7 @@ packages:
     dependencies:
       eslint: 7.32.0
       eslint-config-airbnb-base: 14.2.1_hpmu7kn6tcn2vnxpfzvv33bxmy
-      eslint-plugin-import: 2.26.0_eslint@7.32.0
+      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
       eslint-plugin-jsx-a11y: 6.5.1_eslint@7.32.0
       eslint-plugin-react: 7.29.4_eslint@7.32.0
       eslint-plugin-react-hooks: 4.5.0_eslint@7.32.0
@@ -32959,7 +32957,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.1_metro@0.67.0
+      jest-resolve: 28.1.1
     dev: true
 
   /jest-regex-util/24.9.0:
@@ -36079,6 +36077,24 @@ packages:
       - supports-color
       - utf-8-validate
 
+  /metro-config/0.67.0_5rj3ktdhebdtkdjqejo5rbxriu:
+    resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
+    peerDependencies:
+      metro-transform-worker: '*'
+    peerDependenciesMeta:
+      metro-transform-worker:
+        optional: true
+    dependencies:
+      cosmiconfig: 5.2.1
+      jest-validate: 26.6.2
+      metro: 0.67.0
+      metro-cache: 0.67.0_metro@0.67.0
+      metro-core: 0.67.0_metro@0.67.0
+      metro-runtime: 0.67.0
+      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
+    transitivePeerDependencies:
+      - metro
+
   /metro-config/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
     resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
     peerDependencies:
@@ -36352,7 +36368,7 @@ packages:
       '@babel/parser': 7.18.5
       '@babel/types': 7.18.4
       babel-preset-fbjs: 3.4.0_@babel+core@7.18.5
-      metro: 0.67.0
+      metro: 0.67.0_h77kaxayu5kga6qsud7rauzt6a
       metro-babel-transformer: 0.67.0
       metro-cache: 0.67.0_metro@0.67.0
       metro-cache-key: 0.67.0
@@ -36425,6 +36441,68 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - encoding
+      - supports-color
+      - utf-8-validate
+
+  /metro/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
+    resolution: {integrity: sha512-DwuBGAFcAivoac/swz8Lp7Y5Bcge1tzT7T6K0nf1ubqJP8YzBUtyR4pkjEYVUzVu/NZf7O54kHSPVu1ibYzOBQ==}
+    hasBin: true
+    dependencies:
+      '@babel/code-frame': 7.16.7
+      '@babel/core': 7.18.5
+      '@babel/generator': 7.18.2
+      '@babel/parser': 7.18.5
+      '@babel/template': 7.16.7
+      '@babel/traverse': 7.18.5
+      '@babel/types': 7.18.4
+      absolute-path: 0.0.0
+      accepts: 1.3.8
+      async: 2.6.4
+      chalk: 4.1.2
+      ci-info: 2.0.0
+      connect: 3.7.0
+      debug: 2.6.9
+      denodeify: 1.2.1
+      error-stack-parser: 2.0.7
+      fs-extra: 1.0.0
+      graceful-fs: 4.2.10
+      hermes-parser: 0.5.0
+      image-size: 0.6.3
+      invariant: 2.2.4
+      jest-haste-map: 27.5.1_metro@0.67.0
+      jest-worker: 26.6.2_metro@0.67.0
+      lodash.throttle: 4.1.1
+      metro-babel-transformer: 0.67.0
+      metro-cache: 0.67.0_metro@0.67.0
+      metro-cache-key: 0.67.0
+      metro-config: 0.67.0_5rj3ktdhebdtkdjqejo5rbxriu
+      metro-core: 0.67.0_metro@0.67.0
+      metro-hermes-compiler: 0.67.0
+      metro-inspector-proxy: 0.67.0
+      metro-minify-uglify: 0.67.0
+      metro-react-native-babel-preset: 0.67.0
+      metro-resolver: 0.67.0
+      metro-runtime: 0.67.0
+      metro-source-map: 0.67.0
+      metro-symbolicate: 0.67.0
+      metro-transform-plugins: 0.67.0
+      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
+      mime-types: 2.1.35
+      mkdirp: 0.5.6
+      node-fetch: 2.6.7
+      nullthrows: 1.1.1
+      rimraf: 2.7.1
+      serialize-error: 2.1.0
+      source-map: 0.5.7
+      strip-ansi: 6.0.1
+      temp: 0.8.3
+      throat: 5.0.0
+      ws: 7.5.7
+      yargs: 15.4.1
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -39663,7 +39741,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
@@ -40737,16 +40814,6 @@ packages:
       asyncstorage-down: 4.2.0
       level-filesystem: 1.2.0
       levelup: 0.18.6
-    dev: false
-
-  /react-native-linear-gradient/2.6.2_zqxy7fpkavjkgz5xll7ed4r6rq:
-    resolution: {integrity: sha512-Z8Xxvupsex+9BBFoSYS87bilNPWcRfRsGC0cpJk72Nxb5p2nEkGSBv73xZbEHnW2mUFvP+huYxrVvjZkr/gRjQ==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-    dependencies:
-      react: 17.0.2
-      react-native: 0.68.2_shn3lkepuadv4od4dudas6ijbq
     dev: false
 
   /react-native-localize/2.2.1_zqxy7fpkavjkgz5xll7ed4r6rq:
@@ -44502,6 +44569,7 @@ packages:
       react-is: 17.0.2
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-system/5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}

@@ -76,12 +76,7 @@ const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
   px: p.px ?? 6,
 }))``;
 
-export const Gradient = styled(BackgroundGradient)`
-  position: absolute;
-  width: "100%";
-  height: 450px;
-  top: -130px;
-`;
+export const Gradient = styled(BackgroundGradient)``;
 
 const SectionTitle = ({
   title,
@@ -193,6 +188,8 @@ function PortfolioScreen({ navigation }: Props) {
           portfolio={portfolio}
           areAccountsEmpty={areAccountsEmpty}
           showGraphCard={accounts.length > 0}
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
         />
       </Box>,
       ...(accounts.length > 0
@@ -303,7 +300,10 @@ function PortfolioScreen({ navigation }: Props) {
           accountsLength={accounts.length}
           discreet={discreetMode}
         />
-        <Gradient />
+        <BackgroundGradient
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+        />
         <AnimatedFlatListWithRefreshControl
           data={data}
           style={{ flex: 1, position: "relative", paddingTop: 48 }}
