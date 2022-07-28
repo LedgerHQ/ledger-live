@@ -4,6 +4,11 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import Delta from "./Delta";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -19,6 +24,8 @@ type Props = {
   portfolio: Portfolio;
   counterValueCurrency: Currency;
   useCounterValue?: boolean;
+  currentPositionY: SharedValue<number>;
+  graphCardEndPosition: number;
 };
 
 const Placeholder = styled(Flex).attrs({
@@ -40,6 +47,8 @@ function GraphCard({
   portfolio,
   counterValueCurrency,
   areAccountsEmpty,
+  currentPositionY,
+  graphCardEndPosition,
 }: Props) {
   const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
 
@@ -72,6 +81,19 @@ function GraphCard({
 
   const activeRangeIndex = timeRangeItems.findIndex(r => r.key === range);
 
+  const BalanceOpacity = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      currentPositionY.value,
+      [graphCardEndPosition + 30, graphCardEndPosition + 50],
+      [1, 0],
+      Extrapolate.CLAMP,
+    );
+
+    return {
+      opacity,
+    };
+  }, [graphCardEndPosition]);
+
   return (
     <Flex>
       <Flex
@@ -81,62 +103,68 @@ function GraphCard({
         marginTop={40}
         marginBottom={40}
       >
-        <Flex alignItems="center">
-          {areAccountsEmpty ? (
-            <Text variant={"h3"} color={"neutral.c100"}>
-              <CurrencyUnitValue unit={unit} value={0} />
-            </Text>
-          ) : (
-            <>
-              <Flex>
-                {!balanceAvailable ? (
-                  <BigPlaceholder mt="8px" />
-                ) : (
-                  <Text
-                    fontFamily="Inter"
-                    fontWeight="semiBold"
-                    fontSize="30px"
-                    color={"neutral.c100"}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                  >
-                    <CurrencyUnitValue
-                      unit={unit}
-                      value={hoveredItem ? hoveredItem.value : item.value}
-                      joinFragmentsSeparator=" "
-                    />
-                  </Text>
-                )}
-                <TransactionsPendingConfirmationWarning />
-              </Flex>
-              <Flex flexDirection={"row"}>
-                {!balanceAvailable ? (
-                  <>
-                    <SmallPlaceholder mt="12px" />
-                  </>
-                ) : (
-                  <Flex flexDirection="row" alignItems="center">
-                    {hoveredItem && hoveredItem.date ? (
-                      <Text variant={"body"} fontWeight={"medium"}>
-                        <FormatDate date={hoveredItem.date} />
-                      </Text>
-                    ) : (
-                      <>
-                        <Delta
-                          percent
-                          show0Delta
-                          valueChange={countervalueChange}
-                          // range={portfolio.range}
-                        />
-                        <Delta unit={unit} valueChange={countervalueChange} />
-                      </>
-                    )}
-                  </Flex>
-                )}
-              </Flex>
-            </>
-          )}
-        </Flex>
+        <Animated.View style={[BalanceOpacity]}>
+          <Flex alignItems="center">
+            {areAccountsEmpty ? (
+              <Text variant={"h3"} color={"neutral.c100"}>
+                <CurrencyUnitValue unit={unit} value={0} />
+              </Text>
+            ) : (
+              <>
+                <Flex>
+                  {!balanceAvailable ? (
+                    <BigPlaceholder mt="8px" />
+                  ) : (
+                    <Text
+                      fontFamily="Inter"
+                      fontWeight="semiBold"
+                      fontSize="42px"
+                      color={"neutral.c100"}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                    >
+                      <CurrencyUnitValue
+                        unit={unit}
+                        value={hoveredItem ? hoveredItem.value : item.value}
+                        joinFragmentsSeparator=" "
+                      />
+                    </Text>
+                  )}
+                  <TransactionsPendingConfirmationWarning />
+                </Flex>
+                <Flex flexDirection={"row"}>
+                  {!balanceAvailable ? (
+                    <>
+                      <SmallPlaceholder mt="12px" />
+                    </>
+                  ) : (
+                    <Flex flexDirection="row" alignItems="center">
+                      {hoveredItem && hoveredItem.date ? (
+                        <Text
+                          variant={"body"}
+                          fontWeight={"semibold"}
+                          fontSize="16px"
+                        >
+                          <FormatDate date={hoveredItem.date} />
+                        </Text>
+                      ) : (
+                        <>
+                          <Delta
+                            percent
+                            show0Delta
+                            valueChange={countervalueChange}
+                            // range={portfolio.range}
+                          />
+                          <Delta unit={unit} valueChange={countervalueChange} />
+                        </>
+                      )}
+                    </Flex>
+                  )}
+                </Flex>
+              </>
+            )}
+          </Flex>
+        </Animated.View>
       </Flex>
 
       <Graph
@@ -148,6 +176,7 @@ function GraphCard({
         data={balanceHistory}
         onItemHover={setHoverItem}
         mapValue={mapGraphValue}
+        fill={colors.background.main}
       />
       <Flex paddingTop={6} background={colors.background.main}>
         <GraphTabs

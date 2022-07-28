@@ -4,7 +4,8 @@ import Svg, {
   Defs,
   LinearGradient,
   Stop,
-  RadialGradient,
+  Mask,
+  G,
 } from "react-native-svg";
 import Animated, {
   Extrapolate,
@@ -16,9 +17,11 @@ import { useTheme } from "styled-components/native";
 function BackgroundGradient({
   currentPositionY,
   graphCardEndPosition,
+  gradientColor,
 }: {
   currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
+  gradientColor: string;
 }) {
   const BackgroundOverlayOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -46,7 +49,7 @@ function BackgroundGradient({
           position: "absolute",
           width: 541,
           height: 450,
-          top: -130,
+          top: 0,
         },
       ]}
     >
@@ -57,43 +60,51 @@ function BackgroundGradient({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <Path fill="url(#paint0_linear_5_11)" d="M0 0H541V454H0z" />
-        <Path fill="url(#paint1_radial_5_11)" d="M0 0H541V454H0z" />
-        <Path fill="url(#paint2_radial_5_11)" d="M0 0H541V454H0z" />
+        <Mask
+          id="a"
+          style={{
+            maskType: "alpha",
+          }}
+          maskUnits="userSpaceOnUse"
+          x={0}
+          y={0}
+          width={541}
+          height={454}
+        >
+          <Path fill="#fff" d="M0 0H541V454H0z" />
+        </Mask>
+        <G mask="url(#a)">
+          <Path fill="#272727" d="M0 0H541V454H0z" />
+          <Path
+            fill="url(#paint0_linear_22_3)"
+            fillOpacity={0.3}
+            d="M0 0H541V450.077H0z"
+          />
+          <Path fill="url(#paint1_linear_22_3)" d="M0 0H541V450.077H0z" />
+        </G>
         <Defs>
           <LinearGradient
-            id="paint0_linear_5_11"
+            id="paint0_linear_22_3"
             x1={270.5}
             y1={0}
             x2={270.5}
-            y2={454}
+            y2={450.077}
             gradientUnits="userSpaceOnUse"
           >
-            <Stop offset={0.380208} stopColor="#574772" />
-            <Stop offset={0.864583} stopColor="#141315" />
+            <Stop stopColor={gradientColor} />
+            <Stop offset={1} stopColor={gradientColor} stopOpacity={0} />
           </LinearGradient>
-          <RadialGradient
-            id="paint1_radial_5_11"
-            cx={0}
-            cy={0}
-            r={1}
+          <LinearGradient
+            id="paint1_linear_22_3"
+            x1={270.5}
+            y1={0}
+            x2={270.5}
+            y2={450.077}
             gradientUnits="userSpaceOnUse"
-            gradientTransform="rotate(130.005 122.468 209.276) scale(276.113 273.618)"
           >
-            <Stop stopColor="#271E48" stopOpacity={0.78} />
-            <Stop offset={1} stopColor="#42336B" stopOpacity={0} />
-          </RadialGradient>
-          <RadialGradient
-            id="paint2_radial_5_11"
-            cx={0}
-            cy={0}
-            r={1}
-            gradientUnits="userSpaceOnUse"
-            gradientTransform="matrix(128.49978 203.50003 -238.2652 150.4522 175 236)"
-          >
-            <Stop stopColor="#B6A1FF" stopOpacity={0.2} />
-            <Stop offset={1} stopColor="#9678E3" stopOpacity={0} />
-          </RadialGradient>
+            <Stop stopColor="#131214" stopOpacity={0} />
+            <Stop offset={1} stopColor="#131214" />
+          </LinearGradient>
         </Defs>
       </Svg>
     </Animated.View>
