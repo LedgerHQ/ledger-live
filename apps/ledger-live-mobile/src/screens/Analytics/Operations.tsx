@@ -42,14 +42,19 @@ type Props = {
   };
 };
 
-export function Operations({ navigation }: Props) {
+export function Operations({ navigation, route }: Props) {
+  const { accountsIds } = route.params;
   const [opCount, setOpCount] = useState(50);
 
   function onEndReached() {
     setOpCount(opCount + 50);
   }
 
-  const accounts = useSelector(accountsSelector);
+  const accountsFromState = useSelector(accountsSelector);
+  const accountsFiltered = useMemo(
+    () => accountsFromState.filter(account => accountsIds.includes(account.id)),
+    [accountsFromState, accountsIds],
+  );
   const allAccounts: AccountLikeArray = useSelector(flattenAccountsSelector);
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
