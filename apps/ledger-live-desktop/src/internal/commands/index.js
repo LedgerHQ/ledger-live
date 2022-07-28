@@ -25,6 +25,7 @@ import checkSignatureAndPrepare from "./checkSignatureAndPrepare";
 import getTransactionId from "./getTransactionId";
 import scanDescriptors from "./scanDescriptors";
 import getAppAndVersion from "./getAppAndVersion";
+import getOnboardingStatePolling from "./getOnboardingStatePolling";
 import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
 export const commandsById = {
@@ -55,6 +56,7 @@ export const commandsById = {
   scanDescriptors,
   signMessage,
   getAppAndVersion,
+  getOnboardingStatePolling,
 };
 
 export type Commands = typeof commandsById;
