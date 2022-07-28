@@ -8,15 +8,22 @@ import Touchable from "./Touchable";
 import { withTheme } from "../colors";
 
 type Props = {
-  style?: *,
-  children: string | React$Element<*>,
-  string: string, // String to be copied
-  replacement?: string | React$Element<*>, // String to display in place of children on copy
-  colors: *,
+  style?: any;
+  children: string | React.ReactNode;
+  /**
+   * String to be copied
+   */
+  string: string;
+  /**
+   * String to display in place of children on copy
+   */
+  replacement?: string | React.ReactNode;
+  colors: any;
+  onCopy?: () => void;
 };
 
 type State = {
-  copied: boolean,
+  copied: boolean;
 };
 
 class CopyLink extends PureComponent<Props, State> {
@@ -27,12 +34,12 @@ class CopyLink extends PureComponent<Props, State> {
   timeout = null;
 
   onPress = () => {
-    const { string } = this.props;
+    const { string, onCopy } = this.props;
 
     Clipboard.setString(string);
 
     this.setState({ copied: true });
-
+    onCopy && onCopy();
     this.timeout = setTimeout(() => {
       this.setState({ copied: false });
     }, 3000);
@@ -43,19 +50,18 @@ class CopyLink extends PureComponent<Props, State> {
     const { copied } = this.state;
     return (
       <Touchable
-        event="CopyLink"
         style={[styles.linkContainer, style]}
         onPress={this.onPress}
       >
-        <Icons.CopyMedium
+        <Icons.CheckAloneMedium
           size={16}
-          color={copied ? "neutral.c70" : "primary.c80"}
+          color={copied ? "success.c100" : "neutral.c30"}
         />
         <Text
           variant="body"
           fontWeight="semiBold"
-          color={copied ? "neutral.c70" : "primary.c80"}
-          ml={3}
+          color={copied ? "success.c100" : "primary.c80"}
+          ml={2}
         >
           {copied && replacement ? replacement : children}
         </Text>

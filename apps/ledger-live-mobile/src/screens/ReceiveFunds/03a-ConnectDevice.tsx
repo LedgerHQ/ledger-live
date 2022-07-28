@@ -6,13 +6,13 @@ import { useTranslation } from "react-i18next";
 import {
   getMainAccount,
   getReceiveFlowError,
-  getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { AccountLike } from "@ledgerhq/live-common/types/index";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
+import { useRoute } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -23,7 +23,6 @@ import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
 import GenericErrorView from "../../components/GenericErrorView";
 import DeviceActionModal from "../../components/DeviceActionModal";
-import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
 import SkipSelectDevice from "../SkipSelectDevice";
 import byFamily from "../../generated/ConnectDevice";
 
@@ -36,6 +35,7 @@ type RouteParams = {
   account?: AccountLike,
   accountId: string,
   parentId?: string,
+  notSkippable?: boolean,
   title: string,
   appName?: string,
   onSuccess?: () => void,
@@ -48,7 +48,8 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const [device, setDevice] = useState<?Device>();
+  const [device, setDevice] = useState<Device | undefined>();
+  const routerRoute = useRoute()
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
@@ -70,21 +71,13 @@ export default function ConnectDevice({ navigation, route }: Props) {
       if (!account) {
         return null;
       }
-      return renderVerifyAddress({
-        t,
-        navigation,
-        currencyName: getAccountCurrency(account).name,
-        device: payload.device,
-        onPress: () => {
-          setDevice();
-          navigation.navigate(ScreenName.ReceiveConfirmation, {
-            ...route.params,
-            ...payload,
-          });
-        },
+      setDevice();
+      navigation.navigate(ScreenName.ReceiveVerifyAddress, {
+        ...route.params,
+        ...payload,
       });
     },
-    [navigation, t, route.params, account],
+    [navigation, route.params, account],
   );
 
   const onSkipDevice = useCallback(() => {
@@ -92,7 +85,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
     navigation.navigate(ScreenName.ReceiveConfirmation, {
       ...route.params,
     });
-  }, [account, navigation, parentAccount]);
+  }, [account, navigation, route.params]);
 
   const onClose = useCallback(() => {
     setDevice();
@@ -109,7 +102,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = getAccountCurrency(account);
   const tokenCurrency =
     account && account.type === "TokenAccount" && account.token;
 
@@ -132,8 +124,8 @@ export default function ConnectDevice({ navigation, route }: Props) {
     <>
       <TrackScreen
         category="ReceiveFunds"
-        name="ConnectDevice"
-        currencyName={currency.name}
+        name="Device Selection"
+        source={routerRoute.name}
       />
       <NavigationScrollView
         style={styles.scroll}
@@ -142,14 +134,13 @@ export default function ConnectDevice({ navigation, route }: Props) {
         <SkipSelectDevice route={route} onResult={setDevice} />
         <SelectDevice
           onSelect={setDevice}
-          onWithoutDevice={onSkipDevice}
-          withoutDevice
+          onWithoutDevice={route.params?.notSkippable ? undefined : onSkipDevice}
         />
       </NavigationScrollView>
       <DeviceActionModal
         action={action}
         device={device}
-        renderOnResult={onResult}
+        onResult={onResult}
         onClose={onClose}
         request={{ account: mainAccount, tokenCurrency }}
         appName={route.params.appName}

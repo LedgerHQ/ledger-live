@@ -102,9 +102,16 @@ export const ScreenName = {
   PortfolioOperationHistory: "PortfolioOperationHistory",
   PurchaseDevice: "PurchaseDevice",
   RateProviderSettings: "RateProviderSettings",
+
   ReceiveConfirmation: "ReceiveConfirmation",
+  ReceiveVerificationConfirmation: "ReceiveVerificationConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
+  ReceiveVerifyAddress: "ReceiveVerifyAddress",
+  ReceiveSelectCrypto: "ReceiveSelectCrypto",
   ReceiveSelectAccount: "ReceiveSelectAccount",
+  ReceiveAddAccountSelectDevice: "ReceiveAddAccountSelectDevice",
+  ReceiveAddAccount: "ReceiveAddAccount",
+
   RegionSettings: "RegionSettings",
   RepairDevice: "RepairDevice",
   Resources: "Resources",
