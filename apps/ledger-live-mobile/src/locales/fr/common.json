@@ -820,8 +820,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Vous aimez Ledger Live ?",
-      "description" : "L’app vous plaît ou vous pensez que nous pouvons l’améliorer ? Vos commentaires sont indispensables pour nous.",
+      "title" : "How do you like our app?",
+      "description" : "Your feedback is important for improving Ledger Live.",
       "cta" : {
         "enjoy" : "C’est super",
         "disappointed" : "Je suis déçu(e)",
@@ -838,7 +838,8 @@
     },
     "disappointed" : {
       "title" : "Aidez-nous à faire mieux",
-      "description" : "Notre mission est d’améliorer l’app, et vos commentaires nous aident à répondre à vos besoins.",
+      "description" : "If you need more assistance or would like us to get back to you, please use our live chat",
+      "here" : "here",
       "cta" : {
         "sendFeedback" : "Envoyer un commentaire",
         "notNow" : "Pas maintenant"
@@ -930,9 +931,9 @@
         "title" : "Gagner",
         "desc" : "Gagnez des récompenses passives et faites fructifier vos cryptos."
       },
-      "mint": {
-        "title": "Minter",
-        "desc": "Mintez et acquérez des NFT de collaborations exclusives sur le [ L ] Market."
+      "mint" : {
+        "title" : "Minter",
+        "desc" : "Mintez et acquérez les NFT de collaborations exclusives sur [ L ] Market"
       }
     },
     "comingSoon" : "Prochainement",
@@ -1004,6 +1005,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Choisissez votre appareil"
     },
@@ -1050,7 +1052,7 @@
       "2" : {
         "label" : "Les bases",
         "title" : "Restez hors ligne",
-        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de vos cryptos avec votre Nano."
+        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction en cryptos avec votre Nano."
       },
       "3" : {
         "label" : "Les bases",
@@ -1216,7 +1218,7 @@
         "nextStep" : "Étape suivante"
       },
       "hideRecoveryPhrase" : {
-        "title" : "Cacher votre phrase de récupération",
+        "title" : "Cachez votre phrase de récupération",
         "desc" : "Votre phrase de récupération est votre seule façon d’accéder à vos cryptos si vous ne pouvez plus utiliser votre Nano. La garder en lieu sûr est crucial.",
         "bullets" : {
           "0" : {
@@ -2157,7 +2159,7 @@
       "verifyAgain" : "Revérifier",
       "noAccount" : "Aucun compte trouvé",
       "address" : "Adresse du compte",
-      "copyAddress" : "Copier l’adresse",
+      "copyAddress" : "Copier",
       "shareAddress" : "Partager l’adresse",
       "addressCopied" : "Adresse copiée",
       "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
@@ -3259,7 +3261,9 @@
     "newVersion" : "Nouvelle version {{version}} disponible pour votre {{deviceName}}",
     "drawerUpdate" : {
       "title" : "Mise à jour du micrologiciel",
-      "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur"
+      "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur",
+      "pleaseConnectUsbTitle" : "USB cable needed",
+      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3378,6 +3382,13 @@
             "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Le solde total ne comprend pas les récompenses de staking"
       }
     }
   },
