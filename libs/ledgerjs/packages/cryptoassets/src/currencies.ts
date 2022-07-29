@@ -260,6 +260,35 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  axelar: {
+    type: "CryptoCurrency",
+    id: "axelar",
+    coinType: 118,
+    name: "Axelar",
+    managerAppName: "Axelar",
+    ticker: "AXL",
+    scheme: "axelar",
+    color: "#000000",
+    family: "axelar",
+    units: [
+      {
+        name: "Axelar",
+        code: "AXL",
+        magnitude: 6,
+      },
+      {
+        name: "microAxl",
+        code: "uaxl",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://axelarscan.io/tx/$hash",
+        address: "https://axelarscan.io/account/$address",
+      },
+    ],
+  },
   banano: {
     type: "CryptoCurrency",
     id: "banano",
