@@ -1,4 +1,4 @@
-import { SubAccount } from "../../types";
+import { SubAccount } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
 export class ElrondEncodeTransaction {

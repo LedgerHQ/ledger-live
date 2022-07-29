@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import network from "../../../network";
-import { Operation } from "../../../types";
+import type { Operation } from "@ledgerhq/types-live";
 import { BinaryUtils } from "../utils/binary.utils";
 import {
   HASH_TRANSACTION,

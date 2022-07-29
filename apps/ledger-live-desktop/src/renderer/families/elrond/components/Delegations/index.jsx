@@ -2,7 +2,7 @@
 
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
-import { Account as AccountType } from "@ledgerhq/live-common/types/index";
+import { ElrondAccount as ElrondAccountType } from "@ledgerhq/live-common/lib/families/elrond/types";
 
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
 import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
@@ -12,7 +12,7 @@ import Delegation from "~/renderer/families/elrond/components/Delegations/compon
 interface DelegationsType {
   delegations: Array<DelegationType>;
   validators: Array<ValidatorType>;
-  account: AccountType;
+  account: ElrondAccountType;
 }
 
 const Delegations = ({ delegations, validators, account }: DelegationsType) => {

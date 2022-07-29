@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 
-import { Account } from "@ledgerhq/live-common/types/index";
+import { ElrondAccount as ElrondAccountType } from "@ledgerhq/live-common/lib/families/elrond/types";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -30,7 +30,7 @@ import Unbondings from "~/renderer/families/elrond/components/Unbondings";
 import Delegations from "~/renderer/families/elrond/components/Delegations";
 
 interface Props {
-  account: Account;
+  account: ElrondAccountType;
 }
 
 const Wrapper = styled(Box).attrs(() => ({

@@ -1,12 +1,10 @@
 // @flow
 
 import { TFunction } from "react-i18next";
+import { Operation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { ElrondAccount, Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/families/elrond/types";
 import { Step } from "~/renderer/components/Stepper";
-
-import { Account, TransactionStatus, Operation } from "@ledgerhq/live-common/types/index";
-
-import { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
 
 export type StepId = "claimRewards" | "connectDevice" | "confirmation";
 
@@ -14,8 +12,8 @@ export interface StepProps {
   t: TFunction;
   transitionTo: (param: string) => void;
   device?: Device;
-  account?: Account;
-  parentAccount?: Account;
+  account?: ElrondAccount;
+  parentAccount?: ElrondAccount;
   onRetry: () => void;
   onClose: () => void;
   openModal: (key: string, config?: any) => void;

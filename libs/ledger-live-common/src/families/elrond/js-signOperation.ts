@@ -3,7 +3,9 @@ import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { ElrondAccount, Transaction } from "./types";
 import type {
+  Account,
   Operation,
+  SignedOperation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
@@ -62,7 +64,7 @@ const signOperation = ({
   deviceId,
   transaction,
 }: {
-  account: ElrondAccount;
+  account: Account;
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
@@ -99,7 +101,7 @@ const signOperation = ({
         }
 
         const unsignedTx: string = await buildTransaction(
-          account,
+          account as ElrondAccount,
           tokenAccount,
           transaction
         );
@@ -119,7 +121,7 @@ const signOperation = ({
         });
 
         const operation = buildOptimisticOperation(
-          account,
+          account as ElrondAccount,
           transaction,
           transaction.fees ?? new BigNumber(0)
         );
@@ -129,7 +131,7 @@ const signOperation = ({
             operation,
             signature: r,
             expirationDate: null,
-          },
+          } as SignedOperation,
         });
       }
 

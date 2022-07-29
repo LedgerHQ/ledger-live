@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Trans } from "react-i18next";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/types-live";
 
 import TableContainer, { HeaderWrapper, TableHeader } from "~/renderer/components/TableContainer";
 import { UnbondingType } from "~/renderer/families/elrond/types";

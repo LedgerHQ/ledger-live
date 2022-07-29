@@ -1,4 +1,4 @@
-import type { Account, SubAccount, TokenAccount } from "../../types";
+import type { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 
 export function reconciliateSubAccounts(

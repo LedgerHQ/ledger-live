@@ -14,7 +14,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import type { StepProps, St } from "./types";
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import type { Account, Operation } from "@ledgerhq/types-live";
 
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";

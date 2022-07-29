@@ -12,7 +12,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import type { Operation } from "@ledgerhq/live-common/lib/types";
+import type { Operation } from "@ledgerhq/types-live";
 
 import logger from "~/logger/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";

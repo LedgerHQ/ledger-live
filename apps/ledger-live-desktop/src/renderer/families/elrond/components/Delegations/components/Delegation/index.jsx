@@ -4,7 +4,7 @@ import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Account as AccountType } from "@ledgerhq/live-common/types/index";
+import { ElrondAccount as ElrondAccountType } from "@ledgerhq/live-common/lib/families/elrond/types";
 
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
@@ -56,7 +56,7 @@ const Delegation = ({
   delegations,
   validators,
 }: DelegationType &
-  AccountType &
+  ElrondAccountType &
   Array<DelegationType> &
   Array<ValidatorType> &
   Array<UnbondingType>) => {
