@@ -2695,7 +2695,7 @@
   },
   "avalanchepchain": {
     "stakedBalance": "Staking",
-    "stakedBalanceTooltip": "Amount staked to validators",
+    "stakedBalanceTooltip": "Amount staked to validators.",
     "delegation": {
       "header": "Delegations",
       "add": "Add",
