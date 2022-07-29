@@ -29,6 +29,7 @@ const ignoreErrors = [
   "ENETUNREACH",
   "ENOTFOUND",
   "ETIMEDOUT",
+  "ERR_CONNECTION_RESET",
   "getaddrinfo",
   "HttpError",
   "Network Error",
