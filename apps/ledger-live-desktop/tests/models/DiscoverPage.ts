@@ -23,10 +23,12 @@ export class DiscoverPage {
     this.requestAccountButton = page.locator("data-test-id=request-single-account-button");
     this.selectAccountTitle = page.locator("text=Choose a crypto asset)");
     this.selectBtcAsset = page.locator("text=Bitcoin").first();
-    this.selectBtcAccount = page.locator("text=Bitcoin 1 (legacy)");
+    this.selectBtcAccount = page.locator("text=Bitcoin 1 (legacy)").first();
     this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
-    this.signContinueButton = page.locator('text=Continue');
-    this.confirmText = page.locator('text=Please confirm the operation on your device to finalize it');
+    this.signContinueButton = page.locator("text=Continue");
+    this.confirmText = page.locator(
+      "text=Please confirm the operation on your device to finalize it",
+    );
   }
 
   async openTestApp() {
