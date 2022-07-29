@@ -88,9 +88,7 @@ const signOperation = ({
 
           const operation = buildOptimisticOperation(
             account,
-            transaction,
-            addresses
-          );
+            transaction          );
 
           o.next({
             type: "signed",
@@ -333,7 +331,6 @@ const getPathFromAddress = (address: string, pAddresses: string[]) => {
 const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
-  senders: string[]
 ): Operation => {
   let type: OperationType;
 
@@ -352,16 +349,17 @@ const buildOptimisticOperation = (
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
-    value,
+    value: new BigNumber(0),
     fee,
     blockHash: null,
     blockHeight: null,
-    senders,
+    senders: [],
     recipients: [],
     accountId: account.id,
     date: new Date(),
     extra: {
-      validators: transaction.recipient
+      validator: transaction.recipient,
+      stakeValue: value
     },
   };
 

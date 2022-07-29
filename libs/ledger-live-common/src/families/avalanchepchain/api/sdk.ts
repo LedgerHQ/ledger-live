@@ -84,7 +84,7 @@ const convertDelegationToOperation = (
   accountId,
   type
 ): Operation => {
-  let value = new BigNumber(transaction.metadata.weight);
+  let stakeValue = new BigNumber(transaction.metadata.weight);
 
   return {
     id: encodeOperationId(accountId, transaction.id, type),
@@ -99,7 +99,7 @@ const convertDelegationToOperation = (
     accountId,
     date: new Date(transaction.timestamp),
     extra: {
-      stakeValue: value,
+      stakeValue
     },
   };
 };

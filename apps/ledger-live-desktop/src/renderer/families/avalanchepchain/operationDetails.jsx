@@ -21,11 +21,11 @@ type OperationDetailsExtraProps = {
 };
 
 const OperationDetailsExtra = ({ extra, operation, type, account }: OperationDetailsExtraProps) => {
-  const { stakeValue } = extra;
+  const { stakeValue, validator } = extra;
   const { avalanchePChainResources } = account;
   const { delegations } = avalanchePChainResources;
   const delegation = delegations.find(d => d.txID === operation.hash);
-  const validatorNode = delegation?.nodeID;
+  const validatorNode = validator || delegation?.nodeID;
 
   //TODO: test this on testnet
   switch (type) {
