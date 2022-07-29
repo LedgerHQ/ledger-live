@@ -69,7 +69,6 @@ const PropmtDeviceLanguageStep = ({
       if (
         langAvailableForTheFirstTime &&
         deviceLanguageId !== undefined &&
-        oldDeviceInfo?.languageId === undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
         deviceLocalizationFeatureFlag.enabled
       ) {
