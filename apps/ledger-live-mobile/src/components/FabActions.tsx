@@ -1,23 +1,18 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 
-import { useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import {
-  filterRampCatalogEntries,
-  getAllSupportedCryptoCurrencyIds,
-} from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-
+import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import {
   AccountLike,
   Account,
   CryptoCurrency,
 } from "@ledgerhq/live-common/types/index";
 
-import { Icons } from "@ledgerhq/native-ui";
+import { Icons, QuickActionList } from "@ledgerhq/native-ui";
 
 import {
   readOnlyModeEnabledSelector,
@@ -27,6 +22,9 @@ import { accountsCountSelector } from "../reducers/accounts";
 import { NavigatorName, ScreenName } from "../const";
 import FabAccountButtonBar, { ActionButton } from "./FabAccountButtonBar";
 import useActions from "../screens/Account/hooks/useActions";
+import { Linking } from "react-native";
+import { useTheme } from "styled-components";
+import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
 
 type FabAccountActionsProps = {
   account: AccountLike;
@@ -40,106 +38,75 @@ const iconReceive = Icons.ArrowBottomMedium;
 const iconSend = Icons.ArrowTopMedium;
 const iconAddAccount = Icons.WalletMedium;
 
+export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = ({
+  account,
+  parentAccount,
+}: FabAccountActionsProps) => {
+  const { colors } = useTheme();
+  const navigation = useNavigation();
+
+  const { mainActions } = useActions({ account, parentAccount, colors });
+
+  const onNavigate = useCallback(
+    (name: string, options?: any) => {
+      const accountId = account ? account.id : undefined;
+      const parentId = parentAccount ? parentAccount.id : undefined;
+      navigation.navigate(name, {
+        ...options,
+        params: {
+          ...(options ? options.params : {}),
+          accountId,
+          parentId,
+        },
+      });
+    },
+    [account, parentAccount, navigation],
+  );
+
+  const onPress = useCallback(
+    (data: ActionButton) => {
+      const { navigationParams, linkUrl } = data;
+      if (linkUrl) {
+        Linking.openURL(linkUrl);
+      } else if (navigationParams) {
+        onNavigate(...navigationParams);
+      }
+    },
+    [onNavigate],
+  );
+
+  const quickActions: QuickActionButtonProps[] = mainActions.map(action => {
+    return {
+      Icon: action.Icon,
+      children: action.label,
+      onPress: () => onPress(action),
+    };
+  });
+
+  return (
+    <QuickActionList
+      data={quickActions}
+      numColumns={
+        quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
+      }
+    ></QuickActionList>
+  );
+};
+
 export const FabAccountActionsComponent: React.FC<FabAccountActionsProps> = ({
   account,
   parentAccount,
 }: FabAccountActionsProps) => {
   const { colors } = useTheme();
-  const { t } = useTranslation();
-
-  const currency = getAccountCurrency(account);
-  const swapSelectableCurrencies = useSelector(
-    swapSelectableCurrenciesSelector,
-  );
-  const availableOnSwap =
-    swapSelectableCurrencies.includes(currency.id) && account.balance.gt(0);
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-
-  const rampCatalog = useRampCatalog();
-
-  const [canBeBought, canBeSold] = useMemo(() => {
-    if (!rampCatalog.value || !currency) {
-      return [false, false];
-    }
-
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.onRamp,
-    );
-    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.offRamp,
-    );
-
-    return [
-      allBuyableCryptoCurrencyIds.includes(currency.id),
-      allSellableCryptoCurrencyIds.includes(currency.id),
-    ];
-  }, [rampCatalog.value, currency]);
-
-  const actionButtonSwap: ActionButton = {
-    navigationParams: [
-      NavigatorName.Swap,
-      {
-        screen: ScreenName.Swap,
-        params: {
-          defaultAccount: account,
-          defaultParentAccount: parentAccount,
-        },
-      },
-    ],
-    label: t("transfer.swap.main.header", { currency: currency.name }),
-    Icon: iconSwap,
-    event: "Swap Crypto Account Button",
-    eventProperties: { currencyName: currency.name },
-  };
-
-  const actionButtonBuy: ActionButton = {
-    navigationParams: [
-      NavigatorName.Exchange,
-      {
-        screen: ScreenName.ExchangeBuy,
-        params: {
-          defaultCurrencyId: currency && currency.id,
-          defaultAccountId: account && account.id,
-        },
-      },
-    ],
-    label: t("account.buy"),
-    Icon: iconBuy,
-    event: "Buy Crypto Account Button",
-    eventProperties: {
-      currencyName: currency.name,
-    },
-  };
-
-  const actionButtonSell: ActionButton = {
-    navigationParams: [
-      NavigatorName.Exchange,
-      {
-        screen: ScreenName.ExchangeSell,
-        params: {
-          defaultCurrencyId: currency && currency.id,
-          defaultAccountId: account && account.id,
-        },
-      },
-    ],
-    label: t("account.sell"),
-    Icon: iconSell,
-    event: "Sell Crypto Account Button",
-    eventProperties: {
-      currencyName: currency.name,
-    },
-  };
-
-  const allActions: ActionButton[] = [
-    ...(availableOnSwap ? [actionButtonSwap] : []),
-    ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
-    ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
-    ...useActions({ account, parentAccount, colors }),
-  ];
+  const { secondaryActions } = useActions({
+    account,
+    parentAccount,
+    colors,
+  });
 
   return (
     <FabAccountButtonBar
-      buttons={allActions}
+      buttons={secondaryActions}
       account={account}
       parentAccount={parentAccount}
     />
@@ -161,7 +128,6 @@ const FabMarketActionsComponent: React.FC<Props> = ({
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
-
   const defaultAccount = useMemo(() => (accounts ? accounts[0] : undefined), [
     accounts,
   ]);
@@ -173,7 +139,6 @@ const FabMarketActionsComponent: React.FC<Props> = ({
     currency && swapSelectableCurrencies.includes(currency.id);
 
   const rampCatalog = useRampCatalog();
-
   const [canBeBought, canBeSold] = useMemo(() => {
     if (!rampCatalog.value || !currency) {
       return [false, false];
