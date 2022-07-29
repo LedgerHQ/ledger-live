@@ -174,7 +174,7 @@ const modes = Object.freeze({
   },
   avalanchepchain: {
     overridesDerivation: "44'/9000'/0'/0/<account>",
-    isNonIterable: true
+    isNonIterable: true,
   },
   hederaBip44: {
     overridesDerivation: "44/3030",

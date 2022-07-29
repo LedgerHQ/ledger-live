@@ -1,7 +1,12 @@
 import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "./types";
-import type { Operation, Account, SignOperationEvent, OperationType } from "../../types";
+import type {
+  Operation,
+  Account,
+  SignOperationEvent,
+  OperationType,
+} from "../../types";
 import { withDevice } from "../../hw/deviceAccess";
 import buildTransaction from "./js-buildTransaction";
 import Avalanche, { AVAX_BIP32_PREFIX } from "./hw-app-avalanche";
@@ -86,9 +91,7 @@ const signOperation = ({
           const signature =
             "0x" + binTools.addChecksum(signedTx.toBuffer()).toString("hex");
 
-          const operation = buildOptimisticOperation(
-            account,
-            transaction          );
+          const operation = buildOptimisticOperation(account, transaction);
 
           o.next({
             type: "signed",
@@ -330,7 +333,7 @@ const getPathFromAddress = (address: string, pAddresses: string[]) => {
 
 const buildOptimisticOperation = (
   account: Account,
-  transaction: Transaction,
+  transaction: Transaction
 ): Operation => {
   let type: OperationType;
 
@@ -359,7 +362,7 @@ const buildOptimisticOperation = (
     date: new Date(),
     extra: {
       validator: transaction.recipient,
-      stakeValue: value
+      stakeValue: value,
     },
   };
 

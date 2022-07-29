@@ -1,5 +1,8 @@
 import BigNumber from "bignumber.js";
-import type { AvalanchePChainResourcesRaw, AvalanchePChainResources } from "./types";
+import type {
+  AvalanchePChainResourcesRaw,
+  AvalanchePChainResources,
+} from "./types";
 
 export function toAvalanchePChainResourcesRaw(
   r: AvalanchePChainResources

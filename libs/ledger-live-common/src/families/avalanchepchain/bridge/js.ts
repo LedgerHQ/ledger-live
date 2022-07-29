@@ -1,5 +1,5 @@
 import type { AccountBridge, CurrencyBridge } from "../../../types";
-import type { Transaction } from '../types';
+import type { Transaction } from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { sync, scanAccounts } from "../js-synchronisation";
 import {
@@ -16,23 +16,23 @@ import estimateMaxSpendable from "../js-estimateMaxSpendable";
 const receive = makeAccountBridgeReceive();
 
 const currencyBridge: CurrencyBridge = {
-    preload,
-    hydrate,
-    scanAccounts,
+  preload,
+  hydrate,
+  scanAccounts,
 };
 
 const accountBridge: AccountBridge<Transaction> = {
-    estimateMaxSpendable,
-    createTransaction,
-    updateTransaction,
-    getTransactionStatus,
-    prepareTransaction,
-    sync,
-    receive,
-    signOperation,
-    broadcast,
+  estimateMaxSpendable,
+  createTransaction,
+  updateTransaction,
+  getTransactionStatus,
+  prepareTransaction,
+  sync,
+  receive,
+  signOperation,
+  broadcast,
 };
 export default {
-    currencyBridge,
-    accountBridge,
+  currencyBridge,
+  accountBridge,
 };

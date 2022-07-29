@@ -43,7 +43,7 @@ export const preload = async (): Promise<AvalanchePChainPreloadData> => {
     log("avalanche/preload", "refreshing avalanche validators...");
 
     try {
-      validators = (await getValidators());
+      validators = await getValidators();
       validators = await customValidatorFilter(validators);
     } catch (error) {
       log("avalanche/preload", "failed to fetch validators", {

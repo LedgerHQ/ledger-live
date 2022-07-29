@@ -6,7 +6,7 @@ export const binTools = BinTools.getInstance();
 export const AVAX_HRP = "avax"; //"fuji" for testnet, "avax" for mainnet
 
 export const FIGMENT_AVALANCHE_VALIDATOR_NODES = [
-  "NodeID-GW7CvXwkPFDsfFHrix1SA148NHF5ZnSXs"
+  "NodeID-GW7CvXwkPFDsfFHrix1SA148NHF5ZnSXs",
 ];
 
 export const ONE_AVAX = 1000000000;

@@ -3,7 +3,12 @@ import { binTools } from "./utils";
 import HDKey from "hdkey";
 import { KeyPair as AVMKeyPair } from "avalanche/dist/apis/avm";
 import { AVAX_HRP } from "./utils";
-import { AmountOutput, PlatformVMConstants, StakeableLockOut, UTXOSet } from "avalanche/dist/apis/platformvm";
+import {
+  AmountOutput,
+  PlatformVMConstants,
+  StakeableLockOut,
+  UTXOSet,
+} from "avalanche/dist/apis/platformvm";
 import BigNumber from "bignumber.js";
 import { BN } from "avalanche";
 import { UnixNow } from "avalanche/dist/utils";

@@ -34,7 +34,7 @@ import {
 } from "../families/algorand/serialization";
 import {
   toAvalanchePChainResourcesRaw,
-  fromAvalanchePChainResourcesRaw
+  fromAvalanchePChainResourcesRaw,
 } from "../families/avalanchepchain/serialization";
 import {
   toPolkadotResourcesRaw,
@@ -834,7 +834,9 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   }
 
   if (avalanchePChainResources) {
-    res.avalanchePChainResources = fromAvalanchePChainResourcesRaw(avalanchePChainResources);
+    res.avalanchePChainResources = fromAvalanchePChainResourcesRaw(
+      avalanchePChainResources
+    );
   }
 
   if (polkadotResources) {
@@ -974,7 +976,9 @@ export function toAccountRaw({
   }
 
   if (avalanchePChainResources) {
-    res.avalanchePChainResources = toAvalanchePChainResourcesRaw(avalanchePChainResources);
+    res.avalanchePChainResources = toAvalanchePChainResourcesRaw(
+      avalanchePChainResources
+    );
   }
 
   if (polkadotResources) {

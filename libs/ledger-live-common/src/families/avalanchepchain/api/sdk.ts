@@ -99,7 +99,7 @@ const convertDelegationToOperation = (
     accountId,
     date: new Date(transaction.timestamp),
     extra: {
-      stakeValue
+      stakeValue,
     },
   };
 };

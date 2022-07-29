@@ -49,7 +49,7 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
   const onSearch = useCallback(e => setSearch(e.target.value), [setSearch]);
 
   return (
-<>
+    <>
       {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
       <ValidatorsFieldContainer>
         <Box p={1}>

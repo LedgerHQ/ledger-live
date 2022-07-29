@@ -1,9 +1,9 @@
 import { encodeAccountId } from "../../account";
 import {
-    makeSync,
-    makeScanAccounts,
-    GetAccountShape,
-    mergeOps,
+  makeSync,
+  makeScanAccounts,
+  GetAccountShape,
+  mergeOps,
 } from "../../bridge/jsHelpers";
 import { getAccount, getOperations, getDelegations } from "./api";
 import { HDHelper } from "./hdhelper";
@@ -64,4 +64,4 @@ const getAccountShape: GetAccountShape = async (info) => {
 };
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
-export const sync = makeSync({ getAccountShape }); 
+export const sync = makeSync({ getAccountShape });

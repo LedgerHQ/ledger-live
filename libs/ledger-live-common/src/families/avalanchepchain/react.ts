@@ -25,7 +25,7 @@ export const useAvalancheFilteredValidators = (search: string) => {
 
     const lowercaseSearch = search.toLowerCase();
 
-    const filtered = validators.filter((validator) => 
+    const filtered = validators.filter((validator) =>
       validator.nodeID.toLowerCase().includes(lowercaseSearch)
     );
 
