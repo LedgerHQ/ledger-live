@@ -11,10 +11,10 @@ import {
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import * as Animatable from "react-native-animatable";
 import { useTranslation } from "react-i18next";
+import { Transition } from "@ledgerhq/native-ui/components/transitions";
 import Graph from "../../../components/Graph";
 // @ts-expect-error impot issue
 import getWindowDimensions from "../../../logic/getWindowDimensions";
-import { Transition } from "@ledgerhq/native-ui/components/transitions";
 
 const { width } = getWindowDimensions();
 
