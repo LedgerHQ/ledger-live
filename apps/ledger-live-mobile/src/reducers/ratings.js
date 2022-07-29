@@ -43,7 +43,7 @@ const handlers: Object = {
     ...state,
     isRatingsModalLocked,
   }),
-  RATINGS_SET_CURRENT_ROUTE: (
+  RATINGS_SET_CURRENT_ROUTE_NAME: (
     state: RatingsState,
     { currentRouteName }: { currentRouteName?: string },
   ) => ({
