@@ -1,5 +1,4 @@
 // @flow
-import { getSentryIfAvailable } from "../sentry/internal";
 import { unsubscribeSetup } from "./live-common-setup";
 import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { serializeError } from "@ledgerhq/errors";
@@ -12,11 +11,13 @@ import LoggerTransport from "~/logger/logger-transport-internal";
 import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
 import sentry, { setTags } from "~/sentry/internal";
 
+let unsubscribeSentry = () => {};
+
 process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
   unsubscribeAllCommands();
-  getSentryIfAvailable()?.close(2000);
+  if (unsubscribeSentry) unsubscribeSentry();
 });
 
 logger.add(new LoggerTransport());
@@ -40,7 +41,7 @@ const defers = {};
 // eslint-disable-next-line no-unused-vars
 let sentryEnabled = process.env.INITIAL_SENTRY_ENABLED !== "false";
 const userId = process.env.SENTRY_USER_ID || "";
-sentry(() => Boolean(userId) && sentryEnabled, userId);
+unsubscribeSentry = sentry(() => Boolean(userId) && sentryEnabled, userId);
 
 const { INITIAL_SENTRY_TAGS } = process.env;
 if (INITIAL_SENTRY_TAGS) {
@@ -124,6 +125,7 @@ process.on("message", m => {
 });
 
 process.on("disconnect", () => {
+  unsubscribeSentry();
   process.exit(0);
 });
 
