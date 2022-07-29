@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import type { TFunction } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
@@ -11,8 +11,11 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "../components/ValidatorRow";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { Account, TransactionStatus } from "@ledgerhq/live-common/types";
-import { useAvalanchePChainPreloadData } from "@ledgerhq/live-common/families/avalanchepchain/react";
+import { useAvalancheFilteredValidators } from "@ledgerhq/live-common/families/avalanchepchain/react";
 import type { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
+import ValidatorSearchInput, {
+  NoResultPlaceholder,
+} from "~/renderer/components/Delegation/ValidatorSearchInput";
 
 type Props = {
   t: TFunction,
@@ -23,13 +26,14 @@ type Props = {
 };
 
 const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAddr }: Props) => {
+  const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
   const unit = getAccountUnit(account);
-  const { validators } = useAvalanchePChainPreloadData();
+  const validators = useAvalancheFilteredValidators(search);
 
   if (!status) return null;
 
-  const renderItem = (validator: AvalanchePChainValidator, validatorIdx: number) => {
+  const renderItem = (validator: AvalanchePChainValidator) => {
     return (
       <ValidatorRow
         currency={account.currency}
@@ -42,31 +46,34 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
     );
   };
 
+  const onSearch = useCallback(e => setSearch(e.target.value), [setSearch]);
+
   return (
-    <ValidatorsFieldContainer>
-      <Box p={1}>
-        <ScrollLoadingList
-          data={
-            showAll
-              ? validators
-              : [validators.find(v => v.nodeID === chosenVoteAccAddr) || validators[0]]
-          }
-          style={{
-            flex: showAll ? "1 0 240px" : "1 0 56px",
-            marginBottom: 0,
-            paddingLeft: 0,
-          }}
-          renderItem={renderItem}
-          noResultPlaceholder={null}
-        />
-      </Box>
-      <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
-        <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
-          <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
-        </Text>
-        <IconAngleDown size={16} />
-      </SeeAllButton>
-    </ValidatorsFieldContainer>
+<>
+      {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
+      <ValidatorsFieldContainer>
+        <Box p={1}>
+          <ScrollLoadingList
+            data={
+              showAll
+                ? validators
+                : [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]]
+            }
+            style={{ flex: showAll ? "1 0 256px" : "1 0 64px", marginBottom: 0, paddingLeft: 0 }}
+            renderItem={renderItem}
+            noResultPlaceholder={
+              validators.length <= 0 && search.length > 0 && <NoResultPlaceholder search={search} />
+            }
+          />
+        </Box>
+        <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
+          <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
+            <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
+          </Text>
+          <IconAngleDown size={16} />
+        </SeeAllButton>
+      </ValidatorsFieldContainer>
+    </>
   );
 };
 
