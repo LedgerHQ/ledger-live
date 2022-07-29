@@ -1,6 +1,6 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
-import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { StatusBar, TouchableOpacity } from "react-native";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTranslation } from "react-i18next";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
@@ -24,11 +24,9 @@ export function Selector({
 
   const Icon = currency ? (
     <CurrencyIcon size={32} currency={currency} />
-  ) : (
-    <Flex width={32} height={32} justifyContent="center">
-      <InfiniteLoader size={24} />
-    </Flex>
-  );
+  ) :
+    <Flex width={32} height={32} justifyContent="center" backgroundColor="neutral.c30" borderRadius={16} />
+;
 
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
@@ -38,7 +36,7 @@ export function Selector({
         justifyContent="space-between"
         paddingY={4}
       >
-        <Flex flexDirection="row" alignItems="center">
+        <Flex flexDirection="row" alignItems="center" minWidth={180}>
           <Flex alignItems="center" justifyContent="center">
             {Icon}
           </Flex>
@@ -47,9 +45,9 @@ export function Selector({
             <Text
               variant="h3"
               marginBottom={2}
-              color={title ? "neutral.c100" : "neutral.c70"}
+              color={title? "neutral.c100" : "neutral.c70"}
             >
-              {title ?? t("transfer.swap2.form.loading")}
+              {title || t("transfer.swap2.form.placeholder")}
             </Text>
             <Text
               variant="subtitle"
