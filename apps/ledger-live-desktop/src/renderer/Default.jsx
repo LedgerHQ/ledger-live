@@ -2,7 +2,8 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
-import { Redirect, Route, Switch, useLocation } from "react-router-dom";
+import { Redirect, Route, Switch, useLocation, useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
@@ -28,7 +29,6 @@ import ListenDevices from "~/renderer/components/ListenDevices";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
 import Idler from "~/renderer/components/Idler";
 import IsUnlocked from "~/renderer/components/IsUnlocked";
-import OnboardingOrElse from "~/renderer/components/OnboardingOrElse";
 import AppRegionDrag from "~/renderer/components/AppRegionDrag";
 import IsNewVersion from "~/renderer/components/IsNewVersion";
 import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAvailable";
@@ -57,6 +57,10 @@ import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
+import Onboarding from "~/renderer/components/Onboarding";
+
+import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
+
 // $FlowFixMe
 import Market from "~/renderer/screens/market";
 // $FlowFixMe
@@ -139,6 +143,9 @@ const NightlyLayer = React.memo(NightlyLayerR);
 export default function Default() {
   const location = useLocation();
   const ref: React$ElementRef<any> = useRef();
+  const history = useHistory();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
   useDeeplink();
   useUSBTroubleshooting();
 
@@ -153,6 +160,12 @@ export default function Default() {
       ref.current.scrollTo(0, 0);
     }
   }, [location]);
+
+  useEffect(() => {
+    if (!hasCompletedOnboarding) {
+      history.push("/onboarding");
+    }
+  }, [history, hasCompletedOnboarding]);
 
   return (
     <>
@@ -177,12 +190,13 @@ export default function Default() {
             {process.env.DISABLE_TRANSACTION_BROADCAST ? (
               <DisableTransactionBroadcastWarning />
             ) : null}
-            <OnboardingOrElse>
-              <Switch>
-                <Route exact path="/walletconnect">
-                  <WalletConnect />
-                </Route>
+            <Switch>
+              <Route path="/onboarding" render={props => <Onboarding {...props} />} />
+              {hasCompletedOnboarding && (
                 <Route>
+                  <Route exact path="/walletconnect">
+                    <WalletConnect />
+                  </Route>
                   <IsNewVersion />
                   <IsSystemLanguageAvailable />
                   <IsTermOfUseUpdated />
@@ -287,8 +301,8 @@ export default function Default() {
                     <LetInternalSendCrashTest />
                   </KeyboardContent>
                 </Route>
-              </Switch>
-            </OnboardingOrElse>
+              )}
+            </Switch>
           </ContextMenuWrapper>
         </BridgeSyncProvider>
       </IsUnlocked>

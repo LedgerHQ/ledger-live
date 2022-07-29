@@ -8,6 +8,7 @@ const ScrollAreaContainer: ThemedComponent<*> = styled.div`
   height: 100%;
   width: 100%;
   overflow-y: hidden;
+  padding-bottom: ${({ isInsideDrawer }) => (isInsideDrawer ? "80px" : "0px")};
 `;
 
 const ScrollableContentContainer = styled.div`
@@ -63,6 +64,7 @@ type ScrollAreaProps = {
   children?: React$Node,
   withHint?: boolean,
   hideScrollbar?: boolean,
+  isInsideDrawer?: boolean,
 };
 
 export function ScrollArea({
@@ -70,6 +72,7 @@ export function ScrollArea({
   children,
   withHint = false,
   hideScrollbar = false,
+  isInsideDrawer = false,
 }: ScrollAreaProps) {
   const [hintVisible, setHintVisible] = useState(true);
 
@@ -78,7 +81,7 @@ export function ScrollArea({
   }, []);
 
   return (
-    <ScrollAreaContainer className={className}>
+    <ScrollAreaContainer className={className} isInsideDrawer={isInsideDrawer}>
       {withHint ? <ScrollHint visible={hintVisible} /> : null}
       <ScrollableContentContainer
         id="page-scroller"
