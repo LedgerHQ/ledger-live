@@ -57,6 +57,7 @@ jobs:
         shell: bash
         env:
           FILTER: ${{ github.event.inputs.filter }}
+          VERBOSE_FILE: logs.txt
         run: |
           pnpm common ci-test-integration $FILTER
           git diff --exit-code libs/ledger-live-common/src
@@ -67,3 +68,9 @@ jobs:
           name: ${{ format('live-common-src-{0}', matrix.os) }}
           path: |
             libs/ledger-live-common/src
+      - name: (On Failure) Upload logs
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: logs.txt
+          path: logs.txt

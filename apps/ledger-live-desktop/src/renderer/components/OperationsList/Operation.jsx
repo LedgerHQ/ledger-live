@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import type { TFunction } from "react-i18next";
-import type { AccountLike, Account, Operation } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountName,

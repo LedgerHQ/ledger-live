@@ -1,17 +1,15 @@
 # @ledgerhq/hw-transport-mocker
 
-## 6.27.2-nightly.1
+## 6.27.2
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.27.2-nightly.1
+  - @ledgerhq/hw-transport@6.27.2
 
-## 6.27.2-nightly.0
+## 6.27.2-next.0
 
 ### Patch Changes
 
-- 47252169a: add dummy changesets
-- Updated dependencies [47252169a]
-  - @ledgerhq/hw-transport@6.27.2-nightly.0
-  - @ledgerhq/logs@6.10.1-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.2-next.0

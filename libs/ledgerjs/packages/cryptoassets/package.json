@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "6.30.0-nightly.1",
+  "version": "6.30.0",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"
@@ -22,6 +22,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "invariant": "2"
+  },
+  "devDependencies": {
+    "@ledgerhq/types-cryptoassets": "workspace:^"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

@@ -1,4 +1,5 @@
-import type { CryptoCurrency } from "../../types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees = {
   bitcoin: 1000,

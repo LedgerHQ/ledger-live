@@ -1,6 +1,6 @@
 {
   "name": "@actions/submit-bot-report",
-  "version": "1.0.1-nightly.0",
+  "version": "1.0.1",
   "description": "Use the bot report to upload to all relevant places (Github comment, Slack)",
   "license": "MIT",
   "private": true,

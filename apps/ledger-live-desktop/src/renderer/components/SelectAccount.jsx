@@ -8,7 +8,7 @@ import {
   listSubAccounts,
 } from "@ledgerhq/live-common/account/index";
 import type { TFunction } from "react-i18next";
-import type { AccountLike, Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account, TokenAccount } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import React, { useCallback, useState, useMemo } from "react";
 import { withTranslation, Trans } from "react-i18next";

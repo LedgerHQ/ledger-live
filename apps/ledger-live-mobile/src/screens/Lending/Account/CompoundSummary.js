@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
-import type { TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import { listCurrentRates } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";

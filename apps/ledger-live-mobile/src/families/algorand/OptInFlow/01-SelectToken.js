@@ -17,10 +17,8 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 
-import type {
-  TokenCurrency,
-  SubAccount,
-} from "@ledgerhq/live-common/types/index";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SubAccount } from "@ledgerhq/types-live";
 
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../const";

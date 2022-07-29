@@ -1,5 +1,5 @@
+import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "./../../operation";
-import type { Account, Operation, SignedOperation } from "./../../types";
 import wallet, { getWalletAccount } from "./wallet-btc";
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "esbuild-utils",
-  "version": "1.0.1-nightly.0",
+  "version": "1.0.1",
   "private": true,
   "description": "esbuild utility functions and plugins",
   "main": "index.js",

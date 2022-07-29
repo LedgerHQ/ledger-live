@@ -1,6 +1,6 @@
 // @flow
 import { useMemo } from "react";
-import type { AccountLikeArray } from "@ledgerhq/live-common/types/index";
+import type { AccountLikeArray } from "@ledgerhq/types-live";
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
 

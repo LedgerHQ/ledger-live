@@ -2,7 +2,7 @@ import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
-import { Unit } from "@ledgerhq/cryptoassets";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 
 function expectedValue(unit: Unit, value: BigNumber) {
@@ -38,6 +38,21 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       ignoreAssertionFailure: true,
       expectedValue: ({ account, status }) =>
         expectedValue(account.unit, status.amount),
+    },
+    {
+      title: "Asset fingerprint",
+      button: "LRlr",
+    },
+    {
+      title: "Token amount",
+      button: "LRlr",
+    },
+    {
+      title: "Confirm",
+    },
+    {
+      title: "output?",
+      button: "Rr",
     },
     {
       title: "Transaction fee",

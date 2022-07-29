@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import { command } from "~/renderer/commands";
 import TrackPage from "~/renderer/analytics/TrackPage";

@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { makeClosedHistoryForAccounts } from "@ledgerhq/live-common/compound/logic";
-import type { AccountLikeArray } from "@ledgerhq/live-common/types/index";
+import type { AccountLikeArray } from "@ledgerhq/types-live";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import EmptyState from "../EmptyState";
