@@ -49,11 +49,35 @@ export const useOnboardingStatePolling = ({
         next: (onboardingStatePollingResult: OnboardingStatePollingResult) => {
           if (onboardingStatePollingResult) {
             setFatalError(null);
-            setAllowedError(onboardingStatePollingResult.allowedError);
+            setAllowedError((prevAllowedError) => {
+              // Only updates if the new allowedError is different
+              if (
+                isDifferentError(
+                  prevAllowedError,
+                  onboardingStatePollingResult.allowedError
+                )
+              ) {
+                return onboardingStatePollingResult.allowedError;
+              }
+
+              return prevAllowedError;
+            });
 
             // Does not update the onboarding state if an allowed error occurred
             if (!onboardingStatePollingResult.allowedError) {
-              setOnboardingState(onboardingStatePollingResult.onboardingState);
+              setOnboardingState((prevOnboardingState) => {
+                // Only updates if the new onboardingState is different
+                if (
+                  isDifferentOnboardingState(
+                    prevOnboardingState,
+                    onboardingStatePollingResult.onboardingState
+                  )
+                ) {
+                  return onboardingStatePollingResult.onboardingState;
+                }
+
+                return prevOnboardingState;
+              });
             }
           }
         },
@@ -83,4 +107,22 @@ export const useOnboardingStatePolling = ({
   ]);
 
   return { onboardingState, allowedError, fatalError };
+};
+
+const isDifferentOnboardingState = (
+  prevOnboardingState: OnboardingState | null,
+  newOnboardingState: OnboardingState | null
+): boolean => {
+  // OnboardingState are simple JSON-style objects, without methods
+  return (
+    JSON.stringify(prevOnboardingState) !== JSON.stringify(newOnboardingState)
+  );
+};
+
+const isDifferentError = (
+  prevError: Error | null,
+  newError: Error | null
+): boolean => {
+  // Only interested if the errors are instances of the same Error class
+  return prevError?.constructor !== newError?.constructor;
 };

@@ -59,6 +59,11 @@ describe("useOnboardingStatePolling", () => {
           {
             onboardingState: { ...aSecondOnboardingState },
             allowedError: null,
+          },
+          {
+            // During the third polling, it gets the same onboarding state
+            onboardingState: { ...aSecondOnboardingState },
+            allowedError: null,
           }
         ).pipe(
           delayWhen((_, index) => {
@@ -89,7 +94,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.onboardingState).toEqual(anOnboardingState);
     });
 
-    it("should fetch again the state at a defined frequency and update (if new) the onboarding state returned to the consumer", async () => {
+    it("should fetch again the state at a defined frequency and only update the onboarding state returned to the consumer if it different than the previous one", async () => {
       const device = aDevice;
 
       const { result } = renderHook(() =>
@@ -112,6 +117,19 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(aSecondOnboardingState);
+      // To compare with the result of the third polling
+      const prevOnboardingState = result.current.onboardingState;
+
+      // Third polling
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.allowedError).toBeNull();
+      // It should not have been updated
+      // toBe matcher checks referential identity of object instances
+      expect(result.current.onboardingState).toBe(prevOnboardingState);
     });
 
     describe("and when the hook consumer stops the polling", () => {
@@ -165,6 +183,11 @@ describe("useOnboardingStatePolling", () => {
             allowedError: new DisconnectedDevice("An allowed error"),
           },
           {
+            onboardingState: null,
+            // During the third polling, it gets the same allowed error
+            allowedError: new DisconnectedDevice("An allowed error"),
+          },
+          {
             onboardingState: { ...aSecondOnboardingState },
             allowedError: null,
           }
@@ -176,7 +199,7 @@ describe("useOnboardingStatePolling", () => {
       );
     });
 
-    it("should update the allowed error returned to the consumer, update the fatal error to null and keep the previous onboarding state", async () => {
+    it("should update the allowed error returned to the consumer if different than the previous one, update the fatal error to null and keep the previous onboarding state", async () => {
       const device = aDevice;
 
       const { result } = renderHook(() =>
@@ -199,6 +222,19 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.allowedError).toBeInstanceOf(DisconnectedDevice);
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
+      // To compare with the result of the third polling
+      const prevAllowedError = result.current.allowedError;
+
+      // Thirs polling
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+      // It should not have been updated
+      // toBe matcher checks referential identity of object instances
+      expect(result.current.allowedError).toBe(prevAllowedError);
     });
 
     it("should be able to recover once the allowed error is fixed and the onboarding state is updated", async () => {
@@ -218,7 +254,7 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.onboardingState).toEqual(anOnboardingState);
 
       await act(async () => {
-        jest.advanceTimersByTime(pollingPeriodMs);
+        jest.advanceTimersByTime(2 * pollingPeriodMs);
       });
 
       // Everything is ok on the next run
