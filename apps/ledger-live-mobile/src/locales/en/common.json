@@ -2563,6 +2563,7 @@
           "quote": "Quote",
           "receive": "Receive"
         },
+        "placeholder": "Select account",
         "title": "Exchange",
         "cta": "Exchange",
         "from": "From",
