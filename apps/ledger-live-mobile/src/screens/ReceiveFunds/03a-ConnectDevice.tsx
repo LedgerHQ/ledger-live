@@ -102,7 +102,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = mainAccount && getAccountCurrency(mainAccount)
+  const currency = getAccountCurrency(mainAccount)
   const tokenCurrency =
     account && account.type === "TokenAccount" && account.token;
 
