@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Icon } from "@ledgerhq/native-ui";
+import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
@@ -127,9 +127,9 @@ export function OperationDetails({ route }: OperationDetailsProps) {
             style={styles.providerLinkContainer}
             onPress={openProvider}
           >
-            <LText semiBold style={styles.providerLink} color="live">
+            <Text paddingRight={2} color="primary.c100">
               {getProviderName(provider)}
-            </LText>
+            </Text>
             <ExternalLink size={11} color={colors.live} />
           </TouchableOpacity>
           <LText style={styles.label} color="grey">
