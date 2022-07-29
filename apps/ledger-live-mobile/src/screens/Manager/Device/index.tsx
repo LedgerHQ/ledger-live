@@ -102,8 +102,6 @@ const DeviceCard = ({
     [deviceInfo.seVersion, deviceModel.id],
   );
 
-  console.log({ isLocalizationSupported})
-
   return (
     <BorderCard>
       <Flex flexDirection={"row"} mt={24} mx={4} mb={8}>
