@@ -17,8 +17,8 @@ import {
 import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
 import { ActionButton } from "../../../components/FabAccountButtonBar";
-import { getAllSupportedCryptoCurrencyIds } from "../../../../../../libs/ledger-live-common/lib-es/platform/providers/RampCatalogProvider/helpers";
-import { useRampCatalog } from "../../../../../../libs/ledger-live-common/lib/platform/providers/RampCatalogProvider";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 
 type Props = {
   account: AccountLike;
@@ -45,6 +45,7 @@ export default function useActions({
   const currency = getAccountCurrency(account);
 
   const balance = getAccountSpendableBalance(account);
+  const isZeroBalance = balance.gt(0);
   const mainAccount = getMainAccount(account, parentAccount);
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
@@ -77,8 +78,7 @@ export default function useActions({
   const swapSelectableCurrencies = useSelector(
     swapSelectableCurrenciesSelector,
   );
-  const availableOnSwap =
-    swapSelectableCurrencies.includes(currency.id) && account.balance.gt(0);
+  const availableOnSwap = swapSelectableCurrencies.includes(currency.id);
 
   const extraSendActionParams = useMemo(
     () =>
@@ -109,6 +109,7 @@ export default function useActions({
     ],
     label: t("transfer.swap.main.header", { currency: currency.name }),
     Icon: iconSwap,
+    disabled: isZeroBalance,
     event: "Swap Crypto Account Button",
     eventProperties: { currencyName: currency.name },
   };
@@ -145,6 +146,7 @@ export default function useActions({
     ],
     label: t("account.sell"),
     Icon: iconSell,
+    disabled: isZeroBalance,
     event: "Sell Crypto Account Button",
     eventProperties: {
       currencyName: currency.name,
@@ -161,7 +163,7 @@ export default function useActions({
     label: <Trans i18nKey="account.send" />,
     event: "AccountSend",
     Icon: Icons.ArrowTopMedium,
-    disabled: balance.lte(0),
+    disabled: isZeroBalance,
     ...extraSendActionParams,
   };
 

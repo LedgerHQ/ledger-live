@@ -6,14 +6,13 @@ import { useSelector } from "react-redux";
 
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-
 import {
   AccountLike,
   Account,
   CryptoCurrency,
 } from "@ledgerhq/live-common/types/index";
 
-import { Icons } from "@ledgerhq/native-ui";
+import { Icons, QuickActionList } from "@ledgerhq/native-ui";
 
 import {
   readOnlyModeEnabledSelector,
@@ -23,10 +22,9 @@ import { accountsCountSelector } from "../reducers/accounts";
 import { NavigatorName, ScreenName } from "../const";
 import FabAccountButtonBar, { ActionButton } from "./FabAccountButtonBar";
 import useActions from "../screens/Account/hooks/useActions";
-import { QuickActionList } from "../../../../libs/ui/packages/native/lib";
 import { Linking } from "react-native";
-import { QuickActionButtonProps } from "../../../../libs/ui/packages/native/lib/components/cta/QuickAction/QuickActionButton";
 import { useTheme } from "styled-components";
+import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
 
 type FabAccountActionsProps = {
   account: AccountLike;
