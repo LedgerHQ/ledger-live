@@ -129,7 +129,6 @@ export default function installLanguage({
                   })
                 );
               }
-
               return throwError(e);
             })
           )
