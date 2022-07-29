@@ -18,6 +18,7 @@ import { useNavigation } from "@react-navigation/native";
 import invariant from "invariant";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
@@ -36,6 +37,13 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import type { MessageData } from "@ledgerhq/live-common/hw/types";
+import {
+  receiveOnAccountCommonLogic,
+  signTransactionCommonLogic,
+  completeExchangeCommonLogic,
+  CompleteExchangeUiRequest,
+} from "@ledgerhq/live-common/platform/logic";
+
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
   accountToPlatformAccount,
@@ -249,6 +257,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       const parentAccount = isTokenAccount(account)
         ? accounts.find(a => a.id === account.parentId)
         : null;
+
       return new Promise((resolve, reject) => {
         navigation.navigate(ScreenName.VerifyAccount, {
           account,
@@ -279,12 +288,13 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     }: // TODO: use type SignTransactionParams from LedgerLiveApiSdk
     // }: SignTransactionParams) => {
     {
-      accountId: string;
-      transaction: RawPlatformTransaction;
-      params: any;
+      accountId: string,
+      transaction: RawPlatformTransaction,
+      params: any,
     }) => {
       const platformTransaction = deserializePlatformTransaction(transaction);
       const account = accounts.find(account => account.id === accountId);
+
       tracking.platformSignTransactionRequested(manifest);
 
       if (!account) {
@@ -315,18 +325,23 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         }
 
         const bridge = getAccountBridge(account, parentAccount);
-        const { liveTx } =
-          getPlatformTransactionSignFlowInfos(platformTransaction);
+
+        const { liveTx } = getPlatformTransactionSignFlowInfos(
+          platformTransaction,
+        );
+
         const t = bridge.createTransaction(account);
         const { recipient, ...txData } = liveTx;
         const t2 = bridge.updateTransaction(t, {
           recipient,
           subAccountId: isTokenAccount(account) ? account.id : undefined,
         });
+
         const tx = bridge.updateTransaction(t2, {
           userGasLimit: txData.gasLimit,
           ...txData,
         });
+
         navigation.navigate(NavigatorName.SignTransaction, {
           screen: ScreenName.SignTransactionSummary,
           params: {
@@ -450,18 +465,19 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       feesStrategy,
       exchangeType,
     }: {
-      provider: string;
-      fromAccountId: string;
-      toAccountId: string;
-      transaction: RawPlatformTransaction;
-      binaryPayload: string;
-      signature: string;
-      feesStrategy: string;
-      exchangeType: number;
+      provider: string,
+      fromAccountId: string,
+      toAccountId: string,
+      transaction: RawPlatformTransaction,
+      binaryPayload: string,
+      signature: string,
+      feesStrategy: string,
+      exchangeType: number,
     }) => {
       // Nb get a hold of the actual accounts, and parent accounts
       const fromAccount = accounts.find(a => a.id === fromAccountId);
       let fromParentAccount;
+
       const toAccount = accounts.find(a => a.id === toAccountId);
       let toParentAccount;
 
@@ -477,23 +493,28 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       if (fromAccount.type === "TokenAccount") {
         fromParentAccount = accounts.find(a => a.id === fromAccount.parentId);
       }
-
       if (toAccount && toAccount.type === "TokenAccount") {
         toParentAccount = accounts.find(a => a.id === toAccount.parentId);
       }
 
       const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
       const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+
       // eslint-disable-next-line no-param-reassign
       transaction.family = mainFromAccount.currency.family;
+
       const platformTransaction = deserializePlatformTransaction(transaction);
+
       platformTransaction.feesStrategy = feesStrategy;
-      let processedTransaction =
-        accountBridge.createTransaction(mainFromAccount);
+
+      let processedTransaction = accountBridge.createTransaction(
+        mainFromAccount,
+      );
       processedTransaction = accountBridge.updateTransaction(
         processedTransaction,
         platformTransaction,
       );
+
       tracking.platformCompleteExchangeRequested(manifest);
       return new Promise((resolve, reject) => {
         navigation.navigate(NavigatorName.PlatformExchange, {
@@ -514,7 +535,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               feesStrategy,
             },
             device,
-            onResult: (result: { operation?: any; error?: Error }) => {
+            onResult: (result: { operation?: any, error?: Error }) => {
               if (result.error) {
                 tracking.platformStartExchangeFail(manifest);
                 reject(result.error);

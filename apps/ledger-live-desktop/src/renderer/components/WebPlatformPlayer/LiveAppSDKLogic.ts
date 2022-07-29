@@ -11,17 +11,20 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-common/env";
-import {
-  accountToPlatformAccount,
-  getPlatformTransactionSignFlowInfos,
-} from "@ledgerhq/live-common/platform/converters";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
 import {
   serializePlatformAccount,
-  deserializePlatformTransaction,
   serializePlatformSignedTransaction,
   deserializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/platform/serializers";
 import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import {
+  receiveOnAccountCommonLogic,
+  signTransactionCommonLogic,
+  completeExchangeCommonLogic,
+  CompleteExchangeUiRequest,
+} from "@ledgerhq/live-common/platform/logic";
 import {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
@@ -56,39 +59,31 @@ function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Ac
 export const receiveOnAccountLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
   accountId: string,
-) => {
-  tracking.platformReceiveRequested(manifest);
-
-  const account = accounts.find(account => account.id === accountId);
-
-  if (!account) {
-    tracking.platformReceiveFail(manifest);
-    return Promise.reject(new Error("Account required"));
-  }
-
-  const parentAccount = isTokenAccount(account)
-    ? accounts.find(a => a.id === account.parentId)
-    : null;
-
-  // FIXME: handle address rejection (if user reject address, we don't end up in onResult nor in onCancel 🤔)
-  return new Promise((resolve, reject) =>
-    dispatch(
-      openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
-        account,
-        parentAccount,
-        onResult: (account: Account, parentAccount: Account) => {
-          tracking.platformReceiveSuccess(manifest);
-          resolve(accountToPlatformAccount(account, parentAccount).address);
-        },
-        onCancel: (error: Error) => {
-          tracking.platformReceiveFail(manifest);
-          reject(error);
-        },
-        verifyAddress: true,
-      }),
-    ),
+): Promise<string> =>
+  receiveOnAccountCommonLogic(
+    { manifest, accounts, tracking },
+    accountId,
+    (account: AccountLike, parentAccount: Account | null) => {
+      // FIXME: handle address rejection (if user reject address, we don't end up in onResult nor in onCancel 🤔)
+      return new Promise((resolve, reject) =>
+        dispatch(
+          openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
+            account,
+            parentAccount,
+            onResult: (account: Account, parentAccount: Account) => {
+              tracking.platformReceiveSuccess(manifest);
+              resolve(accountToPlatformAccount(account, parentAccount).address);
+            },
+            onCancel: (error: Error) => {
+              tracking.platformReceiveFail(manifest);
+              reject(error);
+            },
+            verifyAddress: true,
+          }),
+        ),
+      );
+    },
   );
-};
 
 export type RequestAccountParams = {
   currencies?: string[];
@@ -109,58 +104,53 @@ export const signTransactionLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
   accountId: string,
   transaction: RawPlatformTransaction,
-  params?: {
+  params: {
     /**
      * The name of the Ledger Nano app to use for the signing process
      */
     useApp: string;
   },
-) => {
-  tracking.platformSignTransactionRequested(manifest);
-
-  const platformTransaction = deserializePlatformTransaction(transaction);
-
-  const account = accounts.find(account => account.id === accountId);
-
-  if (!account) {
-    tracking.platformSignTransactionFail(manifest);
-    return Promise.reject(new Error("Account required"));
-  }
-
-  const parentAccount = getParentAccount(account, accounts);
-
-  if (
-    (isTokenAccount(account) ? parentAccount?.currency.family : account.currency.family) !==
-    platformTransaction.family
-  ) {
-    throw new Error("Transaction family not matching account currency family");
-  }
-
-  const { canEditFees, liveTx, hasFeesProvided } = getPlatformTransactionSignFlowInfos(
-    platformTransaction,
-  );
-
-  return new Promise((resolve, reject) =>
-    dispatch(
-      openModal("MODAL_SIGN_TRANSACTION", {
+) =>
+  signTransactionCommonLogic(
+    { manifest, accounts, tracking },
+    accountId,
+    transaction,
+    params,
+    (
+      account: AccountLike,
+      parentAccount: Account | null,
+      {
         canEditFees,
-        stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
-        transactionData: liveTx,
-        useApp: params?.useApp,
-        account,
-        parentAccount,
-        onResult: (signedOperation: SignedOperation) => {
-          tracking.platformSignTransactionSuccess(manifest);
-          resolve(serializePlatformSignedTransaction(signedOperation));
-        },
-        onCancel: (error: Error) => {
-          tracking.platformSignTransactionFail(manifest);
-          reject(error);
-        },
-      }),
-    ),
+        hasFeesProvided,
+        liveTx,
+      }: {
+        canEditFees: boolean;
+        hasFeesProvided: boolean;
+        liveTx: Partial<Transaction>;
+      },
+    ) => {
+      return new Promise((resolve, reject) =>
+        dispatch(
+          openModal("MODAL_SIGN_TRANSACTION", {
+            canEditFees,
+            stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
+            transactionData: liveTx,
+            useApp: params.useApp,
+            account,
+            parentAccount,
+            onResult: (signedOperation: SignedOperation) => {
+              tracking.platformSignTransactionSuccess(manifest);
+              resolve(serializePlatformSignedTransaction(signedOperation));
+            },
+            onCancel: (error: Error) => {
+              tracking.platformSignTransactionFail(manifest);
+              reject(error);
+            },
+          }),
+        ),
+      );
+    },
   );
-};
 
 export const broadcastTransactionLogic = async (
   { manifest, dispatch, accounts }: WebPlatformContext,
@@ -169,15 +159,15 @@ export const broadcastTransactionLogic = async (
   pushToast: (data: ToastData) => void,
   t: TFunction,
 ) => {
+  if (!signedTransaction) {
+    tracking.platformBroadcastFail(manifest);
+    return Promise.reject(new Error("Transaction required"));
+  }
+
   const account = accounts.find(account => account.id === accountId);
   if (!account) {
     tracking.platformBroadcastFail(manifest);
     return Promise.reject(new Error("Account required"));
-  }
-
-  if (!signedTransaction) {
-    tracking.platformBroadcastFail(manifest);
-    return Promise.reject(new Error("Transaction required"));
   }
 
   const parentAccount = getParentAccount(account, accounts);
@@ -262,75 +252,50 @@ export type CompleteExchangeRequest = {
 };
 export const completeExchangeLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
-  {
-    provider,
-    fromAccountId,
-    toAccountId,
-    transaction,
-    binaryPayload,
-    signature,
-    feesStrategy,
-    exchangeType,
-  }: CompleteExchangeRequest,
-) => {
-  // Nb get a hold of the actual accounts, and parent accounts
-  const fromAccount = accounts.find(a => a.id === fromAccountId);
-
-  const toAccount = accounts.find(a => a.id === toAccountId);
-
-  if (!fromAccount) {
-    return null;
-  }
-
-  if (exchangeType === 0x00 && !toAccount) {
-    // if we do a swap, a destination account must be provided
-    return null;
-  }
-
-  const fromParentAccount = getParentAccount(fromAccount, accounts);
-  const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : null;
-
-  const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
-  const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-
-  transaction.family = mainFromAccount.currency.family;
-
-  const platformTransaction = deserializePlatformTransaction(transaction);
-
-  platformTransaction.feesStrategy = feesStrategy;
-
-  let processedTransaction = accountBridge.createTransaction(mainFromAccount);
-  processedTransaction = accountBridge.updateTransaction(processedTransaction, platformTransaction);
-
-  tracking.platformCompleteExchangeRequested(manifest);
-  return new Promise((resolve, reject) =>
-    dispatch(
-      openModal("MODAL_PLATFORM_EXCHANGE_COMPLETE", {
-        provider,
-        exchange: {
-          fromAccount,
-          fromParentAccount,
-          toAccount,
-          toParentAccount,
-        },
-        transaction: processedTransaction,
-        binaryPayload,
-        signature,
-        feesStrategy,
-        exchangeType,
-
-        onResult: (operation: Operation) => {
-          tracking.platformCompleteExchangeSuccess(manifest);
-          resolve(operation);
-        },
-        onCancel: (error: Error) => {
-          tracking.platformCompleteExchangeFail(manifest);
-          reject(error);
-        },
-      }),
-    ),
+  request: CompleteExchangeRequest,
+) =>
+  completeExchangeCommonLogic(
+    { manifest, accounts, tracking },
+    request,
+    ({
+      provider,
+      fromAccount,
+      fromParentAccount,
+      toAccount,
+      toParentAccount,
+      transaction,
+      binaryPayload,
+      signature,
+      feesStrategy,
+      exchangeType,
+    }: CompleteExchangeUiRequest): Promise<Operation> =>
+      new Promise((resolve, reject) =>
+        dispatch(
+          openModal("MODAL_PLATFORM_EXCHANGE_COMPLETE", {
+            provider,
+            exchange: {
+              fromAccount,
+              fromParentAccount,
+              toAccount,
+              toParentAccount,
+            },
+            transaction,
+            binaryPayload,
+            signature,
+            feesStrategy,
+            exchangeType,
+            onResult: (operation: Operation) => {
+              tracking.platformCompleteExchangeSuccess(manifest);
+              resolve(operation);
+            },
+            onCancel: (error: Error) => {
+              tracking.platformCompleteExchangeFail(manifest);
+              reject(error);
+            },
+          }),
+        ),
+      ),
   );
-};
 
 export const signMessageLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
