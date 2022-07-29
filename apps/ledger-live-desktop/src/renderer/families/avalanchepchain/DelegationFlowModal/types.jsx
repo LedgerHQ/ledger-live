@@ -5,7 +5,7 @@ import type { Step } from "~/renderer/components/Stepper";
 import type { Account, TransactionStatus, Operation } from "@ledgerhq/live-common/types";
 import type { Transaction } from "@ledgerhq/live-common/families/avalanchepchain/types";
 
-export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
+export type StepId = "validator" | "amount" | "endDate" | "connectDevice" | "confirmation";
 
 export type StepProps = {
   t: TFunction,
