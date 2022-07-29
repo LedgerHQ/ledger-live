@@ -930,9 +930,9 @@
         "title" : "Gana",
         "desc" : "Gana ingresos pasivos y haz crecer tus activos cripto"
       },
-      "mint": {
-        "title": "Acuñar",
-        "desc": "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "próximamente",
@@ -2157,10 +2157,67 @@
       "verifyAgain" : "Verifícala de nuevo",
       "noAccount" : "No se han encontrado cuentas.",
       "address" : "Dirección de la cuenta",
-      "copyAddress" : "Copiar dirección",
+      "copyAddress" : "Copiar",
       "shareAddress" : "Compartir dirección",
-      "addressCopied" : "¡Dirección copiada!",
+      "addressCopied" : "Copiado",
       "taprootWarning" : "Asegúrate de que el remitente soporta Taproot",
+      "selectCrypto" : {
+        "title" : "Selecciona una cripto"
+      },
+      "stepperHeader" : {
+        "range" : "Paso {{currentStep}} de {{totalSteps}}",
+        "connectDevice" : "Conectar dispositivo"
+      },
+      "selectAccount" : {
+        "title" : "Selecciona una cuenta",
+        "subtitle" : "Tus {{currencyTicker}} se depositarán en esta cuenta."
+      },
+      "addAccount" : {
+        "title" : "Buscando en la cadena de bloques",
+        "subtitle" : "Comprobando si ya tienes cuentas de {{currencyTicker}}.",
+        "foundAccounts" : "Se han encontrado {{count}} cuentas",
+        "stopSynchronization" : "Detener sincronización"
+      },
+      "verifyAddress" : {
+        "title" : "Verifica la dirección",
+        "subtitle" : "Verifica que la dirección que se muestra en tu dispositivo es la misma que figura a continuación. Una vez que lo hayas comprobado, haz clic en Approve (Aprobar) en tu dispositivo.",
+        "cancel" : {
+          "title" : "Acabas de rechazar esta dirección",
+          "subtitle" : "Si lo has hecho por error, puedes hacer clic en el siguiente botón para volver a intentarlo.",
+          "info" : "Si tienes la certeza de que las direcciones no son las mismas, es posible que tu teléfono haya sido atacado. Te recomendamos que <0>te pongas en contacto con nosotros lo antes posible.</0>"
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "Recibir {{currencyTicker}}",
+        "addressVerified" : "Dirección verificada",
+        "verifyAddress" : "Toca aquí para verificar tu dirección",
+        "adviceVerify" : "Siempre recomendamos verificar la dirección con el dispositivo Ledger.",
+        "sendWarning" : "Envía solamente {{currencyName}} ({{currencyTicker}}) a esta dirección. El envío de cualquier otra moneda puede suponer una pérdida permanente."
+      },
+      "securityVerify" : {
+        "title" : "Por motivos de seguridad, te recomendamos que verifiques esta dirección con tu dispositivo Ledger.",
+        "subtitle1" : "La verificación de tu dirección te ofrece seguridad. No es posible modificar con un ataque la dirección que aparece en tu dispositivo Ledger.",
+        "subtitle2" : "Si verificas la dirección, podrás confirmar si la dirección que aparece en tu dispositivo es la misma que aparece en Ledger Live.",
+        "verifyCta" : "Verificar mi dirección",
+        "dontVerifyCta" : "Mostrar mi dirección sin verificarla"
+      },
+      "securityDontVerify" : {
+        "title" : "¿Deseas continuar?",
+        "subtitle" : "La dirección que se muestre en Ledger Live no se verificará.",
+        "doNotRemindAgain" : "No volver a recordármelo",
+        "no" : "No",
+        "yes" : "Sí"
+      },
+      "toastMessages" : {
+        "accountImported" : "Hemos importado una cuenta de {{currencyTicker}} por ti. ",
+        "why" : "Quiero saber por qué.",
+        "addressVerified" : "Tu dirección se ha verificado"
+      },
+      "additionalInfoModal" : {
+        "title" : "¿Por qué hemos importado una cuenta?",
+        "subtitle" : "Hemos detectado que previamente tenías una cuenta de {{currencyTicker}} en tu semilla. Hemos importado esa cuenta por ti.",
+        "closeCta" : "Entendido"
+      },
       "notSynced" : {
         "text" : "Sincronizando",
         "desc" : "Esto puede tardar un tiempo si tienes muchas transacciones o una conexión a Internet lenta."

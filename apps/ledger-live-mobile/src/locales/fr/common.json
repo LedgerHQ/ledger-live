@@ -930,9 +930,9 @@
         "title" : "Gagner",
         "desc" : "Gagnez des récompenses passives et faites fructifier vos cryptos."
       },
-      "mint": {
-        "title": "Minter",
-        "desc": "Mintez et acquérez des NFT de collaborations exclusives sur le [ L ] Market."
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "Prochainement",
@@ -1050,7 +1050,7 @@
       "2" : {
         "label" : "Les bases",
         "title" : "Restez hors ligne",
-        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de vos cryptos avec votre Nano."
+        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction en cryptos avec votre Nano."
       },
       "3" : {
         "label" : "Les bases",
@@ -1216,7 +1216,7 @@
         "nextStep" : "Étape suivante"
       },
       "hideRecoveryPhrase" : {
-        "title" : "Cacher votre phrase de récupération",
+        "title" : "Cachez votre phrase de récupération",
         "desc" : "Votre phrase de récupération est votre seule façon d’accéder à vos cryptos si vous ne pouvez plus utiliser votre Nano. La garder en lieu sûr est crucial.",
         "bullets" : {
           "0" : {
@@ -2157,10 +2157,67 @@
       "verifyAgain" : "Revérifier",
       "noAccount" : "Aucun compte trouvé",
       "address" : "Adresse du compte",
-      "copyAddress" : "Copier l’adresse",
+      "copyAddress" : "Copier",
       "shareAddress" : "Partager l’adresse",
-      "addressCopied" : "Adresse copiée",
+      "addressCopied" : "Copié",
       "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
+      "selectCrypto" : {
+        "title" : "Sélectionnez une crypto"
+      },
+      "stepperHeader" : {
+        "range" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "connectDevice" : "Connecter l’appareil"
+      },
+      "selectAccount" : {
+        "title" : "Sélectionner un compte",
+        "subtitle" : "Vos {{currencyTicker}} seront déposés sur ce compte."
+      },
+      "addAccount" : {
+        "title" : "Recherche sur la blockchain",
+        "subtitle" : "Vérifions si vous avez déjà des comptes {{currencyTicker}}.",
+        "foundAccounts" : "{{count}} comptes trouvés",
+        "stopSynchronization" : "Arrêter la synchronisation"
+      },
+      "verifyAddress" : {
+        "title" : "Vérifier l’adresse",
+        "subtitle" : "Vérifiez que l’adresse affichée sur votre appareil est identique à celle ci-dessous. Si elles correspondent, validez sur votre appareil.",
+        "cancel" : {
+          "title" : "Vous avez refusé cette adresse",
+          "subtitle" : "S’il s’agit d’une erreur, vous pouvez recommencer en appuyant sur le bouton ci-dessous.",
+          "info" : "Si les adresses ne correspondent pas, votre téléphone peut être corrompu. Nous vous recommandons de <0>nous contacter au plus vite.</0>"
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "Recevoir des {{currencyTicker}}",
+        "addressVerified" : "Adresse vérifiée",
+        "verifyAddress" : "Appuyez ici pour vérifier votre adresse",
+        "adviceVerify" : "Nous vous recommandons de toujours vérifier votre adresse avec votre appareil Ledger.",
+        "sendWarning" : "Envoyez uniquement des {{currencyName}} ({{currencyTicker}}) à cette adresse. Toute autre crypto risque d’être définitivement perdue."
+      },
+      "securityVerify" : {
+        "title" : "Pour une sécurité optimale, nous vous recommandons de vérifier cette adresse avec votre appareil Ledger.",
+        "subtitle1" : "Vérifier votre adresse permet une sécurité optimale. L’adresse affichée sur votre appareil Ledger ne peut pas être corrompue.",
+        "subtitle2" : "En vérifiant votre adresse, vous pourrez confirmer que l’adresse qui apparaît sur votre appareil Ledger est identique à celle affichée dans Ledger Live.",
+        "verifyCta" : "Vérifier mon adresse",
+        "dontVerifyCta" : "Afficher mon adresse sans la vérifier"
+      },
+      "securityDontVerify" : {
+        "title" : "Êtes-vous sûr(e) ?",
+        "subtitle" : "L’adresse affichée dans Ledger Live ne sera pas vérifiée.",
+        "doNotRemindAgain" : "Ne plus me le rappeler",
+        "no" : "Non",
+        "yes" : "Oui"
+      },
+      "toastMessages" : {
+        "accountImported" : "Nous avons importé un compte {{currencyTicker}}. ",
+        "why" : "Dites-moi pourquoi.",
+        "addressVerified" : "Vous avez bien vérifié votre adresse."
+      },
+      "additionalInfoModal" : {
+        "title" : "Pourquoi avons-nous importé ce compte ?",
+        "subtitle" : "Nous avons détecté que vous aviez déjà un compte {{currencyTicker}} lié à votre phrase de récupération. Nous avons donc importé ce compte.",
+        "closeCta" : "Compris"
+      },
       "notSynced" : {
         "text" : "Synchronisation",
         "desc" : "Cela peut prendre quelques instants si vous avez un grand nombre de transactions ou une connexion Internet lente."

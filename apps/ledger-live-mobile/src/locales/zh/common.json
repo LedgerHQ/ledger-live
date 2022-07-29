@@ -930,9 +930,9 @@
         "title" : "赚取",
         "desc" : "赚取被动收入并增长加密资产"
       },
-      "mint": {
-        "title": "铸造",
-        "desc": "通过 [ L ] Market 市场上的独家合作来铸造 NFT"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "敬请期待",
@@ -2157,10 +2157,67 @@
       "verifyAgain" : "再次检查",
       "noAccount" : "未能找到账户",
       "address" : "账户地址",
-      "copyAddress" : "复制地址",
+      "copyAddress" : "复制",
       "shareAddress" : "分享地址",
-      "addressCopied" : "地址已复制！",
+      "addressCopied" : "已复制",
       "taprootWarning" : "确保发送方支持 taproot",
+      "selectCrypto" : {
+        "title" : "选择一种加密货币"
+      },
+      "stepperHeader" : {
+        "range" : "步骤 {{currentStep}} 之 {{totalSteps}}",
+        "connectDevice" : "连接设备"
+      },
+      "selectAccount" : {
+        "title" : "选择账户",
+        "subtitle" : "您的 {{currencyTicker}} 将存入此账户。"
+      },
+      "addAccount" : {
+        "title" : "正在搜索区块链",
+        "subtitle" : "正在检查您是否已经拥有 {{currencyTicker}} 账户。",
+        "foundAccounts" : "已找到 {{count}} 个账户",
+        "stopSynchronization" : "停止同步"
+      },
+      "verifyAddress" : {
+        "title" : "核实地址",
+        "subtitle" : "核实设备上显示的地址是否与以下地址一致。确定一致后，可以在您的设备上点击 Approve（批准）。",
+        "cancel" : {
+          "title" : "您刚刚否认了此地址",
+          "subtitle" : "如果是误操作，请点击下方按钮重试。",
+          "info" : "如果您确定地址不一致，您的手机可能已被入侵。建议您<0>尽快联系我们。</0>"
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "接收 {{currencyTicker}}",
+        "addressVerified" : "地址已核实",
+        "verifyAddress" : "点按此处核实您的地址",
+        "adviceVerify" : "我们始终建议您使用 Ledger 设备核实地址",
+        "sendWarning" : "仅将 {{currencyName}} ({{currencyTicker}}) 发送到此地址。发送其他币种可能会导致永久丢失。"
+      },
+      "securityVerify" : {
+        "title" : "出于安全考虑，我们建议使用 Ledger 设备核实此地址。",
+        "subtitle1" : "核实地址可为您提供安全保障。Ledger 设备上显示的地址不会泄露。",
+        "subtitle2" : "核实地址可帮助您确认设备上显示的地址与 Ledger Live 中显示的地址相同。",
+        "verifyCta" : "验证我的地址",
+        "dontVerifyCta" : "不经核实便显示我的地址"
+      },
+      "securityDontVerify" : {
+        "title" : "是否确定?",
+        "subtitle" : "将不会核实 Ledger Live 上显示的地址。",
+        "doNotRemindAgain" : "不再提醒",
+        "no" : "不可以",
+        "yes" : "是"
+      },
+      "toastMessages" : {
+        "accountImported" : "我们已为您导入了 {{currencyTicker}} 账户。 ",
+        "why" : "告诉我原因。",
+        "addressVerified" : "您的地址已核实"
+      },
+      "additionalInfoModal" : {
+        "title" : "我们为什么要导入账户？",
+        "subtitle" : "我们检测到您的种子助记词之前已有一个 {{currencyTicker}} 账户。我们为您导入了此账户。",
+        "closeCta" : "好，知道了"
+      },
       "notSynced" : {
         "text" : "正在同步",
         "desc" : "如果您有多笔交易或者您的网速偏慢，可能需要多花费一些时间。"

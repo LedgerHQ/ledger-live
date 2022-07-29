@@ -930,9 +930,9 @@
         "title" : "報酬獲得",
         "desc" : "不労所得を獲得して暗号資産を運用する"
       },
-      "mint": {
-        "title": "ミント”,",
-        "desc": "[ L ] MarketでコラボNFTをミントしましょう"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "近日公開",
@@ -2157,10 +2157,67 @@
       "verifyAgain" : "もう一度確認",
       "noAccount" : "アカウントが見つかりません",
       "address" : "アカウントのアドレス",
-      "copyAddress" : "アドレスをコピー",
+      "copyAddress" : "コピー",
       "shareAddress" : "アドレスを共有",
-      "addressCopied" : "アドレスをコピーしました！",
+      "addressCopied" : "コピー済み",
       "taprootWarning" : "送付元がtaprootに対応しているか確認してください",
+      "selectCrypto" : {
+        "title" : "暗号資産を選択"
+      },
+      "stepperHeader" : {
+        "range" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "connectDevice" : "デバイスを接続"
+      },
+      "selectAccount" : {
+        "title" : "アカウントを選択",
+        "subtitle" : "{{currencyTicker}}はこの口座に入金されます。"
+      },
+      "addAccount" : {
+        "title" : "ブロックチェーンを検索",
+        "subtitle" : "{{currencyTicker}}アカウントを所有しているか確認します。",
+        "foundAccounts" : "{{count}}件のアカウントが見つかりました",
+        "stopSynchronization" : "同期の停止"
+      },
+      "verifyAddress" : {
+        "title" : "アドレスの認証",
+        "subtitle" : "デバイス上に表示されているアドレスが、次のアドレスと一致しているかご確認ください。確認後、デバイスの「Approve(承認)」をクリックできます。",
+        "cancel" : {
+          "title" : "このアドレスを拒否しました",
+          "subtitle" : "これが誤操作によるものである場合は、下のボタンをクリックして再試行できます。",
+          "info" : "アドレスの不一致が確実な場合、お使いのスマートフォンが情報漏洩している可能性があります。<0>できるだけ早くお問い合わせいただく</0>ことをお勧めします。"
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "{{currencyTicker}}を受け取る",
+        "addressVerified" : "認証済みアドレス",
+        "verifyAddress" : "タップしてアドレスを認証",
+        "adviceVerify" : "当社では常にLedgerデバイスでアドレス認証することを推奨しています",
+        "sendWarning" : "このアドレスには、 {{currencyName}} ({{currencyTicker}}) のみを送信します。その他の暗号資産を送信すると、資金が永久に失われる可能性があります。"
+      },
+      "securityVerify" : {
+        "title" : "安全上の理由から、当社ではLedgerデバイスでこのアドレスの認証を推奨しています。",
+        "subtitle1" : "アドレスを認証することで安全にご利用いただけます。Ledgerデバイスに表示されるアドレスが情報漏洩することはありません。",
+        "subtitle2" : "アドレスを認証することで、デバイスに表示されているアドレスがLedger Liveに表示されているアドレスと同一であることを確認できます。",
+        "verifyCta" : "アドレスを認証",
+        "dontVerifyCta" : "認証せずにアドレスを提示"
+      },
+      "securityDontVerify" : {
+        "title" : "本当によろしいですか？",
+        "subtitle" : "Ledger Liveに表示されているアドレスは認証されません。",
+        "doNotRemindAgain" : "今後、このメッセージを表示しない",
+        "no" : "いいえ",
+        "yes" : "はい"
+      },
+      "toastMessages" : {
+        "accountImported" : "{{currencyTicker}}アカウントをインポートしました。 ",
+        "why" : "その理由とは。",
+        "addressVerified" : "アドレスが認証されました"
+      },
+      "additionalInfoModal" : {
+        "title" : "アカウントをインポートした理由は？",
+        "subtitle" : "シードに以前の{{currencyTicker}}アカウントがあることが検出されました。このアカウントをインポートしました。",
+        "closeCta" : "了解"
+      },
       "notSynced" : {
         "text" : "同期中",
         "desc" : "トランザクションの数が多い場合やインターネット接続が遅い場合、しばらく時間がかかることがあります。"
