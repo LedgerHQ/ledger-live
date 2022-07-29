@@ -81,7 +81,8 @@
     "seeMore": "See more",
     "moreInfo": "More info",
     "buyEth": "Buy Ethereum",
-    "popular": "popular"
+    "popular": "popular",
+    "comingSoon": "Coming soon"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -2107,6 +2108,36 @@
         "android": "Review in the Google Play store"
       }
     },
+    "notifications": {
+      "title": "Notifications",
+      "desc": "Manage your notifications",
+      "disabledNotifications": {
+        "title": "Your notifications are disabled",
+        "desc": "{{platform}} is blocking notifications from Ledger Live. To get notifications on your phone, visit your device’s settings to turn on Ledger Live notifications.",
+        "turnOnNotif": "Turn on notifications",
+        "goToSettings": "Go to system settings"
+      },
+      "allowed": {
+        "title": "Allow notifications",
+        "desc": "Receive notifications about your crypto, market tendencies and more"
+      },
+      "transactions": {
+        "title": "Transactions",
+        "desc": "Get notified when you receive or send crypto"
+      },
+      "market": {
+        "title": "Market",
+        "desc": "Receive significant market changes updates"
+      },
+      "announcement": {
+        "title": "Announcements",
+        "desc": "Receive important Ledger Live updates"
+      },
+      "price": {
+        "title": "Price Alerts",
+        "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
+      }
+    },
     "help": {
       "title": "Help",
       "header": "Help",
@@ -2138,6 +2169,14 @@
       "customManifest": {
         "title": "Load Custom Platform Manifest"
       }
+    }
+  },
+  "notifications": {
+    "prompt": {
+      "title": "Turn notifications on",
+      "desc": "Get important updates on Ledger Live, Ledger products and security. Opt out anytime.",
+      "allow": "Allow notifications",
+      "later": "Maybe later"
     }
   },
   "migrateAccounts": {

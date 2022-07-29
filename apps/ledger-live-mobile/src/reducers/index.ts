@@ -1,4 +1,3 @@
-// @flow
 /* eslint import/no-cycle: 0 */
 import { combineReducers } from "redux";
 import accounts from "./accounts";
@@ -23,7 +22,6 @@ export type State = {
   notifications: NotificationsState,
 };
 
-// $FlowFixMe
 const appReducer = combineReducers({
   accounts,
   settings,
