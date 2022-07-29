@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.8.2-nightly.0
+
+### Patch Changes
+
+- [#762](https://github.com/LedgerHQ/ledger-live/pull/762) [`eb74f0606`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add optional size prop to button
+
 ## 0.8.1
 
 ### Patch Changes
