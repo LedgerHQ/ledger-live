@@ -2,12 +2,7 @@ import { Dispatch } from "redux";
 import { TFunction } from "react-i18next";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import {
-  Account,
-  AccountLike,
-  Operation,
-  SignedOperation,
-} from "@ledgerhq/live-common/types/index";
+import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import {
   addPendingOperation,
   getMainAccount,
@@ -48,18 +43,9 @@ type WebPlatformContext = {
 };
 
 function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Account | null {
-  if (isAccount(account)) {
-    return null;
-  }
-
-  const parentAccount = fromAccounts.find(a => a.id === account.parentId);
-  if (!parentAccount) {
-    throw new Error("subaccount has no parent account");
-  }
-  if (!isAccount(parentAccount)) {
-    throw new Error("parentAccount is not of type Account");
-  }
-  return parentAccount;
+  return isTokenAccount(account)
+    ? (fromAccounts.find(a => a.id === account.parentId) as Account)
+    : null;
 }
 
 export const receiveOnAccountLogic = (
@@ -131,7 +117,7 @@ export const signTransactionLogic = (
     return Promise.reject(new Error("Account required"));
   }
 
-  const parentAccount = isTokenAccount(account) ? getParentAccount(account, accounts) : null;
+  const parentAccount = getParentAccount(account, accounts);
 
   if (
     (isTokenAccount(account) ? parentAccount?.currency.family : account.currency.family) !==
@@ -184,7 +170,7 @@ export const broadcastTransactionLogic = async (
     return Promise.reject(new Error("Transaction required"));
   }
 
-  const parentAccount = isTokenAccount(account) ? getParentAccount(account, accounts) : null;
+  const parentAccount = getParentAccount(account, accounts);
 
   const signedOperation = deserializePlatformSignedTransaction(signedTransaction, accountId);
   const bridge = getAccountBridge(account, parentAccount);
@@ -207,7 +193,7 @@ export const broadcastTransactionLogic = async (
   }
 
   dispatch(
-    updateAccountWithUpdater(account.id, account =>
+    updateAccountWithUpdater(mainAccount.id, account =>
       addPendingOperation(account, optimisticOperation),
     ),
   );
@@ -293,14 +279,8 @@ export const completeExchangeLogic = (
     return null;
   }
 
-  let fromParentAccount: Account | null = null;
-  if (isTokenAccount(fromAccount)) {
-    fromParentAccount = getParentAccount(fromAccount, accounts);
-  }
-  let toParentAccount: Account | null = null;
-  if (toAccount && isTokenAccount(toAccount)) {
-    toParentAccount = getParentAccount(toAccount, accounts);
-  }
+  const fromParentAccount = getParentAccount(fromAccount, accounts);
+  const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : null;
 
   const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
