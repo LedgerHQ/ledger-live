@@ -28,6 +28,7 @@ import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import OpenDebugEnv from "./OpenDebugEnv";
 import HasOrderedNanoRow from "./HasOrderedNanoRow";
 import OpenStoryly from "./OpenDebugStoryly";
+import OpenDebugPostOnboarding from "./OpenDebugPostOnboarding";
 
 export function DebugMocks() {
   return (
@@ -52,8 +53,9 @@ export function DebugMocks() {
       <OpenLottie />
       <OpenStoryly />
       <OpenDebugPlayground />
+      <OpenDebugPostOnboarding />
       <ReadOnlyModeRow />
-      <HasOrderedNanoRow/>
+      <HasOrderedNanoRow />
       <MockModeRow />
       <AnalyticsConsoleRow />
       <AddMockAnnouncementButton title="Mock a new announcement" />

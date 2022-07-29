@@ -1,40 +1,70 @@
 import { DeviceModelId } from "@ledgerhq/devices/lib/index";
 import { Icons } from "@ledgerhq/native-ui";
+import { NavigatorName, ScreenName } from "../../const";
 import { PostOnboardingAction, PostOnboardingActionId } from "./types";
 
 const claim: PostOnboardingAction = {
-  id: "claim",
+  id: PostOnboardingActionId.claim,
   icon: Icons.BracketsMedium,
-  title: "Lorem ipsum",
+  title: "Claim lorem ipsum",
   description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sollicitudin turpis ac porttitor consectetur. Nunc bibendum sapien a purus dapibus, sit amet pellentesque ipsum vulputate.",
+    "Claim lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sollicitudin turpis ac porttitor consectetur. Nunc bibendum sapien a purus dapibus, sit amet pellentesque ipsum vulputate.",
   tagLabel: "Ipsum",
-  actionCompletedPopupLabel: "Claim completed popup label",
-  actionCompletedHubTitle: "Claim completed hub title",
+  actionCompletedPopupLabel: "Claimed",
+  actionCompletedHubTitle: "Claimed completed hub title",
+  navigationParams: [
+    NavigatorName.Base,
+    {
+      screen: ScreenName.PostOnboardingMockActionScreen,
+      params: {
+        id: PostOnboardingActionId.claim,
+        title: PostOnboardingActionId.claim,
+      },
+    },
+  ],
 };
 
 const personalize: PostOnboardingAction = {
-  id: "personalize",
+  id: PostOnboardingActionId.personalize,
   icon: Icons.BracketsMedium,
   featureFlagId: "customImage",
   title: "Lorem ipsum",
   description:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sollicitudin turpis ac porttitor consectetur.",
   tagLabel: "Ipsum",
-  actionCompletedPopupLabel: "Personalize completed popup label",
+  actionCompletedPopupLabel: "Personalized",
   actionCompletedHubTitle: "Personalize completeted hub title",
+  navigationParams: [
+    NavigatorName.Base,
+    {
+      screen: ScreenName.PostOnboardingMockActionScreen,
+      params: {
+        id: PostOnboardingActionId.personalize,
+        title: PostOnboardingActionId.personalize,
+      },
+    },
+  ],
 };
 
 const migrateAssets: PostOnboardingAction = {
-  id: "migrateAssets",
+  id: PostOnboardingActionId.migrateAssets,
   featureFlagId: "customImage",
   icon: Icons.TransferMedium,
-  title: "Lorem ipsum",
+  title: "Migrate lorem ipsum",
   description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sollicitudin turpis ac porttitor consectetur.",
-  tagLabel: "Ipsum",
+    "Migrate lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sollicitudin turpis ac porttitor consectetur.",
   actionCompletedPopupLabel: "Migrated",
   actionCompletedHubTitle: "Migrated hub title",
+  navigationParams: [
+    NavigatorName.Base,
+    {
+      screen: ScreenName.PostOnboardingMockActionScreen,
+      params: {
+        id: PostOnboardingActionId.migrateAssets,
+        title: PostOnboardingActionId.migrateAssets,
+      },
+    },
+  ],
 };
 
 export const postOnboardingActions: {
@@ -45,14 +75,10 @@ export const postOnboardingActions: {
   personalize,
 };
 
-const basePostOnboardingActions: PostOnboardingAction[] = [
-  claim,
-  migrateAssets,
-];
-
 const ftsPostOnboardingActions: PostOnboardingAction[] = [
-  ...basePostOnboardingActions,
+  claim,
   personalize,
+  migrateAssets,
 ];
 
 export function getPostOnboardingActionsForDevice(

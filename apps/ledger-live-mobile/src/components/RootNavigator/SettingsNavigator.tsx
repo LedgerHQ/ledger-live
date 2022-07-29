@@ -45,6 +45,7 @@ import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import DebugStoryly from "../../screens/DebugStoryly";
+import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -302,6 +303,10 @@ export default function SettingsNavigator() {
           headerShown: true,
           headerTitle: t("onboarding.stepLanguage.title"),
         }}
+      />
+      <Stack.Screen
+        name={ScreenName.PostOnboardingDebugScreen}
+        component={PostOnboardingDebugScreen}
       />
     </Stack.Navigator>
   );

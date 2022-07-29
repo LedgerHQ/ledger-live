@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useMemo } from "react";
 import { DeviceModelId } from "@ledgerhq/devices/lib/index";
+import { useNavigation } from "@react-navigation/native";
 import { getPostOnboardingActionsForDevice, postOnboardingActions } from ".";
 import {
   hubStateSelector,
@@ -17,7 +18,6 @@ import {
   initPostOnboarding,
   setPostOnboardingActionDone,
 } from "../../actions/postOnboarding";
-import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../const";
 
 type PostOnboardingHubState = {
@@ -69,15 +69,22 @@ function useInitPostOnboardingState(deviceModelId: DeviceModelId) {
   );
 }
 
-export function useInitPostOnboarding(deviceModelId: DeviceModelId) {
+export function useNavigateToPostOnboardingHub() {
   const navigation = useNavigation();
+  return useCallback(() => {
+    navigation.navigate(NavigatorName.Base, {
+      screen: ScreenName.PostOnboardingHub,
+    });
+  }, [navigation]);
+}
+
+export function useInitPostOnboarding(deviceModelId: DeviceModelId) {
   const initPostOnboardingState = useInitPostOnboardingState(deviceModelId);
+  const navigateToPostOnboardingHub = useNavigateToPostOnboardingHub();
   return useCallback(() => {
     initPostOnboardingState();
-    navigation.navigate(NavigatorName.Base, {
-      screenName: ScreenName.PostOnboardingHub,
-    });
-  }, [initPostOnboardingState, navigation]);
+    navigateToPostOnboardingHub();
+  }, [initPostOnboardingState, navigateToPostOnboardingHub]);
 }
 
 export function usePostOnboarding() {

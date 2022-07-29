@@ -16,7 +16,16 @@ const initialState: POState = {
 };
 
 const handlers: Record<string, (state: POState, action: any) => POState> = {
-  POST_ONBOARDING_IMPORT_STATE: (_, action: { newState: POState }) =>
+  POST_ONBOARDING_IMPORT_STATE: (
+    _,
+    action: { newState: Record<string, any> },
+  ): POState =>
+    /**
+     * TODO: the state passed as param cannot be trusted to match
+     * the POState type.
+     * We need to do some type guard before setting it
+     * in state or the type checking can't be trusted.
+     * */
     action.newState,
   POST_ONBOARDING_INIT: (
     _,
