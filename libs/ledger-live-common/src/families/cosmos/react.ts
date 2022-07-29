@@ -14,6 +14,7 @@ import type {
   Transaction,
   CosmosExtraTxInfo,
   CosmosPreloadData,
+  CosmosAccount,
 } from "./types";
 import {
   mapDelegations,
@@ -22,7 +23,6 @@ import {
 } from "./logic";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
-import type { Account } from "../../types";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 
 export function useCosmosPreloadData(): CosmosPreloadData {
@@ -35,7 +35,7 @@ export function useCosmosPreloadData(): CosmosPreloadData {
 }
 
 export function useCosmosMappedDelegations(
-  account: Account,
+  account: CosmosAccount,
   mode?: CosmosOperationMode
 ): CosmosMappedDelegation[] {
   const { validators } = useCosmosPreloadData();
@@ -55,7 +55,7 @@ export function useCosmosMappedDelegations(
 }
 
 export function useCosmosDelegationsQuerySelector(
-  account: Account,
+  account: CosmosAccount,
   transaction: Transaction,
   delegationSearchFilter: CosmosSearchFilter = defaultSearchFilter
 ): {
@@ -147,7 +147,7 @@ export function useMappedExtraOperationDetails({
   account,
   extra,
 }: {
-  account: Account;
+  account: CosmosAccount;
   extra: CosmosExtraTxInfo;
 }): CosmosExtraTxInfo {
   const { validators } = useCosmosPreloadData();
@@ -165,19 +165,27 @@ export function useMappedExtraOperationDetails({
   };
 }
 
-export function useLedgerFirstShuffledValidatorsCosmos() {
+export function useLedgerFirstShuffledValidatorsCosmos(
+  searchInput?: string
+): CosmosValidatorItem[] {
   const data = useCosmosPreloadData();
 
   return useMemo(() => {
-    return reorderValidators(data?.validators ?? []);
-  }, [data]);
+    return reorderValidators(data?.validators ?? [], searchInput);
+  }, [data, searchInput]);
 }
 
 function reorderValidators(
-  validators: CosmosValidatorItem[]
+  validators: CosmosValidatorItem[],
+  searchInput?: string
 ): CosmosValidatorItem[] {
   const sortedValidators = validators
     .filter((validator) => validator.commission !== 1.0)
+    .filter((validator) =>
+      searchInput
+        ? validator.name.toLowerCase().includes(searchInput.toLowerCase())
+        : true
+    )
     .sort((a, b) => b.votingPower - a.votingPower);
 
   // move Ledger validator to the first position

@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { patchOperationWithHash } from "../../operation";
-import type { Account, Operation, SignedOperation } from "../../types";
+import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
 import {
   SolanaTxConfirmationTimeout,

@@ -1,16 +1,16 @@
+import type {
+  Account,
+  AccountLike,
+  NFTStandard,
+  Operation,
+} from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { decodeAccountId } from "./account";
 import { encodeNftId } from "./nft";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "./nft/nftOperationId";
-import {
-  Account,
-  AccountLike,
-  decodeAccountId,
-  NFTStandard,
-  Operation,
-} from "./types";
 
 const nftOperationIdEncoderPerStandard: Record<
   NFTStandard,

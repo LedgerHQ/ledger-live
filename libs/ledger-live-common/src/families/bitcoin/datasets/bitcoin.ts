@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 // import { FeeTooHigh } from "@ledgerhq/errors";
-import type { CurrenciesData } from "../../../types";
-import type { NetworkInfoRaw, Transaction } from "../types";
+import type { CurrenciesData } from "@ledgerhq/types-live";
+import type { BitcoinAccountRaw, NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./bitcoin.scanAccounts.1";
 const networkInfo: NetworkInfoRaw = {
@@ -135,7 +135,10 @@ const dataset: CurrenciesData<Transaction> = {
         blockHeight: 0,
         lastSyncDate: "",
         xpub: "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn",
-      },
+        bitcoinResources: {
+          utxos: [],
+        },
+      } as BitcoinAccountRaw,
     },
     {
       raw: {
@@ -161,7 +164,10 @@ const dataset: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         balance: "2717",
         xpub: "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2",
-      },
+        bitcoinResources: {
+          utxos: [],
+        },
+      } as BitcoinAccountRaw,
     },
   ],
 };

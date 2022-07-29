@@ -6,7 +6,7 @@ import { AnnouncementProvider } from "@ledgerhq/live-common/notifications/Announ
 import { ServiceStatusProvider } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import type { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
-import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import VersionNumber from "react-native-version-number";
 import Config from "react-native-config";
 import { getEnv } from "@ledgerhq/live-common/env";

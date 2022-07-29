@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Account } from "../../types";
-import type { Transaction } from "./types";
+import { CeloAccount, Transaction } from "../celo/types";
 import { celoKit } from "./api/sdk";
 import { getVote } from "./logic";
 
@@ -8,7 +7,7 @@ const getFeesForTransaction = async ({
   account,
   transaction,
 }: {
-  account: Account;
+  account: CeloAccount;
   transaction: Transaction;
 }): Promise<BigNumber> => {
   const { amount, index } = transaction;

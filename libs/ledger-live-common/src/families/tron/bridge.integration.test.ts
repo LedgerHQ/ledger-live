@@ -2,7 +2,7 @@ import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { CurrenciesData, DatasetTest } from "../../types";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 import { activationFees } from "./constants";

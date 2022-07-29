@@ -4,7 +4,7 @@ import React, { useMemo, useCallback, memo } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getNFTById } from "~/renderer/reducers/accounts";
 import Box, { Card } from "~/renderer/components/Box";

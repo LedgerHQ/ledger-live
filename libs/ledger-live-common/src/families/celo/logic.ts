@@ -1,5 +1,5 @@
-import { Account } from "../../types";
 import {
+  CeloAccount,
   CeloPendingWithdrawal,
   CeloValidatorGroup,
   CeloVote,
@@ -12,7 +12,7 @@ const LEDGER_BY_FIGMENT_VALIDATOR_GROUP_ADDRESS =
   "0x0861a61Bf679A30680510EcC238ee43B82C5e843";
 
 export const availablePendingWithdrawals = (
-  account: Account
+  account: CeloAccount
 ): CeloPendingWithdrawal[] => {
   const { pendingWithdrawals } = account.celoResources || {};
 
@@ -21,7 +21,7 @@ export const availablePendingWithdrawals = (
   );
 };
 
-export const withdrawableBalance = (account: Account): BigNumber =>
+export const withdrawableBalance = (account: CeloAccount): BigNumber =>
   availablePendingWithdrawals(account).reduce(
     (sum, withdrawal) => sum.plus(withdrawal.value),
     new BigNumber(0)
@@ -37,20 +37,20 @@ export const isDefaultValidatorGroup = (
   validatorGroup: CeloValidatorGroup
 ): boolean => isDefaultValidatorGroupAddress(validatorGroup.address);
 
-export const activatableVotes = (account: Account): CeloVote[] => {
+export const activatableVotes = (account: CeloAccount): CeloVote[] => {
   const { votes } = account.celoResources || {};
 
   return (votes || []).filter((vote) => vote.activatable);
 };
 
-export const revokableVotes = (account: Account): CeloVote[] => {
+export const revokableVotes = (account: CeloAccount): CeloVote[] => {
   const { votes } = account.celoResources || {};
 
   return (votes || []).filter((vote) => vote.revokable);
 };
 
 export const getVote = (
-  account: Account,
+  account: CeloAccount,
   validatorGroupAddress: string,
   index: number | null | undefined
 ): CeloVote | undefined => {

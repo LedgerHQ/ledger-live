@@ -10,15 +10,14 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { createSelector } from "reselect";
-import type {
-  CryptoCurrency,
-  Currency,
-  AccountLike,
-} from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import type {
+  DeviceModelInfo,
+  AccountLike,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";

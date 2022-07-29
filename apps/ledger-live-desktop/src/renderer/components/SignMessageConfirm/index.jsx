@@ -4,7 +4,7 @@ import invariant from "invariant";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import type { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";

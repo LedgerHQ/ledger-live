@@ -1,10 +1,10 @@
-import { Account, AccountLike } from "../../types";
-import { Transaction } from "./types";
+import { CeloAccount, Transaction } from "./types";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "../../account";
 import getTransactionStatus from "./js-getTransactionStatus";
 import prepareTransaction from "./js-prepareTransaction";
 import createTransaction from "./js-createTransaction";
+import type { AccountLike } from "@ledgerhq/types-live";
 
 const estimateMaxSpendable = async ({
   account,
@@ -12,10 +12,10 @@ const estimateMaxSpendable = async ({
   transaction,
 }: {
   account: AccountLike;
-  parentAccount: Account;
+  parentAccount: CeloAccount;
   transaction: Transaction;
 }): Promise<BigNumber> => {
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount) as CeloAccount;
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
     ...transaction,

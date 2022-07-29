@@ -1,5 +1,4 @@
-import { Account, TransactionStatus } from "../../types";
-import { Transaction } from "./types";
+import { CeloAccount, Transaction, TransactionStatus } from "./types";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -17,7 +16,7 @@ import { getVote } from "./logic";
 const FEES_SAFETY_BUFFER = new BigNumber(5000000000000000);
 
 const getTransactionStatus = async (
-  account: Account,
+  account: CeloAccount,
   transaction: Transaction
 ): Promise<TransactionStatus> => {
   const errors: any = {};

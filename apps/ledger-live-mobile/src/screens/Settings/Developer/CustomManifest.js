@@ -64,7 +64,7 @@ export default function CustomManifest({
               "homepageUrl": "https://developers.ledger.com/",
               "icon": "https://cdn.live.ledger.com/icons/platform/debugger.png",
               "platform": "all",
-              "apiVersion": "0.0.1",
+              "apiVersion": "^1.0.0 || ~0.0.1",
               "manifestVersion": "1",
               "branch": "debug",
               "categories": [

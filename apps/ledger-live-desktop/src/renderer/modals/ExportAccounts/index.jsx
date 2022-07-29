@@ -3,7 +3,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";

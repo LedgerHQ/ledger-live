@@ -1,15 +1,19 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Transaction, CeloOperationMode } from "./types";
-import type { Account, Operation, SignOperationEvent } from "../../types";
+import type { Transaction, CeloOperationMode, CeloAccount } from "./types";
+import type {
+  Account,
+  Operation,
+  SignOperationEvent,
+  OperationType,
+} from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../operation";
 import { CeloApp } from "./hw-app-celo";
 import buildTransaction from "./js-buildTransaction";
 import { rlpEncodedTx, encodeTransaction } from "@celo/wallet-base";
 import { tokenInfoByAddressAndChainId } from "@celo/wallet-ledger/lib/tokens";
 import { withDevice } from "../../hw/deviceAccess";
-import { OperationType } from "../../types";
 
 const MODE_TO_TYPE: { [key in CeloOperationMode | "default"]: string } = {
   send: "OUT",
@@ -24,7 +28,7 @@ const MODE_TO_TYPE: { [key in CeloOperationMode | "default"]: string } = {
 };
 
 const buildOptimisticOperation = (
-  account: Account,
+  account: CeloAccount,
   transaction: Transaction,
   fee: BigNumber
 ): Operation => {
@@ -107,7 +111,7 @@ const signOperation = ({
 
           const celo = new CeloApp(transport);
           const unsignedTransaction = await buildTransaction(
-            account,
+            account as CeloAccount,
             transaction
           );
           const { chainId, to } = unsignedTransaction;
@@ -137,7 +141,7 @@ const signOperation = ({
           );
 
           const operation = buildOptimisticOperation(
-            account,
+            account as CeloAccount,
             transaction,
             transaction.fees ?? new BigNumber(0)
           );

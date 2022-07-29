@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import type { Account, AccountLike, Operation } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useBakers, useRandomBaker } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

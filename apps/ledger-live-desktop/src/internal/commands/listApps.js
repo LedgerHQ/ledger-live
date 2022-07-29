@@ -1,7 +1,7 @@
 // @flow
 import type { Observable } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 import { listApps } from "@ledgerhq/live-common/apps/hw";
 import type { ListAppsEvent } from "@ledgerhq/live-common/apps/index";
 
@@ -12,5 +12,9 @@ type Input = {
 
 const cmd = ({ deviceId, deviceInfo }: Input): Observable<ListAppsEvent> =>
   withDevice(deviceId)(transport => listApps(transport, deviceInfo));
+
+cmd.inferSentryTransaction = ({ deviceInfo }) => ({
+  data: deviceInfo,
+});
 
 export default cmd;

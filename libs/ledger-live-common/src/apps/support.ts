@@ -31,11 +31,12 @@ export function shouldUpgrade(
 const appVersionsRequired = {
   Cosmos: ">= 2.34.4",
   Algorand: ">= 1.2.9",
-  Polkadot: ">= 12.9180.0",
+  Polkadot: ">= 13.9250.0",
   Elrond: ">= 1.0.11",
   Ethereum: ">= 1.9.17",
   Solana: ">= 1.2.0",
   Celo: ">= 1.1.8",
+  "Cardano ADA": ">= 4.1.0",
 };
 export function mustUpgrade(
   deviceModel: DeviceModelId,

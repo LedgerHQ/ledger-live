@@ -5,7 +5,7 @@ import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getMainAccount,
   getAccountCurrency,

@@ -1,9 +1,11 @@
-import type { Unit } from "../types";
 // remove the extra decimals that can't be represented in unit
 // this function will preserve the string characters
 // for instance EUR 1230.00234 will be transformed to EUR 1230.00
 // NB this function parse a subset of formats because it it locale independent.
 // make sure you have at least following options set on the formatter:
+
+import type { Unit } from "@ledgerhq/types-cryptoassets";
+
 // - useGrouping: true
 export const chopCurrencyUnitDecimals = (
   unit: Unit,

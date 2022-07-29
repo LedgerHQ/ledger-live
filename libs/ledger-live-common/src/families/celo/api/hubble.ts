@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import network from "../../../network";
 import { getEnv } from "../../../env";
-import { Operation, OperationType } from "../../../types";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../../operation";
 import { CeloValidatorGroup } from "../types";
 import { isDefaultValidatorGroup } from "../logic";

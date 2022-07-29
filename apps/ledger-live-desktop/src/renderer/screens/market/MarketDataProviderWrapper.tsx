@@ -1,7 +1,5 @@
-// @flow
 import React, { ReactElement } from "react";
 import { useSelector } from "react-redux";
-// $FlowFixMe
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { MarketDataProvider } from "@ledgerhq/live-common/market/MarketDataProvider";
 import apiMock from "@ledgerhq/live-common/market/api/api.mock";
