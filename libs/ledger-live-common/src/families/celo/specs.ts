@@ -1,13 +1,29 @@
-import invariant from "invariant";
-import type { Transaction } from "./types";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { getCryptoCurrencyById } from "../../currencies";
+import {
+  createLockMutation,
+  createRegisterAccountMutation,
+  createSend50PercentMutation,
+  createSendMaxMutation,
+  createUnlockMutation,
+  createVoteMutation,
+  createActivateVoteMutation,
+  createRevokeVoteMutation,
+  createWithdrawMutation,
+} from "./specs/index";
+import type { AppSpec } from "../../bot/types";
+import type { Transaction } from "./types";
 
 const currency = getCryptoCurrencyById("celo");
-const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
-const maxAccount = 3;
+const send50PercentMutation = createSend50PercentMutation();
+const sendMaxMutation = createSendMaxMutation();
+const registerAccountMutation = createRegisterAccountMutation();
+const unlockMutation = createUnlockMutation();
+const lockMutation = createLockMutation();
+const voteMutation = createVoteMutation();
+const activateVoteMutation = createActivateVoteMutation();
+const revokeVoteMutation = createRevokeVoteMutation();
+const withdrawMutation = createWithdrawMutation();
 
 const celo: AppSpec<Transaction> = {
   name: "Celo",
@@ -18,33 +34,15 @@ const celo: AppSpec<Transaction> = {
   },
   testTimeout: 2 * 60 * 1000,
   mutations: [
-    {
-      name: "move 50% to another account",
-      maxRun: 2,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minimalAmount), "balance is too low");
-        const sibling = pickSiblings(siblings, maxAccount);
-        const recipient = sibling.freshAddress;
-        const amount = maxSpendable.div(2).integerValue();
-        return {
-          transaction: bridge.createTransaction(account),
-          updates: [{ recipient }, { amount }],
-        };
-      },
-    },
-    {
-      name: "send max to another account",
-      maxRun: 1,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minimalAmount), "balance is too low");
-        const sibling = pickSiblings(siblings, maxAccount);
-        const recipient = sibling.freshAddress;
-        return {
-          transaction: bridge.createTransaction(account),
-          updates: [{ recipient }, { useAllAmount: true }],
-        };
-      },
-    },
+    send50PercentMutation,
+    sendMaxMutation,
+    registerAccountMutation,
+    unlockMutation,
+    lockMutation,
+    voteMutation,
+    activateVoteMutation,
+    revokeVoteMutation,
+    withdrawMutation,
   ],
 };
 

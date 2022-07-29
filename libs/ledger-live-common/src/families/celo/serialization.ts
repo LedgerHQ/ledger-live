@@ -9,6 +9,8 @@ export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
     nonvotingLockedBalance,
     pendingWithdrawals,
     votes,
+    electionAddress,
+    lockedGoldAddress,
   } = r;
   return {
     registrationStatus,
@@ -27,12 +29,20 @@ export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
       type: vote.type,
       index: vote.index,
     })),
+    electionAddress,
+    lockedGoldAddress,
   };
 }
 
 export function fromCeloResourcesRaw(r: CeloResourcesRaw): CeloResources {
-  const { registrationStatus, lockedBalance, nonvotingLockedBalance, votes } =
-    r;
+  const {
+    registrationStatus,
+    lockedBalance,
+    nonvotingLockedBalance,
+    votes,
+    electionAddress,
+    lockedGoldAddress,
+  } = r;
   return {
     registrationStatus,
     lockedBalance: new BigNumber(lockedBalance),
@@ -50,5 +60,7 @@ export function fromCeloResourcesRaw(r: CeloResourcesRaw): CeloResources {
       type: vote.type,
       index: vote.index,
     })),
+    electionAddress,
+    lockedGoldAddress,
   };
 }

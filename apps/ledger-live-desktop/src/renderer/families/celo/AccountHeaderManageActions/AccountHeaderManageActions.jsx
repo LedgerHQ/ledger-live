@@ -3,9 +3,9 @@
 import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/celo/logic";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
-import { isAccountRegistrationPending } from "../utils";
 import Icon from "./Icon";
 import type { Account } from "@ledgerhq/live-common/types";
 

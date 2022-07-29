@@ -27,6 +27,9 @@ export const withdrawableBalance = (account: Account): BigNumber =>
     new BigNumber(0)
   );
 
+export const hasWithdrawableBalance = (account: Account): boolean =>
+  withdrawableBalance(account).isGreaterThan(0);
+
 export const defaultValidatorGroupAddress = (): string =>
   LEDGER_BY_FIGMENT_VALIDATOR_GROUP_ADDRESS;
 
@@ -43,11 +46,17 @@ export const activatableVotes = (account: Account): CeloVote[] => {
   return (votes || []).filter((vote) => vote.activatable);
 };
 
+export const hasActivatableVotes = (account: Account): boolean =>
+  activatableVotes(account).length > 0;
+
 export const revokableVotes = (account: Account): CeloVote[] => {
   const { votes } = account.celoResources || {};
 
   return (votes || []).filter((vote) => vote.revokable);
 };
+
+export const hasRevokableVotes = (account: Account): boolean =>
+  revokableVotes(account).length > 0;
 
 export const getVote = (
   account: Account,
@@ -73,3 +82,46 @@ export const fallbackValidatorGroup = (
   name: address,
   votes: new BigNumber(0),
 });
+
+export const isAccountRegistrationPending = (
+  accountId: string,
+  accounts: Account[]
+): boolean => {
+  // If there's a pending "REGISTER" operation and the
+  // account's registration status is false, then
+  // we know that the account is truly not registered yet.
+  const account = accounts.find(
+    (currentAccount) => accountId === currentAccount.id
+  );
+
+  const isAccountRegistrationPending =
+    !!account &&
+    account.pendingOperations.some(
+      (currentAccount) => currentAccount.type === "REGISTER"
+    ) &&
+    !account.celoResources?.registrationStatus;
+
+  return isAccountRegistrationPending;
+};
+
+const getValidatorGroupsByVotingActivity = (
+  validatorGroups: CeloValidatorGroup[],
+  votes: CeloVote[],
+  withVotes: boolean
+): CeloValidatorGroup[] => {
+  return validatorGroups.filter(
+    (v) => votes.some((d) => d.validatorGroup === v.address) === withVotes
+  );
+};
+
+export const getValidatorGroupsWithVotes = (
+  validatorGroups: CeloValidatorGroup[],
+  votes: CeloVote[] | null
+): CeloValidatorGroup[] =>
+  getValidatorGroupsByVotingActivity(validatorGroups, votes || [], true);
+
+export const getValidatorGroupsWithoutVotes = (
+  validatorGroups: CeloValidatorGroup[],
+  votes: CeloVote[] | null = []
+): CeloValidatorGroup[] =>
+  getValidatorGroupsByVotingActivity(validatorGroups, votes || [], false);

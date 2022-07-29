@@ -33,6 +33,8 @@ export type CeloResources = {
   nonvotingLockedBalance: BigNumber;
   pendingWithdrawals: CeloPendingWithdrawal[] | null | undefined;
   votes: CeloVote[] | null | undefined;
+  electionAddress: string | null | undefined;
+  lockedGoldAddress: string | null | undefined;
 };
 export type CeloResourcesRaw = {
   registrationStatus: boolean;
@@ -40,18 +42,24 @@ export type CeloResourcesRaw = {
   nonvotingLockedBalance: string;
   pendingWithdrawals: CeloPendingWithdrawalRaw[] | null | undefined;
   votes: CeloVoteRaw[] | null | undefined;
+  electionAddress: string | null | undefined;
+  lockedGoldAddress: string | null | undefined;
 };
 export type Transaction = TransactionCommon & {
   family: "celo";
   fees: BigNumber | null | undefined;
   mode: CeloOperationMode;
   index: number | null | undefined;
+  address: string | null | undefined;
+  group: string | null | undefined;
 };
 export type TransactionRaw = TransactionCommonRaw & {
   family: "celo";
   fees: string | null | undefined;
   mode: CeloOperationMode;
   index: number | null | undefined;
+  address: string | null | undefined;
+  group: string | null | undefined;
 };
 export type CeloValidatorGroup = {
   address: string;

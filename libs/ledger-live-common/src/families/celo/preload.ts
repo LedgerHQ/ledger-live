@@ -21,7 +21,6 @@ function fromHydrateValidator(
 
 function fromHydratePreloadData(data: any): CeloPreloadData {
   let validatorGroups = [];
-
   if (typeof data === "object" && data) {
     if (Array.isArray(data.validatorGroups)) {
       validatorGroups = data.validatorGroups.map(fromHydrateValidator);

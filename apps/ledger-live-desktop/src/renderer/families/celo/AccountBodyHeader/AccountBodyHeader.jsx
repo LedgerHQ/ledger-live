@@ -16,12 +16,12 @@ import Text from "~/renderer/components/Text";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import { openURL } from "~/renderer/linking";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { isAccountRegistrationPending } from "../utils";
 import { Header } from "./Header";
 import { Row } from "./Row";
 import {
   availablePendingWithdrawals,
   activatableVotes,
+  isAccountRegistrationPending,
 } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./AccountBodyHeader.styles";
 import type { Account } from "@ledgerhq/live-common/types";
@@ -37,7 +37,6 @@ const AccountBodyHeaderComponent = ({ account }: Props) => {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
   const isRegistrationPending = isAccountRegistrationPending(account?.id, accounts);
-  console.log(accounts);
   const { votes } = celoResources;
 
   const onEarnRewards = useCallback(() => {
