@@ -2388,6 +2388,35 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  velas: {
+    type: "CryptoCurrency",
+    id: "velas",
+    coinType: 5655640,
+    name: "Velas",
+    managerAppName: "Velas",
+    ticker: "VLX",
+    scheme: "velas",
+    color: "#000",
+    family: "velas",
+    units: [
+      {
+        name: "VLX",
+        code: "VLX",
+        magnitude: 9,
+      },
+      {
+        name: "lamports",
+        code: "lamports",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.velas.com/address/$address",
+        tx: "https://explorer.velas.com/tx/$hash",
+      },
+    ],
+  },
   stakenet: {
     type: "CryptoCurrency",
     id: "stakenet",
