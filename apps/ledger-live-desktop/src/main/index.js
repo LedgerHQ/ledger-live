@@ -19,6 +19,8 @@ import debounce from "lodash/debounce";
 import logger from "~/logger";
 import sentry from "~/sentry/main";
 
+let unsubscribeSentry;
+
 app.allowRendererProcessReuse = false;
 
 const gotLock = app.requestSingleInstanceLock();
@@ -48,6 +50,10 @@ if (!gotLock) {
     }
   });
 }
+
+app.on("window-all-closed", () => {
+  if (unsubscribeSentry) unsubscribeSentry();
+});
 
 app.on("activate", () => {
   const w = getMainWindow();
@@ -87,7 +93,7 @@ app.on("ready", async () => {
   const userId = user?.id;
   if (userId) {
     setUserId(userId);
-    sentry(() => {
+    unsubscribeSentry = sentry(() => {
       const value = getSentryEnabled();
       if (value === null) return settings?.sentryLogs;
       return value;

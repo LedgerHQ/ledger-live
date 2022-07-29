@@ -9,6 +9,9 @@ export default (shouldSendCallback: () => boolean, userId: string) => {
   if (!available) return;
   setShouldSendCallback(shouldSendCallback);
   Sentry.setUser({ id: userId, ip_address: null });
+  return () => {
+    setShouldSendCallback(() => false);
+  };
 };
 
 export const captureException = (e: Error) => {
