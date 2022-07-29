@@ -79,7 +79,7 @@ function Delta({
         <Text
           variant={"body"}
           fontWeight={"semibold"}
-          fontSize="16px"
+          variant={"large"}
           color={color}
         >
           {unit && absDelta !== 0 ? (
