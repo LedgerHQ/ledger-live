@@ -20,19 +20,52 @@ if (process.env.SENTRY_SAMPLE_RATE) {
 }
 
 const ignoreErrors = [
-  "failed with status code",
-  "status code 404",
-  "timeout",
-  "socket hang up",
-  "getaddrinfo",
-  "could not read from HID device",
+  // networking conditions
+  "API HTTP",
+  "DisconnectedError",
+  "ECONNREFUSED",
+  "ECONNRESET",
+  "EHOSTUNREACH",
+  "ENETUNREACH",
   "ENOTFOUND",
   "ETIMEDOUT",
-  "ECONNRESET",
-  "ENETUNREACH",
-  "request timed out",
+  "getaddrinfo",
+  "HttpError",
+  "Network Error",
   "NetworkDown",
+  "NetworkDown",
+  "NotConnectedError",
+  "socket hang up",
+  "status code 404",
+  // timeouts
   "ERR_CONNECTION_TIMED_OUT",
+  "request timed out",
+  "SolanaTxConfirmationTimeout",
+  "TimeoutError",
+  "TronTransactionExpired", // user waits too long on device, possibly network slowness too
+  "WebsocketConnectionError",
+  // bad usage of device
+  "BleError",
+  "BluetoothRequired",
+  "CantOpenDevice",
+  "could not read from HID device",
+  "DeviceOnDashboardExpected",
+  "DisconnectedDevice",
+  "DisconnectedDeviceDuringOperation",
+  "EthAppPleaseEnableContractData",
+  "failed with status code",
+  "GetAppAndVersionUnsupportedFormat",
+  "Invalid channel",
+  "Ledger Device is busy",
+  "ManagerDeviceLocked",
+  "PairingFailed",
+  // other
+  "AccountAwaitingSendPendingOperations",
+  "AccountNeedResync",
+  "DeviceAppVerifyNotSupported",
+  "InvalidAddressError",
+  "Received an invalid JSON-RPC message",
+  "SwapNoAvailableProviders",
 ];
 
 export function init(Sentry: any, opts: any) {
