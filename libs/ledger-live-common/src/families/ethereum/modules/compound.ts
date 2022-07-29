@@ -542,7 +542,7 @@ export async function digestTokenAccounts(
 
 const fetch = (path, query = {}) =>
   network({
-    type: "get",
+    method: "GET",
     url: URL.format({
       pathname: `${getEnv("COMPOUND_API")}/api/v2${path}`,
       query,

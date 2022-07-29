@@ -30,6 +30,10 @@ import { Transaction as ethereumTransaction } from "../families/ethereum/types";
 import { TransactionRaw as ethereumTransactionRaw } from "../families/ethereum/types";
 import { TransactionStatus as ethereumTransactionStatus } from "../families/ethereum/types";
 import { TransactionStatusRaw as ethereumTransactionStatusRaw } from "../families/ethereum/types";
+import { Transaction as evmTransaction } from "../families/evm/types";
+import { TransactionRaw as evmTransactionRaw } from "../families/evm/types";
+import { TransactionStatus as evmTransactionStatus } from "../families/evm/types";
+import { TransactionStatusRaw as evmTransactionStatusRaw } from "../families/evm/types";
 import { Transaction as filecoinTransaction } from "../families/filecoin/types";
 import { TransactionRaw as filecoinTransactionRaw } from "../families/filecoin/types";
 import { TransactionStatus as filecoinTransactionStatus } from "../families/filecoin/types";
@@ -76,6 +80,7 @@ export type Transaction =
   | crypto_orgTransaction
   | elrondTransaction
   | ethereumTransaction
+  | evmTransaction
   | filecoinTransaction
   | hederaTransaction
   | neoTransaction
@@ -94,6 +99,7 @@ export type TransactionRaw =
   | crypto_orgTransactionRaw
   | elrondTransactionRaw
   | ethereumTransactionRaw
+  | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | neoTransactionRaw
@@ -112,6 +118,7 @@ export type TransactionStatus =
   | crypto_orgTransactionStatus
   | elrondTransactionStatus
   | ethereumTransactionStatus
+  | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | neoTransactionStatus
@@ -130,6 +137,7 @@ export type TransactionStatusRaw =
   | crypto_orgTransactionStatusRaw
   | elrondTransactionStatusRaw
   | ethereumTransactionStatusRaw
+  | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | neoTransactionStatusRaw

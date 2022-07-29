@@ -109,6 +109,7 @@ export type CryptoCurrency = CurrencyCommon & {
     link: string;
   };
   deviceTicker?: string;
+  rpc?: string;
 };
 
 /**

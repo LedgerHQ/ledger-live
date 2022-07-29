@@ -5,6 +5,10 @@ import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 setPlatformVersion("1.0.0");
 
 setSupportedCurrencies([
+  "arbitrum_lite",
+  "avalanche_lite",
+  "fantom_lite",
+  "evmos_lite",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -40,6 +44,7 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
+  "ethereum_goerli_lite",
   "cosmos_testnet",
   "hedera",
   "cardano",
