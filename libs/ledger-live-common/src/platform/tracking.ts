@@ -1,9 +1,14 @@
 import type { AppManifest } from "./types";
 
+/**
+ * This signature is to be compatible with track method of `segment.js` file in LLM and LLD
+ * `track(event: string, properties: ?Object, mandatory: ?boolean)` in jsflow
+ * {@link @ledger-desktop/renderer/analytics/segment#track}
+ */
 type TrackPlatform = (
   event: string,
-  properties?: Record<string, string>,
-  mandatory?: boolean
+  properties: Record<string, any> | null,
+  mandatory: boolean | null
 ) => void;
 
 type TrackFunction = (manifest: AppManifest) => void;
@@ -18,9 +23,17 @@ function getEventData(manifest: AppManifest) {
   return { platform: manifest.name };
 }
 
+/**
+ * Wrap call to underlying trackCall function.
+ * @param trackCall
+ * @returns a dictionary of event to trigger.
+ */
 export default function trackingWrapper(
-  track: TrackPlatform
+  trackCall: TrackPlatform
 ): Record<string, TrackFunction> {
+  const track = (event: string, properties: Record<string, any> | null) =>
+    trackCall(event, properties, null);
+
   return {
     // Failed to load the iframe
     platformLoad: (manifest: AppManifest) => {
