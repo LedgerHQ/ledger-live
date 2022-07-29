@@ -1,4 +1,4 @@
-import type { Currency } from "../types";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import type { RateGranularity } from "./types";
 
 const HOUR = 60 * 60 * 1000;

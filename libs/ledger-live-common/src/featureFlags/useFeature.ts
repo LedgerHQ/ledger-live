@@ -1,5 +1,5 @@
 import { useFeatureFlags } from "./provider";
-import { Feature, FeatureId } from "./types";
+import { FeatureId, Feature } from "@ledgerhq/types-live";
 
 const useFeature = (key: FeatureId): Feature | null => {
   const featureFlags = useFeatureFlags();

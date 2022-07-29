@@ -1,13 +1,12 @@
 import { getTokenById } from "@ledgerhq/cryptoassets";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import type { Account, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "../../../currencies";
 import { genAccount } from "../../../mock/account";
-import type {
-  Account,
-  CryptoCurrency,
-  SubAccount,
-  TokenCurrency,
-} from "../../../types";
 import {
   getAccountTuplesForCurrency,
   getAvailableAccountsById,

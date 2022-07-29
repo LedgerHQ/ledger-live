@@ -1,14 +1,14 @@
 import { BigNumber } from "bignumber.js";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
+  Account,
+  AccountLike,
   AccountRaw,
   AccountRawLike,
-  CryptoCurrency,
   Operation,
-  TokenCurrency,
   Transaction,
   TransactionRaw,
-} from "../../types";
-import { Account, AccountLike } from "../../types/account";
+} from "@ledgerhq/types-live";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 
 /// v3 changes here, move me to another folder soon

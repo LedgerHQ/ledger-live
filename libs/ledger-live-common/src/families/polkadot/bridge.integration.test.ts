@@ -3,7 +3,6 @@ import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { disconnect } from "./api";
 import { BigNumber } from "bignumber.js";
 import { canUnbond, MAX_UNLOCKINGS } from "./logic";
-import type { Account } from "../../types";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -20,9 +19,9 @@ import {
   PolkadotAllFundsWarning,
   PolkadotDoMaxSendInstead,
 } from "./errors";
-import type { DatasetTest, CurrenciesData } from "../../types";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { fromTransactionRaw } from "./transaction";
-import type { Transaction } from "./types";
+import type { PolkadotAccount, Transaction } from "./types";
 const ACCOUNT_SAME_STASHCONTROLLER =
   "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";
 const ACCOUNT_STASH = "13jAJfhpFkRZj1TSSdFopaiFeKnof2q7g4GNdcxcg8Lvx6QN";
@@ -360,8 +359,10 @@ const polkadot: CurrenciesData<Transaction> = {
           expectedStatus: (a) => ({
             errors: {},
             warnings: {},
-            amount: a.polkadotResources?.lockedBalance.minus(
-              a.polkadotResources.unlockingBalance
+            amount: (
+              a as PolkadotAccount
+            ).polkadotResources?.lockedBalance.minus(
+              (a as PolkadotAccount).polkadotResources.unlockingBalance
             ),
           }),
         },
@@ -375,7 +376,7 @@ const polkadot: CurrenciesData<Transaction> = {
           expectedStatus: (a) => ({
             errors: {},
             warnings: {},
-            amount: a.polkadotResources?.unlockingBalance,
+            amount: (a as PolkadotAccount).polkadotResources?.unlockingBalance,
           }),
         },
       ],
@@ -702,7 +703,7 @@ testBridge(dataset);
 
 describe("canUnbond", () => {
   test("can unbond", () => {
-    const account: Partial<Account> = {
+    const account: Partial<PolkadotAccount> = {
       polkadotResources: {
         controller: "",
         stash: "",
@@ -720,10 +721,10 @@ describe("canUnbond", () => {
         ],
       },
     };
-    expect(canUnbond(account as Account)).toBeTruthy();
+    expect(canUnbond(account as PolkadotAccount)).toBeTruthy();
   });
   test("can't unbond because unlockings is too much", () => {
-    const account: Partial<Account> = {
+    const account: Partial<PolkadotAccount> = {
       polkadotResources: {
         controller: "",
         stash: "",
@@ -741,10 +742,10 @@ describe("canUnbond", () => {
         ],
       },
     };
-    expect(canUnbond(account as Account)).toBeFalsy();
+    expect(canUnbond(account as PolkadotAccount)).toBeFalsy();
   });
   test("can't unbond because not enough lockedBalance", () => {
-    const account: Partial<Account> = {
+    const account: Partial<PolkadotAccount> = {
       polkadotResources: {
         controller: "",
         stash: "",
@@ -762,6 +763,6 @@ describe("canUnbond", () => {
         ],
       },
     };
-    expect(canUnbond(account as Account)).toBeFalsy();
+    expect(canUnbond(account as PolkadotAccount)).toBeFalsy();
   });
 });

@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { getAllNFTs } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import type { Transaction } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";

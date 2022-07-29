@@ -1,6 +1,6 @@
 // @flow
 
-import type { Account, SubAccount } from "@ledgerhq/live-common/types/index";
+import type { Account, SubAccount } from "@ledgerhq/types-live";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { getKey } from "~/renderer/storage";
 

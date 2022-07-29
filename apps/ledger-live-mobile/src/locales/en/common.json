@@ -561,14 +561,8 @@
     "NotSupportedLegacyAddress": {
       "title": "The legacy address format is no longer supported"
     },
-    "StellarWrongMemoFormat": {
-      "title": "Memo format is wrong"
-    },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
-    },
-    "StellarMemoRecommended": {
-      "title": "A memo may be needed when sending to this recipient"
     },
     "StratisDown2021Warning": {
       "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
@@ -645,7 +639,45 @@
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     },
     "CardanoMinAmountError": {
-      "title": "Minimum {{amount}} ADA required"
+      "title": "Minimum sendable amount is {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds": {
+      "title": "Please ensure you have enough funds to pay for fees"
+    },
+    "StellarWrongMemoFormat": {
+      "title": "Memo format is wrong"
+    },
+    "StellarMemoRecommended": {
+      "title": "A memo may be needed when sending to this recipient"
+    },
+    "StellarAssetNotAccepted": {
+      "title": "This recipient doesn't have a trustline to {{assetCode}} yet"
+    },
+    "StellarAssetRequired": {
+      "title": "A Stellar asset should be selected before adding a trustline"
+    },
+    "StellarAssetNotFound": {
+      "title": "Selected Stellar asset could not be found"
+    },
+    "StellarNotEnoughNativeBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the transaction fee"
+    },
+    "StellarFeeSmallerThanRecommended": {
+      "title": "The selected fee is lower than the recommended fee"
+    },
+    "StellarFeeSmallerThanBase": {
+      "title": "The minimum transaction fee is 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the new trustline"
+    },
+    "StellarMuxedAccountNotExist": {
+      "title": "Stellar account does not exist"
+    },
+    "StellarSourceHasMultiSign": {
+      "title": "Please disable multisign to make Stellar transactions"
     }
   },
   "crash": {
@@ -824,8 +856,8 @@
   },
   "ratings": {
     "init": {
-      "title": "Enjoying Ledger Live?",
-      "description": "Whether you like it or feel we could be doing better. We really value your feedback.",
+      "title": "How do you like our app?",
+      "description": "Your feedback is important for improving Ledger Live.",
       "cta": {
         "enjoy": "It's great",
         "disappointed": "I am disappointed",
@@ -842,7 +874,8 @@
     },
     "disappointed": {
       "title": "Help us build a better product for you",
-      "description": "We want to do better, and your honest feedback helps us know what to improve.",
+      "description": "If you need more assistance or would like us to get back to you, please use our live chat",
+      "here": "here",
       "cta": {
         "sendFeedback": "Send feedback",
         "notNow": "Not now"
@@ -1757,6 +1790,13 @@
         "howTo": "You can add assets to your Algorand account.",
         "addAsa": "Add ASA (Asset)",
         "howAsaWorks": "How ASA (asset) works?"
+      },
+      "stellar": {
+        "seeMore": "See more assets",
+        "seeLess": "See less assets",
+        "addTokens": "Add assets",
+        "howTo": "You can add assets to your Stellar account.",
+        "addAsset": "Add asset"
       }
     },
     "subaccounts": {
@@ -1905,6 +1945,12 @@
         "showTokens_plural": "Show {{length}} ASA",
         "hideTokens": "Hide ASA",
         "hideTokens_plural": "Hide ASA"
+      },
+      "stellar": {
+        "showTokens": "Show {{length}} asset",
+        "showTokens_plural": "Show {{length}} assets",
+        "hideTokens": "Hide asset",
+        "hideTokens_plural": "Hide assets"
       }
     },
     "noResultsFound": "No asset found",
@@ -3334,7 +3380,9 @@
     "newVersion": "Update {{version}} available for your {{deviceName}}",
     "drawerUpdate": {
       "title": "Firmware Update",
-      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
+      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
+      "pleaseConnectUsbTitle": "USB cable needed",
+      "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3816,6 +3864,7 @@
     }
   },
   "stellar": {
+    "token": "Assets",
     "memo": {
       "title": "Memo",
       "warning": "When using a Memo, carefully verify the type with the recipient."
@@ -3826,6 +3875,48 @@
       "MEMO_ID": "Memo ID",
       "MEMO_HASH": "Memo Hash",
       "MEMO_RETURN": "Memo Return"
+    },
+    "fee": "Network fee",
+    "feeAction": "Update fee",
+    "recommendedFee": "Recommended fee",
+    "recommenndedFeeInfo": "You can still submit this transaction with lower fee than recommended but it may not be completed",
+    "suggested": "Suggested",
+    "networkCongestion": "network congestion",
+    "networkCongestionLevel": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "assetCode": "Asset code",
+    "assetIssuer": "Asset issuer",
+    "addAsset": {
+      "stepperHeader": {
+        "selectAsset": "Add asset",
+        "connectDevice": "Connect device",
+        "verification": "Verification",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "selectToken": {
+            "warning": {
+              "title": "Asset already added",
+              "description": "You already have {{token}} asset in your Stellar account."
+            }
+          },
+          "verification": {
+            "success": {
+              "title": "{{token}} asset successfully added!",
+              "text": "You can now receive and send {{token}} assets on your Stellar account.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+          }
+        }
+      }
     }
   },
   "polkadot": {
@@ -4479,8 +4570,8 @@
       "tokenId": "Token ID",
       "tokenIdCopied": "Token ID copied !",
       "quantity": "Quantity",
-      "attributes" : {
-        "floorPrice" : "Floor Price"
+      "attributes": {
+        "floorPrice": "Floor Price"
       }
     },
     "viewerModal": {
@@ -4497,6 +4588,16 @@
     },
     "operations": {
       "title": "Transaction history"
+    }
+  },
+  "hedera": {
+    "name": "hedera",
+    "createHederaAccountHelp": {
+      "text": "Please refer to this support article for",
+      "link": "how to create a Hedera account"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     }
   }
 }

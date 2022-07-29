@@ -2,7 +2,7 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import type { ValidatorAppValidator } from "@ledgerhq/live-common/families/solana/validator-app";
-import type { CryptoCurrency, Unit } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";

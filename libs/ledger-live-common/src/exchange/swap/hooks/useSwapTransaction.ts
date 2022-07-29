@@ -8,11 +8,11 @@ import {
   SetIsSendMaxLoading,
 } from "../types";
 import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
-import { Account } from "../../../types";
 import { useFromState } from "./useFromState";
 import { useProviderRates } from "./useProviderRates";
 import { useToState } from "./useToState";
 import { useReverseAccounts } from "./useReverseAccounts";
+import { Account } from "@ledgerhq/types-live";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 
 export const selectorStateDefaultValues = {

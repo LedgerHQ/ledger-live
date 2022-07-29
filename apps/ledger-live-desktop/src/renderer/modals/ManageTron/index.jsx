@@ -8,7 +8,7 @@ import { BigNumber } from "bignumber.js";
 
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 import { MIN_TRANSACTION_AMOUNT } from "@ledgerhq/live-common/families/tron/react";
 

@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useMemo, useState } from "react";
-import type { Account, AccountLike, SignedOperation } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -19,9 +19,8 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { createAction as initSellCreateAction } from "@ledgerhq/live-common/hw/actions/initSell";
-import { toTransactionRaw } from "@ledgerhq/live-common/transaction/index";
+import { toTransactionRaw, toTransactionStatusRaw } from "@ledgerhq/live-common/transaction/index";
 import { toAccountLikeRaw, toAccountRaw } from "@ledgerhq/live-common/account/serialization";
-import { toTransactionStatusRaw } from "@ledgerhq/live-common/transaction/status";
 import { renderError } from "~/renderer/components/DeviceAction/rendering";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 
@@ -128,7 +127,7 @@ const Root = ({ data, onClose }: Props) => {
             payloadSignature,
             account: toAccountLikeRaw(account),
             parentAccount: parentAccount ? toAccountRaw(parentAccount) : undefined,
-            status: toTransactionStatusRaw(status),
+            status: toTransactionStatusRaw(status, account.currency.family),
           }),
         handleTransactionId,
       ),

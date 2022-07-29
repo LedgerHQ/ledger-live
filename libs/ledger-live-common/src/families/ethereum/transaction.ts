@@ -5,6 +5,7 @@ import type {
   Transaction,
   TransactionRaw,
   EthereumGasLimitRequest,
+  TransactionStatus,
 } from "./types";
 import Common from "@ethereumjs/common";
 import { Transaction as EthereumTx } from "@ethereumjs/tx";
@@ -15,10 +16,14 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import {
+  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
-import type { CryptoCurrency, TransactionStatus, Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { apiForCurrency } from "../../api/Ethereum";
@@ -325,8 +330,12 @@ export const estimateGasLimit: (
     "+" +
     String(r.amplifier)
 );
+
 export default {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+  formatTransactionStatus,
 };

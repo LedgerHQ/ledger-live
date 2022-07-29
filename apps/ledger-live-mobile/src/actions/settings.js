@@ -2,10 +2,10 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import type { Currency } from "@ledgerhq/live-common/types/index";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import type { PortfolioRange } from "@ledgerhq/types-live";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 

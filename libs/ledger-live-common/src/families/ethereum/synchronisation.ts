@@ -15,7 +15,7 @@ import {
 } from "../../account";
 import { listTokensForCryptoCurrency } from "../../currencies";
 import { encodeAccountId } from "../../account";
-import type { Operation, TokenAccount, Account } from "../../types";
+import type { Operation, TokenAccount, Account } from "@ledgerhq/types-live";
 import { API, apiForCurrency, Tx } from "../../api/Ethereum";
 import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
@@ -194,7 +194,6 @@ export const getAccountShape: GetAccountShape = async (
     spendableBalance: balance,
     blockHeight,
     lastSyncDate: new Date(),
-    balanceHistory: undefined,
     syncHash,
     nfts,
   };

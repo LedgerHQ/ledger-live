@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type { CreateStylesReturnType } from "~/renderer/components/Select/createStyles";
 import { AccountOption } from "~/renderer/components/SelectAccount";
 import { CurrencyOption } from "~/renderer/components/SelectCurrency";

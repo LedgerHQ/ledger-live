@@ -1,8 +1,8 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useState } from "react";
 import { selectorStateDefaultValues } from ".";
 import { getAccountCurrency, getMainAccount } from "../../../account";
-import { Account, AccountLike } from "../../../types";
 import { Result as UseBridgeTransactionReturnType } from "../../../bridge/useBridgeTransaction";
 import { SwapSelectorStateType, SwapTransactionType } from "../types";
 

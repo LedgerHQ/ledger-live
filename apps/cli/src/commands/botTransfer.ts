@@ -18,7 +18,6 @@ import {
 } from "@ledgerhq/live-common/bridge/index";
 import { getEnv, setEnv } from "@ledgerhq/live-common/env";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
-import { Account } from "@ledgerhq/live-common/types/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import {
   autoSignTransaction,
@@ -35,6 +34,7 @@ import {
   initialState,
   loadCountervalues,
 } from "@ledgerhq/live-common/countervalues/logic";
+import type { Account } from "@ledgerhq/types-live";
 
 const CONCURRENT = 3;
 
@@ -238,14 +238,16 @@ export default {
               account,
               tx
             );
-            const status = await accountBridge.getTransactionStatus(
+            const statusCommon = await accountBridge.getTransactionStatus(
               account,
               transaction
             );
 
-            if (Object.keys(status.errors).length !== 0) {
+            if (Object.keys(statusCommon.errors).length !== 0) {
               continue;
             }
+
+            const status = { ...statusCommon, family: transaction.family };
 
             if (!r) {
               console.warn(

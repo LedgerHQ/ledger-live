@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

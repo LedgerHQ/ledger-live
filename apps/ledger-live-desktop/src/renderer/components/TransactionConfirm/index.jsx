@@ -6,12 +6,8 @@ import { Trans, withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import styled from "styled-components";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
 import type { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";

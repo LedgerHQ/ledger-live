@@ -12,8 +12,7 @@ import {
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { DerivationMode } from "../types";
-import type { DeviceInfo, FirmwareUpdateContext } from "../types/manager";
+import type { DerivationMode } from "../derivation";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
@@ -27,6 +26,7 @@ import quitApp from "./quitApp";
 import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
 import manager from "../manager";
+import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 export type RequiresDerivation = {
   currencyId: string;

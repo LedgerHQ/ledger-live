@@ -4,7 +4,6 @@ import { BigNumber } from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { Account, Operation, DerivationMode } from "../../types";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { findCurrencyExplorer } from "../../api/Ledger";
@@ -13,12 +12,14 @@ import {
   isSegwitDerivationMode,
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
+  DerivationMode,
 } from "../../derivation";
-import { BitcoinOutput } from "./types";
+import { BitcoinAccount, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { getAddressWithBtcInstance } from "./hw-getAddress";
 import { mapTxToOperations } from "./logic";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "../../account/accountId";
 import { startSpan } from "../../performance";
 
@@ -128,7 +129,9 @@ const getAccountShape: GetAccountShape = async (info) => {
   });
 
   const walletNetwork = toWalletNetwork(currency.id);
-  const walletDerivationMode = toWalletDerivationMode(derivationMode);
+  const walletDerivationMode = toWalletDerivationMode(
+    derivationMode as DerivationMode
+  );
   const explorer = findCurrencyExplorer(currency);
   if (!explorer) {
     throw new Error(`No explorer found for currency ${currency.name}`);
@@ -139,7 +142,7 @@ const getAccountShape: GetAccountShape = async (info) => {
 
   span = startSpan("sync", "generateAccount");
   const walletAccount =
-    initialAccount?.bitcoinResources?.walletAccount ||
+    (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
     (await wallet.generateAccount({
       xpub,
       path: rootPath,
@@ -226,36 +229,35 @@ const getAccountShape: GetAccountShape = async (info) => {
 const postSync = (initial: Account, synced: Account) => {
   log("bitcoin/postSync", "bitcoinResources");
   const perCoin = perCoinLogic[synced.currency.id];
-
+  const syncedBtc = synced as BitcoinAccount;
   if (perCoin) {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
     if (postBuildBitcoinResources) {
-      synced.bitcoinResources = postBuildBitcoinResources(
-        synced,
-        synced.bitcoinResources
+      syncedBtc.bitcoinResources = postBuildBitcoinResources(
+        syncedBtc,
+        syncedBtc.bitcoinResources
       );
     }
 
     if (syncReplaceAddress) {
-      synced.freshAddress = syncReplaceAddress(synced.freshAddress);
-      synced.freshAddresses = synced.freshAddresses.map((a) => ({
+      syncedBtc.freshAddress = syncReplaceAddress(syncedBtc.freshAddress);
+      syncedBtc.freshAddresses = syncedBtc.freshAddresses.map((a) => ({
         ...a,
         address: syncReplaceAddress(a.address),
       }));
-      if (synced.bitcoinResources) {
-        synced.bitcoinResources.utxos = synced.bitcoinResources?.utxos.map(
-          (u) => ({
+      if (syncedBtc.bitcoinResources) {
+        syncedBtc.bitcoinResources.utxos =
+          syncedBtc.bitcoinResources?.utxos.map((u) => ({
             ...u,
             address: u.address && syncReplaceAddress(u.address),
-          })
-        );
+          }));
       }
     }
   }
 
   log("bitcoin/postSync", "bitcoinResources DONE");
-  return synced;
+  return syncedBtc;
 };
 
 const getAddressFn = (transport) => {

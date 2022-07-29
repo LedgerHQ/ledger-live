@@ -8,7 +8,6 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
-import { Account } from "../types";
 import type { MutationReport, SpecReport } from "./types";
 import { promiseAllBatched } from "../promise";
 import {
@@ -26,6 +25,7 @@ import {
   inferTrackingPairForAccounts,
 } from "../countervalues/logic";
 import { getPortfolio } from "../portfolio/v2";
+import { Account } from "@ledgerhq/types-live";
 type Arg = Partial<{
   currency: string;
   family: string;
@@ -201,6 +201,30 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         (s.mutations && s.mutations.every((r) => !r.mutation)))
   );
 
+  const specsWithoutOperations = results.filter(
+    (s) =>
+      !s.fatalError &&
+      !specsWithoutFunds.includes(s) &&
+      s.mutations &&
+      s.mutations.every((r) => !r.operation)
+  );
+
+  const fullySuccessfulSpecs = results.filter(
+    (s) =>
+      !s.fatalError &&
+      s.mutations &&
+      !specsWithoutFunds.includes(s) &&
+      s.mutations.every((r) => !r.mutation || r.operation)
+  );
+
+  const specsWithErrors = results.filter(
+    (s) =>
+      !s.fatalError &&
+      s.mutations &&
+      !specsWithoutFunds.includes(s) &&
+      s.mutations.some((r) => r.mutation && !r.operation)
+  );
+
   const withoutFunds = specsWithoutFunds
     .filter(
       (s) =>
@@ -212,6 +236,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         )
     )
     .map((s) => s.spec.name);
+
   const { GITHUB_RUN_ID, GITHUB_WORKFLOW } = process.env;
 
   let body = "";
@@ -255,8 +280,42 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   body += "\n\n";
   body += subtitle;
 
-  if (uncoveredMutations.length) {
-    body += `> ⚠️ ${uncoveredMutations.length} mutations uncovered\n`;
+  if (fullySuccessfulSpecs.length) {
+    const msg = `> ✅ ${
+      fullySuccessfulSpecs.length
+    } specs are successful: _${fullySuccessfulSpecs
+      .map((o) => o.spec.name)
+      .join(", ")}_\n`;
+    body += msg;
+    slackBody += msg;
+  }
+
+  if (specsWithErrors.length) {
+    const msg = `> ❌ ${
+      specsWithErrors.length
+    } specs have problems: _${specsWithErrors
+      .map((o) => o.spec.name)
+      .join(", ")}_\n`;
+    body += msg;
+    slackBody += msg;
+  }
+
+  if (withoutFunds.length) {
+    const missingFundsWarn = `> ⚠️ ${
+      withoutFunds.length
+    } specs may miss funds: _${withoutFunds.join(", ")}_\n`;
+    body += missingFundsWarn;
+    slackBody += missingFundsWarn;
+  }
+
+  if (specsWithoutOperations.length) {
+    const warn = `> ⚠️ ${
+      specsWithoutOperations.length
+    } specs may have issues: *${specsWithoutOperations
+      .map((o) => o.spec.name)
+      .join(", ")}*\n`;
+    body += warn;
+    slackBody += warn;
   }
 
   body += "\n\n";
@@ -331,20 +390,10 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     body += "</details>\n\n";
   }
 
-  body += "### Portfolio" + (totalUSD ? " (" + totalUSD + ")" : "") + "\n\n";
-
-  if (withoutFunds.length) {
-    const missingFundsWarn = `> ⚠️ ${
-      withoutFunds.length
-    } specs don't have enough funds! (${withoutFunds.join(
-      ", "
-    )}) _(aren't covered by testnet neither)_`;
-    body += missingFundsWarn;
-    slackBody += missingFundsWarn;
-  }
-
   body += "<details>\n";
-  body += `<summary>Details of the ${results.length} currencies</summary>\n\n`;
+  body += `<summary>Portfolio ${
+    totalUSD ? " (" + totalUSD + ")" : ""
+  } – Details of the ${results.length} currencies</summary>\n\n`;
   body += "| Spec (accounts) | Operations | Balance | funds? |\n";
   body += "|-----------------|------------|---------|--------|\n";
   results.forEach((r) => {

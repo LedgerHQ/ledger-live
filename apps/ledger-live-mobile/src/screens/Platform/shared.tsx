@@ -3,9 +3,10 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import {
   FilterParams,
   filterPlatformApps,
-} from "@ledgerhq/live-common/platform/PlatformAppProvider/helpers";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/providers/types";
+} from "@ledgerhq/live-common/platform/filters";
 import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/providers/types";
+import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { useMemo } from "react";
 
 const defaultArray: LiveAppManifest[] = [];
@@ -24,7 +25,7 @@ export const useFilteredManifests = (filterParamsOverride?: FilterParams) => {
 
     // TODO improve types, mismatch between LiveAppManifest & AppManifest
     return filterPlatformApps(Array.from(manifests.values()) as AppManifest[], {
-      version: "0.0.1",
+      version: getPlatformVersion(),
       platform: "mobile",
       branches,
       ...(filterParamsOverride ?? {}),

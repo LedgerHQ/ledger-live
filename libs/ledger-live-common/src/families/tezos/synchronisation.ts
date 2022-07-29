@@ -9,7 +9,7 @@ import { mergeOps } from "../../bridge/jsHelpers";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { encodeOperationId } from "../../operation";
 import { areAllOperationsLoaded, decodeAccountId } from "../../account";
-import type { Operation, Account } from "../../types";
+import type { Operation, Account } from "@ledgerhq/types-live";
 import api from "./api/tzkt";
 import type { APIOperation } from "./api/tzkt";
 import { getEnv } from "../../env";

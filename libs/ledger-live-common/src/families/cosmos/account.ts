@@ -1,11 +1,11 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { Account, Unit } from "../../types";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { CosmosOperation, CosmosExtraTxInfo } from "./types";
+import { CosmosOperation, CosmosExtraTxInfo, CosmosAccount } from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(
   op: CosmosOperation,
@@ -27,7 +27,7 @@ function formatOperationSpecifics(
     .join("");
 }
 
-function formatAccountSpecifics(account: Account): string {
+function formatAccountSpecifics(account: CosmosAccount): string {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmos account expected");
   const { validators } = getCurrentCosmosPreloadData();

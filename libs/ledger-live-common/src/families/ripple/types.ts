@@ -1,9 +1,11 @@
 import type { BigNumber } from "bignumber.js";
-import type { Unit } from "../../types";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
 
 export type NetworkInfo = {
   family: "ripple";
@@ -29,3 +31,5 @@ export type TransactionRaw = TransactionCommonRaw & {
   tag: number | null | undefined;
   feeCustomUnit: Unit | null | undefined;
 };
+export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

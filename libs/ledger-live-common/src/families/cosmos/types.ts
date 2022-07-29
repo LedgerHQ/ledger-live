@@ -1,9 +1,14 @@
 import type { BigNumber } from "bignumber.js";
-import type {
+import {
+  Account,
+  AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
-import type { Operation, OperationRaw } from "../../types/operation";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
 
 export type CosmosDelegationStatus =
   | "bonded" //  in the active set that generates rewards
@@ -159,14 +164,6 @@ export type StatusErrorMap = {
   feeTooHigh?: Error;
 };
 
-export type TransactionStatus = {
-  errors: StatusErrorMap;
-  warnings: StatusErrorMap;
-  estimatedFees: BigNumber;
-  amount: BigNumber;
-  totalSpent: BigNumber;
-};
-
 export type CosmosMappedDelegation = CosmosDelegation & {
   formattedAmount: string;
   formattedPendingRewards: string;
@@ -193,3 +190,10 @@ export type CosmosMappedValidator = {
 export type CosmosSearchFilter = (
   query: string
 ) => (delegation: CosmosMappedDelegation | CosmosMappedValidator) => boolean;
+export type CosmosAccount = Account & { cosmosResources: CosmosResources };
+export type CosmosAccountRaw = AccountRaw & {
+  cosmosResources: CosmosResourcesRaw;
+};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react-hooks";
 import { genAccount, genTokenAccount } from "../../../mock/account";
-import { Account } from "../../../types";
 import { useReverseAccounts } from "./useReverseAccounts";
 
 const BTC = getCryptoCurrencyById("bitcoin");

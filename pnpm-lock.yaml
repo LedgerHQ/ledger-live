@@ -43,6 +43,8 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/live-common': workspace:^
       '@ledgerhq/logs': workspace:^
+      '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@types/command-line-args': ^5.2.0
       '@types/lodash': ^4.14.177
       '@types/node': ^17.0.15
@@ -100,6 +102,8 @@ importers:
     optionalDependencies:
       '@ledgerhq/hw-transport-node-ble': link:../../libs/ledgerjs/packages/hw-transport-node-ble
     devDependencies:
+      '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@types/command-line-args': 5.2.0
       '@types/lodash': 4.14.182
       '@types/node': 17.0.32
@@ -133,20 +137,23 @@ importers:
       '@ledgerhq/live-common': workspace:^
       '@ledgerhq/logs': workspace:^
       '@ledgerhq/react-ui': workspace:^
+      '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@mapbox/node-pre-gyp': ^1.0.8
       '@octokit/rest': ^18.12.0
       '@playwright/test': 1.22.2
       '@polkadot/react-identicon': 0.89.2
       '@sentry/cli': ^2.5.0
       '@sentry/electron': ^3.0.7
-      '@sentry/node': ^7.7.0
-      '@sentry/tracing': ^7.7.0
+      '@sentry/node': 6.19.2
+      '@sentry/tracing': 6.19.2
       '@storybook/addon-actions': ^6.3.12
       '@storybook/addon-essentials': ^6.3.12
       '@storybook/addon-links': ^6.3.12
       '@storybook/react': ^6.3.12
       '@tippyjs/react': ^4.2.6
       '@trust/keyto': ^1.0.1
+      '@types/jest': ^28.1.6
       '@types/react-router-dom': ^5.3.2
       '@types/react-select': ^4
       '@types/redux-actions': ^2.6.2
@@ -296,10 +303,12 @@ importers:
       '@ledgerhq/live-common': link:../../libs/ledger-live-common
       '@ledgerhq/logs': link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/react-ui': link:../../libs/ui/packages/react
+      '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@polkadot/react-identicon': 0.89.2_fane7jikarojcev26y27hpbhu4
       '@sentry/electron': 3.0.7
-      '@sentry/node': 7.7.0
-      '@sentry/tracing': 7.7.0
+      '@sentry/node': 6.19.2
+      '@sentry/tracing': 6.19.2
       '@tippyjs/react': 4.2.6_sfoxds7t5ydpegc3knd667wn6m
       '@trust/keyto': 1.0.1
       '@xstate/inspect': 0.4.1_ws@7.5.7
@@ -404,6 +413,7 @@ importers:
       '@storybook/addon-essentials': 6.4.22_xhrc4i4yvz6ygksqsyy5bus5sy
       '@storybook/addon-links': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
       '@storybook/react': 6.4.22_xukv4uznet4ikv7tocanvygrou
+      '@types/jest': 28.1.6
       '@types/react-router-dom': 5.3.3
       '@types/react-select': 4.0.18
       '@types/redux-actions': 2.6.2
@@ -487,6 +497,8 @@ importers:
       '@ledgerhq/react-native-hid': workspace:^
       '@ledgerhq/react-native-hw-transport-ble': workspace:^
       '@ledgerhq/react-native-passcode-auth': ^2.1.0
+      '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@polkadot/reactnative-identicon': 2.2.1
       '@polkadot/x-randomvalues': 9.1.1
       '@react-native-async-storage/async-storage': ^1.15.17
@@ -689,6 +701,8 @@ importers:
       '@ledgerhq/react-native-hid': link:../../libs/ledgerjs/packages/react-native-hid
       '@ledgerhq/react-native-hw-transport-ble': link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
       '@ledgerhq/react-native-passcode-auth': 2.1.0
+      '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@polkadot/reactnative-identicon': 2.2.1_zqxy7fpkavjkgz5xll7ed4r6rq
       '@polkadot/x-randomvalues': 9.1.1
       '@react-native-async-storage/async-storage': 1.17.4_react-native@0.68.2
@@ -913,8 +927,11 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/json-bignumber': ^1.1.0
-      '@ledgerhq/live-app-sdk': ^0.6.1
+      '@ledgerhq/live-app-sdk': ^0.7.0
       '@ledgerhq/logs': workspace:^
+      '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-devices': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@polkadot/types': 8.5.1
       '@polkadot/types-known': 8.5.1
       '@polkadot/util': 9.2.1
@@ -1002,6 +1019,7 @@ importers:
       leb128: ^0.0.5
       lodash: ^4.17.21
       lru-cache: 5.1.1
+      minimatch: ^5.1.0
       numeral: ^2.0.6
       object-hash: ^2.2.0
       performance-now: ^2.1.0
@@ -1074,7 +1092,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': link:../ledgerjs/packages/hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/json-bignumber': 1.1.0
-      '@ledgerhq/live-app-sdk': 0.6.1
+      '@ledgerhq/live-app-sdk': 0.7.0
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
       '@polkadot/types': 8.5.1
       '@polkadot/types-known': 8.5.1
@@ -1133,6 +1151,7 @@ importers:
       leb128: 0.0.5
       lodash: 4.17.21
       lru-cache: 5.1.1
+      minimatch: 5.1.0
       numeral: 2.0.6
       object-hash: 2.2.0
       performance-now: 2.1.0
@@ -1160,6 +1179,9 @@ importers:
       xstate: 4.32.0
       zcash-bitcore-lib: 0.13.20-rc3
     devDependencies:
+      '@ledgerhq/types-cryptoassets': link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-devices': link:../ledgerjs/packages/types-devices
+      '@ledgerhq/types-live': link:../ledgerjs/packages/types-live
       '@svgr/core': 5.5.0
       '@testing-library/react-hooks': 4.0.1_rmfdlrtvj5fy7r2bxuk4wb2wvq
       '@types/bs58': 4.0.1
@@ -1254,6 +1276,7 @@ importers:
 
   libs/ledgerjs/packages/cryptoassets:
     specifiers:
+      '@ledgerhq/types-cryptoassets': workspace:^
       '@types/jest': '*'
       '@types/node': '*'
       documentation: 13.2.4
@@ -1267,6 +1290,7 @@ importers:
     dependencies:
       invariant: 2.2.4
     devDependencies:
+      '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
       '@types/jest': 27.5.0
       '@types/node': 17.0.32
       documentation: 13.2.4
@@ -2280,6 +2304,7 @@ importers:
   libs/ledgerjs/packages/types-live:
     specifiers:
       '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-devices': workspace:^
       '@types/jest': '*'
       '@types/node': '*'
       bignumber.js: '9'
@@ -2292,10 +2317,11 @@ importers:
       ts-node: ^10.4.0
       typescript: ^4
     dependencies:
-      '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
       bignumber.js: 9.0.2
       rxjs: 6.6.7
     devDependencies:
+      '@ledgerhq/types-cryptoassets': link:../types-cryptoassets
+      '@ledgerhq/types-devices': link:../types-devices
       '@types/jest': 27.5.0
       '@types/node': 17.0.32
       documentation: 13.2.4
@@ -3443,7 +3469,7 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-compilation-targets': 7.17.10_@babel+core@7.17.10
       '@babel/helper-module-imports': 7.16.7
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.17.12
       '@babel/traverse': 7.17.10
       debug: 4.3.4
       lodash.debounce: 4.0.8
@@ -3461,7 +3487,7 @@ packages:
       '@babel/core': 7.17.10
       '@babel/helper-compilation-targets': 7.17.10_@babel+core@7.17.10
       '@babel/helper-module-imports': 7.16.7
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.17.12
       '@babel/traverse': 7.17.10
       debug: 4.3.4
       lodash.debounce: 4.0.8
@@ -3478,7 +3504,7 @@ packages:
       '@babel/core': 7.18.5
       '@babel/helper-compilation-targets': 7.17.10_@babel+core@7.18.5
       '@babel/helper-module-imports': 7.16.7
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.17.12
       '@babel/traverse': 7.17.10
       debug: 4.3.4
       lodash.debounce: 4.0.8
@@ -4085,7 +4111,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.12.9
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.17.12
       '@babel/plugin-syntax-object-rest-spread': 7.8.3_@babel+core@7.12.9
       '@babel/plugin-transform-parameters': 7.16.7_@babel+core@7.12.9
     dev: true
@@ -4519,7 +4545,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.12.9
-      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-plugin-utils': 7.17.12
     dev: true
 
   /@babel/plugin-syntax-jsx/7.16.7:
@@ -10238,11 +10264,11 @@ packages:
       bignumber.js: 9.0.2
     dev: false
 
-  /@ledgerhq/live-app-sdk/0.6.1:
-    resolution: {integrity: sha512-pGSNsTIg/K3P5xrj9n50Lmb6/sILh/7XrZjMsJA5HDTOYfbhWuYNOXtmDgaSjEO5vkI2YrU2I49VoE2XbwpEwg==}
+  /@ledgerhq/live-app-sdk/0.7.0:
+    resolution: {integrity: sha512-gmIFEKnXHtNXbD3dAK9mkLkE2yFX6/M1HwGoTTd0VEOl5ZLgKiKGaaXVcDpjLwVBvhegfRmSlDlpjCV3OLw74g==}
     dependencies:
       bignumber.js: 9.0.2
-      json-rpc-2.0: 1.1.0
+      json-rpc-2.0: 1.3.0
     dev: false
 
   /@ledgerhq/logs/5.50.0:
@@ -12458,22 +12484,6 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/node/7.7.0:
-    resolution: {integrity: sha512-i62x23NHEhLe6CJ6l9E30uRCUMm0VMz9aUmmrjW+9uxS1mZhHTG2kpbU16ozyh9KTLswKDOSE75Z+MzQpGSQ/Q==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/core': 7.7.0
-      '@sentry/hub': 7.7.0
-      '@sentry/types': 7.7.0
-      '@sentry/utils': 7.7.0
-      cookie: 0.4.2
-      https-proxy-agent: 5.0.1
-      lru_map: 0.3.3
-      tslib: 1.14.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /@sentry/react-native/4.2.0_zqxy7fpkavjkgz5xll7ed4r6rq:
     resolution: {integrity: sha512-AGbfrDwECl0FCHXfFBi6a2KUeYByHIR9a0tzLCndoFLHAFCnsZ/zXiHCw8tW9T0PcBe0Nn2K8hIeuYktk62vbQ==}
     peerDependencies:
@@ -12510,6 +12520,17 @@ packages:
       '@sentry/utils': 7.7.0
       hoist-non-react-statics: 3.3.2
       react: 17.0.2
+      tslib: 1.14.1
+    dev: false
+
+  /@sentry/tracing/6.19.2:
+    resolution: {integrity: sha512-rGoPpP1JIAxdq5bzrww0XuNVr6yn7RN6/wUcaxf6CAvklKvDx+q28WTGlZLGTZ/3un8Rv6i1FZFZOXizgnVnrg==}
+    engines: {node: '>=6'}
+    dependencies:
+      '@sentry/hub': 6.19.2
+      '@sentry/minimal': 6.19.2
+      '@sentry/types': 6.19.2
+      '@sentry/utils': 6.19.2
       tslib: 1.14.1
     dev: false
 
@@ -16808,6 +16829,13 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
+  /@types/jest/28.1.6:
+    resolution: {integrity: sha512-0RbGAFMfcBJKOmqRazM8L98uokwuwD5F8rHrv/ZMbrZBwVOWZUyPG6VFNscjYr/vjM3Vu4fRrCPbOs42AfemaQ==}
+    dependencies:
+      jest-matcher-utils: 28.1.1
+      pretty-format: 28.1.1
+    dev: true
+
   /@types/js-yaml/4.0.5:
     resolution: {integrity: sha512-FhpRzf927MNQdRZP0J5DLIdTXhjLYzeUTmLAu69mnVksLH9CJY3IuSeEgbKUki7GQZm0WqDkGzyxju2EZGD2wA==}
     dev: false
@@ -19412,7 +19440,7 @@ packages:
     dev: true
 
   /arity-n/1.0.4:
-    resolution: {integrity: sha512-fExL2kFDC1Q2DUOx3whE/9KoN66IzkY4b4zUHUBFM1ojEYjZZYDcUW3bek/ufGionX9giIKDC5redH2IlGqcQQ==}
+    resolution: {integrity: sha1-2edrEXM+CFacCEeuezmyhgswt0U=}
 
   /arr-diff/2.0.0:
     resolution: {integrity: sha512-dtXTVMkh6VkEEA7OhXnN1Ecb8aAGFdZ1LFxtOCoqj4qkyOJMt7+qs6Ahdy6p/NQCPYsRSXXivhSB/J5E9jmYKA==}
@@ -19449,7 +19477,7 @@ packages:
     dev: false
 
   /array-equal/1.0.0:
-    resolution: {integrity: sha512-H3LU5RLiSsGXPhN+Nipar0iR0IofH+8r89G2y1tBKxQ/agagKyAjhkAFDRBfodP2caPrNKHpAWNIM/c9yeL7uA==}
+    resolution: {integrity: sha1-jCpe8kcv2ep0KwTHenUJO6J1fJM=}
 
   /array-filter/0.0.1:
     resolution: {integrity: sha1-fajPLiZijtcygDWB/SH2fKzS7uw=}
@@ -19715,7 +19743,7 @@ packages:
     dev: false
 
   /aws-sign2/0.7.0:
-    resolution: {integrity: sha512-08kcGqnYf/YmjoRhfxyu+CLxBjUtHLXLXX/vUfx9l2LYzG3c1m61nrpyFUZI6zeS+Li/wWMMidD9KgrqtGq3mA==}
+    resolution: {integrity: sha1-tG6JCTSpWR8tL2+G1+ap8bP+dqg=}
 
   /aws4/1.11.0:
     resolution: {integrity: sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==}
@@ -20408,7 +20436,7 @@ packages:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
 
   /babel-plugin-syntax-object-rest-spread/6.13.0:
-    resolution: {integrity: sha512-C4Aq+GaAj83pRQ0EFgTvw5YO6T3Qz2KGrNRwIj9mSoNHVvdZY4KO2uA6HNtNXCw993iSZnckY1aLW8nOi8i4+w==}
+    resolution: {integrity: sha1-/WU28rzhODb/o6VFjEkDpZe7O/U=}
 
   /babel-plugin-syntax-trailing-function-commas/7.0.0-beta.0:
     resolution: {integrity: sha512-Xj9XuRuz3nTSbaTXWv3itLOcxyF4oPD8douBBmj7U9BBC6nEBYfyOJYQMf/8PJAFotC62UY5dFfIGEPr7WswzQ==}
@@ -21443,7 +21471,7 @@ packages:
     dev: false
 
   /buffer-crc32/0.2.13:
-    resolution: {integrity: sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==}
+    resolution: {integrity: sha1-DTM+PwDqxQqhRUq9MO+MKl2ackI=}
 
   /buffer-equal-constant-time/1.0.1:
     resolution: {integrity: sha1-+OcRMvf/5uAaXJaXpMbz5I1cyBk=}
@@ -21859,7 +21887,7 @@ packages:
     dev: true
 
   /camelcase/4.1.0:
-    resolution: {integrity: sha512-FxAv7HpHrXbh3aPo4o2qxHay2lkLY3x5Mw3KeE4KQE8ysVfziWeRZDwcjauvwBSGEC/nXUPzZy8zeh4HokqOnw==}
+    resolution: {integrity: sha1-1UVjW+HjPFQmScaRc+Xeas+uNN0=}
     engines: {node: '>=4'}
     dev: true
 
@@ -21922,7 +21950,7 @@ packages:
     dev: true
 
   /caseless/0.12.0:
-    resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
+    resolution: {integrity: sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=}
 
   /cashaddrjs/0.4.4:
     resolution: {integrity: sha512-xZkuWdNOh0uq/mxJIng6vYWfTowZLd9F4GMAlp2DwFHlcCqCm91NtuAc47RuV4L7r4PYcY5p6Cr2OKNb4hnkWA==}
@@ -22235,7 +22263,7 @@ packages:
     engines: {node: '>=6'}
 
   /cli-cursor/2.1.0:
-    resolution: {integrity: sha512-8lgKz8LmCRYZZQDpRyT2m5rKJ08TnU4tR9FFFW2rxpxR1FzWi4PQ/NfyODchAatHaUgnSPVcx/R5w6NuTBzFiw==}
+    resolution: {integrity: sha1-s12sN2R5+sw+lHR9QdDQ9SOP/LU=}
     engines: {node: '>=4'}
     dependencies:
       restore-cursor: 2.0.0
@@ -22961,7 +22989,7 @@ packages:
     dev: true
 
   /convert-source-map/0.3.5:
-    resolution: {integrity: sha512-+4nRk0k3oEpwUB7/CalD7xE2z4VmtEnnq0GO2IPTkrooTrAhEsWvuLF5iWP1dXrwluki/azwXV1ve7gtYuPldg==}
+    resolution: {integrity: sha1-8dgClQr33SYxof6+BZZVDIarMZA=}
 
   /convert-source-map/1.7.0:
     resolution: {integrity: sha512-4FJkXzKXEDB1snCFZlLP4gpC3JILicCpGbzG9f9G7tGqGCzETQ2hWPrcinA9oU4wtf2biUaEH5065UnMeR33oA==}
@@ -28623,7 +28651,7 @@ packages:
     dev: true
 
   /forever-agent/0.6.1:
-    resolution: {integrity: sha512-j0KLYPhm6zeac4lz3oJ3o65qvgQCcPubiyotZrXqEaG4hNagNYO8qdlUrX5vwqv9ohqeT/Z3j6+yW067yWWdUw==}
+    resolution: {integrity: sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=}
 
   /fork-ts-checker-webpack-plugin/3.1.1_s4p5obgc5rn2wrc7rinrdszb4m:
     resolution: {integrity: sha512-DuVkPNrM12jR41KM2e+N+styka0EgLkTnXmNcXdgOM37vtGeY+oCBK/Jx0hzSeEU6memFCtWb4htrHPMDfwwUQ==}
@@ -29435,7 +29463,7 @@ packages:
     dev: true
 
   /glob/6.0.4:
-    resolution: {integrity: sha512-MKZeRNyYZAVVVG1oZeLaWie1uweH40m9AZwIwxyPbTSX4hHrVYSzLg0Ro5Z5R7XKkIX+Cc6oD1rqeDJnwsB8/A==}
+    resolution: {integrity: sha1-DwiGD2oVUSey+t1PnOJLGqtuTSI=}
     dependencies:
       inflight: 1.0.6
       inherits: 2.0.4
@@ -31526,7 +31554,7 @@ packages:
     dev: false
 
   /isstream/0.1.2:
-    resolution: {integrity: sha512-Yljz7ffyPbrLpLngrMtZ7NduUgVvi6wG9RJ9IUcyCd59YQ911PBJphODUcbOVbqYfxe1wuYf/LJ8PauMRwsM/g==}
+    resolution: {integrity: sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=}
 
   /istanbul-instrumenter-loader/3.0.1:
     resolution: {integrity: sha512-a5SPObZgS0jB/ixaKSMdn6n/gXSrK2S6q/UfRJBT3e6gQmVjwZROTODQsYW5ZNwOu78hG62Y3fWlebaVOL0C+w==}
@@ -33962,7 +33990,7 @@ packages:
       argparse: 2.0.1
 
   /jsbn/0.1.1:
-    resolution: {integrity: sha512-UVU9dibq2JcFWxQPA6KCqj5O42VOmAY3zQUfEKxU0KpTGXwNoCjkX1e13eHNvw/xPynt6pU0rZ1htjWTNTSXsg==}
+    resolution: {integrity: sha1-peZUwuWi3rXyAdls77yoDA7y9RM=}
 
   /jsc-android/245459.0.0:
     resolution: {integrity: sha512-wkjURqwaB1daNkDi2OYYbsLnIdC/lUM2nPXQKRs5pqEU9chDg435bjvo+LSaHotDENygHQDHe+ntUkkw2gwMtg==}
@@ -34203,8 +34231,8 @@ packages:
     resolution: {integrity: sha512-tegZKneDQjWintJS5Zlw8xNvJK0/xq4sct2M5AgfFmcCJFMjvrLgk1noH7OPfFgEQ+ScueuWdaGfikCPr+qBtg==}
     dev: false
 
-  /json-rpc-2.0/1.1.0:
-    resolution: {integrity: sha512-A4v62rLgwC2U+G3hA1PKRgAXKS55ItTtjUJVbIq68yccD+AUJZSdjayxd0PLQD8i3ustyLvvaYKW6+DglScrjA==}
+  /json-rpc-2.0/1.3.0:
+    resolution: {integrity: sha512-pA85D9LG4B+b8njdb8DzktltNfGPcxGJJydEg6jRqePfwhK008lRdbX7bco6aokfw9oDFw7fEe+LRxxXwP11HA==}
     dev: false
 
   /json-schema-deref-sync/0.13.0:
@@ -36624,6 +36652,13 @@ packages:
     dependencies:
       brace-expansion: 2.0.1
 
+  /minimatch/5.1.0:
+    resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: false
+
   /minimist-options/4.1.0:
     resolution: {integrity: sha512-Q4r8ghd80yhO/0j1O3B2BjweX3fiHg9cdOwjJd2J76Q135c+NDxGCqdYKQ1SKBuFfgWbAUzBfvYjPUEeNgqN1A==}
     engines: {node: '>= 6'}
@@ -38438,7 +38473,7 @@ packages:
       sha.js: 2.4.11
 
   /pend/1.2.0:
-    resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
+    resolution: {integrity: sha1-elfrVQpng/kRUzH89GY9XI4AelA=}
 
   /performance-now/0.2.0:
     resolution: {integrity: sha1-M+8wxcd9TqIcWlOGnZG1bY8lVeU=}
@@ -39716,7 +39751,7 @@ packages:
     dev: true
 
   /proto-list/1.2.4:
-    resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
+    resolution: {integrity: sha1-IS1b/hMYMGpCD2QCuOJv85ZHqEk=}
     optional: true
 
   /protobufjs/6.10.1:
@@ -42555,7 +42590,7 @@ packages:
     dev: true
 
   /restore-cursor/2.0.0:
-    resolution: {integrity: sha512-6IzJLuGi4+R14vwagDHX+JrXmPVtPpn4mffDJ1UdR7/Edm87fl6yi8mMBIVvFtJaNTUvjughmW4hwLhRG7gC1Q==}
+    resolution: {integrity: sha1-n37ih/gv0ybU/RYpI9YhKe7g368=}
     engines: {node: '>=4'}
     dependencies:
       onetime: 2.0.1
@@ -42581,7 +42616,7 @@ packages:
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
   /rework-visit/1.0.0:
-    resolution: {integrity: sha512-W6V2fix7nCLUYX1v6eGPrBOZlc03/faqzP4sUxMAJMBMOPYhfV/RyLegTufn5gJKaOITyi+gvf0LXDZ9NzkHnQ==}
+    resolution: {integrity: sha1-mUWygD8hni96ygCtuLyfZA+ELJo=}
 
   /rework/1.0.1:
     resolution: {integrity: sha512-eEjL8FdkdsxApd0yWVZgBGzfCQiT8yqSc2H1p4jpZpQdtz7ohETiDMoje5PlM8I9WgkqkreVxFUKYOiJdVWDXw==}
@@ -42979,7 +43014,7 @@ packages:
       semver: 6.3.0
 
   /semver/2.3.2:
-    resolution: {integrity: sha512-abLdIKCosKfpnmhS52NCTjO4RiLspDfsn37prjzGrp9im5DPJOgh82Os92vtwGh6XdQryKI/7SREZnV+aqiXrA==}
+    resolution: {integrity: sha1-uYSPJdbPNjMwc+ye+IVtQvEjPlI=}
     hasBin: true
     dev: false
 
@@ -44021,7 +44056,7 @@ packages:
     dev: false
 
   /stream-buffers/2.2.0:
-    resolution: {integrity: sha512-uyQK/mx5QjHun80FLJTfaWE7JtwfRMKBLkMne6udYOmvH0CawotVa7TfgYHzAnpphn4+TweIx1QKMnRIbipmUg==}
+    resolution: {integrity: sha1-kdX1Ew0c75bc+n9yaUUYh0HQnuQ=}
     engines: {node: '>= 0.10.0'}
 
   /stream-combiner/0.0.4:
@@ -45216,7 +45251,7 @@ packages:
       any-promise: 1.3.0
 
   /throat/4.1.0:
-    resolution: {integrity: sha512-wCVxLDcFxw7ujDxaeJC6nfl2XfHJNYs8yUYJnvMgtPEFlttP9tHSfRUv2vBe6C4hkVFPWoP1P6ZccbYjmSEkKA==}
+    resolution: {integrity: sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=}
 
   /throat/5.0.0:
     resolution: {integrity: sha512-fcwX4mndzpLQKBS1DVYhGAcYaYt7vsHNIvQV+WXMvnow5cgjPphq5CaayLaGsjRdSCKZFNGt7/GYAuXaNOiYCA==}
@@ -45971,7 +46006,7 @@ packages:
     dev: false
 
   /tweetnacl/0.14.5:
-    resolution: {integrity: sha512-KXXFFdAbFXY4geFIwoyNK+f5Z1b7swfXABfL7HXCmoIWMKU3dmS26672A4EeQtDzLKy7SXmfBu51JolvEKwtGA==}
+    resolution: {integrity: sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=}
 
   /tweetnacl/1.0.3:
     resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
@@ -49162,7 +49197,7 @@ packages:
     engines: {node: '>=12'}
 
   /yargs-parser/7.0.0:
-    resolution: {integrity: sha512-WhzC+xgstid9MbVUktco/bf+KJG+Uu6vMX0LN1sLJvwmbCQVxb4D8LzogobonKycNasCZLdOzTAk1SK7+K7swg==}
+    resolution: {integrity: sha1-jQrELxbqVd69MyyvTEA4s+P139k=}
     dependencies:
       camelcase: 4.1.0
     dev: true
