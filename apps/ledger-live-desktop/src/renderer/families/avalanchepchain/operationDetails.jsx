@@ -27,7 +27,6 @@ const OperationDetailsExtra = ({ extra, operation, type, account }: OperationDet
   const delegation = delegations.find(d => d.txID === operation.hash);
   const validatorNode = validator || delegation?.nodeID;
 
-  //TODO: test this on testnet
   switch (type) {
     case "DELEGATE":
       return (

@@ -60,7 +60,6 @@ const Delegation = ({ account }: Props) => {
   const explorerView = getDefaultExplorerView(account.currency);
   const isDelegationEnabled = canDelegate(account);
 
-  //TODO: make sure this works on mainnet. Make sure links to same place as official avax wallet
   const onExternalLink = useCallback(
     (address: string) => {
       const url = explorerView && getTransactionExplorer(explorerView, address);
