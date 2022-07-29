@@ -4,6 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
+  getAccountCurrency,
   getMainAccount,
   getReceiveFlowError,
 } from "@ledgerhq/live-common/account/index";
@@ -45,7 +46,6 @@ type RouteParams = {
 const action = createAction(connectApp);
 
 export default function ConnectDevice({ navigation, route }: Props) {
-  const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
@@ -102,6 +102,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const currency = getAccountCurrency(mainAccount)
   const tokenCurrency =
     account && account.type === "TokenAccount" && account.token;
 
