@@ -29,6 +29,8 @@ type Props = {
 export type RouteParams = {
   accountId: string,
   message: MessageData | TypedMessageData,
+  onConfirmationHandler?: (MessageData | TypedMessageData) => void,
+  onFailHandler?: Error => void,
   currentNavigation?: string,
   nextNavigation?: string,
 };

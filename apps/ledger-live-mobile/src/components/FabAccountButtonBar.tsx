@@ -8,8 +8,8 @@ import React, {
 } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
-import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
 import { useSelector } from "react-redux";
+import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
 
 import { ScrollContainer } from "@ledgerhq/native-ui";
 import ChoiceButton from "./ChoiceButton";

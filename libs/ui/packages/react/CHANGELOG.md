@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.8.2-next.0
+
+### Patch Changes
+
+- [#680](https://github.com/LedgerHQ/ledger-live/pull/680) [`a9da2596e`](https://github.com/LedgerHQ/ledger-live/commit/a9da2596ee15bb55449c4a12acfc2dd5432857e5) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Migrate Vertical timeline component from native to UI
+
 ## 0.8.1
 
 ### Patch Changes

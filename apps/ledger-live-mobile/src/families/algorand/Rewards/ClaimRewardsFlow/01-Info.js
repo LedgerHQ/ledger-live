@@ -34,7 +34,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
   const onNext = useCallback(() => {
     navigation.pop();
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: route.params,
     });
   }, [navigation, route.params]);

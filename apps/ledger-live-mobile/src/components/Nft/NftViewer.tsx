@@ -12,6 +12,7 @@ import {
   decodeNftId,
   getNftCapabilities,
   useNftCollectionMetadata,
+  getFloorPrice,
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import {
   useNavigation,
+  useRoute,
   useTheme as useNavTheme,
 } from "@react-navigation/native";
 import {
@@ -56,10 +57,13 @@ export default function SelectDevice({
   const navigation = useNavigation();
   const knownDevices = useSelector(knownDevicesSelector);
   const dispatch = useDispatch();
+  const route = useRoute();
 
   const handleOnSelect = useCallback(
     deviceInfo => {
       const { modelId, wired } = deviceInfo;
+
+      dispatch(setLastConnectedDevice(deviceInfo));  
       if (wired) {
         track("Device selection", {
           modelId,
@@ -67,7 +71,6 @@ export default function SelectDevice({
         });
         // Nb consider a device selection enough to show the fw update banner in portfolio
         dispatch(setHasConnectedDevice(true));
-        dispatch(setLastConnectedDevice(deviceInfo));
         onSelect(deviceInfo);
         dispatch(setReadOnlyMode(false));
       } else {
@@ -93,6 +96,10 @@ export default function SelectDevice({
   const [devices, setDevices] = useState([]);
 
   const onPairNewDevice = useCallback(() => {
+    track("button_clicked", {
+      button: "Pair with bluetooth",
+      screen: route.name,
+    });
     NativeModules.BluetoothHelperModule.prompt()
       .then(() =>
         // @ts-expect-error navigation issue

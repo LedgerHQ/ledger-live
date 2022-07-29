@@ -3,7 +3,11 @@ import { BigNumber } from "bignumber.js";
 import { reduce, filter, map } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
-import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  RecipientRequired,
+  AmountRequired,
+} from "@ledgerhq/errors";
 import type {
   Account,
   Transaction,
@@ -618,6 +622,13 @@ export function testBridge<T extends Transaction>(data: DatasetTest<T>): void {
             const status = await bridge.getTransactionStatus(account, t);
             expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
           });
+          makeTest("Default empty amount has an amount error", async () => {
+            const account = await getSynced();
+            const t = { ...bridge.createTransaction(account) };
+            const status = await bridge.getTransactionStatus(account, t);
+            expect(status.errors.amount).toBeInstanceOf(AmountRequired);
+          });
+
           const accountDataTest = accountData.test;
 
           if (accountDataTest) {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useContext, useState } from "react";
 import { BackHandler, Dimensions, Pressable } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import Lottie from "lottie-react-native";
@@ -13,11 +13,14 @@ import Animated, {
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
+import { useSelector } from "react-redux";
 import Touchable from "../Touchable";
 import TransferDrawer from "./TransferDrawer";
 import { lockSubject } from "../RootNavigator/CustomBlockRouterNavigator";
 import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "./shared";
 import { useTrack } from "../../analytics";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { AnalyticsContext } from "../../components/RootNavigator";
 
 import lightAnimSource from "../../animations/mainButton/light.json";
 import darkAnimSource from "../../animations/mainButton/dark.json";
@@ -120,9 +123,14 @@ export function TransferTabIcon() {
     opacity: interpolate(openAnimValue.value, [0, 1, 2], [0, 1, 0]),
   }));
 
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
+  const [isOpened, setIsOpened] = useState(false);
+
   const openModal = useCallback(() => {
+    setIsOpened(true);
     const animCallback = () => {
-      track("drawer_viewed", { drawer: "trade" });
+      if (!readOnlyModeEnabled) track("drawer_viewed", { drawer: "trade" });
     };
     openAnimValue.value = 0;
     openAnimValue.value = withTiming(1, animParams, finished => {
@@ -130,9 +138,10 @@ export function TransferTabIcon() {
         runOnJS(animCallback)();
       }
     });
-  }, [openAnimValue, track]);
+  }, [openAnimValue, track, readOnlyModeEnabled]);
 
   const closeModal = useCallback(() => {
+    setIsOpened(false);
     openAnimValue.value = withTiming(2, animParams, finished => {
       if (finished) {
         openAnimValue.value = 0;
@@ -140,15 +149,25 @@ export function TransferTabIcon() {
     });
   }, [openAnimValue]);
 
+  const { screen } = useContext(AnalyticsContext);
+
   const onPressButton = useCallback(() => {
     if (getIsModalOpened()) {
       closeModal();
-      track("button_clicked", { button: "close_trade" });
+      track("button_clicked", {
+        button: "close_trade",
+        drawer: "trade",
+        screen,
+      });
     } else {
       openModal();
-      track("button_clicked", { button: "trade", drawer: "trade" });
+      track("button_clicked", {
+        button: "trade",
+        drawer: "trade",
+        screen,
+      });
     }
-  }, [track, getIsModalOpened, closeModal, openModal]);
+  }, [getIsModalOpened, closeModal, track, screen, openModal]);
 
   const handleBackPress = useCallback(() => {
     if (!getIsModalOpened()) return false;
@@ -174,21 +193,23 @@ export function TransferTabIcon() {
         onPress={closeModal}
         style={opacityStyle}
       />
-      <AnimatedDrawerContainer
-        animatedProps={drawerContainerProps}
-        style={[
-          {
-            width: screenWidth,
-            maxHeight: screenHeight - bottomInset - topInset,
-            paddingBottom:
-              bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
-          },
-          opacityStyle,
-          translateYStyle,
-        ]}
-      >
-        <TransferDrawer onClose={closeModal} />
-      </AnimatedDrawerContainer>
+      {isOpened ? (
+        <AnimatedDrawerContainer
+          animatedProps={drawerContainerProps}
+          style={[
+            {
+              width: screenWidth,
+              maxHeight: screenHeight - bottomInset - topInset,
+              paddingBottom:
+                bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
+            },
+            opacityStyle,
+            translateYStyle,
+          ]}
+        >
+          <TransferDrawer onClose={closeModal} />
+        </AnimatedDrawerContainer>
+      ) : null}
       <MainButton
         activeOpacity={1}
         disabled={lockSubject.getValue()}

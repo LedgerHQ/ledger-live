@@ -177,8 +177,10 @@ export default function BaseNavigator() {
           name={ScreenName.Learn}
           component={Learn}
           options={{
-            headerShown: false,
+            headerShown: true,
             animationEnabled: false,
+            headerTitle: "",
+            headerLeft: () => null,
           }}
         />
       ) : null}

@@ -57,7 +57,7 @@ test("Apps hooks - useAppInstallProgress - Queued or unknown app", () => {
   const { result } = renderHook(() =>
     useAppInstallProgress(mockedState, "not_in_queue")
   );
-  expect(result.current).toBe(1);
+  expect(result.current).toBe(0);
 });
 test("Apps hooks - useAppInstallProgress - Current app", () => {
   const currentProgressSubject: Subject<number> = new Subject();

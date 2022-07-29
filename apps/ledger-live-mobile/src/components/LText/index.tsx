@@ -1,18 +1,22 @@
 import React, { useMemo, memo } from "react";
 import { Text } from "@ledgerhq/native-ui";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
 import { FontWeightTypes } from "@ledgerhq/native-ui/components/Text/getTextStyle";
 import getFontStyle from "./getFontStyle";
 
 export { getFontStyle };
 
-export type Opts = {
+export type Opts = BaseTextProps & {
   bold?: boolean;
   semiBold?: boolean;
   secondary?: boolean;
   monospace?: boolean;
   color?: string;
   bg?: string;
+  fontSize?: string;
   children?: React.ReactNode;
+  variant?: string;
+  fontFamily?: string;
 };
 
 export type Res = {
@@ -31,7 +35,10 @@ export type Res = {
     | "900";
 };
 
-const inferFontWeight = ({ semiBold, bold }: Opts): FontWeightTypes => {
+const inferFontWeight = ({
+  semiBold,
+  bold,
+}: Partial<Opts>): FontWeightTypes => {
   if (bold) {
     return "bold";
   }
