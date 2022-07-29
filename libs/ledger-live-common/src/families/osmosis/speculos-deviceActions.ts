@@ -1,13 +1,20 @@
 import type { DeviceAction } from "../../bot/types";
-import type { Transaction } from "./types";
 import { deviceActionFlow } from "../../bot/specs";
-
+import type { Transaction } from "./types";
 const typeWording = {
   send: "Send",
+  delegate: "Delegate",
+  redelegate: "Redelegate",
+  undelegate: "Undelegate",
+  claimReward: "Withdraw Reward",
+  claimRewardCompound: "(not tested)",
 };
-
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
+    {
+      title: "Sequence",
+      button: "Rr",
+    },
     {
       title: "Chain ID",
       button: "Rr",
@@ -17,22 +24,45 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       button: "Rr",
     },
     {
-      title: "Sequence",
-      button: "Rr",
-    },
-    {
       title: "Type",
       button: "Rr",
       expectedValue: ({ transaction }) => typeWording[transaction.mode],
     },
     {
+      title: "Validator Source",
+      button: "Rr",
+      expectedValue: ({ transaction }) => transaction.sourceValidator || "",
+    },
+    {
+      title: "Validator Dest",
+      button: "Rr",
+      expectedValue: ({ transaction }) => transaction.validators[0].address,
+    },
+    {
+      title: "Validator",
+      button: "Rr",
+      expectedValue: ({ transaction }, acc) =>
+        transaction.validators[
+          acc.filter((a) => a.title === "Validator").length
+        ].address,
+    },
+    {
+      title: "Memo",
+      button: "Rr",
+      expectedValue: ({ transaction }) => transaction.memo || "",
+    },
+    {
+      title: "Fee",
+      button: "Rr",
+    },
+    {
+      title: "Gas",
+      button: "Rr",
+      expectedValue: ({ transaction }) => transaction.gas?.toString() || "",
+    },
+    {
       title: "Amount",
       button: "Rr",
-      expectedValue: ({ account, status }) => {
-        const denom = account.currency.units[1].code;
-        const amount = status.amount.toString();
-        return `${amount} ${denom}`;
-      },
     },
     {
       title: "From",
@@ -45,28 +75,17 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "Memo",
+      title: "Delegator",
       button: "Rr",
-      expectedValue: ({ transaction }) => transaction.memo || "",
-    },
-    {
-      title: "Fee",
-      button: "Rr",
-      expectedValue: ({ account, status }) => {
-        const denom = account.currency.units[1].code;
-        const amount = status.estimatedFees.toString();
-        return `${amount} ${denom}`;
-      },
-    },
-    {
-      title: "Gas",
-      button: "Rr",
-      expectedValue: ({ transaction }) => transaction.gas?.toString() || "",
+      expectedValue: ({ account }) => account.freshAddress,
     },
     {
       title: "APPROVE",
       button: "LRlr",
       final: true,
+    },
+    {
+      title: "REJECT",
     },
   ],
 });
