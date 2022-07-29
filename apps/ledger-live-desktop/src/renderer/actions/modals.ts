@@ -1,4 +1,3 @@
-// @flow
 import { createAction } from "redux-actions";
 
 export const openModal = createAction("MODAL_OPEN", (name, data) => ({ name, data }));

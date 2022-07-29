@@ -24,9 +24,15 @@ export function Selector({
 
   const Icon = currency ? (
     <CurrencyIcon size={32} currency={currency} />
-  ) :
-    <Flex width={32} height={32} justifyContent="center" backgroundColor="neutral.c30" borderRadius={16} />
-;
+  ) : (
+    <Flex
+      width={32}
+      height={32}
+      justifyContent="center"
+      backgroundColor="neutral.c30"
+      borderRadius={16}
+    />
+  );
 
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
@@ -45,7 +51,7 @@ export function Selector({
             <Text
               variant="h3"
               marginBottom={2}
-              color={title? "neutral.c100" : "neutral.c70"}
+              color={title ? "neutral.c100" : "neutral.c70"}
             >
               {title || t("transfer.swap2.form.placeholder")}
             </Text>
