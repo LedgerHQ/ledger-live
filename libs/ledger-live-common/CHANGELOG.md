@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 25.1.0-next.2
+
+### Minor Changes
+
+- [#507](https://github.com/LedgerHQ/ledger-live/pull/507) [`3bdbfd3cb`](https://github.com/LedgerHQ/ledger-live/commit/3bdbfd3cbc0153a2ebf4ab91f631cb9f6e42d74c) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Push notifications support added to ledger live mobile, new 'notifications' section added to the settings to enable or disable them, new modal added to ask the user if he wants to allow the notifications
+
 ## 25.1.0-next.1
 
 ### Minor Changes
