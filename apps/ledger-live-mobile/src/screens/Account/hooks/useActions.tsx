@@ -6,13 +6,19 @@ import {
   getAccountSpendableBalance,
 } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../../const";
 // eslint-disable-next-line import/named
-import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
+import {
+  readOnlyModeEnabledSelector,
+  swapSelectableCurrenciesSelector,
+} from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
+import { ActionButton } from "../../../components/FabAccountButtonBar";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 
 type Props = {
   account: AccountLike;
@@ -20,11 +26,26 @@ type Props = {
   colors: any;
 };
 
-export default function useActions({ account, parentAccount, colors }: Props) {
+const iconBuy = Icons.PlusMedium;
+const iconSell = Icons.MinusMedium;
+const iconSwap = Icons.BuyCryptoMedium;
+
+export default function useActions({
+  account,
+  parentAccount,
+  colors,
+}: Props): {
+  mainActions: ActionButton[];
+  secondaryActions: ActionButton[];
+} {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const { t } = useTranslation();
+  // const { colors } = useTheme();
+
   const currency = getAccountCurrency(account);
 
   const balance = getAccountSpendableBalance(account);
+  const isZeroBalance = balance.gt(0);
   const mainAccount = getMainAccount(account, parentAccount);
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
@@ -33,6 +54,31 @@ export default function useActions({ account, parentAccount, colors }: Props) {
   const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(
     currency.id,
   );
+
+  const rampCatalog = useRampCatalog();
+
+  const [canBeBought, canBeSold] = useMemo(() => {
+    if (!rampCatalog.value || !currency) {
+      return [false, false];
+    }
+
+    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
+      rampCatalog.value.onRamp,
+    );
+    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
+      rampCatalog.value.offRamp,
+    );
+
+    return [
+      allBuyableCryptoCurrencyIds.includes(currency.id),
+      allSellableCryptoCurrencyIds.includes(currency.id),
+    ];
+  }, [rampCatalog.value, currency]);
+
+  const swapSelectableCurrencies = useSelector(
+    swapSelectableCurrenciesSelector,
+  );
+  const availableOnSwap = swapSelectableCurrencies.includes(currency.id);
 
   const extraSendActionParams = useMemo(
     () =>
@@ -50,6 +96,63 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     [account, parentAccount, decorators],
   );
 
+  const actionButtonSwap: ActionButton = {
+    navigationParams: [
+      NavigatorName.Swap,
+      {
+        screen: ScreenName.Swap,
+        params: {
+          defaultAccount: account,
+          defaultParentAccount: parentAccount,
+        },
+      },
+    ],
+    label: t("transfer.swap.main.header", { currency: currency.name }),
+    Icon: iconSwap,
+    disabled: isZeroBalance,
+    event: "Swap Crypto Account Button",
+    eventProperties: { currencyName: currency.name },
+  };
+
+  const actionButtonBuy: ActionButton = {
+    navigationParams: [
+      NavigatorName.Exchange,
+      {
+        screen: ScreenName.ExchangeBuy,
+        params: {
+          defaultCurrencyId: currency && currency.id,
+          defaultAccountId: account && account.id,
+        },
+      },
+    ],
+    label: t("account.buy"),
+    Icon: iconBuy,
+    event: "Buy Crypto Account Button",
+    eventProperties: {
+      currencyName: currency.name,
+    },
+  };
+
+  const actionButtonSell: ActionButton = {
+    navigationParams: [
+      NavigatorName.Exchange,
+      {
+        screen: ScreenName.ExchangeSell,
+        params: {
+          defaultCurrencyId: currency && currency.id,
+          defaultAccountId: account && account.id,
+        },
+      },
+    ],
+    label: t("account.sell"),
+    Icon: iconSell,
+    disabled: isZeroBalance,
+    event: "Sell Crypto Account Button",
+    eventProperties: {
+      currencyName: currency.name,
+    },
+  };
+
   const SendAction = {
     navigationParams: [
       NavigatorName.SendFunds,
@@ -60,7 +163,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     label: <Trans i18nKey="account.send" />,
     event: "AccountSend",
     Icon: Icons.ArrowTopMedium,
-    disabled: balance.lte(0),
+    disabled: isZeroBalance,
     ...extraSendActionParams,
   };
 
@@ -87,9 +190,14 @@ export default function useActions({ account, parentAccount, colors }: Props) {
       })) ||
     [];
 
-  const actions = [
+  const mainActions = [
+    ...(availableOnSwap ? [actionButtonSwap] : []),
+    ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
+    ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
+  ];
+  const secondaryActions = [
     ...baseActions,
     ...(isEthereum
       ? [
@@ -132,5 +240,8 @@ export default function useActions({ account, parentAccount, colors }: Props) {
       : []),
   ];
 
-  return actions;
+  return {
+    mainActions,
+    secondaryActions,
+  };
 }
