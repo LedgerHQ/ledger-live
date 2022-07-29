@@ -1,10 +1,10 @@
 import { log } from "@ledgerhq/logs";
-import type { Currency } from "../../types";
 import type { RateGranularity, TrackingPair } from "../types";
 import type { Module } from "./types";
 import api from "../api";
 import weth from "./weth";
 import ethbtc from "./ethbtc";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 const modules: Module[] = [weth, ethbtc];
 

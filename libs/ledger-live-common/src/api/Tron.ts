@@ -14,7 +14,6 @@ import type {
   TronResources,
   TronTransactionInfo,
 } from "../families/tron/types";
-import type { Account, SubAccount } from "../types";
 import {
   decode58Check,
   encode58Check,
@@ -35,6 +34,7 @@ import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
 import compact from "lodash/compact";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 
 const getBaseApiUrl = () => getEnv("API_TRONGRID_PROXY");
 

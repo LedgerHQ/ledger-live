@@ -638,7 +638,10 @@
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     },
     "CardanoMinAmountError": {
-      "title": "Minimum {{amount}} ADA required"
+      "title": "Minimum sendable amount is {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds": {
+      "title": "Please ensure you have enough funds to pay for fees"
     },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"
@@ -849,8 +852,8 @@
   },
   "ratings": {
     "init": {
-      "title": "Enjoying Ledger Live?",
-      "description": "Whether you like it or feel we could be doing better. We really value your feedback.",
+      "title": "How do you like our app?",
+      "description": "Your feedback is important for improving Ledger Live.",
       "cta": {
         "enjoy": "It's great",
         "disappointed": "I am disappointed",
@@ -867,7 +870,8 @@
     },
     "disappointed": {
       "title": "Help us build a better product for you",
-      "description": "We want to do better, and your honest feedback helps us know what to improve.",
+      "description": "If you need more assistance or would like us to get back to you, please use our live chat",
+      "here": "here",
       "cta": {
         "sendFeedback": "Send feedback",
         "notNow": "Not now"
@@ -3299,7 +3303,9 @@
     "newVersion": "Update {{version}} available for your {{deviceName}}",
     "drawerUpdate": {
       "title": "Firmware Update",
-      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
+      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
+      "pleaseConnectUsbTitle": "USB cable needed",
+      "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3418,6 +3424,13 @@
             "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
           }
         }
+      }
+    }
+  },
+  "cardano": {
+    "info": {
+      "balanceDoesNotIncludeRewards": {
+        "title": "Total balance doesn't include staking rewards"
       }
     }
   },
@@ -4480,8 +4493,8 @@
       "tokenId": "Token ID",
       "tokenIdCopied": "Token ID copied !",
       "quantity": "Quantity",
-      "attributes" : {
-        "floorPrice" : "Floor Price"
+      "attributes": {
+        "floorPrice": "Floor Price"
       }
     },
     "viewerModal": {
@@ -4498,6 +4511,16 @@
     },
     "operations": {
       "title": "Transaction history"
+    }
+  },
+  "hedera": {
+    "name": "hedera",
+    "createHederaAccountHelp": {
+      "text": "Please refer to this support article for",
+      "link": "how to create a Hedera account"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     }
   }
 }

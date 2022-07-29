@@ -1,9 +1,9 @@
 // @flow
 
 import { useState, useCallback, useMemo, useEffect } from "react";
-import type { Account, SubAccount } from "@ledgerhq/live-common/types/account";
+import type { Account, SubAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/currencies";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type AccountTuple = {
   account: Account,

@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import StellarSdk from "stellar-sdk";
 import { AmountRequired, FeeNotLoaded, NetworkDown } from "@ledgerhq/errors";
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import {
   buildPaymentOperation,

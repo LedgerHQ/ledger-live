@@ -1,6 +1,7 @@
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import byFamily from "../generated/platformAdapter";
+import type { Transaction } from "../generated/types";
 import { isTokenAccount, isSubAccount } from "../account";
-import { Account, AccountLike, Transaction } from "../types";
 import {
   PlatformAccount,
   PlatformCurrency,

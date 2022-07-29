@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/account";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { openModal } from "~/renderer/actions/modals";
 import IconReceive from "~/renderer/icons/Receive";
@@ -71,7 +71,7 @@ export default function AccountContextMenu({
           if (ptxSmartRouting?.enabled) {
             const params = {
               currency: currency?.id,
-              account: mainAccount?.freshAddress,
+              account: mainAccount?.id,
               mode: "buy", // buy or sell
             };
 
@@ -103,7 +103,7 @@ export default function AccountContextMenu({
           if (ptxSmartRouting?.enabled) {
             const params = {
               currency: currency?.id,
-              account: mainAccount?.freshAddress,
+              account: mainAccount?.id,
               mode: "sell", // buy or sell
             };
 

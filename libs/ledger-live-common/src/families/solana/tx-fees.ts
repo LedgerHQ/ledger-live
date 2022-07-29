@@ -1,4 +1,4 @@
-import { Account } from "../../types";
+import { Account } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
 import { buildTransactionWithAPI } from "./js-buildTransaction";
 import createTransaction from "./js-createTransaction";

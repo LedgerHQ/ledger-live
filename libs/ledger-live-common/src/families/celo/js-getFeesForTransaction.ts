@@ -1,5 +1,6 @@
+import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { Account, Transaction } from "../../types";
+import { Transaction } from "../../generated/types";
 import { celoKit } from "./api/sdk";
 
 const getFeesForTransaction = async ({

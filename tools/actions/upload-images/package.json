@@ -1,6 +1,6 @@
 {
   "name": "@actions/upload-images",
-  "version": "1.0.1-next.0",
+  "version": "1.0.1",
   "description": "Uploads images found in a folder to imgur and creates a json file for later reference",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

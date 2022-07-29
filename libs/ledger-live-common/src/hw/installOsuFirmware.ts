@@ -1,7 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
-
+import type { OsuFirmware } from "@ledgerhq/types-live";
 import type { Observable } from "rxjs";
-import type { OsuFirmware } from "../types/manager";
 import ManagerAPI from "../api/Manager";
 export default (
   transport: Transport,

@@ -1,10 +1,10 @@
+import type { AccountRaw } from "@ledgerhq/types-live";
 import {
   importAccountsMakeItems,
   importAccountsReduce,
   fromAccountRaw,
 } from "../../account";
 import { setSupportedCurrencies } from "../../currencies";
-import { AccountRaw } from "../../types";
 import { setPlatformVersion } from "../../platform/version";
 
 setPlatformVersion("1.0.0");

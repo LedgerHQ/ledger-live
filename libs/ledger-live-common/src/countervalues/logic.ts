@@ -1,5 +1,4 @@
 import { log } from "@ledgerhq/logs";
-import type { Currency, Account } from "../types";
 import { flattenAccounts, getAccountCurrency } from "../account/helpers";
 import { promiseAllBatched } from "../promise";
 import type {
@@ -29,6 +28,8 @@ import {
   mapRate,
   resolveTrackingPair,
 } from "./modules";
+import type { Account } from "@ledgerhq/types-live";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 // yield raw version of the countervalues state to be saved in a db
 export function exportCountervalues({

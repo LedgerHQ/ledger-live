@@ -19,7 +19,6 @@ import {
   setRatingsHappyMoment,
   setRatingsDataOfUser,
 } from "../actions/ratings";
-import { languageSelector } from "../reducers/settings";
 import { track } from "../analytics";
 
 export type RatingsHappyMoment = {
@@ -88,7 +87,6 @@ const useRatings = () => {
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
   const accounts: Account[] = useSelector(accountsSelector);
-  const currAppLanguage = useSelector(languageSelector);
 
   const accountsWithAmountCount = useMemo(() => accounts.filter(account => account.balance?.gt(0)).length, [accounts]);
 
@@ -103,8 +101,6 @@ const useRatings = () => {
   );
 
   const areRatingsConditionsMet = useCallback(() => {
-    if (currAppLanguage !== "en") return false;
-
     if (!ratingsDataOfUser) return false;
 
     // criterias depending on last answer to the ratings flow
@@ -162,7 +158,6 @@ const useRatings = () => {
 
     return true;
   }, [
-    currAppLanguage,
     ratingsDataOfUser,
     accountsWithAmountCount,
     ratingsFeature?.params?.conditions?.minimum_accounts_number,

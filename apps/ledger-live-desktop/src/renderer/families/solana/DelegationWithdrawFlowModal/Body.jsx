@@ -5,7 +5,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Transaction, SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
-import type { AccountBridge, Operation, Account } from "@ledgerhq/live-common/types/index";
+import type { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";

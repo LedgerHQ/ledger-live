@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { AccountLike } from "../types";
+import { AccountLike } from "@ledgerhq/types-live";
 import {
   accountToPlatformAccount,
   currencyToPlatformCurrency,

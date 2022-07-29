@@ -6,7 +6,8 @@ import styled, { css } from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountCapabilities, getEnablingOp } from "@ledgerhq/live-common/compound/logic";
-import type { Account, TokenAccount, Unit, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Unit, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   CompoundAccountSummary,
   CompoundAccountStatus,

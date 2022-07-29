@@ -1,4 +1,4 @@
-import type { Operation } from "../../types";
+import type { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";

@@ -1,5 +1,9 @@
 import { makeRe } from "minimatch";
-import { CryptoCurrency, Currency, TokenCurrency } from "../types";
+import {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { listTokens, listSupportedCurrencies } from "../currencies";
 import { PlatformSupportedCurrency } from "../platform/types";
 import { CurrencyFilters } from "../platform/filters";
