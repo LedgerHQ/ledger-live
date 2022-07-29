@@ -38,7 +38,6 @@ import AddAssetsCard from "./AddAssetsCard";
 import Assets from "./Assets";
 import { PortfolioHistoryList } from "./PortfolioHistory";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { useProviders } from "../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
@@ -143,7 +142,6 @@ function PortfolioScreen({ navigation }: Props) {
   const openAddModal = useCallback(() => setAddModalOpened(true), [
     setAddModalOpened,
   ]);
-  useProviders();
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [
     setAddModalOpened,

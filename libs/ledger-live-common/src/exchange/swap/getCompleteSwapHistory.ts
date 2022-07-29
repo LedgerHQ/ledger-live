@@ -7,7 +7,7 @@ import type {
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
 import type { AccountLike } from "@ledgerhq/types-live";
 
-const getSwapOperationMap =
+export const getSwapOperationMap =
   (account: AccountLike, accounts: AccountLike[]) =>
   (swapOperation: SwapOperation): MappedSwapOperation | null | undefined => {
     const {

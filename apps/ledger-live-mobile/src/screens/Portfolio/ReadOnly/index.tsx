@@ -19,6 +19,8 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { Currency } from "@ledgerhq/live-common/types/index";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
@@ -34,7 +36,6 @@ import TrackScreen from "../../../analytics/TrackScreen";
 import { screen, track } from "../../../analytics";
 import { NavigatorName } from "../../../const";
 import ReadOnlyAssets from "./ReadOnlyAssets";
-import { useProviders } from "../../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
@@ -44,8 +45,6 @@ import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { Currency } from "@ledgerhq/live-common/types/index";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 import {
   useCurrentRouteName,
@@ -158,7 +157,6 @@ function PortfolioScreen({ navigation }: Props) {
   );
   const portfolio = usePortfolio();
   const discreetMode = useSelector(discreetModeSelector);
-  useProviders();
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);

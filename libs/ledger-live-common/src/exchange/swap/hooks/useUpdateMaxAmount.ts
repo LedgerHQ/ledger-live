@@ -1,13 +1,13 @@
 import BigNumber from "bignumber.js";
 import { useCallback, useEffect, useState } from "react";
 import { getAccountBridge } from "../../../bridge";
-import { Transaction } from "../../../generated/types";
 import {
   SetIsSendMaxLoading,
   SwapDataType,
   SwapSelectorStateType,
   SwapTransactionType,
-} from "./useSwapTransaction";
+} from "../types";
+import { Transaction } from "../../../generated/types";
 
 export const ZERO = new BigNumber(0);
 
