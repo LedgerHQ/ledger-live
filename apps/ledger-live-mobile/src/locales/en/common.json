@@ -3304,6 +3304,10 @@
     "changeLanguage": "Change language",
     "allowLanguageInstallation": "Allow language installation",
     "languageInstalled": "Device language changed to {{language}}",
+    "firmwareUpdatePrompt": {
+      "title": "Set your {{deviceName}} in {{language}}?",
+      "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
+    },
     "installingLanguage": "Installing language",
     "languages": {
       "english": "English",

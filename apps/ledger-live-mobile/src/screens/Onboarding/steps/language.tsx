@@ -120,6 +120,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         onClose={closeDeviceLanguagePrompt}
       >
         <ChangeDeviceLanguagePrompt
+          titleWording={t("onboarding.stepLanguage.changeDeviceLanguage")}
           descriptionWording={t(
             "onboarding.stepLanguage.changeDeviceLanguageDescription",
             {
@@ -128,7 +129,6 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
               ),
             },
           )}
-          currentLocale={currentLocale}
           onConfirm={() =>
             setDeviceForChangeLanguageAction(lastConnectedDevice)
           }

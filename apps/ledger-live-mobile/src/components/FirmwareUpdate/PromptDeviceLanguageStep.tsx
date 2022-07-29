@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 
+import { useTranslation } from "react-i18next";
+
 import { Flex } from "@ledgerhq/native-ui";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
@@ -31,9 +34,14 @@ const PropmtDeviceLanguageStep = ({
   device,
 }: Props) => {
   const { locale: currentLocale } = useLocale();
-  let { availableLanguages, loaded } = useAvailableLanguagesForDevice(
-    updatedDeviceInfo,
-  );
+  let {
+    availableLanguages: newAvailableLanguages,
+    loaded: newLanguagesLoaded,
+  } = useAvailableLanguagesForDevice(updatedDeviceInfo);
+  let {
+    availableLanguages: oldAvailableLanguages,
+    loaded: oldLanguagesLoaded,
+  } = useAvailableLanguagesForDevice(oldDeviceInfo);
   const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<
     boolean
   >(false);
@@ -42,27 +50,24 @@ const PropmtDeviceLanguageStep = ({
     setDeviceForChangeLanguageAction,
   ] = useState<Device | null>(null);
 
+  const { t } = useTranslation();
+
   const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
 
   useEffect(() => {
-    if (loaded) {
+    if (newLanguagesLoaded && oldLanguagesLoaded) {
       const deviceLanguageId = updatedDeviceInfo?.languageId;
       const potentialDeviceLanguage = localeIdToDeviceLanguage[currentLocale];
-      const langAvailableOnDevice =
-        potentialDeviceLanguage !== undefined &&
-        availableLanguages.includes(potentialDeviceLanguage);
 
-      console.log({
-        isDeviceLanguagePromptOpen,
-        deviceForChangeLanguageAction,
-        loaded,
-        availableLanguages,
-        updatedDeviceInfo,
-      });
+      const langAvailableForTheFirstTime =
+        potentialDeviceLanguage !== undefined &&
+        !oldAvailableLanguages.includes(potentialDeviceLanguage) &&
+        newAvailableLanguages.includes(potentialDeviceLanguage);
+
       // firmware version verification is not really needed here, the presence of a language id
       // indicates that we are in a firmware that supports localization
       if (
-        langAvailableOnDevice &&
+        langAvailableForTheFirstTime &&
         deviceLanguageId !== undefined &&
         oldDeviceInfo?.languageId === undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
@@ -73,7 +78,17 @@ const PropmtDeviceLanguageStep = ({
         dispatchEvent({ type: "languagePromptDismissed" });
       }
     }
-  }, [availableLanguages, loaded]);
+  }, [
+    newAvailableLanguages,
+    newLanguagesLoaded,
+    oldAvailableLanguages,
+    oldLanguagesLoaded,
+    dispatchEvent,
+    currentLocale,
+    updatedDeviceInfo,
+  ]);
+
+  const deviceName = getDeviceModel(device.modelId).productName;
 
   return (
     <Flex alignItems="center">
@@ -81,8 +96,21 @@ const PropmtDeviceLanguageStep = ({
         <>
           <Track event="FirmwareUpdateFirstDeviceLanguagePrompt" onMount />
           <ChangeDeviceLanguagePrompt
-            currentLocale={currentLocale}
-            descriptionWording="This new framework version allows you to change the language of your device. Would you like to change your device language to French to match Live's language?"
+            titleWording={t("deviceLocalization.firmwareUpdatePrompt.title", {
+              language: t(
+                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
+              ),
+              deviceName,
+            })}
+            descriptionWording={t(
+              "deviceLocalization.firmwareUpdatePrompt.description",
+              {
+                language: t(
+                  `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
+                ),
+                deviceName,
+              },
+            )}
             canSkip
             onSkip={() => dispatchEvent({ type: "languagePromptDismissed" })}
             onConfirm={() => setDeviceForChangeLanguageAction(device)}
