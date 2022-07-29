@@ -104,9 +104,12 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     }
 
     if (params?.accountId) {
-      const enhancedAccounts = accounts.map(acc =>
-        accountWithMandatoryTokens(acc, [params?.currency]),
-      );
+      const enhancedAccounts =
+        params.target === "from"
+          ? accounts
+          : accounts.map(acc =>
+              accountWithMandatoryTokens(acc, [params?.currency]),
+            );
 
       const account = flattenAccounts(enhancedAccounts).find(
         a => a.id === params.accountId,
