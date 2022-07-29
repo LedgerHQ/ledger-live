@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { StyleSheet } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { Unit } from "@ledgerhq/live-common/types/index";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 import CurrencyInput from "../../../../components/CurrencyInput";
 import TranslatedError from "../../../../components/TranslatedError";
 

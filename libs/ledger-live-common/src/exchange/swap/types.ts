@@ -6,9 +6,8 @@ import {
   AccountRaw,
   AccountRawLike,
   Operation,
-  Transaction,
-  TransactionRaw,
 } from "@ledgerhq/types-live";
+import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 
 /// v3 changes here, move me to another folder soon

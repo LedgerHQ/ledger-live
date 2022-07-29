@@ -15,10 +15,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
-import {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap/index";
 import { StatusTag } from "./StatusTag";

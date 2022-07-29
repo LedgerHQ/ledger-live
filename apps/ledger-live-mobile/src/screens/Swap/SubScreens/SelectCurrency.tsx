@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TFunction, useTranslation } from "react-i18next";
 import { TrackScreen } from "../../../analytics";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
@@ -42,6 +42,7 @@ export function SelectCurrency({
   );
 
   return (
+    // @ts-expect-error
     <KeyboardView>
       <Flex>
         <TrackScreen

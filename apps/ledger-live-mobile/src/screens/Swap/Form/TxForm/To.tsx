@@ -15,12 +15,8 @@ import {
   usePickDefaultCurrency,
   useSelectableCurrencies,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
-import { swap } from "@ledgerhq/live-common/src/families/solana/utils";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/src/currencies";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { Selector } from "./Selector";
 import { CurrencyValue } from "./CurrencyValue";
 

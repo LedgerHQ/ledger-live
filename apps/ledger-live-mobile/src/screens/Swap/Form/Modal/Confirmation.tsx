@@ -4,7 +4,6 @@ import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import {
-  AccountLike,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/generated/types";
@@ -25,7 +24,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import { DeviceInfo } from "@ledgerhq/types-live";
+import { AccountLike, DeviceInfo } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   postSwapAccepted,

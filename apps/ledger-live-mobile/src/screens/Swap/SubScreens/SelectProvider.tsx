@@ -6,7 +6,7 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { Unit } from "@ledgerhq/live-common/types/index";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 // eslint-disable-next-line import/no-unresolved, import/named
 import { providerIcons } from "../../../icons/swap";
@@ -101,7 +101,6 @@ export function SelectProvider({
                         {" = "}
 
                         <CurrencyUnitValue
-                          // @ts-expect-error
                           unit={to.currency.units[0]}
                           value={new BigNumber(10)
                             .pow(fromUnit.magnitude)
@@ -124,13 +123,8 @@ export function SelectProvider({
 
                   <Text variant="tiny" color="neutral.c70">
                     <CounterValue
-                      inline
-                      // @ts-expect-error
                       currency={to.currency}
                       value={rate.toAmount}
-                      disableRounding
-                      showCode
-                      color="palette.text.shade40"
                     />
                   </Text>
                 </Flex>

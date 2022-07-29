@@ -15,7 +15,7 @@ import {
   Pair,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
 import { shallowAccountsSelector } from "../../../../reducers/accounts";

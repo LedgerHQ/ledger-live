@@ -4,13 +4,9 @@ import {
   SwapDataType,
   Pair,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  AccountLike,
-  CryptoCurrency,
-  Operation,
-  TokenCurrency,
-  Transaction,
-} from "@ledgerhq/live-common/types/index";
+import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
 import { LodashToPairs } from "lodash/fp";

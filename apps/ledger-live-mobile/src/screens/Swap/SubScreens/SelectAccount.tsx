@@ -4,13 +4,13 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   flattenAccounts,
-} from "@ledgerhq/live-common/src/account";
+} from "@ledgerhq/live-common/account/index";
 import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/src/currencies";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { TrackScreen } from "../../../analytics";
 import AccountCard from "../../../components/AccountCard";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
@@ -31,7 +31,7 @@ export function SelectAccount({
 
   const unfilteredAccounts = useSelector(accountsSelector);
 
-  const accounts = useMemo(
+  const accounts: Account[] = useMemo(
     () =>
       unfilteredAccounts.filter(acc =>
         selectableCurrencyIds.includes(getAccountCurrency(acc).id),
@@ -60,7 +60,7 @@ export function SelectAccount({
   }, [accounts, selectedCurrency]);
 
   const allAccounts = useMemo(() => {
-    const accounts = flattenAccounts(enhancedAccounts);
+    const accounts: AccountLike[] = flattenAccounts(enhancedAccounts);
 
     if (target === "to") {
       return accounts
@@ -192,10 +192,7 @@ export function SelectAccount({
       <Flex>
         <FilteredSearchBar
           keys={["name", "unit.code", "token.name", "token.ticker"]}
-          inputWrapperStyle={[
-            styles.getCurrencyAccountcard,
-            styles.searchBarContainer,
-          ]}
+          inputWrapperStyle={[styles.searchBarContainer]}
           list={allAccounts}
           renderList={renderList}
           renderEmptySearch={() => (

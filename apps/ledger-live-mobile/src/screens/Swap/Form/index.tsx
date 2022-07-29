@@ -23,11 +23,10 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import {
-  getMainAccount,
+  flattenAccounts,
   accountWithMandatoryTokens,
-} from "@ledgerhq/live-common/src/account";
+} from "@ledgerhq/live-common/account/index";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
   swapAcceptedProvidersSelector,
