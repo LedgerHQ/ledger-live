@@ -10,8 +10,8 @@ import "../env";
 // initially we will send errors (anonymized as we don't initially know "userId" neither)
 let shouldSendCallback = () => true;
 
-let productionBuildSampleRate = 0.2;
-let tracesSampleRate = 0.1;
+let productionBuildSampleRate = 0.5;
+let tracesSampleRate = 0.2;
 
 if (process.env.SENTRY_SAMPLE_RATE) {
   const v = parseFloat(process.env.SENTRY_SAMPLE_RATE);
