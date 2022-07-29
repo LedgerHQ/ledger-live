@@ -18,6 +18,10 @@ const prepareTransaction = async (
   account: Account,
   transaction: Transaction
 ) => {
+  transaction.amount = transaction.useAllAmount
+    ? account.spendableBalance
+    : transaction.amount;
+
   return transaction;
 };
 
