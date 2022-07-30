@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.46.0-nightly.1
+
+### Patch Changes
+
+- [#402](https://github.com/LedgerHQ/ledger-live/pull/402) [`6cd97ea89`](https://github.com/LedgerHQ/ledger-live/commit/6cd97ea89431d506b3c7021bd5753ecdb1e562da) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Migrate webplayerplatform to typescript
+
+- Updated dependencies [[`9f5d214c7`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a)]:
+  - @ledgerhq/react-ui@0.8.2-nightly.1
+
 ## 2.46.0-nightly.0
 
 ### Minor Changes

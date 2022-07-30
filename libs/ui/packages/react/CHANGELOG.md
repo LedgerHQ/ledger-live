@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.8.2-nightly.1
+
+### Patch Changes
+
+- [#772](https://github.com/LedgerHQ/ledger-live/pull/772) [`9f5d214c7`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - fix button size
+
 ## 0.8.2-nightly.0
 
 ### Patch Changes
