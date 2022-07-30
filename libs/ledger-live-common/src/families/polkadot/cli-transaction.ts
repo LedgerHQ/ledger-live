@@ -4,12 +4,13 @@ import { getValidators } from "./validators";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import type { Transaction } from "../../generated/types";
+import { isAccount } from "../../account/index";
 import { getCryptoCurrencyById, formatCurrencyUnit } from "../../currencies";
 import {
   SidecarValidatorsParamAddresses,
   SidecarValidatorsParamStatus,
 } from "./api/sidecar.types";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { PolkadotAccount } from "./types";
 const options = [
   {
@@ -138,10 +139,6 @@ const polkadotValidators = {
     ),
 };
 
-function isAccountType(account: AccountLike): account is Account {
-  return (account as Account).type === "Account";
-}
-
 function inferTransactions(
   transactions: Array<{
     account: AccountLike;
@@ -153,7 +150,7 @@ function inferTransactions(
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "polkadot", "polkadot family");
 
-    if (isAccountType(account)) {
+    if (isAccount(account)) {
       invariant(
         (account as PolkadotAccount).polkadotResources,
         "unactivated account"
@@ -169,7 +166,7 @@ function inferTransactions(
       validators,
       era: opts.era || null,
       rewardDestination: opts.rewardDestination || null,
-      numSlashingSpans: isAccountType(account)
+      numSlashingSpans: isAccount(account)
         ? (account as PolkadotAccount).polkadotResources?.numSlashingSpans
         : null,
     };

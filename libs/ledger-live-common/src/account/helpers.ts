@@ -371,6 +371,10 @@ export const findTokenAccountByCurrency = (
   return null; // else return nothing
 };
 
+export function isAccount(account: AccountLike): account is Account {
+  return account.type === "Account";
+}
+
 export function isTokenAccount(account: AccountLike): account is TokenAccount {
   return account.type === "TokenAccount";
 }
