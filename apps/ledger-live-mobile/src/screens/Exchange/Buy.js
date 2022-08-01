@@ -12,7 +12,7 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
 import BigSpinner from "../../icons/BigSpinner";

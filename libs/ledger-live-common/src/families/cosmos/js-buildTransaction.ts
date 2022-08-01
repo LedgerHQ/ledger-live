@@ -1,5 +1,4 @@
-import { Account } from "../../types";
-import { Transaction } from "./types";
+import { CosmosAccount, Transaction } from "./types";
 import {
   makeAuthInfoBytes,
   Registry,
@@ -17,7 +16,7 @@ import { defaultCosmosAPI } from "./api/Cosmos";
 import BigNumber from "bignumber.js";
 
 export const buildTransaction = async (
-  account: Account,
+  account: CosmosAccount,
   transaction: Transaction
 ): Promise<any> => {
   const msg: Array<{ typeUrl: string; value: any }> = [];
@@ -181,7 +180,7 @@ export const buildTransaction = async (
 };
 
 export const postBuildTransaction = async (
-  account: Account,
+  account: CosmosAccount,
   transaction: Transaction,
   pubkey: any,
   unsignedPayload: any,

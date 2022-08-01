@@ -14,10 +14,11 @@ import {
   CosmosTooManyValidators,
   NotEnoughDelegationBalance,
 } from "../../errors";
-import { Account } from "../../types";
 import {
   CosmosLikeTransaction,
   StatusErrorMap,
+  CosmosAccount,
+  Transaction,
   TransactionStatus,
 } from "./types";
 import { BigNumber } from "bignumber.js";
@@ -49,7 +50,7 @@ export class CosmosTransactionStatusManager {
   }
 
   getTransactionStatus = async (
-    a: Account,
+    a: CosmosAccount,
     t: CosmosLikeTransaction
   ): Promise<TransactionStatus> => {
     if (t.mode === "send") {
@@ -152,7 +153,7 @@ export class CosmosTransactionStatusManager {
   };
 
   private getDelegateTransactionStatus = async (
-    a: Account,
+    a: CosmosAccount,
     t: CosmosLikeTransaction
   ): Promise<TransactionStatus> => {
     const errors: StatusErrorMap = {};
@@ -224,7 +225,7 @@ export class CosmosTransactionStatusManager {
   };
 
   private getSendTransactionStatus = async (
-    a: Account,
+    a: CosmosAccount,
     t: CosmosLikeTransaction
   ): Promise<TransactionStatus> => {
     const errors: StatusErrorMap = {};
@@ -287,7 +288,10 @@ export class CosmosTransactionStatusManager {
     });
   };
 
-  private redelegationStatusError = (a: Account, t: CosmosLikeTransaction) => {
+  private redelegationStatusError = (
+    a: CosmosAccount,
+    t: CosmosLikeTransaction
+  ) => {
     if (a.cosmosResources) {
       const redelegations = a.cosmosResources.redelegations;
       invariant(
@@ -312,7 +316,7 @@ export class CosmosTransactionStatusManager {
   };
 
   private isDelegable = (
-    a: Account,
+    a: CosmosAccount,
     address: string | undefined | null,
     amount: BigNumber
   ) => {

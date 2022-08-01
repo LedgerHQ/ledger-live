@@ -11,8 +11,8 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { TFunction } from "react-i18next";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
-import type { Transaction } from "@ledgerhq/live-common/families/tron/types";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/tron/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import { localeSelector } from "~/renderer/reducers/settings";

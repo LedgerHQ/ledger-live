@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import toPairs from "lodash/toPairs";
 import { Trans } from "react-i18next";
-import type { AccountLike, Operation } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { decodeAccountId } from "@ledgerhq/live-common/account/index";
 import { centerEllipsis } from "~/renderer/styles/helpers";

@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
 import { useSelector } from "react-redux";
 import LText from "../../components/LText";

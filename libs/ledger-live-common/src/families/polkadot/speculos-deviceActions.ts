@@ -1,5 +1,5 @@
 import type { DeviceAction } from "../../bot/types";
-import type { Transaction } from "./types";
+import type { PolkadotAccount, Transaction } from "./types";
 import { deviceActionFlow } from "../../bot/specs";
 import { formatCurrencyUnit } from "../../currencies";
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
@@ -44,7 +44,7 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       title: "Nonce",
       button: "Rr",
       expectedValue: ({ account }) =>
-        (account.polkadotResources?.nonce || 0).toString(),
+        ((account as PolkadotAccount).polkadotResources?.nonce || 0).toString(),
     },
     {
       title: "Tip",

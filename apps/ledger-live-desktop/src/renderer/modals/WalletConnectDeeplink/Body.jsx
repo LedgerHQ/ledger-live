@@ -27,7 +27,7 @@ import Text from "~/renderer/components/Text";
 import LedgerLiveImg from "~/renderer/images/ledgerlive-logo.svg";
 import WCLogo from "~/renderer/images/walletconnect.png";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 

@@ -1334,22 +1334,30 @@
       }
     }
   },
-  "tokensList": {
-    "title": "Token'lar",
-    "cta": "Token ekle",
-    "placeholder": "Bir token eklemek için onu {{currencyName}} adresinize göndermeniz yeterlidir.",
-    "link": "Daha fazla bilgi",
-    "seeTokens": "Token'ları göster ({{tokenCount}})",
-    "hideTokens": "Token'ları gizle ({{tokenCount}})",
-    "countTooltip": "1 token",
-    "countTooltip_plural": "{{count}} token",
-    "algorand": {
-      "title": "ASA (Varlıklar)",
-      "cta": "ASA Ekle",
-      "placeholder": "{{currencyName}} hesabınıza varlıklar ekleyebilirsiniz.",
-      "link": "Asset'ler (ASA) nasıl çalışır?",
-      "seeTokens": "ASA'ları göster ({{tokenCount}})",
-      "hideTokens": "ASA'ları gizle ({{tokenCount}})"
+  "tokensList" : {
+    "title" : "Token'lar",
+    "cta" : "Token ekle",
+    "placeholder" : "Bir token eklemek için onu {{currencyName}} adresinize göndermeniz yeterlidir.",
+    "link" : "Daha fazla bilgi",
+    "seeTokens" : "Token'ları göster ({{tokenCount}})",
+    "hideTokens" : "Token'ları gizle ({{tokenCount}})",
+    "countTooltip" : "1 token",
+    "countTooltip_plural" : "{{count}} token",
+    "algorand" : {
+      "title" : "ASA (Varlıklar)",
+      "cta" : "ASA Ekle",
+      "placeholder" : "{{currencyName}} hesabınıza varlıklar ekleyebilirsiniz.",
+      "link" : "Asset'ler (ASA) nasıl çalışır?",
+      "seeTokens" : "ASA'ları göster ({{tokenCount}})",
+      "hideTokens" : "ASA'ları gizle ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "Varlıklar",
+      "cta" : "Varlık ekle",
+      "placeholder" : "{{currencyName}} hesabınıza varlıklar ekleyebilirsiniz.",
+      "link" : "Stellar varlıklarıyla ilgili daha çok bilgi alın",
+      "seeTokens" : "Varlıkları göster ({{tokenCount}})",
+      "hideTokens" : "Varlıkları gizle ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -1856,17 +1864,17 @@
     "title": "Sat",
     "titleCrypto": "{{currency}} sat"
   },
-  "receive": {
-    "title": "Al",
-    "successTitle": "Adres güvenli şekilde paylaşıldı",
-    "steps": {
-      "chooseAccount": {
-        "title": "Hesap",
-        "label": "Alacak hesap",
-        "parentAccount": "1. {{currencyName}} hesabı seçin",
-        "token": "2. Token seçin",
-        "verifyTokenType": "Lütfen <0>{{token}}</0> token'ının <0>{{tokenType}}</0> türü bir token olduğunu doğrulayın. {{currency}} hesabına gönderilen diğer tüm kripto varlıklar kaybolabilir.",
-        "warningTokenType": "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}/0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir."
+  "receive" : {
+    "title" : "Al",
+    "successTitle" : "Adres güvenli şekilde paylaşıldı",
+    "steps" : {
+      "chooseAccount" : {
+        "title" : "Hesap",
+        "label" : "Alacak hesap",
+        "parentAccount" : "1. {{currencyName}} hesabı seçin",
+        "token" : "2. Token seçin",
+        "verifyTokenType" : "Lütfen <0>{{token}}</0> token'ının <0>{{tokenType}}</0> türü bir token olduğunu doğrulayın. {{currency}} hesabına gönderilen diğer tüm kripto varlıklar kaybolabilir.",
+        "warningTokenType" : "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}</0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir."
       },
       "connectDevice": {
         "title": "Cihaz",
@@ -1998,14 +2006,21 @@
       }
     }
   },
-  "tron": {
-    "voting": {
-      "emptyState": {
-        "description": "Artık varlık dondurarak ve oylama yaparak ödüller kazanabilirsiniz.",
-        "info": "Oylama nasıl çalışır?",
-        "votesDesc": "Staking ödülleri kazanmaya başlamak için bir veya daha fazla temsilciye oy verin.",
-        "vote": "Oylama yap",
-        "voteExisting": "Oyları yönet"
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Staking ödülleri toplam bakiyeye dahil edilmez"
+      }
+    }
+  },
+  "tron" : {
+    "voting" : {
+      "emptyState" : {
+        "description" : "Artık varlık dondurarak ve oylama yaparak ödüller kazanabilirsiniz.",
+        "info" : "Oylama nasıl çalışır?",
+        "votesDesc" : "Staking ödülleri kazanmaya başlamak için bir veya daha fazla temsilciye oy verin.",
+        "vote" : "Oylama yap",
+        "voteExisting" : "Oyları yönet"
       },
       "manageTP": "Varlıkları yönet",
       "warnEarnRewards": "Ödül kazanmaya başlamak için en az {{amount}} gerekiyor",
@@ -2586,12 +2601,37 @@
       }
     }
   },
-  "solana": {
-    "common": {
-      "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
-      "viewDetails": "Ayrıntıları göster",
-      "connectDevice": {
-        "title": "Cihaz"
+  "stellar" : {
+    "addAsset" : {
+      "title" : "Varlık ekle",
+      "steps" : {
+        "assets" : {
+          "title" : "Varlık",
+          "info" : "Bir varlık eklemek için minimum ücretle bir işlem gönderilmesi gerekir. Bu, işlem geçmişinizde görünür",
+          "selectLabel" : "Bir varlık seçin",
+          "disabledTooltip" : "Bu varlık Stellar hesabınızda zaten var"
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "title" : "Onaylayın",
+          "success" : {
+            "title" : "{{token}} varlığı başarıyla eklendi",
+            "text" : "Artık Stellar hesabınızla <0>{{token}}</0> varlıkları gönderip alabilirsiniz.",
+            "cta" : "Ayrıntıları göster"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    }
+  },
+  "solana" : {
+    "common" : {
+      "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
+      "viewDetails" : "Ayrıntıları göster",
+      "connectDevice" : {
+        "title" : "Cihaz"
       },
       "confirmation": {
         "title": "Onaylayın"
@@ -3171,16 +3211,16 @@
         "gotIt": "Anladım"
       }
     },
-    "screens": {
-      "welcome": {
-        "title": "Ledger'a Hoş Geldiniz",
-        "description": "Kriptonuzu bilgisayarınızdan güvenli bir şekilde yönetin.",
-        "cta": "Başlangıç",
-        "noDevice": "Cihazınız yok mu? <0>Bir Ledger Nano X satın alın</0>",
-        "languageWarning": {
-          "title": "{{language}} dilinde başlayın",
-          "desc": "Ledger'ı kullanmaya başlamanızı kolaylaştırmak için ek diller sunuyoruz. Ledger deneyiminin geri kalanının an itibarıyla sadece İngilizce olarak mevcut olduğunu lütfen unutmayın.",
-          "cta": "Anladım"
+    "screens" : {
+      "welcome" : {
+        "title" : "Ledger'a Hoş Geldiniz",
+        "description" : "Kriptonuzu bilgisayarınızdan güvenli bir şekilde yönetin.",
+        "cta" : "Hemen başla",
+        "noDevice" : "Cihazınız yok mu? <0>Bir Ledger Nano X satın alın</0>",
+        "languageWarning" : {
+          "title" : "{{language}} dilinde başlayın",
+          "desc" : "Ledger'ı kullanmaya başlamanızı kolaylaştırmak için ek diller sunuyoruz. Ledger deneyiminin geri kalanının an itibarıyla sadece İngilizce olarak mevcut olduğunu lütfen unutmayın.",
+          "cta" : "Anladım"
         }
       },
       "selectDevice": {
@@ -3210,13 +3250,13 @@
           }
         }
       },
-      "tutorial": {
-        "steps": {
-          "getStarted": "Başlangıç",
-          "pinCode": "PIN kodu",
-          "recoveryPhrase": "Kurtarma ifadesi",
-          "hideRecoveryPhrase": "Kurtarma ifadenizi saklayın",
-          "pairNano": "Nano'yu bağla"
+      "tutorial" : {
+        "steps" : {
+          "getStarted" : "Hemen başla",
+          "pinCode" : "PIN kodu",
+          "recoveryPhrase" : "Kurtarma ifadesi",
+          "hideRecoveryPhrase" : "Kurtarma ifadenizi saklayın",
+          "pairNano" : "Nano'yu bağla"
         },
         "screens": {
           "importYourRecoveryPhrase": {
@@ -3717,13 +3757,13 @@
   "RecipientField": {
     "placeholder": "{{currencyName}} adresini girin"
   },
-  "Terms": {
-    "title": "Kullanım koşulları",
-    "description": "Hizmet Şartları ve Gizlilik Politikamızı incelemek için lütfen biraz zaman ayırın",
-    "termsLabel": "Hizmet Şartları",
-    "privacyLabel": "Gizlilik Politikası",
-    "switchLabel": "Hizmet Şartları ve Gizlilik Politikasını okudum ve kabul ediyorum",
-    "cta": "Ledger uygulamasına girin"
+  "Terms" : {
+    "title" : "Kullanım koşulları",
+    "description" : "Hizmet Şartları ve Gizlilik Politikamızı incelemek için lütfen biraz zaman ayırın",
+    "termsLabel" : "Hizmet Şartları",
+    "privacyLabel" : "Gizlilik Politikası",
+    "switchLabel" : "Hizmet Şartları ve Gizlilik Politikasını okudum ve kabul ediyorum",
+    "cta" : "Ledger uygulamasına gir"
   },
   "updatedTerms": {
     "title": "Kullanım Koşulları Güncellemesi",
@@ -3753,7 +3793,20 @@
         "MEMO_HASH": "Memo Hash",
         "MEMO_RETURN": "Memo Dönüşü"
       },
-      "memoWarningText": "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın"
+      "memoWarningText" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın",
+      "fee" : "Ücretler",
+      "feeInfoText" : "Stellar ağındaki işlem için en az 0,00001 XLM'lik bir işlem ücreti alınır.",
+      "suggested" : "Önerilen",
+      "recommendedFee" : "Önerilen ücret",
+      "recommenndedFeeInfo" : "Bu işlemi önerilenden daha düşük bir ücretle gönderebilirsiniz ancak tamamlanmayabilir",
+      "networkCongestion" : "ağ yoğunluğu",
+      "networkCongestionLevel" : {
+        "LOW" : "Düşük",
+        "MEDIUM" : "Orta",
+        "HIGH" : "Yüksek"
+      },
+      "assetCode" : "Varlık kodu",
+      "assetIssuer" : "Varlık yaratıcısı"
     },
     "cosmos": {
       "memo": "Memo",
@@ -4306,17 +4359,11 @@
     "FeeTooHigh": {
       "title": "Ağ ücretleri, tutarın % 10'unun üzerindedir"
     },
-    "StellarWrongMemoFormat": {
-      "title": "Memo biçimi yanlış"
+    "SourceHasMultiSign" : {
+      "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
     },
-    "SourceHasMultiSign": {
-      "title": "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
-    },
-    "StellarMemoRecommended": {
-      "title": "Bu alıcıya gönderirken bir memo gerekebilir"
-    },
-    "SwapExchangeRateAmountTooLow": {
-      "title": "Tutar en az {{minAmountFromFormatted}} olmalıdır"
+    "SwapExchangeRateAmountTooLow" : {
+      "title" : "Tutar en az {{minAmountFromFormatted}} olmalıdır"
     },
     "SwapExchangeRateAmountTooHigh": {
       "title": "Tutar {{maxAmountFromFormatted}} değerinden az olmalıdır"
@@ -4379,8 +4426,49 @@
     "SolanaTxConfirmationTimeout": {
       "title": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
     },
-    "NotEnoughNftOwned": {
-      "title": "Mevcut token sayısını aştınız"
+    "NotEnoughNftOwned" : {
+      "title" : "Mevcut token sayısını aştınız"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "En az {{amount}} ADA gönderilebilir"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Lütfen ücretleri ödemeye yetecek kadar fonunuz olduğundan emin olun"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo biçimi yanlış"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Bu alıcıya gönderirken bir memo gerekebilir"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Bu alıcının henüz {{assetCode}} için bir trustline'ı yok."
+    },
+    "StellarAssetRequired" : {
+      "title" : "Bir trustline eklemek için bir Stellar varlığı seçmelisiniz"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Seçilen Stellar varlığı bulunamadı"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta işlem ücretini karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Seçilen ücret önerilen ücretten az"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Minimum işlem ücreti 0,00001 XLM'dir"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta yeni trustline'ı karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar hesabı mevcut değil"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     }
   },
   "cryptoOrg": {
@@ -4399,14 +4487,28 @@
     "memoPlaceholder": "Opsiyonel",
     "memoWarningText": "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
   },
-  "hedera": {
-    "name": "hedera",
-    "createHederaAccountHelp": {
-      "text": "Bu destek makalesini inceleyerek",
-      "link": "Hedera hesabının nasıl oluşturulduğunu öğrenebilirsiniz"
+  "hedera" : {
+    "name" : "hedera",
+    "createHederaAccountHelp" : {
+      "text" : "Bu destek makalesini inceleyerek",
+      "link" : "Hedera hesabının nasıl oluşturulduğunu öğrenebilirsiniz"
     },
-    "currentAddress": {
-      "messageIfVirtual": "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
+    "currentAddress" : {
+      "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
+    },
+    "send" : {
+      "memo" : {
+        "label" : "Memo (isteğe bağlı)",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "varlık seç"
+    },
+    "selectAccount" : {
+      "title" : "hesap seç"
     }
   }
 }

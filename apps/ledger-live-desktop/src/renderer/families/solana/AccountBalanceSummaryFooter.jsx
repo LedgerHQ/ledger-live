@@ -13,7 +13,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { localeSelector } from "~/renderer/reducers/settings";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 const Wrapper: ThemedComponent<*> = styled(Box).attrs(() => ({

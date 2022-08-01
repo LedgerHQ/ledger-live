@@ -9,10 +9,10 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import type {
   Account,
   AccountLike,
-  Transaction,
   SignedOperation,
   Operation,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import {

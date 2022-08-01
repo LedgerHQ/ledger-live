@@ -5,7 +5,11 @@ import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../api/Manager";
 import { getProviderId } from "../manager/provider";
 import getDeviceInfo from "./getDeviceInfo";
-import type { FinalFirmware, DeviceInfo, McuVersion } from "../types/manager";
+import type {
+  DeviceInfo,
+  FinalFirmware,
+  McuVersion,
+} from "@ledgerhq/types-live";
 const blVersionAliases = {
   "0.0": "0.6",
 };

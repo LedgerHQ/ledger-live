@@ -4,6 +4,7 @@ import sampleSize from "lodash/sampleSize";
 import { BigNumber } from "bignumber.js";
 import { getCurrentPolkadotPreloadData } from "../../families/polkadot/preload";
 import type {
+  PolkadotAccount,
   PolkadotResources,
   Transaction,
 } from "../../families/polkadot/types";
@@ -53,7 +54,7 @@ const polkadot: AppSpec<Transaction> = {
       name: "send 50%~",
       maxRun: 2,
       transaction: ({ account, siblings, bridge }) => {
-        invariant(account.polkadotResources, "polkadot");
+        invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         const sibling = pickSiblings(siblings, 2);
         let amount = account.spendableBalance
           .div(1.9 + 0.2 * Math.random())
@@ -86,16 +87,19 @@ const polkadot: AppSpec<Transaction> = {
       name: "bond - bondExtra",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        invariant(account.polkadotResources, "polkadot");
+        invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         invariant(canBond(account), "can't bond");
-        invariant(hasMinimumBondBalance(account), "not enough balance to bond");
+        invariant(
+          hasMinimumBondBalance(account as PolkadotAccount),
+          "not enough balance to bond"
+        );
         const options: {
           recipient?: string;
           rewardDestination?: string;
           amount?: BigNumber;
         }[] = [];
 
-        if (isFirstBond(account)) {
+        if (isFirstBond(account as PolkadotAccount)) {
           invariant(
             account.balance.gt(EXISTENTIAL_DEPOSIT.plus(POLKADOT_MIN_SAFE)),
             "cant cover fee + bonding amount"
@@ -132,9 +136,9 @@ const polkadot: AppSpec<Transaction> = {
       name: "unbond",
       maxRun: 2,
       transaction: ({ account, bridge }) => {
-        const { polkadotResources } = account;
+        const { polkadotResources } = account as PolkadotAccount;
         invariant(polkadotResources, "polkadot");
-        invariant(canUnbond(account), "can't unbond");
+        invariant(canUnbond(account as PolkadotAccount), "can't unbond");
         invariant(
           account.spendableBalance.gt(POLKADOT_MIN_SAFE),
           "can't cover fee"
@@ -159,7 +163,7 @@ const polkadot: AppSpec<Transaction> = {
       name: "rebond",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        const { polkadotResources } = account;
+        const { polkadotResources } = account as PolkadotAccount;
         invariant(polkadotResources, "polkadot");
         invariant(
           polkadotResources?.unlockingBalance.gt(MIN_LOCKED_BALANCE_REQ),
@@ -190,8 +194,8 @@ const polkadot: AppSpec<Transaction> = {
       name: "nominate",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        invariant(account.polkadotResources, "polkadot");
-        invariant(canNominate(account), "can't nominate");
+        invariant((account as PolkadotAccount).polkadotResources, "polkadot");
+        invariant(canNominate(account as PolkadotAccount), "can't nominate");
         invariant(
           account.spendableBalance.gt(POLKADOT_MIN_SAFE),
           "cant cover fee"
@@ -218,7 +222,7 @@ const polkadot: AppSpec<Transaction> = {
       name: "withdraw",
       maxRun: 2,
       transaction: ({ account, bridge }) => {
-        const { polkadotResources } = account;
+        const { polkadotResources } = account as PolkadotAccount;
         invariant(polkadotResources, "polkadot");
         invariant(
           polkadotResources?.unlockedBalance.gt(0),

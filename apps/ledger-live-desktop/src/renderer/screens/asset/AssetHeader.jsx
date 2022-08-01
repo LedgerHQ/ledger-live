@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 
-import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getDefaultExplorerView,
   getAccountContractExplorer,

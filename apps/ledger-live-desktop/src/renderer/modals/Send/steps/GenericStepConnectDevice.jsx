@@ -8,14 +8,8 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-  TransactionStatus,
-  Operation,
-  SignedOperation,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { command } from "~/renderer/commands";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";

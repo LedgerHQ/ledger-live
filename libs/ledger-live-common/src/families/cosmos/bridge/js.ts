@@ -5,7 +5,6 @@ import prepareTransaction from "../js-prepareTransaction";
 import signOperation from "../js-signOperation";
 import { sync, scanAccounts } from "../js-synchronisation";
 import updateTransaction from "../js-updateTransaction";
-import { AccountBridge, CurrencyBridge } from "../../../types";
 import type { CosmosValidatorItem, Transaction } from "../types";
 import cosmosValidatorsManager from "../validators";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
@@ -14,6 +13,7 @@ import {
   asSafeCosmosPreloadData,
   setCosmosPreloadData,
 } from "../preloadedData";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 
 const receive = makeAccountBridgeReceive();
 
