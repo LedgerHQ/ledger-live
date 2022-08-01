@@ -12,7 +12,7 @@ import ManagerAPI from "@ledgerhq/live-common/api/Manager";
 import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import { deviceOpt } from "../scan";
-import { Application } from "@ledgerhq/live-common/types/manager";
+import { Application } from "@ledgerhq/types-live";
 type Scenario = number[];
 // how to add a scenario:
 // wget https://manager.api.live.ledger.com/api/applications

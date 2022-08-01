@@ -12,7 +12,7 @@ import type { ScanCommonOpts } from "../scan";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { InferTransactionsOpts } from "../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../transaction";
-import { SignedOperation } from "@ledgerhq/live-common/types/index";
+import type { SignedOperation } from "@ledgerhq/types-live";
 
 const toJS = (obj) => {
   if (typeof obj === "object" && obj) {
@@ -126,7 +126,6 @@ ${apdus.map((a) => "  " + a).join("\n")}
     toAccountRaw({
       ...account,
       operations: [],
-      balanceHistory: undefined,
       freshAddresses: [],
     })
   )},

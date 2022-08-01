@@ -2,7 +2,6 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
-import { Modal } from "tests/models/Modal";
 import { Drawer } from "tests/models/Drawer";
 import * as server from "../../utils/serve-dummy-app";
 
@@ -44,7 +43,6 @@ test("Discover", async ({ page }) => {
 
   const discoverPage = new DiscoverPage(page);
   const drawer = new Drawer(page);
-  const modal = new Modal(page);
   const layout = new Layout(page);
 
   await test.step("Navigate to catalog", async () => {
@@ -74,8 +72,8 @@ test("Discover", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-1.png");
   });
 
-  await test.step("Request Account - account dropdown", async () => {
-    await discoverPage.openAccountDropdown();
+  await test.step("Request Account - select asset", async () => {
+    await discoverPage.selectAsset();
     await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-2.png");
   });
 
@@ -85,7 +83,6 @@ test("Discover", async ({ page }) => {
   });
 
   await test.step("Request Account - single account output", async () => {
-    await modal.continue();
     await expect.soft(page).toHaveScreenshot("live-app-request-single-account-output.png");
   });
 });

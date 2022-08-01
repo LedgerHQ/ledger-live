@@ -3,7 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";

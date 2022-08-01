@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import type { TFunction } from "react-i18next";
 import styled from "styled-components";
 import { createStructuredSelector } from "reselect";
-import type { Account, Operation, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getOperationAmountNumber, isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import {

@@ -9,7 +9,7 @@ import { toLocaleString } from "@ledgerhq/live-common/currencies/BigNumberToLoca
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 import invariant from "invariant";
 import InfoModal from "../../modals/Info";

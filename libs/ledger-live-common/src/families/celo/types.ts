@@ -1,8 +1,12 @@
-import { BigNumber } from "bignumber.js";
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 
 export type CeloOperationMode =
   | "send"
@@ -85,3 +89,11 @@ export type CeloVoteRaw = {
 export type CeloPreloadData = {
   validatorGroups: CeloValidatorGroup[];
 };
+
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type CeloAccount = Account & { celoResources: CeloResources };
+
+export type CeloAccountRaw = AccountRaw & { celoResources: CeloResourcesRaw };

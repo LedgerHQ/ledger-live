@@ -7,10 +7,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { Trans } from "react-i18next";
 import { NotEnoughBalance } from "@ledgerhq/errors";
-import type {
-  Account,
-  AccountLikeArray,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLikeArray } from "@ledgerhq/types-live";
 
 import {
   isAccountEmpty,

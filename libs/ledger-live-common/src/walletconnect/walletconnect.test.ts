@@ -5,12 +5,9 @@ import { getAccountBridge } from "../bridge";
 import { parseCallRequest } from "./index";
 import type { WCPayloadTransaction } from "./index";
 import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
-import type { Account } from "../types/account";
 import { emptyHistoryCache } from "../account";
 import { setEnv } from "../env";
-import { setPlatformVersion } from "../platform/version";
-
-setPlatformVersion("0.0.1");
+import type { Account } from "@ledgerhq/types-live";
 
 describe("walletconnect", () => {
   const account: Account = {

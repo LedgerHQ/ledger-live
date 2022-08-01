@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import type { Operation } from "@ledgerhq/live-common/types/index";
+import type { Operation } from "@ledgerhq/types-live";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";

@@ -1,15 +1,15 @@
-import invariant from "invariant";
-import flatMap from "lodash/flatMap";
-
 import type {
-  Transaction,
   Account,
   AccountLike,
   AccountLikeArray,
-} from "../../types";
+} from "@ledgerhq/types-live";
+
 import { from } from "rxjs";
 import { map } from "rxjs/operators";
 import { getValidatorGroups } from "../celo/api";
+import invariant from "invariant";
+import flatMap from "lodash/flatMap";
+import type { Transaction } from "../celo/types";
 
 const options = [
   {

@@ -9,7 +9,8 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import type { AccountBridge, Transaction } from "@ledgerhq/live-common/types/index";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 
 import ValidatorField from "../fields/ValidatorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";

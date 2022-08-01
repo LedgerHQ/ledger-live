@@ -1,11 +1,14 @@
-import type { Transaction } from "./types";
-import type { Account } from "../../types";
+import type { CeloAccount, Transaction } from "./types";
 import { CeloTx } from "@celo/connect";
 import { celoKit } from "./api/sdk";
 import { BigNumber } from "bignumber.js";
 import { getVote } from "./logic";
+import { Account } from "@ledgerhq/types-live";
 
-const buildTransaction = async (account: Account, transaction: Transaction) => {
+const buildTransaction = async (
+  account: CeloAccount,
+  transaction: Transaction
+) => {
   const kit = celoKit();
 
   const value = transactionValue(account, transaction);
@@ -148,7 +151,7 @@ const buildTransaction = async (account: Account, transaction: Transaction) => {
 };
 
 const transactionValue = (
-  account: Account,
+  account: CeloAccount,
   transaction: Transaction
 ): BigNumber => {
   let value = transaction.amount;

@@ -9,7 +9,7 @@ import {
   getLastVotedDate,
 } from "@ledgerhq/live-common/families/tron/react";
 import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";
-import type { Operation } from "@ledgerhq/live-common/types/index";
+import type { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";

@@ -12,7 +12,6 @@ import MODAL_RECEIVE from "./Receive";
 import MODAL_SEND from "./Send";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
 import MODAL_SIGN_TRANSACTION from "./SignTransaction";
-import MODAL_REQUEST_ACCOUNT from "./RequestAccount";
 import MODAL_UPDATE_FIRMWARE from "./UpdateFirmwareModal";
 import MODAL_MIGRATE_ACCOUNTS from "./MigrateAccounts";
 import MODAL_EXPORT_ACCOUNTS from "./ExportAccounts";
@@ -61,6 +60,8 @@ import MODAL_POLKADOT_BOND from "../families/polkadot/BondFlowModal";
 import MODAL_POLKADOT_UNBOND from "../families/polkadot/UnbondFlowModal";
 import MODAL_POLKADOT_REBOND from "../families/polkadot/RebondFlowModal";
 
+import MODAL_STELLAR_ADD_ASSET from "../families/stellar/AddAssetModal";
+
 import MODAL_SOLANA_REWARDS_INFO from "../families/solana/DelegationFlowModal/Info";
 import MODAL_SOLANA_DELEGATE from "../families/solana/DelegationFlowModal";
 import MODAL_SOLANA_DELEGATION_ACTIVATE from "../families/solana/DelegationActivateFlowModal";
@@ -102,7 +103,6 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SEND,
   MODAL_SIGN_MESSAGE,
   MODAL_SIGN_TRANSACTION,
-  MODAL_REQUEST_ACCOUNT,
   MODAL_UPDATE_FIRMWARE,
   MODAL_DELEGATE,
   MODAL_MIGRATE_ACCOUNTS,
@@ -138,6 +138,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_POLKADOT_BOND,
   MODAL_POLKADOT_UNBOND,
   MODAL_POLKADOT_REBOND,
+  MODAL_STELLAR_ADD_ASSET,
   MODAL_SOLANA_REWARDS_INFO,
   MODAL_SOLANA_DELEGATE,
   MODAL_SOLANA_DELEGATION_ACTIVATE,

@@ -20,7 +20,8 @@
  * if the coin is in ethereum family, you must as well provide ethereumLikeInfo
  * if bitcoin family, supportsSegwit defines if it supports segwit.
  */
-import type { CryptoCurrency, Unit } from "./types";
+
+import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 const makeTestnetUnit = (u) => ({ ...u, code: `𝚝${u.code}` });
 
@@ -75,7 +76,7 @@ const ethereumUnits = (name, code) => [
   },
 ];
 
-const cryptocurrenciesById: Record<string, CryptoCurrency> = {
+export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
   near: {
     type: "CryptoCurrency",
     id: "near",
@@ -3282,11 +3283,6 @@ for (const id in cryptocurrenciesById) {
   const definition = cryptocurrenciesById[id];
   registerCryptoCurrency(id, definition);
 }
-
-/**
- *
- */
-export type CryptoCurrencyIds = keyof typeof cryptocurrenciesById;
 
 /**
  *
