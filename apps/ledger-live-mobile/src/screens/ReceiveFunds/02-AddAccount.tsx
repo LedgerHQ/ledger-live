@@ -173,10 +173,8 @@ function AddAccountsAccounts({ navigation, route }: Props) {
             account={acc}
             onPress={() => selectAccount(account)}
             AccountSubTitle={
-              acc.parentAccount || acc.token?.parentCurrency ? (
-                <LText color="neutral.c70">
-                  {(acc.parentAccount || acc.token.parentCurrency).name}
-                </LText>
+              currency.type === "TokenCurrency" ? (
+                <LText color="neutral.c70">{account.name}</LText>
               ) : null
             }
           />
