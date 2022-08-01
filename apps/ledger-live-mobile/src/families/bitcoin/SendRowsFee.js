@@ -1,7 +1,7 @@
 /* @flow */
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 
 import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";

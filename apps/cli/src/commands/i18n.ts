@@ -3,7 +3,7 @@ import { from } from "rxjs";
 import type { ScanCommonOpts } from "../scan";
 import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
 import uninstallLanguage from "@ledgerhq/live-common/lib/hw/uninstallLanguage";
-import type { Language } from "@ledgerhq/live-common/lib/types/languages";
+import type { Language } from "@ledgerhq/types-live";
 import { deviceOpt } from "../scan";
 
 type i18nJobOps = ScanCommonOpts & {

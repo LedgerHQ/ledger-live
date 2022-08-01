@@ -7,7 +7,7 @@ import type {
   ExchangeRaw,
   SwapRequestEvent,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import type { TransactionRaw } from "@ledgerhq/live-common/types/index";
+import type { TransactionRaw } from "@ledgerhq/live-common/generated/types";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import {
   fromExchangeRaw,

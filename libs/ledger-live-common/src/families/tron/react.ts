@@ -2,8 +2,7 @@ import invariant from "invariant";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { getTronSuperRepresentatives } from "../../api/Tron";
 import { BigNumber } from "bignumber.js";
-import type { SuperRepresentative, Vote } from "./types";
-import type { Account } from "../../types";
+import type { SuperRepresentative, TronAccount, Vote } from "./types";
 import { useBridgeSync } from "../../bridge/react";
 import { oneTrx } from "./constants";
 
@@ -51,7 +50,9 @@ export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
 };
 
 /** Get last time voted */
-export const getLastVotedDate = (account: Account): Date | null | undefined => {
+export const getLastVotedDate = (
+  account: TronAccount
+): Date | null | undefined => {
   return account.tronResources && account.tronResources.lastVotedDate
     ? account.tronResources.lastVotedDate
     : null;
@@ -59,7 +60,7 @@ export const getLastVotedDate = (account: Account): Date | null | undefined => {
 
 /** Get next available date to claim rewards */
 export const getNextRewardDate = (
-  account: Account
+  account: TronAccount
 ): number | null | undefined => {
   const lastWithdrawnRewardDate =
     account.tronResources && account.tronResources.lastWithdrawnRewardDate
@@ -103,7 +104,7 @@ export const formatVotes = (
 };
 
 // wait an effect of a tron freeze until it effectively change
-export function useTronPowerLoading(account: Account): boolean {
+export function useTronPowerLoading(account: TronAccount): boolean {
   const tronPower =
     (account.tronResources && account.tronResources.tronPower) || 0;
   const initialTronPower = useRef(tronPower);
@@ -182,7 +183,7 @@ export function useSortedSr(
 
 /** format account to retrieve unfreeze data */
 export const getUnfreezeData = (
-  account: Account
+  account: TronAccount
 ): {
   unfreezeBandwidth: BigNumber;
   unfreezeEnergy: BigNumber;

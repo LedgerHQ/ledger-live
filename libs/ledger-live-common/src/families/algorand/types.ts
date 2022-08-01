@@ -1,9 +1,14 @@
 import type { BigNumber } from "bignumber.js";
 import type {
+  Account,
+  AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
-import type { Operation, OperationRaw } from "../../types/operation";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
 
 export const AlgorandOperationTypeEnum = {
   PAYMENT: 0,
@@ -38,6 +43,8 @@ export type AlgorandTransactionRaw = TransactionCommonRaw & {
   assetId: string | null | undefined;
   memo: string | null | undefined;
 };
+export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatusRaw = TransactionStatusCommonRaw;
 export type Transaction = AlgorandTransaction;
 export type TransactionRaw = AlgorandTransactionRaw;
 export type AlgorandOperation = Operation & {
@@ -50,4 +57,10 @@ export type AlgorandExtraTxInfo = {
   rewards?: BigNumber;
   memo?: string;
   assetId?: string;
+};
+export type AlgorandAccount = Account & {
+  algorandResources: AlgorandResources;
+};
+export type AlgorandAccountRaw = AccountRaw & {
+  algorandResources: AlgorandResourcesRaw;
 };

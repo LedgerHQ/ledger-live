@@ -3,13 +3,8 @@
 
 import { BigNumber } from "bignumber.js";
 import { map, tap } from "rxjs/operators";
-import type {
-  CryptoCurrency,
-  Account,
-  AccountLike,
-  CurrencyBridge,
-  AccountBridge,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import isEqual from "lodash/isEqual";
 import {
   fromTransactionRaw,
@@ -23,6 +18,7 @@ import {
   toAccountRaw,
   fromOperationRaw,
 } from "@ledgerhq/live-common/account/index";
+import { startSpan } from "@ledgerhq/live-common/performance";
 import { patchAccount } from "@ledgerhq/live-common/reconciliation";
 import { fromScanAccountEventRaw } from "@ledgerhq/live-common/bridge/index";
 import * as bridgeImpl from "@ledgerhq/live-common/bridge/impl";
@@ -70,11 +66,19 @@ export const getAccountBridge = (
 ): AccountBridge<any> => {
   const sync = (account, syncConfig) => {
     syncs[account.id] = true;
+    const span = startSpan("sync", "toAccountRaw");
+    const raw = toAccountRaw(account);
+    span.finish();
     return command("AccountSync")({
-      account: toAccountRaw(account),
+      account: raw,
       syncConfig,
     }).pipe(
-      map(raw => account => patchAccount(account, raw)),
+      map(raw => account => {
+        const span = startSpan("sync", "patchAccount");
+        const r = patchAccount(account, raw);
+        span.finish();
+        return r;
+      }),
       tap(() => {
         // on first next event, we set it off
         syncs[account.id] = false;
@@ -115,7 +119,7 @@ export const getAccountBridge = (
       transaction: toTransactionRaw(t),
     })
       .toPromise()
-      .then(fromTransactionStatusRaw);
+      .then(transactionStatus => fromTransactionStatusRaw(transactionStatus, a.currency.family));
 
   const signOperation = ({ account, transaction, deviceId }) =>
     command("AccountSignOperation")({

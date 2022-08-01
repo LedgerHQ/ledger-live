@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction /* TransactionMode */ } from "./types";
-import { Account } from "../../types";
+import { Account } from "@ledgerhq/types-live";
 
 const createTransaction = (_: Account): Transaction => {
   return {

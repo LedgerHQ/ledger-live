@@ -1,7 +1,9 @@
 import { Observable, concat, from, of, throwError } from "rxjs";
 import { concatMap, catchError, delay } from "rxjs/operators";
-import { TransportStatusError, DeviceOnDashboardExpected } from "@ledgerhq/errors";
-import type { DeviceInfo } from "../types/manager";
+import {
+  TransportStatusError,
+  DeviceOnDashboardExpected,
+} from "@ledgerhq/errors";
 import type { ListAppsEvent } from "../apps";
 import { listApps } from "../apps/hw";
 import { withDevice } from "./deviceAccess";
@@ -9,6 +11,8 @@ import getDeviceInfo from "./getDeviceInfo";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import { DeviceNotOnboarded } from "../errors";
+
+import { DeviceInfo } from "@ledgerhq/types-live";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
 
 export type Input = {
@@ -37,7 +41,10 @@ export type ConnectManagerEvent =
     }
   | ListAppsEvent;
 
-const cmd = ({ devicePath, managerRequest }: Input): Observable<ConnectManagerEvent> =>
+const cmd = ({
+  devicePath,
+  managerRequest,
+}: Input): Observable<ConnectManagerEvent> =>
   withDevice(devicePath)((transport) =>
     Observable.create((o) => {
       const timeoutSub = of({

@@ -19,7 +19,7 @@ import {
 } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import type { DeviceInfo } from "../../types/manager";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
 import type {
   InstallLanguageEvent,
@@ -34,7 +34,7 @@ import {
   DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Language } from "../../types/languages";
+import { Language } from "@ledgerhq/types-live";
 
 type State = {
   isLoading: boolean;
@@ -120,8 +120,6 @@ const reducer = (state: State, e: Event): State => {
         installingLanguage: true,
         progress: e.progress,
       };
-    default:
-      return { ...state };
   }
 };
 
@@ -214,7 +212,10 @@ const implementations = {
                     // a disconnect will locally be remembered via locally setting device to null...
                     device = null;
                     o.next(event);
-                    log("actions-install-language-event/polling", "device disconnect timeout");
+                    log(
+                      "actions-install-language-event/polling",
+                      "device disconnect timeout"
+                    );
                   }, DISCONNECT_DEBOUNCE);
                 } else {
                   // These error events should stop polling

@@ -7,10 +7,10 @@ import {
   FeeTooHigh,
   FeeRequired,
 } from "@ledgerhq/errors";
-import type { Account, TransactionStatus } from "./../../types";
-import type { Transaction } from "./types";
+import type { Transaction, TransactionStatus } from "./types";
 import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
 import { TaprootNotActivated } from "./errors";
+import type { Account } from "@ledgerhq/types-live";
 
 const getTransactionStatus = async (
   a: Account,

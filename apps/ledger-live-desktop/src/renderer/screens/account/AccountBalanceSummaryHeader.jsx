@@ -2,7 +2,8 @@
 
 import React from "react";
 import styled from "styled-components";
-import type { Currency, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type {
   ValueChange,
   BalanceHistoryWithCountervalue,

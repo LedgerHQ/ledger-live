@@ -14,12 +14,8 @@ import {
   useTronSuperRepresentatives,
 } from "@ledgerhq/live-common/families/tron/react";
 import type { Vote } from "@ledgerhq/live-common/families/tron/types";
-import type {
-  Account,
-  Operation,
-  Currency,
-  Unit,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

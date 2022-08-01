@@ -1,5 +1,5 @@
 import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
-import { SeedPhraseType } from "../types/manager";
+import { SeedPhraseType } from "@ledgerhq/types-live";
 
 const onboardingFlagsBytesLength = 4;
 

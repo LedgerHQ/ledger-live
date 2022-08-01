@@ -5,10 +5,11 @@ import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { BigNumber } from "bignumber.js";
 import { getValidators } from "./validators";
-import type { Transaction, AccountLike } from "../../types";
+import type { Transaction } from "../../generated/types";
 import { Transaction as CosmosTransaction } from "./types";
 import type { CosmosDelegationInfo } from "./types";
 import { getCryptoCurrencyById } from "../../currencies";
+import { AccountLike } from "@ledgerhq/types-live";
 const options = [
   {
     name: "mode",

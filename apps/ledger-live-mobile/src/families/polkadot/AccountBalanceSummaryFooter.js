@@ -10,7 +10,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
 
 import type { ModalInfo } from "../../modals/Info";

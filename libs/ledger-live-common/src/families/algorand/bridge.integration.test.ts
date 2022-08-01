@@ -1,7 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
-import type { DatasetTest } from "../../types";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
@@ -9,6 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import { AlgorandASANotOptInInRecipient } from "../../errors";
 import type { AlgorandTransaction } from "./types";
+import type { DatasetTest } from "@ledgerhq/types-live";
 // const notCreatedAlgorandAddress =
 //   "ZBILW5BPM7AQU54YQZICSGS4J7KJ2XV6OC3DFUQ7BB4DVLYKKUEVWDDBGM";
 

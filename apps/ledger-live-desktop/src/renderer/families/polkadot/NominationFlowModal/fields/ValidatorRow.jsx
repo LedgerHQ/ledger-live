@@ -7,7 +7,7 @@ import { Polkadot as PolkadotIdenticon } from "@polkadot/react-identicon/icons";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-import type { Unit } from "@ledgerhq/live-common/types/index";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 

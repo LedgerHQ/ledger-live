@@ -7,7 +7,7 @@ import { useTheme } from "@react-navigation/native";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import { currenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";

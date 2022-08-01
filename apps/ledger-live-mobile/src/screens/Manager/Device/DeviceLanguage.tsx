@@ -1,7 +1,7 @@
 import { Flex, Icons, Text, Button, BoxedIcon } from "@ledgerhq/native-ui";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Language } from "@ledgerhq/live-common/lib/types/languages";
+import { Language } from "@ledgerhq/types-live";
 import BottomModal from "../../../components/BottomModal";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import DeviceActionModal from "../../../components/DeviceActionModal";
@@ -9,9 +9,10 @@ import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLangua
 import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import { DeviceInfo } from "@ledgerhq/types-live";
 
 type Props = {
+  pendingInstalls: boolean;
   currentLanguage: Language;
   device: Device;
   deviceInfo: DeviceInfo;
@@ -46,6 +47,7 @@ const DeviceLanguageInstalled: React.FC<{
 };
 
 const DeviceLanguage: React.FC<Props> = ({
+  pendingInstalls,
   currentLanguage,
   device,
   deviceInfo,
@@ -126,7 +128,11 @@ const DeviceLanguage: React.FC<Props> = ({
           </Text>
         </Flex>
         {availableLanguages.length ? (
-          <Button Icon={Icons.DropdownMedium} onPress={openChangeLanguageModal}>
+          <Button
+            disabled={pendingInstalls}
+            Icon={Icons.DropdownMedium}
+            onPress={openChangeLanguageModal}
+          >
             {t(`deviceLocalization.languages.${deviceLanguage}`)}
           </Button>
         ) : (

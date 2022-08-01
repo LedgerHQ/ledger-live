@@ -1,4 +1,4 @@
-import { DefaultFeatures } from "./types";
+import type { DefaultFeatures } from "@ledgerhq/types-live";
 
 export const defaultFeatures: DefaultFeatures = {
   learn: {

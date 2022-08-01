@@ -1,16 +1,11 @@
-import type { AccountLikeArray, AccountLike, Operation } from "../types";
 import { flattenAccounts } from "./helpers";
 import { flattenOperationWithInternalsAndNfts } from "../operation";
-export type DailyOperationsSection = {
-  day: Date;
-  data: Operation[];
-};
-export type DailyOperations = {
-  // operations grouped by day
-  sections: DailyOperationsSection[];
-  // Is the sections complete? means there is no more operations to pull
-  completed: boolean;
-};
+import type {
+  AccountLike,
+  AccountLikeArray,
+  DailyOperations,
+  Operation,
+} from "@ledgerhq/types-live";
 
 function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
