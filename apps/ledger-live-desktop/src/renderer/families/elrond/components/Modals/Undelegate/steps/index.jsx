@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepAmount, { StepAmountFooter } from "./Amount";
 import StepConfirmation, { StepConfirmationFooter } from "./Confirmation";
-import { StepProps, St } from "../types";
+import type { StepProps, St } from "../types";
 
 export function useSteps(): St[] {
   const { t } = useTranslation();

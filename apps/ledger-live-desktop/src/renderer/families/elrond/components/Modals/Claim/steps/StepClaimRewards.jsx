@@ -5,7 +5,7 @@ import React, { Fragment, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 
-import { StepProps } from "../types";
+import type { StepProps } from "../types";
 
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";

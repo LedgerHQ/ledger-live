@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
-import { StepId } from "./types";
+import type { StepId } from "./types";
 
 interface Props {
   name: string;

@@ -14,7 +14,7 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/lib/account";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 
 import getWindowDimensions from "../../logic/getWindowDimensions";

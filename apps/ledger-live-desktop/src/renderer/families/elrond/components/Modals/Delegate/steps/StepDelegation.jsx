@@ -2,7 +2,7 @@
 
 import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
-import { StepProps } from "../types";
+import type { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
