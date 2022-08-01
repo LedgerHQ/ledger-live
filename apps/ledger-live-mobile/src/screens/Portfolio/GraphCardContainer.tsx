@@ -1,11 +1,5 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import {
-  Currency,
-  TokenCurrency,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
-import { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
 import { currenciesSelector } from "../../reducers/accounts";
 import CurrencyDownStatusAlert from "../../components/CurrencyDownStatusAlert";
 import GraphCard from "../../components/GraphCard";
@@ -16,11 +10,15 @@ const GraphCardContainer = ({
   showGraphCard,
   areAccountsEmpty,
   counterValueCurrency,
+  currentPositionY,
+  graphCardEndPosition,
 }: {
   portfolio: Portfolio;
   showGraphCard: boolean;
   areAccountsEmpty: boolean;
   counterValueCurrency: Currency;
+  currentPositionY: SharedValue<number>;
+  graphCardEndPosition: number;
 }) => {
   const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(
     currenciesSelector,
@@ -35,6 +33,8 @@ const GraphCardContainer = ({
           areAccountsEmpty={areAccountsEmpty}
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
         />
       )}
     </>

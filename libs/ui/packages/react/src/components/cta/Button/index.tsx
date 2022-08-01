@@ -289,15 +289,15 @@ export const buttonSizeStyle: {
 } = {
   small: {
     padding: "0 20px",
-    height: "40px",
+    height: "32px",
   },
   medium: {
     padding: "0 24px",
-    height: "48px",
+    height: "40px",
   },
   large: {
     padding: "0 28px",
-    height: "56px",
+    height: "48px",
   },
 };
 

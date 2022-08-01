@@ -3,7 +3,7 @@ import React, { memo, useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import type { TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 
 import AmountUp from "~/renderer/icons/AmountUp";

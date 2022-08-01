@@ -14,12 +14,11 @@ import { useSelector } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation, Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type {
-  AccountLike,
-  Account,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/live-common/generated/types";
 import { RecipientRequired } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

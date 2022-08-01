@@ -24,6 +24,7 @@ type Props = {
   mapValue: Item => number,
   shape?: string,
   verticalRangeRatio?: number,
+  fill: string,
 };
 
 const STROKE_WIDTH = 2;
@@ -39,6 +40,7 @@ function Graph({
   mapValue,
   onItemHover,
   verticalRangeRatio = 2,
+  fill,
 }: Props) {
   const { colors } = useTheme();
 
@@ -86,7 +88,7 @@ function Graph({
       <Defs>
         <DefGraph height={height} color={color} />
       </Defs>
-      <Path d={area} fill="url(#grad)" />
+      <Path d={area} fill={fill || "url(#grad)"} />
       <Path d={line} stroke={color} strokeWidth={STROKE_WIDTH} fill="none" />
     </Svg>
   );

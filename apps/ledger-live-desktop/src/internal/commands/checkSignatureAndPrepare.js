@@ -8,12 +8,14 @@ import type {
   AccountRawLike,
   TransactionStatusRaw,
   TransactionRaw,
-} from "@ledgerhq/live-common/types/index";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
+} from "@ledgerhq/types-live";
+import {
+  fromTransactionRaw,
+  fromTransactionStatusRaw,
+} from "@ledgerhq/live-common/transaction/index";
 import checkSignatureAndPrepare from "@ledgerhq/live-common/exchange/sell/checkSignatureAndPrepare";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { fromAccountRaw, fromAccountLikeRaw } from "@ledgerhq/live-common/account/serialization";
-import { fromTransactionStatusRaw } from "@ledgerhq/live-common/transaction/status";
 type Input = {
   parentAccount: ?AccountRaw,
   account: AccountRawLike,
@@ -33,13 +35,14 @@ const cmd = ({
   parentAccount,
   status,
 }: Input): Observable<SellRequestEvent> => {
+  const acc = fromAccountLikeRaw(account);
   return withDevice(deviceId)(transport =>
     from(
       checkSignatureAndPrepare(transport, {
         binaryPayload,
-        account: fromAccountLikeRaw(account),
+        account: acc,
         parentAccount: parentAccount ? fromAccountRaw(parentAccount) : undefined,
-        status: fromTransactionStatusRaw(status),
+        status: fromTransactionStatusRaw(status, acc.currency.family),
         payloadSignature,
         transaction: fromTransactionRaw(transaction),
       }),

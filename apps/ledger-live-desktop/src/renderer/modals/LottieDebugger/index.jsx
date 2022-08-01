@@ -9,6 +9,7 @@ import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Select from "~/renderer/components/Select";
+import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import type { DeviceModelId } from "@ledgerhq/devices";
 
@@ -57,6 +58,21 @@ import NanoXRecoverLight from "~/renderer/components/Onboarding/Screens/Tutorial
 import NanoXRecoverDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoX/recover/dark.json";
 import NanoXPlugDeviceLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoX/plugDevice/light.json";
 import NanoXPlugDeviceDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoX/plugDevice/dark.json";
+
+import NanoFTSConfirmWordsLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/confirmWords/light.json";
+import NanoFTSConfirmWordsDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/confirmWords/dark.json";
+import NanoFTSNumberOfWordsLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/numberOfWords/light.json";
+import NanoFTSNumberOfWordsDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/numberOfWords/dark.json";
+import NanoFTSPinCodeLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/pinCode/light.json";
+import NanoFTSPinCodeDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/pinCode/dark.json";
+import NanoFTSPowerOnRecoveryLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/powerOnRecovery/light.json";
+import NanoFTSPowerOnRecoveryDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/powerOnRecovery/dark.json";
+import NanoFTSPowerOnLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/powerOn/light.json";
+import NanoFTSPowerOnDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/powerOn/dark.json";
+import NanoFTSRecoverLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/recover/light.json";
+import NanoFTSRecoverDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/recover/dark.json";
+import NanoFTSPlugDeviceLight from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/plugDevice/light.json";
+import NanoFTSPlugDeviceDark from "~/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoFTS/plugDevice/dark.json";
 
 const AnimationWrapper: ThemedComponent<{ modelId?: DeviceModelId }> = styled.div`
   width: 600px;
@@ -132,32 +148,32 @@ export const lottieAnimations = {
   },
   nanoFTS: {
     confirmWords: {
-      light: NanoSConfirmWordsLight,
-      dark: NanoSConfirmWordsDark,
+      light: NanoFTSConfirmWordsLight,
+      dark: NanoFTSConfirmWordsDark,
     },
     numberOfWords: {
-      light: NanoSNumberOfWordsLight,
-      dark: NanoSNumberOfWordsDark,
+      light: NanoFTSNumberOfWordsLight,
+      dark: NanoFTSNumberOfWordsDark,
     },
     pinCode: {
-      light: NanoSPinCodeLight,
-      dark: NanoSPinCodeDark,
+      light: NanoFTSPinCodeLight,
+      dark: NanoFTSPinCodeDark,
     },
     powerOnRecovery: {
-      light: NanoSPowerOnRecoveryLight,
-      dark: NanoSPowerOnRecoveryDark,
+      light: NanoFTSPowerOnRecoveryLight,
+      dark: NanoFTSPowerOnRecoveryDark,
     },
     powerOn: {
-      light: NanoSPowerOnLight,
-      dark: NanoSPowerOnDark,
+      light: NanoFTSPowerOnLight,
+      dark: NanoFTSPowerOnDark,
     },
     recover: {
-      light: NanoSRecoverLight,
-      dark: NanoSRecoverDark,
+      light: NanoFTSRecoverLight,
+      dark: NanoFTSRecoverDark,
     },
     plugDevice: {
-      light: NanoSPlugDeviceLight,
-      dark: NanoSPlugDeviceDark,
+      light: NanoFTSPlugDeviceLight,
+      dark: NanoFTSPlugDeviceDark,
     },
   },
   nanoX: {
@@ -258,7 +274,7 @@ const LottieDebugger = ({ name }: { name: string }) => {
           title={<Trans i18nKey="tron.manage.title" />}
           noScroll
           render={() => (
-            <>
+            <ScrollArea>
               <Alert type="warning">
                 {
                   "This is a tool provided as-is for the team to validate lottie animations used in the app."
@@ -291,12 +307,21 @@ const LottieDebugger = ({ name }: { name: string }) => {
                   Nano S Plus
                 </Button>
                 <Button
+                  mr={2}
                   primary
                   onClick={() => {
                     setModelId("nanoX");
                   }}
                 >
                   Nano X
+                </Button>
+                <Button
+                  primary
+                  onClick={() => {
+                    setModelId("nanoFTS");
+                  }}
+                >
+                  Nano FTS
                 </Button>
               </Box>
               <Box>
@@ -312,7 +337,7 @@ const LottieDebugger = ({ name }: { name: string }) => {
                   renderValue={({ data: { label } }) => label}
                 />
               </Box>
-            </>
+            </ScrollArea>
           )}
         />
       )}

@@ -1,5 +1,5 @@
 // @flow
-import type { OperationType } from "@ledgerhq/live-common/types/index";
+import type { OperationType } from "@ledgerhq/types-live";
 import React from "react";
 import OperationStatusWrapper from "./Wrapper";
 import Freeze from "../Freeze";

@@ -1,4 +1,4 @@
-import { AccountRaw } from "../../../types";
+import type { AccountRaw } from "@ledgerhq/types-live";
 
 export const cardanoRawAccount1: AccountRaw = {
   id: "js:2:cardano_testnet:a902bc61a79256e1d5858d2ba49cab7011a26ad49580daace7412e255e818b1c1eba2defa321ff2937deba397f639f5bbabb0f0064516301fa4d08663c83f5b2:",

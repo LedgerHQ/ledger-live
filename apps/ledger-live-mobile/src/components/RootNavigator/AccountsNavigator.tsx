@@ -24,6 +24,7 @@ import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnly/ReadOnlyA
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import { accountsSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
+import WalletCentricAsset from "../../screens/WalletCentricAsset";
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
@@ -57,7 +58,7 @@ export default function AccountsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
+        component={readOnlyModeEnabled ? ReadOnlyAccount : WalletCentricAsset}
         options={{
           headerLeft: () => (
             // There are spacing differences between ReadOnly and normal modes

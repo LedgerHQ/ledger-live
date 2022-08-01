@@ -2,9 +2,9 @@ import BigNumber from "bignumber.js";
 import { getAccountUnit, getMainAccount } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { DeviceTransactionField } from "../../transaction";
-import { Account, AccountLike, TransactionStatus } from "../../types";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
-import { CardanoResources, Transaction } from "./types";
+import { CardanoAccount, Transaction, TransactionStatus } from "./types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { decodeTokenName } from "./logic";
 
@@ -24,7 +24,7 @@ function getDeviceTransactionConfig({
 
   if (mode === "send") {
     if (account.type === "TokenAccount") {
-      const cardanoResources = mainAccount.cardanoResources as CardanoResources;
+      const cardanoResources = (mainAccount as CardanoAccount).cardanoResources;
 
       const { assetId } = decodeTokenCurrencyId(account.token.id);
       const { policyId, assetName } = decodeTokenAssetId(assetId);

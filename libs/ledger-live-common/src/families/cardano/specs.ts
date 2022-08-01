@@ -1,6 +1,6 @@
 import expect from "expect";
 import type { AppSpec } from "../../bot/types";
-import type { CardanoResources, Transaction } from "./types";
+import type { CardanoAccount, CardanoResources, Transaction } from "./types";
 import { pickSiblings } from "../../bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -9,7 +9,7 @@ import invariant from "invariant";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
 import { parseCurrencyUnit } from "../../currencies";
-import { SubAccount } from "../../types";
+import { SubAccount } from "@ledgerhq/types-live";
 
 const currency = getCryptoCurrencyById("cardano");
 const minBalanceRequired = parseCurrencyUnit(currency.units[0], "2.2");
@@ -82,8 +82,8 @@ const cardano: AppSpec<Transaction> = {
         };
       },
       test: ({ accountBeforeTransaction, operation }): void => {
-        const cardanoResources =
-          accountBeforeTransaction.cardanoResources as CardanoResources;
+        const cardanoResources = (accountBeforeTransaction as CardanoAccount)
+          .cardanoResources as CardanoResources;
         const utxoTokens = cardanoResources.utxos.map((u) => u.tokens).flat();
         const tokenBalance = mergeTokens(utxoTokens);
         const requiredAdaForTokens = tokenBalance.length

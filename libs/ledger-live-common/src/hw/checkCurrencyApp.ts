@@ -5,8 +5,8 @@ import {
   WrongAppForCurrency,
 } from "@ledgerhq/errors";
 import getAddress from "./getAddress";
-import type { CryptoCurrency } from "../types";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 const dashboardAppNames = ["BOLOS", "OLOS\u0000"]; // NB nano x 1.2.4-1 dashboard app name
 
 export default async (

@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "../../operation";
-import { Account, CryptoCurrency, Operation, TokenAccount } from "../../types";
 import { APITransaction } from "./api/api-types";
 import { getAccountChange, getMemoFromTx, isHexString } from "./logic";
 import { PaymentCredential, Token } from "./types";
@@ -13,6 +12,8 @@ import {
 } from "../../account";
 import { groupBy, keyBy } from "lodash";
 import { mergeOps } from "../../bridge/jsHelpers";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 
 export const getTokenAssetId = ({
   policyId,

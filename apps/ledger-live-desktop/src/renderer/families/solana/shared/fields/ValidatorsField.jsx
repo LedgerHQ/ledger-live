@@ -2,7 +2,8 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import type { ValidatorAppValidator } from "@ledgerhq/live-common/families/solana/validator-app";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import invariant from "invariant";
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { TFunction } from "react-i18next";

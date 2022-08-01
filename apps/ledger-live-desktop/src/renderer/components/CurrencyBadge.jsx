@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/react";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
 import IconCheckFull from "~/renderer/icons/CheckFull";
 import Box from "~/renderer/components/Box";

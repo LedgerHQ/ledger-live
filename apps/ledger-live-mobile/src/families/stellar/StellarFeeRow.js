@@ -1,6 +1,7 @@
 // @flow
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   View,
   StyleSheet,
@@ -8,7 +9,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
 import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import {

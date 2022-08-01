@@ -1,13 +1,11 @@
 import values from "lodash/values";
 import type {
-  CryptoCurrency,
   TokenAccount,
   Account,
-  TransactionStatus,
   Operation,
   AccountLike,
-} from "../../../types";
-import type { Transaction } from "../types";
+} from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "../types";
 import type { DeviceTransactionField } from "../../../transaction";
 // maintained union of all the modules
 import * as compound from "./compound";
@@ -20,6 +18,7 @@ import type { Modes as ERC20Modes } from "./erc20";
 import type { Modes as SendModes } from "./send";
 import type { Modes as ERC721Modes } from "./erc721";
 import type { Modes as ERC1155Modes } from "./erc1155";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 const modules = {

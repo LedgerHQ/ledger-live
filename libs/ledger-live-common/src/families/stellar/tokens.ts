@@ -5,15 +5,13 @@ import {
   findTokenById,
   parseCurrencyUnit,
 } from "../../currencies";
-import type {
-  TokenAccount,
-  TokenCurrency,
-  Operation,
-  CryptoCurrency,
-  SyncConfig,
-} from "../../types";
 import type { BalanceAsset } from "./types";
 import { encodeOperationId } from "../../operation";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 
 export const getAssetIdFromTokenId = (tokenId: string): string =>
   tokenId.split("/")[2];

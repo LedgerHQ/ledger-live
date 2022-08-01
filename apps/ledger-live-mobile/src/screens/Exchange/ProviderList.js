@@ -10,7 +10,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";

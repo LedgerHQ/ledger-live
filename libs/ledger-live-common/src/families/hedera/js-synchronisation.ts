@@ -1,6 +1,6 @@
 import invariant from "invariant";
+import { getDerivationScheme, runDerivationScheme } from "../../derivation";
 import { BigNumber } from "bignumber.js";
-import { Account, getDerivationScheme, runDerivationScheme } from "../../types";
 import type {
   GetAccountShape,
   IterateResultBuilder,
@@ -11,6 +11,7 @@ import { encodeAccountId } from "../../account";
 
 import { getAccountsForPublicKey, getOperationsForAccount } from "./api/mirror";
 import { getAccountBalance } from "./api/network";
+import type { Account } from "@ledgerhq/types-live";
 
 const getAccountShape: GetAccountShape = async (
   info

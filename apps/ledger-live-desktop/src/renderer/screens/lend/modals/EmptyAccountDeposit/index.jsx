@@ -5,7 +5,8 @@ import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { getTokenCurrencyIcon } from "@ledgerhq/live-common/react";
-import type { Account, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 
 import Modal, { ModalBody } from "~/renderer/components/Modal/index";

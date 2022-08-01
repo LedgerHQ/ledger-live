@@ -7,7 +7,8 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import type { Account, AccountLike, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 import Box from "~/renderer/components/Box";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
