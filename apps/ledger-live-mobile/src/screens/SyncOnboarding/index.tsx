@@ -13,6 +13,7 @@ import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { OnboardingStep as DeviceOnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
+import { fromSeedPhraseTypeToNbOfSeedWords } from "@ledgerhq/live-common/lib/hw/extractOnboardingState";
 import { NavigatorName, ScreenName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
@@ -41,7 +42,8 @@ type Props = StackScreenProps<
 const pollingPeriodMs = 1000;
 const pollingTimeoutMs = 60000;
 const readyRedirectDelay = 2500;
-const resyncDelay = 10000;
+const shortResyncDelay = 1000;
+const longResyncDelay = 10000;
 
 /* eslint-disable no-unused-vars */
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
@@ -131,6 +133,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   const dispatch = useDispatch();
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
+  const [resyncDelay, setResyncDelay] = useState<number>(shortResyncDelay);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [companionSteps, setCompanionSteps] = useState<Step[]>(
@@ -220,6 +223,32 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         break;
       default:
         break;
+    }
+  }, [deviceOnboardingState]);
+
+  // When the user gets close to the seed generation step, sets the lost synchronization delay
+  // to a higher value. It avoids having a warning message while the connection is lost because
+  // the device is generating the seed.
+  useEffect(() => {
+    if (
+      deviceOnboardingState?.seedPhraseType &&
+      [
+        DeviceOnboardingStep.NewDeviceConfirming,
+        DeviceOnboardingStep.RestoreSeed,
+      ].includes(deviceOnboardingState?.currentOnboardingStep)
+    ) {
+      const nbOfSeedWords = fromSeedPhraseTypeToNbOfSeedWords.get(
+        deviceOnboardingState.seedPhraseType,
+      );
+
+      if (
+        nbOfSeedWords &&
+        deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 1
+      ) {
+        setResyncDelay(longResyncDelay);
+      } else {
+        setResyncDelay(shortResyncDelay);
+      }
     }
   }, [deviceOnboardingState]);
 
