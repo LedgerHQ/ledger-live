@@ -2,9 +2,8 @@ import React, { useState, useCallback } from "react";
 import { Button, Flex, Icons } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import DeviceLanguageInstallation from "./DeviceLanguageInstallation";
-import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { idsToLanguage, Language } from "@ledgerhq/live-common/types/languages";
+import { idsToLanguage, Language, DeviceInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 

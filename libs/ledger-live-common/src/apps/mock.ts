@@ -11,7 +11,7 @@ import {
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
 import { getBTCValues } from "../countervalues/mock";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import { App, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 
 export const deviceInfo155 = {
