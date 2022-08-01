@@ -16,9 +16,10 @@ import {
 } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
-import { ActionButton } from "../../../components/FabAccountButtonBar";
+import { ActionButton } from "../../../components/FabActions/FabAccountButtonBar";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 
 type Props = {
   account: AccountLike;
@@ -30,7 +31,7 @@ const iconBuy = Icons.PlusMedium;
 const iconSell = Icons.MinusMedium;
 const iconSwap = Icons.BuyCryptoMedium;
 
-export default function useActions({
+export default function useAccountActions({
   account,
   parentAccount,
   colors,
@@ -109,7 +110,10 @@ export default function useActions({
     ],
     label: t("transfer.swap.main.header", { currency: currency.name }),
     Icon: iconSwap,
-    disabled: isZeroBalance,
+    disabled: true,
+    modalOnDisabledClick: {
+      component: ZeroBalanceDisabledModalContent,
+    },
     event: "Swap Crypto Account Button",
     eventProperties: { currencyName: currency.name },
   };

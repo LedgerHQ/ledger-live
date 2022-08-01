@@ -1,4 +1,12 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, {
+  ComponentType,
+  memo,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -17,14 +25,51 @@ import { Icons, QuickActionList } from "@ledgerhq/native-ui";
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
-} from "../reducers/settings";
-import { accountsCountSelector } from "../reducers/accounts";
-import { NavigatorName, ScreenName } from "../const";
-import FabAccountButtonBar, { ActionButton } from "./FabAccountButtonBar";
-import useActions from "../screens/Account/hooks/useActions";
+} from "../../reducers/settings";
+import { accountsCountSelector } from "../../reducers/accounts";
+import { NavigatorName, ScreenName } from "../../const";
+import FabAccountButtonBar from "./FabAccountButtonBar";
+import useAccountActions from "../../screens/Account/hooks/useAccountActions";
 import { Linking } from "react-native";
 import { useTheme } from "styled-components";
 import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
+
+export type ModalOnDisabledClickComponentProps = {
+  account?: AccountLike;
+  currency?: CryptoCurrency;
+  isOpen?: boolean;
+};
+
+export type ActionButtonEventProps = {
+  navigationParams?: any[];
+  linkUrl?: string;
+  confirmModalProps?: {
+    withCancel?: boolean;
+    id?: string;
+    title?: string | ReactElement;
+    desc?: string | ReactElement;
+    Icon?: ComponentType;
+    children?: ReactNode;
+    confirmLabel?: string | ReactElement;
+    confirmProps?: any;
+  };
+  modalOnDisabledClick?: {
+    component: React.ComponentType<ModalOnDisabledClickComponentProps>;
+  };
+  Component?: ComponentType;
+  enableActions?: string;
+};
+
+export type ActionButton = ActionButtonEventProps & {
+  label: ReactNode;
+  Icon?: ComponentType<{ size: number; color: string }>;
+  event: string;
+  eventProperties?: { [key: string]: any };
+  Component?: ComponentType;
+  type?: string;
+  outline?: boolean;
+  disabled?: boolean;
+};
 
 type FabAccountActionsProps = {
   account: AccountLike;
@@ -42,10 +87,15 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
   account,
   parentAccount,
 }: FabAccountActionsProps) => {
+  const [ComponentOnDisabledPress, setComponentOnDisabledPress] = useState<
+    React.ComponentType<ModalOnDisabledClickComponentProps> | undefined
+  >(undefined);
+  const [isURLDrawerOpen, setURLDrawerOpen] = useState(false);
+
   const { colors } = useTheme();
   const navigation = useNavigation();
 
-  const { mainActions } = useActions({ account, parentAccount, colors });
+  const { mainActions } = useAccountActions({ account, parentAccount, colors });
 
   const onNavigate = useCallback(
     (name: string, options?: any) => {
@@ -75,21 +125,37 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
     [onNavigate],
   );
 
+  const onPressWhenDisabled = useCallback((action: ActionButton) => {
+    setComponentOnDisabledPress(action.modalOnDisabledClick?.component);
+  }, []);
+
   const quickActions: QuickActionButtonProps[] = mainActions.map(action => {
     return {
       Icon: action.Icon,
       children: action.label,
       onPress: () => onPress(action),
+      disabled: action.disabled,
+      onPressWhenDisabled: action.modalOnDisabledClick
+        ? () => onPressWhenDisabled(action)
+        : undefined,
     };
   });
 
   return (
-    <QuickActionList
-      data={quickActions}
-      numColumns={
-        quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
-      }
-    ></QuickActionList>
+    <>
+      {!ComponentOnDisabledPress ||
+      React.isValidElement(ComponentOnDisabledPress) ? (
+        ComponentOnDisabledPress
+      ) : (
+        <ComponentOnDisabledPress account={account} />
+      )}
+      <QuickActionList
+        data={quickActions}
+        numColumns={
+          quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
+        }
+      ></QuickActionList>
+    </>
   );
 };
 
@@ -98,7 +164,7 @@ export const FabAccountActionsComponent: React.FC<FabAccountActionsProps> = ({
   parentAccount,
 }: FabAccountActionsProps) => {
   const { colors } = useTheme();
-  const { secondaryActions } = useActions({
+  const { secondaryActions } = useAccountActions({
     account,
     parentAccount,
     colors,

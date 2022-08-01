@@ -12,39 +12,12 @@ import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
 import { useSelector } from "react-redux";
 
 import { ScrollContainer } from "@ledgerhq/native-ui";
-import ChoiceButton from "./ChoiceButton";
-import InfoModal from "./InfoModal";
-import Button from "./wrappedUi/Button";
-import { readOnlyModeEnabledSelector } from "../reducers/settings";
-import { track } from "../analytics";
-
-type ActionButtonEventProps = {
-  navigationParams?: any[];
-  linkUrl?: string;
-  confirmModalProps?: {
-    withCancel?: boolean;
-    id?: string;
-    title?: string | ReactElement;
-    desc?: string | ReactElement;
-    Icon?: ComponentType;
-    children?: ReactNode;
-    confirmLabel?: string | ReactElement;
-    confirmProps?: any;
-  };
-  Component?: ComponentType;
-  enableActions?: string;
-};
-
-export type ActionButton = ActionButtonEventProps & {
-  label: ReactNode;
-  Icon?: ComponentType<{ size: number; color: string }>;
-  event: string;
-  eventProperties?: { [key: string]: any };
-  Component?: ComponentType;
-  type?: string;
-  outline?: boolean;
-  disabled?: boolean;
-};
+import ChoiceButton from "../ChoiceButton";
+import InfoModal from "../InfoModal";
+import Button from "../wrappedUi/Button";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { track } from "../../analytics";
+import { ActionButton, ActionButtonEventProps } from "./index";
 
 type Props = {
   buttons: ActionButton[];
