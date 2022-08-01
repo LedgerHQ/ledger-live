@@ -64,11 +64,12 @@ const ignoreErrors = [
   // other
   "AccountAwaitingSendPendingOperations",
   "AccountNeedResync",
+  "Cannot update while running on a read-only volume",
   "DeviceAppVerifyNotSupported",
   "InvalidAddressError",
   "Received an invalid JSON-RPC message",
   "SwapNoAvailableProviders",
-  "Cannot update while running on a read-only volume",
+  "TransactionRefusedOnDevice",
 ];
 
 export function init(Sentry: any, opts: any) {
