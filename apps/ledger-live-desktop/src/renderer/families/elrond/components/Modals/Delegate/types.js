@@ -3,10 +3,7 @@
 import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-
-import { Account, TransactionStatus, Operation } from "@ledgerhq/live-common/types/index";
-
-import { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import { Account, Transaction, TransactionStatus, Operation } from "@ledgerhq/types-live";
 
 export type StepId = "castDelegations" | "connectDevice" | "confirmation";
 
