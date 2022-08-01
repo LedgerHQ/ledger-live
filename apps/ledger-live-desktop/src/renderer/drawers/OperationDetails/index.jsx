@@ -22,7 +22,7 @@ import {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
 } from "@ledgerhq/live-common/operation";
-import type { Account, AccountLike, Operation } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 

@@ -10,7 +10,6 @@ import React, {
   useCallback,
   ReactElement,
 } from "react";
-import type { Account, AccountLike, Currency, Unit } from "../types";
 import { getAccountCurrency, getAccountUnit } from "../account/helpers";
 import {
   initialState,
@@ -28,6 +27,8 @@ import type {
   TrackingPair,
 } from "./types";
 import { useDebounce } from "../hooks/useDebounce";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
 export type Polling = {
   // completely wipe all countervalues

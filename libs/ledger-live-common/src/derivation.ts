@@ -9,10 +9,11 @@ import {
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
-import type { CryptoCurrency, CryptoCurrencyIds } from "./types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "./env";
 import type { GetAddressOptions, Result } from "./hw/getAddress/types";
+import type { CryptoCurrencyIds } from "@ledgerhq/types-live";
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
   isNonIterable?: boolean;
@@ -33,6 +34,7 @@ export type ModeSpec = {
   tag?: string;
   addressFormat?: string;
 };
+
 export type DerivationMode = keyof typeof modes;
 
 const modes = Object.freeze({

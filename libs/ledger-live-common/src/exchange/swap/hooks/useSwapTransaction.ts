@@ -10,14 +10,13 @@ import {
 import useBridgeTransaction, {
   Result as UseBridgeTransactionReturnType,
 } from "../../../bridge/useBridgeTransaction";
-import type {
-  Account,
-  CryptoCurrency,
-  TokenAccount,
-  TokenCurrency,
-} from "../../../types";
 import { ExchangeRate } from "../types";
 import { useReverseAccounts } from "./useReverseAccounts";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 
 export type SwapSelectorStateType = {

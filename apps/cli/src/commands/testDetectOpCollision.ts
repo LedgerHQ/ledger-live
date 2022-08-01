@@ -6,7 +6,7 @@ import { concatMap, reduce } from "rxjs/operators";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
-import { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 export default {
   description: "Detect operation collisions",
   args: [...scanCommonOpts],

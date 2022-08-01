@@ -4,7 +4,7 @@ import { getBalanceHistory } from "../../portfolio/v2";
 import { getEnv, setEnv } from "../../env";
 import { findCryptoCurrencyById } from "../../currencies";
 import { canBeMigrated } from "../../account";
-import { CryptoCurrency } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");

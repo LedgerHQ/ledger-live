@@ -16,6 +16,9 @@ SendRowsCustom \
 SendRowsFee \
 AccountBalanceSummaryFooter \
 SubAccountList \
+Confirmation \
+ConnectDevice \
+NoAssociatedAccounts \
 "
 
 cd ../src

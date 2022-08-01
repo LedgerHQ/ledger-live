@@ -6,14 +6,14 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { Account, TransactionStatus } from "../../types";
-import type { Transaction } from "./types";
+import { DECIMALS_LIMIT } from "./constants";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "./types";
 import {
   isValidAddress,
   isSelfTransaction,
   computeTransactionValue,
 } from "./logic";
-import { DECIMALS_LIMIT } from "./constants";
 
 const getTransactionStatus = async (
   a: Account,

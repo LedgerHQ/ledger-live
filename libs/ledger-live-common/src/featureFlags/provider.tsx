@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 
-import { FeatureId, Feature } from "./types";
+import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
 type State = {
   getFeature: (_: FeatureId) => Feature | null;

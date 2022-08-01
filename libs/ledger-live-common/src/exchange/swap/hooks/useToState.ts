@@ -1,3 +1,4 @@
+import type { Account } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useState } from "react";
 import {
   selectorStateDefaultValues,
@@ -5,7 +6,6 @@ import {
   SwapSelectorStateType,
   SwapTransactionType,
 } from ".";
-import { Account } from "../../../types";
 import { getAccountTuplesForCurrency } from "../utils";
 
 export const useToState = ({

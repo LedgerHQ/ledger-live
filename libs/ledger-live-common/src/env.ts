@@ -110,6 +110,11 @@ const envDefinitions = {
     def: 200,
     desc: "Limit of operation that Horizon will fetch per page",
   },
+  API_STELLAR_HORIZON_STATIC_FEE: {
+    def: false,
+    parser: boolParser,
+    desc: "Static fee for Stellar account",
+  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",

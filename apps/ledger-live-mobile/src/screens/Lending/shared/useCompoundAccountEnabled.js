@@ -1,5 +1,5 @@
 // @flow
-import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   makeCompoundSummaryForAccount,
   getAccountCapabilities,

@@ -1,7 +1,6 @@
 import { $Shape } from "utility-types";
 import { BigNumber } from "bignumber.js";
-import type { Account } from "../../types";
-import type { Transaction } from "./types";
+import type { ElrondAccount, Transaction } from "./types";
 import getEstimatedFees from "./js-getFeesForTransaction";
 import { NetworkConfig } from "@elrondnetwork/erdjs/out";
 
@@ -40,10 +39,10 @@ export const updateTransaction = (
 /**
  * Prepare transaction before checking status
  *
- * @param {Account} a
+ * @param {ElrondAccount} a
  * @param {Transaction} t
  */
-export const prepareTransaction = async (a: Account, t: Transaction) => {
+export const prepareTransaction = async (a: ElrondAccount, t: Transaction) => {
   let fees = t.fees;
   fees = await getEstimatedFees(t);
 

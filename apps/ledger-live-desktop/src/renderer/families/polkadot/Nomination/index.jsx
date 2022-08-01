@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import moment from "moment";
 
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {

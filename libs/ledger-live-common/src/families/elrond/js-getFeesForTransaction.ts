@@ -5,7 +5,6 @@ import { getFees } from "./api";
 /**
  * Fetch the transaction fees for a transaction
  *
- * @param {Account} a
  * @param {Transaction} t
  */
 const getEstimatedFees = async (t: Transaction): Promise<BigNumber> => {

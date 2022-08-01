@@ -1,8 +1,10 @@
-import { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 
 export type Transaction = TransactionCommon & {
   family: "celo";
@@ -12,3 +14,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   family: "celo";
   fees: string | null | undefined;
 };
+
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

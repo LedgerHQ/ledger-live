@@ -4,7 +4,6 @@ import {
   TransportStatusError,
   DeviceOnDashboardExpected,
 } from "@ledgerhq/errors";
-import type { DeviceInfo } from "../types/manager";
 import type { ListAppsEvent } from "../apps";
 import { listApps } from "../apps/hw";
 import { withDevice } from "./deviceAccess";
@@ -15,6 +14,7 @@ import { isDashboardName } from "./isDashboardName";
 import { DeviceNotOnboarded } from "../errors";
 import type { AppAndVersion } from "./connectApp";
 import quitApp from "./quitApp";
+import { DeviceInfo } from "@ledgerhq/types-live";
 export type Input = {
   devicePath: string;
   managerRequest:

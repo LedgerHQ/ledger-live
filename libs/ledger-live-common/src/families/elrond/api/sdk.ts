@@ -6,7 +6,7 @@ import {
   ESDTToken,
   Transaction,
 } from "../types";
-import type { Operation, OperationType } from "../../../types";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
 import {
