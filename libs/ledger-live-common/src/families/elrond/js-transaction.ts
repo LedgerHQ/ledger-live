@@ -32,7 +32,7 @@ export const createTransaction = (): Transaction => {
 export const updateTransaction = (
   t: Transaction,
   patch: $Shape<Transaction>
-) => {
+): Transaction => {
   return { ...t, ...patch };
 };
 
@@ -42,7 +42,10 @@ export const updateTransaction = (
  * @param {ElrondAccount} a
  * @param {Transaction} t
  */
-export const prepareTransaction = async (a: ElrondAccount, t: Transaction) => {
+export const prepareTransaction = async (
+  a: ElrondAccount,
+  t: Transaction
+): Promise<Transaction> => {
   let fees = t.fees;
   fees = await getEstimatedFees(t);
 

@@ -1,9 +1,9 @@
-import type { Account, SubAccount } from "@ledgerhq/types-live";
 import type { ElrondAccount, Transaction } from "./types";
 import * as bech32 from "bech32";
 import BigNumber from "bignumber.js";
 import { buildTransaction } from "./js-buildTransaction";
 import getEstimatedFees from "./js-getFeesForTransaction";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 
 /**
  * The human-readable-part of the bech32 addresses.
@@ -72,7 +72,7 @@ export const getNonce = (a: ElrondAccount): number => {
 
 export const computeTransactionValue = async (
   t: Transaction,
-  a: Account,
+  a: ElrondAccount,
   ta: SubAccount | null
 ): Promise<{
   amount: BigNumber;

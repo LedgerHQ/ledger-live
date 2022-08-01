@@ -1,10 +1,10 @@
-import type { Account, SubAccount, TokenAccount } from "../../types";
 import { log } from "@ledgerhq/logs";
+import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 
 export function reconciliateSubAccounts(
   tokenAccounts: TokenAccount[],
   initialAccount: Account | undefined
-) {
+): TokenAccount[] {
   let subAccounts;
 
   if (initialAccount) {
@@ -56,8 +56,8 @@ export function reconciliateSubAccounts(
       log(
         "elrond",
         "incremental sync: " +
-          String(initialSubAccounts.length) +
-          " sub accounts have not changed"
+        String(initialSubAccounts.length) +
+        " sub accounts have not changed"
       );
       subAccounts = initialSubAccounts;
     } else {

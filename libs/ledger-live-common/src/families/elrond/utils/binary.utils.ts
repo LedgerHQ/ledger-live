@@ -3,7 +3,7 @@ function base64DecodeBinary(str: string): Buffer {
 }
 
 export class BinaryUtils {
-  static base64Encode(str: string) {
+  static base64Encode(str: string): string {
     return Buffer.from(str).toString("base64");
   }
 

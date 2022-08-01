@@ -6,7 +6,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 export type ElrondResources = {
   nonce: number;

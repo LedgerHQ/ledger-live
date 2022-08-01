@@ -1,12 +1,11 @@
 import {
-  CryptoCurrency,
   findTokenById,
   listTokensForCryptoCurrency,
-  TokenCurrency,
 } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "../../account";
-import { Account, SyncConfig, TokenAccount } from "../../types";
 import { getAccountESDTOperations, getAccountESDTTokens } from "./api";
 
 async function buildElrondESDTTokenAccount({

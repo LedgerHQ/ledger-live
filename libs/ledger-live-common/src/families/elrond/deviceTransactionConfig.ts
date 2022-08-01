@@ -1,5 +1,5 @@
 import type { DeviceTransactionField } from "../../transaction";
-import type { TransactionStatus } from "./types";
+import type { TransactionStatus, Transaction } from "./types";
 
 function getDeviceTransactionConfig({
   transaction: { mode, recipient },

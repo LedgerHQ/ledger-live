@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "./types";
 import { getFees } from "./api";
+import { Transaction } from "./types";
 
 /**
  * Fetch the transaction fees for a transaction
