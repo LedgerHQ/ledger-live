@@ -270,6 +270,7 @@ const SyncOnboardingManual = () => {
               Setup Manual
             </Text>
             <Button
+              data-test-id="manual-help-button"
               ml={4}
               Icon={() => <HelpMedium color="neutral.c80" size={24} />}
               onClick={() => setHelpDrawerOpen(true)}
