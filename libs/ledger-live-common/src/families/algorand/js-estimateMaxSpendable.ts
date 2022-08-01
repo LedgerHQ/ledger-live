@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike } from "../../types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
-import type { AlgorandTransaction } from "./types";
+import type { AlgorandAccount, AlgorandTransaction } from "./types";
 import { computeAlgoMaxSpendable } from "./logic";
 import { createTransaction } from "./js-prepareTransaction";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
@@ -16,7 +16,7 @@ export const estimateMaxSpendable = async ({
   parentAccount?: Account | null | undefined;
   transaction?: AlgorandTransaction | null | undefined;
 }): Promise<BigNumber> => {
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount) as AlgorandAccount;
   const { algorandResources } = mainAccount;
   if (!algorandResources) {
     throw new Error("Algorand account expected");

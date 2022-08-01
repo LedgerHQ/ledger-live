@@ -1,7 +1,7 @@
+import type { Account } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
 import { SwapDataType, SwapSelectorStateType, SwapTransactionType } from ".";
 import { flattenAccounts } from "../../../account";
-import { Account } from "../../../types";
 
 export const useReverseAccounts = ({
   accounts,

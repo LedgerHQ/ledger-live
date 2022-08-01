@@ -2,7 +2,7 @@
 /* eslint-disable array-callback-return */
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import type { AccountLikeArray, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";

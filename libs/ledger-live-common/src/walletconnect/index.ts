@@ -5,10 +5,12 @@ import sha from "sha.js";
 import { bufferToHex } from "ethereumjs-util";
 import { getAccountBridge } from "../bridge";
 import { getCryptoCurrencyById } from "../currencies";
-import type { Account, Transaction } from "../types";
+import type { DerivationMode } from "../derivation";
 import type { TypedMessageData } from "../families/ethereum/types";
 import { domainHash, messageHash } from "../families/ethereum/hw-signMessage";
 import type { MessageData } from "../hw/signMessage/types";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "../generated/types";
 export type WCPayloadTransaction = {
   from: string;
   to?: string;
@@ -89,7 +91,7 @@ export const parseCallRequest: Parser = async (account, payload) => {
           message,
           rawMessage,
           currency: getCryptoCurrencyById("ethereum"),
-          derivationMode: account.derivationMode,
+          derivationMode: account.derivationMode as DerivationMode,
           hashes,
         },
       };

@@ -11,7 +11,8 @@ import {
 } from "@ledgerhq/live-common/families/tron/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Vote } from "@ledgerhq/live-common/families/tron/types";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { openURL } from "~/renderer/linking";

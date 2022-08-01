@@ -40,6 +40,8 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
+  const { t } = useTranslation();
+
   const next = useCallback(() => {
     navigation.goBack();
   }, [navigation]);

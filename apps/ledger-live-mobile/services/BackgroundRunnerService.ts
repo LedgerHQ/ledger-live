@@ -5,7 +5,7 @@ import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import { NativeModules } from "react-native";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import { FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 

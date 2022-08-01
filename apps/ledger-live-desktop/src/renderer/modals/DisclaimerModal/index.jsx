@@ -5,7 +5,7 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 import { Trans, withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import styled from "styled-components";
-import type { FinalFirmware, OsuFirmware } from "@ledgerhq/live-common/types/manager";
+import type { FinalFirmware, OsuFirmware } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";

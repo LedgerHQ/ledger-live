@@ -1,6 +1,6 @@
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
-import { FirmwareInfo } from "../types/manager";
+import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { satisfies as versionSatisfies } from "semver";
 import { isDeviceLocalizationSupported } from "../manager/localization";
 
@@ -37,7 +37,6 @@ export const isHardwareVersionSupported = (
     seVersion,
     deviceVersionRangesForHardwareVersion[modelId] as string
   );
-
 
 export default async function getVersion(
   transport: Transport

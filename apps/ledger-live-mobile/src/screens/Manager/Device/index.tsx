@@ -3,14 +3,14 @@ import { View } from "react-native";
 import { Trans } from "react-i18next";
 
 import { State, AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { App, DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
 
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
-import { idsToLanguage } from "@ledgerhq/live-common/types/languages";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
@@ -84,7 +84,7 @@ const DeviceCard = ({
     illustrations[deviceModel.id]({ color: colors.neutral.c100 }),
   );
 
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
+  const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
 
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);

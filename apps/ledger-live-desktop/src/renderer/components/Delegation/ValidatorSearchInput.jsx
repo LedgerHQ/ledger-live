@@ -18,7 +18,7 @@ const SearchContainer = styled(Box).attrs(() => ({
   px: 3,
   borderRadius: 4,
 }))`
-  margin: 0 ${p => p.theme.overflow.trackSize}px;
+  margin: 0 ${p => (p.noMargin === true ? "0px" : p.theme.overflow.trackSize)}px;
   border: 1px solid ${p => p.theme.colors.palette.divider};
 
   > input::placeholder,
@@ -44,12 +44,17 @@ const Placeholder: ThemedComponent<*> = styled(Box).attrs(() => ({
 type ValidatorSearchInputProps = {
   onSearch: (evt: SyntheticInputEvent<HTMLInputElement>) => void,
   search?: string,
+  noMargin: boolean,
 };
 
-const ValidatorSearchInput = ({ search, onSearch }: ValidatorSearchInputProps) => {
+const ValidatorSearchInput = ({
+  search,
+  onSearch,
+  noMargin = false,
+}: ValidatorSearchInputProps) => {
   const { t } = useTranslation();
   return (
-    <SearchContainer>
+    <SearchContainer noMargin={noMargin}>
       <SearchBox
         search={search}
         onTextChange={onSearch}

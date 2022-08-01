@@ -14,7 +14,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Account, AccountLike, Operation } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 
 import logger from "~/logger/logger";
 import TrackPage from "~/renderer/analytics/TrackPage";

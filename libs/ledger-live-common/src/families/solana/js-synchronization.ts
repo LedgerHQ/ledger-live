@@ -1,14 +1,7 @@
 import { GetAccountShapeArg0, mergeOps } from "../../bridge/jsHelpers";
-import {
-  Account,
-  encodeAccountId,
-  Operation,
-  OperationType,
-  TokenAccount,
-} from "../../types";
 import BigNumber from "bignumber.js";
 
-import { emptyHistoryCache } from "../../account";
+import { emptyHistoryCache, encodeAccountId } from "../../account";
 import {
   getTransactions,
   ParsedOnChainStakeAccountWithInfo,
@@ -54,7 +47,13 @@ import {
   toTokenAccountWithInfo,
 } from "./api/chain/web3";
 import { drainSeq } from "./utils";
-import { SolanaStake } from "./types";
+import { SolanaAccount, SolanaStake } from "./types";
+import {
+  Account,
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 
 type OnChainTokenAccount = Awaited<
   ReturnType<typeof getAccount>
@@ -235,7 +234,7 @@ export const getAccountShapeWithAPI = async (
 
   const totalStakedBalance = sum(stakes.map((s) => s.stakeAccBalance));
 
-  const shape: Partial<Account> = {
+  const shape: Partial<SolanaAccount> = {
     // uncomment when tokens are supported
     // subAccounts as undefined makes TokenList disappear in desktop
     //subAccounts: nextSubAccs,

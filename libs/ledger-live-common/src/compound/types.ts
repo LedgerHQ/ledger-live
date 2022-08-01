@@ -1,5 +1,5 @@
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { TokenAccount, Account } from "../types";
 // ? LOGO Token
 export type CompoundAssetMetric = {
   grossSupply: number;

@@ -4,9 +4,9 @@ import appsInstallAll from "./commands/appsInstallAll";
 import appsUpdateTestAll from "./commands/appsUpdateTestAll";
 import appUninstallAll from "./commands/appUninstallAll";
 import balanceHistory from "./commands/balanceHistory";
-import bot from "./commands/bot";
 import botPortfolio from "./commands/botPortfolio";
 import botTransfer from "./commands/botTransfer";
+import bot from "./commands/bot";
 import broadcast from "./commands/broadcast";
 import cleanSpeculos from "./commands/cleanSpeculos";
 import countervalues from "./commands/countervalues";
@@ -34,15 +34,15 @@ import portfolio from "./commands/portfolio";
 import proxy from "./commands/proxy";
 import receive from "./commands/receive";
 import repl from "./commands/repl";
-import satstack from "./commands/satstack";
 import satstackStatus from "./commands/satstackStatus";
+import satstack from "./commands/satstack";
 import scanDescriptors from "./commands/scanDescriptors";
 import send from "./commands/send";
 import signMessage from "./commands/signMessage";
 import speculosList from "./commands/speculosList";
 import swap from "./commands/swap";
-import sync from "./commands/sync";
 import synchronousOnboarding from "./commands/synchronousOnboarding";
+import sync from "./commands/sync";
 import testDetectOpCollision from "./commands/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
 import user from "./commands/user";
@@ -56,9 +56,9 @@ export default {
   appsUpdateTestAll,
   appUninstallAll,
   balanceHistory,
-  bot,
   botPortfolio,
   botTransfer,
+  bot,
   broadcast,
   cleanSpeculos,
   countervalues,
@@ -86,15 +86,15 @@ export default {
   proxy,
   receive,
   repl,
-  satstack,
   satstackStatus,
+  satstack,
   scanDescriptors,
   send,
   signMessage,
   speculosList,
   swap,
-  sync,
   synchronousOnboarding,
+  sync,
   testDetectOpCollision,
   testGetTrustedInputFromTxHash,
   user,
