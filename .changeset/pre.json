@@ -73,5 +73,19 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "afraid-experts-brush",
+    "brave-ears-teach",
+    "dull-timers-care",
+    "giant-buttons-retire",
+    "hot-avocados-dream",
+    "light-pans-report",
+    "long-kiwis-call",
+    "modern-monkeys-teach2",
+    "purple-birds-try",
+    "purple-laws-cry2",
+    "rotten-chicken-greet2",
+    "shiny-swans-tickle2",
+    "wild-spies-cry2"
+  ]
 }
