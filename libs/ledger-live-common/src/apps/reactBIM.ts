@@ -5,6 +5,7 @@ import type { State } from "./types";
 import { withDevice } from "../hw/deviceAccess";
 import { resolveTransportModuleForDeviceId } from "../hw";
 import BIM from "../api/BIM";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const getBaseApiUrl = () => getEnv("API_BIM");
 
@@ -16,8 +17,8 @@ const useBackgroundInstallSubject = (
   // Whenever the queue changes, we need get a new token, but ONLY if this queue
   // change is because we are adding a new item and not because an item was consumed.
   const observable: any = useRef();
+  const bimFeature = useFeature("bim");
   const transportModule = resolveTransportModuleForDeviceId(deviceId || "");
-  const disabled = transportModule?.id !== "ble-bim";
   const [transport, setTransport] = useState<any>();
   const [pendingTransport, setPendingTransport] = useState<boolean>(false);
   const [token, setToken] = useState<string | void>();
@@ -30,6 +31,8 @@ const useBackgroundInstallSubject = (
     () => deviceId && !transport && !pendingTransport && token && queueSize,
     [deviceId, pendingTransport, queueSize, token, transport]
   );
+
+  const enabled = bimFeature?.enabled && transportModule?.id === "ble-bim";
 
   const onError = useCallback(
     (error) => {
@@ -50,7 +53,7 @@ const useBackgroundInstallSubject = (
       const token = await BIM.getTokenFromQueue(queue).catch(onError);
       setToken(token);
     }
-    if (disabled) return;
+    if (!enabled) return;
     if (completed) {
       return;
     }
@@ -65,7 +68,7 @@ const useBackgroundInstallSubject = (
     return () => {
       completed = true;
     };
-  }, [disabled, onError, onEventDispatch, queueSize, setToken, state]);
+  }, [enabled, onError, onEventDispatch, queueSize, setToken, state]);
 
   const cleanUp = useCallback(() => {
     setToken(undefined);
@@ -95,17 +98,17 @@ const useBackgroundInstallSubject = (
   }, [cleanUp, deviceId, onError, onEventDispatch]);
 
   useEffect(() => {
-    if (disabled) return;
+    if (!enabled) return;
     if (shouldStartNewJob) startNewJob();
-  }, [deviceId, shouldStartNewJob, onEventDispatch, startNewJob, disabled]);
+  }, [deviceId, shouldStartNewJob, onEventDispatch, startNewJob, enabled]);
 
   useEffect(() => {
-    if (disabled) return;
+    if (!enabled) return;
     if (!token || !transport) return;
     transport.queue(observable.current, token, getBaseApiUrl());
-  }, [disabled, token, transport]);
+  }, [enabled, token, transport]);
 
-  return !disabled;
+  return enabled;
 };
 
 export default useBackgroundInstallSubject;

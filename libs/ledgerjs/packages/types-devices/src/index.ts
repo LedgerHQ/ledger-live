@@ -67,6 +67,7 @@ export type Observer<Ev> = Readonly<{
 
 export interface Transport {
   deviceModel: DeviceModel | null | undefined;
+  transportId: string | undefined;
 
   exchange: (apdu: Buffer) => Promise<Buffer>;
   close: () => Promise<void>;
