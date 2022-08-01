@@ -16,8 +16,8 @@ import AccountDelegationInfo from "../../../../components/AccountDelegationInfo"
 import AccountSectionLabel from "../../../../components/AccountSectionLabel";
 import IlluRewards from "../../../../icons/images/Rewards";
 
-import Delegation from "./components/Delegation";
-import Right from "./components/Right";
+import Delegation from "./components/Delegation/index.jsx";
+import Right from "./components/Right/index.jsx";
 
 import { denominate } from "../../helpers";
 

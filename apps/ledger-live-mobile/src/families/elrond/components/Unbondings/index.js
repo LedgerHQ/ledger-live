@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 
 import AccountSectionLabel from "../../../../components/AccountSectionLabel";
-import Unbonding from "./components/Unbonding";
+import Unbonding from "./components/Unbonding/index.jsx";
 
 const styles = StyleSheet.create({
   wrapper: {
