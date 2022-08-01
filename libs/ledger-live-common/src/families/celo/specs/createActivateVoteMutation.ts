@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
 import { MutationSpec } from "../../../bot/types";
-import type { Transaction } from "../types";
+import type { CeloAccount, Transaction } from "../types";
 
 const currency = getCryptoCurrencyById("celo");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
@@ -10,7 +10,7 @@ export const createActivateVoteMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Activate Vote",
   maxRun: 5,
   transaction: ({ account, bridge, maxSpendable }) => {
-    const { celoResources } = account;
+    const { celoResources } = account as CeloAccount;
     invariant(
       celoResources?.registrationStatus,
       "Celo: Activate Vote | Account is not registered"

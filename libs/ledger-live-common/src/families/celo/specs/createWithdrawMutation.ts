@@ -2,7 +2,7 @@ import invariant from "invariant";
 import { MutationSpec } from "../../../bot/types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
 import { availablePendingWithdrawals } from "../logic";
-import type { Transaction } from "../types";
+import type { CeloAccount, Transaction } from "../types";
 
 const currency = getCryptoCurrencyById("celo");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
@@ -11,13 +11,14 @@ export const createWithdrawMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Withdraw",
   maxRun: 5,
   transaction: ({ account, bridge, maxSpendable }) => {
-    const { celoResources } = account;
+    const celoAccount = account as CeloAccount;
+    const { celoResources } = celoAccount;
     invariant(
       celoResources?.registrationStatus,
       "Celo: Withdraw | Account is not registered"
     );
 
-    const pendingWithdrawals = availablePendingWithdrawals(account);
+    const pendingWithdrawals = availablePendingWithdrawals(celoAccount);
     invariant(
       pendingWithdrawals.length > 0,
       "Celo: Withdraw | No withdrawable balance"
@@ -29,12 +30,12 @@ export const createWithdrawMutation = (): MutationSpec<Transaction> => ({
     );
 
     const transaction = {
-      recipient: account.celoResources!.lockedGoldAddress!,
+      recipient: celoAccount.celoResources!.lockedGoldAddress!,
       index: pendingWithdrawals[0].index,
     };
 
     return {
-      transaction: bridge.createTransaction(account),
+      transaction: bridge.createTransaction(celoAccount),
       updates: [
         {
           memo: "LedgerLiveBot",

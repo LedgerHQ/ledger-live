@@ -32,6 +32,7 @@ import {
   toSolanaResourcesRaw,
   toCosmosResourcesRaw,
   toTronResourcesRaw,
+  toCeloResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
@@ -47,6 +48,7 @@ import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";
+import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -443,14 +445,23 @@ export function patchAccount(
       }
       break;
     }
-  }
+    case "celo": {
+      const celoAcc = account as CeloAccount;
+      const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
 
-  if (
-    updatedRaw.celoResources &&
-    !isEqual(account.celoResources, updatedRaw.celoResources)
-  ) {
-    next.celoResources = fromCeloResourcesRaw(updatedRaw.celoResources);
-    changed = true;
+      if (
+        !areSameResources(
+          toCeloResourcesRaw(celoAcc.celoResources),
+          celoUpdatedRaw.celoResources
+        )
+      ) {
+        (next as CeloAccount).celoResources = fromCeloResourcesRaw(
+          celoUpdatedRaw.celoResources
+        );
+        changed = true;
+      }
+      break;
+    }
   }
 
   const nfts = updatedRaw?.nfts?.map(fromNFTRaw);

@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Transaction, CeloOperationMode } from "./types";
+import type { Transaction, CeloOperationMode, CeloAccount } from "./types";
 import { encodeOperationId } from "../../operation";
 import { CeloApp } from "./hw-app-celo";
 import buildTransaction from "./js-buildTransaction";
@@ -111,7 +111,7 @@ const signOperation = ({
 
           const celo = new CeloApp(transport);
           const unsignedTransaction = await buildTransaction(
-            account,
+            account as CeloAccount,
             transaction
           );
           const { chainId, to } = unsignedTransaction;

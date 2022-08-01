@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
 import { MutationSpec } from "../../../bot/types";
-import type { Transaction } from "../types";
+import type { CeloAccount, Transaction } from "../types";
 import BigNumber from "bignumber.js";
 
 const currency = getCryptoCurrencyById("celo");
@@ -16,7 +16,7 @@ export const createUnlockMutation = (): MutationSpec<Transaction> => ({
       "Celo:  Unlock | balance is too low"
     );
 
-    const { celoResources } = account;
+    const { celoResources } = account as CeloAccount;
     invariant(
       celoResources?.registrationStatus,
       "Celo: Unlock | Account is not registered"

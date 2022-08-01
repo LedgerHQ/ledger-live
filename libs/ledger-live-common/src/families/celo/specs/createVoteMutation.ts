@@ -5,7 +5,7 @@ import { MutationSpec } from "../../../bot/types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
 import { getCurrentCeloPreloadData } from "../preload";
 import { getValidatorGroupsWithoutVotes } from "../logic";
-import type { CeloResources, Transaction } from "../types";
+import type { CeloAccount, CeloResources, Transaction } from "../types";
 
 const currency = getCryptoCurrencyById("celo");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
@@ -19,7 +19,7 @@ export const createVoteMutation = (): MutationSpec<Transaction> => ({
       "Celo:  Vote | balance is too low"
     );
 
-    const { celoResources } = account;
+    const { celoResources } = account as CeloAccount;
     invariant(
       celoResources?.registrationStatus,
       "Celo: Vote | Account is not registered"
