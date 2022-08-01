@@ -27,6 +27,10 @@ const elrond: CurrenciesData<Transaction> = {
     `,
     },
   ],
+  FIXME_ignoreAccountFields: [
+    "elrondResources.nonce",
+    "elrondResources.delegations",
+  ],
   accounts: [
     {
       raw: {
@@ -45,6 +49,19 @@ const elrond: CurrenciesData<Transaction> = {
         unitMagnitude: 18,
         lastSyncDate: "",
         balance: "299569965",
+        subAccounts: [
+          {
+            // MEX account
+            id: `js:2:elrond:${TEST_ADDRESS}:+elrond/esdt/4d45582d343535633537`,
+            balance: "100",
+            spendableBalance: "100",
+            type: "TokenAccountRaw",
+            tokenId: "elrond/esdt/4d45582d343535633537",
+            parentId: `js:2:elrond:${TEST_ADDRESS}:`,
+            operations: [],
+            pendingOperations: [],
+          },
+        ],
       },
       transactions: [
         {
@@ -100,13 +117,32 @@ const elrond: CurrenciesData<Transaction> = {
             warnings: {},
           },
         },
+        {
+          name: "Not enough balance (ESDT transfer)",
+          transaction: fromTransactionRaw({
+            family: "elrond",
+            recipient:
+              "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
+            amount: "1000000000000000000000000",
+            mode: "send",
+            fees: null,
+            gasLimit: 0,
+            subAccountId: `js:2:elrond:${TEST_ADDRESS}:+elrond/esdt/4d45582d343535633537`,
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new NotEnoughBalance(),
+            },
+            warnings: {},
+          },
+        },
       ],
     },
   ],
 };
 
 const dataset: DatasetTest<Transaction> = {
-  implementations: ["js"],
+  implementations: ["elrondjs"],
   currencies: {
     elrond,
   },
