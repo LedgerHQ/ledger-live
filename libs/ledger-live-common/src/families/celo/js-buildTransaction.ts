@@ -3,7 +3,6 @@ import { CeloTx } from "@celo/connect";
 import { celoKit } from "./api/sdk";
 import { BigNumber } from "bignumber.js";
 import { getVote } from "./logic";
-import { Account } from "@ledgerhq/types-live";
 
 const buildTransaction = async (
   account: CeloAccount,
