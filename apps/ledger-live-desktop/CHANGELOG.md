@@ -1,5 +1,7 @@
 # ledger-live-desktop
 
+## 2.45.0-hotfix.1
+
 ## 2.45.0
 
 ### Minor Changes
