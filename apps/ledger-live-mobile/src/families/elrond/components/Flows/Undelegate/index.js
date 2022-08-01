@@ -7,11 +7,11 @@ import { useTheme } from "@react-navigation/native";
 import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
 import StepHeader from "../../../../../components/StepHeader";
 import { ScreenName } from "../../../../../const";
-import UndelegationAmount from "./01-Amount";
+import UndelegationAmount from "./01-Amount.jsx";
 import SelectDevice from "../../../../../screens/SelectDevice";
 import ConnectDevice from "../../../../../screens/ConnectDevice";
-import UndelegationValidationError from "./03-ValidationError";
-import UndelegationValidationSuccess from "./03-ValidationSuccess";
+import UndelegationValidationError from "./03-ValidationError.jsx";
+import UndelegationValidationSuccess from "./03-ValidationSuccess.jsx";
 
 const totalSteps = "3";
 

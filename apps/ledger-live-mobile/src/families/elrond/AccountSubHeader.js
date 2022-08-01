@@ -31,7 +31,13 @@ function AccountSubHeader() {
       <Text variant={"large"} color={"neutral.c90"} flexShrink={1} mr={3}>
         {t("elrond.account.subHeader.cardTitle")}
       </Text>
-      <Link type={"main"} size={"small"} Icon={InfoMedium} onPress={openDrawer}>
+      <Link
+        type={"main"}
+        size={"small"}
+        Icon={InfoMedium}
+        href="/"
+        onPress={openDrawer}
+      >
         {t("elrond.account.subHeader.moreInfo")}
       </Link>
       <AccountSubHeaderDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
