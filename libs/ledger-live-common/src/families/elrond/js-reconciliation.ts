@@ -53,11 +53,12 @@ export function reconciliateSubAccounts(
     });
 
     if (!anySubAccountHaveChanged && initialSubAccounts) {
+      // eslint-disable-next-line prettier/prettier
       log(
         "elrond",
-        "incremental sync: " +
-        String(initialSubAccounts.length) +
-        " sub accounts have not changed"
+        `incremental sync: ${String(
+          initialSubAccounts.length
+        )} sub accounts have not changed`
       );
       subAccounts = initialSubAccounts;
     } else {
