@@ -54,22 +54,6 @@ export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
   return t.recipient === a.freshAddress;
 };
 
-/**
- * Returns nonce for an account
- *
- * @param {Account} a
- */
-export const getNonce = (a: ElrondAccount): number => {
-  const lastPendingOp = a.pendingOperations[0];
-  const nonce = Math.max(
-    a.elrondResources?.nonce || 0,
-    lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
-      ? lastPendingOp.transactionSequenceNumber + 1
-      : 0
-  );
-  return nonce;
-};
-
 export const computeTransactionValue = async (
   t: Transaction,
   a: ElrondAccount,

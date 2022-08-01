@@ -6,16 +6,16 @@ import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import Elrond from "./hw-app-elrond";
 import { buildTransaction } from "./js-buildTransaction";
-import { getNonce } from "./logic";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { CHAIN_ID } from "./constants";
-import { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
+import { Operation, SignOperationEvent } from "@ledgerhq/types-live";
+import { getAccountNonce } from "./api";
 
-const buildOptimisticOperation = (
-  account: Account,
+const buildOptimisticOperation = async (
+  account: ElrondAccount,
   transaction: Transaction,
   fee: BigNumber
-): Operation => {
+): Promise<Operation> => {
   const type = "OUT";
   const tokenAccount =
     (transaction.subAccountId &&
@@ -31,6 +31,8 @@ const buildOptimisticOperation = (
     value = transaction.amount;
   }
 
+  const txNonce = await getAccountNonce(account.freshAddress);
+
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
@@ -42,7 +44,7 @@ const buildOptimisticOperation = (
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
-    transactionSequenceNumber: getNonce(account as ElrondAccount),
+    transactionSequenceNumber: txNonce.valueOf(),
     date: new Date(),
     extra: {
       data: transaction.data,
@@ -115,7 +117,7 @@ const signOperation = ({
           type: "device-signature-granted",
         });
 
-        const operation = buildOptimisticOperation(
+        const operation = await buildOptimisticOperation(
           account,
           transaction,
           transaction.fees ?? new BigNumber(0)

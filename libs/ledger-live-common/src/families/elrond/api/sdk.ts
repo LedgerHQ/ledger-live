@@ -10,9 +10,11 @@ import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
 import {
+  Account,
   Address,
   GasLimit,
   NetworkConfig,
+  Nonce,
   ProxyProvider,
   Transaction as ElrondSdkTransaction,
   TransactionPayload,
@@ -48,6 +50,15 @@ export const getNetworkConfig = async (): Promise<NetworkConfig> => {
   await NetworkConfig.getDefault().sync(proxy);
 
   return NetworkConfig.getDefault();
+};
+
+export const getAccountNonce = async (addr: string): Promise<Nonce> => {
+  const address = new Address(addr);
+  const account = new Account(address);
+
+  await account.sync(proxy);
+
+  return account.nonce;
 };
 
 /**

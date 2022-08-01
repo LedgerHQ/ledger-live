@@ -9,4 +9,5 @@ export {
   getAccountDelegations,
   getAccountESDTOperations,
   hasESDTTokens,
+  getAccountNonce,
 } from "./sdk";

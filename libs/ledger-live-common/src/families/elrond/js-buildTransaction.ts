@@ -3,8 +3,7 @@ import type {
   ElrondProtocolTransaction,
   Transaction,
 } from "./types";
-import { getNonce } from "./logic";
-import { getNetworkConfig } from "./api";
+import { getAccountNonce, getNetworkConfig } from "./api";
 import {
   GAS,
   HASH_TRANSACTION,
@@ -27,7 +26,7 @@ export const buildTransaction = async (
   t: Transaction
 ): Promise<string> => {
   const address = a.freshAddress;
-  const nonce = getNonce(a);
+  const nonce = await getAccountNonce(address);
   const networkConfig: NetworkConfig = await getNetworkConfig();
   const chainID = networkConfig.ChainID.valueOf();
   const gasPrice = networkConfig.MinGasPrice.valueOf();
@@ -95,7 +94,7 @@ export const buildTransaction = async (
   }
 
   const unsigned: ElrondProtocolTransaction = {
-    nonce,
+    nonce: nonce.valueOf(),
     value: transactionValue.toString(),
     receiver: t.recipient,
     sender: address,
