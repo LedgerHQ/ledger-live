@@ -1,18 +1,18 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { ElrondAccount, Transaction } from "./types";
+import type { Transaction } from "./types";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import Elrond from "./hw-app-elrond";
 import { buildTransaction } from "./js-buildTransaction";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { CHAIN_ID } from "./constants";
-import { Operation, SignOperationEvent } from "@ledgerhq/types-live";
+import { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
 import { getAccountNonce } from "./api";
 
 const buildOptimisticOperation = async (
-  account: ElrondAccount,
+  account: Account,
   transaction: Transaction,
   fee: BigNumber
 ): Promise<Operation> => {
@@ -61,7 +61,7 @@ const signOperation = ({
   deviceId,
   transaction,
 }: {
-  account: ElrondAccount;
+  account: Account;
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>

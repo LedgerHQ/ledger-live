@@ -1,8 +1,4 @@
-import type {
-  ElrondAccount,
-  ElrondProtocolTransaction,
-  Transaction,
-} from "./types";
+import type { ElrondProtocolTransaction, Transaction } from "./types";
 import { getAccountNonce, getNetworkConfig } from "./api";
 import {
   GAS,
@@ -13,7 +9,7 @@ import {
 import BigNumber from "bignumber.js";
 import { ElrondEncodeTransaction } from "./encode";
 import { NetworkConfig } from "@elrondnetwork/erdjs/out";
-import { SubAccount } from "@ledgerhq/types-live";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 
 /**
  *
@@ -21,7 +17,7 @@ import { SubAccount } from "@ledgerhq/types-live";
  * @param {Transaction} t
  */
 export const buildTransaction = async (
-  a: ElrondAccount,
+  a: Account,
   ta: SubAccount | null | undefined,
   t: Transaction
 ): Promise<string> => {

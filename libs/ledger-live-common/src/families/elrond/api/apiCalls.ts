@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import network from "../../../network";
-import { Operation } from "../../../types";
 import { BinaryUtils } from "../utils/binary.utils";
 import {
   HASH_TRANSACTION,
@@ -17,6 +16,7 @@ import {
   Transaction,
 } from "../types";
 import { decodeTransaction } from "./sdk";
+import { Operation } from "@ledgerhq/types-live";
 export default class ElrondApi {
   private API_URL: string;
   private DELEGATION_API_URL: string;
