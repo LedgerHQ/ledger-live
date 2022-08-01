@@ -1,11 +1,16 @@
-import { Observable, from, of, EMPTY, throwError } from "rxjs";
+import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import { DeviceOnDashboardExpected, TransportError, TransportStatusError, LanguageNotFound } from "@ledgerhq/errors";
+import {
+  DeviceOnDashboardExpected,
+  TransportError,
+  TransportStatusError,
+  LanguageNotFound,
+} from "@ledgerhq/errors";
 
 import ManagerAPI from "../api/Manager";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
-import { Language, languageIds, LanguagePackage } from "../types/languages";
+import { Language, LanguagePackage } from "@ledgerhq/types-live";
 import network from "../network";
 import { LanguageInstallRefusedOnDevice } from "../errors";
 import getAppAndVersion from "./getAppAndVersion";
@@ -60,11 +65,16 @@ export default function installLanguage({
                 return;
               }
 
-              const languages = await ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
+              const languages = await ManagerAPI.getLanguagePackagesForDevice(
+                deviceInfo
+              );
 
-              const packs: LanguagePackage[] = languages.filter((l: any) => l.language === language);
+              const packs: LanguagePackage[] = languages.filter(
+                (l: any) => l.language === language
+              );
 
-              if (!packs.length) return subscriber.error(new LanguageNotFound(language));
+              if (!packs.length)
+                return subscriber.error(new LanguageNotFound(language));
 
               const pack = packs[0];
               const { apdu_install_url } = pack;
@@ -86,15 +96,21 @@ export default function installLanguage({
                   });
                 }
 
-                const response = await transport.exchange(Buffer.from(apdus[i], "hex"));
+                const response = await transport.exchange(
+                  Buffer.from(apdus[i], "hex")
+                );
                 const status = response.readUInt16BE(response.length - 2);
                 const statusStr = status.toString(16);
 
                 // Some error handling
                 if (status === 0x5501) {
-                  return subscriber.error(new LanguageInstallRefusedOnDevice(statusStr));
+                  return subscriber.error(
+                    new LanguageInstallRefusedOnDevice(statusStr)
+                  );
                 } else if (status !== 0x9000) {
-                  return subscriber.error(new TransportError("Unexpected device response", statusStr));
+                  return subscriber.error(
+                    new TransportError("Unexpected device response", statusStr)
+                  );
                 }
 
                 subscriber.next({
@@ -129,7 +145,6 @@ export default function installLanguage({
                   })
                 );
               }
-              
               return throwError(e);
             })
           )
@@ -146,18 +161,12 @@ export default function installLanguage({
 }
 
 const uninstallAllLanguages = async (transport: Transport) => {
-  // TODO: in a future FW version, this will be a single apdu
-  for (const id of Object.values(languageIds)) {
-    // do we want to reflect this on the UI? do we need to emit events here
-    // what about error handling, maybe unhandled promise rejection might happen
-    // at least try catch
-    await transport.send(
-      0xe0,
-      0x33,
-      id,
-      0x00,
-      undefined,
-      [0x9000, 0x5501] // Expected responses when uninstalling.
-    );
-  }
+  await transport.send(
+    0xe0,
+    0x33,
+    0xff,
+    0x00,
+    undefined,
+    [0x9000, 0x5501] // Expected responses when uninstalling.
+  );
 };

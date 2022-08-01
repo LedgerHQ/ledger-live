@@ -3,14 +3,14 @@ import { View } from "react-native";
 import { Trans } from "react-i18next";
 
 import { State, AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { App, DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
 
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
-import { idsToLanguage } from "@ledgerhq/live-common/types/languages";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
@@ -20,8 +20,8 @@ import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
 import { Divider } from "@ledgerhq/native-ui";
 import DeviceLanguage from "./DeviceLanguage";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const illustrations = {
   nanoS: NanoS,

@@ -1,5 +1,5 @@
-import type { AccountLike, Account, TransactionStatus } from "../../types";
-import type { Transaction } from "./types";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 
 export type ExtraDeviceTransactionField =
@@ -10,16 +10,27 @@ export type ExtraDeviceTransactionField =
   | {
       type: "stellar.network";
       label: string;
+    }
+  | {
+      type: "stellar.assetCode";
+      label: string;
+    }
+  | {
+      type: "stellar.assetIssuer";
+      label: string;
     };
 
 function getDeviceTransactionConfig({
   status: { amount, estimatedFees },
+  transaction,
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField | ExtraDeviceTransactionField> {
+  const { assetCode, assetIssuer } = transaction;
+
   const fields: Array<DeviceTransactionField | ExtraDeviceTransactionField> = [
     {
       type: "stellar.network",
@@ -31,6 +42,17 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "amount",
       label: "Amount",
+    });
+  }
+
+  if (assetCode && assetIssuer) {
+    fields.push({
+      type: "stellar.assetCode",
+      label: "Asset",
+    });
+    fields.push({
+      type: "stellar.assetIssuer",
+      label: "Asset issuer",
     });
   }
 

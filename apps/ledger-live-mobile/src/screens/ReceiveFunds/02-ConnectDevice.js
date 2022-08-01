@@ -9,7 +9,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
@@ -25,6 +25,7 @@ import GenericErrorView from "../../components/GenericErrorView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
 import SkipSelectDevice from "../SkipSelectDevice";
+import byFamily from "../../generated/ConnectDevice";
 
 type Props = {
   navigation: any,
@@ -111,6 +112,11 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const currency = getAccountCurrency(account);
   const tokenCurrency =
     account && account.type === "TokenAccount" && account.token;
+
+  // check for coin specific UI
+  const CustomConnectDevice = byFamily[currency.family];
+  if (CustomConnectDevice)
+    return <CustomConnectDevice {...{ navigation, route }} />;
 
   if (readOnlyModeEnabled) {
     return <ReadOnlyWarning continue={onSkipDevice} />;

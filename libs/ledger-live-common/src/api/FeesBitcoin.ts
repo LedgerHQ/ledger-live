@@ -1,5 +1,5 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import type { CryptoCurrency } from "../types";
 import type { FeeItems } from "../families/bitcoin/types";
 import { getEstimatedFees } from "./Fees";
 

@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import type { AccountLike, Account } from "../../types";
 import type { Transaction } from "./types";
 import { getMainAccount } from "../../account";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 /**
  * Returns the maximum possible amount for transaction

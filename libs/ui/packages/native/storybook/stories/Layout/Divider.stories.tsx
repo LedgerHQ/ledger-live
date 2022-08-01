@@ -23,7 +23,4 @@ const DividerStory = () => {
   );
 };
 
-storiesOf((story) =>
-  story("Layout/Divider", module)
-    .add("Divider", () => <DividerStory />)
-);
+storiesOf((story) => story("Layout/Divider", module).add("Divider", () => <DividerStory />));

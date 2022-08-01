@@ -3,11 +3,8 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import Config from "react-native-config";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";

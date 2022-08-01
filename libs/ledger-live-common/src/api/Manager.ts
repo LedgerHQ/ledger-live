@@ -20,21 +20,24 @@ import { version as livecommonversion } from "../../package.json";
 import { createDeviceSocket } from "./socket";
 import { createMockSocket, bulkSocketMock, secureChannelMock, resultMock } from "./socket.mock";
 import semver from "semver";
-import type { DeviceInfo, McuVersion, SocketEvent } from "../types/manager";
 import network from "../network";
 import { getEnv } from "../env";
-import type {
-  OsuFirmware,
-  DeviceVersion,
-  FinalFirmware,
-  ApplicationVersion,
-  Application,
-  Category,
-  Id,
-} from "../types/manager";
 import { makeLRUCache } from "../cache";
 import { getUserHashes } from "../user";
-import { LanguagePackage, LanguagePackageResponse } from "../types/languages";
+import {
+  LanguagePackage,
+  LanguagePackageResponse,
+  Application,
+  ApplicationVersion,
+  Category,
+  DeviceInfo,
+  DeviceVersion,
+  FinalFirmware,
+  Id,
+  McuVersion,
+  OsuFirmware,
+  SocketEvent,
+} from "@ledgerhq/types-live";
 import { getProviderId } from "../manager/provider";
 
 declare global {
@@ -189,8 +192,13 @@ const findBestMCU = (compatibleMCU: McuVersion[]): McuVersion | undefined => {
   return best;
 };
 
-const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<LanguagePackage[]> => {
-  const deviceVersion = await getDeviceVersion(deviceInfo.targetId, getProviderId(deviceInfo));
+const getLanguagePackagesForDevice = async (
+  deviceInfo: DeviceInfo
+): Promise<LanguagePackage[]> => {
+  const deviceVersion = await getDeviceVersion(
+    deviceInfo.targetId,
+    getProviderId(deviceInfo)
+  );
 
   const seFirmwareVersion = await getCurrentFirmware({
     version: deviceInfo.version,
@@ -202,7 +210,7 @@ const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<Lan
     method: "GET",
     url: URL.format({
       // TODO use the production key
-      pathname: `https://appstore.api.aws.stg.ldg-tech.com/api/language-package`,
+      pathname: `${getEnv("MANAGER_API_BASE")}/language-package`,
       query: {
         livecommonversion,
       },
@@ -212,14 +220,18 @@ const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<Lan
   const allPackages: LanguagePackage[] = data.reduce(
     (acc, response) => [
       ...acc,
-      ...response.language_package_version.map((p) => ({ ...p, language: response.language })),
+      ...response.language_package_version.map((p) => ({
+        ...p,
+        language: response.language,
+      })),
     ],
     [] as LanguagePackage[]
   );
 
   const packages = allPackages.filter(
     (pack) =>
-      pack.device_versions.includes(deviceVersion.id) && pack.se_firmware_final_versions.includes(seFirmwareVersion.id)
+      pack.device_versions.includes(deviceVersion.id) &&
+      pack.se_firmware_final_versions.includes(seFirmwareVersion.id)
   );
 
   return packages;
@@ -350,7 +362,8 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
         target_id: targetId,
       },
     }).catch((error) => {
-      const status = error && (error.status || (error.response && error.response.status)); // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
+      const status =
+        error && (error.status || (error.response && error.response.status)); // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
 
       if (status === 404) {
         throw new FirmwareNotRecognized("manager api did not recognize targetId=" + targetId, {

@@ -7,7 +7,7 @@ import {
   getAccountUnit,
   shortAddressPreview,
 } from "@ledgerhq/live-common/account/index";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";

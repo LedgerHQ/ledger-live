@@ -1,7 +1,8 @@
 // @flow
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import type { Account, Transaction, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";

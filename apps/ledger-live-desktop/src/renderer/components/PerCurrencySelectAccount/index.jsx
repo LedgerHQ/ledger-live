@@ -2,7 +2,7 @@
 
 import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import type { TFunction } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useState } from "react";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
@@ -10,7 +10,7 @@ import { createFilter } from "react-select";
 import { createStructuredSelector } from "reselect";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Select from "~/renderer/components/Select";
-import type { SubAccount } from "@ledgerhq/live-common/types/account";
+import type { SubAccount } from "@ledgerhq/types-live";
 import { MenuOption } from "~/renderer/components/PerCurrencySelectAccount/Option";
 import type { AccountTuple } from "~/renderer/components/PerCurrencySelectAccount/state";
 

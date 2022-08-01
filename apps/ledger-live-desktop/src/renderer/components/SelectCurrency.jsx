@@ -4,7 +4,7 @@ import React, { useCallback, useMemo, useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Fuse from "fuse.js";
-import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import useEnv from "~/renderer/hooks/useEnv";
 import type { Option } from "~/renderer/components/Select";

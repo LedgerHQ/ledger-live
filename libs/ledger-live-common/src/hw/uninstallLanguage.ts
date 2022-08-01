@@ -7,7 +7,7 @@ import {
 
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
-import { Language, languageIds } from "../types/languages";
+import { Language, languageIds } from "@ledgerhq/types-live";
 import { AppAndVersion } from "./connectApp";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import quitApp from "./quitApp";

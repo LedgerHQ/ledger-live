@@ -15,17 +15,13 @@ import ManagerAPI from "@ledgerhq/live-common/api/Manager";
 import network from "@ledgerhq/live-common/network";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
-import type {
-  DeviceInfo,
-  ApplicationVersion,
-  Application,
-} from "@ledgerhq/live-common/types/manager";
 import { initState, reducer, runAll } from "@ledgerhq/live-common/apps/index";
 import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
 import { delay } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getDependencies } from "@ledgerhq/live-common/apps/polyfill";
 import { deviceOpt } from "../scan";
+import type { Application, ApplicationVersion, DeviceInfo } from "@ledgerhq/types-live";
 type ResultCommon = {
   versionId: number;
   appPath: string;

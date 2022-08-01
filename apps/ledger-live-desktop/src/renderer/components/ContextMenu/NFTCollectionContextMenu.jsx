@@ -8,7 +8,7 @@ import { openModal } from "~/renderer/actions/modals";
 import ContextMenuItem from "./ContextMenuItem";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 type Props = {
   account: Account,

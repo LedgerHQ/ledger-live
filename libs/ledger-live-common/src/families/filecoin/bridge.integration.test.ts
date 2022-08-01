@@ -12,10 +12,10 @@ import {
   InvalidAddress,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
-import type { DatasetTest } from "../../types";
+
+import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { fromTransactionRaw } from "../filecoin/transaction";
-import { CurrenciesData } from "../../types";
 
 const SEED_IDENTIFIER = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
 const ACCOUNT_1 = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";

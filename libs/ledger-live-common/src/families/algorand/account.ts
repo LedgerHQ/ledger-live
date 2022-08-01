@@ -1,9 +1,10 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { Account, Operation, Unit } from "../../types";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { AlgorandResources } from "./types";
+import type { AlgorandAccount, AlgorandResources } from "./types";
+import type { Operation } from "@ledgerhq/types-live";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(
   op: Operation,
@@ -23,7 +24,7 @@ function formatOperationSpecifics(
     : "";
 }
 
-function formatAccountSpecifics(account: Account): string {
+function formatAccountSpecifics(account: AlgorandAccount): string {
   const { algorandResources } = account;
   invariant(algorandResources, "algorand account expected");
   const unit = getAccountUnit(account);

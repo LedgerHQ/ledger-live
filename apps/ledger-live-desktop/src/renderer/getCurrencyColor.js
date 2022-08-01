@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { getCurrencyColor as commonGetCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import type { Currency } from "@ledgerhq/live-common/types/currencies";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 import ensureContrast from "~/renderer/ensureContrast";
 

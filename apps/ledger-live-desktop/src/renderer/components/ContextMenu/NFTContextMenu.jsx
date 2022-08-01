@@ -1,7 +1,7 @@
 // @flow
 import React, { memo } from "react";
 import ContextMenuItem from "./ContextMenuItem";
-import type { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/live-common/types/index";
+import type { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import useNftLinks from "~/renderer/hooks/useNftLinks";
 
 type Props = {

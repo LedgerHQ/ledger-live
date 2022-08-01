@@ -1,10 +1,10 @@
 import invariant from "invariant";
 
 import { FeeEstimationFailed } from "@ledgerhq/errors";
-import type { CryptoCurrency } from "../types";
 import { makeLRUCache } from "../cache";
 import { blockchainBaseURL } from "./Ledger";
 import network from "../network";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type Fees = Record<string, number>;
 

@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/native-ui";
 import {
   Language,
-} from "@ledgerhq/live-common/lib/types/languages";
+} from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 
 type Props = {

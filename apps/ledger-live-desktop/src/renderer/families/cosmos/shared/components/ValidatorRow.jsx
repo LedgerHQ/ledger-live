@@ -3,7 +3,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 import type { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import type { CryptoCurrency, Unit } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
