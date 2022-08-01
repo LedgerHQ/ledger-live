@@ -2,15 +2,18 @@
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import invariant from "invariant";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
+import ValidatorSearchInput, {
+  NoResultPlaceholder,
+} from "~/renderer/components/Delegation/ValidatorSearchInput";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorGroupRow from "../components/ValidatorGroupRow";
 import * as S from "./ValidatorGroupsField.styles";
-import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
+import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import type { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import type { Account, TransactionStatus } from "@ledgerhq/live-common/types";
 
@@ -29,11 +32,14 @@ const ValidatorGroupsField = ({
 }: Props) => {
   invariant(account && account.celoResources, "celo account and resources required");
 
+  const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
 
   const unit = getAccountUnit(account);
 
-  const { validatorGroups } = useCeloPreloadData();
+  const validatorGroups = useValidatorGroups(search);
+
+  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
 
   const chosenValidatorGroup = useMemo(() => {
     if (chosenValidatorGroupAddress !== null) {
@@ -68,22 +74,28 @@ const ValidatorGroupsField = ({
   };
 
   return (
-    <S.ValidatorsFieldContainer>
-      <Box p={1}>
-        <ScrollLoadingList
-          data={showAll ? validatorGroups : [chosenValidatorGroup ?? validatorGroups[0]]}
-          style={{ flex: showAll ? "1 0 240px" : "1 0 56px", marginBottom: 0, paddingLeft: 0 }}
-          renderItem={renderItem}
-          noResultPlaceholder={null}
-        />
-      </Box>
-      <S.SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
-        <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
-          <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
-        </Text>
-        <IconAngleDown size={16} />
-      </S.SeeAllButton>
-    </S.ValidatorsFieldContainer>
+    <>
+      {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
+      <S.ValidatorsFieldContainer>
+        <Box p={1}>
+          <ScrollLoadingList
+            data={showAll ? validatorGroups : [chosenValidatorGroup ?? validatorGroups[0]]}
+            style={{ flex: showAll ? "1 0 240px" : "1 0 56px", marginBottom: 0, paddingLeft: 0 }}
+            renderItem={renderItem}
+            noResultPlaceholder={
+              validatorGroups.length <= 0 &&
+              search.length > 0 && <NoResultPlaceholder search={search} />
+            }
+          />
+        </Box>
+        <S.SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
+          <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
+            <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
+          </Text>
+          <IconAngleDown size={16} />
+        </S.SeeAllButton>
+      </S.ValidatorsFieldContainer>
+    </>
   );
 };
 
