@@ -12,7 +12,10 @@ export type AttemptToQuitAppEvent =
       type: "appDetected";
     };
 
-const attemptToQuitApp = (transport, appAndVersion?: AppAndVersion): Observable<AttemptToQuitAppEvent> =>
+const attemptToQuitApp = (
+  transport,
+  appAndVersion?: AppAndVersion
+): Observable<AttemptToQuitAppEvent> =>
   appAndVersion && appSupportsQuitApp(appAndVersion)
     ? from(quitApp(transport)).pipe(
         concatMap(() =>
