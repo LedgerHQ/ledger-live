@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Subscription } from "rxjs";
+import { isEqual } from "lodash";
 import type { Device } from "../../hw/actions/types";
 import { DeviceOnboardingStatePollingError } from "@ledgerhq/errors";
 
@@ -65,35 +66,23 @@ export const useOnboardingStatePolling = ({
         next: (onboardingStatePollingResult: OnboardingStatePollingResult) => {
           if (onboardingStatePollingResult) {
             setFatalError(null);
-            setAllowedError((prevAllowedError) => {
-              // Only updates if the new allowedError is different
-              if (
-                isDifferentError(
-                  prevAllowedError,
-                  onboardingStatePollingResult.allowedError
-                )
-              ) {
-                return onboardingStatePollingResult.allowedError;
-              }
-
-              return prevAllowedError;
-            });
+            // Only updates if the new allowedError is different
+            setAllowedError((prevAllowedError) =>
+              getNewAllowedErrorIfChanged(
+                prevAllowedError,
+                onboardingStatePollingResult.allowedError
+              )
+            );
 
             // Does not update the onboarding state if an allowed error occurred
             if (!onboardingStatePollingResult.allowedError) {
-              setOnboardingState((prevOnboardingState) => {
-                // Only updates if the new onboardingState is different
-                if (
-                  isDifferentOnboardingState(
-                    prevOnboardingState,
-                    onboardingStatePollingResult.onboardingState
-                  )
-                ) {
-                  return onboardingStatePollingResult.onboardingState;
-                }
-
-                return prevOnboardingState;
-              });
+              // Only updates if the new onboardingState is different
+              setOnboardingState((prevOnboardingState) =>
+                getNewOnboardingStateIfChanged(
+                  prevOnboardingState,
+                  onboardingStatePollingResult.onboardingState
+                )
+              );
             }
           }
         },
@@ -126,20 +115,21 @@ export const useOnboardingStatePolling = ({
   return { onboardingState, allowedError, fatalError };
 };
 
-const isDifferentOnboardingState = (
+const getNewOnboardingStateIfChanged = (
   prevOnboardingState: OnboardingState | null,
   newOnboardingState: OnboardingState | null
-): boolean => {
-  // OnboardingState are simple JSON-style objects, without methods
-  return (
-    JSON.stringify(prevOnboardingState) !== JSON.stringify(newOnboardingState)
-  );
+): OnboardingState | null => {
+  return isEqual(prevOnboardingState, newOnboardingState)
+    ? prevOnboardingState
+    : newOnboardingState;
 };
 
-const isDifferentError = (
+const getNewAllowedErrorIfChanged = (
   prevError: Error | null,
   newError: Error | null
-): boolean => {
+): Error | null => {
   // Only interested if the errors are instances of the same Error class
-  return prevError?.constructor !== newError?.constructor;
+  return prevError?.constructor === newError?.constructor
+    ? prevError
+    : newError;
 };
