@@ -7,6 +7,9 @@ export const defaultFeatures: DefaultFeatures = {
   pushNotifications: {
     enabled: false,
   },
+  bim: {
+    enabled: false,
+  },
   buyDeviceFromLive: {
     enabled: false,
     params: {
