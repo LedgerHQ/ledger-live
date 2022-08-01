@@ -7,6 +7,7 @@ import { toOperationRaw } from "../../account";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import expect from "expect";
+import { sample } from "lodash";
 
 const ELROND_MIN_SAFE = new BigNumber(10000);
 const elrondSpec: AppSpec<Transaction> = {
@@ -58,6 +59,33 @@ const elrondSpec: AppSpec<Transaction> = {
             },
             {
               amount,
+            },
+          ],
+        };
+      },
+    },
+
+    {
+      name: "move some ESDT",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        const esdtAccount: any = sample(
+          (account.subAccounts || []).filter((a) => a.balance.gt(0))
+        );
+        invariant(esdtAccount, "no esdt account");
+
+        const sibling = pickSiblings(siblings, 2);
+        const recipient = sibling.freshAddress;
+
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient,
+              subAccountId: esdtAccount.id,
+            },
+            {
+              amount: esdtAccount.balance.times(Math.random()).integerValue(),
             },
           ],
         };
