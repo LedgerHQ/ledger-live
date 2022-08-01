@@ -36,6 +36,7 @@ const ignoreErrors = [
   "NetworkDown",
   "NetworkDown",
   "NotConnectedError",
+  "socket disconnected",
   "socket hang up",
   "status code 404",
   // timeouts
@@ -67,6 +68,7 @@ const ignoreErrors = [
   "InvalidAddressError",
   "Received an invalid JSON-RPC message",
   "SwapNoAvailableProviders",
+  "Cannot update while running on a read-only volume",
 ];
 
 export function init(Sentry: any, opts: any) {
