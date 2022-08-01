@@ -1,6 +1,7 @@
 /**  Add others with union (e.g. "learn" | "market" | "foo") */
 export type FeatureId =
   | "learn"
+  | "bim"
   | "pushNotifications"
   | "llmUsbFirmwareUpdate"
   | "ratings"

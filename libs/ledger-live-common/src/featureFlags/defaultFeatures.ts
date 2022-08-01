@@ -10,6 +10,9 @@ export const defaultFeatures: DefaultFeatures = {
   deviceLocalization: {
     enabled: false,
   },
+  bim: {
+    enabled: false,
+  },
   buyDeviceFromLive: {
     enabled: false,
     params: {
