@@ -18,7 +18,12 @@ import { throwError, Observable } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { version as livecommonversion } from "../../package.json";
 import { createDeviceSocket } from "./socket";
-import { createMockSocket, bulkSocketMock, secureChannelMock, resultMock } from "./socket.mock";
+import {
+  createMockSocket,
+  bulkSocketMock,
+  secureChannelMock,
+  resultMock,
+} from "./socket.mock";
 import semver from "semver";
 import network from "../network";
 import { getEnv } from "../env";
@@ -121,7 +126,8 @@ const applicationsByDevice: (params: {
     });
     return r.data.application_versions;
   },
-  (p) => `${p.provider}_${p.current_se_firmware_final_version}_${p.device_version}`
+  (p) =>
+    `${p.provider}_${p.current_se_firmware_final_version}_${p.device_version}`
 );
 const listApps: () => Promise<Array<Application>> = makeLRUCache(
   async () => {
@@ -173,10 +179,15 @@ const getMcus: () => Promise<any> = makeLRUCache(
   () => ""
 );
 
-const compatibleMCUForDeviceInfo = (mcus: McuVersion[], deviceInfo: DeviceInfo, provider: number): McuVersion[] =>
+const compatibleMCUForDeviceInfo = (
+  mcus: McuVersion[],
+  deviceInfo: DeviceInfo,
+  provider: number
+): McuVersion[] =>
   mcus.filter(
     (m) =>
-      (deviceInfo.majMin === m.from_bootloader_version || deviceInfo.version === m.from_bootloader_version) &&
+      (deviceInfo.majMin === m.from_bootloader_version ||
+        deviceInfo.version === m.from_bootloader_version) &&
       m.providers.includes(provider)
   );
 
@@ -184,7 +195,12 @@ const findBestMCU = (compatibleMCU: McuVersion[]): McuVersion | undefined => {
   let best = compatibleMCU[0];
 
   for (let i = 1; i < compatibleMCU.length; i++) {
-    if (semver.gt(semver.coerce(compatibleMCU[i].name) || "", semver.coerce(best.name) || "")) {
+    if (
+      semver.gt(
+        semver.coerce(compatibleMCU[i].name) || "",
+        semver.coerce(best.name) || ""
+      )
+    ) {
       best = compatibleMCU[i];
     }
   }
@@ -192,8 +208,13 @@ const findBestMCU = (compatibleMCU: McuVersion[]): McuVersion | undefined => {
   return best;
 };
 
-const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<LanguagePackage[]> => {
-  const deviceVersion = await getDeviceVersion(deviceInfo.targetId, getProviderId(deviceInfo));
+const getLanguagePackagesForDevice = async (
+  deviceInfo: DeviceInfo
+): Promise<LanguagePackage[]> => {
+  const deviceVersion = await getDeviceVersion(
+    deviceInfo.targetId,
+    getProviderId(deviceInfo)
+  );
 
   const seFirmwareVersion = await getCurrentFirmware({
     version: deviceInfo.version,
@@ -215,14 +236,18 @@ const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<Lan
   const allPackages: LanguagePackage[] = data.reduce(
     (acc, response) => [
       ...acc,
-      ...response.language_package_version.map((p) => ({ ...p, language: response.language })),
+      ...response.language_package_version.map((p) => ({
+        ...p,
+        language: response.language,
+      })),
     ],
     [] as LanguagePackage[]
   );
 
   const packages = allPackages.filter(
     (pack) =>
-      pack.device_versions.includes(deviceVersion.id) && pack.se_firmware_final_versions.includes(seFirmwareVersion.id)
+      pack.device_versions.includes(deviceVersion.id) &&
+      pack.se_firmware_final_versions.includes(seFirmwareVersion.id)
   );
 
   return packages;
@@ -264,29 +289,33 @@ const getLatestFirmware: (arg0: {
 
     return data.se_firmware_osu_version;
   },
-  (a) => `${a.current_se_firmware_final_version}_${a.device_version}_${a.provider}`
+  (a) =>
+    `${a.current_se_firmware_final_version}_${a.device_version}_${a.provider}`
 );
-const getCurrentOSU: (input: { version: string; deviceId: string | number; provider: number }) => Promise<OsuFirmware> =
-  makeLRUCache(
-    async (input) => {
-      const { data } = await network({
-        method: "POST",
-        url: URL.format({
-          pathname: `${getEnv("MANAGER_API_BASE")}/get_osu_version`,
-          query: {
-            livecommonversion,
-          },
-        }),
-        data: {
-          device_version: input.deviceId,
-          version_name: `${input.version}-osu`,
-          provider: input.provider,
+const getCurrentOSU: (input: {
+  version: string;
+  deviceId: string | number;
+  provider: number;
+}) => Promise<OsuFirmware> = makeLRUCache(
+  async (input) => {
+    const { data } = await network({
+      method: "POST",
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/get_osu_version`,
+        query: {
+          livecommonversion,
         },
-      });
-      return data;
-    },
-    (a) => `${a.version}_${a.deviceId}_${a.provider}`
-  );
+      }),
+      data: {
+        device_version: input.deviceId,
+        version_name: `${input.version}-osu`,
+        provider: input.provider,
+      },
+    });
+    return data;
+  },
+  (a) => `${a.version}_${a.deviceId}_${a.provider}`
+);
 const getCurrentFirmware: (input: {
   version: string;
   deviceId: string | number;
@@ -315,26 +344,32 @@ const getCurrentFirmware: (input: {
   },
   (a) => `${a.version}_${a.deviceId}_${a.provider}`
 );
-const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCache(
-  async (id) => {
-    const {
-      data,
-    }: {
-      data: FinalFirmware;
-    } = await network({
-      method: "GET",
-      url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/firmware_final_versions/${id}`,
-        query: {
-          livecommonversion,
-        },
-      }),
-    });
-    return data;
-  },
-  (id) => String(id)
-);
-const getDeviceVersion: (targetId: string | number, provider: number) => Promise<DeviceVersion> = makeLRUCache(
+const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> =
+  makeLRUCache(
+    async (id) => {
+      const {
+        data,
+      }: {
+        data: FinalFirmware;
+      } = await network({
+        method: "GET",
+        url: URL.format({
+          pathname: `${getEnv(
+            "MANAGER_API_BASE"
+          )}/firmware_final_versions/${id}`,
+          query: {
+            livecommonversion,
+          },
+        }),
+      });
+      return data;
+    },
+    (id) => String(id)
+  );
+const getDeviceVersion: (
+  targetId: string | number,
+  provider: number
+) => Promise<DeviceVersion> = makeLRUCache(
   async (targetId, provider) => {
     const {
       data,
@@ -353,12 +388,16 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
         target_id: targetId,
       },
     }).catch((error) => {
-      const status = error && (error.status || (error.response && error.response.status)); // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
+      const status =
+        error && (error.status || (error.response && error.response.status)); // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
 
       if (status === 404) {
-        throw new FirmwareNotRecognized("manager api did not recognize targetId=" + targetId, {
-          targetId,
-        });
+        throw new FirmwareNotRecognized(
+          "manager api did not recognize targetId=" + targetId,
+          {
+            targetId,
+          }
+        );
       }
 
       throw error;
@@ -451,7 +490,10 @@ const listInstalledApps = (
 ): Observable<ListInstalledAppsEvent> => {
   if (getEnv("MOCK")) {
     const result = global._listInstalledApps_mock_result;
-    invariant(result, "using MOCK, global._listInstalledApps_mock_result must be set");
+    invariant(
+      result,
+      "using MOCK, global._listInstalledApps_mock_result must be set"
+    );
     return createMockSocket(secureChannelMock(false), resultMock(result));
   }
 
@@ -475,7 +517,10 @@ const listInstalledApps = (
         return {
           type: "result",
           payload: [...o.payload].map((a) => {
-            invariant(typeof a === "object" && a, "payload array item are objects");
+            invariant(
+              typeof a === "object" && a,
+              "payload array item are objects"
+            );
             const { hash, name } = a;
             invariant(typeof hash === "string", "hash is defined");
             invariant(typeof name === "string", "name is defined");

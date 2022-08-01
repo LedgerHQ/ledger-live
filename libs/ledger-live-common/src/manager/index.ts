@@ -160,11 +160,15 @@ const CacheAPI = {
     };
   },
   // get list of available languages for a given deviceInfo
-  getAvailableLanguagesDevice: async (deviceInfo: DeviceInfo): Promise<Language[]> => {
-    const languagePackages = await ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
+  getAvailableLanguagesDevice: async (
+    deviceInfo: DeviceInfo
+  ): Promise<Language[]> => {
+    const languagePackages = await ManagerAPI.getLanguagePackagesForDevice(
+      deviceInfo
+    );
     const languages = languagePackages.map((pack) => pack.language);
-    
-    if(!languages.includes("english")) {
+
+    if (!languages.includes("english")) {
       languages.push("english"); // english is always available
     }
 

@@ -38,7 +38,6 @@ export const isHardwareVersionSupported = (
     deviceVersionRangesForHardwareVersion[modelId] as string
   );
 
-
 export default async function getVersion(
   transport: Transport
 ): Promise<FirmwareInfo> {
