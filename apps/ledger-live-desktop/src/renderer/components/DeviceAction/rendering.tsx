@@ -5,14 +5,14 @@ import { TFunction, Trans } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { WrongDeviceForAccount, UpdateYourApp } from "@ledgerhq/errors";
 import { LatestFirmwareVersionRequired } from "@ledgerhq/live-common/errors";
-import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   getAccountUnit,
   getMainAccount,
@@ -49,7 +49,7 @@ import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
-import { Flex, Log, ProgressLoader } from "@ledgerhq/react-ui"
+import { Flex, Log, ProgressLoader } from "@ledgerhq/react-ui";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 export const AnimationWrapper = styled.div`
@@ -174,8 +174,8 @@ export const renderRequestQuitApp = ({
   modelId,
   type,
 }: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
+  modelId: DeviceModelId;
+  type: "light" | "dark";
 }) => (
   <Wrapper>
     <Header />
@@ -194,8 +194,8 @@ export const renderVerifyUnwrapped = ({
   modelId,
   type,
 }: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
+  modelId: DeviceModelId;
+  type: "light" | "dark";
 }) => (
   <AnimationWrapper modelId={modelId}>
     <DeviceBlocker />
@@ -211,12 +211,12 @@ const OpenManagerBtn = ({
   mt = 2,
   ml = 0,
 }: {
-  closeAllModal: () => void,
-  appName?: string,
-  updateApp?: boolean,
-  firmwareUpdate?: boolean,
-  mt?: number,
-  ml?: number,
+  closeAllModal: () => void;
+  appName?: string;
+  updateApp?: boolean;
+  firmwareUpdate?: boolean;
+  mt?: number;
+  ml?: number;
 }) => {
   const history = useHistory();
   const { setDrawer } = useContext(context);
@@ -297,12 +297,12 @@ export const InstallingApp = ({
   request,
   analyticsPropertyFlow = "unknown",
 }: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
-  appName: string,
-  progress: number,
-  request: any,
-  analyticsPropertyFlow?: string,
+  modelId: DeviceModelId;
+  type: "light" | "dark";
+  appName: string;
+  progress: number;
+  request: any;
+  analyticsPropertyFlow?: string;
 }) => {
   const currency = request?.currency || request?.account?.currency;
   const appNameToTrack = appName || request?.appName || currency?.managerAppName;
@@ -333,32 +333,28 @@ export const InstallingApp = ({
   );
 };
 
-export const renderInstallingLanguage = withV3StyleProvider(({
-  progress,
-  t
-}: {
-  progress: number,
-  t: TFunction
-}) => {
-  const cleanProgress = Math.round(progress * 100);
+export const renderInstallingLanguage = withV3StyleProvider(
+  ({ progress, t }: { progress: number; t: TFunction }) => {
+    const cleanProgress = Math.round(progress * 100);
 
-  return (
-    <Flex 
-      flex={1}
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-      data-test-id="installing-language-progress"
-    >
-      <ProgressWrapper>
-        <ProgressLoader progress={cleanProgress} />
-      </ProgressWrapper>
-      <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={30}>
-        {t("deviceLocalization.installingLanguage")}
-      </Log> 
-    </Flex>
-  );
-});
+    return (
+      <Flex
+        flex={1}
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+        data-test-id="installing-language-progress"
+      >
+        <ProgressWrapper>
+          <ProgressLoader progress={cleanProgress} />
+        </ProgressWrapper>
+        <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={30}>
+          {t("deviceLocalization.installingLanguage")}
+        </Log>
+      </Flex>
+    );
+  },
+);
 
 export const renderListingApps = () => (
   <Wrapper data-test-id="device-action-loader">
@@ -384,9 +380,9 @@ export const renderAllowManager = ({
   type,
   wording,
 }: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
-  wording: string,
+  modelId: DeviceModelId;
+  type: "light" | "dark";
+  wording: string;
 }) => (
   <Wrapper>
     <DeviceBlocker />
@@ -407,9 +403,9 @@ export const renderAllowLanguageInstallation = ({
   type,
   t,
 }: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
-  t: TFunction,
+  modelId: DeviceModelId;
+  type: "light" | "dark";
+  t: TFunction;
 }) => (
   <Flex
     flex={1}
@@ -435,11 +431,11 @@ export const renderAllowOpeningApp = ({
   tokenContext,
   isDeviceBlocker,
 }: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
-  wording: string,
-  tokenContext?: TokenCurrency,
-  isDeviceBlocker?: boolean,
+  modelId: DeviceModelId;
+  type: "light" | "dark";
+  wording: string;
+  tokenContext?: TokenCurrency;
+  isDeviceBlocker?: boolean;
 }) => (
   <Wrapper>
     {isDeviceBlocker ? <DeviceBlocker /> : null}
@@ -468,8 +464,8 @@ export const renderWarningOutdated = ({
   passWarning,
   appName,
 }: {
-  passWarning: () => void,
-  appName: string,
+  passWarning: () => void;
+  appName: string;
 }) => (
   <Wrapper id={`warning-outdated-app`}>
     <Logo warning>
@@ -503,17 +499,17 @@ export const renderError = ({
   requireFirmwareUpdate,
   withOnboardingCTA,
 }: {
-  error: Error,
-  withOpenManager?: boolean,
-  onRetry?: () => void,
-  withExportLogs?: boolean,
-  list?: boolean,
-  supportLink?: string,
-  warning?: boolean,
-  info?: boolean,
-  managerAppName?: string,
-  requireFirmwareUpdate?: boolean,
-  withOnboardingCTA?: boolean,
+  error: Error;
+  withOpenManager?: boolean;
+  onRetry?: () => void;
+  withExportLogs?: boolean;
+  list?: boolean;
+  supportLink?: string;
+  warning?: boolean;
+  info?: boolean;
+  managerAppName?: string;
+  requireFirmwareUpdate?: boolean;
+  withOnboardingCTA?: boolean;
 }) => (
   <Wrapper id={`error-${error.name}`}>
     <Logo info={info} warning={warning}>
@@ -571,8 +567,8 @@ export const renderInWrongAppForAccount = ({
   onRetry,
   accountName,
 }: {
-  onRetry: () => void,
-  accountName: string,
+  onRetry: () => void;
+  accountName: string;
 }) =>
   renderError({
     error: new WrongDeviceForAccount(null, { accountName }),
@@ -588,12 +584,12 @@ export const renderConnectYourDevice = ({
   device,
   unresponsive,
 }: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
-  onRetry: () => void,
-  onRepairModal: () => void,
-  device: Device,
-  unresponsive?: boolean,
+  modelId: DeviceModelId;
+  type: "light" | "dark";
+  onRetry: () => void;
+  onRepairModal: () => void;
+  device: Device;
+  unresponsive?: boolean;
 }) => (
   <Wrapper>
     <Header />
@@ -627,8 +623,8 @@ export const renderFirmwareUpdating = ({
   modelId,
   type,
 }: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
+  modelId: DeviceModelId;
+  type: "light" | "dark";
 }) => (
   <Wrapper>
     <Header />
@@ -653,14 +649,14 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo,
   estimatedFees,
 }: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
-  transaction: Transaction,
-  status: TransactionStatus,
-  exchangeRate: ExchangeRate,
-  exchange: Exchange,
-  amountExpectedTo?: string,
-  estimatedFees?: string,
+  modelId: DeviceModelId;
+  type: "light" | "dark";
+  transaction: Transaction;
+  status: TransactionStatus;
+  exchangeRate: ExchangeRate;
+  exchange: Exchange;
+  amountExpectedTo?: string;
+  estimatedFees?: string;
 }) => {
   const ProviderIcon = getProviderIcon(exchangeRate);
   const [sourceAccountName, sourceAccountCurrency] = [
@@ -765,9 +761,9 @@ export const renderSecureTransferDeviceConfirmation = ({
   modelId,
   type,
 }: {
-  exchangeType: "sell" | "fund",
-  modelId: DeviceModelId,
-  type: "light" | "dark",
+  exchangeType: "sell" | "fund";
+  modelId: DeviceModelId;
+  type: "light" | "dark";
 }) => (
   <>
     <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
@@ -786,8 +782,8 @@ export const renderLoading = ({
   modelId,
   children,
 }: {
-  modelId: DeviceModelId,
-  children?: React.ReactNode,
+  modelId: DeviceModelId;
+  children?: React.ReactNode;
 }) => (
   <Wrapper data-test-id="device-action-loader">
     <Header />

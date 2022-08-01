@@ -81,12 +81,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   }, [onClose, setInstalling]);
 
   const Result = useCallback(() => {
-    return (
-      <DeviceLanguageInstalled
-        onContinue={onCloseDrawer}
-        onMount={onSuccess}
-      />
-    );
+    return <DeviceLanguageInstalled onContinue={onCloseDrawer} onMount={onSuccess} />;
   }, [selectedLanguage, onCloseDrawer, onSuccess]);
 
   const onChange = useCallback(

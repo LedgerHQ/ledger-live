@@ -8,13 +8,12 @@ import { useTranslation } from "react-i18next";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 type Props = {
-  deviceInfo: DeviceInfo;
+  // this makes sure that this component is only rendered if languageId is present in deviceInfo
+  deviceInfo: DeviceInfo & { languageId: number };
   device: Device;
 };
 
 const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
-  if (deviceInfo.languageId === undefined) return null;
-
   const [isLanguageInstallationOpen, setIsLanguageInstallation] = useState(false);
   const [deviceLanguage, setDeviceLanguage] = useState<Language>(
     idsToLanguage[deviceInfo.languageId],

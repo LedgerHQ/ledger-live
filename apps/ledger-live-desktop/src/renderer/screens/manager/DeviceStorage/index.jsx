@@ -332,7 +332,9 @@ const DeviceStorage = ({
             )}{" "}
             {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
           </Text>
-          <DeviceLanguage deviceInfo={deviceInfo} device={device} />
+          {deviceInfo.languageId !== undefined && (
+            <DeviceLanguage deviceInfo={deviceInfo} device={device} />
+          )}
         </Flex>
         <Separator />
         <Info>
