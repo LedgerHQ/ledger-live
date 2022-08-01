@@ -212,7 +212,10 @@ const implementations = {
                     // a disconnect will locally be remembered via locally setting device to null...
                     device = null;
                     o.next(event);
-                    log("actions-install-language-event/polling", "device disconnect timeout");
+                    log(
+                      "actions-install-language-event/polling",
+                      "device disconnect timeout"
+                    );
                   }, DISCONNECT_DEBOUNCE);
                 } else {
                   // These error events should stop polling

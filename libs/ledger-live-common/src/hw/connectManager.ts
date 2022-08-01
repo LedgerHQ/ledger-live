@@ -41,7 +41,10 @@ export type ConnectManagerEvent =
     }
   | ListAppsEvent;
 
-const cmd = ({ devicePath, managerRequest }: Input): Observable<ConnectManagerEvent> =>
+const cmd = ({
+  devicePath,
+  managerRequest,
+}: Input): Observable<ConnectManagerEvent> =>
   withDevice(devicePath)((transport) =>
     Observable.create((o) => {
       const timeoutSub = of({
@@ -90,7 +93,8 @@ const cmd = ({ devicePath, managerRequest }: Input): Observable<ConnectManagerEv
             ) {
               return from(getAppAndVersion(transport)).pipe(
                 concatMap((appAndVersion) => {
-                  return !managerRequest?.autoQuitAppDisabled && !isDashboardName(appAndVersion.name)
+                  return !managerRequest?.autoQuitAppDisabled &&
+                    !isDashboardName(appAndVersion.name)
                     ? attemptToQuitApp(transport, appAndVersion)
                     : of({
                         type: "appDetected",
