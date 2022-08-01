@@ -17,7 +17,7 @@ process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
   unsubscribeAllCommands();
-  if (unsubscribeSentry) unsubscribeSentry();
+  unsubscribeSentry();
 });
 
 logger.add(new LoggerTransport());
