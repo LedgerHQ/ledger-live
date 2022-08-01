@@ -52,9 +52,11 @@ const getTransactionStatus = async (
 
   if (
     !errors.amount &&
-    account.celoResources?.lockedBalance.gt(0) &&
+    (account.celoResources?.lockedBalance.gt(0) ||
+      !!account.celoResources?.pendingWithdrawals?.length) &&
     (transaction.useAllAmount ||
-      account.spendableBalance.minus(amount).lt(FEES_SAFETY_BUFFER))
+      account.spendableBalance.minus(amount).lt(FEES_SAFETY_BUFFER)) &&
+    ["send", "lock"].includes(transaction.mode)
   ) {
     warnings.amount = new CeloAllFundsWarning();
   }
