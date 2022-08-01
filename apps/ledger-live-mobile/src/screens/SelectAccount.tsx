@@ -84,14 +84,15 @@ export default function ReceiveFunds({ navigation, route }: Props) {
       if (!isNaN(minBalance) && balance.lte(minBalance)) {
         setError(new NotEnoughBalance());
       } else {
-        navigation.navigate(ScreenName.ReceiveConnectDevice, {
+        navigation.navigate(next || ScreenName.ReceiveConnectDevice, {
+          ...route.params,
           account,
           accountId: account.id,
           parentId: account.type !== "Account" ? account.parentId : undefined,
         });
       }
     },
-    [minBalance, navigation],
+    [minBalance, navigation, next, route.params],
   );
 
   return (
