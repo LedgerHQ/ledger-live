@@ -4,7 +4,7 @@ import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Account as AccountType } from "@ledgerhq/live-common/types/index";
+import { Account as AccountType } from "@ledgerhq/types-live";
 
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
@@ -23,11 +23,11 @@ import { constants } from "~/renderer/families/elrond/constants";
 interface RenderDropdownItemType {
   isActive: boolean;
   item: {
-    key: string;
-    label: string;
-    disabled: boolean;
-    tooltip: ReactNode;
-    show: boolean;
+    key: string,
+    label: string,
+    disabled: boolean,
+    tooltip: ReactNode,
+    show: boolean,
   };
 }
 

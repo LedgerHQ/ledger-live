@@ -2,7 +2,7 @@
 
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
-import { Account as AccountType } from "@ledgerhq/live-common/types/index";
+import { Account as AccountType } from "@ledgerhq/types-live";
 
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
 import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";

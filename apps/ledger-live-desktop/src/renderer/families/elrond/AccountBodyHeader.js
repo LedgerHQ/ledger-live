@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
