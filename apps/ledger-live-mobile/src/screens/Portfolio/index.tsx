@@ -16,7 +16,6 @@ import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import LinearGradient from "react-native-linear-gradient";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import {
@@ -27,7 +26,6 @@ import {
 import { usePortfolio } from "../../actions/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import BackgroundGradient from "../../components/BackgroundGradient";
-import getWindowDimensions from "../../logic/getWindowDimensions";
 
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
@@ -39,7 +37,6 @@ import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import AddAssetsCard from "./AddAssetsCard";
 import Assets from "./Assets";
-import { PortfolioHistoryList } from "./PortfolioHistory";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { useProviders } from "../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
@@ -47,6 +44,7 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -256,15 +254,7 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       ...(showAssets
         ? [
-            <Box background={colors.background.main}>
-              <SectionContainer px={0} mb={8}>
-                <SectionTitle
-                  title={t("analytics.operations.title")}
-                  containerProps={{ mx: 6 }}
-                />
-                <PortfolioHistoryList navigation={navigation} />
-              </SectionContainer>
-            </Box>,
+            <OperationsHistorySection accounts={assetsToDisplay} />,
           ]
         : []),
     ],
@@ -306,7 +296,7 @@ function PortfolioScreen({ navigation }: Props) {
         />
         <AnimatedFlatListWithRefreshControl
           data={data}
-          style={{ flex: 1, position: "relative", paddingTop: 48 }}
+          style={{ flex: 1, position: "relative", paddingTop: 48, marginBottom: 36 }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
           keyExtractor={(_: any, index: number) => String(index)}
