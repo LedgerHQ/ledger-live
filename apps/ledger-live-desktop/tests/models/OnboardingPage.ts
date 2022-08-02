@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from "@playwright/test";
+import { Page, Locator } from "@playwright/test";
 import { DeviceAction } from "./DeviceAction";
 
 export class OnboardingPage {
@@ -75,14 +75,15 @@ export class OnboardingPage {
     this.quizAnswerBottomButton = page.locator("data-test-id=v3-quiz-answer-1");
   }
 
-  async getStarted() {
+  async waitForLaunch() {
     await this.getStartedButton.waitFor({ state: "visible" });
-    expect(await this.page.screenshot()).toMatchSnapshot("v3-get-started.png");
+  }
+
+  async getStarted() {
     await this.getStartedButton.click();
   }
 
   async selectDevice(device: "nanoS" | "nanoX" | "nanoSPlus") {
-    expect(await this.page.screenshot()).toMatchSnapshot("v3-device-selection.png");
     await this.page.hover(`[data-test-id=v3-container-device-${device}]`);
     await this.selectDeviceButton(device).click();
   }
@@ -105,28 +106,6 @@ export class OnboardingPage {
 
   async pedagogyEnd() {
     await this.stepperEndButton.click();
-  }
-
-  async startTutorial(group: string, nano: string) {
-    expect(await this.page.screenshot()).toMatchSnapshot([group, "get-started-1.png"]);
-    await this.continueTutorial();
-
-    expect.soft(await this.page.screenshot()).toMatchSnapshot([group, `get-started-2-${nano}.png`]);
-    await this.continueTutorial();
-  }
-
-  async setPinCode(group: string) {
-    expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-1.png"]);
-    await this.acceptPrivatePinCode();
-
-    expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-2.png"]);
-    await this.continueTutorial();
-
-    expect.soft(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-3.png"]);
-    await this.continueTutorial();
-
-    expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-4.png"]);
-    await this.continuePinDrawer();
   }
 
   async continuePinDrawer() {
@@ -178,15 +157,11 @@ export class OnboardingPage {
   }
 
   async checkDevice() {
-    expect(await this.page.screenshot()).toMatchSnapshot("v3-genuine-check.png");
     await this.checkMyNanoButton.click();
-    expect(await this.page.screenshot()).toMatchSnapshot("v3-before-genuine-check.png");
   }
 
   async genuineCheck() {
-    expect(await this.page.screenshot()).toMatchSnapshot("v3-genuine-checking.png");
     await this.deviceAction.genuineCheck();
-    expect(await this.page.screenshot()).toMatchSnapshot("v3-genuine-check-done.png");
   }
 
   async continue() {
@@ -196,6 +171,5 @@ export class OnboardingPage {
   async reachApp() {
     await this.continue();
     await this.page.waitForTimeout(500);
-    expect(await this.page.screenshot()).toMatchSnapshot("v3-onboarding-complete.png");
   }
 }
