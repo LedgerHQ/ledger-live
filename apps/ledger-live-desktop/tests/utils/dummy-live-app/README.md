@@ -12,7 +12,8 @@ Run `pnpm --filter="dummy-live-app" start`.
 
 ## Quick script to build the app from scratch
 
-`pnpm clean && pnpm i && pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build`
+To use the Dummy app in the Playwright tests, you must install and build the dependencies and source code for the dummy app. To do this run the following from the root folder of this monorepo:
+
+`pnpm clean && pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build`
 
 Then run `pnpm --filter="dummy-live-app" serve`
-
