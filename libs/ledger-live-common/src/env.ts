@@ -102,7 +102,7 @@ const envDefinitions = {
   },
   API_STELLAR_HORIZON_FETCH_LIMIT: {
     parser: intParser,
-    def: 200,
+    def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
   },
   API_STELLAR_HORIZON_STATIC_FEE: {
