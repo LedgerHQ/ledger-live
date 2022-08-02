@@ -19,7 +19,7 @@ import {
   localeIdToDeviceLanguage,
   Locale,
 } from "../../../languages";
-import { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage } from "../../../actions/settings";
@@ -29,12 +29,8 @@ import {
 } from "../../../reducers/settings";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import NanoXFolded from "../../../images/devices/NanoXFolded";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
-import {
-  idsToLanguage,
-  Language,
-} from "@ledgerhq/live-common/lib/types/languages";
 
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
