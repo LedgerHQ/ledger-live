@@ -1,6 +1,7 @@
 // @flow
 import type { CeloResources, CeloResourcesRaw } from "./types";
 import { BigNumber } from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 
 export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
   const {
@@ -35,24 +36,25 @@ export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
 }
 
 export function fromCeloResourcesRaw(r: CeloResourcesRaw): CeloResources {
-  const {
-    registrationStatus,
-    lockedBalance,
-    nonvotingLockedBalance,
-    votes,
-    electionAddress,
-    lockedGoldAddress,
-  } = r;
+  // const {
+  //   registrationStatus,
+  //   lockedBalance,
+  //   nonvotingLockedBalance,
+  //   votes,
+  //   electionAddress,
+  //   lockedGoldAddress,
+  // } = r;
+  log("celo resources raw", JSON.stringify(r));
   return {
-    registrationStatus,
-    lockedBalance: new BigNumber(lockedBalance),
-    nonvotingLockedBalance: new BigNumber(nonvotingLockedBalance),
+    registrationStatus: r.registrationStatus,
+    lockedBalance: new BigNumber(r.lockedBalance),
+    nonvotingLockedBalance: new BigNumber(r.nonvotingLockedBalance),
     pendingWithdrawals: r.pendingWithdrawals?.map((u) => ({
       value: new BigNumber(u.value),
       time: new BigNumber(u.time),
       index: Number(u.index),
     })),
-    votes: votes?.map((vote) => ({
+    votes: r.votes?.map((vote) => ({
       validatorGroup: vote.validatorGroup,
       amount: new BigNumber(vote.amount),
       activatable: vote.activatable,
@@ -60,7 +62,7 @@ export function fromCeloResourcesRaw(r: CeloResourcesRaw): CeloResources {
       type: vote.type,
       index: vote.index,
     })),
-    electionAddress,
-    lockedGoldAddress,
+    electionAddress: r.electionAddress,
+    lockedGoldAddress: r.lockedGoldAddress,
   };
 }
