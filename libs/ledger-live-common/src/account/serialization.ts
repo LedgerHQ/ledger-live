@@ -778,9 +778,13 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
 
   switch (res.currency.family) {
     case "tron":
-      (res as TronAccount).tronResources = fromTronResourcesRaw(
-        (rawAccount as TronAccountRaw).tronResources
-      );
+      const rawTronResources = (rawAccount as TronAccountRaw).tronResources;
+      if (rawTronResources) {
+        (res as TronAccount).tronResources = fromTronResourcesRaw(
+          rawTronResources
+        );
+      }
+
       break;
     case "cosmos":
       (res as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(

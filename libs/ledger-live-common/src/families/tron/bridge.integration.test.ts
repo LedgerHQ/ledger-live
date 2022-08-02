@@ -24,6 +24,7 @@ import {
   TronVoteRequired,
   TronUnexpectedFees,
 } from "../../errors";
+import { getTronResources } from "../../api/Tron";
 
 const unactivatedAddress = "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD";
 const activatedAddress1 = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";

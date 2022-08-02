@@ -719,7 +719,10 @@ const getTransactionStatus = async (
   const totalSpent =
     account.type === "Account" ? amountSpent.plus(estimatedFees) : amountSpent;
 
-  if (!errors.recipient && ["send", "freeze"].includes(mode)) {
+  if (["send", "freeze"].includes(mode)) {
+    if (amount.eq(0)) {
+      errors.amount = new AmountRequired();
+    }
     if (amountSpent.eq(0)) {
       errors.amount = useAllAmount
         ? new NotEnoughBalance()
