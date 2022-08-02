@@ -1,6 +1,6 @@
 // @flow
 import invariant from "invariant";
-import React from "react";
+import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
@@ -9,7 +9,7 @@ import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-com
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 import Box from "~/renderer/components/Box";
-import { NoResultPlaceholder } from "~/renderer/components/Delegation/ValidatorSearchInput";
+import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
@@ -23,8 +23,10 @@ const ValidatorsSection: ThemedComponent<{}> = styled(Box)`
 
 export default function ValidatorField({ account, transaction, t, onChange }: *) {
   const currencyName = account.currency.name.toLowerCase();
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
+  const [search, setSearch] = useState("");
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName, search);
   const { cosmosResources } = account;
+  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
 
   invariant(cosmosResources, "cosmosResources required");
 
@@ -57,11 +59,13 @@ export default function ValidatorField({ account, transaction, t, onChange }: *)
           />
         </Text>
       </Box>
+      <Box mb={2}>
+        <ValidatorSearchInput search={search} onSearch={onSearch} />
+      </Box>
       <ScrollLoadingList
         data={sortedFilteredValidators}
         style={{ flex: "1 0 350px" }}
         renderItem={renderItem}
-        noResultPlaceholder={validators.length <= 0 && <NoResultPlaceholder search={""} />}
       />
     </ValidatorsSection>
   );

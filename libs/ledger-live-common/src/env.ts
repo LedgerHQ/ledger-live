@@ -115,6 +115,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Endpoint for Osmosis Node",
   },
+  API_STELLAR_HORIZON_STATIC_FEE: {
+    def: false,
+    parser: boolParser,
+    desc: "Static fee for Stellar account",
+  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",

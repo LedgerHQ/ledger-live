@@ -4,7 +4,7 @@ import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
 
-import type { Transaction } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 
 import WarnBox from "~/renderer/components/WarnBox";
 

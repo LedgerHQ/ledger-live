@@ -1334,22 +1334,30 @@
       }
     }
   },
-  "tokensList": {
-    "title": "トークン",
-    "cta": "トークンの追加",
-    "placeholder": "トークンを追加するには、 {{currencyName}} アドレスにトークンを送付してください。",
-    "link": "詳細はこちら",
-    "seeTokens": "トークンを表示 ({{tokenCount}})",
-    "hideTokens": "トークンを非表示 ({{tokenCount}})",
-    "countTooltip": "1トークン",
-    "countTooltip_plural": "{{count}}トークン",
-    "algorand": {
-      "title": "ASA（資産）",
-      "cta": "ASAを追加",
-      "placeholder": "{{currencyName}}アカウントに資産を追加できます。",
-      "link": "ASA(資産)の仕組みとは？",
-      "seeTokens": "ASAを表示({{tokenCount}})",
-      "hideTokens": "ASAを非表示({{tokenCount}})"
+  "tokensList" : {
+    "title" : "トークン",
+    "cta" : "トークンの追加",
+    "placeholder" : "トークンを追加するには、 {{currencyName}} アドレスにトークンを送付してください。",
+    "link" : "詳細はこちら",
+    "seeTokens" : "トークンを表示 ({{tokenCount}})",
+    "hideTokens" : "トークンを非表示 ({{tokenCount}})",
+    "countTooltip" : "1トークン",
+    "countTooltip_plural" : "{{count}}トークン",
+    "algorand" : {
+      "title" : "ASA（資産）",
+      "cta" : "ASAを追加",
+      "placeholder" : "{{currencyName}}アカウントに資産を追加できます。",
+      "link" : "ASA(資産)の仕組みとは？",
+      "seeTokens" : "ASAを表示({{tokenCount}})",
+      "hideTokens" : "ASAを非表示({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "資産",
+      "cta" : "資産を追加",
+      "placeholder" : "{{currencyName}}アカウントに資産を追加できます。",
+      "link" : "Stellar資産の詳細",
+      "seeTokens" : "資産を表示 ({{tokenCount}})",
+      "hideTokens" : "資産を非表示 ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -1856,17 +1864,17 @@
     "title": "売却",
     "titleCrypto": "{{currency}}を売却する"
   },
-  "receive": {
-    "title": "受け取る",
-    "successTitle": "安全に共有されたアドレス",
-    "steps": {
-      "chooseAccount": {
-        "title": "アカウント",
-        "label": "引き落としアカウント",
-        "parentAccount": "1. {{currencyName}}アカウントを選択",
-        "token": "2. トークンを選択する",
-        "verifyTokenType": "<0>{{token}}</0>が<0>{{tokenType}}</0>トークンであることを確認してください。{{currency}}アカウント他の暗号資産を送信すると失われる可能性があります。",
-        "warningTokenType": "{{currency}}アカウントには、<0>{{ticker}}</0>または<0>{{tokenType}}</0>トークンのみを送金してください他の暗号資産を送信すると、資金が永久に失われる可能性があります。"
+  "receive" : {
+    "title" : "受け取る",
+    "successTitle" : "安全に共有されたアドレス",
+    "steps" : {
+      "chooseAccount" : {
+        "title" : "アカウント",
+        "label" : "受取アカウント",
+        "parentAccount" : "1. {{currencyName}}アカウントを選択",
+        "token" : "2. トークンを選択する",
+        "verifyTokenType" : "<0>{{token}}</0>が<0>{{tokenType}}</0>トークンであることを確認してください。{{currency}}アカウント他の暗号資産を送信すると失われる可能性があります。",
+        "warningTokenType" : "{{currency}}アカウントには、<0>{{ticker}}</0>または<0>{{tokenType}}</0>トークンのみを送金してください他の暗号資産を送信すると、資金が永久に失われる可能性があります。"
       },
       "connectDevice": {
         "title": "デバイス",
@@ -1998,14 +2006,21 @@
       }
     }
   },
-  "tron": {
-    "voting": {
-      "emptyState": {
-        "description": "資産を凍結し投票することで、報酬を得られるようになりました。",
-        "info": "投票の仕組み",
-        "votesDesc": "1人以上の代表に投票して、ステーキング報酬を得ることができます。",
-        "vote": "投票する",
-        "voteExisting": "投票の管理"
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "合計残高にはステーキング報酬は含まれません"
+      }
+    }
+  },
+  "tron" : {
+    "voting" : {
+      "emptyState" : {
+        "description" : "資産を凍結し投票することで、報酬を得られるようになりました。",
+        "info" : "投票の仕組み",
+        "votesDesc" : "1人以上の代表に投票して、ステーキング報酬を得ることができます。",
+        "vote" : "投票する",
+        "voteExisting" : "投票の管理"
       },
       "manageTP": "資産管理",
       "warnEarnRewards": "報酬の獲得を開始するには、少なくとも{{amount}}が必要です",
@@ -2586,12 +2601,37 @@
       }
     }
   },
-  "solana": {
-    "common": {
-      "broadcastError": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。",
-      "viewDetails": "詳細を表示",
-      "connectDevice": {
-        "title": "デバイス"
+  "stellar" : {
+    "addAsset" : {
+      "title" : "資産を追加",
+      "steps" : {
+        "assets" : {
+          "title" : "資産",
+          "info" : "資産を追加するには、最少額の手数料でトランザクションを送信する必要があります。これは取引履歴に表示されます",
+          "selectLabel" : "資産を選択",
+          "disabledTooltip" : "すでに、Stellarアカウントに資産を所有しています"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "{{token}}資産が正常に追加されました",
+            "text" : "Stellarアカウントで<0>{{token}}</0>資産の受け取りや、送付が可能になりました。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    }
+  },
+  "solana" : {
+    "common" : {
+      "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。",
+      "viewDetails" : "詳細を表示",
+      "connectDevice" : {
+        "title" : "デバイス"
       },
       "confirmation": {
         "title": "確認"
@@ -3753,7 +3793,20 @@
         "MEMO_HASH": "メモのハッシュ",
         "MEMO_RETURN": "メモリターン"
       },
-      "memoWarningText": "Memo(メモ)を使用する場合は、受取先とタイプを確認してください。"
+      "memoWarningText" : "Memo(メモ)を使用する場合は、受取先とタイプを確認してください。",
+      "fee" : "手数料",
+      "feeInfoText" : "Stellarネットワークでの取引には、最低0.00001 XLMの取引手数料が必要です",
+      "suggested" : "提案済み",
+      "recommendedFee" : "推奨手数料",
+      "recommenndedFeeInfo" : "このトランザクションを推奨手数料より低額で提出可能ですが、完了しない場合があります",
+      "networkCongestion" : "ネットワーク混雑",
+      "networkCongestionLevel" : {
+        "LOW" : "低速",
+        "MEDIUM" : "標準",
+        "HIGH" : "高速"
+      },
+      "assetCode" : "資産コード",
+      "assetIssuer" : "資産発行者"
     },
     "cosmos": {
       "memo": "メモ",
@@ -4306,17 +4359,11 @@
     "FeeTooHigh": {
       "title": "ネットワーク手数料が10%を超えています。"
     },
-    "StellarWrongMemoFormat": {
-      "title": "メモのフォーマットに誤りがあります。"
+    "SourceHasMultiSign" : {
+      "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
     },
-    "SourceHasMultiSign": {
-      "title": "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
-    },
-    "StellarMemoRecommended": {
-      "title": "この受取先に送付するには、Memoが必要な場合があります。"
-    },
-    "SwapExchangeRateAmountTooLow": {
-      "title": "{{minAmountFromFormatted}} 以上の数量でなければなりません。"
+    "SwapExchangeRateAmountTooLow" : {
+      "title" : "{{minAmountFromFormatted}} 以上の数量でなければなりません。"
     },
     "SwapExchangeRateAmountTooHigh": {
       "title": "{{maxAmountFromFormatted}}以下の値でなければなりません。"
@@ -4379,8 +4426,49 @@
     "SolanaTxConfirmationTimeout": {
       "title": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
     },
-    "NotEnoughNftOwned": {
-      "title": "利用可能なトークン数を超えています"
+    "NotEnoughNftOwned" : {
+      "title" : "利用可能なトークン数を超えています"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "送付可能な最低金額は、{{amount}} ADAです"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "お支払いに十分な資金があることをご確認ください"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "メモのフォーマットに誤りがあります。"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "この受取先に送付するには、Memoが必要な場合があります。"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "この受取人にはまだ{{assetCode}}へのトラストラインがありません"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Stellar資産はトラストライン追加前に選択する必要があります"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "選択されたStellar資産が見つかりませんでした"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントにトランザクション手数料をカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "選択された手数料は推奨手数料を下回っています"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低トランザクション手数料は0.00001 XLMです"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに新しいトラストラインをカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellarアカウントが存在しません"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     }
   },
   "cryptoOrg": {
@@ -4399,14 +4487,28 @@
     "memoPlaceholder": "任意",
     "memoWarningText": "メモを使用する場合は、受取人と情報をしっかりと確認してください"
   },
-  "hedera": {
-    "name": "Hedera",
-    "createHederaAccountHelp": {
-      "text": "Hederaアカウントの作成方法については、",
-      "link": "こちらのサポート記事をご参照ください。"
+  "hedera" : {
+    "name" : "Hedera",
+    "createHederaAccountHelp" : {
+      "text" : "Hederaアカウントの作成方法については、",
+      "link" : "こちらのサポート記事をご参照ください。"
     },
-    "currentAddress": {
-      "messageIfVirtual": "{{name}}アドレスがLedgerデバイス上で確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    "currentAddress" : {
+      "messageIfVirtual" : "{{name}}アドレスがLedgerデバイス上で確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    },
+    "send" : {
+      "memo" : {
+        "label" : "メモ (任意)",
+        "characterCount" : "{{memoLength}}/ {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "資産を選択"
+    },
+    "selectAccount" : {
+      "title" : "アカウントを選択"
     }
   }
 }

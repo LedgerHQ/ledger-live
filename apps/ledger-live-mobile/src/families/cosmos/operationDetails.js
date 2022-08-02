@@ -6,11 +6,7 @@ import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import type {
-  Account,
-  OperationType,
-  Operation,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, OperationType, Operation } from "@ledgerhq/types-live";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";

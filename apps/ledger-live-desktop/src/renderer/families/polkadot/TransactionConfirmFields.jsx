@@ -5,7 +5,7 @@ import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 
-import type { Transaction } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 

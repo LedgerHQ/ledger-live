@@ -1,16 +1,16 @@
 import expect from "expect";
 import invariant from "invariant";
-import type { AlgorandTransaction } from "./types";
+import type { AlgorandAccount, AlgorandTransaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { isAccountEmpty } from "../../account";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { BigNumber } from "bignumber.js";
-import type { Account } from "../../types";
 import sample from "lodash/sample";
 import { listTokensForCryptoCurrency } from "../../currencies";
 import { extractTokenId } from "./tokens";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { Account } from "@ledgerhq/types-live";
 const currency = getCryptoCurrencyById("algorand");
 // Minimum balance required for a new non-ASA account
 const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
@@ -100,7 +100,8 @@ const algorand: AppSpec<AlgorandTransaction> = {
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
         const rewards =
-          accountBeforeTransaction.algorandResources?.rewards || 0;
+          (accountBeforeTransaction as AlgorandAccount).algorandResources
+            ?.rewards || 0;
         expect(account.balance.plus(rewards).toString()).toBe(
           accountBeforeTransaction.balance.minus(operation.value).toString()
         );
@@ -231,7 +232,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
       name: "claim rewards",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        const rewards = account.algorandResources?.rewards;
+        const rewards = (account as AlgorandAccount).algorandResources?.rewards;
         invariant(rewards && rewards.gt(0), "No pending rewards");
         // Ensure that the rewards can effectively be claimed
         // (fees have to be paid in order to claim the rewards)
@@ -250,7 +251,8 @@ const algorand: AppSpec<AlgorandTransaction> = {
       },
       test: ({ account }) => {
         expect(
-          account.algorandResources && account.algorandResources.rewards.eq(0)
+          (account as AlgorandAccount).algorandResources &&
+            (account as AlgorandAccount).algorandResources.rewards.eq(0)
         ).toBe(true);
       },
     },

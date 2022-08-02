@@ -12,10 +12,8 @@ import {
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import type {
-  Transaction,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useSupplyMaxChoiceButtons } from "@ledgerhq/live-common/compound/react";

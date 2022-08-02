@@ -255,8 +255,8 @@
         "accountPlaceholder": "Quelle auswählen",
         "currencyDisabledTooltip": "Diese Währung ist für swap noch nicht verfügbar"
       },
-      "to": {
-        "title": "Bis"
+      "to" : {
+        "title" : "An"
       },
       "notAvailable": {
         "title": "Swap ist in Ihrem Land noch nicht verfügbar",
@@ -468,12 +468,12 @@
         "amount": "Zu sendender Betrag",
         "currency": "Krypto-Vermögenswert"
       },
-      "to": {
-        "title": "Bis",
-        "account": "Konto",
-        "amount": "Zu erhaltender Betrag",
-        "currency": "Krypto-Vermögenswert",
-        "addAccountCTA": "Neues Konto hinzufügen"
+      "to" : {
+        "title" : "An",
+        "account" : "Konto",
+        "amount" : "Zu erhaltender Betrag",
+        "currency" : "Krypto-Vermögenswert",
+        "addAccountCTA" : "Neues Konto hinzufügen"
       },
       "tradeMethod": {
         "title": "Kurs",
@@ -485,37 +485,37 @@
         "fixedDesc": "Ihr Betrag bleibt auch dann unverändert, wenn sich der Markt ändert. Aktualisiert alle 60 Sekunden.",
         "by": "Bereitgestellt von"
       },
-      "exchange": "Umtauschen",
-      "helpCTA": "Was ist Swap?",
-      "bubble": "Wir verwenden einen festen Tarif, dies ist der genaue Betrag, den Sie erhalten.",
-      "noAccounts": "Sie haben keine {{currencyName}} Konten mit Guthaben",
-      "noApp": "{{currencyName}} App nicht installiert.",
-      "outdatedApp": "{{currencyName}} App-Aktualisierung verfügbar.",
-      "loadingRates": "Raten werden geladen..."
+      "exchange" : "Umtauschen",
+      "helpCTA" : "Was ist Swap?",
+      "bubble" : "Wir verwenden einen festen Tarif, dies ist der genaue Betrag, den Sie erhalten.",
+      "noAccounts" : "Sie haben keine {{currencyName}} Konten mit Guthaben",
+      "noApp" : "{{currencyName}} App nicht installiert.",
+      "outdatedApp" : "{{currencyName}} App-Aktualisierung verfügbar.",
+      "loadingRates" : "Raten werden geladen..."
     },
-    "unauthorizedRatesModal": {
-      "title": "Ledger Live benötigt ein Update",
-      "subtitle": "Bitte aktualisieren Sie Ledger Live auf die neueste Version, und verifizieren Sie Ihre Identität erneut, um mit wyre zu tauschen",
-      "cta": "Verifizierung zurücksetzen"
+    "unauthorizedRatesModal" : {
+      "title" : "Ledger Live benötigt ein Update",
+      "subtitle" : "Bitte aktualisieren Sie Ledger Live auf die neueste Version, und verifizieren Sie Ihre Identität erneut, um mit wyre zu tauschen",
+      "cta" : "Verifizierung zurücksetzen"
     },
-    "resetThirdPartyDataModal": {
-      "title": "Ihre lokalen Drittanbieterdaten löschen",
-      "subtitle": "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
-      "cta": "Bestätigen"
+    "resetThirdPartyDataModal" : {
+      "title" : "Ihre lokalen Drittanbieterdaten löschen",
+      "subtitle" : "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
+      "cta" : "Bestätigen"
     },
-    "modal": {
-      "title": "Umtauschen",
-      "steps": {
-        "summary": {
-          "title": "Zusammenfassung",
-          "from": "Von",
-          "to": "Bis",
-          "toExchange": "Zu sendender Betrag",
-          "toReceive": "Zu erhaltender Betrag",
-          "terms": "Allgemeine Geschäftsbedingungen",
-          "disclaimer": {
-            "description": "Durch Klicken auf \"Bestätigen\" bestätige und akzeptiere ich, dass dieser Dienst ausschließlich von <0>{{provider}}</0> verwaltet wird",
-            "acceptedDescription": "Dieser Dienst wird ausschließlich durch <0>{{provider}}</0> verwaltet"
+    "modal" : {
+      "title" : "Umtauschen",
+      "steps" : {
+        "summary" : {
+          "title" : "Zusammenfassung",
+          "from" : "Von",
+          "to" : "An",
+          "toExchange" : "Zu sendender Betrag",
+          "toReceive" : "Zu erhaltender Betrag",
+          "terms" : "Allgemeine Geschäftsbedingungen",
+          "disclaimer" : {
+            "description" : "Durch Klicken auf \"Bestätigen\" bestätige und akzeptiere ich, dass dieser Dienst ausschließlich von <0>{{provider}}</0> verwaltet wird",
+            "acceptedDescription" : "Dieser Dienst wird ausschließlich durch <0>{{provider}}</0> verwaltet"
           },
           "details": {
             "provider": "Anbieter",
@@ -555,14 +555,14 @@
         "onhold": "Bitte kontaktieren Sie den Swap-Anbieter mit Ihrer Swap-ID, um die Situation zu lösen.",
         "finished": "Ihr Swap wurde erfolgreich abgeschlossen."
       },
-      "date": "Datum",
-      "from": "Von",
-      "fromAddress": "Ursprungsadresse",
-      "fromAddress_plural": "Ursprungsadressen",
-      "to": "Bis",
-      "toProvider": "Adresse des Anbieters",
-      "initialAmount": "Anfangsbetrag",
-      "creditedAmount": "Gutschrift"
+      "date" : "Datum",
+      "from" : "Von",
+      "fromAddress" : "Ursprungsadresse",
+      "fromAddress_plural" : "Ursprungsadressen",
+      "to" : "An",
+      "toProvider" : "Adresse des Anbieters",
+      "initialAmount" : "Anfangsbetrag",
+      "creditedAmount" : "Gutschrift"
     }
   },
   "lottieDebugger": {
@@ -1334,22 +1334,30 @@
       }
     }
   },
-  "tokensList": {
-    "title": "Token",
-    "cta": "Token hinzufügen",
-    "placeholder": "Um Token hinzuzufügen, senden Sie sie einfach an Ihre {{currencyName}}-Adresse.",
-    "link": "Weitere Informationen",
-    "seeTokens": "Token anzeigen ({{tokenCount}})",
-    "hideTokens": "Token ausblenden ({{tokenCount}})",
-    "countTooltip": "1 Token",
-    "countTooltip_plural": "{{count}} Token",
-    "algorand": {
-      "title": "ASA (Vermögenswerte)",
-      "cta": "ASA hinzufügen",
-      "placeholder": "Sie können Vermögenswerte zu Ihrem {{currencyName}} Konto hinzufügen.",
-      "link": "Wie funktionieren ASA-Vermögenswerte?",
-      "seeTokens": "ASA anzeigen ({{tokenCount}})",
-      "hideTokens": "ASA ausblenden ({{tokenCount}})"
+  "tokensList" : {
+    "title" : "Token",
+    "cta" : "Token hinzufügen",
+    "placeholder" : "Um Token hinzuzufügen, senden Sie sie einfach an Ihre {{currencyName}}-Adresse.",
+    "link" : "Weitere Informationen",
+    "seeTokens" : "Token anzeigen ({{tokenCount}})",
+    "hideTokens" : "Token ausblenden ({{tokenCount}})",
+    "countTooltip" : "1 Token",
+    "countTooltip_plural" : "{{count}} Token",
+    "algorand" : {
+      "title" : "ASA (Vermögenswerte)",
+      "cta" : "ASA hinzufügen",
+      "placeholder" : "Sie können Vermögenswerte zu Ihrem {{currencyName}} Konto hinzufügen.",
+      "link" : "Wie funktionieren ASA-Vermögenswerte?",
+      "seeTokens" : "ASA anzeigen ({{tokenCount}})",
+      "hideTokens" : "ASA ausblenden ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "Vermögenswerte",
+      "cta" : "Wert hinzufügen",
+      "placeholder" : "Sie können Vermögenswerte zu Ihrem {{currencyName}} Konto hinzufügen.",
+      "link" : "Erfahren Sie mehr über Stellar Vermögenswerte",
+      "seeTokens" : "Vermögenswerte ({{tokenCount}}) anzeigen",
+      "hideTokens" : "Vermögenswerte ({{tokenCount}})verbergen"
     }
   },
   "subAccounts": {
@@ -1445,63 +1453,63 @@
       }
     }
   },
-  "operationDetails": {
-    "whatIsThis": "Was ist diese Aktion?",
-    "title": "Details",
-    "type": "Eingeben",
-    "amount": "Betrag",
-    "account": "Konto",
-    "date": "Datum",
-    "currentValue": "Aktueller Wert",
-    "status": "Status",
-    "confirmed": "Bestätigt",
-    "failed": "Fehlgeschlagen",
-    "notConfirmed": "Nicht bestätigt",
-    "fees": "Gebühr",
-    "noFees": "Keine Gebühr",
-    "from": "Von",
-    "to": "Bis",
-    "identifier": "Transaktions-ID",
-    "viewOperation": "Im Explorer ansehen",
-    "showMore": "Mehr {{recipients}} anzeigen",
-    "showLess": "Weniger anzeigen",
-    "tokenOperations": "Token-Aktionen",
-    "subAccountOperations": "Unterkonto-Aktionen",
-    "tokenTooltip": "Diese Aktion ist den folgenden Token-Aktionen zugehörig",
-    "subAccountTooltip": "Diese Aktion bezieht sich auf die folgenden Unterkontenvorgänge",
-    "internalOperations": "Interne Aktionen",
-    "internalOpTooltip": "Diese Aktion hat interne Aktionen",
-    "details": "{{ currency }} Details",
-    "multipleAddresses": "Warum mehrere Adressen?",
-    "nft": {
-      "name": "Token-Name",
-      "contract": "Token-Vertrag",
-      "id": "Token (NFT) ID",
-      "quantity": "Menge"
+  "operationDetails" : {
+    "whatIsThis" : "Was ist diese Aktion?",
+    "title" : "Details",
+    "type" : "Eingeben",
+    "amount" : "Betrag",
+    "account" : "Konto",
+    "date" : "Datum",
+    "currentValue" : "Aktueller Wert",
+    "status" : "Status",
+    "confirmed" : "Bestätigt",
+    "failed" : "Fehlgeschlagen",
+    "notConfirmed" : "Nicht bestätigt",
+    "fees" : "Gebühr",
+    "noFees" : "Keine Gebühr",
+    "from" : "Von",
+    "to" : "An",
+    "identifier" : "Transaktions-ID",
+    "viewOperation" : "Im Explorer ansehen",
+    "showMore" : "Mehr {{recipients}} anzeigen",
+    "showLess" : "Weniger anzeigen",
+    "tokenOperations" : "Token-Aktionen",
+    "subAccountOperations" : "Unterkonto-Aktionen",
+    "tokenTooltip" : "Diese Aktion ist den folgenden Token-Aktionen zugehörig",
+    "subAccountTooltip" : "Diese Aktion bezieht sich auf die folgenden Unterkontenvorgänge",
+    "internalOperations" : "Interne Aktionen",
+    "internalOpTooltip" : "Diese Aktion hat interne Aktionen",
+    "details" : "{{ currency }} Details",
+    "multipleAddresses" : "Warum mehrere Adressen?",
+    "nft" : {
+      "name" : "Token-Name",
+      "contract" : "Token-Vertrag",
+      "id" : "Token (NFT) ID",
+      "quantity" : "Menge"
     },
-    "extra": {
-      "frozenAmount": "Eingefrorener Betrag",
-      "unfreezeAmount": "Betrag entsperren",
-      "votes": "Abstimmungen ({{number}})",
-      "votesAddress": "<0>{{votes}}</0>zu <2>{{name}}</2>",
-      "validators": "Validatoren",
-      "redelegated": "Erneut delegiert",
-      "redelegatedFrom": "Zurückdelegiert von",
-      "redelegatedTo": "Zurückdelegiert zu",
-      "redelegatedAmount": "Zurückdelegierter Betrag",
-      "undelegated": "Nicht delegiert",
-      "undelegatedFrom": "Übertragung aufgehoben durch",
-      "undelegatedAmount": "Nicht delegierter Betrag",
-      "rewardFrom": "Prämie von",
-      "memo": "Memo",
-      "assetId": "Vermögenswert-ID",
-      "rewards": "Verdiente Prämien",
-      "bondedAmount": "Gebundener Betrag",
-      "unbondedAmount": "Ungebundener Betrag",
-      "withdrawUnbondedAmount": "Abgehobener Betrag",
-      "palletMethod": "Methode",
-      "transferAmount": "Betrag transferieren",
-      "validatorsCount": "Validatoren ({{number}})"
+    "extra" : {
+      "frozenAmount" : "Eingefrorener Betrag",
+      "unfreezeAmount" : "Betrag entsperren",
+      "votes" : "Abstimmungen ({{number}})",
+      "votesAddress" : "<0>{{votes}}</0>zu <2>{{name}}</2>",
+      "validators" : "Validatoren",
+      "redelegated" : "Erneut delegiert",
+      "redelegatedFrom" : "Zurückdelegiert von",
+      "redelegatedTo" : "Zurückdelegiert zu",
+      "redelegatedAmount" : "Zurückdelegierter Betrag",
+      "undelegated" : "Nicht delegiert",
+      "undelegatedFrom" : "Übertragung aufgehoben durch",
+      "undelegatedAmount" : "Nicht delegierter Betrag",
+      "rewardFrom" : "Prämie von",
+      "memo" : "Memo",
+      "assetId" : "Vermögenswert-ID",
+      "rewards" : "Verdiente Prämien",
+      "bondedAmount" : "Gebundener Betrag",
+      "unbondedAmount" : "Ungebundener Betrag",
+      "withdrawUnbondedAmount" : "Abgehobener Betrag",
+      "palletMethod" : "Methode",
+      "transferAmount" : "Betrag transferieren",
+      "validatorsCount" : "Validatoren ({{number}})"
     }
   },
   "operationList": {
@@ -1905,23 +1913,23 @@
       "device": {
         "title": "Gerät"
       },
-      "details": {
-        "utxoLag": "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
-        "subaccountsWarning": "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
-        "from": "Von",
-        "to": "Bis",
-        "selectAccountDebit": "Zu belastendes Konto",
-        "recipientAddress": "Adresse des Empfängers",
-        "amount": "Betrag",
-        "fees": "Netzgebühren",
-        "useMax": "Maximum senden",
-        "rippleTag": "Tag",
-        "rippleTagPlaceholder": "Optional",
-        "ethereumGasLimit": "Gaslimit",
-        "ethereumGasPrice": "Gaspreis",
-        "unitPerByte": "{{unit}} pro Byte",
-        "nft": "NFT",
-        "nftQuantity": "Menge"
+      "details" : {
+        "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
+        "subaccountsWarning" : "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
+        "from" : "Von",
+        "to" : "An",
+        "selectAccountDebit" : "Zu belastendes Konto",
+        "recipientAddress" : "Adresse des Empfängers",
+        "amount" : "Betrag",
+        "fees" : "Netzgebühren",
+        "useMax" : "Maximum senden",
+        "rippleTag" : "Tag",
+        "rippleTagPlaceholder" : "Optional",
+        "ethereumGasLimit" : "Gaslimit",
+        "ethereumGasPrice" : "Gaspreis",
+        "unitPerByte" : "{{unit}} pro Byte",
+        "nft" : "NFT",
+        "nftQuantity" : "Menge"
       },
       "verification": {
         "streaming": {
@@ -1998,14 +2006,21 @@
       }
     }
   },
-  "tron": {
-    "voting": {
-      "emptyState": {
-        "description": "Sie können jetzt durch Sperren und Abstimmen Prämien verdienen.",
-        "info": "Wie die Abstimmung funktioniert",
-        "votesDesc": "Geben Sie Ihre Stimme für einen oder mehrere Repräsentanten ab und beginnen Sie mit dem Sammeln von Einsatzprämien.",
-        "vote": "Stimmen abgeben",
-        "voteExisting": "Stimmen verwalten"
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Der Gesamtkontostand enthält keine Stakingprämien"
+      }
+    }
+  },
+  "tron" : {
+    "voting" : {
+      "emptyState" : {
+        "description" : "Sie können jetzt durch Sperren und Abstimmen Prämien verdienen.",
+        "info" : "Wie die Abstimmung funktioniert",
+        "votesDesc" : "Geben Sie Ihre Stimme für einen oder mehrere Repräsentanten ab und beginnen Sie mit dem Sammeln von Einsatzprämien.",
+        "vote" : "Stimmen abgeben",
+        "voteExisting" : "Stimmen verwalten"
       },
       "manageTP": "Vermögenswerte verwalten",
       "warnEarnRewards": "Sie benötigen mindestens {{amount}}, um Prämien zu erhalten",
@@ -2586,12 +2601,37 @@
       }
     }
   },
-  "solana": {
-    "common": {
-      "broadcastError": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen.",
-      "viewDetails": "Details anzeigen",
-      "connectDevice": {
-        "title": "Gerät"
+  "stellar" : {
+    "addAsset" : {
+      "title" : "Wert hinzufügen",
+      "steps" : {
+        "assets" : {
+          "title" : "Vermögenswert",
+          "info" : "Das Hinzufügen eines Vermögenswerts erfordert das Senden einer Transaktion mit Mindestgebühren. Dies wird in Ihrem Transaktionsverlauf angezeigt",
+          "selectLabel" : "Wählen Sie einen Vermögenswert aus",
+          "disabledTooltip" : "Sie haben bereits diesen Vermögenswert in Ihrem Stellar-Konto"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "{{token}}-Vermögenswert erfolgreich hinzugefügt",
+            "text" : "Sie können jetzt <0>{{token}}</0> Vermögenswerte auf Ihrem Stellar-Konto empfangen und senden.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    }
+  },
+  "solana" : {
+    "common" : {
+      "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen.",
+      "viewDetails" : "Details anzeigen",
+      "connectDevice" : {
+        "title" : "Gerät"
       },
       "confirmation": {
         "title": "Bestätigung"
@@ -3753,7 +3793,20 @@
         "MEMO_HASH": "Memo Hash",
         "MEMO_RETURN": "Memo-Rückgabe"
       },
-      "memoWarningText": "Wenn Sie ein Memo verwenden, überprüfen Sie sorgfältig den verwendeten Typ mit dem Empfänger"
+      "memoWarningText" : "Wenn Sie ein Memo verwenden, überprüfen Sie sorgfältig den verwendeten Typ mit dem Empfänger",
+      "fee" : "Gebühren",
+      "feeInfoText" : "Für Transaktionen im Stellar-Netzwerk wird eine Mindesttransaktionsgebühr von 0,00001 XLM erhoben.",
+      "suggested" : "Empfohlen",
+      "recommendedFee" : "Empfohlene Gebühren",
+      "recommenndedFeeInfo" : "Die Transaktion kann auch mit einer niedrigeren Gebühr als der empfohlenen eingereicht werden, aber sie wird möglicherweise nicht abgeschlossen.",
+      "networkCongestion" : "Netzüberlastung",
+      "networkCongestionLevel" : {
+        "LOW" : "Niedrig",
+        "MEDIUM" : "Medium",
+        "HIGH" : "Hoch"
+      },
+      "assetCode" : "Vermögenswerte-Code",
+      "assetIssuer" : "Emittent der Vermögenswerte"
     },
     "cosmos": {
       "memo": "Memo",
@@ -4306,17 +4359,11 @@
     "FeeTooHigh": {
       "title": "Die Netzwerkgebühren liegen über 10 % des Betrags"
     },
-    "StellarWrongMemoFormat": {
-      "title": "Memo-Format ist falsch"
+    "SourceHasMultiSign" : {
+      "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
     },
-    "SourceHasMultiSign": {
-      "title": "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
-    },
-    "StellarMemoRecommended": {
-      "title": "Beim Senden an diesen Empfänger kann ein Memo erforderlich sein"
-    },
-    "SwapExchangeRateAmountTooLow": {
-      "title": "Betrag muss größer sein als {{minAmountFromFormatted}}"
+    "SwapExchangeRateAmountTooLow" : {
+      "title" : "Betrag muss größer sein als {{minAmountFromFormatted}}"
     },
     "SwapExchangeRateAmountTooHigh": {
       "title": "Betrag muss kleiner sein als {{maxAmountFromFormatted}}"
@@ -4379,8 +4426,49 @@
     "SolanaTxConfirmationTimeout": {
       "title": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
     },
-    "NotEnoughNftOwned": {
-      "title": "Sie haben die Anzahl der verfügbaren Token überschritten"
+    "NotEnoughNftOwned" : {
+      "title" : "Sie haben die Anzahl der verfügbaren Token überschritten"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "Der Mindestbetrag, der versendet werden kann, ist {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Bitte vergewissern Sie sich, dass Sie ausreichend Geld für die Bezahlung der Gebühren haben"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo-Format ist falsch"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Beim Senden an diesen Empfänger kann ein Memo erforderlich sein"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Dieser Empfänger hat noch keine Trustline zu {{assetCode}}"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Vor dem Hinzufügen einer Trustline sollte ein Stellar-Vermögenswert ausgewählt werden"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Der ausgewählte Stellar-Vermögenswert konnte nicht gefunden werden"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
+      "description" : "Bitte vergewissern Sie sich, dass das Konto ausreichend gedeckt ist, um die Transaktionsgebühr zu decken."
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Die gewählte Gebühr ist niedriger als die empfohlene Gebühr"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Die Mindesttransaktionsgebühr beträgt 0,00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
+      "description" : "Vergewissern Sie sich, dass das Konto genügend Deckung für die neue Trustline aufweist."
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar-Konto existiert nicht"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
     }
   },
   "cryptoOrg": {
@@ -4399,14 +4487,28 @@
     "memoPlaceholder": "Optional",
     "memoWarningText": "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren."
   },
-  "hedera": {
-    "name": "Hedera",
-    "createHederaAccountHelp": {
-      "text": "In diesem Supportartikel erhalten Sie weitere Informationen zum Thema",
-      "link": "Erstellen eines Hedera-Kontos"
+  "hedera" : {
+    "name" : "Hedera",
+    "createHederaAccountHelp" : {
+      "text" : "In diesem Supportartikel erhalten Sie weitere Informationen zum Thema",
+      "link" : "Erstellen eines Hedera-Kontos"
     },
-    "currentAddress": {
-      "messageIfVirtual": "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
+    "currentAddress" : {
+      "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
+    },
+    "send" : {
+      "memo" : {
+        "label" : "Memo (Optional)",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "Vermögenswert auswählen"
+    },
+    "selectAccount" : {
+      "title" : "Konto auswählen"
     }
   }
 }

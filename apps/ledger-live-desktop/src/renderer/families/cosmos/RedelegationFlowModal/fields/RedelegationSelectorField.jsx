@@ -6,7 +6,7 @@ import type {
   CosmosMappedDelegation,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Label from "~/renderer/components/Label";

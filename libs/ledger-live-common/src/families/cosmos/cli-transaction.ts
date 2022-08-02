@@ -4,10 +4,10 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { BigNumber } from "bignumber.js";
-import cosmosValidatorsManager from "./validators";
-import type { Transaction, AccountLike } from "../../types";
 import { Transaction as CosmosTransaction } from "./types";
 import type { CosmosDelegationInfo } from "./types";
+import cosmosValidatorsManager from "./validators";
+import { AccountLike } from "@ledgerhq/types-live";
 
 const options = [
   {
@@ -52,11 +52,11 @@ const options = [
 function inferTransactions(
   transactions: Array<{
     account: AccountLike;
-    transaction: Transaction;
+    transaction: CosmosTransaction;
   }>,
   opts: Record<string, any>,
   { inferAmount }: any
-): Transaction[] {
+): CosmosTransaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "cosmos", "cosmos family");
     const validatorsAddresses: string[] = opts["cosmosValidator"] || [];

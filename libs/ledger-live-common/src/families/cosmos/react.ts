@@ -14,6 +14,7 @@ import type {
   Transaction,
   CosmosExtraTxInfo,
   CosmosPreloadData,
+  CosmosAccount,
 } from "./types";
 import {
   mapDelegations,
@@ -22,7 +23,6 @@ import {
 } from "./logic";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
-import type { Account } from "../../types";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 
 // Add Cosmos-families imports below:
@@ -65,7 +65,7 @@ export function useCosmosFamilyPreloadData(
 // }
 
 export function useCosmosFamilyMappedDelegations(
-  account: Account,
+  account: CosmosAccount,
   mode?: CosmosOperationMode
 ): CosmosMappedDelegation[] {
   const currencyName = account.currency.name.toLowerCase();
@@ -87,7 +87,7 @@ export function useCosmosFamilyMappedDelegations(
 }
 
 export function useCosmosFamilyDelegationsQuerySelector(
-  account: Account,
+  account: CosmosAccount,
   transaction: Transaction,
   delegationSearchFilter: CosmosSearchFilter = defaultSearchFilter
 ): {
@@ -183,7 +183,7 @@ export function useMappedExtraOperationDetails({
   account,
   extra,
 }: {
-  account: Account;
+  account: CosmosAccount;
   extra: CosmosExtraTxInfo;
 }): CosmosExtraTxInfo {
   const { validators } = useCosmosFamilyPreloadData("cosmos");
@@ -204,8 +204,9 @@ export function useMappedExtraOperationDetails({
 }
 
 export function useLedgerFirstShuffledValidatorsCosmosFamily(
-  currencyName: string
-) {
+  currencyName: string,
+  searchInput?: string
+): CosmosValidatorItem[] {
   let data;
   let ledgerValidatorAddress;
   if (currencyName == "osmosis") {
@@ -217,16 +218,26 @@ export function useLedgerFirstShuffledValidatorsCosmosFamily(
   }
 
   return useMemo(() => {
-    return reorderValidators(data?.validators ?? [], ledgerValidatorAddress);
-  }, [data, ledgerValidatorAddress]);
+    return reorderValidators(
+      data?.validators ?? [],
+      ledgerValidatorAddress,
+      searchInput
+    );
+  }, [data, ledgerValidatorAddress, searchInput]);
 }
 
 function reorderValidators(
   validators: CosmosValidatorItem[],
-  ledgerValidatorAddress: string
+  ledgerValidatorAddress: string,
+  searchInput?: string
 ): CosmosValidatorItem[] {
   const sortedValidators = validators
     .filter((validator) => validator.commission !== 1.0)
+    .filter((validator) =>
+      searchInput
+        ? validator.name.toLowerCase().includes(searchInput.toLowerCase())
+        : true
+    )
     .sort((a, b) => b.votingPower - a.votingPower);
 
   // move Ledger validator to the first position

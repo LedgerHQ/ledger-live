@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { Operation } from "@ledgerhq/live-common/types/index";
+import type { Operation } from "@ledgerhq/types-live";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/react";
 import { useTheme } from "@react-navigation/native";

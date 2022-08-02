@@ -1334,22 +1334,30 @@
       }
     }
   },
-  "tokensList": {
-    "title": "代币",
-    "cta": "添加代币",
-    "placeholder": "要添加代币，只需将其发送到您的 {{currencyName}} 地址。",
-    "link": "了解更多",
-    "seeTokens": "显示代币 ({{tokenCount}})",
-    "hideTokens": "隐藏代币 ({{tokenCount}})",
-    "countTooltip": "1 枚代币",
-    "countTooltip_plural": "{{count}} 枚代币",
-    "algorand": {
-      "title": "ASA (资产)",
-      "cta": "添加 ASA",
-      "placeholder": "您可以向您的 {{currencyName}} 账户添加资产。",
-      "link": "资产 (ASA) 如何运作？",
-      "seeTokens": "显示 ASA ({{tokenCount}})",
-      "hideTokens": "隐藏 ASA ({{tokenCount}})"
+  "tokensList" : {
+    "title" : "代币",
+    "cta" : "添加代币",
+    "placeholder" : "要添加代币，只需将其发送到您的 {{currencyName}} 地址。",
+    "link" : "了解更多",
+    "seeTokens" : "显示代币 ({{tokenCount}})",
+    "hideTokens" : "隐藏代币 ({{tokenCount}})",
+    "countTooltip" : "1 枚代币",
+    "countTooltip_plural" : "{{count}} 枚代币",
+    "algorand" : {
+      "title" : "ASA (资产)",
+      "cta" : "添加 ASA",
+      "placeholder" : "您可以向您的 {{currencyName}} 账户添加资产。",
+      "link" : "资产 (ASA) 如何运作？",
+      "seeTokens" : "显示 ASA ({{tokenCount}})",
+      "hideTokens" : "隐藏 ASA ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "多种资产",
+      "cta" : "添加资产",
+      "placeholder" : "您可以向您的 {{currencyName}} 账户添加资产。",
+      "link" : "详细了解 Stellar（恒星）资产",
+      "seeTokens" : "显示资产 ({{tokenCount}})",
+      "hideTokens" : "隐藏资产 ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -1998,14 +2006,21 @@
       }
     }
   },
-  "tron": {
-    "voting": {
-      "emptyState": {
-        "description": "您现在可以通过冻结资产和投票来赚取奖励。",
-        "info": "如何投票",
-        "votesDesc": "将您的选票投给一个或多个代表，从而开始赚取权益质押奖励。",
-        "vote": "将票投出",
-        "voteExisting": "管理选票"
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "总余额不包括权益质押奖励"
+      }
+    }
+  },
+  "tron" : {
+    "voting" : {
+      "emptyState" : {
+        "description" : "您现在可以通过冻结资产和投票来赚取奖励。",
+        "info" : "如何投票",
+        "votesDesc" : "将您的选票投给一个或多个代表，从而开始赚取权益质押奖励。",
+        "vote" : "将票投出",
+        "voteExisting" : "管理选票"
       },
       "manageTP": "管理资产",
       "warnEarnRewards": "您至少需要 {{amount}} 才能开始赚取奖励",
@@ -2586,12 +2601,37 @@
       }
     }
   },
-  "solana": {
-    "common": {
-      "broadcastError": "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。",
-      "viewDetails": "查看详情",
-      "connectDevice": {
-        "title": "设备"
+  "stellar" : {
+    "addAsset" : {
+      "title" : "添加资产",
+      "steps" : {
+        "assets" : {
+          "title" : "资产",
+          "info" : "添加资产需要以最低费用发送一笔交易。这笔交易将出现在您的交易记录中",
+          "selectLabel" : "选择一种资产",
+          "disabledTooltip" : "您的 Stellar（恒星）账户中已经有此资产"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "已成功添加 {{token}} 资产",
+            "text" : "您现在可以在 Stellar（恒星）账户上接收和发送 <0>{{token}}</0> 资产了。",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        }
+      }
+    }
+  },
+  "solana" : {
+    "common" : {
+      "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。",
+      "viewDetails" : "查看详情",
+      "connectDevice" : {
+        "title" : "设备"
       },
       "confirmation": {
         "title": "确认"
@@ -3753,7 +3793,20 @@
         "MEMO_HASH": "Memo Hash 标签哈希",
         "MEMO_RETURN": "Memo 返回"
       },
-      "memoWarningText": "当使用 Memo 标签时，请仔细核对接收方的类型。"
+      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的类型。",
+      "fee" : "费用",
+      "feeInfoText" : "在 Stellar（恒星）网络上进行交易的最低交易费用为 0.00001 XLM",
+      "suggested" : "建议",
+      "recommendedFee" : "建议费用",
+      "recommenndedFeeInfo" : "您仍可以低于建议的费用提交此交易，但交易可能无法完成",
+      "networkCongestion" : "网络拥塞",
+      "networkCongestionLevel" : {
+        "LOW" : "低",
+        "MEDIUM" : "中",
+        "HIGH" : "高"
+      },
+      "assetCode" : "资产代码",
+      "assetIssuer" : "资产发行者"
     },
     "cosmos": {
       "memo": "Memo",
@@ -4306,17 +4359,11 @@
     "FeeTooHigh": {
       "title": "网络费用超过数额的10%"
     },
-    "StellarWrongMemoFormat": {
-      "title": "Memo 格式错误"
+    "SourceHasMultiSign" : {
+      "title" : "请禁用多重签名以发送 {{currencyName}}"
     },
-    "SourceHasMultiSign": {
-      "title": "请禁用多重签名以发送 {{currencyName}}"
-    },
-    "StellarMemoRecommended": {
-      "title": "发送到该接收方时，或许需要添加 memo（目的地标签）"
-    },
-    "SwapExchangeRateAmountTooLow": {
-      "title": "数额必须至少为 {{minAmountFromFormatted}}"
+    "SwapExchangeRateAmountTooLow" : {
+      "title" : "数额必须至少为 {{minAmountFromFormatted}}"
     },
     "SwapExchangeRateAmountTooHigh": {
       "title": "数额必须低于 {{maxAmountFromFormatted}}"
@@ -4379,8 +4426,49 @@
     "SolanaTxConfirmationTimeout": {
       "title": "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
     },
-    "NotEnoughNftOwned": {
-      "title": "您已超过可用代币的数量"
+    "NotEnoughNftOwned" : {
+      "title" : "您已超过可用代币的数量"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "最小可发送数额为 {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "请确保您的资金足够支付费用"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo 格式错误"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "发送到该接收方时，或许需要添加 memo（目的地标签）"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "此接收人还没有 {{assetCode}} 的信任额度"
+    },
+    "StellarAssetRequired" : {
+      "title" : "应在添加信任额度之前先选择 Stellar（恒星）资产"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "找不到所选的 Stellar（恒星）资产"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金足够支付交易费用"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "所选费用低于建议费用"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低交易费用为 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金多于新的信任额度"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar（恒星）账户不存在"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     }
   },
   "cryptoOrg": {
@@ -4399,14 +4487,28 @@
     "memoPlaceholder": "可选",
     "memoWarningText": "当使用 Memo 标签时，请仔细核对接收方的信息。"
   },
-  "hedera": {
-    "name": "hedera",
-    "createHederaAccountHelp": {
-      "text": "要了解如何创建 Hedera 账户，",
-      "link": "请参考此支持文章"
+  "hedera" : {
+    "name" : "hedera",
+    "createHederaAccountHelp" : {
+      "text" : "要了解如何创建 Hedera 账户，",
+      "link" : "请参考此支持文章"
     },
-    "currentAddress": {
-      "messageIfVirtual": "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
+    "currentAddress" : {
+      "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
+    },
+    "send" : {
+      "memo" : {
+        "label" : "Memo（可选）",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "选择资产"
+    },
+    "selectAccount" : {
+      "title" : "选择账户"
     }
   }
 }

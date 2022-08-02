@@ -1,12 +1,17 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { Account, Unit } from "../../types";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { CosmosOperation, CosmosExtraTxInfo, CosmosPreloadData } from "./types";
+import {
+  CosmosOperation,
+  CosmosExtraTxInfo,
+  CosmosPreloadData,
+  CosmosAccount,
+} from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
 import { getCurrentOsmosisPreloadData } from "../osmosis/preloadedData";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(
   op: CosmosOperation,
@@ -55,7 +60,7 @@ function getCurrentCosmosFamilyPreloadData(
   }
 }
 
-export function formatAccountSpecifics(account: Account): string {
+export function formatAccountSpecifics(account: CosmosAccount): string {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmos account expected");
   const currencyName = account.currency.name.toLowerCase();

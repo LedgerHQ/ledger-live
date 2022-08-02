@@ -1,13 +1,13 @@
 import { genAccount } from "../mock/account";
 import { getDerivationModesForCurrency } from "../derivation";
 import { listCryptoCurrencies } from "../currencies";
-import type { Account } from "../types";
 import {
   accountDataToAccount,
   accountToAccountData,
   encode,
   decode,
 } from "../cross";
+import { Account } from "@ledgerhq/types-live";
 test("accountDataToAccount / accountToAccountData", () => {
   listCryptoCurrencies().forEach((currency) => {
     getDerivationModesForCurrency(currency).forEach((derivationMode) => {

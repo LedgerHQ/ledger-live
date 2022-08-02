@@ -1,6 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
 import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
+import type { DeviceVersion, FinalFirmware } from "@ledgerhq/types-live";
 import {
   concatMap,
   delay,
@@ -20,7 +21,6 @@ import {
   followDeviceRepair,
   followDeviceUpdate,
 } from "../deviceWordings";
-import { DeviceVersion, FinalFirmware } from "../types/manager";
 const wait2s = of({
   type: "wait",
 }).pipe(delay(2000));

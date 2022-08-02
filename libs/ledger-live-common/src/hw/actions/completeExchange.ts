@@ -5,7 +5,7 @@ import type { Action, Device } from "./types";
 import type { AppState } from "./app";
 import { log } from "@ledgerhq/logs";
 import { Exchange } from "../../exchange/swap/types";
-import { Transaction } from "../../types";
+import { Transaction } from "../../generated/types";
 
 type State = {
   completeExchangeResult: Transaction | null | undefined;

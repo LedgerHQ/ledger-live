@@ -1,7 +1,7 @@
 ---
-"ledger-live-desktop": major
-"live-mobile": major
-"@ledgerhq/live-common": major
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 "@ledgerhq/live-cli": minor
 "@ledgerhq/cryptoassets": minor
 ---
@@ -9,8 +9,6 @@
 Osmosis Send, Receive and Staking + Cosmos refactor
 
 For additional context on what changed:
-
-Major:
 
 - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
 - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
@@ -22,8 +20,6 @@ Major:
   validators.ts and js-synchronisation.ts into classes.
 
 - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
-
-Minor:
 
 - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
 

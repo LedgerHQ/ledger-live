@@ -2,12 +2,11 @@
 
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type {
-  Account,
-  AccountLike,
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";

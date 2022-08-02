@@ -4,7 +4,7 @@ import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import {
   hasExternalController,
   hasExternalStash,

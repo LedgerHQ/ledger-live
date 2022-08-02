@@ -11,10 +11,8 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import type {
-  Transaction,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";

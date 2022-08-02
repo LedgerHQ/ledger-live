@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 
-import type { Transaction } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 

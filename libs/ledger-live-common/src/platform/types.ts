@@ -1,10 +1,26 @@
-import type { SignedOperation } from "../types";
+import type { SignedOperation } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import { AccountFilters, CurrencyFilters } from "./filters";
+import {
+  Account as PlatformAccount,
+  Currency as PlatformCurrency,
+} from "@ledgerhq/live-app-sdk";
 
 export type {
   Account as PlatformAccount,
   Currency as PlatformCurrency,
   Unit as PlatformUnit,
   Transaction as PlatformTransaction,
+  CryptoCurrency as PlatformCryptoCurrency,
+  ERC20TokenCurrency as PlatformERC20TokenCurrency,
+} from "@ledgerhq/live-app-sdk";
+
+export {
+  CurrencyType as PlatformCurrencyType,
+  TokenStandard as PlatformTokenStandard,
 } from "@ledgerhq/live-app-sdk";
 
 export type TranslatableString = {
@@ -52,3 +68,13 @@ export type PlatformApi = {
 };
 
 export type PlatformSignedTransaction = SignedOperation;
+
+export type ListPlatformAccount = (
+  filters?: AccountFilters
+) => PlatformAccount[];
+
+export type ListPlatformCurrency = (
+  filters?: CurrencyFilters
+) => PlatformCurrency[];
+
+export type PlatformSupportedCurrency = CryptoCurrency | TokenCurrency;

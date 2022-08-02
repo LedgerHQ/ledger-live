@@ -7,20 +7,17 @@ import { CosmosAPI } from "../../cosmos/api/Cosmos";
 import { CosmosDelegationInfo } from "../../cosmos/types";
 import {
   OsmosisDistributionParams,
-  OsmosisEpochProvisions,
-  OsmosisEpochs,
-  OsmosisMintParams,
   OsmosisPool,
   OsmosisTotalSupply,
 } from "../OsmosisSupplyTypes";
 import {
   OsmosisAccountTransaction,
-  OsmosisTransactionTypeEnum,
   OsmosisAmount,
   OsmosisCurrency,
-  OsmosisSendEventContent,
   OsmosisEventNestedContent,
+  OsmosisSendEventContent,
   OsmosisStakingEventContent,
+  OsmosisTransactionTypeEnum,
 } from "./sdk.types";
 
 export const nodeEndpoint = getEnv("API_OSMOSIS_NODE").replace(/\/$/, "");

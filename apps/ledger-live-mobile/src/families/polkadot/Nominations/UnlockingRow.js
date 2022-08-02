@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import isBefore from "date-fns/isBefore";
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountUnit,

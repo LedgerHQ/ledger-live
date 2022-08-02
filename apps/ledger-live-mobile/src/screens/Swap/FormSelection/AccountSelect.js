@@ -9,7 +9,7 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
 
-import type { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";
 
