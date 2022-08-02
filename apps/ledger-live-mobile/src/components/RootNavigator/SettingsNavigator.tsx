@@ -15,6 +15,7 @@ import DebugBLE from "../../screens/DebugBLE";
 import DebugBLEBenchmark from "../../screens/DebugBLEBenchmark";
 import DebugCrash from "../../screens/DebugCrash";
 import DebugHttpTransport from "../../screens/DebugHttpTransport";
+import DebugFeatureFlags from "../../screens/DebugFeatureFlags";
 import DebugIcons from "../../screens/DebugIcons";
 import DebugLottie from "../../screens/DebugLottie.js";
 import DebugLogs from "../../screens/DebugLogs.js";
@@ -198,6 +199,13 @@ export default function SettingsNavigator() {
         component={DebugDevices}
         options={{
           title: "Debug Devices",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFeatureFlags}
+        component={DebugFeatureFlags}
+        options={{
+          title: "Debug Feature Flags",
         }}
       />
       <Stack.Screen
