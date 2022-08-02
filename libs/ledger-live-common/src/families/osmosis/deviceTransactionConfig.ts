@@ -3,7 +3,8 @@ import { Transaction } from "./types";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { DeviceTransactionField } from "../../transaction";
-import type { AccountLike, TransactionStatus } from "../../types";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type { TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField =
   | {

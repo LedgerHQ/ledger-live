@@ -22,7 +22,6 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { cosmosResources } = mainAccount;
   invariant(cosmosResources, "Osmosis account with cosmosResources expected");
   const earnRewardEnabled = canDelegate(mainAccount);
-  // const earnRewardEnabled = true;
 
   const hasDelegations = cosmosResources.delegations.length > 0;
 

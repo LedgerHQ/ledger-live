@@ -11,7 +11,7 @@ import {
 } from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
 import { getCurrentOsmosisPreloadData } from "../osmosis/preloadedData";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(
   op: CosmosOperation,

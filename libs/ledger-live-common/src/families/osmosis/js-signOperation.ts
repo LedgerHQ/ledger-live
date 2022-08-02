@@ -1,10 +1,10 @@
-import {
+import type {
   Account,
   DeviceId,
   Operation,
   OperationType,
   SignOperationEvent,
-} from "../../types";
+} from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { osmosisAPI } from "./api/sdk";
 import { Observable } from "rxjs";

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Operation } from "../../types";
+import type { Operation } from "@ledgerhq/types-live";
 import {
   //   fromOperationExtraRaw,
   //   toOperationExtraRaw,

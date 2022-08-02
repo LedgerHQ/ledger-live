@@ -787,6 +787,19 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
         (rawAccount as CosmosAccountRaw).cosmosResources
       );
       break;
+    case "osmosis":
+      if ((res as CosmosAccount).cosmosResources != null) {
+        (res as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
+          (rawAccount as CosmosAccountRaw).cosmosResources
+        );
+      } else {
+        throw new Error(
+          `Osmosis account couldn't find cosmosResources, res is: ${Object.keys(
+            res
+          )}`
+        );
+      }
+      break;
     case "tezos":
       (res as TezosAccount).tezosResources = fromTezosResourcesRaw(
         (rawAccount as TezosAccountRaw).tezosResources
@@ -918,6 +931,11 @@ export function toAccountRaw(account: Account): AccountRaw {
         (account as CosmosAccount).cosmosResources
       );
       break;
+    case "osmosis":
+      (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
+        (account as CosmosAccount).cosmosResources
+      );
+    break;
     case "tezos":
       (res as TezosAccountRaw).tezosResources = toTezosResourcesRaw(
         (account as TezosAccount).tezosResources

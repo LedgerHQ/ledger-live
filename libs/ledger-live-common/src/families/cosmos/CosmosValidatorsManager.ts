@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { EnvName, EnvValue, getEnv } from "../../env";
 import { makeLRUCache } from "../../cache";
 import type { CosmosValidatorItem, CosmosRewardsState } from "./types";
-import type { CryptoCurrency } from "../../types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 // Utils
 const getBaseApiUrl = (currency: CryptoCurrency) => {

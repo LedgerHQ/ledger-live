@@ -20499,7 +20499,7 @@ packages:
       minipass-pipeline: 1.2.4
       mkdirp: 1.0.4
       p-map: 4.0.0
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 3.0.2
       ssri: 8.0.1
       tar: 6.1.11
@@ -34880,6 +34880,24 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
+
+  /metro-config/0.67.0_5rj3ktdhebdtkdjqejo5rbxriu:
+    resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
+    peerDependencies:
+      metro-transform-worker: '*'
+    peerDependenciesMeta:
+      metro-transform-worker:
+        optional: true
+    dependencies:
+      cosmiconfig: 5.2.1
+      jest-validate: 26.6.2
+      metro: 0.67.0
+      metro-cache: 0.67.0_metro@0.67.0
+      metro-core: 0.67.0_metro@0.67.0
+      metro-runtime: 0.67.0
+      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
+    transitivePeerDependencies:
+      - metro
 
   /metro-config/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
     resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
