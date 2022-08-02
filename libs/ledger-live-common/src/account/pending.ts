@@ -1,4 +1,4 @@
-import type { Account, Operation, SubAccount } from "../types";
+import type { Account, Operation, SubAccount } from "@ledgerhq/types-live";
 import { getEnv } from "../env";
 export function shouldRetainPendingOperation(
   account: Account,

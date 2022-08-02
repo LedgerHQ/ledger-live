@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Account } from "../../types";
-import { Transaction } from "./types";
+import { CardanoAccount, Transaction } from "./types";
 import {
   types as TyphonTypes,
   address as TyphonAddress,
@@ -40,7 +39,7 @@ export const updateTransaction = (
  * @param {Transaction} t
  */
 export const prepareTransaction = async (
-  a: Account,
+  a: CardanoAccount,
   t: Transaction
 ): Promise<Transaction> => {
   let transaction;

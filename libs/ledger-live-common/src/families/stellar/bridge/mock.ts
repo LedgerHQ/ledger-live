@@ -11,7 +11,11 @@ import {
   NotEnoughSpendableBalance,
 } from "@ledgerhq/errors";
 import { StellarWrongMemoFormat, SourceHasMultiSign } from "../../../errors";
-import type { AccountBridge, CurrencyBridge } from "../../../types";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+} from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { getMainAccount } from "../../../account";
 import { formatCurrencyUnit } from "../../../currencies";
@@ -84,7 +88,7 @@ const isMemoValid = (memoType: string, memoValue: string): boolean => {
   return true;
 };
 
-const getTransactionStatus = async (a, t) => {
+const getTransactionStatus = async (a: Account, t: Transaction) => {
   const errors: {
     recipient?: Error;
     fees?: Error;

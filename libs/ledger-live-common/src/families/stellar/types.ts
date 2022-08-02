@@ -3,7 +3,9 @@ import type { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
 
 export type NetworkInfo = {
   family: "stellar";
@@ -91,3 +93,7 @@ export type Signer = {
   key: string;
   type: string;
 };
+
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

@@ -8,7 +8,7 @@ import type {
   Operation,
   OperationType,
   TokenAccount,
-} from "../../types";
+} from "@ledgerhq/types-live";
 import {
   fetchSigners,
   fetchBaseFee,

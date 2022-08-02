@@ -8,7 +8,6 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
-import { Account } from "../types";
 import type { MutationReport, SpecReport } from "./types";
 import { promiseAllBatched } from "../promise";
 import {
@@ -26,6 +25,7 @@ import {
   inferTrackingPairForAccounts,
 } from "../countervalues/logic";
 import { getPortfolio } from "../portfolio/v2";
+import { Account } from "@ledgerhq/types-live";
 type Arg = Partial<{
   currency: string;
   family: string;
@@ -201,14 +201,6 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         (s.mutations && s.mutations.every((r) => !r.mutation)))
   );
 
-  const specsWithoutOperations = results.filter(
-    (s) =>
-      !s.fatalError &&
-      !specsWithoutFunds.includes(s) &&
-      s.mutations &&
-      s.mutations.every((r) => !r.operation)
-  );
-
   const fullySuccessfulSpecs = results.filter(
     (s) =>
       !s.fatalError &&
@@ -223,6 +215,15 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       s.mutations &&
       !specsWithoutFunds.includes(s) &&
       s.mutations.some((r) => r.mutation && !r.operation)
+  );
+
+  const specsWithoutOperations = results.filter(
+    (s) =>
+      !s.fatalError &&
+      !specsWithoutFunds.includes(s) &&
+      !specsWithErrors.includes(s) &&
+      s.mutations &&
+      s.mutations.every((r) => !r.operation)
   );
 
   const withoutFunds = specsWithoutFunds
@@ -301,7 +302,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   }
 
   if (withoutFunds.length) {
-    const missingFundsWarn = `> ⚠️ ${
+    const missingFundsWarn = `> 💰 ${
       withoutFunds.length
     } specs may miss funds: _${withoutFunds.join(", ")}_\n`;
     body += missingFundsWarn;

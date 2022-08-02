@@ -3,7 +3,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import type { Operation } from "@ledgerhq/live-common/types/index";
+import type { Operation } from "@ledgerhq/types-live";
 import {
   getDefaultExplorerView,
   getTransactionExplorer,

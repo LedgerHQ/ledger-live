@@ -4,6 +4,7 @@ import sampleSize from "lodash/sampleSize";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import type {
+  CosmosAccount,
   CosmosDelegation,
   CosmosRedelegation,
   CosmosResources,
@@ -139,8 +140,8 @@ const cosmos: AppSpec<Transaction> = {
           account.index % 2 > 0,
           "only one out of 2 accounts is not going to delegate"
         );
-        invariant(canDelegate(account), "can delegate");
-        const { cosmosResources } = account;
+        invariant(canDelegate(account as CosmosAccount), "can delegate");
+        const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
         invariant(
           (cosmosResources as CosmosResources).delegations.length < 3,
@@ -148,7 +149,10 @@ const cosmos: AppSpec<Transaction> = {
         );
         const data = getCurrentCosmosPreloadData();
         const count = 1 + Math.floor(2 * Math.random());
-        let remaining = getMaxDelegationAvailable(account, count)
+        let remaining = getMaxDelegationAvailable(
+          account as CosmosAccount,
+          count
+        )
           .minus(minAmount.times(2))
           .times(0.5 * Math.random());
         invariant(remaining.gt(0), "not enough funds in account for delegate");
@@ -187,7 +191,7 @@ const cosmos: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { cosmosResources } = account;
+        const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
         transaction.validators.forEach((v) => {
           const d = (cosmosResources as CosmosResources).delegations.find(
@@ -208,8 +212,8 @@ const cosmos: AppSpec<Transaction> = {
       name: "undelegate",
       maxRun: 3,
       transaction: ({ account, bridge }) => {
-        invariant(canUndelegate(account), "can undelegate");
-        const { cosmosResources } = account;
+        invariant(canUndelegate(account as CosmosAccount), "can undelegate");
+        const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
         invariant(
           (cosmosResources as CosmosResources).delegations.length > 0,
@@ -255,7 +259,7 @@ const cosmos: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { cosmosResources } = account;
+        const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
         transaction.validators.forEach((v) => {
           const d = (cosmosResources as CosmosResources).unbondings.find(
@@ -276,11 +280,11 @@ const cosmos: AppSpec<Transaction> = {
       name: "redelegate",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        const { cosmosResources } = account;
+        const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
         const sourceDelegation = sample(
           (cosmosResources as CosmosResources).delegations.filter((d) =>
-            canRedelegate(account, d)
+            canRedelegate(account as CosmosAccount, d)
           )
         );
         invariant(sourceDelegation, "none can redelegate");
@@ -317,7 +321,7 @@ const cosmos: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { cosmosResources } = account;
+        const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
         transaction.validators.forEach((v) => {
           // we possibly are moving from one existing delegation to another existing.
@@ -355,7 +359,7 @@ const cosmos: AppSpec<Transaction> = {
       name: "claim rewards",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        const { cosmosResources } = account;
+        const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
         const delegation = sample(
           (cosmosResources as CosmosResources).delegations.filter((d) =>
@@ -380,7 +384,7 @@ const cosmos: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { cosmosResources } = account;
+        const { cosmosResources } = account as CosmosAccount;
         invariant(cosmosResources, "cosmos");
         transaction.validators.forEach((v) => {
           const d = (cosmosResources as CosmosResources).delegations.find(
@@ -388,7 +392,7 @@ const cosmos: AppSpec<Transaction> = {
           );
           invariant(d, "delegation %s must be found in account", v.address);
           invariant(
-            !canClaimRewards(account, d as CosmosDelegation),
+            !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
             "reward no longer be claimable"
           );
         });

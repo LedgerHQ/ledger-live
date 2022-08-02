@@ -228,6 +228,9 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
+    "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^",
     "@svgr/core": "^5.5.0",
     "@testing-library/react-hooks": "^4.0.1",
     "@types/bs58": "^4.0.1",

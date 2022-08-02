@@ -6,7 +6,8 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { StellarMemoType } from "@ledgerhq/live-common/families/stellar/types";
 import Select from "~/renderer/components/Select";
 import invariant from "invariant";
-import type { Account, Transaction } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 
 const options = StellarMemoType.map(type => ({
   label: type,

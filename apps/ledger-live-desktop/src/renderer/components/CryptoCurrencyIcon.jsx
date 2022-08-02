@@ -2,7 +2,7 @@
 import React from "react";
 import styled, { withTheme } from "styled-components";
 import { getCryptoCurrencyIcon, getTokenCurrencyIcon } from "@ledgerhq/live-common/react";
-import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import { mix } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

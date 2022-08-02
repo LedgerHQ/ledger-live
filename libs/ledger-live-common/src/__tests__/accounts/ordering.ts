@@ -1,5 +1,5 @@
+import type { AccountRaw } from "@ledgerhq/types-live";
 import { fromAccountRaw, sortAccountsComparatorFromOrder } from "../../account";
-import { AccountRaw } from "../../types";
 const accounts = [
   <AccountRaw>{
     id: "ethereumjs:2:ethereum:0x01:",

@@ -4,8 +4,7 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useAppInstallNeedsDeps, useAppUninstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useHistory } from "react-router-dom";
-
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import type { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 
 import styled from "styled-components";

@@ -5,7 +5,7 @@ import React, { PureComponent } from "react";
 import styled from "styled-components";
 import noop from "lodash/noop";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
-import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { radii } from "~/renderer/styles/theme";
 

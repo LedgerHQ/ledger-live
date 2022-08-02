@@ -1,4 +1,5 @@
-import type { Currency } from "../types";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
+
 export const getCurrencyColor = (currency: Currency) => {
   switch (currency.type) {
     case "CryptoCurrency":
