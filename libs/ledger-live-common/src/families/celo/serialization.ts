@@ -1,7 +1,6 @@
 // @flow
 import type { CeloResources, CeloResourcesRaw } from "./types";
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 
 export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
   const {
@@ -36,15 +35,6 @@ export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
 }
 
 export function fromCeloResourcesRaw(r: CeloResourcesRaw): CeloResources {
-  // const {
-  //   registrationStatus,
-  //   lockedBalance,
-  //   nonvotingLockedBalance,
-  //   votes,
-  //   electionAddress,
-  //   lockedGoldAddress,
-  // } = r;
-  log("celo resources raw", JSON.stringify(r));
   return {
     registrationStatus: r.registrationStatus,
     lockedBalance: new BigNumber(r.lockedBalance),
