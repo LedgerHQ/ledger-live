@@ -1,6 +1,6 @@
 // @flow
 
-export interface ValidatorType {
+export type ValidatorType = {
   apr: any;
   avatar: string;
   description: string;
@@ -18,16 +18,16 @@ export interface ValidatorType {
   twitter: string;
   validators: number;
   website: string;
-}
+};
 
-export interface UnbondingType {
+export type UnbondingType = {
   amount: string;
   seconds: number;
   contract?: string;
   validator?: ValidatorType;
-}
+};
 
-export interface DelegationType {
+export type DelegationType = {
   address: string;
   claimableRewards: string;
   contract: string;
@@ -35,4 +35,4 @@ export interface DelegationType {
   userUnBondable: string;
   userUndelegatedList: Array<UnbondingType>;
   validator: ValidatorType;
-}
+};

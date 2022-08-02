@@ -4,7 +4,7 @@ import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Account as AccountType } from "@ledgerhq/types-live";
+import type { Account as AccountType } from "@ledgerhq/types-live";
 
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
@@ -13,7 +13,11 @@ import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import ChevronRight from "~/renderer/icons/ChevronRight";
 import Text from "~/renderer/components/Text";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
-import { DelegationType, ValidatorType, UnbondingType } from "~/renderer/families/elrond/types";
+import type {
+  DelegationType,
+  ValidatorType,
+  UnbondingType,
+} from "~/renderer/families/elrond/types";
 import { Ellipsis, Column, Wrapper, Divider } from "~/renderer/families/elrond/blocks/Delegation";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";

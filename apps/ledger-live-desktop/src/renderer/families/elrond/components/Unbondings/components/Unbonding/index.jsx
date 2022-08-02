@@ -9,7 +9,7 @@ import Box from "~/renderer/components/Box/Box";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
-import { UnbondingType } from "~/renderer/families/elrond/types";
+import type { UnbondingType } from "~/renderer/families/elrond/types";
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 import { openURL } from "~/renderer/linking";

@@ -2,11 +2,11 @@
 
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
-import { Account as AccountType } from "@ledgerhq/types-live";
+import type { Account as AccountType } from "@ledgerhq/types-live";
 
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
 import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
-import { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
 import Delegation from "~/renderer/families/elrond/components/Delegations/components/Delegation";
 
 interface DelegationsType {
