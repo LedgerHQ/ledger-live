@@ -19,6 +19,7 @@ import styled, { withTheme } from "styled-components";
 import { useAvalanchePChainPreloadData } from "@ledgerhq/live-common/families/avalanchepchain/react";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import {
+  MINUTE,
   FIVE_MINUTES,
   YEAR,
   TWO_WEEKS,
@@ -65,12 +66,15 @@ function StepEndDate({
   const stakeStartTime = moment().unix() + FIVE_MINUTES;
   const unixMinEndDate = stakeStartTime + TWO_WEEKS;
   const unixMaxEndDate = Math.min(stakeStartTime + YEAR, Number(selectedValidator.endTime));
-  const unixDefaultEndDate = Math.min(stakeStartTime + THREE_WEEKS, unixMaxEndDate);
+  const unixDefaultEndDate = Math.min(stakeStartTime + THREE_WEEKS + MINUTE, unixMaxEndDate);
 
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
   const defaultEndDate = moment.unix(unixDefaultEndDate).format("YYYY-MM-DDTHH:mm");
-  const minEndDateText = moment.unix(unixMinEndDate).add(1, 'minutes').format("MM/DD/YYYY, h:mm a");
+  const minEndDateText = moment
+    .unix(unixMinEndDate)
+    .add(1, "minutes")
+    .format("MM/DD/YYYY, h:mm a");
   const maxEndDateText = moment.unix(unixMaxEndDate).format("MM/DD/YYYY, h:mm a");
 
   useEffect(() => {
