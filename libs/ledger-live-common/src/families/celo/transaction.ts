@@ -29,8 +29,6 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fees: tr.fees ? new BigNumber(tr.fees) : null,
     mode: tr.mode,
     index: tr.index,
-    address: tr.address,
-    group: tr.group,
   };
 };
 
@@ -42,8 +40,6 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     fees: t.fees?.toString() || null,
     mode: t.mode,
     index: t.index,
-    address: t.address,
-    group: t.group,
   };
 };
 

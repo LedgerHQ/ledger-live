@@ -54,16 +54,12 @@ export type Transaction = TransactionCommon & {
   fees: BigNumber | null | undefined;
   mode: CeloOperationMode;
   index: number | null | undefined;
-  address: string | null | undefined;
-  group: string | null | undefined;
 };
 export type TransactionRaw = TransactionCommonRaw & {
   family: "celo";
   fees: string | null | undefined;
   mode: CeloOperationMode;
   index: number | null | undefined;
-  address: string | null | undefined;
-  group: string | null | undefined;
 };
 export type CeloValidatorGroup = {
   address: string;

@@ -26,7 +26,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
   const { spendableBalance, celoResources } = account;
   const { lockedBalance, nonvotingLockedBalance } = celoResources;
 
-  const _withdrawableBalance = withdrawableBalance(account);
+  const withdrawableBalanceAmount = withdrawableBalance(account);
 
   const unit = getAccountUnit(account);
 
@@ -45,7 +45,11 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
     nonvotingLockedBalance,
     formatConfig,
   );
-  const formattedWithdrawableBalance = formatCurrencyUnit(unit, _withdrawableBalance, formatConfig);
+  const formattedWithdrawableBalance = formatCurrencyUnit(
+    unit,
+    withdrawableBalanceAmount,
+    formatConfig,
+  );
 
   return (
     <S.Wrapper>

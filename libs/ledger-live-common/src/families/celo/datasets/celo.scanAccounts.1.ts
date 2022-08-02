@@ -15,8 +15,11 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 
+// This account is registered for staking and has available funds, locked voting funds,
+// locked non-voting funds, and withdrawable funds.
 const LEDGER_CELO_ACCOUNT_1 = "0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB";
-const LEDGER_CELO_ACCOUNT_2 = "0xDE680aC69f10F8B7e8B547f6da866369D059ac81";
+// This account has no funds and isn't registered for staking.
+const LEDGER_CELO_ACCOUNT_2 = "0x2cC7E5913bADa8FA2895bDeF7F4C2E36C2368Abb";
 const VALIDATOR_ACCOUNT_1 = "0x0861a61Bf679A30680510EcC238ee43B82C5e843";
 
 const dataset: CurrenciesData<Transaction> = {
@@ -112,8 +115,6 @@ const dataset: CurrenciesData<Transaction> = {
             mode: "send",
             fees: null,
             index: 0,
-            address: null,
-            group: null,
           }),
           expectedStatus: {
             errors: {
@@ -131,8 +132,6 @@ const dataset: CurrenciesData<Transaction> = {
             mode: "send",
             fees: null,
             index: 0,
-            address: null,
-            group: null,
           }),
           expectedStatus: {
             errors: {
@@ -328,6 +327,49 @@ const dataset: CurrenciesData<Transaction> = {
               errors: {},
               warnings: {},
             };
+          },
+        },
+      ],
+    },
+    {
+      FIXME_tests: ["balance is sum of ops"],
+      raw: {
+        id: `js:2:celo:${LEDGER_CELO_ACCOUNT_2}:`,
+        seedIdentifier:
+          "0453390dcc1e6f1be0fb34f837b278ed1b4c84097c7493c13a0d915c735af1d8aa445d2738a95e8f50bc22abd2e17cb868d4db22a623d99d861740eb93373d50a3",
+        name: "Celo 1",
+        derivationMode: "",
+        index: 0,
+        freshAddress: LEDGER_CELO_ACCOUNT_2,
+        freshAddressPath: "44'/52752'/0'/0/0",
+        freshAddresses: [],
+        blockHeight: 0,
+        operations: [],
+        pendingOperations: [],
+        currencyId: "celo",
+        unitMagnitude: 18,
+        lastSyncDate: "",
+        balance: "399893159500000000",
+        celoResources: {
+          registrationStatus: false,
+          lockedBalance: "0",
+          nonvotingLockedBalance: "0",
+          pendingWithdrawals: [],
+          votes: [],
+          electionAddress: "0x8D6677192144292870907E3Fa8A5527fE55A7ff6",
+          lockedGoldAddress: "0x6cC083Aed9e3ebe302A6336dBC7c921C9f03349E",
+        },
+      } as AccountRaw,
+      transactions: [
+        {
+          name: "Register Account - success",
+          transaction: (t) => ({
+            ...t,
+            mode: "register",
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
       ],
