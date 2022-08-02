@@ -785,9 +785,6 @@ const estimateMaxSpendable = async ({
   transaction: Transaction;
 }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const isContractAddressRecipient =
-    (await fetchTronContract(transaction.recipient)) !== undefined;
-  console.log(isContractAddressRecipient, transaction.recipient);
   const fees = await getEstimatedFees(
     mainAccount,
     {
@@ -798,7 +795,7 @@ const estimateMaxSpendable = async ({
         transaction?.recipient || "0x0000000000000000000000000000000000000000",
       amount: new BigNumber(0),
     },
-    isContractAddressRecipient
+    transaction && transaction.recipient ? (await fetchTronContract(transaction.recipient)) !== undefined : false
   );
   return account.type === "Account"
     ? BigNumber.max(0, account.spendableBalance.minus(fees))
