@@ -8,11 +8,14 @@ import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
+import GeniuneCheckPopin from "./GeniuneCheckPopin";
+
+import { SoftwareCheckContent } from "./SoftwareCheckStep";
 
 const SyncOnboardingManual = () => {
   const steps = [
     {
-      status: "active",
+      status: "completed",
       title: "Nano is connected",
       renderBody: () => (
         <Text>
@@ -21,7 +24,7 @@ const SyncOnboardingManual = () => {
       ),
     },
     {
-      status: "inactive",
+      status: "completed",
       title: "Set your PIN",
       renderBody: () => (
         <Text>
@@ -31,7 +34,7 @@ const SyncOnboardingManual = () => {
       estimatedTime: 120,
     },
     {
-      status: "inactive",
+      status: "completed",
       title: "Recovery phrase",
       renderBody: () => (
         <Text>{`Tap on the videos below to learn more about your secret recovery phrase`}</Text>
@@ -39,10 +42,10 @@ const SyncOnboardingManual = () => {
       estimatedTime: 300,
     },
     {
-      status: "inactive",
+      status: "active",
       title: "Software check",
       renderBody: () => (
-        <Text>{`We'll verify whether your Nano is genuine. This should be quick and easy!`}</Text>
+        <SoftwareCheckContent genuineCheckStatus="active" firmwareUpdateStatus="inactive" />
       ),
     },
     {
@@ -58,10 +61,15 @@ const SyncOnboardingManual = () => {
 
   const { t } = useTranslation();
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [isGeniuneCheckPopinOpen, setGeniuneCheckPopinOpen] = useState<boolean>(true);
 
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
+      <GeniuneCheckPopin
+        isOpen={isGeniuneCheckPopinOpen}
+        onClose={() => setGeniuneCheckPopinOpen(false)}
+      />
       <Flex width="100%" justifyContent="flex-end" mt={4} px={4}>
         <LangSwitcher />
         <Button ml={4} Icon={CloseMedium} />
