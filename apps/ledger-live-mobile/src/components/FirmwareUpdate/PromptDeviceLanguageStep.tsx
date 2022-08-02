@@ -4,13 +4,9 @@ import { useTranslation } from "react-i18next";
 
 import { Flex } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import { DeviceInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
-import {
-  idsToLanguage,
-  Language,
-} from "@ledgerhq/live-common/lib/types/languages";
 
 import Track from "../../analytics/Track";
 import { FwUpdateForegroundEvent } from ".";
