@@ -120,9 +120,13 @@ describe("trackingWrapper", () => {
 
       // Then
       expect(mockedTrack).toHaveBeenCalledTimes(1);
-      expect(mockedTrack).toHaveBeenCalledWith(message, {
-        platform: appManifest.name,
-      });
+      expect(mockedTrack).toHaveBeenCalledWith(
+        message,
+        {
+          platform: appManifest.name,
+        },
+        null
+      );
     });
   }
 });
