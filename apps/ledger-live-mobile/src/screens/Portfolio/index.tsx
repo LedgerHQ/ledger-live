@@ -15,7 +15,6 @@ import { Box, Flex, Link as TextLink } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import LinearGradient from "react-native-linear-gradient";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import {
@@ -25,6 +24,7 @@ import {
 } from "../../reducers/settings";
 import { usePortfolio } from "../../actions/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
+import BackgroundGradient from "../../components/BackgroundGradient";
 
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
@@ -43,8 +43,6 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
-import SectionTitle from "../WalletCentricSections/SectionTitle";
-import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
@@ -251,13 +249,7 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       ...(showAssets
         ? [
-            <SectionContainer px={0} mb={8}>
-              <SectionTitle
-                title={t("analytics.operations.title")}
-                containerProps={{ mx: 6 }}
-              />
-              <PortfolioHistoryList navigation={navigation} />
-            </SectionContainer>,
+            <OperationsHistorySection accounts={assetsToDisplay} />,
           ]
         : []),
     ],
@@ -296,7 +288,7 @@ function PortfolioScreen({ navigation }: Props) {
         <Gradient />
         <AnimatedFlatListWithRefreshControl
           data={data}
-          style={{ flex: 1, position: "relative" }}
+          style={{ flex: 1, position: "relative", paddingTop: 48, marginBottom: 36 }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
           keyExtractor={(_: any, index: number) => String(index)}
