@@ -22,12 +22,12 @@ const FTXLogin = ({ onClose, provider }: Props) => {
   useEffect(() => {
     const webview = webviewRef.current;
     if (webview) {
-      webview.addEventListener("dom-ready", handleExecuteJavaScript);
+      webview.addEventListener("did-start-loading", handleExecuteJavaScript);
     }
 
     return () => {
       if (webview) {
-        webview.removeEventListener("dom-ready", handleExecuteJavaScript);
+        webview.removeEventListener("did-start-loading", handleExecuteJavaScript);
       }
     };
   }, [handleExecuteJavaScript]);
