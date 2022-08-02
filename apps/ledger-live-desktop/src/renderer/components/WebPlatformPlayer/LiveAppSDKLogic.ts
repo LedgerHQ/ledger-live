@@ -107,7 +107,12 @@ export const signTransactionLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
   accountId: string,
   transaction: RawPlatformTransaction,
-  params: any,
+  params?: {
+    /**
+     * The name of the Ledger Nano app to use for the signing process
+     */
+    useApp: string;
+  },
 ) => {
   tracking.platformSignTransactionRequested(manifest);
 
@@ -139,7 +144,7 @@ export const signTransactionLogic = (
         canEditFees,
         stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
         transactionData: liveTx,
-        useApp: params.useApp,
+        useApp: params?.useApp,
         account,
         parentAccount,
         onResult: (signedOperation: SignedOperation) => {
