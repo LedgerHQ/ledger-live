@@ -3,7 +3,7 @@ import network from "../../../network";
 import { getEnv } from "../../../env";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../../operation";
-import { CeloValidatorGroup } from "../types";
+import { CeloValidatorGroup, FigmentIndexerTransaction } from "../types";
 import { isDefaultValidatorGroup } from "../logic";
 import { celoKit } from "./sdk";
 
@@ -71,17 +71,17 @@ const getOperationType = (type: string): OperationType => {
 const transactionToOperation = (
   address: string,
   accountId: string,
-  transaction
+  transaction: FigmentIndexerTransaction
 ): Operation => {
   const type: OperationType = getOperationType(transaction.kind);
-  const hasFailed = transaction.data.success
-    ? !transaction.data.success
+  const hasFailed = transaction.data?.success
+    ? !transaction.data?.success
     : false;
   const data = transaction.data;
   const sender = data?.Account || data?.from;
   const recipient = data?.Group || data?.to;
-  const fee = new BigNumber(transaction.data.gas_used).times(
-    new BigNumber(transaction.data.gas_price)
+  const fee = new BigNumber(transaction.data?.gas_used || 0).times(
+    new BigNumber(transaction.data?.gas_price || 0)
   );
   const value =
     type === "LOCK"
@@ -105,7 +105,17 @@ const transactionToOperation = (
   };
 };
 
-export const getAccountDetails = async (address: string, accountId: string) => {
+export const getAccountDetails = async (
+  address: string,
+  accountId: string
+): Promise<{
+  blockHeight: any;
+  balance: BigNumber;
+  spendableBalance: BigNumber;
+  operations: Operation[];
+  lockedBalance: BigNumber;
+  nonvotingLockedBalance: BigNumber;
+}> => {
   const accountDetails = await fetchAccountDetails(address);
   const spendableBalance = new BigNumber(accountDetails.gold_balance);
   const lockedBalance = new BigNumber(accountDetails.total_locked_gold);
@@ -125,8 +135,9 @@ export const getAccountDetails = async (address: string, accountId: string) => {
     )
     .concat(accountDetails.transactions);
 
-  const operations = allTransactions.map((transaction) =>
-    transactionToOperation(address, accountId, transaction)
+  const operations: Operation[] = allTransactions.map(
+    (transaction: FigmentIndexerTransaction) =>
+      transactionToOperation(address, accountId, transaction)
   );
 
   return {

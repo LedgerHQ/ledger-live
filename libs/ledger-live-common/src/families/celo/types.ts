@@ -86,6 +86,37 @@ export type CeloVoteRaw = {
   type: CeloVoteType;
   index: number;
 };
+export type FigmentIndexerTransaction = {
+  id: number;
+  height: number;
+  time: string;
+  transaction_hash: string;
+  address: string;
+  amount: number;
+  kind: string;
+  data?: {
+    Raw?: {
+      data: string;
+      topics: Array<string>;
+      address: string;
+      removed: boolean;
+      logIndex: string;
+      blockHash: string;
+      blockNumber: string;
+      transactionHash: string;
+      transactionIndex: string;
+    };
+    gas: number;
+    Account?: string;
+    Group?: string;
+    success?: boolean;
+    from?: string;
+    to?: string;
+    gas_used: number;
+    gas_price: number;
+  };
+};
+
 export type CeloPreloadData = {
   validatorGroups: CeloValidatorGroup[];
 };
