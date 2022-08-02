@@ -798,9 +798,11 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
       );
       break;
     case "algorand":
-      (res as AlgorandAccount).algorandResources = fromAlgorandResourcesRaw(
-        (rawAccount as AlgorandAccountRaw).algorandResources
-      );
+      const algoResourcesRaw = (rawAccount as AlgorandAccountRaw)
+        .algorandResources;
+      if (algoResourcesRaw)
+        (res as AlgorandAccount).algorandResources =
+          fromAlgorandResourcesRaw(algoResourcesRaw);
       break;
     case "polkadot":
       (res as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(

@@ -25,7 +25,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
         {
           name: "algorand seed 1",
           apdus: `
-          => 800300000400000000
+          => 800300000480000000
           <= c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c49000
           => 800300000480000000
           <= c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c49000
