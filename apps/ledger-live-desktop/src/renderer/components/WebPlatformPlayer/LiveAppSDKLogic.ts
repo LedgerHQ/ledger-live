@@ -219,7 +219,7 @@ export const broadcastTransactionLogic = async (
       setDrawer(OperationDetails, {
         operationId: optimisticOperation.id,
         accountId: account.id,
-        parentId: parentAccount && parentAccount.id,
+        parentId: parentAccount?.id,
       });
     },
   });
