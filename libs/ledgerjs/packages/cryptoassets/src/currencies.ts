@@ -2617,7 +2617,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "Thundercore",
     ticker: "TT",
     scheme: "thundercore",
-    color: "#000",
+    color: "#0844D2",
     family: "ethereum",
     ethereumLikeInfo: {
       chainId: 108,
@@ -2629,7 +2629,12 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 18,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://viewblock.io/thundercore/tx/$hash",
+        address: "https://viewblock.io/thundercore/address/$address",
+      },
+    ],
   },
   tomo: {
     type: "CryptoCurrency",
@@ -3002,7 +3007,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "Zilliqa",
     ticker: "ZIL",
     scheme: "zilliqa",
-    color: "#000",
+    color: "#2CC0BE",
     family: "zilliqa",
     units: [
       {
@@ -3011,7 +3016,12 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 12,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://viewblock.io/zilliqa/tx/$hash",
+        address: "https://viewblock.io/zilliqa/address/$address",
+      },
+    ],
   },
   crypto_org: {
     type: "CryptoCurrency",
