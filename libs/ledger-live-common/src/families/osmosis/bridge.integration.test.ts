@@ -1,7 +1,7 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { BigNumber } from "bignumber.js";
-import type { CurrenciesData, DatasetTest } from "../../types";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
