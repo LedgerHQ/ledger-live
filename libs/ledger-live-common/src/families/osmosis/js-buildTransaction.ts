@@ -1,4 +1,4 @@
-import { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { cosmos } from "@keplr-wallet/cosmos";

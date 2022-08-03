@@ -10,4 +10,11 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
 
-export default { formatTransaction, fromTransactionRaw, toTransactionRaw, fromTransactionStatusRaw, toTransactionStatusRaw, formatTransactionStatus };
+export default {
+  formatTransaction,
+  fromTransactionRaw,
+  toTransactionRaw,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+  formatTransactionStatus,
+};

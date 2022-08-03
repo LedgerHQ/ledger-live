@@ -1,5 +1,9 @@
 import type { BigNumber } from "bignumber.js";
 import {
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
+import {
   CosmosLikeTransaction,
   CosmosLikeTransactionRaw,
 } from "../cosmos/types";
@@ -25,25 +29,9 @@ export type TransactionRaw = CosmosLikeTransactionRaw & {
   sourceValidator: string | null | undefined;
 };
 
-export type StatusErrorMap = {
-  recipient?: Error;
-  amount?: Error;
-  fees?: Error;
-  validators?: Error;
-  delegate?: Error;
-  redelegation?: Error;
-  unbonding?: Error;
-  claimReward?: Error;
-  feeTooHigh?: Error;
-};
+export type TransactionStatus = TransactionStatusCommon;
 
-export type TransactionStatus = {
-  errors: StatusErrorMap;
-  warnings: StatusErrorMap;
-  estimatedFees: BigNumber;
-  amount: BigNumber;
-  totalSpent: BigNumber;
-};
+export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type OsmosisRewardsState = {
   targetBondedRatio: number;

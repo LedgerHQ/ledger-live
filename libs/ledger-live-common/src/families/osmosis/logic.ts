@@ -1,9 +1,10 @@
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { COSMOS_MAX_DELEGATIONS } from "../cosmos/logic";
+import { DEFAULT_GAS, MIN_GAS_FEE } from "./js-getFeesForTransaction";
 
-export const OSMOSIS_MIN_SAFE = new BigNumber(10000); // 10000 uosmo, setting a reasonable floor
-export const OSMOSIS_MIN_FEES = new BigNumber(0); // 0 uosmo
+const OSMOSIS_MIN_SAFE = new BigNumber(10000); // 10000 uosmo, setting a reasonable floor
+const OSMOSIS_MIN_FEES = new BigNumber(MIN_GAS_FEE * DEFAULT_GAS);
 
 export function canDelegate(account: Account): boolean {
   const maxSpendableBalance = getMaxDelegationAvailable(account, 1);

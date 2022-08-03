@@ -6,12 +6,12 @@ import zipWith from "lodash/zipWith";
 import { BigNumber } from "bignumber.js";
 import osmosisValidatorsManager from "./validators";
 
+import type { Transaction } from "../../generated/types";
 import type {
-  Transaction,
   Account,
   AccountLike,
   AccountLikeArray,
-} from "../../types";
+} from "@ledgerhq/types-live";
 import { CosmosDelegationInfo } from "../cosmos/types";
 
 const options = [

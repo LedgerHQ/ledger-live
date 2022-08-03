@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
 import network from "../../../network";
 import { encodeOperationId } from "../../../operation";
-import { Operation, OperationType } from "../../../types";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 import { CosmosAPI } from "../../cosmos/api/Cosmos";
 import { CosmosDelegationInfo } from "../../cosmos/types";
 import {
