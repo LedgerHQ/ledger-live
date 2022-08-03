@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "Abhebung",
       "NOMINATE" : "Nominierung",
       "CHILL" : "Nominierungen löschen",
-      "SET_CONTROLLER" : "Controller einstellen"
+      "SET_CONTROLLER" : "Controller einstellen",
+      "LOCK" : "Locked",
+      "UNLOCK" : "Unlocked",
+      "WITHDRAW" : "Ausgezahlt",
+      "REVOKE" : "Revoked",
+      "ACTIVATE" : "Activated",
+      "REGISTER" : "Registered"
     }
   },
   "byteSize" : {
@@ -2112,6 +2118,271 @@
       "MERGE_OUTPUTS" : "Zukünftige Gebühren minimieren (Coins zusammenführen)"
     }
   },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Mehr Infos",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "The CELO  token is now available on Ledger Live",
+        "description" : "You can now start to manage your CELO tokens and secure them through Ledger Live.",
+        "description2" : "The Celo token is native to the Celo chain and is used for everything from transactions, staking and many upcoming features.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "lockedBalance" : "Locked balance",
+    "lockedTooltip" : "Assets must be locked and voted for validator groups before earning rewards.",
+    "nonvotingLockedBalance" : "Non-voting locked balance",
+    "nonvotingLockedTooltip" : "The balance of locked assets available to be used for voting",
+    "withdrawableBalance" : "Withdrawable balance",
+    "withdrawableTooltip" : "The amount you can withdraw now.",
+    "delegation" : {
+      "activeTooltip" : "Active vote generates rewards",
+      "pendingTooltip" : "Pending vote does not generate rewards and needs to be activated after 24h",
+      "awaitingActivationTooltip" : "This pending vote can be now activated",
+      "listHeader" : "Delegierungen",
+      "add" : "Hinzufügen",
+      "validatorGroup" : "Validator Group",
+      "manageMultipleVoteWarning" : "You need to Activate or Revoke other votes in the same validator group before managing this vote.",
+      "actions" : {
+        "activate" : "Aktivieren",
+        "revoke" : "Revoke"
+      },
+      "emptyState" : {
+        "description" : "You can earn CELO rewards by delegating your assets.",
+        "info" : "So funktioniert Delegierung",
+        "delegation" : "Verdienen Sie Belohnungen"
+      },
+      "earnRewards" : {
+        "description" : "You may earn rewards by delegating your CELO assets to a validator.",
+        "bullet" : {
+          "0" : "Sie behalten das Eigentum an delegierten Vermögenswerten",
+          "1" : "Delegieren Sie mit Ihrem Ledger-Gerät",
+          "2" : "Vermögenswerte sind nach nach Aufhebung der Delegierung verfügbar"
+        },
+        "warning" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer übertragenen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+      }
+    },
+    "manage" : {
+      "title" : "Vermögenswerte verwalten",
+      "titleWhenPendingRegistration" : "Account Registration Pending",
+      "lock" : {
+        "title" : "Sperren",
+        "description" : "To earn rewards, first lock an amount. Then you must vote for your validator(s)."
+      },
+      "unlock" : {
+        "title" : "Unlock",
+        "description" : "To make a locked amount available again, first you need to unlock it. You can withdraw it after the 3-day unlocking period."
+      },
+      "withdraw" : {
+        "title" : "Abheben",
+        "description" : "To retrieve an unlocked amount back to the available balance, you need to withdraw it manually."
+      },
+      "vote" : {
+        "title" : "Abstimmen",
+        "description" : "Vote for validator groups. Ensure you activate your votes to earn rewards."
+      },
+      "activate" : {
+        "title" : "Activate vote",
+        "description" : "Activate your vote for validator group"
+      },
+      "revoke" : {
+        "title" : "Revoke vote",
+        "description" : "Revoke your vote for validator group"
+      }
+    },
+    "lock" : {
+      "title" : "Lock assets",
+      "steps" : {
+        "amount" : {
+          "title" : "Betrag",
+          "amountLabel" : "Amount to lock",
+          "availableLabel" : "Verfügbar",
+          "maxLabel" : "Max.",
+          "info" : "Locked assets can be unlocked at any time, but unlocking takes 3 days."
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "Assets successfully locked",
+            "text" : "You can vote for validators once the network has confirmed the transaction.",
+            "textVote" : "You will be able to vote validators once the network has confirmed your transaction.",
+            "cta" : "Details anzeigen"
+          },
+          "pending" : {
+            "title" : "Locking your assets..."
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "Unlock assets",
+      "steps" : {
+        "amount" : {
+          "title" : "Betrag",
+          "amountLabel" : "Amount to unlock",
+          "availableLabel" : "Locked",
+          "maxLabel" : "Max.",
+          "info" : "Unlocked assets can be withdrawn after the 3-day unlocking period.",
+          "learnMore" : "Weitere Informationen"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "label" : "Bestätigung",
+          "success" : {
+            "title" : "Unlock transaction sent successfully",
+            "text" : "Unlocked assets can be withdrawn in 3 days.",
+            "cta" : "Details anzeigen"
+          },
+          "pending" : {
+            "title" : "Unlocking your assets..."
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "Register account",
+          "description" : "",
+          "info" : "Before locking any Celo you need to register your account on-chain."
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "Informationen"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "label" : "Bestätigung",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "Account registered successfully",
+                "text" : "Sie werden Ihre Aktion bald in Ihrem Verlauf sehen.",
+                "cta" : "Sperren"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "Sende Transaktion..."
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "Vermögenswerte abheben",
+      "steps" : {
+        "amount" : {
+          "title" : "Abheben"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "",
+            "text" : "Your assets were withdrawn successfully. The withdrawn amount will be credited to your available balance.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "vote" : {
+      "title" : "Abstimmen",
+      "steps" : {
+        "amount" : {
+          "title" : "Betrag"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "You have successfully voted",
+            "text" : "Sie werden Ihre Aktion bald in Ihrem Verlauf sehen.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        },
+        "validatorGroup" : {
+          "title" : "Validator Group",
+          "ledgerByFigmentTC" : "Ledger laut Figment AGBs",
+          "totalVotes" : "Total Votes",
+          "commission" : "Provision"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "Activate votes",
+      "steps" : {
+        "vote" : {
+          "title" : "Abstimmen"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "",
+            "text" : "Your vote was successfully activated.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "Revoke vote",
+      "steps" : {
+        "amount" : {
+          "title" : "Betrag",
+          "amountLabel" : "Amount to revoke",
+          "availableLabel" : "Verfügbar",
+          "maxLabel" : "Max."
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "You have successfully revoked your votes",
+            "text" : "Sie werden Ihre Aktion bald in Ihrem Verlauf sehen.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        },
+        "vote" : {
+          "title" : "Abstimmen",
+          "active" : "Aktiv",
+          "pending" : "Ausstehend",
+          "awaitingActivation" : "Awaiting activation",
+          "info" : "Only revokable votes are shown on this modal"
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "You have a withdrawable balance",
+      "activatableVotes" : "You have votes that can now be activated."
+    }
+  },
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
@@ -3842,6 +4113,9 @@
     "NoAccessToCamera" : {
       "title" : "Bitte stellen Sie sicher, dass Ihr System über eine Kamera verfügt, dass diese nicht von einer anderen Anwendung verwendet wird und dass Ledger Live die Erlaubnis hat, diese zu verwenden.",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Stellen Sie sicher, dass Sie genug Guthaben für zukünftige Transaktionsgebühren übrig haben"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Die Prämien sind kleiner als die geschätzten Gebühren, die anfallen, um diese zu beanspruchen",
