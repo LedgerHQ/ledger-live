@@ -13,22 +13,19 @@ import {
   Text,
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useDispatch } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { OnboardingStep as DeviceOnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { fromSeedPhraseTypeToNbOfSeedWords } from "@ledgerhq/live-common/lib/hw/extractOnboardingState";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
-import { completeOnboarding } from "../../actions/settings";
 import SoftwareChecksStep from "./SoftwareChecksStep";
 
 type StepStatus = "completed" | "active" | "inactive";
@@ -137,7 +134,6 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     [device],
   );
 
-  const dispatch = useDispatch();
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [resyncDelay, setResyncDelay] = useState<number>(shortResyncDelay);
@@ -175,17 +171,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   }, [navigation]);
 
   const handleDeviceReady = useCallback(() => {
-    dispatch(completeOnboarding());
-
-    const parentNav = navigation.getParent();
-    if (parentNav) {
-      parentNav.popToTop();
-    }
-
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-    });
-  }, [dispatch, navigation]);
+    navigation.navigate(ScreenName.SyncOnboardingCompletion);
+  }, [navigation]);
 
   // useEffect(() => {
   //   TODO: handle fatal errors
