@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import DeviceActionModal from "./DeviceActionModal";
-import { Language } from "@ledgerhq/live-common/lib/types/languages";
+import { Language } from "@ledgerhq/types-live";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
 import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
 import { useTranslation } from "react-i18next";
@@ -11,12 +11,12 @@ import { BoxedIcon, Flex, Text, Button, Icons } from "@ledgerhq/native-ui";
 type Props = {
   device: Device | null;
   language: Language;
-  onClose: () => void;
+  onClose?: () => void;
   onResult?: () => void;
 };
 
 const DeviceLanguageInstalled: React.FC<{
-  onContinue: () => void;
+  onContinue?: () => void;
   onMount?: () => void;
   installedLanguage: Language;
 }> = ({ onContinue, onMount, installedLanguage }) => {

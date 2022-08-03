@@ -60,6 +60,7 @@ const PropmtDeviceLanguageStep = ({
 
   const installLanguage = useCallback(
     (language: Language) => {
+      console.log("install language:", language);
       setLanguageToInstall(language);
       setDeviceForAction(device);
     },
@@ -67,7 +68,7 @@ const PropmtDeviceLanguageStep = ({
   );
 
   useEffect(() => {
-    if (newLanguagesLoaded && oldLanguagesLoaded) {
+    if (true) {
       const deviceLanguageId = updatedDeviceInfo?.languageId;
       const potentialDeviceLanguage = localeIdToDeviceLanguage[currentLocale];
 
@@ -78,18 +79,39 @@ const PropmtDeviceLanguageStep = ({
 
       // firmware version verification is not really needed here, the presence of a language id
       // indicates that we are in a firmware that supports localization
+
+      console.log("FROOM THE USE EFFECT", {
+        langAvailableForTheFirstTime,
+        deviceLanguageId,
+        potentialDeviceLanguage,
+        deviceLanguageText: idsToLanguage[deviceLanguageId as number],
+        deviceLocalizationFeatureFlag,
+        oldDeviceInfo,
+        englishId: languageIds["english"],
+        firstCondition:
+          langAvailableForTheFirstTime &&
+          deviceLanguageId !== undefined &&
+          idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
+          deviceLocalizationFeatureFlag.enabled,
+        secondCondition:
+          oldDeviceInfo?.languageId !== undefined &&
+          oldDeviceInfo?.languageId !== languageIds["english"],
+      });
+
       if (
-        langAvailableForTheFirstTime &&
-        deviceLanguageId !== undefined &&
-        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag.enabled
+        false
+        // langAvailableForTheFirstTime &&
+        // deviceLanguageId !== undefined &&
+        // idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
+        // deviceLocalizationFeatureFlag.enabled
       ) {
         setIsLanguagePromptOpen(true);
-      } else if ( // did not work, for some reason old device info was zero, my mistake maybe?
-        oldDeviceInfo?.languageId !== undefined &&
-        oldDeviceInfo?.languageId !== languageIds["english"]
+      } else if (
+        true
+        // oldDeviceInfo?.languageId !== undefined &&
+        // oldDeviceInfo?.languageId !== languageIds["english"]
       ) {
-        installLanguage(idsToLanguage[oldDeviceInfo.languageId]);
+        installLanguage("french");
       } else {
         dispatchEvent({ type: "languagePromptDismissed" });
       }
@@ -106,7 +128,8 @@ const PropmtDeviceLanguageStep = ({
     installLanguage,
   ]);
 
-  console.log({
+  // TODO: remove console log
+  console.log("RENDER", {
     newAvailableLanguages,
     newLanguagesLoaded,
     oldAvailableLanguages,
@@ -117,6 +140,7 @@ const PropmtDeviceLanguageStep = ({
     updatedDeviceInfo,
     installLanguage,
     deviceForAction,
+    languageToInstall
   });
 
   const deviceName = getDeviceModel(device.modelId).productName;
@@ -157,6 +181,7 @@ const PropmtDeviceLanguageStep = ({
           device={deviceForAction}
           language={languageToInstall}
           onClose={() => {
+            console.log("FIIIM DA DEVICE ACTION")
             setDeviceForAction(null);
             dispatchEvent({ type: "languagePromptDismissed" });
           }}
