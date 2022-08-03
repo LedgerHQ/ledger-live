@@ -11,12 +11,10 @@ import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
-import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Link as TextLink } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
-import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import LinearGradient from "react-native-linear-gradient";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import {
@@ -27,7 +25,6 @@ import {
 import { usePortfolio } from "../../actions/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import BackgroundGradient from "../../components/BackgroundGradient";
-import getWindowDimensions from "../../logic/getWindowDimensions";
 
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
@@ -39,7 +36,6 @@ import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import AddAssetsCard from "./AddAssetsCard";
 import Assets from "./Assets";
-import { PortfolioHistoryList } from "./PortfolioHistory";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { useProviders } from "../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
@@ -47,6 +43,8 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import SectionTitle from "../WalletCentricSections/SectionTitle";
+import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -62,71 +60,12 @@ type Props = {
   navigation: any;
 };
 
-const StyledTouchableOpacity = proxyStyled.TouchableOpacity.attrs({
-  justifyContent: "center",
-  alignItems: "flex-end",
-  px: 7,
-  mx: -7,
-  py: 5,
-  my: -5,
-})``;
-
 const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
   mt: 9,
   px: p.px ?? 6,
 }))``;
 
 export const Gradient = styled(BackgroundGradient)``;
-
-const SectionTitle = ({
-  title,
-  onSeeAllPress,
-  navigatorName,
-  screenName,
-  params,
-  navigation,
-  seeMoreText,
-  containerProps,
-}: {
-  title: React.ReactElement;
-  onSeeAllPress?: () => void;
-  navigatorName?: string;
-  screenName?: string;
-  params?: any;
-  navigation?: any;
-  seeMoreText?: React.ReactElement;
-  containerProps?: FlexBoxProps;
-}) => {
-  const { t } = useTranslation();
-  const onLinkPress = useCallback(() => {
-    if (onSeeAllPress) {
-      onSeeAllPress();
-    }
-    if (navigation && navigatorName) {
-      navigation.navigate(navigatorName, { screen: screenName, params });
-    }
-  }, [onSeeAllPress, navigation, navigatorName, screenName, params]);
-
-  return (
-    <Flex
-      flexDirection={"row"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      {...containerProps}
-    >
-      <Text variant={"h3"} textTransform={"uppercase"} mt={2}>
-        {title}
-      </Text>
-      {onSeeAllPress || navigatorName ? (
-        <StyledTouchableOpacity onPress={onLinkPress}>
-          <TextLink onPress={onLinkPress} type={"color"}>
-            {seeMoreText || t("common.seeAll")}
-          </TextLink>
-        </StyledTouchableOpacity>
-      ) : null}
-    </Flex>
-  );
-};
 
 const maxAssetsToDisplay = 5;
 
@@ -256,15 +195,10 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       ...(showAssets
         ? [
-            <Box background={colors.background.main}>
-              <SectionContainer px={0} mb={8}>
-                <SectionTitle
-                  title={t("analytics.operations.title")}
-                  containerProps={{ mx: 6 }}
-                />
-                <PortfolioHistoryList navigation={navigation} />
-              </SectionContainer>
-            </Box>,
+            <SectionContainer px={6} mb={8}>
+              <SectionTitle title={t("analytics.operations.title")} />
+              <OperationsHistorySection accounts={assetsToDisplay} />
+            </SectionContainer>,
           ]
         : []),
     ],
@@ -306,7 +240,11 @@ function PortfolioScreen({ navigation }: Props) {
         />
         <AnimatedFlatListWithRefreshControl
           data={data}
-          style={{ flex: 1, position: "relative", paddingTop: 48 }}
+          style={{
+            flex: 1,
+            position: "relative",
+            paddingTop: 48,
+          }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
           keyExtractor={(_: any, index: number) => String(index)}
