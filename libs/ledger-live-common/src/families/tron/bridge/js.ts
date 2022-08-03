@@ -798,7 +798,9 @@ const estimateMaxSpendable = async ({
         transaction?.recipient || "0x0000000000000000000000000000000000000000",
       amount: new BigNumber(0),
     },
-    transaction && transaction.recipient ? (await fetchTronContract(transaction.recipient)) !== undefined : false
+    transaction && transaction.recipient
+      ? (await fetchTronContract(transaction.recipient)) !== undefined
+      : false
   );
   return account.type === "Account"
     ? BigNumber.max(0, account.spendableBalance.minus(fees))

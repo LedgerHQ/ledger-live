@@ -1,30 +1,28 @@
-import "../../__tests__/test-helpers/setup";
-import { testBridge } from "../../__tests__/test-helpers/bridge";
-import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
-import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
-import { fromTransactionRaw } from "./transaction";
-import type { Transaction } from "./types";
-import { activationFees } from "./constants";
 import {
   AmountRequired,
-  NotEnoughBalance,
-  RecipientRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
+  NotEnoughBalance,
+  RecipientRequired,
 } from "@ledgerhq/errors";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import {
-  TronNoFrozenForBandwidth,
-  TronNoFrozenForEnergy,
-  TronNoReward,
   TronInvalidFreezeAmount,
   TronInvalidVoteCount,
+  TronNoFrozenForBandwidth,
+  TronNoReward,
   TronNotEnoughTronPower,
   TronSendTrc20ToNewAccountForbidden,
-  TronVoteRequired,
   TronUnexpectedFees,
+  TronVoteRequired,
 } from "../../errors";
-import { getTronResources } from "../../api/Tron";
+import { testBridge } from "../../__tests__/test-helpers/bridge";
+import "../../__tests__/test-helpers/setup";
+import { activationFees } from "./constants";
+import { fromTransactionRaw } from "./transaction";
+import type { Transaction } from "./types";
 
 const unactivatedAddress = "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD";
 const activatedAddress1 = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
