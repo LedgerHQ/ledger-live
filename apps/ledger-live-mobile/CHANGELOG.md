@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.19
+
+### Patch Changes
+
+- [#797](https://github.com/LedgerHQ/ledger-live/pull/797) [`b2eb19311`](https://github.com/LedgerHQ/ledger-live/commit/b2eb19311711bf3a1cc4ca095af495da0988caca) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Receive flow - fix issue on token account creation name
+
 ## 3.5.0-next.18
 
 ### Patch Changes
