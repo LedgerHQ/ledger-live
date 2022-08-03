@@ -58,7 +58,7 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
-  broadcast: osmosisAPI.broadcast,
+  broadcast: osmosisAPI?.broadcast,
 };
 
 export default { currencyBridge, accountBridge };
