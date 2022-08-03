@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "Retiré",
       "NOMINATE" : "Nomination",
       "CHILL" : "Retirer les nominations",
-      "SET_CONTROLLER" : "Définir contrôleur"
+      "SET_CONTROLLER" : "Définir contrôleur",
+      "LOCK" : "Locked",
+      "UNLOCK" : "Unlocked",
+      "WITHDRAW" : "Retiré",
+      "REVOKE" : "Revoked",
+      "ACTIVATE" : "Activated",
+      "REGISTER" : "Registered"
     }
   },
   "byteSize" : {
@@ -2112,6 +2118,271 @@
       "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)"
     }
   },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Plus d’informations",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "The CELO  token is now available on Ledger Live",
+        "description" : "You can now start to manage your CELO tokens and secure them through Ledger Live.",
+        "description2" : "The Celo token is native to the Celo chain and is used for everything from transactions, staking and many upcoming features.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "lockedBalance" : "Locked balance",
+    "lockedTooltip" : "Assets must be locked and voted for validator groups before earning rewards.",
+    "nonvotingLockedBalance" : "Non-voting locked balance",
+    "nonvotingLockedTooltip" : "The balance of locked assets available to be used for voting",
+    "withdrawableBalance" : "Withdrawable balance",
+    "withdrawableTooltip" : "The amount you can withdraw now.",
+    "delegation" : {
+      "activeTooltip" : "Active vote generates rewards",
+      "pendingTooltip" : "Pending vote does not generate rewards and needs to be activated after 24h",
+      "awaitingActivationTooltip" : "This pending vote can be now activated",
+      "listHeader" : "Délégations",
+      "add" : "Ajouter",
+      "validatorGroup" : "Validator Group",
+      "manageMultipleVoteWarning" : "You need to Activate or Revoke other votes in the same validator group before managing this vote.",
+      "actions" : {
+        "activate" : "Activer",
+        "revoke" : "Revoke"
+      },
+      "emptyState" : {
+        "description" : "You can earn CELO rewards by delegating your assets.",
+        "info" : "Fonctionnement de la délégation",
+        "delegation" : "Gagner des récompenses"
+      },
+      "earnRewards" : {
+        "description" : "You may earn rewards by delegating your CELO assets to a validator.",
+        "bullet" : {
+          "0" : "Vous gardez la propriété de vos actifs délégués.",
+          "1" : "Déléguez avec votre appareil Ledger.",
+          "2" : "Les actifs seront disponibles une fois la délégation arrêtée."
+        },
+        "warning" : "Choisissez votre validateur judicieusement : une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement."
+      }
+    },
+    "manage" : {
+      "title" : "Gérer les actifs",
+      "titleWhenPendingRegistration" : "Account Registration Pending",
+      "lock" : {
+        "title" : "Immobiliser",
+        "description" : "To earn rewards, first lock an amount. Then you must vote for your validator(s)."
+      },
+      "unlock" : {
+        "title" : "Unlock",
+        "description" : "To make a locked amount available again, first you need to unlock it. You can withdraw it after the 3-day unlocking period."
+      },
+      "withdraw" : {
+        "title" : "Retirer",
+        "description" : "To retrieve an unlocked amount back to the available balance, you need to withdraw it manually."
+      },
+      "vote" : {
+        "title" : "Voter",
+        "description" : "Vote for validator groups. Ensure you activate your votes to earn rewards."
+      },
+      "activate" : {
+        "title" : "Activate vote",
+        "description" : "Activate your vote for validator group"
+      },
+      "revoke" : {
+        "title" : "Revoke vote",
+        "description" : "Revoke your vote for validator group"
+      }
+    },
+    "lock" : {
+      "title" : "Lock assets",
+      "steps" : {
+        "amount" : {
+          "title" : "Montant",
+          "amountLabel" : "Amount to lock",
+          "availableLabel" : "Disponible",
+          "maxLabel" : "Max",
+          "info" : "Locked assets can be unlocked at any time, but unlocking takes 3 days."
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "Assets successfully locked",
+            "text" : "You can vote for validators once the network has confirmed the transaction.",
+            "textVote" : "You will be able to vote validators once the network has confirmed your transaction.",
+            "cta" : "Voir les détails"
+          },
+          "pending" : {
+            "title" : "Locking your assets..."
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "Unlock assets",
+      "steps" : {
+        "amount" : {
+          "title" : "Montant",
+          "amountLabel" : "Amount to unlock",
+          "availableLabel" : "Locked",
+          "maxLabel" : "Max",
+          "info" : "Unlocked assets can be withdrawn after the 3-day unlocking period.",
+          "learnMore" : "En savoir plus"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "label" : "Confirmation",
+          "success" : {
+            "title" : "Unlock transaction sent successfully",
+            "text" : "Unlocked assets can be withdrawn in 3 days.",
+            "cta" : "Voir les détails"
+          },
+          "pending" : {
+            "title" : "Unlocking your assets..."
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "Register account",
+          "description" : "",
+          "info" : "Before locking any Celo you need to register your account on-chain."
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "Informations"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "label" : "Confirmation",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "Account registered successfully",
+                "text" : "L’opération apparaîtra dans votre historique sous peu.",
+                "cta" : "Immobiliser"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "Diffusion de la transaction..."
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "Retirer des actifs",
+      "steps" : {
+        "amount" : {
+          "title" : "Retirer"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "",
+            "text" : "Your assets were withdrawn successfully. The withdrawn amount will be credited to your available balance.",
+            "cta" : "Voir les détails"
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "vote" : {
+      "title" : "Voter",
+      "steps" : {
+        "amount" : {
+          "title" : "Montant"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "You have successfully voted",
+            "text" : "L’opération apparaîtra dans votre historique sous peu.",
+            "cta" : "Voir les détails"
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        },
+        "validatorGroup" : {
+          "title" : "Validator Group",
+          "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment",
+          "totalVotes" : "Total Votes",
+          "commission" : "Commission"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "Activate votes",
+      "steps" : {
+        "vote" : {
+          "title" : "Voter"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "",
+            "text" : "Your vote was successfully activated.",
+            "cta" : "Voir les détails"
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "Revoke vote",
+      "steps" : {
+        "amount" : {
+          "title" : "Montant",
+          "amountLabel" : "Amount to revoke",
+          "availableLabel" : "Disponible",
+          "maxLabel" : "Max"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "You have successfully revoked your votes",
+            "text" : "L’opération apparaîtra dans votre historique sous peu.",
+            "cta" : "Voir les détails"
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        },
+        "vote" : {
+          "title" : "Voter",
+          "active" : "Actif",
+          "pending" : "En attente",
+          "awaitingActivation" : "Awaiting activation",
+          "info" : "Only revokable votes are shown on this modal"
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "You have a withdrawable balance",
+      "activatableVotes" : "You have votes that can now be activated."
+    }
+  },
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
@@ -3842,6 +4113,9 @@
     "NoAccessToCamera" : {
       "title" : "Veuillez vous assurer que votre système a un appareil photo qui n’est pas utilisé par une autre application, et que Ledger Live a les autorisations nécessaires pour l’utiliser.",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Les récompenses sont inférieures aux frais estimés pour les demander.",
