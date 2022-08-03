@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.17
+
+### Patch Changes
+
+- [#792](https://github.com/LedgerHQ/ledger-live/pull/792) [`555c334eb`](https://github.com/LedgerHQ/ledger-live/commit/555c334ebf9f25271a810bc487abce03acf30fc5) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fix issue related to navigation on receive flow
+
 ## 3.5.0-next.16
 
 ### Patch Changes
