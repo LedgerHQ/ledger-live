@@ -46,7 +46,6 @@ export default function StepConfirmation({
     const amount =
       unit && validator && formatCurrencyUnit(unit, validator.amount, { showCode: true, locale });
 
-    const currencyName = account.currency.name.toLowerCase();
     return (
       <Container>
         <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmed" />

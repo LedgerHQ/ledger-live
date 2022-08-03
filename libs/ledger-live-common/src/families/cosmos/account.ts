@@ -17,8 +17,8 @@ function formatOperationSpecifics(
   op: CosmosOperation,
   unit: Unit | null | undefined
 ): string {
-  const { validators, autoClaimedRewards } = op.extra;
-  const validatorsString = (validators || [])
+  const { validators } = op.extra;
+  return (validators || [])
     .map(
       (v) =>
         `\n    to ${v.address} ${
@@ -31,23 +31,6 @@ function formatOperationSpecifics(
         }`
     )
     .join("");
-
-  const rewards = "";
-  // const rewards = (autoClaimedRewards || [])
-  //   .map(
-  //     (r) =>
-  //       `\n auto claimed reward: ${
-  //         unit
-  //           ? formatCurrencyUnit(unit, new BigNumber(r.amount), {
-  //               showCode: true,
-  //               disableRounding: true,
-  //             }).padEnd(16)
-  //           : r.amount
-  //       }`
-  //   )
-  //   .join("");
-
-  return `${validatorsString} \n ${rewards}`;
 }
 
 function getCurrentCosmosFamilyPreloadData(
