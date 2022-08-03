@@ -3,9 +3,9 @@
 exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
 Array [
   Object {
-    "balance": "840931",
+    "balance": "838474",
     "cosmosResources": Object {
-      "delegatedBalance": "10499",
+      "delegatedBalance": "105249",
       "withdrawAddress": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
     },
     "currencyId": "osmo",
@@ -22,7 +22,7 @@ Array [
     "index": 0,
     "name": "Osmosis 1",
     "nfts": undefined,
-    "operationsCount": 28,
+    "operationsCount": 31,
     "pendingOperations": Array [],
     "seedIdentifier": "02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f0",
     "starred": false,
@@ -283,6 +283,33 @@ Array [
     },
     Object {
       "accountId": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:",
+      "blockHash": "A468F720031AFDD4B6EAE420747833319D462C25C3EB3FCCF24E3FAE0BE92503",
+      "blockHeight": 5431337,
+      "contract": undefined,
+      "extra": Object {
+        "autoClaimedRewards": "0",
+        "memo": "Ledger Live",
+        "validators": Array [
+          Object {
+            "address": "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            "amount": "5250",
+          },
+        ],
+      },
+      "fee": "875",
+      "hasFailed": false,
+      "hash": "79C07C6B64E7F3BF1F54570EF55C35CE2C41C0BCD6D726FE913CEAB8B35A00F7",
+      "id": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:-79C07C6B64E7F3BF1F54570EF55C35CE2C41C0BCD6D726FE913CEAB8B35A00F7-UNDELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "UNDELEGATE",
+      "value": "5250",
+    },
+    Object {
+      "accountId": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:",
       "blockHash": "CA4221C86054FDC6201F0F125D3819334784C89CDDBC0542933368E0AAFA551E",
       "blockHeight": 4535474,
       "contract": undefined,
@@ -356,6 +383,34 @@ Array [
       "tokenId": undefined,
       "type": "UNDELEGATE",
       "value": "5000",
+    },
+    Object {
+      "accountId": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:",
+      "blockHash": "D56F27506AE30FC57E48BDD4E3E355C352ECBD8D7177021A516CFE026BD60E61",
+      "blockHeight": 5431343,
+      "contract": undefined,
+      "extra": Object {
+        "autoClaimedRewards": "0",
+        "memo": "Ledger Live",
+        "sourceValidator": "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+        "validators": Array [
+          Object {
+            "address": "osmovaloper1clpqr4nrk4khgkxj78fcwwh6dl3uw4ep88n0y4",
+            "amount": "52625",
+          },
+        ],
+      },
+      "fee": "1375",
+      "hasFailed": false,
+      "hash": "937D9FBF121E797AD4391384E007313315527A832D2D0A239B11E0896E62B092",
+      "id": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:-937D9FBF121E797AD4391384E007313315527A832D2D0A239B11E0896E62B092-REDELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "REDELEGATE",
+      "value": "52625",
     },
     Object {
       "accountId": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:",
@@ -687,6 +742,33 @@ Array [
       "tokenId": undefined,
       "type": "UNDELEGATE",
       "value": "10500",
+    },
+    Object {
+      "accountId": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:",
+      "blockHash": "1D266C72C1F75BD33478510FE5B4EFB7EF4C855F14256074BCAB7586CC83956E",
+      "blockHeight": 5431333,
+      "contract": undefined,
+      "extra": Object {
+        "autoClaimedRewards": "543",
+        "memo": "Ledger Live",
+        "validators": Array [
+          Object {
+            "address": "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            "amount": "100000",
+          },
+        ],
+      },
+      "fee": "750",
+      "hasFailed": false,
+      "hash": "F4F3CED63F3A71D0141401F780341BAE69E9083D1421C7B0ED568035F430217B",
+      "id": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:-F4F3CED63F3A71D0141401F780341BAE69E9083D1421C7B0ED568035F430217B-DELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "DELEGATE",
+      "value": "100000",
     },
     Object {
       "accountId": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:",
