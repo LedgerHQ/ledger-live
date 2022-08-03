@@ -560,14 +560,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "Das Legacy-Adressformat wird nicht mehr unterstützt"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo-Format ist falsch"
-    },
     "SourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Beim Senden an diesen Empfänger wird möglicherweise ein Memo benötigt"
     },
     "StratisDown2021Warning" : {
       "description" : "Die Stratis-Blockchain hat sich weiterentwickelt und funktioniert möglicherweise nicht mehr korrekt. Die Unterstützung für die ursprüngliche Stratis-Blockchain wird bis zum 16. Oktober 2021 aufrechterhalten."
@@ -644,7 +638,45 @@
       "title" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie vor einem erneuten Versuch zunächst den Transaktionsverlauf."
     },
     "CardanoMinAmountError" : {
-      "title" : "Mindestens {{amount}} ADA erforderlich"
+      "title" : "Der Mindestbetrag, der versendet werden kann, ist {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Bitte vergewissern Sie sich, dass Sie genügend Geld für die Bezahlung der Gebühren haben"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo-Format ist falsch"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Beim Senden an diesen Empfänger wird möglicherweise ein Memo benötigt"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Dieser Empfänger hat noch keine Trustline zu {{assetCode}}"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Vor dem Hinzufügen einer Trustline sollte ein Stellar-Vermögenswert ausgewählt werden"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Der ausgewählte Stellar-Vermögenswert konnte nicht gefunden werden"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
+      "description" : "Bitte vergewissern Sie sich, dass das Konto ausreichend gedeckt ist, um die Transaktionsgebühr zu decken."
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Die gewählte Gebühr ist niedriger als die empfohlene Gebühr"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Die Mindesttransaktionsgebühr beträgt 0,00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
+      "description" : "Vergewissern Sie sich, dass das Konto genügend Deckung für die neue Trustline aufweist."
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar-Konto existiert nicht"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
     }
   },
   "bluetooth" : {
@@ -820,8 +852,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Wie gefällt Ihnen Ledger Live?",
-      "description" : "Sind Sie zufrieden oder haben Sie mehr von uns erwartet? In beiden Fällen freuen wir uns über Ihr Feedback.",
+      "title" : "Wie gefällt Ihnen unsere App?",
+      "description" : "Ihr Feedback ist uns wichtig, um Ledger Live zu verbessern.",
       "cta" : {
         "enjoy" : "Ich bin begeistert",
         "disappointed" : "Ich bin enttäuscht",
@@ -838,7 +870,8 @@
     },
     "disappointed" : {
       "title" : "Helfen Sie uns, das Produkt für Sie noch besser zu machen",
-      "description" : "Mit Ihrem ehrlichen Feedback unterstützen Sie uns dabei, Bereiche mit Optimierungsbedarf zu identifizieren.",
+      "description" : "Wenn Sie weitere Hilfe benötigen oder möchten, dass wir uns mit Ihnen in Verbindung setzen, nutzen Sie bitte unseren Live-Chat",
+      "here" : "Hier",
       "cta" : {
         "sendFeedback" : "Feedback senden",
         "notNow" : "Nicht jetzt"
@@ -930,9 +963,9 @@
         "title" : "Verdienen",
         "desc" : "Verdienen Sie ein passives Einkommen und vermehren Sie Ihr Kryptovermögen"
       },
-      "mint": {
-        "title": "Minting",
-        "desc": "Minte NFTs von exklusiven Kollaborationen auf [ L ] Market"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs aus exklusiven Kooperationen auf dem [ L ] Markt"
       }
     },
     "comingSoon" : "In Kürze verfügbar",
@@ -1656,7 +1689,12 @@
       "WITHDRAW_UNBONDED" : "Abhebung",
       "NOMINATE" : "Nominierung",
       "CHILL" : "Nominierungen löschen",
-      "SET_CONTROLLER" : "Controller einstellen"
+      "SET_CONTROLLER" : "Controller einstellen",
+      "ACTIVATE" : "Activated",
+      "LOCK" : "Locked",
+      "UNLOCK" : "Unlocked",
+      "REVOKE" : "Revoked",
+      "REGISTER" : "Registered"
     }
   },
   "operationDetails" : {
@@ -1753,6 +1791,13 @@
         "howTo" : "Sie können Ihrem Algorand-Konto Vermögenswerte hinzufügen.",
         "addAsa" : "ASA hinzufügen (Vermögenswert)",
         "howAsaWorks" : "Wie funktioniert ASA (Vermögenswert)?"
+      },
+      "stellar" : {
+        "seeMore" : "Mehr Vermögenswerte anzeigen",
+        "seeLess" : "Weniger Vermögenswerte anzeigen",
+        "addTokens" : "Vermögenswerte hinzufügen",
+        "howTo" : "Sie können Vermögenswerte zu Ihrem Stellar-Konto hinzufügen.",
+        "addAsset" : "Wert hinzufügen"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1946,12 @@
         "showTokens_plural" : "Zeige {{length}} ASA",
         "hideTokens" : "ASA ausblenden",
         "hideTokens_plural" : "ASA ausblenden"
+      },
+      "stellar" : {
+        "showTokens" : "Vermögenswerte {{length}} anzeigen",
+        "showTokens_plural" : "Vermögenswerte {{length}} anzeigen",
+        "hideTokens" : "Vermögenswerte ausblenden",
+        "hideTokens_plural" : "Vermögenswerte ausblenden"
       }
     },
     "noResultsFound" : "Kein Wert gefunden",
@@ -3259,7 +3310,9 @@
     "newVersion" : "Update {{version}} steht für Ihre {{deviceName}} bereit",
     "drawerUpdate" : {
       "title" : "Firmware-Update",
-      "description" : "Aktualisieren Sie Ihre Ledger Nano Firmware, indem Sie sie mit der Ledger Live Anwendung auf dem Desktop verbinden"
+      "description" : "Aktualisieren Sie Ihre Ledger Nano Firmware, indem Sie sie mit der Ledger Live Anwendung auf dem Desktop verbinden",
+      "pleaseConnectUsbTitle" : "USB-Kabel erforderlich",
+      "pleaseConnectUsbDescription" : "Um die Firmware-Aktualisierung zu starten, schließen Sie Ihr {{deviceName}} über ein USB-Kabel an Ihr Mobiltelefon an."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3378,6 +3431,13 @@
             "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte schauen Sie in ein paar Minuten noch einmal nach, um sicherzustellen, dass Ihre Transaktion nicht fehlgeschlagen ist, bevor Sie es erneut versuchen."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Der Gesamtkontostand enthält keine Stakingprämien"
       }
     }
   },
@@ -3734,6 +3794,7 @@
     }
   },
   "stellar" : {
+    "token" : "Vermögenswerte",
     "memo" : {
       "title" : "Memo",
       "warning" : "Wenn Sie ein Memo verwenden, überprüfen Sie den Typ sorgfältig mit dem Empfänger."
@@ -3744,6 +3805,48 @@
       "MEMO_ID" : "Memo-ID",
       "MEMO_HASH" : "Memo Hash",
       "MEMO_RETURN" : "Memo-Rückgabe"
+    },
+    "fee" : "Netzwerkgebühr",
+    "feeAction" : "Update-Gebühr",
+    "recommendedFee" : "Empfohlene Gebühren",
+    "recommenndedFeeInfo" : "Die Transaktion kann auch mit einer niedrigeren Gebühr als der empfohlenen eingereicht werden, aber sie wird möglicherweise nicht abgeschlossen.",
+    "suggested" : "Empfohlen",
+    "networkCongestion" : "Netzüberlastung",
+    "networkCongestionLevel" : {
+      "LOW" : "Niedrig",
+      "MEDIUM" : "Medium",
+      "HIGH" : "Hoch"
+    },
+    "assetCode" : "Vermögenswerte-Code",
+    "assetIssuer" : "Emittent der Vermögenswerte",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "Wert hinzufügen",
+        "connectDevice" : "Verbundenes Gerät",
+        "verification" : "Verifizierung",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "Vermögenswert bereits hinzugefügt",
+              "description" : "Sie haben bereits einen {{token}} Vermögenswert in Ihrem Stellar-Konto."
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}}-Vermögenswerte erfolgreich hinzugefügt!",
+              "text" : "Sie können jetzt <0>{{token}}</0> Vermögenswerte auf Ihrem Stellar-Konto empfangen und senden.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte schauen Sie in ein paar Minuten noch einmal nach, um sicherzustellen, dass Ihre Transaktion nicht fehlgeschlagen ist, bevor Sie es erneut versuchen."
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4407,6 +4510,16 @@
     },
     "operations" : {
       "title" : "Transaktionsverlauf"
+    }
+  },
+  "hedera" : {
+    "name" : "Hedera",
+    "createHederaAccountHelp" : {
+      "text" : "In diesem Support-Artikel erhalten Sie weitere Informationen zur",
+      "link" : "Erstellung eines Hedera-Kontos"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
     }
   }
 }
