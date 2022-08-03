@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useCallback } from "react";
 import { SectionList } from "react-native";
-import { Button, Flex, Text } from "@ledgerhq/native-ui";
+import { Button, Flex } from "@ledgerhq/native-ui";
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { AccountLikeArray, Operation } from "@ledgerhq/live-common/types/index";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
@@ -76,10 +76,7 @@ const OperationsHistory = ({ accounts }: Props) => {
   }, [navigation, accounts]);
 
   return (
-    <Flex flex={1} px={6}>
-      <Text variant="small" fontWeight="semiBold" color="neutral.c60" uppercase>
-        {t("analytics.operations.title")}
-      </Text>
+    <Flex flex={1}>
       <SectionList
         sections={sections}
         style={{ flex: 1 }}

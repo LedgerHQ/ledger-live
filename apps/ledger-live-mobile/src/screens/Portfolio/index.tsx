@@ -43,6 +43,7 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
@@ -70,56 +71,6 @@ export const Gradient = styled(BackgroundGradient)`
   height: 450px;
   top: -130px;
 `;
-
-const SectionTitle = ({
-  title,
-  onSeeAllPress,
-  navigatorName,
-  screenName,
-  params,
-  navigation,
-  seeMoreText,
-  containerProps,
-}: {
-  title: React.ReactElement;
-  onSeeAllPress?: () => void;
-  navigatorName?: string;
-  screenName?: string;
-  params?: any;
-  navigation?: any;
-  seeMoreText?: React.ReactElement;
-  containerProps?: FlexBoxProps;
-}) => {
-  const { t } = useTranslation();
-  const onLinkPress = useCallback(() => {
-    if (onSeeAllPress) {
-      onSeeAllPress();
-    }
-    if (navigation && navigatorName) {
-      navigation.navigate(navigatorName, { screen: screenName, params });
-    }
-  }, [onSeeAllPress, navigation, navigatorName, screenName, params]);
-
-  return (
-    <Flex
-      flexDirection={"row"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      {...containerProps}
-    >
-      <Text variant={"h3"} textTransform={"uppercase"} mt={2}>
-        {title}
-      </Text>
-      {onSeeAllPress || navigatorName ? (
-        <StyledTouchableOpacity onPress={onLinkPress}>
-          <TextLink onPress={onLinkPress} type={"color"}>
-            {seeMoreText || t("common.seeAll")}
-          </TextLink>
-        </StyledTouchableOpacity>
-      ) : null}
-    </Flex>
-  );
-};
 
 const maxAssetsToDisplay = 5;
 
@@ -249,7 +200,10 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       ...(showAssets
         ? [
-            <OperationsHistorySection accounts={assetsToDisplay} />,
+            <SectionContainer px={6} mb={8}>
+              <SectionTitle title={t("analytics.operations.title")} />
+              <OperationsHistorySection accounts={assetsToDisplay} />
+            </SectionContainer>,
           ]
         : []),
     ],
@@ -288,7 +242,11 @@ function PortfolioScreen({ navigation }: Props) {
         <Gradient />
         <AnimatedFlatListWithRefreshControl
           data={data}
-          style={{ flex: 1, position: "relative", paddingTop: 48, marginBottom: 36 }}
+          style={{
+            flex: 1,
+            position: "relative",
+            paddingTop: 48,
+          }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
           keyExtractor={(_: any, index: number) => String(index)}
