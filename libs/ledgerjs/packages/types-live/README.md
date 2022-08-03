@@ -782,7 +782,7 @@ Type: {ticker: [string](https://developer.mozilla.org/docs/Web/JavaScript/Refere
 
 ### OperationType
 
-Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"SUPPLY"` | `"REDEEM"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"NFT_IN"` | `"NFT_OUT"`)
+Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"SUPPLY"` | `"REDEEM"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"LOCK"` | `"UNLOCK"` | `"WITHDRAW"` | `"REVOKE"` | `"ACTIVATE"` | `"REGISTER"` | `"NFT_IN"` | `"NFT_OUT"`)
 
 ### Operation
 
