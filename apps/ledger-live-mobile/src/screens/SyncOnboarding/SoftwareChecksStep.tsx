@@ -13,8 +13,8 @@ import { useGetLatestFirmware } from "@ledgerhq/live-common/lib/hw/hooks/useGetL
 import GenuineCheckDrawer from "./GenuineCheckDrawer";
 import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
 import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
-import GenuineCheckActiveDrawer from "./GenuineCheckActiveDrawer";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
+import AllowManagerDrawer from "./AllowManagerDrawer";
 
 const softwareStepDelay = 2500;
 const uiDrawerDisplayDelayMs = 500;
@@ -384,45 +384,6 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     }
   }, [firmwareUpdateStatus, isDisplayed]);
 
-  // Handles software update UI and logic states
-  // useEffect(() => {
-  //   if (!isDisplayed) {
-  //     return;
-  //   }
-
-  //   // Transitions from genuine check step to firmware update step
-  //   if (
-  //     (genuineCheckStepStatus === "completed" ||
-  //       genuineCheckStepStatus === "failed") &&
-  //     firmwareUpdateStepStatus === "inactive"
-  //   ) {
-  //     setTimeout(() => {
-  //       setFirmwareUpdateStepStatus("requested");
-  //     }, softwareStepDelay);
-  //   }
-
-  //   if (firmwareUpdateStepStatus === "active") {
-  //     if (latestFirmwareGettingError) {
-  //       setFirmwareUpdateStepStatus("failed");
-  //     } else if (
-  //       latestFirmwareGettingStatus === "available-firmware" &&
-  //       latestFirmware
-  //     ) {
-  //       setFirmwareUpdateStepStatus("completed");
-  //     } else if (latestFirmwareGettingStatus === "no-available-firmware") {
-  //       setFirmwareUpdateStepStatus("completed");
-  //     }
-  //   }
-  // }, [
-  //   isDisplayed,
-  //   genuineCheckStepStatus,
-  //   firmwareUpdateStepStatus,
-  //   latestFirmware,
-  //   latestFirmwareGettingError,
-  //   t,
-  //   latestFirmwareGettingStatus,
-  // ]);
-
   // Handles the firmware update UI step title
   useEffect(() => {
     switch (firmwareUpdateUiStepStatus) {
@@ -496,8 +457,9 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
             isOpen={genuineCheckUiDrawerStatus === "unlock-needed"}
             device={device}
           />
-          <GenuineCheckActiveDrawer
+          <AllowManagerDrawer
             isOpen={genuineCheckUiDrawerStatus === "allow-manager"}
+            device={device}
           />
           <GenuineCheckCancelledDrawer
             isOpen={genuineCheckUiDrawerStatus === "cancelled"}
