@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "سحب",
       "NOMINATE" : "ترشيح",
       "CHILL" : "حذف الترشيحات",
-      "SET_CONTROLLER" : "إعداد وحدة التحكم"
+      "SET_CONTROLLER" : "إعداد وحدة التحكم",
+      "LOCK" : "Locked",
+      "UNLOCK" : "Unlocked",
+      "WITHDRAW" : "مسحوب",
+      "REVOKE" : "Revoked",
+      "ACTIVATE" : "Activated",
+      "REGISTER" : "Registered"
     }
   },
   "byteSize" : {
@@ -2112,6 +2118,271 @@
       "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)"
     }
   },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "مزيد من المعلومات",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "The CELO  token is now available on Ledger Live",
+        "description" : "You can now start to manage your CELO tokens and secure them through Ledger Live.",
+        "description2" : "The Celo token is native to the Celo chain and is used for everything from transactions, staking and many upcoming features.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "lockedBalance" : "Locked balance",
+    "lockedTooltip" : "Assets must be locked and voted for validator groups before earning rewards.",
+    "nonvotingLockedBalance" : "Non-voting locked balance",
+    "nonvotingLockedTooltip" : "The balance of locked assets available to be used for voting",
+    "withdrawableBalance" : "Withdrawable balance",
+    "withdrawableTooltip" : "The amount you can withdraw now.",
+    "delegation" : {
+      "activeTooltip" : "Active vote generates rewards",
+      "pendingTooltip" : "Pending vote does not generate rewards and needs to be activated after 24h",
+      "awaitingActivationTooltip" : "This pending vote can be now activated",
+      "listHeader" : "التفويضات",
+      "add" : "أضف",
+      "validatorGroup" : "Validator Group",
+      "manageMultipleVoteWarning" : "You need to Activate or Revoke other votes in the same validator group before managing this vote.",
+      "actions" : {
+        "activate" : "تفعيل",
+        "revoke" : "Revoke"
+      },
+      "emptyState" : {
+        "description" : "You can earn CELO rewards by delegating your assets.",
+        "info" : "كيف يعمل التفويض",
+        "delegation" : "اكسب المكافآت"
+      },
+      "earnRewards" : {
+        "description" : "You may earn rewards by delegating your CELO assets to a validator.",
+        "bullet" : {
+          "0" : "أنت تحتفظ بملكية الأصول المفوضة",
+          "1" : "قم بالتفويض باستخدام جهازك Ledger",
+          "2" : "الأصول ستكون متاحة بعد إلغاء التفويض"
+        },
+        "warning" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المفوضة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+      }
+    },
+    "manage" : {
+      "title" : "إدارة الأصول",
+      "titleWhenPendingRegistration" : "Account Registration Pending",
+      "lock" : {
+        "title" : "إقفال",
+        "description" : "To earn rewards, first lock an amount. Then you must vote for your validator(s)."
+      },
+      "unlock" : {
+        "title" : "Unlock",
+        "description" : "To make a locked amount available again, first you need to unlock it. You can withdraw it after the 3-day unlocking period."
+      },
+      "withdraw" : {
+        "title" : "سحب",
+        "description" : "To retrieve an unlocked amount back to the available balance, you need to withdraw it manually."
+      },
+      "vote" : {
+        "title" : "تصويت",
+        "description" : "Vote for validator groups. Ensure you activate your votes to earn rewards."
+      },
+      "activate" : {
+        "title" : "Activate vote",
+        "description" : "Activate your vote for validator group"
+      },
+      "revoke" : {
+        "title" : "Revoke vote",
+        "description" : "Revoke your vote for validator group"
+      }
+    },
+    "lock" : {
+      "title" : "Lock assets",
+      "steps" : {
+        "amount" : {
+          "title" : "المبلغ",
+          "amountLabel" : "Amount to lock",
+          "availableLabel" : "متاح",
+          "maxLabel" : "الحد الأقصى",
+          "info" : "Locked assets can be unlocked at any time, but unlocking takes 3 days."
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "Assets successfully locked",
+            "text" : "You can vote for validators once the network has confirmed the transaction.",
+            "textVote" : "You will be able to vote validators once the network has confirmed your transaction.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "pending" : {
+            "title" : "Locking your assets..."
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "Unlock assets",
+      "steps" : {
+        "amount" : {
+          "title" : "المبلغ",
+          "amountLabel" : "Amount to unlock",
+          "availableLabel" : "Locked",
+          "maxLabel" : "الحد الأقصى",
+          "info" : "Unlocked assets can be withdrawn after the 3-day unlocking period.",
+          "learnMore" : "تعرّف على المزيد"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "label" : "تأكيد",
+          "success" : {
+            "title" : "Unlock transaction sent successfully",
+            "text" : "Unlocked assets can be withdrawn in 3 days.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "pending" : {
+            "title" : "Unlocking your assets..."
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "Register account",
+          "description" : "",
+          "info" : "Before locking any Celo you need to register your account on-chain."
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "معلومات"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "label" : "تأكيد",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "Account registered successfully",
+                "text" : "سترى معاملتك في السجل قريباً.",
+                "cta" : "إقفال"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "جاري بث المعاملة..."
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "سحب الأصول",
+      "steps" : {
+        "amount" : {
+          "title" : "سحب"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "",
+            "text" : "Your assets were withdrawn successfully. The withdrawn amount will be credited to your available balance.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "vote" : {
+      "title" : "تصويت",
+      "steps" : {
+        "amount" : {
+          "title" : "المبلغ"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "You have successfully voted",
+            "text" : "سترى معاملتك في السجل قريباً.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        },
+        "validatorGroup" : {
+          "title" : "Validator Group",
+          "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment",
+          "totalVotes" : "Total Votes",
+          "commission" : "العمولة"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "Activate votes",
+      "steps" : {
+        "vote" : {
+          "title" : "تصويت"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "",
+            "text" : "Your vote was successfully activated.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "Revoke vote",
+      "steps" : {
+        "amount" : {
+          "title" : "المبلغ",
+          "amountLabel" : "Amount to revoke",
+          "availableLabel" : "متاح",
+          "maxLabel" : "الحد الأقصى"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "You have successfully revoked your votes",
+            "text" : "سترى معاملتك في السجل قريباً.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        },
+        "vote" : {
+          "title" : "تصويت",
+          "active" : "نشِط",
+          "pending" : "مُعلقّة",
+          "awaitingActivation" : "Awaiting activation",
+          "info" : "Only revokable votes are shown on this modal"
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "You have a withdrawable balance",
+      "activatableVotes" : "You have votes that can now be activated."
+    }
+  },
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
@@ -3842,6 +4113,9 @@
     "NoAccessToCamera" : {
       "title" : "يرجى التأكد من أن نظامك يحتوي على كاميرا، وأنها ليست قيد الاستخدام من قِبل تطبيق آخر وأن Ledger Live لديه تصريح لاستخدامها.",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "المكافآت أصغر من الرسوم المقدرة للمطالبة بهم",
