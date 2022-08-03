@@ -93,12 +93,14 @@ const DebugLottie = () => {
       <LText secondary semiBold style={styles.title}>
         {!key ? "Select Animation" : `Showing '${key}'`}
       </LText>
-      <View style={{ borderWidth: 1 }}>
-        {animation && <Animation source={animation} />}
-      </View>
-      <View style={{ backgroundColor: "#121212" }}>
-        {animation2 && <Animation source={animation2} />}
-      </View>
+      <ScrollView>
+        <View style={{ borderWidth: 1 }}>
+          {animation && <Animation source={animation} />}
+        </View>
+        <View style={{ backgroundColor: "#121212" }}>
+          {animation2 && <Animation source={animation2} />}
+        </View>
+      </ScrollView>
       <View style={styles.select}>
         <Button
           type={modelId === "nanoS" ? "primary" : "secondary"}
@@ -130,6 +132,14 @@ const DebugLottie = () => {
           disabled
           onPress={() => {
             setModelId("blue");
+          }}
+        />
+        <Button
+          type={modelId === "nanoFTS" ? "primary" : "secondary"}
+          title="nanoFTS"
+          disabled={Config.OVERRIDE_MODEL_ID}
+          onPress={() => {
+            setModelId("nanoFTS");
           }}
         />
       </View>
@@ -190,6 +200,7 @@ const styles = StyleSheet.create({
   },
   select: {
     marginTop: 20,
+    flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-between",
   },
