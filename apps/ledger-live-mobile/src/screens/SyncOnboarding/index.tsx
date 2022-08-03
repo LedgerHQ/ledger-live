@@ -62,14 +62,18 @@ enum CompanionStepKey {
 /* eslint-enable no-unused-vars */
 
 function nextStepKey(step: CompanionStepKey): CompanionStepKey {
-  if (step === CompanionStepKey.Ready) {
-    return CompanionStepKey.Ready;
+  if (step === CompanionStepKey.Exit) {
+    return CompanionStepKey.Exit;
   }
   return step + 1;
 }
 
 export const SyncOnboarding = ({ navigation, route }: Props) => {
   const { device } = route.params;
+
+  const handleSoftwareCheckComplete = useCallback(() => {
+    setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck));
+  }, []);
 
   const defaultCompanionSteps: Step[] = useMemo(
     () => [
@@ -119,9 +123,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           <SoftwareChecksStep
             device={device}
             isDisplayed={isDisplayed}
-            onComplete={() =>
-              setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck))
-            }
+            onComplete={handleSoftwareCheckComplete}
           />
         ),
       },
