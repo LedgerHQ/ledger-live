@@ -4,11 +4,13 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ScreenName } from "../../const";
 import { SyncOnboarding } from "../../screens/SyncOnboarding";
 import { DeviceModelSelection } from "../../screens/SyncOnboarding/DeviceModelSelection";
+import CompletionScreen from "../../screens/SyncOnboarding/CompletionScreen";
 
 export type SyncOnboardingStackParamList = {
   // With USB transport pairedDevice is null
   SyncOnboardingCompanion: { device: Device };
   DeviceModelSelection: undefined;
+  SyncOnboardingCompletion: undefined;
 };
 
 const Stack = createStackNavigator<SyncOnboardingStackParamList>();
@@ -29,6 +31,10 @@ export const SyncOnboardingNavigator = () => (
     <Stack.Screen
       name={ScreenName.SyncOnboardingCompanion as "SyncOnboardingCompanion"}
       component={SyncOnboarding}
+    />
+    <Stack.Screen
+      name={ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion"}
+      component={CompletionScreen}
     />
   </Stack.Navigator>
 );
