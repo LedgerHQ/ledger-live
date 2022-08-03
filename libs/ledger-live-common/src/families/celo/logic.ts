@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/types-live";
 import {
   CeloAccount,
   CeloPendingWithdrawal,
