@@ -220,6 +220,9 @@ export const urls = {
   elrond: {
     website: "https://elrond.com",
   },
+  figment: {
+    website: "https://www.figment.io",
+  },
   solana: {
     staking: "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
     recipient_info: "https://support.ledger.com",
