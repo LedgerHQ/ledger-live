@@ -26,14 +26,15 @@ const OsmosisExtendedAmountField = ({
   invariant(transaction.family === "osmosis", "osmosis transaction");
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
+  const specifiedAmount = field.value != null ? field.value : null;
   return (
     <TransactionConfirmField label={field.label}>
-      <Box>
+      <Box textAlign="right">
         <FormattedVal
           color={"palette.text.shade80"}
           disableRounding={true}
           unit={unit}
-          val={amount}
+          val={specifiedAmount ?? amount}
           fontSize={3}
           inline
           showCode
@@ -45,7 +46,7 @@ const OsmosisExtendedAmountField = ({
             unit={currency.units[1]}
             subMagnitude={1}
             prefix={"("}
-            val={amount}
+            val={specifiedAmount ?? amount}
             suffix={")"}
             fontSize={3}
             inline

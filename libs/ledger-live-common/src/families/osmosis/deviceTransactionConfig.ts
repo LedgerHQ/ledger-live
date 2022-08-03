@@ -22,10 +22,10 @@ export type ExtraDeviceTransactionField =
   | {
       type: "osmosis.extendedAmount";
       label: string;
+      value?: string;
     };
 
 function getDeviceTransactionConfig({
-  account,
   transaction,
   status: { estimatedFees, totalSpent },
 }: {
@@ -34,7 +34,6 @@ function getDeviceTransactionConfig({
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const { mode, memo, validators } = transaction;
-  const currency = getCryptoCurrencyById("osmo");
   const fields: Array<DeviceTransactionField> = [];
 
   switch (mode) {
@@ -64,17 +63,11 @@ function getDeviceTransactionConfig({
         label: "Type",
         value: "Undelegate",
       });
+
       fields.push({
-        type: "text",
+        type: "osmosis.extendedAmount",
         label: "Amount",
-        value: formatCurrencyUnit(
-          getAccountUnit(account),
-          validators[0].amount,
-          {
-            showCode: true,
-            disableRounding: false,
-          }
-        ),
+        value: validators[0].amount.toString(),
       });
       fields.push({
         type: "cosmos.validatorName",
@@ -90,16 +83,9 @@ function getDeviceTransactionConfig({
       });
 
       fields.push({
-        type: "text",
+        type: "osmosis.extendedAmount",
         label: "Amount",
-        value: formatCurrencyUnit(
-          getAccountUnit(account),
-          validators[0].amount,
-          {
-            showCode: true,
-            disableRounding: false,
-          }
-        ),
+        value: validators[0].amount.toString(),
       });
 
       fields.push({
@@ -152,8 +138,9 @@ function getDeviceTransactionConfig({
 
   if (!estimatedFees.isNaN() && !estimatedFees.isZero()) {
     fields.push({
-      type: "fees",
+      type: "osmosis.extendedAmount",
       label: "Fee",
+      value: estimatedFees.toString(),
     });
   }
 
@@ -169,23 +156,18 @@ function getDeviceTransactionConfig({
     let label = "Amount to be received";
     label += mode === "claimRewardCompound" ? " and delegated" : "";
     fields.push({
-      type: "text",
-      label,
-      value: formatCurrencyUnit(getAccountUnit(account), validators[0].amount, {
-        showCode: true,
-        disableRounding: true,
-      }),
+      type: "osmosis.extendedAmount",
+      label: label,
+      value: validators[0].amount.toString(),
     });
+    validators[0].amount;
   } else if (mode === "undelegate" || mode === "redelegate") {
     return fields;
   } else {
     fields.push({
-      type: "text",
+      type: "osmosis.extendedAmount",
       label: "Total",
-      value: formatCurrencyUnit(currency.units[0], totalSpent, {
-        showCode: true,
-        disableRounding: true,
-      }),
+      value: totalSpent.toString(),
     });
   }
 
