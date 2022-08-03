@@ -3,9 +3,9 @@ import { Subject } from "rxjs";
 import { getEnv } from "../env";
 import type { State } from "./types";
 import { withDevice } from "../hw/deviceAccess";
+import { useFeature } from "../featureFlags";
 import { resolveTransportModuleForDeviceId } from "../hw";
 import BIM from "../api/BIM";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const getBaseApiUrl = () => getEnv("API_BIM");
 

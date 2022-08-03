@@ -55485,7 +55485,7 @@ packages:
     dev: false
 
   github.com/LedgerHQ/compressjs/d9e8e4d994923e0ea76a32b97289bcccfe71b82e:
-    resolution: {commit: d9e8e4d994923e0ea76a32b97289bcccfe71b82e, repo: git+ssh://git@github.com/LedgerHQ/compressjs.git, type: git}
+    resolution: {tarball: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e}
     name: '@ledgerhq/compressjs'
     version: 1.3.1
     hasBin: true

@@ -20,8 +20,6 @@ import type {
   ListAppsResult,
   RunnerEvent,
 } from "./types";
-import type { App, DeviceInfo } from "../types/manager";
-import { AppType } from "../types/manager";
 import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";

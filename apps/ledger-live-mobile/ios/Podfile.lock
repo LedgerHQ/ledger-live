@@ -935,7 +935,7 @@ EXTERNAL SOURCES:
   RNVectorIcons:
     :path: "../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons"
   storyly-react-native:
-    :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native"
+    :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native"
   TcpSockets:
     :path: "../../../node_modules/.pnpm/react-native-tcp@4.0.0_react-native@0.68.2/node_modules/react-native-tcp"
   Yoga:

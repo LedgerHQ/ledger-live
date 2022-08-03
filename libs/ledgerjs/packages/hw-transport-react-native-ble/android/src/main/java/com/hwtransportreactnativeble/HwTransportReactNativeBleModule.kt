@@ -2,7 +2,7 @@ package com.hwtransportreactnativeble
 
 import com.facebook.react.bridge.*
 import com.hwtransportreactnativeble.tasks.Queue
-import com.ledger.live.ble.BleManager
+import com.ledger.live.ble.BleManagerFactory
 import timber.log.Timber
 
 
@@ -11,7 +11,7 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     private var tag: String = "BleTransport"
     private var onDisconnect: ((Any) -> Void)? = null
 
-    private var bleManager = BleManager.Companion.getInstance(reactContext)
+    private var bleManager = BleManagerFactory.newInstance(reactContext)
     private var eventEmitter = EventEmitter.getInstance(reactContext)
     private var queue: Queue? = null
     private var planted: Boolean = false
