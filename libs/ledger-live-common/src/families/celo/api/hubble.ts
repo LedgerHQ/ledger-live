@@ -83,10 +83,17 @@ const transactionToOperation = (
   const fee = new BigNumber(transaction.data?.gas_used || 0).times(
     new BigNumber(transaction.data?.gas_price || 0)
   );
-  const value =
-    type === "LOCK"
-      ? new BigNumber(transaction.amount).plus(fee)
-      : new BigNumber(transaction.amount);
+
+  const value = [
+    "LOCK",
+    "UNLOCK",
+    "ACTIVATE",
+    "VOTE",
+    "REVOKE",
+    "REGISTER",
+  ].includes(type)
+    ? new BigNumber(fee)
+    : new BigNumber(transaction.amount);
 
   return {
     id: encodeOperationId(accountId, transaction.transaction_hash, type),
@@ -101,7 +108,14 @@ const transactionToOperation = (
     recipients: recipient ? [recipient] : [],
     hasFailed,
     blockHash: null,
-    extra: {},
+    extra: {
+      celoOperationValue: new BigNumber(transaction.amount),
+      ...(["ACTIVATE", "VOTE", "REVOKE"].includes(type)
+        ? {
+            celoSourceValidator: recipient,
+          }
+        : {}),
+    },
   };
 };
 
