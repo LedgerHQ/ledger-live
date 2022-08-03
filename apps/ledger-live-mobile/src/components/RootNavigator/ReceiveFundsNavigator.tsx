@@ -5,7 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { HeaderBackButton } from "@react-navigation/elements";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import ReceiveConfirmation from "../../screens/ReceiveFunds/03-Confirmation";
 import ReceiveConnectDevice from "../../screens/ReceiveFunds/03a-ConnectDevice";
@@ -41,11 +41,12 @@ export default function ReceiveFundsNavigator() {
     [colors, onClose],
   );
 
-  const onConnectDeviceBack = useCallback(() => {
+  const onConnectDeviceBack = useCallback((navigation: any) => {
     track("button_clicked", {
       button: "Back arrow",
       screen: ScreenName.ReceiveConnectDevice,
     });
+    navigation.goBack();
   }, []);
 
   const onConfirmationClose = useCallback(() => {
@@ -118,7 +119,7 @@ export default function ReceiveFundsNavigator() {
       <Stack.Screen
         name={ScreenName.ReceiveConnectDevice}
         component={ReceiveConnectDevice}
-        options={{
+        options={({ navigation }) => ({
           headerTitle: () => (
             <StepHeader
               subtitle={t("transfer.receive.stepperHeader.range", {
@@ -128,8 +129,10 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
-          headerLeft: () => <HeaderBackButton onPress={onConnectDeviceBack} />,
-        }}
+          headerLeft: () => (
+            <HeaderBackButton onPress={() => onConnectDeviceBack(navigation)} />
+          ),
+        })}
       />
       {/* Select / Connect Device */}
       <Stack.Screen
