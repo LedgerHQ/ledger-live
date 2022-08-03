@@ -68,6 +68,6 @@ test("convertTransactionToOperation", () => {
     {}
   );
 
-  expect(result.senders.length).toBe(0);
-  expect(result.recipients.length).toBe(0);
+  expect(result.senders.length).toBe(1);
+  expect(result.recipients.length).toBe(1);
 });
