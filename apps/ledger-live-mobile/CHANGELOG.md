@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.20
+
+### Patch Changes
+
+- [#804](https://github.com/LedgerHQ/ledger-live/pull/804) [`10aba54ba`](https://github.com/LedgerHQ/ledger-live/commit/10aba54ba8a14853a5d50d0cebf1e2af965b6320) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Keyboard avoiding view fixed on Send Coin Amount page
+
 ## 3.5.0-next.19
 
 ### Patch Changes
