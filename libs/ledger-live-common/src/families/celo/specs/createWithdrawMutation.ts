@@ -19,6 +19,7 @@ export const createWithdrawMutation = (): MutationSpec<Transaction> => ({
     );
 
     const pendingWithdrawals = availablePendingWithdrawals(celoAccount);
+
     invariant(
       pendingWithdrawals.length > 0,
       "Celo: Withdraw | No withdrawable balance"
@@ -29,19 +30,14 @@ export const createWithdrawMutation = (): MutationSpec<Transaction> => ({
       "Celo:  Withdraw Vote | balance is too low"
     );
 
-    const transaction = {
-      recipient: celoAccount.celoResources!.lockedGoldAddress!,
-      index: pendingWithdrawals[0].index,
-    };
-
     return {
       transaction: bridge.createTransaction(celoAccount),
       updates: [
         {
-          memo: "LedgerLiveBot",
           mode: "withdraw",
+          recipient: celoAccount.celoResources!.lockedGoldAddress!,
+          index: pendingWithdrawals[0].index,
         },
-        transaction,
       ],
     };
   },
