@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "提取",
       "NOMINATE" : "提名",
       "CHILL" : "清除提名",
-      "SET_CONTROLLER" : "设置控制器"
+      "SET_CONTROLLER" : "设置控制器",
+      "LOCK" : "Locked",
+      "UNLOCK" : "Unlocked",
+      "WITHDRAW" : "已提取",
+      "REVOKE" : "Revoked",
+      "ACTIVATE" : "Activated",
+      "REGISTER" : "Registered"
     }
   },
   "byteSize" : {
@@ -2112,6 +2118,271 @@
       "MERGE_OUTPUTS" : "令未来费用最小化（合并硬币）"
     }
   },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "更多信息",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "The CELO  token is now available on Ledger Live",
+        "description" : "You can now start to manage your CELO tokens and secure them through Ledger Live.",
+        "description2" : "The Celo token is native to the Celo chain and is used for everything from transactions, staking and many upcoming features.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "lockedBalance" : "Locked balance",
+    "lockedTooltip" : "Assets must be locked and voted for validator groups before earning rewards.",
+    "nonvotingLockedBalance" : "Non-voting locked balance",
+    "nonvotingLockedTooltip" : "The balance of locked assets available to be used for voting",
+    "withdrawableBalance" : "Withdrawable balance",
+    "withdrawableTooltip" : "The amount you can withdraw now.",
+    "delegation" : {
+      "activeTooltip" : "Active vote generates rewards",
+      "pendingTooltip" : "Pending vote does not generate rewards and needs to be activated after 24h",
+      "awaitingActivationTooltip" : "This pending vote can be now activated",
+      "listHeader" : "委托",
+      "add" : "添加",
+      "validatorGroup" : "Validator Group",
+      "manageMultipleVoteWarning" : "You need to Activate or Revoke other votes in the same validator group before managing this vote.",
+      "actions" : {
+        "activate" : "激活",
+        "revoke" : "Revoke"
+      },
+      "emptyState" : {
+        "description" : "You can earn CELO rewards by delegating your assets.",
+        "info" : "委托机制如何运作",
+        "delegation" : "赚取奖励"
+      },
+      "earnRewards" : {
+        "description" : "You may earn rewards by delegating your CELO assets to a validator.",
+        "bullet" : {
+          "0" : "您保有对已委托资产的所有权",
+          "1" : "使用您的 Ledger 设备进行委托",
+          "2" : "资产将在解除委托后可用"
+        },
+        "warning" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
+      }
+    },
+    "manage" : {
+      "title" : "管理资产",
+      "titleWhenPendingRegistration" : "Account Registration Pending",
+      "lock" : {
+        "title" : "锁定",
+        "description" : "To earn rewards, first lock an amount. Then you must vote for your validator(s)."
+      },
+      "unlock" : {
+        "title" : "Unlock",
+        "description" : "To make a locked amount available again, first you need to unlock it. You can withdraw it after the 3-day unlocking period."
+      },
+      "withdraw" : {
+        "title" : "提取",
+        "description" : "To retrieve an unlocked amount back to the available balance, you need to withdraw it manually."
+      },
+      "vote" : {
+        "title" : "投票",
+        "description" : "Vote for validator groups. Ensure you activate your votes to earn rewards."
+      },
+      "activate" : {
+        "title" : "Activate vote",
+        "description" : "Activate your vote for validator group"
+      },
+      "revoke" : {
+        "title" : "Revoke vote",
+        "description" : "Revoke your vote for validator group"
+      }
+    },
+    "lock" : {
+      "title" : "Lock assets",
+      "steps" : {
+        "amount" : {
+          "title" : "数额",
+          "amountLabel" : "Amount to lock",
+          "availableLabel" : "可用",
+          "maxLabel" : "最大值",
+          "info" : "Locked assets can be unlocked at any time, but unlocking takes 3 days."
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "Assets successfully locked",
+            "text" : "You can vote for validators once the network has confirmed the transaction.",
+            "textVote" : "You will be able to vote validators once the network has confirmed your transaction.",
+            "cta" : "查看详情"
+          },
+          "pending" : {
+            "title" : "Locking your assets..."
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "Unlock assets",
+      "steps" : {
+        "amount" : {
+          "title" : "数额",
+          "amountLabel" : "Amount to unlock",
+          "availableLabel" : "Locked",
+          "maxLabel" : "最大值",
+          "info" : "Unlocked assets can be withdrawn after the 3-day unlocking period.",
+          "learnMore" : "了解更多"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "label" : "确认",
+          "success" : {
+            "title" : "Unlock transaction sent successfully",
+            "text" : "Unlocked assets can be withdrawn in 3 days.",
+            "cta" : "查看详情"
+          },
+          "pending" : {
+            "title" : "Unlocking your assets..."
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "Register account",
+          "description" : "",
+          "info" : "Before locking any Celo you need to register your account on-chain."
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "信息"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "label" : "确认",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "Account registered successfully",
+                "text" : "很快就能在历史记录中查看您的操作。",
+                "cta" : "锁定"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "正在播送交易……"
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "提取资产",
+      "steps" : {
+        "amount" : {
+          "title" : "提取"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "",
+            "text" : "Your assets were withdrawn successfully. The withdrawn amount will be credited to your available balance.",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        }
+      }
+    },
+    "vote" : {
+      "title" : "投票",
+      "steps" : {
+        "amount" : {
+          "title" : "数额"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "You have successfully voted",
+            "text" : "很快就能在历史记录中查看您的操作。",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        },
+        "validatorGroup" : {
+          "title" : "Validator Group",
+          "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
+          "totalVotes" : "Total Votes",
+          "commission" : "佣金"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "Activate votes",
+      "steps" : {
+        "vote" : {
+          "title" : "投票"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "",
+            "text" : "Your vote was successfully activated.",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "Revoke vote",
+      "steps" : {
+        "amount" : {
+          "title" : "数额",
+          "amountLabel" : "Amount to revoke",
+          "availableLabel" : "可用",
+          "maxLabel" : "最大值"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "You have successfully revoked your votes",
+            "text" : "很快就能在历史记录中查看您的操作。",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        },
+        "vote" : {
+          "title" : "投票",
+          "active" : "活跃",
+          "pending" : "待处理",
+          "awaitingActivation" : "Awaiting activation",
+          "info" : "Only revokable votes are shown on this modal"
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "You have a withdrawable balance",
+      "activatableVotes" : "You have votes that can now be activated."
+    }
+  },
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
@@ -3842,6 +4113,9 @@
     "NoAccessToCamera" : {
       "title" : "请确保您的系统安装有摄像头，该摄像头没有被其他应用程序占用且允许 Ledger Live 使用。",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "奖励少于领取奖金的估算费用。",
