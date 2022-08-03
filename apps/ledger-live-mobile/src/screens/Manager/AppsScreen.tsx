@@ -54,6 +54,7 @@ type Props = {
   tab: ManagerTab;
   optimisticState: State;
   result: ListAppsResult;
+  onLanguageChange: () => void;
 };
 
 const AppsScreen = ({
@@ -72,6 +73,7 @@ const AppsScreen = ({
   searchQuery,
   optimisticState,
   result,
+  onLanguageChange
 }: Props) => {
   const distribution = distribute(state);
 
@@ -269,6 +271,7 @@ const AppsScreen = ({
               dispatch={dispatch}
               device={device}
               appList={deviceApps}
+              onLanguageChange={onLanguageChange}
             />
             <Flex mt={6}>
               <FirmwareUpdateBanner />
