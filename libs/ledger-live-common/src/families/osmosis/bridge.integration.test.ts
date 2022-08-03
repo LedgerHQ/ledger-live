@@ -1,186 +1,461 @@
+import "../../__tests__/test-helpers/setup";
+import { testBridge } from "../../__tests__/test-helpers/bridge";
+import { BigNumber } from "bignumber.js";
+import type { CurrenciesData, DatasetTest } from "../../types";
 import {
+  InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  AmountRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
-import "../../__tests__/test-helpers/setup";
-import type { AccountRaw, DatasetTest } from "@ledgerhq/types-live";
-import transactionMethod from "./transaction";
+import { ClaimRewardsFeesWarning } from "../../errors";
+import invariant from "invariant";
 import type { Transaction } from "./types";
-import { testBridge } from "../../__tests__/test-helpers/bridge";
+import transactionTransformer from "./transaction";
 
-const makeAccount2 = (): AccountRaw => {
-  return {
-    id: "js:2:osmo:osmo108uy5q9jt59gwugq5yrdhkzcd9jryslmfrrmqx:",
-    seedIdentifier:
-      "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    name: "Osmosis 2",
-    derivationMode: "",
-    index: 0,
-    freshAddress: "osmo108uy5q9jt59gwugq5yrdhkzcd9jryslmfrrmqx",
-    freshAddressPath: "44'/118'/1'/0/0",
-    freshAddresses: [],
-    blockHeight: 4703025,
-    operationsCount: 1,
-    operations: [],
-    pendingOperations: [],
-    currencyId: "osmo",
-    unitMagnitude: 6,
-    lastSyncDate: "2022-06-06T15:35:18.079Z",
-    balance: "400000",
-    spendableBalance: "400000",
-  };
-};
-
-const makeAccount1 = (): AccountRaw => {
-  return {
-    id: "js:2:osmo:osmo1g84934jpu3v5de5yqukkkhxmcvsw3u2a6al3md:",
-    seedIdentifier:
-      "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    name: "Osmosis 1",
-    derivationMode: "",
-    index: 0,
-    freshAddress: "osmo1g84934jpu3v5de5yqukkkhxmcvsw3u2a6al3md",
-    freshAddressPath: "44'/118'/0'/0/0",
-    freshAddresses: [],
-    blockHeight: 4703025,
-    operationsCount: 1,
-    operations: [],
-    pendingOperations: [],
-    currencyId: "osmo",
-    unitMagnitude: 6,
-    lastSyncDate: "2022-06-06T15:35:18.079Z",
-    balance: "0",
-    spendableBalance: "0",
-  };
+const osmosis: CurrenciesData<Transaction> = {
+  FIXME_ignoreAccountFields: [
+    "cosmosResources.unbondingBalance", // They move once all unbonding are done
+    "cosmosResources.pendingRewardsBalance", // They are always movings
+    "cosmosResources.delegations", // They are always movings because of pending Rewards
+    "cosmosResources.redelegations", // will change ince a redelegation it's done
+    "cosmosResources.unbondings", // will change once a unbonding it's done
+    "spendableBalance", // will change with the rewards that automatically up
+  ],
+  scanAccounts: [
+    {
+      name: "osmo seed 1",
+      apdus: `
+      => 5504000019046f736d6f2c00008076000080000000800000000000000000
+      <= 02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f06f736d6f3137676d6378796335636364356b77717161747067666467683338307732686337377a6d307a779000
+      => 5504000019046f736d6f2c00008076000080000000800000000000000000
+      <= 02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f06f736d6f3137676d6378796335636364356b77717161747067666467683338307732686337377a6d307a779000
+      => 5504000019046f736d6f2c00008076000080010000800000000000000000
+      <= 0246b68a4f546af213bca96b0a0d0319b1ffa3c194cd89b16e48c349492e3b36e66f736d6f3139683863656e6e726b663039736a78717433366c6d6b3933667a7972637772667877373834799000
+      `,
+    },
+  ],
+  accounts: [
+    {
+      FIXME_tests: ["balance is sum of ops"],
+      raw: {
+        id: "js:2:osmo:osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c:",
+        seedIdentifier:
+          "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
+        xpub: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
+        derivationMode: "",
+        index: 0,
+        freshAddress: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
+        freshAddressPath: "44'/118'/0'/0/0",
+        freshAddresses: [
+          {
+            address: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
+            derivationPath: "44'/118'/0'/0/0",
+          },
+        ],
+        name: "Osmosis 1 - Nano X",
+        balance: "500250",
+        spendableBalance: "500250",
+        blockHeight: 5417468,
+        currencyId: "osmo",
+        unitMagnitude: 6,
+        operationsCount: 2,
+        operations: [],
+        pendingOperations: [],
+        lastSyncDate: "",
+      },
+      transactions: [
+        {
+          name: "Same as Recipient",
+          transaction: (t) => ({
+            ...t,
+            amount: new BigNumber(100),
+            recipient: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Invalid Address",
+          transaction: (t) => ({
+            ...t,
+            amount: new BigNumber(100),
+            recipient: "dsadasdasdasdas",
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new InvalidAddress(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "send max",
+          transaction: transactionTransformer.fromTransactionRaw({
+            amount: "0",
+            recipient: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
+            useAllAmount: true,
+            family: "osmosis",
+            networkInfo: null,
+            validators: [],
+            sourceValidator: null,
+            fees: null,
+            gas: null,
+            memo: null,
+            mode: "send",
+          }),
+          expectedStatus: (account) => {
+            const { cosmosResources } = account;
+            if (!cosmosResources)
+              throw new Error("Should exist because it's osmosis");
+            const totalSpent = account.balance.minus(
+              cosmosResources.unbondingBalance.plus(
+                cosmosResources.delegatedBalance
+              )
+            );
+            return {
+              errors: {},
+              warnings: {},
+              totalSpent,
+            };
+          },
+        },
+        {
+          name: "send with memo",
+          transaction: transactionTransformer.fromTransactionRaw({
+            amount: "0",
+            recipient: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
+            useAllAmount: true,
+            family: "osmosis",
+            networkInfo: null,
+            validators: [],
+            sourceValidator: null,
+            fees: null,
+            gas: null,
+            memo: "test",
+            mode: "send",
+          }),
+          expectedStatus: (account, t) => {
+            const { cosmosResources } = account;
+            if (!cosmosResources)
+              throw new Error("Should exist because it's osmosis");
+            invariant(t.memo === "test", "Should have a memo");
+            const totalSpent = account.balance.minus(
+              cosmosResources.unbondingBalance.plus(
+                cosmosResources.delegatedBalance
+              )
+            );
+            return {
+              errors: {},
+              warnings: {},
+              totalSpent,
+            };
+          },
+        },
+        {
+          name: "Not Enough balance",
+          transaction: (t) => ({
+            ...t,
+            amount: new BigNumber("99999999999999999"),
+            recipient: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new NotEnoughBalance(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Redelegation - success",
+          transaction: (t) => ({
+            ...t,
+            amount: new BigNumber(100),
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(100),
+              },
+            ],
+            sourceValidator:
+              "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            mode: "redelegate",
+          }),
+          expectedStatus: (a, t) => {
+            invariant(t.memo === "Ledger Live", "Should have a memo");
+            return {
+              errors: {},
+              warnings: {},
+            };
+          },
+        },
+        {
+          name: "redelegation - AmountRequired",
+          transaction: (t) => ({
+            ...t,
+            mode: "redelegate",
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(0),
+              },
+            ],
+            sourceValidator:
+              "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new AmountRequired(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "redelegation - Source is Destination",
+          transaction: (t) => ({
+            ...t,
+            mode: "redelegate",
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(100),
+              },
+            ],
+            sourceValidator:
+              "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+          }),
+          expectedStatus: {
+            errors: {
+              redelegation: new InvalidAddressBecauseDestinationIsAlsoSource(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Unbonding - success",
+          transaction: (t) => ({
+            ...t,
+            mode: "undelegate",
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(100),
+              },
+            ],
+          }),
+          expectedStatus: (a, t) => {
+            invariant(t.memo === "Ledger Live", "Should have a memo");
+            return {
+              errors: {},
+              warnings: {},
+            };
+          },
+        },
+        {
+          name: "Unbonding - AmountRequired",
+          transaction: (t) => ({
+            ...t,
+            mode: "undelegate",
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(0),
+              },
+            ],
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new AmountRequired(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Delegate - success",
+          transaction: (t) => ({
+            ...t,
+            mode: "delegate",
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(105),
+              },
+            ],
+          }),
+          expectedStatus: (a, t) => {
+            invariant(t.memo === "Ledger Live", "Should have a memo");
+            return {
+              errors: {},
+              warnings: {},
+            };
+          },
+        },
+        {
+          name: "Delegate - not a valid",
+          transaction: (t) => ({
+            ...t,
+            mode: "delegate",
+            validators: [
+              {
+                address: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
+                amount: new BigNumber(100),
+              },
+            ],
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new InvalidAddress(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "ClaimReward - success",
+          transaction: (t) => ({
+            ...t,
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(0),
+              },
+            ],
+            mode: "claimReward",
+          }),
+          expectedStatus: (a, t) => {
+            invariant(t.memo === "Ledger Live", "Should have a memo");
+            return {
+              errors: {},
+              warnings: {},
+            };
+          },
+        },
+        {
+          name: "ClaimReward - Warning",
+          transaction: (t) => ({
+            ...t,
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(0),
+              },
+            ],
+            fees: new BigNumber(9999999999999999),
+            mode: "claimReward",
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {
+              claimReward: new ClaimRewardsFeesWarning(),
+            },
+          },
+        },
+        {
+          name: "ClaimReward - not a osmovaloper",
+          transaction: (t) => ({
+            ...t,
+            validators: [
+              {
+                address: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
+                amount: new BigNumber(0),
+              },
+            ],
+            mode: "claimReward",
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new InvalidAddress(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "claimRewardCompound - success",
+          transaction: (t) => ({
+            ...t,
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(100),
+              },
+            ],
+            mode: "claimRewardCompound",
+          }),
+          expectedStatus: (a, t) => {
+            invariant(t.memo === "Ledger Live", "Should have a memo");
+            return {
+              errors: {},
+              warnings: {},
+            };
+          },
+        },
+        {
+          name: "ClaimRewardCompound - Warning",
+          transaction: (t) => ({
+            ...t,
+            validators: [
+              {
+                address: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+                amount: new BigNumber(100),
+              },
+            ],
+            fees: new BigNumber(99999999999999999999),
+            mode: "claimRewardCompound",
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {
+              claimReward: new ClaimRewardsFeesWarning(),
+            },
+          },
+        },
+      ],
+    },
+    {
+      FIXME_tests: ["balance is sum of ops"],
+      raw: {
+        id: "js:2:osmo:osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89:",
+        seedIdentifier:
+          "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
+        name: "Osmosis 2 - Nano X Static Account",
+        starred: true,
+        derivationMode: "",
+        index: 1,
+        freshAddress: "osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89",
+        freshAddressPath: "44'/118'/1'/0/0",
+        freshAddresses: [],
+        blockHeight: 5417472,
+        creationDate: "2022-08-02T16:09:08.906Z",
+        operationsCount: 1,
+        operations: [],
+        pendingOperations: [],
+        currencyId: "osmo",
+        unitMagnitude: 6,
+        lastSyncDate: "2022-08-02T16:11:47.343Z",
+        balance: "200250",
+        spendableBalance: "200250",
+        xpub: "osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89",
+        cosmosResources: {
+          delegations: [],
+          redelegations: [],
+          unbondings: [],
+          delegatedBalance: "0",
+          pendingRewardsBalance: "0",
+          unbondingBalance: "0",
+          withdrawAddress: "",
+        },
+      },
+    },
+  ],
 };
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
-    osmosis: {
-      scanAccounts: [
-        {
-          name: "osmo seed 1",
-          apdus: `
-              => 5504000019046f736d6f2c00008076000080000000800000000000000000
-              <= 0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a6f736d6f316738343933346a70753376356465357971756b6b6b68786d637673773375326136616c336d649000
-              => 5504000019046f736d6f2c00008076000080000000800000000000000000
-              <= 0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a6f736d6f316738343933346a70753376356465357971756b6b6b68786d637673773375326136616c336d649000
-              => 5504000019046f736d6f2c00008076000080010000800000000000000000
-              <= 02624ac83690d5ef627927104767d679aef73d3d3c9544abe4206b1d0c463c94ff6f736d6f31303875793571396a743539677775677135797264686b7a6364396a7279736c6d6672726d71789000
-              => 5504000019046f736d6f2c00008076000080020000800000000000000000
-              <= 038ff98278402aa3e46ccfd020561dc9724ab63d7179ca507c8154b5257c7d52006f736d6f3163676336393661793270673664346763656a656b3279386c6136366a37653579657264786a759000
-              `,
-        },
-      ],
-      accounts: [
-        {
-          raw: makeAccount2(),
-          transactions: [
-            {
-              name: "Normal transaction",
-              transaction: transactionMethod.fromTransactionRaw({
-                amount: "100000",
-                recipient: "osmo1g84934jpu3v5de5yqukkkhxmcvsw3u2a6al3md",
-                useAllAmount: false,
-                family: "osmosis",
-                mode: "send",
-                fees: "0",
-                gas: "100000",
-                memo: "LedgerLive",
-              }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
-                estimatedFees: new BigNumber("250"),
-                amount: new BigNumber("100000"),
-                totalSpent: new BigNumber("100250"),
-              },
-            },
-            {
-              name: "Same sender and recipient",
-              transaction: transactionMethod.fromTransactionRaw({
-                amount: "100000",
-                recipient: "osmo108uy5q9jt59gwugq5yrdhkzcd9jryslmfrrmqx",
-                useAllAmount: false,
-                family: "osmosis",
-                mode: "send",
-                fees: "0",
-                gas: "100000",
-                memo: "LedgerLive",
-              }),
-              expectedStatus: {
-                errors: {
-                  recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
-                },
-                warnings: {},
-              },
-            },
-            {
-              name: "Use all amount",
-              transaction: transactionMethod.fromTransactionRaw({
-                amount: "100000",
-                recipient: "osmo1g84934jpu3v5de5yqukkkhxmcvsw3u2a6al3md",
-                useAllAmount: true,
-                family: "osmosis",
-                mode: "send",
-                fees: "0",
-                gas: "100000",
-                memo: "LedgerLive",
-              }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
-              },
-            },
-            {
-              name: "Amount > balance",
-              transaction: transactionMethod.fromTransactionRaw({
-                amount: "4000000",
-                recipient: "osmo1g84934jpu3v5de5yqukkkhxmcvsw3u2a6al3md",
-                useAllAmount: false,
-                family: "osmosis",
-                mode: "send",
-                fees: "0",
-                gas: "100000",
-                memo: "LedgerLive",
-              }),
-              expectedStatus: {
-                errors: {
-                  amount: new NotEnoughBalance(),
-                },
-                warnings: {},
-              },
-            },
-          ],
-        },
-        {
-          raw: makeAccount1(),
-          transactions: [
-            {
-              name: "fees > balance",
-              transaction: transactionMethod.fromTransactionRaw({
-                amount: "1000",
-                recipient: "osmo108uy5q9jt59gwugq5yrdhkzcd9jryslmfrrmqx",
-                useAllAmount: false,
-                family: "osmosis",
-                mode: "send",
-                fees: "4000",
-                gas: "100000",
-                memo: "LedgerLive",
-              }),
-              expectedStatus: {
-                errors: {
-                  amount: new NotEnoughBalance(),
-                },
-                warnings: {},
-              },
-            },
-          ],
-        },
-      ],
-    },
+    osmosis,
   },
 };
 
