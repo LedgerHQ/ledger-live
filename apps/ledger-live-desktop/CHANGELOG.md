@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.45.0
+
+### Patch Changes
+
+- [#801](https://github.com/LedgerHQ/ledger-live/pull/801) [`5832094f1`](https://github.com/LedgerHQ/ledger-live/commit/5832094f124077ff1ebf5a456044f70964757e7a) Thanks [@gre](https://github.com/gre)! - Reduce perf sampling for sentry
+
+* [#801](https://github.com/LedgerHQ/ledger-live/pull/801) [`5832094f1`](https://github.com/LedgerHQ/ledger-live/commit/5832094f124077ff1ebf5a456044f70964757e7a) Thanks [@gre](https://github.com/gre)! - Fixes segment integration
+
 ## 2.45.0-hotfix.2
 
 ### Patch Changes
