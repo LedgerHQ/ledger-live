@@ -560,14 +560,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "현재 지원되지 않는 레거시 주소 형식입니다"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "메모 형식이 잘못되었습니다"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratis 블록체인 진화로 더 이상 제대로 작동하지 않을 수 있습니다. 기존 Stratis 블록체인은 2021년 10월 16일까지 지원됩니다."
@@ -644,7 +638,45 @@
       "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "CardanoMinAmountError" : {
-      "title" : "최소 {{amount}} ADA 필요"
+      "title" : "전송할 수 있는 최소 금액은 {{amount}} ADA입니다"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "수수료 지불에 필요한 충분한 자금이 있는지 반드시 확인해 주세요"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "메모 형식이 잘못되었습니다"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "이 수령인은 아직 {{assetCode}}에 대한 트러스트라인(trustline)이 없습니다."
+    },
+    "StellarAssetRequired" : {
+      "title" : "트러스트라인 추가 전 스텔라 자산을 선택해야 합니다."
+    },
+    "StellarAssetNotFound" : {
+      "title" : "선택한 스텔라 자산을 찾을 수 없습니다."
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 수수료를 지불할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "권장 수수료 대비 선택 수수료가 낮습니다"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "최소 트랜잭션 수수료는 0.00001 XLM입니다"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 신규 트러스트라인을 추가할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "스텔라 계정이 없습니다"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
     }
   },
   "bluetooth" : {
@@ -820,8 +852,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Ledger Live를 마음껏 누리고 있나요?",
-      "description" : "사용자가 전적으로 만족하든 개선의 여지가 있다고 느끼든 당사는 사용자의 피드백을 매우 소중하게 생각합니다.",
+      "title" : "How do you like our app?",
+      "description" : "Your feedback is important for improving Ledger Live.",
       "cta" : {
         "enjoy" : "훌륭해요",
         "disappointed" : "실망스러워요",
@@ -838,7 +870,8 @@
     },
     "disappointed" : {
       "title" : "더 나은 제품을 만들 수 있도록 도와주세요.",
-      "description" : "당사는 더 나은 기업으로 거듭나고 싶습니다. 개선점을 파악할 수 있도록 귀하의 솔직한 피드백을 부탁드립니다.",
+      "description" : "If you need more assistance or would like us to get back to you, please use our live chat",
+      "here" : "here",
       "cta" : {
         "sendFeedback" : "피드백 보내기",
         "notNow" : "나중에 하기"
@@ -930,9 +963,9 @@
         "title" : "소득 창출",
         "desc" : "불로소득을 얻고 암호화폐를 성장시키세요"
       },
-      "mint": {
-        "title": "민팅",
-        "desc": "[ L ] Market 독점 콜라보레이션 NFT 민팅"
+      "mint" : {
+        "title" : "민팅",
+        "desc" : "[ L ] 마켓 독점 콜라보 NFT 민팅"
       }
     },
     "comingSoon" : "곧 출시 예정",
@@ -1656,7 +1689,12 @@
       "WITHDRAW_UNBONDED" : "출금",
       "NOMINATE" : "지명",
       "CHILL" : "지명 해제",
-      "SET_CONTROLLER" : "관리자 설정"
+      "SET_CONTROLLER" : "관리자 설정",
+      "ACTIVATE" : "Activated",
+      "LOCK" : "Locked",
+      "UNLOCK" : "Unlocked",
+      "REVOKE" : "Revoked",
+      "REGISTER" : "Registered"
     }
   },
   "operationDetails" : {
@@ -1753,6 +1791,13 @@
         "howTo" : "귀하의 Algorand 계정에 자산을 추가할 수 있습니다.",
         "addAsa" : "ASA(자산) 추가",
         "howAsaWorks" : "ASA(자산)는 어떻게 운영되나요?"
+      },
+      "stellar" : {
+        "seeMore" : "더 많은 자산 보기",
+        "seeLess" : "자산 보기 줄이기",
+        "addTokens" : "자산 추가",
+        "howTo" : "스텔라 계정에 자산을 추가할 수 있습니다.",
+        "addAsset" : "자산 추가"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1946,12 @@
         "showTokens_plural" : "{{length}} ASA 보기",
         "hideTokens" : "ASA 숨기기",
         "hideTokens_plural" : "ASA 숨기기"
+      },
+      "stellar" : {
+        "showTokens" : "{{length}} 자산 표시",
+        "showTokens_plural" : "{{length}} 자산 표시",
+        "hideTokens" : "자산 숨기기",
+        "hideTokens_plural" : "자산 숨기기"
       }
     },
     "noResultsFound" : "발견된 자산 없음",
@@ -3259,7 +3310,9 @@
     "newVersion" : "{{deviceName}}에 사용할 수 있는 업데이트 {{version}}",
     "drawerUpdate" : {
       "title" : "펌웨어 업데이트",
-      "description" : "Ledger Nano 펌웨어를 Ledger Live 데스크탑 애플리케이션에 연결해 업데이트하세요"
+      "description" : "Ledger Nano 펌웨어를 Ledger Live 데스크탑 애플리케이션에 연결해 업데이트하세요",
+      "pleaseConnectUsbTitle" : "USB cable needed",
+      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3378,6 +3431,13 @@
             "broadcastError" : "트랜잭션이 실패한 것 같습니다. 트랜잭션이 전송되지 않았는지 몇 분 후 다시 확인하고 재시도하세요."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "스테이킹 보상은 총 잔액에 포함되지 않습니다."
       }
     }
   },
@@ -3734,6 +3794,7 @@
     }
   },
   "stellar" : {
+    "token" : "자산",
     "memo" : {
       "title" : "메모",
       "warning" : "메모 기능을 사용할 때는 수령인과 메모 유형을 신중하게 확인하세요"
@@ -3744,6 +3805,48 @@
       "MEMO_ID" : "메모 ID",
       "MEMO_HASH" : "메모 해시",
       "MEMO_RETURN" : "메모 반환"
+    },
+    "fee" : "네트워크 수수료",
+    "feeAction" : "수수료 업데이트",
+    "recommendedFee" : "권장 수수료",
+    "recommenndedFeeInfo" : "권장 수수료보다 낮은 수수료로도 여전히 트랜잭션 제출이 가능하지만 거래가 체결되지 않을 수 있습니다.",
+    "suggested" : "추천",
+    "networkCongestion" : "네트워크 혼잡",
+    "networkCongestionLevel" : {
+      "LOW" : "낮음",
+      "MEDIUM" : "Medium",
+      "HIGH" : "높음"
+    },
+    "assetCode" : "자산 코드",
+    "assetIssuer" : "자산 발행인",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "자산 추가",
+        "connectDevice" : "장치 연결",
+        "verification" : "인증",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "자산이 이미 추가되었습니다",
+              "description" : "이미 스텔라 계정에 {{token}} 자산을 보유하고 있습니다."
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}} 자산이 성공적으로 추가되었습니다",
+              "text" : "이제 스텔라 계정에서 {{token}} 자산을 보내고 받을 수 있습니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 트랜잭션이 전송되지 않았는지 몇 분 후 다시 확인하고 재시도하세요."
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4407,6 +4510,16 @@
     },
     "operations" : {
       "title" : "거래 내역"
+    }
+  },
+  "hedera" : {
+    "name" : "헤데라",
+    "createHederaAccountHelp" : {
+      "text" : "헤데라 계정 생성 방법은",
+      "link" : "이 지원 문서를 참조하세요."
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "Ledger 장치에서 귀하의 {{name}} 주소를 확인할 수 없습니다. 사용은 본인의 책임입니다."
     }
   }
 }
