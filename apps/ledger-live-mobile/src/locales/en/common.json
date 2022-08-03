@@ -1694,7 +1694,8 @@
       "LOCK": "Locked",
       "UNLOCK": "Unlocked",
       "REVOKE": "Revoked",
-      "REGISTER": "Registered"
+      "REGISTER": "Registered",
+      "WITHDRAW": "Withdrawn"
     }
   },
   "operationDetails": {
@@ -4135,6 +4136,7 @@
     "delegation": "Delegation",
     "viewDetails": "View details",
     "validator": "Validator",
+    "validatorGroup": "Validator Group",
     "validatorAddress": "Validator address",
     "delegatedAccount": "Delegated account",
     "duration": "Duration",

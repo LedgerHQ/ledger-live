@@ -58,7 +58,7 @@ const OperationDetailsExtra = ({ operation, type, account }: OperationDetailsExt
               <OpDetailsData>
                 <Box>
                   <FormattedVal
-                    val={operation.value}
+                    val={operation.extra.celoOperationValue}
                     unit={account.unit}
                     showCode
                     fontSize={4}
@@ -89,26 +89,6 @@ const OperationDetailsExtra = ({ operation, type, account }: OperationDetailsExt
       );
     }
     case "LOCK":
-      return (
-        <>
-          <OpDetailsSection>
-            <OpDetailsTitle>
-              <Trans i18nKey={`operation.type.${type}`} />
-            </OpDetailsTitle>
-            <OpDetailsData>
-              <Box>
-                <FormattedVal
-                  val={operation.value.minus(operation.fee)}
-                  unit={account.unit}
-                  showCode
-                  fontSize={4}
-                  color="palette.text.shade60"
-                />
-              </Box>
-            </OpDetailsData>
-          </OpDetailsSection>
-        </>
-      );
     case "UNLOCK":
       return (
         <>
@@ -119,7 +99,7 @@ const OperationDetailsExtra = ({ operation, type, account }: OperationDetailsExt
             <OpDetailsData>
               <Box>
                 <FormattedVal
-                  val={operation.value}
+                  val={operation.extra.celoOperationValue}
                   unit={account.unit}
                   showCode
                   fontSize={4}
