@@ -2,6 +2,18 @@ import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow } from "../../bot/specs";
 import { formatCurrencyUnit } from "../../currencies";
+
+const typeWording = {
+  send: "Send",
+  lock: "Lock",
+  unlock: "Unlock",
+  withdraw: "Withdraw",
+  vote: "Vote",
+  revoke: "Revoke",
+  activate: "Activate",
+  register: "Create Account",
+};
+
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
@@ -38,6 +50,17 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "No Gateway Fee",
       button: "Rr",
+    },
+    {
+      title: "Validator",
+      button: "Rr",
+    },
+    {
+      title: "Type",
+      button: "Rr",
+      expectedValue: ({ transaction }) => {
+        return typeWording[transaction.mode];
+      },
     },
     {
       title: "Accept",

@@ -11,10 +11,14 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { Account } from "@ledgerhq/types-live";
 export const formatTransaction = (t: Transaction, account: Account): string => `
-SEND ${formatCurrencyUnit(getAccountUnit(account), t.amount, {
-  showCode: true,
-  disableRounding: true,
-})}
+SEND ${
+  t.useAllAmount
+    ? "MAX CELO"
+    : formatCurrencyUnit(getAccountUnit(account), t.amount, {
+        showCode: true,
+        disableRounding: true,
+      })
+}
 TO ${t.recipient}`;
 
 const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
@@ -23,6 +27,8 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     ...common,
     family: tr.family,
     fees: tr.fees ? new BigNumber(tr.fees) : null,
+    mode: tr.mode,
+    index: tr.index,
   };
 };
 
@@ -32,6 +38,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...common,
     family: t.family,
     fees: t.fees?.toString() || null,
+    mode: t.mode,
+    index: t.index,
   };
 };
 

@@ -36,6 +36,13 @@ export type OperationType =
   // ALGORAND
   | "OPT_IN"
   | "OPT_OUT"
+  // CELO
+  | "LOCK"
+  | "UNLOCK"
+  | "WITHDRAW"
+  | "REVOKE"
+  | "ACTIVATE"
+  | "REGISTER"
   // NFT
   | "NFT_IN"
   | "NFT_OUT";

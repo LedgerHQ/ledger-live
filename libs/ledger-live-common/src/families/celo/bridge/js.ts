@@ -2,6 +2,7 @@ import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { sync, scanAccounts } from "../js-synchronisation";
+import { getPreloadStrategy, preload, hydrate } from "../preload";
 import signOperation from "../js-signOperation";
 import getTransactionStatus from "../js-getTransactionStatus";
 import broadcast from "../js-broadcast";
@@ -13,10 +14,8 @@ const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const receive = makeAccountBridgeReceive();
 
-const preload = async () => Promise.resolve({});
-const hydrate = (): void => {};
-
 const currencyBridge: CurrencyBridge = {
+  getPreloadStrategy,
   preload,
   hydrate,
   scanAccounts,
