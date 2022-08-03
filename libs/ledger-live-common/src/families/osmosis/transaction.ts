@@ -4,4 +4,10 @@ import {
   toTransactionRaw,
 } from "../cosmos/transaction";
 
-export default { formatTransaction, fromTransactionRaw, toTransactionRaw };
+import {
+  formatTransactionStatusCommon as formatTransactionStatus,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
+} from "../../transaction/common";
+
+export default { formatTransaction, fromTransactionRaw, toTransactionRaw, fromTransactionStatusRaw, toTransactionStatusRaw, formatTransactionStatus };
