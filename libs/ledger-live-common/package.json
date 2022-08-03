@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "24.1.0",
+  "version": "25.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -143,7 +143,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/json-bignumber": "^1.1.0",
-    "@ledgerhq/live-app-sdk": "^0.6.1",
+    "@ledgerhq/live-app-sdk": "^0.7.0",
     "@ledgerhq/logs": "workspace:^",
     "@polkadot/types": "8.5.1",
     "@polkadot/types-known": "8.5.1",
@@ -202,6 +202,7 @@
     "leb128": "^0.0.5",
     "lodash": "^4.17.21",
     "lru-cache": "5.1.1",
+    "minimatch": "^5.1.0",
     "numeral": "^2.0.6",
     "object-hash": "^2.2.0",
     "performance-now": "^2.1.0",
@@ -230,6 +231,9 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
+    "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^",
     "@svgr/core": "^5.5.0",
     "@testing-library/react-hooks": "^4.0.1",
     "@types/bs58": "^4.0.1",

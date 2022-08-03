@@ -10,7 +10,7 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import type { DProps } from "~/renderer/screens/exchange";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ProviderList } from "../ProviderList";
 import { useRampCatalogCurrencies } from "../hooks";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";

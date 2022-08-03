@@ -5,7 +5,7 @@ import { from } from "rxjs";
 import type { ExchangeRaw } from "@ledgerhq/live-common/exchange/platform/types";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import { fromExchangeRaw } from "@ledgerhq/live-common/exchange/platform/serialization";
-import type { TransactionRaw } from "@ledgerhq/live-common/types/index";
+import type { TransactionRaw } from "@ledgerhq/live-common/generated/types";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 
 type Input = {

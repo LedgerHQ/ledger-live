@@ -15,7 +15,7 @@ import {
 import { isOutdated } from "./logic";
 import { getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { NFT, ProtoNFT } from "../../types";
+import type { NFT, ProtoNFT } from "@ledgerhq/types-live";
 
 const NftMetadataContext = createContext<NFTMetadataContextType>({
   cache: {},

@@ -2,7 +2,7 @@
 
 import type { Observable } from "rxjs";
 import main from "@ledgerhq/live-common/hw/firmwareUpdate-main";
-import type { FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 type Input = FirmwareUpdateContext;
 

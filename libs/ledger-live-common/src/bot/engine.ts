@@ -13,14 +13,6 @@ import {
   timeoutWith,
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
-import type {
-  TransactionStatus,
-  Transaction,
-  Account,
-  Operation,
-  SignOperationEvent,
-  CryptoCurrency,
-} from "../types";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
 import { isAccountEmpty, formatAccount } from "../account";
@@ -53,6 +45,13 @@ import type {
 } from "./types";
 import { makeBridgeCacheSystem } from "../bridge/cache";
 import { accountDataToAccount, accountToAccountData } from "../cross";
+import type {
+  Account,
+  Operation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Transaction, TransactionStatus } from "../generated/types";
 
 let appCandidates;
 const localCache = {};

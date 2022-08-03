@@ -3,13 +3,8 @@ import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Step } from "~/renderer/components/Stepper";
 
-import type {
-  Account,
-  TokenAccount,
-  TransactionStatus,
-  Operation,
-} from "@ledgerhq/live-common/types/index";
-import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import type { Account, TokenAccount, Operation } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
 export type StepId = "amount" | "connectDevice" | "confirmation";
 
 export type StepProps = {

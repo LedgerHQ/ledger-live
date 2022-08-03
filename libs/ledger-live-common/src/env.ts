@@ -105,6 +105,11 @@ const envDefinitions = {
     def: 200,
     desc: "Limit of operation that Horizon will fetch per page",
   },
+  API_STELLAR_HORIZON_STATIC_FEE: {
+    def: false,
+    parser: boolParser,
+    desc: "Static fee for Stellar account",
+  },
   API_OSMOSIS_INDEXER: {
     def: "https://osmosis.coin.ledger.com/indexer",
     parser: stringParser,

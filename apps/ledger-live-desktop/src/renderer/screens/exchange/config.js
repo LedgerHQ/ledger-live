@@ -1,6 +1,6 @@
 // @flow
 
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/currencies";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const supportedBuyCurrenciesIds = [
   "bitcoin",

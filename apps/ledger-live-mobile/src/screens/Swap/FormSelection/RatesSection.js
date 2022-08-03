@@ -17,9 +17,11 @@ import type {
   Account,
   TokenAccount,
   AccountLikeArray,
+} from "@ledgerhq/types-live";
+import type {
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import type {
   SwapTransaction,
   ExchangeRate,

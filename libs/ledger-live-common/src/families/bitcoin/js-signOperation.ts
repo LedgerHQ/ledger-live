@@ -2,8 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
-import type { Account, Operation, SignOperationEvent } from "./../../types";
-import { isSegwitDerivationMode } from "./../../derivation";
+import { DerivationMode, isSegwitDerivationMode } from "./../../derivation";
 import { encodeOperationId } from "./../../operation";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
@@ -12,6 +11,11 @@ import { buildTransaction } from "./js-buildTransaction";
 import { calculateFees } from "./cache";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { perCoinLogic } from "./logic";
+import type {
+  Account,
+  Operation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 
 const signOperation = ({
   account,
@@ -63,7 +67,9 @@ const signOperation = ({
           throw new Error("sigHashType should not be NaN");
         }
 
-        const segwit = isSegwitDerivationMode(account.derivationMode);
+        const segwit = isSegwitDerivationMode(
+          account.derivationMode as DerivationMode
+        );
 
         const hasTimestamp = currency.id === "peercoin";
         const initialTimestamp = hasTimestamp

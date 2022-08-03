@@ -1,8 +1,9 @@
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
-import { Account, isSegwitDerivationMode } from "../../types";
+import { DerivationMode, isSegwitDerivationMode } from "../../derivation";
 import getAddress from "../../hw/getAddress";
+import type { Account } from "@ledgerhq/types-live";
 
 const receive = (
   account: Account,
@@ -20,10 +21,12 @@ const receive = (
       void (async function () {
         try {
           const r = await getAddress(transport, {
-            derivationMode: account.derivationMode,
+            derivationMode: account.derivationMode as DerivationMode,
             currency: account.currency,
             path: account.freshAddressPath,
-            segwit: isSegwitDerivationMode(account.derivationMode),
+            segwit: isSegwitDerivationMode(
+              account.derivationMode as DerivationMode
+            ),
           });
 
           if (r.publicKey !== account.seedIdentifier) {

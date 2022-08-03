@@ -2,7 +2,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
-import type { AccountLikeArray, AccountLike, Operation } from "@ledgerhq/live-common/types/index";
+import type { AccountLikeArray, AccountLike, Operation } from "@ledgerhq/types-live";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 import { isCompoundTokenSupported } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 import TrackPage from "~/renderer/analytics/TrackPage";
