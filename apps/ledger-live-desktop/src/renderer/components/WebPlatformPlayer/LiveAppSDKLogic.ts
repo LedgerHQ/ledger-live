@@ -10,7 +10,7 @@ import {
   isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import { getEnv } from "@ledgerhq/live-common/env";
 import {
   accountToPlatformAccount,
   getPlatformTransactionSignFlowInfos,
