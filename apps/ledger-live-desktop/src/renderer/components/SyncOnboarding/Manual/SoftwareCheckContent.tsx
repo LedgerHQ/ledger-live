@@ -1,5 +1,6 @@
 import React from "react";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/react-ui";
+import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 
 import Check from "~/renderer/icons/Check";
@@ -53,7 +54,7 @@ const Bullet = ({
         ) : isCompleted ? (
           <Check size={24} color={theme.colors.palette.success.c50} />
         ) : (
-          bulletText
+          <Text fontSize="20px">{bulletText}</Text>
         )}
       </IconContainer>
       <Column flex="1" ml={4}>
@@ -76,33 +77,47 @@ enum Status {
 
 type StatusType = "inactive" | "active" | "completed";
 
-export const SoftwareCheckContent = ({
+const SoftwareCheckContent = ({
   genuineCheckStatus,
   firmwareUpdateStatus,
 }: {
   genuineCheckStatus: StatusType;
   firmwareUpdateStatus: StatusType;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <Bullet
         bulletText="1"
         isActive={genuineCheckStatus === Status.active && true}
         isCompleted={genuineCheckStatus === Status.completed && true}
-        text={genuineCheckStatus === Status.completed ? "Nano is authentic" : "Checking Nano"}
+        text={
+          genuineCheckStatus === Status.completed
+            ? t(
+                "syncOnboarding.manual.verticalTimeline.softwareCheckContent.genuineCheck.completed",
+              )
+            : t("syncOnboarding.manual.verticalTimeline.softwareCheckContent.genuineCheck.active")
+        }
       />
       <Bullet
         bulletText="2"
         isActive={firmwareUpdateStatus === Status.active && true}
         isCompleted={firmwareUpdateStatus === Status.completed && true}
         text={
-          genuineCheckStatus === Status.inactive
-            ? "Software check"
-            : genuineCheckStatus === Status.active
-            ? "Checking for software updates"
-            : "Software is up to date"
+          firmwareUpdateStatus === Status.inactive
+            ? t(
+                "syncOnboarding.manual.verticalTimeline.softwareCheckContent.firmwareUpdate.inactive",
+              )
+            : firmwareUpdateStatus === Status.active
+            ? t("syncOnboarding.manual.verticalTimeline.softwareCheckContent.firmwareUpdate.active")
+            : t(
+                "syncOnboarding.manual.verticalTimeline.softwareCheckContent.firmwareUpdate.completed",
+              )
         }
       />
     </>
   );
 };
+
+export default SoftwareCheckContent;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Flex, Popin, Text } from "@ledgerhq/react-ui";
-import { useTheme } from "styled-components";
+import { useTranslation } from "react-i18next";
 
 export type Props = {
   isOpen: boolean;
@@ -8,6 +8,8 @@ export type Props = {
 };
 
 const GeniuneCheckPopin = ({ isOpen, onClose }: Props) => {
+  const { t } = useTranslation();
+
   return (
     <Popin position="relative" isOpen={isOpen}>
       <Flex
@@ -18,17 +20,16 @@ const GeniuneCheckPopin = ({ isOpen, onClose }: Props) => {
         padding="40px"
       >
         <Text variant="h2" fontSize="20px" color="palette.primary.c80">
-          Authenticity Check
+          {t("syncOnboarding.manual.genuineCheckPopin.title")}
         </Text>
-        <Text variant="paragraph" fontSize="25px">
-          Let's make sure your Nano is Authentic and safe to use
+        <Text variant="paragraph" fontSize="25px" textAlign="center">
+          {t("syncOnboarding.manual.genuineCheckPopin.paragraph1")}
         </Text>
-        <Text variant="paragraph" fontSize="18px" color="palette.neutral.c80">
-          We will perform a check to ensure your device hasn't been tampered with. You'll need to
-          accept this on your Nano.
+        <Text variant="paragraph" fontSize="18px" color="palette.neutral.c80" textAlign="center">
+          {t("syncOnboarding.manual.genuineCheckPopin.paragraph2")}
         </Text>
         <Button variant="main" width="100%" onClick={onClose}>
-          Check device
+          {t("syncOnboarding.manual.genuineCheckPopin.checkDeviceButton")}
         </Button>
       </Flex>
     </Popin>

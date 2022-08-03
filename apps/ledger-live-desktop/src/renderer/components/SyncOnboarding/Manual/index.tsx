@@ -10,9 +10,11 @@ import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
 import GeniuneCheckPopin from "./GeniuneCheckPopin";
 
-import { SoftwareCheckContent } from "./SoftwareCheckStep";
+import SoftwareCheckContent from "./SoftwareCheckContent";
 
 const SyncOnboardingManual = () => {
+  const { t } = useTranslation();
+
   const steps = [
     {
       status: "completed",
@@ -59,7 +61,6 @@ const SyncOnboardingManual = () => {
     },
   ];
 
-  const { t } = useTranslation();
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isGeniuneCheckPopinOpen, setGeniuneCheckPopinOpen] = useState<boolean>(true);
 
