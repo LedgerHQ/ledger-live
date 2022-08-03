@@ -677,7 +677,7 @@ importers:
       rxjs: ^6.6.6
       rxjs-compat: ^6.6.6
       semver: ^7.3.7
-      storyly-react-native: ^1.24.0
+      storyly-react-native: 1.24.1
       stream-browserify: ^3.0.0
       string_decoder: ~1.3.0
       styled-components: ^5.3.3
@@ -834,7 +834,7 @@ importers:
       rxjs: 6.6.7
       rxjs-compat: 6.6.7
       semver: 7.3.7
-      storyly-react-native: 1.24.0_zqxy7fpkavjkgz5xll7ed4r6rq
+      storyly-react-native: 1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq
       stream-browserify: 3.0.0
       string_decoder: 1.3.0
       styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
@@ -3334,6 +3334,7 @@ packages:
       '@babel/helper-validator-option': 7.16.7
       browserslist: 4.20.3
       semver: 6.3.0
+    dev: false
 
   /@babel/helper-compilation-targets/7.18.2_@babel+core@7.17.10:
     resolution: {integrity: sha512-s1jnPotJS9uQnzFtiZVBUxe67CuBa679oWFHpxYYnTpRL/1ffhyX44R9uYiXoa/pLXcY9H2moJta0iaanlk/rQ==}
@@ -19320,6 +19321,7 @@ packages:
 
   /array-filter/0.0.1:
     resolution: {integrity: sha1-fajPLiZijtcygDWB/SH2fKzS7uw=}
+    dev: true
 
   /array-find-index/1.0.2:
     resolution: {integrity: sha1-3wEKoSh+Fku9pvlyOwqWoexBh6E=}
@@ -19348,9 +19350,11 @@ packages:
 
   /array-map/0.0.0:
     resolution: {integrity: sha1-iKK6tz0c97zVwbEYoAP2b2ZfpmI=}
+    dev: true
 
   /array-reduce/0.0.0:
     resolution: {integrity: sha1-FziZ0//Rx9k4PkR5Ul2+J4yrXys=}
+    dev: true
 
   /array-union/1.0.2:
     resolution: {integrity: sha512-Dxr6QJj/RdU/hCaBjOfxW+q6lyuVE6JFWIrAUpuOOhoJJoQ99cUn3igRaHVB5P9WrgFVN0FfArM3x0cueOU8ng==}
@@ -43552,6 +43556,7 @@ packages:
       array-map: 0.0.0
       array-reduce: 0.0.0
       jsonify: 0.0.0
+    dev: true
 
   /shell-quote/1.7.2:
     resolution: {integrity: sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==}
@@ -44237,8 +44242,8 @@ packages:
     resolution: {integrity: sha512-CMtO2Uneg3SAz/d6fZ/6qbqqQHi2ynq6/KzMD/26gTkiEShCcpqFfTHgOxsE0egAq6SX3FmN4CeSqn8BzXQkJg==}
     dev: true
 
-  /storyly-react-native/1.24.0_zqxy7fpkavjkgz5xll7ed4r6rq:
-    resolution: {integrity: sha512-Cum4UcCZwc583t7T40jEIZJ+vGuWktZ5fVyJemIXHCLIgkcqEulZs20H1oddEHMx6nd7Bn2yu1ibVJBvL1+igw==}
+  /storyly-react-native/1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq:
+    resolution: {integrity: sha512-gKQTwUfEoK7TgEdTneaFuHUzHSL85AmzGUkuuBuKjSq2lUsToiAK3KmvZ3d0BjP/+44l12hh9Pz5GeXyTWYTYw==}
     peerDependencies:
       react: ^17.0.2
       react-native: '>=0.64.2 <1.0.x'
