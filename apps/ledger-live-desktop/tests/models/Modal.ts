@@ -58,4 +58,8 @@ export class Modal {
   async close() {
     await this.closeButton.click();
   }
+
+  async waitForModalToDisappear() {
+    await this.container.waitFor({state: "detached"})
+  }
 }
