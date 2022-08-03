@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { useTranslation } from "react-i18next";
 
 import { Flex } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
+import {
+  DeviceInfo,
+  idsToLanguage,
+  Language,
+  languageIds,
+} from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 
@@ -30,6 +35,7 @@ const PropmtDeviceLanguageStep = ({
   device,
 }: Props) => {
   const { locale: currentLocale } = useLocale();
+
   let {
     availableLanguages: newAvailableLanguages,
     loaded: newLanguagesLoaded,
@@ -38,17 +44,27 @@ const PropmtDeviceLanguageStep = ({
     availableLanguages: oldAvailableLanguages,
     loaded: oldLanguagesLoaded,
   } = useAvailableLanguagesForDevice(oldDeviceInfo);
-  const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<
-    boolean
-  >(false);
-  const [
-    deviceForChangeLanguageAction,
-    setDeviceForChangeLanguageAction,
-  ] = useState<Device | null>(null);
+
+  const [isLanguagePromptOpen, setIsLanguagePromptOpen] = useState<boolean>(
+    false,
+  );
+
+  const [languageToInstall, setLanguageToInstall] = useState<Language>(
+    "english",
+  );
+  const [deviceForAction, setDeviceForAction] = useState<Device | null>(null);
 
   const { t } = useTranslation();
 
   const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
+
+  const installLanguage = useCallback(
+    (language: Language) => {
+      setLanguageToInstall(language);
+      setDeviceForAction(device);
+    },
+    [device],
+  );
 
   useEffect(() => {
     if (newLanguagesLoaded && oldLanguagesLoaded) {
@@ -68,7 +84,12 @@ const PropmtDeviceLanguageStep = ({
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
         deviceLocalizationFeatureFlag.enabled
       ) {
-        setIsDeviceLanguagePromptOpen(true);
+        setIsLanguagePromptOpen(true);
+      } else if ( // did not work, for some reason old device info was zero, my mistake maybe?
+        oldDeviceInfo?.languageId !== undefined &&
+        oldDeviceInfo?.languageId !== languageIds["english"]
+      ) {
+        installLanguage(idsToLanguage[oldDeviceInfo.languageId]);
       } else {
         dispatchEvent({ type: "languagePromptDismissed" });
       }
@@ -80,14 +101,29 @@ const PropmtDeviceLanguageStep = ({
     oldLanguagesLoaded,
     dispatchEvent,
     currentLocale,
+    oldDeviceInfo,
     updatedDeviceInfo,
+    installLanguage,
   ]);
+
+  console.log({
+    newAvailableLanguages,
+    newLanguagesLoaded,
+    oldAvailableLanguages,
+    oldLanguagesLoaded,
+    dispatchEvent,
+    currentLocale,
+    oldDeviceInfo,
+    updatedDeviceInfo,
+    installLanguage,
+    deviceForAction,
+  });
 
   const deviceName = getDeviceModel(device.modelId).productName;
 
   return (
     <Flex alignItems="center">
-      {isDeviceLanguagePromptOpen ? (
+      {isLanguagePromptOpen && (
         <>
           <Track event="FirmwareUpdateFirstDeviceLanguagePrompt" onMount />
           <ChangeDeviceLanguagePrompt
@@ -108,19 +144,25 @@ const PropmtDeviceLanguageStep = ({
             )}
             canSkip
             onSkip={() => dispatchEvent({ type: "languagePromptDismissed" })}
-            onConfirm={() => setDeviceForChangeLanguageAction(device)}
-          />
-          <ChangeDeviceLanguageAction
-            device={deviceForChangeLanguageAction}
-            language={localeIdToDeviceLanguage[currentLocale] as Language}
-            onClose={() => {
-              setDeviceForChangeLanguageAction(null);
-              dispatchEvent({ type: "languagePromptDismissed" });
-            }}
+            onConfirm={() =>
+              installLanguage(
+                localeIdToDeviceLanguage[currentLocale] as Language,
+              )
+            }
           />
         </>
+      )}
+      {deviceForAction !== null ? (
+        <ChangeDeviceLanguageAction
+          device={deviceForAction}
+          language={languageToInstall}
+          onClose={() => {
+            setDeviceForAction(null);
+            dispatchEvent({ type: "languagePromptDismissed" });
+          }}
+        />
       ) : (
-        <DeviceActionProgress />
+        !isLanguagePromptOpen && <DeviceActionProgress />
       )}
     </Flex>
   );

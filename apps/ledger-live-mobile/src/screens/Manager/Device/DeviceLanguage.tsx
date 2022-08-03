@@ -30,7 +30,7 @@ const DeviceLanguage: React.FC<Props> = ({
   const [deviceLanguage, setDeviceLanguage] = useState<Language>(
     currentLanguage,
   );
-  const availableLanguages = useAvailableLanguagesForDevice(deviceInfo);
+  const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
 
   const [shouldInstallLanguage, setShouldInstallLanguage] = useState<boolean>(
     false,
