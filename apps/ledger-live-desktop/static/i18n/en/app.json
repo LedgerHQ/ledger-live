@@ -2344,6 +2344,17 @@
     }
   },
   "osmosis": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Powered by Figment",
+        "moreInfo": "More info",
+        "drawerTitle": "Powered by Figment",
+        "title": "The OSMO token is now available on Ledger Live",
+        "description": "You can now start to manage your OSMO tokens and secure them through Ledger Live.",
+        "description2": "The OSMO token is native to the Osmosis chain and is used for everything from transactions, staking and many upcoming features.",
+        "website": "Powered by Figment"
+      }
+    },
     "memo": "Memo",
     "memoPlaceholder": "Optional",
     "memoWarningText": "When using a memo, carefully check the information with the recipient",
