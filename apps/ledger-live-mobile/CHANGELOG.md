@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.16
+
+### Patch Changes
+
+- [#796](https://github.com/LedgerHQ/ledger-live/pull/796) [`078665b95`](https://github.com/LedgerHQ/ledger-live/commit/078665b952d7d8b26e98687e5d6275466353e31d) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Send Flow navigation issue
+
 ## 3.5.0-next.15
 
 ### Minor Changes
