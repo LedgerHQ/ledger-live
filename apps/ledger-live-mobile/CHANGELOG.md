@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.22
+
+### Patch Changes
+
+- [#821](https://github.com/LedgerHQ/ledger-live/pull/821) [`7e46d2828`](https://github.com/LedgerHQ/ledger-live/commit/7e46d28284b6d1700a36bb776dbd3708233cfc61) Thanks [@LFBarreto](https://github.com/LFBarreto)! - revert storyly
+
 ## 3.5.0-next.21
 
 ### Patch Changes
