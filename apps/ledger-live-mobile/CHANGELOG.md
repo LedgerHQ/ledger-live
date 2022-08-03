@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.21
+
+### Patch Changes
+
+- [#811](https://github.com/LedgerHQ/ledger-live/pull/811) [`0872e6688`](https://github.com/LedgerHQ/ledger-live/commit/0872e6688d34b6711a7043b24dfb765f72fe9e5d) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - add microphone permission to LLM for live apps
+
 ## 3.5.0-next.20
 
 ### Patch Changes
