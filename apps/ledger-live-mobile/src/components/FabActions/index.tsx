@@ -31,13 +31,17 @@ import { NavigatorName, ScreenName } from "../../const";
 import FabAccountButtonBar from "./FabAccountButtonBar";
 import useAccountActions from "../../screens/Account/hooks/useAccountActions";
 import { Linking } from "react-native";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
   currency?: CryptoCurrency;
   isOpen?: boolean;
+  onClose: () => void;
+  action: {
+    label: ReactNode;
+  };
 };
 
 export type ActionButtonEventProps = {
@@ -61,7 +65,7 @@ export type ActionButtonEventProps = {
 };
 
 export type ActionButton = ActionButtonEventProps & {
-  label: ReactNode;
+  label: string;
   Icon?: ComponentType<{ size: number; color: string }>;
   event: string;
   eventProperties?: { [key: string]: any };
@@ -87,10 +91,13 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
   account,
   parentAccount,
 }: FabAccountActionsProps) => {
-  const [ComponentOnDisabledPress, setComponentOnDisabledPress] = useState<
-    React.ComponentType<ModalOnDisabledClickComponentProps> | undefined
+  const [pressedDisabledAction, setPressedDisabledAction] = useState<
+    ActionButton | undefined
   >(undefined);
-  const [isURLDrawerOpen, setURLDrawerOpen] = useState(false);
+  const [
+    isDisabledActionModalOpened,
+    setIsDisabledActionModalOpened,
+  ] = useState(false);
 
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -126,7 +133,8 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
   );
 
   const onPressWhenDisabled = useCallback((action: ActionButton) => {
-    setComponentOnDisabledPress(action.modalOnDisabledClick?.component);
+    setPressedDisabledAction(action);
+    setIsDisabledActionModalOpened(true);
   }, []);
 
   const quickActions: QuickActionButtonProps[] = mainActions.map(action => {
@@ -143,11 +151,13 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
 
   return (
     <>
-      {!ComponentOnDisabledPress ||
-      React.isValidElement(ComponentOnDisabledPress) ? (
-        ComponentOnDisabledPress
-      ) : (
-        <ComponentOnDisabledPress account={account} />
+      {pressedDisabledAction?.modalOnDisabledClick?.component && (
+        <pressedDisabledAction.modalOnDisabledClick.component
+          account={account}
+          action={pressedDisabledAction}
+          isOpen={isDisabledActionModalOpened}
+          onClose={() => setIsDisabledActionModalOpened(false)}
+        ></pressedDisabledAction.modalOnDisabledClick.component>
       )}
       <QuickActionList
         data={quickActions}

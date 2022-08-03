@@ -1917,6 +1917,12 @@
         "title": "You don't have any transactions",
         "subtitle": "You'll need a device in order to buy or receive {{assetName}}"
       }
+    },
+    "modals": {
+      "zeroBalanceDisabledAction": {
+        "title": "You have no {{currencyTicker}} yet",
+        "description": "You need some {{currencyTicker}} to {{actionName}} with this account."
+      }
     }
   },
   "accounts": {
