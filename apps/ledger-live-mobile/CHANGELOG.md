@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.18
+
+### Patch Changes
+
+- [#794](https://github.com/LedgerHQ/ledger-live/pull/794) [`661719e15`](https://github.com/LedgerHQ/ledger-live/commit/661719e159666b140246079107e8cf09d452268f) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fic issue on redirection after account deletion
+
 ## 3.5.0-next.17
 
 ### Patch Changes
