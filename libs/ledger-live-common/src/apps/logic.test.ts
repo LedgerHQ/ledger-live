@@ -313,8 +313,7 @@ const scenarios = [
             name: "Bitcoin",
           },
         ],
-        expectPlan:
-          "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Bitcoin",
+        expectPlan: "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Bitcoin",
         expectInstalled: "",
       },
     ],
