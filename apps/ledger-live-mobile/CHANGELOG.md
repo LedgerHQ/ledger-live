@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.5.0-next.25
+
+### Patch Changes
+
+- [#834](https://github.com/LedgerHQ/ledger-live/pull/834) [`7aa93b8b2`](https://github.com/LedgerHQ/ledger-live/commit/7aa93b8b260a48d236b33181e1500f96962b3d86) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fixes issue on market header button touch highlight color
+
+- Updated dependencies [[`7aa93b8b2`](https://github.com/LedgerHQ/ledger-live/commit/7aa93b8b260a48d236b33181e1500f96962b3d86)]:
+  - @ledgerhq/native-ui@0.8.3-next.1
+
 ## 3.5.0-next.24
 
 ### Patch Changes
