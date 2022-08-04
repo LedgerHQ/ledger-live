@@ -27,8 +27,8 @@
   "types": "lib/Eth.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ethersproject/abi": "^5.5.0",
-    "@ethersproject/rlp": "^5.5.0",
+    "@ethersproject/abi": "^5.6.4",
+    "@ethersproject/rlp": "^5.6.1",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
