@@ -12,8 +12,9 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`3bdbfd3cb`](https://github.com/LedgerHQ/ledger-live/commit/3bdbfd3cbc0153a2ebf4ab91f631cb9f6e42d74c)]:
-  - @ledgerhq/live-common@25.1.0-next.2
+- [#801](https://github.com/LedgerHQ/ledger-live/pull/801) [`5832094f1`](https://github.com/LedgerHQ/ledger-live/commit/5832094f124077ff1ebf5a456044f70964757e7a) Thanks [@gre](https://github.com/gre)! - Reduce perf sampling for sentry
+
+* [#801](https://github.com/LedgerHQ/ledger-live/pull/801) [`5832094f1`](https://github.com/LedgerHQ/ledger-live/commit/5832094f124077ff1ebf5a456044f70964757e7a) Thanks [@gre](https://github.com/gre)! - Fixes segment integration
 
 ## 2.45.1-hotfix.1
 
