@@ -76,7 +76,7 @@ export const useAvailableLanguagesForDevice = (deviceInfo?: DeviceInfo) => {
         .then(setAvailableLanguages)
         .finally(() => setLoaded(true));
     }
-  }, [deviceInfo, setAvailableLanguages]);
+  }, [deviceInfo]);
 
   return { availableLanguages, loaded };
 };

@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { NativeModules } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import {
   FwUpdateBackgroundEvent,
@@ -15,7 +14,7 @@ import {
 } from "../../actions/appstate";
 import BottomModal from "../BottomModal";
 import GenericErrorView from "../GenericErrorView";
-import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import ConfirmRecoveryStep from "./ConfirmRecoveryStep";
 import FlashMcuStep from "./FlashMcuStep";
@@ -23,7 +22,7 @@ import FirmwareUpdatedStep from "./FirmwareUpdatedStep";
 import ConfirmPinStep from "./ConfirmPinStep";
 import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
-import PromptDeviceLanguageStep from "./PromptDeviceLanguageStep";
+import DeviceLanguageStep from "./DeviceLanguageStep";
 import { track } from "../../analytics";
 import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
 import {
@@ -219,7 +218,7 @@ export default function FirmwareUpdate({
         <FlashMcuStep progress={progress} installing={installing} />
       )}
       {step === "promptLanguageChange" && (
-        <PromptDeviceLanguageStep
+        <DeviceLanguageStep
           dispatchEvent={dispatchEvent}
           updatedDeviceInfo={updatedDeviceInfo}
           oldDeviceInfo={deviceInfo}

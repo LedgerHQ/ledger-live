@@ -28,7 +28,7 @@ type Props = {
   device: Device;
   dispatchEvent: React.Dispatch<FwUpdateForegroundEvent>;
 };
-const PropmtDeviceLanguageStep = ({
+const DeviceLanguageStep = ({
   oldDeviceInfo,
   updatedDeviceInfo,
   dispatchEvent,
@@ -68,7 +68,7 @@ const PropmtDeviceLanguageStep = ({
   );
 
   useEffect(() => {
-    if (true) {
+    if (newLanguagesLoaded && oldLanguagesLoaded) {
       const deviceLanguageId = updatedDeviceInfo?.languageId;
       const potentialDeviceLanguage = localeIdToDeviceLanguage[currentLocale];
 
@@ -79,26 +79,6 @@ const PropmtDeviceLanguageStep = ({
 
       // firmware version verification is not really needed here, the presence of a language id
       // indicates that we are in a firmware that supports localization
-
-      //TODO remove console log 
-      console.log("FROOM THE USE EFFECT", {
-        langAvailableForTheFirstTime,
-        deviceLanguageId,
-        potentialDeviceLanguage,
-        deviceLanguageText: idsToLanguage[deviceLanguageId as number],
-        deviceLocalizationFeatureFlag,
-        oldDeviceInfo,
-        englishId: languageIds["english"],
-        firstCondition:
-          langAvailableForTheFirstTime &&
-          deviceLanguageId !== undefined &&
-          idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-          deviceLocalizationFeatureFlag.enabled,
-        secondCondition:
-          oldDeviceInfo?.languageId !== undefined &&
-          oldDeviceInfo?.languageId !== languageIds["english"],
-      });
-
       if (
         langAvailableForTheFirstTime &&
         deviceLanguageId !== undefined &&
@@ -127,26 +107,12 @@ const PropmtDeviceLanguageStep = ({
     installLanguage,
   ]);
 
-  // TODO: remove console log
-  console.log("RENDER", {
-    newAvailableLanguages,
-    newLanguagesLoaded,
-    oldAvailableLanguages,
-    oldLanguagesLoaded,
-    dispatchEvent,
-    currentLocale,
-    oldDeviceInfo,
-    updatedDeviceInfo,
-    installLanguage,
-    deviceForAction,
-    languageToInstall
-  });
 
   const deviceName = getDeviceModel(device.modelId).productName;
 
   return (
     <Flex alignItems="center">
-      {isLanguagePromptOpen && (
+      {isLanguagePromptOpen && deviceForAction === null && (
         <>
           <Track event="FirmwareUpdateFirstDeviceLanguagePrompt" onMount />
           <ChangeDeviceLanguagePrompt
@@ -191,4 +157,4 @@ const PropmtDeviceLanguageStep = ({
   );
 };
 
-export default PropmtDeviceLanguageStep;
+export default DeviceLanguageStep;

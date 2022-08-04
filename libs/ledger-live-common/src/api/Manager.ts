@@ -209,7 +209,6 @@ const getLanguagePackagesForDevice = async (
   const { data }: { data: LanguagePackageResponse[] } = await network({
     method: "GET",
     url: URL.format({
-      // TODO use the production key
       pathname: `${getEnv("MANAGER_API_BASE")}/language-package`,
       query: {
         livecommonversion,
