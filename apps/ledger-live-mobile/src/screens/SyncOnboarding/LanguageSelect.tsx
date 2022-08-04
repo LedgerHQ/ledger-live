@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -17,6 +17,7 @@ import {
 } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 
+import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
 import { setLanguage } from "../../../actions/settings";
 import { useLocale } from "../../context/Locale";
@@ -28,7 +29,6 @@ import {
 import Illustration from "../../images/illustration/Illustration";
 import DeviceDark from "../../images/illustration/Dark/_FamilyPackX.png";
 import DeviceLight from "../../images/illustration/Light/_FamilyPackX.png";
-import { useTranslation } from "react-i18next";
 
 const ScrollViewContainer = styled(ScrollView)`
   height: 100%;
@@ -41,8 +41,13 @@ const LanguageSelect = () => {
   const { t } = useTranslation();
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
+  const [isAnyModalDisplayed, setIsAnyModalDisplayed] = useState(false);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [isFirmwareDrawerOpen, setFirmwareDrawerOpen] = useState(false);
+  const [
+    isNewSelectedLanguageFirmwareSupported,
+    setIsNewSelectedLanguageFirmwareSupported,
+  ] = useState<boolean>(false);
 
   const handleLanguageSelect = useCallback(
     language => {
@@ -50,11 +55,26 @@ const LanguageSelect = () => {
       dispatch(setLanguage(language));
 
       if (firmwareSupportedLocales.includes(language)) {
-        setTimeout(() => setFirmwareDrawerOpen(true), 1000);
+        setIsNewSelectedLanguageFirmwareSupported(true);
+      } else {
+        setIsNewSelectedLanguageFirmwareSupported(false);
       }
     },
     [dispatch],
   );
+
+  const languageSelectOnPress = useCallback(() => {
+    setDrawerOpen(true);
+    setIsAnyModalDisplayed(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isAnyModalDisplayed && isNewSelectedLanguageFirmwareSupported) {
+      setFirmwareDrawerOpen(true);
+      setIsAnyModalDisplayed(true);
+      setIsNewSelectedLanguageFirmwareSupported(false);
+    }
+  }, [isAnyModalDisplayed, isNewSelectedLanguageFirmwareSupported]);
 
   const handleFirmwareLanguageSelect = useCallback(() => {
     // TODO: redirect to firmware localization flow when available
@@ -62,7 +82,7 @@ const LanguageSelect = () => {
 
   const handleFirmwareLanguageCancel = useCallback(() => {
     setFirmwareDrawerOpen(false);
-    setDrawerOpen(false);
+    setIsAnyModalDisplayed(false);
   }, []);
 
   return (
@@ -73,11 +93,16 @@ const LanguageSelect = () => {
         size="small"
         Icon={ChevronBottomMedium}
         iconPosition="right"
-        onPress={() => setDrawerOpen(true)}
+        onPress={languageSelectOnPress}
       >
         {currentLocale.toLocaleUpperCase()}
       </Button>
-      <BottomDrawer noCloseButton preventBackdropClick isOpen={isDrawerOpen}>
+      <BottomDrawer
+        noCloseButton
+        preventBackdropClick
+        isOpen={isDrawerOpen}
+        onClose={() => setIsAnyModalDisplayed(false)}
+      >
         <Flex
           mb={4}
           flexDirection="row"
