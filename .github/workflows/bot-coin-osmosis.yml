@@ -1,4 +1,4 @@
-name: Bot 'osmosis on Silicium'
+name: [Bot] Osmosis on Silicium
 on:
   push:
     branches:

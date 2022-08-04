@@ -1,56 +1,27 @@
-import { BigNumber } from "bignumber.js";
-import network from "../../../network";
+import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
-import { Operation, OperationType } from "../../../types";
-import { encodeOperationId, patchOperationWithHash } from "../../../operation";
+import network from "../../../network";
+import { encodeOperationId } from "../../../operation";
+import { Operation, OperationType } from "@ledgerhq/types-live";
+import { CosmosAPI } from "../../cosmos/api/Cosmos";
+import { CosmosDelegationInfo } from "../../cosmos/types";
 import {
-  CosmosAmount,
+  OsmosisDistributionParams,
+  OsmosisPool,
+  OsmosisTotalSupply,
+} from "../OsmosisSupplyTypes";
+import {
   OsmosisAccountTransaction,
-  OsmosisAccountTransactionTypeEnum,
   OsmosisAmount,
   OsmosisCurrency,
-  OsmosisEventContent,
   OsmosisEventNestedContent,
+  OsmosisSendEventContent,
+  OsmosisStakingEventContent,
+  OsmosisTransactionTypeEnum,
 } from "./sdk.types";
 
-const DEFAULT_TRANSACTIONS_LIMIT = 100;
-const NAMESPACE = "cosmos";
-const VERSION = "v1beta1";
-
-const getIndexerUrl = (route): string =>
-  `${getEnv("API_OSMOSIS_INDEXER")}${route || ""}`;
-const getNodeUrl = (route): string =>
-  `${getEnv("API_OSMOSIS_NODE")}${route || ""}`;
-
-/**
- * Queries the node for account balance
- */
-const fetchAccountBalance = async (address: string) => {
-  const { data } = await network({
-    method: "GET",
-    url: getNodeUrl(`/${NAMESPACE}/bank/${VERSION}/balances/${address}`),
-  });
-  const amount = getMicroOsmoAmountCosmosType(
-    data.balances ? data.balances : []
-  );
-  return amount;
-};
-
-/**
- * Queries the node for account information
- */
-export const fetchAccountInfo = async (address: string) => {
-  const { data } = await network({
-    method: "GET",
-    url: getNodeUrl(`/${NAMESPACE}/auth/${VERSION}/accounts/${address}`),
-  });
-  if (data == null) {
-    throw new Error("Error fetching account information");
-  }
-  const accountNumber = data.account?.account_number ?? null;
-  const sequence = data.account?.sequence ?? 0;
-  return { accountNumber, sequence };
-};
+export const nodeEndpoint = getEnv("API_OSMOSIS_NODE").replace(/\/$/, "");
+const indexerEndpoint = getEnv("API_OSMOSIS_INDEXER").replace(/\/$/, "");
 
 /**
  * Returns true if account is the signer
@@ -63,17 +34,46 @@ function isSender(content: OsmosisEventNestedContent, addr: string): boolean {
  * Map transaction to an Operation Type
  */
 function getOperationType(
-  eventContent: OsmosisEventContent,
+  eventContent: OsmosisSendEventContent,
   addr: string
 ): OperationType {
   return isSender(eventContent.sender[0], addr) ? "OUT" : "IN";
 }
 
 /**
+ * Map a send transaction as returned by the indexer to a Ledger Live Operation
+ */
+export const convertTransactionToOperation = (
+  accountId: string,
+  type: OperationType,
+  value: BigNumber,
+  transaction: OsmosisAccountTransaction,
+  senders: string[] = [],
+  recipients: string[] = [],
+  extra: Record<string, any>
+): Operation => {
+  return {
+    id: encodeOperationId(accountId, transaction.hash, type),
+    accountId,
+    fee: new BigNumber(getMicroOsmoAmount(transaction.transaction_fee)),
+    value,
+    type,
+    hash: transaction.hash,
+    blockHash: transaction.block_hash,
+    blockHeight: transaction.height,
+    date: new Date(transaction.time),
+    senders,
+    recipients,
+    hasFailed: transaction.has_errors,
+    extra,
+  };
+};
+
+/**
  * Map transaction to a correct Operation Value (affecting account balance)
  */
 export function getOperationValue(
-  eventContent: OsmosisEventContent,
+  eventContent: OsmosisSendEventContent,
   type: string,
   fee: BigNumber
 ): BigNumber {
@@ -91,7 +91,8 @@ export function getOperationValue(
       break;
     default:
       // defaults to received funds (i.e. no fee is added)
-      amount = getMicroOsmoAmount(eventContent.recipient[0]?.amounts);
+      // amount = getMicroOsmoAmount(eventContent.recipient[0]?.amounts);
+      amount = new BigNumber(0);
   }
   return amount;
 }
@@ -109,200 +110,421 @@ export const getMicroOsmoAmount = (amounts: OsmosisAmount[]): BigNumber => {
   );
 };
 
-/**
- * Extract only the amount from a list of type CosmosAmount
- */
-export const getMicroOsmoAmountCosmosType = (
-  amounts: CosmosAmount[]
-): BigNumber => {
-  return amounts.reduce(
-    (result, current) =>
-      current.denom === OsmosisCurrency
-        ? result.plus(new BigNumber(current.amount))
-        : result,
-    new BigNumber(0)
-  );
-};
+export class OsmosisAPI extends CosmosAPI {
+  protected _defaultEndpoint: string = nodeEndpoint;
+  protected _namespace = "osmosis";
+  private _defaultTransactionsLimit = 100;
 
-/**
- * Map a send transaction as returned by the indexer to a Ledger Live Operation
- */
-export function convertTransactionToOperation(
-  accountId: string,
-  addr: string,
-  eventContent: OsmosisEventContent,
-  transaction: OsmosisAccountTransaction,
-  memo: string
-): Operation {
-  const type = getOperationType(eventContent, addr);
-  const fee = new BigNumber(getMicroOsmoAmount(transaction.transaction_fee));
-  const senders = eventContent.sender[0]?.account?.id
-    ? [eventContent.sender[0]?.account?.id]
-    : [];
-  const recipients = eventContent.recipient[0]?.account?.id
-    ? [eventContent.recipient[0]?.account?.id]
-    : [];
-  return {
-    id: encodeOperationId(accountId, transaction.hash, type),
-    accountId,
-    fee,
-    value: getOperationValue(eventContent, type, fee),
-    type,
-    hash: transaction.hash,
-    blockHash: transaction.block_hash,
-    blockHeight: transaction.height,
-    date: new Date(transaction.time),
-    senders,
-    recipients,
-    hasFailed: transaction.has_errors,
-    extra: { memo },
-  };
-}
+  getOperations = async (
+    accountId: string,
+    address: string,
+    startDate: Date | null,
+    startAt = 0,
+    transactionsLimit: number = this._defaultTransactionsLimit
+  ): Promise<Operation[]> => {
+    const now = new Date().toISOString();
+    const operations: Operation[] = [];
 
-/**
- * Fetch operation list from indexer
- */
-export const getOperations = async (
-  accountId: string,
-  addr: string,
-  startDate: Date | null,
-  startAt = 0,
-  transactionsLimit: number = DEFAULT_TRANSACTIONS_LIMIT
-): Promise<Operation[]> => {
-  const now = new Date().toISOString();
-  const operations: Operation[] = [];
-  const { data } = await network({
-    method: "POST",
-    url: getIndexerUrl(`/transactions_search/`),
-    data: {
-      network: "osmosis",
-      type: ["send"],
-      account: [addr],
-      before_time: now,
-      after_time: startDate !== null ? startDate.toISOString() : null,
-      limit: transactionsLimit,
-      offset: startAt,
-    },
-  });
-  if (data == null) {
-    return operations;
-  }
-  const accountTransactions = data;
-  for (let i = 0; i < accountTransactions.length; i++) {
-    const events = accountTransactions[i].events;
-    const memo = accountTransactions[i].memo;
-    const memoTransaction = memo || "";
-    for (let j = 0; j < events.length; j++) {
-      const transactionType = events[j].kind ? events[j].kind : "n/a";
-      switch (
-        // Example: "send". See: OsmosisAccountTransactionTypeEnum.
-        // Note: "send" means all transactions where some party was sending some OSMO,
-        // which means it shouldn't be interpreted as OUT transactions. See isSender()
-        // for context on how we determine if a "send" transaction is IN or OUT.
-        transactionType
-      ) {
-        case OsmosisAccountTransactionTypeEnum.Send: {
-          // Check sub array exists. Sub array contains transactions messages. If there isn't one, skip
-          if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
+    const { data: accountTransactions } = await network({
+      method: "POST",
+      url: `${indexerEndpoint}/transactions_search/`,
+      data: {
+        network: "osmosis",
+        // type: [OsmosisTransactionTypeEnum.Redelegate], // if no type is specified, all transaction types will be returned
+        account: [address],
+        before_time: now,
+        after_time: startDate !== null ? startDate.toISOString() : null,
+        limit: transactionsLimit,
+        offset: startAt,
+      },
+    });
+
+    if (!accountTransactions || !accountTransactions.length) {
+      return operations;
+    }
+
+    for (let i = 0; i < accountTransactions.length; i++) {
+      const events = accountTransactions[i].events;
+      const memo: string = accountTransactions[i].memo || "";
+      for (let j = 0; j < events.length; j++) {
+        const transactionType = events[j].kind ? events[j].kind : "n/a";
+        switch (
+          // Example: "send". See: OsmosisTransactionTypeEnum.
+          // Note: "send" means all transactions where some party was sending some OSMO,
+          // which means it shouldn't be interpreted as OUT transactions. See isSender()
+          // for context on how we determine if a "send" transaction is IN or OUT.
+          transactionType
+        ) {
+          case OsmosisTransactionTypeEnum.Send: {
+            const operation = await this.convertSendTransactionToOperation(
+              accountId,
+              address,
+              events[j],
+              accountTransactions[i],
+              memo
+            );
+            if (operation != null) {
+              operations.push(operation);
+            }
             break;
           }
 
-          const eventContent: OsmosisEventContent[] = events[j].sub;
-          // Check that sub array is not empty
-          if (!(eventContent.length > 0)) break;
-
-          // Check eventContent contains at least one entry of type "send" using find() and retrieve it.
-          // More in depth: find() retrieves the (first) message, which contains sender, recipient and amount info
-          // First message because typically "send" transactions only have one sender and one recipient
-          // If no messages are found, skips the transaction altogether
-          const sendEvent = eventContent.find(
-            (event) => event.type[0] === OsmosisAccountTransactionTypeEnum.Send
-          );
-          if (sendEvent == null) break;
-          operations.push(
-            convertTransactionToOperation(
+          case OsmosisTransactionTypeEnum.Delegate: {
+            const ops = await this.convertDelegateTransactionToOperation(
               accountId,
-              addr,
-              sendEvent,
+              events[j],
               accountTransactions[i],
-              memoTransaction
-            )
-          );
-          break;
+              memo
+            );
+            if (ops.length > 0) {
+              ops.forEach((op) => operations.push(op));
+            }
+            break;
+          }
+
+          case OsmosisTransactionTypeEnum.Redelegate: {
+            const ops = await this.convertRedelegateTransactionToOperation(
+              accountId,
+              events[j],
+              accountTransactions[i],
+              memo
+            );
+            if (ops.length > 0) {
+              ops.forEach((op) => operations.push(op));
+            }
+            break;
+          }
+          case OsmosisTransactionTypeEnum.Undelegate: {
+            const ops = await this.convertUndelegateTransactionToOperation(
+              accountId,
+              events[j],
+              accountTransactions[i],
+              memo
+            );
+            if (ops.length > 0) {
+              ops.forEach((op) => operations.push(op));
+            }
+            break;
+          }
+          case OsmosisTransactionTypeEnum.Reward: {
+            // For the time being we'll be creating duplicate ops for the edge case of
+            // rewards txs that contain multiple claim messages.
+            // The idea is that a few duplicate operations won't affect performance
+            // significantly, and the duplicate will be removed anyways by mergeOps in js-sync.
+            // If this doesn't work then simply add a check here to see if there's already
+            // an operation in the operations[] array with the current tx hash.
+
+            const ops = await this.convertRewardTransactionToOperation(
+              accountId,
+              accountTransactions[i],
+              memo
+            );
+            if (ops.length > 0) {
+              ops.forEach((op) => operations.push(op));
+            }
+            break;
+          }
+          default:
+            break;
         }
-        default:
-          break;
       }
     }
-  }
 
-  return operations;
-};
-
-/**
- * Query the node for updated block height and chain id
- */
-const fetchLatestBlockInfo = async () => {
-  const { data } = await network({
-    method: "GET",
-    url: getNodeUrl(`/blocks/latest`),
-  });
-  if (data == null) {
-    throw new Error("Error fetching block information");
-  }
-  // TODO what kind of data validation do we want to have here? any sensible defaults?
-  const blockHeight = data?.block?.header?.height;
-  const chainId = data?.block?.header?.chain_id;
-  return { blockHeight, chainId };
-};
-
-/**
- * Wrapper to retrieve chain id
- */
-export const getChainId = async () => {
-  const { chainId } = await fetchLatestBlockInfo();
-  return chainId;
-};
-
-/**
- * Wrapper for account balance and node info
- */
-export const getAccount = async (address: string) => {
-  const balance = await fetchAccountBalance(address);
-  const { blockHeight } = await fetchLatestBlockInfo();
-  return {
-    blockHeight,
-    balance,
-    spendableBalance: balance,
+    return operations;
   };
-};
 
-/**
- * Broadcasts a signed operation to the node
- */
-export const broadcast = async ({
-  signedOperation: { operation, signature },
-}): Promise<Operation> => {
-  const url = getNodeUrl(`/${NAMESPACE}/tx/${VERSION}/txs`);
-  const { data } = await network({
-    method: "POST",
-    url: url,
-    data: {
-      tx_bytes: Array.from(Uint8Array.from(Buffer.from(signature, "hex"))),
-      mode: "BROADCAST_MODE_SYNC",
-    },
-  });
+  convertSendTransactionToOperation = async (
+    accountId: string,
+    address: string,
+    event: any,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation | undefined> => {
+    // Check "sub" array exists. The "sub" array contains transactions messages. If there isn't one, skip the tx
+    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+      return;
+    }
 
-  if (data.tx_response.code != 0) {
-    // error codes: https://github.com/cosmos/cosmos-sdk/blob/master/types/errors/errors.go
-    throw new Error(
-      "invalid broadcast return (code: " +
-        (data.tx_response.code || "?") +
-        ", message: '" +
-        (data.tx_response.raw_log || "") +
-        "')"
+    const eventContent: OsmosisSendEventContent[] = event.sub;
+    // Check that sub array is not empty
+    if (!(eventContent.length > 0)) return;
+
+    // Check eventContent contains at least one entry of type "send" using find() and retrieve it.
+    // find() retrieves the (first) message, which contains sender, recipient and amount info
+    // We get get the first message because typically "send" transactions only have one sender and one recipient
+    // If no messages are found, skip the tx
+    const sendEvent = eventContent.find(
+      (event) => event.type[0] === OsmosisTransactionTypeEnum.Send
     );
-  }
+    if (sendEvent == null) return;
+    const type = getOperationType(sendEvent, address);
+    const senders = sendEvent.sender[0]?.account?.id
+      ? [sendEvent.sender[0]?.account?.id]
+      : [];
+    const recipients = sendEvent.recipient[0]?.account?.id
+      ? [sendEvent.recipient[0]?.account?.id]
+      : [];
+    const fee = new BigNumber(getMicroOsmoAmount(tx.transaction_fee));
+    return convertTransactionToOperation(
+      accountId,
+      type,
+      getOperationValue(sendEvent, type, fee),
+      tx,
+      senders,
+      recipients,
+      { memo }
+    );
+  };
 
-  return patchOperationWithHash(operation, data.tx_response.txhash);
-};
+  convertDelegateTransactionToOperation = async (
+    accountId: string,
+    event: any,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation[]> => {
+    const ops: Operation[] = [];
+
+    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+      return ops;
+    }
+    const eventContent: OsmosisStakingEventContent[] = event.sub;
+    if (!(eventContent.length > 0)) return ops;
+    const delegateEvent = eventContent.find(
+      (event) => event.type[0] === OsmosisTransactionTypeEnum.Delegate
+    );
+    if (delegateEvent == null) return ops;
+    const type = "DELEGATE";
+    const extra = {
+      memo: memo,
+      validators: [
+        {
+          address: delegateEvent.node.validator[0].id,
+          amount: new BigNumber(
+            getMicroOsmoAmount([delegateEvent.amount.delegate])
+          ),
+        },
+      ],
+      autoClaimedRewards: this.calculateAutoClaimedRewards(tx).toString(),
+    };
+
+    ops.push(
+      convertTransactionToOperation(
+        accountId,
+        type,
+        extra.validators[0].amount,
+        tx,
+        [],
+        [],
+        extra
+      )
+    );
+    return ops;
+  };
+
+  calculateAutoClaimedRewards = (tx: OsmosisAccountTransaction): BigNumber => {
+    //  These types are the only types for which auto claim rewards are supported
+    const SUPPORTED_TYPES = [
+      OsmosisTransactionTypeEnum.Delegate,
+      OsmosisTransactionTypeEnum.Redelegate,
+      OsmosisTransactionTypeEnum.Undelegate,
+    ];
+    let totalRewardsAmount = new BigNumber(0);
+    tx.events.forEach((event) => {
+      if (Object.prototype.hasOwnProperty.call(event, "sub")) {
+        const eventContent: OsmosisStakingEventContent[] =
+          event.sub as OsmosisStakingEventContent[];
+        if (eventContent.length > 0) {
+          const rewardEvent = eventContent[0];
+          if (
+            rewardEvent != null &&
+            SUPPORTED_TYPES.includes(rewardEvent.type[0])
+          ) {
+            let amount = new BigNumber(0);
+            if (rewardEvent.transfers != null) {
+              if (rewardEvent.transfers.reward) {
+                amount = getMicroOsmoAmount(
+                  rewardEvent.transfers.reward[0].amounts
+                );
+                totalRewardsAmount = totalRewardsAmount.plus(amount);
+              }
+            }
+          }
+        }
+      }
+    });
+    return totalRewardsAmount;
+  };
+
+  convertRedelegateTransactionToOperation = async (
+    accountId: string,
+    event: any,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation[]> => {
+    const ops: Operation[] = [];
+
+    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+      return ops;
+    }
+    const eventContent: OsmosisStakingEventContent[] = event.sub;
+    if (!(eventContent.length > 0)) return ops;
+    const redelegEvent = eventContent.find(
+      (event) => event.type[0] === OsmosisTransactionTypeEnum.Redelegate
+    );
+    if (redelegEvent == null) return ops;
+    const type = "REDELEGATE";
+    const extra = {
+      memo: memo,
+      validators: [
+        {
+          address: redelegEvent.node.validator_destination[0].id,
+          amount: new BigNumber(
+            getMicroOsmoAmount([redelegEvent.amount.delegate])
+          ),
+        },
+      ],
+      sourceValidator: redelegEvent.node.validator_source[0].id,
+      autoClaimedRewards: this.calculateAutoClaimedRewards(tx).toString(),
+    };
+
+    ops.push(
+      convertTransactionToOperation(
+        accountId,
+        type,
+        extra.validators[0].amount,
+        tx,
+        [],
+        [],
+        extra
+      )
+    );
+    return ops;
+  };
+
+  convertUndelegateTransactionToOperation = async (
+    accountId: string,
+    event: any,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation[]> => {
+    const ops: Operation[] = [];
+
+    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+      return ops;
+    }
+    const eventContent: OsmosisStakingEventContent[] = event.sub;
+    if (!(eventContent.length > 0)) return ops;
+    const undelegEvent = eventContent.find(
+      (event) => event.type[0] === OsmosisTransactionTypeEnum.Undelegate
+    );
+    if (undelegEvent == null) return ops;
+    const type = "UNDELEGATE";
+    const extra = {
+      memo: memo,
+      validators: [
+        {
+          address: undelegEvent.node.validator[0].id,
+          amount: new BigNumber(
+            getMicroOsmoAmount([undelegEvent.amount.undelegate])
+          ),
+        },
+      ],
+      autoClaimedRewards: this.calculateAutoClaimedRewards(tx).toString(),
+    };
+
+    ops.push(
+      convertTransactionToOperation(
+        accountId,
+        type,
+        extra.validators[0].amount,
+        tx,
+        [],
+        [],
+        extra
+      )
+    );
+    return ops;
+  };
+
+  convertRewardTransactionToOperation = async (
+    accountId: string,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation[]> => {
+    const ops: Operation[] = [];
+
+    let totalRewardsAmount = new BigNumber(0);
+    const rewardValidators: CosmosDelegationInfo[] = [];
+    tx.events.forEach((event) => {
+      if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+        return ops;
+      }
+      const eventContent: OsmosisStakingEventContent[] =
+        event.sub as OsmosisStakingEventContent[];
+      if (!(eventContent.length > 0)) return ops;
+      const rewardEvent = eventContent.find(
+        (event) => event.type[0] === OsmosisTransactionTypeEnum.Reward
+      );
+      if (rewardEvent == null) return ops;
+      let amount = new BigNumber(0);
+      if (rewardEvent.transfers != null) {
+        if (rewardEvent.transfers.reward) {
+          amount = getMicroOsmoAmount(rewardEvent.transfers.reward[0].amounts);
+          totalRewardsAmount = totalRewardsAmount.plus(amount);
+          rewardValidators.push({
+            address: rewardEvent.node.validator[0].id,
+            amount,
+          });
+        }
+      }
+    });
+    const type = "REWARD";
+    const extra = {
+      memo: memo,
+      validators: rewardValidators,
+    };
+    ops.push(
+      convertTransactionToOperation(
+        accountId,
+        type,
+        totalRewardsAmount,
+        tx,
+        [],
+        [],
+        extra
+      )
+    );
+    return ops;
+  };
+
+  queryTotalSupply = async (
+    minDenomUnit: string
+  ): Promise<OsmosisTotalSupply> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this._defaultEndpoint}/cosmos/bank/v1beta1/supply/${minDenomUnit}`,
+    });
+    const { amount } = data;
+    return { ...amount };
+  };
+
+  queryPool = async (): Promise<OsmosisPool> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this._defaultEndpoint}/cosmos/staking/v1beta1/pool`,
+    });
+    const { pool } = data;
+    return { ...pool };
+  };
+
+  queryDistributionParams = async (): Promise<OsmosisDistributionParams> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this._defaultEndpoint}/cosmos/distribution/v1beta1/params`,
+    });
+    const { params } = data;
+    return { ...params };
+  };
+}
+
+export const osmosisAPI = new OsmosisAPI();

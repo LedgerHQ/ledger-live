@@ -782,11 +782,15 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
         (rawAccount as TronAccountRaw).tronResources
       );
       break;
-    case "cosmos":
-      (res as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
-        (rawAccount as CosmosAccountRaw).cosmosResources
-      );
+    case "osmosis":
+    case "cosmos": {
+      const cosmosResourcesRaw = (rawAccount as CosmosAccountRaw)
+        .cosmosResources;
+      if (cosmosResourcesRaw)
+        (res as CosmosAccount).cosmosResources =
+          fromCosmosResourcesRaw(cosmosResourcesRaw);
       break;
+    }
     case "tezos":
       (res as TezosAccount).tezosResources = fromTezosResourcesRaw(
         (rawAccount as TezosAccountRaw).tezosResources
@@ -914,6 +918,11 @@ export function toAccountRaw(account: Account): AccountRaw {
       );
       break;
     case "cosmos":
+      (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
+        (account as CosmosAccount).cosmosResources
+      );
+      break;
+    case "osmosis":
       (res as CosmosAccountRaw).cosmosResources = toCosmosResourcesRaw(
         (account as CosmosAccount).cosmosResources
       );

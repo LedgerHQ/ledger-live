@@ -14,6 +14,7 @@ import stellar from "../../families/stellar/bridge/mock";
 
 import tezos from "../../families/tezos/bridge/mock";
 
+
 export default {
   algorand,
   bitcoin,

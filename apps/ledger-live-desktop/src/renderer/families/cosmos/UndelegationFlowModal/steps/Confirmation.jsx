@@ -14,7 +14,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { StepProps } from "../types";
 
-import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -30,7 +30,8 @@ export default function StepConfirmation({
   transaction,
 }: StepProps) {
   const { t } = useTranslation();
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
   const locale = useSelector(localeSelector);
 
   if (optimisticOperation) {
@@ -50,11 +51,11 @@ export default function StepConfirmation({
         <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmed" />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
-          title={t("cosmos.undelegation.flow.steps.confirmation.success.title")}
+          title={t(`${currencyName}.undelegation.flow.steps.confirmation.success.title`)}
           description={
             <div>
               <Trans
-                i18nKey="cosmos.undelegation.flow.steps.confirmation.success.description"
+                i18nKey={`${currencyName}.undelegation.flow.steps.confirmation.success.description`}
                 values={{
                   amount,
                   validator: v && v.name,
@@ -75,7 +76,7 @@ export default function StepConfirmation({
         <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={t("cosmos.undelegation.flow.steps.confirmation.broadcastError")}
+            title={t(`${currencyName}.undelegation.flow.steps.confirmation.broadcastError`)}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />
@@ -121,6 +122,7 @@ export function StepConfirmationFooter({
       });
     }
   }, [onClose, account, concernedOperation, parentAccount]);
+  const currencyName = account.currency.name;
 
   return (
     <Box horizontal alignItems="right">
@@ -132,10 +134,10 @@ export function StepConfirmationFooter({
         <Button
           primary
           ml={2}
-          event="Undelegation Cosmos Flow Step 3 View OpD Clicked"
+          event={`Undelegation ${currencyName} Flow Step 3 View OpD Clicked`}
           onClick={onViewDetails}
         >
-          {t("cosmos.undelegation.flow.steps.confirmation.success.cta")}
+          {t(`${currencyName.toLowerCase()}.undelegation.flow.steps.confirmation.success.cta`)}
         </Button>
       ) : error ? (
         <RetryButton primary ml={2} onClick={onRetry} />

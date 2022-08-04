@@ -1,20 +1,13 @@
 import BigNumber from "bignumber.js";
 import network from "../../../network";
-import {
-  fetchAccountInfo,
-  getOperationValue,
-  getMicroOsmoAmountCosmosType,
-  convertTransactionToOperation,
-  getChainId,
-} from "./sdk";
+import { getOperationValue, convertTransactionToOperation } from "./sdk";
 import type {
-  OsmosisEventContent,
+  OsmosisSendEventContent,
   OsmosisAmount,
-  CosmosAmount,
   OsmosisAccountTransaction,
   OsmosisEvent,
 } from "./sdk.types";
-import { OsmosisAccountTransactionTypeEnum } from "./sdk.types";
+import { OsmosisTransactionTypeEnum } from "./sdk.types";
 jest.mock("../../../network");
 
 const mockNetwork = network as jest.MockedFunction<typeof network>;
@@ -24,7 +17,7 @@ const mockOsmosisAmount: OsmosisAmount = {
   currency: "",
   numeric: "300",
 };
-const mockOsmosisEventContent: OsmosisEventContent = {
+const mockOsmosisSendEventContent: OsmosisSendEventContent = {
   type: ["", ""],
   module: "",
   sender: [{ account: {}, amounts: [mockOsmosisAmount] }],
@@ -34,8 +27,8 @@ const mockOsmosisEventContent: OsmosisEventContent = {
 
 const mockOsmosisEvent: OsmosisEvent = {
   id: "",
-  kind: OsmosisAccountTransactionTypeEnum,
-  sub: [mockOsmosisEventContent],
+  kind: OsmosisTransactionTypeEnum,
+  sub: [mockOsmosisSendEventContent],
 };
 
 const mockOsmosisAccountTransaction: OsmosisAccountTransaction = {
@@ -54,46 +47,27 @@ const mockOsmosisAccountTransaction: OsmosisAccountTransaction = {
   memo: "",
 };
 
-describe("osmosis sdk", () => {
-  mockNetwork.mockResolvedValue({ data: null });
-  test("fetchAccountInfo", async () => {
-    await expect(
-      async () => await fetchAccountInfo("mockaddress")
-    ).rejects.toThrow(/fetching/);
-  });
+test("getOperationValue", () => {
+  expect(
+    getOperationValue(
+      mockOsmosisSendEventContent,
+      "UNKNOWN",
+      new BigNumber(100)
+    ).toString()
+  ).toBe("0");
+});
 
-  test("fetchLatestBlockInfo", async () => {
-    await expect(async () => await getChainId()).rejects.toThrow(/fetching/);
-  });
+test("convertTransactionToOperation", () => {
+  const result = convertTransactionToOperation(
+    "test",
+    "OUT",
+    new BigNumber(123),
+    mockOsmosisAccountTransaction,
+    ["test_sender"],
+    ["test_recipient"],
+    {}
+  );
 
-  test("getOperationValue", () => {
-    expect(
-      getOperationValue(
-        mockOsmosisEventContent,
-        "UNKNOWN",
-        new BigNumber(100)
-      ).toString()
-    ).toBe("0");
-  });
-
-  test("getMicroOsmoAmountCosmosType", () => {
-    const mockCosmosAmount: CosmosAmount = { amount: "300", denom: "Cosmos" };
-
-    expect(getMicroOsmoAmountCosmosType([mockCosmosAmount]).toString()).toBe(
-      "0"
-    );
-  });
-
-  test("convertTransactionToOperation", () => {
-    const result = convertTransactionToOperation(
-      "test",
-      "test",
-      mockOsmosisEventContent,
-      mockOsmosisAccountTransaction,
-      ""
-    );
-
-    expect(result.senders.length).toBe(0);
-    expect(result.recipients.length).toBe(0);
-  });
+  expect(result.senders.length).toBe(1);
+  expect(result.recipients.length).toBe(1);
 });

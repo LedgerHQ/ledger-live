@@ -231,6 +231,7 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
+    "@keplr-wallet/proto-types": "^0.10.4",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",

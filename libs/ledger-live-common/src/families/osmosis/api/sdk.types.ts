@@ -1,8 +1,12 @@
-export const OsmosisAccountTransactionTypeEnum = {
-  // See https://docs.figment.io/network-documentation/terra/enriched-apis/transaction-search
+export const OsmosisTransactionTypeEnum = {
+  // See https://docs.figment.io/network-documentation/cosmos/enriched-apis/transaction-search
   // for help on these types.
   Send: "send",
   MultiSend: "multisend",
+  Delegate: "delegate",
+  Redelegate: "begin_redelegate",
+  Undelegate: "undelegate",
+  Reward: "withdraw_delegator_reward",
 };
 
 export const OsmosisCurrency = "uosmo";
@@ -39,16 +43,23 @@ export interface OsmosisEventNestedContent {
   amounts: OsmosisAmount[];
 }
 
-export interface OsmosisEventContent {
+export interface OsmosisSendEventContent {
   type: string[];
   module: string;
   sender: OsmosisEventNestedContent[];
   recipient: OsmosisEventNestedContent[];
   transfers: any[];
 }
+export interface OsmosisStakingEventContent {
+  type: string[];
+  module: string;
+  node: any;
+  amount: any;
+  transfers: any;
+}
 
 export interface OsmosisEvent {
   id: string;
-  kind: typeof OsmosisAccountTransactionTypeEnum;
-  sub: OsmosisEventContent[];
+  kind: typeof OsmosisTransactionTypeEnum;
+  sub: OsmosisSendEventContent[] | OsmosisStakingEventContent[];
 }
