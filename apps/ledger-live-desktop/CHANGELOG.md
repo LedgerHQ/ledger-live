@@ -1,26 +1,21 @@
 # ledger-live-desktop
 
-## 2.45.1-next.2
+## 2.45.1
+
+### Patch Changes
+
+- [`7526b8ae51`](https://github.com/LedgerHQ/ledger-live/commit/7526b8ae5139fb478c6500c9b216ba46d5d36f17) Thanks [@Justkant](https://github.com/Justkant)! - Reduce perf sampling for sentry
+
+* [`7526b8ae51`](https://github.com/LedgerHQ/ledger-live/commit/7526b8ae5139fb478c6500c9b216ba46d5d36f17) Thanks [@Justkant](https://github.com/Justkant)! - Fixes segment integration
+
+## 2.45.1-hotfix.2
 
 ### Patch Changes
 
 - Updated dependencies [[`3bdbfd3cb`](https://github.com/LedgerHQ/ledger-live/commit/3bdbfd3cbc0153a2ebf4ab91f631cb9f6e42d74c)]:
   - @ledgerhq/live-common@25.1.0-next.2
 
-## 2.45.1-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`0e115ae5c`](https://github.com/LedgerHQ/ledger-live/commit/0e115ae5cd7ddcc728d9f435dc4084cedb53beed)]:
-  - @ledgerhq/live-common@25.1.0-next.1
-
-## 2.45.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`f10d01171`](https://github.com/LedgerHQ/ledger-live/commit/f10d01171f4c0869d1d82e6cc5402da9ca80990b), [`aa2794813`](https://github.com/LedgerHQ/ledger-live/commit/aa2794813c05b1b39272814cc803cd662662584c), [`8afb69530`](https://github.com/LedgerHQ/ledger-live/commit/8afb69530292fa1f41f2fc78b38639134b1fe16f), [`a9da2596e`](https://github.com/LedgerHQ/ledger-live/commit/a9da2596ee15bb55449c4a12acfc2dd5432857e5), [`331794cfb`](https://github.com/LedgerHQ/ledger-live/commit/331794cfbdb901f9224fed759c57f419861ec364)]:
-  - @ledgerhq/live-common@25.0.1-next.0
-  - @ledgerhq/react-ui@0.8.2-next.0
+## 2.45.1-hotfix.1
 
 ## 2.45.0
 
