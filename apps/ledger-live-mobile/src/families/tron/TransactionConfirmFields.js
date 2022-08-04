@@ -4,7 +4,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   formatVotes,
   useTronSuperRepresentatives,

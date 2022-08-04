@@ -1,5 +1,8 @@
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { useEffect } from "react";
-import { CryptoCurrency, TokenCurrency } from "../../../types";
 
 // Pick a default currency target if none are selected.
 export const usePickDefaultCurrency = (

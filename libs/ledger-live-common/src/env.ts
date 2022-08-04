@@ -105,6 +105,11 @@ const envDefinitions = {
     def: 200,
     desc: "Limit of operation that Horizon will fetch per page",
   },
+  API_STELLAR_HORIZON_STATIC_FEE: {
+    def: false,
+    parser: boolParser,
+    desc: "Static fee for Stellar account",
+  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
@@ -548,6 +553,11 @@ const envDefinitions = {
     def: 2,
     parser: intParser,
     desc: "version used for ledger status api",
+  },
+  TEZOS_MAX_TX_QUERIES: {
+    def: 100,
+    parser: intParser,
+    desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
   PLATFORM_DEBUG: {
     def: false,

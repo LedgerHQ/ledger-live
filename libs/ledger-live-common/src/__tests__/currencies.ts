@@ -14,7 +14,7 @@ import {
   sanitizeValueString,
 } from "../currencies";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 test("erc20 are all consistent with those on ledgerjs side", () => {
   const normalList = listTokens();
   const delistedList = listTokens({

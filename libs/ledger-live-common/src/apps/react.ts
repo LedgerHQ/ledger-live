@@ -1,6 +1,5 @@
 import { useState, useReducer, useEffect, useMemo } from "react";
 import type { Exec, State, Action, ListAppsResult } from "./types";
-import type { App } from "../types/manager";
 import type { AppType, SortOptions } from "./filtering";
 import { useSortedFilteredApps } from "./filtering";
 import {
@@ -11,6 +10,7 @@ import {
   predictOptimisticState,
 } from "./logic";
 import { runAppOp } from "./runner";
+import { App } from "@ledgerhq/types-live";
 
 type UseAppsRunnerResult = [State, (arg0: Action) => void];
 // use for React apps. support dynamic change of the state.

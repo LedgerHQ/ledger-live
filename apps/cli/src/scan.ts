@@ -11,16 +11,20 @@ import {
 } from "rxjs/operators";
 import type {
   Account,
-  CryptoCurrency,
   SyncConfig,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency
+} from "@ledgerhq/types-cryptoassets";
 import {
-  fromAccountRaw,
   encodeAccountId,
   decodeAccountId,
-  emptyHistoryCache,
-} from "@ledgerhq/live-common/account/index";
-import { asDerivationMode } from "@ledgerhq/live-common/derivation";
+} from "@ledgerhq/live-common/lib/account/accountId";
+import { emptyHistoryCache } from "@ledgerhq/live-common/lib/account/balanceHistoryCache";
+import {
+  fromAccountRaw,
+} from "@ledgerhq/live-common/lib/account/serialization";
+import { asDerivationMode, DerivationMode } from "@ledgerhq/live-common/lib/derivation";
 import {
   getAccountBridge,
   getCurrencyBridge,
@@ -338,7 +342,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               decodeAccountId(id);
             const currency = getCryptoCurrencyById(currencyId);
             const scheme = getDerivationScheme({
-              derivationMode,
+              derivationMode: derivationMode as DerivationMode,
               currency,
             });
             const index = 0;

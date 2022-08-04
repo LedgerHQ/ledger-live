@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import Box from "~/renderer/components/Box";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/account";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";

@@ -1,18 +1,18 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "6.29.0",
+  "version": "6.30.0",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/LedgerHQ/ledgerjs"
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
   "bugs": {
-    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/cryptoassets",
   "publishConfig": {
     "access": "public"
   },
@@ -22,6 +22,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "invariant": "2"
+  },
+  "devDependencies": {
+    "@ledgerhq/types-cryptoassets": "workspace:^"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

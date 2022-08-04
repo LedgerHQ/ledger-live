@@ -15,6 +15,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pr-is-fork:
+    name: "Check if the PR is a fork"
+    uses: ./.github/workflows/pr-is-fork.yml
+    with:
+      non-pr-result: true
+    secrets:
+      token: ${{ secrets.COMMON_READ_ORG }}
+
   typecheck:
     name: "Ledger Live Desktop TypeCheck"
     env:
@@ -44,27 +52,18 @@ jobs:
       - name: Run code checkers
         run: pnpm desktop test:codecheck
 
-  is-org-member:
-    name: "Check Org Member"
-    uses: ledgerhq/ledger-live/.github/workflows/is-org-member.yml@develop
-    with:
-      username: ${{ github.actor }}
-      organisation: ledgerhq
-    secrets:
-      token: ${{ secrets.COMMON_READ_ORG }}
-
   matrix_prep:
-    needs: [is-org-member]
+    needs: [pr-is-fork]
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - id: set-matrix
         run: |
-          if [[ "${{ needs.is-org-member.outputs.is-org-member }}" == "true" ]]; then
-            echo "::set-output name=matrix::{\"os\": [\"ubuntu-latest\", \"windows-latest\"]}"
-          else
+          if [[ "${{ needs.pr-is-fork.outputs.pr-is-fork }}" == "true" ]]; then
             echo "::set-output name=matrix::{\"os\": [\"ubuntu-latest\", \"windows-latest\", \"macos-latest\"]}"
+          else
+            echo "::set-output name=matrix::{\"os\": [\"ubuntu-latest\", \"windows-latest\"]}"
           fi
 
   test-desktop-app:
@@ -111,47 +110,8 @@ jobs:
         with:
           os: ${{ steps.os.outputs.result }}
 
-  test-desktop-app-mac-internal:
-    name: "Ledger Live Desktop Tests (macos-latest)"
-    needs:
-      - is-org-member
-    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
-    runs-on: [ledger-live, macos]
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      INSTRUMENT_BUILD: true
-      FORCE_COLOR: 3
-      CI_OS: "macos-latest"
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      # DEBUG: "pw:browser*"
-      # DEBUG_LOGS: 1
-    steps:
-      - name: format os name
-        id: os
-        uses: actions/github-script@v6
-        with:
-          result-encoding: string
-          script: return "macos"
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.inputs.ref || github.ref }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_python: true
-          skip_ruby: true
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          server-token: "yolo"
-      - uses: ./tools/actions/composites/test-desktop
-        id: test-desktop
-        with:
-          os: ${{ steps.os.outputs.result }}
-
   report:
-    needs: [test-desktop-app, test-desktop-app-mac-internal]
+    needs: [test-desktop-app]
     runs-on: ubuntu-latest
     if: ${{ always()  && !cancelled() && github.event.pull_request != '' }}
     steps:

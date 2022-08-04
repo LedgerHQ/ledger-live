@@ -1,4 +1,4 @@
-import { AccountRaw } from "../../../types";
+import type { AccountRaw } from "@ledgerhq/types-live";
 
 export const ethereum2: AccountRaw = {
   id: "js:2:ethereum:0x789d2f10826BF8f3a56Ec524359bBA4e738Af5bF:",

@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import type { OpenedLoan, ClosedLoan } from "@ledgerhq/live-common/compound/types";
-import type { TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

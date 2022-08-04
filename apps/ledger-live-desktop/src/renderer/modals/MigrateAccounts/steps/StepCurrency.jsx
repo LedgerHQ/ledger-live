@@ -8,7 +8,7 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import invariant from "invariant";
 import last from "lodash/last";
 
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 import logger from "~/logger";
 import Box from "~/renderer/components/Box";

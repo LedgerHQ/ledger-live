@@ -1,7 +1,7 @@
 // @flow
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Transaction } from "@ledgerhq/live-common/families/solana/types";
-import type { AccountBridge } from "@ledgerhq/live-common/types/index";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";

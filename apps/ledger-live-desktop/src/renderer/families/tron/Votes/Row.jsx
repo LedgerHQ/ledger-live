@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { ExplorerView } from "@ledgerhq/live-common/types/index";
+import type { ExplorerView } from "@ledgerhq/types-cryptoassets";
 
 import { openURL } from "~/renderer/linking";
 import Ellipsis from "~/renderer/components/Ellipsis";

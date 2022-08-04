@@ -10,12 +10,11 @@ import { useTheme } from "@react-navigation/native";
 import { AmountRequired } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type {
-  Account,
-  TokenAccount,
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import type { SwapTransaction } from "@ledgerhq/live-common/exchange/swap/types";
 import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";

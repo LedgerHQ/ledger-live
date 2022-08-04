@@ -21,6 +21,8 @@ const appsImg = require("../../images/illustration/Shared/_Apps.png");
 
 const earnImg = require("../../images/illustration/Shared/_Earn.png");
 
+const mintImg = require("../../images/illustration/Shared/_Mint.png");
+
 const StyledSafeAreaView = styled(TabBarSafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background.main};
 `;
@@ -110,6 +112,24 @@ function Discover() {
               size={130}
               darkSource={earnImg}
               lightSource={earnImg}
+            />
+          ),
+        },
+        {
+          title: t("discover.sections.mint.title"),
+          subTitle: t("discover.sections.mint.desc"),
+          onPress: () => {
+            readOnlyTrack("Mint");
+              track("Discover - Mint - OpenUrl", { url: urls.discover.mint});
+              Linking.openURL(urls.discover.mint);
+
+          },
+          disabled: false,
+          Image: (
+            <Illustration
+              size={130}
+              darkSource={mintImg}
+              lightSource={mintImg}
             />
           ),
         },

@@ -6,7 +6,7 @@ import { connect, useSelector } from "react-redux";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { Redirect } from "react-router";
-import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 import { isNFTActive } from "@ledgerhq/live-common/nft/support";

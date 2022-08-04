@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import WalletConnectClient from "@walletconnect/client";
 import { parseCallRequest } from "./index";
-import type { AccountLike } from "../types";
+import type { AccountLike } from "@ledgerhq/types-live";
 export const STATUS = {
   DISCONNECTED: 0x00,
   CONNECTING: 0x01,

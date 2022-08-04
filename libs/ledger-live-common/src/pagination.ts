@@ -1,4 +1,5 @@
-import type { SyncConfig } from "./types";
+import type { SyncConfig } from "@ledgerhq/types-live";
+
 export function getOperationsPageSize(
   accountId: string | null | undefined,
   syncConfig: SyncConfig

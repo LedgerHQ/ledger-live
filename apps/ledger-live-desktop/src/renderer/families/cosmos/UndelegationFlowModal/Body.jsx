@@ -13,7 +13,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import type { TFunction } from "react-i18next";
-import type { Account, Operation } from "@ledgerhq/live-common/types/index";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import type { StepId } from "./types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 

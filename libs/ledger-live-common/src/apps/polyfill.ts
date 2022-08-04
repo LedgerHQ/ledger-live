@@ -1,10 +1,10 @@
 // polyfill the unfinished support of apps logic
 import uniq from "lodash/uniq";
-import type { App, Application } from "../types/manager";
 import {
   listCryptoCurrencies,
   findCryptoCurrencyById,
 } from "@ledgerhq/cryptoassets";
+import { App, Application } from "@ledgerhq/types-live";
 const directDep = {};
 const reverseDep = {};
 

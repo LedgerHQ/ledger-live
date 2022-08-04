@@ -56,7 +56,7 @@ function StellarEditMemoValue({ navigation, route }: Props) {
   }, [navigation, route.params, account, memoValue]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >

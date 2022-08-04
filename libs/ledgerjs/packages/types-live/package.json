@@ -7,12 +7,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/LedgerHQ/ledgerjs"
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
   "bugs": {
-    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/types-live",
   "publishConfig": {
     "access": "public"
   },
@@ -21,9 +21,12 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "bignumber.js": "9",
     "rxjs": "6"
+  },
+  "devDependencies": {
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
