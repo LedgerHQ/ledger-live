@@ -105,7 +105,10 @@ export function getListHeaderComponents({
   const AccountSubHeader =
     perFamilyAccountSubHeader[mainAccount.currency.family];
 
-  const stickyHeaderIndices = empty ? [] : [4];
+  const AccountBalanceSummaryFooter =
+    perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
+
+  const stickyHeaderIndices = empty ? [] : [0];
 
   return {
     listHeaderComponents: [
@@ -126,11 +129,11 @@ export function getListHeaderComponents({
             }
             countervalueAvailable={countervalueAvailable}
             counterValueCurrency={counterValueCurrency}
-            renderAccountSummary={renderAccountSummary(
-              account,
-              parentAccount,
-              compoundSummary,
-            )}
+            // renderAccountSummary={renderAccountSummary(
+            //   account,
+            //   parentAccount,
+            //   compoundSummary,
+            // )}
             onSwitchAccountCurrency={onSwitchAccountCurrency}
             countervalueChange={countervalueChange}
             counterValueUnit={counterValueCurrency.units[0]}
@@ -154,6 +157,11 @@ export function getListHeaderComponents({
             />,
           ]
         : []),
+      <Box mx={0} py={3}>
+        <AccountBalanceSummaryFooter
+          account={account}
+        ></AccountBalanceSummaryFooter>
+      </Box>,
       ...(!empty
         ? [
             <Box py={3} mb={8}>
