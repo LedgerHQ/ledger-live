@@ -34,15 +34,15 @@ const celo: AppSpec<Transaction> = {
   },
   testTimeout: 2 * 60 * 1000,
   mutations: [
-    send50PercentMutation,
-    sendMaxMutation,
+    //send50PercentMutation,
+    //sendMaxMutation,
     registerAccountMutation,
-    unlockMutation,
-    lockMutation,
-    voteMutation,
-    activateVoteMutation,
-    revokeVoteMutation,
-    withdrawMutation,
+    //unlockMutation,
+    //lockMutation,
+    //voteMutation,
+    //activateVoteMutation,
+    //revokeVoteMutation,
+    //withdrawMutation,
   ],
 };
 
