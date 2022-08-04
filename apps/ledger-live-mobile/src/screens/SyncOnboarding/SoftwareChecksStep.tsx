@@ -188,6 +188,10 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     }
 
     if (genuineCheckError) {
+      console.error(
+        "Failed to perform genuine check with error:",
+        genuineCheckError.message,
+      );
       setGenuineCheckStatus("failed");
     }
 
@@ -328,6 +332,10 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     }
 
     if (latestFirmwareGettingError) {
+      console.error(
+        "Failed to retrieve latest firmware version with error:",
+        latestFirmwareGettingError.message,
+      );
       setFirmwareUpdateStatus("failed");
     }
 
@@ -439,7 +447,11 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
 
   // Handles the completion of the entire software check step
   useEffect(() => {
-    if (isDisplayed && onComplete && firmwareUpdateStatus === "completed") {
+    if (
+      isDisplayed &&
+      onComplete &&
+      ["completed", "failed"].includes(firmwareUpdateStatus)
+    ) {
       // FIXME: timeout for now to display the status of the available fw update
       setTimeout(() => onComplete(), 2000);
     }
