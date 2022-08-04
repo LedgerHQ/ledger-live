@@ -1,4 +1,4 @@
-name: [Bot] Osmosis on Silicium
+name: "[Bot] 'Osmosis on Silicium'"
 on:
   push:
     branches:
@@ -74,7 +74,7 @@ jobs:
           githubSha: ${{github.sha}}
           githubToken: ${{github.token}}
           slackApiToken: ${{secrets.SLACK_API_TOKEN}}
-          slackChannel: ci-osmosis-ll
+          slackChannel: ci-osmo-ll
       - name: upload logs to github artifacts
         if: always()
         uses: actions/upload-artifact@v1
