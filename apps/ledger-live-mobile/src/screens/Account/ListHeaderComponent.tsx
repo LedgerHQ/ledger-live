@@ -175,7 +175,7 @@ export function getListHeaderComponents({
                   </Box>
                 )}
                 {compoundSummary && account.type === "TokenAccount" && (
-                  <Box mb={6}>
+                  <Box>
                     <CompoundSummary
                       key="compoundSummary"
                       account={account}

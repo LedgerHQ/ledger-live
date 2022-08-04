@@ -23,7 +23,7 @@ import {
   tupleOfUnion,
 } from "@ledgerhq/live-common/families/solana/utils";
 import { Account } from "@ledgerhq/types-live";
-import { Text } from "@ledgerhq/native-ui";
+import { Box, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -308,23 +308,25 @@ function Delegations({ account }: Props) {
               <DelegationLabelRight disabled={false} onPress={onDelegate} />
             }
           />
-          {stakesWithMeta.map((stakeWithMeta, i) => (
-            <View
-              key={stakeWithMeta.stake.stakeAccAddr}
-              style={[
-                styles.delegationsWrapper,
-                { backgroundColor: colors.card },
-              ]}
-            >
-              <DelegationRow
-                stakeWithMeta={stakeWithMeta}
-                currency={currency}
-                unit={unit}
-                onPress={onDelegationSelected}
-                isLast={i === stakesWithMeta.length - 1}
-              />
-            </View>
-          ))}
+          <Box mt={6}>
+            {stakesWithMeta.map((stakeWithMeta, i) => (
+              <View
+                key={stakeWithMeta.stake.stakeAccAddr}
+                style={[
+                  styles.delegationsWrapper,
+                  { backgroundColor: colors.card },
+                ]}
+              >
+                <DelegationRow
+                  stakeWithMeta={stakeWithMeta}
+                  currency={currency}
+                  unit={unit}
+                  onPress={onDelegationSelected}
+                  isLast={i === stakesWithMeta.length - 1}
+                />
+              </View>
+            ))}
+          </Box>
         </View>
       )}
     </View>
@@ -360,7 +362,7 @@ export default function SolanaDelegations({ account }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    margin: 16,
+    marginHorizontal: 16,
   },
   illustration: { alignSelf: "center", marginBottom: 16 },
   rewardsWrapper: {
@@ -384,9 +386,7 @@ const styles = StyleSheet.create({
   column: {
     flexDirection: "column",
   },
-  wrapper: {
-    marginBottom: 16,
-  },
+  wrapper: {},
   delegationsWrapper: {
     borderRadius: 4,
   },

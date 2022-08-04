@@ -524,9 +524,7 @@ const styles = StyleSheet.create({
   column: {
     flexDirection: "column",
   },
-  wrapper: {
-    marginBottom: 16,
-  },
+  wrapper: {},
   delegationsWrapper: {
     borderRadius: 4,
   },
