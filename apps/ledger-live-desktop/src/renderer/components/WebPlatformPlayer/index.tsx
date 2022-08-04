@@ -27,7 +27,8 @@ import BigSpinner from "../BigSpinner";
 import Box from "../Box";
 
 import TopBar from "./TopBar";
-import * as tracking from "./tracking";
+import { track } from "~/renderer/analytics/segment";
+import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { TopBarConfig } from "./type";
 import {
   receiveOnAccountLogic,
@@ -40,6 +41,8 @@ import {
   RequestAccountParams,
   signMessageLogic,
 } from "./LiveAppSDKLogic";
+
+const tracking = trackingWrapper(track);
 
 const Container = styled.div`
   display: flex;
@@ -125,11 +128,16 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
     ({
       accountId,
       transaction,
-      params = {},
+      params,
     }: {
       accountId: string;
       transaction: RawPlatformTransaction;
-      params: any;
+      params?: {
+        /**
+         * The name of the Ledger Nano app to use for the signing process
+         */
+        useApp: string;
+      };
     }) => {
       return signTransactionLogic({ manifest, dispatch, accounts }, accountId, transaction, params);
     },
