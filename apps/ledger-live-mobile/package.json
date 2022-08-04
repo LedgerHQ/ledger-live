@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.5.0-nightly.8",
+  "version": "3.5.0",
   "private": true,
   "scripts": {
     "postinstall": "bash ./scripts/post.sh",
@@ -203,7 +203,7 @@
     "rxjs": "^6.6.6",
     "rxjs-compat": "^6.6.6",
     "semver": "^7.3.7",
-    "storyly-react-native": "^1.24.0",
+    "storyly-react-native": "1.24.1",
     "stream-browserify": "^3.0.0",
     "string_decoder": "~1.3.0",
     "styled-components": "^5.3.3",
