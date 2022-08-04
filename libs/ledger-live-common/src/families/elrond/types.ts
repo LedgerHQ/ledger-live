@@ -1,9 +1,13 @@
-import type { BigNumber } from "bignumber.js";
-import { Range, RangeRaw } from "../../range";
-import type {
+import {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
+import { Range, RangeRaw } from "../../range";
 
 export type ElrondResources = {
   nonce: number;
@@ -71,3 +75,13 @@ export type NetworkInfoRaw = {
 export type ElrondPreloadData = {
   validators: Record<string, any>;
 };
+
+export type ElrondAccount = Account & { elrondResources: ElrondResources };
+
+export type ElrondAccountRaw = AccountRaw & {
+  elrondResources: ElrondResourcesRaw;
+};
+
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

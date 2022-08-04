@@ -4,7 +4,7 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import _ from "lodash";
-import type { AccountLikeArray } from "@ledgerhq/live-common/types/index";
+import type { AccountLikeArray } from "@ledgerhq/types-live";
 import type { CurrentRate } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 // import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { useNavigation, useTheme } from "@react-navigation/native";

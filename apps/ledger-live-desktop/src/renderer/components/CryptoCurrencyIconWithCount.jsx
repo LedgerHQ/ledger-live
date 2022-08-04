@@ -3,7 +3,7 @@ import React, { PureComponent } from "react";
 import styled, { withTheme } from "styled-components";
 import { Trans } from "react-i18next";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import Tooltip from "~/renderer/components/Tooltip";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

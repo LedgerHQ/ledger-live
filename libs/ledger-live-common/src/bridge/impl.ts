@@ -1,16 +1,16 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
-import type {
-  CryptoCurrency,
-  Account,
-  AccountLike,
-  CurrencyBridge,
-  AccountBridge,
-} from "../types";
 import { decodeAccountId, getMainAccount } from "../account";
 import { getEnv } from "../env";
 import { checkAccountSupported } from "../account/support";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  Account,
+  AccountBridge,
+  AccountLike,
+  CurrencyBridge,
+} from "@ledgerhq/types-live";
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {

@@ -6,7 +6,7 @@ import { connect, useDispatch } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { useBridgeSync, useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 
 import Box from "~/renderer/components/Box";
 import { Rotating } from "~/renderer/components/Spinner";

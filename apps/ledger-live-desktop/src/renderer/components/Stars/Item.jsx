@@ -8,7 +8,7 @@ import {
   getAccountUnit,
   getAccountName,
 } from "@ledgerhq/live-common/account/helpers";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 
 import Hide from "~/renderer/components/MainSideBar/Hide";
 import FormattedVal from "~/renderer/components/FormattedVal";

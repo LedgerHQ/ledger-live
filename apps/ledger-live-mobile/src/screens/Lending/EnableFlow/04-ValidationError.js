@@ -1,11 +1,8 @@
 /* @flow */
 import React, { useCallback } from "react";
 import { StyleSheet, Linking, SafeAreaView } from "react-native";
-import type {
-  Account,
-  AccountLike,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";

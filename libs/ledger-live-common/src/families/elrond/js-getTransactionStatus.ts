@@ -7,8 +7,8 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { Account, TransactionStatus } from "../../types";
-import type { Transaction } from "./types";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "./types";
 import { isValidAddress, isSelfTransaction } from "./logic";
 
 const getTransactionStatus = async (

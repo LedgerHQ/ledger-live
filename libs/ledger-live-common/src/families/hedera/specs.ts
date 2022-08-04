@@ -2,12 +2,18 @@ import expect from "expect";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
-import type { AppSpec } from "../../bot/types";
+import type {
+  AppSpec,
+  TransactionTestInput,
+  TransactionArg,
+  TransactionRes,
+} from "../../bot/types";
 import type { Transaction } from "./types";
 import { pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
 
 const currency = getCryptoCurrencyById("hedera");
+const memoTestMessage = "This is a test memo.";
 
 // Ensure that, when the recipient corresponds to an empty account,
 // the amount to send is greater or equal to the required minimum
@@ -41,7 +47,11 @@ const hedera: AppSpec<Transaction> = {
     {
       name: "Send ~50%",
       maxRun: 2,
-      transaction: ({ account, siblings, bridge }) => {
+      transaction: ({
+        account,
+        siblings,
+        bridge,
+      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
 
@@ -58,7 +68,11 @@ const hedera: AppSpec<Transaction> = {
           updates: [{ amount }, { recipient }],
         };
       },
-      test: ({ account, accountBeforeTransaction, operation }) => {
+      test: ({
+        account,
+        accountBeforeTransaction,
+        operation,
+      }: TransactionTestInput<Transaction>): void => {
         expect(account.balance.toString()).toBe(
           accountBeforeTransaction.balance.minus(operation.value).toString()
         );
@@ -67,7 +81,11 @@ const hedera: AppSpec<Transaction> = {
     {
       name: "Send max",
       maxRun: 2,
-      transaction: ({ account, siblings, bridge }) => {
+      transaction: ({
+        account,
+        siblings,
+        bridge,
+      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
 
@@ -78,7 +96,12 @@ const hedera: AppSpec<Transaction> = {
           updates: [{ recipient }, { useAllAmount: true }],
         };
       },
-      test: ({ accountBeforeTransaction, account, operation, transaction }) => {
+      test: ({
+        accountBeforeTransaction,
+        account,
+        operation,
+        transaction,
+      }: TransactionTestInput<Transaction>): void => {
         const accountBalanceAfterTx = account.balance.toNumber();
 
         // NOTE: operation.fee is the ACTUAL (not estimated) fee cost of the transaction
@@ -87,6 +110,34 @@ const hedera: AppSpec<Transaction> = {
           .toNumber();
 
         expect(accountBalanceAfterTx).toBe(amount);
+      },
+    },
+    {
+      name: "Memo",
+      maxRun: 2,
+      transaction: ({
+        account,
+        siblings,
+        bridge,
+      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
+        const sibling = pickSiblings(siblings, 4);
+        const recipient = sibling.freshAddress;
+
+        const transaction = bridge.createTransaction(account);
+
+        const amount = account.balance
+          .div(1.9 + 0.2 * Math.random())
+          .integerValue();
+
+        checkSendableToEmptyAccount(amount, sibling);
+
+        return {
+          transaction,
+          updates: [{ recipient }, { amount }, { memo: memoTestMessage }],
+        };
+      },
+      test: ({ transaction }: TransactionTestInput<Transaction>): void => {
+        expect(transaction.memo).toBe(memoTestMessage);
       },
     },
   ],

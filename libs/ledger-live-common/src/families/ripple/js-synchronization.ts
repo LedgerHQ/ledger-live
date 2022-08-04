@@ -11,7 +11,7 @@ import {
   mergeOps,
 } from "../../bridge/jsHelpers";
 import { encodeOperationId } from "../../operation";
-import { Account, Operation } from "../../types";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../account";
 import { NEW_ACCOUNT_ERROR_MESSAGE } from "./bridge/js";
 import { TxXRPL } from "./types.api";

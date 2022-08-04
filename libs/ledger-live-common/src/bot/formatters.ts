@@ -1,5 +1,4 @@
 import groupBy from "lodash/groupBy";
-import type { Transaction } from "../types";
 import { formatOperation, formatAccount } from "../account";
 import {
   toSignedOperationRaw,
@@ -8,6 +7,7 @@ import {
 } from "../transaction";
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
+import type { Transaction } from "../generated/types";
 export const formatTime = (t: number) =>
   t > 3000
     ? `${Math.round(t / 100) / 10}s`
@@ -21,11 +21,13 @@ export function formatAppCandidate(appCandidate: AppCandidate) {
 
 export function formatError(e: any) {
   if (!e || typeof e !== "object" || e instanceof Error) return String(e);
+  let out;
   try {
-    return "raw object: " + JSON.stringify(e).slice(0, 400);
+    out = "raw object: " + JSON.stringify(e);
   } catch (_e) {
-    return String(e);
+    out = String(e);
   }
+  return out.replace(/\n/g, " ").slice(0, 400);
 }
 
 export function formatReportForConsole<T extends Transaction>({

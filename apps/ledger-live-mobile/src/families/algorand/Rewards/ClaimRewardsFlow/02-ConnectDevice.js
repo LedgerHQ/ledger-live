@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import type { Transaction } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";

@@ -7,7 +7,6 @@ import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
-import type { CryptoCurrency, TokenCurrency, Transaction } from "../../types";
 import { getSwapAPIBaseURL } from "./";
 import type {
   CheckQuote,
@@ -21,6 +20,11 @@ import type {
   SwapRequestEvent,
   ValidKYCStatus,
 } from "./types";
+import type { Transaction } from "../../generated/types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 export const getMockExchangeRate = ({
   provider = "ftx",

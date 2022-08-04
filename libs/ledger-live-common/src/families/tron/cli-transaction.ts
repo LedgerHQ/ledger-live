@@ -5,14 +5,14 @@ import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { getAccountCurrency } from "../../account";
 import { getTronSuperRepresentativeData } from "../../api/Tron";
-import type { Transaction as TronTransaction } from "./types";
+import type { Transaction as TronTransaction, TronAccount } from "./types";
+import type { Transaction } from "../../generated/types";
+import type { SuperRepresentativeData, Vote } from "./types";
 import type {
-  Transaction,
   Account,
   AccountLike,
   AccountLikeArray,
-} from "../../types";
-import type { SuperRepresentativeData, Vote } from "./types";
+} from "@ledgerhq/types-live";
 const options = [
   {
     name: "token",
@@ -120,7 +120,7 @@ function inferTransactions(
     invariant(transaction.family === "tron", "tron family");
 
     if (account.type === "Account") {
-      invariant(account.tronResources, "unactivated account");
+      invariant((account as TronAccount).tronResources, "unactivated account");
     }
 
     if (account.type === "TokenAccount") {

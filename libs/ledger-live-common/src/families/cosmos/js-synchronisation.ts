@@ -1,4 +1,3 @@
-import { Operation, OperationType } from "../../types";
 import { BigNumber } from "bignumber.js";
 import {
   makeSync,
@@ -11,6 +10,7 @@ import { getAccountInfo } from "./api/Cosmos";
 import { pubkeyToAddress, decodeBech32Pubkey } from "@cosmjs/amino";
 import { encodeOperationId } from "../../operation";
 import { CosmosDelegationInfo } from "./types";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 
 const txToOps = (info: any, id: string, txs: any): Operation[] => {
   const { address, currency } = info;

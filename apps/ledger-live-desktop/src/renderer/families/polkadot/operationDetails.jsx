@@ -5,7 +5,8 @@ import React, { useMemo } from "react";
 
 import { BigNumber } from "bignumber.js";
 
-import type { Currency, Unit, Operation, Account } from "@ledgerhq/live-common/types/index";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Operation, Account } from "@ledgerhq/types-live";
 
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 
