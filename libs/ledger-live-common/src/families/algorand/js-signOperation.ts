@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Algorand from "@ledgerhq/hw-app-algorand";
 import { withDevice } from "../../hw/deviceAccess";
-import type { AlgorandAccount, Transaction } from "./types";
+import type { Transaction } from "./types";
 import {
   buildTransactionPayload,
   encodeToSign,
@@ -34,10 +34,7 @@ export const signOperation = ({
           throw new FeeNotLoaded();
         }
 
-        const algoTx = await buildTransactionPayload(
-          account as AlgorandAccount,
-          transaction
-        );
+        const algoTx = await buildTransactionPayload(account, transaction);
 
         const toSign = encodeToSign(algoTx);
 
@@ -58,10 +55,7 @@ export const signOperation = ({
 
         const toBroadcast = encodeToBroadcast(algoTx, signature);
 
-        const operation = buildOptimisticOperation(
-          account as AlgorandAccount,
-          transaction
-        );
+        const operation = buildOptimisticOperation(account, transaction);
 
         o.next({
           type: "signed",
@@ -85,7 +79,7 @@ export const signOperation = ({
   );
 
 const buildOptimisticOperation = (
-  account: AlgorandAccount,
+  account: Account,
   transaction: Transaction
 ): Operation => {
   const { spendableBalance, id, freshAddress, subAccounts } = account;

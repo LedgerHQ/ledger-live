@@ -2,7 +2,8 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import type { AlgorandAccount, AlgorandResources } from "./types";
+import type { Account } from "@ledgerhq/types-live";
+import type { AlgorandResources } from "./types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
@@ -24,9 +25,9 @@ function formatOperationSpecifics(
     : "";
 }
 
-function formatAccountSpecifics(account: AlgorandAccount): string {
-  const { algorandResources } = account;
-  invariant(algorandResources, "algorand account expected");
+function formatAccountSpecifics(account: Account): string {
+  const { accountResources } = account;
+  invariant(accountResources, "algorand account expected");
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
@@ -38,11 +39,11 @@ function formatAccountSpecifics(account: AlgorandAccount): string {
     formatCurrencyUnit(unit, account.spendableBalance, formatConfig) +
     " spendable. ";
 
-  if ((algorandResources as AlgorandResources).rewards.gt(0)) {
+  if ((accountResources as AlgorandResources).rewards.gt(0)) {
     str +=
       formatCurrencyUnit(
         unit,
-        (algorandResources as AlgorandResources).rewards,
+        (accountResources as AlgorandResources).rewards,
         formatConfig
       ) + " rewards. ";
   }

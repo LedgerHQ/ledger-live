@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import type { AlgorandAccount, Transaction } from "./types";
+import type { Transaction } from "./types";
 import { getEstimatedFees } from "./js-getFeesForTransaction";
 import { estimateMaxSpendable } from "./js-estimateMaxSpendable";
+import type { Account } from "@ledgerhq/types-live";
 
 export const createTransaction = (): Transaction => ({
   family: "algorand",
@@ -15,7 +16,7 @@ export const createTransaction = (): Transaction => ({
 });
 
 export const prepareTransaction = async (
-  account: AlgorandAccount,
+  account: Account,
   transaction: Transaction
 ): Promise<Transaction> => {
   let recipient: string;

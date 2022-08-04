@@ -32,15 +32,15 @@ export default function StepInfo({
   t,
 }: StepProps) {
   invariant(
-    account && account.algorandResources && transaction,
+    account && account.accountResources && transaction,
     "account and transaction required",
   );
 
   const unit = getAccountUnit(account);
   const locale = useSelector(localeSelector);
 
-  const { algorandResources } = account;
-  const { rewards } = algorandResources || {};
+  const { accountResources } = account;
+  const { rewards } = accountResources || {};
 
   const formattedRewards = formatCurrencyUnit(unit, rewards, {
     showCode: true,

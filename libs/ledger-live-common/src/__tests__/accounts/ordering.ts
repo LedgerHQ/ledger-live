@@ -1,5 +1,8 @@
 import type { AccountRaw } from "@ledgerhq/types-live";
 import { fromAccountRaw, sortAccountsComparatorFromOrder } from "../../account";
+import { setSupportedCurrencies } from "../../currencies";
+setSupportedCurrencies(["ethereum"]);
+
 const accounts = [
   <AccountRaw>{
     id: "ethereumjs:2:ethereum:0x01:",

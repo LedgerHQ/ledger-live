@@ -161,6 +161,8 @@ export interface AccountBridge<T extends TransactionCommon> {
     parentAccount?: Account | null | undefined;
     transaction?: T | null | undefined;
   }): Promise<BigNumber>;
+  toResourcesRaw?: (resourcesRaw: any) => any;
+  fromResourcesRaw?: (resourcesRaw: any) => any;
   // finalizing a transaction by signing it with the ledger device
   // This results of a "signed" event with a signedOperation
   // than can be locally saved and later broadcasted

@@ -31,7 +31,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
 
   invariant(
-    account && account.algorandResources,
+    account && account.accountResources,
     "account and algorand resources required",
   );
 

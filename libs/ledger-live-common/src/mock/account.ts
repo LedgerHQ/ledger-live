@@ -27,7 +27,6 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
-import { AlgorandAccount } from "../families/algorand/types";
 import { PolkadotAccount } from "../families/polkadot/types";
 import { TezosAccount } from "../families/tezos/types";
 
@@ -456,7 +455,7 @@ export function genAccount(
   }
 
   if (currency.family === "algorand") {
-    (account as AlgorandAccount).algorandResources = {
+    account.accountResources = {
       rewards: new BigNumber(0),
       nbAssets: account.subAccounts?.length ?? 0,
     };

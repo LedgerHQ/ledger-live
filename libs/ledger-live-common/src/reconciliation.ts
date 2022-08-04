@@ -19,7 +19,6 @@ import {
   fromTronResourcesRaw,
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
-  fromAlgorandResourcesRaw,
   fromPolkadotResourcesRaw,
   fromTezosResourcesRaw,
   fromElrondResourcesRaw,
@@ -33,7 +32,6 @@ import {
   toTronResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
-import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
 import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
 import { CardanoAccount, CardanoAccountRaw } from "./families/cardano/types";
 import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
@@ -46,6 +44,7 @@ import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";
+import { getAccountBridge } from "./bridge";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -322,22 +321,6 @@ export function patchAccount(
       }
       break;
     }
-    case "algorand": {
-      const algorandAcc = account as AlgorandAccount;
-      const algorandUpdatedRaw = updatedRaw as AlgorandAccountRaw;
-      if (
-        !areSameResources(
-          algorandAcc.algorandResources,
-          algorandUpdatedRaw.algorandResources
-        )
-      ) {
-        (next as AlgorandAccount).algorandResources = fromAlgorandResourcesRaw(
-          algorandUpdatedRaw.algorandResources
-        );
-        changed = true;
-      }
-      break;
-    }
     case "bitcoin": {
       if (shouldRefreshBitcoinResources(updatedRaw, account)) {
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
@@ -441,6 +424,22 @@ export function patchAccount(
         changed = true;
       }
       break;
+    }
+    default: {
+      const bridge = getAccountBridge(account);
+      const fromResourcesRaw = bridge.fromResourcesRaw;
+      if (
+        fromResourcesRaw &&
+        !areSameResources(
+          account.accountResources,
+          updatedRaw.accountResourcesRaw
+        )
+      ) {
+        next.accountResources = fromResourcesRaw(
+          updatedRaw.accountResourcesRaw
+        );
+        changed = true;
+      }
     }
   }
 

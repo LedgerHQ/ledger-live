@@ -188,6 +188,7 @@ export type Account = {
   syncHash?: string;
   // Array of NFTs computed by diffing NFTOperations ordered from newest to oldest
   nfts?: ProtoNFT[];
+  accountResources?: any;
 };
 
 /** super type that is either a token or a child account */
@@ -273,6 +274,7 @@ export type AccountRaw = {
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;
   nfts?: ProtoNFTRaw[];
+  accountResourcesRaw?: any;
 };
 
 /** */

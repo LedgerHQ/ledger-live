@@ -20,6 +20,9 @@ import {
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+import { toResourcesRaw } from "../serialization";
+import { fromResourcesRaw } from "../serialization";
+
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) => t.fees || new BigNumber(0);
@@ -100,6 +103,8 @@ const accountBridge: AccountBridge<AlgorandTransaction> = {
   prepareTransaction,
   sync,
   receive,
+  toResourcesRaw,
+  fromResourcesRaw,
   signOperation,
   broadcast,
 };

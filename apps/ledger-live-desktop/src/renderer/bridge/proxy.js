@@ -152,6 +152,8 @@ export const getAccountBridge = (
     prepareTransaction,
     sync,
     receive,
+    fromResourcesRaw: bridgeImpl.getAccountBridge(account, parentAccount).fromResourcesRaw,
+    toResourcesRaw: bridgeImpl.getAccountBridge(account, parentAccount).toResourcesRaw,
     signOperation,
     broadcast,
     estimateMaxSpendable,

@@ -62,19 +62,6 @@ export const getAccountBridge = (
   }
 
   const jsBridge = jsBridges[family];
-  if (type === "libcore") {
-    // migrate from libcore via JS
-    if (jsBridge) {
-      return jsBridge.accountBridge;
-    }
-    throw new CurrencyNotSupported(
-      "no libcore implementation available for currency " + currency.id,
-      {
-        currencyName: currency.name,
-      }
-    );
-  }
-
   if (jsBridge) return jsBridge.accountBridge;
   throw new CurrencyNotSupported("currency not supported " + currency.id, {
     currencyName: mainAccount.currency.name,
