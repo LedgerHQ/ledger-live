@@ -46,11 +46,11 @@ const LanguageSelect = () => {
 
   const handleLanguageSelect = useCallback(
     language => {
+      setDrawerOpen(false);
       dispatch(setLanguage(language));
+
       if (firmwareSupportedLocales.includes(language)) {
-        setFirmwareDrawerOpen(true);
-      } else {
-        setDrawerOpen(false);
+        setTimeout(() => setFirmwareDrawerOpen(true), 1000);
       }
     },
     [dispatch],
@@ -90,7 +90,7 @@ const LanguageSelect = () => {
               onPress={() => setDrawerOpen(false)}
             />
           </Flex>
-          <Text variant="h5" fontWeight="semiBold" justifySelf="center">
+          <Text variant="h5" fontWeight="semiBold" justifyContent="center">
             {t("syncOnboarding.languageSelect.title")}
           </Text>
           <Flex flex={1} />
