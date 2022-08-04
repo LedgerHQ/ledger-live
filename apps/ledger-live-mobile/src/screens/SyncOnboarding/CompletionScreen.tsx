@@ -29,7 +29,7 @@ const CompletionScreen = ({ navigation }: Props) => {
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
-  }, []);
+  }, [dispatch, navigation]);
 
   const skipDelay = useCallback(() => {
     if (!delay) {
@@ -42,7 +42,7 @@ const CompletionScreen = ({ navigation }: Props) => {
 
   useEffect(() => {
     setDelay(setTimeout(redirectToPostOnboarding, redirectDelay));
-  }, []);
+  }, [redirectToPostOnboarding]);
 
   return (
     <TouchableWithoutFeedback onPress={skipDelay}>

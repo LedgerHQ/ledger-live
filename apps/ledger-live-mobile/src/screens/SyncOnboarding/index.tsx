@@ -127,7 +127,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         status: "inactive",
       },
     ],
-    [device],
+    [device, handleSoftwareCheckComplete],
   );
 
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
@@ -145,7 +145,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   const {
     onboardingState: deviceOnboardingState,
     allowedError,
-    // fatalErrorItem,
+    fatalError,
   } = useOnboardingStatePolling({
     device,
     pollingPeriodMs,
@@ -170,11 +170,12 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     navigation.navigate(ScreenName.SyncOnboardingCompletion);
   }, [navigation]);
 
-  // useEffect(() => {
-  //   TODO: handle fatal errors
-  //   console.log("Fatal error");
-  //   setDesyncDrawerOpen(true);
-  // }, [fatalError]);
+  useEffect(() => {
+    if (!fatalError) {
+      return;
+    }
+    setDesyncDrawerOpen(true);
+  }, [fatalError]);
 
   useEffect(() => {
     if (allowedError && !timer) {
