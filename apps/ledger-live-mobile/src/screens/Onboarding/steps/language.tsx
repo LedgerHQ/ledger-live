@@ -27,7 +27,7 @@ import {
 } from "../../../reducers/settings";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
+import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 
@@ -131,7 +131,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
           }
         />
       </BottomDrawer>
-      <ChangeDeviceLanguageAction
+      <ChangeDeviceLanguageActionModal
         device={deviceForChangeLanguageAction}
         language={localeIdToDeviceLanguage[currentLocale] as Language}
         onClose={() => {

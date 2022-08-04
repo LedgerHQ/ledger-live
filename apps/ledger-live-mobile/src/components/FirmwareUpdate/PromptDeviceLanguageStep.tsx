@@ -80,6 +80,7 @@ const PropmtDeviceLanguageStep = ({
       // firmware version verification is not really needed here, the presence of a language id
       // indicates that we are in a firmware that supports localization
 
+      //TODO remove console log 
       console.log("FROOM THE USE EFFECT", {
         langAvailableForTheFirstTime,
         deviceLanguageId,
@@ -99,17 +100,15 @@ const PropmtDeviceLanguageStep = ({
       });
 
       if (
-        false
-        // langAvailableForTheFirstTime &&
-        // deviceLanguageId !== undefined &&
-        // idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        // deviceLocalizationFeatureFlag.enabled
+        langAvailableForTheFirstTime &&
+        deviceLanguageId !== undefined &&
+        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
+        deviceLocalizationFeatureFlag.enabled
       ) {
         setIsLanguagePromptOpen(true);
       } else if (
-        true
-        // oldDeviceInfo?.languageId !== undefined &&
-        // oldDeviceInfo?.languageId !== languageIds["english"]
+        oldDeviceInfo?.languageId !== undefined &&
+        oldDeviceInfo?.languageId !== languageIds["english"]
       ) {
         installLanguage("french");
       } else {
@@ -180,8 +179,7 @@ const PropmtDeviceLanguageStep = ({
         <ChangeDeviceLanguageAction
           device={deviceForAction}
           language={languageToInstall}
-          onClose={() => {
-            console.log("FIIIM DA DEVICE ACTION")
+          onContinue={() => {
             setDeviceForAction(null);
             dispatchEvent({ type: "languagePromptDismissed" });
           }}

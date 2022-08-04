@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import BottomModal from "../../../components/BottomModal";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
-import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
+import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
@@ -111,7 +111,7 @@ const DeviceLanguage: React.FC<Props> = ({
           availableLanguages={availableLanguages}
         />
       </BottomModal>
-      <ChangeDeviceLanguageAction
+      <ChangeDeviceLanguageActionModal
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}
         language={selectedLanguage}
