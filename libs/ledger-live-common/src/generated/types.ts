@@ -85,11 +85,12 @@ export type Transaction =
   | neoTransaction
   | osmosisTransaction
   | polkadotTransaction
+  | osmosisTransaction
   | rippleTransaction
   | solanaTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction
+  | tronTransaction;
 export type TransactionRaw =
   | algorandTransactionRaw
   | bitcoinTransactionRaw
@@ -104,11 +105,12 @@ export type TransactionRaw =
   | neoTransactionRaw
   | osmosisTransactionRaw
   | polkadotTransactionRaw
+  | osmosisTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw
+  | tronTransactionRaw;
 export type TransactionStatus =
   | algorandTransactionStatus
   | bitcoinTransactionStatus
@@ -123,11 +125,12 @@ export type TransactionStatus =
   | neoTransactionStatus
   | osmosisTransactionStatus
   | polkadotTransactionStatus
+  | osmosisTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
-  | tronTransactionStatus
+  | tronTransactionStatus;
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
   | bitcoinTransactionStatusRaw
@@ -142,8 +145,9 @@ export type TransactionStatusRaw =
   | neoTransactionStatusRaw
   | osmosisTransactionStatusRaw
   | polkadotTransactionStatusRaw
+  | osmosisTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
-  | tronTransactionStatusRaw
+  | tronTransactionStatusRaw;
