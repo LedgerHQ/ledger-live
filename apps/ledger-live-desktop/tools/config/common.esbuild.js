@@ -27,6 +27,7 @@ module.exports = {
     ".eot": "file",
     ".ttf": "file",
     ".otf": "file",
+    ".webm": "file",
     ".png": "dataurl",
     ".jpg": "dataurl",
     ".jpeg": "dataurl",
