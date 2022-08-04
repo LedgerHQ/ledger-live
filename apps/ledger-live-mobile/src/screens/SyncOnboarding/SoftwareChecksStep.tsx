@@ -2,14 +2,15 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BoxedIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
-  CheckAloneMedium,
   CircledAlertMedium,
+  CircledCheckSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useGenuineCheck } from "@ledgerhq/live-common/lib/hw/hooks/useGenuineCheck";
 import { useGetLatestFirmware } from "@ledgerhq/live-common/lib/hw/hooks/useGetLatestFirmware";
 import { getDeviceModel } from "@ledgerhq/devices/lib/index";
+import { useTheme } from "styled-components/native";
 
 import GenuineCheckDrawer from "./GenuineCheckDrawer";
 import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
@@ -56,18 +57,23 @@ type CheckCardProps = FlexBoxProps & {
 };
 
 const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
-  const getCheckIcon = useCallback((status: CheckStatus, index: number) => {
-    if (status === "active") {
-      return <InfiniteLoader size={24} />;
-    }
-    if (status === "completed") {
-      return <CheckAloneMedium color="success.c100" size={16} />;
-    }
-    if (status === "failed") {
-      return <CircledAlertMedium color="warning.c100" size={24} />;
-    }
-    return <Text variant="body">{index}</Text>;
-  }, []);
+  const { colors } = useTheme();
+
+  const getCheckIcon = useCallback(
+    (status: CheckStatus, index: number) => {
+      if (status === "active") {
+        return <InfiniteLoader color={colors.primary.c80} size={24} />;
+      }
+      if (status === "completed") {
+        return <CircledCheckSolidMedium color="success.c100" size={24} />;
+      }
+      if (status === "failed") {
+        return <CircledAlertMedium color="warning.c100" size={24} />;
+      }
+      return <Text variant="body">{index}</Text>;
+    },
+    [colors.primary.c80],
+  );
 
   return (
     <Flex flexDirection="row" alignItems="center" {...props}>

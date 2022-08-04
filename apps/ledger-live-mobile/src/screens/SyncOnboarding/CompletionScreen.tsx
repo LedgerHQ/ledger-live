@@ -58,9 +58,6 @@ const CompletionScreen = ({ navigation }: Props) => {
           darkSource={DeviceDark}
           size={300}
         />
-        <Text variant="h1" fontSize={32} textAlign="center">
-          {t("syncOnboarding.completion.title")}
-        </Text>
       </Flex>
     </TouchableWithoutFeedback>
   );
