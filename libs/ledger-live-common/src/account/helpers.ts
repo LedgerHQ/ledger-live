@@ -249,7 +249,9 @@ export const getVotesCount = (
     case "tron":
       return (mainAccount as TronAccount)?.tronResources.votes.length || 0;
     case "cosmos":
-      return (mainAccount as CosmosAccount)?.cosmosResources.delegations.length || 0;
+      return (
+        (mainAccount as CosmosAccount)?.cosmosResources.delegations.length || 0
+      );
     default:
       return 0;
   }

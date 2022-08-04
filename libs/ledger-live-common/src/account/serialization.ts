@@ -836,25 +836,28 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromElrondResourcesRaw(elrondResourcesRaw);
       break;
     }
-    case "cardano":
+    case "cardano": {
       const cardanoResourcesRaw = (rawAccount as CardanoAccountRaw)
         .cardanoResources;
       (res as CardanoAccount).cardanoResources =
         fromCardanoResourceRaw(cardanoResourcesRaw);
       break;
-    case "solana":
+    }
+    case "solana": {
       const solanaResourcesRaw = (rawAccount as SolanaAccountRaw)
         .solanaResources;
       (res as SolanaAccount).solanaResources =
         fromSolanaResourcesRaw(solanaResourcesRaw);
       break;
-    case "crypto_org":
+    }
+    case "crypto_org": {
       const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
         .cryptoOrgResources;
       (res as CryptoOrgAccount).cryptoOrgResources = fromCryptoOrgResourcesRaw(
         cryptoOrgResourcesRaw
       );
       break;
+    }
   }
 
   if (swapHistory) {
