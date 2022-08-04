@@ -9,6 +9,7 @@ import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useGenuineCheck } from "@ledgerhq/live-common/lib/hw/hooks/useGenuineCheck";
 import { useGetLatestFirmware } from "@ledgerhq/live-common/lib/hw/hooks/useGetLatestFirmware";
+import { getDeviceModel } from "@ledgerhq/devices/lib/index";
 
 import GenuineCheckDrawer from "./GenuineCheckDrawer";
 import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
@@ -92,6 +93,9 @@ export type Props = {
 const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
   const { t } = useTranslation();
 
+  const productName =
+    getDeviceModel(device.modelId).productName || device.modelId;
+
   const [genuineCheckUiStepStatus, setGenuineCheckUiStepStatus] = useState<
     GenuineCheckUiStepStatus
   >("inactive");
@@ -105,7 +109,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
   >("none");
 
   const [genuineCheckStepTitle, setGenuineCheckStepTitle] = useState<string>(
-    t("syncOnboarding.sofwareChecksSteps.genuineCheckStep.inactive.title"),
+    t("syncOnboarding.softwareChecksSteps.genuineCheckStep.inactive.title"),
   );
 
   const [firmwareUpdateUiStepStatus, setFirmwareUpdateUiStepStatus] = useState<
@@ -123,7 +127,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
 
   const [firmwareUpdateStepTitle, setFirmwareUpdateStepTitle] = useState<
     string
-  >(t("syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.inactive.title"));
+  >(t("syncOnboarding.softwareChecksSteps.firmwareUpdateStep.inactive.title"));
 
   // Not a DeviceAction as we're only interested in the permission requested, granted and result.
   // No need the full DeviceAction with its retry strategy etc.
@@ -277,35 +281,38 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     switch (genuineCheckUiStepStatus) {
       case "active":
         setGenuineCheckStepTitle(
-          t("syncOnboarding.sofwareChecksSteps.genuineCheckStep.active.title", {
-            productName: "Nano", // TODO: put something like device.modelId,
-          }),
+          t(
+            "syncOnboarding.softwareChecksSteps.genuineCheckStep.active.title",
+            {
+              productName,
+            },
+          ),
         );
         break;
       case "completed":
         setGenuineCheckStepTitle(
           t(
-            "syncOnboarding.sofwareChecksSteps.genuineCheckStep.completed.title",
+            "syncOnboarding.softwareChecksSteps.genuineCheckStep.completed.title",
             {
-              productName: "Nano", // TODO: put something like device.modelId,
+              productName,
             },
           ),
         );
         break;
       case "failed":
         setGenuineCheckStepTitle(
-          t("syncOnboarding.sofwareChecksSteps.genuineCheckStep.failed.title"),
+          t("syncOnboarding.softwareChecksSteps.genuineCheckStep.failed.title"),
         );
         break;
       default:
         setGenuineCheckStepTitle(
           t(
-            "syncOnboarding.sofwareChecksSteps.genuineCheckStep.inactive.title",
+            "syncOnboarding.softwareChecksSteps.genuineCheckStep.inactive.title",
           ),
         );
         break;
     }
-  }, [t, genuineCheckUiStepStatus]);
+  }, [t, genuineCheckUiStepStatus, productName]);
 
   const {
     latestFirmware,
@@ -398,7 +405,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       case "active":
         setFirmwareUpdateStepTitle(
           t(
-            "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.active.title",
+            "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.active.title",
           ),
         );
         break;
@@ -409,7 +416,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
         ) {
           setFirmwareUpdateStepTitle(
             t(
-              "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.completed.updateAvailable.title",
+              "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.completed.updateAvailable.title",
               {
                 firmwareVersion: JSON.stringify(latestFirmware.final.name),
               },
@@ -418,7 +425,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
         } else {
           setFirmwareUpdateStepTitle(
             t(
-              "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.completed.noUpdateAvailable.title",
+              "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.completed.noUpdateAvailable.title",
             ),
           );
         }
@@ -426,14 +433,14 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       case "failed":
         setFirmwareUpdateStepTitle(
           t(
-            "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.failed.title",
+            "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.failed.title",
           ),
         );
         break;
       default:
         setFirmwareUpdateStepTitle(
           t(
-            "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.inactive.title",
+            "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.inactive.title",
           ),
         );
         break;
@@ -462,6 +469,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       {isDisplayed && (
         <Flex>
           <GenuineCheckDrawer
+            productName={productName}
             isOpen={genuineCheckUiDrawerStatus === "requested"}
             onPress={() => setGenuineCheckStatus("ongoing")}
           />
@@ -474,6 +482,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
             device={device}
           />
           <GenuineCheckCancelledDrawer
+            productName={productName}
             isOpen={genuineCheckUiDrawerStatus === "cancelled"}
             onRetry={() => {
               resetGenuineCheckState();
@@ -482,6 +491,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
             onSkip={() => setGenuineCheckStatus("failed")}
           />
           <FirmwareUpdateDrawer
+            productName={productName}
             isOpen={firmwareUpdateUiDrawerStatus === "new-firmware-available"}
             onSkip={() => setFirmwareUpdateStatus("completed")}
             onUpdate={() => setFirmwareUpdateStatus("completed")}

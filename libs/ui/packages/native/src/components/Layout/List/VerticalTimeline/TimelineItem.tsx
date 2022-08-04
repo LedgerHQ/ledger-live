@@ -16,6 +16,7 @@ import TimelineIndicator from "./TimelineIndicator";
 
 export type Props = {
   item: Item;
+  formatEstimatedTime?: (_: number) => string;
   isFirstItem?: boolean;
   isLastItem?: boolean;
 };
@@ -52,7 +53,12 @@ const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   padding: 20px 16px;
 `;
 
-export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
+export default function TimelineItem({
+  item,
+  formatEstimatedTime,
+  isFirstItem,
+  isLastItem,
+}: Props) {
   const [height, setHeight] = useState(0);
 
   const transition = useDerivedValue(() => {
@@ -101,7 +107,11 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
             {item.title}
           </Text>
           {item?.estimatedTime && item.status === "active" && (
-            <Tag>{`${item.estimatedTime / 60} min`}</Tag>
+            <Tag>
+              {formatEstimatedTime
+                ? formatEstimatedTime(item.estimatedTime)
+                : `${item.estimatedTime / 60} min`}
+            </Tag>
           )}
         </Flex>
         <Animated.View style={style}>

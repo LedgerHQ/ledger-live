@@ -19,7 +19,7 @@ type Props = CompositeScreenProps<
 >;
 
 export const DeviceModelSelection = ({ navigation }: Props) => {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const setupNanoFTS = useCallback(() => {
     // On pairing success, navigate to the Sync Onboarding Companion
@@ -54,13 +54,13 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
   return (
     <OnboardingView
       hasBackButton
-      title="Which device do you own ?"
-      subTitle="Choose which ledger wallet you want to set up with Ledger Live."
+      title={t("syncOnboarding.deviceSelection.title")}
+      subTitle={t("syncOnboarding.deviceSelection.subtitle")}
     >
       <DiscoverCard
-        title="nanoFTS"
+        title={t("syncOnboarding.deviceSelection.nanoFTS.title")}
         titleProps={{ variant: "h3" }}
-        subTitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        subTitle={t("syncOnboarding.deviceSelection.nanoFTS.description")}
         onPress={setupNanoFTS}
         cardProps={{ mx: 0 }}
         Image={
@@ -73,9 +73,9 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
       />
 
       <DiscoverCard
-        title="Nano X"
+        title={t("syncOnboarding.deviceSelection.nanoX.title")}
         titleProps={{ variant: "h3" }}
-        subTitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        subTitle={t("syncOnboarding.deviceSelection.nanoX.description")}
         onPress={setupNanoX}
         cardProps={{ mx: 0 }}
         Image={
