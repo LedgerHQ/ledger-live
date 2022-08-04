@@ -36,7 +36,6 @@ const QuickActionButton = ({
   onPressWhenDisabled,
   ...otherProps
 }: QuickActionButtonProps): React.ReactElement => {
-  // We s
   return (
     <Base
       disabled={onPressWhenDisabled ? false : disabled}

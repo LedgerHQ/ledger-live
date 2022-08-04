@@ -161,6 +161,7 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
       )}
       <QuickActionList
         data={quickActions}
+        // Use two columns only when we have only two or four items, otherwise three columns
         numColumns={
           quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
         }
