@@ -391,7 +391,7 @@ Object {
 exports[`Scenario: order is preserved in uninstall action plan 1`] = `
 Object {
   "apps": Array [
-      Object {
+    Object {
       "blocks": 1,
       "bytes": 4096,
       "currencyId": "zcash",
