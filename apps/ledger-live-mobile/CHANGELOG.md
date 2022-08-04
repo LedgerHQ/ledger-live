@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.23
+
+### Patch Changes
+
+- [#823](https://github.com/LedgerHQ/ledger-live/pull/823) [`4df8aed2e`](https://github.com/LedgerHQ/ledger-live/commit/4df8aed2e865f1e7ef15f45780673cf5c26fbfec) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - market receive flow redirection issue
+
 ## 3.5.0-next.22
 
 ### Patch Changes
