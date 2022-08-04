@@ -26,6 +26,7 @@ Welcome to Ledger's JavaScript libraries.
 | -------- | ---------------------- | --- | ------ | --------- |
 | Blue     | DEPRECATED<sup>1</sup> | YES | NO     | NO        |
 | Nano S   | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
+| Nano S Plus | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
 | Nano X   | DEPRECATED<sup>1</sup> | YES | YES    | YES       |
 
 1. U2F is deprecated. See https://github.com/LedgerHQ/ledger-live/wiki/LJS:MigrateWebUSB
