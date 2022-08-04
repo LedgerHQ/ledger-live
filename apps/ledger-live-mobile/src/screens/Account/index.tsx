@@ -242,46 +242,46 @@ const AccountScreenInner = ({
 
   const data = [
     ...listHeaderComponents,
-    <List
-      ref={ref}
-      sections={sections}
-      style={[styles.sectionList]}
-      contentContainerStyle={styles.contentContainer}
-      ListHeaderComponent={() => (
-        <Text variant={"h3"} mt={8}>
-          <Trans i18nKey="account.lastTransactions" />
-        </Text>
-      )}
-      ListFooterComponent={
-        !completed ? (
-          <LoadingFooter />
-        ) : sections.length === 0 ? (
-          isAccountEmpty(account) ? null : (
-            <NoOperationFooter />
-          )
-        ) : (
-          <NoMoreOperationFooter />
-        )
-      }
-      ListEmptyComponent={ListEmptyComponent}
-      keyExtractor={keyExtractor}
-      renderItem={renderItem}
-      renderSectionHeader={renderSectionHeader}
-      onEndReached={onEndReached}
-      onScroll={event(
-        [
-          {
-            nativeEvent: {
-              contentOffset: { y: scrollY },
-            },
-          },
-        ],
-        { useNativeDriver: true },
-      )}
-      showsVerticalScrollIndicator={false}
-      accountId={account.id}
-      stickySectionHeadersEnabled={false}
-    />,
+    // <List
+    //   ref={ref}
+    //   sections={sections}
+    //   style={[styles.sectionList]}
+    //   contentContainerStyle={styles.contentContainer}
+    //   ListHeaderComponent={() => (
+    //     <Text variant={"h3"} mt={8}>
+    //       <Trans i18nKey="account.lastTransactions" />
+    //     </Text>
+    //   )}
+    //   ListFooterComponent={
+    //     !completed ? (
+    //       <LoadingFooter />
+    //     ) : sections.length === 0 ? (
+    //       isAccountEmpty(account) ? null : (
+    //         <NoOperationFooter />
+    //       )
+    //     ) : (
+    //       <NoMoreOperationFooter />
+    //     )
+    //   }
+    //   ListEmptyComponent={ListEmptyComponent}
+    //   keyExtractor={keyExtractor}
+    //   renderItem={renderItem}
+    //   renderSectionHeader={renderSectionHeader}
+    //   onEndReached={onEndReached}
+    //   onScroll={event(
+    //     [
+    //       {
+    //         nativeEvent: {
+    //           contentOffset: { y: scrollY },
+    //         },
+    //       },
+    //     ],
+    //     { useNativeDriver: true },
+    //   )}
+    //   showsVerticalScrollIndicator={false}
+    //   accountId={account.id}
+    //   stickySectionHeadersEnabled={false}
+    // />,
   ];
 
   return (

@@ -151,17 +151,23 @@ export function getListHeaderComponents({
       ),
       ...(!empty && AccountBodyHeader
         ? [
-            <AccountBodyHeader
-              account={account}
-              parentAccount={parentAccount}
-            />,
+            <Box backgroundColor={"blue"}>
+              <AccountBodyHeader
+                account={account}
+                parentAccount={parentAccount}
+              />
+            </Box>,
           ]
         : []),
-      <Box mx={0} py={3}>
-        <AccountBalanceSummaryFooter
-          account={account}
-        ></AccountBalanceSummaryFooter>
-      </Box>,
+      ...(!empty && AccountBalanceSummaryFooter
+        ? [
+            <Box mx={0}>
+              <AccountBalanceSummaryFooter
+                account={account}
+              ></AccountBalanceSummaryFooter>
+            </Box>,
+          ]
+        : []),
       ...(!empty
         ? [
             <Box py={3} mb={8}>

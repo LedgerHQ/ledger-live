@@ -50,7 +50,7 @@ const RewardsSection = ({ account }: Props) => {
     <Box p={6}>
       <AccountSectionLabel
         name={t("algorand.claimRewards.title")}
-        icon={<InfoMedium size={20} color={"neutral.c100"} />}
+        Icon={InfoMedium}
         onPress={onRewardsInfoClick}
       />
       <Flex flexDirection={"row"} alignItems={"center"} py={6} mb={6}>

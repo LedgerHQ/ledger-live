@@ -11,15 +11,14 @@ type Props = {
   title: React.ReactNode;
   value: React.ReactNode;
   warning?: boolean;
+  isLast?: boolean;
 };
 
 const StyledTouchableOpacity = styled.TouchableOpacity.attrs({
   flexBasis: "auto",
   flexDirection: "column",
   mr: 7,
-  pr: 7,
   py: 5,
-  borderRightWidth: 1,
   borderRightColor: "neutral.c40",
 })``;
 
@@ -28,9 +27,14 @@ export default function BalanceSummaryInfoItem({
   title,
   value,
   warning = false,
+  isLast = false,
 }: Props) {
   return (
-    <StyledTouchableOpacity onPress={onPress}>
+    <StyledTouchableOpacity
+      onPress={onPress}
+      pr={isLast ? 0 : 7}
+      borderRightWidth={isLast ? 0 : 1}
+    >
       <Flex flexDirection={"row"} alignItems={"center"}>
         <Text
           variant={"small"}
