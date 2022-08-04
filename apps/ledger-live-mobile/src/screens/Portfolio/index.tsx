@@ -27,14 +27,11 @@ import globalSyncRefreshControl from "../../components/globalSyncRefreshControl"
 import BackgroundGradient from "../../components/BackgroundGradient";
 
 import GraphCardContainer from "./GraphCardContainer";
-import Carousel from "../../components/Carousel";
 import Header from "./Header";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { NavigatorName } from "../../const";
-import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
-import AddAssetsCard from "./AddAssetsCard";
 import Assets from "./Assets";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { useProviders } from "../Swap/SwapEntry";
@@ -66,12 +63,7 @@ const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
   px: p.px ?? 6,
 }))``;
 
-export const Gradient = styled(BackgroundGradient)`
-  position: absolute;
-  width: "100%";
-  height: 450px;
-  top: -130px;
-`;
+export const Gradient = styled(BackgroundGradient)``;
 
 const maxAssetsToDisplay = 5;
 
@@ -122,11 +114,6 @@ function PortfolioScreen({ navigation }: Props) {
 
   const data = useMemo(
     () => [
-      !showAssets && (
-        <Box mx={6} mt={3}>
-          <AddAssetsCard />
-        </Box>
-      ),
       <Box onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
@@ -137,15 +124,8 @@ function PortfolioScreen({ navigation }: Props) {
           graphCardEndPosition={graphCardEndPosition}
         />
       </Box>,
-      ...(accounts.length > 0
-        ? [
-            <Box pt={6} background={colors.background.main}>
-              <FabActions areAccountsEmpty={areAccountsEmpty} />
-            </Box>,
-          ]
-        : []),
       ...(showAssets
-        ? [
+        ? [ // If the user has some accounts we display the following components
             <Box background={colors.background.main}>
               <SectionContainer>
                 <SectionTitle
@@ -184,23 +164,6 @@ function PortfolioScreen({ navigation }: Props) {
                 )}
               </SectionContainer>
             </Box>,
-          ]
-        : []),
-      ...(showCarousel
-        ? [
-            <Box background={colors.background.main}>
-              <SectionContainer px={0} minHeight={175}>
-                <SectionTitle
-                  title={t("portfolio.recommended.title")}
-                  containerProps={{ mb: 7, mx: 6 }}
-                />
-                <Carousel cardsVisibility={carouselVisibility} />
-              </SectionContainer>
-            </Box>,
-          ]
-        : []),
-      ...(showAssets
-        ? [
             <SectionContainer px={6}>
               <SectionTitle title={t("analytics.allocation.title")} />
               <AllocationsSection />
@@ -210,7 +173,10 @@ function PortfolioScreen({ navigation }: Props) {
               <OperationsHistorySection accounts={assetsToDisplay} />
             </SectionContainer>,
           ]
-        : []),
+        : [ // If the user has no accounts we display an empty state
+          <Flex flex={1}>
+          </Flex>,
+        ]),
     ],
     [
       showAssets,
