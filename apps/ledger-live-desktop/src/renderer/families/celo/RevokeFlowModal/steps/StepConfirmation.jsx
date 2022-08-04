@@ -21,7 +21,6 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps &
     return (
       <S.Container>
         <TrackPage category="Celo Revoke" name="Step Confirmation" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
           title={<Trans i18nKey="celo.revoke.steps.confirmation.success.title" />}
           description={multiline(t("celo.revoke.steps.confirmation.success.text"))}
@@ -57,6 +56,13 @@ export const StepConfirmationFooter = ({
 }: StepProps) => {
   return (
     <Box horizontal alignItems="right">
+      {/**
+       * We're rendering the <SyncOneAccountOnMount /> component
+       * here to ensure that it will always be rendered after a transaction
+       * is broadcasted so that account balances are correct/up-to-date
+       * before a future operation/transaction can be created.
+       */}
+      <SyncOneAccountOnMount priority={10} accountId={account.id} />
       <Button data-test-id="modal-close-button" ml={2} onClick={onClose}>
         <Trans i18nKey="common.close" />
       </Button>
