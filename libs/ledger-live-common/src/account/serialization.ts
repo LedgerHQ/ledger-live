@@ -626,11 +626,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   }
 
   switch (res.currency.family) {
-    case "tron":
-      (res as TronAccount).tronResources = fromTronResourcesRaw(
-        (rawAccount as TronAccountRaw).tronResources
-      );
+    case "tron": {
+      const rawTronResources = (rawAccount as TronAccountRaw).tronResources;
+      if (rawTronResources) {
+        (res as TronAccount).tronResources =
+          fromTronResourcesRaw(rawTronResources);
+      }
       break;
+    }
     case "cosmos":
       (res as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
         (rawAccount as CosmosAccountRaw).cosmosResources
@@ -647,9 +650,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
       );
       break;
     case "polkadot":
-      (res as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(
-        (rawAccount as PolkadotAccountRaw).polkadotResources
-      );
+      {
+        const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
+          .polkadotResources;
+
+        if (polkadotResourcesRaw)
+          (res as PolkadotAccount).polkadotResources =
+            fromPolkadotResourcesRaw(polkadotResourcesRaw);
+      }
       break;
     case "elrond":
       (res as ElrondAccount).elrondResources = fromElrondResourcesRaw(
