@@ -314,7 +314,7 @@ const scenarios = [
           },
         ],
         expectPlan:
-          "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Zcash, -Bitcoin",
+          "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Bitcoin",
         expectInstalled: "",
       },
     ],

@@ -368,6 +368,30 @@ Object {
       "name": "Dogecoin",
     },
     Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "zcash",
+      "name": "Zcash",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 18,
+  "freeSpaceBytes": 73728,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 42,
+  "totalAppsBytes": 172032,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: order is preserved in uninstall action plan 1`] = `
+Object {
+  "apps": Array [
+      Object {
       "blocks": 1,
       "bytes": 4096,
       "currencyId": "zcash",
@@ -376,30 +400,13 @@ Object {
   ],
   "appsSpaceBlocks": 60,
   "appsSpaceBytes": 245760,
-  "freeSpaceBlocks": 27,
-  "freeSpaceBytes": 110592,
+  "freeSpaceBlocks": 59,
+  "freeSpaceBytes": 241664,
   "osBlocks": 20,
   "osBytes": 81920,
   "shouldWarnMemory": false,
-  "totalAppsBlocks": 33,
-  "totalAppsBytes": 135168,
-  "totalBlocks": 80,
-  "totalBytes": 327680,
-}
-`;
-
-exports[`Scenario: order is preserved in uninstall action plan 1`] = `
-Object {
-  "apps": Array [],
-  "appsSpaceBlocks": 60,
-  "appsSpaceBytes": 245760,
-  "freeSpaceBlocks": 60,
-  "freeSpaceBytes": 245760,
-  "osBlocks": 20,
-  "osBytes": 81920,
-  "shouldWarnMemory": false,
-  "totalAppsBlocks": 0,
-  "totalAppsBytes": 0,
+  "totalAppsBlocks": 1,
+  "totalAppsBytes": 4096,
   "totalBlocks": 80,
   "totalBytes": 327680,
 }
