@@ -227,7 +227,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           </Flex>
         </Flex>
         <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6} flexDirection="row" width="100%" justifyContent={"space-between"}>
-          <Text numberOfLines={1} width="75%" fontWeight="semiBold">
+          <Text numberOfLines={4} flex={1} fontWeight="semiBold">
             {mainAccount.freshAddress}
           </Text>
           <CopyLink
