@@ -44,6 +44,7 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
+import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
@@ -200,6 +201,10 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       ...(showAssets
         ? [
+            <SectionContainer px={6}>
+              <SectionTitle title={t("analytics.allocation.title")} />
+              <AllocationsSection />
+            </SectionContainer>,
             <SectionContainer px={6} mb={8}>
               <SectionTitle title={t("analytics.operations.title")} />
               <OperationsHistorySection accounts={assetsToDisplay} />
