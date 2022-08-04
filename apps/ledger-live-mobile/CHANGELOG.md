@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.24
+
+### Patch Changes
+
+- [#833](https://github.com/LedgerHQ/ledger-live/pull/833) [`91cfea6e2`](https://github.com/LedgerHQ/ledger-live/commit/91cfea6e250574b6e21982509b4630066c7816bf) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Receive flow copy address button overflow issue
+
 ## 3.5.0-next.23
 
 ### Patch Changes
