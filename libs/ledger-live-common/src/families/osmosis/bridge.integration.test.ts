@@ -1,7 +1,11 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { BigNumber } from "bignumber.js";
-import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
+import type {
+  AccountRaw,
+  CurrenciesData,
+  DatasetTest,
+} from "@ledgerhq/types-live";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -12,6 +16,7 @@ import { ClaimRewardsFeesWarning } from "../../errors";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
+import { CosmosAccount } from "../cosmos/types";
 
 const osmosis: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
@@ -107,9 +112,9 @@ const osmosis: CurrenciesData<Transaction> = {
             gas: null,
             memo: null,
             mode: "send",
-          }),
+          }) as Transaction,
           expectedStatus: (account) => {
-            const { cosmosResources } = account;
+            const { cosmosResources } = account as CosmosAccount;
             if (!cosmosResources)
               throw new Error("Should exist because it's osmosis");
             const totalSpent = account.balance.minus(
@@ -138,9 +143,9 @@ const osmosis: CurrenciesData<Transaction> = {
             gas: null,
             memo: "test",
             mode: "send",
-          }),
+          }) as Transaction,
           expectedStatus: (account, t) => {
-            const { cosmosResources } = account;
+            const { cosmosResources } = account as CosmosAccount;
             if (!cosmosResources)
               throw new Error("Should exist because it's osmosis");
             invariant(t.memo === "test", "Should have a memo");
@@ -447,7 +452,7 @@ const osmosis: CurrenciesData<Transaction> = {
           unbondingBalance: "0",
           withdrawAddress: "",
         },
-      },
+      } as AccountRaw,
     },
   ],
 };
