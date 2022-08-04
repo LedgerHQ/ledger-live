@@ -15,15 +15,17 @@ export type Item = {
 
 export type Props = BaseStyledProps & {
   steps?: Item[];
+  formatEstimatedTime?: (_: number) => string;
 };
 
-export default function VerticalTimeline({ steps, ...props }: Props) {
+export default function VerticalTimeline({ steps, formatEstimatedTime, ...props }: Props) {
   return (
     <Flex {...props} flexDirection="column">
       {steps?.map((step, index) => (
         <TimelineItem
           key={step.title}
           item={step}
+          formatEstimatedTime={formatEstimatedTime}
           isFirstItem={index === 0}
           isLastItem={index === steps.length - 1}
         />

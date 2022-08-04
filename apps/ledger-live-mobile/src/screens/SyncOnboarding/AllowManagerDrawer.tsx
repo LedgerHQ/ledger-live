@@ -21,7 +21,9 @@ const UnlockDeviceDrawer = ({ isOpen, device }: Props) => {
       <Flex mb={300} pt={80}>
         <AllowManager
           t={t}
-          wording="Ledger Live"
+          wording={t(
+            "syncOnboarding.softwareChecksSteps.allowManagerDrawer.wording",
+          )}
           device={device}
           theme={theme}
           colors={colors}

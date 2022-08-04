@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import { NanoXAltMedium } from "@ledgerhq/native-ui/assets/icons";
+import { useTranslation } from "react-i18next";
 
 import { completeOnboarding } from "../../actions/settings";
 import { NavigatorName } from "../../const";
@@ -20,6 +20,7 @@ type Props = StackScreenProps<
 >;
 
 const CompletionScreen = ({ navigation }: Props) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [delay, setDelay] = useState<NodeJS.Timeout | null>(null);
 
@@ -58,7 +59,7 @@ const CompletionScreen = ({ navigation }: Props) => {
           size={300}
         />
         <Text variant="h1" fontSize={32} textAlign="center">
-          Now you are in control
+          {t("syncOnboarding.completion.title")}
         </Text>
       </Flex>
     </TouchableWithoutFeedback>

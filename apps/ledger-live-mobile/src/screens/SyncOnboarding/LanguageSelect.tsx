@@ -28,6 +28,7 @@ import {
 import Illustration from "../../images/illustration/Illustration";
 import DeviceDark from "../../images/illustration/Dark/_FamilyPackX.png";
 import DeviceLight from "../../images/illustration/Light/_FamilyPackX.png";
+import { useTranslation } from "react-i18next";
 
 const ScrollViewContainer = styled(ScrollView)`
   height: 100%;
@@ -37,6 +38,7 @@ const ScrollViewContainer = styled(ScrollView)`
 const firmwareSupportedLocales = ["en", "fr", "es"];
 
 const LanguageSelect = () => {
+  const { t } = useTranslation();
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -89,7 +91,7 @@ const LanguageSelect = () => {
             />
           </Flex>
           <Text variant="h5" fontWeight="semiBold" justifySelf="center">
-            App Language
+            {t("syncOnboarding.languageSelect.title")}
           </Text>
           <Flex flex={1} />
         </Flex>
@@ -121,16 +123,17 @@ const LanguageSelect = () => {
           />
         </Flex>
         <Text variant="h4" fontWeight="semiBold" mb={4}>
-          Change language on your Nano
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.title")}
         </Text>
         <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
-          Ledger Live is now in English. Do you want to use English on your
-          Fatstacks too?
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.description")}
         </Text>
         <Button type="main" mb={4} onPress={handleFirmwareLanguageSelect}>
-          Change language
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.updateCta")}
         </Button>
-        <Button onPress={handleFirmwareLanguageCancel}>Cancel</Button>
+        <Button onPress={handleFirmwareLanguageCancel}>
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.cancelCta")}
+        </Button>
       </BottomDrawer>
     </Flex>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   isOpen: boolean;
@@ -8,6 +9,7 @@ type Props = {
 };
 
 const ResyncOverlay = ({ isOpen, delay = 0 }: Props) => {
+  const { t } = useTranslation();
   const [showContent, setShowContent] = useState<boolean>(false);
   const { colors, radii } = useTheme();
 
@@ -49,7 +51,7 @@ const ResyncOverlay = ({ isOpen, delay = 0 }: Props) => {
           justifyContent="space-between"
         >
           <Text pr={3} variant="body" textBreakStrategy="balanced">
-            {`It looks like connection to your Nano was lost. We're trying to reconnect.`}
+            {t("syncOnboarding.resyncOverlay.content")}
           </Text>
           <InfiniteLoader color="black" size={24} />
         </Flex>

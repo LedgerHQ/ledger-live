@@ -19,6 +19,8 @@ import { OnboardingStep as DeviceOnboardingStep } from "@ledgerhq/live-common/sr
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { fromSeedPhraseTypeToNbOfSeedWords } from "@ledgerhq/live-common/lib/hw/extractOnboardingState";
+import { getDeviceModel } from "@ledgerhq/devices/lib/index";
+
 import { ScreenName } from "../../const";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
@@ -69,55 +71,64 @@ function nextStepKey(step: CompanionStepKey): CompanionStepKey {
 }
 
 export const SyncOnboarding = ({ navigation, route }: Props) => {
+  const { t } = useTranslation();
   const { device } = route.params;
+
+  const productName =
+    getDeviceModel(device.modelId).productName || device.modelId;
+  const deviceName = device.deviceName || productName;
 
   const handleSoftwareCheckComplete = useCallback(() => {
     setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck));
   }, []);
 
+  const formatEstimatedTime = (estimatedTime: number) =>
+    t("syncOnboarding.estimatedTimeFormat", {
+      estimatedTime: estimatedTime / 60,
+    });
+
   const defaultCompanionSteps: Step[] = useMemo(
     () => [
       {
         key: CompanionStepKey.Paired,
-        title: "Nano is paired",
+        title: t("syncOnboarding.pairingStep.title", { productName }),
         status: "inactive",
         renderBody: () => (
           <Text variant="bodyLineHeight">
-            {`Continue setting up on your Nano and look back here for step by step assistance.`}
+            {t("syncOnboarding.pairingStep.description", { productName })}
           </Text>
         ),
       },
       {
         key: CompanionStepKey.Pin,
-        title: "Choose your PIN",
+        title: t("syncOnboarding.pinStep.title"),
         status: "inactive",
         estimatedTime: 120,
         renderBody: () => (
           <Flex>
-            <Text
-              variant="bodyLineHeight"
-              mb={6}
-            >{`Your PIN can be 4 to 8 digits long.`}</Text>
+            <Text variant="bodyLineHeight" mb={6}>
+              {t("syncOnboarding.pinStep.description", { productName })}
+            </Text>
             <Text variant="bodyLineHeight">
-              {`Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
+              {t("syncOnboarding.pinStep.warning", { productName })}
             </Text>
           </Flex>
         ),
       },
       {
         key: CompanionStepKey.Seed,
-        title: "Set your recovery phrase",
+        title: t("syncOnboarding.seedStep.title"),
         status: "inactive",
         estimatedTime: 300,
         renderBody: () => (
           <Text variant="bodyLineHeight">
-            {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
+            {t("syncOnboarding.seedStep.description", { productName })}
           </Text>
         ),
       },
       {
         key: CompanionStepKey.SoftwareCheck,
-        title: "Operating system check",
+        title: t("syncOnboarding.softwareChecksSteps.title"),
         status: "inactive",
         renderBody: (isDisplayed?: boolean) => (
           <SoftwareChecksStep
@@ -129,11 +140,11 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       },
       {
         key: CompanionStepKey.Ready,
-        title: "Nano is ready",
+        title: t("syncOnboarding.readyStep.title", { productName }),
         status: "inactive",
       },
     ],
-    [device, handleSoftwareCheckComplete],
+    [t, productName, device, handleSoftwareCheckComplete],
   );
 
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
@@ -293,6 +304,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           isOpen={isDesyncDrawerOpen}
           onClose={handleDesyncClose}
           navigation={navigation}
+          productName={productName}
         />
         <Flex
           flexDirection="row"
@@ -310,7 +322,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
             <Flex px={7} pt={2}>
               <Flex mb={7} flexDirection="row" alignItems="center">
                 <Text variant="h4" fontWeight="semiBold">
-                  Setup your Nano
+                  {t("syncOnboarding.title", { deviceName })}
                 </Text>
                 <Button
                   ml={2}
@@ -318,7 +330,10 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
                   onPress={() => setHelpDrawerOpen(true)}
                 />
               </Flex>
-              <VerticalTimeline steps={companionSteps} />
+              <VerticalTimeline
+                steps={companionSteps}
+                formatEstimatedTime={formatEstimatedTime}
+              />
             </Flex>
           </ScrollContainer>
         </Flex>

@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { BottomDrawer, Button, Link, Text } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+import { useTranslation } from "react-i18next";
 
 export type Props = {
   isOpen: boolean;
@@ -8,6 +9,8 @@ export type Props = {
 };
 
 const HelpDrawer = ({ isOpen, onClose }: Props) => {
+  const { t } = useTranslation();
+
   const handleDocumentationPress = useCallback(() => {
     // TODO: add logic when user press "FAQ" button
   }, []);
@@ -19,23 +22,16 @@ const HelpDrawer = ({ isOpen, onClose }: Props) => {
   return (
     <BottomDrawer onClose={onClose} isOpen={isOpen}>
       <Text variant="h4" fontWeight="semiBold" mb={4}>
-        Need some help with your setup manual?
-      </Text>
-      <Text variant="bodyLineHeight" mb={4} color="neutral.c80">
-        Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de
-        Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo
-        eget Gal.
+        {t("syncOnboarding.helpDrawer.title")}
       </Text>
       <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
-        Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de
-        Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo
-        eget Gal.
+        {t("syncOnboarding.helpDrawer.description")}
       </Text>
       <Button type="main" mb={6} onPress={handleDocumentationPress}>
-        View our FAQs
+        {t("syncOnboarding.helpDrawer.docCta")}
       </Button>
       <Link Icon={ExternalLinkMedium} onPress={handleSupportPress}>
-        Speak to a human
+        {t("syncOnboarding.helpDrawer.supportCta")}
       </Link>
     </BottomDrawer>
   );

@@ -1,7 +1,9 @@
 import React, { useCallback } from "react";
 import { NativeModules } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
-import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
+import { useTranslation } from "react-i18next";
+
+import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { ScreenName } from "../../const";
 // TODO: to put OnboardingView in components/move it in root ?
 import OnboardingView from "../Onboarding/OnboardingView";
@@ -16,15 +18,19 @@ type Props = StackScreenProps<
 >;
 
 export const DeviceModelSelection = ({ navigation }: Props) => {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
 
   const setupNanoFTS = useCallback(() => {
     // Prompts user to enable bluetooth. Not necessary as next screen handles the ble requirement, but it smooths the transition
     NativeModules.BluetoothHelperModule.prompt()
-      .then(() => navigation.navigate(ScreenName.BleDevicesScanning as "BleDevicesScanning"))
+      .then(() =>
+        navigation.navigate(
+          ScreenName.BleDevicesScanning as "BleDevicesScanning",
+        ),
+      )
       .catch(() => {
-      // ignore
-    });
+        // ignore
+      });
   }, [navigation]);
 
   const setupNanoX = () => {};
@@ -32,13 +38,13 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
   return (
     <OnboardingView
       hasBackButton
-      title="Which device do you own ?"
-      subTitle="Choose which ledger wallet you want to set up with Ledger Live."
+      title={t("syncOnboarding.deviceSelection.title")}
+      subTitle={t("syncOnboarding.deviceSelection.subtitle")}
     >
       <DiscoverCard
-        title="nanoFTS"
+        title={t("syncOnboarding.deviceSelection.nanoFTS.title")}
         titleProps={{ variant: "h3" }}
-        subTitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        subTitle={t("syncOnboarding.deviceSelection.nanoFTS.description")}
         onPress={setupNanoFTS}
         cardProps={{ mx: 0 }}
         Image={
@@ -49,11 +55,11 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
           />
         }
       />
-    
+
       <DiscoverCard
-        title="Nano X"
+        title={t("syncOnboarding.deviceSelection.nanoX.title")}
         titleProps={{ variant: "h3" }}
-        subTitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        subTitle={t("syncOnboarding.deviceSelection.nanoX.description")}
         onPress={setupNanoX}
         cardProps={{ mx: 0 }}
         Image={
@@ -66,4 +72,4 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
       />
     </OnboardingView>
   );
-}
+};
