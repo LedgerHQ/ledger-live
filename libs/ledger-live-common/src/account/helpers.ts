@@ -247,7 +247,7 @@ export const getVotesCount = (
     case "tezos":
       return isAccountDelegating(account) ? 1 : 0;
     case "tron":
-      return (mainAccount as TronAccount)?.tronResources.votes.length || 0;
+      return (mainAccount as TronAccount)?.tronResources?.votes.length || 0;
     case "cosmos":
       return (
         (mainAccount as CosmosAccount)?.cosmosResources.delegations.length || 0
