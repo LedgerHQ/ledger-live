@@ -51,6 +51,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   const [error, setError] = useState(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [cancelled, setCancelled] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<String | null>(null);
 
   const scanSubscription = useRef<any>();
 
@@ -143,19 +144,22 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
   const selectAccount = useCallback(
     (account: Account) => {
-      dispatch(
-        replaceAccounts({
-          scannedAccounts,
-          selectedIds: [account.id],
-          renamings: {},
-        }),
-      );
-      navigation.navigate(ScreenName.ReceiveConfirmation, {
-        ...route.params,
-        accountId: account.id,
-      });
+      if (!selectedAccount) {
+        setSelectedAccount(account.id);
+        dispatch(
+          replaceAccounts({
+            scannedAccounts,
+            selectedIds: [account.id],
+            renamings: {},
+          }),
+        );
+        navigation.navigate(ScreenName.ReceiveConfirmation, {
+          ...route.params,
+          accountId: account.id,
+        });
+      }
     },
-    [dispatch, navigation, route.params, scannedAccounts],
+    [dispatch, navigation, route.params, scannedAccounts, selectedAccount],
   );
 
   const renderItem = useCallback(
