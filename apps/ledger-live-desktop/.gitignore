@@ -120,6 +120,7 @@ src/renderer/generated/
 tests/coverage/
 tests/artifacts/*
 !tests/artifacts/.gitkeep
+tests/utils/dummy-live-app/build
 
 # Yalc
 .yalc
