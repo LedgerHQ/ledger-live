@@ -34,7 +34,6 @@ const CustomButton = styled(Button)`
   padding-right: 14px;
 `;
 
-// TODO: Define props here
 export default function AccountSubHeader({ family, team }) {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const { t } = useTranslation();
