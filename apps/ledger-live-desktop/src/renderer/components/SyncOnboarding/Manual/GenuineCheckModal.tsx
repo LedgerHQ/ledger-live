@@ -20,16 +20,16 @@ const GenuineCheckModal = ({ isOpen, onClose }: Props) => {
         padding="40px"
       >
         <Text variant="h2" fontSize="20px" color="palette.primary.c80">
-          {t("syncOnboarding.manual.genuineCheckPopin.title")}
+          {t("syncOnboarding.manual.genuineCheckModal.title")}
         </Text>
         <Text variant="paragraph" fontSize="25px" textAlign="center">
-          {t("syncOnboarding.manual.genuineCheckPopin.paragraph1")}
+          {t("syncOnboarding.manual.genuineCheckModal.paragraph1")}
         </Text>
         <Text variant="paragraph" fontSize="18px" color="palette.neutral.c80" textAlign="center">
-          {t("syncOnboarding.manual.genuineCheckPopin.paragraph2")}
+          {t("syncOnboarding.manual.genuineCheckModal.paragraph2")}
         </Text>
         <Button variant="main" width="100%" onClick={onClose}>
-          {t("syncOnboarding.manual.genuineCheckPopin.checkDeviceButton")}
+          {t("syncOnboarding.manual.genuineCheckModal.checkDeviceButton")}
         </Button>
       </Flex>
     </Popin>

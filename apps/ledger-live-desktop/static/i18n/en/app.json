@@ -1073,20 +1073,18 @@
   },
   "syncOnboarding": {
     "manual": {
-      "verticalTimeline": {
-        "softwareCheckContent": {
-          "genuineCheck": {
-            "active": "Checking Nano",
-            "completed": "Nano is authentic"
-          },
-          "firmwareUpdate": {
-            "inactive": "Software check",
-            "active": "Checking for software updates",
-            "completed": "Software is up to date"
-          }
+      "softwareCheckContent": {
+        "genuineCheck": {
+          "active": "Checking Nano",
+          "completed": "Nano is authentic"
+        },
+        "firmwareUpdate": {
+          "inactive": "Software check",
+          "active": "Checking for software updates",
+          "completed": "Software is up to date"
         }
       },
-      "genuineCheckPopin": {
+      "genuineCheckModal": {
         "title": "Authenticity Check",
         "paragraph1": "Let's make sure your Nano is Authentic and safe to use",
         "paragraph2": "We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your Nano.",

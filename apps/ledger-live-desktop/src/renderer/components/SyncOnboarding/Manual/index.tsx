@@ -17,7 +17,7 @@ const SyncOnboardingManual = () => {
 
   const steps = [
     {
-      status: "completed",
+      status: "active",
       title: "Nano is connected",
       renderBody: () => (
         <Text>
@@ -26,7 +26,7 @@ const SyncOnboardingManual = () => {
       ),
     },
     {
-      status: "completed",
+      status: "inactive",
       title: "Set your PIN",
       renderBody: () => (
         <Text>
@@ -36,7 +36,7 @@ const SyncOnboardingManual = () => {
       estimatedTime: 120,
     },
     {
-      status: "completed",
+      status: "inactive",
       title: "Recovery phrase",
       renderBody: () => (
         <Text>{`Tap on the videos below to learn more about your secret recovery phrase`}</Text>
@@ -44,7 +44,7 @@ const SyncOnboardingManual = () => {
       estimatedTime: 300,
     },
     {
-      status: "active",
+      status: "inactive",
       title: "Software check",
       renderBody: () => (
         <SoftwareCheckContent genuineCheckStatus="active" firmwareUpdateStatus="inactive" />
@@ -62,14 +62,14 @@ const SyncOnboardingManual = () => {
   ];
 
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
-  const [isGenuineCheckPopinOpen, setGenuineCheckPopinOpen] = useState<boolean>(true);
+  const [isGenuineCheckModalOpen, setGenuineCheckModalOpen] = useState<boolean>(true);
 
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <GenuineCheckModal
-        isOpen={isGenuineCheckPopinOpen}
-        onClose={() => setGenuineCheckPopinOpen(false)}
+        isOpen={isGenuineCheckModalOpen}
+        onClose={() => setGenuineCheckModalOpen(false)}
       />
       <Flex width="100%" justifyContent="flex-end" mt={4} px={4}>
         <LangSwitcher />

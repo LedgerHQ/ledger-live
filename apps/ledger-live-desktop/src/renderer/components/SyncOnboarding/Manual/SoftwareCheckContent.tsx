@@ -94,10 +94,8 @@ const SoftwareCheckContent = ({
         isCompleted={genuineCheckStatus === Status.completed && true}
         text={
           genuineCheckStatus === Status.completed
-            ? t(
-                "syncOnboarding.manual.verticalTimeline.softwareCheckContent.genuineCheck.completed",
-              )
-            : t("syncOnboarding.manual.verticalTimeline.softwareCheckContent.genuineCheck.active")
+            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.completed")
+            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.active")
         }
       />
       <Bullet
@@ -106,14 +104,10 @@ const SoftwareCheckContent = ({
         isCompleted={firmwareUpdateStatus === Status.completed && true}
         text={
           firmwareUpdateStatus === Status.inactive
-            ? t(
-                "syncOnboarding.manual.verticalTimeline.softwareCheckContent.firmwareUpdate.inactive",
-              )
+            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.inactive")
             : firmwareUpdateStatus === Status.active
-            ? t("syncOnboarding.manual.verticalTimeline.softwareCheckContent.firmwareUpdate.active")
-            : t(
-                "syncOnboarding.manual.verticalTimeline.softwareCheckContent.firmwareUpdate.completed",
-              )
+            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.active")
+            : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.completed")
         }
       />
     </>
