@@ -1,12 +1,7 @@
 // @flow
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import type {
-  Currency,
-  CryptoCurrency,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/live-common/types/index";
+import type { Currency, CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import type {
   ValueChange,
   BalanceHistoryWithCountervalue,
@@ -21,13 +16,15 @@ import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 
 // $FlowFixMe
-import Button from "~/renderer/components/Button.ui.tsx";
+import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { useProviders } from "../exchange/Swap2/Form";
+
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   isAvailable: boolean,
@@ -54,6 +51,9 @@ export default function AssetBalanceSummaryHeader({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
+
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   const cvUnit = counterValue.units[0];
   const data = useMemo(
@@ -100,14 +100,28 @@ export default function AssetBalanceSummaryHeader({
 
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        mode: "onRamp",
-        currencyId: currency.id,
-      },
-    });
-  }, [currency, history]);
+    // PTX smart routing redirect to live app or to native implementation
+    if (ptxSmartRouting?.enabled) {
+      const params = {
+        currency: currency?.id,
+        mode: "buy", // buy or sell
+      };
+
+      history.push({
+        // replace 'multibuy' in case live app id changes
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+        state: params,
+      });
+    } else {
+      history.push({
+        pathname: "/exchange",
+        state: {
+          mode: "onRamp",
+          currencyId: currency.id,
+        },
+      });
+    }
+  }, [currency.id, history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
     setTrackingSource("asset header actions");

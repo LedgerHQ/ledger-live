@@ -1,6 +1,11 @@
 import { Observable } from "rxjs";
 import { PublicKey } from "@hashgraph/sdk";
-import { Account, DeviceId, Operation, SignOperationEvent } from "../../types";
+import {
+  Account,
+  DeviceId,
+  Operation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { Transaction } from "./types";
 import { buildUnsignedTransaction } from "./api/network";

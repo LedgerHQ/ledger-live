@@ -203,6 +203,12 @@ class BitcoinLikeStorage implements IStorage {
     this.accountIndex = {};
     this.unspentUtxos = {};
     this.spentUtxos = {};
+    data.txs.forEach((tx) => {
+      // migration from the field "hash" to "id" to adapt old data format
+      if (!tx.id && tx.hash) {
+        tx.id = tx.hash;
+      }
+    });
     this.appendTxs(data.txs);
     this.addressCache = data.addressCache;
     Base.addressCache = { ...Base.addressCache, ...this.addressCache };

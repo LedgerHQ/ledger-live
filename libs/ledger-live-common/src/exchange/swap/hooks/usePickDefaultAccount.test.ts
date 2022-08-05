@@ -3,8 +3,9 @@ import BigNumber from "bignumber.js";
 
 import { usePickDefaultAccount } from "./usePickDefaultAccount";
 import { genAccount } from "../../../mock/account";
-import type { Account, CryptoCurrency } from "../../../types";
 import { getCryptoCurrencyById } from "../../../currencies";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
   let id = 0;

@@ -19,6 +19,8 @@ import debounce from "lodash/debounce";
 import logger from "~/logger";
 import sentry from "~/sentry/main";
 
+let unsubscribeSentry;
+
 app.allowRendererProcessReuse = false;
 
 const gotLock = app.requestSingleInstanceLock();
@@ -49,6 +51,10 @@ if (!gotLock) {
   });
 }
 
+app.on("window-all-closed", () => {
+  if (unsubscribeSentry) unsubscribeSentry();
+});
+
 app.on("activate", () => {
   const w = getMainWindow();
   if (w) {
@@ -74,8 +80,24 @@ app.on("will-finish-launching", () => {
 });
 
 app.on("ready", async () => {
+  app.dirname = __dirname;
   if (__DEV__) {
     await installExtensions();
+  }
+
+  db.init(userDataDirectory);
+
+  const settings = await db.getKey("app", "settings");
+  const user = await db.getKey("app", "user");
+
+  const userId = user?.id;
+  if (userId) {
+    setUserId(userId);
+    unsubscribeSentry = sentry(() => {
+      const value = getSentryEnabled();
+      if (value === null) return settings?.sentryLogs;
+      return value;
+    }, userId);
   }
 
   /**
@@ -95,8 +117,6 @@ app.on("ready", async () => {
     );
   });
 
-  db.init(userDataDirectory);
-  app.dirname = __dirname;
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
     return db.getKey(ns, keyPath, defaultValue);
   });
@@ -147,19 +167,6 @@ app.on("ready", async () => {
   Menu.setApplicationMenu(menu);
 
   const windowParams = await db.getKey("windowParams", "MainWindow", {});
-  const settings = await db.getKey("app", "settings");
-  const user = await db.getKey("app", "user");
-
-  const userId = user?.id;
-  if (userId) {
-    setUserId(userId);
-    sentry(() => {
-      const value = getSentryEnabled();
-      if (value === null) return settings?.sentryLogs;
-      return value;
-    }, userId);
-  }
-
   const window = await createMainWindow(windowParams, settings);
 
   window.on(

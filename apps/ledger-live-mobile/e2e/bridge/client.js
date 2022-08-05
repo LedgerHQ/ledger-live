@@ -2,7 +2,7 @@
 import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs/Subject";
-import type { AccountRaw } from "@ledgerhq/live-common/types/index";
+import type { AccountRaw } from "@ledgerhq/types-live";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
 import { setAccounts } from "../../src/actions/accounts";

@@ -3,12 +3,15 @@ import { map } from "rxjs/operators";
 import { getValidators } from "./validators";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction, AccountLike, Account } from "../../types";
+import type { Transaction } from "../../generated/types";
+import { isAccount } from "../../account/index";
 import { getCryptoCurrencyById, formatCurrencyUnit } from "../../currencies";
 import {
   SidecarValidatorsParamAddresses,
   SidecarValidatorsParamStatus,
 } from "./api/sidecar.types";
+import { AccountLike } from "@ledgerhq/types-live";
+import { PolkadotAccount } from "./types";
 const options = [
   {
     name: "mode",
@@ -136,10 +139,6 @@ const polkadotValidators = {
     ),
 };
 
-function isAccountType(account: AccountLike): account is Account {
-  return (account as Account).type === "Account";
-}
-
 function inferTransactions(
   transactions: Array<{
     account: AccountLike;
@@ -151,8 +150,11 @@ function inferTransactions(
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "polkadot", "polkadot family");
 
-    if (isAccountType(account)) {
-      invariant(account.polkadotResources, "unactivated account");
+    if (isAccount(account)) {
+      invariant(
+        (account as PolkadotAccount).polkadotResources,
+        "unactivated account"
+      );
     }
 
     const validators: string[] = opts["validator"] || [];
@@ -164,8 +166,8 @@ function inferTransactions(
       validators,
       era: opts.era || null,
       rewardDestination: opts.rewardDestination || null,
-      numSlashingSpans: isAccountType(account)
-        ? account.polkadotResources?.numSlashingSpans
+      numSlashingSpans: isAccount(account)
+        ? (account as PolkadotAccount).polkadotResources?.numSlashingSpans
         : null,
     };
   });

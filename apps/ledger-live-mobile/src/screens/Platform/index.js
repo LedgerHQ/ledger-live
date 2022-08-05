@@ -4,7 +4,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { useSelector } from "react-redux";

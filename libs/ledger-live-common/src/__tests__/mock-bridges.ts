@@ -7,7 +7,7 @@ import { getAccountBridge, getCurrencyBridge } from "../bridge";
 import { setEnv } from "../env";
 import { getCryptoCurrencyById } from "../currencies";
 import { toAccountRaw, flattenAccounts } from "../account";
-import { Account } from "../types";
+import type { Account } from "@ledgerhq/types-live";
 jest.setTimeout(120000);
 const mockedCoins = [
   "bitcoin",

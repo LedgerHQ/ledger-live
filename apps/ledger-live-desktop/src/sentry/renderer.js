@@ -1,16 +1,22 @@
 // @flow
 
 import * as Sentry from "@sentry/electron/renderer";
+import { BrowserTracing } from "@sentry/tracing";
 import user from "./../helpers/user";
 import { init, setShouldSendCallback } from "./install";
 
-const available = init(Sentry);
+const available = init(Sentry, {
+  integrations: [new BrowserTracing()],
+});
 
 export default async (shouldSendCallback: () => boolean) => {
   if (!available) return;
   setShouldSendCallback(shouldSendCallback);
   const u = await user();
   Sentry.setUser({ id: u.id, ip_address: null });
+  return () => {
+    setShouldSendCallback(() => false);
+  };
 };
 
 export const captureException = (e: Error) => {
@@ -23,4 +29,8 @@ export const captureBreadcrumb = (o: *) => {
 
 export const setTags = (tags: *) => {
   Sentry.setTags(tags);
+};
+
+export const getSentryIfAvailable = (): typeof Sentry | null => {
+  return available ? Sentry : null;
 };

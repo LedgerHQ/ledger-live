@@ -2,7 +2,7 @@ import { Observable, from, of, EMPTY } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import invariant from "invariant";
 import bs58 from "bs58";
-import type { Account, DerivationMode, CryptoCurrency } from "../../types";
+import type { DerivationMode } from "../../derivation";
 import type { Result } from "../../hw/getAddress/types";
 import { hash256, hash160 } from "../../crypto";
 import {
@@ -13,6 +13,10 @@ import {
 } from "../../derivation";
 import { withDevice } from "../../hw/deviceAccess";
 import getAddress from "../../hw/getAddress";
+import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { decodeAccountId } from "../../account/accountId";
+
 export type AccountDescriptor = {
   internal: string;
   external: string;
@@ -57,7 +61,8 @@ export function inferDescriptorFromAccount(
   account: Account
 ): AccountDescriptor | null | undefined {
   if (account.currency.family !== "bitcoin") return;
-  const { xpub, derivationMode, seedIdentifier, currency, index } = account;
+  const { id, derivationMode, seedIdentifier, currency, index } = account;
+  const xpub = decodeAccountId(id).xpubOrAddress;
   const fingerprint = makeFingerprint(
     compressPublicKeySECP256(Buffer.from(seedIdentifier, "hex"))
   );

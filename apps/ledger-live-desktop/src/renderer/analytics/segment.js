@@ -15,9 +15,6 @@ import {
 } from "~/renderer/reducers/settings";
 import type { State } from "~/renderer/reducers";
 
-// load analytics
-import "./inject-in-window";
-
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 
 const os = require("os");
@@ -57,7 +54,7 @@ const extraProperties = store => {
     appVersion: __APP_VERSION__,
     language,
     region,
-    environment: __DEV__ ? "development" : "production",
+    environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
     systemLanguage: systemLocale.language,
     systemRegion: systemLocale.region,
     osType,
@@ -71,7 +68,8 @@ const extraProperties = store => {
 let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
 
 export const start = async (store: *) => {
-  if (!user || process.env.MOCK || process.env.PLAYWRIGHT_RUN) return;
+  if (!user || (!process.env.SEGMENT_TEST && (process.env.MOCK || process.env.PLAYWRIGHT_RUN)))
+    return;
   const { id } = await user();
   logger.analyticsStart(id, extraProperties(store));
   storeInstance = store;

@@ -1,6 +1,6 @@
 /* @flow */
 import React from "react";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
 
 import RippleFeeRow from "./RippleFeeRow";

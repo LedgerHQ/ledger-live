@@ -1,12 +1,12 @@
 // @flow
 import { useCallback } from "react";
-import type { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
+import type { Dispatch } from "redux";
 import { useTranslation } from "react-i18next";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
-import type { Currency } from "@ledgerhq/live-common/types/index";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import type { SettingsState as Settings } from "~/renderer/reducers/settings";
 import {

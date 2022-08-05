@@ -112,6 +112,7 @@ function readPackage(pkg, context) {
       // Crashes ios build if removed /!\
       addDependencies("react-native", {
         mkdirp: "*",
+        yargs: "*",
       }),
       addPeerDependencies("@react-native-community/cli", {
         "metro-resolver": "*",
@@ -146,6 +147,11 @@ function readPackage(pkg, context) {
       }),
       addDependencies("react-native-locale", {
         fbjs: "*",
+      }),
+      addDependencies("postcss-loader", {
+        "postcss-flexbugs-fixes": "*",
+        "postcss-preset-env": "*",
+        "postcss-normalize": "*",
       }),
       addPeerDependencies("any-observable", {
         rxjs: "*",

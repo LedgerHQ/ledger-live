@@ -3,8 +3,8 @@
 import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
-import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FeeSliderField from "~/renderer/components/FeeSliderField";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
