@@ -137,7 +137,7 @@ const osmosis: AppSpec<Transaction> = {
           "already enough delegations"
         );
         const data = getCurrentOsmosisPreloadData();
-        const count = 1 + Math.floor(2 * Math.random());
+        const count = 1; // number of delegations to perform in a single tx
         let remaining = getMaxDelegationAvailable(account, count)
           .minus(minimalAmount.times(2))
           .times(0.5 * Math.random());
