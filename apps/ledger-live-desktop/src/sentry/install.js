@@ -11,7 +11,7 @@ import "../env";
 let shouldSendCallback = () => true;
 
 let productionBuildSampleRate = 0.2;
-let tracesSampleRate = 0.1;
+let tracesSampleRate = 0.0005;
 
 if (process.env.SENTRY_SAMPLE_RATE) {
   const v = parseFloat(process.env.SENTRY_SAMPLE_RATE);
