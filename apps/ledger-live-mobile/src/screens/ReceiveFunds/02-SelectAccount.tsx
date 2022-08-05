@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -24,6 +24,7 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
   const currency = route.params?.currency;
   const routerRoute = useRoute();
   const { t } = useTranslation();
+  const [selectedAccount, setSelectedAccount] = useState<String | null>(null);
 
   const accounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
@@ -57,17 +58,26 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
 
   const selectAccount = useCallback(
     (account: AccountLike) => {
-      track("account_clicked", {
-        currency: currency.name,
-        screen: routerRoute.name,
-      });
-      navigation.navigate(ScreenName.ReceiveConfirmation, {
-        ...route.params,
-        accountId: account?.parentId || account.id,
-        createTokenAccount: account?.triggerCreateAccount,
-      });
+      if (!selectedAccount) {
+        setSelectedAccount(account.id);
+        track("account_clicked", {
+          currency: currency.name,
+          screen: routerRoute.name,
+        });
+        navigation.navigate(ScreenName.ReceiveConfirmation, {
+          ...route.params,
+          accountId: account?.parentId || account.id,
+          createTokenAccount: account?.triggerCreateAccount,
+        });
+      }
     },
-    [currency.name, navigation, route.params, routerRoute.name],
+    [
+      currency.name,
+      navigation,
+      route.params,
+      routerRoute.name,
+      selectedAccount,
+    ],
   );
 
   const renderItem = useCallback(
