@@ -1084,6 +1084,23 @@
   },
   "syncOnboarding": {
     "manual": {
+      "softwareCheckContent": {
+        "genuineCheck": {
+          "active": "Checking Nano",
+          "completed": "Nano is authentic"
+        },
+        "firmwareUpdate": {
+          "inactive": "Software check",
+          "active": "Checking for software updates",
+          "completed": "Software is up to date"
+        }
+      },
+      "genuineCheckModal": {
+        "title": "Authenticity Check",
+        "paragraph1": "Let's make sure your Nano is Authentic and safe to use",
+        "paragraph2": "We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your Nano.",
+        "checkDeviceButton": "Check device"
+      },
       "helpDrawer": {
         "title": "Need some help with your setup manual?",
         "description": "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
