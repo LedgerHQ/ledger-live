@@ -7,7 +7,7 @@ export type Props = {
   onClose: () => void;
 };
 
-const GeniuneCheckPopin = ({ isOpen, onClose }: Props) => {
+const GenuineCheckModal = ({ isOpen, onClose }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -36,4 +36,4 @@ const GeniuneCheckPopin = ({ isOpen, onClose }: Props) => {
   );
 };
 
-export default GeniuneCheckPopin;
+export default GenuineCheckModal;

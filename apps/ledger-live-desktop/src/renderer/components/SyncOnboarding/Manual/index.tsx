@@ -8,7 +8,7 @@ import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
-import GeniuneCheckPopin from "./GeniuneCheckPopin";
+import GenuineCheckModal from "./GenuineCheckModal";
 
 import SoftwareCheckContent from "./SoftwareCheckContent";
 
@@ -62,14 +62,14 @@ const SyncOnboardingManual = () => {
   ];
 
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
-  const [isGeniuneCheckPopinOpen, setGeniuneCheckPopinOpen] = useState<boolean>(true);
+  const [isGenuineCheckPopinOpen, setGenuineCheckPopinOpen] = useState<boolean>(true);
 
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
-      <GeniuneCheckPopin
-        isOpen={isGeniuneCheckPopinOpen}
-        onClose={() => setGeniuneCheckPopinOpen(false)}
+      <GenuineCheckModal
+        isOpen={isGenuineCheckPopinOpen}
+        onClose={() => setGenuineCheckPopinOpen(false)}
       />
       <Flex width="100%" justifyContent="flex-end" mt={4} px={4}>
         <LangSwitcher />
