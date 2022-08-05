@@ -1,11 +1,8 @@
 // @flow
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import type {
-  Action,
-  Device,
-} from "@ledgerhq/live-common/lib/hw/actions/types";
-import { DeviceNotOnboarded } from "@ledgerhq/live-common/lib/errors";
+import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -23,9 +20,11 @@ import {
   renderInWrongAppForAccount,
   renderError,
   renderBootloaderStep,
+  renderExchange,
   renderConfirmSwap,
   renderConfirmSell,
   LoadingAppInstall,
+  AutoRepair,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -72,6 +71,9 @@ export default function DeviceAction<R, H, P>({
     requiresAppInstallation,
     inWrongDeviceForAccount,
     onRetry,
+    repairModalOpened,
+    onAutoRepair,
+    closeRepairModal,
     deviceSignatureRequested,
     deviceStreamingProgress,
     displayUpgradeWarning,
@@ -81,6 +83,9 @@ export default function DeviceAction<R, H, P>({
     initSwapResult,
     signMessageRequested,
     allowOpeningGranted,
+    completeExchangeStarted,
+    completeExchangeResult,
+    completeExchangeError,
     initSellRequested,
     initSellResult,
     initSellError,
@@ -109,6 +114,19 @@ export default function DeviceAction<R, H, P>({
       colors,
       theme,
     });
+  }
+
+  if (repairModalOpened && repairModalOpened.auto) {
+    return (
+      <AutoRepair
+        t={t}
+        onDone={closeRepairModal}
+        device={device}
+        navigation={navigation}
+        colors={colors}
+        theme={theme}
+      />
+    );
   }
 
   if (requestQuitApp) {
@@ -170,8 +188,30 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
+  if (
+    completeExchangeStarted &&
+    !completeExchangeResult &&
+    !completeExchangeError
+  ) {
+    return renderExchange({
+      // $FlowFixMe
+      exchangeType: request?.exchangeType,
+      t,
+      device,
+      theme,
+    });
+  }
+
   if (initSwapRequested && !initSwapResult && !initSwapError) {
-    return renderConfirmSwap({ t, device: selectedDevice, colors, theme });
+    return renderConfirmSwap({
+      t,
+      device: selectedDevice,
+      colors,
+      theme,
+      provider:
+        (request && request.exchangeRate && request.exchangeRate.provider) ||
+        undefined,
+    });
   }
 
   if (initSellRequested && !initSellResult && !initSellError) {
@@ -205,6 +245,8 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (!isLoading && error) {
+    /** @TODO Put that back if the app is still crashing */
+    // track("DeviceActionError", error);
     onError && onError(error);
 
     // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
@@ -252,7 +294,7 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (deviceInfo && deviceInfo.isBootloader) {
-    return renderBootloaderStep({ t, colors, theme });
+    return renderBootloaderStep({ onAutoRepair, t });
   }
 
   if (request && device && deviceSignatureRequested) {

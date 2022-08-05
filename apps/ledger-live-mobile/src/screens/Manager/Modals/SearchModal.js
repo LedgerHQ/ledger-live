@@ -2,13 +2,13 @@ import React, { useState, useMemo, useCallback, useRef } from "react";
 import { View, StyleSheet, Platform, VirtualizedList } from "react-native";
 import ReactNativeModal from "react-native-modal";
 import { Trans, useTranslation } from "react-i18next";
-import type { Action, State } from "@ledgerhq/live-common/lib/apps";
-import type { App } from "@ledgerhq/live-common/lib/types/manager";
-import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
+import type { Action, State } from "@ledgerhq/live-common/apps/index";
+import type { App } from "@ledgerhq/live-common/types/manager";
+import { useSortedFilteredApps } from "@ledgerhq/live-common/apps/filtering";
 import {
   listTokens,
   isCurrencySupported,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { installAppFirstTime } from "../../../actions/settings";

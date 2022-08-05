@@ -27,4 +27,4 @@ translations:
   - apps/ledger-live-mobile/src/locales/**/*
 
 screenshots:
-  - apps/ledger-live-desktop/tests/specs/**/*
+  - apps/ledger-live-desktop/tests/specs/**/*.png

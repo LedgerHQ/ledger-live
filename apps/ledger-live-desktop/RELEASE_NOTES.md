@@ -1,17 +1,57 @@
+# 2.45.0
+
+We're back with another roundup of handy new features and improvements.
+
+### 🚀 Features
+
+**100 native Cardano tokens** made their way to Ledger Live, including WMT, DANA, and ADAX. You can find the full list [here](https://www.ledger.com/supported-crypto-assets).  
+Speaking of new tokens, we’ve added support of USDC on the Stellar blockchain.  
+Looking to send **HBAR** from Ledger Live to an exchange? As of today, Ledger Live allows you to **add a memo** to help identify a transaction and credit the proper account.  
+Delegating **Solana** or **Cosmos stake** just got easier—the nifty new search bar helps you **find validators easily and quickly**.
+
+# 2.44.0
+
+Ledger and FTX joining forces, RBF for Bitcoin transactions, a few bug fixes, and more. Here are some powerful new Ledger Live features heading your way.
+
+### 🚀 Features
+
+Swap crypto on FTX without leaving Ledger Live. Access to FTX swapping options to grow and diversify your portfolio while your assets remain fully secure in a Ledger hardware wallet.
+Gone are the days of stuck Bitcoin transactions. With the enhanced Bitcoin RBF (Replace-by-Fee) feature, you can increase network fees and speed up unconfirmed transactions.
+Did you know that the floor price is one of the most important metrics for determining the value of an NFT collection? In this spirit, Ledger Live will now display an NFT’s floor price next to the collection name.
+
+### 🐛 Fixes
+
+There were a few little bugs that caused some trouble. For instance, several users reported issues when connecting to Rarible or OpenSea with WalletConnect. We’ve patched this up.
+
+# 2.43.0
+
+We’re constantly adding new integrations and working on performance improvements to make Ledger Live a world-class experience. Here is what’s new in this release.
+
+### 🚀 Features
+
+We’re excited to announce that Ledger Live is launching support for Cardano, one of the biggest cryptocurrencies based on its total market value. Now you can send and receive Cardano’s native token, ADA.
+
+### 🐛 Fixes
+
+We’ve done some bug fixes and made a few small but important changes behind the curtain.
+
 # v2.42.0
+
 New coins, Solana staking improvements, NFT videos, and more. Here is what's new in Ledger Live Desktop and what we're gradually rolling out.
 
 ### 🚀 Features
-- Say hello to HEDERA 👋. Starting today, Ledger Live supports HEDERA. Send and receive HBAR at your fingertips.
-- NFTs are getting traction in Ledger Live. In addition to basic images, you can now explore NFTs with animated media. 
 
+- Say hello to HEDERA 👋. Starting today, Ledger Live supports HEDERA. Send and receive HBAR at your fingertips.
+- NFTs are getting traction in Ledger Live. In addition to basic images, you can now explore NFTs with animated media.
 
 ### 🐛 Fixes
+
 - This release includes noteworthy improvements to Solana staking. Along with Available balance, now you can see your Staked balance as well. We've also removed validators with 100% commission and made some cosmetic fixes to error messages and notifications.
 
-
 # v2.41.3
+
 ## 🚀 Features
+
 - Solana staking
 - Polygon NFTs
 - Filtering of spam NFT collections
@@ -20,83 +60,107 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Goerli testnet for ETH 2.0 staking
 
 ## 🐛 Fixes
+
 - Issue when adding BCH accounts
 - WalletConnect transaction flow improvement
 - Performance improvements and minor issues
-      
+
 # v2.40.4
+
 ## 🐛 Fixes
+
 - Fix nano disconnection issues
-      
+
 # v2.40.2
+
 ## 🐛 Fixes
+
 - Fix nano disconnection issue
 
 ## 🔧 Support :
+
 - Add missing translations
-      
+
 # v2.39.2
+
 ## 🐛 Fixes
+
 - Redirecting non-onboarded Nano S Plus users to onboarding
-      
+
 # v2.38.3
+
 ## 🐛 Fixes
+
 - Bug fixes and enhancements for various Bitcoin forks
-      
+
 # v2.38.2
+
 ## 🐛 Fixes
+
 - Missing translations
 - Issue if you were using Dusk mode previously
 - Plugins in the manager now redirect to the discover section
-      
+
 # v2.37.2
+
 ## 🐛 Fixes
+
 - Fixes Bitcoin legacy synchronisation when Bitcoin Cash or Bitcoin Gold 'unsplit' accounts exists
-      
+
 # v2.37.1
+
 ## 🐛 Fixes
+
 - Fixes on issues with ETH tokens
 - Adding a missing warning message on BTC account creation
 - Adding a missing label in Sell flow
-      
+
 # v2.36.3
+
 ## 🐛 Fixes
- - Fixing checksum issue on 2.36.2
-      
+
+- Fixing checksum issue on 2.36.2
+
 # v2.36.2
+
 ## 🐛 Fixes
+
 - Ledger Live App icon was not displaying properly on some macOS versions
-      
+
 # v2.36.1
+
 ## 🐛 Fixes
+
 - The Manager tab doesn't force quit applications on the device anymore.
 - Polygon icon fix
 - Improvements of NFT Management experimental feature
 
-      
 # v2.36.0
+
 ## 🚀 Features
+
 - Elrond Integration in Ledger Live
 - Polygon Integration in Ledger Live
 - Swap with 1Inch directly in Ledger Live
 
-
 ## 🐛 Fixes
+
 - The Manager tab doesn't force quit applications on the device anymore.
 
-      
 # v2.35.2
+
 ## 🐛 Fixes
 
 - Hide unsupported tokens
 
-      
 # v2.35.1
+
 ## 🐛 Fixes
 
-- Fixed overlapping language discoverability pop-up 
-      
+- Fixed overlapping language discoverability pop-up
+
 # v2.35.0
+
 ## 🚀 Features
 
 - Taproot is now supported in Ledger Live (Experimental feature)!
@@ -108,22 +172,24 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Polkadot support restored
 - Status banner removal
 - Bitcoin support improvements (Exprimental feature)
-      
+
 # v2.34.4
+
 - Upgrade Stellar SDK to support Protocol 18
-      
+
 # v2.34.3
+
 ## 🐛 Fixes
 
 - Polkadot fix
-      
+
 # v2.34.2
+
 ## 🚀 Features
 
 - Improved Swap UX!
 - Simplified firmware update flow starting from version 2.0
 - Troubleshoot USB errors on Live
-
 
 ## 🐛 Fixes
 
@@ -132,47 +198,51 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Enhanced behaviour when multiple announcements are triggered
 - Assets without a currency conversion are highlighted
 - Coin-specific service status updates only appear if Live holds those accounts
-      
+
 # v2.33.1
+
 ## 🚀 Features
 
 - Added information drawer for every Live apps
 - Update banner for outdated firmware version
 - Added alert when price is not available
 
-
 ## 🐛 Fixes
 
 - Fixed dead links
 - Improved localized experience
 - Fixed duplicate token balance
-      
+
 # v2.32.2
+
 ## 🚀 Features
 
 - Swap with Wyre for U.S. customers!
 - Live now supports BSC! Send and receive them today!
 - Stake your ETH on Lido to migrate from ETH 1 to ETH 2.
 
-
 ## 🐛 Fixes
 
 - Wording improvements
-- Better error handling for outdated firmware 
+- Better error handling for outdated firmware
 - Removed memo input on XLM integration
 - Fixes build for some Linux distributions (GLIBCXX issue)
-      
+
 # v2.31.1
+
 ## 🚀 Features
+
 - View your NFTs on rainbow.me integration on the Discover section
 - Zerion now on Live's Discover section as well
 - Update banner available globally throughout the application
 - Support URI scheme on Linux
 
 ## 🐛 Fixes
+
 - Polkadot operations better handled
-      
+
 # v2.30.0
+
 ## 🚀 Features
 
 - Browse our web3 apps directly from Live's catalog
@@ -185,8 +255,9 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 
 - No more payout fees in the native swap and UX improvements
 - Hiding balance does not hide fees anymore
-      
+
 # v2.29.0
+
 ## 🚀 Features
 
 - Swap with Paraswap on the Ethereum chain.
@@ -197,7 +268,6 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - New button layout in the account page.
 - Inline app installation added to experimental settings. Enable to try it!
 
-
 ## 🐛 Fixes
 
 - Improved porfolio performance.
@@ -206,14 +276,14 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Cosmos and Polkadot fixes.
 - Scroll removed from status side drawer.
 - Fixed Dash glitches.
-      
+
 # v2.26.1
+
 ## 🚀 Features
 
 - Added icons of major cryptocurrencies.
 - Operation exports include a "select all" and our provider's countervalues.
 - Operations details now shows countervalue at today's rate and at the time of the operations.
-
 
 ## 🐛 Fixes
 
@@ -221,8 +291,9 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Improved BUY experience without a device.
 - Fixed multiple issues on Polkadot.
 - Refactored our alert system.
-      
+
 # v2.25.1
+
 ## 🚀 Features
 
 - BUY new assets: DOGE, DOT, LTC, COMP and more are available!
@@ -230,13 +301,13 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Swap crypto with floating rates (not available in some countries, including the US).
 - Address format tag on BTC(-based) accounts. New accounts are Native Segwit by default, Legacy supported.
 
-
 ## 🐛 Fixes
 
 - Available balance during DOT bonding excludes future nomination fees.
 - Minor improvements in user experience.
-      
+
 # v2.24.0
+
 ## 🐛 Fixes
 
 - Fixed error when adding an account.
@@ -246,14 +317,14 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Currencies now sorted when searching.
 - Cosmos "insufficient funds" send bug fixed.
 - Upgraded XRP endpoint to xrpcluster.com
-      
+
 # v2.23.0
+
 ## 🚀 Features
 
 - Polkadot is Live! Add your account to send and stake DOT.
 - Buy crypto without your Ledger device!
 - Cosmos migrated to Stargate update. Cosmos transactions made before the update are no longer displayed.
-
 
 ## 🐛 Fixes
 
@@ -261,8 +332,9 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Fixed weekly chart that looked flat.
 - Dropped ETH transactions are not stuck as pending anymore.
 - Better error format for Swap.
-      
+
 # v2.21.3
+
 ## 🚀 Features
 
 - Various improvements in user experience.
@@ -273,8 +345,9 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Fixed fiat value for many tokens including UNI.
 - Issue with new Ethereum accounts due to API is now fixed.
 - Fixed swap status, tooltips and icons.
-      
+
 # v2.20.0
+
 ## 🐛 Fixes
 
 - All known countervalue bugs are fixed!
@@ -292,8 +365,9 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Added back button when onboarding a device from settings.
 - Added opened loans to Lend page.
 - Linux app icon fixed thanks to community member @herandol!
-      
+
 # v2.19.0
+
 ## 🚀 Features
 
 - New onboarding! Added education on core crypto concepts for new comers.
@@ -307,8 +381,9 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Client-side countervalue bug fixes. Remaining latency to improve while we scale our infra.
 - Fixed Algorand and Cosmos earn reward flow.
 - Removed negative gains when issuing a supply on Compound.
-      
+
 # v2.18.0
+
 ## Features
 
 - Complete rework of countervalues bringing many improvements.
@@ -322,20 +397,21 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Fixed regression on update banner.
 - Improved logs for better support troubleshooting.
 - ALGO, TRON, and XRP performance improvements.
-      
+
 # v2.17.1
+
 ## 🚀 Features
 
 - Sell Bitcoin through our partner.
 - Added countervalues to the summary when sending crypto.
 
-
 ## 🐛 Fixes
 
 - Remove BCH fork banner.
 - Various improvements in user experience.
-      
+
 # v2.16.0
+
 ## 🚀 Features
 
 - Lend your assets with Compound! Approve your account and deposit stablecoins on the protocol to earn interest.
@@ -350,8 +426,9 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Improved default gas price on Ethereum transactions.
 - Complete switch to Ethereum.js which improves stability.
 - Fixed Tron synchronisation issues.
-      
+
 # v2.15.0
+
 ## 🚀 Features
 
 - Apps open automatically with your consent. No more looking for the right app!
@@ -366,12 +443,13 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Fixed an infinite loop in device actions in some cases.
 - Fixes SWAP operation detail crash on ERC-20s.
 - Various improvements in user experience.
-      
+
 # v2.14.0
+
 ## 🚀 Introducing SWAP in Ledger Live!
 
-- Swap one crypto asset for another directly from your Ledger accounts. 
-- With end-to-end security, swapping is both easy and secure. 
+- Swap one crypto asset for another directly from your Ledger accounts.
+- With end-to-end security, swapping is both easy and secure.
 - Updated contract address for OCEAN and added UNI.
 
 ## 🐛 Fixes
@@ -380,8 +458,9 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Fixed caching issues causing incorrect operation details.
 - URI scheme fixes.
 - Minor improvements in user experience.
-      
+
 # v2.13.0
+
 ## 🎊 New features
 
 - Added memo to the summary when sending Stellar, XRP and Cosmos
@@ -395,24 +474,28 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Send max glitch fixed on Tezos, Stellar, Cosmos, Tron and ERC-20s
 - Minor improvements in user experience
 - Dev tool fixes
-      
+
 # v2.11.1
+
 ## 🎊 New features
+
 - Added support for Algorand (ALGO) assets directly in Ledger Live!
 - Manage your Algorand accounts, send, receive ALGO, and earn rewards!
 - Coin Control support for Bitcoin and Bitcoin-based assets in the send flow.
-- Full Bitcoin Cash CashAddr support, now used for receiving addresses and in operation details.  
+- Full Bitcoin Cash CashAddr support, now used for receiving addresses and in operation details.
 - Improved crypto and fiat currency formatting.
 - Added operation type in operation details (Send, Receive, Stake, etc.).
 - Reformatted the identifier displayed during a firmware update to make it easier to verify.
 
 ## 🐛 Fixes
+
 - Multiple UI bugs on Cosmos and Tron integration.
 - Minor slider bug during gas limit selection.
 - Fixed banner button and position.
 - Fixed account name overflow in title bar breadcrumbs.
-      
+
 # v2.10.0
+
 ## 🎊 Features
 
 - BCH: sending to cashaddr addresses is now supported
@@ -427,8 +510,8 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 
 - Various UI and wording improvements
 
-      
 # v2.9.0
+
 ## New features
 
 - Buy Crypto allows USDT (ERC20) and Stellar
@@ -442,20 +525,24 @@ New coins, Solana staking improvements, NFT videos, and more. Here is what's new
 - Unification of Cosmos operations details
 - Cosmos/Tron UI uniformisation
 - Native SegWit comes first in the add account flow
-      
+
 # v2.8.0
-### 🔵  Manager update badge
+
+### 🔵 Manager update badge
 
 Added a blue notification badge indicating that firmware or app updates are available in the Manager.
-      
+
 # v2.7.0
+
 ## Features
+
 - Firmware updates: Apps will be uninstalled and reinstalled automatically
 - New indicator to inform the balance is not yet confirmed when an operation is still pending confirmation
 - New warning that displays each time you use an outdated app
 - Indication when a device has an outdated firmware
 
 ## Bug fixes
+
 - Ethereum: Better gasLimit estimation to fix “out of gas” issues
 - Fix on XRP pending operation to have a wrong transaction hash displayed
 - Fix on Ethereum Classic balance and amount precision issue
@@ -471,33 +558,37 @@ Added a blue notification badge indicating that firmware or app updates are avai
 
 - Wording rework
 
-
-
-      
 # v2.6.0
+
 ## 🎊 NEW! EARN COSMOS REWARDS WHILE HOLDING
+
 - Delegate your Cosmos (ATOM) assets to earn staking rewards directly in Ledger Live. Learn more about Cosmos staking
 - Manage your Cosmos accounts
 - Send and receive your coins
 
 ## Bug fixes
+
 - Fixes a false positive Kaspersky antivirus detection
 
 ## Others
+
 - Tezos bakers list update
 
-      
 # v2.5.0
-##  💳 Buy crypto directly from Ledger Live
+
+## 💳 Buy crypto directly from Ledger Live
+
 You only need one place to buy, secure and manage your crypto
+
 ## 🐞 Bug fixes
+
 Error messages during synchronization issues
 Access the manager from the add account flow
 Fixed minor display bugs in Tron voting
-Fixed minor interface bugs 
+Fixed minor interface bugs
 
-      
 # v2.4.1
+
 **Please update your Ledger Nano X/S applications for an important update. [Read more](https://support.ledger.com/hc/en-us/articles/360014191540-Massive-transaction-fees-in-BTC-and-BTC-based-apps)**
 
 ## Other
@@ -508,21 +599,23 @@ Fixed minor interface bugs
 - Updated ERC-20 list
 - Updated XRPL node
 - Fixed minor interface bugs
-      
+
 # v2.3.2
+
 - Stellar (XLM) is now supported! Add your accounts, Send and Receive.
 - Fixed a synchronization issue for some Tron accounts.
 - Minor user interface improvement when clicking on the update banner.
 - Fixes some UI glitches including amount ellipsis in operation list.
 
-      
 # v2.2.4
+
 ### Bug fixes
 
 - Windows: Fixed a bug that created a false positive virus detection linked to the uninstall script.
 - Fixed a display bug in Tron voting.
-      
+
 # v2.2.3
+
 ## 💥 TRON is now available in Ledger Live!
 
 - Easily send and receive TRX from within the app.
@@ -537,14 +630,15 @@ Received an airdrop of an undesired token? Do a secondary click on the token and
 ## 🐞 Other
 
 - Maximum spendable amount is now displayed when sending crypto assets.
-- Various fixes on Windows. 
+- Various fixes on Windows.
 - Improved crash screen.
 - Fixed an incorrect calculation of portfolio balance and graph.
 - Fixed an ETH synchronization error on accounts that received ERC20 tokens via a contract.
 
 Special thanks to Cryptochain for his help on the Ledger Nano application
-      
+
 # v2.0.1
+
 ## 🐛 Bug fixes
 
 - Linux: Fixed major issue at boot (GLIBCXX version).
@@ -553,14 +647,15 @@ Special thanks to Cryptochain for his help on the Ledger Nano application
 - Minor wording refinement in the Manager.
 - Fixed a visual glitch with **Starred accounts**.
 - Better performance in the Manager.
-      
+
 # v2.0.0
+
 ## 🎊 NEW! VASTLY IMPROVED DEVICE MANAGER
 
 - See what apps are installed on your device, and how much storage they take.
 - Install and uninstall apps without having to worry about dependencies.
 - Update or uninstall all apps in one click!
-- Sort and filter apps in the App catalog. 
+- Sort and filter apps in the App catalog.
 - See which crypto assets are supported in Ledger Live.
 
 ## 🎉 Improved device interactions
@@ -572,7 +667,7 @@ Special thanks to Cryptochain for his help on the Ledger Nano application
 
 ## 👀 Discreet mode
 
-- Hide your balances from prying eyes in one click! 
+- Hide your balances from prying eyes in one click!
 
 ## ⚙️ Complete app rework
 
@@ -588,8 +683,8 @@ Special thanks to Cryptochain for his help on the Ledger Nano application
 - You can now send more than 9999 units of an asset.
 - KICK token price removed from the portfolio balance.
 
-      
 # v1.20.0
+
 ## 🦟 Bug fixes
 
 - **Fixed Sync error issues.** We have fixed our Clear Cache implementation as well as introduced a system that automatically clears the cache when necessary.
@@ -598,31 +693,33 @@ Special thanks to Cryptochain for his help on the Ledger Nano application
 
 - Fixed a caching problem that caused the validator list to never reload.
 - Added a way for users to identify which validators are overdelegated.
-      
+
 # v1.19.2
+
 ## 🎊 NEW! ꜩ EARN TEZOS REWARDS WHILE HOLDING
 
-- Delegate your Tezos account to earn staking rewards directly in Ledger Live. [How staking works](https://www.ledger.com/staking-tezos) 
-- Manage your Tezos accounts. 
-- Basic support of Tezos accounts created in third-party wallets (including KT accounts) 
+- Delegate your Tezos account to earn staking rewards directly in Ledger Live. [How staking works](https://www.ledger.com/staking-tezos)
+- Manage your Tezos accounts.
+- Basic support of Tezos accounts created in third-party wallets (including KT accounts)
 
-##  🎉 New send flow
+## 🎉 New send flow
 
-- Sending crypto assets has now become easier with a new form that's split into recipient and amount steps. 
-- New summary screen allowing you to easily double check transaction details on your hardware wallet (recipient address, total to spend, network fees). 
+- Sending crypto assets has now become easier with a new form that's split into recipient and amount steps.
+- New summary screen allowing you to easily double check transaction details on your hardware wallet (recipient address, total to spend, network fees).
 - All device interactions are now in one final step.
 
 ## 🔍 Others
 
-- New Terms of Use. 
-- Introduction of Dai Stablecoin v2.0 (DAI). [Learn more](https://support.ledger.com/hc/en-us/articles/360010790499)  
+- New Terms of Use.
+- Introduction of Dai Stablecoin v2.0 (DAI). [Learn more](https://support.ledger.com/hc/en-us/articles/360010790499)
 
 ## 🐞 Bug fixes
 
 - [Mac] Notarized Ledger Live with Apple so macOS users do not receive a security popup when opening the app.
-- Multiple UI fixes 
-      
+- Multiple UI fixes
+
 # v1.18.2
+
 ## 🎊 Dark Mode
 
 WHEN DARK MODE?! NOW!!! Go to the settings and select your favorite theme for your favorite app
@@ -638,8 +735,9 @@ WHEN DARK MODE?! NOW!!! Go to the settings and select your favorite theme for yo
 
 - ERC20 operations stay visible when they are broadcasted
 - Various minor fixes
-      
+
 # v1.15.0
+
 ## 🐞 Bugfixes
 
 - Fixes "ERC20 not found" to occur when trying to send some recently added ERC20.
@@ -664,20 +762,21 @@ WHEN DARK MODE?! NOW!!! Go to the settings and select your favorite theme for yo
 - Use `finalFirmware.name` for displaying new firmware (instead of OSU)
 - Advanced: `KEYCHAIN_OBSERVABLE_RANGE` environment variable can be set to increase BIP44's address gap limit (default is 20)
 
-      
 # v1.14.0
+
 ## 🎊 ERC20 tokens are here!
 
 We would like to give a big thank you to all beta testers that helped us improve this feature!
 
-* You can now manage up to 1250 ERC20 tokens, directly in Ledger Live. Major tokens are included.
-* As ERC20s are tokens on the Ethereum blockchain, Ledger Live will now display the tokens belonging to an Ethereum account after adding the account with the Ethereum app on your Ledger hardware wallet.
-* Make sure to *Update* the Ethereum accounts you already have for your ERC20s to display. Updating your accounts requires your Ledger hardware wallet with the Ethereum app installed.
-* To receive ERC20 tokens, send them to your Ethereum account.
+- You can now manage up to 1250 ERC20 tokens, directly in Ledger Live. Major tokens are included.
+- As ERC20s are tokens on the Ethereum blockchain, Ledger Live will now display the tokens belonging to an Ethereum account after adding the account with the Ethereum app on your Ledger hardware wallet.
+- Make sure to _Update_ the Ethereum accounts you already have for your ERC20s to display. Updating your accounts requires your Ledger hardware wallet with the Ethereum app installed.
+- To receive ERC20 tokens, send them to your Ethereum account.
 
-For more information including step by step instructions, please check [this support article](https://support.ledger.com/hc/en-us/articles/115005197845-Manage-ERC20-tokens) 
-      
+For more information including step by step instructions, please check [this support article](https://support.ledger.com/hc/en-us/articles/115005197845-Manage-ERC20-tokens)
+
 # v1.13.2
+
 ## ⭐️ Starred accounts
 
 You can now star accounts so they appear in the sidebar, similar to earlier versions of Ledger Live. 🌟You can drag the starred accounts in the sidebar to reorder them.
@@ -706,8 +805,9 @@ You can now star accounts so they appear in the sidebar, similar to earlier vers
 - Changed BTC testnet explorer to blockcypher.com
 - Fixed accounts to default to list mode.
 - Various improvements in user experience
-      
+
 # v1.12.0
+
 This release enables sending the full balance of an account by clicking a **max** toggle and brings many bug fixes.
 
 ## 🎊 Send max
@@ -725,6 +825,7 @@ Send max is now available for all assets except XRP and ETH.
 > ERC20 is released as an experimental feature for advanced users. Improvements will be made to make it less technical.
 >
 > To test it, you must:
+>
 > - Enable Experimental nodes in Settings > Experimental features.
 > - Enable Experimental Core in Settings > Experimental features.
 > - Add your Ethereum accounts again to update them with ERC20 functionality.
@@ -737,8 +838,9 @@ Send max is now available for all assets except XRP and ETH.
 - New Experimental USB with potentially better performance.
 - Improved camera error case of the QR code scanner.
 - Various improvements in user experience.
-      
+
 # v1.11.0
+
 This release contains some major features, some of which only available in the experimental features in the settings.
 
 ## 🎊 Native SegWit is now available!
@@ -789,16 +891,17 @@ To test it you must:
 - Polishes in Portfolio distribution section
 - The % delta calculation uses the first non-zero point of the range
 - Various other fixes in user experience
-      
+
 # v1.10.2
+
 This release fixes a USB bug, improving connectivity issues for some users. **Please uncheck Experimental USB in Settings > Experimental features** if you were using Experimental USB.
 
 ## 🐛 Bug fixes
+
 - Fixed Repair tool.
 - Fixed USB connectivity issues after switching apps.
-      
-# v1.10.0
 
+# v1.10.0
 
 ## 🎊 Features
 
@@ -808,14 +911,14 @@ This release fixes a USB bug, improving connectivity issues for some users. **Pl
 
 ## 🐛 Bug fixes
 
-- Ethereum Gas limit field is no longer blocked on 21000, fixing a regression. 
+- Ethereum Gas limit field is no longer blocked on 21000, fixing a regression.
 
 ## 👨‍🔬 Experimental
 
 - Native SegWit support is available in the Experimental settings! Known issue: you must clear the cache after sending funds. Please consider operation and balance information to be incorrect until the cache is cleared, a fix is underway.
 
-      
 # v1.9.1
+
 ## 🎊 New Features
 
 - Accounts now have a dedicated section
@@ -840,11 +943,13 @@ This release fixes a USB bug, improving connectivity issues for some users. **Pl
 
 - Edits in wording
 - “USB only” mentioned during the onboarding to inform Nano X users that Bluetooth is not supported yet
-      
+
 # v1.8.1
+
 Fixes firmware update for Nano S 1.3.1.
-      
+
 # v1.8.0
+
 This release features major performance enhancements, adds the option to show account balances in crypto and has various other improvements.
 
 ## 🏃 Performance
@@ -869,9 +974,10 @@ This release features major performance enhancements, adds the option to show ac
 
 - Various improvements in user experience.
 - (Experimental features) Scan for more invalid paths: Segwit on Legacy, Legacy on Segwit.
-      
+
 # v1.7.0
-This release adds functionality to export operation history as a CSV file, to cancel app installations, and to search for a crypto asset by its ticker. Further, it fixes a critical crash on macOS 10.10.x and restores multiple countervalue bugs that broke the portfolio graphs. Full list of changes below.  
+
+This release adds functionality to export operation history as a CSV file, to cancel app installations, and to search for a crypto asset by its ticker. Further, it fixes a critical crash on macOS 10.10.x and restores multiple countervalue bugs that broke the portfolio graphs. Full list of changes below.
 
 ## 🎊 Features
 
@@ -893,15 +999,16 @@ This release adds functionality to export operation history as a CSV file, to ca
 - Improved the interruption of the Genuine check when leaving Manager.
 - More explicit errors if the device gets disconnected while adding accounts.
 - Improved errors in the send flow, including a case where the user will be asked to verify if the crypto assets have not actually been sent, in case the signed transaction was broadcast.
-      
+
 # v1.6.0
+
 ## 🌷 Manager improvements
 
 - Firmware update is made more user-friendly.
 - Reduced genuine checks to once per Manager session.
 - Prevent asking to restart in bootloader mode when not needed.
 
-## 🐛  Bug fixes
+## 🐛 Bug fixes
 
 - Fixed repair tool getting stuck at 100%.
 - Fixed some glitches in modals related to scrolling.
@@ -910,8 +1017,9 @@ This release adds functionality to export operation history as a CSV file, to ca
 ## Other
 
 - Various minor improvements in user experience.
-      
+
 # v1.5.0
+
 ## 🎊 Features
 
 - Add Ledger Nano X compatibility in onboarding, Manager, send and receive. ([1](https://github.com/LedgerHQ/ledger-live-desktop/pull/1815), [2](https://github.com/LedgerHQ/ledger-live-desktop/pull/1816), [3](https://github.com/LedgerHQ/ledger-live-desktop/pull/1820))
@@ -936,22 +1044,27 @@ This release adds functionality to export operation history as a CSV file, to ca
 - clean cache has been refactored to use libcore implementation (so it's technically less intense and more reliable)
 - new libcore version
 - partners list is shared in live-common.
-      
+
 # v1.4.1
+
 ## 🎊 Features
-* Improved modals with scrollbars, vertical centering and improved animation performance.
-* A new update process including download progress bar and opt-in button.
-* Announcement for Ledger Live mobile.
-* Show error if XRP recipient address is the same as the sending address.
+
+- Improved modals with scrollbars, vertical centering and improved animation performance.
+- A new update process including download progress bar and opt-in button.
+- Announcement for Ledger Live mobile.
+- Show error if XRP recipient address is the same as the sending address.
 
 ## Bugfixes
-* ZEC-related bugfixes.
-* A fix in the device repair tool that wrongly asked to reboot in bootloader mode.
+
+- ZEC-related bugfixes.
+- A fix in the device repair tool that wrongly asked to reboot in bootloader mode.
 
 ## Other
-* Various improvements in user experience.
-      
+
+- Various improvements in user experience.
+
 # v1.3.4
+
 🐛 This release contains important bug fixes. 🐛
 
 ## General
@@ -968,38 +1081,47 @@ This release adds functionality to export operation history as a CSV file, to ca
 - DCR: fix transaction bug affecting some users.
 - HSR and POSW: blockchain synchronization and send feature fixed.
 - Other crypto assets: fix "getVarint" errors for various assets.
-      
+
 # v1.3.2
+
 ## 🐛 Bugfixes
+
 - Fix the MCU not genuine issue
-      
+
 # v1.3.0
+
 ## ✨ Features
+
 - New export screen for mobile app
 - Show progress on app install
 - Improved Manager performance
 - Improved firmware update
 
 ## 🐛 Bugfixes
+
 - Fixed broken order when missing provider/balance
 - Fixed unselectable fee levels
 - Fixed custom fees value field
 - Fixed auto-lock firing too early
 
 ## Others
+
 - Better logs for internal errors
 - Wording adjustments
 
-      
 # v1.2.7
+
 ## ✨ Features
+
 - Decred support ([#1644](https://github.com/LedgerHQ/ledger-live-desktop/pull/1644))
 - Auto-Lock feature ([#1409](https://github.com/LedgerHQ/ledger-live-desktop/pull/1409))
 
 ## Others
+
 - Wording adjustments
-      
+
 # v1.2.6
+
 ### ✨ Features
 
 - Added an alert to Send, Receive and Add Accounts when a network service is disrupted ([#1649](https://github.com/LedgerHQ/ledger-live-desktop/pull/1649))
@@ -1012,8 +1134,8 @@ This release adds functionality to export operation history as a CSV file, to ca
 - Fixed a display bug causing the app to be “Paused” during a network disruption ([#1645](https://github.com/LedgerHQ/ledger-live-desktop/pull/1645))
 - An improvement to app search in the Manager ([#1647](https://github.com/LedgerHQ/ledger-live-desktop/pull/1647))
 
-      
 # v1.2.5
+
 ### Features
 
 - Support for more derivations ([#1599](https://github.com/LedgerHQ/ledger-live-desktop/pull/1599))
@@ -1024,12 +1146,13 @@ This release adds functionality to export operation history as a CSV file, to ca
 
 - Handle gaps in sqlite accounts ([#1609](https://github.com/LedgerHQ/ledger-live-desktop/pull/1609))
 - Wording fixes
-      
+
 # v1.2.3
+
 - Support ZCash Sapling upgrade. 🌲
 
-      
 # v1.2.1
+
 This release addresses many bugs found in Ledger Live.
 
 ### 🐛 Bugfixes
@@ -1047,8 +1170,9 @@ This release addresses many bugs found in Ledger Live.
 
 - Expose db/commands/store to global window object, for debugging purposes ([#1572](https://github.com/LedgerHQ/ledger-live-desktop/pull/1572))
 - Wording adjustments
-      
+
 # v1.2.0
+
 ### 🐛 Bugfixes
 
 - Ensure sync is stopped when doing clear cache & hard reset ([#1537](https://github.com/LedgerHQ/ledger-live-desktop/pull/1537))
@@ -1071,10 +1195,10 @@ This release addresses many bugs found in Ledger Live.
 - Analytics are now opt-out, this affects only new installs ([66b91d8c](https://github.com/LedgerHQ/ledger-live-desktop/commit/66b91d8c7860ffbd5931e26115f8613dcc50b4d0))
 - Error wording updates
 - Design polishing
-      
+
 # v1.1.11
 
-This release fixes some issues for a few crypto assets and improves synchronization performance. 
+This release fixes some issues for a few crypto assets and improves synchronization performance.
 
 **DigiByte users must reinstall the DigiByte app and clear the Ledger Live cache.**
 
@@ -1093,14 +1217,15 @@ This release fixes some issues for a few crypto assets and improves synchronizat
 
 - Minor improvements to the user experience.
 
-      
 # v1.1.10
+
 - Rollback changes concerning DGB to still allow to use the previous Digibyte app (until we release a wider fix for DGB in incoming release)
-      
+
 # v1.1.9
+
 - Integrate rebranding from Ripple to **XRP**
 - Integrate rebranding from Zencash to **Horizen**
-- Fix *coreSyncAccount timeout* error to occur for some users
+- Fix _coreSyncAccount timeout_ error to occur for some users
 - Better wordings
 
 Minor polishes:
@@ -1109,35 +1234,40 @@ Minor polishes:
 - Prevent crash to occur when pressing backspace in XRP fees
 - More robust 'Clean Cache' implementation
 
-      
 # v1.1.7
+
 - QR Code scanning is back 🎉
 - Segwit support added to Digibyte
 - Luno, Shapeshift and Genesis added to Buy/Trade
 - Fix `Internal Process Error (null)` error blocking sending funds for some accounts
 - Fix display glitch in the amount field
-      
+
 # v1.1.6
+
 - Fix Pivx failing synchronization due to zero-knowledge protocol (closes #1089)
 - Fix Digibyte sync timeout/hang due to accounts with lot of transactions, this fix affect all other cryptos encountering same issue ("Oops! Time out error")
 - Synchronization performance boost
-      
+
 # v1.1.5
+
 - Display warning instead of rejecting ETH address without checksum (#1397)
 - Error wording updates
-      
+
 # v1.1.4
+
 - New apps in the manager:
   - Nano S: Icon, kusd, ont (ontology), particl, poa, rsk (rootstock), VeChain, Wanchain
   - Blue: kusd, ont (ontology), poa, rsk, wanchain
 - Enforce ETH address validation using eip55
-      
+
 # v1.1.2
+
 - Fixes a crash occuring after a failed file migration ([#1375](https://github.com/LedgerHQ/ledger-live-desktop/pull/1375))
-      
+
 # v1.1.1
+
 - Fixes a crash during discovering of ETH accounts that only receive from contract. ([#1366](https://github.com/LedgerHQ/ledger-live-desktop/pull/1366))
-      
+
 # v1.1.0
 
 🎉 Improved performance and various bugfixes.
@@ -1166,29 +1296,32 @@ We have identified and fixed bottlenecks that were degrading app performance. Th
 - Missing explorers were added for multiple crypto assets ([live-common#57](https://github.com/LedgerHQ/ledger-live-common/pull/57)).
 - Added in-app guidance to help some users solve USB connection issues, particularly on Linux. ([#1224](https://github.com/LedgerHQ/ledger-live-desktop/pull/1224))
 - Various user experience improvements throughout the app.
-      
+
 # v1.0.7
+
 - Update some exchanges link
-      
+
 # v1.0.6
+
 - Fixes a bug in ZCash transactions ([ledgerjs#192](https://github.com/LedgerHQ/ledgerjs/pull/192))
-      
+
 # v1.0.5
+
 🎉 Important bug fixes.
 
-- **Fixed a crash occuring at launch for some Windows users.** ( [#933](https://github.com/LedgerHQ/ledger-live-desktop/pull/933)  `Internal process error (3765269347)` )
+- **Fixed a crash occuring at launch for some Windows users.** ( [#933](https://github.com/LedgerHQ/ledger-live-desktop/pull/933) `Internal process error (3765269347)` )
 - **Fixed a crash occuring at launch for some Mac users.** ( [#1193](https://github.com/LedgerHQ/ledger-live-desktop/pull/1193) `Correct dynamic library path to be handled by macOS >= 10.9.0` )
 - Fixes ETC scanning of the MEW path. ( [#1258](https://github.com/LedgerHQ/ledger-live-desktop/pull/1258) )
 - Fixes app logo on Mac for non Retina computers. ( [#1194](https://github.com/LedgerHQ/ledger-live-desktop/pull/1194) )
 - Fixed an edge case bug that set an unavailable exchange as the default one. Also add more exchanges. ( [#1138](https://github.com/LedgerHQ/ledger-live-desktop/pull/1138) )
 - Fixed various other edge case bugs 🐛 ( #1223 #1225 #1195 #1145 #1169 #1253 )
-- Bugs related to Ripple: 
+- Bugs related to Ripple:
   - Fixed an error (`'Ledger Sequence too high'`) that could appear if transaction was not signed quickly enough. ( [#1233](https://github.com/LedgerHQ/ledger-live-desktop/pull/1233) )
   - Fixed a bug that prevented sending more than 1000 XRP. ( [#1186](https://github.com/LedgerHQ/ledger-live-desktop/pull/1186) )
-  - Fixed the sync to properly remove *pending* operations when they are confirmed by the XRP Ledger.
+  - Fixed the sync to properly remove _pending_ operations when they are confirmed by the XRP Ledger.
 
-      
 # v1.0.3
+
 patch release with important bug fixes.
 
 - **ZCash** is now working (supports overwinter feature [#904](https://github.com/LedgerHQ/ledger-live-desktop/issues/904))
@@ -1199,8 +1332,9 @@ patch release with important bug fixes.
 also notable changes in ecosystem:
 
 - TRON app is fixed in Manager
-      
+
 # v1.0.2
+
 **🎉 We have fixed a lot of bugs.**
 
 ## 🐛 Bugfixes
@@ -1247,15 +1381,16 @@ We are aware of the following problems and we and doing our best to resolve them
 
 > 🚀 Other discussions can be found on [https://github.com/LedgerHQ/ledger-live-desktop/issues](https://github.com/LedgerHQ/ledger-live-desktop/issues)
 
-      
 # v1.0.1
+
 Patches.
 
 - Fix a bug that was preventing **ETC** accounts to display. You can now try to your ETC accounts again. ([#947](https://github.com/LedgerHQ/ledger-live-desktop/issues/947))
 - Fix an UI glitch on the sidebar ([#932](https://github.com/LedgerHQ/ledger-live-desktop/issues/932))
 - Fix `noDeviceTrackOrder` url
-      
+
 # v1.0.0
+
 🎉 We are finally proud to release Ledger Live 1.0.0
 
 ## Features
@@ -1269,5 +1404,3 @@ Patches.
 - **In-app Manager** to manage your device (install and uninstall apps, upgrade the firmware)
 - **Many settings** including countervalues with many fiats and exchanges supported.
 - Auto updates with in-app releases notes
-
-      

@@ -1,5 +1,8 @@
 import { valid, gte } from "semver";
-import type { CryptoCurrency, TokenCurrency } from "../types/currencies";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
 import { getEnv } from "../env";
 import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
@@ -46,6 +49,13 @@ export type ExchangeProviderNameAndSignature = {
   nameAndPubkey: Buffer;
   signature: Buffer;
 };
+
+export type SwapProviderConfig = ExchangeProviderNameAndSignature & {
+  curve: string;
+  needsKYC: boolean;
+  needsBearerToken: boolean;
+};
+
 export const isExchangeSupportedByApp = (
   appName: string,
   appVersion: string

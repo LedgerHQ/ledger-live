@@ -9,7 +9,7 @@ import * as shape from "d3-shape";
 import * as scale from "d3-scale";
 import maxBy from "lodash/maxBy";
 import Svg, { Path } from "react-native-svg";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { useTheme } from "@react-navigation/native";
 import LText from "../components/LText";
 import TranslatedError from "../components/TranslatedError";

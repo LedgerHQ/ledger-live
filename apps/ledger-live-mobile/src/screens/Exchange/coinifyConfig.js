@@ -3,7 +3,7 @@ import Config from "react-native-config";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types/currencies";
+} from "@ledgerhq/types-cryptoassets";
 
 const supportedCurrenciesIds = {
   buy: [

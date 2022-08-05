@@ -4,11 +4,11 @@ import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/Ionicons";
 
-import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import type { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   getAccountUnit,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/account/helpers";
 
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";

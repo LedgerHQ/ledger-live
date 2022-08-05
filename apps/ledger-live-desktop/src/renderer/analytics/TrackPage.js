@@ -15,7 +15,6 @@ function TrackPage({ category, name, ...properties }: { category: string, name?:
     source = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return null;
 }
 

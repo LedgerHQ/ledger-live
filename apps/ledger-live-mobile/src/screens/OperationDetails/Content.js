@@ -5,26 +5,22 @@ import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import {
-  Account,
-  Operation,
-  AccountLike,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountUnit,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   getOperationAmountNumber,
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
-} from "@ledgerhq/live-common/lib/operation";
+} from "@ledgerhq/live-common/operation";
 import {
   useNftCollectionMetadata,
   useNftMetadata,
-} from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/nft/index";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -378,13 +374,15 @@ export default function Content({
         value={operation.hash}
       />
 
-      <View style={sectionStyles.wrapper}>
-        <DataList
-          data={uniqueSenders}
-          title={<Trans i18nKey="operationDetails.from" />}
-          titleStyle={sectionStyles.title}
-        />
-      </View>
+      {uniqueSenders.length > 0 && (
+        <View style={sectionStyles.wrapper}>
+          <DataList
+            data={uniqueSenders}
+            title={<Trans i18nKey="operationDetails.from" />}
+            titleStyle={sectionStyles.title}
+          />
+        </View>
+      )}
 
       {shouldDisplayTo ? (
         <View style={sectionStyles.wrapper}>

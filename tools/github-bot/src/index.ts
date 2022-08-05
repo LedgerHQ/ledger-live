@@ -19,7 +19,7 @@ export default (app: Probot) => {
       ref: "develop",
       inputs: {
         number: `${data.number}`,
-        login: `${payload.issue.user.login}`,
+        login: `${payload.comment.user.login}`,
       },
     });
   });
@@ -58,7 +58,7 @@ export default (app: Probot) => {
     }
 
     if (!isBodyValid) {
-      body += `- _you overrode or did not fill in the [pull request template](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/pull_request_template.md) properly_\n`;
+      body += `- _the description is missing or you removed or overrode one or more sections of the [pull request template](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/pull_request_template.md)_\n`;
     }
     comment = context.issue({
       body,

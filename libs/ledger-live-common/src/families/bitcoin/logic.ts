@@ -1,7 +1,6 @@
 import cashaddr from "cashaddrjs";
 import { Currency, isValidAddress } from "./wallet-btc";
 import { RecipientRequired, InvalidAddress } from "@ledgerhq/errors";
-import type { Account, CryptoCurrency, CryptoCurrencyIds } from "./../../types";
 import type {
   BitcoinOutput,
   BitcoinResources,
@@ -9,6 +8,17 @@ import type {
   NetworkInfo,
   UtxoStrategy,
 } from "./types";
+import { $Shape } from "utility-types";
+import type {
+  TX,
+  Input as WalletInput,
+  Output as WalletOutput,
+} from "./wallet-btc";
+import { BigNumber } from "bignumber.js";
+import { encodeOperationId } from "../../operation";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { CryptoCurrencyIds } from "@ledgerhq/cryptoassets";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees = {
@@ -68,7 +78,7 @@ export const isValidRecipient = async (params: {
 type UTXOStatus =
   | {
       excluded: true;
-      reason: "pickUnconfirmedRBF" | "pickPendingNonRBF" | "userExclusion";
+      reason: "pickPendingUtxo" | "userExclusion";
     }
   | {
       excluded: false;
@@ -77,16 +87,11 @@ export const getUTXOStatus = (
   utxo: BitcoinOutput,
   utxoStrategy: UtxoStrategy
 ): UTXOStatus => {
-  if (!utxoStrategy.pickUnconfirmedRBF && utxo.rbf && !utxo.blockHeight) {
+  if (!utxo.blockHeight && !utxo.isChange) {
+    // exclude pending and not change utxo
     return {
       excluded: true,
-      reason: "pickUnconfirmedRBF",
-    };
-  }
-  if (!utxo.rbf && !utxo.blockHeight) {
-    return {
-      excluded: true,
-      reason: "pickPendingNonRBF",
+      reason: "pickPendingUtxo",
     };
   }
   if (
@@ -180,4 +185,164 @@ export const perCoinLogic: Record<
       forceFormat: "cashaddr",
     }),
   },
+};
+
+export const mapTxToOperations = (
+  tx: TX,
+  currencyId: string,
+  accountId: string,
+  accountAddresses: Set<string>,
+  changeAddresses: Set<string>
+): $Shape<Operation[]> => {
+  const operations: Operation[] = [];
+  const txId = tx.id;
+  const fee = new BigNumber(tx.fees);
+  const blockHeight = tx.block?.height;
+  const blockHash = tx.block?.hash;
+  const date = new Date(tx.block?.time || tx.received_at);
+  const senders = new Set<string>();
+  const recipients: string[] = [];
+  let type: OperationType = "OUT";
+  let value = new BigNumber(0);
+  const hasFailed = false;
+  const accountInputs: WalletInput[] = [];
+  const accountOutputs: WalletOutput[] = [];
+  const syncReplaceAddress = perCoinLogic[currencyId]?.syncReplaceAddress;
+
+  for (const input of tx.inputs) {
+    if (input.address) {
+      senders.add(
+        syncReplaceAddress ? syncReplaceAddress(input.address) : input.address
+      );
+
+      if (input.value) {
+        if (accountAddresses.has(input.address)) {
+          // This address is part of the account
+          value = value.plus(input.value);
+          accountInputs.push(input);
+        }
+      }
+    }
+  }
+
+  // All inputs of a same transaction have the same sequence
+  const transactionSequenceNumber =
+    (accountInputs.length > 0 && accountInputs[0].sequence) || undefined;
+
+  const hasSpentNothing = value.eq(0);
+
+  // Change output is always the last one
+  const changeOutputIndex =
+    tx.outputs.length === 0
+      ? 0
+      : tx.outputs.map((o) => o.output_index).reduce((p, c) => (p > c ? p : c));
+
+  for (const output of tx.outputs) {
+    if (output.address) {
+      if (!accountAddresses.has(output.address)) {
+        // The output doesn't belong to this account
+        if (
+          accountInputs.length > 0 && // It's a SEND operation
+          (tx.outputs.length === 1 || // The transaction has only 1 output
+            output.output_index < changeOutputIndex) // The output isn't the change output
+        ) {
+          recipients.push(
+            syncReplaceAddress
+              ? syncReplaceAddress(output.address)
+              : output.address
+          );
+        }
+      } else {
+        // The output belongs to this account
+        accountOutputs.push(output);
+
+        if (!changeAddresses.has(output.address)) {
+          // The output isn't a change output of this account
+          recipients.push(
+            syncReplaceAddress
+              ? syncReplaceAddress(output.address)
+              : output.address
+          );
+        } else {
+          // The output is a change output of this account,
+          // we count it as a recipient only in some special cases
+          if (
+            (recipients.length === 0 &&
+              output.output_index >= changeOutputIndex) ||
+            hasSpentNothing
+          ) {
+            recipients.push(
+              syncReplaceAddress
+                ? syncReplaceAddress(output.address)
+                : output.address
+            );
+          }
+        }
+      }
+    }
+  }
+
+  if (accountInputs.length > 0) {
+    // It's a SEND operation
+    for (const output of accountOutputs) {
+      if (changeAddresses.has(output.address)) {
+        value = value.minus(output.value);
+      }
+    }
+
+    type = "OUT";
+    operations.push({
+      id: encodeOperationId(accountId, txId, type),
+      hash: txId,
+      type,
+      value,
+      fee,
+      senders: Array.from(senders),
+      recipients,
+      blockHeight,
+      blockHash,
+      transactionSequenceNumber,
+      accountId,
+      date,
+      hasFailed,
+      extra: {},
+    });
+  }
+
+  if (accountOutputs.length > 0) {
+    // It's a RECEIVE operation
+    const filterChangeAddresses = !!accountInputs.length;
+    let accountOutputCount = 0;
+    let finalAmount = new BigNumber(0);
+
+    for (const output of accountOutputs) {
+      if (!filterChangeAddresses || !changeAddresses.has(output.address)) {
+        finalAmount = finalAmount.plus(output.value);
+        accountOutputCount += 1;
+      }
+    }
+
+    if (accountOutputCount > 0) {
+      value = finalAmount;
+      type = "IN";
+      operations.push({
+        id: encodeOperationId(accountId, txId, type),
+        hash: txId,
+        type,
+        value,
+        fee,
+        senders: Array.from(senders),
+        recipients,
+        blockHeight,
+        blockHash,
+        transactionSequenceNumber,
+        accountId,
+        date,
+        hasFailed,
+        extra: {},
+      });
+    }
+  }
+
+  return operations;
 };

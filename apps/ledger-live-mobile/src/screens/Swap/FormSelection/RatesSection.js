@@ -11,20 +11,22 @@ import {
   getAccountUnit,
   getAccountName,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import type {
   Account,
   TokenAccount,
   AccountLikeArray,
+} from "@ledgerhq/types-live";
+import type {
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/types-cryptoassets";
 import type {
   SwapTransaction,
   ExchangeRate,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+} from "@ledgerhq/live-common/exchange/swap/types";
+import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";
 
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
@@ -152,29 +154,43 @@ export default function RatesSection({
   ]);
 
   const onAddAccount = useCallback(() => {
-    navigation.navigate(NavigatorName.AddAccounts, {
-      screen: ScreenName.AddAccountsSelectDevice,
-      params: {
-        currency: toCurrency,
-        returnToSwap: true,
-        onSuccess: ({ scannedAccounts }) => {
-          if (scannedAccounts && scannedAccounts[0]) {
-            setToAccount(
-              getAccountCurrency(scannedAccounts[0]),
-              scannedAccounts[0],
-              scannedAccounts[0].parentId &&
-                accounts.find(({ id }) => id === scannedAccounts[0].parentId),
-            );
-          }
+    const params = {
+      returnToSwap: true,
+      onSuccess: ({ scannedAccounts }) => {
+        if (scannedAccounts && scannedAccounts[0]) {
+          setToAccount(
+            getAccountCurrency(scannedAccounts[0]),
+            scannedAccounts[0],
+            scannedAccounts[0].parentId &&
+              accounts.find(({ id }) => id === scannedAccounts[0].parentId),
+          );
+        }
 
-          navigation.navigate(ScreenName.SwapForm, {
-            swap,
-          });
-        },
-        analyticsPropertyFlow: "swap",
+        navigation.navigate(ScreenName.SwapForm, {
+          swap,
+        });
       },
-    });
-  }, [navigation, toCurrency, swap]);
+      analyticsPropertyFlow: "swap",
+    };
+
+    if (toCurrency.type === "TokenCurrency") {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
+        params: {
+          ...params,
+          token: toCurrency,
+        },
+      });
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        screen: ScreenName.AddAccountsSelectDevice,
+        params: {
+          ...params,
+          currency: toCurrency,
+        },
+      });
+    }
+  }, [toCurrency, navigation, swap, setToAccount, accounts]);
 
   const ProviderIcon = providerIcons[provider];
 

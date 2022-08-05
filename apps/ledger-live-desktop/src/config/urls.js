@@ -178,6 +178,14 @@ export const urls = {
         support: "https://support.sendwyre.com/hc/en-us/requests/new",
         kyc: "https://support.ledger.com/hc/en-us/articles/4404422869265",
       },
+      ftx: {
+        main: "https://ftx.com",
+        support: "https://ftx.com/support",
+      },
+      ftxus: {
+        main: "https://ftx.us/",
+        support: "https://help.ftx.us/hc/en-us",
+      },
     },
   },
   exchange: {
@@ -217,6 +225,6 @@ export const urls = {
   },
   hedera: {
     supportArticleLink:
-      "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
+      "https://support.ledger.com/hc/en-us/articles/4494505217565-Create-a-Ledger-Hedera-HBAR-account-via-HashPack?docs=true",
   },
 };

@@ -11,16 +11,14 @@ import {
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge/impl";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
-import { extractTokenId } from "@ledgerhq/live-common/lib/families/algorand/tokens";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
+import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 
-import type {
-  TokenCurrency,
-  SubAccount,
-} from "@ledgerhq/live-common/lib/types";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SubAccount } from "@ledgerhq/types-live";
 
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../const";

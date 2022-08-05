@@ -2,8 +2,20 @@
 import { serializeError } from "@ledgerhq/errors";
 import { commandsById } from "./commands";
 import logger from "../logger";
+import { getSentryIfAvailable } from "~/sentry/internal";
 
 const subscriptions = {};
+
+function inferSentryTransaction(cmd, command) {
+  const value = cmd.inferSentryTransaction ? cmd.inferSentryTransaction(command.data) : null;
+  if (!value) return;
+  const { id } = command;
+  return getSentryIfAvailable()?.startTransaction({
+    op: "command",
+    name: id,
+    ...value,
+  });
+}
 
 export function executeCommand(command: *, send: *) {
   const { data, requestId, id } = command;
@@ -11,6 +23,12 @@ export function executeCommand(command: *, send: *) {
   if (!cmd) {
     logger.warn(`command ${id} not found`);
     return;
+  }
+  const sentryTransaction = inferSentryTransaction(cmd, command);
+  if (sentryTransaction) {
+    getSentryIfAvailable()?.configureScope(scope => {
+      scope.setSpan(sentryTransaction);
+    });
   }
   const startTime = Date.now();
   logger.onCmd("cmd.START", id, 0, data);
@@ -24,12 +42,14 @@ export function executeCommand(command: *, send: *) {
         delete subscriptions[requestId];
         logger.onCmd("cmd.COMPLETE", id, Date.now() - startTime);
         send({ type: "cmd.COMPLETE", requestId });
+        sentryTransaction?.finish();
       },
       error: error => {
         logger.warn("Command error:", { error });
         delete subscriptions[requestId];
         logger.onCmd("cmd.ERROR", id, Date.now() - startTime, error);
         send({ type: "cmd.ERROR", requestId, data: serializeError(error) });
+        sentryTransaction?.setStatus("internal_error");
       },
     });
   } catch (error) {
@@ -37,6 +57,8 @@ export function executeCommand(command: *, send: *) {
     delete subscriptions[requestId];
     logger.onCmd("cmd.ERROR", id, Date.now() - startTime, error);
     send({ type: "cmd.ERROR", requestId, data: serializeError(error) });
+    sentryTransaction?.setStatus("unknown");
+    sentryTransaction?.finish();
   }
 }
 

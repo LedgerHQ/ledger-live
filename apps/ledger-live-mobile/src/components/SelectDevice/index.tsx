@@ -7,8 +7,11 @@ import {
   useNavigation,
   useTheme as useNavTheme,
 } from "@react-navigation/native";
-import { discoverDevices, TransportModule } from "@ledgerhq/live-common/lib/hw";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import {
+  discoverDevices,
+  TransportModule,
+} from "@ledgerhq/live-common/hw/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Button } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
@@ -20,6 +23,10 @@ import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";
 import { track } from "../../analytics";
+import {
+  setLastConnectedDevice,
+  setReadOnlyMode,
+} from "../../actions/settings";
 
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
@@ -53,6 +60,8 @@ export default function SelectDevice({
   const handleOnSelect = useCallback(
     deviceInfo => {
       const { modelId, wired } = deviceInfo;
+
+      dispatch(setLastConnectedDevice(deviceInfo));  
       if (wired) {
         track("Device selection", {
           modelId,
@@ -61,6 +70,7 @@ export default function SelectDevice({
         // Nb consider a device selection enough to show the fw update banner in portfolio
         dispatch(setHasConnectedDevice(true));
         onSelect(deviceInfo);
+        dispatch(setReadOnlyMode(false));
       } else {
         NativeModules.BluetoothHelperModule.prompt()
           .then(() => {
@@ -71,6 +81,7 @@ export default function SelectDevice({
             // Nb consider a device selection enough to show the fw update banner in portfolio
             dispatch(setHasConnectedDevice(true));
             onSelect(deviceInfo);
+            dispatch(setReadOnlyMode(false));
           })
           .catch(() => {
             /* ignore */
@@ -152,7 +163,7 @@ export default function SelectDevice({
     <>
       {usbOnly && withArrows && !hideAnimation ? (
         <UsbPlaceholder />
-      ) : ble.length === 0 ? (
+      ) : usbOnly ? null : ble.length === 0 ? (
         <BluetoothEmpty
           hideAnimation={hideAnimation}
           onPairNewDevice={onPairNewDevice}

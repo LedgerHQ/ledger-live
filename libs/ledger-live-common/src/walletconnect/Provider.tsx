@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from "react";
 import WalletConnectClient from "@walletconnect/client";
 import { parseCallRequest } from "./index";
-import type { AccountLike } from "../types";
+import type { AccountLike } from "@ledgerhq/types-live";
 export const STATUS = {
   DISCONNECTED: 0x00,
   CONNECTING: 0x01,
@@ -133,16 +133,14 @@ const ProviderCommon = ({
         status: STATUS.CONNECTED,
       });
     });
-    connector.on("disconnect", () => {
-      disconnect();
-    });
-    connector.on("error", (error) => {
+    connector.on("disconnect", () => disconnect());
+    connector.on("error", (error: Error) => {
       dispatch({
         status: STATUS.ERROR,
         error,
       });
     });
-    connector.on("call_request", (error, payload) => {
+    connector.on("call_request", (error: Error, payload: unknown | null) => {
       if (error) {
         dispatch({
           status: STATUS.ERROR,
@@ -153,6 +151,7 @@ const ProviderCommon = ({
 
       handleCallRequest(payload);
     });
+
     dispatch({
       error: null,
       connector,
@@ -161,9 +160,17 @@ const ProviderCommon = ({
     });
   };
 
-  disconnect = () => {
+  disconnect = async () => {
     if (state.connector) {
-      state.connector.killSession();
+      // Workaround for an error while trying to kill the session and it returns a error
+      // It lets the user in a state where he can't connect anymore even after relaunching the live
+      // See ref: https://github.com/WalletConnect/walletconnect-monorepo/issues/315#issuecomment-830695953
+      try {
+        await state.connector.killSession();
+      } catch (e) {
+        // using optional chaining to prevent it from crashing on mobile
+        window?.localStorage?.removeItem("walletconnect");
+      }
     }
 
     if (state.status !== STATUS.DISCONNECTED) {

@@ -11,6 +11,13 @@ import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
 import {
+  getFocusedRouteNameFromRoute,
+  RouteProp,
+  useRoute,
+} from "@react-navigation/native";
+import { snakeCase } from "lodash";
+import { useCallback } from "react";
+import {
   getAndroidArchitecture,
   getAndroidVersionCode,
 } from "../logic/cleanBuildVersion";
@@ -20,9 +27,13 @@ import {
   languageSelector,
   localeSelector,
   lastSeenDeviceSelector,
+  sensitiveAnalyticsSelector,
+  firstConnectionHasDeviceSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
+import { satisfactionSelector } from "../reducers/ratings";
 import type { State } from "../reducers";
+import { NavigatorName } from "../const";
 
 const sessionId = uuid();
 
@@ -33,10 +44,14 @@ const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 const extraProperties = store => {
   const state: State = store.getState();
-  const systemLanguage = RNLocalize.getLocales()[0]?.languageTag;
-  const language = languageSelector(state);
-  const region = localeSelector(state);
+  const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
+  const systemLanguage = sensitiveAnalytics
+    ? null
+    : RNLocalize.getLocales()[0]?.languageTag;
+  const language = sensitiveAnalytics ? null : languageSelector(state);
+  const region = sensitiveAnalytics ? null : localeSelector(state);
   const devices = knownDevicesSelector(state);
+  const satisfaction = satisfactionSelector(state);
 
   const lastDevice =
     lastSeenDeviceSelector(state) || devices[devices.length - 1];
@@ -47,20 +62,24 @@ const extraProperties = store => {
         modelId: lastDevice.modelId,
       }
     : {};
+  const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
 
   return {
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
-    systemLanguage,
+    systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
     region: region?.split("-")[1] || region,
     platformOS: Platform.OS,
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
+    firstConnectionHasDevice,
+    // $FlowFixMe
     ...deviceInfo,
+    ...(satisfaction && { satisfaction }),
   };
 };
 
@@ -95,6 +114,25 @@ export const start = async (store: *) => {
     }
   }
   track("Start", extraProperties(store), true);
+};
+
+export const updateIdentify = async () => {
+  Sentry.addBreadcrumb({
+    category: "identify",
+    level: "debug",
+  });
+
+  if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
+    return;
+  }
+
+  if (ANALYTICS_LOGS)
+    console.log("analytics:identify", extraProperties(storeInstance), {
+      context,
+    });
+  if (!token) return;
+  const { user } = await getOrCreateUser();
+  analytics.identify(user.id, extraProperties(storeInstance), { context });
 };
 
 export const stop = () => {
@@ -136,6 +174,46 @@ export const track = (
 
   if (!token) return;
   analytics.track(event, allProperties, { context });
+};
+
+export const getPageNameFromRoute = (route: RouteProp) => {
+  const routeName =
+    getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
+  return snakeCase(routeName);
+};
+
+export const trackWithRoute = (
+  event: string,
+  properties: ?Object,
+  mandatory: ?boolean,
+  route: RouteProp,
+) => {
+  const newProperties = {
+    page: getPageNameFromRoute(route), // don't override page if it's already set
+    ...(properties || {}),
+  };
+  track(event, newProperties, mandatory);
+};
+
+export const useTrack = () => {
+  const route = useRoute();
+  const track = useCallback(
+    (event: string, properties: ?Object, mandatory: ?boolean) =>
+      trackWithRoute(event, properties, mandatory, route),
+    [route],
+  );
+  return track;
+};
+
+export const usePageNameFromRoute = () => {
+  const route = useRoute();
+  return getPageNameFromRoute(route);
+};
+
+export const useAnalytics = () => {
+  const track = useTrack();
+  const page = usePageNameFromRoute();
+  return { track, page };
 };
 
 export const screen = (

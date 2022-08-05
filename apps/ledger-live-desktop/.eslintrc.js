@@ -43,6 +43,7 @@ module.exports = {
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
     "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
     "jest/no-done-callback": 0,
+    "react/jsx-filename-extension": "error",
   },
   overrides: [
     {
@@ -58,9 +59,6 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
       ],
       parser: "@typescript-eslint/parser",
-      parserOptions: {
-        project: "./src/tsconfig.json",
-      },
       rules: {
         "space-before-function-paren": 0,
         "no-prototype-builtins": 0,
@@ -70,6 +68,14 @@ module.exports = {
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
         "flowtype/no-types-missing-file-annotation": 0,
+        "react/jsx-filename-extension": 0,
+
+        // Ignore live-common for the moment because this rule does not work with subpath exports
+        // See: https://github.com/import-js/eslint-plugin-import/issues/1810
+        // "import/no-unresolved": [
+        //   "error",
+        //   { ignore: ["^@ledgerhq/live-common/.*", "^@ledgerhq/react-ui/.*"] },
+        // ],
       },
     },
   ],

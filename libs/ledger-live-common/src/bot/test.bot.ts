@@ -1,6 +1,6 @@
-import { setup } from "../__tests__/test-helpers/libcore-setup";
+import "../__tests__/test-helpers/setup";
 import { bot } from ".";
-setup("bot");
+
 jest.setTimeout(110 * 60 * 1000);
 const { BOT_FILTER_CURRENCY, BOT_FILTER_FAMILY } = process.env;
 test("bot", async () => {

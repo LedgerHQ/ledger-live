@@ -1,7 +1,14 @@
 // @flow
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
-import { View, StyleSheet, Keyboard, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Platform,
+} from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
@@ -9,11 +16,11 @@ import { BigNumber } from "bignumber.js";
 import type {
   CosmosValidatorItem,
   Transaction,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
 
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -95,9 +102,17 @@ function DelegationAmount({ navigation, route }: Props) {
         ? validators.filter(v => !v.amount.eq(0))
         : validators;
 
-    const transaction = bridge.updateTransaction(tx, {
-      validators: filteredValidators,
-    });
+    const transaction = bridge.updateTransaction(
+      tx,
+      tx.mode === "delegate"
+        ? {
+            amount: new BigNumber(value),
+            validators: filteredValidators,
+          }
+        : {
+            validators: filteredValidators,
+          },
+    );
 
     navigation.navigate(route.params.nextScreen, {
       ...route.params,
@@ -124,136 +139,156 @@ function DelegationAmount({ navigation, route }: Props) {
     [value, max, min, route.params.transaction],
   );
 
+  let behaviorParam;
+
+  if (Platform.OS === "ios") {
+    behaviorParam = "padding";
+  }
+
   return (
     <View style={[styles.root, { backgroundColor: colors.background.main }]}>
-      <KeyboardView>
-        <View style={styles.main}>
-          <CurrencyInput
-            unit={unit}
-            value={value}
-            onChange={setValue}
-            inputStyle={styles.inputStyle}
-            hasError={error}
-          />
-          <View style={styles.ratioButtonContainer}>
-            {ratioButtons.map(({ label, value: v }) => (
-              <TouchableOpacity
-                key={label}
-                style={[
-                  styles.ratioButton,
-                  value.eq(v)
-                    ? {
-                        backgroundColor: colors.primary.c80,
+      <KeyboardView behavior={behaviorParam}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.container}>
+            <View style={styles.main}>
+              <CurrencyInput
+                unit={unit}
+                value={value}
+                onChange={setValue}
+                inputStyle={styles.inputStyle}
+                hasError={error}
+              />
+              <View style={styles.ratioButtonContainer}>
+                {ratioButtons.map(({ label, value: v }) => (
+                  <TouchableOpacity
+                    key={label}
+                    style={[
+                      styles.ratioButton,
+                      value.eq(v)
+                        ? {
+                            backgroundColor: colors.primary.c80,
+                          }
+                        : { borderColor: colors.neutral.c60 },
+                    ]}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setValue(v);
+                    }}
+                  >
+                    <LText
+                      style={[styles.ratioLabel]}
+                      color={
+                        value.eq(v) ? colors.neutral.c100 : colors.neutral.c60
                       }
-                    : { borderColor: colors.neutral.c60 },
-                ]}
-                onPress={() => {
-                  Keyboard.dismiss();
-                  setValue(v);
-                }}
-              >
-                <LText
-                  style={[styles.ratioLabel]}
-                  color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
-                >
-                  {label}
-                </LText>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
+                    >
+                      {label}
+                    </LText>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
 
-        <View
-          style={[styles.footer, { backgroundColor: colors.background.main }]}
-        >
-          {error && !value.eq(0) && (
-            <View style={styles.labelContainer}>
-              <Warning size={16} color={colors.error.c100} />
-              <LText style={[styles.assetsRemaining]} color={colors.error.c100}>
-                <Trans
-                  i18nKey={
-                    value.lt(min)
-                      ? "cosmos.delegation.flow.steps.amount.minAmount"
-                      : "cosmos.delegation.flow.steps.amount.incorrectAmount"
-                  }
-                  values={{
-                    min: formatCurrencyUnit(unit, min, {
-                      showCode: true,
-                      showAllDigits: true,
-                      locale,
-                    }),
-                    max: formatCurrencyUnit(unit, initialMax, {
-                      showCode: true,
-                      showAllDigits: true,
-                      locale,
-                    }),
-                  }}
-                >
-                  <LText semiBold>{""}</LText>
-                </Trans>
-              </LText>
+            <View
+              style={[
+                styles.footer,
+                { backgroundColor: colors.background.main },
+              ]}
+            >
+              {error && !value.eq(0) && (
+                <View style={styles.labelContainer}>
+                  <Warning size={16} color={colors.error.c100} />
+                  <LText
+                    style={[styles.assetsRemaining]}
+                    color={colors.error.c100}
+                  >
+                    <Trans
+                      i18nKey={
+                        value.lt(min)
+                          ? "cosmos.delegation.flow.steps.amount.minAmount"
+                          : "cosmos.delegation.flow.steps.amount.incorrectAmount"
+                      }
+                      values={{
+                        min: formatCurrencyUnit(unit, min, {
+                          showCode: true,
+                          showAllDigits: true,
+                          locale,
+                        }),
+                        max: formatCurrencyUnit(unit, initialMax, {
+                          showCode: true,
+                          showAllDigits: true,
+                          locale,
+                        }),
+                      }}
+                    >
+                      <LText semiBold>{""}</LText>
+                    </Trans>
+                  </LText>
+                </View>
+              )}
+              {max.isZero() && (
+                <View style={styles.labelContainer}>
+                  <Check size={16} color={colors.success.c100} />
+                  <LText
+                    style={[styles.assetsRemaining]}
+                    color={colors.success.c100}
+                  >
+                    <Trans
+                      i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`}
+                    />
+                  </LText>
+                </View>
+              )}
+              {max.gt(0) && !error && (
+                <View style={styles.labelContainer}>
+                  <LText style={styles.assetsRemaining}>
+                    <Trans
+                      i18nKey="cosmos.delegation.flow.steps.amount.assetsRemaining"
+                      values={{
+                        amount: formatCurrencyUnit(unit, max, {
+                          showCode: true,
+                          locale,
+                        }),
+                      }}
+                    >
+                      <LText semiBold>{""}</LText>
+                    </Trans>
+                  </LText>
+                </View>
+              )}
+              {!error && redelegatedBalance.gt(0) && (
+                <View style={[styles.labelContainer, styles.labelSmall]}>
+                  <LText style={[styles.assetsRemaining, styles.small]}>
+                    <Trans
+                      i18nKey="cosmos.redelegation.flow.steps.amount.newRedelegatedBalance"
+                      values={{
+                        amount: formatCurrencyUnit(
+                          unit,
+                          redelegatedBalance.plus(value),
+                          {
+                            showCode: true,
+                            locale,
+                          },
+                        ),
+                        name: route.params.validator?.name ?? "",
+                      }}
+                    >
+                      <LText semiBold>{""}</LText>
+                    </Trans>
+                  </LText>
+                </View>
+              )}
+              <Button
+                disabled={error}
+                event="Cosmos DelegationAmountContinueBtn"
+                onPress={onNext}
+                title={
+                  <Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />
+                }
+                type="primary"
+              />
             </View>
-          )}
-          {max.isZero() && (
-            <View style={styles.labelContainer}>
-              <Check size={16} color={colors.success.c100} />
-              <LText
-                style={[styles.assetsRemaining]}
-                color={colors.success.c100}
-              >
-                <Trans
-                  i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`}
-                />
-              </LText>
-            </View>
-          )}
-          {max.gt(0) && !error && (
-            <View style={styles.labelContainer}>
-              <LText style={styles.assetsRemaining}>
-                <Trans
-                  i18nKey="cosmos.delegation.flow.steps.amount.assetsRemaining"
-                  values={{
-                    amount: formatCurrencyUnit(unit, max, {
-                      showCode: true,
-                      locale,
-                    }),
-                  }}
-                >
-                  <LText semiBold>{""}</LText>
-                </Trans>
-              </LText>
-            </View>
-          )}
-          {!error && redelegatedBalance.gt(0) && (
-            <View style={[styles.labelContainer, styles.labelSmall]}>
-              <LText style={[styles.assetsRemaining, styles.small]}>
-                <Trans
-                  i18nKey="cosmos.redelegation.flow.steps.amount.newRedelegatedBalance"
-                  values={{
-                    amount: formatCurrencyUnit(
-                      unit,
-                      redelegatedBalance.plus(value),
-                      {
-                        showCode: true,
-                        locale,
-                      },
-                    ),
-                    name: route.params.validator?.name ?? "",
-                  }}
-                >
-                  <LText semiBold>{""}</LText>
-                </Trans>
-              </LText>
-            </View>
-          )}
-          <Button
-            disabled={error}
-            event="Cosmos DelegationAmountContinueBtn"
-            onPress={onNext}
-            title={<Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />}
-            type="primary"
-          />
-        </View>
+          </View>
+        </TouchableWithoutFeedback>
       </KeyboardView>
     </View>
   );
@@ -270,6 +305,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     minHeight: 150,
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    alignItems: "stretch",
   },
   inputStyle: { textAlign: "center", fontSize: 40, fontWeight: "600" },
   ratioButtonContainer: {

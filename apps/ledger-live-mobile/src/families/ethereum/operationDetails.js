@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { useTranslation } from "react-i18next";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike } from "@ledgerhq/types-live";
 
 import Section from "../../screens/OperationDetails/Section";
 

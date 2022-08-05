@@ -6,8 +6,8 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { setEnv } from "../../env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
-import type { Account, CurrencyBridge } from "../../types";
 import type {
+  CosmosAccount,
   CosmosDelegation,
   CosmosMappedDelegation,
   CosmosResources,
@@ -18,6 +18,7 @@ import { getCurrentCosmosPreloadData } from "./preloadedData";
 import preloadedMockData from "./preloadedData.mock";
 import * as hooks from "./react";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import { CurrencyBridge } from "@ledgerhq/types-live";
 const localCache = {};
 const cache = makeBridgeCacheSystem({
   saveData(c, d) {
@@ -49,6 +50,9 @@ describe("cosmos/react", () => {
       );
       const delegations = account.cosmosResources?.delegations;
       invariant(delegations, "cosmos: delegations is required");
+      expect(
+        account.cosmosResources?.delegations?.some((d) => d.amount[0] === 0)
+      ).toBe(false);
       expect(Array.isArray(result.current)).toBe(true);
       expect(result.current.length).toBe(
         (delegations as CosmosDelegation[]).length
@@ -196,7 +200,7 @@ describe("cosmos/react", () => {
 });
 
 function setup(): {
-  account: Account;
+  account: CosmosAccount;
   currencyBridge: CurrencyBridge;
   transaction: Transaction;
   prepare: () => Promise<any>;
@@ -208,7 +212,7 @@ function setup(): {
   const a = genAccount(seed, {
     currency,
   });
-  const account = genAddingOperationsInAccount(a, 3, seed);
+  const account = genAddingOperationsInAccount(a, 3, seed) as CosmosAccount;
   const currencyBridge = getCurrencyBridge(currency);
   const bridge = getAccountBridge(account);
   const transaction = bridge.createTransaction(account);

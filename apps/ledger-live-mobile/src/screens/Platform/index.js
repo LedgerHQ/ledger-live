@@ -1,15 +1,13 @@
 // @flow
 
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
-import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
-import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
+import { useSelector } from "react-redux";
 import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
 import { ScreenName } from "../../const";
@@ -20,6 +18,10 @@ import type { Props as DisclaimerProps } from "./DAppDisclaimer";
 import CatalogBanner from "./CatalogBanner";
 import AppCard from "./AppCard";
 import AnimatedHeaderView from "../../components/AnimatedHeader";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
+import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { useFilteredManifests } from "./shared";
 
 type RouteParams = {
   defaultAccount: ?AccountLike,
@@ -34,23 +36,9 @@ const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const { platform, ...routeParams } = route.params ?? {};
   const navigation = useNavigation();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
-  const { manifests } = usePlatformApp();
-  const experimental = useEnv("PLATFORM_EXPERIMENTAL_APPS");
-
-  const filteredManifests = useMemo(() => {
-    const branches = [
-      "stable",
-      "soon",
-      ...(experimental ? ["experimental"] : []),
-    ];
-
-    return filterPlatformApps(Array.from(manifests.values()), {
-      version: "0.0.1",
-      platform: "mobile",
-      branches,
-    });
-  }, [manifests, experimental]);
+  const filteredManifests = useFilteredManifests();
 
   // Disclaimer State
   const [disclaimerOpts, setDisclaimerOpts] = useState<DisclaimerOpts>(null);
@@ -68,7 +56,7 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
           name: manifest.name,
         });
 
-      if (!disclaimerDisabled) {
+      if (!disclaimerDisabled && !readOnlyModeEnabled) {
         setDisclaimerOpts({
           disableDisclaimer: () => setDisclaimerDisabled(),
           closeDisclaimer: () => setDisclaimerOpened(false),
@@ -81,7 +69,13 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
         openDApp();
       }
     },
-    [navigation, routeParams, setDisclaimerDisabled, disclaimerDisabled],
+    [
+      navigation,
+      routeParams,
+      setDisclaimerDisabled,
+      disclaimerDisabled,
+      readOnlyModeEnabled,
+    ],
   );
 
   useEffect(() => {
@@ -100,47 +94,47 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   }, [platform, filteredManifests, navigation, routeParams]);
 
   return (
-    <AnimatedHeaderView
-      titleStyle={styles.title}
-      title={<Trans i18nKey={"platform.catalog.title"} />}
-      hasBackButton
-    >
-      <TrackScreen category="Platform" name="Catalog" />
-      {disclaimerOpts && (
-        <DAppDisclaimer
-          disableDisclaimer={disclaimerOpts.disableDisclaimer}
-          closeDisclaimer={disclaimerOpts.closeDisclaimer}
-          onContinue={disclaimerOpts.onContinue}
-          isOpened={disclaimerOpened}
-          icon={disclaimerOpts.icon}
-          name={disclaimerOpts.name}
-        />
-      )}
+    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+      <AnimatedHeaderView
+        edges={[]}
+        titleStyle={styles.title}
+        title={<Trans i18nKey={"platform.catalog.title"} />}
+        hasBackButton
+      >
+        <TrackScreen category="Platform" name="Catalog" />
+        {disclaimerOpts && (
+          <DAppDisclaimer
+            disableDisclaimer={disclaimerOpts.disableDisclaimer}
+            closeDisclaimer={disclaimerOpts.closeDisclaimer}
+            onContinue={disclaimerOpts.onContinue}
+            isOpened={disclaimerOpened}
+            icon={disclaimerOpts.icon}
+            name={disclaimerOpts.name}
+          />
+        )}
 
-      <CatalogBanner />
-      <CatalogTwitterBanner />
-      {filteredManifests.map(manifest => (
-        <AppCard
-          key={manifest.id}
-          manifest={manifest}
-          onPress={handlePressCard}
-        />
-      ))}
-      <View style={styles.bottomPadding} />
-    </AnimatedHeaderView>
+        <CatalogBanner />
+        <CatalogTwitterBanner />
+        {filteredManifests.map(manifest => (
+          <AppCard
+            key={`${manifest.id}.${manifest.branch}`}
+            manifest={manifest}
+            onPress={handlePressCard}
+          />
+        ))}
+        <View style={styles.bottomPadding} />
+      </AnimatedHeaderView>
+    </TabBarSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   title: {
     lineHeight: 40,
     textAlign: "left",
   },
   bottomPadding: {
-    height: 40,
+    paddingBottom: TAB_BAR_SAFE_HEIGHT,
   },
 });
 

@@ -8,19 +8,15 @@ import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
 import ReactNativeModal from "react-native-modal";
-import type {
-  Account,
-  TokenAccount,
-  AccountLike,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -44,6 +40,7 @@ import logger from "../../logger";
 import { rejectionOp } from "../../logic/debugReject";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
+import byFamily from "../../generated/Confirmation";
 
 type Props = {
   account: ?(TokenAccount | Account),
@@ -168,6 +165,11 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const QRSize = Math.round(width / 1.8 - 16);
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
+
+  // check for coin specific UI
+  const CustomConfirmation = byFamily[currency.family];
+  if (CustomConfirmation)
+    return <CustomConfirmation {...{ navigation, route }} />;
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>

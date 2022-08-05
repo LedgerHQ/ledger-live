@@ -1,18 +1,19 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
-import type { Account, Operation, OperationType } from "../../types";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type {
   CosmosResources,
   CosmosDelegation,
   CosmosUnbonding,
   CosmosRedelegation,
+  CosmosAccount,
 } from "./types";
 import preloadedData from "./preloadedData.mock";
 import { genHex, genAddress } from "../../mock/helpers";
 const { validators } = preloadedData;
 
 function setCosmosResources(
-  account: Account,
+  account: CosmosAccount,
   delegations: CosmosDelegation[],
   unbondingBalance: BigNumber = new BigNumber(0),
   unbondings: CosmosUnbonding[] | null | undefined,
@@ -50,7 +51,7 @@ function setOperationFeeValue(
 }
 
 function genBaseOperation(
-  account: Account,
+  account: CosmosAccount,
   rng: Prando,
   type: OperationType,
   index: number
@@ -85,10 +86,10 @@ function genBaseOperation(
 /**
  * Generates a cosmos delegation operation updating both operations list and account cosmos resources
  * @memberof cosmos/mock
- * @param {Account} account
+ * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function addDelegationOperation(account: Account, rng: Prando): Account {
+function addDelegationOperation(account: CosmosAccount, rng: Prando): Account {
   const { spendableBalance } = account;
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
@@ -163,10 +164,13 @@ function addDelegationOperation(account: Account, rng: Prando): Account {
 /**
  * Generates a cosmos redelegation operation updating both operations list and account cosmos resources
  * @memberof cosmos/mock
- * @param {Account} account
+ * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function addRedelegationOperation(account: Account, rng: Prando): Account {
+function addRedelegationOperation(
+  account: CosmosAccount,
+  rng: Prando
+): Account {
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
     : {
@@ -227,10 +231,13 @@ function addRedelegationOperation(account: Account, rng: Prando): Account {
 /**
  * Generates a cosmos redelegation operation updating both operations list and account cosmos resources
  * @memberof cosmos/mock
- * @param {Account} account
+ * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function addClaimRewardsOperation(account: Account, rng: Prando): Account {
+function addClaimRewardsOperation(
+  account: CosmosAccount,
+  rng: Prando
+): Account {
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
     : {
@@ -275,10 +282,13 @@ function addClaimRewardsOperation(account: Account, rng: Prando): Account {
 /**
  * Generates a cosmos undelegation operation updating both operations list and account cosmos resources
  * @memberof cosmos/mock
- * @param {Account} account
+ * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function addUndelegationOperation(account: Account, rng: Prando): Account {
+function addUndelegationOperation(
+  account: CosmosAccount,
+  rng: Prando
+): Account {
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
     : {
@@ -342,10 +352,13 @@ function addUndelegationOperation(account: Account, rng: Prando): Account {
 /**
  * add in specific cosmos operations
  * @memberof cosmos/mock
- * @param {Account} account
+ * @param {CosmosAccount} account
  * @param {Prando} rng
  */
-function genAccountEnhanceOperations(account: Account, rng: Prando): Account {
+function genAccountEnhanceOperations(
+  account: CosmosAccount,
+  rng: Prando
+): Account {
   addDelegationOperation(account, rng);
   addRedelegationOperation(account, rng);
   addClaimRewardsOperation(account, rng);
@@ -357,9 +370,9 @@ function genAccountEnhanceOperations(account: Account, rng: Prando): Account {
 /**
  * Update spendable balance for the account based on delegation data
  * @memberof cosmos/mock
- * @param {Account} account
+ * @param {CosmosAccount} account
  */
-function postSyncAccount(account: Account): Account {
+function postSyncAccount(account: CosmosAccount): Account {
   const cosmosResources = account?.cosmosResources;
   const delegatedBalance =
     cosmosResources?.delegatedBalance ?? new BigNumber(0);
@@ -378,13 +391,13 @@ function postSyncAccount(account: Account): Account {
  * @param {Account} account
  */
 function postScanAccount(
-  account: Account,
+  account: CosmosAccount,
   {
     isEmpty,
   }: {
     isEmpty: boolean;
   }
-): Account {
+): CosmosAccount {
   if (isEmpty) {
     account.cosmosResources = {
       delegations: [],

@@ -1,4 +1,4 @@
-import type { FiatCurrency } from "./types";
+import type { FiatCurrency } from "@ledgerhq/types-cryptoassets";
 // inspired by https://github.com/smirzaei/currency-formatter/blob/master/currencies.json
 
 function fiat(name, ticker, defaultSymbol, defaultMagnitude): FiatCurrency {

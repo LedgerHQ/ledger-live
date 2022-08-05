@@ -1,4 +1,4 @@
-import { Account, Address, Operation } from "../../../../types";
+import { Account, Address, Operation } from "@ledgerhq/types-live";
 import {
   getCryptoCurrencyById,
   parseCurrencyUnit,

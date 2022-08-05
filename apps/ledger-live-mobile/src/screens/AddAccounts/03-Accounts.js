@@ -17,16 +17,21 @@ import { compose } from "redux";
 import {
   isAccountEmpty,
   groupAddAccounts,
-} from "@ledgerhq/live-common/lib/account";
-import type { AddAccountSupportLink } from "@ledgerhq/live-common/lib/account/addAccounts";
+} from "@ledgerhq/live-common/account/index";
+import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/addAccounts";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
-import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
-import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+  Account,
+} from "@ledgerhq/live-common/types/index";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 
-import type { DerivationMode } from "@ledgerhq/live-common/lib/derivation";
+import type { DerivationMode } from "@ledgerhq/live-common/derivation";
 
 import { useTheme } from "@react-navigation/native";
 import { replaceAccounts } from "../../actions/accounts";
@@ -53,6 +58,7 @@ import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 import BottomModal from "../../components/BottomModal";
 import { urls } from "../../config/urls";
+import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
 
 const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
   useEffect(() => {
@@ -65,7 +71,7 @@ const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
 };
 
 type RouteParams = {
-  currency: CryptoCurrency,
+  currency: CryptoCurrency | TokenCurrency,
   device: Device,
   inline?: boolean,
   returnToSwap?: boolean,
@@ -179,7 +185,10 @@ function AddAccountsAccounts({
   }, []);
 
   const startSubscription = useCallback(() => {
-    const bridge = getCurrencyBridge(currency);
+    const cryptoCurrency = isTokenCurrency(currency)
+      ? currency.parentCurrency
+      : currency;
+    const bridge = getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
       paginationConfig: {
         operation: 0,
@@ -189,9 +198,9 @@ function AddAccountsAccounts({
     // will be set to false if an existing account is found
 
     scanSubscription.current = concat(
-      from(prepareCurrency(currency)).pipe(ignoreElements()),
+      from(prepareCurrency(cryptoCurrency)).pipe(ignoreElements()),
       bridge.scanAccounts({
-        currency,
+        currency: cryptoCurrency,
         deviceId,
         syncConfig,
       }),
@@ -333,6 +342,8 @@ function AddAccountsAccounts({
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
   );
 
+  const CustomNoAssociatedAccounts =
+    noAssociatedAccountsByFamily[currency.family];
   const emptyTexts = {
     creatable: alreadyEmptyAccount ? (
       <LText style={styles.paddingHorizontal}>
@@ -342,6 +353,8 @@ function AddAccountsAccounts({
           {"PLACEHOLDER-2"}
         </Trans>
       </LText>
+    ) : CustomNoAssociatedAccounts ? (
+      <CustomNoAssociatedAccounts style={styles} />
     ) : (
       <LText style={styles.paddingHorizontal}>
         <Trans i18nKey="addAccounts.noAccountToCreate">

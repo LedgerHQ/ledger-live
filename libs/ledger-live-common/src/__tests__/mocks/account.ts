@@ -1,10 +1,10 @@
 import "../test-helpers/staticTime";
 import { genAccount } from "../../mock/account";
-import { getBalanceHistory } from "../../portfolio";
+import { getBalanceHistory } from "../../portfolio/v2";
 import { getEnv, setEnv } from "../../env";
 import { findCryptoCurrencyById } from "../../currencies";
 import { canBeMigrated } from "../../account";
-import { CryptoCurrency } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");
@@ -108,8 +108,8 @@ test("allow specifying number of operations", () => {
 test("mock generators don't generate negative balances", () => {
   for (let i = 0; i < 100; i++) {
     const account = genAccount("negative?" + i);
-    const history = getBalanceHistory(account, "year");
-    const invalidDataPoints = history.filter((h) => h.value.isNegative());
+    const history = getBalanceHistory(account, "year", 300);
+    const invalidDataPoints = history.filter((h) => h.value < 0);
     expect(invalidDataPoints).toMatchObject([]);
   }
 });

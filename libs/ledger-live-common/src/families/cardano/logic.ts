@@ -29,13 +29,14 @@ import {
   Token,
 } from "./types";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import bs58 from "bs58";
 import BigNumber from "bignumber.js";
 import { getNetworkParameters } from "./networks";
-import { CryptoCurrency, OperationType } from "../../types";
 import groupBy from "lodash/groupBy";
 import { APITransaction } from "./api/api-types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
+import type { OperationType } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  *  returns BipPath object with account, chain and index field for cardano
@@ -152,21 +153,17 @@ export const isValidAddress = (address: string, networkId: number): boolean => {
   if (!address) return false;
 
   try {
-    // check if it is byron address
-    const addr = bs58.decode(address).toString("hex");
-    if (addr[0] !== "8") {
-      return false;
-    }
-  } catch (error) {
-    try {
-      const hexAddress = TyphonUtils.decodeBech32(address);
-      const addressNetworkId = Number(hexAddress.value.toLowerCase().charAt(1));
+    const cardanoAddress = TyphonUtils.getAddressFromBech32(address);
+    if (cardanoAddress instanceof ShelleyTypeAddress) {
+      const addressNetworkId = Number(
+        cardanoAddress.getHex().toLowerCase().charAt(1)
+      );
       if (addressNetworkId !== networkId) {
         return false;
       }
-    } catch (error) {
-      return false;
     }
+  } catch (error) {
+    return false;
   }
   return true;
 };
@@ -451,4 +448,14 @@ export function getMemoFromTx(tx: APITransaction): string | undefined {
 export function isHexString(value: string): boolean {
   const regExp = /^[0-9a-fA-F]+$/;
   return regExp.test(value);
+}
+
+export function decodeTokenName(assetName: string): string {
+  if (assetName.length > 0) {
+    const bytes = [...Buffer.from(assetName, "hex")];
+    if (bytes.filter((byte) => byte <= 32 || byte >= 127).length === 0) {
+      return String.fromCharCode(...bytes);
+    }
+  }
+  return assetName;
 }

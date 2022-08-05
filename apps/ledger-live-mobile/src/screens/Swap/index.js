@@ -1,62 +1,52 @@
 // @flow
 
-import { useTheme } from "@react-navigation/native";
-import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { ScrollView, StyleSheet, View, Keyboard } from "react-native";
-
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-  TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
-import type {
-  Account,
-  AccountLike,
-  TokenAccount,
-} from "@ledgerhq/live-common/lib/types/account";
-
-import type {
-  ExchangeRate,
-  SwapTransaction,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-
-import { useSwapTransaction } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-
-import {
-  CurrenciesStatus,
-  getSupportedCurrencies,
-} from "@ledgerhq/live-common/lib/exchange/swap/logic";
-
-import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
   accountWithMandatoryTokens,
   flattenAccounts,
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks";
+import { useSwapTransaction } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import {
+  CurrenciesStatus,
+  getSupportedCurrencies,
+} from "@ledgerhq/live-common/exchange/swap/logic";
+import type {
+  ExchangeRate,
+  SwapTransaction,
+} from "@ledgerhq/live-common/exchange/swap/types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { useTheme } from "@react-navigation/native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Trans } from "react-i18next";
+import { Keyboard, ScrollView, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
-import AccountAmountRow from "./FormSelection/AccountAmountRow";
+import { swapAcceptProvider } from "../../actions/settings";
+import { Track, TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import Switch from "../../components/Switch";
-import { accountsSelector } from "../../reducers/accounts";
-
-import { NavigatorName } from "../../const";
-import KeyboardView from "../../components/KeyboardView";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import KeyboardView from "../../components/KeyboardView";
+import LText from "../../components/LText";
+import Switch from "../../components/Switch";
+import { NavigatorName, ScreenName } from "../../const";
 import Info from "../../icons/Info";
-import RatesSection from "./FormSelection/RatesSection";
+import { accountsSelector } from "../../reducers/accounts";
 import { swapAcceptedProvidersSelector } from "../../reducers/settings";
 import Confirmation from "./Confirmation";
-import { swapAcceptProvider } from "../../actions/settings";
 import Connect from "./Connect";
-import { Track, TrackScreen } from "../../analytics";
 import DisclaimerModal from "./DisclaimerModal";
+import AccountAmountRow from "./FormSelection/AccountAmountRow";
+import RatesSection from "./FormSelection/RatesSection";
 
 export type SwapRouteParams = {
   swap: SwapDataType,
@@ -142,7 +132,6 @@ function SwapForm({
     fromAmountError,
   } = useSwapTransaction({
     accounts,
-    exchangeRate: rate,
     setExchangeRate: setRate,
   });
 
@@ -423,13 +412,17 @@ export default function SwapFormEntry(props: Props) {
 
   const onNavigateToBuyCrypto = useCallback(() => {
     setNoAssetModalOpen(false);
-    navigation.replace(NavigatorName.ExchangeBuyFlow);
+    navigation.replace(NavigatorName.Exchange, {
+      screen: ScreenName.ExchangeBuy,
+    });
   }, [navigation]);
 
   const onNavigateBack = useCallback(() => {
-    setNoAssetModalOpen(false);
-    navigation.goBack();
-  }, [navigation]);
+    if (noAssetModalOpen) {
+      setNoAssetModalOpen(false);
+      navigation.goBack();
+    }
+  }, [navigation, noAssetModalOpen]);
 
   return defaultAccount ? (
     <SwapForm {...props} defaultAccount={defaultAccount} />

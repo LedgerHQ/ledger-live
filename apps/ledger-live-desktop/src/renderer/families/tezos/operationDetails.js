@@ -1,6 +1,6 @@
-/* eslint-disable consistent-return */
 // @flow
-import type { Operation } from "@ledgerhq/live-common/lib/types";
+/* eslint-disable consistent-return */
+import type { Operation } from "@ledgerhq/types-live";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360010653260";
 

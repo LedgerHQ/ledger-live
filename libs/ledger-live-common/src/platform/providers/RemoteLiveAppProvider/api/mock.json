@@ -6,12 +6,10 @@
     "homepageUrl": "https://www.moonpay.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/moonpay.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "buy"
-    ],
+    "categories": ["buy"],
     "currencies": [
       "bitcoin",
       "bitcoin_cash",
@@ -34,9 +32,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "ramp",
@@ -45,12 +41,10 @@
     "homepageUrl": "https://ramp.network/buy",
     "icon": "https://cdn.live.ledger.com/icons/platform/ramp.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "buy"
-    ],
+    "categories": ["buy"],
     "currencies": [
       "ethereum",
       "bitcoin",
@@ -74,9 +68,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "paraswap",
@@ -108,17 +100,11 @@
     "supportUrl": "https://paraswap.io",
     "icon": "https://cdn.live.ledger.com/icons/platform/paraswap.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "swap",
-      "defi"
-    ],
-    "currencies": [
-      "ethereum",
-      "bsc"
-    ],
+    "categories": ["swap", "defi"],
+    "currencies": ["ethereum", "bsc"],
     "content": {
       "shortDescription": {
         "en": "Swap your crypto with ParaSwap that aggregates and provides the best quotes decentralised exchanges."
@@ -131,36 +117,26 @@
       {
         "method": "account.list",
         "params": {
-          "currencies": [
-            "ethereum",
-            "bsc"
-          ]
+          "currencies": ["ethereum", "bsc"]
         }
       },
       {
         "method": "account.request",
         "params": {
-          "currencies": [
-            "ethereum",
-            "bsc"
-          ]
+          "currencies": ["ethereum", "bsc"]
         }
       },
       {
         "method": "transaction.sign",
         "params": {
-          "nanoApp": [
-            "paraswap"
-          ]
+          "nanoApp": ["paraswap"]
         }
       },
       {
         "method": "transaction.broadcast"
       }
     ],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "paraswap v5",
@@ -192,17 +168,11 @@
     "supportUrl": "https://paraswap.io",
     "icon": "https://cdn.live.ledger.com/icons/platform/paraswap.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
-    "categories": [
-      "swap",
-      "defi"
-    ],
-    "currencies": [
-      "ethereum",
-      "bsc"
-    ],
+    "categories": ["swap", "defi"],
+    "currencies": ["ethereum", "bsc"],
     "content": {
       "shortDescription": {
         "en": "Swap your crypto with ParaSwap that aggregates and provides the best quotes decentralised exchanges."
@@ -215,36 +185,26 @@
       {
         "method": "account.list",
         "params": {
-          "currencies": [
-            "ethereum",
-            "bsc"
-          ]
+          "currencies": ["ethereum", "bsc"]
         }
       },
       {
         "method": "account.request",
         "params": {
-          "currencies": [
-            "ethereum",
-            "bsc"
-          ]
+          "currencies": ["ethereum", "bsc"]
         }
       },
       {
         "method": "transaction.sign",
         "params": {
-          "nanoApp": [
-            "paraswap"
-          ]
+          "nanoApp": ["paraswap"]
         }
       },
       {
         "method": "transaction.broadcast"
       }
     ],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "lido",
@@ -265,16 +225,11 @@
     "homepageUrl": "https://lido.fi/",
     "icon": "https://cdn.live.ledger.com/icons/platform/lido.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "staking",
-      "defi"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["staking", "defi"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "Stake your ETH with Lido to earn daily staking rewards."
@@ -284,9 +239,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "1inch",
@@ -317,16 +270,11 @@
     "homepageUrl": "https://1inch.io/",
     "icon": "https://cdn.live.ledger.com/icons/platform/1inch.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "swap",
-      "defi"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["swap", "defi"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "Exchange crypto via a Defi/DEX aggregator on Ethereum mainnet, BSC or Polygon"
@@ -336,9 +284,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "btcdirect",
@@ -347,19 +293,11 @@
     "homepageUrl": "https://btcdirect.eu/",
     "icon": "https://cdn.live.ledger.com/icons/platform/btcdirect.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "buy"
-    ],
-    "currencies": [
-      "bitcoin",
-      "bitcoin_cash",
-      "ethereum",
-      "litecoin",
-      "ripple"
-    ],
+    "categories": ["buy"],
+    "currencies": ["bitcoin", "bitcoin_cash", "ethereum", "litecoin", "ripple"],
     "content": {
       "shortDescription": {
         "en": "Buy crypto easily and quickly from your Ledger Live via BTC Direct."
@@ -369,9 +307,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "banxa",
@@ -380,19 +316,11 @@
     "homepageUrl": "https://banxa.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/banxa.png",
     "platform": "desktop",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "buy"
-    ],
-    "currencies": [
-      "ethereum",
-      "bitcoin",
-      "litecoin",
-      "ripple",
-      "tether"
-    ],
+    "categories": ["buy"],
+    "currencies": ["ethereum", "bitcoin", "litecoin", "ripple", "tether"],
     "content": {
       "shortDescription": {
         "en": "Banxa supports the widest choice of payment options locally and globally, enabling people to purchase crypto"
@@ -402,9 +330,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "bitrefill",
@@ -413,16 +339,11 @@
     "homepageUrl": "https://bitrefill.com",
     "icon": "https://cdn.live.ledger.com/icons/platform/bitrefill.png",
     "platform": "desktop",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "gift cards"
-    ],
-    "currencies": [
-      "bitcoin",
-      "ethereum"
-    ],
+    "categories": ["gift cards"],
+    "currencies": ["bitcoin", "ethereum"],
     "content": {
       "shortDescription": {
         "en": "Buy gift cards and top up airtime"
@@ -432,9 +353,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "mercuryo",
@@ -443,13 +362,10 @@
     "homepageUrl": "https://www.mercuryo.io/",
     "icon": "https://cdn.live.ledger.com/icons/platform/mercuryo.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "buy",
-      "sell"
-    ],
+    "categories": ["buy", "sell"],
     "currencies": [
       "bitcoin",
       "ethereum",
@@ -477,18 +393,11 @@
     "homepageUrl": "https://www.sendwyre.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/wyre.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "exchange",
-      "buy"
-    ],
-    "currencies": [
-      "ethereum",
-      "bitcoin",
-      "algorand"
-    ],
+    "categories": ["exchange", "buy"],
+    "currencies": ["ethereum", "bitcoin", "algorand"],
     "content": {
       "shortDescription": {
         "en": "Purchase Bitcoin, Ethereum and more crypto with Wyre, only available to our US customers."
@@ -501,17 +410,11 @@
       {
         "method": "account.request",
         "params": {
-          "currencies": [
-            "ethereum",
-            "bitcoin",
-            "algorand"
-          ]
+          "currencies": ["ethereum", "bitcoin", "algorand"]
         }
       }
     ],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "zerion",
@@ -532,16 +435,11 @@
     "homepageUrl": "https://zerion.io/",
     "icon": "https://cdn.live.ledger.com/icons/platform/zerion.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "portfolio",
-      "defi"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["portfolio", "defi"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "The smart way to manage your DeFi portfolio."
@@ -551,9 +449,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "rainbow",
@@ -562,15 +458,11 @@
     "homepageUrl": "https://rainbow.me",
     "icon": "https://cdn.live.ledger.com/icons/platform/rainbow.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "nft"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["nft"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "An easy way to visualize the NFT secured by your hardware wallet."
@@ -580,9 +472,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "poap",
@@ -591,16 +481,11 @@
     "homepageUrl": "https://app.poap.xyz/",
     "icon": "https://cdn.live.ledger.com/icons/platform/poap.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "stable",
-    "categories": [
-      "nft",
-      "defi"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["nft", "defi"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "Proof of Attendance Protocol"
@@ -610,9 +495,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "aave",
@@ -621,15 +504,11 @@
     "homepageUrl": "https://aave.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/aave.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "soon",
-    "categories": [
-      "lend"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["lend"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "Lend or Borrow your crypto through a liquidity market protocol and stay in control of your funds."
@@ -648,16 +527,11 @@
     "homepageUrl": "https://compound.finance/",
     "icon": "https://cdn.live.ledger.com/icons/platform/compound.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "soon",
-    "categories": [
-      "lend",
-      "compound"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["lend", "compound"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "Lend or Borrow your crypto via a completely decentralized and open-source protocol."
@@ -676,15 +550,11 @@
     "homepageUrl": "https://alkemi.network/",
     "icon": "https://cdn.live.ledger.com/icons/platform/alkemi.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "soon",
-    "categories": [
-      "lend"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["lend"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "Earn high yields on your assets with our professional DeFi borrowing and lending platform."
@@ -703,15 +573,11 @@
     "homepageUrl": "https://www.deversifi.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/deversifi.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "soon",
-    "categories": [
-      "dex"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["dex"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "Trade through a self-custody decentralized exchange on Ethereum layer-2."
@@ -742,16 +608,11 @@
     "homepageUrl": "https://beta.yearn.finance",
     "icon": "https://cdn.live.ledger.com/icons/platform/yearn.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
-    "categories": [
-      "staking",
-      "defi"
-    ],
-    "currencies": [
-      "ethereum"
-    ],
+    "categories": ["staking", "defi"],
+    "currencies": ["ethereum"],
     "content": {
       "shortDescription": {
         "en": "Generate yield automatically with Yearn products"
@@ -761,9 +622,7 @@
       }
     },
     "permissions": [],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "changenow",
@@ -772,16 +631,11 @@
     "homepageUrl": "https://changenow.io/",
     "icon": "https://content-api.changenow.io/uploads/changenow_3fec68652e.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
-    "categories": [
-      "swap"
-    ],
-    "currencies": [
-      "bitcoin",
-      "ethereum"
-    ],
+    "categories": ["swap"],
+    "currencies": ["bitcoin", "ethereum"],
     "content": {
       "shortDescription": {
         "en": "Exchange 300+ coins and tokens free of limits",
@@ -811,9 +665,7 @@
         "method": "*"
       }
     ],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "mercuryo",
@@ -822,13 +674,10 @@
     "homepageUrl": "https://www.mercuryo.io/",
     "icon": "https://inlnk.ru/84PnYo",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
-    "categories": [
-      "buy",
-      "sell"
-    ],
+    "categories": ["buy", "sell"],
     "currencies": [
       "bitcoin",
       "ethereum",
@@ -856,12 +705,10 @@
     "homepageUrl": "https://transak.com",
     "icon": "https://d1wvnwyfte65eg.cloudfront.net/logo_main.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "experimental",
-    "categories": [
-      "tools"
-    ],
+    "categories": ["tools"],
     "currencies": [
       "bitcoin",
       "ethereum",
@@ -886,9 +733,7 @@
         "method": "*"
       }
     ],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   },
   {
     "id": "debug",
@@ -897,12 +742,10 @@
     "homepageUrl": "https://developers.ledger.com/",
     "icon": "https://cdn.live.ledger.com/icons/platform/debugger.png",
     "platform": "all",
-    "apiVersion": "0.0.1",
+    "apiVersion": "^1.0.0 || ~0.0.1",
     "manifestVersion": "1",
     "branch": "debug",
-    "categories": [
-      "tools"
-    ],
+    "categories": ["tools"],
     "currencies": "*",
     "content": {
       "shortDescription": {
@@ -917,39 +760,6 @@
         "method": "*"
       }
     ],
-    "domains": [
-      "https://*"
-    ]
-  },
-  {
-    "id": "dummy-live-app",
-    "name": "Dummy Live App",
-    "url": "http://localhost:3001",
-    "homepageUrl": "https://developers.ledger.com/",
-    "icon": "",
-    "platform": "all",
-    "apiVersion": "0.0.1",
-    "manifestVersion": "1",
-    "branch": "stable",
-    "categories": [
-      "tools"
-    ],
-    "currencies": "*",
-    "content": {
-      "shortDescription": {
-        "en": "Dummy app for testing the Platform apps and Live SDK in E2E (Playwright) tests"
-      },
-      "description": {
-        "en": "Dummy app for testing the Platform apps and Live SDK in E2E (Playwright) tests"
-      }
-    },
-    "permissions": [
-      {
-        "method": "*"
-      }
-    ],
-    "domains": [
-      "https://*"
-    ]
+    "domains": ["https://*"]
   }
 ]

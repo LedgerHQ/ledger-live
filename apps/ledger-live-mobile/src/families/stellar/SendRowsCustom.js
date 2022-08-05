@@ -1,7 +1,7 @@
 /* @flow */
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 
 import SendRowMemo from "./SendRowMemo";
 

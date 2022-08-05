@@ -1,5 +1,5 @@
-import type { AccountLike, Account, TransactionStatus } from "../../types";
-import type { Transaction } from "./types";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { PolkadotAccount, Transaction, TransactionStatus } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 import { getMainAccount } from "../../account";
 import { formatCurrencyUnit, getCryptoCurrencyById } from "../../currencies";
@@ -50,7 +50,7 @@ function getDeviceTransactionConfig({
 }): Array<DeviceTransactionField> {
   const { mode, recipient, rewardDestination } = transaction;
   const { amount } = status;
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   let fields: { type: string; label: string; value?: string }[] = [];
 
   switch (mode) {

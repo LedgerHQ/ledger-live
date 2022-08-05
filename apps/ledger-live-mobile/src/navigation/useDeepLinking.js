@@ -1,8 +1,9 @@
 // @flow
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
-import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
+import { getPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
 import { NavigatorName, ScreenName } from "../const";
 
 function getSettingsScreen(pathname) {
@@ -34,15 +35,19 @@ function getSettingsScreen(pathname) {
   return screen;
 }
 
+// To avoid recreating a ref on each render and triggering hooks
+const emptyObject = {};
+
 export function useDeepLinkHandler() {
   const { navigate } = useNavigation();
-  const { manifests } = usePlatformApp();
+  const { state } = useRemoteLiveAppContext();
+  const manifests = state?.value?.liveAppByIndex || emptyObject;
 
   const filteredManifests = useMemo(() => {
     const branches = ["stable", "soon"];
 
     return filterPlatformApps(Array.from(manifests.values()), {
-      version: "0.0.1",
+      version: getPlatformVersion(),
       platform: "mobile",
       branches,
     });
@@ -63,8 +68,8 @@ export function useDeepLinkHandler() {
         case "buy": {
           const buyCurrency = pathname.replace(/(^\/+|\/+$)/g, "");
           if (buyCurrency)
-            navigate(NavigatorName.ExchangeBuyFlow, {
-              screen: ScreenName.ExchangeSelectCurrency,
+            navigate(NavigatorName.Exchange, {
+              screen: ScreenName.ExchangeBuy,
               params: { currency: buyCurrency },
             });
           else navigate(NavigatorName.Exchange);

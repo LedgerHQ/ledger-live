@@ -1,6 +1,6 @@
 [
   {
-    "tag_name": "v2.41.3",
-    "body": "## 🚀 Features\n- Solana staking\n- Polygon NFTs\n- Filtering of spam NFT collections\n- Tezos (XTZ) new implementation\n- Cosmos (ATOM) new implementation\n- Goerli testnet for ETH 2.0 staking\n\n## 🐛 Fixes\n- Issue when adding BCH accounts\n- WalletConnect transaction flow improvement\n- Performance improvements and minor issues\n      "
+    "tag_name": "2.44.0",
+    "body": "\nLedger and FTX joining forces, RBF for Bitcoin transactions, a few bug fixes, and more. Here are some powerful new Ledger Live features heading your way. \n\n### 🚀 Features\nSwap crypto on FTX without leaving Ledger Live. Access to FTX swapping options to grow and diversify your portfolio while your assets remain fully secure in a Ledger hardware wallet. \nGone are the days of stuck Bitcoin transactions. With the enhanced Bitcoin RBF (Replace-by-Fee) feature, you can increase network fees and speed up unconfirmed transactions.\nDid you know that the floor price is one of the most important metrics for determining the value of an NFT collection? In this spirit, Ledger Live will now display an NFT’s floor price next to the collection name.\n\n### 🐛 Fixes\nThere were a few little bugs that caused some trouble. For instance, several users reported issues when connecting to Rarible or OpenSea with WalletConnect. We’ve patched this up.\n"
   }
 ]

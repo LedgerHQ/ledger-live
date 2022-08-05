@@ -4,13 +4,65 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
+  "version": "25.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LedgerHQ/ledger-live-common"
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
-  "version": "23.0.0-next.1",
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common",
   "main": "lib/index.js",
+  "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "lib/*/": [
+        "lib/*/index.d.ts"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*/": [
+        "lib-es/*/index.d.ts"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*/": [
+        "lib/*/index.d.ts"
+      ],
+      "*": [
+        "lib/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*/": "./lib/*/index.js",
+    "./lib/*": "./lib/*.js",
+    "./lib/*.js": "./lib/*.js",
+    "./lib-es/*/": "./lib-es/*/index.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib-es/*.js": "./lib-es/*.js",
+    "./*/": {
+      "require": "./lib/*/index.js",
+      "default": "./lib-es/*/index.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./*.js": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "license": "Apache-2.0",
   "scripts": {
     "build": "bash ./scripts/build-ts.sh",
@@ -21,10 +73,11 @@
     "lint:fix": "pnpm lint --fix",
     "jest": "cross-env TZ=America/New_York jest",
     "typecheck": "tsc --noEmit -p src/tsconfig.json",
-    "test": "pnpm ci-test-common",
     "ci-lint": "pnpm lint",
-    "ci-test-common": "env-cmd -f ./.ci.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
-    "ci-test-bot": "env-cmd -f ./.ci.env pnpm jest --testMatch '**/*.bot.ts'"
+    "test": "pnpm ci-test-unit",
+    "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
+    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot",
+    "ci-test-bot": "env-cmd -f .ci.bot.env pnpm jest --ci"
   },
   "files": [
     "lib",
@@ -33,11 +86,11 @@
     "reactNative.js"
   ],
   "peerDependencies": {
+    "@types/react": "*",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-native-svg": ">=12.1.1",
-    "@types/react": "*"
+    "react-native-svg": ">=12.1.1"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -69,7 +122,7 @@
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
     "@hashgraph/sdk": "^2.10.1",
-    "@ledgerhq/compressjs": "1.3.2",
+    "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
@@ -87,22 +140,23 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/json-bignumber": "^1.1.0",
-    "@ledgerhq/live-app-sdk": "^0.6.1",
+    "@ledgerhq/live-app-sdk": "^0.7.0",
     "@ledgerhq/logs": "workspace:^",
-    "@polkadot/types": "8.1.1",
-    "@polkadot/types-known": "8.1.1",
-    "@polkadot/util": "9.1.1",
-    "@polkadot/util-crypto": "9.1.1",
+    "@polkadot/types": "8.5.1",
+    "@polkadot/types-known": "8.5.1",
+    "@polkadot/util": "9.2.1",
+    "@polkadot/util-crypto": "9.2.1",
     "@polkadot/wasm-crypto": "6.0.1",
     "@solana/spl-token": "^0.2.0",
-    "@solana/web3.js": "^1.41.4",
+    "@solana/web3.js": "1.41.3",
     "@stricahq/bip32ed25519": "^1.0.3",
-    "@stricahq/typhonjs": "^1.1.3",
+    "@stricahq/typhonjs": "^1.2.4",
     "@taquito/ledger-signer": "stablelib",
     "@taquito/taquito": "stablelib",
     "@taquito/utils": "stablelib",
     "@types/bchaddrjs": "^0.4.0",
     "@types/bs58check": "^2.1.0",
+    "@types/qs": "^6.9.7",
     "@walletconnect/client": "1.7.3",
     "@xstate/react": "^1.6.3",
     "@zondax/ledger-filecoin": "^0.11.2",
@@ -135,18 +189,22 @@
     "eth-sig-util": "3.0.1",
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-util": "^7.1.4",
+    "events": "^3.3.0",
     "expect": "^27.4.6",
     "generic-pool": "^3.8.2",
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",
     "json-rpc-2.0": "^0.2.19",
+    "jwt-decode": "^3.1.2",
     "leb128": "^0.0.5",
     "lodash": "^4.17.21",
     "lru-cache": "5.1.1",
+    "minimatch": "^5.1.0",
     "numeral": "^2.0.6",
     "object-hash": "^2.2.0",
     "performance-now": "^2.1.0",
     "prando": "^6.0.1",
+    "qs": "^6.10.1",
     "redux": "^4.1.2",
     "reselect": "^4.1.5",
     "ripemd160": "^2.0.2",
@@ -159,7 +217,7 @@
     "semver": "^7.3.5",
     "sha.js": "^2.4.11",
     "source-map-support": "^0.5.21",
-    "stellar-sdk": "^10.1.0",
+    "stellar-sdk": "^10.1.1",
     "superstruct": "0.14.2",
     "tiny-secp256k1": "^1.1.6",
     "triple-beam": "^1.3.0",
@@ -170,6 +228,9 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
+    "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^",
     "@svgr/core": "^5.5.0",
     "@testing-library/react-hooks": "^4.0.1",
     "@types/bs58": "^4.0.1",
@@ -198,7 +259,7 @@
     "eslint-plugin-typescript": "^0.14.0",
     "fs": "^0.0.1-security",
     "glob": "^7.2.0",
-    "jest": "^27.5.1",
+    "jest": "^28.1.1",
     "jest-file-snapshot": "^0.5.0",
     "prettier": "2.3.2",
     "react": "^17.0.2",
@@ -207,7 +268,7 @@
     "react-native-svg": "^12.1.1",
     "react-test-renderer": "^17.0.2",
     "timemachine": "^0.3.2",
-    "ts-jest": "^27.1.3",
+    "ts-jest": "^28.0.5",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5",
     "typescript-eslint-parser": "^22.0.0",

@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   listFiatCurrencies,
   getFiatCurrencyByTicker,
@@ -19,7 +20,6 @@ import {
   findCryptoCurrencyByKeyword,
   registerCryptoCurrency,
 } from "./currencies";
-import { CryptoCurrency } from "./types";
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({
@@ -212,6 +212,19 @@ test("all USDT are countervalue enabled", () => {
   );
   expect(tokens.map((t) => t.id).sort()).toMatchSnapshot();
   expect(tokens.every((t) => t.disableCountervalue === false)).toBe(true);
+});
+
+test("Ethereum family convention: all ethereum testnet coins must derivate on the same cointype as the testnet it's for (e.g. ethereum ropsten is on 60)", () => {
+  expect(
+    listCryptoCurrencies()
+      .filter(
+        (e) =>
+          e.family === "ethereum" && // ethereum family
+          e.isTestnetFor && // is a testnet coin
+          e.coinType !== getCryptoCurrencyById(e.isTestnetFor).coinType // it must use same coinType as the mainnet coin
+      )
+      .map((e) => e.id) // to get a nice error if it fails
+  ).toEqual([]);
 });
 
 test("can register a new coin externally", () => {

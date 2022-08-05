@@ -26,6 +26,8 @@ import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import MockModeRow from "../General/MockModeRow";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import OpenDebugEnv from "./OpenDebugEnv";
+import HasOrderedNanoRow from "./HasOrderedNanoRow";
+import OpenStoryly from "./OpenDebugStoryly";
 
 export function DebugMocks() {
   return (
@@ -48,8 +50,10 @@ export function DebugMocks() {
       <OpenDebugEnv />
       <OpenDebugIcons />
       <OpenLottie />
+      <OpenStoryly />
       <OpenDebugPlayground />
       <ReadOnlyModeRow />
+      <HasOrderedNanoRow/>
       <MockModeRow />
       <AnalyticsConsoleRow />
       <AddMockAnnouncementButton title="Mock a new announcement" />

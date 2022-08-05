@@ -60,12 +60,6 @@ export const TronTransactionExpired = createCustomErrorClass(
 export const TronNotEnoughEnergy = createCustomErrorClass(
   "TronNotEnoughEnergy"
 );
-export const StellarMemoRecommended = createCustomErrorClass(
-  "StellarMemoRecommended"
-);
-export const StellarWrongMemoFormat = createCustomErrorClass(
-  "StellarWrongMemoFormat"
-);
 export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
   "AccountAwaitingSendPendingOperations"
 );
@@ -160,7 +154,6 @@ export const SwapSubmitKYCFailed = createCustomErrorClass(
   "SwapSubmitKYCFailed"
 );
 
-export const SwapUnknownSwapId = createCustomErrorClass("SwapUnknownSwapId");
 export const SwapGenericAPIError = createCustomErrorClass(
   "SwapGenericAPIError"
 );
@@ -214,5 +207,6 @@ export const UnsupportedDerivation = createCustomErrorClass(
 );
 
 export * from "./families/polkadot/errors";
+export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";

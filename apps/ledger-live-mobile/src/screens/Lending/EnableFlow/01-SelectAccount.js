@@ -5,21 +5,17 @@ import React, { useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import type {
-  Account,
-  AccountLike,
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
 import {
   getAccountName,
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import { subAccountByCurrencyOrderedScreenSelector } from "../../../reducers/accounts";
 import { rgba } from "../../../colors";
@@ -49,7 +45,7 @@ const SEARCH_KEYS = [
 
 type Props = {
   navigation: any,
-  route: { params?: { currency: CryptoCurrency | TokenCurrency } },
+  route: { params?: { token: TokenCurrency } },
 };
 
 const keyExtractor = item => item.account.id;
@@ -57,8 +53,8 @@ const keyExtractor = item => item.account.id;
 function LendingEnableSelectAccount({ route, navigation }: Props) {
   const { colors } = useTheme();
   const locale = useSelector(localeSelector);
-  const currency = route?.params?.currency;
-  invariant(currency, "currency required");
+  const token = route?.params?.token;
+  invariant(token, "token required");
 
   let enabledTotalAmount = null;
   const accounts = useSelector(
@@ -74,10 +70,10 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
       const n = navigation.getParent() || navigation;
       n.replace(NavigatorName.AddAccounts, {
         screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
-        params: { token: currency },
+        params: { token },
       });
     }
-  }, [currency, filteredAccounts, navigation]);
+  }, [token, filteredAccounts, navigation]);
 
   let accountsWithUnlimitedEnabledAmount = 0;
   filteredAccounts.forEach(({ account }) => {
@@ -103,7 +99,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
 
   const formattedEnabledAmount =
     enabledTotalAmount instanceof BigNumber &&
-    formatCurrencyUnit(currency.units[0], enabledTotalAmount, {
+    formatCurrencyUnit(token.units[0], enabledTotalAmount, {
       showCode: true,
       disableRounding: false,
       locale,
@@ -235,7 +231,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
       <TrackScreen
         category="Lend Approve"
         name="Select Account"
-        eventProperties={{ currencyName: currency.name }}
+        eventProperties={{ currencyName: token.name }}
       />
       <LendingWarnings />
       <ConfirmationModal
@@ -284,7 +280,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
                       ? filteredAccounts.length
                       : accountsWithUnlimitedEnabledAmount,
                   amount: formattedEnabledAmount,
-                  currency: currency.name,
+                  currency: token.name,
                 }}
                 count={
                   enabledTotalAmount < Infinity

@@ -1,8 +1,16 @@
 {
   "name": "@ledgerhq/icons-ui",
   "description": "Icons used by the Ledger design system.",
-  "version": "0.2.4",
+  "version": "0.2.7",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/icons",
   "files": [
     "react",
     "native",
@@ -13,11 +21,16 @@
       "require": "./react/cjs/",
       "default": "./react/"
     },
+    "./react/*": {
+      "require": "./react/cjs/*.js",
+      "default": "./react/*.js"
+    },
     "./react": {
       "require": "./react/cjs/index.js",
       "default": "./react/index.js"
     },
     "./native/": "./native/",
+    "./native/*": "./native/*.js",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -28,7 +41,8 @@
   "peerDependencies": {
     "styled-components": "*",
     "styled-system": "*",
-    "@types/react": "*"
+    "@types/react": "*",
+    "react": "*"
   },
   "peerDependenciesMeta": {
     "@types/react": {

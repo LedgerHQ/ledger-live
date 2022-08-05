@@ -3,7 +3,14 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.1.0",
+  "packageManager": "pnpm@7.3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
   "scripts": {
     "clean": "git clean -fdX",
     "changelog": "changeset add",
@@ -11,19 +18,21 @@
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
     "build": "pnpm turbo run build --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
-    "build:libs": "pnpm turbo run build --scope=@ledgerhq/* --include-dependencies --no-deps",
+    "build:libs": "pnpm turbo run build --filter=\"!./apps/**\" --scope=@ledgerhq/* --include-dependencies --no-deps",
     "build:libs:force": "pnpm -r --filter=\"!./apps/**\" --filter=\"!ledger-live\" build",
-    "build:apps": "pnpm turbo run build-ci",
     "build:actions": "pnpm turbo run build --filter=@actions/* --no-deps",
     "build:cli": "pnpm turbo run build --filter=live-cli",
-    "build:lld": "pnpm turbo run build-ci --filter=ledger-live-desktop",
-    "build:lld:deps": "pnpm turbo run build --filter='ledger-live-desktop^...'",
-    "build:llm": "pnpm turbo run build-ci --filter=live-mobile",
-    "build:llm:deps": "pnpm turbo run build --filter='live-mobile^...'",
-    "build:ljs": "pnpm turbo run build --filter='./libs/ledgerjs/**'",
-    "clean:ljs": "pnpm turbo run clean --filter='./libs/ledgerjs/**'",
-    "doc:ljs": "pnpm turbo run doc --filter='./libs/ledgerjs/**'",
-    "watch:ljs": "pnpm turbo run watch --filter='./libs/ledgerjs/**'",
+    "build:lld": "pnpm turbo run build --filter=ledger-live-desktop",
+    "build:lld:deps": "pnpm turbo run build --filter=\"ledger-live-desktop^...\"",
+    "build:llm:android": "pnpm turbo run android:apk --filter=live-mobile",
+    "build:llm:ios": "pnpm turbo run ios:local:ipa --filter=live-mobile",
+    "build:llm:deps": "pnpm turbo run build --filter=\"live-mobile^...\"",
+    "build:ljs": "pnpm turbo run build --filter=\"./libs/ledgerjs/**\"",
+    "build-ci:llm:ios": "pnpm turbo run ios:ci:adhoc --filter=live-mobile",
+    "build-ci:llm:android": "pnpm turbo run android:apk --filter=live-mobile",
+    "clean:ljs": "pnpm turbo run clean --filter=\"./libs/ledgerjs/**\"",
+    "doc:ljs": "pnpm turbo run doc --filter=\"./libs/ledgerjs/**\"",
+    "watch:ljs": "pnpm turbo run watch --filter=\"./libs/ledgerjs/**\"",
     "watch:common": "pnpm turbo run watch --filter=live-common",
     "dev:cli": "pnpm turbo run watch --filter=live-cli",
     "dev:lld": "pnpm turbo run start --filter=ledger-live-desktop",
@@ -41,6 +50,7 @@
     "cli": "pnpm --filter live-cli",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
+    "common-tools": "pnpm --filter live-common-tools",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryoptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter cryptoassets",
@@ -81,11 +91,12 @@
     "actions": "pnpm --filter @actions/*"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.21.1",
+    "@changesets/changelog-github": "^0.4.5",
+    "@changesets/cli": "^2.23.0",
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "turbo": "^1.2.9"
+    "turbo": "1.3.1"
   },
   "pnpm": {
     "overrides": {
@@ -96,7 +107,9 @@
       "metro-react-native-babel-transformer": "^0.67.0",
       "metro-resolver": "^0.67.0",
       "metro-runtime": "^0.67.0",
-      "metro-transform-worker": "^0.67.0"
+      "metro-transform-worker": "^0.67.0",
+      "remove-flow-types-loader>flow-remove-types": "^2",
+      "remove-flow-types-loader>loader-utils": "*"
     }
   }
 }

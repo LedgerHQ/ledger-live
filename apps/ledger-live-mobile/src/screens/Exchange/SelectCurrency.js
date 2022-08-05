@@ -1,28 +1,24 @@
 // @flow
-import React, { useMemo } from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import {
-  isCurrencySupported,
-  listTokens,
-  useCurrenciesByMarketcap,
-  listSupportedCurrencies,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/types-cryptoassets";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 
 import { useTheme } from "@react-navigation/native";
-import type { Device } from "@ledgerhq/hw-transport/lib/Transport";
 import { track } from "../../analytics/segment";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import KeyboardView from "../../components/KeyboardView";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
-import { getSupportedCurrencies } from "./coinifyConfig";
+import { NavigatorName, ScreenName } from "../../const";
+import { useRampCatalogCurrencies } from "./hooks";
 
 const SEARCH_KEYS = ["name", "ticker"];
 const forceInset = { bottom: "always" };
@@ -34,7 +30,7 @@ type Props = {
     params?: {
       currency?: string,
       mode: "buy" | "sell",
-      device?: Device,
+      onCurrencyChange: (currency: CryptoCurrency | TokenCurrency) => void,
     },
   },
 };
@@ -49,51 +45,66 @@ const renderEmptyList = () => (
   </View>
 );
 
-const listSupportedTokens = () =>
-  listTokens().filter(t => isCurrencySupported(t.parentCurrency));
-
 export default function ExchangeSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { params } = route;
-  const initialCurrencySelected = params?.currency;
-  const device = params?.device;
-  const mode = params?.mode || "buy";
+  const { params = {} } = route;
+  const {
+    currency: initialCurrencySelected,
+    mode = "buy",
+    onCurrencyChange,
+  } = params;
 
-  const cryptoCurrencies = useMemo(
-    () => listSupportedCurrencies().concat(listSupportedTokens()),
-    [],
+  const rampCatalog = useRampCatalog();
+  const cryptoCurrencies = useRampCatalogCurrencies(
+    mode === "buy" ? rampCatalog.value.onRamp : rampCatalog.value.offRamp,
   );
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
-  const supportedCryptoCurrencies = sortedCryptoCurrencies.filter(currency =>
-    getSupportedCurrencies(mode).includes(currency.id),
+  const onPressCurrency = useCallback(
+    (currency: CryptoCurrency) => {
+      if (onCurrencyChange) {
+        onCurrencyChange(currency);
+      }
+
+      const destinationScreen =
+        mode === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell;
+      navigation.navigate(NavigatorName.Exchange, {
+        screen: destinationScreen,
+      });
+    },
+    [mode, navigation, onCurrencyChange],
   );
 
-  const onPressCurrency = (currency: CryptoCurrency) => {
-    track("Buy Crypto Continue Button", { currencyName: currency.name });
-    navigation.navigate("ExchangeSelectAccount", {
-      currency,
-      mode,
-      device,
-    });
-  };
+  const onPressToken = useCallback(
+    (token: TokenCurrency) => {
+      if (onCurrencyChange) {
+        onCurrencyChange(token);
+      }
 
-  const onPressToken = (token: TokenCurrency) => {
-    navigation.navigate("ExchangeSelectAccount", {
-      currency: token,
-      mode,
-      device,
-    });
-  };
+      const destinationScreen =
+        mode === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell;
+      navigation.navigate(NavigatorName.Exchange, {
+        screen: destinationScreen,
+      });
+    },
+    [mode, navigation, onCurrencyChange],
+  );
 
-  const onPressItem = (currencyOrToken: CryptoCurrency | TokenCurrency) => {
-    if (currencyOrToken.type === "TokenCurrency") {
-      onPressToken(currencyOrToken);
-    } else {
-      onPressCurrency(currencyOrToken);
-    }
-  };
+  const onPressItem = useCallback(
+    (currencyOrToken: CryptoCurrency | TokenCurrency) => {
+      track("Buy Crypto Continue Button", {
+        currencyName: currencyOrToken.name,
+      });
+
+      if (currencyOrToken.type === "TokenCurrency") {
+        onPressToken(currencyOrToken);
+      } else {
+        onPressCurrency(currencyOrToken);
+      }
+    },
+    [onPressCurrency, onPressToken],
+  );
 
   const renderList = items => (
     <FlatList
@@ -119,7 +130,7 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
           <FilteredSearchBar
             keys={SEARCH_KEYS}
             inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-            list={supportedCryptoCurrencies}
+            list={sortedCryptoCurrencies}
             renderList={renderList}
             renderEmptySearch={renderEmptyList}
             initialQuery={initialCurrencySelected}

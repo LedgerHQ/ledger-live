@@ -6,15 +6,17 @@ import shuffle from "lodash/shuffle";
 import flatMap from "lodash/flatMap";
 import { BigNumber } from "bignumber.js";
 import type {
-  TransactionStatus,
   Transaction,
-  AccountLike,
+} from "@ledgerhq/live-common/generated/types";
+import type {
   Account,
-} from "@ledgerhq/live-common/lib/types";
+  AccountLike,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/parseCurrencyUnit";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge/index";
 
 const inferAmount = (account: AccountLike, str: string): BigNumber => {
   const currency = getAccountCurrency(account);
@@ -100,7 +102,7 @@ export const inferTransactionsOpts = uniqBy(
 export async function inferTransactions(
   mainAccount: Account,
   opts: InferTransactionsOpts
-): Promise<[Transaction, TransactionStatus][]> {
+): Promise<[Transaction, TransactionStatusCommon][]> {
   const bridge = getAccountBridge(mainAccount, null);
   const specific = perFamily[mainAccount.currency.family];
 
@@ -146,7 +148,7 @@ export async function inferTransactions(
     all = shuffle(all);
   }
 
-  const transactions: [Transaction, TransactionStatus][] = await Promise.all(
+  const transactions: [Transaction, TransactionStatusCommon][] = await Promise.all(
     inferTransactions(all, opts, {
       inferAmount,
     }).map(async (transaction) => {

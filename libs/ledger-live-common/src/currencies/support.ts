@@ -1,13 +1,10 @@
-import type {
-  FiatCurrency,
-  CryptoCurrency,
-  CryptoCurrencyIds,
-} from "@ledgerhq/cryptoassets/lib/types";
 import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
   hasCryptoCurrencyId,
+  CryptoCurrencyIds,
 } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "../env";
 
 // set by user side effect to precise which currencies are considered supported (typically by live)

@@ -4,7 +4,7 @@ import { createCustomErrorClass } from "@ledgerhq/errors";
 import type {
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import WarningBanner from "./WarningBanner";
 
 type Props = {

@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "../../../operation";
 import { getEnv } from "../../../env";
 import { getOperationType } from "./common";
-import type { OperationType, Operation } from "../../../types";
+import type { OperationType, Operation } from "@ledgerhq/types-live";
 import { isValidAddress } from "../address";
 
 const LIMIT = 200;

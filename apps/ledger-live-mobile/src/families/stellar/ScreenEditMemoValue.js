@@ -6,8 +6,8 @@ import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
@@ -56,7 +56,7 @@ function StellarEditMemoValue({ navigation, route }: Props) {
   }, [navigation, route.params, account, memoValue]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >

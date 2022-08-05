@@ -2,7 +2,7 @@
 import React from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -10,14 +10,13 @@ import { useTheme } from "@react-navigation/native";
 import { AmountRequired } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type {
-  Account,
-  TokenAccount,
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import type { SwapTransaction } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+} from "@ledgerhq/types-cryptoassets";
+import type { SwapTransaction } from "@ledgerhq/live-common/exchange/swap/types";
+import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";
 
 import LText from "../../../components/LText";
