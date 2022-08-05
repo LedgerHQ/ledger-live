@@ -8,16 +8,22 @@ import { renderConnectYourDevice as ConnectYourDevice } from "../../components/D
 export type Props = {
   isOpen: boolean;
   onPress?: () => void;
+  onClose?: () => void;
   device: Device;
 };
 
-const UnlockDeviceDrawer = ({ isOpen, device }: Props) => {
+const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
   const { t } = useTranslation();
   const { colors, dark } = useTheme();
   const theme = dark ? "dark" : "light";
 
   return (
-    <BottomDrawer isOpen={isOpen} preventBackdropClick noCloseButton>
+    <BottomDrawer
+      isOpen={isOpen}
+      onClose={onClose}
+      preventBackdropClick
+      noCloseButton
+    >
       <Flex mb={300} pt={80}>
         <ConnectYourDevice
           t={t}

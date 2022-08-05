@@ -102,34 +102,27 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
   const productName =
     getDeviceModel(device.modelId).productName || device.modelId;
 
-  const [genuineCheckUiStepStatus, setGenuineCheckUiStepStatus] = useState<
-    GenuineCheckUiStepStatus
-  >("inactive");
+  const [currentDisplayedDrawer, setCurrentDisplayedDrawer] = useState<
+    GenuineCheckUiDrawerStatus | FirmwareUpdateUiDrawerStatus
+  >("none");
+
+  // Will be computed depending on the states. Updating nextDrawerToDisplay
+  // triggers the current displayed drawer to close
+  let nextDrawerToDisplay:
+    | GenuineCheckUiDrawerStatus
+    | FirmwareUpdateUiDrawerStatus = "none";
 
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<
     GenuineCheckStatus
   >("unchecked");
 
-  const [genuineCheckUiDrawerStatus, setGenuineCheckUiDrawerStatus] = useState<
-    GenuineCheckUiDrawerStatus
-  >("none");
-
   const [genuineCheckStepTitle, setGenuineCheckStepTitle] = useState<string>(
     t("syncOnboarding.softwareChecksSteps.genuineCheckStep.inactive.title"),
   );
 
-  const [firmwareUpdateUiStepStatus, setFirmwareUpdateUiStepStatus] = useState<
-    FirmwareUpdateUiStepStatus
-  >("inactive");
-
   const [firmwareUpdateStatus, setFirmwareUpdateStatus] = useState<
     FirmwareUpdateStatus
   >("unchecked");
-
-  const [
-    firmwareUpdateUiDrawerStatus,
-    setFirmwareUpdateUiDrawerStatus,
-  ] = useState<FirmwareUpdateUiDrawerStatus>("none");
 
   const [firmwareUpdateStepTitle, setFirmwareUpdateStepTitle] = useState<
     string
@@ -222,65 +215,53 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
   ]);
 
   // Handles the genuine check UI
-  useEffect(() => {
-    // The software check step is not the current step
-    if (!isDisplayed) {
-      setGenuineCheckUiStepStatus("inactive");
-      setGenuineCheckUiDrawerStatus("none");
-      return;
-    }
+  let genuineCheckUiStepStatus: GenuineCheckUiStepStatus = "inactive";
 
+  // The software check step is not the current step
+  if (!isDisplayed) {
+    genuineCheckUiStepStatus = "inactive";
+    nextDrawerToDisplay = "none";
+  } else {
     switch (genuineCheckStatus) {
       case "completed":
-        setGenuineCheckUiStepStatus("completed");
-        setGenuineCheckUiDrawerStatus("none");
+        genuineCheckUiStepStatus = "completed";
+        nextDrawerToDisplay = "none";
         break;
       case "failed":
-        setGenuineCheckUiStepStatus("failed");
-        setGenuineCheckUiDrawerStatus("none");
+        genuineCheckUiStepStatus = "failed";
+        nextDrawerToDisplay = "none";
         break;
       case "requested":
-        setGenuineCheckUiStepStatus("active");
-        setGenuineCheckUiDrawerStatus("none");
-
-        setTimeout(() => {
-          setGenuineCheckUiDrawerStatus("requested");
-        }, uiDrawerDisplayDelayMs);
+        genuineCheckUiStepStatus = "active";
+        nextDrawerToDisplay = "requested";
         break;
       case "ongoing":
-        setGenuineCheckUiStepStatus("active");
-        setGenuineCheckUiDrawerStatus("none");
+        genuineCheckUiStepStatus = "active";
+        nextDrawerToDisplay = "none";
         break;
       case "allow-manager-needed":
-        setGenuineCheckUiStepStatus("active");
-        setGenuineCheckUiDrawerStatus("none");
-
-        setTimeout(() => {
-          setGenuineCheckUiDrawerStatus("allow-manager");
-        }, uiDrawerDisplayDelayMs);
+        genuineCheckUiStepStatus = "active";
+        nextDrawerToDisplay = "allow-manager";
         break;
       case "cancelled":
-        setGenuineCheckUiStepStatus("active");
-        setGenuineCheckUiDrawerStatus("none");
-
-        setTimeout(() => {
-          setGenuineCheckUiDrawerStatus("cancelled");
-        }, uiDrawerDisplayDelayMs);
+        genuineCheckUiStepStatus = "active";
+        nextDrawerToDisplay = "cancelled";
         break;
       case "unlock-needed":
-        setGenuineCheckUiDrawerStatus("none");
-
-        setTimeout(() => {
-          setGenuineCheckUiDrawerStatus("unlock-needed");
-        }, uiDrawerDisplayDelayMs);
+        genuineCheckUiStepStatus = "active";
+        nextDrawerToDisplay = "unlock-needed";
         break;
       case "unchecked":
       default:
-        setGenuineCheckUiStepStatus("inactive");
-        setGenuineCheckUiDrawerStatus("none");
+        genuineCheckUiStepStatus = "inactive";
+        nextDrawerToDisplay = "none";
         break;
     }
-  }, [isDisplayed, genuineCheckStatus]);
+  }
+
+  console.log(
+    `🧙‍♂️ genuineCheckStatus = ${genuineCheckStatus} | genuineCheckUiStepStatus = ${genuineCheckUiStepStatus} | currentDisplayedDrawer = ${currentDisplayedDrawer} | nextDrawerToDisplay = ${nextDrawerToDisplay}`,
+  );
 
   // Handles the genuine check UI step title
   useEffect(() => {
@@ -336,7 +317,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
 
     // Transitions from genuine check step to firmware update step
     if (
-      (genuineCheckStatus === "completed" || genuineCheckStatus === "failed") &&
+      ["completed", "failed"].includes(genuineCheckStatus) &&
       firmwareUpdateStatus === "unchecked"
     ) {
       setTimeout(() => {
@@ -373,37 +354,35 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
   ]);
 
   // Handles the firmware update UI
-  useEffect(() => {
-    // The software check step is not the current step
-    if (!isDisplayed) {
-      setFirmwareUpdateUiDrawerStatus("none");
-      setFirmwareUpdateUiStepStatus("inactive");
-      return;
-    }
-
+  let firmwareUpdateUiStepStatus: FirmwareUpdateUiStepStatus = "inactive";
+  // The software check step is not the current step
+  if (!isDisplayed) {
+    nextDrawerToDisplay = "none";
+    firmwareUpdateUiStepStatus = "inactive";
+  } else if (["completed", "failed"].includes(genuineCheckStatus)) {
     switch (firmwareUpdateStatus) {
       case "ongoing":
-        setFirmwareUpdateUiStepStatus("active");
-        setFirmwareUpdateUiDrawerStatus("none");
+        firmwareUpdateUiStepStatus = "active";
+        nextDrawerToDisplay = "none";
         break;
       case "new-firmware-available":
-        setFirmwareUpdateUiStepStatus("active");
-        setFirmwareUpdateUiDrawerStatus("new-firmware-available");
+        firmwareUpdateUiStepStatus = "active";
+        nextDrawerToDisplay = "new-firmware-available";
         break;
       case "completed":
-        setFirmwareUpdateUiStepStatus("completed");
-        setFirmwareUpdateUiDrawerStatus("none");
+        firmwareUpdateUiStepStatus = "completed";
+        nextDrawerToDisplay = "none";
         break;
       case "failed":
-        setFirmwareUpdateUiStepStatus("failed");
-        setFirmwareUpdateUiDrawerStatus("none");
+        firmwareUpdateUiStepStatus = "failed";
+        nextDrawerToDisplay = "none";
         break;
       case "unchecked":
       default:
-        setFirmwareUpdateUiStepStatus("inactive");
-        setFirmwareUpdateUiDrawerStatus("none");
+        firmwareUpdateUiStepStatus = "inactive";
+        nextDrawerToDisplay = "none";
     }
-  }, [firmwareUpdateStatus, isDisplayed]);
+  }
 
   // Handles the firmware update UI step title
   useEffect(() => {
@@ -470,37 +449,63 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     }
   }, [isDisplayed, firmwareUpdateStatus, onComplete]);
 
+  // If there is already a displayed drawer, the currentDisplayedDrawer would be
+  // synchronized with nextDrawerToDisplay during the displayed drawer onClose event
+  if (currentDisplayedDrawer === "none" && nextDrawerToDisplay !== "none") {
+    setCurrentDisplayedDrawer(nextDrawerToDisplay);
+  }
+
   return (
     <Flex>
       {isDisplayed && (
         <Flex>
           <GenuineCheckDrawer
             productName={productName}
-            isOpen={genuineCheckUiDrawerStatus === "requested"}
+            isOpen={
+              currentDisplayedDrawer === "requested" &&
+              nextDrawerToDisplay === "requested"
+            }
             onPress={() => setGenuineCheckStatus("ongoing")}
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
           />
           <UnlockDeviceDrawer
-            isOpen={genuineCheckUiDrawerStatus === "unlock-needed"}
+            isOpen={
+              currentDisplayedDrawer === "unlock-needed" &&
+              nextDrawerToDisplay === "unlock-needed"
+            }
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
             device={device}
           />
           <AllowManagerDrawer
-            isOpen={genuineCheckUiDrawerStatus === "allow-manager"}
+            isOpen={
+              currentDisplayedDrawer === "allow-manager" &&
+              nextDrawerToDisplay === "allow-manager"
+            }
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
             device={device}
           />
           <GenuineCheckCancelledDrawer
             productName={productName}
-            isOpen={genuineCheckUiDrawerStatus === "cancelled"}
+            isOpen={
+              currentDisplayedDrawer === "cancelled" &&
+              nextDrawerToDisplay === "cancelled"
+            }
             onRetry={() => {
               resetGenuineCheckState();
               setGenuineCheckStatus("ongoing");
             }}
             onSkip={() => setGenuineCheckStatus("failed")}
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
           />
           <FirmwareUpdateDrawer
             productName={productName}
-            isOpen={firmwareUpdateUiDrawerStatus === "new-firmware-available"}
+            isOpen={
+              currentDisplayedDrawer === "new-firmware-available" &&
+              nextDrawerToDisplay === "new-firmware-available"
+            }
             onSkip={() => setFirmwareUpdateStatus("completed")}
             onUpdate={() => setFirmwareUpdateStatus("completed")}
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
           />
         </Flex>
       )}

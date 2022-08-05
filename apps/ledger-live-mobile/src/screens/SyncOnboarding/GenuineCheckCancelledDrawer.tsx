@@ -13,6 +13,7 @@ export type Props = {
   isOpen: boolean;
   onRetry?: () => void;
   onSkip?: () => void;
+  onClose?: () => void;
   productName: string;
 };
 
@@ -20,12 +21,18 @@ const GenuineCheckCancelledDrawer = ({
   isOpen,
   onRetry,
   onSkip,
+  onClose,
   productName,
 }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <BottomDrawer isOpen={isOpen} preventBackdropClick noCloseButton>
+    <BottomDrawer
+      isOpen={isOpen}
+      onClose={onClose}
+      preventBackdropClick
+      noCloseButton
+    >
       <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
         <BoxedIcon
           Icon={<ShieldCheckMedium color="warning.c100" size={24} />}

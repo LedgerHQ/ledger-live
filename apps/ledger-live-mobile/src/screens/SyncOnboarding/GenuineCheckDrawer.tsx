@@ -12,15 +12,21 @@ import { useTranslation } from "react-i18next";
 export type Props = {
   isOpen: boolean;
   onPress?: () => void;
+  onClose?: () => void;
   productName: string;
 };
 
-const GenuineCheckDrawer = ({ isOpen, onPress, productName }: Props) => {
+const GenuineCheckDrawer = ({
+  isOpen,
+  onPress,
+  productName,
+  onClose,
+}: Props) => {
   const { t } = useTranslation();
 
   return (
     <BottomDrawer
-      onClose={onPress}
+      onClose={onClose}
       isOpen={isOpen}
       preventBackdropClick
       noCloseButton

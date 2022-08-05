@@ -13,6 +13,7 @@ export type Props = {
   isOpen: boolean;
   onSkip?: () => void;
   onUpdate?: () => void;
+  onClose?: () => void;
   productName: string;
 };
 
@@ -20,12 +21,20 @@ const FirmwareUpdateDrawer = ({
   isOpen,
   onSkip,
   onUpdate,
+  onClose,
   productName,
 }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <BottomDrawer onClose={onSkip} isOpen={isOpen} preventBackdropClick>
+    <BottomDrawer
+      onClose={() => {
+        onClose?.();
+        onSkip?.();
+      }}
+      isOpen={isOpen}
+      preventBackdropClick
+    >
       <Flex justifyContent="center" alignItems="center">
         <BoxedIcon
           Icon={<NanoFirmwareUpdateMedium color="primary.c90" size={24} />}
