@@ -135,12 +135,6 @@ export const urls = {
     "https://support.ledgerwallet.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral",
   maxSpendable:
     "https://support.ledger.com/hc/en-us/articles/360012960679?utm_source=ledger_live_mobile&utm_medium=self_referral",
-  elrond: {
-    website: "https://elrond.com",
-  },
-  cryptoOrg: {
-    website: "https://crypto.org",
-  },
   solana: {
     supportPage: "https://support.ledger.com",
     stakingPage: "https://support.ledger.com",
@@ -166,8 +160,7 @@ export const urls = {
       "https://www.ledger.com/academy?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     tellMeMore:
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
-    mint:
-      "ledgerlive://discover/lmarket"
+    mint: "ledgerlive://discover/lmarket",
   },
   hedera: {
     supportArticleLink:
