@@ -77,7 +77,7 @@ export function useManagerBlueDot(
 }
 
 export const useAvailableLanguagesForDevice = (
-  deviceInfo: DeviceInfo
+  deviceInfo?: DeviceInfo
 ): Language[] => {
   const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
 

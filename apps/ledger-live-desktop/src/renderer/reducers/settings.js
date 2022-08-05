@@ -418,12 +418,12 @@ const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLan
 };
 
 /** Use this for translations */
-export const languageSelector: OutputSelector<State, void, string> = createSelector(
+export const languageSelector: OutputSelector<State, string, string> = createSelector(
   languageAndUseSystemLangSelector,
   o => o.language,
 );
 
-export const useSystemLanguageSelector: OutputSelector<State, void, boolean> = createSelector(
+export const useSystemLanguageSelector: OutputSelector<State, boolean, boolean> = createSelector(
   languageAndUseSystemLangSelector,
   o => o.useSystemLanguage,
 );
