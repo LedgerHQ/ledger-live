@@ -1,11 +1,79 @@
-import { useEffect, useRef, useState } from "react";
 import LedgerLiveApi, { WindowMessageTransport } from "@ledgerhq/live-app-sdk";
-import logo from "./ledger-logo.png";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, Outlet, Route, Routes } from "react-router-dom";
 import "./App.css";
+import logo from "./ledger-logo.png";
 
 const prettyJSON = (payload: any) => JSON.stringify(payload, null, 2);
 
-const App = () => {
+const Layout = () => {
+  return (
+    <div>
+      {/* A "layout route" is a good place to put markup you want to
+      share across all the pages on your site, like navigation. */}
+      <nav>
+        <ul>
+          <li>
+            <Link data-test-id="home-link" to="/">
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link data-test-id="about-link" to="/about">
+              About
+            </Link>
+          </li>
+          <li>
+            <Link data-test-id="dashboard-link" to="/dashboard">
+              Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link data-test-id="nothing-here-link" to="/nothing-here">
+              Nothing Here
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
+      <hr />
+
+      {/* An <Outlet> renders whatever child route is currently active,
+      so you can think about this <Outlet> as a placeholder for
+      the child routes we defined above. */}
+      <Outlet />
+    </div>
+  );
+};
+
+function About() {
+  return (
+    <div>
+      <h2 data-test-id="about-page">About Page</h2>
+    </div>
+  );
+}
+
+function Dashboard() {
+  return (
+    <div>
+      <h2 data-test-id="dashboard-page">Dashboard Page</h2>
+    </div>
+  );
+}
+
+function NoMatch() {
+  return (
+    <div>
+      <h2 data-test-id="nothing-here-page">Nothing to see here!</h2>
+      <p>
+        <Link to="/">Go to the home page</Link>
+      </p>
+    </div>
+  );
+}
+
+const SDKTests = () => {
   // Define the Ledger Live API variable used to call api methods
   const api = useRef<LedgerLiveApi>();
 
@@ -18,8 +86,8 @@ const App = () => {
     if (llapi) {
       api.current = llapi;
     }
-    
-    // Cleanup the Ledger Live API on component unmount 
+
+    // Cleanup the Ledger Live API on component unmount
     return () => {
       api.current = undefined;
       void llapi.disconnect();
@@ -41,7 +109,7 @@ const App = () => {
     const action = await api.current.requestAccount().catch(error => console.error({ error }));
     setOutput(action);
   };
-  
+
   const verifyAddress = async () => {
     if (!api.current) {
       return;
@@ -49,7 +117,7 @@ const App = () => {
     const action = await api.current.receive("mock:1:bitcoin:true_bitcoin_0:");
     setOutput(action);
   };
-  
+
   const signTransaction = async () => {
     if (!api.current) {
       return;
@@ -59,17 +127,20 @@ const App = () => {
       recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
       family: "bitcoin",
       feePerByte: 1,
-    }
+    };
 
-    const params: any = {useApp: null};
+    const params: any = { useApp: null };
 
-    const action = await api.current.signTransaction("mock:1:bitcoin:true_bitcoin_0:", transaction, params);
+    const action = await api.current.signTransaction(
+      "mock:1:bitcoin:true_bitcoin_0:",
+      transaction,
+      params,
+    );
     setOutput(action);
   };
 
   const broadcastTransaction = async () => {
     if (!api.current) {
-      return;
     }
     // const action = await api.current.broadcastSignedTransaction("mock:1:bitcoin:true_bitcoin_0:", signed tx);
     // setOutput(action)
@@ -80,7 +151,7 @@ const App = () => {
       return;
     }
     const action = await api.current.listCurrencies();
-    setOutput(action)
+    setOutput(action);
   };
 
   const swap = async () => {};
@@ -126,6 +197,28 @@ const App = () => {
         </div>
         <pre className="output-container">{output ? prettyJSON(output) : ""}</pre>
       </header>
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <div>
+      {/* Routes nest inside one another. Nested route paths build upon
+          parent route paths, and nested route elements render inside
+          parent route elements. See the note about <Outlet> below. */}
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<SDKTests />} />
+          <Route path="about" element={<About />} />
+          <Route path="dashboard" element={<Dashboard />} />
+
+          {/* Using path="*"" means "match anything", so this route
+              acts like a catch-all for URLs that we don't have explicit
+              routes for. */}
+          <Route path="*" element={<NoMatch />} />
+        </Route>
+      </Routes>
     </div>
   );
 };
