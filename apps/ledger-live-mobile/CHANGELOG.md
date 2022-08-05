@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.26
+
+### Patch Changes
+
+- [#847](https://github.com/LedgerHQ/ledger-live/pull/847) [`03c90eebe`](https://github.com/LedgerHQ/ledger-live/commit/03c90eebebd87cb58c796fd422657b8a0ace8ab3) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Receive flow prevent creation of multiple accounts at the same time
+
 ## 3.5.0-next.25
 
 ### Patch Changes
