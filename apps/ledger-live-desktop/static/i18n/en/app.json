@@ -2180,7 +2180,8 @@
       },
       "vote": {
         "title": "Vote",
-        "description": "Vote for validator groups. Ensure you activate your votes to earn rewards."
+        "description": "Vote for validator groups. Ensure you activate your votes to earn rewards.",
+        "descriptionMaxVotes": "You may vote for up to {{maxVotes}} validator groups. Revoke a vote to vote for a new validator group"
       },
       "activate": {
         "title": "Activate vote",

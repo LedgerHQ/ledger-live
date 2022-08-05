@@ -11,6 +11,7 @@ export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
     votes,
     electionAddress,
     lockedGoldAddress,
+    maxNumGroupsVotedFor,
   } = r;
   return {
     registrationStatus,
@@ -31,6 +32,7 @@ export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
     })),
     electionAddress,
     lockedGoldAddress,
+    maxNumGroupsVotedFor: maxNumGroupsVotedFor.toString(),
   };
 }
 
@@ -54,5 +56,6 @@ export function fromCeloResourcesRaw(r: CeloResourcesRaw): CeloResources {
     })),
     electionAddress: r.electionAddress,
     lockedGoldAddress: r.lockedGoldAddress,
+    maxNumGroupsVotedFor: new BigNumber(r.maxNumGroupsVotedFor),
   };
 }

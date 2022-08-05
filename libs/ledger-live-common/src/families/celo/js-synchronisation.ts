@@ -15,6 +15,7 @@ const getAccountShape: GetAccountShape = async (info) => {
   const { address, currency, initialAccount, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
   const election = await kit.contracts.getElection();
+  const electionConfig = await election.getConfig();
   const lockedGold = await kit.contracts.getLockedGold();
 
   const accountId = encodeAccountId({
@@ -56,6 +57,7 @@ const getAccountShape: GetAccountShape = async (info) => {
       votes,
       electionAddress: election.address,
       lockedGoldAddress: lockedGold.address,
+      maxNumGroupsVotedFor: electionConfig.maxNumGroupsVotedFor,
     },
   };
   return { ...shape, operations };
