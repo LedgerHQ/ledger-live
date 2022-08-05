@@ -1,34 +1,16 @@
 import { Dispatch } from "redux";
 import { TFunction } from "react-i18next";
 
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
-import {
-  addPendingOperation,
-  getMainAccount,
-  isAccount,
-  isTokenAccount,
-} from "@ledgerhq/live-common/account/index";
+import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-common/env";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
-import {
-  serializePlatformAccount,
-  serializePlatformSignedTransaction,
-  deserializePlatformSignedTransaction,
-} from "@ledgerhq/live-common/platform/serializers";
+import { broadcastTransactionLogic as broadcastTransactionCommonLogic } from "@ledgerhq/live-common/platform/logic";
+
+import { serializePlatformAccount } from "@ledgerhq/live-common/platform/serializers";
 import { AppManifest } from "@ledgerhq/live-common/platform/types";
-import {
-  receiveOnAccountCommonLogic,
-  signTransactionCommonLogic,
-  completeExchangeCommonLogic,
-  CompleteExchangeUiRequest,
-} from "@ledgerhq/live-common/platform/logic";
-import {
-  RawPlatformTransaction,
-  RawPlatformSignedTransaction,
-} from "@ledgerhq/live-common/platform/rawTypes";
+import { RawPlatformSignedTransaction } from "@ledgerhq/live-common/platform/rawTypes";
 import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 
 import { updateAccountWithUpdater } from "../../actions/accounts";
@@ -50,41 +32,6 @@ type WebPlatformContext = {
   accounts: AccountLike[];
 };
 
-function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Account | null {
-  return isTokenAccount(account)
-    ? (fromAccounts.find(a => a.id === account.parentId) as Account)
-    : null;
-}
-
-export const receiveOnAccountLogic = (
-  { manifest, dispatch, accounts }: WebPlatformContext,
-  accountId: string,
-): Promise<string> =>
-  receiveOnAccountCommonLogic(
-    { manifest, accounts, tracking },
-    accountId,
-    (account: AccountLike, parentAccount: Account | null) => {
-      // FIXME: handle address rejection (if user reject address, we don't end up in onResult nor in onCancel 🤔)
-      return new Promise((resolve, reject) =>
-        dispatch(
-          openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
-            account,
-            parentAccount,
-            onResult: (account: Account, parentAccount: Account) => {
-              tracking.platformReceiveSuccess(manifest);
-              resolve(accountToPlatformAccount(account, parentAccount).address);
-            },
-            onCancel: (error: Error) => {
-              tracking.platformReceiveFail(manifest);
-              reject(error);
-            },
-            verifyAddress: true,
-          }),
-        ),
-      );
-    },
-  );
-
 export type RequestAccountParams = {
   currencies?: string[];
   allowAddAccount?: boolean;
@@ -100,23 +47,18 @@ export const requestAccountLogic = async (
   return serializePlatformAccount(accountToPlatformAccount(account, parentAccount));
 };
 
-export const signTransactionLogic = (
+export const broadcastTransactionLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
   accountId: string,
-  transaction: RawPlatformTransaction,
-  params: {
-    /**
-     * The name of the Ledger Nano app to use for the signing process
-     */
-    useApp: string;
-  },
-) =>
-  signTransactionCommonLogic(
+  signedTransaction: RawPlatformSignedTransaction,
+  pushToast: (data: ToastData) => void,
+  t: TFunction,
+): Promise<string> =>
+  broadcastTransactionCommonLogic(
     { manifest, accounts, tracking },
     accountId,
-    transaction,
-    params,
-    (
+    signedTransaction,
+    async (
       account: AccountLike,
       parentAccount: Account | null,
       {
@@ -198,7 +140,7 @@ export const broadcastTransactionLogic = async (
     ),
   );
 
-  pushToast({
+pushToast({
     id: optimisticOperation.id,
     type: "operation",
     title: t("platform.flows.broadcast.toast.title"),
