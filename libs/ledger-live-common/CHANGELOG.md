@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 25.1.0-nightly.1
+
+### Patch Changes
+
+- [#779](https://github.com/LedgerHQ/ledger-live/pull/779) [`97eab434d`](https://github.com/LedgerHQ/ledger-live/commit/97eab434dee361716588b256146665c99c274af9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Refactoring of useOnboardingStatePolling bringing 2 changes:
+
+  - avoid re-rendering: the hook only updates its result on a new onboardingState or new allowedError, not at every run
+  - update of useOnboardingStatePolling args: getOnboardingStatePolling as an optional injected dependency to the hook. It is needed for LLD to have the polling working on the internal thread. It is set by default to live-common/hw/getOnboardingStatePolling so it is not needed to pass it as an arg to use the hook on LLM.
+
 ## 25.1.0-nightly.0
 
 ### Minor Changes

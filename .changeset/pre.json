@@ -75,15 +75,27 @@
     "dummy-live-app": "0.1.0"
   },
   "changesets": [
+    "afraid-experts-brush",
     "afraid-moles-train",
+    "brave-ears-teach",
     "breezy-plants-remain",
     "brown-nails-yell",
+    "dull-timers-care",
     "famous-pens-move",
+    "giant-buttons-retire",
     "green-crabs-begin",
     "hip-buckets-deny",
+    "hot-avocados-dream",
     "hot-singers-lick",
+    "light-pans-report",
+    "long-kiwis-call",
+    "modern-monkeys-teach2",
     "plenty-geckos-report",
+    "purple-birds-try",
+    "purple-laws-cry2",
+    "rotten-chicken-greet2",
     "seven-humans-sip",
+    "shiny-swans-tickle2",
     "six-donuts-teach",
     "six-rats-bathe",
     "soft-dodos-check",
@@ -91,7 +103,9 @@
     "spicy-eyes-decide",
     "tender-mirrors-guess",
     "thick-ligers-fail",
+    "twelve-oranges-play",
     "weak-queens-shout",
+    "wild-spies-cry2",
     "yellow-sloths-fry"
   ]
 }
