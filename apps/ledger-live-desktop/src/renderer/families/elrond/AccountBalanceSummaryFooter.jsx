@@ -42,10 +42,12 @@ const Summary = (props: Props) => {
 
     if (account.elrondResources && !account.elrondResources.delegations) {
       fetchData();
+    } else {
+      setDelegationResources(account.elrondResources.delegations || []);
     }
 
     return () => setDelegationResources(account.elrondResources.delegations || []);
-  }, [account]);
+  }, [account.freshAddress, JSON.stringify(account.elrondResources.delegations)]);
 
   const available = useMemo(() => account.spendableBalance, [account.spendableBalance]);
   const delegations = useMemo(

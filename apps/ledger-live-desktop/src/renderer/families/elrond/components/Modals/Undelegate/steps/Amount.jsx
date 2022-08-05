@@ -1,7 +1,7 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { StepProps } from "../types";
@@ -30,12 +30,7 @@ export default function StepAmount({
 
   const updateValidator = useCallback(
     payload => {
-      onUpdateTransaction(transaction =>
-        bridge.updateTransaction(transaction, {
-          mode: "unDelegate",
-          ...payload,
-        }),
-      );
+      onUpdateTransaction(transaction => bridge.updateTransaction(transaction, payload));
     },
     [onUpdateTransaction, bridge],
   );
@@ -56,6 +51,15 @@ export default function StepAmount({
     },
     [updateValidator],
   );
+
+  useEffect(() => {
+    onUpdateTransaction(transaction =>
+      bridge.updateTransaction(transaction, {
+        mode: "unDelegate",
+        amount: value,
+      }),
+    );
+  }, []);
 
   return (
     <Box flow={1}>

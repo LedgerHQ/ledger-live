@@ -85,7 +85,14 @@ const Delegation = (props: Props) => {
     const sortDelegations = (alpha, beta) =>
       transform(alpha.userActiveStake).isGreaterThan(transform(beta.userActiveStake)) ? -1 : 1;
 
-    return delegationResources.map(assignValidator).sort(sortDelegations);
+    const filterDelegations = delegation =>
+      BigNumber(delegation.userActiveStake).isGreaterThan(0) ||
+      BigNumber(delegation.claimableRewards).isGreaterThan(0);
+
+    return delegationResources
+      .map(assignValidator)
+      .sort(sortDelegations)
+      .filter(filterDelegations);
   }, [findValidator, delegationResources]);
 
   const unbondings = useMemo(
@@ -125,12 +132,10 @@ const Delegation = (props: Props) => {
 
     fetchData();
 
-    return setValidators;
+    return () => setValidators([]);
   };
 
-  console.log(account);
-
-  const fetchDelegations = () => {
+  const fetchDelegations = useCallback(() => {
     const fetchData = async () => {
       try {
         const delegations = await axios.get(
@@ -145,10 +150,12 @@ const Delegation = (props: Props) => {
 
     if (account.elrondResources && !account.elrondResources.delegations) {
       fetchData();
+    } else {
+      setDelegationResources(account.elrondResources.delegations || []);
     }
 
     return () => setDelegationResources(account.elrondResources.delegations || []);
-  };
+  }, [account.freshAddress, JSON.stringify(account.elrondResources.delegations)]);
 
   const onEarnRewards = useCallback(() => {
     dispatch(
@@ -188,7 +195,7 @@ const Delegation = (props: Props) => {
   const hasUnbondings = unbondings.length > 0;
 
   useEffect(fetchValidators, []);
-  useEffect(fetchDelegations, [account]);
+  useEffect(fetchDelegations, [fetchDelegations]);
 
   return (
     <Fragment>

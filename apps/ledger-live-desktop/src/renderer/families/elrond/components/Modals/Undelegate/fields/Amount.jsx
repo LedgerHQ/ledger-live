@@ -95,8 +95,7 @@ export default function AmountField({
     [initialAmount],
   );
 
-  const error = errors.amount || errors.redelegation || errors.unbonding;
-
+  const error = errors.amount || errors.unbonding;
   const warning = useMemo(() => focused && Object.values(warnings || {})[0], [focused, warnings]);
 
   return (
