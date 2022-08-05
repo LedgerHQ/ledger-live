@@ -39,6 +39,22 @@ export class DiscoverPage {
     await this.testAppCatalogItem.click();
   }
 
+  async navigateToHomeLink() {
+    await this.clickWebviewElement("[data-test-id=home-link]");
+  }
+
+  async navigateToAboutLink() {
+    await this.clickWebviewElement("[data-test-id=about-link]");
+  }
+
+  async navigateToDashboardLink() {
+    await this.clickWebviewElement("[data-test-id=dashboard-link]");
+  }
+
+  async navigateToNothingHereLink() {
+    await this.clickWebviewElement("[data-test-id=nothing-here-link]");
+  }
+
   async getAccountsList() {
     await this.clickWebviewElement("[data-test-id=get-all-accounts-button]");
   }
@@ -87,6 +103,24 @@ export class DiscoverPage {
     `,
       );
     }, elementName);
+  }
+
+  async getWebviewHeadingElementByText() {
+    const text = await this.page.evaluate(() => {
+      const webview = document.querySelector("webview");
+      (webview as any)
+        .executeJavaScript(
+          `(function() {
+        return document.querySelector('h2').innerHTML;
+      })();
+    `,
+        )
+        .then((text: string) => {
+          text;
+        });
+    });
+
+    return text;
   }
 
   async goBack() {

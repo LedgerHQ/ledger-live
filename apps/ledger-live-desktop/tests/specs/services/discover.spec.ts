@@ -8,9 +8,9 @@ import { Layout } from "../../models/Layout";
 import * as server from "../../utils/serve-dummy-app";
 
 // Comment out to disable recorder
-// process.env.PWDEBUG = "1";
+process.env.PWDEBUG = "1";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH", env: { DEV_TOOLS: true } });
 
 let continueTest = false;
 
@@ -68,21 +68,24 @@ test("Discover", async ({ page }) => {
 
   // To test that the navigation button in webPlatformPlayer topBar is enabled
   await test.step("Navigate in live app to about page", async () => {
-    await discoverPage.clickWebviewElement("[data-test-id=about-link]");
+    await page.pause();
+    await discoverPage.navigateToAboutLink();
 
     /**
      * FIXME: should find an alternative to screenshot
      * find an easy way to get a webview element and perform assert on it
      * like toBeVisible() or toHaveURL(regex) for example
      */
-    await expect.soft(page).toHaveScreenshot("live-app-navigate-about-page.png");
+     await page.pause();
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
   });
 
   // To test that the back navigation button in webPlatformPlayer topBar is working
   await test.step("Navigate backward in live app", async () => {
+    await page.pause();
     await discoverPage.goBack();
-
-    await expect.soft(page).toHaveScreenshot("live-app-navigate-go-back.png");
+    await page.pause();
+    // await expect.soft(page).toHaveScreenshot("live-app-navigate-go-back.png");
   });
 
   // To test that the forward navigation button in webPlatformPlayer topBar is working

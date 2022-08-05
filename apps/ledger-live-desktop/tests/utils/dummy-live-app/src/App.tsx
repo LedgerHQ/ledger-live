@@ -140,8 +140,6 @@ const SDKTests = () => {
   };
 
   const broadcastTransaction = async () => {
-    if (!api.current) {
-    }
     // const action = await api.current.broadcastSignedTransaction("mock:1:bitcoin:true_bitcoin_0:", signed tx);
     // setOutput(action)
   };
