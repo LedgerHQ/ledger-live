@@ -1,10 +1,10 @@
-import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { DiscoverPage } from "../../models/DiscoverPage";
-import { Layout } from "../../models/Layout";
+import { DeviceAction } from "tests/models/DeviceAction";
 import { Drawer } from "tests/models/Drawer";
 import { Modal } from "tests/models/Modal";
-import { DeviceAction } from "tests/models/DeviceAction";
+import test from "../../fixtures/common";
+import { DiscoverPage } from "../../models/DiscoverPage";
+import { Layout } from "../../models/Layout";
 import * as server from "../../utils/serve-dummy-app";
 
 // Comment out to disable recorder
@@ -66,6 +66,43 @@ test("Discover", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 
+  // To test that the navigation button in webPlatformPlayer topBar is enabled
+  await test.step("Navigate in live app to about page", async () => {
+    await discoverPage.clickWebviewElement("[data-test-id=about-link]");
+
+    /**
+     * FIXME: should find an alternative to screenshot
+     * find an easy way to get a webview element and perform assert on it
+     * like toBeVisible() or toHaveURL(regex) for example
+     */
+    await expect.soft(page).toHaveScreenshot("live-app-navigate-about-page.png");
+  });
+
+  // To test that the back navigation button in webPlatformPlayer topBar is working
+  await test.step("Navigate backward in live app", async () => {
+    await discoverPage.goBack();
+
+    await expect.soft(page).toHaveScreenshot("live-app-navigate-go-back.png");
+  });
+
+  // To test that the forward navigation button in webPlatformPlayer topBar is working
+  await test.step("Navigate forward in live app", async () => {
+    await discoverPage.goForward();
+
+    await expect.soft(page).toHaveScreenshot("live-app-navigate-about-page2.png");
+  });
+
+  // To test that both navigation buttons in webPlatformPlayer topBar are enabled
+  await test.step("Navigate in live app to middle of history", async () => {
+    await discoverPage.clickWebviewElement("[data-test-id=dashboard-link]");
+    await discoverPage.goBack();
+
+    await expect.soft(page).toHaveScreenshot("live-app-navigate-middle-history.png");
+
+    // Come back to home for next tests
+    await discoverPage.clickWebviewElement("[data-test-id=home-link]");
+  });
+
   await test.step("List all accounts", async () => {
     await discoverPage.getAccountsList();
     await expect.soft(page).toHaveScreenshot("live-app-list-all-accounts.png");
@@ -90,7 +127,7 @@ test("Discover", async ({ page }) => {
     await discoverPage.listCurrencies();
     await expect.soft(page).toHaveScreenshot("live-app-list-currencies.png");
   });
-  
+
   await test.step("Verify Address - modal", async () => {
     await discoverPage.verifyAddress();
     await deviceAction.openApp();

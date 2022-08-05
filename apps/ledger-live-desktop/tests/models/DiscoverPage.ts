@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 
 export class DiscoverPage {
   readonly page: Page;
@@ -13,6 +13,8 @@ export class DiscoverPage {
   readonly disclaimerCheckbox: Locator;
   readonly signContinueButton: Locator;
   readonly confirmText: Locator;
+  readonly topBarGoBackButton: Locator;
+  readonly topBarGoForwardButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -29,6 +31,8 @@ export class DiscoverPage {
     this.confirmText = page.locator(
       "text=Please confirm the operation on your device to finalize it",
     );
+    this.topBarGoBackButton = page.locator("data-test-id=topbar-back-button");
+    this.topBarGoForwardButton = page.locator("data-test-id=topbar-forward-button");
   }
 
   async openTestApp() {
@@ -65,11 +69,11 @@ export class DiscoverPage {
   }
 
   async continueToSignTransaction() {
-    await this.signContinueButton.click({force: true});
+    await this.signContinueButton.click({ force: true });
   }
 
   async waitForConfirmationScreenToBeDisplayed() {
-    await this.confirmText.waitFor({state: "visible"});
+    await this.confirmText.waitFor({ state: "visible" });
   }
 
   async clickWebviewElement(elementName: string) {
@@ -83,5 +87,13 @@ export class DiscoverPage {
     `,
       );
     }, elementName);
+  }
+
+  async goBack() {
+    await this.topBarGoBackButton.click();
+  }
+
+  async goForward() {
+    await this.topBarGoForwardButton.click();
   }
 }
