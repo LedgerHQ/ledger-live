@@ -41,6 +41,9 @@ const Regular = (): JSX.Element => (
     Icon={iconSelect()}
     disabled={boolean("disabled", false)}
     onPress={action("onPress")}
+    onPressWhenDisabled={
+      boolean("onPressWhenDisabled", false) ? action("onPressWhenDisabled") : undefined
+    }
   >
     {text("label", "Sell")}
   </QuickActionButton>

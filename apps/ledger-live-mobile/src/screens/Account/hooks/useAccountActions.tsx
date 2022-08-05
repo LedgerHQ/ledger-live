@@ -6,7 +6,7 @@ import {
   getAccountSpendableBalance,
 } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../../const";
 // eslint-disable-next-line import/named
@@ -16,9 +16,10 @@ import {
 } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
-import { ActionButton } from "../../../components/FabAccountButtonBar";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
+import { ActionButton } from "../../../components/FabActions";
 
 type Props = {
   account: AccountLike;
@@ -30,7 +31,7 @@ const iconBuy = Icons.PlusMedium;
 const iconSell = Icons.MinusMedium;
 const iconSwap = Icons.BuyCryptoMedium;
 
-export default function useActions({
+export default function useAccountActions({
   account,
   parentAccount,
   colors,
@@ -40,7 +41,6 @@ export default function useActions({
 } {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const { t } = useTranslation();
-  // const { colors } = useTheme();
 
   const currency = getAccountCurrency(account);
 
@@ -110,6 +110,9 @@ export default function useActions({
     label: t("transfer.swap.main.header", { currency: currency.name }),
     Icon: iconSwap,
     disabled: isZeroBalance,
+    modalOnDisabledClick: {
+      component: ZeroBalanceDisabledModalContent,
+    },
     event: "Swap Crypto Account Button",
     eventProperties: { currencyName: currency.name },
   };
@@ -160,10 +163,13 @@ export default function useActions({
         screen: ScreenName.SendSelectRecipient,
       },
     ],
-    label: <Trans i18nKey="account.send" />,
+    label: t("account.send"),
     event: "AccountSend",
     Icon: Icons.ArrowTopMedium,
     disabled: isZeroBalance,
+    modalOnDisabledClick: {
+      component: ZeroBalanceDisabledModalContent,
+    },
     ...extraSendActionParams,
   };
 
@@ -174,7 +180,7 @@ export default function useActions({
         screen: ScreenName.ReceiveConnectDevice,
       },
     ],
-    label: <Trans i18nKey="account.receive" />,
+    label: t("account.receive"),
     event: "AccountReceive",
     Icon: Icons.ArrowBottomMedium,
     ...extraReceiveActionParams,
@@ -212,7 +218,7 @@ export default function useActions({
                 },
               },
             ],
-            label: <Trans i18nKey="account.stake" />,
+            label: t("account.stake"),
             Icon: Icons.ClaimRewardsMedium,
             event: "Stake Ethereum Account Button",
             eventProperties: { currencyName: currency?.name },
@@ -231,7 +237,7 @@ export default function useActions({
                 },
               },
             ],
-            label: <Trans i18nKey="account.walletconnect" />,
+            label: t("account.walletconnect"),
             Icon: WalletConnect,
             event: "WalletConnect Account Button",
             eventProperties: { currencyName: currency?.name },
