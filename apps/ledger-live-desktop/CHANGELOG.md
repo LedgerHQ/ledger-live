@@ -1,35 +1,14 @@
 # ledger-live-desktop
 
-## 2.46.0-nightly.1
+## 2.45.1
 
 ### Patch Changes
 
-- [#402](https://github.com/LedgerHQ/ledger-live/pull/402) [`6cd97ea89`](https://github.com/LedgerHQ/ledger-live/commit/6cd97ea89431d506b3c7021bd5753ecdb1e562da) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Migrate webplayerplatform to typescript
+- [`7526b8ae51`](https://github.com/LedgerHQ/ledger-live/commit/7526b8ae5139fb478c6500c9b216ba46d5d36f17) Thanks [@Justkant](https://github.com/Justkant)! - Reduce perf sampling for sentry
 
-- Updated dependencies [[`9f5d214c7`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a)]:
-  - @ledgerhq/react-ui@0.8.2-nightly.1
+* [`7526b8ae51`](https://github.com/LedgerHQ/ledger-live/commit/7526b8ae5139fb478c6500c9b216ba46d5d36f17) Thanks [@Justkant](https://github.com/Justkant)! - Fixes segment integration
 
-## 2.46.0-nightly.0
-
-### Minor Changes
-
-- [#451](https://github.com/LedgerHQ/ledger-live/pull/451) [`134355d56`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Type libraries usage in LLC, LLD, LLM, CLI
-
-### Patch Changes
-
-- [#757](https://github.com/LedgerHQ/ledger-live/pull/757) [`1edaab40e`](https://github.com/LedgerHQ/ledger-live/commit/1edaab40e4d457cbe96f27a6b2a149517f800091) Thanks [@gre](https://github.com/gre)! - Downgrade @sentry/node to a compatible version with @sentry/electron
-
-* [#645](https://github.com/LedgerHQ/ledger-live/pull/645) [`88002763f`](https://github.com/LedgerHQ/ledger-live/commit/88002763f3b7dc394cb8dff67b72cc234298c5f1) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add generic lotties
-
-- [#537](https://github.com/LedgerHQ/ledger-live/pull/537) [`910a79bc7`](https://github.com/LedgerHQ/ledger-live/commit/910a79bc7e1668f71c7db3f9abf26e8e933ca2e7) Thanks [@tomav](https://github.com/tomav)! - Fixes autofocus on password field in lock screen
-
-- Updated dependencies [[`134355d56`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4), [`eb74f0606`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f)]:
-  - @ledgerhq/live-common@25.1.0-nightly.0
-  - @ledgerhq/types-cryptoassets@6.23.0-nightly.1
-  - @ledgerhq/types-live@6.23.0-nightly.1
-  - @ledgerhq/react-ui@0.8.2-nightly.0
-
-## 2.45.0
+## 2.45.1-hotfix.2
 
 ### Patch Changes
 
@@ -37,15 +16,7 @@
 
 * [#801](https://github.com/LedgerHQ/ledger-live/pull/801) [`5832094f1`](https://github.com/LedgerHQ/ledger-live/commit/5832094f124077ff1ebf5a456044f70964757e7a) Thanks [@gre](https://github.com/gre)! - Fixes segment integration
 
-## 2.45.0-hotfix.2
-
-### Patch Changes
-
-- [#801](https://github.com/LedgerHQ/ledger-live/pull/801) [`5832094f1`](https://github.com/LedgerHQ/ledger-live/commit/5832094f124077ff1ebf5a456044f70964757e7a) Thanks [@gre](https://github.com/gre)! - Reduce perf sampling for sentry
-
-* [#801](https://github.com/LedgerHQ/ledger-live/pull/801) [`5832094f1`](https://github.com/LedgerHQ/ledger-live/commit/5832094f124077ff1ebf5a456044f70964757e7a) Thanks [@gre](https://github.com/gre)! - Fixes segment integration
-
-## 2.45.0-hotfix.1
+## 2.45.1-hotfix.1
 
 ## 2.45.0
 
