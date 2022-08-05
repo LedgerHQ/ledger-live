@@ -8,8 +8,13 @@ import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
+import GenuineCheckModal from "./GenuineCheckModal";
+
+import SoftwareCheckContent from "./SoftwareCheckContent";
 
 const SyncOnboardingManual = () => {
+  const { t } = useTranslation();
+
   const steps = [
     {
       status: "active",
@@ -42,7 +47,7 @@ const SyncOnboardingManual = () => {
       status: "inactive",
       title: "Software check",
       renderBody: () => (
-        <Text>{`We'll verify whether your Nano is genuine. This should be quick and easy!`}</Text>
+        <SoftwareCheckContent genuineCheckStatus="active" firmwareUpdateStatus="inactive" />
       ),
     },
     {
@@ -56,12 +61,16 @@ const SyncOnboardingManual = () => {
     },
   ];
 
-  const { t } = useTranslation();
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [isGenuineCheckModalOpen, setGenuineCheckModalOpen] = useState<boolean>(true);
 
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
+      <GenuineCheckModal
+        isOpen={isGenuineCheckModalOpen}
+        onClose={() => setGenuineCheckModalOpen(false)}
+      />
       <Flex width="100%" justifyContent="flex-end" mt={4} px={4}>
         <LangSwitcher />
         <Button ml={4} Icon={CloseMedium} />
