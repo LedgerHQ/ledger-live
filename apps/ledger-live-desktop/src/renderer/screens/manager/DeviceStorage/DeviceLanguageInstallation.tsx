@@ -1,8 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Button, Flex, Icons, Drawer, Radio, BoxedIcon, Divider, Log } from "@ledgerhq/react-ui";
-import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { Language } from "@ledgerhq/live-common/types/languages";
 import { command } from "~/renderer/commands";
 import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -93,7 +92,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
 
   return (
     <Drawer isOpen={isOpen} onClose={onCloseDrawer} title="Device Language" big>
-      <Flex flex={1} flexDirection="column" justifyContent="space-between">
+      <Flex flex={1} flexDirection="column" justifyContent="space-between" pt={2}>
         {installing ? (
           <DeviceAction action={action} request={selectedLanguage} Result={Result} />
         ) : (
