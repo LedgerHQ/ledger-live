@@ -106,6 +106,8 @@ export class DiscoverPage {
   }
 
   async getWebviewHeadingElementByText() {
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     const text = await this.page.evaluate(() => {
       const webview = document.querySelector("webview");
       const textToReturn = (webview as any)

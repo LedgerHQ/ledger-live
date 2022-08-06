@@ -8,9 +8,9 @@ import { Layout } from "../../models/Layout";
 import * as server from "../../utils/serve-dummy-app";
 
 // Comment out to disable recorder
-process.env.PWDEBUG = "1";
+// process.env.PWDEBUG = "1";
 
-test.use({ userdata: "1AccountBTC1AccountETH", env: { DEV_TOOLS: true } });
+test.use({ userdata: "1AccountBTC1AccountETH" });
 
 let continueTest = false;
 
@@ -66,22 +66,29 @@ test("Discover", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 
-  // To test that the navigation button in webPlatformPlayer topBar is enabled
-  await test.step("Navigate in live app to about page", async () => {
-    await discoverPage.navigateToAboutLink();
-    /**
-     * FIXME: should find an alternative to screenshot
-     * find an easy way to get a webview element and perform assert on it
-     * like toBeVisible() or toHaveURL(regex) for example
-     */
-    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
+  // To test that the navigation buttons in webPlatformPlayer topBar have no effect
+  // TODO: make this simpler by checking the buttons are disabled/not clickable
+  await test.step("Cannot navigate with no previous actions", async () => {
+    await discoverPage.goBack();
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe(
+      "Ledger Live Dummy Test App",
+    );
+
+    await discoverPage.goForward();
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe(
+      "Ledger Live Dummy Test App",
+    );
   });
 
   // To test that the back navigation button in webPlatformPlayer topBar is working
   await test.step("Navigate backward in live app", async () => {
-    await page.pause();
+    await discoverPage.navigateToAboutLink();
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
+
     await discoverPage.goBack();
-    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("Home Page");
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe(
+      "Ledger Live Dummy Test App",
+    );
   });
 
   // To test that the forward navigation button in webPlatformPlayer topBar is working
@@ -93,13 +100,15 @@ test("Discover", async ({ page }) => {
   // To test that both navigation buttons in webPlatformPlayer topBar are enabled
   await test.step("Navigate in live app to middle of history", async () => {
     await discoverPage.navigateToDashboardLink();
-    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("Discover Page");
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("Dashboard Page");
 
     await discoverPage.goBack();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
 
-    // Come back to home for next tests
-    await discoverPage.navigateToHomeLink();
+    await discoverPage.goBack();
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe(
+      "Ledger Live Dummy Test App",
+    );
   });
 
   await test.step("List all accounts", async () => {

@@ -11,7 +11,6 @@ const Layout = () => {
     <div>
       {/* A "layout route" is a good place to put markup you want to
       share across all the pages on your site, like navigation. */}
-      <h2 data-test-id="home-page">Home Page</h2>
       <nav>
         <ul>
           <li>
@@ -163,7 +162,7 @@ const SDKTests = () => {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <h3>Ledger Live Dummy Test App</h3>
+        <h2 data-test-id="home-page">Ledger Live Dummy Test App</h2>
         <p>App for testing the Ledger Live SDK manually and in Automated tests</p>
         <div className="button-container">
           <button onClick={getAccounts} data-test-id="get-all-accounts-button">
