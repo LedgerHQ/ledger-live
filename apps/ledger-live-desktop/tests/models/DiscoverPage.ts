@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+  import { Locator, Page } from "@playwright/test";
 
 export class DiscoverPage {
   readonly page: Page;
@@ -108,7 +108,7 @@ export class DiscoverPage {
   async getWebviewHeadingElementByText() {
     const text = await this.page.evaluate(() => {
       const webview = document.querySelector("webview");
-      (webview as any)
+      const textToReturn = (webview as any)
         .executeJavaScript(
           `(function() {
         return document.querySelector('h2').innerHTML;
@@ -116,18 +116,20 @@ export class DiscoverPage {
     `,
         )
         .then((text: string) => {
-          text;
+          return text;
         });
+      return textToReturn;
     });
+    console.log("TEXT: " + text);
 
     return text;
   }
 
   async goBack() {
-    await this.topBarGoBackButton.click();
+    await this.topBarGoBackButton.click({ force: true });
   }
 
   async goForward() {
-    await this.topBarGoForwardButton.click();
+    await this.topBarGoForwardButton.click({ force: true });
   }
 }

@@ -68,15 +68,12 @@ test("Discover", async ({ page }) => {
 
   // To test that the navigation button in webPlatformPlayer topBar is enabled
   await test.step("Navigate in live app to about page", async () => {
-    await page.pause();
     await discoverPage.navigateToAboutLink();
-
     /**
      * FIXME: should find an alternative to screenshot
      * find an easy way to get a webview element and perform assert on it
      * like toBeVisible() or toHaveURL(regex) for example
      */
-     await page.pause();
     await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
   });
 
@@ -84,26 +81,25 @@ test("Discover", async ({ page }) => {
   await test.step("Navigate backward in live app", async () => {
     await page.pause();
     await discoverPage.goBack();
-    await page.pause();
-    // await expect.soft(page).toHaveScreenshot("live-app-navigate-go-back.png");
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("Home Page");
   });
 
   // To test that the forward navigation button in webPlatformPlayer topBar is working
   await test.step("Navigate forward in live app", async () => {
     await discoverPage.goForward();
-
-    await expect.soft(page).toHaveScreenshot("live-app-navigate-about-page2.png");
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
   });
 
   // To test that both navigation buttons in webPlatformPlayer topBar are enabled
   await test.step("Navigate in live app to middle of history", async () => {
-    await discoverPage.clickWebviewElement("[data-test-id=dashboard-link]");
-    await discoverPage.goBack();
+    await discoverPage.navigateToDashboardLink();
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("Discover Page");
 
-    await expect.soft(page).toHaveScreenshot("live-app-navigate-middle-history.png");
+    await discoverPage.goBack();
+    await expect(await discoverPage.getWebviewHeadingElementByText()).toBe("About Page");
 
     // Come back to home for next tests
-    await discoverPage.clickWebviewElement("[data-test-id=home-link]");
+    await discoverPage.navigateToHomeLink();
   });
 
   await test.step("List all accounts", async () => {

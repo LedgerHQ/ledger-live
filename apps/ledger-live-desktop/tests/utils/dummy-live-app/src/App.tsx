@@ -11,6 +11,7 @@ const Layout = () => {
     <div>
       {/* A "layout route" is a good place to put markup you want to
       share across all the pages on your site, like navigation. */}
+      <h2 data-test-id="home-page">Home Page</h2>
       <nav>
         <ul>
           <li>
