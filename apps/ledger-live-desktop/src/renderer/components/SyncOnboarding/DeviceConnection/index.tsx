@@ -7,7 +7,7 @@ import Success from "./Success";
 import Searching from "./Searching";
 
 export type SyncOnboardingDeviceConnectionProps = {
-  deviceModelId: DeviceModelId
+  deviceModelId: DeviceModelId;
 };
 
 const SUCCESS_TIMEOUT_MS = 4000;
