@@ -51,7 +51,6 @@ const Footer = ({ renderAccountSummary }: FooterProps) => {
       alignItems={"center"}
       marginTop={5}
       overflow={"hidden"}
-      background="green"
     >
       {accountSummary}
     </Box>
