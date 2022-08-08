@@ -143,7 +143,6 @@ function PortfolioHeader({
           {
             display: "flex",
             position: "absolute",
-            width: "100%",
             flexDirection: "row",
             width: windowsWidth,
             height: 92,

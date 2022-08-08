@@ -24,6 +24,7 @@ import {
 } from "@ledgerhq/native-ui";
 
 import { useTranslation } from "react-i18next";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -47,9 +48,10 @@ const Footer = ({ renderAccountSummary }: FooterProps) => {
   return accountSummary ? (
     <Box
       flexDirection={"row"}
-      alignItemps={"center"}
+      alignItems={"center"}
       marginTop={5}
       overflow={"hidden"}
+      background="green"
     >
       {accountSummary}
     </Box>
@@ -137,13 +139,7 @@ function AccountGraphCard({
   );
 
   return (
-    <Flex
-      flexDirection="column"
-      bg="neutral.c30"
-      mt={20}
-      py={6}
-      borderRadius={8}
-    >
+    <Flex flexDirection="column" mt={20}>
       <GraphCardHeader
         account={account}
         countervalueAvailable={countervalueAvailable}
@@ -163,22 +159,22 @@ function AccountGraphCard({
               isInteractive
               isLoading={!isAvailable}
               height={120}
-              width={width - 32}
-              color={colors.primary.c80}
+              width={width}
+              color={getCurrencyColor(account?.currency) || colors.primary.c80}
               data={history}
               mapValue={useCounterValue ? mapCounterValue : mapCryptoValue}
               onItemHover={setHoverItem}
               verticalRangeRatio={10}
+              fill={colors.background.main}
             />
           </Transitions.Fade>
         ) : (
           <InfiniteLoader size={32} />
         )}
       </Flex>
-      <Flex mt={25} px={6}>
+      <Flex pt={16} px={6} bg={colors.background.main}>
         <GraphTabs
           activeIndex={activeRangeIndex}
-          activeBg="background.main"
           onChange={updateRange}
           labels={rangesLabels}
         />
@@ -227,7 +223,12 @@ const GraphCardHeader = ({
   }
 
   return (
-    <Flex flexDirection={"row"} px={6} justifyContent={"space-between"}>
+    <Flex
+      flexDirection={"row"}
+      px={6}
+      pt={100}
+      justifyContent={"space-between"}
+    >
       <Touchable
         event="SwitchAccountCurrency"
         eventProperties={{ useCounterValue: shouldUseCounterValue }}
@@ -235,20 +236,26 @@ const GraphCardHeader = ({
         style={{ flexShrink: 1 }}
       >
         <Flex>
-          <Flex flexDirection={"row"}>
-            <Text variant={"large"} fontWeight={"medium"} color={"neutral.c70"}>
-              {typeof items[1]?.value === "number" ? (
-                <CurrencyUnitValue {...items[1]} />
-              ) : (
-                <NoCountervaluePlaceholder />
-              )}
-            </Text>
-            <TransactionsPendingConfirmationWarning maybeAccount={account} />
+          <Flex>
+            <Flex flexDirection="row">
+              <Text
+                variant={"large"}
+                fontWeight={"medium"}
+                color={"neutral.c70"}
+              >
+                {typeof items[1]?.value === "number" ? (
+                  <CurrencyUnitValue {...items[1]} />
+                ) : (
+                  <NoCountervaluePlaceholder />
+                )}
+              </Text>
+              <TransactionsPendingConfirmationWarning maybeAccount={account} />
+            </Flex>
           </Flex>
           <Text
             fontFamily="Inter"
             fontWeight="semiBold"
-            fontSize="30px"
+            fontSize="32px"
             numberOfLines={1}
             adjustsFontSizeToFit
           >
@@ -265,9 +272,6 @@ const GraphCardHeader = ({
           </Flex>
         </Flex>
       </Touchable>
-      <Flex justifyContent={"flex-start"} ml={4}>
-        <DiscreetModeButton />
-      </Flex>
     </Flex>
   );
 };
