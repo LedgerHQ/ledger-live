@@ -12,7 +12,7 @@ import { Currency } from "@ledgerhq/live-common/types/index";
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
-import ReadOnlyFabActions from "../../../components/ReadOnlyFabActions";
+import ReadOnlyFabActions from "../../../components/FabActions/ReadOnlyFabActions";
 import GradientContainer from "../../../components/GradientContainer";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,

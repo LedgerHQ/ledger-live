@@ -29,6 +29,7 @@
     "received": "Received",
     "sent": "Sent",
     "or": "OR",
+    "others": "Others",
     "rename": "Rename",
     "learnMore": "Learn more",
     "checkItOut": "Check it out",
@@ -1610,7 +1611,12 @@
       "title": "Market gainers (24H)",
       "seeMarket": "See all"
     },
-    "walletBalance": "Wallet balance"
+    "walletBalance": "Wallet balance",
+    "marketPriceSection": {
+      "title": "{{currencyTicker}} market price",
+      "currencyPrice": "1 {{currencyTicker}} price",
+      "currencyPriceChange": "Last 24h change"
+    }
   },
   "addAccountsModal": {
     "ctaAdd": "Add accounts",
@@ -1916,6 +1922,12 @@
       "noTransaction": {
         "title": "You don't have any transactions",
         "subtitle": "You'll need a device in order to buy or receive {{assetName}}"
+      }
+    },
+    "modals": {
+      "zeroBalanceDisabledAction": {
+        "title": "You have no {{currencyTicker}} yet",
+        "description": "You need some {{currencyTicker}} to {{actionName}} with this account."
       }
     }
   },
