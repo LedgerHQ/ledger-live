@@ -60,3 +60,6 @@ runs:
           apps/ledger-live-desktop/tests/artifacts/html-report
           apps/ledger-live-desktop/tests/artifacts/coverage
           apps/ledger-live-desktop/tests/artifacts/videos
+    - name: Run sanity tests
+      run: pnpm desktop test:playwright:post-checks
+      shell: bash
