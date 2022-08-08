@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { LedgerSigner, DerivationType } from "@taquito/ledger-signer";
 import { TezosToolkit } from "@taquito/taquito";
 import type { Transaction } from "./types";
-import type { Account, SignOperationEvent } from "../../types";
+import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { getEnv } from "../../env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
@@ -43,7 +43,7 @@ export const signOperation = ({
         // disable the broadcast because we want to do it in a second phase (broadcast hook)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        tezos.contract.context.injector.inject = async () => "";
+        tezos.contract.context.injector.inject = async () => "op4WsnE6gvDPFFzbXtsX1wLCsuAAbkA8JhXKApxvEYmaEd3fpNC"
 
         o.next({ type: "device-signature-requested" });
 
