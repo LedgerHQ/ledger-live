@@ -65,7 +65,7 @@ describe("BridgeSync", () => {
       ];
       const synced: Array<any> = [];
       let resolveFirst;
-      function prepareCurrency(c) {
+      function prepareCurrency() {
         if (!resolveFirst) {
           return new Promise((resolve, reject) => {
             resolveFirst = resolve;
