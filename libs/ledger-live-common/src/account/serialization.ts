@@ -839,23 +839,25 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     case "cardano": {
       const cardanoResourcesRaw = (rawAccount as CardanoAccountRaw)
         .cardanoResources;
-      (res as CardanoAccount).cardanoResources =
-        fromCardanoResourceRaw(cardanoResourcesRaw);
+      if (cardanoResourcesRaw)
+        (res as CardanoAccount).cardanoResources =
+          fromCardanoResourceRaw(cardanoResourcesRaw);
       break;
     }
     case "solana": {
       const solanaResourcesRaw = (rawAccount as SolanaAccountRaw)
         .solanaResources;
-      (res as SolanaAccount).solanaResources =
-        fromSolanaResourcesRaw(solanaResourcesRaw);
+      if (solanaResourcesRaw)
+        (res as SolanaAccount).solanaResources =
+          fromSolanaResourcesRaw(solanaResourcesRaw);
       break;
     }
     case "crypto_org": {
       const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
         .cryptoOrgResources;
-      (res as CryptoOrgAccount).cryptoOrgResources = fromCryptoOrgResourcesRaw(
-        cryptoOrgResourcesRaw
-      );
+      if (cryptoOrgResourcesRaw)
+        (res as CryptoOrgAccount).cryptoOrgResources =
+          fromCryptoOrgResourcesRaw(cryptoOrgResourcesRaw);
       break;
     }
   }
