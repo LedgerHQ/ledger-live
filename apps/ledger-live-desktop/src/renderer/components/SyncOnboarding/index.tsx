@@ -5,10 +5,11 @@ import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import SyncOnboardingPairing from "./Pairing";
 import SyncOnboardingManual from "./Manual";
+import CompletionScreen from "./Manual/CompletionScreen";
 
 const SyncOnboarding = () => {
   const { path } = useRouteMatch();
-
+  console.log(path);
   return (
     <Flex width="100%" height="100%" position="relative">
       <Switch>
@@ -19,6 +20,7 @@ const SyncOnboarding = () => {
         />
         <Route path={`${path}/pairing`} render={props => <SyncOnboardingPairing {...props} />} />
         <Route path={`${path}/manual`} render={props => <SyncOnboardingManual {...props} />} />
+        <Route path={`${path}/completion`} render={props => <CompletionScreen {...props} />} />
       </Switch>
     </Flex>
   );
