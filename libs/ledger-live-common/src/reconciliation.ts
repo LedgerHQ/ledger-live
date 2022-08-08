@@ -450,7 +450,6 @@ export function patchAccount(
       const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
 
       if (
-        celoUpdatedRaw.celoResources &&
         !areSameResources(
           toCeloResourcesRaw(celoAcc.celoResources),
           celoUpdatedRaw.celoResources
