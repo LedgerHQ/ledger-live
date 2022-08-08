@@ -15,7 +15,7 @@ import ValidatorGroupRow from "../components/ValidatorGroupRow";
 import * as S from "./ValidatorGroupsField.styles";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import type { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types";
+import type { Account, TransactionStatus } from "@ledgerhq/types-live";
 
 type Props = {
   account: Account,

@@ -12,7 +12,7 @@ import LedgerByFigmentTC from "../components/LedgerByFigmentTCLink";
 import ValidatorGroupsField from "../fields/ValidatorGroupsField";
 import { isDefaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import type { Transaction } from "@ledgerhq/live-common/families/celo/types";
-import type { AccountBridge } from "@ledgerhq/live-common/types";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import type { StepProps } from "../types";
 
 export const StepValidatorGroupFooter = ({

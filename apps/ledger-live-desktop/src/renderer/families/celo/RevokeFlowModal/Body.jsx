@@ -22,7 +22,7 @@ import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepVote, { StepVoteFooter } from "./steps/StepVote";
 import type { CeloVote, Transaction } from "@ledgerhq/live-common/families/celo/types";
-import type { AccountBridge, Operation, Account } from "@ledgerhq/live-common/types";
+import type { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";
 import type { St, StepProps, StepId } from "./types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
