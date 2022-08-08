@@ -33,6 +33,10 @@ type LanguageSelectStatus =
   | "firmware-language-update-requested"
   | "completed";
 
+export type Props = {
+  productName: string;
+};
+
 const ScrollViewContainer = styled(ScrollView)`
   height: 100%;
 `;
@@ -40,7 +44,7 @@ const ScrollViewContainer = styled(ScrollView)`
 // TODO: remove this when there's a real equivalent
 const firmwareSupportedLocales = ["en", "fr", "es"];
 
-const LanguageSelect = () => {
+const LanguageSelect = ({ productName }: Props) => {
   const { t } = useTranslation();
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
@@ -53,7 +57,7 @@ const LanguageSelect = () => {
   // triggers the current displayed drawer to close
   let nextDrawerToDisplay: UiDrawerStatus = "none";
 
-  const [selectedLanguage, setSelectedLanguage] = useState<any | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
 
   const [languageSelectStatus, setLanguageSelectStatus] = useState<
     LanguageSelectStatus
@@ -61,7 +65,9 @@ const LanguageSelect = () => {
 
   // Handles a newly selected language to redux-dispatch
   useEffect(() => {
-    dispatch(setLanguage(selectedLanguage));
+    if (selectedLanguage) {
+      dispatch(setLanguage(selectedLanguage));
+    }
   }, [dispatch, selectedLanguage]);
 
   const handleLanguageSelectOnChange = useCallback(language => {
@@ -180,10 +186,15 @@ const LanguageSelect = () => {
           />
         </Flex>
         <Text variant="h4" fontWeight="semiBold" mb={4}>
-          {t("syncOnboarding.firmwareLanguageUpdateDrawer.title")}
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.title", {
+            productName,
+          })}
         </Text>
         <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
-          {t("syncOnboarding.firmwareLanguageUpdateDrawer.description")}
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.description", {
+            productName,
+            newLanguage: selectedLanguage,
+          })}
         </Text>
         <Button type="main" mb={4} onPress={handleFirmwareLanguageUpdate}>
           {t("syncOnboarding.firmwareLanguageUpdateDrawer.updateCta")}

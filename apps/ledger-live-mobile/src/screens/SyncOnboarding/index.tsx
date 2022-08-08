@@ -307,7 +307,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           px={7}
           pb={4}
         >
-          <LanguageSelect />
+          <LanguageSelect productName={productName} />
           <Button type="default" Icon={CloseMedium} onPress={handleClose} />
         </Flex>
         <Flex flex={1}>

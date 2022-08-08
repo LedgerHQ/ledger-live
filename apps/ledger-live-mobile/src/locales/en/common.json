@@ -1627,7 +1627,7 @@
     },
     "firmwareLanguageUpdateDrawer": {
       "title": "Change language on your {{productName}}",
-      "description": "Ledger Live is now in English. Do you want to use English on your {{productName}} too?",
+      "description": "Ledger Live is now in {{newLanguage}}. Do you want to use {{newLanguage}} on your {{productName}} too?",
       "updateCta": "Change language",
       "cancelCta": "Cancel"
     },
