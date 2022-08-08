@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Button, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { CloseMedium, HelpMedium } from "@ledgerhq/react-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
@@ -12,11 +13,35 @@ import GenuineCheckModal from "./GenuineCheckModal";
 
 import SoftwareCheckContent from "./SoftwareCheckContent";
 
+const readyRedirectDelay = 2500;
+
+enum StepKey {
+  Paired = 0,
+  Pin,
+  Seed,
+  SoftwareCheck,
+  Applications,
+  Ready,
+  Exit,
+}
+
+type StepStatus = "completed" | "active" | "inactive";
+
+type Step = {
+  key: StepKey;
+  status: StepStatus;
+  title: string;
+  estimatedTime?: number;
+  renderBody?: () => ReactNode;
+};
+
 const SyncOnboardingManual = () => {
   const { t } = useTranslation();
+  const history = useHistory();
 
-  const steps = [
+  const defaultSteps: Step[] = [
     {
+      key: StepKey.Paired,
       status: "active",
       title: "Nano is connected",
       renderBody: () => (
@@ -26,6 +51,7 @@ const SyncOnboardingManual = () => {
       ),
     },
     {
+      key: StepKey.Pin,
       status: "inactive",
       title: "Set your PIN",
       renderBody: () => (
@@ -36,6 +62,7 @@ const SyncOnboardingManual = () => {
       estimatedTime: 120,
     },
     {
+      key: StepKey.Seed,
       status: "inactive",
       title: "Recovery phrase",
       renderBody: () => (
@@ -44,6 +71,7 @@ const SyncOnboardingManual = () => {
       estimatedTime: 300,
     },
     {
+      key: StepKey.SoftwareCheck,
       status: "inactive",
       title: "Software check",
       renderBody: () => (
@@ -51,18 +79,32 @@ const SyncOnboardingManual = () => {
       ),
     },
     {
+      key: StepKey.Applications,
       status: "inactive",
       title: "Nano applications",
       renderBody: () => <Text>{`Nano uses apps to enable secure blockchain transactions`}</Text>,
     },
     {
+      key: StepKey.Ready,
       status: "inactive",
       title: "Nano is ready",
     },
   ];
 
+  const [steps, setSteps] = useState<Step[]>(defaultSteps);
+  const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isGenuineCheckModalOpen, setGenuineCheckModalOpen] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (stepKey === StepKey.Ready) {
+      setTimeout(() => setStepKey(StepKey.Exit), readyRedirectDelay / 2);
+    }
+
+    if (stepKey === StepKey.Exit) {
+      setTimeout(() => history.push(`/sync-onboarding/completion`), readyRedirectDelay / 2);
+    }
+  }, [history, stepKey]);
 
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
