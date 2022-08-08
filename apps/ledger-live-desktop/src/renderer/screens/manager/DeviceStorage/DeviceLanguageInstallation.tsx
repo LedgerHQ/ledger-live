@@ -91,7 +91,12 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   const onInstall = useCallback(() => setInstalling(true), [setInstalling]);
 
   return (
-    <Drawer isOpen={isOpen} onClose={onCloseDrawer} title="Device Language" big>
+    <Drawer
+      isOpen={isOpen}
+      onClose={onCloseDrawer}
+      title={t("deviceLocalization.deviceLanguage")}
+      big
+    >
       <Flex flex={1} flexDirection="column" justifyContent="space-between" pt={2}>
         {installing ? (
           <DeviceAction action={action} request={selectedLanguage} Result={Result} />
