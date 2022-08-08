@@ -427,19 +427,8 @@ export function patchAccount(
     }
     default: {
       const bridge = getAccountBridge(account);
-      const fromResourcesRaw = bridge.fromResourcesRaw;
-      if (
-        fromResourcesRaw &&
-        !areSameResources(
-          account.accountResources,
-          updatedRaw.accountResourcesRaw
-        )
-      ) {
-        next.accountResources = fromResourcesRaw(
-          updatedRaw.accountResourcesRaw
-        );
-        changed = true;
-      }
+      const applyReconciliation = bridge.applyReconciliation;
+      changed = applyReconciliation(account, updatedRaw, next);
     }
   }
 

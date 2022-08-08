@@ -20,8 +20,7 @@ import {
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
-import { toResourcesRaw } from "../serialization";
-import { fromResourcesRaw } from "../serialization";
+import { applyReconciliation, toAccountRaw, fromAccountRaw } from "../serialization";
 
 const receive = makeAccountBridgeReceive();
 
@@ -103,8 +102,9 @@ const accountBridge: AccountBridge<AlgorandTransaction> = {
   prepareTransaction,
   sync,
   receive,
-  toResourcesRaw,
-  fromResourcesRaw,
+  applyReconciliation,
+  toAccountRaw,
+  fromAccountRaw,
   signOperation,
   broadcast,
 };
