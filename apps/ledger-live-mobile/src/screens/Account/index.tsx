@@ -1,7 +1,12 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { StyleSheet, View, SectionList, FlatList } from "react-native";
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import Animated, { Value, event } from "react-native-reanimated";
+import Animated, {
+  Value,
+  event,
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -22,6 +27,9 @@ import {
 } from "@ledgerhq/live-common/compound/logic";
 import { Trans } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { Colors } from "react-native/Libraries/NewAppScreen";
+import { useTheme } from "styled-components/native";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import {
@@ -40,7 +48,8 @@ import { ScreenName } from "../../const";
 import EmptyStateAccount from "./EmptyStateAccount";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import { useScrollToTop } from "../../navigation/utils";
-
+import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
+import AccountHeader from "./AccountHeader";
 import { getListHeaderComponents } from "./ListHeaderComponent";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -87,6 +96,7 @@ const AccountScreenInner = ({
   account: AccountLike;
   parentAccount: Account | undefined;
 }) => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
@@ -183,6 +193,17 @@ const AccountScreenInner = ({
 
   const [isCollapsed, setIsCollapsed] = useState(true);
 
+  const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
+  const currentPositionY = useSharedValue(0);
+  const handleScroll = useAnimatedScrollHandler(event => {
+    currentPositionY.value = event.contentOffset.y;
+  });
+
+  const onAccountCardLayout = useCallback((event: LayoutChangeEvent) => {
+    const { y, height } = event.nativeEvent.layout;
+    setGraphCardEndPosition(y + height / 10);
+  }, []);
+
   const { listHeaderComponents } = useMemo(
     () =>
       getListHeaderComponents({
@@ -200,6 +221,7 @@ const AccountScreenInner = ({
         compoundSummary,
         isCollapsed,
         setIsCollapsed,
+        onAccountCardLayout,
       }),
     [
       account,
@@ -265,6 +287,11 @@ const AccountScreenInner = ({
   return (
     <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
       {analytics}
+      <CurrencyBackgroundGradient
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+        gradientColor={getCurrencyColor(currency) || colors.primary.c80}
+      />
       <AnimatedFlatListWithRefreshControl
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
@@ -272,6 +299,12 @@ const AccountScreenInner = ({
         renderItem={({ item }: any) => item}
         keyExtractor={(_: any, index: any) => String(index)}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+      />
+      <AccountHeader
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+        account={account}
       />
     </TabBarSafeAreaView>
   );

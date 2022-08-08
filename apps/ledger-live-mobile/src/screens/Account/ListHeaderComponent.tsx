@@ -11,6 +11,8 @@ import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Box } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 
+import { Colors } from "react-native/Libraries/NewAppScreen";
+import { useTheme } from "styled-components/native";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -71,6 +73,7 @@ type Props = {
   onAccountPress: () => void;
   onSwitchAccountCurrency: () => void;
   compoundSummary?: CompoundAccountSummary;
+  onAccountCardLayout: any;
 };
 
 export function getListHeaderComponents({
@@ -86,12 +89,15 @@ export function getListHeaderComponents({
   onAccountPress,
   onSwitchAccountCurrency,
   compoundSummary,
+  onAccountCardLayout,
 }: Props): {
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
 } {
   if (!account)
     return { listHeaderComponents: [], stickyHeaderIndices: undefined };
+
+  const { colors } = useTheme();
 
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -109,13 +115,8 @@ export function getListHeaderComponents({
 
   return {
     listHeaderComponents: [
-      <Header accountId={account.id} />,
-      !!AccountSubHeader && <AccountSubHeader />,
-      !empty && !!AccountHeader && (
-        <AccountHeader account={account} parentAccount={parentAccount} />
-      ),
       !empty && (
-        <Box mx={6} my={6}>
+        <Box onLayout={onAccountCardLayout}>
           <AccountGraphCard
             account={account}
             range={range}
@@ -138,8 +139,21 @@ export function getListHeaderComponents({
           />
         </Box>
       ),
+      <Box bg={colors.background.main}>
+        <Header accountId={account.id} />
+      </Box>,
+      !!AccountSubHeader && (
+        <Box bg={colors.background.main}>
+          <AccountSubHeader />
+        </Box>
+      ),
+      !empty && !!AccountHeader && (
+        <Box bg={colors.background.main}>
+          <AccountHeader account={account} parentAccount={parentAccount} />
+        </Box>
+      ),
       !empty && (
-        <Box mx={6} my={6}>
+        <Box px={6} py={6} bg={colors.background.main}>
           <FabAccountMainActionsComponent
             account={account}
             parentAccount={parentAccount}
@@ -148,10 +162,12 @@ export function getListHeaderComponents({
       ),
       ...(!empty && AccountBodyHeader
         ? [
-            <AccountBodyHeader
-              account={account}
-              parentAccount={parentAccount}
-            />,
+            <Box bg={colors.background.main}>
+              <AccountBodyHeader
+                account={account}
+                parentAccount={parentAccount}
+              />
+            </Box>,
           ]
         : []),
       ...(!empty

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { FiltersMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
+import { SettingsMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -34,7 +34,7 @@ export default function AccountHeaderRight() {
         <Touchable
           event="ShowContractAddress"
           onPress={toggleModal}
-          style={{ alignItems: "center", justifyContent: "center", margin: 16 }}
+          style={{ alignItems: "center", justifyContent: "center" }}
         >
           <View>
             <OthersMedium size={24} color={"neutral.c100"} />
@@ -61,10 +61,10 @@ export default function AccountHeaderRight() {
             },
           });
         }}
-        style={{ alignItems: "center", justifyContent: "center", margin: 16 }}
+        style={{ alignItems: "center", justifyContent: "center" }}
       >
         <View>
-          <FiltersMedium size={24} color="neutral.c100" />
+          <SettingsMedium size={24} color="neutral.c100" />
         </View>
       </Touchable>
     );

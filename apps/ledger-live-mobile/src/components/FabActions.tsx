@@ -11,6 +11,9 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { Icons, QuickActionList } from "@ledgerhq/native-ui";
 
+import { Linking } from "react-native";
+import { useTheme } from "styled-components/native";
+import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
@@ -19,9 +22,6 @@ import { accountsCountSelector } from "../reducers/accounts";
 import { NavigatorName, ScreenName } from "../const";
 import FabAccountButtonBar, { ActionButton } from "./FabAccountButtonBar";
 import useActions from "../screens/Account/hooks/useActions";
-import { Linking } from "react-native";
-import { useTheme } from "styled-components";
-import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
 
 type FabAccountActionsProps = {
   account: AccountLike;
@@ -72,13 +72,11 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
     [onNavigate],
   );
 
-  const quickActions: QuickActionButtonProps[] = mainActions.map(action => {
-    return {
-      Icon: action.Icon,
-      children: action.label,
-      onPress: () => onPress(action),
-    };
-  });
+  const quickActions: QuickActionButtonProps[] = mainActions.map(action => ({
+    Icon: action.Icon,
+    children: action.label,
+    onPress: () => onPress(action),
+  }));
 
   return (
     <QuickActionList
@@ -86,7 +84,7 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
       numColumns={
         quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
       }
-    ></QuickActionList>
+    />
   );
 };
 

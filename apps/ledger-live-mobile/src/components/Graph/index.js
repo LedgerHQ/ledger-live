@@ -68,7 +68,9 @@ function Graph({
     .x(d => x(d.date))
     .y0(d => yExtractor(d))
     .y1(
-      d => yExtractor(d) + Math.min((maxY - minY) / verticalRangeRatio, height),
+      d =>
+        yExtractor(d) +
+        Math.min((maxY - minY) / verticalRangeRatio, height + 20),
     )
     .curve(curve)(data);
 
