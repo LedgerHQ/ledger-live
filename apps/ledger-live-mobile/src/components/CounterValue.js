@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
-import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   useCalculate,
   useCountervaluesPolling,

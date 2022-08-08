@@ -4,11 +4,7 @@ import take from "lodash/take";
 import { StyleSheet, View, FlatList } from "react-native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import {
-  Account,
-  SubAccount,
-  TokenAccount,
-} from "@ledgerhq/live-common/types/index";
+import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { listSubAccounts } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";

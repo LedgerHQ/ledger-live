@@ -3,7 +3,7 @@ import { View, StyleSheet, Platform, VirtualizedList } from "react-native";
 import ReactNativeModal from "react-native-modal";
 import { Trans, useTranslation } from "react-i18next";
 import type { Action, State } from "@ledgerhq/live-common/apps/index";
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import { useSortedFilteredApps } from "@ledgerhq/live-common/apps/filtering";
 import {
   listTokens,
