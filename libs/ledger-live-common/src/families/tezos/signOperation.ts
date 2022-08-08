@@ -40,10 +40,12 @@ export const signOperation = ({
         );
         tezos.setProvider({ signer: ledgerSigner });
 
-        // disable the broadcast because we want to do it in a second phase (broadcast hook)
+        // Disable the broadcast because we want to do it in a second phase (broadcast hook)
+        // Use a dummy transaction hash, we don't care about this check
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        tezos.contract.context.injector.inject = async () => "op4WsnE6gvDPFFzbXtsX1wLCsuAAbkA8JhXKApxvEYmaEd3fpNC"
+        tezos.contract.context.injector.inject = async () =>
+          "op4WsnE6gvDPFFzbXtsX1wLCsuAAbkA8JhXKApxvEYmaEd3fpNC";
 
         o.next({ type: "device-signature-requested" });
 
