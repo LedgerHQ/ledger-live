@@ -5,7 +5,8 @@ import { Box } from "@ledgerhq/react-ui";
 type Props = {
   lightSource: string;
   darkSource: string;
-  size: number;
+  height: number;
+  width: number
 };
 
 const defineStyleFromTheme = (lightAsset: string, darkAsset: string) => (
@@ -13,8 +14,8 @@ const defineStyleFromTheme = (lightAsset: string, darkAsset: string) => (
 ) => (p.theme.colors.palette.type === "light" ? lightAsset : darkAsset);
 
 const Img: ThemedComponent<Props> = styled(Box).attrs((p: Props) => ({
-  width: `${p.size}px`,
-  height: `${p.size}px`,
+  width: `${p.width}px`,
+  height: `${p.height}px`,
 }))<Props>`
   background: url(${(p: Props) => defineStyleFromTheme(p.lightSource, p.darkSource)(p)});
   background-size: cover;

@@ -1977,6 +1977,8 @@
     "language": "Language",
     "deviceLanguage": "Device Language",
     "changeLanguage": "Change language",
+    "changeDeviceLanguage": "Change your device language?",
+    "changeDeviceLanguageDescription": "Ledger Live is now in {{language}}. Do you want to use {{language}} on your device too?",
     "allowLanguageInstallation": "Allow language installation",
     "languageInstalled": "Language changed successfully",
     "installingLanguage": "Installing language",

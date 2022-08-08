@@ -13,19 +13,9 @@ import { useSystemLanguageSelector, languageSelector } from "~/renderer/reducers
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { getEnv } from "@ledgerhq/live-common/env";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { idsToLanguage } from "@ledgerhq/types-live";
-import { Flex, Drawer, Text, Button } from "@ledgerhq/react-ui";
-import DeviceAction from "~/renderer/components/DeviceAction";
-import { command } from "~/renderer/commands";
-
-// TODO split language installation action into dedicated component
-const installLanguageExec = command("installLanguage");
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : installLanguageExec);
+import ChangeDeviceLanguagePrompt from "./ChangeDeviceLanguagePrompt";
 
 export const languageLabels: { [key in Locale]: string } = {
   de: "Deutsch",
@@ -55,11 +45,9 @@ const LanguageSelect = () => {
   const useSystem = useSelector(useSystemLanguageSelector);
   const language = useSelector(languageSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const lastConnectedDevice = useSelector(getCurrentDevice);
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
 
-  const [installingLanguage, setInstallingLanguage] = useState(false);
   const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<boolean>(false);
 
   const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
@@ -83,7 +71,10 @@ const LanguageSelect = () => {
   const currentLanguage = useMemo(
     () => (useSystem ? languages[0] : languages.find(l => l.value === language)),
     [language, languages, useSystem],
-  );
+  ) as {
+    value: Locale | null;
+    label: string;
+  };
 
   useEffect(() => {
     i18n.changeLanguage(language);
@@ -110,17 +101,19 @@ const LanguageSelect = () => {
 
       dispatch(setLanguage(languageKey));
     },
-    [dispatch],
+    [dispatch, lastSeenDevice, availableDeviceLanguages, deviceLocalizationFeatureFlag],
   );
 
-  const onCloseDrawer = useCallback(() => setIsDeviceLanguagePromptOpen(false), []);
+  const onClosePrompt = useCallback(() => {
+    setIsDeviceLanguagePromptOpen(false);
+  }, []);
 
   return (
     <>
       <Track
         onUpdate
         event="LanguageSelect"
-        currentRegion={currentLanguage && currentLanguage.value}
+        currentRegion={currentLanguage.value}
       />
 
       <Select
@@ -133,25 +126,11 @@ const LanguageSelect = () => {
         options={languages}
       />
 
-      <Drawer
+      <ChangeDeviceLanguagePrompt
         isOpen={isDeviceLanguagePromptOpen}
-        onClose={onCloseDrawer}
-        title="Device Language"
-        big
-      >
-        <Flex flex={1} flexDirection="column" justifyContent="space-between" pt={2}>
-          {installingLanguage && currentLanguage?.value ? (
-            <DeviceAction action={action} request={localeIdToDeviceLanguage[currentLanguage?.value]} Result={null} />
-          ) : (
-            <>
-            <Text>Install, lezz go?</Text>
-            <Button onClick={() => setInstallingLanguage(true)}>
-              Lezzgo
-            </Button>
-            </>
-          )}
-        </Flex>
-      </Drawer>
+        onClose={onClosePrompt}
+        currentLanguage={currentLanguage.value as Locale}
+      />
     </>
   );
 };

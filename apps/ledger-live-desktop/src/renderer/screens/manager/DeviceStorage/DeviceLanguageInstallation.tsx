@@ -1,17 +1,10 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { Button, Flex, Icons, Drawer, Radio, BoxedIcon, Divider, Log } from "@ledgerhq/react-ui";
+import React, { useState, useCallback } from "react";
+import { Button, Flex, Icons, Drawer, Radio, Divider } from "@ledgerhq/react-ui";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { command } from "~/renderer/commands";
-import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import { getEnv } from "@ledgerhq/live-common/env";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import DeviceAction from "~/renderer/components/DeviceAction";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
-
-const installLanguageExec = command("installLanguage");
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : installLanguageExec);
+import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
 
 type Props = {
   isOpen: boolean;
@@ -22,41 +15,6 @@ type Props = {
   currentLanguage: Language;
   onSelectLanguage: (language: Language) => void;
   device: Device;
-};
-
-const DeviceLanguageInstalled = ({
-  onContinue,
-  onMount,
-}: {
-  onContinue: () => void;
-  onMount: () => void;
-}) => {
-  useEffect(() => onMount(), [onMount]);
-
-  const { t } = useTranslation();
-
-  return (
-    <Flex height="100%" flexDirection="column" data-test-id="language-installed">
-      <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center">
-        <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c100" size={64} iconSize={24} />
-        <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
-          {t("deviceLocalization.languageInstalled")}
-        </Log>
-      </Flex>
-      <Flex flexDirection="column" rowGap={10}>
-        <Divider variant="light" />
-        <Flex alignSelf="end">
-          <Button
-            variant="main"
-            onClick={onContinue}
-            data-test-id="close-language-installation-button"
-          >
-            {t("common.close")}
-          </Button>
-        </Flex>
-      </Flex>
-    </Flex>
-  );
 };
 
 const DeviceLanguageInstallation: React.FC<Props> = ({
@@ -79,10 +37,6 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
     setInstalling(false);
   }, [onClose, setInstalling]);
 
-  const Result = useCallback(() => {
-    return <DeviceLanguageInstalled onContinue={onCloseDrawer} onMount={onSuccess} />;
-  }, [selectedLanguage, onCloseDrawer, onSuccess]);
-
   const onChange = useCallback(
     (radioValue?: string | string[] | number) => onSelectLanguage(radioValue as Language),
     [onSelectLanguage],
@@ -91,10 +45,19 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   const onInstall = useCallback(() => setInstalling(true), [setInstalling]);
 
   return (
-    <Drawer isOpen={isOpen} onClose={onCloseDrawer} title="Device Language" big>
+    <Drawer
+      isOpen={isOpen}
+      onClose={onCloseDrawer}
+      title={t("deviceLocalization.deviceLanguage")}
+      big
+    >
       <Flex flex={1} flexDirection="column" justifyContent="space-between" pt={2}>
         {installing ? (
-          <DeviceAction action={action} request={selectedLanguage} Result={Result} />
+          <ChangeDeviceLanguageAction
+            onContinue={onCloseDrawer}
+            onSuccess={onSuccess}
+            language={selectedLanguage}
+          />
         ) : (
           <>
             <Radio
