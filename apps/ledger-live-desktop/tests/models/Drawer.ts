@@ -14,7 +14,7 @@ export class Drawer {
   }
 
   async continue() {
-    await this.continueButton.click();
+    await this.continueButton.click({ force: true });
   }
 
   async waitForDrawerToDisappear() {

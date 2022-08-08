@@ -73,14 +73,9 @@ test("Discover", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-1.png");
   });
 
-  await test.step("Request Account - account dropdown", async () => {
-    await discoverPage.openAccountDropdown();
-    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-2.png");
-  });
-
   await test.step("Request Account - select BTC", async () => {
-    await discoverPage.selectAccount("BTC");
-    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-3.png");
+    await discoverPage.selectAccount("BTC", "Bitcoin 1 (legacy)");
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-2.png");
   });
 
   await test.step("Request Account - single account output", async () => {

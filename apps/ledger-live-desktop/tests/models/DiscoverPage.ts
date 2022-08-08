@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import { Page, Locator, expect } from "@playwright/test";
 
 export class DiscoverPage {
   readonly page: Page;
@@ -8,7 +8,9 @@ export class DiscoverPage {
   readonly getAllAccountsButton: Locator;
   readonly requestAccountButton: Locator;
   readonly selectAccountTitle: Locator;
+  readonly selectCurrencyDropdown: Locator;
   readonly selectAccountDropdown: Locator;
+  readonly currencySelect: Function;
   readonly accountSelect: Function;
   readonly disclaimerCheckbox: Locator;
 
@@ -21,8 +23,10 @@ export class DiscoverPage {
     this.getAllAccountsButton = page.locator("data-test-id=get-all-accounts-button"); // TODO: make this into its own model
     this.requestAccountButton = page.locator("data-test-id=request-single-account-button");
     this.selectAccountTitle = page.locator("text=Choose a crypto asset)");
+    this.selectCurrencyDropdown = page.locator(".select__dropdown-indicator").first();
     this.selectAccountDropdown = page.locator(".select__dropdown-indicator").last();
-    this.accountSelect = (currency: string) : Locator => page.locator(`text=(${currency})`);
+    this.currencySelect = (currency: string) : Locator => page.locator(".select-options-list").locator(`text=${currency}`);
+    this.accountSelect = (account: string) : Locator => page.locator(".select__menu-list").locator(`text=${account}`);
     this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
   }
 
@@ -38,29 +42,41 @@ export class DiscoverPage {
     await this.clickWebviewElement("[data-test-id=request-single-account-button]");
   }
 
-  async openAccountDropdown() {
-    // FIXME - this isn't working without force. 'subtree intercepts pointer events' error
+  async selectAccount(currency: string, account: string) {
+    await this.selectCurrencyDropdown.click({ force: true });
+    await this.currencySelect(currency).click({ force: true });
     await this.selectAccountDropdown.click({ force: true });
-  }
-
-  async selectAccount(currency: string) {
-    await this.accountSelect(currency).click({ force: true });
+    await this.accountSelect(account).click({ force: true });
   }
 
   async verifyAddress() {
-    await this.clickWebviewElement("[data-test-id=verify-address-button]]");
+    await this.clickWebviewElement("[data-test-id=verify-address-button]");
   }
 
   async clickWebviewElement(elementName: string) {
     await this.page.evaluate(elementName => {
       const webview = document.querySelector("webview");
-      (webview as any).executeJavaScript(
-        `(function() {
-        const element = document.querySelector('${elementName}');
-        element.click();
-      })();
-    `,
-      );
+
+      (webview as any).executeJavaScript(`(
+        function () {
+          const element = document.querySelector('${elementName}');
+          element.click();
+        }
+      )();`);
     }, elementName);
+  }
+
+  async fillWebviewElement(elementName: string, value: string) {
+    await this.page.evaluate(args => {
+      const [elementName, value] = args
+      const webview = document.querySelector("webview");
+
+      (webview as any).executeJavaScript(`(
+        function () {
+          const element = document.querySelector('${elementName}');
+          element.value = '${value}';
+        }
+      )();`);
+    }, [elementName, value]);
   }
 }
