@@ -844,11 +844,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
         (rawAccount as CryptoOrgAccountRaw).cryptoOrgResources
       );
       break;
-    case "celo":
-      (res as CeloAccount).celoResources = fromCeloResourcesRaw(
-        (rawAccount as CeloAccountRaw).celoResources
-      );
+    case "celo": {
+      const celoResourcesRaw = (rawAccount as CeloAccountRaw).celoResources;
+      if (celoResourcesRaw) {
+        (res as CeloAccount).celoResources =
+          fromCeloResourcesRaw(celoResourcesRaw);
+      }
       break;
+    }
   }
 
   if (swapHistory) {
