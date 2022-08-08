@@ -9,7 +9,7 @@ import CompletionScreen from "./Manual/CompletionScreen";
 
 const SyncOnboarding = () => {
   const { path } = useRouteMatch();
-  console.log(path);
+
   return (
     <Flex width="100%" height="100%" position="relative">
       <Switch>

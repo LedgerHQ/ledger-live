@@ -92,7 +92,7 @@ const SyncOnboardingManual = () => {
   ];
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
-  const [stepKey, setStepKey] = useState<StepKey>(StepKey.Ready);
+  const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isGenuineCheckModalOpen, setGenuineCheckModalOpen] = useState<boolean>(true);
 
