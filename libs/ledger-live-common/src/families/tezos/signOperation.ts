@@ -43,7 +43,7 @@ export const signOperation = ({
         // disable the broadcast because we want to do it in a second phase (broadcast hook)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        tezos.contract.context.injector.inject = async () => "";
+        tezos.contract.context.injector.inject = async () => "op4WsnE6gvDPFFzbXtsX1wLCsuAAbkA8JhXKApxvEYmaEd3fpNC"
 
         o.next({ type: "device-signature-requested" });
 
