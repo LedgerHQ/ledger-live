@@ -28,6 +28,15 @@ export type OnboardingStatePollingResult = {
   allowedError: Error | null;
 };
 
+export type GetOnboardingStatePollingResult =
+  Observable<OnboardingStatePollingResult>;
+
+export type GetOnboardingStatePollingArgs = {
+  deviceId: string;
+  pollingPeriodMs: number;
+  fetchingTimeoutMs?: number;
+};
+
 /**
  * Polls the device onboarding state at a given frequency
  * @param deviceId A device id
@@ -39,11 +48,7 @@ export const getOnboardingStatePolling = ({
   deviceId,
   pollingPeriodMs,
   fetchingTimeoutMs = pollingPeriodMs,
-}: {
-  deviceId: string;
-  pollingPeriodMs: number;
-  fetchingTimeoutMs?: number;
-}): Observable<OnboardingStatePollingResult> => {
+}: GetOnboardingStatePollingArgs): GetOnboardingStatePollingResult => {
   let firstRun = true;
 
   const delayedOnceOnboardingStateObservable: Observable<OnboardingStatePollingResult> =

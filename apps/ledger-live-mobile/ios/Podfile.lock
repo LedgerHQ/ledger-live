@@ -575,8 +575,8 @@ PODS:
     - Sentry/Core (= 7.20.0)
   - Sentry/Core (7.20.0)
   - SocketRocket (0.6.0)
-  - Storyly (1.24.0)
-  - storyly-react-native (1.24.0):
+  - Storyly (1.24.1)
+  - storyly-react-native (1.24.1):
     - React
     - Storyly (~> 1.24.0)
   - TcpSockets (4.0.0):
@@ -691,7 +691,7 @@ DEPENDENCIES:
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@12.3.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-svg`)"
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons`)"
-  - "storyly-react-native (from `../../../node_modules/.pnpm/storyly-react-native@1.24.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native`)"
+  - "storyly-react-native (from `../../../node_modules/.pnpm/storyly-react-native@1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native`)"
   - "TcpSockets (from `../../../node_modules/.pnpm/react-native-tcp@4.0.0_react-native@0.68.2/node_modules/react-native-tcp`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.68.2_shn3lkepuadv4od4dudas6ijbq/node_modules/react-native/ReactCommon/yoga`)"
 
@@ -884,7 +884,7 @@ EXTERNAL SOURCES:
   RNVectorIcons:
     :path: "../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons"
   storyly-react-native:
-    :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native"
+    :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native"
   TcpSockets:
     :path: "../../../node_modules/.pnpm/react-native-tcp@4.0.0_react-native@0.68.2/node_modules/react-native-tcp"
   Yoga:
@@ -998,8 +998,8 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   Sentry: 9e8ec837fa37e7b397f19f75542800461b138d0e
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  Storyly: a532af158a58795a0c3efe6f13e7545b087fe3d9
-  storyly-react-native: 15a66fc16250e2f5edce786126a02438182d89f9
+  Storyly: 1ae05f53c33d2ce75e8fdcc57f2617c4304d433c
+  storyly-react-native: fb35dd20cb36da37a851a785d12969c95fe3c888
   TcpSockets: 4ef55305239923b343ed0a378b1fac188b1373b0
   Yoga: 99652481fcd320aefa4a7ef90095b95acd181952
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
