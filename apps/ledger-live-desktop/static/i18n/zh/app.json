@@ -3163,6 +3163,7 @@
         "link" : "有关恢复短语的更多详情",
         "title2" : "如果我的 Nano 无法使用了该怎么办？",
         "paragraph3" : "不要担心并遵循以下步骤：",
+        "paragraph4" : "为了恢复对您加密资产的访问，任何钱包都能通过您的恢复短语算出同样的私钥。",
         "points" : {
           "1" : "获得一个新的硬件钱包。",
           "2" : "在 Ledger 应用程序中选择 “Restore recovery phrase on a new device” (在新设备上还原恢复短语)",
@@ -3203,40 +3204,57 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "欢迎使用 Ledger",
-        "description" : "通过您的电脑来安全管理您的加密资产。",
-        "cta" : "开始",
-        "noDevice" : "没有设备？<0>购买 Ledger Nano X</0>",
-        "languageWarning" : {
-          "title" : "以{{language}}开始",
-          "desc" : "为了让大家更好地使用 Ledger，我们正在推出其他语言版本。需要注意的是，Ledger 其他功能目前只有英语版可用。",
-          "cta" : "知道了"
+        "title" : "最安全的加密货币和 NFT 钱包",
+        "description" : "在 Ledger Live 上安全地管理、买入和增长您的加密货币和 NFT。",
+        "nextButton" : "开始",
+        "noDevice" : "没有设备？",
+        "buyLink" : "没有设备？购买 Ledger Nano X",
+        "byTapping" : "点按“开始”即表示您应允并同意我们的",
+        "termsAndConditions" : "条款与条件",
+        "and" : "和",
+        "privacyPolicy" : "隐私政策",
+        "steps" : {
+          "0" : {
+            "title" : "访问您的加密资产",
+            "desc" : "您的加密资产存储在区块链上。使用您的私钥访问和管理加密资产"
+          },
+          "1" : {
+            "title" : "保管好您的私钥",
+            "desc" : "您的私钥存储在 Nano 设备中，您必须是私钥的唯一持有者才能控制您的资金"
+          },
+          "2" : {
+            "title" : "保持离线状态",
+            "desc" : "Nano 是一种“冷存储”钱包，这意味着它永远不会联网泄露您的私钥，即使在使用应用程序时也不会泄露"
+          },
+          "3" : {
+            "title" : "验证交易",
+            "desc" : "利用 Ledger Live，您可以买入、卖出、管理、兑换和赚取加密货币，同时保护您的加密货币<br/>您需要使用 Nano 核实每笔加密货币交易"
+          },
+          "4" : {
+            "title" : "开始设置 Nano",
+            "desc" : "我们首先要设置 Nano"
+          }
         }
       },
       "selectDevice" : {
-        "title" : "您使用的是哪款设备？"
+        "title" : "选择您的设备",
+        "selectLabel" : "选择"
       },
       "selectUseCase" : {
-        "greetings" : "您好！",
         "hasNoRecovery" : "首次使用您的 {{deviceName}} ？",
         "hasRecovery" : "已经有了恢复短语？",
-        "separator" : "或者",
-        "switchDevice" : "切换设备",
         "options" : {
           "1" : {
-            "heading" : "首次使用",
             "title" : "设置一个新的 {{deviceName}}",
-            "description" : "让我们开始设置您的设备吧！"
+            "description" : "开始设置您的设备"
           },
           "2" : {
-            "heading" : "连接设备",
             "title" : "请连接您的{{deviceName}}",
             "description" : "设备已经设置好了？将其连接到应用程序！"
           },
           "3" : {
-            "heading" : "还原设备",
             "title" : "在新设备上还原您的恢复短语",
-            "description" : "使用现有的恢复短语在新的 {{deviceName}} 上恢复您的私钥！"
+            "description" : "在新的 Nano 设备上使用现有的恢复短语来还原您的私钥！"
           }
         }
       },
@@ -3269,6 +3287,10 @@
             "buttons" : {
               "next" : "好的，我一切就绪！",
               "prev" : "上一步"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "deviceHowTo" : {
@@ -3292,9 +3314,14 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "deviceHowTo2" : {
+            "title" : "最佳的开始方式：",
             "turnOn" : {
               "title" : "启动 Nano",
               "descr" : "使用 USB 数据线，将您的设备连接到您的电脑上。"
@@ -3315,6 +3342,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "pinCode" : {
@@ -3325,6 +3356,10 @@
               "next" : "设置 PIN 识别码",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "quizSuccess" : {
@@ -3338,10 +3373,14 @@
           },
           "quizFailure" : {
             "title" : "距成为高手仅一步之遥……",
-            "paragraph" : "别担心，Ledger 会全程为您的操作提供指导。很快，您就会对自己加密资产的安全性感到格外舒心。\n\n只剩下最后一小步！",
+            "paragraph" : "不必担心，Ledger 将指导您完成每一步。很快您就会对您的加密货币安全更加放心了。\n\n只剩一小步了！",
             "buttons" : {
               "next" : "下一步",
               "prev" : "上一步"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "pinCodeHowTo" : {
@@ -3357,6 +3396,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "existingRecoveryPhrase" : {
@@ -3371,7 +3414,7 @@
             },
             "warning" : {
               "title" : "请勿使用非您本人生成的恢复短语。",
-              "desc" : "您的 Ledger 硬件钱包的 PIN 识别码和恢复短语应该由您本人单独完成初始化操作。如果您收到的设备含有一个已经存在的种子词或一个已经初始化的 PIN 识别码，那么请勿使用该产品，并请联系我们的客服。",
+              "desc" : "您的 Ledger 硬件钱包识别码和恢复短语应该仅由您本人执行初始化。如果您收到的设备带有预设的种子助记词或已初始化的识别码，请勿使用该产品，应尽快联系我们的客服。",
               "supportLink" : "联系客服"
             }
           },
@@ -3388,6 +3431,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "newRecoveryPhrase" : {
@@ -3399,6 +3446,10 @@
               "next" : "恢复短语",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "recoveryHowTo" : {
@@ -3424,6 +3475,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "recoveryHowTo3" : {
@@ -3438,6 +3493,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "genuineCheck" : {
@@ -3461,6 +3520,10 @@
               "prev" : "上一步",
               "help" : "需要帮助",
               "learn" : "了解如何保管您的恢复短语"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "pairMyNano" : {
@@ -3470,6 +3533,10 @@
               "next" : "检验我的 Nano",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           }
         }
@@ -3495,9 +3562,9 @@
           "description" : "Ledger Live 在确保您的安全性的同时，允许您买入、卖出、管理、交易并赚取加密货币。您将使用您的 Nano 对每一笔交易进行验证。"
         },
         "setUpNanoWallet" : {
-          "title" : "让我们设置您的 Nano 吧！",
+          "title" : "开始设置 Nano！",
           "description" : "首先要设置 Nano 的安全性。",
-          "CTA" : "动手吧！"
+          "CTA" : "我们开始吧！"
         }
       }
     },
@@ -3506,7 +3573,7 @@
       "title" : "游戏开始！",
       "descr" : "回答 3 个简单问题，消除您对硬币钱包的常见误解。",
       "buttons" : {
-        "start" : "接受测验",
+        "start" : "参加测验",
         "next" : "下一题",
         "finish" : "完成测验"
       },
@@ -3754,7 +3821,9 @@
     "termsLabel" : "服务条款",
     "privacyLabel" : "隐私政策",
     "switchLabel" : "我已阅读并接受服务条款和隐私政策",
-    "cta" : "进入 Ledger 应用程序"
+    "cta" : "进入 Ledger 应用程序",
+    "termsCheckboxLabel" : "我已阅读并同意使用条款",
+    "privacyCheckboxLabel" : "我已阅读并接受隐私政策"
   },
   "updatedTerms" : {
     "title" : "使用条款更新",
