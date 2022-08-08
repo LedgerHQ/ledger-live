@@ -209,6 +209,6 @@ This part of the repository is where you will add the support of your blockchain
 For a smooth and quick integration:
 
 - See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
-- Go on [Discord]((https://developers.ledger.com/discord-pro/)) to chat with developper support and the developper community.
+- Go on [Discord]((https://developers.ledger.com/discord-pro/)) to chat with developer support and the developer community.
 
 ---
