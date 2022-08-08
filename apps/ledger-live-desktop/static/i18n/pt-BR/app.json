@@ -2007,7 +2007,7 @@
   "cardano" : {
     "account" : {
       "subHeader" : {
-        "cardTitle" : "Total balance doesn't include staking rewards"
+        "cardTitle" : "O saldo total não inclui recompensas de staking"
       }
     }
   },
@@ -3163,6 +3163,7 @@
         "link" : "Mais sobre a frase de recuperação",
         "title2" : "O que acontece se eu perder o acesso à minha Nano?",
         "paragraph3" : "Não se preocupe e siga estes passos:",
+        "paragraph4" : "Para restaurar o acesso aos seus criptoativos, qualquer carteira pode calcular as mesmas chaves privadas a partir da sua frase de recuperação.",
         "points" : {
           "1" : "Adquira uma nova carteira hardware.",
           "2" : "Selecione “Restaurar frase de recuperação em um novo dispositivo” no aplicativo Ledger",
@@ -3203,40 +3204,57 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "Boas-vindas à Ledger",
-        "description" : "Gerencie suas criptos com segurança do seu computador.",
-        "cta" : "Começar",
-        "noDevice" : "Nenhum dispositivo? <0>Compre uma Ledger Nano X</0>",
-        "languageWarning" : {
-          "title" : "Começar em {{language}}",
-          "desc" : "Estamos introduzindo idiomas adicionais a fim de facilitar seu embarque na Ledger. Esteja ciente de que o restante da experiência na Ledger está disponível apenas em inglês atualmente.",
-          "cta" : "Entendi"
+        "title" : "A carteira de criptomoedas e NFTs mais segura",
+        "description" : "Gerencie, compre e cresça suas criptos e NFTs em segurança no Ledger Live.",
+        "nextButton" : "Começar",
+        "noDevice" : "Sem Dispositivo?",
+        "buyLink" : "Sem Dispositivo? Comprar uma Ledger Nano X",
+        "byTapping" : "Ao tocar \"Começar\" você consente e concorda com nossos",
+        "termsAndConditions" : "Termos e condições",
+        "and" : "e",
+        "privacyPolicy" : "Política de privacidade",
+        "steps" : {
+          "0" : {
+            "title" : "Acesse suas criptos",
+            "desc" : "Seus criptoativos são armazenados na blockchain. Use sua chave privada para acessá-los e gerenciá-los"
+          },
+          "1" : {
+            "title" : "Tenha o controle da sua chave privada",
+            "desc" : "Sua chave privada é armazenada dentro da sua Nano. Só você deve possuí-la para estar no controle do seu dinheiro."
+          },
+          "2" : {
+            "title" : "Ficar Offline",
+            "desc" : "Sua Nano funciona como uma carteira de \"armazenamento frio\". Isso significa que ela nunca expõe sua chave privada na internet, mesmo ao utilizar o aplicativo."
+          },
+          "3" : {
+            "title" : "Validar Transações",
+            "desc" : "O Ledger Live permite que você compre, venda, gerencie, negocie e receba criptoativos enquanto permanece protegido. Você validará cada transação de criptoativos com sua Nano."
+          },
+          "4" : {
+            "title" : "Vamos configurar sua Nano",
+            "desc" : "Vamos começar configurando sua Nano"
+          }
         }
       },
       "selectDevice" : {
-        "title" : "Qual é o seu dispositivo?"
+        "title" : "Selecione seu dispositivo",
+        "selectLabel" : "Selecionar"
       },
       "selectUseCase" : {
-        "greetings" : "Olá!",
         "hasNoRecovery" : "Primeira vez usando sua {{deviceName}}?",
         "hasRecovery" : "Já tem uma frase de recuperação?",
-        "separator" : "ou",
-        "switchDevice" : "Alterar Dispositivo",
         "options" : {
           "1" : {
-            "heading" : "Primeiro Uso",
-            "title" : "Configurar um novo {{deviceName}}",
-            "description" : "Vamos começar configurando seu dispositivo!"
+            "title" : "Configurar uma nova {{deviceName}}",
+            "description" : "Vamos começar e configurar seu dispositivo!"
           },
           "2" : {
-            "heading" : "Conectar Dispositivo",
             "title" : "Conecte seu {{deviceName}}",
             "description" : "Seu dispositivo já está configurado? Conecte-o ao aplicativo!"
           },
           "3" : {
-            "heading" : "Restaurar Dispositivo",
             "title" : "Restaure sua frase de recuperação em um novo dispositivo",
-            "description" : "Use uma frase de recuperação existente para restaurar suas chaves privadas em um novo {{deviceName}}!"
+            "description" : "Use uma frase de recuperação existente para restaurar suas chaves privadas em uma nova Nano!"
           }
         }
       },
@@ -3269,6 +3287,10 @@
             "buttons" : {
               "next" : "OK, vamos lá!",
               "prev" : "Passo Anterior"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "deviceHowTo" : {
@@ -3292,9 +3314,14 @@
               "next" : "Próximo Passo",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "deviceHowTo2" : {
+            "title" : "A melhor maneira de começar:",
             "turnOn" : {
               "title" : "Ligue a Nano",
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
@@ -3315,6 +3342,10 @@
               "next" : "Próximo Passo",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "pinCode" : {
@@ -3325,6 +3356,10 @@
               "next" : "Configurar código PIN",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "quizSuccess" : {
@@ -3342,6 +3377,10 @@
             "buttons" : {
               "next" : "Próximo Passo",
               "prev" : "Passo Anterior"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "pinCodeHowTo" : {
@@ -3357,6 +3396,10 @@
               "next" : "Próximo Passo",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "existingRecoveryPhrase" : {
@@ -3388,6 +3431,10 @@
               "next" : "Próximo Passo",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "newRecoveryPhrase" : {
@@ -3399,6 +3446,10 @@
               "next" : "Frase de recuperação",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "recoveryHowTo" : {
@@ -3424,6 +3475,10 @@
               "next" : "Próximo Passo",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "recoveryHowTo3" : {
@@ -3438,6 +3493,10 @@
               "next" : "Próximo Passo",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "genuineCheck" : {
@@ -3461,6 +3520,10 @@
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda",
               "learn" : "Aprenda como escondê-la"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           },
           "pairMyNano" : {
@@ -3470,13 +3533,17 @@
               "next" : "Verificar minha Nano",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda"
+            },
+            "help" : {
+              "help" : "Preciso de ajuda",
+              "descr" : "Não sabe o que tem que fazer? Obtenha ajuda para encerrar esta etapa."
             }
           }
         }
       }
     },
     "pedagogy" : {
-      "heading" : "noções básicas",
+      "heading" : "Noções Básicas",
       "screens" : {
         "accessYourCoins" : {
           "title" : "Acesse suas criptos",
@@ -3506,7 +3573,7 @@
       "title" : "O jogo começou!",
       "descr" : "Responda 3 perguntas simples para evitar equívocos comuns sobre sua carteira hardware.",
       "buttons" : {
-        "start" : "Vamos fazer o quiz",
+        "start" : "Vamos às perguntas",
         "next" : "Próxima Pergunta",
         "finish" : "Finalizar Quiz"
       },
@@ -3754,7 +3821,9 @@
     "termsLabel" : "Termos de serviço",
     "privacyLabel" : "Política de privacidade",
     "switchLabel" : "Eu li e aceito os termos de serviço e a política de privacidade",
-    "cta" : "Entrar no aplicativo Ledger"
+    "cta" : "Entrar no aplicativo Ledger",
+    "termsCheckboxLabel" : "Eu li e concordo com os Termos de uso",
+    "privacyCheckboxLabel" : "Eu li e aceitei a Política de Privacidade"
   },
   "updatedTerms" : {
     "title" : "Atualização dos Termos de uso",
@@ -4417,10 +4486,10 @@
       "title" : "Você excedeu o número de tokens disponíveis"
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum sendable amount is {{amount}} ADA"
+      "title" : "A quantia mínima a ser enviada é {{amount}} ADA"
     },
     "CardanoNotEnoughFunds" : {
-      "title" : "Please ensure you have enough funds to pay for fees"
+      "title" : "Certifique-se de ter fundos suficientes para pagar as taxas"
     },
     "StellarWrongMemoFormat" : {
       "title" : "O formato do memo está incorreto"
