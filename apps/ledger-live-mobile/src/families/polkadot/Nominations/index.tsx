@@ -413,5 +413,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   illustration: { alignSelf: "center", marginBottom: 16 },
-  wrapper: {},
+  wrapper: {
+    marginBottom: 16,
+  },
 });

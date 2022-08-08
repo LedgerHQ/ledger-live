@@ -8,7 +8,7 @@ import { AccountLike, Account, ValueChange } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 
-import { Box } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 
 import Header from "./Header";
@@ -25,6 +25,15 @@ import {
   FabAccountActions,
   FabAccountMainActionsComponent,
 } from "../../components/FabActions";
+import SectionTitle from "../WalletCentricSections/SectionTitle";
+import styled from "@ledgerhq/native-ui/components/styled";
+import { useTranslation } from "react-i18next";
+
+const SectionContainer = styled(Flex).attrs((p: { isLast: boolean }) => ({
+  py: 8,
+  borderBottomWidth: !p.isLast ? 1 : 0,
+  borderBottomColor: "neutral.c30",
+}))``;
 
 const renderAccountSummary = (
   account: AccountLike,
@@ -90,6 +99,8 @@ export function getListHeaderComponents({
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
 } {
+  const { t } = useTranslation();
+
   if (!account)
     return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
@@ -118,7 +129,7 @@ export function getListHeaderComponents({
         <AccountHeader account={account} parentAccount={parentAccount} />
       ),
       !empty && (
-        <Box mx={6} my={6}>
+        <Box mx={6} mt={6}>
           <AccountGraphCard
             account={account}
             range={range}
@@ -129,11 +140,6 @@ export function getListHeaderComponents({
             }
             countervalueAvailable={countervalueAvailable}
             counterValueCurrency={counterValueCurrency}
-            // renderAccountSummary={renderAccountSummary(
-            //   account,
-            //   parentAccount,
-            //   compoundSummary,
-            // )}
             onSwitchAccountCurrency={onSwitchAccountCurrency}
             countervalueChange={countervalueChange}
             counterValueUnit={counterValueCurrency.units[0]}
@@ -142,40 +148,57 @@ export function getListHeaderComponents({
         </Box>
       ),
       !empty && (
-        <Box mx={6} my={6}>
+        <SectionContainer px={6}>
+          <SectionTitle
+            title={t("account.quickActions")}
+            containerProps={{ mb: 6 }}
+          ></SectionTitle>
           <FabAccountMainActionsComponent
             account={account}
             parentAccount={parentAccount}
           />
-        </Box>
+        </SectionContainer>
       ),
+      ...(!empty
+        ? [
+            <SectionContainer>
+              <Box>
+                <SectionTitle
+                  title={t("account.earn")}
+                  containerProps={{ mx: 6, mb: 6 }}
+                ></SectionTitle>
+                {AccountBalanceSummaryFooter && (
+                  <Box mb={6}>
+                    <AccountBalanceSummaryFooter
+                      account={account}
+                    ></AccountBalanceSummaryFooter>
+                  </Box>
+                )}
+                {compoundSummary && account.type === "TokenAccount" && (
+                  <Box mb={6}>
+                    <CompoundSummary
+                      key="compoundSummary"
+                      account={account}
+                      compoundSummary={compoundSummary}
+                    ></CompoundSummary>
+                  </Box>
+                )}
+                <FabAccountActions
+                  account={account}
+                  parentAccount={parentAccount}
+                />
+              </Box>
+            </SectionContainer>,
+          ]
+        : []),
       ...(!empty && AccountBodyHeader
         ? [
-            <Box backgroundColor={"blue"}>
+            <SectionContainer>
               <AccountBodyHeader
                 account={account}
                 parentAccount={parentAccount}
               />
-            </Box>,
-          ]
-        : []),
-      ...(!empty && AccountBalanceSummaryFooter
-        ? [
-            <Box mx={0}>
-              <AccountBalanceSummaryFooter
-                account={account}
-              ></AccountBalanceSummaryFooter>
-            </Box>,
-          ]
-        : []),
-      ...(!empty
-        ? [
-            <Box py={3} mb={8}>
-              <FabAccountActions
-                account={account}
-                parentAccount={parentAccount}
-              />
-            </Box>,
+            </SectionContainer>,
           ]
         : []),
       ...(!empty && account.type === "Account" && account.subAccounts

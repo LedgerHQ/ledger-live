@@ -1,11 +1,4 @@
-import React, {
-  useCallback,
-  memo,
-  useState,
-  ComponentType,
-  ReactElement,
-  ReactNode,
-} from "react";
+import React, { useCallback, memo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
@@ -113,8 +106,8 @@ function FabAccountButtonBar({
             event,
             eventProperties,
             Component,
-            type = "color",
-            outline = false,
+            type = "shade",
+            outline = true,
             disabled,
             ...rest
           },

@@ -242,15 +242,17 @@ const Delegation = ({ account, parentAccount }: Props) => {
         ) : (
           <>
             <AccountSectionLabel name={t("tron.voting.votes.title")} />
-            <AccountDelegationInfo
-              description={t("tron.voting.votes.description", {
-                name: account.currency.name,
-              })}
-              infoUrl={urls.tronStaking}
-              infoTitle={t("tron.voting.howItWorks")}
-              onPress={onDelegate}
-              ctaTitle={t("tron.voting.votes.cta")}
-            />
+            <Box my={6}>
+              <AccountDelegationInfo
+                description={t("tron.voting.votes.description", {
+                  name: account.currency.name,
+                })}
+                infoUrl={urls.tronStaking}
+                infoTitle={t("tron.voting.howItWorks")}
+                onPress={onDelegate}
+                ctaTitle={t("tron.voting.votes.cta")}
+              />
+            </Box>
           </>
         )
       ) : (
