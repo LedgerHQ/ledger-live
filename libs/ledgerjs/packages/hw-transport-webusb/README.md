@@ -126,3 +126,17 @@ Create a Ledger transport with a USBDevice
 ##### Parameters
 
 *   `device` **USBDevice** 
+
+
+---
+
+## Are you adding Ledger support to your software wallet?
+
+You may be using this package to open a USB connexion between your web application and the device.
+
+For a smooth and quick integration:
+
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+- Go on [Discord]((https://developers.ledger.com/discord-pro/)) to chat with developper support and the developper community.
+
+---
