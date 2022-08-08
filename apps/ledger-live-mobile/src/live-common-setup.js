@@ -66,6 +66,7 @@ setSupportedCurrencies([
   "elrond",
   "hedera",
   "cardano",
+  "osmosis",
 ]);
 
 if (Config.VERBOSE) {

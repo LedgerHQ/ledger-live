@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import network from "../../../network";
 import { getOperationValue, convertTransactionToOperation } from "./sdk";
 import type {
   OsmosisSendEventContent,
@@ -9,8 +8,6 @@ import type {
 } from "./sdk.types";
 import { OsmosisTransactionTypeEnum } from "./sdk.types";
 jest.mock("../../../network");
-
-const mockNetwork = network as jest.MockedFunction<typeof network>;
 
 const mockOsmosisAmount: OsmosisAmount = {
   text: "",

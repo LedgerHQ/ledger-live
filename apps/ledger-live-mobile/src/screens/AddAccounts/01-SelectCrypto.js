@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 
 import { useTheme } from "@react-navigation/native";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
@@ -44,16 +45,24 @@ const listSupportedTokens = () =>
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { filterCurrencyIds = [] } = route.params || {};
-  const cryptoCurrencies = useMemo(
-    () =>
-      listSupportedCurrencies()
-        .concat(listSupportedTokens())
-        .filter(
-          ({ id }) =>
-            filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
-        ),
-    [filterCurrencyIds],
-  );
+  const currencyOsmosis = useFeature("currencyOsmosis");
+
+  const cryptoCurrencies = useMemo(() => {
+    const currencies = listSupportedCurrencies()
+      .concat(listSupportedTokens())
+      .filter(
+        ({ id }) =>
+          filterCurrencyIds.length <= 0 ||
+          filterCurrencyIds.includes(id) ||
+          currencyOsmosis?.enabled,
+      );
+
+    if (currencyOsmosis?.enabled) {
+      return currencies;
+    }
+
+    return currencies.filter(c => c.family !== "osmosis");
+  }, [currencyOsmosis, filterCurrencyIds]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 

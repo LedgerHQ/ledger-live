@@ -378,10 +378,7 @@ export class CosmosValidatorsManager {
     );
   };
 
-  _osmoValidatorEstimatedRate = (
-    validatorCommission: number,
-    rewardsState: CosmosRewardsState
-  ): number => {
+  _osmoValidatorEstimatedRate = (_: number, __: CosmosRewardsState): number => {
     return 0.15; // todo fix this obviously
   };
 
