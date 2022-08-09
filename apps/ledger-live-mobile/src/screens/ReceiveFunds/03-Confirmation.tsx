@@ -1,7 +1,7 @@
 // @flow
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { TouchableOpacity, TouchableWithoutFeedback, Share } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { TouchableOpacity, Share } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation, Trans } from "react-i18next";
@@ -60,11 +60,10 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
   const verified = route.params?.verified;
-  const [isModalOpened, setIsModalOpened] = useState(false);
+  const [isModalOpened, setIsModalOpened] = useState(true);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState();
   const [isToastDisplayed, setIsToastDisplayed] = useState(false);
   const [isVerifiedToastDisplayed, setIsVerifiedToastDisplayed] = useState(verified);
-  const onModalHide = useRef(() => {});
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const dispatch = useDispatch();
   const lastRoute = usePreviousRouteName()
@@ -96,13 +95,9 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
       screen: routerRoute.name
     })
     const params = {...route.params, notSkippable: true}
-    if (isModalOpened) {
-      setIsModalOpened(false);
-      onModalHide.current = () => navigation.navigate(ScreenName.ReceiveConnectDevice, params);
-    } else {
-      navigation.navigate(ScreenName.ReceiveConnectDevice, params);
-    }
-  }, [isModalOpened, navigation, route.params, routerRoute])
+    setIsModalOpened(false);
+    navigation.navigate(ScreenName.ReceiveConnectDevice, params);
+  }, [navigation, route.params, routerRoute])
 
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
@@ -264,7 +259,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         {t("transfer.receive.shareAddress")}
       </Button>}
       </Flex>
-     {verified ? null : <ReceiveSecurityModal onVerifyAddress={onRetry} />}
+     {verified ? null : isModalOpened ? <ReceiveSecurityModal onVerifyAddress={onRetry} /> : null}
       
       <AdditionalInfoModal
         isOpen={isAddionalInfoModalOpen}
