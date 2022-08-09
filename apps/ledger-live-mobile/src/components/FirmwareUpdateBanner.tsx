@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Platform } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../const";
