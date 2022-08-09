@@ -215,7 +215,7 @@ function PortfolioHeader({
                 fontSize="16px"
                 mr={2}
               >
-                {t("tabs.portfolio")}
+                {t("portfolio.walletBalance")}
               </Text>
               {!hidePortfolio && <DiscreetModeButton size={20} />}
             </Flex>

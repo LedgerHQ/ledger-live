@@ -11,8 +11,6 @@ import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 
-import { Colors } from "react-native/Libraries/NewAppScreen";
-import { useTheme } from "styled-components/native";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
