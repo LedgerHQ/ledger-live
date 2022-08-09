@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
-import { TokenCurrency } from "@ledgerhq/live-common/types/index";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";

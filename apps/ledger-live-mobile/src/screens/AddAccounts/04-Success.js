@@ -3,7 +3,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { useTheme } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";

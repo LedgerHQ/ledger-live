@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import AccountCard from "../../components/AccountCard";
 import CheckBox from "../../components/CheckBox";

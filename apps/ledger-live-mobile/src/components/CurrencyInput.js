@@ -11,7 +11,7 @@ import {
 import noop from "lodash/noop";
 import clamp from "lodash/clamp";
 
-import type { Unit } from "@ledgerhq/live-common/types/index";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 import { localeSelector } from "../reducers/settings";
 import getFontStyle from "./LText/getFontStyle";

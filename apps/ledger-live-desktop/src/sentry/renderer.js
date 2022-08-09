@@ -14,9 +14,6 @@ export default async (shouldSendCallback: () => boolean) => {
   setShouldSendCallback(shouldSendCallback);
   const u = await user();
   Sentry.setUser({ id: u.id, ip_address: null });
-  return () => {
-    setShouldSendCallback(() => false);
-  };
 };
 
 export const captureException = (e: Error) => {
