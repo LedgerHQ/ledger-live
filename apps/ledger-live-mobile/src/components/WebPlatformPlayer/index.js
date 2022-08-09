@@ -124,7 +124,6 @@ const InfoPanelButton = ({
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
   const accounts = flattenAccounts(useSelector(accountsSelector));
-  const theme = useTheme();
   const navigation = useNavigation();
   const { locale } = useLocale();
 
@@ -139,11 +138,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     {
       loadDate,
     },
-    {
-      ...inputs,
-      lang: locale,
-      theme: theme.theme,
-    },
+    inputs,
   );
 
   const listAccounts = useListPlatformAccounts(accounts);
