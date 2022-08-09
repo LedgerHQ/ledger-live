@@ -2,7 +2,9 @@ import React from "react";
 import { Drawer, Flex, Text, Button, Link } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components";
 import { ExternalLinkMedium } from "@ledgerhq/react-ui/assets/icons";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
@@ -10,11 +12,13 @@ import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animation
 export type Props = {
   isOpen: boolean;
   onClose: () => void;
+  lastKnownDeviceId: DeviceModelId;
 };
 
-const TroubleshootingDrawer = ({ isOpen, onClose }: Props) => {
+const TroubleshootingDrawer = ({ isOpen, onClose, lastKnownDeviceId }: Props) => {
   const { t } = useTranslation();
   const history = useHistory();
+  const theme = useTheme();
 
   return (
     <Drawer big isOpen={isOpen} onClose={onClose}>
@@ -23,7 +27,11 @@ const TroubleshootingDrawer = ({ isOpen, onClose }: Props) => {
           <Animation
             width="230px"
             height="288px"
-            animation={getDeviceAnimation("nanoFTS", "light", "plugAndPinCode")}
+            animation={getDeviceAnimation(
+              lastKnownDeviceId,
+              theme.theme as "light" | "dark",
+              "plugAndPinCode",
+            )}
           />
           <Text variant="h4" fontSize={24} fontWeight="semiBold">
             {t("syncOnboarding.manual.troubleshootingDrawer.title")}
