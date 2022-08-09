@@ -2135,7 +2135,7 @@
     "nonvotingLockedBalance": "Non-voting locked balance",
     "nonvotingLockedTooltip": "The balance of locked assets available to be used for voting",
     "withdrawableBalance": "Withdrawable balance",
-    "withdrawableTooltip": "The amount you can withdraw now.",
+    "withdrawableTooltip": "Unlocked Celo you can withdraw to your Available Balance",
     "delegation": {
       "activeTooltip": "Active vote generates rewards",
       "pendingTooltip": "Pending vote does not generate rewards and needs to be activated after 24h",
