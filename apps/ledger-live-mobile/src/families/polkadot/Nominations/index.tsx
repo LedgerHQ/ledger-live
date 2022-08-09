@@ -410,7 +410,7 @@ export default function Nominations({ account }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    margin: 16,
+    marginHorizontal: 16,
   },
   illustration: { alignSelf: "center", marginBottom: 16 },
   wrapper: {

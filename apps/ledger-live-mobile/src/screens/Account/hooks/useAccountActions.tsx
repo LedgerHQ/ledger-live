@@ -45,7 +45,7 @@ export default function useAccountActions({
   const currency = getAccountCurrency(account);
 
   const balance = getAccountSpendableBalance(account);
-  const isZeroBalance = balance.gt(0);
+  const isZeroBalance = !balance.gt(0);
   const mainAccount = getMainAccount(account, parentAccount);
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];

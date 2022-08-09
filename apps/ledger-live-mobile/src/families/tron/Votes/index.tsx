@@ -18,7 +18,7 @@ import {
 } from "@ledgerhq/live-common/families/tron/react";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { Account } from "@ledgerhq/types-live";
-import { Box, Button, Text } from "@ledgerhq/native-ui";
+import { Box, Button, Icons, Text } from "@ledgerhq/native-ui";
 import { urls } from "../../../config/urls";
 import Row from "./Row";
 import Header from "./Header";
@@ -155,7 +155,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
         <>
           <AccountSectionLabel
             name={t("tron.voting.rewards.title")}
-            icon={<Info size={16} color={colors.darkBlue} />}
+            Icon={Icons.InfoMedium}
             onPress={openRewardsInfoModal}
           />
           <View style={[styles.rewardSection]}>
@@ -242,15 +242,17 @@ const Delegation = ({ account, parentAccount }: Props) => {
         ) : (
           <>
             <AccountSectionLabel name={t("tron.voting.votes.title")} />
-            <AccountDelegationInfo
-              description={t("tron.voting.votes.description", {
-                name: account.currency.name,
-              })}
-              infoUrl={urls.tronStaking}
-              infoTitle={t("tron.voting.howItWorks")}
-              onPress={onDelegate}
-              ctaTitle={t("tron.voting.votes.cta")}
-            />
+            <Box my={6}>
+              <AccountDelegationInfo
+                description={t("tron.voting.votes.description", {
+                  name: account.currency.name,
+                })}
+                infoUrl={urls.tronStaking}
+                infoTitle={t("tron.voting.howItWorks")}
+                onPress={onDelegate}
+                ctaTitle={t("tron.voting.votes.cta")}
+              />
+            </Box>
           </>
         )
       ) : (
@@ -280,7 +282,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
 
 const styles = StyleSheet.create({
   root: {
-    padding: 16,
+    paddingHorizontal: 16,
   },
   container: {
     padding: 16,
@@ -296,7 +298,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
   },
   illustration: { alignSelf: "center", marginBottom: 16 },
   collectButton: {
