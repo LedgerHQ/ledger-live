@@ -824,16 +824,3 @@ Type: {inputs: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Referen
 ### TransactionOutput
 
 ### Transaction
-
----
-
-## Are you adding Ledger support to your software wallet?
-
-You may be using this package to communicate with the Bitcoin Nano App.
-
-For a smooth and quick integration:
-
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-- Go on [Discord]((https://developers.ledger.com/discord-pro/)) to chat with developer support and the developer community.
-
----

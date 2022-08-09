@@ -157,17 +157,3 @@ const signature = await tron.getECDHPairKey("44'/195'/0'/0/0", "04ff21f8e64d3a3c
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** shared key hex string,
-
-
----
-
-## Are you adding Ledger support to your software wallet?
-
-You may be using this package to communicate with the TRX Nano App.
-
-For a smooth and quick integration:
-
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-- Go on [Discord]((https://developers.ledger.com/discord-pro/)) to chat with developer support and the developer community.
-
----
