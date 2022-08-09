@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { from } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import { DeviceInfo, FirmwareUpdateContext } from "../../types/manager";
+import type { FirmwareUpdateContext, DeviceId } from "@ledgerhq/types-live";
 import manager from "../../manager";
-import { DeviceId } from "../../types";
 import { withDevice } from "../deviceAccess";
 import getDeviceInfo from "../getDeviceInfo";
 
