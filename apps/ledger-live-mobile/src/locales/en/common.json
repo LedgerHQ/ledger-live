@@ -1598,7 +1598,10 @@
         "addAccounts": "Add asset",
         "title": "Get started",
         "description": "You can either purchase crypto from our partners or setup your wallet"
-      }
+      },
+      "title": "Start by adding your favorite assets to your wallet",
+      "subtitle": "Ledger supports more than 6,000 coins and tokens",
+      "addAccount": "or add an account"
     },
     "noOpState": {
       "title": "No operations yet?",
@@ -1823,7 +1826,8 @@
       "buttons": {
         "receiveFunds": "Receive",
         "buyCrypto": "Buy"
-      }
+      },
+      "addAccountCta": "Add Account"
     },
     "settings": {
       "header": "Account settings",

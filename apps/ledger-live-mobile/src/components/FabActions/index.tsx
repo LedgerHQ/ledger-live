@@ -20,6 +20,9 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { Icons, QuickActionList } from "@ledgerhq/native-ui";
 
+import { Linking } from "react-native";
+import { useTheme } from "styled-components/native";
+import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
@@ -28,7 +31,6 @@ import { accountsCountSelector } from "../../reducers/accounts";
 import { NavigatorName, ScreenName } from "../../const";
 import FabAccountButtonBar from "./FabAccountButtonBar";
 import useAccountActions from "../../screens/Account/hooks/useAccountActions";
-import { useTheme } from "styled-components/native";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;

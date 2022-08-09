@@ -34,7 +34,6 @@ import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { NavigatorName } from "../../const";
 import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
-import AddAssetsCard from "./AddAssetsCard";
 import Assets from "./Assets";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { useProviders } from "../Swap/SwapEntry";
@@ -43,7 +42,9 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
+import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 
@@ -60,11 +61,6 @@ const AnimatedFlatListWithRefreshControl = createNativeWrapper(
 type Props = {
   navigation: any;
 };
-
-const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
-  mt: 9,
-  px: p.px ?? 6,
-}))``;
 
 export const Gradient = styled(BackgroundGradient)``;
 
@@ -117,11 +113,6 @@ function PortfolioScreen({ navigation }: Props) {
 
   const data = useMemo(
     () => [
-      !showAssets && (
-        <Box mx={6} mt={3}>
-          <AddAssetsCard />
-        </Box>
-      ),
       <Box onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
@@ -170,18 +161,13 @@ function PortfolioScreen({ navigation }: Props) {
                         {t("distribution.moreAssets")}
                       </TextLink>
                     </Flex>
-                    <AddAccountsModal
-                      navigation={navigation}
-                      isOpened={isAddModalOpened}
-                      onClose={closeAddModal}
-                    />
                   </>
                 )}
               </SectionContainer>
             </Box>,
           ]
         : []),
-      ...(showCarousel
+      ...(showAssets && showCarousel
         ? [
             <Box background={colors.background.main}>
               <SectionContainer px={0} minHeight={175}>
@@ -200,27 +186,33 @@ function PortfolioScreen({ navigation }: Props) {
               <SectionTitle title={t("analytics.allocation.title")} />
               <AllocationsSection />
             </SectionContainer>,
-            <SectionContainer px={6} mb={8}>
+            <SectionContainer px={6} mb={8} isLast>
               <SectionTitle title={t("analytics.operations.title")} />
               <OperationsHistorySection accounts={assetsToDisplay} />
             </SectionContainer>,
           ]
-        : []),
+        : [
+            // If the user has no accounts we display an empty state
+            <Flex flex={1} mt={12}>
+              <PortfolioEmptyState openAddAccountModal={openAddModal} />
+            </Flex>,
+          ]),
     ],
     [
-      showAssets,
       onPortfolioCardLayout,
       counterValueCurrency,
       portfolio,
       areAccountsEmpty,
       accounts.length,
+      currentPositionY,
+      graphCardEndPosition,
+      colors.background.main,
+      colors.neutral.c40,
+      showAssets,
       t,
       navigation,
       assetsToDisplay,
-      colors.neutral.c40,
       openAddModal,
-      isAddModalOpened,
-      closeAddModal,
       showCarousel,
       carouselVisibility,
     ],
@@ -268,6 +260,11 @@ function PortfolioScreen({ navigation }: Props) {
           hidePortfolio={areAccountsEmpty}
         />
       </TabBarSafeAreaView>
+      <AddAccountsModal
+        navigation={navigation}
+        isOpened={isAddModalOpened}
+        onClose={closeAddModal}
+      />
     </>
   );
 }

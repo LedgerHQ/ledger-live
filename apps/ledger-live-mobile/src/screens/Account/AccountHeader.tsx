@@ -115,13 +115,12 @@ function AccountHeader({
             position: "absolute",
             width: windowsWidth,
             height: 92,
-            backgroundColor: "green",
             overflow: "hidden",
           },
           BackgroundOpacity,
         ]}
       >
-        <Box height={"100%"} width={windowsWidth} background="blue">
+        <Box height={"100%"} width={windowsWidth}>
           <CurrencyGradient
             gradientColor={
               getCurrencyColor(account.currency) || colors.primary.c80
