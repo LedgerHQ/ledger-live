@@ -3,6 +3,7 @@
 import { handleActions } from "redux-actions";
 import { getEnv } from "@ledgerhq/live-common/env";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 export type DevicesState = {
   currentDevice: ?Device,
@@ -45,7 +46,7 @@ const handlers: Object = {
 export function getCurrentDevice(state: { devices: DevicesState }) {
   if (getEnv("DEVICE_PROXY_URL") || getEnv("MOCK")) {
     // bypass the listen devices (we should remove modelId here by instead get it at open time if needed)
-    return { deviceId: "", wired: true, modelId: "nanoS" };
+    return { deviceId: "", wired: true, modelId: DeviceModelId.nanoS };
   }
   return state.devices.currentDevice;
 }
@@ -53,7 +54,7 @@ export function getCurrentDevice(state: { devices: DevicesState }) {
 export function getDevices(state: { devices: DevicesState }) {
   if (getEnv("DEVICE_PROXY_URL")) {
     // bypass the listen devices
-    return [{ deviceId: "", wired: true, modelId: "nanoS" }];
+    return [{ deviceId: "", wired: true, modelId: DeviceModelId.nanoS }];
   }
   return state.devices.devices;
 }
