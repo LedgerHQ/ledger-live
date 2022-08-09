@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { from } from "rxjs";
 import { first } from "rxjs/operators";
+import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import getVersion from "../../hw/getVersion";
-import { FirmwareInfo } from "../../types/manager";
 import { BleError } from "../types";
 
 export type useBleDevicePairingArgs = {
