@@ -13,8 +13,8 @@ import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
+import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import GenuineCheckModal from "./GenuineCheckModal";
-
 import SoftwareCheckContent from "./SoftwareCheckContent";
 
 const readyRedirectDelay = 2500;
@@ -112,6 +112,7 @@ const SyncOnboardingManual = () => {
   console.log(`🦄 Manual onboarding polling = ${JSON.stringify(deviceOnboardingState)}`);
 
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
   const [isGenuineCheckModalOpen, setGenuineCheckModalOpen] = useState<boolean>(true);
 
   useEffect(() => {
@@ -127,6 +128,10 @@ const SyncOnboardingManual = () => {
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
+      <TroubleshootingDrawer
+        isOpen={isTroubleshootingDrawerOpen}
+        onClose={() => setTroubleshootingDrawerOpen(false)}
+      />
       <GenuineCheckModal
         isOpen={isGenuineCheckModalOpen}
         onClose={() => setGenuineCheckModalOpen(false)}

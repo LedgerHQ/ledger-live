@@ -1103,6 +1103,12 @@
         "description": "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
         "docButton": "Go to FAQ",
         "supportButton": "Speak to a human"
+      },
+      "troubleshootingDrawer": {
+        "title": "Troubleshoot USB connection",
+        "description": "There seems to be a problem connecting to your device. Don’t worry, you can try different solutions one by one until your device connects!",
+        "fixButton": "Fix it",
+        "closeButton": "Close"
       }
     }
   },
@@ -3674,7 +3680,7 @@
         }
       }
     }
-  }, 
+  },
   "connectTroubleshooting": {
     "desc": "Having trouble connecting your device?",
     "cta": "Fix it",
