@@ -20,8 +20,8 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { Trans } from "react-i18next";
-import { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Portfolio } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import Touchable from "../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../const";
 import { scrollToTop } from "../../navigation/utils";

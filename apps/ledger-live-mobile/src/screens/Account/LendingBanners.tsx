@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";

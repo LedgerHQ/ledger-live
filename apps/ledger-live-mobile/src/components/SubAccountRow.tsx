@@ -9,11 +9,7 @@ import {
   LongPressGestureHandler,
   State,
 } from "react-native-gesture-handler";
-import {
-  SubAccount,
-  TokenAccount,
-  Account,
-} from "@ledgerhq/live-common/types/index";
+import { SubAccount, TokenAccount, Account } from "@ledgerhq/types-live";
 import { createStructuredSelector } from "reselect";
 import { connect, useSelector } from "react-redux";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";

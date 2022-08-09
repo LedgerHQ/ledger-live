@@ -6,7 +6,7 @@ import SettingsRow from "../../../components/SettingsRow";
 import FeatureSwitch from "./FeatureSwitch";
 import FeatureInteger from "./FeatureInteger";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId } from "@ledgerhq/live-common/types/index";
+import { FeatureId } from "@ledgerhq/types-live";
 
 type Props = {
   feature: Feature;
