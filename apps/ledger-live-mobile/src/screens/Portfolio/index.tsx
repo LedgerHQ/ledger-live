@@ -171,7 +171,7 @@ function PortfolioScreen({ navigation }: Props) {
             </Box>,
           ]
         : []),
-      ...(showCarousel
+      ...(showAssets && showCarousel
         ? [
             <Box background={colors.background.main}>
               <SectionContainer px={0} minHeight={175}>
@@ -195,11 +195,12 @@ function PortfolioScreen({ navigation }: Props) {
               <OperationsHistorySection accounts={assetsToDisplay} />
             </SectionContainer>,
           ]
-        : [ // If the user has no accounts we display an empty state
-        <Flex flex={1} mt={12}>
-          <PortfolioEmptyState openAddAccountModal={openAddModal} />
-        </Flex>,
-      ]),
+        : [
+            // If the user has no accounts we display an empty state
+            <Flex flex={1} mt={12}>
+              <PortfolioEmptyState openAddAccountModal={openAddModal} />
+            </Flex>,
+          ]),
     ],
     [
       showAssets,
