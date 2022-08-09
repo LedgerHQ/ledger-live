@@ -67,6 +67,7 @@ import InfoPanel from "./InfoPanel";
 import { track } from "../../analytics/segment";
 
 const tracking = trackingWrapper(track);
+
 type Props = {
   manifest: AppManifest;
   inputs?: Record<string, any>;

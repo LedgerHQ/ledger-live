@@ -6,25 +6,23 @@ import {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 
-import { AppManifest } from "./types";
-import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
-import { getAccountBridge } from "../bridge/index";
 import {
   accountToPlatformAccount,
   getPlatformTransactionSignFlowInfos,
 } from "./converters";
 import {
-  serializePlatformAccount,
-  deserializePlatformTransaction,
-  serializePlatformSignedTransaction,
-  deserializePlatformSignedTransaction,
-} from "./serializers";
-import {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
 } from "./rawTypes";
-import { Transaction } from "../generated/types";
+import {
+  deserializePlatformTransaction,
+  deserializePlatformSignedTransaction,
+} from "./serializers";
 import { TrackFunction } from "./tracking";
+import { AppManifest } from "./types";
+import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
+import { getAccountBridge } from "../bridge/index";
+import { Transaction } from "../generated/types";
 import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 

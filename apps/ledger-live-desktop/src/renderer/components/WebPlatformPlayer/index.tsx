@@ -8,8 +8,9 @@ import styled from "styled-components";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
   receiveOnAccountLogic,
@@ -20,7 +21,6 @@ import {
   signMessageLogic,
 } from "@ledgerhq/live-common/platform/logic";
 import { serializePlatformSignedTransaction } from "@ledgerhq/live-common/platform/serializers";
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
@@ -41,8 +41,8 @@ import { accountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import Box from "../Box";
 
-import TopBar from "./TopBar";
 import { track } from "~/renderer/analytics/segment";
+import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
 import {
   requestAccountLogic,

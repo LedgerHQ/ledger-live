@@ -5,24 +5,19 @@ import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/type
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-common/env";
+import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
 import { broadcastTransactionLogic as broadcastTransactionCommonLogic } from "@ledgerhq/live-common/platform/logic";
-
-import { serializePlatformAccount } from "@ledgerhq/live-common/platform/serializers";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { RawPlatformSignedTransaction } from "@ledgerhq/live-common/platform/rawTypes";
-import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
+import { serializePlatformAccount } from "@ledgerhq/live-common/platform/serializers";
+import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
+import { AppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { openModal } from "../../actions/modals";
 import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
 
 import { track } from "~/renderer/analytics/segment";
-import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
-import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
-import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import { setDrawer } from "~/renderer/drawers/Provider";
 
 const tracking = trackingWrapper(track);
 
