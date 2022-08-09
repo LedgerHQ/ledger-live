@@ -16,7 +16,7 @@ You may be using this package to communicate with the Solana Nano App.
 For a smooth and quick integration:
 
 - See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-- Go on [Discord]((https://developers.ledger.com/discord-pro/)) to chat with developer support and the developer community.
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---
 

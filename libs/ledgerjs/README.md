@@ -216,7 +216,7 @@ This part of the repository is where you will add your blockchain to the cryptoa
 
 For a smooth and quick integration:
 - See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and 
-- Go on [Discord]((https://developers.ledger.com/discord-pro/)) to chat with developer support and the developer community.
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ## Are you adding Ledger device support to your web/mobile/desktop application?
 
@@ -224,6 +224,6 @@ This part of the repository contains the transport libraries that will be used t
 
 For a smooth and quick integration:
 - See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and 
-- Go on [Discord]((https://developers.ledger.com/discord-pro/)) to chat with developer support and the developer community.
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---
