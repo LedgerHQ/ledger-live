@@ -6,7 +6,7 @@ import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type { Transaction } from "@ledgerhq/live-common/families/osmosis/types";
 
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -16,7 +16,7 @@ import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-com
 import { useTheme } from "@react-navigation/native";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import ValidatorRow from "../shared/ValidatorRow";
-import ValidatorHead from "../shared/ValidatorHead";
+import ValidatorHead from "../../cosmos/shared/ValidatorHead";
 
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
@@ -70,7 +70,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
 
   const [searchQuery, setSearchQuery] = useState("");
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
-    "cosmos",
+    "osmosis",
     searchQuery,
   );
 
@@ -135,7 +135,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
 
   const onSelect = useCallback(
     (validator, redelegatedBalance) => {
-      navigation.navigate(ScreenName.CosmosRedelegationAmount, {
+      navigation.navigate(ScreenName.OsmosisRedelegationAmount, {
         ...route.params,
         transaction,
         validatorSrc,
@@ -143,7 +143,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
         max,
         redelegatedBalance,
         status,
-        nextScreen: ScreenName.CosmosRedelegationSelectDevice,
+        nextScreen: ScreenName.OsmosisRedelegationSelectDevice,
       });
     },
     [navigation, route.params, transaction, status, max, validatorSrc],

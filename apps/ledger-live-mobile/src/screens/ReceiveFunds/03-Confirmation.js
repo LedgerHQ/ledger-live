@@ -272,7 +272,10 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
               <Trans
                 i18nKey="transfer.receive.verifyPending"
                 values={{
-                  currencyName: mainAccount.currency.managerAppName,
+                  currencyName:
+                    mainAccount.currency.name === "Osmosis"
+                      ? mainAccount.currency.name
+                      : mainAccount.currency.managerAppName, // Can we use name here instead of managerAppName? Otherwise we see "Cosmos" instead of "Osmosis"
                 }}
               />
             </Alert>
