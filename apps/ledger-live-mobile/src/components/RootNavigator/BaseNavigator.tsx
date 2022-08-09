@@ -91,7 +91,7 @@ export default function BaseNavigator() {
   );
   const learn = useFeature("learn");
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
+  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
@@ -357,10 +357,12 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.Exchange}
         component={
-          ptxSmartRouting.enabled ? ExchangeLiveAppNavigator : ExchangeNavigator
+          ptxSmartRoutingMobile?.enabled
+            ? ExchangeLiveAppNavigator
+            : ExchangeNavigator
         }
         options={
-          ptxSmartRouting.enabled
+          ptxSmartRoutingMobile?.enabled
             ? { headerShown: false }
             : { headerStyle: styles.headerNoShadow, headerLeft: null }
         }

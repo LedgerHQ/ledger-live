@@ -137,11 +137,13 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const uri = usePlatformUrl(
     manifest,
     {
-      lang: locale,
-      theme: theme.theme,
       loadDate,
     },
-    inputs,
+    {
+      ...inputs,
+      lang: locale,
+      theme: theme.theme,
+    },
   );
 
   const listAccounts = useListPlatformAccounts(accounts);

@@ -13,7 +13,7 @@ export default function ExchangeLiveAppNavigator({ route }: any) {
   const { colors } = useTheme();
 
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
+  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
 
   const stackNavigationConfig = useMemo(
     () => getStackNavigatorConfig(colors, true),
@@ -43,8 +43,8 @@ export default function ExchangeLiveAppNavigator({ route }: any) {
             route={{
               ..._props.route,
               params: {
-                ..._props.route.params,
-                platform: ptxSmartRouting?.params?.liveAppId || "multibuy",
+                platform:
+                  ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
                 mode: "buy",
                 currency: _props.route.params?.defaultCurrencyId,
                 account: _props.route.params?.defaultAccountId,
@@ -72,8 +72,8 @@ export default function ExchangeLiveAppNavigator({ route }: any) {
             route={{
               ..._props.route,
               params: {
-                ..._props.route.params,
-                platform: ptxSmartRouting?.params?.liveAppId || "multibuy",
+                platform:
+                  ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
                 mode: "sell",
                 currency: _props.route.params?.defaultCurrencyId,
                 account: _props.route.params?.defaultAccountId,
