@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { from, of } from "rxjs";
-import { delay, mergeMap } from "rxjs/operators";
+import { from } from "rxjs";
+import { mergeMap } from "rxjs/operators";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import type { SocketEvent, DeviceId } from "@ledgerhq/types-live";
 import getDeviceInfo from "../getDeviceInfo";

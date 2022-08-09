@@ -10,7 +10,7 @@ import {
   UserRefusedAllowManager,
   DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
-import { DeviceInfo } from "../../types/manager";
+import { DeviceInfo } from "@ledgerhq/types-live";
 
 jest.mock("../deviceAccess");
 jest.mock("../getDeviceInfo");
