@@ -4,7 +4,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { from } from "rxjs";
 import { map, retryWhen } from "rxjs/operators";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CantOpenDevice } from "@ledgerhq/errors";

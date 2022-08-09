@@ -5,7 +5,7 @@ import invariant from "invariant";
 import { View, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { encodeURIScheme } from "@ledgerhq/live-common/currencies/index";
-import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export default class QRCodePreview extends Component<{
   address: string,

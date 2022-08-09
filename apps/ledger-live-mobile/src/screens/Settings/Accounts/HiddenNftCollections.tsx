@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import { Box, Flex, Text, Icons } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import {
   useNftCollectionMetadata,
   useNftMetadata,

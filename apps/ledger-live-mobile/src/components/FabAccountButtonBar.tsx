@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
-import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 
 import { ScrollContainer } from "@ledgerhq/native-ui";
