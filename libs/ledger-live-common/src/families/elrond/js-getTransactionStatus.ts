@@ -56,11 +56,7 @@ const getTransactionStatus = async (
       errors.amount = new Error(`Maximum '${DECIMALS_LIMIT}' decimals allowed`);
     }
   } else {
-    if (
-      totalSpent.gt(a.balance) &&
-      t.mode !== "unDelegate" &&
-      t.mode !== "withdraw"
-    ) {
+    if (totalSpent.gt(a.balance)) {
       errors.amount = new NotEnoughBalance();
     }
 

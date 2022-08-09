@@ -1,4 +1,4 @@
-import type { ElrondAccount, Transaction } from "./types";
+import type { ElrondAccount, Transaction, ElrondDelegation } from "./types";
 import * as bech32 from "bech32";
 import BigNumber from "bignumber.js";
 import { buildTransaction } from "./js-buildTransaction";
@@ -84,4 +84,26 @@ export const computeTransactionValue = async (
   }
 
   return { amount, totalSpent, estimatedFees };
+};
+
+export const computeDelegationBalance = (
+  delegations: ElrondDelegation[]
+): BigNumber => {
+  let totalDelegationBalance = new BigNumber(0);
+
+  for (const delegation of delegations) {
+    let delegationBalance = new BigNumber(delegation.userActiveStake)
+      .plus(new BigNumber(delegation.claimableRewards))
+      .plus(new BigNumber(delegation.userUnBondable));
+
+    for (const undelegation of delegation.userUndelegatedList) {
+      delegationBalance = delegationBalance.plus(
+        new BigNumber(undelegation.amount)
+      );
+    }
+
+    totalDelegationBalance = totalDelegationBalance.plus(delegationBalance);
+  }
+
+  return totalDelegationBalance;
 };

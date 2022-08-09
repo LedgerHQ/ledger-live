@@ -11,6 +11,7 @@ import elrondBuildESDTTokenAccounts from "./js-buildSubAccounts";
 import { reconciliateSubAccounts } from "./js-reconciliation";
 import { FEES_BALANCE } from "./constants";
 import { TokenAccount } from "@ledgerhq/types-live";
+import { computeDelegationBalance } from "./logic";
 
 const getAccountShape: GetAccountShape = async (info) => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -51,9 +52,11 @@ const getAccountShape: GetAccountShape = async (info) => {
 
   const delegations = await getAccountDelegations(address);
 
+  const delegationBalance = computeDelegationBalance(delegations);
+
   const shape = {
     id: accountId,
-    balance,
+    balance: balance.plus(delegationBalance),
     spendableBalance: balance.gt(FEES_BALANCE)
       ? balance.minus(FEES_BALANCE)
       : balance,
