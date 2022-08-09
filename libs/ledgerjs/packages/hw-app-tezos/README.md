@@ -7,7 +7,7 @@
 
 Ledger Hardware Wallet Tezos JavaScript bindings.
 
----
+***
 
 ## Are you adding Ledger support to your software wallet?
 
@@ -15,10 +15,10 @@ You may be using this package to communicate with the Tezos Nano App.
 
 For a smooth and quick integration:
 
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
----
+***
 
 ## API
 
@@ -65,5 +65,3 @@ tez.getAddress("44'/1729'/0'/0'", { verify: true })
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<GetAddressResult>** an object with address, publicKey
-
-

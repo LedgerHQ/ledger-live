@@ -7,7 +7,7 @@
 
 Ledger Hardware Wallet Polkadot JavaScript bindings.
 
----
+***
 
 ## Are you adding Ledger support to your software wallet?
 
@@ -15,11 +15,10 @@ You may be using this package to communicate with the Polkadot Nano App.
 
 For a smooth and quick integration:
 
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
----
-
+***
 
 ## API
 

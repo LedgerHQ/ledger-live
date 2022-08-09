@@ -9,7 +9,7 @@ Allows to communicate with Ledger Hardware Wallets.
 
 **\[Node]**/Electron **(HID)** – uses `node-hid` and `usb-detection`. Keep transport opened and re-use it as a singleton, one device at a time on a computer but more robust implementation.
 
----
+***
 
 ## Are you adding Ledger support to your software wallet?
 
@@ -17,10 +17,10 @@ You may be using this package to open a USB connexion between your desktop appli
 
 For a smooth and quick integration:
 
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
----
+***
 
 ## API
 
@@ -91,6 +91,3 @@ globally disconnect the transport singleton
 if path="" is not provided, the library will take the first device
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[TransportNodeHidSingleton](#transportnodehidsingleton)>** 
-
-
-

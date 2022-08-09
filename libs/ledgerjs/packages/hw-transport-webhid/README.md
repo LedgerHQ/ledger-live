@@ -9,7 +9,7 @@ Allows to communicate with Ledger Hardware Wallets.
 
 **\[Web]** **(WebHID)** – WebHID [check browser support](https://caniuse.com/webhid).
 
----
+***
 
 ## Are you adding Ledger support to your software wallet?
 
@@ -17,11 +17,10 @@ You may be using this package to open a USB connexion between your web applicati
 
 For a smooth and quick integration:
 
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
----
-
+***
 
 ### FAQ: "DOM Exception" is triggered when creating the transport
 
@@ -126,5 +125,3 @@ Create a Ledger transport with a HIDDevice
 ##### Parameters
 
 *   `device` **HIDDevice** 
-
-
