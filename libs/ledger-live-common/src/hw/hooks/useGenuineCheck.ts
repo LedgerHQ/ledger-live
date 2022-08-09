@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { from } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
+import type { SocketEvent, DeviceId } from "@ledgerhq/types-live";
 import getDeviceInfo from "../getDeviceInfo";
 import { withDevice } from "../deviceAccess";
-import { DeviceId } from "../../types";
-import { SocketEvent } from "../../types/manager";
 import genuineCheck from "../genuineCheck";
 
 export type GenuineState = "unchecked" | "genuine" | "non-genuine";
