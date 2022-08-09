@@ -18,6 +18,7 @@ export default function SyncNewAccounts({ priority }: { priority: number }) {
         type: "SYNC_SOME_ACCOUNTS",
         accountIds,
         priority,
+        reason: "new-accounts",
       });
     }
   }, [ids, sync, priority]);
