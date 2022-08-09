@@ -10,7 +10,7 @@ import {
 import type { EnvName } from "@ledgerhq/live-common/env";
 
 import logger from "./logger";
-import { FeatureId } from "@ledgerhq/live-common/types/index";
+import { FeatureId } from "@ledgerhq/types-live";
 
 export type FeatureCommon = {
   name: EnvName,

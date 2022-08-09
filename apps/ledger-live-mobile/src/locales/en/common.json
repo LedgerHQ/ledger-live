@@ -1933,7 +1933,9 @@
         "title": "You have no {{currencyTicker}} yet",
         "description": "You need some {{currencyTicker}} to {{actionName}} with this account."
       }
-    }
+    },
+    "earn": "Earn",
+    "quickActions": "Quick actions"
   },
   "accounts": {
     "title": "Accounts",

@@ -15,7 +15,7 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/live-common/types/index";
+import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import LoadingFooter from "../../components/LoadingFooter";
 import NftMedia from "../../components/Nft/NftMedia";

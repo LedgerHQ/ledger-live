@@ -1,5 +1,7 @@
 import React, { useCallback, useState, memo } from "react";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Portfolio } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import Animated, {

@@ -12,10 +12,7 @@ import RingChart from "../Analytics/RingChart";
 
 const NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY = 4;
 
-const AllocationCaption = ({
-  assetAllocation,
-  colors,
-}: {
+const AllocationCaption = ({ assetAllocation, colors }: {
   assetAllocation: any;
   colors: any;
 }) => {
@@ -28,7 +25,7 @@ const AllocationCaption = ({
 
   return (
     <Flex flexDirection="row" alignItems="center" mb={3}>
-      <Flex bg={currencyColor} width={8} height={8} borderRadius={4} mr={2} />
+      <Flex bg={currencyColor} width={8} height={8} borderRadius={4} mr={2}/>
       <Text variant="body" fontWeight="semiBold">
         {assetAllocation.currency?.ticker}
       </Text>

@@ -11,7 +11,7 @@ import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import {
   canNominate,
   isStash,
@@ -410,7 +410,7 @@ export default function Nominations({ account }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    margin: 16,
+    marginHorizontal: 16,
   },
   illustration: { alignSelf: "center", marginBottom: 16 },
   wrapper: {

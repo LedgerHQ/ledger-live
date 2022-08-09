@@ -5,7 +5,11 @@ import { useTranslation } from "react-i18next";
 import WalletCoinsSupported from "../../icons/WalletCoinsSupported";
 import { NavigatorName, ScreenName } from "../../const";
 
-const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () => void }) => {
+const PortfolioEmptyState = ({
+  openAddAccountModal,
+}: {
+  openAddAccountModal: () => void;
+}) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 

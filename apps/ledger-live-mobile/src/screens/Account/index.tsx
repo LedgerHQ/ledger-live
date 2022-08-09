@@ -11,7 +11,8 @@ import {
   Account,
   AccountLike,
   TokenAccount,
-} from "@ledgerhq/live-common/types/index";
+  Operation,
+} from "@ledgerhq/types-live";
 import debounce from "lodash/debounce";
 import {
   getAccountCapabilities,

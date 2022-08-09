@@ -14,11 +14,9 @@ import { useSelector } from "react-redux";
 
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import {
-  AccountLike,
-  Account,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
+import { AccountLike, Account } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 
 import { Icons, QuickActionList } from "@ledgerhq/native-ui";
 

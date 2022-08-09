@@ -7,7 +7,8 @@ import React, {
   useEffect,
 } from "react";
 import { useTheme } from "styled-components/native";
-import { Unit, Currency, AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
+import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   ValueChange,

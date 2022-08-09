@@ -1,6 +1,6 @@
 /* @flow */
 import React from "react";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { RouteParams } from "../screens/SendFunds/04-Summary";
 

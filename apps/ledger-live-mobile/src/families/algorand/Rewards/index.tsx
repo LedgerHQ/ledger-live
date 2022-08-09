@@ -2,9 +2,6 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-
-import { Account } from "@ledgerhq/live-common/types/index";
-
 import {
   getAccountUnit,
   getAccountCurrency,
@@ -15,9 +12,10 @@ import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import { ScreenName, NavigatorName } from "../../../const";
+import { AlgorandAccount } from "@ledgerhq/live-common/lib/families/algorand/types";
 
 type Props = {
-  account: Account;
+  account: AlgorandAccount;
 };
 
 const RewardsSection = ({ account }: Props) => {
@@ -52,7 +50,7 @@ const RewardsSection = ({ account }: Props) => {
     <Box p={6}>
       <AccountSectionLabel
         name={t("algorand.claimRewards.title")}
-        icon={<InfoMedium size={20} color={"neutral.c100"} />}
+        Icon={InfoMedium}
         onPress={onRewardsInfoClick}
       />
       <Flex flexDirection={"row"} alignItems={"center"} py={6} mb={6}>

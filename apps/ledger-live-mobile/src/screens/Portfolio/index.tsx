@@ -44,6 +44,7 @@ import TabBarSafeAreaView, {
 } from "../../components/TabBar/TabBarSafeAreaView";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
+import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 
@@ -60,11 +61,6 @@ const AnimatedFlatListWithRefreshControl = createNativeWrapper(
 type Props = {
   navigation: any;
 };
-
-const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
-  mt: 9,
-  px: p.px ?? 6,
-}))``;
 
 export const Gradient = styled(BackgroundGradient)``;
 
@@ -190,7 +186,7 @@ function PortfolioScreen({ navigation }: Props) {
               <SectionTitle title={t("analytics.allocation.title")} />
               <AllocationsSection />
             </SectionContainer>,
-            <SectionContainer px={6} mb={8}>
+            <SectionContainer px={6} mb={8} isLast>
               <SectionTitle title={t("analytics.operations.title")} />
               <OperationsHistorySection accounts={assetsToDisplay} />
             </SectionContainer>,
@@ -203,19 +199,20 @@ function PortfolioScreen({ navigation }: Props) {
           ]),
     ],
     [
-      showAssets,
       onPortfolioCardLayout,
       counterValueCurrency,
       portfolio,
       areAccountsEmpty,
       accounts.length,
+      currentPositionY,
+      graphCardEndPosition,
+      colors.background.main,
+      colors.neutral.c40,
+      showAssets,
       t,
       navigation,
       assetsToDisplay,
-      colors.neutral.c40,
       openAddModal,
-      isAddModalOpened,
-      closeAddModal,
       showCarousel,
       carouselVisibility,
     ],

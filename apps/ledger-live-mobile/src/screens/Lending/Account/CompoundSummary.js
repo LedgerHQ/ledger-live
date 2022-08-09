@@ -127,6 +127,7 @@ export default function AccountBalanceSummaryFooter({
           />
         }
         onPress={onPressInfoCreator("interestEarned")}
+        isLast={true}
       />
     </ScrollView>
   );
@@ -137,7 +138,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     borderTopWidth: 1,
-    paddingTop: 16,
     overflow: "visible",
   },
 });
