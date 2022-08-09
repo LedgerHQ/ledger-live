@@ -9,7 +9,7 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackScreen from "../../../analytics/TrackScreen";
 import NoResultsFound from "../../../icons/NoResultsFound";
 

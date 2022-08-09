@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 
 import { useAppUninstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import type { Action, State } from "@ledgerhq/live-common/apps/index";
 
 import styled from "styled-components/native";

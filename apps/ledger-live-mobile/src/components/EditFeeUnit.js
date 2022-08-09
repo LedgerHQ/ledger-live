@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { FlatList, View, StyleSheet, Keyboard } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";

@@ -7,7 +7,7 @@ import {
   PolkadotNomination,
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountUnit,

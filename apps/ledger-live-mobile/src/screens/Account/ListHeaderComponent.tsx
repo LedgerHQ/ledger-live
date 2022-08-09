@@ -4,12 +4,8 @@ import {
   getMainAccount,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import {
-  AccountLike,
-  Account,
-  Currency,
-} from "@ledgerhq/live-common/types/index";
-import { ValueChange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { AccountLike, Account, ValueChange } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 
 import { Box } from "@ledgerhq/native-ui";

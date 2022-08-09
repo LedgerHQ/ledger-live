@@ -5,7 +5,7 @@ import {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import CounterValue from "../../../components/CounterValue";
