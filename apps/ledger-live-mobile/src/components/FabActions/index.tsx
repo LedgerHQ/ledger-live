@@ -28,6 +28,7 @@ import { accountsCountSelector } from "../../reducers/accounts";
 import { NavigatorName, ScreenName } from "../../const";
 import FabAccountButtonBar from "./FabAccountButtonBar";
 import useAccountActions from "../../screens/Account/hooks/useAccountActions";
+import { useTheme } from "styled-components/native";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
