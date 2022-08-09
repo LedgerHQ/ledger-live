@@ -27,10 +27,12 @@ import globalSyncRefreshControl from "../../components/globalSyncRefreshControl"
 import BackgroundGradient from "../../components/BackgroundGradient";
 
 import GraphCardContainer from "./GraphCardContainer";
+import Carousel from "../../components/Carousel";
 import Header from "./Header";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { NavigatorName } from "../../const";
+import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import Assets from "./Assets";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
@@ -115,18 +117,25 @@ function PortfolioScreen({ navigation }: Props) {
 
   const data = useMemo(
     () => [
-      ...(showAssets
-        ? [ // If the user has some accounts we display the following components
-            <Box onLayout={onPortfolioCardLayout}>
-              <GraphCardContainer
-                counterValueCurrency={counterValueCurrency}
-                portfolio={portfolio}
-                areAccountsEmpty={areAccountsEmpty}
-                showGraphCard={accounts.length > 0}
-                currentPositionY={currentPositionY}
-                graphCardEndPosition={graphCardEndPosition}
-              />
+      <Box onLayout={onPortfolioCardLayout}>
+        <GraphCardContainer
+          counterValueCurrency={counterValueCurrency}
+          portfolio={portfolio}
+          areAccountsEmpty={areAccountsEmpty}
+          showGraphCard={accounts.length > 0}
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+        />
+      </Box>,
+      ...(accounts.length > 0
+        ? [
+            <Box pt={6} background={colors.background.main}>
+              <FabActions areAccountsEmpty={areAccountsEmpty} />
             </Box>,
+          ]
+        : []),
+      ...(showAssets
+        ? [
             <Box background={colors.background.main}>
               <SectionContainer>
                 <SectionTitle
@@ -160,6 +169,23 @@ function PortfolioScreen({ navigation }: Props) {
                 )}
               </SectionContainer>
             </Box>,
+          ]
+        : []),
+      ...(showCarousel
+        ? [
+            <Box background={colors.background.main}>
+              <SectionContainer px={0} minHeight={175}>
+                <SectionTitle
+                  title={t("portfolio.recommended.title")}
+                  containerProps={{ mb: 7, mx: 6 }}
+                />
+                <Carousel cardsVisibility={carouselVisibility} />
+              </SectionContainer>
+            </Box>,
+          ]
+        : []),
+      ...(showAssets
+        ? [
             <SectionContainer px={6}>
               <SectionTitle title={t("analytics.allocation.title")} />
               <AllocationsSection />
@@ -170,10 +196,10 @@ function PortfolioScreen({ navigation }: Props) {
             </SectionContainer>,
           ]
         : [ // If the user has no accounts we display an empty state
-          <Flex flex={1} mt={12}>
-            <PortfolioEmptyState openAddAccountModal={openAddModal} />
-          </Flex>,
-        ]),
+        <Flex flex={1} mt={12}>
+          <PortfolioEmptyState openAddAccountModal={openAddModal} />
+        </Flex>,
+      ]),
     ],
     [
       showAssets,
@@ -207,7 +233,10 @@ function PortfolioScreen({ navigation }: Props) {
           accountsLength={accounts.length}
           discreet={discreetMode}
         />
-        <Gradient />
+        <BackgroundGradient
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+        />
         <AnimatedFlatListWithRefreshControl
           data={data}
           style={{

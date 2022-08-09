@@ -4,7 +4,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
-import Color from "color";
 
 import {
   NotificationsMedium,
@@ -16,13 +15,9 @@ import styled, { useTheme } from "styled-components/native";
 import Animated, {
   Extrapolate,
   interpolate,
-  interpolateColor,
-  SharedValue,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import { Trans, useTranslation } from "react-i18next";
-import { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { useTranslation } from "react-i18next";
 import Touchable from "../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../const";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -102,7 +97,7 @@ function PortfolioHeader({
   const BackgroundOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
       currentPositionY.value,
-      [graphCardEndPosition + 50, graphCardEndPosition + 120],
+      [graphCardEndPosition + 80, graphCardEndPosition + 100],
       [0, 1],
       Extrapolate.CLAMP,
     );
@@ -122,7 +117,6 @@ function PortfolioHeader({
     alignItems: "center",
     height: 48,
     left: -p.width / 2,
-    border: "1px solid green",
   }))`
     position: absolute;
   `;
@@ -149,11 +143,10 @@ function PortfolioHeader({
           {
             display: "flex",
             position: "absolute",
-            width: "100%",
             flexDirection: "row",
             width: windowsWidth,
             height: 92,
-            backgroundColor: colors.neutral.c30,
+            backgroundColor: colors.background.drawer,
           },
           BackgroundOpacity,
         ]}
@@ -172,19 +165,37 @@ function PortfolioHeader({
           <Animated.View
             height={"100%"}
             justifyContent={"center"}
-            style={[WalletTitleAnimation]}
+            style={[PortfolioValueAnimation]}
           >
-            <Flex flexDirection={"row"} alignItems={"center"}>
-              <Text
-                variant={"small"}
-                fontWeight={"semiBold"}
-                color={"neutral.c100"}
-                textTransform={"uppercase"}
-                mr={2}
-              >
-                {t("portfolio.walletBalance")}
-              </Text>
-              {!hidePortfolio && <DiscreetModeButton size={20} />}
+            <Flex flexDirection={"column"} alignItems={"center"}>
+              {isAvailable ? (
+                <>
+                  <Text
+                    variant={"small"}
+                    fontWeight={"semiBold"}
+                    color={"neutral.c70"}
+                    fontSize="11px"
+                  >
+                    {t("portfolio.walletBalance")}
+                  </Text>
+                  <Text
+                    variant={"small"}
+                    fontWeight={"semiBold"}
+                    color={"neutral.c100"}
+                    fontSize="18px"
+                  >
+                    <CurrencyUnitValue
+                      unit={unit}
+                      value={currentPortfolio.value}
+                    />
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Placeholder width={100} containerHeight={18} />
+                  <Placeholder width={150} containerHeight={28} />
+                </>
+              )}
             </Flex>
           </Animated.View>
         </CenteredElement>
@@ -192,15 +203,20 @@ function PortfolioHeader({
           <Animated.View
             height={"100%"}
             justifyContent={"center"}
-            style={[PortfolioValueAnimation]}
+            style={[WalletTitleAnimation]}
           >
-            {isAvailable ? (
-              <Text variant={"h2"} color={"neutral.c100"}>
-                <CurrencyUnitValue unit={unit} value={currentPortfolio.value} />
+            <Flex flexDirection={"row"} alignItems={"center"}>
+              <Text
+                variant={"small"}
+                fontWeight={"semiBold"}
+                color={"neutral.c100"}
+                fontSize="16px"
+                mr={2}
+              >
+                {t("tabs.portfolio")}
               </Text>
-            ) : (
-              <Placeholder width={150} containerHeight={28} />
-            )}
+              {!hidePortfolio && <DiscreetModeButton size={20} />}
+            </Flex>
           </Animated.View>
         </CenteredElement>
       </Flex>

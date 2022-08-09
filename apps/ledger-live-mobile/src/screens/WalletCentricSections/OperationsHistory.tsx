@@ -26,7 +26,7 @@ const renderSectionHeader = ({ section }: { section: { day: Date } }) => (
 const OperationsHistory = ({ accounts }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const { sections } = useMemo(
+  const { sections, completed } = useMemo(
     () =>
       groupAccountsOperationsByDay(accounts, {
         count: NB_OPERATIONS_TO_DISPLAY,
@@ -86,15 +86,17 @@ const OperationsHistory = ({ accounts }: Props) => {
         renderSectionHeader={renderSectionHeader}
         stickySectionHeadersEnabled={false}
       />
-      <Button
-        type="shade"
-        size="large"
-        outline
-        mt={6}
-        onPress={goToAnalyticsOperations}
-      >
-        {t("common.seeAll")}
-      </Button>
+      {!completed ? (
+        <Button
+          type="shade"
+          size="large"
+          outline
+          mt={6}
+          onPress={goToAnalyticsOperations}
+        >
+          {t("common.seeAll")}
+        </Button>
+      ) : null}
     </Flex>
   );
 };
