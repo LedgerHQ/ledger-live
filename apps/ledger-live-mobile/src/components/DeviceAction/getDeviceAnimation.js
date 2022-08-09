@@ -135,6 +135,32 @@ const animations = {
       dark: require("../../animations/blue/7Validate/data.json"),
     },
   },
+  nanoFTS: {
+    plugAndPinCode: {
+      light: require("../../animations/nanoFTS/1PlugAndPinCode/light.json"),
+      dark: require("../../animations/nanoFTS/1PlugAndPinCode/dark.json"),
+    },
+    enterPinCode: {
+      light: require("../../animations/nanoFTS/3EnterPinCode/light.json"),
+      dark: require("../../animations/nanoFTS/3EnterPinCode/dark.json"),
+    },
+    quitApp: {
+      light: require("../../animations/nanoFTS/4QuitApp/light.json"),
+      dark: require("../../animations/nanoFTS/4QuitApp/dark.json"),
+    },
+    allowManager: {
+      light: require("../../animations/nanoFTS/5AllowManager/light.json"),
+      dark: require("../../animations/nanoFTS/5AllowManager/dark.json"),
+    },
+    openApp: {
+      light: require("../../animations/nanoFTS/6OpenApp/light.json"),
+      dark: require("../../animations/nanoFTS/6OpenApp/dark.json"),
+    },
+    validate: {
+      light: require("../../animations/nanoFTS/7Validate/light.json"),
+      dark: require("../../animations/nanoFTS/7Validate/dark.json"),
+    },
+  },
 };
 
 export default function getDeviceAnimation({
@@ -149,7 +175,7 @@ export default function getDeviceAnimation({
   const modelId = Config.OVERRIDE_MODEL_ID || device.modelId;
   const wired = Config.OVERRIDE_WIRED || device.wired;
 
-  const animation = ["nanoS", "nanoSP", "blue"].includes(modelId)
+  const animation = ["nanoS", "nanoSP", "blue", "nanoFTS"].includes(modelId)
     ? animations[modelId][key]
     : animations.nanoX[wired ? "wired" : "bluetooth"][key];
   return animation[theme];

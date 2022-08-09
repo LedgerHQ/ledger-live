@@ -12,7 +12,7 @@ import {
   listSupportedCurrencies,
 } from "../../currencies";
 import { rangeDataTable } from "../utils/rangeDataTable";
-import { CryptoCurrency } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "../../env";
 import network from "../../network";
 

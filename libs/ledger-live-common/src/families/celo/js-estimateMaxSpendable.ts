@@ -1,10 +1,10 @@
-import { Account, AccountLike } from "../../types";
 import { Transaction } from "./types";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "../../account";
 import getTransactionStatus from "./js-getTransactionStatus";
 import prepareTransaction from "./js-prepareTransaction";
 import createTransaction from "./js-createTransaction";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 const estimateMaxSpendable = async ({
   account,

@@ -5,7 +5,7 @@ import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import {
   isCurrencySupported,
   listTokens,

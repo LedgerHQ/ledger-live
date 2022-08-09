@@ -6,10 +6,12 @@ import type {
   Account,
   AccountLike,
   AccountLikeArray,
-} from "@ledgerhq/live-common/types/account";
+  SubAccount,
+} from "@ledgerhq/types-live";
 
 export type SearchResult = {
   account: AccountLike,
+  parentAccount?: AccountLike,
   match?: boolean,
 };
 
@@ -44,21 +46,45 @@ export const formatSearchResults = (
       } else {
         const parentId = account.parentId;
         const parentAccount = accounts.find((a: Account) => a.id === parentId);
-        if (!acc[account.parentId]) {
-          acc[account.parentId] = {
+        if (!acc[parentId]) {
+          acc[parentId] = {
             account: parentAccount,
             tokenAccounts: [],
             match: false,
           };
         }
-        acc[account.parentId].tokenAccounts = [
-          ...acc[account.parentId].tokenAccounts,
+        acc[parentId].tokenAccounts = [
+          ...acc[parentId].tokenAccounts,
           {
             account,
             match: true,
           },
         ];
       }
+      return acc;
+    },
+    {},
+  );
+  return flattenStructuredSearchResults(formated);
+};
+
+export const formatSearchResultsTuples = (
+  searchResults: { account: AccountLike, subAccount: SubAccount }[],
+): SearchResult[] => {
+  const formated = reduce(
+    searchResults,
+    (acc, tuple) => {
+      const accountId = tuple.subAccount
+        ? tuple.subAccount.id
+        : tuple.account.id;
+      if (!acc[accountId]) {
+        acc[accountId] = {
+          account: tuple.subAccount || tuple.account,
+          parentAccount: tuple.subAccount ? tuple.account : null,
+          tokenAccounts: [],
+        };
+      }
+      acc[accountId].match = true;
       return acc;
     },
     {},

@@ -5,7 +5,7 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import Slider from "react-native-slider";
 import { useTheme } from "@react-navigation/native";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import {
   reverseRangeIndex,

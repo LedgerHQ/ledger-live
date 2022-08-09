@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import { satisfies as versionSatisfies } from "semver";
 
 const deviceVersionRangesForUpdate: { [key in DeviceModelId]?: string } = {
@@ -12,7 +12,7 @@ export const isFirmwareUpdateVersionSupported = (
   deviceInfo: DeviceInfo,
   modelId: DeviceModelId,
 ) =>
-  deviceVersionRangesForUpdate[modelId] &&
+  Boolean(deviceVersionRangesForUpdate[modelId]) &&
   versionSatisfies(
     deviceInfo.version,
     deviceVersionRangesForUpdate[modelId] as string,

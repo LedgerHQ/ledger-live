@@ -1,10 +1,4 @@
-import {
-  Account,
-  Operation,
-  OperationType,
-  SignOperationEvent,
-} from "../../types";
-import type { Transaction } from "./types";
+import type { CosmosAccount, Transaction } from "./types";
 import { getAccount, getChainId } from "./api/Cosmos";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
@@ -14,6 +8,12 @@ import { AminoTypes } from "@cosmjs/stargate";
 import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
 import { Secp256k1Signature } from "@cosmjs/crypto";
+import type {
+  Account,
+  Operation,
+  OperationType,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 
 const aminoTypes = new AminoTypes({ prefix: "cosmos" });
 
@@ -55,7 +55,10 @@ const signOperation = ({
           ]),
         };
 
-        const unsignedPayload = await buildTransaction(account, transaction);
+        const unsignedPayload = await buildTransaction(
+          account as CosmosAccount,
+          transaction
+        );
 
         const msgs = unsignedPayload.map((msg) => aminoTypes.toAmino(msg));
 
@@ -94,7 +97,7 @@ const signOperation = ({
         ).toFixedLength();
 
         const tx_bytes = await postBuildTransaction(
-          account,
+          account as CosmosAccount,
           transaction,
           pubkey,
           unsignedPayload,

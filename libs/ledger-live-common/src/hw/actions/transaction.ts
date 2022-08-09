@@ -3,15 +3,7 @@ import { scan, catchError, tap } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError } from "@ledgerhq/errors";
-import type {
-  TokenCurrency,
-  AccountLike,
-  Account,
-  Transaction,
-  TransactionStatus,
-  SignedOperation,
-  SignOperationEvent,
-} from "../../types";
+import type { Transaction, TransactionStatus } from "../../generated/types";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -19,6 +11,13 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { Action, Device } from "./types";
 import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
+import type {
+  Account,
+  AccountLike,
+  SignedOperation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 type State = {
   signedOperation: SignedOperation | null | undefined;
   deviceSignatureRequested: boolean;

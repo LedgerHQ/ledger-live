@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsSelector } from "../reducers/accounts";
@@ -19,7 +19,6 @@ import {
   setRatingsHappyMoment,
   setRatingsDataOfUser,
 } from "../actions/ratings";
-import { languageSelector } from "../reducers/settings";
 import { track } from "../analytics";
 
 export type RatingsHappyMoment = {
@@ -88,7 +87,6 @@ const useRatings = () => {
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
   const accounts: Account[] = useSelector(accountsSelector);
-  const currAppLanguage = useSelector(languageSelector);
 
   const accountsWithAmountCount = useMemo(() => accounts.filter(account => account.balance?.gt(0)).length, [accounts]);
 
@@ -103,8 +101,6 @@ const useRatings = () => {
   );
 
   const areRatingsConditionsMet = useCallback(() => {
-    if (currAppLanguage !== "en") return false;
-
     if (!ratingsDataOfUser) return false;
 
     // criterias depending on last answer to the ratings flow
@@ -162,7 +158,6 @@ const useRatings = () => {
 
     return true;
   }, [
-    currAppLanguage,
     ratingsDataOfUser,
     accountsWithAmountCount,
     ratingsFeature?.params?.conditions?.minimum_accounts_number,

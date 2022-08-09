@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
-import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   shortAddressPreview,
   getAccountCurrency,

@@ -18,7 +18,7 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import type { Account, FeeStrategy } from "@ledgerhq/live-common/types/index";
+import type { Account, FeeStrategy } from "@ledgerhq/types-live";
 
 type OnClickType = {
   amount: BigNumber,

@@ -6,7 +6,7 @@ import { listSubAccounts } from "@ledgerhq/live-common/account/helpers";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/account";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";

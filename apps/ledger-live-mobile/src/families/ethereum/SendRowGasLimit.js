@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/BigNumberToLocaleString";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { BigNumber } from "bignumber.js";

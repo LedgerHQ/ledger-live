@@ -6,11 +6,8 @@ import { Trans } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import type {
-  TokenCurrency,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/types/index";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { WrongDeviceForAccount, UpdateYourApp } from "@ledgerhq/errors";

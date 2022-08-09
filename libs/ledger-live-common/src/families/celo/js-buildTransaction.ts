@@ -1,7 +1,7 @@
 import type { Transaction } from "./types";
-import type { Account } from "../../types";
 import { CeloTx } from "@celo/connect";
 import { celoKit } from "./api/sdk";
+import { Account } from "@ledgerhq/types-live";
 
 const buildTransaction = async (account: Account, transaction: Transaction) => {
   const kit = celoKit();

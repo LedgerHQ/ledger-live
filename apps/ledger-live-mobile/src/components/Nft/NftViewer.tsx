@@ -12,13 +12,14 @@ import {
   decodeNftId,
   getNftCapabilities,
   useNftCollectionMetadata,
+  getFloorPrice,
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
-import { ProtoNFT, FloorPrice } from "@ledgerhq/live-common/types/index";
+import { ProtoNFT, FloorPrice } from "@ledgerhq/types-live";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
