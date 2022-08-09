@@ -1,14 +1,20 @@
-import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/EIP712.types";
 import Eth from "@ledgerhq/hw-app-eth";
+import {
+  EIP712Message,
+  isEIP712Message,
+} from "@ledgerhq/hw-app-eth/lib/modules/EIP712/index";
 import Transport from "@ledgerhq/hw-transport";
 import { TypedDataUtils } from "eth-sig-util";
 import { bufferToHex } from "ethereumjs-util";
 import { getEnv } from "../../env";
 import type { MessageData, Result } from "../../hw/signMessage/types";
 import type { TypedMessageData } from "./types";
-type EthResolver = (
-  arg0: Transport,
-  arg1: Pick<MessageData | TypedMessageData, "path" | "message"> &
+import { DerivationMode } from "../../derivation";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+type EthSignMessage = (
+  transport: Transport,
+  message: Pick<MessageData | TypedMessageData, "path" | "message"> &
     Partial<Pick<MessageData, "rawMessage">>
 ) => Promise<Result>;
 
@@ -29,7 +35,46 @@ export const messageHash = (message: EIP712Message): Buffer => {
   );
 };
 
-const resolver: EthResolver = async (
+function tryConvertToJSON(message: string): string | EIP712Message {
+  const mess = Buffer.from(message, "hex").toString();
+  try {
+    const parsedMessage = JSON.parse(mess);
+    if (isEIP712Message(parsedMessage)) {
+      return parsedMessage as EIP712Message;
+    }
+  } catch {
+    // Not a JSON message
+  }
+  return mess;
+}
+
+export const prepareMessageToSign = (
+  currency: CryptoCurrency,
+  path: string,
+  derivationMode: DerivationMode,
+  message: string
+): MessageData | TypedMessageData => {
+  const parsedMessage = tryConvertToJSON(message);
+
+  if (typeof parsedMessage === "string") {
+    return {
+      currency,
+      path,
+      derivationMode,
+      message: parsedMessage,
+      rawMessage: "0x" + message,
+    };
+  } else {
+    return {
+      currency,
+      path,
+      derivationMode,
+      message: parsedMessage,
+    };
+  }
+};
+
+const signMessage: EthSignMessage = async (
   transport,
   { path, message, rawMessage }
 ) => {
@@ -70,4 +115,4 @@ const resolver: EthResolver = async (
   };
 };
 
-export default resolver;
+export default { prepareMessageToSign, signMessage };

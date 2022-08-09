@@ -1,8 +1,11 @@
 import "../../__tests__/test-helpers/setup";
 
-import EIP712Message from "@ledgerhq/hw-app-eth/tests/sample-messages/0.json";
-import hwSignMessage from "./hw-signMessage";
+import eIP712Message from "@ledgerhq/hw-app-eth/tests/sample-messages/0.json";
+import ethSignMessage from "./hw-signMessage";
 import { setEnv } from "../../env";
+import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712";
+
+const hwSignMessage = ethSignMessage.signMessage;
 
 const signPersonalMessage = jest.fn(() =>
   Promise.resolve({
@@ -52,7 +55,7 @@ describe("Eth hw-signMessage", () => {
     it("should be using the signEIP712HashedMessage method with stringified message", async () => {
       await hwSignMessage({} as any, {
         path: "",
-        message: JSON.stringify(EIP712Message),
+        message: JSON.stringify(eIP712Message),
         rawMessage: "0xtest",
       });
 
@@ -64,12 +67,22 @@ describe("Eth hw-signMessage", () => {
 
       await hwSignMessage({} as any, {
         path: "",
-        message: EIP712Message,
+        message: eIP712Message as EIP712Message,
         rawMessage: "0xtest",
       });
 
       expect(signEIP712Message).toHaveBeenCalledTimes(1);
       setEnv("EXPERIMENTAL_EIP712", false);
+    });
+
+    it("should be using the signEIP712Message method XXX", async () => {
+      await hwSignMessage({} as any, {
+        path: "",
+        message: eIP712Message as EIP712Message,
+        rawMessage: "0xtest",
+      });
+
+      expect(signEIP712HashedMessage).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -87,7 +100,7 @@ describe("Eth hw-signMessage", () => {
     it("should not be returning parity for signEIP712HashedMessage", async () => {
       const { rsv } = await hwSignMessage({} as any, {
         path: "",
-        message: JSON.stringify(EIP712Message),
+        message: JSON.stringify(eIP712Message),
         rawMessage: "0xtest",
       });
 
@@ -99,7 +112,7 @@ describe("Eth hw-signMessage", () => {
 
       const { rsv } = await hwSignMessage({} as any, {
         path: "",
-        message: EIP712Message,
+        message: eIP712Message,
         rawMessage: "0xtest",
       });
 

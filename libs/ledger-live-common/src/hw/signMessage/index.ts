@@ -13,29 +13,28 @@ import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
-import type { MessageData, Resolver, Result } from "./types";
-import { DerivationMode } from "../../derivation";
+import type { MessageData, SignMessage, Result } from "./types";
+import { TypedMessageData } from "../../families/ethereum/types";
 
 export const prepareMessageToSign = (
   { currency, freshAddressPath, derivationMode }: Account,
   message: string
-): MessageData | null => {
+): MessageData | TypedMessageData => {
   if (!perFamily[currency.family]) {
     throw new Error("Crypto does not support signMessage");
   }
 
-  return {
-    currency: currency,
-    path: freshAddressPath,
-    derivationMode: derivationMode as DerivationMode,
-    message: Buffer.from(message, "hex").toString(),
-    rawMessage: "0x" + message,
-  };
+  return perFamily[currency.family].prepareMessageToSign(
+    currency,
+    freshAddressPath,
+    derivationMode,
+    message
+  );
 };
 
-const dispatch: Resolver = (transport, opts) => {
+const signMessage: SignMessage = (transport, opts) => {
   const { currency, verify } = opts;
-  const signMessage = perFamily[currency.family];
+  const signMessage = perFamily[currency.family].signMessage;
   invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
   return signMessage(transport, opts)
     .then((result) => {
@@ -87,7 +86,7 @@ export const signMessageExec = ({
   deviceId,
 }: Input): Observable<Result> => {
   const result: Observable<Result> = withDevice(deviceId)((transport) =>
-    from(dispatch(transport, request.message))
+    from(signMessage(transport, request.message))
   );
   return result;
 };
@@ -175,4 +174,4 @@ export const createAction = (
     }),
   };
 };
-export default dispatch;
+export default signMessage;

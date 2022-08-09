@@ -1,7 +1,22 @@
 import Btc from "@ledgerhq/hw-app-btc";
-import type { Resolver } from "../../hw/signMessage/types";
+import type { Account } from "@ledgerhq/types-live";
+import type { MessageData, SignMessage } from "../../hw/signMessage/types";
+import type { DerivationMode } from "../../derivation";
 
-const resolver: Resolver = async (transport, { path, message }) => {
+export const prepareMessageToSign = (
+  { currency, freshAddressPath, derivationMode }: Account,
+  message: string
+): MessageData => {
+  return {
+    currency,
+    path: freshAddressPath,
+    derivationMode: derivationMode as DerivationMode,
+    message: Buffer.from(message, "hex").toString(),
+    rawMessage: "0x" + message,
+  };
+};
+
+const signMessage: SignMessage = async (transport, { path, message }) => {
   const btc = new Btc(transport);
   const hexMessage = Buffer.from(message).toString("hex");
   const result = await btc.signMessageNew(path, hexMessage);
@@ -16,4 +31,4 @@ const resolver: Resolver = async (transport, { path, message }) => {
   };
 };
 
-export default resolver;
+export default { prepareMessageToSign, signMessage };

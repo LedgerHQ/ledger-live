@@ -1,10 +1,26 @@
 import Fil from "@zondax/ledger-filecoin";
 import { log } from "@ledgerhq/logs";
+import type { Account } from "@ledgerhq/types-live";
 
-import type { Resolver, Result } from "../../hw/signMessage/types";
+import { MessageData, SignMessage, Result } from "../../hw/signMessage/types";
 import { getBufferFromString, getPath, isError } from "./utils";
 
-const resolver: Resolver = async (
+import type { DerivationMode } from "../../derivation";
+
+export const prepareMessageToSign = (
+  { currency, freshAddressPath, derivationMode }: Account,
+  message: string
+): MessageData => {
+  return {
+    currency,
+    path: freshAddressPath,
+    derivationMode: derivationMode as DerivationMode,
+    message: Buffer.from(message, "hex").toString(),
+    rawMessage: "0x" + message,
+  };
+};
+
+const signMessage: SignMessage = async (
   transport,
   { path, message }
 ): Promise<Result> => {
@@ -27,4 +43,4 @@ const resolver: Resolver = async (
   };
 };
 
-export default resolver;
+export default { prepareMessageToSign, signMessage };

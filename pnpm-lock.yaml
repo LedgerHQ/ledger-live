@@ -906,7 +906,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/json-bignumber': ^1.1.0
-      '@ledgerhq/live-app-sdk': ^0.7.0
+      '@ledgerhq/live-app-sdk': ^0.8.1
       '@ledgerhq/logs': workspace:^
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
@@ -1078,7 +1078,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': link:../ledgerjs/packages/hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/json-bignumber': 1.1.0
-      '@ledgerhq/live-app-sdk': 0.7.0
+      '@ledgerhq/live-app-sdk': 0.8.1
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
       '@polkadot/types': 8.12.2
       '@polkadot/types-known': 8.12.2
@@ -11255,8 +11255,8 @@ packages:
       json-rpc-2.0: 0.2.19
     dev: false
 
-  /@ledgerhq/live-app-sdk/0.7.0:
-    resolution: {integrity: sha512-gmIFEKnXHtNXbD3dAK9mkLkE2yFX6/M1HwGoTTd0VEOl5ZLgKiKGaaXVcDpjLwVBvhegfRmSlDlpjCV3OLw74g==}
+  /@ledgerhq/live-app-sdk/0.8.1:
+    resolution: {integrity: sha512-RYQS76VPu/e0+KHi8/Q1yFjdxOUENxxP21ncSjHBRbyLbF/CfD7WDGTsoYv3dCMS7em14Sg3mxOv1P2uaCbCVw==}
     dependencies:
       bignumber.js: 9.0.2
       json-rpc-2.0: 1.1.0
@@ -24275,7 +24275,7 @@ packages:
     dev: true
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
 
   /concat-stream/1.5.2:
     resolution: {integrity: sha1-cIl4Yk2FavQaWnQd790mHadSwmY=}

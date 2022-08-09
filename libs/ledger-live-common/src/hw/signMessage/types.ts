@@ -17,4 +17,7 @@ export type MessageData = {
   message: string;
   rawMessage: string;
 };
-export type Resolver = (arg0: Transport, arg1: MessageData) => Promise<Result>;
+export type SignMessage = (
+  transport: Transport,
+  message: MessageData
+) => Promise<Result>;

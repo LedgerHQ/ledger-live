@@ -1,13 +1,10 @@
 /* eslint-disable no-fallthrough */
 import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
-import sha from "sha.js";
-import { bufferToHex } from "ethereumjs-util";
 import { getAccountBridge } from "../bridge";
 import { getCryptoCurrencyById } from "../currencies";
 import type { DerivationMode } from "../derivation";
 import type { TypedMessageData } from "../families/ethereum/types";
-import { domainHash, messageHash } from "../families/ethereum/hw-signMessage";
 import type { MessageData } from "../hw/signMessage/types";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../generated/types";
@@ -39,9 +36,9 @@ export type WCCallRequest =
       method: "send" | "sign";
       data: Transaction;
     };
-type Parser = (arg0: Account, arg1: WCPayload) => Promise<WCCallRequest>;
+type Parser = (account: Account, payload: WCPayload) => Promise<WCCallRequest>;
 export const parseCallRequest: Parser = async (account, payload) => {
-  let wcTransactionData, bridge, transaction, message, rawMessage, hashes;
+  let wcTransactionData, bridge, transaction, message, rawMessage;
 
   switch (payload.method) {
     case "eth_sendRawTransaction":
@@ -52,47 +49,24 @@ export const parseCallRequest: Parser = async (account, payload) => {
 
     // @dev: Today, `eth_signTypedData` is versionned. We can't only check `eth_signTypedData`
     //       This regex matches `eth_signTypedData` and `eth_signTypedData_v[0-9]`
+    // https://docs.metamask.io/guide/signing-data.html
     case payload.method.match(/eth_signTypedData(_v.)?$/)?.input:
       message = JSON.parse(payload.params[1]);
-      hashes = {
-        // $FlowFixMe
-        domainHash: bufferToHex(domainHash(message)),
-        // $FlowFixMe
-        messageHash: bufferToHex(messageHash(message)),
-      };
     case "eth_sign":
       message = message || payload.params[1];
       rawMessage = rawMessage || payload.params[1];
-      hashes = hashes || {
-        stringHash:
-          "0x" +
-          sha("sha256")
-            // $FlowFixMe
-            .update(Buffer.from(payload.params[1].slice(2), "hex"))
-            .digest("hex"),
-      };
     case "personal_sign":
       message =
         message || Buffer.from(payload.params[0].slice(2), "hex").toString();
       rawMessage = rawMessage || payload.params[0];
-      hashes = hashes || {
-        stringHash:
-          "0x" +
-          sha("sha256")
-            // $FlowFixMe
-            .update(message)
-            .digest("hex"),
-      };
       return {
         type: "message",
-        // $FlowFixMe (can't figure out MessageData | TypedMessageData)
         data: {
           path: account.freshAddressPath,
           message,
           rawMessage,
           currency: getCryptoCurrencyById("ethereum"),
           derivationMode: account.derivationMode as DerivationMode,
-          hashes,
         },
       };
 
