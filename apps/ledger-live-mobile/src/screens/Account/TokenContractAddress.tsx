@@ -6,8 +6,10 @@ import SafeAreaView from "react-native-safe-area-view";
 import Icon from "react-native-vector-icons/dist/Feather";
 import type {
   TokenAccount,
+} from "@ledgerhq/types-live";
+import type {
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 
 import { useTheme } from "@react-navigation/native";

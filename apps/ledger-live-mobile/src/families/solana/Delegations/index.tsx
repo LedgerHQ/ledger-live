@@ -22,7 +22,7 @@ import {
   sweetch,
   tupleOfUnion,
 } from "@ledgerhq/live-common/families/solana/utils";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
