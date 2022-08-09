@@ -105,7 +105,7 @@ test("Discover", async ({ page }) => {
   await test.step("Sign Transaction - info modal", async () => {
     await discoverPage.signTransaction();
     await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-info.png", {
-      timeout: 10000,
+      timeout: 20000,
     });
   });
 
