@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import WalletCoinsSupported from "../../icons/WalletCoinsSupported";
 import { NavigatorName, ScreenName } from "../../const";
 
-const PortfolioEmptyState = () => {
+const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () => void }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -19,10 +19,6 @@ const PortfolioEmptyState = () => {
     navigation.navigate(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
     });
-  }, [navigation]);
-
-  const goToAddAccount = useCallback(() => {
-    navigation.navigate(NavigatorName.AddAccounts);
   }, [navigation]);
 
   return (
@@ -82,7 +78,7 @@ const PortfolioEmptyState = () => {
           size="large"
           iconName="Plus"
           iconPosition="left"
-          onPress={goToAddAccount}
+          onPress={openAddAccountModal}
         >
           {t("account.emptyState.addAccountCta")}
         </Button>

@@ -156,11 +156,6 @@ function PortfolioScreen({ navigation }: Props) {
                         {t("distribution.moreAssets")}
                       </TextLink>
                     </Flex>
-                    <AddAccountsModal
-                      navigation={navigation}
-                      isOpened={isAddModalOpened}
-                      onClose={closeAddModal}
-                    />
                   </>
                 )}
               </SectionContainer>
@@ -176,7 +171,7 @@ function PortfolioScreen({ navigation }: Props) {
           ]
         : [ // If the user has no accounts we display an empty state
           <Flex flex={1} mt={12}>
-            <PortfolioEmptyState />
+            <PortfolioEmptyState openAddAccountModal={openAddModal} />
           </Flex>,
         ]),
     ],
@@ -238,6 +233,11 @@ function PortfolioScreen({ navigation }: Props) {
           hidePortfolio={areAccountsEmpty}
         />
       </TabBarSafeAreaView>
+      <AddAccountsModal
+        navigation={navigation}
+        isOpened={isAddModalOpened}
+        onClose={closeAddModal}
+      />
     </>
   );
 }

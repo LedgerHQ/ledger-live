@@ -22,7 +22,7 @@ function BackgroundGradient({
 }) {
   const BackgroundOverlayOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
-      currentPositionY.value,
+      currentPositionY?.value || 0,
       [graphCardEndPosition + 10, graphCardEndPosition + 90],
       [1, 0],
       Extrapolate.CLAMP,
@@ -40,7 +40,7 @@ function BackgroundGradient({
       height={"100%"}
       justifyContent={"center"}
       style={[
-        BackgroundOverlayOpacity,
+        { opacity: 1 }, // BackgroundOverlayOpacity,
         {
           background: colors.background.main,
           position: "absolute",

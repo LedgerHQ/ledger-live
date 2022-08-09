@@ -192,7 +192,6 @@ function PortfolioHeader({
           <Animated.View
             height={"100%"}
             justifyContent={"center"}
-            background={"green"}
             style={[PortfolioValueAnimation]}
           >
             {isAvailable ? (
