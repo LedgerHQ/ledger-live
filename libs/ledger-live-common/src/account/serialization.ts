@@ -1002,11 +1002,13 @@ export function toAccountRaw(account: Account): AccountRaw {
         (account as CryptoOrgAccount).cryptoOrgResources
       );
       break;
-    case "celo":
-      (res as CeloAccountRaw).celoResources = toCeloResourcesRaw(
-        (account as CeloAccount).celoResources
-      );
+    case "celo": {
+      const celoResources = (account as CeloAccount).celoResources;
+      if (celoResources)
+        (res as CeloAccountRaw).celoResources =
+          toCeloResourcesRaw(celoResources);
       break;
+    }
   }
 
   if (swapHistory) {
