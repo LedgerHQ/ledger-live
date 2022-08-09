@@ -1072,6 +1072,14 @@
     "hideCTA": "Hide token"
   },
   "syncOnboarding": {
+    "connection": {
+      "searching": {
+        "title": "Connect {{deviceModelName}} to your computer"
+      },
+      "success": {
+        "title": "Connected to {{ deviceName }}"
+      }
+    },
     "manual": {
       "softwareCheckContent": {
         "genuineCheck": {
@@ -3666,7 +3674,7 @@
         }
       }
     }
-  },
+  }, 
   "connectTroubleshooting": {
     "desc": "Having trouble connecting your device?",
     "cta": "Fix it",
