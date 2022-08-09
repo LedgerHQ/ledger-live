@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { useTheme } from "styled-components/native";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 import getWindowDimensions from "../logic/getWindowDimensions";

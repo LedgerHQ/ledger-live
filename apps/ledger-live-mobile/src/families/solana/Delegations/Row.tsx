@@ -1,7 +1,7 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
 import { sweetch } from "@ledgerhq/live-common/families/solana/utils";
-import { Currency, Unit } from "@ledgerhq/live-common/types/index";
+import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";

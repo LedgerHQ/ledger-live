@@ -4,7 +4,8 @@ import React, { useMemo, useState, memo, useCallback } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { SearchInput } from "@ledgerhq/react-ui";
-import type { Account, AccountLike, Currency } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "../Provider";
 
 import Fuse from "fuse.js";
