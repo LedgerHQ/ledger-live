@@ -143,7 +143,6 @@ function PortfolioHeader({
           {
             display: "flex",
             position: "absolute",
-            width: "100%",
             flexDirection: "row",
             width: windowsWidth,
             height: 92,
@@ -214,7 +213,7 @@ function PortfolioHeader({
                 fontSize="16px"
                 mr={2}
               >
-                {t("portfolio.walletBalance")}
+                {t("tabs.portfolio")}
               </Text>
               {!hidePortfolio && <DiscreetModeButton size={20} />}
             </Flex>

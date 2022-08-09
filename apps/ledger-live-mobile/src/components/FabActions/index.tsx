@@ -22,6 +22,9 @@ import {
 
 import { Icons, QuickActionList } from "@ledgerhq/native-ui";
 
+import { Linking } from "react-native";
+import { useTheme } from "styled-components/native";
+import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,

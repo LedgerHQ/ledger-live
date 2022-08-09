@@ -14,8 +14,6 @@ import TabBarSafeAreaView, {
 import { accountsSelector } from "../../reducers/accounts";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
-import MarketPriceSection from "../WalletCentricSections/MarketPrice";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/src/currencies";
 
 type RouteParams = {
   currencyId: string;
@@ -26,10 +24,10 @@ type Props = {
   route: { params: RouteParams };
 };
 
-const SectionContainer = styled(Flex).attrs((p: { isLast: boolean }) => ({
-  py: 8,
-  borderBottomWidth: !p.isLast ? 1 : 0,
-  borderBottomColor: "neutral.c30",
+
+const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
+  mt: 9,
+  px: p.px ?? 6,
 }))``;
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
@@ -40,7 +38,6 @@ const AssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
   const { currencyId } = route?.params;
-  const currency = getCryptoCurrencyById(currencyId);
   const cryptoAccounts = useMemo(
     () => accounts.filter(a => getAccountCurrency(a).id === currencyId),
     [accounts, currencyId],
@@ -48,11 +45,7 @@ const AssetScreen = ({ route }: Props) => {
 
   const data = useMemo(
     () => [
-      <SectionContainer px={6}>
-        <SectionTitle title={t("portfolio.marketPriceSection.title", { currencyTicker: currency.ticker })} />
-        <MarketPriceSection currency={currency} />
-      </SectionContainer>,
-      <SectionContainer px={6} mb={8} isLast>
+      <SectionContainer px={6} mb={8}>
         <SectionTitle title={t("analytics.operations.title")} />
         <OperationsHistorySection accounts={cryptoAccounts} />
       </SectionContainer>,
