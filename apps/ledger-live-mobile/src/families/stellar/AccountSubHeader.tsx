@@ -3,7 +3,10 @@ import AccountSubHeader from "../../components/AccountSubHeader";
 
 function StellarAccountSubHeader() {
   return (
-    <AccountSubHeader family="Stellar" team="Stellar Development Foundation" />
+    <AccountSubHeader
+      family="Stellar Tokens"
+      team="Stellar Development Foundation"
+    />
   );
 }
 

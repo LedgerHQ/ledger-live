@@ -32,7 +32,7 @@ function AccountSubHeader({ team, family }: Props) {
       m={6}
     >
       <Text variant={"large"} color={"neutral.c90"} flexShrink={1} mr={3}>
-        {t("account.subHeader.title", { team })}
+        {t("account.subHeader.cardTitle", { team })}
       </Text>
       <Link type={"main"} size={"small"} Icon={InfoMedium} onPress={openDrawer}>
         {t("account.subHeader.moreInfo")}
