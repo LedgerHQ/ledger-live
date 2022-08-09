@@ -40,6 +40,7 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
@@ -114,18 +115,18 @@ function PortfolioScreen({ navigation }: Props) {
 
   const data = useMemo(
     () => [
-      <Box onLayout={onPortfolioCardLayout}>
-        <GraphCardContainer
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          areAccountsEmpty={areAccountsEmpty}
-          showGraphCard={accounts.length > 0}
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-        />
-      </Box>,
       ...(showAssets
         ? [ // If the user has some accounts we display the following components
+            <Box onLayout={onPortfolioCardLayout}>
+              <GraphCardContainer
+                counterValueCurrency={counterValueCurrency}
+                portfolio={portfolio}
+                areAccountsEmpty={areAccountsEmpty}
+                showGraphCard={accounts.length > 0}
+                currentPositionY={currentPositionY}
+                graphCardEndPosition={graphCardEndPosition}
+              />
+            </Box>,
             <Box background={colors.background.main}>
               <SectionContainer>
                 <SectionTitle
@@ -174,7 +175,8 @@ function PortfolioScreen({ navigation }: Props) {
             </SectionContainer>,
           ]
         : [ // If the user has no accounts we display an empty state
-          <Flex flex={1}>
+          <Flex flex={1} mt={12}>
+            <PortfolioEmptyState />
           </Flex>,
         ]),
     ],
