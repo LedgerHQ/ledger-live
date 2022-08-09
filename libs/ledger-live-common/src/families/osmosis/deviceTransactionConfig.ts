@@ -1,10 +1,7 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { Transaction } from "./types";
-import { getAccountUnit } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
-import type { DeviceTransactionField } from "../../transaction";
 import type { AccountLike } from "@ledgerhq/types-live";
+import type { DeviceTransactionField } from "../../transaction";
 import type { TransactionStatus } from "./types";
+import { Transaction } from "./types";
 
 export type ExtraDeviceTransactionField =
   | {

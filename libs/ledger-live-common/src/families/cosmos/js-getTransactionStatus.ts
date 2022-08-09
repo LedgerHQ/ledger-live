@@ -18,7 +18,6 @@ import {
   CosmosLikeTransaction,
   StatusErrorMap,
   CosmosAccount,
-  Transaction,
   TransactionStatus,
 } from "./types";
 import { BigNumber } from "bignumber.js";

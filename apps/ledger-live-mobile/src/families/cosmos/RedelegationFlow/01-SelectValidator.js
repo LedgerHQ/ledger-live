@@ -69,7 +69,10 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   );
 
   const [searchQuery, setSearchQuery] = useState("");
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily("cosmos", searchQuery);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    "cosmos",
+    searchQuery,
+  );
 
   const validatorSrc = useMemo(
     () =>
