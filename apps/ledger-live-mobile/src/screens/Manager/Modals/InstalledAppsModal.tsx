@@ -2,7 +2,7 @@ import React, { memo, useCallback, useMemo, useEffect } from "react";
 
 import { Text, Flex, Button, BaseModal } from "@ledgerhq/native-ui";
 import { FlatList } from "react-native";
-import { App } from "@ledgerhq/live-common/types/manager";
+import { App } from "@ledgerhq/types-live";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";

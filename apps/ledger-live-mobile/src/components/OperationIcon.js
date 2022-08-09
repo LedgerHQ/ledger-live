@@ -7,7 +7,7 @@ import type {
   Operation,
   OperationType,
   AccountLike,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import OperationStatusIcon from "../icons/OperationStatusIcon";

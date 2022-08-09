@@ -247,11 +247,12 @@ export const getVotesCount = (
     case "tezos":
       return isAccountDelegating(account) ? 1 : 0;
     case "tron":
-      return (mainAccount as TronAccount).tronResources.votes.length;
-    case "cosmos":
-      return (mainAccount as CosmosAccount).cosmosResources.delegations.length;
+      return (mainAccount as TronAccount)?.tronResources?.votes.length || 0;
     case "osmosis":
-      return (mainAccount as CosmosAccount).cosmosResources.delegations.length;
+    case "cosmos":
+      return (
+        (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0
+      );
     default:
       return 0;
   }

@@ -4,10 +4,7 @@ import {
   accountWithMandatoryTokens,
   flattenAccounts,
 } from "@ledgerhq/live-common/account/helpers";
-import {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex } from "@ledgerhq/native-ui";
 import {
   isAccountEmpty,

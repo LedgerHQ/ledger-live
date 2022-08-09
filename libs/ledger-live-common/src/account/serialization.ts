@@ -778,10 +778,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
 
   switch (res.currency.family) {
     case "tron": {
-      const rawTronResources = (rawAccount as TronAccountRaw).tronResources;
-      if (rawTronResources) {
+      const tronResourcesRaw = (rawAccount as TronAccountRaw).tronResources;
+      if (tronResourcesRaw) {
         (res as TronAccount).tronResources =
-          fromTronResourcesRaw(rawTronResources);
+          fromTronResourcesRaw(tronResourcesRaw);
       }
       break;
     }
@@ -795,15 +795,21 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
       break;
     }
     case "tezos":
-      (res as TezosAccount).tezosResources = fromTezosResourcesRaw(
-        (rawAccount as TezosAccountRaw).tezosResources
-      );
+      {
+        const tezosResourcesRaw = (rawAccount as TezosAccountRaw)
+          .tezosResources;
+        if (tezosResourcesRaw)
+          (res as TezosAccount).tezosResources =
+            fromTezosResourcesRaw(tezosResourcesRaw);
+      }
       break;
-    case "bitcoin":
-      (res as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
-        (rawAccount as BitcoinAccountRaw).bitcoinResources
-      );
+    case "bitcoin": {
+      const bitcoinResourcesRaw = (rawAccount as BitcoinAccountRaw)
+        .bitcoinResources;
+      (res as BitcoinAccount).bitcoinResources =
+        fromBitcoinResourcesRaw(bitcoinResourcesRaw);
       break;
+    }
     case "algorand": {
       const algoResourcesRaw = (rawAccount as AlgorandAccountRaw)
         .algorandResources;
@@ -822,26 +828,39 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
             fromPolkadotResourcesRaw(polkadotResourcesRaw);
       }
       break;
-    case "elrond":
-      (res as ElrondAccount).elrondResources = fromElrondResourcesRaw(
-        (rawAccount as ElrondAccountRaw).elrondResources
-      );
+    case "elrond": {
+      const elrondResourcesRaw = (rawAccount as ElrondAccountRaw)
+        .elrondResources;
+
+      if (elrondResourcesRaw)
+        (res as ElrondAccount).elrondResources =
+          fromElrondResourcesRaw(elrondResourcesRaw);
       break;
-    case "cardano":
-      (res as CardanoAccount).cardanoResources = fromCardanoResourceRaw(
-        (rawAccount as CardanoAccountRaw).cardanoResources
-      );
+    }
+    case "cardano": {
+      const cardanoResourcesRaw = (rawAccount as CardanoAccountRaw)
+        .cardanoResources;
+      if (cardanoResourcesRaw)
+        (res as CardanoAccount).cardanoResources =
+          fromCardanoResourceRaw(cardanoResourcesRaw);
       break;
-    case "solana":
-      (res as SolanaAccount).solanaResources = fromSolanaResourcesRaw(
-        (rawAccount as SolanaAccountRaw).solanaResources
-      );
+    }
+    case "solana": {
+      const solanaResourcesRaw = (rawAccount as SolanaAccountRaw)
+        .solanaResources;
+      if (solanaResourcesRaw)
+        (res as SolanaAccount).solanaResources =
+          fromSolanaResourcesRaw(solanaResourcesRaw);
       break;
-    case "crypto_org":
-      (res as CryptoOrgAccount).cryptoOrgResources = fromCryptoOrgResourcesRaw(
-        (rawAccount as CryptoOrgAccountRaw).cryptoOrgResources
-      );
+    }
+    case "crypto_org": {
+      const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
+        .cryptoOrgResources;
+      if (cryptoOrgResourcesRaw)
+        (res as CryptoOrgAccount).cryptoOrgResources =
+          fromCryptoOrgResourcesRaw(cryptoOrgResourcesRaw);
       break;
+    }
   }
 
   if (swapHistory) {
