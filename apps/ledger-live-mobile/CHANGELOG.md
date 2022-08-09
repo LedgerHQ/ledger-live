@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.27
+
+### Patch Changes
+
+- [#883](https://github.com/LedgerHQ/ledger-live/pull/883) [`7101ca25c`](https://github.com/LedgerHQ/ledger-live/commit/7101ca25cb38490ae9697be2122aa2a42e734d21) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Receive flow - prevent double modal to pop during verification of address
+
 ## 3.5.0-next.26
 
 ### Patch Changes
