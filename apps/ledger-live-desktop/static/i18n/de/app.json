@@ -3331,6 +3331,7 @@
         "link" : "Mehr zur Wiederherstellungsphrase",
         "title2" : "Was passiert, wenn ich den Zugriff auf meinen Nano verliere?",
         "paragraph3" : "Machen Sie sich keine Sorgen und folgen Sie diesen Schritten:",
+        "paragraph4" : "Um den Zugriff auf Ihre Kryptos wiederherzustellen, kann jede Wallet die gleichen privaten Schlüssel aus Ihrem Wiederherstellungssatz berechnen.",
         "points" : {
           "1" : "Besorgen Sie sich eine neue Hardware-Wallet.",
           "2" : "Wählen Sie „Wiederherstellungsphrase auf einem neuen Gerät wiederherstellen“ in der Ledger-App",
@@ -3371,40 +3372,57 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "Willkommen bei Ledger",
-        "description" : "Verwalten Sie Ihre Kryptowährungen sicher von Ihrem Computer aus.",
-        "cta" : "Erste Schritte",
-        "noDevice" : "Kein Gerät? <0>Kaufen Sie einen Ledger Nano X",
-        "languageWarning" : {
-          "title" : "Erste Schritte in {{language}}",
-          "desc" : "Wir führen zusätzliche Sprachen ein, um Ihnen das Onboarding mit Ledger zu erleichtern. Bitte beachten Sie, dass der Rest der Ledger-Erfahrung derzeit nur auf Englisch verfügbar ist.",
-          "cta" : "Verstanden"
+        "title" : "Die sicherste Wallet für Kryptowährungen & NFTs",
+        "description" : "Verwalten, kaufen und vermehren Sie Ihre Krypto und NFTs auf Ledger Live.",
+        "nextButton" : "Erste Schritte",
+        "noDevice" : "Kein Gerät?",
+        "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
+        "byTapping" : "Indem Sie auf „Get Started\" (Loslegen) tippen, erklären Sie sich mit unserem",
+        "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
+        "and" : "Hinzu kommt:",
+        "privacyPolicy" : "Datenschutzrichtlinie",
+        "steps" : {
+          "0" : {
+            "title" : "Zugriff auf Ihre Kryptos",
+            "desc" : "Ihre Krypto-Vermögenswerte werden auf der Blockchain gespeichert. Verwenden Sie Ihren privaten Schlüssel, um auf sie zuzugreifen und sie zu verwalten"
+          },
+          "1" : {
+            "title" : "Achten Sie auf Ihren privaten Schlüssel",
+            "desc" : "Ihr privater Schlüssel ist in Ihrem Nano gespeichert. Sie müssen der einzige sein, der ihn besitzt, um die Kontrolle über Ihr Geld zu haben."
+          },
+          "2" : {
+            "title" : "Offline bleiben",
+            "desc" : "Ihr Nano arbeitet als „Cold Storage“-Wallet. Das bedeutet, dass er Ihren privaten Schlüssel niemals online preisgibt, selbst wenn Sie die App verwenden."
+          },
+          "3" : {
+            "title" : "Transaktionen validieren",
+            "desc" : "Mit Ledger Live können Sie Krypto kaufen, verkaufen, verwalten, tauschen und verdienen und bleiben dabei geschützt. Sie werden jede Krypto-Transaktion mit Ihrem Nano validieren."
+          },
+          "4" : {
+            "title" : "Lassen Sie uns Ihren Nano einrichten",
+            "desc" : "Wir beginnen mit der Einrichtung Ihres Nano"
+          }
         }
       },
       "selectDevice" : {
-        "title" : "Welches Gerät haben Sie?"
+        "title" : "Gerät auswählen",
+        "selectLabel" : "Auswählen"
       },
       "selectUseCase" : {
-        "greetings" : "Hallo!",
         "hasNoRecovery" : "Verwenden Sie Ihr {{deviceName}} zum ersten Mal?",
         "hasRecovery" : "Haben Sie bereits eine Wiederherstellungsphrase?",
-        "separator" : "oder",
-        "switchDevice" : "Gerät wechseln",
         "options" : {
           "1" : {
-            "heading" : "Erste Verwendung",
             "title" : "Einrichten eines neuen {{deviceName}}",
             "description" : "Lassen Sie uns beginnen und Ihr Gerät einrichten!"
           },
           "2" : {
-            "heading" : "Verbundenes Gerät",
             "title" : "Verbinden Sie Ihr {{deviceName}}",
             "description" : "Ist Ihr Gerät bereits eingerichtet? Verbinden Sie es mit der App!"
           },
           "3" : {
-            "heading" : "Gerät wiederherstellen",
             "title" : "Wiederherstellen Ihrer Wiederherstellungsphrase auf einem neuen Gerät",
-            "description" : "Verwenden Sie eine vorhandene Wiederherstellungsphrase, um Ihre privaten Schlüssel auf einem neuen {{deviceName}} wiederherzustellen!"
+            "description" : "Verwenden Sie eine vorhandene Wiederherstellungsphrase, um Ihre privaten Schlüssel auf einem neuen Nano wiederherzustellen!"
           }
         }
       },
@@ -3437,6 +3455,10 @@
             "buttons" : {
               "next" : "OK, ich bin bereit!",
               "prev" : "Vorheriger Schritt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "deviceHowTo" : {
@@ -3460,9 +3482,14 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "deviceHowTo2" : {
+            "title" : "Der beste Weg für den Anfang:",
             "turnOn" : {
               "title" : "Nano einschalten",
               "descr" : "Schließen Sie Ihr Gerät mit dem USB-Kabel an Ihren Computer an."
@@ -3483,6 +3510,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "pinCode" : {
@@ -3493,6 +3524,10 @@
               "next" : "PIN-Code einrichten",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "quizSuccess" : {
@@ -3510,6 +3545,10 @@
             "buttons" : {
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "pinCodeHowTo" : {
@@ -3525,6 +3564,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "existingRecoveryPhrase" : {
@@ -3539,7 +3582,7 @@
             },
             "warning" : {
               "title" : "Verwenden Sie keinen Wiederherstellungssatz, den Sie nicht selbst erstellt haben.",
-              "desc" : "Der PIN-Code und der Wiederherstellungssatz Ihrer Ledger-Hardware-Wallet sollten von Ihnen und nur von Ihnen erstellt werden. Falls Sie ein Gerät mit einem bereits existierendem Seed-Wort oder einem bereits initialisierten PIN-Code erhalten haben, verwenden Sie das Produkt bitte nicht und kontaktieren Sie unseren Kundendienst.",
+              "desc" : "Der PIN-Code und die Wiederherstellungsphrase Ihrer Ledger-Hardware-Wallet sollten von Ihnen und nur von Ihnen erstellt werden. Falls Sie ein Gerät mit einem bereits existierendem Seed-Wort oder einem bereits initialisierten PIN-Code erhalten haben, verwenden Sie das Produkt bitte nicht und kontaktieren Sie unseren Kundendienst.",
               "supportLink" : "Kundensupport kontaktieren"
             }
           },
@@ -3556,6 +3599,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "newRecoveryPhrase" : {
@@ -3567,6 +3614,10 @@
               "next" : "Wiederherstellungsphrase",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "recoveryHowTo" : {
@@ -3592,6 +3643,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "recoveryHowTo3" : {
@@ -3606,6 +3661,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "genuineCheck" : {
@@ -3629,6 +3688,10 @@
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt",
               "learn" : "Erfahren Sie wie man gut versteckt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "pairMyNano" : {
@@ -3638,6 +3701,10 @@
               "next" : "Meinen Nano prüfen",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           }
         }
@@ -3674,7 +3741,7 @@
       "title" : "Jetzt geht's los!",
       "descr" : "Beantworten Sie 3 einfache Fragen, um häufige Missverständnisse über Ihre Hardware-Wallet zu vermeiden.",
       "buttons" : {
-        "start" : "Lassen Sie uns das Quiz machen",
+        "start" : "Los geht's mit dem Quiz",
         "next" : "Nächste Frage",
         "finish" : "Quiz beenden"
       },
@@ -3924,7 +3991,9 @@
     "termsLabel" : "Allgemeine Geschäftsbedingungen",
     "privacyLabel" : "Datenschutzrichtlinie",
     "switchLabel" : "Ich habe die Nutzungsbedingungen und Datenschutzrichtlinien gelesen und akzeptiere sie",
-    "cta" : "Zur Ledger-App"
+    "cta" : "Zur Ledger-App",
+    "termsCheckboxLabel" : "Ich habe die Nutzungsbedingungen gelesen und erkläre mich damit einverstanden",
+    "privacyCheckboxLabel" : "Ich habe die Datenschutzbestimmungen gelesen und erkläre mich damit einverstanden."
   },
   "updatedTerms" : {
     "title" : "Aktualisierung der Nutzungsbedingungen",
