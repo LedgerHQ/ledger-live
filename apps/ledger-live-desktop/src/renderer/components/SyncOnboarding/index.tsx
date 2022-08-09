@@ -1,25 +1,30 @@
 import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
-import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-
+import { Route, Switch, useRouteMatch, RouteComponentProps } from "react-router-dom";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import SyncOnboardingPairing from "./Pairing";
+import SyncOnboardingDeviceConnection, {
+  SyncOnboardingDeviceConnectionProps,
+} from "./DeviceConnection";
 import SyncOnboardingManual from "./Manual";
 import CompletionScreen from "./Manual/CompletionScreen";
 
+export type SyncOnboardingDeviceConnectionRouteProps = RouteComponentProps<
+  SyncOnboardingDeviceConnectionProps
+>;
+
 const SyncOnboarding = () => {
   const { path } = useRouteMatch();
-
   return (
     <Flex width="100%" height="100%" position="relative">
       <Switch>
+        <Route exact path={[`${path}/manual`]} render={() => <SyncOnboardingManual />} />
         <Route
           exact
-          path={path}
-          render={() => <Redirect to={`${path}/manual` /* TODO put pairing instead */} />}
+          path={[`${path}/:deviceModelId`, `${path}/connection/:deviceModelId`]}
+          render={(routeProps: SyncOnboardingDeviceConnectionRouteProps) => (
+            <SyncOnboardingDeviceConnection {...routeProps.match.params} />
+          )}
         />
-        <Route path={`${path}/pairing`} render={props => <SyncOnboardingPairing {...props} />} />
-        <Route path={`${path}/manual`} render={props => <SyncOnboardingManual {...props} />} />
         <Route path={`${path}/completion`} render={props => <CompletionScreen {...props} />} />
       </Switch>
     </Flex>
