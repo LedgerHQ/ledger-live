@@ -8,13 +8,14 @@ import { command } from "~/renderer/commands";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
+import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import GenuineCheckModal from "./GenuineCheckModal";
-
 import SoftwareCheckContent from "./SoftwareCheckContent";
 
 const readyRedirectDelay = 2500;
@@ -112,7 +113,9 @@ const SyncOnboardingManual = () => {
   console.log(`🦄 Manual onboarding polling = ${JSON.stringify(deviceOnboardingState)}`);
 
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
   const [isGenuineCheckModalOpen, setGenuineCheckModalOpen] = useState<boolean>(true);
+  const [lastKnownDeviceId, setLastKnownDeviceId] = useState<DeviceModelId>(DeviceModelId.nanoX);
 
   useEffect(() => {
     if (stepKey === StepKey.Ready) {
@@ -124,9 +127,20 @@ const SyncOnboardingManual = () => {
     }
   }, [history, stepKey]);
 
+  useEffect(() => {
+    if (device) {
+      setLastKnownDeviceId(device.modelId);
+    }
+  }, [device]);
+
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
+      <TroubleshootingDrawer
+        lastKnownDeviceId={lastKnownDeviceId}
+        isOpen={isTroubleshootingDrawerOpen}
+        onClose={() => setTroubleshootingDrawerOpen(false)}
+      />
       <GenuineCheckModal
         isOpen={isGenuineCheckModalOpen}
         onClose={() => setGenuineCheckModalOpen(false)}
