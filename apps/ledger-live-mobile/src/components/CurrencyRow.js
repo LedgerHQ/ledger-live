@@ -6,7 +6,7 @@ import { RectButton } from "react-native-gesture-handler";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 
 import LText from "./LText";
 import CircleCurrencyIcon from "./CircleCurrencyIcon";

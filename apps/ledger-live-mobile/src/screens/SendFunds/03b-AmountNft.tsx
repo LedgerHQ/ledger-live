@@ -14,9 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-
-import type { Transaction } from "@ledgerhq/live-common/types/index";
-
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TranslatedError from "../../components/TranslatedError";
 import KeyboardView from "../../components/KeyboardView";

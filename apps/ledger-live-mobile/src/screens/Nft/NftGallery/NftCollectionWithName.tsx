@@ -1,11 +1,7 @@
 import React, { useCallback, useState, memo } from "react";
 import { useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
 import { FlatList, View, SafeAreaView, StyleSheet } from "react-native";
-import {
-  ProtoNFT,
-  NFTMetadata,
-  Account,
-} from "@ledgerhq/live-common/types/index";
+import { ProtoNFT, NFTMetadata, Account } from "@ledgerhq/types-live";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import NftCard from "../../../components/Nft/NftCard";

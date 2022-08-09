@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 
 import { DeviceModel } from "@ledgerhq/devices";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 
