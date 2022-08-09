@@ -28,9 +28,6 @@ import { accountsCountSelector } from "../../reducers/accounts";
 import { NavigatorName, ScreenName } from "../../const";
 import FabAccountButtonBar from "./FabAccountButtonBar";
 import useAccountActions from "../../screens/Account/hooks/useAccountActions";
-import { Linking } from "react-native";
-import { useTheme } from "styled-components/native";
-import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
