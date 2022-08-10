@@ -164,7 +164,7 @@ export const ScreenName = {
   VoteValidationError: "VoteValidationError",
   VoteValidationSuccess: "VoteValidationSuccess",
 
-  CosmosEditMemo: "CosmosEditMemo",
+  CosmosFamilyEditMemo: "CosmosFamilyEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
   CosmosDelegationValidatorSelect: "CosmosDelegationValidatorSelect",
