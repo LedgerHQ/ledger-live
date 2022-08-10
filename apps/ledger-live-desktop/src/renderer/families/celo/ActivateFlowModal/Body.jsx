@@ -20,7 +20,7 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/logger/logger";
 import type { CeloVote } from "@ledgerhq/live-common/families/celo/types";
-import type { Account, Operation } from "@ledgerhq/live-common/types";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { StepId, StepProps, St } from "./types";

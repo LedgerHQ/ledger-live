@@ -7,11 +7,7 @@ import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import {
-  Account,
-  Operation,
-  OperationType,
-} from "@ledgerhq/live-common/types/index";
+import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";

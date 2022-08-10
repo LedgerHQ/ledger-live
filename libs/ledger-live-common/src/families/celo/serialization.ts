@@ -12,11 +12,11 @@ export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
     electionAddress,
     lockedGoldAddress,
     maxNumGroupsVotedFor,
-  } = r;
+  } = r ?? {};
   return {
     registrationStatus,
-    lockedBalance: lockedBalance.toString(),
-    nonvotingLockedBalance: nonvotingLockedBalance.toString(),
+    lockedBalance: lockedBalance?.toString(),
+    nonvotingLockedBalance: nonvotingLockedBalance?.toString(),
     pendingWithdrawals: pendingWithdrawals?.map((withdrawal) => ({
       value: withdrawal.value.toString(),
       time: withdrawal.time.toString(),

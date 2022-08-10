@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 
-import type { Currency, Operation, Account } from "@ledgerhq/live-common/types";
+import type { Currency, Operation, Account } from "@ledgerhq/types-live";
 
 import {
   OpDetailsTitle,

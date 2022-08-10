@@ -297,6 +297,7 @@ export function patchAccount(
         const tronAcc = account as TronAccount;
         const tronUpdatedRaw = updatedRaw as TronAccountRaw;
         if (
+          tronUpdatedRaw.tronResources &&
           !areSameResources(
             toTronResourcesRaw(tronAcc.tronResources),
             tronUpdatedRaw.tronResources
@@ -313,6 +314,7 @@ export function patchAccount(
       const cosmosAcc = account as CosmosAccount;
       const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
       if (
+        cosmosUpdatedRaw.cosmosResources &&
         !areSameResources(
           toCosmosResourcesRaw(cosmosAcc.cosmosResources),
           cosmosUpdatedRaw.cosmosResources
@@ -329,6 +331,7 @@ export function patchAccount(
       const algorandAcc = account as AlgorandAccount;
       const algorandUpdatedRaw = updatedRaw as AlgorandAccountRaw;
       if (
+        algorandUpdatedRaw.algorandResources &&
         !areSameResources(
           algorandAcc.algorandResources,
           algorandUpdatedRaw.algorandResources
@@ -353,6 +356,7 @@ export function patchAccount(
       const polkadotAcc = account as PolkadotAccount;
       const polkadotUpdatedRaw = updatedRaw as PolkadotAccountRaw;
       if (
+        polkadotUpdatedRaw.polkadotResources &&
         !areSameResources(
           polkadotAcc.polkadotResources,
           polkadotUpdatedRaw.polkadotResources
@@ -369,6 +373,7 @@ export function patchAccount(
       const tezosAcc = account as TezosAccount;
       const tezosUpdatedRaw = updatedRaw as TezosAccountRaw;
       if (
+        tezosUpdatedRaw.tezosResources &&
         !areSameResources(
           tezosAcc.tezosResources,
           tezosUpdatedRaw.tezosResources
@@ -385,6 +390,7 @@ export function patchAccount(
       const elrondAcc = account as ElrondAccount;
       const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
       if (
+        elrondUpdatedRaw.elrondResources &&
         areSameResources(
           elrondAcc.elrondResources,
           elrondUpdatedRaw.elrondResources
@@ -401,6 +407,7 @@ export function patchAccount(
       const cardanoAcc = account as CardanoAccount;
       const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
       if (
+        cardanoUpdatedRaw.cardanoResources &&
         !areSameResources(
           cardanoAcc.cardanoResources,
           cardanoUpdatedRaw.cardanoResources
@@ -417,6 +424,7 @@ export function patchAccount(
       const cryptoOrgAcc = account as CryptoOrgAccount;
       const cryptoOrgUpdatedRaw = updatedRaw as CryptoOrgAccountRaw;
       if (
+        cryptoOrgUpdatedRaw.cryptoOrgResources &&
         !areSameResources(
           toCryptoOrgResourcesRaw(cryptoOrgAcc.cryptoOrgResources),
           cryptoOrgUpdatedRaw.cryptoOrgResources
@@ -433,6 +441,7 @@ export function patchAccount(
       const solanaUpdatedRaw = updatedRaw as SolanaAccountRaw;
 
       if (
+        solanaUpdatedRaw.solanaResources &&
         !areSameResources(
           toSolanaResourcesRaw(solanaAcc.solanaResources),
           solanaUpdatedRaw.solanaResources
@@ -450,6 +459,7 @@ export function patchAccount(
       const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
 
       if (
+        celoUpdatedRaw.celoResources &&
         !areSameResources(
           toCeloResourcesRaw(celoAcc.celoResources),
           celoUpdatedRaw.celoResources

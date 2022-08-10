@@ -1,10 +1,7 @@
 import React, { useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import {
-  Currency,
-  Unit,
-} from "@ledgerhq/live-common/types/index";
+import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, ProgressLoader, Text, Tag } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";

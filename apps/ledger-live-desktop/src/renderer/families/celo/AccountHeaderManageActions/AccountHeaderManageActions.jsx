@@ -7,7 +7,7 @@ import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/cel
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import Icon from "./Icon";
-import type { Account } from "@ledgerhq/live-common/types";
+import type { Account } from "@ledgerhq/types-live";
 
 type Props = {
   account: Account,

@@ -13,7 +13,7 @@ import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
 import * as S from "./AmountField.styles";
 import type { TFunction } from "react-i18next";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types";
+import type { Account, TransactionStatus } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/celo/types";
 
 type Props = {

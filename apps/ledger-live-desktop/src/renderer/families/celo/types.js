@@ -1,7 +1,7 @@
 // @flow
 import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { Account, TransactionStatus, Operation } from "@ledgerhq/live-common/types";
+import type { Account, TransactionStatus, Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/celo/types";
 
 export type CoreStakingFlowModalStepProps = {

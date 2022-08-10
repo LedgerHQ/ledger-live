@@ -24,7 +24,7 @@ import {
   isAccountRegistrationPending,
 } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./AccountBodyHeader.styles";
-import type { Account } from "@ledgerhq/live-common/types";
+import type { Account } from "@ledgerhq/types-live";
 import type { CeloVote } from "@ledgerhq/live-common/families/celo/types";
 
 type Props = {

@@ -24,7 +24,7 @@ import StepValidatorGroup, { StepValidatorGroupFooter } from "./steps/StepValida
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import type { TFunction } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/families/celo/types";
-import type { AccountBridge, Operation, Account } from "@ledgerhq/live-common/types";
+import type { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import type { St, StepProps, StepId } from "./types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 

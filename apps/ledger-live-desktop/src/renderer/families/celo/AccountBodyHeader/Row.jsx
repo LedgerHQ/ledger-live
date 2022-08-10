@@ -2,7 +2,7 @@
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { Account } from "@ledgerhq/live-common/types";
+import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";

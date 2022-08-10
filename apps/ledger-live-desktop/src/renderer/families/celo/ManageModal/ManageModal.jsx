@@ -18,7 +18,7 @@ import {
   revokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./ManageModal.styles";
-import type { Account } from "@ledgerhq/live-common/types";
+import type { Account } from "@ledgerhq/types-live";
 
 type Props = {
   name?: string,
