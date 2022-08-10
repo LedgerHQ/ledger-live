@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.28
+
+### Patch Changes
+
+- [#897](https://github.com/LedgerHQ/ledger-live/pull/897) [`bb92400cf`](https://github.com/LedgerHQ/ledger-live/commit/bb92400cf8243ec1df89a08810bd5b6788e25575) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Receive flow fix issue on receive token accounts from market page
+
 ## 3.5.0-next.27
 
 ### Patch Changes
