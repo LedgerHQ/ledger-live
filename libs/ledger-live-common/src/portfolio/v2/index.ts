@@ -318,12 +318,19 @@ export function getAssetsDistribution(
   };
   const idBalances: Record<string, number> = {};
   const idCurrencies: Record<string, CryptoCurrency | TokenCurrency> = {};
+  const currenciesAccounts: Record<string, AccountLike[]> = {};
   const accounts = flattenAccounts(topAccounts);
 
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
     const cur = getAccountCurrency(account);
     const id = cur.id;
+
+    if (!currenciesAccounts[id]) {
+      currenciesAccounts[id] = [account];
+    } else {
+      currenciesAccounts[id].push(account);
+    }
 
     if (account.balance.isGreaterThan(0)) {
       idCurrencies[id] = cur;
@@ -363,11 +370,13 @@ export function getAssetsDistribution(
       const currency = idCurrencies[id];
       const amount = idBalances[id];
       const countervalue = idCountervalues[id] ?? 0;
+      const currencyAccounts = currenciesAccounts[id];
       return {
         currency,
         countervalue,
         amount,
         distribution: isAvailable ? countervalue / sum : 0,
+        accounts: currencyAccounts,
       };
     })
     .sort((a, b) => {

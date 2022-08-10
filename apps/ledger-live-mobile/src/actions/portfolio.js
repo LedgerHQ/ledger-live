@@ -28,11 +28,15 @@ export function useBalanceHistoryWithCountervalue({
   return useBalanceHistoryWithCountervalueCommon({ account, range, to });
 }
 
-export function usePortfolio() {
+export function usePortfolio(accounts: AccountLike[]) {
   const to = useSelector(counterValueCurrencySelector);
-  const accounts = useSelector(accountsSelector);
+  const accountsSelected = useSelector(accountsSelector);
   const range = useSelector(selectedTimeRangeSelector);
-  return usePortfolioCommon({ accounts, range, to });
+  return usePortfolioCommon({
+    accounts: accounts || accountsSelected,
+    range,
+    to,
+  });
 }
 
 export function useCurrencyPortfolio({

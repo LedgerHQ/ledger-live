@@ -8,6 +8,8 @@ export const ScreenName = {
   Account: "Account",
   AccountCurrencySettings: "AccountCurrencySettings",
   Accounts: "Accounts",
+  Assets: "Assets",
+  Asset: "Asset",
   AccountSettingsMain: "AccountSettingsMain",
   AccountsSettings: "AccountsSettings",
   AddAccountsAccounts: "AddAccountsAccounts",
