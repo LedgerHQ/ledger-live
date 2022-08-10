@@ -69,7 +69,6 @@ import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
 
 import { track } from "../../analytics/segment";
-import { useLocale } from "../../context/Locale";
 
 const tracking = trackingWrapper(track);
 type Props = {
@@ -125,7 +124,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
   const accounts = flattenAccounts(useSelector(accountsSelector));
   const navigation = useNavigation();
-  const { locale } = useLocale();
 
   const [loadDate, setLoadDate] = useState(Date.now());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
