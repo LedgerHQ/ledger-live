@@ -1,19 +1,12 @@
-import React, { useState, useRef, useCallback, useMemo } from "react";
-import { StyleSheet, View, SectionList, FlatList } from "react-native";
-import { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import React, { useState, useCallback, useMemo } from "react";
+import { FlatList } from "react-native";
 import Animated, {
-  Value,
-  event,
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import {
-  isAccountEmpty,
-  groupAccountOperationsByDay,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   Account,
   AccountLike,
@@ -25,10 +18,8 @@ import {
   getAccountCapabilities,
   makeCompoundSummaryForAccount,
 } from "@ledgerhq/live-common/compound/logic";
-import { Trans } from "react-i18next";
-import { Text } from "@ledgerhq/native-ui";
+import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 import { useTheme } from "styled-components/native";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
@@ -40,14 +31,7 @@ import {
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
-import OperationRow from "../../components/OperationRow";
-import SectionHeader from "../../components/SectionHeader";
-import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
-import LoadingFooter from "../../components/LoadingFooter";
 import { ScreenName } from "../../const";
-import EmptyStateAccount from "./EmptyStateAccount";
-import NoOperationFooter from "../../components/NoOperationFooter";
-import { useScrollToTop } from "../../navigation/utils";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import AccountHeader from "./AccountHeader";
 import { getListHeaderComponents } from "./ListHeaderComponent";
@@ -55,6 +39,9 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import SectionContainer from "../WalletCentricSections/SectionContainer";
+import SectionTitle from "../WalletCentricSections/SectionTitle";
+import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 
 type Props = {
   navigation: any;
@@ -66,22 +53,9 @@ type RouteParams = {
   parentId?: string;
 };
 
-const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
-const List = accountSyncRefreshControl(AnimatedSectionList);
-
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
 );
-
-function renderSectionHeader({ section }: any) {
-  return <SectionHeader section={section} />;
-}
-
-function keyExtractor(item: Operation) {
-  return item.id;
-}
-
-const stickySectionHeight = 56;
 
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -96,6 +70,7 @@ const AccountScreenInner = ({
   account: AccountLike;
   parentAccount: Account | undefined;
 }) => {
+  const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -109,16 +84,6 @@ const AccountScreenInner = ({
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
-  const [opCount, setOpCount] = useState(100);
-  const ref = useRef();
-  const scrollY = useRef(new Value(0)).current;
-
-  useScrollToTop(ref);
-
-  const onEndReached = useCallback(() => {
-    setOpCount(opCount + 50);
-  }, [setOpCount, opCount]);
-
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
   }, [dispatch]);
@@ -130,43 +95,6 @@ const AccountScreenInner = ({
     });
   }, 300);
 
-  const ListEmptyComponent = useCallback(
-    () =>
-      isAccountEmpty(account) && (
-        <EmptyStateAccount
-          account={account}
-          parentAccount={parentAccount}
-          navigation={navigation}
-        />
-      ),
-    [account, parentAccount, navigation],
-  );
-
-  const renderItem = useCallback(
-    ({
-      item,
-      index,
-      section,
-    }: {
-      item: Operation;
-      index: number;
-      section: SectionBase<any>;
-    }) => {
-      if (!account) return null;
-
-      return (
-        <OperationRow
-          operation={item}
-          account={account}
-          parentAccount={parentAccount}
-          isFirst={index === 0}
-          isLast={section.data.length - 1 === index}
-        />
-      );
-    },
-    [account, parentAccount],
-  );
-
   const currency = getAccountCurrency(account);
 
   const analytics = (
@@ -176,10 +104,6 @@ const AccountScreenInner = ({
       operationsSize={account.operations.length}
     />
   );
-
-  const { sections, completed } = groupAccountOperationsByDay(account, {
-    count: opCount,
-  });
 
   const compoundCapabilities: any =
     account.type === "TokenAccount" &&
@@ -215,8 +139,8 @@ const AccountScreenInner = ({
         history,
         countervalueChange,
         cryptoChange,
-        counterValueCurrency,
         onAccountPress,
+        counterValueCurrency,
         onSwitchAccountCurrency,
         compoundSummary,
         isCollapsed,
@@ -225,6 +149,7 @@ const AccountScreenInner = ({
       }),
     [
       account,
+      onAccountPress,
       compoundSummary,
       counterValueCurrency,
       countervalueAvailable,
@@ -232,7 +157,7 @@ const AccountScreenInner = ({
       cryptoChange,
       history,
       isCollapsed,
-      onAccountPress,
+      onAccountCardLayout,
       onSwitchAccountCurrency,
       parentAccount,
       range,
@@ -242,46 +167,10 @@ const AccountScreenInner = ({
 
   const data = [
     ...listHeaderComponents,
-    // <List
-    //   ref={ref}
-    //   sections={sections}
-    //   style={[styles.sectionList]}
-    //   contentContainerStyle={styles.contentContainer}
-    //   ListHeaderComponent={() => (
-    //     <Text variant={"h3"} mt={8}>
-    //       <Trans i18nKey="account.lastTransactions" />
-    //     </Text>
-    //   )}
-    //   ListFooterComponent={
-    //     !completed ? (
-    //       <LoadingFooter />
-    //     ) : sections.length === 0 ? (
-    //       isAccountEmpty(account) ? null : (
-    //         <NoOperationFooter />
-    //       )
-    //     ) : (
-    //       <NoMoreOperationFooter />
-    //     )
-    //   }
-    //   ListEmptyComponent={ListEmptyComponent}
-    //   keyExtractor={keyExtractor}
-    //   renderItem={renderItem}
-    //   renderSectionHeader={renderSectionHeader}
-    //   onEndReached={onEndReached}
-    //   onScroll={event(
-    //     [
-    //       {
-    //         nativeEvent: {
-    //           contentOffset: { y: scrollY },
-    //         },
-    //       },
-    //     ],
-    //     { useNativeDriver: true },
-    //   )}
-    //   showsVerticalScrollIndicator={false}
-    //   accountId={account.id}
-    //   stickySectionHeadersEnabled={false}
-    // />,
+    <SectionContainer px={6} isLast>
+      <SectionTitle title={t("analytics.operations.title")} />
+      <OperationsHistorySection accounts={[account]} />
+    </SectionContainer>,
   ];
 
   return (
@@ -309,50 +198,5 @@ const AccountScreenInner = ({
     </TabBarSafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "column",
-  },
-  sectionList: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  balanceContainer: {
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  balanceText: {
-    fontSize: 22,
-    paddingBottom: 4,
-  },
-  contentContainer: {
-    paddingBottom: 64,
-    flexGrow: 1,
-  },
-  accountFabActions: {
-    width: "100%",
-    height: 56,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-  },
-  stickyContainer: {
-    width: "100%",
-    height: stickySectionHeight,
-    paddingVertical: 8,
-    position: "absolute",
-    left: 0,
-    top: 0,
-    zIndex: -100,
-    opacity: 0,
-  },
-  stickyBg: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: 0,
-  },
-});
 
 export default withDiscreetMode(AccountScreen);
