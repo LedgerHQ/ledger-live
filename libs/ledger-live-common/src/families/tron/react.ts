@@ -126,6 +126,7 @@ export function useTronPowerLoading(account: TronAccount): boolean {
         type: "SYNC_ONE_ACCOUNT",
         priority: 10,
         accountId: initialAccount.current.id,
+        reason: "tron-power-load",
       });
     }, 5000);
     return () => clearInterval(interval);

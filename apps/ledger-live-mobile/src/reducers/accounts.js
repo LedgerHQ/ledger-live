@@ -3,13 +3,11 @@ import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
 import type { OutputSelector } from "reselect";
+import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import type {
-  Account,
-  AccountLike,
   CryptoCurrency,
   TokenCurrency,
-  SubAccount,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import {
   makeCompoundSummaryForAccount,
   getAccountCapabilities,

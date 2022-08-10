@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import {
   starredMarketCoinsSelector,
   readOnlyModeEnabledSelector,

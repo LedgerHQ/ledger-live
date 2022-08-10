@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/live-common/types/index";
+import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import NftMedia from "./NftMedia";
 

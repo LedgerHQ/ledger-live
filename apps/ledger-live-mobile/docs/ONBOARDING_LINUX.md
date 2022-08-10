@@ -22,11 +22,10 @@ On [this page](https://github.com/settings/organizations), you can see that you 
 - Generate and link a GPG key to your Github account and Git using this nice guide : https://gist.github.com/ankurk91/c4f0e23d76ef868b139f3c28bde057fc
 
 ### Cloning
+
 Clone the following Ledger Live repositories :
 
-`git clone https://github.com/LedgerHQ/ledger-live-mobile.git`
-`git clone https://github.com/LedgerHQ/ledger-live-desktop.git`
-`git clone https://github.com/LedgerHQ/ledger-live-common.git`
+`git clone https://github.com/LedgerHQ/ledger-live.git`
 
 > Small tip : You probably have Sentinel One on your computer. It is an antivirus that constantly scans all your files on your computer to ensure its security. However, it is not adapted to a development environment and will slow down your node package installations or builds enormously and thus kill your productivity. Contact me on Slack to have a solution to mitigate this problem :)
 

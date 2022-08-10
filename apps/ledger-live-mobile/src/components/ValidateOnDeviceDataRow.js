@@ -3,7 +3,7 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
-import type { Unit } from "@ledgerhq/live-common/types/index";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";

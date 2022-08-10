@@ -1,6 +1,6 @@
 // @flow
 
-import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
