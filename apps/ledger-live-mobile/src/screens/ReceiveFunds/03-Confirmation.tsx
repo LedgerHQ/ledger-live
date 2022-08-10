@@ -55,9 +55,15 @@ type RouteParams = {
   onError?: () => void,
 };
 
-export default function ReceiveConfirmation({ navigation, route }: Props) {
-  const { colors } = useTheme();
+export default function ReceiveConfirmation({ navigation }: Props) {
+  const route = useRoute();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+
+  return account ? <ReceiveConfirmationInner navigation={navigation} route={route} account={account} parentAccount={parentAccount} /> : null
+}
+
+function ReceiveConfirmationInner({ navigation, route, account, parentAccount }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const verified = route.params?.verified;
   const [isModalOpened, setIsModalOpened] = useState(true);
