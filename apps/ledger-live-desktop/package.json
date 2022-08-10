@@ -22,7 +22,7 @@
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
     "build": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false STAGING=1 node ./tools/dist --nosign -v",
     "build:js": "cross-env NODE_ENV=production node ./tools/main.js build",
-    "build:testing": "cross-env NODE_ENV=production TESTING=1 node ./tools/main.js build",
+    "build:testing": "cross-env NODE_ENV=production TESTING=1 node ./tools/main.js build && pnpm --filter='dummy-live-app' i && pnpm --filter='dummy-live-app' build",
     "lint": "eslint src tools static --ext .js,.json,.ts,.tsx",
     "lint:fix": "eslint src tools static --ext .js,.json,.ts,.tsx --fix",
     "prettier": "prettier --write \"{src,tools}/**/*.{js,json}\"",
