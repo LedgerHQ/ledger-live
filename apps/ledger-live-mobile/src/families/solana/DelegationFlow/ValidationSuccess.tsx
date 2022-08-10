@@ -1,4 +1,5 @@
-import { Operation, Transaction } from "@ledgerhq/live-common/types/index";
+import { Operation } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/families/solana/types";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";

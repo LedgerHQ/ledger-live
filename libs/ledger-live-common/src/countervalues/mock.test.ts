@@ -13,6 +13,7 @@ import {
   parseFormattedDate,
 } from "./helpers";
 setEnv("MOCK", "1");
+setEnv("MOCK_COUNTERVALUES", "1");
 test("helpers", () => {
   expect(formatCounterValueDay(new Date())).toBe("2018-03-14");
   expect(formatCounterValueHour(new Date())).toBe("2018-03-14T17");

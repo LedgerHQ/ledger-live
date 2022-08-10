@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";

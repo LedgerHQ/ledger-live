@@ -1,6 +1,6 @@
 /* @flow */
 import React from "react";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";

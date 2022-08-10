@@ -1,13 +1,8 @@
 import React, { memo } from "react";
 
 import { useTheme } from "@react-navigation/native";
-
-import type {
-  NFTMetadataResponse,
-  Operation,
-  Currency,
-  Unit,
-} from "@ledgerhq/live-common/types/index";
+import type { NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { BigNumber } from "bignumber.js";
 
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

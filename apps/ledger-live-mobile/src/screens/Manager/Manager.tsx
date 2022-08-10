@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";

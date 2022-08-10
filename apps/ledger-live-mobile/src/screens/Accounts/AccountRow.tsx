@@ -5,12 +5,8 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import {
-  Account,
-  Currency,
-  TokenAccount,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Currency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
