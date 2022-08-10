@@ -8,7 +8,7 @@ interface Props {
 }
 
 export function Requirement({ required, provider }: Props) {
-  if (!provider || required === ActionRequired.None) {
+  if (required === ActionRequired.None) {
     return null;
   }
 

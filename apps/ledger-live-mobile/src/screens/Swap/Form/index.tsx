@@ -137,8 +137,8 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   // On provider change, reset banner and flow
   useEffect(() => {
-    setCurrentFlow(ActionRequired.None);
     setCurrentBanner(ActionRequired.None);
+    setCurrentFlow(ActionRequired.None);
     setErrorCode(undefined);
   }, [provider]);
 
@@ -266,7 +266,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         }
 
         // If status is ok, close login, kyc and mfa widgets even if open
-        setCurrentBanner(ActionRequired.None);
+        setCurrentFlow(ActionRequired.None);
 
         dispatch(
           setSwapKYCStatus({
@@ -316,7 +316,12 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
       // All other statuses are considered errors
       setErrorCode(status.codeName);
     }
-  }, [kyc, exchangeRate, dispatch, provider, currentFlow, swapTx.swap]);
+    /**
+     * Remove `swapTransaction` from dependency list because it seems to mess up
+     * with the `checkQuote` call (the endpoint gets called too often)
+     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kyc, exchangeRate, dispatch, provider, currentFlow]);
 
   const isSwapReady =
     !errorCode &&
