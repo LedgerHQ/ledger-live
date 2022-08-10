@@ -11,6 +11,7 @@ type Props = {
   onClose: () => void;
   deviceInfo: DeviceInfo;
   onSuccess: () => void;
+  onError: () => void;
   selectedLanguage: Language;
   currentLanguage: Language;
   onSelectLanguage: (language: Language) => void;
@@ -23,6 +24,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   deviceInfo,
   selectedLanguage,
   onSelectLanguage,
+  onError,
   currentLanguage,
   onSuccess,
 }: Props) => {
@@ -56,6 +58,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
           <ChangeDeviceLanguageAction
             onContinue={onCloseDrawer}
             onSuccess={onSuccess}
+            onError={onError}
             language={selectedLanguage}
           />
         ) : (

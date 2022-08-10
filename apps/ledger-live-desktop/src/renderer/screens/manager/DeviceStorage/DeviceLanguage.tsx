@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { Button, Flex, Icons } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import DeviceLanguageInstallation from "./DeviceLanguageInstallation";
@@ -10,19 +10,14 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 type Props = {
   // this makes sure that this component is only rendered if languageId is present in deviceInfo
   deviceInfo: DeviceInfo & { languageId: number };
+  onRefreshDeviceInfo: () => void;
   device: Device;
 };
 
-const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
+const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceInfo }: Props) => {
+  const deviceLanguage = idsToLanguage[deviceInfo.languageId];
   const [isLanguageInstallationOpen, setIsLanguageInstallation] = useState(false);
-  const [deviceLanguage, setDeviceLanguage] = useState<Language>(
-    idsToLanguage[deviceInfo.languageId],
-  );
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(deviceLanguage);
-
-  const refreshDeviceLanguage = useCallback(() => {
-    setDeviceLanguage(selectedLanguage);
-  }, [setDeviceLanguage, selectedLanguage]);
 
   const { t } = useTranslation();
 
@@ -46,10 +41,11 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
         onClose={() => setIsLanguageInstallation(false)}
         deviceInfo={deviceInfo}
         device={device}
+        onError={onRefreshDeviceInfo}
         onSelectLanguage={setSelectedLanguage}
         selectedLanguage={selectedLanguage}
         currentLanguage={deviceLanguage}
-        onSuccess={refreshDeviceLanguage}
+        onSuccess={onRefreshDeviceInfo}
       />
     </Flex>
   );

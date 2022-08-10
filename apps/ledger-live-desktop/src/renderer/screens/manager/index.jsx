@@ -8,6 +8,8 @@ import { command } from "~/renderer/commands";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Disconnected from "./Disconnected";
+import { setLastSeenDevice } from "~/renderer/actions/settings";
+import { useDispatch } from "react-redux";
 
 const connectManagerExec = command("connectManager");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManagerExec);
@@ -21,13 +23,32 @@ const Manager = () => {
     setResult(null);
     if (!firmwareUpdateOpened) setHasReset(true);
   }, []);
+
+  const dispatch = useDispatch();
+
+  const refreshDeviceInfo = useCallback(() => {
+    if (result?.device) {
+      command("getDeviceInfo")(result.device.deviceId)
+        .toPromise()
+        .then(deviceInfo => {
+          setResult({ ...result, deviceInfo });
+          dispatch(setLastSeenDevice({ deviceInfo }));
+        });
+    }
+  }, [result]);
+
   const onResult = useCallback(result => setResult(result), []);
 
   return (
     <>
       <SyncSkipUnderPriority priority={999} />
       {result ? (
-        <Dashboard {...result} onReset={onReset} appsToRestore={appsToRestore} />
+        <Dashboard
+          {...result}
+          onReset={onReset}
+          appsToRestore={appsToRestore}
+          onRefreshDeviceInfo={refreshDeviceInfo}
+        />
       ) : !hasReset ? (
         <DeviceAction onResult={onResult} action={action} request={null} />
       ) : (

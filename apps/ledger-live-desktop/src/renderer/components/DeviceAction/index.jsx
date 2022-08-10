@@ -138,6 +138,12 @@ const DeviceAction = <R, H, P>({
     }
   }, [dispatch, modelId, preferredDeviceModel]);
 
+  useEffect(() => {
+    if (error && onError) {
+      onError();
+    }
+  }, [error]);
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -257,9 +263,6 @@ const DeviceAction = <R, H, P>({
   }
 
   if (!isLoading && error) {
-    if(onError) {
-      onError();
-    }
     if (
       error instanceof ManagerNotEnoughSpaceError ||
       error instanceof OutdatedApp ||

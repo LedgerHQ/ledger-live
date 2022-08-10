@@ -14,14 +14,10 @@ const installLanguageExec = command("installLanguage");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : installLanguageExec);
 
 const DeviceLanguageInstalled = ({
-  onContinue,
-  onMount,
+  onContinue
 }: {
   onContinue: () => void;
-  onMount: () => void;
 }) => {
-  useEffect(() => onMount(), []);
-
   const { t } = useTranslation();
 
   return (
@@ -58,20 +54,19 @@ type Props = {
 
 const ChangeDeviceLanguageAction: React.FC<Props> = ({
   language,
-  onResult,
   onContinue,
   onError,
   onSuccess,
 }) => {
   const Result = useCallback(() => {
-    return <DeviceLanguageInstalled onContinue={onContinue} onMount={onSuccess} />;
-  }, [onContinue, onSuccess]);
+    return <DeviceLanguageInstalled onContinue={onContinue} />;
+  }, [onContinue]);
 
   return (
     <DeviceAction
       action={action}
       request={language}
-      onResult={onResult}
+      onResult={onSuccess}
       Result={Result}
       onError={onError}
     />
