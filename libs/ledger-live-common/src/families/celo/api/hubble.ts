@@ -79,7 +79,7 @@ const transactionToOperation = (
     : false;
   const data = transaction.data;
   const sender = data?.Account || data?.from;
-  const recipient = data?.Group || data?.to;
+  const recipient = data?.Group || data?.to || data?.Raw?.address;
   const fee = new BigNumber(transaction.data?.gas_used || 0).times(
     new BigNumber(transaction.data?.gas_price || 0)
   );
