@@ -1,6 +1,6 @@
 /* @flow */
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import perFamily from "../generated/SendRowsCustom";
 
 export default ({

@@ -7,7 +7,7 @@ import type {
   AccountLike,
   AccountLikeArray,
   SubAccount,
-} from "@ledgerhq/live-common/types/account";
+} from "@ledgerhq/types-live";
 
 export type SearchResult = {
   account: AccountLike,

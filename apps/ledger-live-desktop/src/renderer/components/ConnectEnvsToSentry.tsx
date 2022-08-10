@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { ipcRenderer } from "electron";
 import { EnvName, getEnv } from "@ledgerhq/live-common/env";
 import { defaultFeatures, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId } from "@ledgerhq/live-common/types";
+import { FeatureId } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "../experimental";
 import { setTags } from "../../sentry/renderer";
 
