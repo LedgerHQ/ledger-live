@@ -658,16 +658,15 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
         fromBitcoinResourcesRaw(bitcoinResourcesRaw);
       break;
     }
-    case "polkadot":
-      {
-        const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
-          .polkadotResources;
+    case "polkadot": {
+      const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
+        .polkadotResources;
 
-        if (polkadotResourcesRaw)
-          (res as PolkadotAccount).polkadotResources =
-            fromPolkadotResourcesRaw(polkadotResourcesRaw);
+      if (polkadotResourcesRaw)
+        (res as PolkadotAccount).polkadotResources =
+          fromPolkadotResourcesRaw(polkadotResourcesRaw);
       break;
-      }
+    }
     case "elrond": {
       const elrondResourcesRaw = (rawAccount as ElrondAccountRaw)
         .elrondResources;
