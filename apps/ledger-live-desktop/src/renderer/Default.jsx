@@ -189,6 +189,9 @@ export default function Default() {
             ) : null}
             <Switch>
               <Route path="/onboarding" render={props => <Onboarding {...props} />} />
+              <Route path="/USBTroubleshooting">
+                <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
+              </Route>
               {hasCompletedOnboarding && (
                 <Route>
                   <Route exact path="/walletconnect">
@@ -249,10 +252,6 @@ export default function Default() {
                           render={(props: any) => <Asset {...props} />}
                         />
                         <Route path="/swap" render={props => <Swap2 {...props} />} />
-                        <Route
-                          path="/USBTroubleshooting"
-                          render={props => <USBTroubleshooting {...props} />}
-                        />
 
                         <Route
                           path="/market/:currencyId"
