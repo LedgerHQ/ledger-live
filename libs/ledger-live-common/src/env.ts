@@ -102,7 +102,7 @@ const envDefinitions = {
   },
   API_STELLAR_HORIZON_FETCH_LIMIT: {
     parser: intParser,
-    def: 200,
+    def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
   },
   API_STELLAR_HORIZON_STATIC_FEE: {
@@ -409,6 +409,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values.",
+  },
+  MOCK_COUNTERVALUES: {
+    def: "",
+    parser: stringParser,
+    desc: "switch the countervalues resolution into a MOCK mode for test purpose",
   },
   MOCK_SWAP_KYC: {
     def: "",

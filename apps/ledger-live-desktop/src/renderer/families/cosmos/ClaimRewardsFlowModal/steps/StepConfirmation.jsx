@@ -65,7 +65,11 @@ function StepConfirmation({
     return (
       <Container>
         <TrackPage category="ClaimRewards Cosmos Flow" name="Step Confirmed" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={
             <Trans i18nKey={`cosmos.claimRewards.flow.steps.confirmation.success.${titleKey}`} />

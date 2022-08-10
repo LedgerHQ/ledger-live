@@ -18,7 +18,7 @@ expect.extend({
   },
 });
 
-setPlatformVersion("1.0.0");
+setPlatformVersion("1.1.0");
 
 setSupportedCurrencies([
   "bitcoin",
