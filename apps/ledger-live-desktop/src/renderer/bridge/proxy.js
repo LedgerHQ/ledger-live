@@ -155,6 +155,7 @@ export const getAccountBridge = (
     applyReconciliation: bridgeImpl.getAccountBridge(account, parentAccount).applyReconciliation,
     toAccountRaw: bridgeImpl.getAccountBridge(account, parentAccount).toAccountRaw,
     fromAccountRaw: bridgeImpl.getAccountBridge(account, parentAccount).fromAccountRaw,
+    mockAccount: bridgeImpl.getAccountBridge(account, parentAccount).mockAccount,
     signOperation,
     broadcast,
     estimateMaxSpendable,

@@ -29,7 +29,7 @@ import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
 import { PolkadotAccount } from "../families/polkadot/types";
 import { TezosAccount } from "../families/tezos/types";
-import { AlgorandAccount } from "../families/algorand/types";
+import { getAccountBridge } from "../bridge";
 
 function ensureNoNegative(operations) {
   let total = new BigNumber(0);
@@ -435,52 +435,51 @@ export function genAccount(
     );
   }
 
-  if (currency.id === "cosmos") {
-    (account as CosmosAccount).cosmosResources = {
-      // TODO variation in these
-      delegations: [],
-      redelegations: [],
-      unbondings: [],
-      delegatedBalance: new BigNumber(0),
-      pendingRewardsBalance: new BigNumber(0),
-      unbondingBalance: new BigNumber(0),
-      withdrawAddress: address,
-    };
-  }
-
-  if (currency.family === "bitcoin") {
-    (account as BitcoinAccount).bitcoinResources = {
-      utxos: [],
-      walletAccount: undefined,
-    };
-  }
-
-  if (currency.family === "algorand") {
-    (account as AlgorandAccount).algorandResources = {
-      rewards: new BigNumber(0),
-      nbAssets: account.subAccounts?.length ?? 0,
-    };
-  }
-
-  if (currency.family === "polkadot") {
-    (account as PolkadotAccount).polkadotResources = {
-      stash: null,
-      controller: null,
-      nonce: 0,
-      lockedBalance: new BigNumber(0),
-      unlockingBalance: new BigNumber(0),
-      unlockedBalance: new BigNumber(0),
-      unlockings: [],
-      nominations: [],
-      numSlashingSpans: 0,
-    };
-  }
-
-  if (currency.family === "tezos") {
-    (account as TezosAccount).tezosResources = {
-      revealed: true,
-      counter: 0,
-    };
+  switch (currency.family) {
+    case "cosmos":
+      (account as CosmosAccount).cosmosResources = {
+        // TODO variation in these
+        delegations: [],
+        redelegations: [],
+        unbondings: [],
+        delegatedBalance: new BigNumber(0),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
+        withdrawAddress: address,
+      };
+      break;
+    case "bitcoin":
+      (account as BitcoinAccount).bitcoinResources = {
+        utxos: [],
+        walletAccount: undefined,
+      };
+      break;
+    case "polkadot":
+      (account as PolkadotAccount).polkadotResources = {
+        stash: null,
+        controller: null,
+        nonce: 0,
+        lockedBalance: new BigNumber(0),
+        unlockingBalance: new BigNumber(0),
+        unlockedBalance: new BigNumber(0),
+        unlockings: [],
+        nominations: [],
+        numSlashingSpans: 0,
+      };
+      break;
+    case "tezos":
+      (account as TezosAccount).tezosResources = {
+        revealed: true,
+        counter: 0,
+      };
+      break;
+    default: {
+      const bridge = getAccountBridge(account);
+      const mockAccount = bridge.mockAccount;
+      if (mockAccount) {
+        mockAccount(account);
+      }
+    }
   }
 
   account.operations = Array(operationsSize)

@@ -168,6 +168,7 @@ export interface AccountBridge<T extends TransactionCommon> {
   ) => boolean;
   toAccountRaw?: (account: Account, accountRaw: AccountRaw) => void;
   fromAccountRaw?: (accountRaw: AccountRaw, account: Account) => void;
+  mockAccount?: (account: Account) => void;
   // finalizing a transaction by signing it with the ledger device
   // This results of a "signed" event with a signedOperation
   // than can be locally saved and later broadcasted

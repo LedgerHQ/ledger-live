@@ -25,6 +25,7 @@ import {
   toAccountRaw,
   fromAccountRaw,
 } from "../serialization";
+import { mockAccount } from "../mockAccount";
 
 const receive = makeAccountBridgeReceive();
 
@@ -109,6 +110,7 @@ const accountBridge: AccountBridge<AlgorandTransaction> = {
   applyReconciliation,
   toAccountRaw,
   fromAccountRaw,
+  mockAccount,
   signOperation,
   broadcast,
 };
