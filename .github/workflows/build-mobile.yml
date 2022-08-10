@@ -22,7 +22,7 @@ jobs:
     name: "Check if the PR is a fork"
     uses: ./.github/workflows/pr-is-fork.yml
     with:
-      non-pr-result: true
+      non-pr-result: false
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
