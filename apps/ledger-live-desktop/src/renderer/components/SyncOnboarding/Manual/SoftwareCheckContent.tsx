@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 
 import Check from "~/renderer/icons/Check";
+import { SoftwareCheckStatus } from "./SoftwareCheckStep";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 
 export const BorderFlex = styled(Flex)`
@@ -93,13 +94,12 @@ const Bullet = ({
   );
 };
 
-const SoftwareCheckContent = ({
-  genuineCheckStatus,
-  firmwareUpdateStatus,
-}: {
-  genuineCheckStatus: StatusType;
-  firmwareUpdateStatus: StatusType;
-}) => {
+export type Props = {
+  genuineCheckStatus: SoftwareCheckStatus;
+  firmwareUpdateStatus: SoftwareCheckStatus;
+};
+
+const SoftwareCheckContent = ({ genuineCheckStatus, firmwareUpdateStatus }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -108,7 +108,7 @@ const SoftwareCheckContent = ({
         bulletText="1"
         status={genuineCheckStatus}
         text={
-          genuineCheckStatus === Status.completed
+          genuineCheckStatus === SoftwareCheckStatus.completed
             ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.completed")
             : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.active")
         }
@@ -117,9 +117,9 @@ const SoftwareCheckContent = ({
         bulletText="2"
         status={firmwareUpdateStatus}
         text={
-          firmwareUpdateStatus === Status.inactive
+          firmwareUpdateStatus === SoftwareCheckStatus.inactive
             ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.inactive")
-            : firmwareUpdateStatus === Status.active
+            : firmwareUpdateStatus === SoftwareCheckStatus.active
             ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.active")
             : firmwareUpdateStatus === Status.updateAvailable
             ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.updateAvailable", {
