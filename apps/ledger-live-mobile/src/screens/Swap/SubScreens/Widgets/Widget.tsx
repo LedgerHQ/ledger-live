@@ -106,10 +106,10 @@ export function Widget({ provider, type }: Props) {
       source={{
         uri,
       }}
-      incognito={true}
       // to allow signin with Google
       userAgent="ledger-live-mobile"
       injectedJavaScriptBeforeContentLoaded={preload}
+      sharedCookiesEnabled={true}
       onMessage={handleMessage}
       startInLoadingState
       renderLoading={() => (
