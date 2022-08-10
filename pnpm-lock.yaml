@@ -969,7 +969,7 @@ importers:
       '@solana/spl-token': ^0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': ^1.0.3
-      '@stricahq/typhonjs': ^1.2.4
+      '@stricahq/typhonjs': ^1.2.5
       '@svgr/core': ^5.5.0
       '@taquito/ledger-signer': ^13.0.1
       '@taquito/taquito': ^13.0.1
@@ -1134,7 +1134,7 @@ importers:
       '@solana/spl-token': 0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': 1.0.4
-      '@stricahq/typhonjs': 1.2.4
+      '@stricahq/typhonjs': 1.2.5
       '@taquito/ledger-signer': 13.0.1
       '@taquito/taquito': 13.0.1
       '@taquito/utils': 13.0.1
@@ -15610,8 +15610,8 @@ packages:
       buffer: 6.0.3
     dev: false
 
-  /@stricahq/typhonjs/1.2.4:
-    resolution: {integrity: sha512-y9WoFYYAqmAr0EyAfym6JtT/YtVT8kFObeDeSJM/7yVZuRdoITIc+RckyOoBYp4dgXt5dMwRd+TmUxGZPUbesA==}
+  /@stricahq/typhonjs/1.2.5:
+    resolution: {integrity: sha512-5b849vjcyAob6GzQ9UG3hJFsQJ6pQqXxT0dDaH32QlOoTqiFo3/R9OuUXEzPAkFJIxpM1ShDos/RTSlix7iAWQ==}
     dependencies:
       '@stricahq/cbors': 1.0.1
       bech32: 2.0.0
