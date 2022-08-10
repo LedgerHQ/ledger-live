@@ -20,7 +20,11 @@ import {
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
-import { applyReconciliation, toAccountRaw, fromAccountRaw } from "../serialization";
+import {
+  applyReconciliation,
+  toAccountRaw,
+  fromAccountRaw,
+} from "../serialization";
 
 const receive = makeAccountBridgeReceive();
 

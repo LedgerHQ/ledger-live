@@ -46,10 +46,10 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const bridge = getAccountBridge(mainAccount, undefined);
 
   invariant(
-    mainAccount && mainAccount.accountResources,
+    mainAccount && mainAccount.algorandResources,
     "algorand Account required",
   );
-  const { rewards } = mainAccount.accountResources;
+  const { rewards } = mainAccount.algorandResources;
 
   const unit = getAccountUnit(mainAccount);
 

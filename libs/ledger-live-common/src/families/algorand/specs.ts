@@ -1,6 +1,6 @@
 import expect from "expect";
 import invariant from "invariant";
-import type { AlgorandTransaction } from "./types";
+import type { AlgorandAccount, AlgorandTransaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { isAccountEmpty } from "../../account";
 import { pickSiblings } from "../../bot/specs";
@@ -99,7 +99,9 @@ const algorand: AppSpec<AlgorandTransaction> = {
         };
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
-        const rewards = accountBeforeTransaction.accountResources?.rewards || 0;
+        const rewards =
+          (accountBeforeTransaction as AlgorandAccount).algorandResources
+            ?.rewards || 0;
         expect(account.balance.plus(rewards).toString()).toBe(
           accountBeforeTransaction.balance.minus(operation.value).toString()
         );
@@ -230,7 +232,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
       name: "claim rewards",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        const rewards = account.accountResources?.rewards;
+        const rewards = (account as AlgorandAccount).algorandResources?.rewards;
         invariant(rewards && rewards.gt(0), "No pending rewards");
         // Ensure that the rewards can effectively be claimed
         // (fees have to be paid in order to claim the rewards)
@@ -249,7 +251,8 @@ const algorand: AppSpec<AlgorandTransaction> = {
       },
       test: ({ account }) => {
         expect(
-          account.accountResources && account.accountResources.rewards.eq(0)
+          (account as AlgorandAccount).algorandResources &&
+            (account as AlgorandAccount).algorandResources.rewards.eq(0)
         ).toBe(true);
       },
     },

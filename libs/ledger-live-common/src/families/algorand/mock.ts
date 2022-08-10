@@ -2,10 +2,11 @@ import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import { genHex, genAddress } from "../../mock/helpers";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { AlgorandAccount } from "./types";
 
 function setAlgorandResources(account: Account): Account {
   /** format algorandResources given the new delegations */
-  account.accountResources = {
+  (account as AlgorandAccount).algorandResources = {
     rewards: account.balance.multipliedBy(0.01),
     nbAssets: account.subAccounts?.length ?? 0,
   };
@@ -89,7 +90,9 @@ function genAccountEnhanceOperations(account: Account, rng: Prando): Account {
  * @param {Account} account
  */
 function postSyncAccount(account: Account): Account {
-  const algorandResources = account.accountResources || { rewards: undefined };
+  const algorandResources = (account as AlgorandAccount).algorandResources || {
+    rewards: undefined,
+  };
   const rewards = algorandResources.rewards || new BigNumber(0);
   account.spendableBalance = account.balance.plus(rewards);
   return account;
@@ -110,7 +113,7 @@ function postScanAccount(
   }
 ): Account {
   if (isEmpty) {
-    account.accountResources = {
+    (account as AlgorandAccount).algorandResources = {
       rewards: new BigNumber(0),
       nbAssets: account.subAccounts?.length ?? 0,
     };

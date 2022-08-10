@@ -29,6 +29,7 @@ import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
 import { PolkadotAccount } from "../families/polkadot/types";
 import { TezosAccount } from "../families/tezos/types";
+import { AlgorandAccount } from "../families/algorand/types";
 
 function ensureNoNegative(operations) {
   let total = new BigNumber(0);
@@ -455,7 +456,7 @@ export function genAccount(
   }
 
   if (currency.family === "algorand") {
-    account.accountResources = {
+    (account as AlgorandAccount).algorandResources = {
       rewards: new BigNumber(0),
       nbAssets: account.subAccounts?.length ?? 0,
     };

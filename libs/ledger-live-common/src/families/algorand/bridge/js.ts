@@ -10,7 +10,11 @@ import { getTransactionStatus } from "../js-getTransactionStatus";
 import { signOperation } from "../js-signOperation";
 import { broadcast } from "../js-broadcast";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { applyReconciliation, toAccountRaw, fromAccountRaw } from "../serialization";
+import {
+  applyReconciliation,
+  toAccountRaw,
+  fromAccountRaw,
+} from "../serialization";
 
 const receive = makeAccountBridgeReceive();
 

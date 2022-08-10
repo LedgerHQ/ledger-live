@@ -428,7 +428,9 @@ export function patchAccount(
     default: {
       const bridge = getAccountBridge(account);
       const applyReconciliation = bridge.applyReconciliation;
-      changed = applyReconciliation(account, updatedRaw, next);
+      if (applyReconciliation) {
+        changed = changed || applyReconciliation(account, updatedRaw, next);
+      }
     }
   }
 

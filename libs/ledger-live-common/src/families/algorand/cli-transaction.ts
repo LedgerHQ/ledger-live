@@ -5,6 +5,8 @@ import { getAccountCurrency } from "../../account";
 import { extractTokenId } from "./tokens";
 import type { Account } from "@ledgerhq/types-live";
 import type { AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
+import type { AlgorandAccount } from "./types";
+
 const options = [
   {
     name: "mode",
@@ -84,7 +86,10 @@ function inferTransactions(
     invariant(transaction.family === "algorand", "algorand family");
 
     if (account.type === "Account") {
-      invariant(account.accountResources, "unactivated account");
+      invariant(
+        (account as AlgorandAccount).algorandResources,
+        "unactivated account"
+      );
     }
 
     if (account.type === "TokenAccount") {

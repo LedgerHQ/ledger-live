@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
-import type { AlgorandTransaction } from "./types";
+import type { AlgorandTransaction, AlgorandAccount } from "./types";
 import { computeAlgoMaxSpendable } from "./logic";
 import { createTransaction } from "./js-prepareTransaction";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
@@ -17,8 +17,8 @@ export const estimateMaxSpendable = async ({
   transaction?: AlgorandTransaction | null | undefined;
 }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const { accountResources } = mainAccount;
-  if (!accountResources) {
+  const { algorandResources } = mainAccount as AlgorandAccount;
+  if (!algorandResources) {
     throw new Error("Algorand account expected");
   }
 
@@ -43,7 +43,7 @@ export const estimateMaxSpendable = async ({
 
     let maxSpendable = computeAlgoMaxSpendable({
       accountBalance: mainAccount.balance,
-      nbAccountAssets: accountResources.nbAssets,
+      nbAccountAssets: algorandResources.nbAssets,
       mode: tx.mode,
     });
 

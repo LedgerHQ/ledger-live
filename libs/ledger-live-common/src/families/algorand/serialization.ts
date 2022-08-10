@@ -1,9 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import type { AlgorandResourcesRaw, AlgorandResources, AlgorandAccount, AlgorandAccountRaw } from "./types";
 import type {
-  Account,
-  AccountRaw,
-} from "@ledgerhq/types-live";
+  AlgorandResourcesRaw,
+  AlgorandResources,
+  AlgorandAccount,
+  AlgorandAccountRaw,
+} from "./types";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 
 function toResourcesRaw(r: AlgorandResources): AlgorandResourcesRaw {
@@ -21,7 +23,11 @@ function fromResourcesRaw(r: AlgorandResourcesRaw): AlgorandResources {
   };
 }
 
-export function applyReconciliation(account: Account, updatedRaw: AccountRaw, next: Account): boolean {
+export function applyReconciliation(
+  account: Account,
+  updatedRaw: AccountRaw,
+  next: Account
+): boolean {
   let changed = false;
   const algorandAcc = account as AlgorandAccount;
   const algorandUpdatedRaw = updatedRaw as AlgorandAccountRaw;
@@ -40,15 +46,20 @@ export function applyReconciliation(account: Account, updatedRaw: AccountRaw, ne
 }
 
 export function toAccountRaw(account: Account, accountRaw: AccountRaw): void {
-  (accountRaw as AlgorandAccountRaw).algorandResources = toResourcesRaw(
-    (account as AlgorandAccount).algorandResources
-  );
+  const algorandAccount = account as AlgorandAccount;
+  const algorandAccountRaw = accountRaw as AlgorandAccountRaw;
+  if (algorandAccount.algorandResources) {
+    algorandAccountRaw.algorandResources = toResourcesRaw(
+      algorandAccount.algorandResources
+    );
+  }
 }
 
 export function fromAccountRaw(accountRaw: AccountRaw, account: Account): void {
-  const algoResourcesRaw = (accountRaw as AlgorandAccountRaw)
-  .algorandResources;
-if (algoResourcesRaw)
-  (account as AlgorandAccount).algorandResources =
-    fromResourcesRaw(algoResourcesRaw);
+  const algorandResourcesRaw = (accountRaw as AlgorandAccountRaw)
+    .algorandResources;
+  const algorandAccount = account as AlgorandAccount;
+  if (algorandResourcesRaw) {
+    algorandAccount.algorandResources = fromResourcesRaw(algorandResourcesRaw);
+  }
 }

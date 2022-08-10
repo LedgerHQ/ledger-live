@@ -20,7 +20,7 @@ type Props = {
 };
 
 const RewardsSection = ({ account }: Props) => {
-  const { rewards } = account.accountResources || {};
+  const { rewards } = account.algorandResources || {};
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const dispatch = useDispatch();
@@ -77,9 +77,9 @@ const RewardsSection = ({ account }: Props) => {
 };
 
 const Rewards = ({ account }: Props) => {
-  const { accountResources } = account;
+  const { algorandResources } = account;
 
-  if (!accountResources) return null;
+  if (!algorandResources) return null;
 
   return <RewardsSection account={account} />;
 };

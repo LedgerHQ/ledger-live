@@ -17,7 +17,7 @@ const dataset: DatasetTest<AlgorandTransaction> = {
   currencies: {
     algorand: {
       FIXME_ignoreAccountFields: [
-        "accountResources.rewards", // We cant keep track of this since it's always moving
+        "algorandResources.rewards", // We cant keep track of this since it's always moving
         "balance", // Rewards are included, same as above
         "spendableBalance", // Same since the rewards are included here too
       ],

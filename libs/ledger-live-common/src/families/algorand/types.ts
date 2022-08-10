@@ -1,7 +1,7 @@
 import type { BigNumber } from "bignumber.js";
 import type {
   Account,
-  AccountRaw,  
+  AccountRaw,
   Operation,
   OperationRaw,
   TransactionCommon,

@@ -22,10 +22,10 @@ type Props = {
 
 const RewardsSection = ({ account }: Props) => {
   invariant(
-    account && account.accountResources,
+    account && account.algorandResources,
     "algorand resources required",
   );
-  const { rewards } = account.accountResources;
+  const { rewards } = account.algorandResources;
 
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
@@ -73,9 +73,9 @@ const RewardsSection = ({ account }: Props) => {
 };
 
 const Rewards = ({ account }: Props) => {
-  const { accountResources } = account;
+  const { algorandResources } = account;
 
-  if (!accountResources) return null;
+  if (!algorandResources) return null;
 
   return <RewardsSection account={account} />;
 };

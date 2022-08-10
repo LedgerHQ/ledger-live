@@ -18,7 +18,7 @@ import {
   ClaimRewardsFeesWarning,
   AlgorandASANotOptInInRecipient,
 } from "../../errors";
-import type { AlgorandResources, Transaction } from "./types";
+import type { Transaction, AlgorandAccount } from "./types";
 import { extractTokenId } from "./tokens";
 import {
   ALGORAND_MAX_MEMO_SIZE,
@@ -58,8 +58,11 @@ export const getTransactionStatus = async (a: Account, t: Transaction) => {
   let amount = t.amount;
   let totalSpent = estimatedFees;
 
-  invariant(a.accountResources, "Algorand family expected");
-  const algorandResources = a.accountResources as AlgorandResources;
+  invariant(
+    (a as AlgorandAccount).algorandResources,
+    "Algorand family expected"
+  );
+  const algorandResources = (a as AlgorandAccount).algorandResources;
 
   const algoSpendableBalance = computeAlgoMaxSpendable({
     accountBalance: a.balance,
