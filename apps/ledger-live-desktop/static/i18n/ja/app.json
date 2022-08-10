@@ -3220,15 +3220,15 @@
           },
           "1" : {
             "title" : "秘密鍵は自分で管理しましょう",
-            "desc" : "秘密鍵はお使いのNano上に保存されています。資産は、お客様ご自身で管理・所有しなければなりません。"
+            "desc" : "Your private key is stored within your Nano.\nYou must be the only one to own it to be in control of your money"
           },
           "2" : {
             "title" : "常にオフラインで保管する",
-            "desc" : "Nanoは、「コールドストレージ」のウォレットとして機能します。つまり、アプリを使用している間も、秘密鍵がオンラインで公開されることは絶対にありません。"
+            "desc" : "Your Nano works as a \"cold storage\" wallet.\nThis means that it never exposes your private key online, even when using the app"
           },
           "3" : {
             "title" : "トランザクションを検証する",
-            "desc" : "Ledger Liveでは、暗号資産の購入・売却・管理・交換・報酬の獲得を、保護された安全な状態で行うことができます。<br/>暗号資産の取引はすべて、Nanoを使って認証されます。"
+            "desc" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected.\nYou will validate every crypto transaction with your Nano"
           },
           "4" : {
             "title" : "Nanoをセットアップしましょう",
