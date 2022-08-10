@@ -100,6 +100,10 @@ jobs:
           ref: ${{ github.event.inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
+      - name: Install node-gyp globally
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          pnpm add -g node-gyp
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
