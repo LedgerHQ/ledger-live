@@ -3233,15 +3233,15 @@
           },
           "1": {
             "title": "Own your private key",
-            "desc": "Your private key is stored within your Nano You must be the only one to own it to be in control of your money"
+            "desc": "Your private key is stored within your Nano.\nYou must be the only one to own it to be in control of your money"
           },
           "2": {
             "title": "Stay offline",
-            "desc": "Your Nano works as a \"cold storage\" wallet This means that it never exposes your private key online, even when using the app"
+            "desc": "Your Nano works as a \"cold storage\" wallet.\nThis means that it never exposes your private key online, even when using the app"
           },
           "3": {
             "title": "Validate transactions",
-            "desc": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected You will validate every crypto transaction with your Nano"
+            "desc": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected.\nYou will validate every crypto transaction with your Nano"
           },
           "4": {
             "title": "Let's set up your nano",
