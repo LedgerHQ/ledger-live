@@ -168,6 +168,20 @@ export default function Default() {
     }
   }, [history, hasCompletedOnboarding]);
 
+  useEffect(() => {
+    const script = document.createElement("script");
+
+    script.src = "https://web-story.storyly.io/v2/storyly-web.js";
+    script["custom-element"] = "storyly-web";
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <>
       <TriggerAppReady />

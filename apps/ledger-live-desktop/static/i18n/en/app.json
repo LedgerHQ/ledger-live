@@ -1081,7 +1081,12 @@
       }
     },
     "manual": {
+      "recoveryContent": {
+        "title": "Recovery phrase",
+        "content": "Tap on the videos below to learn more about your secret recovery phrase"
+      },
       "softwareCheckContent": {
+        "title": "Software check",
         "genuineCheck": {
           "active": "Checking Nano",
           "completed": "Nano is authentic"

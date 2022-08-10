@@ -17,6 +17,7 @@ import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import GenuineCheckModal from "./GenuineCheckModal";
 import SoftwareCheckContent from "./SoftwareCheckContent";
+import RecoveryContent from "./RecoveryContent";
 
 const readyRedirectDelay = 2500;
 
@@ -68,17 +69,15 @@ const SyncOnboardingManual = () => {
     },
     {
       key: StepKey.Seed,
-      status: "inactive",
-      title: "Recovery phrase",
-      renderBody: () => (
-        <Text>{`Tap on the videos below to learn more about your secret recovery phrase`}</Text>
-      ),
+      status: "active",
+      title: t("syncOnboarding.manual.recoveryContent.title"),
+      renderBody: () => <RecoveryContent />,
       estimatedTime: 300,
     },
     {
       key: StepKey.SoftwareCheck,
       status: "inactive",
-      title: "Software check",
+      title: t("syncOnboarding.manual.softwareCheckContent.title"),
       renderBody: () => (
         <SoftwareCheckContent genuineCheckStatus="active" firmwareUpdateStatus="inactive" />
       ),
