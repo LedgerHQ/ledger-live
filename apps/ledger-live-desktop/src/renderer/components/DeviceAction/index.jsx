@@ -42,6 +42,7 @@ type OwnProps<R, H, P> = {
   overridesPreferredDeviceModel?: DeviceModelId,
   Result?: React$ComponentType<P>,
   onResult?: P => void,
+  onError?: () => void,
   action: Action<R, H, P>,
   request: R,
 };
@@ -78,6 +79,7 @@ const DeviceAction = <R, H, P>({
   request,
   Result,
   onResult,
+  onError,
   // $FlowFixMe god of flow help me
   reduxDevice,
   overridesPreferredDeviceModel,
@@ -255,6 +257,9 @@ const DeviceAction = <R, H, P>({
   }
 
   if (!isLoading && error) {
+    if(onError) {
+      onError();
+    }
     if (
       error instanceof ManagerNotEnoughSpaceError ||
       error instanceof OutdatedApp ||

@@ -13,13 +13,6 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 const installLanguageExec = command("installLanguage");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : installLanguageExec);
 
-type Props = {
-  language: Language;
-  onResult?: () => void;
-  onSuccess: () => void;
-  onContinue: () => void;
-};
-
 const DeviceLanguageInstalled = ({
   onContinue,
   onMount,
@@ -55,17 +48,34 @@ const DeviceLanguageInstalled = ({
   );
 };
 
+type Props = {
+  language: Language;
+  onResult?: () => void;
+  onError?: () => void;
+  onSuccess: () => void;
+  onContinue: () => void;
+};
+
 const ChangeDeviceLanguageAction: React.FC<Props> = ({
   language,
   onResult,
   onContinue,
+  onError,
   onSuccess,
 }) => {
   const Result = useCallback(() => {
     return <DeviceLanguageInstalled onContinue={onContinue} onMount={onSuccess} />;
   }, [onContinue, onSuccess]);
 
-  return <DeviceAction action={action} request={language} onResult={onResult} Result={Result} />;
+  return (
+    <DeviceAction
+      action={action}
+      request={language}
+      onResult={onResult}
+      Result={Result}
+      onError={onError}
+    />
+  );
 };
 
 export default withV3StyleProvider(ChangeDeviceLanguageAction);
