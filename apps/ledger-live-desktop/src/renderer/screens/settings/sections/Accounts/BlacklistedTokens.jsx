@@ -23,7 +23,11 @@ export default function BlacklistedTokens() {
   const [sectionVisible, setSectionVisible] = useState(false);
 
   // Trigger a sync on unmounting the block
-  useEffect(() => () => sync({ type: "SYNC_ALL_ACCOUNTS", priority: 5 }), [sync]);
+  useEffect(
+    () => () =>
+      sync({ type: "SYNC_ALL_ACCOUNTS", priority: 5, reason: "tokens-ignore-list-change" }),
+    [sync],
+  );
 
   const onShowToken = useCallback(
     tokenId => {

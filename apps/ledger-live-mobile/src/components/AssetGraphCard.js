@@ -2,7 +2,7 @@
 import React, { useState, useCallback } from "react";
 import { useTheme } from "@react-navigation/native";
 import { View, StyleSheet, Platform } from "react-native";
-import type { Unit, Currency } from "@ledgerhq/live-common/types/index";
+import type { Unit, Currency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type {
   ValueChange,
