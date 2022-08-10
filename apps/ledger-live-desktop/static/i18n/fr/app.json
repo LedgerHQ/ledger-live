@@ -3220,15 +3220,15 @@
           },
           "1" : {
             "title" : "Détenez votre clé privée",
-            "desc" : "Votre clé privée est stockée dans votre Nano. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+            "desc" : "Your private key is stored within your Nano.\nYou must be the only one to own it to be in control of your money"
           },
           "2" : {
             "title" : "Restez hors ligne",
-            "desc" : "Votre Nano est un wallet physique de stockage à froid. Cela signifie que votre clé privée n’est jamais exposée sur Internet, même lorsque vous utilisez Ledger Live."
+            "desc" : "Your Nano works as a \"cold storage\" wallet.\nThis means that it never exposes your private key online, even when using the app"
           },
           "3" : {
             "title" : "Validez vos transactions",
-            "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction en cryptos avec votre Nano."
+            "desc" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected.\nYou will validate every crypto transaction with your Nano"
           },
           "4" : {
             "title" : "Configurez votre Nano",
