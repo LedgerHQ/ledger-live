@@ -263,7 +263,10 @@ const FabMarketActionsComponent: React.FC<Props> = ({
                 NavigatorName.ReceiveFunds,
                 {
                   screen: ScreenName.ReceiveConfirmation,
-                  params: { currency, account: accounts?.[0] },
+                  params: {
+                    parentId: defaultAccount?.parentId,
+                    accountId: defaultAccount.id,
+                  },
                 },
               ],
             },
