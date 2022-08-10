@@ -11,7 +11,7 @@ const Wrapper = styled(Flex).attrs({
   position: "relative",
   flex: 1,
   justifyContent: "center",
-  width: "350px",
+  width: "400px",
   margin: "auto",
   height: "100%",
 })`
@@ -41,7 +41,7 @@ const Slide = ({ title, description, image }: SlideProps): React.ReactElement =>
       <Text mb={12} variant="h3" color="palette.constant.black">
         {title}
       </Text>
-      <Text mb={76} variant="body" color="palette.constant.black">
+      <Text mb={76} variant="body" color="palette.constant.black" whiteSpace="pre-line">
         {description}
       </Text>
     </Wrapper>
