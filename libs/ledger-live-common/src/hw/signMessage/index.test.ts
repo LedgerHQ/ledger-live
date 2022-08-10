@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { isEIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712";
 import eIP712Message from "@ledgerhq/hw-app-eth/tests/sample-messages/0.json";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
