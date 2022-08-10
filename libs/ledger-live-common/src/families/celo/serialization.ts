@@ -32,7 +32,7 @@ export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
     })),
     electionAddress,
     lockedGoldAddress,
-    maxNumGroupsVotedFor: maxNumGroupsVotedFor.toString(),
+    maxNumGroupsVotedFor: maxNumGroupsVotedFor?.toString(),
   };
 }
 
