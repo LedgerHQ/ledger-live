@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsSelector } from "../reducers/accounts";

@@ -8,7 +8,8 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/helpers";
 import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
-import { AccountLike, CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";

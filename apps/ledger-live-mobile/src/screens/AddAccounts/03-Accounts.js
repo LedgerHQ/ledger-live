@@ -22,11 +22,11 @@ import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/addAcc
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
+import type { Account } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   TokenCurrency,
-  Account,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";

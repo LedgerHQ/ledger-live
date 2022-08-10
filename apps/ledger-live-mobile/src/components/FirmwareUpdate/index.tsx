@@ -14,7 +14,7 @@ import {
 } from "../../actions/appstate";
 import BottomModal from "../BottomModal";
 import GenericErrorView from "../GenericErrorView";
-import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import ConfirmRecoveryStep from "./ConfirmRecoveryStep";
 import FlashMcuStep from "./FlashMcuStep";

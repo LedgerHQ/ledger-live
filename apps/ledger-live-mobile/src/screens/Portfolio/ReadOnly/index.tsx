@@ -20,7 +20,7 @@ import {
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,

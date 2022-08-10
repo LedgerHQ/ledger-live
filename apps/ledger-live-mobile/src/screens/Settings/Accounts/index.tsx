@@ -3,10 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { findTokenById } from "@ledgerhq/live-common/currencies/index";
-import {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "styled-components/native";
 import SettingsRow from "../../../components/SettingsRow";
 import { showToken } from "../../../actions/settings";

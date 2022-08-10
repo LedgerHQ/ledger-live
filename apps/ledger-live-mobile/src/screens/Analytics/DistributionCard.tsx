@@ -1,10 +1,6 @@
 import React, { useCallback, useMemo } from "react";
-import {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/currencies";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-
 import styled, { useTheme } from "styled-components/native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

@@ -3,6 +3,8 @@ import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
 import { Drawer } from "tests/models/Drawer";
+import { Modal } from "tests/models/Modal";
+import { DeviceAction } from "tests/models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
 
 // Comment out to disable recorder
@@ -43,7 +45,9 @@ test("Discover", async ({ page }) => {
 
   const discoverPage = new DiscoverPage(page);
   const drawer = new Drawer(page);
+  const modal = new Modal(page);
   const layout = new Layout(page);
+  const deviceAction = new DeviceAction(page);
 
   await test.step("Navigate to catalog", async () => {
     await layout.goToDiscover();
@@ -52,7 +56,7 @@ test("Discover", async ({ page }) => {
 
   await test.step("Open Test App", async () => {
     await discoverPage.openTestApp();
-    await expect.soft(page).toHaveScreenshot("open-test-app.png");
+    await expect.soft(drawer.content).toContainText("External Application");
   });
 
   await test.step("Accept Live App Disclaimer", async () => {
@@ -67,22 +71,53 @@ test("Discover", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("live-app-list-all-accounts.png");
   });
 
-  await test.step("Request Account modal - open", async () => {
+  await test.step("Request Account drawer - open", async () => {
     await discoverPage.requestAccount();
-    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-1.png");
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-drawer.png");
   });
 
   await test.step("Request Account - select asset", async () => {
     await discoverPage.selectAsset();
-    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-2.png");
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-select-account.png");
   });
 
   await test.step("Request Account - select BTC", async () => {
     await discoverPage.selectAccount();
-    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-3.png");
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-output.png");
   });
 
-  await test.step("Request Account - single account output", async () => {
-    await expect.soft(page).toHaveScreenshot("live-app-request-single-account-output.png");
+  await test.step("List currencies", async () => {
+    await discoverPage.listCurrencies();
+    await expect.soft(page).toHaveScreenshot("live-app-list-currencies.png");
+  });
+  
+  await test.step("Verify Address - modal", async () => {
+    await discoverPage.verifyAddress();
+    await deviceAction.openApp();
+    await expect.soft(page).toHaveScreenshot("live-app-verify-address.png");
+  });
+
+  await test.step("Verify Address - address output", async () => {
+    await modal.waitForModalToDisappear();
+    await expect.soft(page).toHaveScreenshot("live-app-verify-address-output.png");
+  });
+
+  await test.step("Sign Transaction - info modal", async () => {
+    await discoverPage.signTransaction();
+    await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-info.png", {
+      timeout: 20000,
+    });
+  });
+
+  await test.step("Sign Transaction - confirmation modal", async () => {
+    await discoverPage.continueToSignTransaction();
+    await layout.waitForLoadingSpinnerToHaveDisappeared();
+    await discoverPage.waitForConfirmationScreenToBeDisplayed();
+    await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-confirm.png");
+  });
+
+  await test.step("Sign Transaction - signature output", async () => {
+    await modal.waitForModalToDisappear();
+    await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-output.png");
   });
 });

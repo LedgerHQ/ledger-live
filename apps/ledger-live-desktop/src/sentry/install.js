@@ -10,8 +10,8 @@ import "../env";
 // initially we will send errors (anonymized as we don't initially know "userId" neither)
 let shouldSendCallback = () => true;
 
-let productionBuildSampleRate = 0.2;
-let tracesSampleRate = 0.1;
+let productionBuildSampleRate = 0.5;
+let tracesSampleRate = 0.005;
 
 if (process.env.SENTRY_SAMPLE_RATE) {
   const v = parseFloat(process.env.SENTRY_SAMPLE_RATE);
@@ -20,19 +20,56 @@ if (process.env.SENTRY_SAMPLE_RATE) {
 }
 
 const ignoreErrors = [
-  "failed with status code",
-  "status code 404",
-  "timeout",
-  "socket hang up",
-  "getaddrinfo",
-  "could not read from HID device",
+  // networking conditions
+  "API HTTP",
+  "DisconnectedError",
+  "ECONNREFUSED",
+  "ECONNRESET",
+  "EHOSTUNREACH",
+  "ENETUNREACH",
   "ENOTFOUND",
   "ETIMEDOUT",
-  "ECONNRESET",
-  "ENETUNREACH",
-  "request timed out",
+  "ERR_CONNECTION_RESET",
+  "getaddrinfo",
+  "HttpError",
+  "Network Error",
   "NetworkDown",
+  "NetworkDown",
+  "NotConnectedError",
+  "socket disconnected",
+  "socket hang up",
+  "status code 404",
+  // timeouts
   "ERR_CONNECTION_TIMED_OUT",
+  "request timed out",
+  "SolanaTxConfirmationTimeout",
+  "TimeoutError",
+  "TronTransactionExpired", // user waits too long on device, possibly network slowness too
+  "WebsocketConnectionError",
+  // bad usage of device
+  "BleError",
+  "BluetoothRequired",
+  "CantOpenDevice",
+  "could not read from HID device",
+  "DeviceOnDashboardExpected",
+  "DisconnectedDevice",
+  "DisconnectedDeviceDuringOperation",
+  "EthAppPleaseEnableContractData",
+  "failed with status code",
+  "GetAppAndVersionUnsupportedFormat",
+  "Invalid channel",
+  "Ledger Device is busy",
+  "ManagerDeviceLocked",
+  "PairingFailed",
+  // other
+  "AccountAwaitingSendPendingOperations",
+  "AccountNeedResync",
+  "Cannot update while running on a read-only volume",
+  "DeviceAppVerifyNotSupported",
+  "InvalidAddressError",
+  "Received an invalid JSON-RPC message",
+  "SwapNoAvailableProviders",
+  "TransactionRefusedOnDevice",
 ];
 
 export function init(Sentry: any, opts: any) {

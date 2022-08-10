@@ -1,19 +1,39 @@
 import { useState, useEffect } from "react";
 import { Subscription } from "rxjs";
+import { isEqual } from "lodash";
 import type { Device } from "../../hw/actions/types";
 import { DeviceOnboardingStatePollingError } from "@ledgerhq/errors";
 
-import type { OnboardingStatePollingResult } from "../../hw/getOnboardingStatePolling";
-import { getOnboardingStatePolling } from "../../hw/getOnboardingStatePolling";
+import type {
+  OnboardingStatePollingResult,
+  GetOnboardingStatePollingArgs,
+  GetOnboardingStatePollingResult,
+} from "../../hw/getOnboardingStatePolling";
+import { getOnboardingStatePolling as defaultGetOnboardingStatePolling } from "../../hw/getOnboardingStatePolling";
 import { OnboardingState } from "../../hw/extractOnboardingState";
 
 export type UseOnboardingStatePollingResult = OnboardingStatePollingResult & {
   fatalError: Error | null;
 };
 
+export type UseOnboardingStatePollingDependencies = {
+  getOnboardingStatePolling?: (
+    args: GetOnboardingStatePollingArgs
+  ) => GetOnboardingStatePollingResult;
+};
+
+export type UseOnboardingStatePollingArgs =
+  UseOnboardingStatePollingDependencies & {
+    device: Device | null;
+    pollingPeriodMs: number;
+    stopPolling?: boolean;
+  };
+
 /**
  * Polls the current device onboarding state, and notify the hook consumer of
  * any allowed errors and fatal errors
+ * @param getOnboardingStatePolling A polling function, by default set to live-common/hw/getOnboardingStatePolling.
+ * This dependency injection is needed for LLD to have the polling working on the internal thread
  * @param device A Device object
  * @param pollingPeriodMs The period in ms after which the device onboarding state is fetched again
  * @param stopPolling Flag to stop or continue the polling
@@ -23,14 +43,11 @@ export type UseOnboardingStatePollingResult = OnboardingStatePollingResult & {
  * - fatalError: any error that is fatal and stops the polling
  */
 export const useOnboardingStatePolling = ({
+  getOnboardingStatePolling = defaultGetOnboardingStatePolling,
   device,
   pollingPeriodMs,
   stopPolling = false,
-}: {
-  device: Device | null;
-  pollingPeriodMs: number;
-  stopPolling?: boolean;
-}): UseOnboardingStatePollingResult => {
+}: UseOnboardingStatePollingArgs): UseOnboardingStatePollingResult => {
   const [onboardingState, setOnboardingState] =
     useState<OnboardingState | null>(null);
   const [allowedError, setAllowedError] = useState<Error | null>(null);
@@ -49,11 +66,23 @@ export const useOnboardingStatePolling = ({
         next: (onboardingStatePollingResult: OnboardingStatePollingResult) => {
           if (onboardingStatePollingResult) {
             setFatalError(null);
-            setAllowedError(onboardingStatePollingResult.allowedError);
+            // Only updates if the new allowedError is different
+            setAllowedError((prevAllowedError) =>
+              getNewAllowedErrorIfChanged(
+                prevAllowedError,
+                onboardingStatePollingResult.allowedError
+              )
+            );
 
             // Does not update the onboarding state if an allowed error occurred
             if (!onboardingStatePollingResult.allowedError) {
-              setOnboardingState(onboardingStatePollingResult.onboardingState);
+              // Only updates if the new onboardingState is different
+              setOnboardingState((prevOnboardingState) =>
+                getNewOnboardingStateIfChanged(
+                  prevOnboardingState,
+                  onboardingStatePollingResult.onboardingState
+                )
+              );
             }
           }
         },
@@ -80,7 +109,27 @@ export const useOnboardingStatePolling = ({
     setAllowedError,
     setFatalError,
     stopPolling,
+    getOnboardingStatePolling,
   ]);
 
   return { onboardingState, allowedError, fatalError };
+};
+
+const getNewOnboardingStateIfChanged = (
+  prevOnboardingState: OnboardingState | null,
+  newOnboardingState: OnboardingState | null
+): OnboardingState | null => {
+  return isEqual(prevOnboardingState, newOnboardingState)
+    ? prevOnboardingState
+    : newOnboardingState;
+};
+
+const getNewAllowedErrorIfChanged = (
+  prevError: Error | null,
+  newError: Error | null
+): Error | null => {
+  // Only interested if the errors are instances of the same Error class
+  return prevError?.constructor === newError?.constructor
+    ? prevError
+    : newError;
 };
