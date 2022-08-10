@@ -16,6 +16,7 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/src/currencies";
+import { FabAssetActions } from "../../components/FabActions";
 
 type RouteParams = {
   currencyId: string;
@@ -49,7 +50,21 @@ const AssetScreen = ({ route }: Props) => {
   const data = useMemo(
     () => [
       <SectionContainer px={6}>
-        <SectionTitle title={t("portfolio.marketPriceSection.title", { currencyTicker: currency.ticker })} />
+        <SectionTitle
+          title={t("account.quickActions")}
+          containerProps={{ mb: 6 }}
+        ></SectionTitle>
+        <FabAssetActions
+          currency={currency}
+          accounts={accounts}
+        ></FabAssetActions>
+      </SectionContainer>,
+      <SectionContainer px={6}>
+        <SectionTitle
+          title={t("portfolio.marketPriceSection.title", {
+            currencyTicker: currency.ticker,
+          })}
+        />
         <MarketPriceSection currency={currency} />
       </SectionContainer>,
       <SectionContainer px={6} mb={8} isLast>
