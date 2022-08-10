@@ -106,7 +106,7 @@ export class DiscoverPage {
   }
 
   async getWebviewHeadingElementByText() {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     const text = await this.page.evaluate(() => {
       const webview = document.querySelector("webview");
@@ -122,7 +122,6 @@ export class DiscoverPage {
         });
       return textToReturn;
     });
-    console.log("TEXT: " + text);
 
     return text;
   }
@@ -131,7 +130,15 @@ export class DiscoverPage {
     await this.topBarGoBackButton.click({ force: true });
   }
 
+  async getBackButtonStatus() {
+    return await this.topBarGoBackButton.getAttribute("cursor");
+  }
+
   async goForward() {
-    await this.topBarGoForwardButton.click({ force: true });
+    return await this.topBarGoForwardButton.click({ force: true });
+  }
+
+  async getForwardButtonStatus() {
+    return await this.topBarGoForwardButton.getAttribute("cursor");
   }
 }
