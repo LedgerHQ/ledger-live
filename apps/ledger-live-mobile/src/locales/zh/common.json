@@ -81,7 +81,8 @@
     "seeMore" : "查看更多",
     "moreInfo" : "更多信息",
     "buyEth" : "购买以太坊",
-    "popular" : "热门"
+    "popular" : "热门",
+    "comingSoon" : "敬请期待"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -560,14 +561,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "不再支持这种传统地址格式"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo 格式错误"
-    },
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "发送到该接收方时需要添加 memo"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratis 区块链已经进化，可能无法正确工作。对原有 Stratis 区块链的技术支持，将会持续到 2021 年 10 月 16 日。"
@@ -644,7 +639,45 @@
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
     },
     "CardanoMinAmountError" : {
-      "title" : "至少需要 {{amount}} 个 ADA"
+      "title" : "最小可发送数额为 {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "请确保您的资金足够支付费用"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo 格式错误"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "发送到该接收方时需要添加 memo"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "此接收人还没有 {{assetCode}} 的信任额度"
+    },
+    "StellarAssetRequired" : {
+      "title" : "应在添加信任额度之前先选择 Stellar（恒星）资产"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "找不到所选的 Stellar（恒星）资产"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金足够支付交易费用"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "所选费用低于建议费用"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低交易费用为 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金多于新的信任额度"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar（恒星）账户不存在"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     }
   },
   "bluetooth" : {
@@ -820,8 +853,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "喜欢 Ledger Live 吗？",
-      "description" : "无论您喜欢我们的产品还是觉得我们可以做得更好，我们都非常重视您的反馈。",
+      "title" : "您觉得我们的应用程序怎么样？",
+      "description" : "您的反馈对于改进 Ledger Live 非常重要。",
       "cta" : {
         "enjoy" : "做得很棒",
         "disappointed" : "我很失望",
@@ -838,7 +871,8 @@
     },
     "disappointed" : {
       "title" : "帮助我们打造更完善的产品",
-      "description" : "我们希望做得更好，您的真实反馈有助于我们了解有待改进的地方。",
+      "description" : "如果您需要更多帮助或希望得到我们的回复，请使用在线聊天",
+      "here" : "点击此处",
       "cta" : {
         "sendFeedback" : "发送反馈",
         "notNow" : "以后再说"
@@ -930,9 +964,9 @@
         "title" : "赚取",
         "desc" : "赚取被动收入并增长加密资产"
       },
-      "mint": {
-        "title": "铸造",
-        "desc": "通过 [ L ] Market 市场上的独家合作来铸造 NFT"
+      "mint" : {
+        "title" : "铸造",
+        "desc" : "通过 [ L ] 市场上的独家合作来铸造 NFT"
       }
     },
     "comingSoon" : "敬请期待",
@@ -1753,6 +1787,13 @@
         "howTo" : "您可以将资产添加到您的 Algorand 账户。",
         "addAsa" : "添加 ASA (资产)",
         "howAsaWorks" : "ASA (资产) 如何运作？"
+      },
+      "stellar" : {
+        "seeMore" : "查看更多资产",
+        "seeLess" : "查看更少资产",
+        "addTokens" : "添加资产",
+        "howTo" : "您可以将资产添加到 Stellar（恒星）账户。",
+        "addAsset" : "添加资产"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1942,12 @@
         "showTokens_plural" : "显示 {{length}} ASA",
         "hideTokens" : "隐藏 ASA",
         "hideTokens_plural" : "隐藏 ASA"
+      },
+      "stellar" : {
+        "showTokens" : "显示 {{length}} 种资产",
+        "showTokens_plural" : "显示 {{length}} 种资产",
+        "hideTokens" : "隐藏资产",
+        "hideTokens_plural" : "隐藏资产"
       }
     },
     "noResultsFound" : "未找到资产。",
@@ -2061,6 +2108,36 @@
         "android" : "在 Google Play（谷歌应用商店）内评论"
       }
     },
+    "notifications" : {
+      "title" : "通知",
+      "desc" : "管理通知",
+      "disabledNotifications" : {
+        "title" : "您已禁用通知",
+        "desc" : "{{platform}} 阻止了 Ledger Live 发送的通知。要在手机上获得通知，请在手机的设置中开启 Ledger Live 通知。",
+        "turnOnNotif" : "开启通知",
+        "goToSettings" : "前往系统设置"
+      },
+      "allowed" : {
+        "title" : "允许通知",
+        "desc" : "接收关于加密货币、市场趋势等内容的通知"
+      },
+      "transactions" : {
+        "title" : "交易",
+        "desc" : "接收或发送加密货币时获得通知"
+      },
+      "market" : {
+        "title" : "市场",
+        "desc" : "接收重大市场变化动态"
+      },
+      "announcement" : {
+        "title" : "公告",
+        "desc" : "接收重要 Ledger Live 更新"
+      },
+      "price" : {
+        "title" : "价格提醒",
+        "desc" : "为您收藏的币种设置价格提醒，以免错过市场波动"
+      }
+    },
     "help" : {
       "title" : "帮助",
       "header" : "帮助",
@@ -2092,6 +2169,14 @@
       "customManifest" : {
         "title" : "加载自定义平台清单"
       }
+    }
+  },
+  "notifications" : {
+    "prompt" : {
+      "title" : "打开通知",
+      "desc" : "获取关于 Ledger Live、Ledger 产品和安全性的重要动态。您可随时决定退出。",
+      "allow" : "允许通知",
+      "later" : "以后再说"
     }
   },
   "migrateAccounts" : {
@@ -2157,10 +2242,67 @@
       "verifyAgain" : "再次检查",
       "noAccount" : "未能找到账户",
       "address" : "账户地址",
-      "copyAddress" : "复制地址",
+      "copyAddress" : "复制",
       "shareAddress" : "分享地址",
-      "addressCopied" : "地址已复制！",
+      "addressCopied" : "已复制",
       "taprootWarning" : "确保发送方支持 taproot",
+      "selectCrypto" : {
+        "title" : "选择一种加密货币"
+      },
+      "stepperHeader" : {
+        "range" : "步骤 {{currentStep}} 之 {{totalSteps}}",
+        "connectDevice" : "连接设备"
+      },
+      "selectAccount" : {
+        "title" : "选择账户",
+        "subtitle" : "您的 {{currencyTicker}} 将存入此账户。"
+      },
+      "addAccount" : {
+        "title" : "正在搜索区块链",
+        "subtitle" : "正在检查您是否已经拥有 {{currencyTicker}} 账户。",
+        "foundAccounts" : "已找到 {{count}} 个账户",
+        "stopSynchronization" : "停止同步"
+      },
+      "verifyAddress" : {
+        "title" : "核实地址",
+        "subtitle" : "核实设备上显示的地址是否与以下地址一致。确定一致后，可以在您的设备上点击 Approve（批准）。",
+        "cancel" : {
+          "title" : "您刚刚否认了此地址",
+          "subtitle" : "如果是误操作，请点击下方按钮重试。",
+          "info" : "如果您确定地址不一致，您的手机可能已被入侵。建议您<0>尽快联系我们。</0>"
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "接收 {{currencyTicker}}",
+        "addressVerified" : "地址已核实",
+        "verifyAddress" : "点按此处核实您的地址",
+        "adviceVerify" : "我们始终建议您使用 Ledger 设备核实地址",
+        "sendWarning" : "仅将 {{currencyName}} ({{currencyTicker}}) 发送到此地址。发送其他币种可能会导致永久丢失。"
+      },
+      "securityVerify" : {
+        "title" : "出于安全考虑，我们建议使用 Ledger 设备核实此地址。",
+        "subtitle1" : "核实地址可为您提供安全保障。Ledger 设备上显示的地址不会泄露。",
+        "subtitle2" : "核实地址可帮助您确认设备上显示的地址与 Ledger Live 中显示的地址相同。",
+        "verifyCta" : "验证我的地址",
+        "dontVerifyCta" : "不经核实便显示我的地址"
+      },
+      "securityDontVerify" : {
+        "title" : "是否确定?",
+        "subtitle" : "将不会核实 Ledger Live 上显示的地址。",
+        "doNotRemindAgain" : "不再提醒",
+        "no" : "不可以",
+        "yes" : "是"
+      },
+      "toastMessages" : {
+        "accountImported" : "我们已为您导入了 {{currencyTicker}} 账户。 ",
+        "why" : "告诉我原因。",
+        "addressVerified" : "您的地址已核实"
+      },
+      "additionalInfoModal" : {
+        "title" : "我们为什么要导入账户？",
+        "subtitle" : "我们检测到您的种子助记词之前已有一个 {{currencyTicker}} 账户。我们为您导入了此账户。",
+        "closeCta" : "好，知道了"
+      },
       "notSynced" : {
         "text" : "正在同步",
         "desc" : "如果您有多笔交易或者您的网速偏慢，可能需要多花费一些时间。"
@@ -3259,7 +3401,9 @@
     "newVersion" : "更新适用于您的 {{deviceName}} 的版本 {{version}}",
     "drawerUpdate" : {
       "title" : "固件更新",
-      "description" : "将您的 Ledger Nano 固件连接到桌面板的 Ledger Live 应用程序以更新"
+      "description" : "将您的 Ledger Nano 固件连接到桌面板的 Ledger Live 应用程序以更新",
+      "pleaseConnectUsbTitle" : "需要使用 USB 线",
+      "pleaseConnectUsbDescription" : "要开始固件更新，请使用 USB 线将 {{deviceName}} 插入手机。"
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3378,6 +3522,13 @@
             "broadcastError" : "您的交易可能已失败。请等待几分钟后再次查看，如果确认交易未成功，则再次尝试。"
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "总余额不包括权益质押奖励"
       }
     }
   },
@@ -3734,6 +3885,7 @@
     }
   },
   "stellar" : {
+    "token" : "多种资产",
     "memo" : {
       "title" : "Memo",
       "warning" : "当使用 Memo 标签时，请仔细核对接收方的类型。"
@@ -3744,6 +3896,48 @@
       "MEMO_ID" : "Memo ID",
       "MEMO_HASH" : "Memo Hash 标签哈希",
       "MEMO_RETURN" : "Memo 返回"
+    },
+    "fee" : "网络费用",
+    "feeAction" : "更新费用",
+    "recommendedFee" : "建议费用",
+    "recommenndedFeeInfo" : "您仍可以低于建议的费用提交此交易，但交易可能无法完成",
+    "suggested" : "建议",
+    "networkCongestion" : "网络拥塞",
+    "networkCongestionLevel" : {
+      "LOW" : "低",
+      "MEDIUM" : "中",
+      "HIGH" : "高"
+    },
+    "assetCode" : "资产代码",
+    "assetIssuer" : "资产发行者",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "添加资产",
+        "connectDevice" : "连接设备",
+        "verification" : "验证",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "资产已添加",
+              "description" : "您的 Stellar（恒星）账户中已有 {{token}} 资产。"
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "已成功添加 {{token}} 资产！",
+              "text" : "您现在可以在 Stellar（恒星）账户上接收和发送 {{token}} 资产了。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请在几分钟后查看并在确保您的交易的确没有通过后，才再次重试。"
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4407,6 +4601,16 @@
     },
     "operations" : {
       "title" : "交易历史"
+    }
+  },
+  "hedera" : {
+    "name" : "hedera",
+    "createHederaAccountHelp" : {
+      "text" : "要了解如何创建 Hedera 账户，",
+      "link" : "请参考此支持文章"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
     }
   }
 }

@@ -85,6 +85,7 @@ import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
+import PushNotificationsModal from "./screens/PushNotificationsModal";
 import RatingsModal from "./screens/RatingsModal";
 import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
@@ -203,6 +204,9 @@ function App({ importDataString }: AppProps) {
 
       <AnalyticsConsole />
       <ThemeDebug />
+      <FeatureToggle feature="pushNotifications">
+        <PushNotificationsModal />
+      </FeatureToggle>
       <FeatureToggle feature="ratings">
         <RatingsModal />
       </FeatureToggle>
