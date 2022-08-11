@@ -27,7 +27,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
       name: "Send 50%~",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
-        const sibling = pickSiblings(siblings, 2);
+        const sibling = pickSiblings(siblings, maxAccount);
         let amount = account.spendableBalance
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
@@ -44,7 +44,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: pickSiblings(siblings, maxAccount).freshAddress,
+              recipient: sibling.freshAddress,
             },
             {
               amount,
