@@ -820,19 +820,19 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Vous aimez Ledger Live ?",
-      "description" : "L’app vous plaît ou vous pensez que nous pouvons l’améliorer ? Vos commentaires sont indispensables pour nous.",
+      "title" : "Que pensez-vous de l’app ?",
+      "description" : "L’app vous plaît ou vous pensez que nous pouvons l’améliorer ? Votre avis est indispensable.",
       "cta" : {
-        "enjoy" : "C’est super",
-        "disappointed" : "Je suis déçu(e)",
+        "enjoy" : "Très satisfait(e)",
+        "disappointed" : "Déçu(e)",
         "notNow" : "Pas maintenant"
       }
     },
     "enjoy" : {
-      "title" : "Vous êtes super, vous aussi",
-      "description" : "Nous vous invitons à donner votre avis. Votre soutien nous est précieux et nous encourage à développer de nouvelles fonctionnalités.",
+      "title" : "Notez l’app",
+      "description" : "Nous vous invitons à partager votre avis. Votre soutien nous est précieux et nous encourage à développer de nouvelles fonctionnalités.",
       "cta" : {
-        "rate" : "Attribuez-nous 5 étoiles",
+        "rate" : "Noter 5 étoiles",
         "notNow" : "Pas maintenant"
       }
     },
@@ -2051,8 +2051,8 @@
       "privacyPolicy" : "Politique de confidentialité",
       "privacyPolicyDesc" : "Découvrez les données personnelles que nous collectons, à quelles fins et comment nous les utilisons.",
       "liveReview" : {
-        "title" : "Commentaires",
-        "desc" : "Faites-nous part de vos commentaires sur l’app",
+        "title" : "Avis",
+        "desc" : "Faites-nous part de vos commentaires sur l’app.",
         "ios" : "Donnez votre avis dans l’App Store",
         "android" : "Donnez votre avis dans le Google Play Store"
       }
@@ -2153,7 +2153,7 @@
       "verifyAgain" : "Revérifier",
       "noAccount" : "Aucun compte trouvé",
       "address" : "Adresse du compte",
-      "copyAddress" : "Copier l’adresse",
+      "copyAddress" : "Copier",
       "shareAddress" : "Partager l’adresse",
       "addressCopied" : "Adresse copiée",
       "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
@@ -3397,7 +3397,7 @@
       },
       "undelegating" : {
         "title" : "Délégation interrompue",
-        "description" : "Les actifs dont la délégation est interrompue sont immobilisés pendant 21 jours avant d’être disponibles."
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 21 jours."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -3440,7 +3440,7 @@
               "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
             },
             "warning" : {
-              "description" : "Choisissez votre validateur judicieusement : une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement."
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             },
             "cta" : "Continuer"
           },
