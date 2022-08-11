@@ -1,11 +1,14 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Box, Flex, Icons, Notification, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { usePostOnboardingHubState } from "../../logic/postOnboarding/hooks";
+import {
+  useClearLastActionCompletedCallback,
+  usePostOnboardingHubState,
+} from "../../logic/postOnboarding/hooks";
 import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
 import ConfettiParty from "../../components/ConfettiParty";
 import { NavigatorName, ScreenName } from "../../const";
@@ -31,6 +34,15 @@ export default () => {
     lastActionCompleted ?? {};
 
   // TODO: (design) "all done" state with confettis
+
+  const clearLastActionCompleted = useClearLastActionCompletedCallback();
+
+  useEffect(
+    () => () => {
+      clearLastActionCompleted();
+    },
+    [clearLastActionCompleted],
+  );
 
   const navigateToWallet = useCallback(() => {
     navigation.navigate(NavigatorName.Main, { screen: ScreenName.Portfolio });

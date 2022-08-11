@@ -13,6 +13,7 @@ import {
 } from "../../reducers/postOnboarding";
 import { getFeature } from "../../components/FirebaseFeatureFlags";
 import {
+  clearPostOnboardingLastActionCompleted,
   hidePostOnboardingWalletEntryPoint,
   initPostOnboarding,
   setPostOnboardingActionDone,
@@ -121,4 +122,11 @@ export function useSetActionDoneCallback() {
       dispatch(setPostOnboardingActionDone(actionId)),
     [dispatch],
   );
+}
+
+export function useClearLastActionCompletedCallback() {
+  const dispatch = useDispatch();
+  return useCallback(() => {
+    dispatch(clearPostOnboardingLastActionCompleted());
+  }, [dispatch]);
 }
