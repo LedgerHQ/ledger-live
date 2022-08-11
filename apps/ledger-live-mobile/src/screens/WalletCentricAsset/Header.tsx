@@ -23,11 +23,11 @@ import CurrencyGradient from "../../components/CurrencyGradient";
 function Header({
   currentPositionY,
   graphCardEndPosition,
-  asset,
+  currency,
 }: {
   currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
-  asset: any;
+  currency: Currency;
 }) {
   const navigation = useNavigation();
   const { colors } = useTheme();
@@ -116,10 +116,7 @@ function Header({
       >
         <Box height={"100%"} width={windowsWidth}>
           <CurrencyGradient
-            gradientColor={
-              //   getCurrencyColor(asset.currency) ||
-              colors.primary.c80
-            }
+            gradientColor={getCurrencyColor(currency) || colors.primary.c80}
           />
         </Box>
       </Animated.View>
@@ -130,7 +127,7 @@ function Header({
       </Box>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <Text variant={"large"} fontWeight={"semiBold"}>
-          toto
+          {currency.managerAppName}
         </Text>
       </Flex>
       <Box>{/*  */}</Box>

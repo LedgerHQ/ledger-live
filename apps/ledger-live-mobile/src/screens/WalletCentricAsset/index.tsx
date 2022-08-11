@@ -98,6 +98,7 @@ const AssetScreen = ({ route }: Props) => {
       <Header
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
+        currency={currency}
       />
     </TabBarSafeAreaView>
   );
