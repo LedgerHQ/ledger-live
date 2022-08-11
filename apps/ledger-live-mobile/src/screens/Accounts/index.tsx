@@ -31,6 +31,7 @@ import TabBarSafeAreaView, {
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -60,6 +61,12 @@ function Accounts({ navigation, route }: Props) {
 
   const search = params?.search;
 
+  const currency = useMemo(
+    () =>
+      route?.params?.currencyId &&
+      getCryptoCurrencyById(route?.params?.currencyId),
+    [route?.params?.currencyId],
+  );
   const [account, setAccount] = useState(undefined);
   const accountsFiltered = useMemo(
     () =>
@@ -164,14 +171,16 @@ function Accounts({ navigation, route }: Props) {
         </Flex>
       </Flex>
     ),
-    [t],
+    [],
   );
 
   return (
     <TabBarSafeAreaView>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <Flex flex={1} bg={"background.main"}>
-        <AccountsNavigationHeader />
+        <AccountsNavigationHeader
+          currencyTicker={currency && currency.ticker}
+        />
         {syncPending && (
           <Flex flexDirection={"row"} alignItems={"center"} px={6} my={3}>
             <Spinning clockwise>
