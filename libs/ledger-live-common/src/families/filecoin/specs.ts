@@ -8,6 +8,8 @@ import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 
 const MIN_SAFE = new BigNumber(100000);
+const maxAccount = 6;
+
 const filecoinSpecs: AppSpec<Transaction> = {
   name: "Filecoin",
   currency: getCryptoCurrencyById("filecoin"),
@@ -42,7 +44,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: pickSiblings(siblings, 2).freshAddress,
+              recipient: pickSiblings(siblings, maxAccount).freshAddress,
             },
             {
               amount,
@@ -59,7 +61,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: pickSiblings(siblings, 2).freshAddress,
+              recipient: pickSiblings(siblings, maxAccount).freshAddress,
             },
             {
               useAllAmount: true,
