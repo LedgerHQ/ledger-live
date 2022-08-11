@@ -10,6 +10,8 @@ import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { Trans, useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector, isUpToDateSelector } from "../../reducers/accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
@@ -30,8 +32,6 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 

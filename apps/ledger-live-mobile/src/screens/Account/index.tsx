@@ -18,11 +18,10 @@ import {
   getAccountCapabilities,
   makeCompoundSummaryForAccount,
 } from "@ledgerhq/live-common/compound/logic";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import {
