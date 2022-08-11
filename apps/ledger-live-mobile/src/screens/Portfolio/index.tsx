@@ -11,11 +11,13 @@ import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
-import { Box, Flex, Link as TextLink } from "@ledgerhq/native-ui";
+import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
-import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useRefreshAccountsOrdering } from "../../actions/general";
+import {
+  useDistribution,
+  useRefreshAccountsOrdering,
+} from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import {
   discreetModeSelector,
@@ -31,7 +33,7 @@ import Carousel from "../../components/Carousel";
 import Header from "./Header";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import Assets from "./Assets";
@@ -73,7 +75,9 @@ function PortfolioScreen({ navigation }: Props) {
     () => Object.values(carouselVisibility).some(Boolean),
     [carouselVisibility],
   );
+  const distribution = useDistribution();
   const accounts = useSelector(accountsSelector);
+
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
@@ -103,12 +107,26 @@ function PortfolioScreen({ navigation }: Props) {
     setGraphCardEndPosition(y + height / 10);
   }, []);
 
-  const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
-    accounts,
-  ]);
+  const goToAssets = useCallback(() => {
+    navigation.navigate(NavigatorName.PortfolioAccounts, {
+      screen: ScreenName.Assets,
+    });
+  }, [navigation]);
+
+  const areAccountsEmpty = useMemo(
+    () =>
+      distribution.list &&
+      distribution.list.every(currencyDistribution =>
+        currencyDistribution.accounts.every(isAccountEmpty),
+      ),
+    [distribution],
+  );
   const [showAssets, assetsToDisplay] = useMemo(
-    () => [accounts.length > 0, accounts.slice(0, maxAssetsToDisplay)],
-    [accounts],
+    () => [
+      distribution.isAvailable && distribution.list.length > 0,
+      distribution.list.slice(0, maxAssetsToDisplay),
+    ],
+    [distribution],
   );
 
   const data = useMemo(
@@ -118,52 +136,41 @@ function PortfolioScreen({ navigation }: Props) {
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
           areAccountsEmpty={areAccountsEmpty}
-          showGraphCard={accounts.length > 0}
+          showGraphCard={showAssets}
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
         />
       </Box>,
-      ...(accounts.length > 0
+      ...(showAssets
         ? [
             <Box pt={6} background={colors.background.main}>
               <FabActions areAccountsEmpty={areAccountsEmpty} />
             </Box>,
-          ]
-        : []),
-      ...(showAssets
-        ? [
-            <Box background={colors.background.main}>
-              <SectionContainer>
-                <SectionTitle
-                  title={t("distribution.title")}
-                  navigation={navigation}
-                  navigatorName={NavigatorName.PortfolioAccounts}
-                  containerProps={{ mb: "9px" }}
-                />
-                <Assets
-                  balanceHistory={portfolio.balanceHistory}
-                  assets={assetsToDisplay}
-                />
-                {accounts.length < maxAssetsToDisplay && (
-                  <>
-                    <Flex
-                      mt={6}
-                      p={4}
-                      border={`1px dashed ${colors.neutral.c40}`}
-                      borderRadius={4}
-                    >
-                      <TextLink
-                        onPress={openAddModal}
-                        Icon={PlusMedium}
-                        iconPosition={"left"}
-                        type={"color"}
-                      >
-                        {t("distribution.moreAssets")}
-                      </TextLink>
-                    </Flex>
-                  </>
-                )}
-              </SectionContainer>
+            <Box background={colors.background.main} px={6} mt={6}>
+              <Assets assets={assetsToDisplay} />
+              {distribution.list.length < maxAssetsToDisplay ? (
+                <Button
+                  type="shade"
+                  size="large"
+                  outline
+                  mt={6}
+                  iconPosition="left"
+                  Icon={Icons.PlusMedium}
+                  onPress={openAddModal}
+                >
+                  {t("account.emptyState.addAccountCta")}
+                </Button>
+              ) : (
+                <Button
+                  type="shade"
+                  size="large"
+                  outline
+                  mt={6}
+                  onPress={goToAssets}
+                >
+                  {t("portfolio.seelAllAssets")}
+                </Button>
+              )}
             </Box>,
           ]
         : []),
@@ -188,7 +195,7 @@ function PortfolioScreen({ navigation }: Props) {
             </SectionContainer>,
             <SectionContainer px={6} mb={8} isLast>
               <SectionTitle title={t("analytics.operations.title")} />
-              <OperationsHistorySection accounts={assetsToDisplay} />
+              <OperationsHistorySection accounts={accounts} />
             </SectionContainer>,
           ]
         : [
@@ -203,18 +210,18 @@ function PortfolioScreen({ navigation }: Props) {
       counterValueCurrency,
       portfolio,
       areAccountsEmpty,
-      accounts.length,
+      showAssets,
       currentPositionY,
       graphCardEndPosition,
       colors.background.main,
-      colors.neutral.c40,
-      showAssets,
       t,
-      navigation,
       assetsToDisplay,
+      distribution.list.length,
       openAddModal,
       showCarousel,
       carouselVisibility,
+      accounts,
+      goToAssets,
     ],
   );
 
@@ -228,7 +235,7 @@ function PortfolioScreen({ navigation }: Props) {
         <CheckTermOfUseUpdate />
         <TrackScreen
           category="Portfolio"
-          accountsLength={accounts.length}
+          accountsLength={distribution.list && distribution.list.length}
           discreet={discreetMode}
         />
         <BackgroundGradient
@@ -248,7 +255,9 @@ function PortfolioScreen({ navigation }: Props) {
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
           testID={
-            accounts.length ? "PortfolioAccountsList" : "PortfolioEmptyAccount"
+            distribution.list && distribution.list.length
+              ? "PortfolioAccountsList"
+              : "PortfolioEmptyAccount"
           }
         />
         <MigrateAccountsBanner />

@@ -20,6 +20,7 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
+import { FabAssetActions } from "../../components/FabActions";
 import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
@@ -65,13 +66,23 @@ const AssetScreen = ({ route }: Props) => {
       </Box>,
       <SectionContainer px={6}>
         <SectionTitle
+          title={t("account.quickActions")}
+          containerProps={{ mb: 6 }}
+        ></SectionTitle>
+        <FabAssetActions
+          currency={currency}
+          accounts={accounts}
+        ></FabAssetActions>
+      </SectionContainer>,
+      <SectionContainer px={6}>
+        <SectionTitle
           title={t("portfolio.marketPriceSection.title", {
             currencyTicker: currency.ticker,
           })}
         />
         <MarketPriceSection currency={currency} />
       </SectionContainer>,
-      <SectionContainer px={6} mb={8} isLast>
+      <SectionContainer px={6} isLast>
         <SectionTitle title={t("analytics.operations.title")} />
         <OperationsHistorySection accounts={cryptoAccounts} />
       </SectionContainer>,

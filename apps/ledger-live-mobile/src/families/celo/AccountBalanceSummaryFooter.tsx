@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -62,6 +60,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
             disableRounding
           />
         }
+        isLast={true}
       />
     </ScrollView>
   );
@@ -77,7 +76,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     flexDirection: "row",
-    paddingTop: 16,
     overflow: "visible",
   },
 });

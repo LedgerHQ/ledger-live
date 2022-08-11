@@ -17,7 +17,9 @@ import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import { accountsSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
+
 import WalletCentricAsset from "../../screens/WalletCentricAsset";
+import Assets from "../../screens/Assets";
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
@@ -62,6 +64,19 @@ export default function AccountsNavigator() {
         component={NftViewer}
         options={{
           headerTitle: "",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.Assets}
+        component={Assets}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.Asset}
+        component={WalletCentricAsset}
+        options={{
         }}
       />
     </Stack.Navigator>

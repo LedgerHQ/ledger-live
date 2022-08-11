@@ -1615,6 +1615,7 @@
       "seeMarket": "See all"
     },
     "walletBalance": "Wallet balance",
+    "seelAllAssets": "See All Assets",
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
@@ -1939,6 +1940,7 @@
   },
   "accounts": {
     "title": "Accounts",
+    "cryptoAccountsTitle": "{{currencyTicker}} accounts",
     "importNotification": {
       "message": "Your accounts were imported successfully!"
     },
