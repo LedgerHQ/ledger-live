@@ -2,7 +2,7 @@ import { DeviceModelId } from "@ledgerhq/devices/lib/index";
 import {
   PostOnboardingActionId,
   PostOnboardingState,
-} from "../logic/postOnboarding/types";
+} from "@ledgerhq/live-common/lib/postOnboarding/types";
 
 export const importPostOnboardingState = (state: PostOnboardingState) => ({
   type: "POST_ONBOARDING_IMPORT_STATE",
@@ -23,6 +23,10 @@ export const setPostOnboardingActionDone = (
 ) => ({
   type: "POST_ONBOARDING_SET_ACTION_DONE",
   actionId,
+});
+
+export const clearPostOnboardingLastActionCompleted = () => ({
+  type: "POST_ONBOARDING_CLEAR_LAST_ACTION_COMPLETED",
 });
 
 export const hidePostOnboardingWalletEntryPoint = () => ({

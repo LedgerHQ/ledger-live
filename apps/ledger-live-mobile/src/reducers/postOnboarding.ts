@@ -1,5 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/devices/lib/";
-import { PostOnboardingActionId, PostOnboardingState } from "@ledgerhq/live-common/lib/postOnboarding/types";
+import {
+  PostOnboardingActionId,
+  PostOnboardingState,
+} from "@ledgerhq/live-common/lib/postOnboarding/types";
 import { handleActions } from "redux-actions";
 
 const initialState: PostOnboardingState = {
@@ -58,6 +61,10 @@ const handlers: Record<
       lastActionCompleted: actionId,
     };
   },
+  POST_ONBOARDING_CLEAR_LAST_ACTION_COMPLETED: state => ({
+    ...state,
+    lastActionCompleted: null,
+  }),
   POST_ONBOARDING_HIDE_WALLET_ENTRY_POINT: state => ({
     ...state,
     walletEntryPointVisible: false,
