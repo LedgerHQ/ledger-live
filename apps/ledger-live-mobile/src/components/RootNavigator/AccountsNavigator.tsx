@@ -77,6 +77,7 @@ export default function AccountsNavigator() {
         name={ScreenName.Asset}
         component={WalletCentricAsset}
         options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

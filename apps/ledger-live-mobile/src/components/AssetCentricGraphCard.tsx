@@ -26,6 +26,12 @@ import {
 
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { useNavigation } from "@react-navigation/native";
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -37,8 +43,6 @@ import Touchable from "./Touchable";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import { NoCountervaluePlaceholder } from "./CounterValue";
 import DiscreetModeButton from "./DiscreetModeButton";
-
-const { width } = getWindowDimensions();
 
 type FooterProps = {
   renderAccountSummary: () => ReactNode;
@@ -59,7 +63,12 @@ type FooterProps = {
 // };
 
 type Props = {
-  asset: any;
+  assetPortfolio: Portfolio;
+  counterValueCurrency: Currency;
+  currentPositionY: SharedValue<number>;
+  graphCardEndPosition: number;
+  currency: Currency;
+  areAccountsEmpty: boolean;
 };
 
 const timeRangeMapped: any = {
@@ -70,183 +79,153 @@ const timeRangeMapped: any = {
   "24h": "day",
 };
 
-function AssetCentricGraphCard({ asset }: Props) {
+function AssetCentricGraphCard({
+  assetPortfolio,
+  counterValueCurrency,
+  currentPositionY,
+  graphCardEndPosition,
+  currency,
+  areAccountsEmpty,
+}: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const [timeRange, setTimeRange] = useTimeRange();
+  const [, setTimeRange, timeRangeItems] = useTimeRange();
   const [loading, setLoading] = useState(false);
-  //   const { countervalueChange } = useBalanceHistoryWithCountervalue({
-  //     account,
-  //     range: timeRange,
-  //   });
+  const {
+    countervalueChange,
+    balanceAvailable,
+    balanceHistory,
+  } = assetPortfolio;
 
-  const ranges = useMemo(
-    () =>
-      Object.keys(timeRangeMapped).map(r => ({
-        label: t(`common:time.${timeRangeMapped[r]}`),
-        value: timeRangeMapped[r],
-      })),
-    [t],
-  );
+  const item = balanceHistory[balanceHistory.length - 1];
+  const navigation = useNavigation();
 
-  const rangesLabels = ranges.map(({ label }) => label);
+  const unit = counterValueCurrency.units[0];
 
-  const activeRangeIndex = ranges.findIndex(r => r.value === timeRange);
+  const [hoveredItem, setHoverItem] = useState();
 
-  // const isAvailable = !useCounterValue || countervalueAvailable;
-
-  const updateRange = useCallback(
+  const updateTimeRange = useCallback(
     index => {
-      if (ranges[index]) {
-        const range: PortfolioRange = ranges[index].value;
-        setLoading(true);
-        setTimeRange(range);
-      }
+      setTimeRange(timeRangeItems[index]);
     },
-    [ranges, setTimeRange],
+    [setTimeRange, timeRangeItems],
   );
 
-  //   useEffect(() => {
-  //     if (history && history.length > 0) {
-  //       setLoading(false);
-  //     }
-  //   }, [history]);
+  const mapGraphValue = useCallback(d => d.value || 0, []);
 
-  const [hoveredItem, setHoverItem] = useState<Item>();
+  const range = assetPortfolio.range;
+  const isAvailable = assetPortfolio.balanceAvailable;
 
-  const mapCryptoValue = useCallback(d => d.value || 0, []);
-  const mapCounterValue = useCallback(
-    d => (d.countervalue ? d.countervalue : 0),
-    [],
-  );
+  const rangesLabels = timeRangeItems.map(({ label }) => label);
+
+  const activeRangeIndex = timeRangeItems.findIndex(r => r.key === range);
+
+  const BalanceOpacity = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      currentPositionY.value,
+      [graphCardEndPosition + 30, graphCardEndPosition + 50],
+      [1, 0],
+      Extrapolate.CLAMP,
+    );
+
+    return {
+      opacity,
+    };
+  }, [graphCardEndPosition]);
 
   return (
-    <Flex flexDirection="column" mt={20}>
-      <GraphCardHeader asset={asset} />
-      <Flex height={120} alignItems="center" justifyContent="center">
-        {!loading ? (
-          <Transitions.Fade duration={400} status="entering">
-            {/** @ts-expect-error import js issue */}
-            {/* <Graph
-              isInteractive
-              isLoading={!isAvailable}
-              height={120}
-              width={width}
-              color={
-                // getCurrencyColor(account?.currency) ||
-                colors.primary.c80
-              }
-              data={[]}
-              //   mapValue={useCounterValue ? mapCounterValue : mapCryptoValue}
-              onItemHover={setHoverItem}
-              verticalRangeRatio={10}
-              fill={colors.background.main}
-            /> */}
-          </Transitions.Fade>
-        ) : (
-          <InfiniteLoader size={32} />
-        )}
+    <Flex flexDirection="column">
+      <Flex
+        flexDirection={"row"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        marginTop={40}
+        marginBottom={40}
+      >
+        <Animated.View style={[BalanceOpacity]}>
+          <Flex alignItems="center">
+            {areAccountsEmpty ? (
+              <Text variant={"h3"} color={"neutral.c100"}>
+                <CurrencyUnitValue unit={unit} value={0} />
+              </Text>
+            ) : (
+              <>
+                <Flex>
+                  {!balanceAvailable ? (
+                    <BigPlaceholder mt="8px" />
+                  ) : (
+                    <Text
+                      fontFamily="Inter"
+                      fontWeight="semiBold"
+                      fontSize="42px"
+                      color={"neutral.c100"}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                    >
+                      <CurrencyUnitValue
+                        unit={unit}
+                        value={hoveredItem ? hoveredItem.value : item.value}
+                        joinFragmentsSeparator=" "
+                      />
+                    </Text>
+                  )}
+                  <TransactionsPendingConfirmationWarning />
+                </Flex>
+                <Flex flexDirection={"row"}>
+                  {!balanceAvailable ? (
+                    <>
+                      <SmallPlaceholder mt="12px" />
+                    </>
+                  ) : (
+                    <Flex flexDirection="row" alignItems="center">
+                      {hoveredItem && hoveredItem.date ? (
+                        <Text
+                          variant={"body"}
+                          fontWeight={"semibold"}
+                          fontSize="16px"
+                        >
+                          <FormatDate date={hoveredItem.date} />
+                        </Text>
+                      ) : (
+                        <>
+                          <Delta
+                            percent
+                            show0Delta
+                            valueChange={countervalueChange}
+                            // range={portfolio.range}
+                          />
+                          <Delta unit={unit} valueChange={countervalueChange} />
+                        </>
+                      )}
+                    </Flex>
+                  )}
+                </Flex>
+              </>
+            )}
+          </Flex>
+        </Animated.View>
       </Flex>
-      <Flex pt={16} px={6} bg={colors.background.main}>
-        {/* <GraphTabs
+      <Graph
+        isInteractive={isAvailable}
+        isLoading={!isAvailable}
+        height={110}
+        width={getWindowDimensions().width + 1}
+        color={getCurrencyColor(currency) || colors.primary.c80}
+        data={balanceHistory}
+        onItemHover={setHoverItem}
+        mapValue={mapGraphValue}
+        fill={colors.background.main}
+      />
+      <Flex paddingTop={6} background={colors.background.main}>
+        <GraphTabs
           activeIndex={activeRangeIndex}
-          onChange={updateRange}
+          onChange={updateTimeRange}
           labels={rangesLabels}
-        /> */}
+        />
       </Flex>
-      {/* <Footer renderAccountSummary={renderAccountSummary} /> */}
     </Flex>
   );
 }
-
-type HeaderTitleProps = {
-  asset: any;
-};
-
-const GraphCardHeader = ({ asset }: HeaderTitleProps) => {
-  // const items = [
-  //   {
-  //     unit: cryptoCurrencyUnit,
-  //     value: item.value,
-  //   },
-  //   {
-  //     unit: counterValueUnit,
-  //     value: item.countervalue,
-  //     joinFragmentsSeparator: " ",
-  //   },
-  // ];
-  const items = [
-    {
-      unit: "altDol",
-      value: 42,
-    },
-    {
-      unit: "dol",
-      value: 42,
-      joinFragmentsSeparator: " ",
-    },
-  ];
-
-  const shouldUseCounterValue = false;
-  // countervalueAvailable && useCounterValue;
-  // if (shouldUseCounterValue) {
-  //   items.reverse();
-  // }
-
-  return (
-    <Flex
-      flexDirection={"row"}
-      px={6}
-      pt={100}
-      justifyContent={"space-between"}
-    >
-      <Touchable
-        event="SwitchAccountCurrency"
-        //   eventProperties={{ useCounterValue: shouldUseCounterValue }}
-        //   onPress={countervalueAvailable ? onSwitchAccountCurrency : undefined}
-        style={{ flexShrink: 1 }}
-      >
-        <Flex>
-          <Flex>
-            <Flex flexDirection="row">
-              <Text
-                variant={"large"}
-                fontWeight={"medium"}
-                color={"neutral.c70"}
-              >
-                {typeof items[1]?.value === "number" ? (
-                  "42424242"
-                ) : (
-                  // <CurrencyUnitValue {...items[1]} />
-                  <NoCountervaluePlaceholder />
-                )}
-              </Text>
-            </Flex>
-          </Flex>
-          <Text
-            fontFamily="Inter"
-            fontWeight="semiBold"
-            fontSize="32px"
-            numberOfLines={1}
-            adjustsFontSizeToFit
-          >
-            42424242
-            {/* <CurrencyUnitValue
-                disableRounding={shouldUseCounterValue}
-                {...items[0]}
-              /> */}
-          </Text>
-          <Flex flexDirection="row" alignItems="center">
-            {/* <Delta percent valueChange={valueChange} /> */}
-            <Flex ml={2}>
-              {/* <Delta unit={items[0].unit} valueChange={valueChange} /> */}
-            </Flex>
-          </Flex>
-        </Flex>
-      </Touchable>
-    </Flex>
-  );
-};
 
 export default memo(AssetCentricGraphCard);

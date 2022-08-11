@@ -223,12 +223,7 @@ const GraphCardHeader = ({
   }
 
   return (
-    <Flex
-      flexDirection={"row"}
-      px={6}
-      pt={100}
-      justifyContent={"space-between"}
-    >
+    <Flex flexDirection={"row"} pt={100} justifyContent={"space-between"}>
       <Touchable
         event="SwitchAccountCurrency"
         eventProperties={{ useCounterValue: shouldUseCounterValue }}

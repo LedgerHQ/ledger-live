@@ -10,6 +10,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/src/currencies";
 import { useTranslation } from "react-i18next";
 import { Box } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -24,6 +25,13 @@ import { FabAssetActions } from "../../components/FabActions";
 import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
+import { usePortfolio } from "../../actions/portfolio";
+import {
+  discreetModeSelector,
+  counterValueCurrencySelector,
+  carouselVisibilitySelector,
+} from "../../reducers/settings";
+import { useDistribution } from "../../actions/general";
 
 type RouteParams = {
   currencyId: string;
@@ -48,6 +56,23 @@ const AssetScreen = ({ route }: Props) => {
     [accounts, currencyId],
   );
 
+  const distribution = useDistribution();
+
+  const areAccountsEmpty = useMemo(
+    () =>
+      distribution.list &&
+      distribution.list.every(currencyDistribution =>
+        currencyDistribution.accounts.every(isAccountEmpty),
+      ),
+    [distribution],
+  );
+
+  const counterValueCurrency: Currency = useSelector(
+    counterValueCurrencySelector,
+  );
+
+  const assetPortfolio = usePortfolio(cryptoAccounts);
+
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler(event => {
@@ -61,18 +86,22 @@ const AssetScreen = ({ route }: Props) => {
 
   const data = useMemo(
     () => [
-      <Box mx={6} mt={6} onLayout={onAssetCardLayout}>
-        <AssetCentricGraphCard />
+      <Box mt={6} onLayout={onAssetCardLayout}>
+        <AssetCentricGraphCard
+          assetPortfolio={assetPortfolio}
+          counterValueCurrency={counterValueCurrency}
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+          currency={currency}
+          areAccountsEmpty={areAccountsEmpty}
+        />
       </Box>,
       <SectionContainer px={6}>
         <SectionTitle
           title={t("account.quickActions")}
           containerProps={{ mb: 6 }}
-        ></SectionTitle>
-        <FabAssetActions
-          currency={currency}
-          accounts={accounts}
-        ></FabAssetActions>
+        />
+        <FabAssetActions currency={currency} accounts={accounts} />
       </SectionContainer>,
       <SectionContainer px={6}>
         <SectionTitle
@@ -98,7 +127,7 @@ const AssetScreen = ({ route }: Props) => {
         gradientColor={getCurrencyColor(currency) || colors.primary.c80}
       />
       <AnimatedFlatListWithRefreshControl
-        style={{ flex: 1 }}
+        style={{ flex: 1, paddingTop: 48 }}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
         renderItem={({ item }: any) => item}

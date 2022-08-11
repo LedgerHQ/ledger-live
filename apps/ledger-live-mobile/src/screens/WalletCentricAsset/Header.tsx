@@ -10,7 +10,10 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
-import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  ArrowLeftMedium,
+  SettingsMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Touchable from "../../components/Touchable";
 import { NavigatorName } from "../../const";
@@ -130,7 +133,11 @@ function Header({
           {currency.managerAppName}
         </Text>
       </Flex>
-      <Box>{/*  */}</Box>
+      <Box>
+        <Touchable onPress={() => {}}>
+          <SettingsMedium size={24} />
+        </Touchable>
+      </Box>
     </Header>
   );
 }
