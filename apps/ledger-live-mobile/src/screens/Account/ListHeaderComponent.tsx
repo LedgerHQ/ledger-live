@@ -11,6 +11,9 @@ import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Box } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 
+import styled from "@ledgerhq/native-ui/components/styled";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components/native";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -42,6 +45,7 @@ type Props = {
   onAccountPress: () => void;
   onSwitchAccountCurrency: () => void;
   compoundSummary?: CompoundAccountSummary;
+  onAccountCardLayout: any;
   t: any;
 };
 
@@ -58,6 +62,7 @@ export function getListHeaderComponents({
   onAccountPress,
   onSwitchAccountCurrency,
   compoundSummary,
+  onAccountCardLayout,
   t,
 }: Props): {
   listHeaderComponents: ReactNode[];
@@ -86,14 +91,12 @@ export function getListHeaderComponents({
     perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
 
   const stickyHeaderIndices = empty ? [] : [0];
+  const { colors } = useTheme();
 
   return {
     listHeaderComponents: [
-      <Header accountId={account.id} />,
-      !!AccountSubHeader && <AccountSubHeader />,
-
       !empty && (
-        <Box mx={6} mt={6}>
+        <Box mt={6} onLayout={onAccountCardLayout}>
           <AccountGraphCard
             account={account}
             range={range}
@@ -111,7 +114,18 @@ export function getListHeaderComponents({
           />
         </Box>
       ),
-      <SectionContainer px={6}>
+      <Header accountId={account.id} />,
+      !!AccountSubHeader && (
+        <Box bg={colors.background.main}>
+          <AccountSubHeader />
+        </Box>
+      ),
+      !empty && !!AccountHeader && (
+        <Box bg={colors.background.main}>
+          <AccountHeader account={account} parentAccount={parentAccount} />
+        </Box>
+      ),
+      <SectionContainer px={6} bg={colors.background.main}>
         <SectionTitle
           title={t("account.quickActions")}
           containerProps={{ mb: 6 }}
