@@ -20,6 +20,7 @@ type Props = {
   renderProps?: RenderProps,
   noScroll?: boolean,
   refocusWhenChange?: any,
+  backButtonComponent?: React$Node,
 };
 
 class ModalBody extends PureComponent<Props> {
@@ -35,6 +36,7 @@ class ModalBody extends PureComponent<Props> {
   render() {
     const {
       onBack,
+      backButtonComponent,
       onClose,
       title,
       subTitle,
@@ -50,7 +52,13 @@ class ModalBody extends PureComponent<Props> {
     const renderedFooter = renderFooter && renderFooter(renderProps);
     return (
       <>
-        <ModalHeader subTitle={subTitle} onBack={onBack} onClose={onClose} style={headerStyle}>
+        <ModalHeader
+          subTitle={subTitle}
+          onBack={onBack}
+          onClose={onClose}
+          style={headerStyle}
+          backButtonComponent={backButtonComponent}
+        >
           {title || null}
         </ModalHeader>
         <ModalContent ref={this._content} noScroll={noScroll}>
