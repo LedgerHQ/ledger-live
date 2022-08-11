@@ -110,7 +110,6 @@ const ModalHeader = ({
   backButtonComponent?: React$Node,
 }) => {
   const { t } = useTranslation();
-  console.log({backButtonComponent})
   return (
     <Container hasTitle={Boolean(children || subTitle)} style={style}>
       {onBack ? (

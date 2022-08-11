@@ -55,7 +55,7 @@ function useSteps(canEditFees = false): St[] {
         onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
         backButtonComponent: canEditFees ? (
           <Text ff="Inter|Bold" fontSize={4} color="palette.primary.main">
-            {t("common.editFees")}
+            {t("common.adjustFees")}
           </Text>
         ) : (
           undefined
@@ -228,8 +228,6 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   };
 
   if (!status) return null;
-
-  console.log(steps);
 
   return (
     <Stepper {...stepperProps}>
