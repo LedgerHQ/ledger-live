@@ -18,9 +18,11 @@ import {
   getAccountCapabilities,
   makeCompoundSummaryForAccount,
 } from "@ledgerhq/live-common/compound/logic";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
+import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
+import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import {
@@ -42,6 +44,7 @@ import TabBarSafeAreaView, {
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
+import GradientContainer from "../../components/GradientContainer";
 
 type Props = {
   navigation: any;
@@ -83,6 +86,7 @@ const AccountScreenInner = ({
   } = useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const isEmpty = isAccountEmpty(account);
 
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
@@ -146,6 +150,7 @@ const AccountScreenInner = ({
         isCollapsed,
         setIsCollapsed,
         onAccountCardLayout,
+        t,
       }),
     [
       account,
@@ -162,15 +167,53 @@ const AccountScreenInner = ({
       parentAccount,
       range,
       useCounterValue,
+      t,
     ],
   );
 
   const data = [
     ...listHeaderComponents,
-    <SectionContainer px={6} isLast>
-      <SectionTitle title={t("analytics.operations.title")} />
-      <OperationsHistorySection accounts={[account]} />
-    </SectionContainer>,
+    ...(!isEmpty
+      ? [
+          <SectionContainer px={6} isLast>
+            <SectionTitle title={t("analytics.operations.title")} />
+            <OperationsHistorySection accounts={[account]} />
+          </SectionContainer>,
+        ]
+      : [
+          <Box mt={8}>
+            <GradientContainer containerStyle={{ marginHorizontal: 16 }}>
+              <Flex
+                flex={1}
+                px={10}
+                py={11}
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Text
+                  variant="large"
+                  fontWeight="semiBold"
+                  color="neutral.c100"
+                  textAlign="center"
+                >
+                  {t("account.readOnly.noTransaction.title")}
+                </Text>
+                <Text
+                  variant="small"
+                  fontWeight="medium"
+                  color="neutral.c70"
+                  textAlign="center"
+                  mt={3}
+                >
+                  <Trans
+                    i18nKey={"account.readOnly.noTransaction.subtitle"}
+                    values={{ assetName: currency.name }}
+                  />
+                </Text>
+              </Flex>
+            </GradientContainer>
+          </Box>,
+        ]),
   ];
 
   return (
@@ -183,7 +226,10 @@ const AccountScreenInner = ({
       />
       <AnimatedFlatListWithRefreshControl
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+        contentContainerStyle={{
+          paddingBottom: TAB_BAR_SAFE_HEIGHT + 48,
+          marginTop: 92,
+        }}
         data={data}
         renderItem={({ item }: any) => item}
         keyExtractor={(_: any, index: any) => String(index)}
