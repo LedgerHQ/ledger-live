@@ -23,7 +23,7 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
