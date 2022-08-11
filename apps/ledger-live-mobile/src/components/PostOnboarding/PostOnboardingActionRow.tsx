@@ -2,12 +2,11 @@ import React, { useCallback } from "react";
 import { Flex, Icons, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-
-import Touchable from "../Touchable";
 import {
   ActionState,
   PostOnboardingAction,
 } from "@ledgerhq/live-common/lib/postOnboarding/types";
+import Touchable from "../Touchable";
 
 export type Props = PostOnboardingAction & ActionState;
 

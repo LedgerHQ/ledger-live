@@ -1,13 +1,15 @@
-import { DeviceModelId } from "@ledgerhq/devices/lib/";
+import { DeviceModelId } from "@ledgerhq/devices/lib/index";
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
-import { useInitPostOnboarding } from "../../../logic/postOnboarding/hooks";
 import SettingsRow from "../../components/SettingsRow";
-import { useNavigateToPostOnboardingHub } from "../../logic/postOnboarding/hooks";
+import {
+  useNavigateToPostOnboardingHubCallback,
+  useStartPostOnboardingCallback,
+} from "../../logic/postOnboarding/hooks";
 
 export default () => {
-  const handleInit = useInitPostOnboarding(DeviceModelId.nanoFTS);
-  const navigateToPostOnboardingHub = useNavigateToPostOnboardingHub();
+  const handleInit = useStartPostOnboardingCallback(DeviceModelId.nanoFTS);
+  const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   return (
     <Flex>
       <SettingsRow

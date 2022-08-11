@@ -19,6 +19,11 @@ import {
 } from "../../actions/postOnboarding";
 import { NavigatorName, ScreenName } from "../../const";
 
+/*
+ * post onboarding hub screen.
+ * @returns an object representing the state that should be rendered on the
+ *
+ * */
 export function usePostOnboardingHubState(): PostOnboardingHubState {
   const hubState = useSelector(hubStateSelector);
   return useMemo(() => {
@@ -43,11 +48,38 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
   }, [hubState]);
 }
 
+/**
+ *
+ * @returns a boolean representing whether the post onboarding entry point
+ * should be visible on the wallet page.
+ */
 export function usePostOnboardingEntryPointVisibleOnWallet(): boolean {
   return useSelector(walletPostOnboardingEntryPointVisibleSelector);
 }
 
-function useInitPostOnboardingState(deviceModelId: DeviceModelId) {
+/**
+ *
+ * @returns a callback function that can be called to navigate to the post
+ * onboarding hub.
+ */
+export function useNavigateToPostOnboardingHubCallback() {
+  const navigation = useNavigation();
+  return useCallback(() => {
+    navigation.navigate(NavigatorName.Base, {
+      screen: ScreenName.PostOnboardingHub,
+    });
+  }, [navigation]);
+}
+
+/**
+ * Use this to initialize the post onboarding flow for a given
+ * device model. NB: this does NOT navigate to the post onboarding hub.
+ *
+ * @param deviceModelId
+ * @returns a callback function that can be called to initialize the post
+ * onboarding for the given device model
+ */
+function useInitPostOnboardingStateCallback(deviceModelId: DeviceModelId) {
   const dispatch = useDispatch();
   const actions = getPostOnboardingActionsForDevice(deviceModelId);
   return useCallback(
@@ -62,33 +94,31 @@ function useInitPostOnboardingState(deviceModelId: DeviceModelId) {
   );
 }
 
-export function useNavigateToPostOnboardingHub() {
-  const navigation = useNavigation();
-  return useCallback(() => {
-    navigation.navigate(NavigatorName.Base, {
-      screen: ScreenName.PostOnboardingHub,
-    });
-  }, [navigation]);
-}
-
-export function useInitPostOnboarding(deviceModelId: DeviceModelId) {
-  const initPostOnboardingState = useInitPostOnboardingState(deviceModelId);
-  const navigateToPostOnboardingHub = useNavigateToPostOnboardingHub();
+/**
+ * Use this to initialize AND navigate to the post onboarding hub for a given
+ * device model.
+ *
+ * @param deviceModelId
+ * @returns a callback function that can be called to initialize the post
+ * onboarding for the given device model and navigate to the post onboarding
+ * hub.
+ */
+export function useStartPostOnboardingCallback(deviceModelId: DeviceModelId) {
+  const initPostOnboardingState = useInitPostOnboardingStateCallback(
+    deviceModelId,
+  );
+  const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   return useCallback(() => {
     initPostOnboardingState();
     navigateToPostOnboardingHub();
   }, [initPostOnboardingState, navigateToPostOnboardingHub]);
 }
 
-export function usePostOnboarding() {
+export function useSetActionDoneCallback() {
   const dispatch = useDispatch();
-  return useMemo(
-    () => ({
-      setActionDone: (actionId: PostOnboardingActionId) =>
-        dispatch(setPostOnboardingActionDone(actionId)),
-      hideWalletEntryPoint: () =>
-        dispatch(hidePostOnboardingWalletEntryPoint()),
-    }),
+  return useCallback(
+    (actionId: PostOnboardingActionId) =>
+      dispatch(setPostOnboardingActionDone(actionId)),
     [dispatch],
   );
 }

@@ -1,15 +1,15 @@
 import React, { useCallback } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { usePostOnboarding } from "../../logic/postOnboarding/hooks";
+import { useSetActionDoneCallback } from "../../logic/postOnboarding/hooks";
 import { postOnboardingActions } from "../../logic/postOnboarding";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 
 export default () => {
   const route = useRoute();
   const { params } = route;
   const { id }: { id: PostOnboardingActionId } = params;
-  const { setActionDone } = usePostOnboarding();
+  const setActionDone = useSetActionDoneCallback();
   const navigation = useNavigation();
 
   const action = postOnboardingActions[id];
