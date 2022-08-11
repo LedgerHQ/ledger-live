@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "25.1.0",
+  "version": "25.2.0-next.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"

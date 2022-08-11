@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.6.0-next.0
+
+### Minor Changes
+
+- [#451](https://github.com/LedgerHQ/ledger-live/pull/451) [`134355d56`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Type libraries usage in LLC, LLD, LLM, CLI
+
+### Patch Changes
+
+- [#798](https://github.com/LedgerHQ/ledger-live/pull/798) [`222335854`](https://github.com/LedgerHQ/ledger-live/commit/222335854d412cd748c0add73b5f0bb93e02ba42) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - bug fix issue on storyly package version
+
+* [#882](https://github.com/LedgerHQ/ledger-live/pull/882) [`807f3feb9`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8) Thanks [@Justkant](https://github.com/Justkant)! - fix: bump platform API version [LIVE-3181]
+
+- [#859](https://github.com/LedgerHQ/ledger-live/pull/859) [`f66e547cb`](https://github.com/LedgerHQ/ledger-live/commit/f66e547cb9f9c6403f3046c08c8c14789fc47bfd) Thanks [@gre](https://github.com/gre)! - Add Analytics 'reason' field in context of sync events
+
+* [#815](https://github.com/LedgerHQ/ledger-live/pull/815) [`152339dce`](https://github.com/LedgerHQ/ledger-live/commit/152339dceeaca4b4b7656aad1c690589189900a8) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add generics lotties animations
+
+* Updated dependencies [[`37159cbb9`](https://github.com/LedgerHQ/ledger-live/commit/37159cbb9e0023b65593e4ed71557f80bf48989e), [`ebe1adfb7`](https://github.com/LedgerHQ/ledger-live/commit/ebe1adfb7d264da0f8c9e30b84c188eaa931d1e6), [`3dbd4d078`](https://github.com/LedgerHQ/ledger-live/commit/3dbd4d0781569cd0bfce575854e706def2bd951f), [`1a33d8641`](https://github.com/LedgerHQ/ledger-live/commit/1a33d8641f9d1b4e4adfa262a179f124918e0ff5), [`807f3feb9`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8), [`3cc45438a`](https://github.com/LedgerHQ/ledger-live/commit/3cc45438a8aced1922742ff077946d1216f63525), [`134355d56`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4), [`f4b789442`](https://github.com/LedgerHQ/ledger-live/commit/f4b7894426341f5b909ba3a2422ae2b8ecf31466), [`97eab434d`](https://github.com/LedgerHQ/ledger-live/commit/97eab434dee361716588b256146665c99c274af9)]:
+  - @ledgerhq/live-common@25.2.0-next.0
+  - @ledgerhq/types-live@6.23.0-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.3-next.0
+  - @ledgerhq/types-cryptoassets@6.23.0-next.0
+
 ## 3.5.0
 
 ### Minor Changes
