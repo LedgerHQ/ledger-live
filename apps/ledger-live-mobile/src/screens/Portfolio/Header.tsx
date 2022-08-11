@@ -218,17 +218,17 @@ function PortfolioHeader({
                 {t("portfolio.walletBalance")}
               </Text>
               {!hidePortfolio && <DiscreetModeButton size={20} />}
+              {incidents.length > 0 && (
+                <Box pl={2}>
+                  <Touchable onPress={onStatusErrorButtonPress}>
+                    <WarningMedium size={24} color={"warning.c100"} />
+                  </Touchable>
+                </Box>
+              )}
             </Flex>
           </Animated.View>
         </CenteredElement>
       </Flex>
-      {incidents.length > 0 && (
-        <Box>
-          <Touchable onPress={onStatusErrorButtonPress}>
-            <WarningMedium size={24} color={"warning.c100"} />
-          </Touchable>
-        </Box>
-      )}
       <Box>
         <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
           <SettingsMedium size={24} color={"neutral.c100"} />

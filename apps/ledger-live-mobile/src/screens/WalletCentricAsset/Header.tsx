@@ -130,7 +130,7 @@ function Header({
       </Box>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <Text variant={"large"} fontWeight={"semiBold"}>
-          {currency.managerAppName}
+          {currency.name}
         </Text>
       </Flex>
       <Box>

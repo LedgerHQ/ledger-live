@@ -26,7 +26,6 @@ import {
 
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { useNavigation } from "@react-navigation/native";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -48,20 +47,6 @@ type FooterProps = {
   renderAccountSummary: () => ReactNode;
 };
 
-// const Footer = ({ renderAccountSummary }: FooterProps) => {
-//   const accountSummary = renderAccountSummary && renderAccountSummary();
-//   return accountSummary ? (
-//     <Box
-//       flexDirection={"row"}
-//       alignItems={"center"}
-//       marginTop={5}
-//       overflow={"hidden"}
-//     >
-//       {accountSummary}
-//     </Box>
-//   ) : null;
-// };
-
 type Props = {
   assetPortfolio: Portfolio;
   counterValueCurrency: Currency;
@@ -69,14 +54,6 @@ type Props = {
   graphCardEndPosition: number;
   currency: Currency;
   areAccountsEmpty: boolean;
-};
-
-const timeRangeMapped: any = {
-  all: "all",
-  "1y": "year",
-  "30d": "month",
-  "7d": "week",
-  "24h": "day",
 };
 
 function AssetCentricGraphCard({
@@ -99,7 +76,6 @@ function AssetCentricGraphCard({
   } = assetPortfolio;
 
   const item = balanceHistory[balanceHistory.length - 1];
-  const navigation = useNavigation();
 
   const unit = counterValueCurrency.units[0];
 
@@ -140,8 +116,8 @@ function AssetCentricGraphCard({
         flexDirection={"row"}
         justifyContent={"center"}
         alignItems={"center"}
-        marginTop={40}
-        marginBottom={40}
+        marginTop={9}
+        marginBottom={9}
       >
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
@@ -175,16 +151,12 @@ function AssetCentricGraphCard({
                 <Flex flexDirection={"row"}>
                   {!balanceAvailable ? (
                     <>
-                      <SmallPlaceholder mt="12px" />
+                      <SmallPlaceholder mt={4} />
                     </>
                   ) : (
                     <Flex flexDirection="row" alignItems="center">
                       {hoveredItem && hoveredItem.date ? (
-                        <Text
-                          variant={"body"}
-                          fontWeight={"semibold"}
-                          fontSize="16px"
-                        >
+                        <Text variant={"large"} fontWeight={"semibold"}>
                           <FormatDate date={hoveredItem.date} />
                         </Text>
                       ) : (
