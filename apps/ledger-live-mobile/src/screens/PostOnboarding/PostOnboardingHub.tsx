@@ -37,7 +37,6 @@ export default () => {
   const { actionCompletedHubTitle, actionCompletedPopupLabel } =
     lastActionCompleted ?? {};
 
-  // TODO: (design) title correct typography to implement in native-ui
   // TODO: (design) "all done" state with confettis
 
   const navigateToWallet = useCallback(() => {
@@ -48,12 +47,12 @@ export default () => {
   return (
     <SafeContainer>
       <Flex px={6} py={7} justifyContent="space-between" flex={1}>
-        <Text variant="h1" mb="34px">
+        <Text variant="h1Inter" fontWeight="semiBold" mb="34px">
           {actionCompletedHubTitle
             ? t(actionCompletedHubTitle)
             : t("postOnboarding.hub.title")}
         </Text>
-        <Text variant="subtitle" mb={4}>
+        <Text variant="paragraph" mb={4} color="neutral.c70">
           {t("postOnboarding.hub.subtitle")}
         </Text>
         <ScrollView>
