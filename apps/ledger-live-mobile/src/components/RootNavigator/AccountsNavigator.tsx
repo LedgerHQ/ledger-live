@@ -40,7 +40,7 @@ export default function AccountsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
+        component={readOnlyModeEnabled ? ReadOnlyAccount : WalletCentricAsset}
         options={{ headerShown: false }}
       />
       <Stack.Screen

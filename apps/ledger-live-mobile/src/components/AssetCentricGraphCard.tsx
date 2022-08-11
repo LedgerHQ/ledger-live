@@ -44,30 +44,22 @@ type FooterProps = {
   renderAccountSummary: () => ReactNode;
 };
 
-const Footer = ({ renderAccountSummary }: FooterProps) => {
-  const accountSummary = renderAccountSummary && renderAccountSummary();
-  return accountSummary ? (
-    <Box
-      flexDirection={"row"}
-      alignItems={"center"}
-      marginTop={5}
-      overflow={"hidden"}
-    >
-      {accountSummary}
-    </Box>
-  ) : null;
-};
+// const Footer = ({ renderAccountSummary }: FooterProps) => {
+//   const accountSummary = renderAccountSummary && renderAccountSummary();
+//   return accountSummary ? (
+//     <Box
+//       flexDirection={"row"}
+//       alignItems={"center"}
+//       marginTop={5}
+//       overflow={"hidden"}
+//     >
+//       {accountSummary}
+//     </Box>
+//   ) : null;
+// };
 
 type Props = {
-  account: AccountLike;
-  range: PortfolioRange;
-  history: BalanceHistoryWithCountervalue;
-  valueChange: ValueChange;
-  countervalueAvailable: boolean;
-  counterValueCurrency: Currency;
-  useCounterValue?: boolean;
-  renderAccountSummary: () => ReactNode;
-  onSwitchAccountCurrency: () => void;
+  asset: any;
 };
 
 const timeRangeMapped: any = {
@@ -78,25 +70,16 @@ const timeRangeMapped: any = {
   "24h": "day",
 };
 
-function AccountGraphCard({
-  account,
-  countervalueAvailable,
-  history,
-  counterValueCurrency,
-  useCounterValue,
-  renderAccountSummary,
-  onSwitchAccountCurrency,
-  valueChange,
-}: Props) {
+function AssetCentricGraphCard({ asset }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   const [timeRange, setTimeRange] = useTimeRange();
   const [loading, setLoading] = useState(false);
-  const { countervalueChange } = useBalanceHistoryWithCountervalue({
-    account,
-    range: timeRange,
-  });
+  //   const { countervalueChange } = useBalanceHistoryWithCountervalue({
+  //     account,
+  //     range: timeRange,
+  //   });
 
   const ranges = useMemo(
     () =>
@@ -111,7 +94,7 @@ function AccountGraphCard({
 
   const activeRangeIndex = ranges.findIndex(r => r.value === timeRange);
 
-  const isAvailable = !useCounterValue || countervalueAvailable;
+  // const isAvailable = !useCounterValue || countervalueAvailable;
 
   const updateRange = useCallback(
     index => {
@@ -124,11 +107,11 @@ function AccountGraphCard({
     [ranges, setTimeRange],
   );
 
-  useEffect(() => {
-    if (history && history.length > 0) {
-      setLoading(false);
-    }
-  }, [history]);
+  //   useEffect(() => {
+  //     if (history && history.length > 0) {
+  //       setLoading(false);
+  //     }
+  //   }, [history]);
 
   const [hoveredItem, setHoverItem] = useState<Item>();
 
@@ -140,87 +123,76 @@ function AccountGraphCard({
 
   return (
     <Flex flexDirection="column" mt={20}>
-      <GraphCardHeader
-        account={account}
-        countervalueAvailable={countervalueAvailable}
-        onSwitchAccountCurrency={onSwitchAccountCurrency}
-        countervalueChange={countervalueChange}
-        counterValueUnit={counterValueCurrency.units[0]}
-        useCounterValue={useCounterValue}
-        cryptoCurrencyUnit={getAccountUnit(account)}
-        item={hoveredItem || history[history.length - 1]}
-        valueChange={valueChange}
-      />
+      <GraphCardHeader asset={asset} />
       <Flex height={120} alignItems="center" justifyContent="center">
         {!loading ? (
           <Transitions.Fade duration={400} status="entering">
             {/** @ts-expect-error import js issue */}
-            <Graph
+            {/* <Graph
               isInteractive
               isLoading={!isAvailable}
               height={120}
               width={width}
-              color={getCurrencyColor(account?.currency) || colors.primary.c80}
-              data={history}
-              mapValue={useCounterValue ? mapCounterValue : mapCryptoValue}
+              color={
+                // getCurrencyColor(account?.currency) ||
+                colors.primary.c80
+              }
+              data={[]}
+              //   mapValue={useCounterValue ? mapCounterValue : mapCryptoValue}
               onItemHover={setHoverItem}
               verticalRangeRatio={10}
               fill={colors.background.main}
-            />
+            /> */}
           </Transitions.Fade>
         ) : (
           <InfiniteLoader size={32} />
         )}
       </Flex>
-      <Flex bg={colors.background.main}>
-        <GraphTabs
+      <Flex pt={16} px={6} bg={colors.background.main}>
+        {/* <GraphTabs
           activeIndex={activeRangeIndex}
           onChange={updateRange}
           labels={rangesLabels}
-        />
+        /> */}
       </Flex>
-      <Footer renderAccountSummary={renderAccountSummary} />
+      {/* <Footer renderAccountSummary={renderAccountSummary} /> */}
     </Flex>
   );
 }
 
 type HeaderTitleProps = {
-  account: AccountLike;
-  countervalueAvailable: boolean;
-  onSwitchAccountCurrency: () => void;
-  valueChange: ValueChange;
-  useCounterValue?: boolean;
-  cryptoCurrencyUnit: Unit;
-  counterValueUnit: Unit;
-  item: Item;
+  asset: any;
 };
 
-const GraphCardHeader = ({
-  account,
-  countervalueAvailable,
-  onSwitchAccountCurrency,
-  valueChange,
-  useCounterValue,
-  cryptoCurrencyUnit,
-  counterValueUnit,
-  item,
-}: HeaderTitleProps) => {
+const GraphCardHeader = ({ asset }: HeaderTitleProps) => {
+  // const items = [
+  //   {
+  //     unit: cryptoCurrencyUnit,
+  //     value: item.value,
+  //   },
+  //   {
+  //     unit: counterValueUnit,
+  //     value: item.countervalue,
+  //     joinFragmentsSeparator: " ",
+  //   },
+  // ];
   const items = [
     {
-      unit: cryptoCurrencyUnit,
-      value: item.value,
+      unit: "altDol",
+      value: 42,
     },
     {
-      unit: counterValueUnit,
-      value: item.countervalue,
+      unit: "dol",
+      value: 42,
       joinFragmentsSeparator: " ",
     },
   ];
 
-  const shouldUseCounterValue = countervalueAvailable && useCounterValue;
-  if (shouldUseCounterValue) {
-    items.reverse();
-  }
+  const shouldUseCounterValue = false;
+  // countervalueAvailable && useCounterValue;
+  // if (shouldUseCounterValue) {
+  //   items.reverse();
+  // }
 
   return (
     <Flex
@@ -231,8 +203,8 @@ const GraphCardHeader = ({
     >
       <Touchable
         event="SwitchAccountCurrency"
-        eventProperties={{ useCounterValue: shouldUseCounterValue }}
-        onPress={countervalueAvailable ? onSwitchAccountCurrency : undefined}
+        //   eventProperties={{ useCounterValue: shouldUseCounterValue }}
+        //   onPress={countervalueAvailable ? onSwitchAccountCurrency : undefined}
         style={{ flexShrink: 1 }}
       >
         <Flex>
@@ -244,12 +216,12 @@ const GraphCardHeader = ({
                 color={"neutral.c70"}
               >
                 {typeof items[1]?.value === "number" ? (
-                  <CurrencyUnitValue {...items[1]} />
+                  "42424242"
                 ) : (
+                  // <CurrencyUnitValue {...items[1]} />
                   <NoCountervaluePlaceholder />
                 )}
               </Text>
-              <TransactionsPendingConfirmationWarning maybeAccount={account} />
             </Flex>
           </Flex>
           <Text
@@ -259,15 +231,16 @@ const GraphCardHeader = ({
             numberOfLines={1}
             adjustsFontSizeToFit
           >
-            <CurrencyUnitValue
-              disableRounding={shouldUseCounterValue}
-              {...items[0]}
-            />
+            42424242
+            {/* <CurrencyUnitValue
+                disableRounding={shouldUseCounterValue}
+                {...items[0]}
+              /> */}
           </Text>
           <Flex flexDirection="row" alignItems="center">
-            <Delta percent valueChange={valueChange} />
+            {/* <Delta percent valueChange={valueChange} /> */}
             <Flex ml={2}>
-              <Delta unit={items[0].unit} valueChange={valueChange} />
+              {/* <Delta unit={items[0].unit} valueChange={valueChange} /> */}
             </Flex>
           </Flex>
         </Flex>
@@ -276,4 +249,4 @@ const GraphCardHeader = ({
   );
 };
 
-export default memo(AccountGraphCard);
+export default memo(AssetCentricGraphCard);
