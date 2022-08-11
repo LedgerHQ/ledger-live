@@ -21,6 +21,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
+import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import {
@@ -42,6 +43,7 @@ import TabBarSafeAreaView, {
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
+import EmptyAccountCard from "./EmptyAccountCard";
 
 type Props = {
   navigation: any;
@@ -83,6 +85,7 @@ const AccountScreenInner = ({
   } = useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const isEmpty = isAccountEmpty(account);
 
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
@@ -146,6 +149,7 @@ const AccountScreenInner = ({
         isCollapsed,
         setIsCollapsed,
         onAccountCardLayout,
+        t,
       }),
     [
       account,
@@ -162,15 +166,20 @@ const AccountScreenInner = ({
       parentAccount,
       range,
       useCounterValue,
+      t,
     ],
   );
 
   const data = [
     ...listHeaderComponents,
-    <SectionContainer px={6} isLast>
-      <SectionTitle title={t("analytics.operations.title")} />
-      <OperationsHistorySection accounts={[account]} />
-    </SectionContainer>,
+    ...(!isEmpty
+      ? [
+          <SectionContainer px={6} isLast>
+            <SectionTitle title={t("analytics.operations.title")} />
+            <OperationsHistorySection accounts={[account]} />
+          </SectionContainer>,
+        ]
+      : [<EmptyAccountCard currencyTicker={currency.ticker} />]),
   ];
 
   return (
@@ -183,7 +192,10 @@ const AccountScreenInner = ({
       />
       <AnimatedFlatListWithRefreshControl
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+        contentContainerStyle={{
+          paddingBottom: TAB_BAR_SAFE_HEIGHT + 48,
+          marginTop: 92,
+        }}
         data={data}
         renderItem={({ item }: any) => item}
         keyExtractor={(_: any, index: any) => String(index)}

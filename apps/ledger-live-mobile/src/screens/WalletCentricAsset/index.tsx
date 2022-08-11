@@ -10,7 +10,8 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/src/currencies";
 import { useTranslation } from "react-i18next";
 import { Box } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
+import { useTheme } from "styled-components/native";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -22,16 +23,12 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import { FabAssetActions } from "../../components/FabActions";
+import EmptyAccountCard from "../Account/EmptyAccountCard";
 import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
 import { usePortfolio } from "../../actions/portfolio";
-import {
-  discreetModeSelector,
-  counterValueCurrencySelector,
-  carouselVisibilitySelector,
-} from "../../reducers/settings";
-import { useDistribution } from "../../actions/general";
+import { counterValueCurrencySelector } from "../../reducers/settings";
 
 type RouteParams = {
   currencyId: string;
@@ -51,20 +48,14 @@ const AssetScreen = ({ route }: Props) => {
   const accounts = useSelector(accountsSelector);
   const { currencyId } = route?.params;
   const currency = getCryptoCurrencyById(currencyId);
+  const { colors } = useTheme();
   const cryptoAccounts = useMemo(
     () => accounts.filter(a => getAccountCurrency(a).id === currencyId),
     [accounts, currencyId],
   );
-
-  const distribution = useDistribution();
-
-  const areAccountsEmpty = useMemo(
-    () =>
-      distribution.list &&
-      distribution.list.every(currencyDistribution =>
-        currencyDistribution.accounts.every(isAccountEmpty),
-      ),
-    [distribution],
+  const areCryptoAccountsEmpty = useMemo(
+    () => cryptoAccounts.every(account => isAccountEmpty(account)),
+    [cryptoAccounts],
   );
 
   const counterValueCurrency: Currency = useSelector(
@@ -93,7 +84,7 @@ const AssetScreen = ({ route }: Props) => {
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
           currency={currency}
-          areAccountsEmpty={areAccountsEmpty}
+          areAccountsEmpty={areCryptoAccountsEmpty}
         />
       </Box>,
       <SectionContainer px={6}>
@@ -103,6 +94,9 @@ const AssetScreen = ({ route }: Props) => {
         />
         <FabAssetActions currency={currency} accounts={accounts} />
       </SectionContainer>,
+      ...(areCryptoAccountsEmpty
+        ? [<EmptyAccountCard currencyTicker={currency.ticker} />]
+        : []),
       <SectionContainer px={6}>
         <SectionTitle
           title={t("portfolio.marketPriceSection.title", {
@@ -111,12 +105,27 @@ const AssetScreen = ({ route }: Props) => {
         />
         <MarketPriceSection currency={currency} />
       </SectionContainer>,
-      <SectionContainer px={6} isLast>
-        <SectionTitle title={t("analytics.operations.title")} />
-        <OperationsHistorySection accounts={cryptoAccounts} />
-      </SectionContainer>,
+      ...(!areCryptoAccountsEmpty
+        ? [
+            <SectionContainer px={6} isLast>
+              <SectionTitle title={t("analytics.operations.title")} />
+              <OperationsHistorySection accounts={cryptoAccounts} />
+            </SectionContainer>,
+          ]
+        : []),
     ],
-    [cryptoAccounts, currency, t],
+    [
+      onAssetCardLayout,
+      assetPortfolio,
+      counterValueCurrency,
+      currentPositionY,
+      graphCardEndPosition,
+      currency,
+      t,
+      accounts,
+      areCryptoAccountsEmpty,
+      cryptoAccounts,
+    ],
   );
 
   return (

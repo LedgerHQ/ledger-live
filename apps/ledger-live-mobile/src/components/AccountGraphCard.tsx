@@ -36,7 +36,6 @@ import Graph from "./Graph";
 import Touchable from "./Touchable";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import { NoCountervaluePlaceholder } from "./CounterValue";
-import DiscreetModeButton from "./DiscreetModeButton";
 
 const { width } = getWindowDimensions();
 
@@ -223,7 +222,7 @@ const GraphCardHeader = ({
   }
 
   return (
-    <Flex flexDirection={"row"} pt={13} justifyContent={"space-between"}>
+    <Flex flexDirection={"row"} px={6} justifyContent={"space-between"}>
       <Touchable
         event="SwitchAccountCurrency"
         eventProperties={{ useCounterValue: shouldUseCounterValue }}

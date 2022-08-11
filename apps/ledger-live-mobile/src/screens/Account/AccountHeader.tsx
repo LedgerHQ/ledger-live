@@ -33,8 +33,7 @@ function AccountHeader({
   const navigation = useNavigation();
   const { colors } = useTheme();
 
-  const readOnlyModeEnabled =
-    useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onSettingsButtonPress = useCallback(() => {
     // @ts-expect-error navigation ts issue
