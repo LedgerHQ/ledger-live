@@ -103,6 +103,7 @@ export type AssetsDistribution = {
   // a sorted list of assets with data
   list: {
     currency: CryptoCurrency | TokenCurrency;
+    accounts: AccountLike[];
     distribution: number;
     // % of the total (normalized in 0-1)
     amount: number;

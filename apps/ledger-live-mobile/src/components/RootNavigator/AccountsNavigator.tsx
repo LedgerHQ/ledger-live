@@ -17,6 +17,7 @@ import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import { accountsSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
+
 import WalletCentricAsset from "../../screens/WalletCentricAsset";
 
 export default function AccountsNavigator() {
@@ -62,6 +63,12 @@ export default function AccountsNavigator() {
         component={NftViewer}
         options={{
           headerTitle: "",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.Asset}
+        component={WalletCentricAsset}
+        options={{
         }}
       />
     </Stack.Navigator>
