@@ -1,13 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/devices/lib/";
+import { PostOnboardingActionId, PostOnboardingState } from "@ledgerhq/live-common/lib/postOnboarding/types";
 import { handleActions } from "redux-actions";
-import {
-  PostOnboardingActionId,
-  PostOnboardingState,
-} from "../logic/postOnboarding/types";
 
-export type POState = PostOnboardingState;
-
-const initialState: POState = {
+const initialState: PostOnboardingState = {
   deviceModelId: null,
   walletEntryPointVisible: false,
   actionsToComplete: [],
@@ -15,18 +10,21 @@ const initialState: POState = {
   lastActionCompleted: null,
 };
 
-const handlers: Record<string, (state: POState, action: any) => POState> = {
+const handlers: Record<
+  string,
+  (state: PostOnboardingState, action: any) => PostOnboardingState
+> = {
   POST_ONBOARDING_IMPORT_STATE: (
     _,
     action: { newState: Record<string, any> },
-  ): POState =>
+  ): PostOnboardingState =>
     /**
      * TODO: the state passed as param cannot be trusted to match
-     * the POState type.
+     * the PostOnboardingState type.
      * We need to do some type guard before setting it
      * in state or the type checking can't be trusted.
      * */
-    action.newState,
+    action.newState as PostOnboardingState,
   POST_ONBOARDING_INIT: (
     _,
     action: {
@@ -71,13 +69,13 @@ export default handleActions(handlers, initialState);
 export const postOnboardingSelector = ({
   postOnboarding,
 }: {
-  postOnboarding: POState;
-}): POState => postOnboarding;
+  postOnboarding: PostOnboardingState;
+}): PostOnboardingState => postOnboarding;
 
 export const hubStateSelector = ({
   postOnboarding,
 }: {
-  postOnboarding: POState;
+  postOnboarding: PostOnboardingState;
 }) => {
   const {
     deviceModelId,
@@ -96,5 +94,5 @@ export const hubStateSelector = ({
 export const walletPostOnboardingEntryPointVisibleSelector = ({
   postOnboarding,
 }: {
-  postOnboarding: POState;
+  postOnboarding: PostOnboardingState;
 }) => postOnboarding.walletEntryPointVisible;

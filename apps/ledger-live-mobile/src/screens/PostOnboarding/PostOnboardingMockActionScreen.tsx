@@ -3,7 +3,6 @@ import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { usePostOnboarding } from "../../logic/postOnboarding/hooks";
 import { postOnboardingActions } from "../../logic/postOnboarding";
-import { PostOnboardingActionId } from "../../logic/postOnboarding/types";
 import { ScreenName } from "../../const";
 
 export default () => {

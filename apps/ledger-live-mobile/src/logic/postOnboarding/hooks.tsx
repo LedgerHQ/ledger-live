@@ -1,17 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useMemo } from "react";
-import { DeviceModelId } from "@ledgerhq/devices/lib/index";
 import { useNavigation } from "@react-navigation/native";
+import { DeviceModelId } from "@ledgerhq/devices/lib/index";
+import {
+  PostOnboardingActionId,
+  PostOnboardingHubState,
+} from "@ledgerhq/live-common/lib/postOnboarding/types";
 import { getPostOnboardingActionsForDevice, postOnboardingActions } from ".";
 import {
   hubStateSelector,
   walletPostOnboardingEntryPointVisibleSelector,
 } from "../../reducers/postOnboarding";
-import {
-  ActionState,
-  PostOnboardingAction,
-  PostOnboardingActionId,
-} from "./types";
 import { getFeature } from "../../components/FirebaseFeatureFlags";
 import {
   hidePostOnboardingWalletEntryPoint,
@@ -19,12 +18,6 @@ import {
   setPostOnboardingActionDone,
 } from "../../actions/postOnboarding";
 import { NavigatorName, ScreenName } from "../../const";
-
-type PostOnboardingHubState = {
-  deviceModelId: DeviceModelId | null;
-  lastActionCompleted: PostOnboardingAction | null;
-  actionsState: (PostOnboardingAction & ActionState)[];
-};
 
 export function usePostOnboardingHubState(): PostOnboardingHubState {
   const hubState = useSelector(hubStateSelector);

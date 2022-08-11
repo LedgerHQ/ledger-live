@@ -1,6 +1,7 @@
 // @flow
 /* eslint import/no-cycle: 0 */
 import { combineReducers } from "redux";
+import { PostOnboardingState } from "@ledgerhq/live-common/lib/postOnboarding/types";
 import accounts from "./accounts";
 import settings from "./settings";
 import appstate from "./appstate";
@@ -12,7 +13,6 @@ import type { SettingsState } from "./settings";
 import type { AppState } from "./appstate";
 import type { BleState } from "./ble";
 import type { RatingsState } from "./ratings";
-import type { POState as PostOnboardingState } from "./postOnboarding";
 
 export type State = {
   accounts: AccountsState,

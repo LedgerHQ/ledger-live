@@ -2,19 +2,18 @@ import React, { useCallback } from "react";
 import { Flex, Icons, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+
+import Touchable from "../Touchable";
 import {
   ActionState,
   PostOnboardingAction,
-} from "../../logic/postOnboarding/types";
-import Touchable from "../Touchable";
+} from "@ledgerhq/live-common/lib/postOnboarding/types";
 
 export type Props = PostOnboardingAction & ActionState;
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
-    id,
     navigationParams,
-    onPress,
     icon: Icon,
     title,
     description,

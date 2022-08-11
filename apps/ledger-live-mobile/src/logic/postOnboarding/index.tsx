@@ -1,7 +1,10 @@
 import { DeviceModelId } from "@ledgerhq/devices/lib/index";
+import {
+  PostOnboardingAction,
+  PostOnboardingActionId,
+} from "@ledgerhq/live-common/lib/postOnboarding/types";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
-import { PostOnboardingAction, PostOnboardingActionId } from "./types";
 
 const claim: PostOnboardingAction = {
   id: PostOnboardingActionId.claim,
@@ -67,9 +70,10 @@ const migrateAssets: PostOnboardingAction = {
   ],
 };
 
-export const postOnboardingActions: {
-  [key in PostOnboardingActionId]: PostOnboardingAction;
-} = {
+export const postOnboardingActions: Record<
+  PostOnboardingActionId,
+  PostOnboardingAction
+> = {
   claim,
   migrateAssets,
   personalize,
