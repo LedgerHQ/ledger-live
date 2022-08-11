@@ -6,7 +6,7 @@ import {
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 
-const claim: PostOnboardingAction = {
+const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claim,
   icon: Icons.BracketsMedium,
   title: "Claim lorem ipsum",
@@ -16,7 +16,7 @@ const claim: PostOnboardingAction = {
   actionCompletedPopupLabel: "Claimed",
   actionCompletedHubTitle: "Claimed completed hub title",
   navigationParams: [
-    NavigatorName.Base,
+    NavigatorName.PostOnboarding,
     {
       screen: ScreenName.PostOnboardingMockActionScreen,
       params: {
@@ -27,18 +27,18 @@ const claim: PostOnboardingAction = {
   ],
 };
 
-const personalize: PostOnboardingAction = {
+const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalize,
   icon: Icons.BracketsMedium,
   featureFlagId: "customImage",
-  title: "Lorem ipsum",
+  title: "Personalize lorem ipsum",
   description:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sollicitudin turpis ac porttitor consectetur.",
   tagLabel: "Ipsum",
   actionCompletedPopupLabel: "Personalized",
   actionCompletedHubTitle: "Personalize completeted hub title",
   navigationParams: [
-    NavigatorName.Base,
+    NavigatorName.PostOnboarding,
     {
       screen: ScreenName.PostOnboardingMockActionScreen,
       params: {
@@ -49,7 +49,7 @@ const personalize: PostOnboardingAction = {
   ],
 };
 
-const migrateAssets: PostOnboardingAction = {
+const migrateAssetsMock: PostOnboardingAction = {
   id: PostOnboardingActionId.migrateAssets,
   featureFlagId: "customImage",
   icon: Icons.TransferMedium,
@@ -59,7 +59,7 @@ const migrateAssets: PostOnboardingAction = {
   actionCompletedPopupLabel: "Migrated",
   actionCompletedHubTitle: "Migrated hub title",
   navigationParams: [
-    NavigatorName.Base,
+    NavigatorName.PostOnboarding,
     {
       screen: ScreenName.PostOnboardingMockActionScreen,
       params: {
@@ -74,15 +74,15 @@ export const postOnboardingActions: Record<
   PostOnboardingActionId,
   PostOnboardingAction
 > = {
-  claim,
-  migrateAssets,
-  personalize,
+  claim: claimMock,
+  migrateAssets: migrateAssetsMock,
+  personalize: personalizeMock,
 };
 
 const ftsPostOnboardingActions: PostOnboardingAction[] = [
-  claim,
-  personalize,
-  migrateAssets,
+  claimMock,
+  personalizeMock,
+  migrateAssetsMock,
 ];
 
 export function getPostOnboardingActionsForDevice(

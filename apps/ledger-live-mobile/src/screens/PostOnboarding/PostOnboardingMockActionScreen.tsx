@@ -1,20 +1,23 @@
 import React, { useCallback } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
+
 import {
   useNavigateToPostOnboardingHubCallback,
   useSetActionDoneCallback,
 } from "../../logic/postOnboarding/hooks";
 import { postOnboardingActions } from "../../logic/postOnboarding";
 import { NavigatorName, ScreenName } from "../../const";
+import { ParamList } from "./types";
 
-export default () => {
-  const route = useRoute();
+const PostOnboardingMockActionScreen: React.FC<StackScreenProps<
+  ParamList,
+  "PostOnboardingMockActionScreen"
+>> = ({ navigation, route }) => {
   const { params } = route;
-  const { id }: { id: PostOnboardingActionId } = params;
+  const { id } = params;
   const setActionDone = useSetActionDoneCallback();
   const navigateToHub = useNavigateToPostOnboardingHubCallback();
-  const navigation = useNavigation();
 
   const action = postOnboardingActions[id];
 
@@ -48,3 +51,5 @@ export default () => {
     </Flex>
   );
 };
+
+export default PostOnboardingMockActionScreen;

@@ -65,7 +65,7 @@ export function usePostOnboardingEntryPointVisibleOnWallet(): boolean {
 export function useNavigateToPostOnboardingHubCallback() {
   const navigation = useNavigation();
   return useCallback(() => {
-    navigation.navigate(NavigatorName.Base, {
+    navigation.navigate(NavigatorName.PostOnboarding, {
       screen: ScreenName.PostOnboardingHub,
     });
   }, [navigation]);

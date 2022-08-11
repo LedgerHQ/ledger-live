@@ -457,4 +457,6 @@ export const NavigatorName = {
   // Root
   RootNavigator: "RootNavigator",
   Discover: "Discover",
+
+  PostOnboarding: "PostOnboarding",
 };
