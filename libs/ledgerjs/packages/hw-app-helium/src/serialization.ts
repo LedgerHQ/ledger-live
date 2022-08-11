@@ -59,7 +59,7 @@ export const serializePaymentV2 = (txn: PaymentV2): Buffer => {
     serializeNumber(txn.fee),
     serializeNumber(txn.nonce),
     Buffer.from([payee.version]),
-    Buffer.from([payee.keyType]),
+    Buffer.from([payee.netType | payee.keyType]),
     Buffer.from(payee.publicKey),
     serializeMemo(memo || ""),
   ]);

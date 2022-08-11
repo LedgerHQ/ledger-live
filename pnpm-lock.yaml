@@ -1569,9 +1569,9 @@ importers:
 
   libs/ledgerjs/packages/hw-app-helium:
     specifiers:
-      '@helium/address': ^4.3.1
+      '@helium/address': ^4.6.2
       '@helium/proto': ^1.6.0
-      '@helium/transactions': ^4.6.0
+      '@helium/transactions': ^4.7.5
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
@@ -1591,9 +1591,9 @@ importers:
       ts-node: ^10.4.0
       typescript: ^4
     dependencies:
-      '@helium/address': 4.3.1
+      '@helium/address': 4.6.2
       '@helium/proto': 1.6.0
-      '@helium/transactions': 4.6.0
+      '@helium/transactions': 4.7.5
       '@ledgerhq/errors': link:../errors
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
@@ -8382,6 +8382,14 @@ packages:
       multiformats: 9.6.5
     dev: false
 
+  /@helium/address/4.6.2:
+    resolution: {integrity: sha512-MXlT9SH4HPrBj+r71w51grZj4MUNi4o4SnDJds/yallROBK0qlO8m/bDCsKfmj0FVm861tIfQBrJc6y5vjsymg==}
+    dependencies:
+      bs58: 5.0.0
+      js-sha256: 0.9.0
+      multiformats: 9.6.5
+    dev: false
+
   /@helium/crypto/4.6.0:
     resolution: {integrity: sha512-o2C02MkrjYN7Qeb3MK1wTrtEkQscdQTYwEpZ0mvmKSaxIOaJVnvsU7ODvYZwXFSRwpkmucKFY99CC3PjCprpcQ==}
     dependencies:
@@ -8420,6 +8428,16 @@ packages:
     resolution: {integrity: sha512-t+fAOvt8+CeMbHfB6B32NQz3L5qgAS3ke5UcSd4Zv93FWZAkphxqGVXOXutbzi1wVkqTiU832kgQTyzeOL4T3w==}
     dependencies:
       '@helium/address': 4.3.1
+      '@helium/proto': 1.6.0
+      '@types/libsodium-wrappers': 0.7.9
+      long: 4.0.0
+      path: 0.12.7
+    dev: false
+
+  /@helium/transactions/4.7.5:
+    resolution: {integrity: sha512-SCJI9lYVUTec9Ub60TpYcMEKmdiTV4qjib8yh63C4l1ACM5sHMSHoJwKSVxpjEEA8q+j6fnEBBEnJMtTSoK9/Q==}
+    dependencies:
+      '@helium/address': 4.6.2
       '@helium/proto': 1.6.0
       '@types/libsodium-wrappers': 0.7.9
       long: 4.0.0
