@@ -29,9 +29,10 @@ import {
   signEIP712HashedMessage,
   signEIP712Message,
   EIP712Message,
+  isEIP712Message,
 } from "./modules/EIP712";
 
-export { ledgerService };
+export { ledgerService, isEIP712Message };
 
 export type StarkQuantizationType =
   | "eth"
