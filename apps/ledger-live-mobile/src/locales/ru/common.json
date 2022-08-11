@@ -2615,7 +2615,7 @@
       }
     },
     "stepperHeader" : {
-      "selectAccount" : "Счёт для пополнения",
+      "selectAccount" : "Счёт для списания",
       "recipientAddress" : "Адрес получателя",
       "selectAmount" : "Сумма",
       "summary" : "Сводка",
@@ -2810,7 +2810,7 @@
     },
     "validation" : {
       "message" : "Обязательно проверяйте соответствие адреса на экране устройства адресу, который вам предоставили.",
-      "success" : "Ваши голоса переданы",
+      "success" : "Вы успешно проголосовали",
       "info" : "",
       "button" : {
       }
@@ -3803,13 +3803,13 @@
       "nominatorsCount" : "Номинаторов: {{nominatorsCount}}",
       "nominatorsInfo" : "Количество номинаторов у этого валидатора: {{count}}.",
       "oversubscribed" : "Превышен лимит голосов ({{nominatorsCount}})",
-      "oversubscribedInfo" : "Вознаграждения получают только ТОП-{{maxNominatorRewardedPerValidator}} номинатора(-ов) с наибольшей заблокированной суммой",
+      "oversubscribedInfo" : "Вознаграждения получают только ТОП-{{maxNominatorRewardedPerValidator}} номинаторов с наибольшей заблокированной суммой",
       "hasPendingBondOperation" : "Блокировка средств ожидает подтверждения",
       "externalControllerUnsupported" : "Этот stash-счёт контролируется отдельным счётом с адресом <0>{{controllerAddress}}</0>. Чтобы стейкать средства в Ledger Live, вам нужно назначить stash-счёт в качестве самостоятельного контроллера.",
       "externalStashUnsupported" : "Этот счёт контролируется отдельным счётом с адресом <0>{{stashAddress}}</0>. Чтобы стейкать средства в Ledger Live, вам нужно назначить stash-счёт в качестве самостоятельного контроллера.",
-      "showInactiveNominations" : "Показать всех номинаторов ({{count}})",
+      "showInactiveNominations" : "Показать все назначения ({{count}})",
       "hideInactiveNominations" : "Показать только активных номинаторов",
-      "noActiveNominations" : "Нет активных номинаторов.",
+      "noActiveNominations" : "Нет активных назначений.",
       "showAllUnlockings" : "Показать все разблокируемые средства ({{count}})",
       "hideAllUnlockings" : "Скрыть разблокируемые средства"
     },
