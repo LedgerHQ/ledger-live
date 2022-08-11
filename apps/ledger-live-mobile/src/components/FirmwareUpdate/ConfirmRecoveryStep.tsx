@@ -1,4 +1,5 @@
 import {
+  Divider,
   Flex,
   Text,
   Link,
@@ -83,9 +84,7 @@ const ConfirmRecoveryStep = ({
           <SafeMarkdown markdown={firmwareNotes} />
         </Flex>
       </ScrollView>
-
-      <Flex height={1} backgroundColor="neutral.c40" />
-      {/** TODO: replace by divider component when we have one */}
+      <Divider />
       <Flex backgroundColor="neutral.c30" p={5} mt={5} borderRadius={5}>
         <Checkbox
           checked={confirmRecoveryPhraseBackup}

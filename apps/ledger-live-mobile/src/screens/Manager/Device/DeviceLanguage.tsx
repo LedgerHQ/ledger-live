@@ -4,33 +4,33 @@ import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import BottomModal from "../../../components/BottomModal";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
-import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
+import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
 type Props = {
   pendingInstalls: boolean;
-  currentLanguage: Language;
+  currentDeviceLanguage: Language;
   device: Device;
   deviceInfo: DeviceInfo;
+  onLanguageChange: () => void;
 };
 
 const DeviceLanguage: React.FC<Props> = ({
   pendingInstalls,
-  currentLanguage,
+  currentDeviceLanguage,
   device,
   deviceInfo,
+  onLanguageChange,
 }) => {
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    currentLanguage,
+    currentDeviceLanguage,
   );
-  const [deviceLanguage, setDeviceLanguage] = useState<Language>(
-    currentLanguage,
-  );
-  const availableLanguages = useAvailableLanguagesForDevice(deviceInfo);
+
+  const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
 
   const [shouldInstallLanguage, setShouldInstallLanguage] = useState<boolean>(
     false,
@@ -67,10 +67,9 @@ const DeviceLanguage: React.FC<Props> = ({
     setDeviceForActionModal(null);
   }, [setShouldInstallLanguage, setDeviceForActionModal]);
 
-  const refreshDeviceLanguage = useCallback(
-    () => setDeviceLanguage(selectedLanguage),
-    [setDeviceLanguage, selectedLanguage],
-  );
+  const refreshDeviceLanguage = useCallback(() => {
+    onLanguageChange();
+  }, [selectedLanguage]);
 
   return (
     <>
@@ -91,10 +90,12 @@ const DeviceLanguage: React.FC<Props> = ({
             Icon={Icons.DropdownMedium}
             onPress={openChangeLanguageModal}
           >
-            {t(`deviceLocalization.languages.${deviceLanguage}`)}
+            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
           </Button>
         ) : (
-          <Text>{t(`deviceLocalization.languages.${deviceLanguage}`)}</Text>
+          <Text>
+            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
+          </Text>
         )}
       </Flex>
       <BottomModal
@@ -103,14 +104,14 @@ const DeviceLanguage: React.FC<Props> = ({
         onModalHide={openDeviceActionModal}
       >
         <DeviceLanguageSelection
-          deviceLanguage={deviceLanguage}
+          deviceLanguage={currentDeviceLanguage}
           onSelectLanguage={setSelectedLanguage}
           selectedLanguage={selectedLanguage}
           onConfirmInstall={confirmInstall}
           availableLanguages={availableLanguages}
         />
       </BottomModal>
-      <ChangeDeviceLanguageAction
+      <ChangeDeviceLanguageActionModal
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}
         language={selectedLanguage}

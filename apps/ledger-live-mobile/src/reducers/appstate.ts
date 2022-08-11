@@ -1,13 +1,14 @@
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import { NetworkDown } from "@ledgerhq/errors";
+import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import type { State } from ".";
 
 export type AsyncState = {
   isConnected: boolean | null,
 };
 
-export type BackgroundEvent = {
+export type FwUpdateBackgroundEvent = {
   type: "confirmPin"
 } | {
   type: "downloadingUpdate",
@@ -20,16 +21,20 @@ export type BackgroundEvent = {
   installing?: string | null,
 } | {
   type: "firmwareUpdated"
+  updatedDeviceInfo?: DeviceInfo
 } | {
   type: "error",
   error: any
+} | {
+  type: "log",
+  message: string
 };
 
 export type AppState = {
   isConnected: boolean | null,
   hasConnectedDevice: boolean,
   modalLock: boolean,
-  backgroundEvents: Array<BackgroundEvent>,
+  backgroundEvents: Array<FwUpdateBackgroundEvent>,
 };
 
 const initialState: AppState = {

@@ -8,7 +8,6 @@ import {
   Icons,
   Text,
   BottomDrawer,
-  Link,
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +18,6 @@ import {
   localeIdToDeviceLanguage,
   Locale,
 } from "../../../languages";
-import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage } from "../../../actions/settings";
@@ -28,9 +26,10 @@ import {
   lastSeenDeviceSelector,
 } from "../../../reducers/settings";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
-import NanoXFolded from "../../../images/devices/NanoXFolded";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
+import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
+import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
+import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
@@ -59,7 +58,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
 
   const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
   // TODO: reactivate this feature flag once QA is done
-  const availableDeviceLanguages = useAvailableLanguagesForDevice(
+  const { availableLanguages, loaded } = useAvailableLanguagesForDevice(
     lastSeenDevice?.deviceInfo,
   );
 
@@ -71,11 +70,12 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
       const potentialDeviceLanguage = localeIdToDeviceLanguage[l];
       const langAvailableOnDevice =
         potentialDeviceLanguage !== undefined &&
-        availableDeviceLanguages.includes(potentialDeviceLanguage);
+        availableLanguages.includes(potentialDeviceLanguage);
 
       // firmware version verification is not really needed here, the presence of a language id
       // indicates that we are in a firmware that supports localization
       if (
+        loaded &&
         langAvailableOnDevice &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
@@ -86,7 +86,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         next();
       }
     },
-    [dispatch, next, availableDeviceLanguages],
+    [dispatch, next, availableLanguages, loaded],
   );
 
   const closeDeviceLanguagePrompt = useCallback(() => {
@@ -116,44 +116,22 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         isOpen={isDeviceLanguagePromptOpen}
         onClose={closeDeviceLanguagePrompt}
       >
-        <Flex alignItems="center">
-          <NanoXFolded size={200} />
-          <Text variant="h4" textAlign="center">
-            {t("onboarding.stepLanguage.changeDeviceLanguage")}
-          </Text>
-          <Flex px={7} mt={4} mb={8}>
-            <Text variant="paragraph" textAlign="center" color="neutral.c70">
-              {t("onboarding.stepLanguage.changeDeviceLanguageDescription", {
-                language: t(
-                  `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
-                ),
-              })}
-            </Text>
-          </Flex>
-          <Button
-            type="main"
-            onPress={() =>
-              setDeviceForChangeLanguageAction(lastConnectedDevice)
-            }
-            outline={false}
-            alignSelf="stretch"
-          >
-            {t("deviceLocalization.changeLanguage")}
-          </Button>
-          <Flex mt={6}>
-            <Link
-              onPress={() => console.log("TODO: open link")}
-              Icon={Icons.ExternalLinkMedium}
-              iconPosition="right"
-              type="color"
-              style={{ justifyContent: "flex-start" }}
-            >
-              {t("common.learnMore")}
-            </Link>
-          </Flex>
-        </Flex>
+        <ChangeDeviceLanguagePrompt
+          titleWording={t("onboarding.stepLanguage.changeDeviceLanguage")}
+          descriptionWording={t(
+            "onboarding.stepLanguage.changeDeviceLanguageDescription",
+            {
+              language: t(
+                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
+              ),
+            },
+          )}
+          onConfirm={() =>
+            setDeviceForChangeLanguageAction(lastConnectedDevice)
+          }
+        />
       </BottomDrawer>
-      <ChangeDeviceLanguageAction
+      <ChangeDeviceLanguageActionModal
         device={deviceForChangeLanguageAction}
         language={localeIdToDeviceLanguage[currentLocale] as Language}
         onClose={() => {

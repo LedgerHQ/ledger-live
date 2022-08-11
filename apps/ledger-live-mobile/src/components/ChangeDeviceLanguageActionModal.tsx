@@ -1,34 +1,25 @@
 import React, { useMemo } from "react";
 
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import DeviceAction from "./DeviceAction";
+import DeviceActionModal from "./DeviceActionModal";
 import { Language } from "@ledgerhq/types-live";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
 import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
-import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  Alert,
-} from "@ledgerhq/native-ui";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";
 
 type Props = {
-  device: Device;
+  device: Device | null;
   language: Language;
-  onContinue: () => void;
+  onClose?: () => void;
   onResult?: () => void;
 };
-
 
 const ChangeDeviceLanguageAction: React.FC<Props> = ({
   device,
   language,
-  onContinue,
+  onClose,
   onResult,
 }) => {
-  const showAlert = !device?.wired;
-  const { t } = useTranslation();
-
   const action = useMemo(
     () =>
       createAction(() =>
@@ -41,24 +32,18 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
   );
 
   return (
-    <>
-      <Flex flexDirection="row" mb={showAlert ? "16px" : 0}>
-        <DeviceAction
-          action={action}
-          device={device}
-          renderOnResult={() => (
-            <DeviceLanguageInstalled
-              onContinue={onContinue}
-              onMount={onResult}
-              installedLanguage={language}
-            />
-          )}
+    <DeviceActionModal
+      action={action}
+      onClose={onClose}
+      device={device}
+      renderOnResult={() => (
+        <DeviceLanguageInstalled
+          onContinue={onClose}
+          onMount={onResult}
+          installedLanguage={language}
         />
-      </Flex>
-      {showAlert && (
-        <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />
       )}
-    </>
+    />
   );
 };
 
