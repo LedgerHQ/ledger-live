@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.45.2-nightly.2
+
+### Patch Changes
+
+- [#768](https://github.com/LedgerHQ/ledger-live/pull/768) [`73cad51a5`](https://github.com/LedgerHQ/ledger-live/commit/73cad51a50af55048d56566914c2f80a2fc29f02) Thanks [@Justkant](https://github.com/Justkant)! - fix: use getMainAccount in broadcastTransaction [LIVE-3142]
+
+- Updated dependencies [[`3dbd4d078`](https://github.com/LedgerHQ/ledger-live/commit/3dbd4d0781569cd0bfce575854e706def2bd951f), [`f4b789442`](https://github.com/LedgerHQ/ledger-live/commit/f4b7894426341f5b909ba3a2422ae2b8ecf31466)]:
+  - @ledgerhq/live-common@25.1.0-nightly.3
+
 ## 2.45.2-nightly.1
 
 ### Patch Changes
