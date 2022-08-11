@@ -5,21 +5,18 @@ import { Box, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import {
-  ArrowBottomMedium,
-  DroprightMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { DroprightMedium } from "@ledgerhq/native-ui/assets/icons";
 import NftCollectionOptionsMenu from "../../components/Nft/NftCollectionOptionsMenu";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import NftCollectionRow from "../../components/Nft/NftCollectionRow";
 import { NavigatorName, ScreenName } from "../../const";
 import Button from "../../components/wrappedUi/Button";
 import Touchable from "../../components/Touchable";
-import Link from "../../components/wrappedUi/Link";
+import SectionTitle from "../WalletCentricSections/SectionTitle";
+import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 
 const MAX_COLLECTIONS_TO_SHOW = 3;
 
@@ -102,20 +99,11 @@ export default function NftCollectionsList({ account }: Props) {
 
   const renderHeader = useCallback(
     () => (
-      <View style={styles.header}>
-        <Text variant={"h3"}>NFT</Text>
-        {data.length ? (
-          <Link
-            type="color"
-            event="AccountReceiveToken"
-            Icon={ArrowBottomMedium}
-            iconPosition={"left"}
-            onPress={navigateToReceive}
-          >
-            <Trans i18nKey="account.nft.receiveNft" />
-          </Link>
-        ) : null}
-      </View>
+      <SectionTitle
+        title={"NFT"}
+        seeMoreText={t("account.nft.receiveNft")}
+        onSeeAllPress={data.length ? navigateToReceive : undefined}
+      ></SectionTitle>
     ),
     [data.length, navigateToReceive],
   );
@@ -146,7 +134,7 @@ export default function NftCollectionsList({ account }: Props) {
               },
             ]}
           >
-            <Icon color={colors.live} size={26} name="plus" />
+            <PlusMedium color={"primary.c80"} size={26} />
             <View style={styles.footerText}>
               <Text variant={"large"}>
                 <Trans
@@ -192,7 +180,7 @@ export default function NftCollectionsList({ account }: Props) {
   );
 
   return (
-    <View style={styles.collectionList}>
+    <View>
       <FlatList
         data={data}
         renderItem={renderItem}
@@ -217,11 +205,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  collectionList: {
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingBottom: 24,
   },
   footer: {
     borderRadius: 4,

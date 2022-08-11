@@ -2,19 +2,23 @@ import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import take from "lodash/take";
 import { StyleSheet, View, FlatList } from "react-native";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { listSubAccounts } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { DropdownMedium, DropupMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  DropdownMedium,
+  DropupMedium,
+  PlusMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import { NavigatorName, ScreenName } from "../../const";
 import SubAccountRow from "../../components/SubAccountRow";
 import Touchable from "../../components/Touchable";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import perFamilySubAccountList from "../../generated/SubAccountList";
+import SectionTitle from "../WalletCentricSections/SectionTitle";
 
 const keyExtractor = (o: any) => o.id;
 
@@ -35,12 +39,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     paddingLeft: 12,
     flexDirection: "row",
-  },
-  header: {
-    marginBottom: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
 });
 
@@ -88,21 +86,24 @@ export default function SubAccountsList({
 
   const renderHeader = useCallback(
     () => (
-      <View style={styles.header}>
-        <Text variant={"h3"}>
-          <Trans
-            i18nKey={
-              isToken
-                ? hasSpecificTokenWording
-                  ? `${family}.token`
-                  : "common.token"
-                : "common.subaccount"
-            }
-            count={subAccounts.length}
-          />
-          {` (${subAccounts.length})`}
-        </Text>
-      </View>
+      <SectionTitle
+        title={
+          <>
+            <Trans
+              i18nKey={
+                isToken
+                  ? hasSpecificTokenWording
+                    ? `${family}.token`
+                    : "common.token"
+                  : "common.subaccount"
+              }
+              count={subAccounts.length}
+            />
+            {` (${subAccounts.length})`}
+          </>
+        }
+        containerProps={{ mb: 6 }}
+      ></SectionTitle>
     ),
     [
       isToken,
@@ -134,7 +135,7 @@ export default function SubAccountsList({
               },
             ]}
           >
-            <Icon color={colors.live} size={26} name="plus" />
+            <PlusMedium color={"primary.c80"} size={26} />
             <View style={styles.footerText}>
               <Text variant={"large"}>
                 <Trans
