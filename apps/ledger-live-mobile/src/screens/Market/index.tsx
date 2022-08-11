@@ -7,6 +7,7 @@ import React, {
   useState,
   useEffect,
   useRef,
+  useContext,
 } from "react";
 import { useTheme } from "styled-components/native";
 import {
@@ -25,7 +26,7 @@ import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import {
   marketFilterByStarredAccountsSelector,
@@ -46,6 +47,7 @@ import {
   setMarketFilterByStarredAccounts,
   setMarketRequestParams,
 } from "../../actions/settings";
+import { AnalyticsContext } from "../../components/RootNavigator";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -449,6 +451,18 @@ export default function Market({ navigation }: { navigation: any }) {
   useEffect(() => {
     if (refreshControlVisible && !loading) setRefreshControlVisible(false);
   }, [refreshControlVisible, loading]);
+
+  const { setSource, setScreen } = useContext(AnalyticsContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Market");
+
+      return () => {
+        setSource("Market");
+      };
+    }, [setScreen, setSource]),
+  );
 
   return (
     <TabBarSafeAreaView

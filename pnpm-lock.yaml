@@ -541,6 +541,7 @@ importers:
       '@react-native-community/eslint-config': ^2.0.0
       '@react-native-community/netinfo': ^6.0.1
       '@react-native-firebase/app': ^14.3.1
+      '@react-native-firebase/messaging': ^14.5.1
       '@react-native-firebase/remote-config': ^14.3.1
       '@react-native-masked-view/masked-view': ^0.2.6
       '@react-navigation/bottom-tabs': ^6.0.9
@@ -744,6 +745,7 @@ importers:
       '@react-native-community/clipboard': 1.5.1_zqxy7fpkavjkgz5xll7ed4r6rq
       '@react-native-community/netinfo': 6.2.1_react-native@0.68.2
       '@react-native-firebase/app': 14.9.3_zqxy7fpkavjkgz5xll7ed4r6rq
+      '@react-native-firebase/messaging': 14.11.1_ljhxmmg6zhnbalfqtji2e6aebm
       '@react-native-firebase/remote-config': 14.9.3_ljhxmmg6zhnbalfqtji2e6aebm
       '@react-native-masked-view/masked-view': 0.2.6_zqxy7fpkavjkgz5xll7ed4r6rq
       '@react-navigation/bottom-tabs': 6.3.1_3jvtadmweogmrrz7eqvlu5womu
@@ -971,7 +973,7 @@ importers:
       '@solana/spl-token': ^0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': ^1.0.3
-      '@stricahq/typhonjs': ^1.2.4
+      '@stricahq/typhonjs': ^1.2.5
       '@svgr/core': ^5.5.0
       '@taquito/ledger-signer': ^13.0.1
       '@taquito/taquito': ^13.0.1
@@ -1136,7 +1138,7 @@ importers:
       '@solana/spl-token': 0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': 1.0.4
-      '@stricahq/typhonjs': 1.2.4
+      '@stricahq/typhonjs': 1.2.5
       '@taquito/ledger-signer': 13.0.1
       '@taquito/taquito': 13.0.1
       '@taquito/utils': 13.0.1
@@ -4145,7 +4147,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.18.5
-      '@babel/helper-plugin-utils': 7.17.12
+      '@babel/helper-plugin-utils': 7.16.7
       '@babel/plugin-syntax-numeric-separator': 7.10.4_@babel+core@7.18.5
 
   /@babel/plugin-proposal-numeric-separator/7.16.7_@babel+core@7.9.0:
@@ -4155,7 +4157,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.17.12
+      '@babel/helper-plugin-utils': 7.16.7
       '@babel/plugin-syntax-numeric-separator': 7.10.4_@babel+core@7.9.0
 
   /@babel/plugin-proposal-numeric-separator/7.8.3_@babel+core@7.9.0:
@@ -5212,7 +5214,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.18.5
-      '@babel/helper-plugin-utils': 7.17.12
+      '@babel/helper-plugin-utils': 7.16.7
       '@babel/plugin-syntax-flow': 7.16.7_@babel+core@7.18.5
 
   /@babel/plugin-transform-flow-strip-types/7.9.0_@babel+core@7.9.0:
@@ -5707,7 +5709,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.18.5
-      '@babel/helper-plugin-utils': 7.17.12
+      '@babel/helper-plugin-utils': 7.16.7
 
   /@babel/plugin-transform-react-display-name/7.16.7_@babel+core@7.9.0:
     resolution: {integrity: sha512-qgIg8BcZgd0G/Cz916D5+9kqX0c7nPZyXaP8R2tLNN5tkyIZdG5fEwBrxwplzSnjC1jvQmyMNVwUCZPcbGY7Pg==}
@@ -5716,7 +5718,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.17.12
+      '@babel/helper-plugin-utils': 7.16.7
 
   /@babel/plugin-transform-react-display-name/7.8.3_@babel+core@7.9.0:
     resolution: {integrity: sha512-3Jy/PCw8Fe6uBKtEgz3M82ljt+lTg+xJaM4og+eyu83qLT87ZUSckn0wy7r31jflURWLO83TW6Ylf7lyXj3m5A==}
@@ -13019,6 +13021,14 @@ packages:
       - supports-color
     dev: false
 
+  /@react-native-firebase/messaging/14.11.1_ljhxmmg6zhnbalfqtji2e6aebm:
+    resolution: {integrity: sha512-nJjmA+Oku/rWM//y0hpsXJAM8dqkucZKyu71bZ8f4XCOU0ueqO/Qlyv8ylQ/2G+4+FCoSxncffxDdUfr+3nExA==}
+    peerDependencies:
+      '@react-native-firebase/app': 14.11.1
+    dependencies:
+      '@react-native-firebase/app': 14.9.3_zqxy7fpkavjkgz5xll7ed4r6rq
+    dev: false
+
   /@react-native-firebase/remote-config/14.9.3_ljhxmmg6zhnbalfqtji2e6aebm:
     resolution: {integrity: sha512-Opynaqki18A7OyWofMRyOsr42v7dotpU6qoDczsxPqnnsPKxYohHsMtbKHTOcEL6qa2B24z49PaNzf1loLdiaw==}
     peerDependencies:
@@ -16778,8 +16788,8 @@ packages:
       buffer: 6.0.3
     dev: false
 
-  /@stricahq/typhonjs/1.2.4:
-    resolution: {integrity: sha512-y9WoFYYAqmAr0EyAfym6JtT/YtVT8kFObeDeSJM/7yVZuRdoITIc+RckyOoBYp4dgXt5dMwRd+TmUxGZPUbesA==}
+  /@stricahq/typhonjs/1.2.5:
+    resolution: {integrity: sha512-5b849vjcyAob6GzQ9UG3hJFsQJ6pQqXxT0dDaH32QlOoTqiFo3/R9OuUXEzPAkFJIxpM1ShDos/RTSlix7iAWQ==}
     dependencies:
       '@stricahq/cbors': 1.0.1
       bech32: 2.0.0

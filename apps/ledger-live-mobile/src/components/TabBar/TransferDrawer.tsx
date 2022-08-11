@@ -1,11 +1,16 @@
 import React, { useCallback, useMemo } from "react";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  getFocusedRouteNameFromRoute,
+} from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
 import { ScrollView, Linking } from "react-native";
+import { snakeCase } from "lodash";
 import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
@@ -57,10 +62,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     [onNavigate],
   );
   const onReceiveFunds = useCallback(
-    () =>
-      onNavigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveSelectAccount,
-      }),
+    () => onNavigate(NavigatorName.ReceiveFunds),
     [onNavigate],
   );
   const onSwap = useCallback(
@@ -117,7 +119,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           }}
           title={t("transfer.receive.title")}
           description={t("transfer.receive.description")}
-          onPress={accountsCount > 0 ? onReceiveFunds : null}
+          onPress={onReceiveFunds}
           Icon={Icons.ArrowBottomMedium}
           disabled={readOnlyModeEnabled}
         />
@@ -199,6 +201,28 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     [page],
   );
 
+  let screen = "Wallet";
+
+  // TODO : Find a way to get Assets and Asset screen names
+  // * Currently, these 2 screen names are under NavigatorName.Portfolio's navigator
+  switch (page) {
+    case snakeCase(NavigatorName.Portfolio): {
+      screen = "Wallet";
+      break;
+    }
+    case snakeCase(NavigatorName.Market): {
+      screen = "Market";
+      break;
+    }
+    case snakeCase(NavigatorName.Discover): {
+      screen = "Discover";
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9}>
       <ScrollView
@@ -225,12 +249,13 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           buttonSize="small"
           event="button_clicked"
           eventProperties={bannerEventProperties}
+          screen={screen}
           {...IMAGE_PROPS_SMALL_NANO}
         />
       )}
       {readOnlyModeEnabled && hasOrderedNano ? (
         <Box mt={8} width={"100%"}>
-          <SetupDeviceBanner />
+          <SetupDeviceBanner screen={screen} />
         </Box>
       ) : null}
     </Flex>

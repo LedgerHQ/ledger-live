@@ -1,14 +1,14 @@
 import React, { useCallback, useState, useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
 
-import { ActivityIndicator, TouchableHighlight, TouchableHighlightProps, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, TouchableOpacityProps, View } from "react-native";
 import { buttonSizeStyle, getButtonColorStyle } from "../../cta/Button/getButtonStyle";
 import { ctaIconSize, ctaTextType } from "../../cta/getCtaStyle";
 import Text from "../../Text";
 import { Icon as IconComponent } from "../../Icon";
 import baseStyled, { BaseStyledProps } from "../../styled";
 
-export type ButtonProps = TouchableHighlightProps &
+export type ButtonProps = TouchableOpacityProps &
   BaseStyledProps & {
     Icon?: React.ComponentType<{ size: number; color: string }> | null;
     iconName?: string;
@@ -31,7 +31,7 @@ const IconContainer = styled.View<{
     p.iconButton ? "" : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
 `;
 
-export const Base = baseStyled(TouchableHighlight).attrs<ButtonProps>((p) => ({
+export const Base = baseStyled(TouchableOpacity).attrs<ButtonProps>((p) => ({
   ...getButtonColorStyle(p.theme.colors, p).button,
   // Avoid conflict with styled-system's size property by nulling size and renaming it
   size: undefined,

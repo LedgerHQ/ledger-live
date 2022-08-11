@@ -1,7 +1,15 @@
 /* eslint-disable import/named */
-import React, { useCallback, useMemo, useState, memo, useEffect } from "react";
+import React, {
+  useCallback,
+  useMemo,
+  useState,
+  memo,
+  useEffect,
+  useContext,
+} from "react";
 import { useSelector } from "react-redux";
 import { FlatList, LayoutChangeEvent } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -46,10 +54,7 @@ import BuyDeviceBanner, {
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
-import {
-  useCurrentRouteName,
-  usePreviousRouteName,
-} from "../../../helpers/routeHooks";
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
@@ -178,8 +183,6 @@ function PortfolioScreen({ navigation }: Props) {
     [topCryptoCurrencies],
   );
 
-  const currentRoute = useCurrentRouteName();
-
   const data = useMemo(
     () => [
       hasOrderedNano && (
@@ -205,7 +208,7 @@ function PortfolioScreen({ navigation }: Props) {
           navigatorName={NavigatorName.PortfolioAccounts}
           containerProps={{ mb: "9px" }}
         />
-        <ReadOnlyAssets assets={assetsToDisplay} screen="Wallet" />
+        <ReadOnlyAssets assets={assetsToDisplay} />
       </SectionContainer>,
       !hasOrderedNano && (
         <BuyDeviceBanner
@@ -220,7 +223,7 @@ function PortfolioScreen({ navigation }: Props) {
           event="button_clicked"
           eventProperties={{
             button: "Discover the Nano",
-            screen: currentRoute,
+            screen: "Wallet",
           }}
           screen="Wallet"
           {...IMAGE_PROPS_BIG_NANO}
@@ -235,15 +238,24 @@ function PortfolioScreen({ navigation }: Props) {
       showCarousel,
       navigation,
       assetsToDisplay,
-      currentRoute,
     ],
   );
 
-  const previousRoute = usePreviousRouteName();
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
-  useEffect(() => {
-    screen("ReadOnly", "Wallet", { source: previousRoute });
-  }, [previousRoute]);
+  useFocusEffect(() => {
+    screen("ReadOnly", "Wallet", { source });
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Wallet");
+
+      return () => {
+        setSource("Wallet");
+      };
+    }, [setSource, setScreen]),
+  );
 
   return (
     <>

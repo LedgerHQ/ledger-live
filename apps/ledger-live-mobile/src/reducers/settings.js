@@ -106,7 +106,14 @@ export type SettingsState = {
   marketCounterCurrency: ?string,
   marketFilterByStarredAccounts: boolean,
   sensitiveAnalytics: boolean,
-  firstConnectionHasDevice: boolean,
+  firstConnectionHasDevice: boolean | null,
+  notifications: {
+    allowed: boolean,
+    transactions: boolean,
+    market: boolean,
+    announcement: boolean,
+    price: boolean,
+  },
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -163,6 +170,13 @@ export const INITIAL_STATE: SettingsState = {
   marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
   firstConnectionHasDevice: false,
+  notifications: {
+    allowed: false,
+    transactions: false,
+    market: false,
+    announcement: false,
+    price: false,
+  },
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -458,6 +472,13 @@ const handlers: Object = {
     ...state,
     firstConnectionHasDevice: payload,
   }),
+  SET_NOTIFICATIONS: (state: SettingsState, { payload }) => ({
+    ...state,
+    notifications: {
+      ...state.notifications,
+      ...payload,
+    },
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -666,3 +687,6 @@ export const sensitiveAnalyticsSelector = (state: State) =>
 
 export const firstConnectionHasDeviceSelector = (state: State) =>
   state.settings.firstConnectionHasDevice;
+
+export const notificationsSelector = (state: State) =>
+  state.settings.notifications;
