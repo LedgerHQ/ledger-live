@@ -32,9 +32,14 @@ import { updateAccountWithUpdater } from "../../actions/accounts";
 import { openModal } from "../../actions/modals";
 import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
 
-import * as tracking from "./tracking";
+import { track } from "~/renderer/analytics/segment";
+import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
+import { OperationDetails } from "~/renderer/drawers/OperationDetails";
+import { setDrawer } from "~/renderer/drawers/Provider";
+
+const tracking = trackingWrapper(track);
 
 type WebPlatformContext = {
   manifest: AppManifest;
@@ -104,7 +109,12 @@ export const signTransactionLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
   accountId: string,
   transaction: RawPlatformTransaction,
-  params: any,
+  params?: {
+    /**
+     * The name of the Ledger Nano app to use for the signing process
+     */
+    useApp: string;
+  },
 ) => {
   tracking.platformSignTransactionRequested(manifest);
 
@@ -136,7 +146,7 @@ export const signTransactionLogic = (
         canEditFees,
         stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
         transactionData: liveTx,
-        useApp: params.useApp,
+        useApp: params?.useApp,
         account,
         parentAccount,
         onResult: (signedOperation: SignedOperation) => {
@@ -206,13 +216,11 @@ export const broadcastTransactionLogic = async (
     icon: "info",
     callback: () => {
       tracking.platformBroadcastOperationDetailsClick(manifest);
-      dispatch(
-        openModal("MODAL_OPERATION_DETAILS", {
-          operationId: optimisticOperation.id,
-          accountId: account.id,
-          parentId: null,
-        }),
-      );
+      setDrawer(OperationDetails, {
+        operationId: optimisticOperation.id,
+        accountId: account.id,
+        parentId: parentAccount?.id,
+      });
     },
   });
 

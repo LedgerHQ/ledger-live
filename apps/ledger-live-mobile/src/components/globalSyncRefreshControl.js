@@ -25,6 +25,7 @@ export default (ScrollListLike: any) => {
       setSyncBehavior({
         type: "SYNC_ALL_ACCOUNTS",
         priority: 5,
+        reason: "user-pull-to-refresh",
       });
       setRefreshing(true);
     }

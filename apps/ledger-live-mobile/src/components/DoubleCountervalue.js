@@ -3,7 +3,7 @@ import React, { useState, useCallback, memo } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
-import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";

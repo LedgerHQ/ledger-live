@@ -289,7 +289,7 @@ export const fetchTronContract = async (
     const data = await post(`${getBaseApiUrl()}/wallet/getcontract`, {
       value: decode58Check(addr),
     });
-    return data;
+    return Object.keys(data).length !== 0 ? data : undefined;
   } catch (e) {
     return undefined;
   }
