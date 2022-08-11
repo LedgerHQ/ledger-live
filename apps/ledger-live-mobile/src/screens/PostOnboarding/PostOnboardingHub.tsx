@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Box, Flex, Icons, Notification, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -30,6 +30,7 @@ export default () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
+  const [popupOpened, setPopupOpened] = useState(true);
   const { actionCompletedHubTitle, actionCompletedPopupLabel } =
     lastActionCompleted ?? {};
 
@@ -44,9 +45,17 @@ export default () => {
     [clearLastActionCompleted],
   );
 
+  useEffect(() => {
+    setPopupOpened(true);
+  }, [actionCompletedPopupLabel]);
+
   const navigateToWallet = useCallback(() => {
     navigation.navigate(NavigatorName.Main, { screen: ScreenName.Portfolio });
   }, [navigation]);
+
+  const handleClosePopup = useCallback(() => {
+    setPopupOpened(false);
+  }, [setPopupOpened]);
 
   const allDone = actionsState.every(action => action.completed);
   return (
@@ -68,11 +77,13 @@ export default () => {
             </>
           ))}
         </ScrollView>
-        {!!actionCompletedPopupLabel && (
+        {!!actionCompletedPopupLabel && popupOpened && (
           <Notification
-            Icon={Icons.CircledCheckMedium}
-            variant="success"
+            Icon={Icons.CircledCheckSolidMedium}
+            iconColor="success.c50"
+            variant="plain"
             title={t(actionCompletedPopupLabel)}
+            onClose={handleClosePopup}
           />
         )}
         <Flex mt={8}>
