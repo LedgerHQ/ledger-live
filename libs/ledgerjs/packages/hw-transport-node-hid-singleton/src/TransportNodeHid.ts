@@ -12,8 +12,6 @@ import { identifyUSBProductId } from "@ledgerhq/devices";
 import { CantOpenDevice } from "@ledgerhq/errors";
 import { listenDevices } from "./listenDevices";
 
-export * as usbDetect from "usb-detection";
-
 let transportInstance;
 
 const DISCONNECT_TIMEOUT = 5000;
