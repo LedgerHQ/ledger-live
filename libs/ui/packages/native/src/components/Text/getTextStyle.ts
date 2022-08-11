@@ -69,6 +69,10 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
     large: {
       fontFamily: "Inter",
     },
+    largeLineHeight: {
+      fontFamily: "Inter",
+      lineHeight: "27.2",
+    },
     body: {
       fontFamily: "Inter",
     },
