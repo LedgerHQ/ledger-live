@@ -1,6 +1,7 @@
 import React, { memo, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import WalletCoinsSupported from "../../icons/WalletCoinsSupported";
 import { NavigatorName, ScreenName } from "../../const";
@@ -12,6 +13,7 @@ const PortfolioEmptyState = ({
 }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const { colors } = useTheme();
 
   const goToReceiveFunds = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
@@ -27,7 +29,7 @@ const PortfolioEmptyState = ({
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">
-      <WalletCoinsSupported />
+      <WalletCoinsSupported moreAssetsBackgroundColor={colors.neutral.c100} />
       <Flex mt={8} alignItems="center" justifyContent="center">
         <Text variant="h4" fontWeight="semiBold" textAlign="center">
           {t("portfolio.emptyState.title")}

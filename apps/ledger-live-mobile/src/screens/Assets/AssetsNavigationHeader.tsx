@@ -3,24 +3,23 @@ import { TouchableOpacity } from "react-native";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import AddAccount from "./AddAccount";
+import AddAccount from "../Accounts/AddAccount";
 import Touchable from "../../components/Touchable";
 import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 
 type Props = {
   readOnly?: boolean;
-  currencyTicker?: string;
 };
 
-function AccountsNavigationHeader({ readOnly, currencyTicker }: Props) {
+function AssetsNavigationHeader({ readOnly }: Props) {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
   const handleOnReadOnlyAddAccountPress = useCallback(() => {
     track("button_clicked", {
       button: "Add Account '+'",
-      screen: "Accounts",
+      screen: "Assets",
     });
     navigation.navigate(ScreenName.NoDeviceWallScreen);
   }, [navigation]);
@@ -28,18 +27,18 @@ function AccountsNavigationHeader({ readOnly, currencyTicker }: Props) {
   const goBack = useCallback(() => {
     track("button_clicked", {
       button: "Back",
-      screen: "Accounts",
+      screen: "Assets",
     });
     navigation.goBack();
   }, [navigation]);
 
   return (
     <Flex p={6} flexDirection="row" alignItems="center">
-      <Box mr={3}>
+      <Flex mr={3}>
         <TouchableOpacity onPress={goBack}>
           <Icons.ArrowLeftMedium size={24} />
         </TouchableOpacity>
-      </Box>
+      </Flex>
       <Flex
         height={30}
         flexDirection="column"
@@ -48,19 +47,9 @@ function AccountsNavigationHeader({ readOnly, currencyTicker }: Props) {
         mb={3}
         flex={1}
       >
-        <Text variant="h1">
-          {currencyTicker
-            ? t("accounts.cryptoAccountsTitle", { currencyTicker })
-            : t("accounts.title")}
-        </Text>
+        <Text variant="h1">{t("distribution.title")}</Text>
       </Flex>
       <Flex flexDirection="row" alignItems={"center"}>
-        {/**
-         <Box mr={7}>
-         {!flattenedAccounts.length ? null : <AccountOrder />}
-         </Box>
-         */}
-
         {readOnly ? (
           <Touchable onPress={handleOnReadOnlyAddAccountPress}>
             <Flex
@@ -82,4 +71,4 @@ function AccountsNavigationHeader({ readOnly, currencyTicker }: Props) {
   );
 }
 
-export default memo<Props>(AccountsNavigationHeader);
+export default memo<Props>(AssetsNavigationHeader);

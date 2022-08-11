@@ -1,7 +1,13 @@
-import * as React from "react"
-import Svg, { SvgProps, Mask, Path, G, Rect } from "react-native-svg"
+import * as React from "react";
+import Svg, { SvgProps, Mask, Path, G, Rect } from "react-native-svg";
 
-const SvgComponent = (props: SvgProps) => (
+const SvgComponent = ({
+  props,
+  moreAssetsBackgroundColor,
+}: {
+  props: SvgProps;
+  moreAssetsBackgroundColor: string;
+}) => (
   <Svg
     width={197}
     height={52}
@@ -95,7 +101,7 @@ const SvgComponent = (props: SvgProps) => (
       width={76}
       height={50}
       rx={25}
-      fill="#fff"
+      fill={moreAssetsBackgroundColor}
       fillOpacity={0.1}
     />
     <Path
