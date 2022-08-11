@@ -101,7 +101,9 @@ export default function TezosAccountBodyHeader({
 
   const delegation = useDelegation(account);
 
-  if (!delegation) return null;
+  if (!delegation) {
+    return null;
+  }
 
   const name = delegation.baker
     ? delegation.baker.name
