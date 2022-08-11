@@ -3,7 +3,7 @@ import StellarSdk, {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
   NotFoundError,
-  NetworkError,
+  NetworkError as StellarSdkNetworkError,
 } from "stellar-sdk";
 import { getEnv } from "../../../env";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
@@ -14,7 +14,7 @@ import {
   rawOperationsToOperations,
   getReservedBalance,
 } from "../logic";
-import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx, LedgerAPI5xx, NetworkError } from "@ledgerhq/errors";
 import { requestInterceptor, responseInterceptor } from "../../../network";
 import type { BalanceAsset } from "../types";
 import { NetworkCongestionLevel, Signer } from "../types";
@@ -128,7 +128,7 @@ export const fetchAccount = async (
       return balance.asset_type !== "native";
     });
   } catch (e) {
-    balance.balance = "0";
+    throw new NetworkError();
   }
 
   const formattedBalance = parseCurrencyUnit(
@@ -205,11 +205,11 @@ export const fetchOperations = async ({
     }
 
     if (
-      e instanceof NetworkError ||
+      e instanceof StellarSdkNetworkError ||
       errorMsg.match(/ECONNRESET|ECONNREFUSED|ENOTFOUND|EPIPE|ETIMEDOUT/) ||
       errorMsg.match(/undefined is not an object/)
     ) {
-      throw new NetworkDown();
+      throw new NetworkError();
     }
 
     throw e;
