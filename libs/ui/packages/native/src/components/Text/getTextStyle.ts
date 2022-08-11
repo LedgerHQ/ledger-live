@@ -13,6 +13,7 @@ const bracketSizes: Record<TextVariants, number> = {
   h4: 18,
   h5: 18,
   large: 20,
+  largeLineHeight: 20,
   body: 20,
   bodyLineHeight: 20,
   paragraph: 20,
