@@ -11,6 +11,8 @@ import { genAccount } from "../../../mock/account";
 import { mockGetExchangeRates } from "../mock";
 
 jest.mock("..");
+import { setSupportedCurrencies } from "../../../currencies";
+setSupportedCurrencies(["ethereum"]);
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");

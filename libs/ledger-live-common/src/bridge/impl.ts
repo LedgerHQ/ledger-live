@@ -53,12 +53,6 @@ export const getAccountBridge = (
   if (type === "mock") {
     const mockBridge = mockBridges[currency.family];
     if (mockBridge) return mockBridge.accountBridge;
-    throw new CurrencyNotSupported(
-      "no mock implementation available for currency " + currency.id,
-      {
-        currencyName: currency.name,
-      }
-    );
   }
 
   const jsBridge = jsBridges[family];

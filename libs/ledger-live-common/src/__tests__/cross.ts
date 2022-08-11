@@ -8,6 +8,9 @@ import {
   decode,
 } from "../cross";
 import { Account } from "@ledgerhq/types-live";
+import { setSupportedCurrencies } from "../currencies";
+setSupportedCurrencies(["ethereum", "ethereum_classic"]);
+
 test("accountDataToAccount / accountToAccountData", () => {
   listCryptoCurrencies().forEach((currency) => {
     getDerivationModesForCurrency(currency).forEach((derivationMode) => {

@@ -474,10 +474,14 @@ export function genAccount(
       };
       break;
     default: {
-      const bridge = getAccountBridge(account);
-      const mockAccount = bridge.mockAccount;
-      if (mockAccount) {
-        mockAccount(account);
+      try {
+        const bridge = getAccountBridge(account);
+        const mockAccount = bridge.mockAccount;
+        if (mockAccount) {
+          mockAccount(account);
+        }
+      } catch (e: any) {
+        //skip bridge error if family doesn't exist
       }
     }
   }

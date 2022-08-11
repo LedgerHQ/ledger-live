@@ -11,6 +11,9 @@ import {
 } from "../account";
 import { genAccount } from "../mock/account";
 import { Operation } from "@ledgerhq/types-live";
+import { setSupportedCurrencies } from "../currencies";
+setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);
+
 describe("groupAccountOperationsByDay", () => {
   test("basic", () => {
     const account = genAccount("seed_7", {

@@ -6,6 +6,8 @@ import { genAccount } from "../../../mock/account";
 import { getCryptoCurrencyById } from "../../../currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
+import { setSupportedCurrencies } from "../../../currencies";
+setSupportedCurrencies(["ethereum"]);
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
   let id = 0;
