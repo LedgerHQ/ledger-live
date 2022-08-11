@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, memo } from "react";
+import React, { useCallback, useState, useEffect, memo, useMemo } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
@@ -30,6 +30,8 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -37,7 +39,9 @@ const List = globalSyncRefreshControl(FlatList);
 
 type Props = {
   navigation: any;
-  route: { params?: { currency?: string; search?: string } };
+  route: {
+    params?: { currency?: string; search?: string; currencyId?: string };
+  };
 };
 
 function Accounts({ navigation, route }: Props) {
@@ -57,9 +61,25 @@ function Accounts({ navigation, route }: Props) {
 
   const search = params?.search;
 
+  const currency = useMemo(
+    () =>
+      route?.params?.currencyId &&
+      getCryptoCurrencyById(route?.params?.currencyId),
+    [route?.params?.currencyId],
+  );
   const [account, setAccount] = useState(undefined);
+  const accountsFiltered = useMemo(
+    () =>
+      route?.params?.currencyId
+        ? accounts.filter(
+            account =>
+              getAccountCurrency(account).id === route?.params?.currencyId,
+          )
+        : accounts,
+    [accounts, route?.params?.currencyId],
+  );
 
-  const flattenedAccounts = flattenAccounts(accounts, {
+  const flattenedAccounts = flattenAccounts(accountsFiltered, {
     enforceHideEmptySubAccounts: true,
   });
 
@@ -93,7 +113,7 @@ function Accounts({ navigation, route }: Props) {
         account={item}
         accountId={item.id}
         onSetAccount={setAccount}
-        isLast={index === accounts.length - 1}
+        isLast={index === accountsFiltered.length - 1}
         portfolioValue={
           portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value
         }
@@ -101,7 +121,12 @@ function Accounts({ navigation, route }: Props) {
         bottomLink={flattenedAccounts[index + 1]?.type === "TokenAccount"}
       />
     ),
-    [navigation, accounts.length, portfolio.balanceHistory],
+    [
+      navigation,
+      accountsFiltered.length,
+      portfolio.balanceHistory,
+      flattenedAccounts,
+    ],
   );
 
   const renderList = useCallback(
@@ -146,14 +171,16 @@ function Accounts({ navigation, route }: Props) {
         </Flex>
       </Flex>
     ),
-    [t],
+    [],
   );
 
   return (
     <TabBarSafeAreaView>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <Flex flex={1} bg={"background.main"}>
-        <AccountsNavigationHeader />
+        <AccountsNavigationHeader
+          currencyTicker={currency && currency.ticker}
+        />
         {syncPending && (
           <Flex flexDirection={"row"} alignItems={"center"} px={6} my={3}>
             <Spinning clockwise>

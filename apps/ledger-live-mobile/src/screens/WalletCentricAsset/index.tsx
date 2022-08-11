@@ -60,7 +60,7 @@ const AssetScreen = ({ route }: Props) => {
         />
         <MarketPriceSection currency={currency} />
       </SectionContainer>,
-      <SectionContainer px={6} mb={8} isLast>
+      <SectionContainer px={6} isLast>
         <SectionTitle title={t("analytics.operations.title")} />
         <OperationsHistorySection accounts={cryptoAccounts} />
       </SectionContainer>,
