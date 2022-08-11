@@ -7,6 +7,11 @@ export const setRatingsModalOpen = (isRatingsModalOpen: boolean) => ({
   isRatingsModalOpen,
 });
 
+export const setRatingsModalLocked = (isRatingsModalLocked: boolean) => ({
+  type: "RATINGS_SET_MODAL_LOCKED",
+  isRatingsModalLocked,
+});
+
 export const setRatingsCurrentRouteName = (currentRouteName?: string) => ({
   type: "RATINGS_SET_CURRENT_ROUTE_NAME",
   currentRouteName,
