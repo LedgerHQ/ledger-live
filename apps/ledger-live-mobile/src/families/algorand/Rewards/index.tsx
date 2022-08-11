@@ -47,13 +47,13 @@ const RewardsSection = ({ account }: Props) => {
   const rewardsDisabled = rewards.lte(0);
 
   return (
-    <Box p={6}>
+    <Box px={6}>
       <AccountSectionLabel
         name={t("algorand.claimRewards.title")}
         Icon={InfoMedium}
         onPress={onRewardsInfoClick}
       />
-      <Flex flexDirection={"row"} alignItems={"center"} py={6} mb={6}>
+      <Flex flexDirection={"row"} alignItems={"center"} pt={6}>
         <Flex flexDirection={"column"} flex={1}>
           <Text fontWeight={"semiBold"} variant={"large"}>
             <CurrencyUnitValue unit={unit} value={rewards} />

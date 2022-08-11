@@ -22,7 +22,7 @@ import {
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import type { PolkadotNomination } from "@ledgerhq/live-common/families/polkadot/types";
 
-import { Flex } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../../const";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import { urls } from "../../../config/urls";
@@ -362,7 +362,7 @@ export default function Nominations({ account }: Props) {
           }
         />
       ) : (
-        <View style={styles.wrapper}>
+        <Box>
           <AccountSectionLabel
             name={t("polkadot.nomination.header")}
             RightComponent={
@@ -385,7 +385,7 @@ export default function Nominations({ account }: Props) {
               </Alert>
             )}
           </CollapsibleList>
-        </View>
+        </Box>
       )}
 
       {hasUnlockings ? (
