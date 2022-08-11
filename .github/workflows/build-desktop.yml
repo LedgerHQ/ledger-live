@@ -71,26 +71,24 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: linux
-
       - name: build the app
         run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: upload linux app
@@ -123,7 +121,7 @@ jobs:
         with:
           ruby-version: 2.7
           bundler-cache: true
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
@@ -131,18 +129,15 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: linux
-
       - name: build the app
         run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: upload linux app
@@ -171,22 +166,19 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
-
+          dest: ${{ runner.temp }}/setup-pnpm
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: win
-
       - name: build the app
         run: |
           pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
@@ -212,27 +204,24 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: mac
-
       - name: build the app
         run: |
           eval "$(rbenv init - bash)"
