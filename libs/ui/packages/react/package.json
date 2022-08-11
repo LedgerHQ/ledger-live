@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/react-ui",
-  "version": "0.8.2-next.0",
+  "version": "0.8.2",
   "description": "Ledger Live - Desktop UI",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": {

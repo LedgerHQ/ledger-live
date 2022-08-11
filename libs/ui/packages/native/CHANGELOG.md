@@ -1,5 +1,13 @@
 # @ledgerhq/native-ui
 
+## 0.8.3
+
+### Patch Changes
+
+- [#834](https://github.com/LedgerHQ/ledger-live/pull/834) [`7aa93b8b2`](https://github.com/LedgerHQ/ledger-live/commit/7aa93b8b260a48d236b33181e1500f96962b3d86) Thanks [@LFBarreto](https://github.com/LFBarreto)! - Button component uses correct TouchableOpacity instead of Highlight
+
+* [#440](https://github.com/LedgerHQ/ledger-live/pull/440) [`858898d63`](https://github.com/LedgerHQ/ledger-live/commit/858898d63b3d70dc0be4cefbeaba5770c389660b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - UI - native - notifications component styles extended
+
 ## 0.8.3-next.1
 
 ### Patch Changes
