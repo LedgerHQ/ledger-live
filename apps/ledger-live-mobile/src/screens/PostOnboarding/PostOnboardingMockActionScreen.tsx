@@ -1,7 +1,10 @@
 import React, { useCallback } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useSetActionDoneCallback } from "../../logic/postOnboarding/hooks";
+import {
+  useNavigateToPostOnboardingHubCallback,
+  useSetActionDoneCallback,
+} from "../../logic/postOnboarding/hooks";
 import { postOnboardingActions } from "../../logic/postOnboarding";
 import { NavigatorName, ScreenName } from "../../const";
 
@@ -10,6 +13,7 @@ export default () => {
   const { params } = route;
   const { id }: { id: PostOnboardingActionId } = params;
   const setActionDone = useSetActionDoneCallback();
+  const navigateToHub = useNavigateToPostOnboardingHubCallback();
   const navigation = useNavigation();
 
   const action = postOnboardingActions[id];
@@ -22,18 +26,25 @@ export default () => {
     navigation.navigate(NavigatorName.Main, { screen: ScreenName.Portfolio });
   }, [navigation]);
 
-  const handleFinishAndClose = useCallback(() => {
+  const handleFinishAndGoToWallet = useCallback(() => {
     finishAction();
     navigateToWallet();
   }, [finishAction, navigateToWallet]);
 
+  const handleFinishAndGoToHub = useCallback(() => {
+    finishAction();
+    navigateToHub();
+  }, [finishAction, navigateToHub]);
+
   return (
     <Flex>
       <Text>action: {action?.id}</Text>
-      <Button type="main" onPress={handleFinishAndClose}>
+      <Button type="main" onPress={handleFinishAndGoToWallet}>
         Finish action & go to Wallet
       </Button>
-      <Button type="main">Finish action & go back to onboarding hub</Button>
+      <Button type="main" onPress={handleFinishAndGoToHub}>
+        Finish action & go back to onboarding hub
+      </Button>
     </Flex>
   );
 };
