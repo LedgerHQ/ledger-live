@@ -44,7 +44,7 @@ import TabBarSafeAreaView, {
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
-import GradientContainer from "../../components/GradientContainer";
+import EmptyAccountCard from "./EmptyAccountCard";
 
 type Props = {
   navigation: any;
@@ -180,40 +180,7 @@ const AccountScreenInner = ({
             <OperationsHistorySection accounts={[account]} />
           </SectionContainer>,
         ]
-      : [
-          <Box mt={8}>
-            <GradientContainer containerStyle={{ marginHorizontal: 16 }}>
-              <Flex
-                flex={1}
-                px={10}
-                py={11}
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Text
-                  variant="large"
-                  fontWeight="semiBold"
-                  color="neutral.c100"
-                  textAlign="center"
-                >
-                  {t("account.readOnly.noTransaction.title")}
-                </Text>
-                <Text
-                  variant="small"
-                  fontWeight="medium"
-                  color="neutral.c70"
-                  textAlign="center"
-                  mt={3}
-                >
-                  <Trans
-                    i18nKey={"account.readOnly.noTransaction.subtitle"}
-                    values={{ assetName: currency.name }}
-                  />
-                </Text>
-              </Flex>
-            </GradientContainer>
-          </Box>,
-        ]),
+      : [<EmptyAccountCard currencyTicker={currency.ticker} />]),
   ];
 
   return (

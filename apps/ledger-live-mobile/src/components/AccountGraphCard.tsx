@@ -36,7 +36,6 @@ import Graph from "./Graph";
 import Touchable from "./Touchable";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import { NoCountervaluePlaceholder } from "./CounterValue";
-import DiscreetModeButton from "./DiscreetModeButton";
 
 const { width } = getWindowDimensions();
 

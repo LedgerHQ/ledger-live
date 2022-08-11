@@ -16,6 +16,8 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import { FabAssetActions } from "../../components/FabActions";
+import EmptyAccountCard from "../Account/EmptyAccountCard";
+import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
 
 type RouteParams = {
   currencyId: string;
@@ -39,6 +41,10 @@ const AssetScreen = ({ route }: Props) => {
     () => accounts.filter(a => getAccountCurrency(a).id === currencyId),
     [accounts, currencyId],
   );
+  const areAllEmpty = useMemo(
+    () => accounts.every(account => isAccountEmpty(account)),
+    [accounts],
+  );
 
   const data = useMemo(
     () => [
@@ -46,12 +52,12 @@ const AssetScreen = ({ route }: Props) => {
         <SectionTitle
           title={t("account.quickActions")}
           containerProps={{ mb: 6 }}
-        ></SectionTitle>
-        <FabAssetActions
-          currency={currency}
-          accounts={accounts}
-        ></FabAssetActions>
+        />
+        <FabAssetActions currency={currency} accounts={accounts} />
       </SectionContainer>,
+      ...(areAllEmpty
+        ? [<EmptyAccountCard currencyTicker={currency.ticker} />]
+        : []),
       <SectionContainer px={6}>
         <SectionTitle
           title={t("portfolio.marketPriceSection.title", {
@@ -60,12 +66,16 @@ const AssetScreen = ({ route }: Props) => {
         />
         <MarketPriceSection currency={currency} />
       </SectionContainer>,
-      <SectionContainer px={6} isLast>
-        <SectionTitle title={t("analytics.operations.title")} />
-        <OperationsHistorySection accounts={cryptoAccounts} />
-      </SectionContainer>,
+      ...(!areAllEmpty
+        ? [
+            <SectionContainer px={6} isLast>
+              <SectionTitle title={t("analytics.operations.title")} />
+              <OperationsHistorySection accounts={cryptoAccounts} />
+            </SectionContainer>,
+          ]
+        : []),
     ],
-    [cryptoAccounts, currency, t],
+    [accounts, cryptoAccounts, currency, t, areAllEmpty],
   );
 
   return (
