@@ -5,8 +5,6 @@ import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
 import { getEnv } from "../../../env";
 import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import type { CheckQuoteStatus } from "../types";
-import { setSupportedCurrencies } from "../../../currencies";
-setSupportedCurrencies(["ethereum"]);
 
 // Note: looks like we can't use an enum because this is used in LLD js code
 export const KYC_STATUS = {

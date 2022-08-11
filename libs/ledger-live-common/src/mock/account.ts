@@ -481,7 +481,7 @@ export function genAccount(
           mockAccount(account);
         }
       } catch (e: any) {
-        //skip bridge error if family doesn't exist
+        // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency
       }
     }
   }
