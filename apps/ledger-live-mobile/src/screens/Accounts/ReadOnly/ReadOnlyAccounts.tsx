@@ -24,7 +24,6 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
-import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { AnalyticsContext } from "../../../components/RootNavigator";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
