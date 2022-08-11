@@ -1,19 +1,12 @@
 import React, { useCallback } from "react";
-import {
-  Box,
-  Flex,
-  Icons,
-  Link as UILink,
-  Notification,
-  Text,
-} from "@ledgerhq/native-ui";
+import { Box, Flex, Icons, Notification, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { usePostOnboardingHubState } from "../../logic/postOnboarding/hooks";
-import PostOnboardingActionRow from "./PostOnboardingActionRow";
+import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
 import ConfettiParty from "../../components/ConfettiParty";
 import { NavigatorName, ScreenName } from "../../const";
 import Button from "../../components/Button";
@@ -76,9 +69,15 @@ export default () => {
               {t("postOnboarding.hub.goToWallet")}
             </Button>
           ) : (
-            <UILink onPress={navigateToWallet} type="color">
+            <Text
+              variant="large"
+              fontWeight="semiBold"
+              alignSelf="center"
+              onPress={navigateToWallet}
+              color="primary.c80"
+            >
               {t("postOnboarding.hub.skip")}
-            </UILink>
+            </Text>
           )}
         </Flex>
       </Flex>

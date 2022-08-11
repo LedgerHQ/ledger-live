@@ -6,8 +6,7 @@ import {
   ActionState,
   PostOnboardingAction,
 } from "../../logic/postOnboarding/types";
-import { usePostOnboarding } from "../../logic/postOnboarding/hooks";
-import Touchable from "../../components/Touchable";
+import Touchable from "../Touchable";
 
 export type Props = PostOnboardingAction & ActionState;
 
@@ -27,16 +26,11 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const { setActionDone } = usePostOnboarding();
-
   const handlePress = useCallback(() => {
     if (navigationParams) navigation.navigate(...navigationParams);
   }, [navigationParams, navigation]);
 
   // TODO: (design) implement Tag component variant in native-ui
-  // TODO: (design) implement title typo in native-ui (large lineheight)
-  // TODO: (design) use correct typo from design once it's using design system properly
-  // TODO: (logic) implement correct onpress / navigation
 
   return (
     <Touchable onPress={completed ? null : handlePress}>
@@ -55,13 +49,13 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
             flexShrink={1}
           >
             <Text
-              variant="large"
+              variant="largeLineHeight"
               fontWeight="medium"
               color={completed ? "neutral.c70" : "neutral.c100"}
             >
               {t(title)}
             </Text>
-            <Text color="neutral.c70" fontWeight="medium">
+            <Text variant="body" fontWeight="medium" color="neutral.c70">
               {t(description)}
             </Text>
           </Flex>
@@ -81,7 +75,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           {completed ? (
             <Icons.CheckAloneMedium color="success.c100" size={16} />
           ) : (
-            <Icons.ChevronRightMedium color="neutral.c80" size={16} />
+            <Icons.ChevronRightMedium color="primary.c80" size={16} />
           )}
         </Flex>
       </Flex>
