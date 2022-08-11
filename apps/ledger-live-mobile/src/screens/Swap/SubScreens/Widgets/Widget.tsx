@@ -29,11 +29,13 @@ export function Widget({ provider, type }: Props) {
   const ref = useRef<WebView>();
 
   const preload = useMemo(
-    () => `
-      ${authToken &&
-        `
-        localStorage.setItem("authToken", "${authToken}");
-      `}
+    () =>
+      `
+      ${
+        authToken
+          ? `localStorage.setItem("authToken", "${authToken}");`
+          : 'localStorage.removeItem("authToken");'
+      }
       localStorage.setItem("theme", "${dark ? "dark" : "light"}");
 
       window.ledger = { postMessage: window.ReactNativeWebView.postMessage };
