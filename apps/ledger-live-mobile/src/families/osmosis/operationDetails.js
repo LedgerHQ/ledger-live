@@ -29,11 +29,7 @@ function getURLWhatIsThis(op: Operation): ?string {
 }
 
 type Props = {
-  extra: {
-    validators: CosmosDelegationInfo[],
-    sourceValidator?: string,
-    memo?: string,
-  },
+  extra: { [key: string]: any },
   type: OperationType,
   account: Account,
 };
