@@ -58,7 +58,7 @@ export default function DeviceActionModal({
       {onResult && result
         ? null
         : device && (
-            <Flex>
+            <Flex alignItems="center">
               <DeviceActionContainer marginBottom={showAlert ? "16px" : 0}>
                 <DeviceAction
                   action={action}

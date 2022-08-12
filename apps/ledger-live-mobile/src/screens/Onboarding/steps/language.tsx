@@ -75,6 +75,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
       // firmware version verification is not really needed here, the presence of a language id
       // indicates that we are in a firmware that supports localization
       if (
+        l !== currentLocale &&
         loaded &&
         langAvailableOnDevice &&
         deviceLanguageId !== undefined &&
