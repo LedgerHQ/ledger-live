@@ -184,7 +184,9 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   }, [navigation]);
 
   const handleDeviceReady = useCallback(() => {
-    navigation.navigate(ScreenName.SyncOnboardingCompletion);
+    navigation.navigate(
+      ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion",
+    );
   }, [navigation]);
 
   useEffect(() => {
