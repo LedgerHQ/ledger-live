@@ -189,7 +189,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       if (ptxSmartRouting?.enabled) {
         const params = {
           currency: currency?.id,
-          account: mainAccount?.id,
+          account: account?.id,
           mode, // buy or sell
         };
 
@@ -204,12 +204,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
           state: {
             mode: "onRamp",
             currencyId: currency.id,
-            accountId: mainAccount.id,
+            accountId: account.id,
           },
         });
       }
     },
-    [currency, history, mainAccount, ptxSmartRouting],
+    [currency, history, account, ptxSmartRouting],
   );
 
   const onLend = useCallback(() => {
