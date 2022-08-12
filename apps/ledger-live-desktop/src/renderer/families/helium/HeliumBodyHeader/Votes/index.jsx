@@ -1,6 +1,5 @@
 // @flow
 
-import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { useVotes } from "@ledgerhq/live-common/families/helium/react";
 import type { Account } from "@ledgerhq/live-common/types/index";
 import invariant from "invariant";
@@ -100,18 +99,13 @@ const Votes = ({ account }: Props) => {
     [account, dispatch],
   );
 
-  const explorerView = getDefaultExplorerView(account.currency);
+  const onExternalLink = () => {
+    const url = "";
 
-  const onExternalLink = useCallback(
-    (vote: any) => {
-      const url = "";
-
-      if (url) {
-        openURL(url);
-      }
-    },
-    [explorerView],
-  );
+    if (url) {
+      openURL(url);
+    }
+  };
 
   return (
     <>

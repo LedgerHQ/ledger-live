@@ -88,19 +88,6 @@ export function Row({ account, vote, onManageAction, onExternalLink }: Props) {
 
   const voteOpen = useMemo(() => blocksRemaining > 0, [blocksRemaining]);
 
-  const formattedTime = useMemo(() => {
-    if (!voteOpen) {
-      if (!timestamp) return;
-
-      const endDate = new Date(timestamp);
-      const formatted = moment(endDate).format("MM/DD/yy");
-      return formatted;
-    }
-
-    const deadlineDate = moment(timestamp).add(blocksRemaining, "minutes");
-    return moment(deadlineDate).format("MM/DD/yy");
-  }, [timestamp, voteOpen, blocksRemaining]);
-
   const estTimeToDisplay = useMemo(() => {
     if (!voteOpen) {
       return <Trans i18nKey="helium.votes.votingClosed" />;

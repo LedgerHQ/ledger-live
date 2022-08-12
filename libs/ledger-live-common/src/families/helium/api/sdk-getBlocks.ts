@@ -5,7 +5,8 @@ const userAgent = `helium-ledger-live-js-client`;
 
 export const getBlocks = async (currency: CryptoCurrency): Promise<number> => {
   const client = new Client(
-    currency.id === "helium_testnet" ? Network.testnet : Network.production,
+    // TODO: Switch to testnet when we have vote data for testnet
+    currency.id === "helium_testnet" ? Network.production : Network.production,
     {
       retry: 1,
       name: userAgent,
