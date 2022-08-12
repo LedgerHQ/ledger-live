@@ -64,6 +64,7 @@ setSupportedCurrencies([
   "hedera",
   "cardano",
   "cardano_testnet",
+  "osmosis",
   "filecoin",
 ]);
 

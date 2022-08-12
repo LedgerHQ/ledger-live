@@ -24,6 +24,7 @@
 | Horizen | ZEN | YES | zencash |
 | Komodo | KMD | YES | komodo |
 | Litecoin | LTC | YES | litecoin |
+| Osmosis | OSMO | YES | osmo |
 | Peercoin | PPC | YES | peercoin |
 | PivX | PIVX | YES | pivx |
 | Polkadot | DOT | YES | polkadot |
@@ -85,7 +86,6 @@
 | Nimiq | NIM | NO | nimiq |
 | Nix | NIX | NO | nix |
 | Ontology | ONT | NO | ontology |
-| Osmosis | OSMO | NO | osmo |
 | POA | POA | NO | poa |
 | Particl | PART | NO | particl |
 | Pirl | PIRL | NO | pirl |

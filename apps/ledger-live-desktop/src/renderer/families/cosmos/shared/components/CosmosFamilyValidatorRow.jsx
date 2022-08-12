@@ -3,6 +3,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 import type { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
+import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
 import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 import { BigNumber } from "bignumber.js";
@@ -16,7 +17,7 @@ import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
-import CosmosLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosLedgerValidatorIcon";
+import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 type Props = {
@@ -27,11 +28,14 @@ type Props = {
   unit: Unit,
 };
 
-function CosmosValidatorRow({ validator, active, onClick, unit, currency }: Props) {
+function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }: Props) {
   const explorerView = getDefaultExplorerView(currency);
+  const currencyName = currency.name.toLowerCase();
   const onExternalLink = useCallback(
     (address: string) => {
-      if (address === LEDGER_VALIDATOR_ADDRESS) {
+      const ledgerValidator =
+        currencyName === "osmosis" ? LEDGER_OSMOSIS_VALIDATOR_ADDRESS : LEDGER_VALIDATOR_ADDRESS;
+      if (address === ledgerValidator) {
         openURL(urls.ledgerValidator);
       } else {
         const srURL = explorerView && getAddressExplorer(explorerView, address);
@@ -39,7 +43,7 @@ function CosmosValidatorRow({ validator, active, onClick, unit, currency }: Prop
         if (srURL) openURL(srURL);
       }
     },
-    [explorerView],
+    [currencyName, explorerView],
   );
 
   return (
@@ -47,7 +51,7 @@ function CosmosValidatorRow({ validator, active, onClick, unit, currency }: Prop
       onClick={onClick}
       key={validator.validatorAddress}
       validator={{ address: validator.validatorAddress }}
-      icon={<CosmosLedgerValidatorIcon validator={validator} />}
+      icon={<CosmosFamilyLedgerValidatorIcon validator={validator} />}
       title={validator.name || validator.voteAccount}
       onExternalLink={onExternalLink}
       unit={unit}
@@ -60,7 +64,10 @@ function CosmosValidatorRow({ validator, active, onClick, unit, currency }: Prop
               })}
             </Text>
             <Text fontSize={2} textAlign="right">
-              <Trans color="palette.text.shade50" i18nKey="cosmos.delegation.totalStake" />
+              <Trans
+                color="palette.text.shade50"
+                i18nKey={`${currencyName}.delegation.totalStake`}
+              />
             </Text>
           </Box>
           <Box ml={2} justifyContent="center" alignContent="center">
@@ -71,7 +78,7 @@ function CosmosValidatorRow({ validator, active, onClick, unit, currency }: Prop
       subtitle={
         <Box>
           <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
-            <Trans i18nKey="cosmos.delegation.commission" />{" "}
+            <Trans i18nKey={`${currencyName}.delegation.commission`} />{" "}
             {`${Math.round(validator.commission * 10000) / 100} %`}
           </Text>
         </Box>
@@ -90,4 +97,4 @@ const ChosenMark: ThemedComponent<{ active: boolean }> = styled(Check).attrs(p =
   size: 14,
 }))``;
 
-export default CosmosValidatorRow;
+export default CosmosFamilyValidatorRow;

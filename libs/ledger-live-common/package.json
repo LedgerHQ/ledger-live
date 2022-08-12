@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "25.2.0-next.0",
+  "version": "25.2.0-next.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -116,12 +116,15 @@
     "@celo/wallet-ledger": "^1.5.2",
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.26.5",
+    "@cosmjs/launchpad": "^0.26.5",
+    "@cosmjs/ledger-amino": "^0.26.5",
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-com/chain-jslib": "0.0.19",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
     "@hashgraph/sdk": "^2.10.1",
+    "@keplr-wallet/cosmos": "^0.9.16",
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
@@ -228,6 +231,7 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
+    "@keplr-wallet/proto-types": "^0.10.4",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
@@ -263,6 +267,7 @@
     "jest": "^28.1.1",
     "jest-environment-jsdom": "28",
     "jest-file-snapshot": "^0.5.0",
+    "long": "^4.0.0",
     "prettier": "2.3.2",
     "react": "^17.0.2",
     "react-dom": "17.0.2",
