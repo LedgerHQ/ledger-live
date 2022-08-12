@@ -27,7 +27,7 @@ import {
 } from "../../../reducers/settings";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
+import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 
@@ -116,29 +116,34 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         isOpen={isDeviceLanguagePromptOpen}
         onClose={closeDeviceLanguagePrompt}
       >
-        <ChangeDeviceLanguagePrompt
-          titleWording={t("onboarding.stepLanguage.changeDeviceLanguage")}
-          descriptionWording={t(
-            "onboarding.stepLanguage.changeDeviceLanguageDescription",
-            {
-              language: t(
-                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
-              ),
-            },
+        <Flex alignItems="center">
+          {deviceForChangeLanguageAction ? (
+            <ChangeDeviceLanguageAction
+              device={deviceForChangeLanguageAction}
+              language={localeIdToDeviceLanguage[currentLocale] as Language}
+              onContinue={() => {
+                setDeviceForChangeLanguageAction(null);
+                closeDeviceLanguagePrompt();
+              }}
+            />
+          ) : (
+            <ChangeDeviceLanguagePrompt
+              titleWording={t("onboarding.stepLanguage.changeDeviceLanguage")}
+              descriptionWording={t(
+                "onboarding.stepLanguage.changeDeviceLanguageDescription",
+                {
+                  language: t(
+                    `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
+                  ),
+                },
+              )}
+              onConfirm={() =>
+                setDeviceForChangeLanguageAction(lastConnectedDevice)
+              }
+            />
           )}
-          onConfirm={() =>
-            setDeviceForChangeLanguageAction(lastConnectedDevice)
-          }
-        />
+        </Flex>
       </BottomDrawer>
-      <ChangeDeviceLanguageActionModal
-        device={deviceForChangeLanguageAction}
-        language={localeIdToDeviceLanguage[currentLocale] as Language}
-        onClose={() => {
-          setDeviceForChangeLanguageAction(null);
-          closeDeviceLanguagePrompt();
-        }}
-      />
     </>
   );
 }
