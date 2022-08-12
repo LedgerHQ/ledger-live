@@ -1,5 +1,25 @@
 # @ledgerhq/cryptoassets
 
+## 6.32.0-next.0
+
+### Minor Changes
+
+- [#451](https://github.com/LedgerHQ/ledger-live/pull/451) [`134355d56`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Type libraries usage in LLC, LLD, LLM, CLI
+
+* [#887](https://github.com/LedgerHQ/ledger-live/pull/887) [`e2a9cfad6`](https://github.com/LedgerHQ/ledger-live/commit/e2a9cfad63f3c8fddf4660942a53545eabb03d6b) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update 20220809
+
+## 6.31.0
+
+### Minor Changes
+
+- [#702](https://github.com/LedgerHQ/ledger-live/pull/702) [`3eeb1e18c`](https://github.com/LedgerHQ/ledger-live/commit/3eeb1e18c883eca22201fb0d882799e2f6667b58) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update 20220721
+
+## 6.31.0-next.0
+
+### Minor Changes
+
+- [#702](https://github.com/LedgerHQ/ledger-live/pull/702) [`3eeb1e18c`](https://github.com/LedgerHQ/ledger-live/commit/3eeb1e18c883eca22201fb0d882799e2f6667b58) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update 20220721
+
 ## 6.30.0
 
 ### Minor Changes
