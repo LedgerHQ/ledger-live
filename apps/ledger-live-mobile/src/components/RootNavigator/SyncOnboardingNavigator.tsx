@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { ScreenName } from "../../const";
 import { SyncOnboarding } from "../../screens/SyncOnboarding";
 import { DeviceModelSelection } from "../../screens/SyncOnboarding/DeviceModelSelection";
@@ -22,12 +24,18 @@ export type SyncOnboardingStackParamList = {
 
 const Stack = createStackNavigator<SyncOnboardingStackParamList>();
 
-export const SyncOnboardingNavigator = () => (
+export const SyncOnboardingNavigator = () => {
+
+  const { colors } = useTheme();
+  const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors), [
+    colors,
+  ]);
+
+  return (
   <Stack.Navigator
     screenOptions={{
+      ...stackNavigatorConfig,
       headerShown: false,
-      headerTitle: "",
-      headerShadowVisible: false,
     }}
   >
     <Stack.Screen
@@ -45,11 +53,11 @@ export const SyncOnboardingNavigator = () => (
     <Stack.Screen
       name={ScreenName.SyncOnboardingCompanion as "SyncOnboardingCompanion"}
       component={SyncOnboarding}
-      initialParams={{ pairedDevice: null }}
     />
     <Stack.Screen
       name={ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion"}
       component={CompletionScreen}
     />
   </Stack.Navigator>
-);
+  );
+  }
