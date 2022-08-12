@@ -10,12 +10,16 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
-import { accountsSelector } from "../../reducers/accounts";
+import {
+  accountsSelector,
+  flattenAccountsByCryptoCurrencyScreenSelector,
+} from "../../reducers/accounts";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import { FabAssetActions } from "../../components/FabActions";
+import AccountsSection from "./AccountsSection";
 
 type RouteParams = {
   currencyId: string;
@@ -40,6 +44,12 @@ const AssetScreen = ({ route }: Props) => {
     [accounts, currencyId],
   );
 
+  const allAccounts = useSelector(
+    flattenAccountsByCryptoCurrencyScreenSelector(currency),
+  );
+
+  console.log("allAccounts", allAccounts.length, allAccounts);
+
   const data = useMemo(
     () => [
       <SectionContainer px={6}>
@@ -59,6 +69,14 @@ const AssetScreen = ({ route }: Props) => {
           })}
         />
         <MarketPriceSection currency={currency} />
+      </SectionContainer>,
+      <SectionContainer px={6}>
+        <SectionTitle
+          title={t("portfolio.marketPriceSection.title", {
+            currencyTicker: currency.ticker,
+          })}
+        />
+        <AccountsSection accounts={allAccounts}></AccountsSection>
       </SectionContainer>,
       <SectionContainer px={6} isLast>
         <SectionTitle title={t("analytics.operations.title")} />

@@ -22,7 +22,6 @@ type Props = {
   navigation: any;
   isLast: boolean;
   onSetAccount: (arg: TokenAccount) => void;
-  portfolioValue: number;
   navigationParams?: any[];
   hideDelta?: boolean;
   topLink?: boolean;
@@ -33,7 +32,6 @@ const AccountRow = ({
   navigation,
   account,
   accountId,
-  portfolioValue,
   navigationParams,
   hideDelta,
   topLink,
@@ -49,25 +47,6 @@ const AccountRow = ({
     account.derivationMode !== undefined &&
     account.derivationMode !== null &&
     getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
-
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
-
-  const countervalue = useCalculate({
-    from: currency,
-    to: counterValueCurrency,
-    value:
-      account.balance instanceof BigNumber
-        ? account.balance.toNumber()
-        : account.balance,
-    disableRounding: true,
-  });
-
-  const portfolioPercentage = useMemo(
-    () => (countervalue ? countervalue / Math.max(1, portfolioValue) : 0), // never divide by potential zero, we dont want to go towards infinity
-    [countervalue, portfolioValue],
-  );
 
   const { countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
@@ -121,7 +100,6 @@ const AccountRow = ({
       name={name}
       countervalueChange={countervalueChange}
       tag={tag}
-      progress={portfolioPercentage}
       topLink={topLink}
       bottomLink={bottomLink}
       hideDelta={hideDelta}
