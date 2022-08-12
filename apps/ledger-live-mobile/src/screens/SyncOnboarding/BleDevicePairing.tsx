@@ -15,6 +15,9 @@ import { ScreenName } from "../../const";
 import OnboardingView from "../Onboarding/OnboardingView";
 import Illustration from "../../images/illustration/Illustration";
 import RequiresBLE from "../../components/RequiresBLE";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { CircledCheckSolidMedium } from "@ledgerhq/native-ui/assets/icons";
+import { useTheme } from "styled-components/native";
 
 const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.png");
 
@@ -61,6 +64,7 @@ const BleDevicePairingInner = ({
   pairingError: PairingError;
 }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   const productName =
     getDeviceModel(device.modelId).productName || device.modelId;
@@ -68,16 +72,30 @@ const BleDevicePairingInner = ({
 
   if (isPaired) {
     return (
-      <OnboardingView
-        title={`✅ ${t("syncOnboarding.pairing.success.title", {
-          deviceName,
-        })}`}
-      >
-        <Illustration
-          size={300}
-          darkSource={setupLedgerImg}
-          lightSource={setupLedgerImg}
-        />
+      <OnboardingView>
+        <Flex alignItems="center">
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            p={1}
+            borderWidth={2}
+            borderRadius="9999px"
+            borderColor={colors.success.c80}
+            mb={6}
+          >
+            <CircledCheckSolidMedium color={colors.success.c80} size={48} />
+          </Flex>
+          <Text mb={8} textAlign="center" variant="h4" fontWeight="semiBold">
+            {t("syncOnboarding.pairing.success.title", {
+              deviceName,
+            })}
+          </Text>
+          <Illustration
+            size={300}
+            darkSource={setupLedgerImg}
+            lightSource={setupLedgerImg}
+          />
+        </Flex>
       </OnboardingView>
     );
   }
@@ -98,15 +116,29 @@ const BleDevicePairingInner = ({
   }
 
   return (
-    <OnboardingView
-      title={t("syncOnboarding.pairing.loading.title", { deviceName })}
-      subTitle={t("syncOnboarding.pairing.loading.subtitle", { productName })}
-    >
-      <Illustration
-        size={300}
-        darkSource={setupLedgerImg}
-        lightSource={setupLedgerImg}
-      />
+    <OnboardingView>
+      <Flex alignItems="center">
+        <Flex mb={6} p={1} borderWidth={2} borderColor="transparent">
+          <InfiniteLoader size={48} />
+        </Flex>
+        <Text variant="h4" fontWeight="semiBold" textAlign="center" mb={4}>
+          {t("syncOnboarding.pairing.loading.title", { deviceName })}
+        </Text>
+        <Text
+          variant="body"
+          fontWeight="medium"
+          textAlign="center"
+          mb={8}
+          color="neutral.c80"
+        >
+          {t("syncOnboarding.pairing.loading.subtitle", { productName })}
+        </Text>
+        <Illustration
+          size={300}
+          darkSource={setupLedgerImg}
+          lightSource={setupLedgerImg}
+        />
+      </Flex>
     </OnboardingView>
   );
 };

@@ -1572,7 +1572,8 @@
       }
     },
     "scanning": {
-      "title": "Connect {{productName}}"
+      "title": "Looking for your {{productName}}",
+      "description": "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
     },
     "pairing": {
       "success": {
