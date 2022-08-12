@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import {
   useNavigation,
+  useRoute,
   useTheme as useNavTheme,
 } from "@react-navigation/native";
 import {
@@ -56,6 +57,7 @@ export default function SelectDevice({
   const navigation = useNavigation();
   const knownDevices = useSelector(knownDevicesSelector);
   const dispatch = useDispatch();
+  const route = useRoute();
 
   const handleOnSelect = useCallback(
     deviceInfo => {
@@ -94,6 +96,10 @@ export default function SelectDevice({
   const [devices, setDevices] = useState([]);
 
   const onPairNewDevice = useCallback(() => {
+    track("button_clicked", {
+      button: "Pair with bluetooth",
+      screen: route.name,
+    });
     NativeModules.BluetoothHelperModule.prompt()
       .then(() =>
         // @ts-expect-error navigation issue

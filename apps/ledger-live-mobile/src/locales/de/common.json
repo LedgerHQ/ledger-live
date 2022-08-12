@@ -1,87 +1,88 @@
 {
-  "common": {
-    "cancel": "Abbrechen",
-    "apply": "Anwenden",
-    "seeAll": "Alles anzeigen",
-    "back": "Zurück",
-    "delete": "Löschen",
-    "paste": "Einfügen",
-    "yes": "Ja",
-    "no": "Nein",
-    "gotit": "Verstanden",
-    "continue": "Weiter",
-    "retry": "Wiederholen",
-    "done": "Fertig",
-    "sortBy": "Sortieren nach",
-    "signOut": "Abmelden",
-    "search": "Suchen nach",
-    "contactUs": "Ledger-Kundenservice kontaktieren",
-    "device": "Gerät",
-    "cryptoAsset": "Krypto-Vermögenswert",
-    "skip": "Überspringen",
-    "noCryptoFound": "Keine Krypto-Werte gefunden",
-    "needHelp": "Brauchen Sie Hilfe?",
-    "edit": "Bearbeiten",
-    "editName": "Name bearbeiten",
-    "close": "Schließen",
-    "confirm": "Bestätigen",
-    "poweredBy": "Unterstützt durch ",
-    "received": "Empfangen",
-    "sent": "Gesendet",
-    "or": "ODER",
-    "rename": "Umbenennen",
-    "learnMore": "Weitere Informationen",
-    "checkItOut": "Mehr erfahren",
-    "viewDetails": "Details anzeigen",
-    "today": "Heute",
-    "yesterday": "Gestern",
-    "upToDate": "Aktuell",
-    "transactionDate": "Datum der Transaktion:",
-    "outdated": "Veraltet",
-    "satPerByte": "Sat/Bytes",
-    "notAvailable": "Nicht verfügbar",
-    "import": "Importieren",
-    "bluetooth": "Bluetooth",
-    "usb": "USB",
-    "add": "Hinzufügen",
-    "token": "Token",
-    "token_plural": "Token",
-    "subaccount": "Unterkonto",
-    "subaccount_plural": "Unterkonten",
-    "forgetDevice": "Gerät entfernen",
-    "help": "Hilfe",
-    "saveLogs": "Protokolle speichern",
-    "sync": {
-      "ago": "Synchronisiert {{time}}"
+  "common" : {
+    "cancel" : "Abbrechen",
+    "apply" : "Anwenden",
+    "seeAll" : "Alles anzeigen",
+    "back" : "Zurück",
+    "delete" : "Löschen",
+    "paste" : "Einfügen",
+    "yes" : "Ja",
+    "no" : "Nein",
+    "gotit" : "Verstanden",
+    "continue" : "Weiter",
+    "retry" : "Wiederholen",
+    "done" : "Fertig",
+    "sortBy" : "Sortieren nach",
+    "signOut" : "Abmelden",
+    "search" : "Suchen nach",
+    "contactUs" : "Ledger-Kundenservice kontaktieren",
+    "device" : "Gerät",
+    "cryptoAsset" : "Krypto-Vermögenswert",
+    "skip" : "Überspringen",
+    "noCryptoFound" : "Keine Krypto-Werte gefunden",
+    "needHelp" : "Brauchen Sie Hilfe?",
+    "edit" : "Bearbeiten",
+    "editName" : "Name bearbeiten",
+    "close" : "Schließen",
+    "confirm" : "Bestätigen",
+    "poweredBy" : "Unterstützt durch ",
+    "received" : "Empfangen",
+    "sent" : "Gesendet",
+    "or" : "ODER",
+    "rename" : "Umbenennen",
+    "learnMore" : "Weitere Informationen",
+    "checkItOut" : "Mehr erfahren",
+    "viewDetails" : "Details anzeigen",
+    "today" : "Heute",
+    "yesterday" : "Gestern",
+    "upToDate" : "Aktuell",
+    "transactionDate" : "Datum der Transaktion:",
+    "outdated" : "Veraltet",
+    "satPerByte" : "Sat/Bytes",
+    "notAvailable" : "Nicht verfügbar",
+    "import" : "Importieren",
+    "bluetooth" : "Bluetooth",
+    "usb" : "USB",
+    "add" : "Hinzufügen",
+    "token" : "Token",
+    "token_plural" : "Token",
+    "subaccount" : "Unterkonto",
+    "subaccount_plural" : "Unterkonten",
+    "forgetDevice" : "Gerät entfernen",
+    "help" : "Hilfe",
+    "saveLogs" : "Protokolle speichern",
+    "sync" : {
+      "ago" : "Synchronisiert {{time}}"
     },
-    "update": "Update verfügbar",
-    "install": "Installieren",
-    "installed": "Installiert",
-    "uninstall": "Deinstallieren",
-    "fromNow": {
-      "seconds": "in einer Sekunde",
-      "seconds_plural": "in {{time}} Sekunden",
-      "minutes": "in einer Minute",
-      "minutes_plural": "in {{time}} Minuten",
-      "hours": "in einer Stunde",
-      "hours_plural": "in {{time}} Stunden",
-      "days": "in einem Tag",
-      "days_plural": "in {{time}} Tagen"
+    "update" : "Update verfügbar",
+    "install" : "Installieren",
+    "installed" : "Installiert",
+    "uninstall" : "Deinstallieren",
+    "fromNow" : {
+      "seconds" : "in einer Sekunde",
+      "seconds_plural" : "in {{time}} Sekunden",
+      "minutes" : "in einer Minute",
+      "minutes_plural" : "in {{time}} Minuten",
+      "hours" : "in einer Stunde",
+      "hours_plural" : "in {{time}} Stunden",
+      "days" : "in einem Tag",
+      "days_plural" : "in {{time}} Tagen"
     },
-    "timeAgo": {
-      "seconds": "vor einer Sekunde",
-      "seconds_plural": "vor {{time}} Sekunden",
-      "minutes": "vor einer Minute",
-      "minutes_plural": "Vor {{time}} Minuten",
-      "hours": "vor einer Stunde",
-      "hours_plural": "vor {{time}} Stunden",
-      "days": "Gestern",
-      "days_plural": "vor {{time}} Tagen"
+    "timeAgo" : {
+      "seconds" : "vor einer Sekunde",
+      "seconds_plural" : "vor {{time}} Sekunden",
+      "minutes" : "vor einer Minute",
+      "minutes_plural" : "Vor {{time}} Minuten",
+      "hours" : "vor einer Stunde",
+      "hours_plural" : "vor {{time}} Stunden",
+      "days" : "Gestern",
+      "days_plural" : "vor {{time}} Tagen"
     },
-    "seeMore": "Mehr anzeigen",
-    "moreInfo": "Mehr Infos",
-    "buyEth": "Ethereum kaufen",
-    "popular": "beliebt"
+    "seeMore" : "Mehr anzeigen",
+    "moreInfo" : "Mehr Infos",
+    "buyEth" : "Ethereum kaufen",
+    "popular" : "beliebt",
+    "comingSoon" : "In Kürze verfügbar"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -560,17 +561,11 @@
     "NotSupportedLegacyAddress": {
       "title": "Das Legacy-Adressformat wird nicht mehr unterstützt"
     },
-    "StellarWrongMemoFormat": {
-      "title": "Memo-Format ist falsch"
+    "SourceHasMultiSign" : {
+      "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
     },
-    "SourceHasMultiSign": {
-      "title": "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
-    },
-    "StellarMemoRecommended": {
-      "title": "Beim Senden an diesen Empfänger wird möglicherweise ein Memo benötigt"
-    },
-    "StratisDown2021Warning": {
-      "description": "Die Stratis-Blockchain hat sich weiterentwickelt und funktioniert möglicherweise nicht mehr korrekt. Die Unterstützung für die ursprüngliche Stratis-Blockchain wird bis zum 16. Oktober 2021 aufrechterhalten."
+    "StratisDown2021Warning" : {
+      "description" : "Die Stratis-Blockchain hat sich weiterentwickelt und funktioniert möglicherweise nicht mehr korrekt. Die Unterstützung für die ursprüngliche Stratis-Blockchain wird bis zum 16. Oktober 2021 aufrechterhalten."
     },
     "SwapExchangeRateAmountTooLow": {
       "title": "Betrag muss höher als {{minAmountFromFormatted}} sein"
@@ -643,8 +638,46 @@
     "SolanaTxConfirmationTimeout": {
       "title": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie vor einem erneuten Versuch zunächst den Transaktionsverlauf."
     },
-    "CardanoMinAmountError": {
-      "title": "Mindestens {{amount}} ADA erforderlich"
+    "CardanoMinAmountError" : {
+      "title" : "Der Mindestbetrag, der versendet werden kann, ist {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Bitte vergewissern Sie sich, dass Sie genügend Geld für die Bezahlung der Gebühren haben"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo-Format ist falsch"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Beim Senden an diesen Empfänger wird möglicherweise ein Memo benötigt"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Dieser Empfänger hat noch keine Trustline zu {{assetCode}}"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Vor dem Hinzufügen einer Trustline sollte ein Stellar-Vermögenswert ausgewählt werden"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Der ausgewählte Stellar-Vermögenswert konnte nicht gefunden werden"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
+      "description" : "Bitte vergewissern Sie sich, dass das Konto ausreichend gedeckt ist, um die Transaktionsgebühr zu decken."
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Die gewählte Gebühr ist niedriger als die empfohlene Gebühr"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Die Mindesttransaktionsgebühr beträgt 0,00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus",
+      "description" : "Vergewissern Sie sich, dass das Konto genügend Deckung für die neue Trustline aufweist."
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar-Konto existiert nicht"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
     }
   },
   "bluetooth": {
@@ -818,14 +851,14 @@
       }
     }
   },
-  "ratings": {
-    "init": {
-      "title": "Wie gefällt Ihnen Ledger Live?",
-      "description": "Sind Sie zufrieden oder haben Sie mehr von uns erwartet? In beiden Fällen freuen wir uns über Ihr Feedback.",
-      "cta": {
-        "enjoy": "Ich bin begeistert",
-        "disappointed": "Ich bin enttäuscht",
-        "notNow": "Nicht jetzt"
+  "ratings" : {
+    "init" : {
+      "title" : "Wie gefällt Ihnen unsere App?",
+      "description" : "Ihr Feedback ist uns wichtig, um Ledger Live zu verbessern.",
+      "cta" : {
+        "enjoy" : "Ich bin begeistert",
+        "disappointed" : "Ich bin enttäuscht",
+        "notNow" : "Nicht jetzt"
       }
     },
     "enjoy": {
@@ -836,12 +869,13 @@
         "notNow": "Nicht jetzt"
       }
     },
-    "disappointed": {
-      "title": "Helfen Sie uns, das Produkt für Sie noch besser zu machen",
-      "description": "Mit Ihrem ehrlichen Feedback unterstützen Sie uns dabei, Bereiche mit Optimierungsbedarf zu identifizieren.",
-      "cta": {
-        "sendFeedback": "Feedback senden",
-        "notNow": "Nicht jetzt"
+    "disappointed" : {
+      "title" : "Helfen Sie uns, das Produkt für Sie noch besser zu machen",
+      "description" : "Wenn Sie weitere Hilfe benötigen oder möchten, dass wir uns mit Ihnen in Verbindung setzen, nutzen Sie bitte unseren Live-Chat",
+      "here" : "Hier",
+      "cta" : {
+        "sendFeedback" : "Feedback senden",
+        "notNow" : "Nicht jetzt"
       }
     },
     "disappointedDone": {
@@ -930,9 +964,9 @@
         "title": "Verdienen",
         "desc": "Verdienen Sie ein passives Einkommen und vermehren Sie Ihr Kryptovermögen"
       },
-      "mint": {
-        "title": "Minting",
-        "desc": "Minte NFTs von exklusiven Kollaborationen auf [ L ] Market"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs aus exklusiven Kooperationen auf dem [ L ] Markt"
       }
     },
     "comingSoon": "In Kürze verfügbar",
@@ -1736,23 +1770,30 @@
     "subaccountCount": "+1 Unterkonto",
     "subaccountCount_plural": "+{{count}} Unterkonten"
   },
-  "account": {
-    "tokens": {
-      "contractAddress": "Vertragsadresse",
-      "viewInExplorer": "Im Explorer ansehen",
-      "seeMore": "Weitere Token anzeigen",
-      "seeLess": "Weniger Token anzeigen",
-      "addTokens": "Token hinzufügen",
-      "howTo": "Um Token-Konten hinzuzufügen, müssen Sie <0>Geldmittel</0> mit Ihrer <1>{{currency}}-Adresse</1> empfangen.",
-      "algorand": {
-        "contractAddress": "Vertragsadresse",
-        "viewInExplorer": "Im Explorer ansehen",
-        "seeMore": "Mehr ASA sehen",
-        "seeLess": "Weniger ASA anzeigen",
-        "addTokens": "ASA hinzufügen",
-        "howTo": "Sie können Ihrem Algorand-Konto Vermögenswerte hinzufügen.",
-        "addAsa": "ASA hinzufügen (Vermögenswert)",
-        "howAsaWorks": "Wie funktioniert ASA (Vermögenswert)?"
+  "account" : {
+    "tokens" : {
+      "contractAddress" : "Vertragsadresse",
+      "viewInExplorer" : "Im Explorer ansehen",
+      "seeMore" : "Weitere Token anzeigen",
+      "seeLess" : "Weniger Token anzeigen",
+      "addTokens" : "Token hinzufügen",
+      "howTo" : "Um Token-Konten hinzuzufügen, müssen Sie <0>Geldmittel</0> mit Ihrer <1>{{currency}}-Adresse</1> empfangen.",
+      "algorand" : {
+        "contractAddress" : "Vertragsadresse",
+        "viewInExplorer" : "Im Explorer ansehen",
+        "seeMore" : "Mehr ASA sehen",
+        "seeLess" : "Weniger ASA anzeigen",
+        "addTokens" : "ASA hinzufügen",
+        "howTo" : "Sie können Ihrem Algorand-Konto Vermögenswerte hinzufügen.",
+        "addAsa" : "ASA hinzufügen (Vermögenswert)",
+        "howAsaWorks" : "Wie funktioniert ASA (Vermögenswert)?"
+      },
+      "stellar" : {
+        "seeMore" : "Mehr Vermögenswerte anzeigen",
+        "seeLess" : "Weniger Vermögenswerte anzeigen",
+        "addTokens" : "Vermögenswerte hinzufügen",
+        "howTo" : "Sie können Vermögenswerte zu Ihrem Stellar-Konto hinzufügen.",
+        "addAsset" : "Wert hinzufügen"
       }
     },
     "subaccounts": {
@@ -1878,29 +1919,35 @@
       }
     }
   },
-  "accounts": {
-    "title": "Konten",
-    "importNotification": {
-      "message": "Ihre Konten wurden erfolgreich importiert!"
+  "accounts" : {
+    "title" : "Konten",
+    "importNotification" : {
+      "message" : "Ihre Konten wurden erfolgreich importiert!"
     },
-    "row": {
-      "syncPending": "Synchronisiere...",
-      "upToDate": "Synchronisiert",
-      "error": "Fehler",
-      "queued": "Warten auf",
-      "showTokens": "Zeige {{length}} Token",
-      "showTokens_plural": "Zeige {{length}} Token",
-      "showSubAccounts": "{{length}} Unterkonto anzeigen",
-      "showSubAccounts_plural": "{{length}} Unterkonten anzeigen",
-      "hideTokens": "Token ausblenden",
-      "hideTokens_plural": "Token verbergen",
-      "hideSubAccounts": "Unterkonto ausblenden",
-      "hideSubAccounts_plural": "Unterkonten ausblenden",
-      "algorand": {
-        "showTokens": "Zeige {{length}} ASA",
-        "showTokens_plural": "Zeige {{length}} ASA",
-        "hideTokens": "ASA ausblenden",
-        "hideTokens_plural": "ASA ausblenden"
+    "row" : {
+      "syncPending" : "Synchronisiere...",
+      "upToDate" : "Synchronisiert",
+      "error" : "Fehler",
+      "queued" : "Warten auf",
+      "showTokens" : "Zeige {{length}} Token",
+      "showTokens_plural" : "Zeige {{length}} Token",
+      "showSubAccounts" : "{{length}} Unterkonto anzeigen",
+      "showSubAccounts_plural" : "{{length}} Unterkonten anzeigen",
+      "hideTokens" : "Token ausblenden",
+      "hideTokens_plural" : "Token verbergen",
+      "hideSubAccounts" : "Unterkonto ausblenden",
+      "hideSubAccounts_plural" : "Unterkonten ausblenden",
+      "algorand" : {
+        "showTokens" : "Zeige {{length}} ASA",
+        "showTokens_plural" : "Zeige {{length}} ASA",
+        "hideTokens" : "ASA ausblenden",
+        "hideTokens_plural" : "ASA ausblenden"
+      },
+      "stellar" : {
+        "showTokens" : "Vermögenswerte {{length}} anzeigen",
+        "showTokens_plural" : "Vermögenswerte {{length}} anzeigen",
+        "hideTokens" : "Vermögenswerte ausblenden",
+        "hideTokens_plural" : "Vermögenswerte ausblenden"
       }
     },
     "noResultsFound": "Kein Wert gefunden",
@@ -1952,270 +1999,365 @@
       "desc": "Prüfen Sie unseren Systemstatus"
     }
   },
-  "settings": {
-    "header": "Einstellungen",
-    "resources": "Ledger-Ressourcen",
-    "display": {
-      "title": "Allgemeines",
-      "desc": "Konfigurieren Sie die allgemeinen Ledger-Live-Einstellungen.",
-      "carousel": "Karussell-Sichtbarkeit",
-      "carouselDesc": "Aktivieren Sie die Sichtbarkeit des Karussells auf Portfolio",
-      "language": "Sprache",
-      "languageDesc": "Stellen Sie die in Ledger Live angezeigte Sprache ein.",
-      "region": "Region",
-      "regionDesc": "Wählen Sie Ihre Region, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
-      "password": "Passwort-Sperre",
-      "passwordDesc": "Legen Sie ein Passwort fest, um die Ledger Live-Daten auf Ihrem Telefon zu schützen.",
-      "counterValue": "Bevorzugte Währung",
-      "theme": "Design",
-      "themeDesc": "App-UI-Thema festlegen",
-      "themes": {
-        "system": "System",
-        "dark": "Dunkel",
-        "light": "Hell",
-        "dusk": "Mittel"
+  "settings" : {
+    "header" : "Einstellungen",
+    "resources" : "Ledger-Ressourcen",
+    "display" : {
+      "title" : "Allgemeines",
+      "desc" : "Konfigurieren Sie die allgemeinen Ledger-Live-Einstellungen.",
+      "carousel" : "Karussell-Sichtbarkeit",
+      "carouselDesc" : "Aktivieren Sie die Sichtbarkeit des Karussells auf Portfolio",
+      "language" : "Sprache",
+      "languageDesc" : "Stellen Sie die in Ledger Live angezeigte Sprache ein.",
+      "region" : "Region",
+      "regionDesc" : "Wählen Sie Ihre Region, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
+      "password" : "Passwort-Sperre",
+      "passwordDesc" : "Legen Sie ein Passwort fest, um die Ledger Live-Daten auf Ihrem Telefon zu schützen.",
+      "counterValue" : "Bevorzugte Währung",
+      "theme" : "Design",
+      "themeDesc" : "App-UI-Thema festlegen",
+      "themes" : {
+        "system" : "System",
+        "dark" : "Dunkel",
+        "light" : "Hell",
+        "dusk" : "Mittel"
       },
-      "counterValueDesc": "Wählen Sie die Währung für Salden und Aktionen.",
-      "exchange": "Anbieter bewerten",
-      "exchangeDesc": "Anbieter des Wechselkurses von Bitcoin zu {{fiat}} einstellen",
-      "stock": "Regionaler Marktindikator",
-      "stockDesc": "Wählen Sie Westlich, um Marktsteigerungen in Blau anzuzeigen, oder Östlich, um sie in Rot anzuzeigen.",
-      "reportErrors": "Fehlerberichte",
-      "reportErrorsDesc": "Berichte automatisch versenden, um Ledger bei der Verbesserung seiner Produkte zu unterstützen.",
-      "developerMode": "Entwicklermodus",
-      "developerModeDesc": "Zeigen Sie Entwickler-Apps im Manager an und aktivieren Sie Testnet-Apps.",
-      "analytics": "Analysen",
-      "analyticsDesc": "Aktivieren Sie Analysen, um Ledger bei der Verbesserung der Benutzerfreundlichkeit zu helfen.",
-      "analyticsModal": {
-        "title": "Analysen teilen",
-        "desc": "Aktivieren Sie Analysen, um Ledger bei der Verbesserung der Benutzerfreundlichkeit zu helfen",
-        "bullet0": "Klicks",
-        "bullet1": "In-App-Seitenbesuche",
-        "bullet2": "Zur Webseite umleiten",
-        "bullet3": "Aktionen: Senden, Empfangen, Sperren, etc.",
-        "bullet4": "zum Ende der Seite blättern",
-        "bullet5": "App-(De-)Installation und Version",
-        "bullet6": "Anzahl der Konten, Währungen und Aktionen",
-        "bullet7": "Gesamt- und Seiten-Sitzungsdauer",
-        "bullet8": "Ledger-Gerätetyp und -Firmware"
+      "counterValueDesc" : "Wählen Sie die Währung für Salden und Aktionen.",
+      "exchange" : "Anbieter bewerten",
+      "exchangeDesc" : "Anbieter des Wechselkurses von Bitcoin zu {{fiat}} einstellen",
+      "stock" : "Regionaler Marktindikator",
+      "stockDesc" : "Wählen Sie Westlich, um Marktsteigerungen in Blau anzuzeigen, oder Östlich, um sie in Rot anzuzeigen.",
+      "reportErrors" : "Fehlerberichte",
+      "reportErrorsDesc" : "Berichte automatisch versenden, um Ledger bei der Verbesserung seiner Produkte zu unterstützen.",
+      "developerMode" : "Entwicklermodus",
+      "developerModeDesc" : "Zeigen Sie Entwickler-Apps im Manager an und aktivieren Sie Testnet-Apps.",
+      "analytics" : "Analysen",
+      "analyticsDesc" : "Aktivieren Sie Analysen, um Ledger bei der Verbesserung der Benutzerfreundlichkeit zu helfen.",
+      "analyticsModal" : {
+        "title" : "Analysen teilen",
+        "desc" : "Aktivieren Sie Analysen, um Ledger bei der Verbesserung der Benutzerfreundlichkeit zu helfen",
+        "bullet0" : "Klicks",
+        "bullet1" : "In-App-Seitenbesuche",
+        "bullet2" : "Zur Webseite umleiten",
+        "bullet3" : "Aktionen: Senden, Empfangen, Sperren, etc.",
+        "bullet4" : "zum Ende der Seite blättern",
+        "bullet5" : "App-(De-)Installation und Version",
+        "bullet6" : "Anzahl der Konten, Währungen und Aktionen",
+        "bullet7" : "Gesamt- und Seiten-Sitzungsdauer",
+        "bullet8" : "Ledger-Gerätetyp und -Firmware"
       },
-      "technicalData": "Technische Daten",
-      "technicalDataDesc": "Ledger sammelt automatisch anonymisierte technische Daten, um die Benutzerfreundlichkeit zu verbessern.",
-      "technicalDataModal": {
-        "title": "Technische Daten",
-        "desc": "Ledger sammelt automatisch anonymisierte technische Daten, um die Benutzerfreundlichkeit zu verbessern.",
-        "bullet1": "Anonyme, einzigartige Anwendungs-ID",
-        "bullet2": "Ledger Live-Version, OS-Region, Sprache und Region"
+      "technicalData" : "Technische Daten",
+      "technicalDataDesc" : "Ledger sammelt automatisch anonymisierte technische Daten, um die Benutzerfreundlichkeit zu verbessern.",
+      "technicalDataModal" : {
+        "title" : "Technische Daten",
+        "desc" : "Ledger sammelt automatisch anonymisierte technische Daten, um die Benutzerfreundlichkeit zu verbessern.",
+        "bullet1" : "Anonyme, einzigartige Anwendungs-ID",
+        "bullet2" : "Ledger Live-Version, OS-Region, Sprache und Region"
       },
-      "hideEmptyTokenAccounts": "Leere Token-Konten ausblenden",
-      "hideEmptyTokenAccountsDesc": "Alle leeren Token-Konten auf der Werte-Seite werden ausgeblendet."
+      "hideEmptyTokenAccounts" : "Leere Token-Konten ausblenden",
+      "hideEmptyTokenAccountsDesc" : "Alle leeren Token-Konten auf der Werte-Seite werden ausgeblendet."
     },
-    "currencies": {
-      "header": "Währungen",
-      "rateProvider": "Anbieter bewerten ({{currencyTicker}}→ BTC)",
-      "rateProviderDesc": "Wählen Sie den Anbieter des Preises zwischen {{currencyTicker}} und Bitcoin.",
-      "confirmationNb": "Anzahl der Bestätigungen",
-      "confirmationNbDesc": "Legen Sie die Anzahl der Netzwerkbestätigungen für zu genehmigende Transaktionen fest.",
-      "currencySettingsTitle": "{{currencyName}} Einstellungen",
-      "placeholder": "Keine Einstellungen für diesen Vermögenswert"
+    "currencies" : {
+      "header" : "Währungen",
+      "rateProvider" : "Anbieter bewerten ({{currencyTicker}}→ BTC)",
+      "rateProviderDesc" : "Wählen Sie den Anbieter des Preises zwischen {{currencyTicker}} und Bitcoin.",
+      "confirmationNb" : "Anzahl der Bestätigungen",
+      "confirmationNbDesc" : "Legen Sie die Anzahl der Netzwerkbestätigungen für zu genehmigende Transaktionen fest.",
+      "currencySettingsTitle" : "{{currencyName}} Einstellungen",
+      "placeholder" : "Keine Einstellungen für diesen Vermögenswert"
     },
-    "accounts": {
-      "header": "Konten",
-      "title": "Konten",
-      "desc": "Verwalten Sie die Anzeige von Vermögenswerten in der App.",
-      "hideTokenCTA": "Token ausblenden",
-      "showContractCTA": "Vertrag anzeigen",
-      "blacklistedTokens": "Ausgeblendete Token-Liste",
-      "blacklistedTokensDesc": "Sie können Token ausblenden, indem Sie zur Kontenliste gehen, dann lange auf das Token drücken und \"Token ausblenden\" wählen.",
-      "blacklistedTokensModal": {
-        "title": "Token ausblenden",
-        "desc": "Diese Aktion blendet alle <1><0>{tokenName}</0></1> Konten aus, Sie können sie unter <3>Einstellungen</3> wieder einblenden",
-        "confirm": "Token ausblenden"
+    "accounts" : {
+      "header" : "Konten",
+      "title" : "Konten",
+      "desc" : "Verwalten Sie die Anzeige von Vermögenswerten in der App.",
+      "hideTokenCTA" : "Token ausblenden",
+      "showContractCTA" : "Vertrag anzeigen",
+      "blacklistedTokens" : "Ausgeblendete Token-Liste",
+      "blacklistedTokensDesc" : "Sie können Token ausblenden, indem Sie zur Kontenliste gehen, dann lange auf das Token drücken und \"Token ausblenden\" wählen.",
+      "blacklistedTokensModal" : {
+        "title" : "Token ausblenden",
+        "desc" : "Diese Aktion blendet alle <1><0>{tokenName}</0></1> Konten aus, Sie können sie unter <3>Einstellungen</3> wieder einblenden",
+        "confirm" : "Token ausblenden"
       },
-      "hideNFTCollectionCTA": "Sammlung ausblenden",
-      "hiddenNFTCollections": "Ausgeblendete NFT-Sammlungen",
-      "hiddenNFTCollectionsDesc": "Sie können Token ausblenden, indem Sie zum Konto gehen und dann lange auf eine Sammlung drücken und \"Sammlung ausblenden\" auswählen.",
-      "hideNFTCollectionModal": {
-        "title": "Sammlung ausblenden?",
-        "desc": "Sie können diese Sammlung in den Einstellungen wiedergeben."
+      "hideNFTCollectionCTA" : "Sammlung ausblenden",
+      "hiddenNFTCollections" : "Ausgeblendete NFT-Sammlungen",
+      "hiddenNFTCollectionsDesc" : "Sie können Token ausblenden, indem Sie zum Konto gehen und dann lange auf eine Sammlung drücken und \"Sammlung ausblenden\" auswählen.",
+      "hideNFTCollectionModal" : {
+        "title" : "Sammlung ausblenden?",
+        "desc" : "Sie können diese Sammlung in den Einstellungen wiedergeben."
       },
-      "cryptoAssets": {
-        "header": "Kryptowährungen",
-        "title": "Kryptowährungen",
-        "desc": "Wählen Sie einen Krypto-Vermögenswert, um dessen Einstellungen zu bearbeiten."
+      "cryptoAssets" : {
+        "header" : "Kryptowährungen",
+        "title" : "Kryptowährungen",
+        "desc" : "Wählen Sie einen Krypto-Vermögenswert, um dessen Einstellungen zu bearbeiten."
       }
     },
-    "about": {
-      "title": "Über uns",
-      "desc": "App-Informationen, Geschäftsbedingungen und Datenschutzrichtlinien.",
-      "appDescription": "Mit Ledger Live sichern, kaufen, verkaufen, tauschen, vermehren und verwalten Sie Ihre Kryptowährungen. Alles an einem Ort.",
-      "appVersion": "Version",
-      "termsConditions": "Allgemeinen Geschäftsbedingungen",
-      "termsConditionsDesc": "Durch die Nutzung von Ledger Live wird davon ausgegangen, dass Sie unsere allgemeinen Geschäftsbedingungen akzeptiert haben.",
-      "privacyPolicy": "Datenschutzrichtlinie",
-      "privacyPolicyDesc": "Sehen Sie, welche persönlichen Daten erfasst werden, warum und wie sie verwendet werden.",
-      "liveReview": {
-        "title": "Feedback",
-        "desc": "Teilen Sie uns Ihr Feedback per App mit",
-        "ios": "Im App Store bewerten",
-        "android": "Im Google Play Store bewerten"
+    "about" : {
+      "title" : "Über uns",
+      "desc" : "App-Informationen, Geschäftsbedingungen und Datenschutzrichtlinien.",
+      "appDescription" : "Mit Ledger Live sichern, kaufen, verkaufen, tauschen, vermehren und verwalten Sie Ihre Kryptowährungen. Alles an einem Ort.",
+      "appVersion" : "Version",
+      "termsConditions" : "Allgemeinen Geschäftsbedingungen",
+      "termsConditionsDesc" : "Durch die Nutzung von Ledger Live wird davon ausgegangen, dass Sie unsere allgemeinen Geschäftsbedingungen akzeptiert haben.",
+      "privacyPolicy" : "Datenschutzrichtlinie",
+      "privacyPolicyDesc" : "Sehen Sie, welche persönlichen Daten erfasst werden, warum und wie sie verwendet werden.",
+      "liveReview" : {
+        "title" : "Feedback",
+        "desc" : "Teilen Sie uns Ihr Feedback per App mit",
+        "ios" : "Im App Store bewerten",
+        "android" : "Im Google Play Store bewerten"
       }
     },
-    "help": {
-      "title": "Hilfe",
-      "header": "Hilfe",
-      "desc": "Erfahren Sie mehr über Ledger Live oder wie Sie Hilfe erhalten können.",
-      "support": "Ledger Support",
-      "supportDesc": "Falls Sie ein Problem haben, nutzen Sie Ledger Live mit Ihrer Hardware-Wallet.",
-      "configureDevice": "Ein Gerät einrichten",
-      "configureDeviceDesc": "Als neues Gerät einrichten oder ein vorhandenes Gerät wiederherstellen. Konten und Einstellungen bleiben erhalten.",
-      "clearCache": "Cache löschen",
-      "clearCacheDesc": "Die Transaktionen im Netzwerk werden gescannt und Ihre Konten werden neu berechnet.",
-      "clearCacheModal": "Sind Sie sicher?",
-      "clearCacheModalDesc": "Es wird ein neuer und vollständiger Scan der Transaktionen im Netzwerk durchgeführt. Die Kontoverläufe werden neu aufgebaut und die Salden werden neu berechnet.",
-      "clearCacheButton": "Löschen",
-      "exportLogs": "Protokolle speichern",
-      "exportLogsDesc": "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
-      "hardReset": "Ledger Live zurücksetzen",
-      "hardResetDesc": "Dies hat keine Auswirkung auf Ihre Vermögenswerte. Löscht alle Daten in Ledger Live, einschließlich Kontodaten, Transaktionsverläufe und Einstellungen. Verwenden Sie Ihr Ledger-Gerät, um Ihre Krypto-Vermögenswerte auf einem leeren Ledger Live neu zu laden und zu verwalten.",
-      "repairDevice": "Reparieren Sie Ihr Ledger-Gerät",
-      "repairDeviceDesc": "Wenn Sie ein Problem bei der Aktualisierung Ihres Geräts haben und die Updates nicht fortsetzen können, können Sie dies versuchen, um Ihr Gerät zu reparieren."
+    "notifications" : {
+      "title" : "Benachrichtigungen",
+      "desc" : "Benachrichtigungen verwalten",
+      "disabledNotifications" : {
+        "title" : "Ihre Benachrichtigungen sind deaktiviert",
+        "desc" : "{{platform}} blockiert Benachrichtigungen von Ledger Live. Um Benachrichtigungen auf Ihrem Smartphone zu erhalten, gehen Sie zu den Einstellungen Ihres Geräts, um Benachrichtigungen von Ledger Live zu aktivieren.",
+        "turnOnNotif" : "Benachrichtigungen aktivieren",
+        "goToSettings" : "Gehen Sie zu Systemeinstellungen"
+      },
+      "allowed" : {
+        "title" : "Benachrichtigungen zulassen",
+        "desc" : "Erhalten Sie Benachrichtigungen über Ihre Krypto, Markttendenzen und mehr"
+      },
+      "transactions" : {
+        "title" : "Transaktionen",
+        "desc" : "Werden Sie benachrichtigt, wenn Sie Krypto empfangen oder senden"
+      },
+      "market" : {
+        "title" : "Markt",
+        "desc" : "Erhalten Sie wichtige Updates zu Marktveränderungen"
+      },
+      "announcement" : {
+        "title" : "Ankündigung",
+        "desc" : "Wichtige Updates zu Ledger Live erhalten"
+      },
+      "price" : {
+        "title" : "Preisalarme",
+        "desc" : "Legen Sie Preisalarme für Ihre Lieblingscoins fest, damit Sie keine Marktbewegung verpassen"
+      }
     },
-    "experimental": {
-      "title": "Experimentelle Funktionen",
-      "desc": "Probieren Sie die experimentellen Funktionen aus und lassen Sie uns wissen, was Sie davon halten.",
-      "disclaimer": "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen."
+    "help" : {
+      "title" : "Hilfe",
+      "header" : "Hilfe",
+      "desc" : "Erfahren Sie mehr über Ledger Live oder wie Sie Hilfe erhalten können.",
+      "support" : "Ledger Support",
+      "supportDesc" : "Falls Sie ein Problem haben, nutzen Sie Ledger Live mit Ihrer Hardware-Wallet.",
+      "configureDevice" : "Ein Gerät einrichten",
+      "configureDeviceDesc" : "Als neues Gerät einrichten oder ein vorhandenes Gerät wiederherstellen. Konten und Einstellungen bleiben erhalten.",
+      "clearCache" : "Cache löschen",
+      "clearCacheDesc" : "Die Transaktionen im Netzwerk werden gescannt und Ihre Konten werden neu berechnet.",
+      "clearCacheModal" : "Sind Sie sicher?",
+      "clearCacheModalDesc" : "Es wird ein neuer und vollständiger Scan der Transaktionen im Netzwerk durchgeführt. Die Kontoverläufe werden neu aufgebaut und die Salden werden neu berechnet.",
+      "clearCacheButton" : "Löschen",
+      "exportLogs" : "Protokolle speichern",
+      "exportLogsDesc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
+      "hardReset" : "Ledger Live zurücksetzen",
+      "hardResetDesc" : "Dies hat keine Auswirkung auf Ihre Vermögenswerte. Löscht alle Daten in Ledger Live, einschließlich Kontodaten, Transaktionsverläufe und Einstellungen. Verwenden Sie Ihr Ledger-Gerät, um Ihre Krypto-Vermögenswerte auf einem leeren Ledger Live neu zu laden und zu verwalten.",
+      "repairDevice" : "Reparieren Sie Ihr Ledger-Gerät",
+      "repairDeviceDesc" : "Wenn Sie ein Problem bei der Aktualisierung Ihres Geräts haben und die Updates nicht fortsetzen können, können Sie dies versuchen, um Ihr Gerät zu reparieren."
     },
-    "developer": {
-      "title": "Entwickler",
-      "desc": "Probieren Sie die experimentellen Entwicklerfunktionen aus und lassen Sie uns wissen, was Sie davon halten.",
-      "customManifest": {
-        "title": "Benutzerdefiniertes Plattform-Manifest laden"
+    "experimental" : {
+      "title" : "Experimentelle Funktionen",
+      "desc" : "Probieren Sie die experimentellen Funktionen aus und lassen Sie uns wissen, was Sie davon halten.",
+      "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen."
+    },
+    "developer" : {
+      "title" : "Entwickler",
+      "desc" : "Probieren Sie die experimentellen Entwicklerfunktionen aus und lassen Sie uns wissen, was Sie davon halten.",
+      "customManifest" : {
+        "title" : "Benutzerdefiniertes Plattform-Manifest laden"
       }
     }
   },
-  "migrateAccounts": {
-    "banner": "Ledger Live-Konten Update",
-    "overview": {
-      "headerTitle": "Update für Konto",
-      "title": "Ledger Live-Konten Update",
-      "subtitle": "Neue Funktionen in Ledger Live bedeuten, dass Ihre Konten aktualisiert werden müssen",
-      "notice": "{{accountCount}} Konto konnte nicht aktualisiert werden. Bitte verbinden Sie das mit dem nachstehenden Konto verbundene Gerät.",
-      "notice_plural": "{{accountCount}} Konten konnten nicht aktualisiert werden. Bitte verbinden Sie das mit den nachstehenden Konten verbundene Gerät.",
-      "currency": "1 {{currency}}-Konto muss aktualisiert werden",
-      "currency_plural": "{{count}} {{currency}} Konten müssen aktualisiert werden",
-      "start": "Update starten",
-      "continue": "Update fortsetzen"
+  "notifications" : {
+    "prompt" : {
+      "title" : "Benachrichtigungen aktivieren",
+      "desc" : "Erhalten Sie wichtige Updates zu Ledger Live, Ledger Produkten und Sicherheit. Abmeldung jederzeit möglich.",
+      "allow" : "Benachrichtigungen zulassen",
+      "later" : "Vielleicht später"
+    }
+  },
+  "migrateAccounts" : {
+    "banner" : "Ledger Live-Konten Update",
+    "overview" : {
+      "headerTitle" : "Update für Konto",
+      "title" : "Ledger Live-Konten Update",
+      "subtitle" : "Neue Funktionen in Ledger Live bedeuten, dass Ihre Konten aktualisiert werden müssen",
+      "notice" : "{{accountCount}} Konto konnte nicht aktualisiert werden. Bitte verbinden Sie das mit dem nachstehenden Konto verbundene Gerät.",
+      "notice_plural" : "{{accountCount}} Konten konnten nicht aktualisiert werden. Bitte verbinden Sie das mit den nachstehenden Konten verbundene Gerät.",
+      "currency" : "1 {{currency}}-Konto muss aktualisiert werden",
+      "currency_plural" : "{{count}} {{currency}} Konten müssen aktualisiert werden",
+      "start" : "Update starten",
+      "continue" : "Update fortsetzen"
     },
-    "progress": {
-      "headerTitle": "Konten aktualisieren",
-      "pending": {
-        "title": "{{currency}} Update in Arbeit",
-        "subtitle": "Bitte warten Sie, bis Ihr Konto aktualisiert wird."
+    "progress" : {
+      "headerTitle" : "Konten aktualisieren",
+      "pending" : {
+        "title" : "{{currency}} Update in Arbeit",
+        "subtitle" : "Bitte warten Sie, bis Ihr Konto aktualisiert wird."
       },
-      "notice": {
-        "title": "{{currency}} Aktualisierung unvollständig",
-        "subtitle": "Mit diesem Gerät konnten keine {{currency}}-Konten aktualisiert werden.",
-        "cta": "Weiter",
-        "ctaNextCurrency": "Weiter mit {{currency}}"
+      "notice" : {
+        "title" : "{{currency}} Aktualisierung unvollständig",
+        "subtitle" : "Mit diesem Gerät konnten keine {{currency}}-Konten aktualisiert werden.",
+        "cta" : "Weiter",
+        "ctaNextCurrency" : "Weiter mit {{currency}}"
       },
-      "done": {
-        "title": "{{currency}} Update abgeschlossen",
-        "subtitle": "Glückwunsch, Ihre {{currency}}-Konten wurden erfolgreich aktualisiert.",
-        "cta": "Weiter",
-        "ctaNextCurrency": "Weiter mit {{currency}}",
-        "ctaDone": "Fertig"
+      "done" : {
+        "title" : "{{currency}} Update abgeschlossen",
+        "subtitle" : "Glückwunsch, Ihre {{currency}}-Konten wurden erfolgreich aktualisiert.",
+        "cta" : "Weiter",
+        "ctaNextCurrency" : "Weiter mit {{currency}}",
+        "ctaDone" : "Fertig"
       },
-      "error": {
-        "cta": "Wiederholen"
+      "error" : {
+        "cta" : "Wiederholen"
       }
     },
     "connectDevice": {
       "headerTitle": "Verbundenes Gerät"
     }
   },
-  "transfer": {
-    "recipient": {
-      "input": "Adresse eingeben"
+  "transfer" : {
+    "recipient" : {
+      "input" : "Adresse eingeben"
     },
-    "send": {
-      "title": "Senden",
-      "description": "Senden Sie Kryptos an eine andere Wallet."
+    "send" : {
+      "title" : "Senden",
+      "description" : "Senden Sie Kryptos an eine andere Wallet."
     },
-    "fees": {
-      "title": "Gebühren bearbeiten"
+    "fees" : {
+      "title" : "Gebühren bearbeiten"
     },
-    "receive": {
-      "title": "Empfangen",
-      "description": "Empfangen Sie Kryptos von einer anderen Wallet.",
-      "titleReadOnly": "Ungeprüfte Adresse",
-      "headerTitle": "Krypto-Vermögenswert",
-      "titleDevice": "Verbundenes Gerät",
-      "verifySkipped": "Ihre Empfangsadresse wurde auf Ihrem Ledger Gerät nicht bestätigt. Bitte überprüfen Sie Ihre {{accountType}} -Adresse, um sicher zu bleiben.",
-      "verifyPending": "Bitte stellen Sie sicher, dass die auf Ihrem Gerät angezeigte {{currencyName}} -Adresse genau der auf Ihrem Telefon entspricht.",
-      "verified": "Adresse bestätigt. Prüfen Sie erneut, ob Sie sie kopiert oder gescannt haben.",
-      "verifyAgain": "Erneut prüfen",
-      "noAccount": "Kein Konto gefunden",
-      "address": "Adresse für Konto",
-      "copyAddress": "Adresse kopieren",
-      "shareAddress": "Adresse teilen",
-      "addressCopied": "Adresse kopiert!",
-      "taprootWarning": "Stellen Sie sicher, dass der Absender taproot unterstützt",
-      "notSynced": {
-        "text": "Synchronisieren",
-        "desc": "Dies kann einen Moment dauern, wenn Sie viele Transaktionen haben oder eine langsame Internetverbindung."
+    "receive" : {
+      "title" : "Empfangen",
+      "description" : "Empfangen Sie Kryptos von einer anderen Wallet.",
+      "titleReadOnly" : "Ungeprüfte Adresse",
+      "headerTitle" : "Krypto-Vermögenswert",
+      "titleDevice" : "Verbundenes Gerät",
+      "verifySkipped" : "Ihre Empfangsadresse wurde auf Ihrem Ledger Gerät nicht bestätigt. Bitte überprüfen Sie Ihre {{accountType}} -Adresse, um sicher zu bleiben.",
+      "verifyPending" : "Bitte stellen Sie sicher, dass die auf Ihrem Gerät angezeigte {{currencyName}} -Adresse genau der auf Ihrem Telefon entspricht.",
+      "verified" : "Adresse bestätigt. Prüfen Sie erneut, ob Sie sie kopiert oder gescannt haben.",
+      "verifyAgain" : "Erneut prüfen",
+      "noAccount" : "Kein Konto gefunden",
+      "address" : "Adresse für Konto",
+      "copyAddress" : "Kopieren",
+      "shareAddress" : "Adresse teilen",
+      "addressCopied" : "Kopiert",
+      "taprootWarning" : "Stellen Sie sicher, dass der Absender taproot unterstützt",
+      "selectCrypto" : {
+        "title" : "Eine Krypto auswählen"
       },
-      "readOnly": {
-        "title": "Empfangen",
-        "text": "Bitte seien Sie vorsichtig",
-        "desc": "Sie sind dabei, eine Adresse anzuzeigen, die nicht verifiziert wurde. Überprüfen Sie Adressen auf Ihrem Gerät, um sicher zu bleiben.",
-        "verify": "Die Adresse von {{accountType}} wurde nicht überprüft. Überprüfen Sie die Adressen auf Ihrem Gerät, um sicher zu bleiben."
+      "stepperHeader" : {
+        "range" : "Schritt {{currentStep}} von {{totalSteps}}",
+        "connectDevice" : "Verbundenes Gerät"
       },
-      "noResultsFound": "Kein Krypto-Wert gefunden",
-      "noResultsDesc": "Bitte überprüfen Sie die Schreibweise und versuchen Sie es erneut"
-    },
-    "buy": {
-      "title": "Kaufen",
-      "description": "Kaufen Sie Kryptos sicher mit Bargeld."
-    },
-    "sell": {
-      "title": "Verkaufen",
-      "description": "Verkaufen Sie Kryptos sicher gegen Bargeld."
-    },
-    "exchange": {
-      "title": "Kaufen / Verkaufen"
-    },
-    "swap": {
-      "title": "Umtauschen",
-      "description": "Tauschen Sie eine Kryptowährung gegen eine andere.",
-      "selectDevice": "Gerät auswählen",
-      "broadcasting": "Übertrage Swap",
-      "loadingFees": "Netzwerkgebühren werden geladen...",
-      "landing": {
-        "header": "Umtauschen",
-        "title": "Willkommen bei Swap",
-        "whatIsSwap": "Was ist Swap?",
-        "disclaimer": "Tauschen Sie Krypto direkt von Ihrem Ledger-Gerät aus. Dieser Service ist in einigen Ländern, einschließlich den USA, nicht verfügbar."
+      "selectAccount" : {
+        "title" : "Wählen Sie ein Konto",
+        "subtitle" : "Ihr {{currencyTicker}} wird auf dieses Konto eingezahlt."
       },
-      "unauthorizedRates": {
-        "cta": "Verifizierung zurücksetzen",
-        "banner": "Setzen Sie Ihr KYC zurück und aktualisieren Sie Live, um mit Wyre zu tauschen.",
-        "bannerCTA": "KYC zurücksetzen"
+      "addAccount" : {
+        "title" : "Die Blockchain durchsuchen",
+        "subtitle" : "Prüfen Sie, ob Sie bereits {{currencyTicker}}-Konten besitzen.",
+        "foundAccounts" : "{{count}} Konten gefunden",
+        "stopSynchronization" : "Synchronisierung stoppen"
       },
-      "main": {
-        "header": "Umtauschen"
+      "verifyAddress" : {
+        "title" : "Adresse verifizieren",
+        "subtitle" : "Verifizieren Sie, dass die auf Ihrem Gerät angezeigte Adresse mit der unten stehenden Adresse übereinstimmt. Wenn Sie sich sicher sind, können Sie auf Ihrem Gerät auf \"Genehmigen\" klicken.",
+        "cancel" : {
+          "title" : "Sie haben gerade diese Adresse abgelehnt",
+          "subtitle" : "Sollte dies versehentlich geschehen sein, können Sie es erneut versuchen, indem Sie auf die Schaltfläche unten klicken.",
+          "info" : "Wenn Sie sich sicher sind, dass die Adressen nicht übereinstimmen, kann Ihr Telefon gefährdet sein. Wir empfehlen Ihnen, <0>sich so schnell wie möglich mit uns in Verbindung zu setzen.</0>"
+        }
       },
-      "kyc": {
-        "disclaimer": "Ich erkenne an, dass meine Standortdaten zu Compliance-Zwecken an Dritte weitergegeben werden.",
-        "cta": "Weiter",
-        "wyre": {
-          "title": "Vervollständigen Sie Ihr KYC",
-          "subtitle": "Ihre Daten werden von LEDGER im Auftrag von WYRE gesammelt und zu KYC-Zwecken an WYRE übertragen. Für weitere Informationen lesen Sie bitte unsere Datenschutzrichtlinie",
-          "pending": {
-            "cta": "Weiter",
-            "title": "KYC zur Freigabe eingereicht",
-            "subtitle": "Ihr KYC wurde eingereicht und ist in Bearbeitung.",
-            "link": "Erfahren Sie mehr über KYC"
+      "receiveConfirmation" : {
+        "title" : "Erhalte {{currencyTicker}}",
+        "addressVerified" : "Adresse verifizieren",
+        "verifyAddress" : "Tippen Sie hier, um Ihre Adresse zu verifizieren",
+        "adviceVerify" : "Wir empfehlen immer Ihre Adresse mit Ihrem Ledger Gerät zu verifizieren",
+        "sendWarning" : "Senden Sie nur {{currencyName}} ({{currencyTicker}}) an diese Adresse. Die Zusendung anderer Coins kann zu einem dauerhaften Verlust führen."
+      },
+      "securityVerify" : {
+        "title" : "Zu Ihrer Sicherheit empfehlen wir, diese Adresse mit Ihrem Ledger-Gerät zu verifizieren.",
+        "subtitle1" : "Die Verifizierung Ihrer Adresse gewährleistet Ihre Sicherheit. Die auf Ihrem Ledger-Gerät angezeigte Adresse kann nicht kompromittiert werden.",
+        "subtitle2" : "Durch die Verifizierung der Adresse können Sie bestätigen, dass die auf Ihrem Gerät angezeigte Adresse mit der in Ledger Live angezeigten Adresse übereinstimmt.",
+        "verifyCta" : "Meine Adresse verifizieren",
+        "dontVerifyCta" : "Meine Adresse ohne Verifizierung preisgeben"
+      },
+      "securityDontVerify" : {
+        "title" : "Sind Sie sicher?",
+        "subtitle" : "Die in Ledger Live angezeigte Adresse wird nicht verifiziert.",
+        "doNotRemindAgain" : "Nicht erneut erinnern",
+        "no" : "Nein",
+        "yes" : "Ja"
+      },
+      "toastMessages" : {
+        "accountImported" : "Wir haben ein {{currencyTicker}} Konto für Sie importiert. ",
+        "why" : "Sagen Sie mir, warum.",
+        "addressVerified" : "Ihre Adresse ist verifiziert"
+      },
+      "additionalInfoModal" : {
+        "title" : "Warum haben wir ein Konto importiert?",
+        "subtitle" : "Wir haben festgestellt, dass Sie ein früheres {{currencyTicker}} Konto auf Ihrem Seed hatten. Wir haben das Konto für Sie importiert.",
+        "closeCta" : "Ok, verstanden"
+      },
+      "notSynced" : {
+        "text" : "Synchronisieren",
+        "desc" : "Dies kann einen Moment dauern, wenn Sie viele Transaktionen haben oder eine langsame Internetverbindung."
+      },
+      "readOnly" : {
+        "title" : "Empfangen",
+        "text" : "Bitte seien Sie vorsichtig",
+        "desc" : "Sie sind dabei, eine Adresse anzuzeigen, die nicht verifiziert wurde. Überprüfen Sie Adressen auf Ihrem Gerät, um sicher zu bleiben.",
+        "verify" : "Die Adresse von {{accountType}} wurde nicht überprüft. Überprüfen Sie die Adressen auf Ihrem Gerät, um sicher zu bleiben."
+      },
+      "noResultsFound" : "Kein Krypto-Wert gefunden",
+      "noResultsDesc" : "Bitte überprüfen Sie die Schreibweise und versuchen Sie es erneut"
+    },
+    "buy" : {
+      "title" : "Kaufen",
+      "description" : "Kaufen Sie Kryptos sicher mit Bargeld."
+    },
+    "sell" : {
+      "title" : "Verkaufen",
+      "description" : "Verkaufen Sie Kryptos sicher gegen Bargeld."
+    },
+    "exchange" : {
+      "title" : "Kaufen / Verkaufen"
+    },
+    "swap" : {
+      "title" : "Umtauschen",
+      "description" : "Tauschen Sie eine Kryptowährung gegen eine andere.",
+      "selectDevice" : "Gerät auswählen",
+      "broadcasting" : "Übertrage Swap",
+      "loadingFees" : "Netzwerkgebühren werden geladen...",
+      "landing" : {
+        "header" : "Umtauschen",
+        "title" : "Willkommen bei Swap",
+        "whatIsSwap" : "Was ist Swap?",
+        "disclaimer" : "Tauschen Sie Krypto direkt von Ihrem Ledger-Gerät aus. Dieser Service ist in einigen Ländern, einschließlich den USA, nicht verfügbar."
+      },
+      "unauthorizedRates" : {
+        "cta" : "Verifizierung zurücksetzen",
+        "banner" : "Setzen Sie Ihr KYC zurück und aktualisieren Sie Live, um mit Wyre zu tauschen.",
+        "bannerCTA" : "KYC zurücksetzen"
+      },
+      "main" : {
+        "header" : "Umtauschen"
+      },
+      "kyc" : {
+        "disclaimer" : "Ich erkenne an, dass meine Standortdaten zu Compliance-Zwecken an Dritte weitergegeben werden.",
+        "cta" : "Weiter",
+        "wyre" : {
+          "title" : "Vervollständigen Sie Ihr KYC",
+          "subtitle" : "Ihre Daten werden von LEDGER im Auftrag von WYRE gesammelt und zu KYC-Zwecken an WYRE übertragen. Für weitere Informationen lesen Sie bitte unsere Datenschutzrichtlinie",
+          "pending" : {
+            "cta" : "Weiter",
+            "title" : "KYC zur Freigabe eingereicht",
+            "subtitle" : "Ihr KYC wurde eingereicht und ist in Bearbeitung.",
+            "link" : "Erfahren Sie mehr über KYC"
           },
           "approved": {
             "cta": "Weiter",
@@ -3203,61 +3345,63 @@
       "name": "Name"
     }
   },
-  "AuthenticityRow": {
-    "title": "Authentifizierung",
-    "subtitle": "Echt"
+  "AuthenticityRow" : {
+    "title" : "Authentifizierung",
+    "subtitle" : "Echt"
   },
-  "RemoveRow": {
-    "title": "Gerät entfernen"
+  "RemoveRow" : {
+    "title" : "Gerät entfernen"
   },
-  "FirmwareVersionRow": {
-    "title": "Firmware-Version",
-    "subtitle": "V {{version}}"
+  "FirmwareVersionRow" : {
+    "title" : "Firmware-Version",
+    "subtitle" : "V {{version}}"
   },
-  "FirmwareUpdateRow": {
-    "title": "Firmware-Version {{version}} verfügbar",
-    "subtitle": "Bitte verwenden Sie Ledger Live Desktop zum Aktualisieren",
-    "action": "Aktualisieren"
+  "FirmwareUpdateRow" : {
+    "title" : "Firmware-Version {{version}} verfügbar",
+    "subtitle" : "Bitte verwenden Sie Ledger Live Desktop zum Aktualisieren",
+    "action" : "Aktualisieren"
   },
-  "FirmwareUpdate": {
-    "title": "Firmware aktualisieren",
-    "preparing": "Das Firmware-Update wird vorbereitet. Bitte stellen Sie sicher, dass Ihr Gerät während des Updates entsperrt und verbunden ist. Wir informieren Sie über den Fortschritt des Vorgangs.",
-    "confirmIdentifierText": "Vergewissern Sie sich, dass die Kennung auf Ihrem Gerät mit der unten stehenden Kennung übereinstimmt. Bestätigen Sie und geben Sie Ihren PIN-Code ein, wenn Sie dazu aufgefordert werden.",
-    "pleaseReinstallApps": "Bitte installieren Sie die Apps erneut auf Ihrem Gerät.",
-    "pleaseConfirmUpdate": "Bestätigen Sie das Update auf Ihrem Gerät",
-    "finishUpdate": "Schließen Sie das Update auf Ihrer {{deviceName}} ab",
-    "identifierTitle": "Kennung:",
-    "pleaseWaitDownload": "Bitte warten Sie, bis der Download des Installationsprogramms abgeschlossen ist",
-    "preparingDevice": "Ihr Gerät wird vorbereitet",
-    "pleaseWaitUpdate": "Bitte warten Sie, bis das Update beendet ist",
-    "waitForFirmwareUpdate": "Warten Sie, bis das Firmware-Update auf Ihrem Gerät abgeschlossen ist",
-    "unlockDeviceWithPin": "Entsperren Sie Ihr Gerät mit Ihrer PIN",
-    "reinstallApps": "Installieren Sie die Apps neu.",
-    "currentVersionNumber": "Aktuelle Version",
-    "newVersionNumber": "Neue Version",
-    "success": "Firmware aktualisiert",
-    "update": "Aktualisieren",
-    "Notifications": {
-      "confirmOnDevice": "Wir benötigen Ihre Bestätigung auf dem Gerät",
-      "preparingUpdate": "Das Update wird übertragen. Wir benachrichtigen Sie, wenn der Vorgang abgeschlossen ist.",
-      "installing": "Installationsfortschritt: {{progress}} %"
+  "FirmwareUpdate" : {
+    "title" : "Firmware aktualisieren",
+    "preparing" : "Das Firmware-Update wird vorbereitet. Bitte stellen Sie sicher, dass Ihr Gerät während des Updates entsperrt und verbunden ist. Wir informieren Sie über den Fortschritt des Vorgangs.",
+    "confirmIdentifierText" : "Vergewissern Sie sich, dass die Kennung auf Ihrem Gerät mit der unten stehenden Kennung übereinstimmt. Bestätigen Sie und geben Sie Ihren PIN-Code ein, wenn Sie dazu aufgefordert werden.",
+    "pleaseReinstallApps" : "Bitte installieren Sie die Apps erneut auf Ihrem Gerät.",
+    "pleaseConfirmUpdate" : "Bestätigen Sie das Update auf Ihrem Gerät",
+    "finishUpdate" : "Schließen Sie das Update auf Ihrer {{deviceName}} ab",
+    "identifierTitle" : "Kennung:",
+    "pleaseWaitDownload" : "Bitte warten Sie, bis der Download des Installationsprogramms abgeschlossen ist",
+    "preparingDevice" : "Ihr Gerät wird vorbereitet",
+    "pleaseWaitUpdate" : "Bitte warten Sie, bis das Update beendet ist",
+    "waitForFirmwareUpdate" : "Warten Sie, bis das Firmware-Update auf Ihrem Gerät abgeschlossen ist",
+    "unlockDeviceWithPin" : "Entsperren Sie Ihr Gerät mit Ihrer PIN",
+    "reinstallApps" : "Installieren Sie die Apps neu.",
+    "currentVersionNumber" : "Aktuelle Version",
+    "newVersionNumber" : "Neue Version",
+    "success" : "Firmware aktualisiert",
+    "update" : "Aktualisieren",
+    "Notifications" : {
+      "confirmOnDevice" : "Wir benötigen Ihre Bestätigung auf dem Gerät",
+      "preparingUpdate" : "Das Update wird übertragen. Wir benachrichtigen Sie, wenn der Vorgang abgeschlossen ist.",
+      "installing" : "Installationsfortschritt: {{progress}} %"
     },
-    "Installing": {
-      "title": "{{stepName}}...",
-      "subtitle": "Wenn Sie auf Ihrem Gerät dazu aufgefordert werden, geben Sie bitte Ihre PIN ein, um den Vorgang abzuschließen."
+    "Installing" : {
+      "title" : "{{stepName}}...",
+      "subtitle" : "Wenn Sie auf Ihrem Gerät dazu aufgefordert werden, geben Sie bitte Ihre PIN ein, um den Vorgang abzuschließen."
     },
-    "steps": {
-      "osu": "Installation der OSU",
-      "flash-mcu": "MCU-Aktualisierung",
-      "flash-bootloader": "Bootloader-Aktualisierung",
-      "flash": "Flashen Ihres Geräts",
-      "preparing": "Update wird vorbereitet",
-      "firmware": "Update wird heruntergeladen"
+    "steps" : {
+      "osu" : "Installation der OSU",
+      "flash-mcu" : "MCU-Aktualisierung",
+      "flash-bootloader" : "Bootloader-Aktualisierung",
+      "flash" : "Flashen Ihres Geräts",
+      "preparing" : "Update wird vorbereitet",
+      "firmware" : "Update wird heruntergeladen"
     },
-    "newVersion": "Update {{version}} steht für Ihre {{deviceName}} bereit",
-    "drawerUpdate": {
-      "title": "Firmware-Update",
-      "description": "Aktualisieren Sie Ihre Ledger Nano Firmware, indem Sie sie mit der Ledger Live Anwendung auf dem Desktop verbinden"
+    "newVersion" : "Update {{version}} steht für Ihre {{deviceName}} bereit",
+    "drawerUpdate" : {
+      "title" : "Firmware-Update",
+      "description" : "Aktualisieren Sie Ihre Ledger Nano Firmware, indem Sie sie mit der Ledger Live Anwendung auf dem Desktop verbinden",
+      "pleaseConnectUsbTitle" : "USB-Kabel erforderlich",
+      "pleaseConnectUsbDescription" : "Um die Firmware-Aktualisierung zu starten, schließen Sie Ihr {{deviceName}} über ein USB-Kabel an Ihr Mobiltelefon an."
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3379,11 +3523,18 @@
       }
     }
   },
-  "celo": {
-    "info": {
-      "available": {
-        "title": "CELO verfügbar",
-        "description": "Dieser Betrag ist verfügbar."
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Der Gesamtkontostand enthält keine Stakingprämien"
+      }
+    }
+  },
+  "celo" : {
+    "info" : {
+      "available" : {
+        "title" : "CELO verfügbar",
+        "description" : "Dieser Betrag ist verfügbar."
       }
     }
   },
@@ -3704,49 +3855,92 @@
       }
     }
   },
-  "stellar": {
-    "memo": {
-      "title": "Memo",
-      "warning": "Wenn Sie ein Memo verwenden, überprüfen Sie den Typ sorgfältig mit dem Empfänger."
+  "stellar" : {
+    "token" : "Vermögenswerte",
+    "memo" : {
+      "title" : "Memo",
+      "warning" : "Wenn Sie ein Memo verwenden, überprüfen Sie den Typ sorgfältig mit dem Empfänger."
     },
-    "memoType": {
-      "MEMO_TEXT": "Memo-Text",
-      "NO_MEMO": "Kein Memo",
-      "MEMO_ID": "Memo-ID",
-      "MEMO_HASH": "Memo Hash",
-      "MEMO_RETURN": "Memo-Rückgabe"
+    "memoType" : {
+      "MEMO_TEXT" : "Memo-Text",
+      "NO_MEMO" : "Kein Memo",
+      "MEMO_ID" : "Memo-ID",
+      "MEMO_HASH" : "Memo Hash",
+      "MEMO_RETURN" : "Memo-Rückgabe"
+    },
+    "fee" : "Netzwerkgebühr",
+    "feeAction" : "Update-Gebühr",
+    "recommendedFee" : "Empfohlene Gebühren",
+    "recommenndedFeeInfo" : "Die Transaktion kann auch mit einer niedrigeren Gebühr als der empfohlenen eingereicht werden, aber sie wird möglicherweise nicht abgeschlossen.",
+    "suggested" : "Empfohlen",
+    "networkCongestion" : "Netzüberlastung",
+    "networkCongestionLevel" : {
+      "LOW" : "Niedrig",
+      "MEDIUM" : "Medium",
+      "HIGH" : "Hoch"
+    },
+    "assetCode" : "Vermögenswerte-Code",
+    "assetIssuer" : "Emittent der Vermögenswerte",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "Wert hinzufügen",
+        "connectDevice" : "Verbundenes Gerät",
+        "verification" : "Verifizierung",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "Vermögenswert bereits hinzugefügt",
+              "description" : "Sie haben bereits einen {{token}} Vermögenswert in Ihrem Stellar-Konto."
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}}-Vermögenswerte erfolgreich hinzugefügt!",
+              "text" : "Sie können jetzt <0>{{token}}</0> Vermögenswerte auf Ihrem Stellar-Konto empfangen und senden.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte schauen Sie in ein paar Minuten noch einmal nach, um sicherzustellen, dass Ihre Transaktion nicht fehlgeschlagen ist, bevor Sie es erneut versuchen."
+          }
+        }
+      }
     }
   },
-  "polkadot": {
-    "lockedBalance": "Gebundenes Guthaben",
-    "unlockingBalance": "Bindung von Guthaben aufheben",
-    "unlockedBalance": "Guthaben mit aufgehobener Bindung",
-    "networkFees": "Die Netzwerkgebühren werden automatisch durch den Polkadot-Konsens festgelegt, Sie können sie nicht auf Ihrem Gerät überprüfen",
-    "bondedBalanceBelowMinimum": "Ihr Anleiheguthaben liegt unter dem aktuellen Minimum von {{minimumBondBalance}}. Es besteht die Gefahr, dass Ihre Nominierungen entfernt werden.",
-    "info": {
-      "available": {
-        "title": "DOT verfügbar",
-        "description": "Dieser Betrag kann jederzeit gesendet werden."
+  "polkadot" : {
+    "lockedBalance" : "Gebundenes Guthaben",
+    "unlockingBalance" : "Bindung von Guthaben aufheben",
+    "unlockedBalance" : "Guthaben mit aufgehobener Bindung",
+    "networkFees" : "Die Netzwerkgebühren werden automatisch durch den Polkadot-Konsens festgelegt, Sie können sie nicht auf Ihrem Gerät überprüfen",
+    "bondedBalanceBelowMinimum" : "Ihr Anleiheguthaben liegt unter dem aktuellen Minimum von {{minimumBondBalance}}. Es besteht die Gefahr, dass Ihre Nominierungen entfernt werden.",
+    "info" : {
+      "available" : {
+        "title" : "DOT verfügbar",
+        "description" : "Dieser Betrag kann jederzeit gesendet werden."
       },
-      "locked": {
-        "title": "Gebundene Vermögenswerte",
-        "description": "Vermögenswerte müssen an nominierte Validatoren gebunden werden, bevor Sie Prämien erhalten."
+      "locked" : {
+        "title" : "Gebundene Vermögenswerte",
+        "description" : "Vermögenswerte müssen an nominierte Validatoren gebunden werden, bevor Sie Prämien erhalten."
       },
-      "unlocking": {
-        "title": "Bindung von Vermögenswerten aufheben",
-        "description": "Nicht gebundene Guthaben bleiben für 28 Tage gesperrt, bevor sie abgehoben werden können."
+      "unlocking" : {
+        "title" : "Bindung von Vermögenswerten aufheben",
+        "description" : "Nicht gebundene Guthaben bleiben für 28 Tage gesperrt, bevor sie abgehoben werden können."
       },
-      "unlocked": {
-        "title": "Vermögenswerte mit aufgehobener Bindung",
-        "description": "Nicht gebundene Vermögenswerte können jetzt mit der Aktion „Zurückziehen“ verschoben werden."
+      "unlocked" : {
+        "title" : "Vermögenswerte mit aufgehobener Bindung",
+        "description" : "Nicht gebundene Vermögenswerte können jetzt mit der Aktion „Zurückziehen“ verschoben werden."
       },
-      "electionOpen": {
-        "title": "Wahl der Validatoren läuft",
-        "description": "Die Wahl der neuen Validatoren ist derzeit im Gange. Daher sind die Einsätze für maximal 15 Minuten nicht verfügbar."
+      "electionOpen" : {
+        "title" : "Wahl der Validatoren läuft",
+        "description" : "Die Wahl der neuen Validatoren ist derzeit im Gange. Daher sind die Einsätze für maximal 15 Minuten nicht verfügbar."
       },
-      "minBondWarning": {
-        "title": "Nicht genug gebunden",
-        "description": "Ihr Guthaben liegt unter dem aktuell erlaubten Minimum für Nominierungen. Es besteht die Gefahr, dass Ihre Nominierungen entfernt werden."
+      "minBondWarning" : {
+        "title" : "Nicht genug gebunden",
+        "description" : "Ihr Guthaben liegt unter dem aktuell erlaubten Minimum für Nominierungen. Es besteht die Gefahr, dass Ihre Nominierungen entfernt werden."
       }
     },
     "nomination": {
@@ -4360,32 +4554,32 @@
     "gallery": {
       "allNft": "Alle NFT"
     },
-    "viewer": {
-      "properties": "Eigenschaften",
-      "description": "Beschreibung",
-      "tokenContract": "TOKEN-Adresse",
-      "tokenContractCopied": "Token-Adresse kopiert!",
-      "tokenId": "Token ID",
-      "tokenIdCopied": "Token-ID kopiert!",
-      "quantity": "Menge",
-      "attributes": {
-        "floorPrice": "Tiefstpreis"
+    "viewer" : {
+      "properties" : "Eigenschaften",
+      "description" : "Beschreibung",
+      "tokenContract" : "TOKEN-Adresse",
+      "tokenContractCopied" : "Token-Adresse kopiert!",
+      "tokenId" : "Token ID",
+      "tokenIdCopied" : "Token-ID kopiert!",
+      "quantity" : "Menge",
+      "attributes" : {
+        "floorPrice" : "Tiefstpreis"
       }
     },
-    "viewerModal": {
-      "viewOn": "Ansehen auf",
-      "viewInExplorer": "Im Explorer ansehen",
-      "txDetails": "Transaktionsdetails"
+    "viewerModal" : {
+      "viewOn" : "Ansehen auf",
+      "viewInExplorer" : "Im Explorer ansehen",
+      "txDetails" : "Transaktionsdetails"
     }
   },
-  "ApplicationVersion": "v{{version}}",
-  "analytics": {
-    "title": "Analysen",
-    "allocation": {
-      "title": "Aufteilung"
+  "ApplicationVersion" : "v{{version}}",
+  "analytics" : {
+    "title" : "Analysen",
+    "allocation" : {
+      "title" : "Aufteilung"
     },
-    "operations": {
-      "title": "Transaktionsverlauf"
+    "operations" : {
+      "title" : "Transaktionsverlauf"
     }
   }
 }

@@ -1,87 +1,88 @@
 {
-  "common": {
-    "cancel": "キャンセル",
-    "apply": "適用",
-    "seeAll": "すべて表示",
-    "back": "戻る",
-    "delete": "削除",
-    "paste": "貼り付け",
-    "yes": "はい",
-    "no": "いいえ",
-    "gotit": "了解",
-    "continue": "続行",
-    "retry": "再試行",
-    "done": "完了",
-    "sortBy": "並び替え",
-    "signOut": "サインアウト",
-    "search": "検索",
-    "contactUs": "Ledgerサポートへのお問い合わせ",
-    "device": "デバイス",
-    "cryptoAsset": "暗号資産",
-    "skip": "スキップ",
-    "noCryptoFound": "暗号資産が見つかりません",
-    "needHelp": "ヘルプが必要ですか？",
-    "edit": "編集",
-    "editName": "名前を編集",
-    "close": "閉じる",
-    "confirm": "確認",
-    "poweredBy": "Powered by ",
-    "received": "受取済み",
-    "sent": "送付済み",
-    "or": "または",
-    "rename": "名前の変更",
-    "learnMore": "詳細はこちら",
-    "checkItOut": "確認する",
-    "viewDetails": "詳細を表示",
-    "today": "今日",
-    "yesterday": "昨日",
-    "upToDate": "最新の状態",
-    "transactionDate": "トランザクション日",
-    "outdated": "最新の状態ではありません",
-    "satPerByte": "sat/バイト",
-    "notAvailable": "利用不可",
-    "import": "インポート",
-    "bluetooth": "Bluetooth",
-    "usb": "USB",
-    "add": "追加",
-    "token": "トークン",
-    "token_plural": "トークン",
-    "subaccount": "サブアカウント",
-    "subaccount_plural": "サブアカウント",
-    "forgetDevice": "デバイスの削除",
-    "help": "ヘルプ",
-    "saveLogs": "ログを保存",
-    "sync": {
-      "ago": "{{time}}に同期済み"
+  "common" : {
+    "cancel" : "キャンセル",
+    "apply" : "適用",
+    "seeAll" : "すべて表示",
+    "back" : "戻る",
+    "delete" : "削除",
+    "paste" : "貼り付け",
+    "yes" : "はい",
+    "no" : "いいえ",
+    "gotit" : "了解",
+    "continue" : "続行",
+    "retry" : "再試行",
+    "done" : "完了",
+    "sortBy" : "並び替え",
+    "signOut" : "サインアウト",
+    "search" : "検索",
+    "contactUs" : "Ledgerサポートへのお問い合わせ",
+    "device" : "デバイス",
+    "cryptoAsset" : "暗号資産",
+    "skip" : "スキップ",
+    "noCryptoFound" : "暗号資産が見つかりません",
+    "needHelp" : "ヘルプが必要ですか？",
+    "edit" : "編集",
+    "editName" : "名前を編集",
+    "close" : "閉じる",
+    "confirm" : "確認",
+    "poweredBy" : "Powered by ",
+    "received" : "受取済み",
+    "sent" : "送付済み",
+    "or" : "または",
+    "rename" : "名前の変更",
+    "learnMore" : "詳細はこちら",
+    "checkItOut" : "確認する",
+    "viewDetails" : "詳細を表示",
+    "today" : "今日",
+    "yesterday" : "昨日",
+    "upToDate" : "最新の状態",
+    "transactionDate" : "トランザクション日",
+    "outdated" : "最新の状態ではありません",
+    "satPerByte" : "sat/バイト",
+    "notAvailable" : "利用不可",
+    "import" : "インポート",
+    "bluetooth" : "Bluetooth",
+    "usb" : "USB",
+    "add" : "追加",
+    "token" : "トークン",
+    "token_plural" : "トークン",
+    "subaccount" : "サブアカウント",
+    "subaccount_plural" : "サブアカウント",
+    "forgetDevice" : "デバイスの削除",
+    "help" : "ヘルプ",
+    "saveLogs" : "ログを保存",
+    "sync" : {
+      "ago" : "{{time}}に同期済み"
     },
-    "update": "アップデートが利用可能です。",
-    "install": "インストール",
-    "installed": "インストール済み",
-    "uninstall": "アンインストール",
-    "fromNow": {
-      "seconds": "1秒後",
-      "seconds_plural": "{{time}}秒後",
-      "minutes": "1分後",
-      "minutes_plural": "{{time}}分後",
-      "hours": "1時間後",
-      "hours_plural": "{{time}}時間後",
-      "days": "1日後",
-      "days_plural": "{{time}}日後"
+    "update" : "アップデートが利用可能です。",
+    "install" : "インストール",
+    "installed" : "インストール済み",
+    "uninstall" : "アンインストール",
+    "fromNow" : {
+      "seconds" : "1秒後",
+      "seconds_plural" : "{{time}}秒後",
+      "minutes" : "1分後",
+      "minutes_plural" : "{{time}}分後",
+      "hours" : "1時間後",
+      "hours_plural" : "{{time}}時間後",
+      "days" : "1日後",
+      "days_plural" : "{{time}}日後"
     },
-    "timeAgo": {
-      "seconds": "1秒前",
-      "seconds_plural": "{{time}}秒前",
-      "minutes": "1分前",
-      "minutes_plural": "{{time}}分前",
-      "hours": "1時間前",
-      "hours_plural": "{{time}}時間前",
-      "days": "昨日",
-      "days_plural": "{{time}}日前"
+    "timeAgo" : {
+      "seconds" : "1秒前",
+      "seconds_plural" : "{{time}}秒前",
+      "minutes" : "1分前",
+      "minutes_plural" : "{{time}}分前",
+      "hours" : "1時間前",
+      "hours_plural" : "{{time}}時間前",
+      "days" : "昨日",
+      "days_plural" : "{{time}}日前"
     },
-    "seeMore": "詳細を表示",
-    "moreInfo": "詳細はこちら",
-    "buyEth": "Ethereumを購入",
-    "popular": "人気"
+    "seeMore" : "詳細を表示",
+    "moreInfo" : "詳細はこちら",
+    "buyEth" : "Ethereumを購入",
+    "popular" : "人気",
+    "comingSoon" : "近日公開"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -560,17 +561,11 @@
     "NotSupportedLegacyAddress": {
       "title": "レガシーアドレス形式はサポートを終了しました。"
     },
-    "StellarWrongMemoFormat": {
-      "title": "メモのフォーマットに誤りがあります。"
+    "SourceHasMultiSign" : {
+      "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
     },
-    "SourceHasMultiSign": {
-      "title": "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
-    },
-    "StellarMemoRecommended": {
-      "title": "この受取人に送金するには、Memo(メモ)が必要な場合があります"
-    },
-    "StratisDown2021Warning": {
-      "description": "Stratisブロックチェーンのメジャーアップデートが実施されたため、正しく動作しない可能性があります。旧Stratisブロックチェーンのサポートは、2021年10月16日まで引き続き提供されます。"
+    "StratisDown2021Warning" : {
+      "description" : "Stratisブロックチェーンのメジャーアップデートが実施されたため、正しく動作しない可能性があります。旧Stratisブロックチェーンのサポートは、2021年10月16日まで引き続き提供されます。"
     },
     "SwapExchangeRateAmountTooLow": {
       "title": "数量は{{minAmountFromFormatted}}以上でなければなりません。"
@@ -643,8 +638,46 @@
     "SolanaTxConfirmationTimeout": {
       "title": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
     },
-    "CardanoMinAmountError": {
-      "title": "最低{{amount}} ADA以上必要"
+    "CardanoMinAmountError" : {
+      "title" : "送付可能な最低金額は、{{amount}} ADAです"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "お支払いに十分な資金があることをご確認ください"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "メモのフォーマットに誤りがあります。"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "この受取人に送金するには、Memo(メモ)が必要な場合があります"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "この受取人にはまだ{{assetCode}}へのトラストラインがありません"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Stellar資産はトラストライン追加前に選択する必要があります"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "選択されたStellar資産が見つかりませんでした"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントにトランザクション手数料をカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "選択された手数料は推奨手数料を下回っています"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低トランザクション手数料は0.00001 XLMです"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに新しいトラストラインをカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellarアカウントが存在しません"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     }
   },
   "bluetooth": {
@@ -818,14 +851,14 @@
       }
     }
   },
-  "ratings": {
-    "init": {
-      "title": "Ledger Liveをお楽しみいただいていますか?",
-      "description": "Ledger Liveの改善点等にお気づきでしょうか。弊社にとって、お客様のご意見やご感想は非常に大切です。",
-      "cta": {
-        "enjoy": "素晴らしい",
-        "disappointed": "がっかりした",
-        "notNow": "後で"
+  "ratings" : {
+    "init" : {
+      "title" : "アプリの使い勝手はいかがですか？",
+      "description" : "ご意見は、Ledger Liveの改善に重要です。",
+      "cta" : {
+        "enjoy" : "素晴らしい",
+        "disappointed" : "がっかりした",
+        "notNow" : "後で"
       }
     },
     "enjoy": {
@@ -836,12 +869,13 @@
         "notNow": "後で"
       }
     },
-    "disappointed": {
-      "title": "より良い製品の開発にぜひご協力ください",
-      "description": "弊社は常に改善に取り組んでいます。お客様の率直なご意見をいただけますと、改善点の正確な把握に非常に役立ちます。",
-      "cta": {
-        "sendFeedback": "意見を送る",
-        "notNow": "後で"
+    "disappointed" : {
+      "title" : "より良い製品の開発にぜひご協力ください",
+      "description" : "さらにサポートが必要な場合、またはお問合せを希望される場合は、ライブチャットを",
+      "here" : "ご利用ください",
+      "cta" : {
+        "sendFeedback" : "意見を送る",
+        "notNow" : "後で"
       }
     },
     "disappointedDone": {
@@ -930,9 +964,9 @@
         "title": "報酬獲得",
         "desc": "不労所得を獲得して暗号資産を運用する"
       },
-      "mint": {
-        "title": "ミント”,",
-        "desc": "[ L ] MarketでコラボNFTをミントしましょう"
+      "mint" : {
+        "title" : "ミント",
+        "desc" : "[ L ] Marketにおける専用コラボレーションからNFTをミント"
       }
     },
     "comingSoon": "近日公開",
@@ -1736,23 +1770,30 @@
     "subaccountCount": "+1個のサブアカウント",
     "subaccountCount_plural": "+{{count}}個のサブアカウント"
   },
-  "account": {
-    "tokens": {
-      "contractAddress": "コントラクトアドレス",
-      "viewInExplorer": "エクスプローラーで表示",
-      "seeMore": "トークンの表示を増やす",
-      "seeLess": "トークンの表示を減らす",
-      "addTokens": "トークンの追加",
-      "howTo": "トークンを追加するには、<1>{{currency}}アドレス</1>を使用して<0>受け取る</0>必要があります。",
-      "algorand": {
-        "contractAddress": "コントラクトアドレス",
-        "viewInExplorer": "エクスプローラーで表示",
-        "seeMore": "ASAをさらに表示",
-        "seeLess": "ASAの表示を減らす",
-        "addTokens": "ASAを追加",
-        "howTo": "Algorandアカウントに資産を追加できます。",
-        "addAsa": "ASA（資産）の追加",
-        "howAsaWorks": "ASA（資産）の仕組み"
+  "account" : {
+    "tokens" : {
+      "contractAddress" : "コントラクトアドレス",
+      "viewInExplorer" : "エクスプローラーで表示",
+      "seeMore" : "トークンの表示を増やす",
+      "seeLess" : "トークンの表示を減らす",
+      "addTokens" : "トークンの追加",
+      "howTo" : "トークンを追加するには、<1>{{currency}}アドレス</1>を使用して<0>受け取る</0>必要があります。",
+      "algorand" : {
+        "contractAddress" : "コントラクトアドレス",
+        "viewInExplorer" : "エクスプローラーで表示",
+        "seeMore" : "ASAをさらに表示",
+        "seeLess" : "ASAの表示を減らす",
+        "addTokens" : "ASAを追加",
+        "howTo" : "Algorandアカウントに資産を追加できます。",
+        "addAsa" : "ASA（資産）の追加",
+        "howAsaWorks" : "ASA（資産）の仕組み"
+      },
+      "stellar" : {
+        "seeMore" : "さらに資産を見る",
+        "seeLess" : "資産の表示を減らす",
+        "addTokens" : "資産を追加",
+        "howTo" : "Stellarアカウントに資産を追加できます。",
+        "addAsset" : "資産を追加"
       }
     },
     "subaccounts": {
@@ -1878,29 +1919,35 @@
       }
     }
   },
-  "accounts": {
-    "title": "アカウント",
-    "importNotification": {
-      "message": "アカウントが正常にインポートされました！"
+  "accounts" : {
+    "title" : "アカウント",
+    "importNotification" : {
+      "message" : "アカウントが正常にインポートされました！"
     },
-    "row": {
-      "syncPending": "同期中...",
-      "upToDate": "同期済み",
-      "error": "エラー",
-      "queued": "待機中",
-      "showTokens": "{{length}}トークンを表示",
-      "showTokens_plural": "{{length}}トークンを表示",
-      "showSubAccounts": "{{length}}サブアカウントを表示",
-      "showSubAccounts_plural": "{{length}}サブアカウントを表示",
-      "hideTokens": "トークンを非表示",
-      "hideTokens_plural": "トークンを非表示",
-      "hideSubAccounts": "サブアカウントを非表示",
-      "hideSubAccounts_plural": "サブアカウントを非表示",
-      "algorand": {
-        "showTokens": "{{length}}ASAを表示",
-        "showTokens_plural": "{{length}}ASAを表示",
-        "hideTokens": "ASAを非表示",
-        "hideTokens_plural": "ASAを非表示"
+    "row" : {
+      "syncPending" : "同期中...",
+      "upToDate" : "同期済み",
+      "error" : "エラー",
+      "queued" : "待機中",
+      "showTokens" : "{{length}}トークンを表示",
+      "showTokens_plural" : "{{length}}トークンを表示",
+      "showSubAccounts" : "{{length}}サブアカウントを表示",
+      "showSubAccounts_plural" : "{{length}}サブアカウントを表示",
+      "hideTokens" : "トークンを非表示",
+      "hideTokens_plural" : "トークンを非表示",
+      "hideSubAccounts" : "サブアカウントを非表示",
+      "hideSubAccounts_plural" : "サブアカウントを非表示",
+      "algorand" : {
+        "showTokens" : "{{length}}ASAを表示",
+        "showTokens_plural" : "{{length}}ASAを表示",
+        "hideTokens" : "ASAを非表示",
+        "hideTokens_plural" : "ASAを非表示"
+      },
+      "stellar" : {
+        "showTokens" : "{{length}}資産を表示",
+        "showTokens_plural" : "{{length}}資産を表示",
+        "hideTokens" : "資産を非表示",
+        "hideTokens_plural" : "資産を非表示"
       }
     },
     "noResultsFound": "資産が見つかりません",
@@ -1952,270 +1999,365 @@
       "desc": "システムの状態を確認"
     }
   },
-  "settings": {
-    "header": "設定",
-    "resources": "Ledgerリソース",
-    "display": {
-      "title": "一般",
-      "desc": "Ledger Liveの一般設定を変更します。",
-      "carousel": "カルーセルの表示／非表示",
-      "carouselDesc": "ポートフォリオ上でカルーセルの表示を有効化",
-      "language": "表示言語",
-      "languageDesc": "Ledger Liveの表示言語を設定。",
-      "region": "地域",
-      "regionDesc": "地域を選択して日付や時間、通貨をアップデートする。",
-      "password": "パスワードロック",
-      "passwordDesc": "スマートフォン上のLedger Liveのデータを保護するため、パスワードを設定。",
-      "counterValue": "優先する通貨",
-      "theme": "テーマ",
-      "themeDesc": "アプリUIのテーマを設定",
-      "themes": {
-        "system": "システム",
-        "dark": "ダーク",
-        "light": "ライト",
-        "dusk": "夕暮れ"
+  "settings" : {
+    "header" : "設定",
+    "resources" : "Ledgerリソース",
+    "display" : {
+      "title" : "一般",
+      "desc" : "Ledger Liveの一般設定を変更します。",
+      "carousel" : "カルーセルの表示／非表示",
+      "carouselDesc" : "ポートフォリオ上でカルーセルの表示を有効化",
+      "language" : "表示言語",
+      "languageDesc" : "Ledger Liveの表示言語を設定。",
+      "region" : "地域",
+      "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
+      "password" : "パスワードロック",
+      "passwordDesc" : "スマートフォン上のLedger Liveのデータを保護するため、パスワードを設定。",
+      "counterValue" : "優先する通貨",
+      "theme" : "テーマ",
+      "themeDesc" : "アプリUIのテーマを設定",
+      "themes" : {
+        "system" : "システム",
+        "dark" : "ダーク",
+        "light" : "ライト",
+        "dusk" : "夕暮れ"
       },
-      "counterValueDesc": "残高や操作に使用する通貨を選択。",
-      "exchange": "レートプロバイダー",
-      "exchangeDesc": "Bitcoinから{{fiat}}への取引レートのプロバイダーを設定",
-      "stock": "マーケットインジケーターの色分け",
-      "stockDesc": "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択。",
-      "reportErrors": "バグレポート",
-      "reportErrorsDesc": "製品の向上に役立つレポートを、Ledgerに自動的に送信します。",
-      "developerMode": "デベロッパーモード",
-      "developerModeDesc": "管理ページに開発者用アプリを表示し、Testnetアプリを有効化。",
-      "analytics": "アナリティクス",
-      "analyticsDesc": "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する。",
-      "analyticsModal": {
-        "title": "アナリティクスの共有",
-        "desc": "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する",
-        "bullet0": "クリック数",
-        "bullet1": "アプリ内ページアクセス数",
-        "bullet2": "ウェブページへのリダイレクト",
-        "bullet3": "アクション：送付、受け取り、ロックなど",
-        "bullet4": "ページスクロールの最後",
-        "bullet5": "アプリのインストール/アンインストールとバージョン",
-        "bullet6": "アカウント、通貨、およびオペレーションの数",
-        "bullet7": "全体および各ページのセッション時間",
-        "bullet8": "Ledgerデバイスの種類とファームウェア"
+      "counterValueDesc" : "残高や操作に使用する通貨を選択。",
+      "exchange" : "レートプロバイダー",
+      "exchangeDesc" : "Bitcoinから{{fiat}}への取引レートのプロバイダーを設定",
+      "stock" : "マーケットインジケーターの色分け",
+      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択。",
+      "reportErrors" : "バグレポート",
+      "reportErrorsDesc" : "製品の向上に役立つレポートを、Ledgerに自動的に送信します。",
+      "developerMode" : "デベロッパーモード",
+      "developerModeDesc" : "管理ページに開発者用アプリを表示し、Testnetアプリを有効化。",
+      "analytics" : "アナリティクス",
+      "analyticsDesc" : "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する。",
+      "analyticsModal" : {
+        "title" : "アナリティクスの共有",
+        "desc" : "アナリティクスを有効にして、Ledgerによるユーザーエクスペリエンスの向上に協力する",
+        "bullet0" : "クリック数",
+        "bullet1" : "アプリ内ページアクセス数",
+        "bullet2" : "ウェブページへのリダイレクト",
+        "bullet3" : "アクション：送付、受け取り、ロックなど",
+        "bullet4" : "ページスクロールの最後",
+        "bullet5" : "アプリのインストール/アンインストールとバージョン",
+        "bullet6" : "アカウント、通貨、およびオペレーションの数",
+        "bullet7" : "全体および各ページのセッション時間",
+        "bullet8" : "Ledgerデバイスの種類とファームウェア"
       },
-      "technicalData": "テクニカルデータ",
-      "technicalDataDesc": "Ledgerは、ユーザーエクスペリエンスを向上するために、匿名化された技術データを自動的に収集します。",
-      "technicalDataModal": {
-        "title": "テクニカルデータ",
-        "desc": "Ledgerは、ユーザーエクスペリエンスを向上するために、匿名化された技術データを自動的に収集します。",
-        "bullet1": "匿名の識別アプリケーションID",
-        "bullet2": "Ledger Liveのバージョンと、OSのリージョン、言語、地域"
+      "technicalData" : "テクニカルデータ",
+      "technicalDataDesc" : "Ledgerは、ユーザーエクスペリエンスを向上するために、匿名化された技術データを自動的に収集します。",
+      "technicalDataModal" : {
+        "title" : "テクニカルデータ",
+        "desc" : "Ledgerは、ユーザーエクスペリエンスを向上するために、匿名化された技術データを自動的に収集します。",
+        "bullet1" : "匿名の識別アプリケーションID",
+        "bullet2" : "Ledger Liveのバージョンと、OSのリージョン、言語、地域"
       },
-      "hideEmptyTokenAccounts": "未使用アカウントを非表示にする",
-      "hideEmptyTokenAccountsDesc": "資産ページでは、全ての空のトークンアカウントが非表示になります。"
+      "hideEmptyTokenAccounts" : "未使用アカウントを非表示にする",
+      "hideEmptyTokenAccountsDesc" : "資産ページでは、全ての空のトークンアカウントが非表示になります。"
     },
-    "currencies": {
-      "header": "通貨",
-      "rateProvider": "レートプロバイダー（{{currencyTicker}}→BTC）",
-      "rateProviderDesc": "{{currencyTicker}}とBitcoinのレートプロバイダーを選択してください。",
-      "confirmationNb": "承認数",
-      "confirmationNbDesc": "トランザクションの確認に必要なネットワーク承認の回数を設定。",
-      "currencySettingsTitle": "{{currencyName}}設定",
-      "placeholder": "この資産の設定はありません。"
+    "currencies" : {
+      "header" : "通貨",
+      "rateProvider" : "レートプロバイダー（{{currencyTicker}}→BTC）",
+      "rateProviderDesc" : "{{currencyTicker}}とBitcoinのレートプロバイダーを選択してください。",
+      "confirmationNb" : "承認数",
+      "confirmationNbDesc" : "トランザクションの確認に必要なネットワーク承認の回数を設定。",
+      "currencySettingsTitle" : "{{currencyName}}設定",
+      "placeholder" : "この資産の設定はありません。"
     },
-    "accounts": {
-      "header": "アカウント",
-      "title": "アカウント",
-      "desc": "アプリ内の資産の表示方法を管理します。",
-      "hideTokenCTA": "トークンを非表示",
-      "showContractCTA": "コントラクトを表示",
-      "blacklistedTokens": "非表示トークンリスト",
-      "blacklistedTokensDesc": "トークンを非表示にするには、アカウント一覧で任意のトークンを長押しし、「トークンを非表示」を選択します。",
-      "blacklistedTokensModal": {
-        "title": "トークンを非表示",
-        "desc": "この操作により、すべての<1><0>{tokenName}</0></1>アカウントが非表示になります。<3>設定 > アカウント</3>から再度表示可能です。",
-        "confirm": "トークンを非表示"
+    "accounts" : {
+      "header" : "アカウント",
+      "title" : "アカウント",
+      "desc" : "アプリ内の資産の表示方法を管理します。",
+      "hideTokenCTA" : "トークンを非表示",
+      "showContractCTA" : "コントラクトを表示",
+      "blacklistedTokens" : "非表示トークンリスト",
+      "blacklistedTokensDesc" : "トークンを非表示にするには、アカウント一覧で任意のトークンを長押しし、「トークンを非表示」を選択します。",
+      "blacklistedTokensModal" : {
+        "title" : "トークンを非表示",
+        "desc" : "この操作により、すべての<1><0>{tokenName}</0></1>アカウントが非表示になります。<3>設定 > アカウント</3>から再度表示可能です。",
+        "confirm" : "トークンを非表示"
       },
-      "hideNFTCollectionCTA": "コレクションを非表示",
-      "hiddenNFTCollections": "非表示のNFTコレクション",
-      "hiddenNFTCollectionsDesc": "NFTを非表示にするには、アカウントで該当するコレクションを長押して「コレクションを非表示」を選択してください。",
-      "hideNFTCollectionModal": {
-        "title": "コレクションを非表示にしますか?",
-        "desc": "設定オプションでコレクションの非表示を解除することができます。"
+      "hideNFTCollectionCTA" : "コレクションを非表示",
+      "hiddenNFTCollections" : "非表示のNFTコレクション",
+      "hiddenNFTCollectionsDesc" : "NFTを非表示にするには、アカウントで該当するコレクションを長押して「コレクションを非表示」を選択してください。",
+      "hideNFTCollectionModal" : {
+        "title" : "コレクションを非表示にしますか?",
+        "desc" : "設定オプションでコレクションの非表示を解除することができます。"
       },
-      "cryptoAssets": {
-        "header": "暗号資産",
-        "title": "暗号資産",
-        "desc": "設定を編集する暗号資産を選択してください。"
+      "cryptoAssets" : {
+        "header" : "暗号資産",
+        "title" : "暗号資産",
+        "desc" : "設定を編集する暗号資産を選択してください。"
       }
     },
-    "about": {
-      "title": "Ledgerについて",
-      "desc": "アプリ情報、利用規約、およびプライバシーポリシー。",
-      "appDescription": "Ledger Liveを使って暗号資産を安全に保管や売買、スワップをしながら、資産を管理して増やしましょう。すべてを1つの場所で。",
-      "appVersion": "バージョン",
-      "termsConditions": "利用規約",
-      "termsConditionsDesc": "Ledger Liveを使用することにより、Ledgerの利用規約に同意したものとみなされます。",
-      "privacyPolicy": "プライバシーポリシー",
-      "privacyPolicyDesc": "どのような個人情報が収集され、どのような理由で、どのように使用されるのかをご確認いただけます。",
-      "liveReview": {
-        "title": "フィードバック",
-        "desc": "当アプリに関するご意見やご感想をお聞かせください",
-        "ios": "App Storeでレビュー",
-        "android": "Google Playストアでレビュー"
+    "about" : {
+      "title" : "Ledgerについて",
+      "desc" : "アプリ情報、利用規約、およびプライバシーポリシー。",
+      "appDescription" : "Ledger Liveを使って暗号資産を安全に保管や売買、スワップをしながら、資産を管理して増やしましょう。すべてを1つの場所で。",
+      "appVersion" : "バージョン",
+      "termsConditions" : "利用規約",
+      "termsConditionsDesc" : "Ledger Liveを使用することにより、Ledgerの利用規約に同意したものとみなされます。",
+      "privacyPolicy" : "プライバシーポリシー",
+      "privacyPolicyDesc" : "どのような個人情報が収集され、どのような理由で、どのように使用されるのかをご確認いただけます。",
+      "liveReview" : {
+        "title" : "フィードバック",
+        "desc" : "当アプリに関するご意見やご感想をお聞かせください",
+        "ios" : "App Storeでレビュー",
+        "android" : "Google Playストアでレビュー"
       }
     },
-    "help": {
-      "title": "ヘルプ",
-      "header": "ヘルプ",
-      "desc": "Ledger Liveについての詳細や、ヘルプの利用方法についてはこちらをご覧ください。",
-      "support": "Ledgerサポート",
-      "supportDesc": "問題がある場合は、ハードウェアウォレットでLedger Liveを使用するためのヘルプを参照してください。",
-      "configureDevice": "デバイスのセットアップ",
-      "configureDeviceDesc": "新しいデバイスとしてセットアップするか、既存のデバイスを復元すする。アカウントと設定はそのまま保持されます。",
-      "clearCache": "Cacheを削除",
-      "clearCacheDesc": "ネットワーク上のトランザクションがスキャンされ、アカウントは再計算されます。",
-      "clearCacheModal": "本当によろしいですか？",
-      "clearCacheModalDesc": "ネットワーク上のトランザクションの完全なスキャンが新たに実行されます。アカウントの履歴が再構築され、残高は再計算されます。",
-      "clearCacheButton": "クリア",
-      "exportLogs": "ログを保存",
-      "exportLogsDesc": "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
-      "hardReset": "Ledger Liveをリセット",
-      "hardResetDesc": "これは、あなたの資産には影響しません。アカウントデータ、トランザクション履歴、設定など、Ledger Live上のすべてのデータを消去します。Ledgerデバイスを使って、初期化されたLedger Liveに暗号資産を再び読み込んで管理できます。",
-      "repairDevice": "Ledgerデバイスを修理する",
-      "repairDeviceDesc": "デバイスのアップデート中に問題が発生し、アップデートを再開できない場合は、この方法でデバイスの修復を試みてください。"
+    "notifications" : {
+      "title" : "通知",
+      "desc" : "通知を管理",
+      "disabledNotifications" : {
+        "title" : "通知はオフです",
+        "desc" : "{{platform}}はLedger Liveからの通知をブロックしています。スマートフォンで通知を受信するには、デバイスの設定からLedger Liveの通知をオンにしてください。",
+        "turnOnNotif" : "通知をオンにする",
+        "goToSettings" : "設定を開く"
+      },
+      "allowed" : {
+        "title" : "通知を許可",
+        "desc" : "暗号資産、マーケットの傾向に関する通知を受け取る"
+      },
+      "transactions" : {
+        "title" : "トランザクション",
+        "desc" : "暗号資産を送受信の際に通知を受け取りましょう"
+      },
+      "market" : {
+        "title" : "Market",
+        "desc" : "マーケットの重要な変化に関する最新情報を受け取る"
+      },
+      "announcement" : {
+        "title" : "お知らせ",
+        "desc" : "Ledger Liveの重要なアップデートを受け取る"
+      },
+      "price" : {
+        "title" : "価格アラート",
+        "desc" : "お気に入りのコインの価格アラートを設定して、市場の動きを見逃さないようにしましょう"
+      }
     },
-    "experimental": {
-      "title": "試験的機能",
-      "desc": "試験的機能をお試しになり、フィードバックをお寄せください。",
-      "disclaimer": "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。"
+    "help" : {
+      "title" : "ヘルプ",
+      "header" : "ヘルプ",
+      "desc" : "Ledger Liveについての詳細や、ヘルプの利用方法についてはこちらをご覧ください。",
+      "support" : "Ledgerサポート",
+      "supportDesc" : "問題がある場合は、ハードウェアウォレットでLedger Liveを使用するためのヘルプを参照してください。",
+      "configureDevice" : "デバイスのセットアップ",
+      "configureDeviceDesc" : "新しいデバイスとしてセットアップするか、既存のデバイスを復元すする。アカウントと設定はそのまま保持されます。",
+      "clearCache" : "Cacheを削除",
+      "clearCacheDesc" : "ネットワーク上のトランザクションがスキャンされ、アカウントは再計算されます。",
+      "clearCacheModal" : "本当によろしいですか？",
+      "clearCacheModalDesc" : "ネットワーク上のトランザクションの完全なスキャンが新たに実行されます。アカウントの履歴が再構築され、残高は再計算されます。",
+      "clearCacheButton" : "クリア",
+      "exportLogs" : "ログを保存",
+      "exportLogsDesc" : "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
+      "hardReset" : "Ledger Liveをリセット",
+      "hardResetDesc" : "これは、あなたの資産には影響しません。アカウントデータ、トランザクション履歴、設定など、Ledger Live上のすべてのデータを消去します。Ledgerデバイスを使って、初期化されたLedger Liveに暗号資産を再び読み込んで管理できます。",
+      "repairDevice" : "Ledgerデバイスを修理する",
+      "repairDeviceDesc" : "デバイスのアップデート中に問題が発生し、アップデートを再開できない場合は、この方法でデバイスの修復を試みてください。"
     },
-    "developer": {
-      "title": "デベロッパー",
-      "desc": "試験的機能をお試しになり、フィードバックをお寄せください。",
-      "customManifest": {
-        "title": "カスタムプラットフォームマニフェストを読み込む"
+    "experimental" : {
+      "title" : "試験的機能",
+      "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
+      "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。"
+    },
+    "developer" : {
+      "title" : "デベロッパー",
+      "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
+      "customManifest" : {
+        "title" : "カスタムプラットフォームマニフェストを読み込む"
       }
     }
   },
-  "migrateAccounts": {
-    "banner": "Ledger Liveアカウントのアップデート",
-    "overview": {
-      "headerTitle": "アカウントのアップデート",
-      "title": "Ledger Liveアカウントのアップデート",
-      "subtitle": "Ledger Liveに新機能が追加されたため、アカウントをアップデートする必要があります",
-      "notice": "{{accountCount}}アカウントを読み込みできませんでした。下記のアカウントに関連付けられているデバイスを接続してください。",
-      "notice_plural": "{{accountCount}}アカウントを読み込みできませんでした。下記のアカウントに関連付けられているデバイスを接続してください。",
-      "currency": "1個の{{currency}}アカウントをアップデートする必要があります。",
-      "currency_plural": "{{count}}個の{{currency}}アカウントをアップデートする必要があります。",
-      "start": "アップデートを開始",
-      "continue": "アップデートを続行"
+  "notifications" : {
+    "prompt" : {
+      "title" : "通知をオンにする",
+      "desc" : "Ledger LiveやLedger製品、セキュリティに関する最新情報を入手しましょう。いつでも購読解除が可能です。",
+      "allow" : "通知を許可",
+      "later" : "後で"
+    }
+  },
+  "migrateAccounts" : {
+    "banner" : "Ledger Liveアカウントのアップデート",
+    "overview" : {
+      "headerTitle" : "アカウントのアップデート",
+      "title" : "Ledger Liveアカウントのアップデート",
+      "subtitle" : "Ledger Liveに新機能が追加されたため、アカウントをアップデートする必要があります",
+      "notice" : "{{accountCount}}アカウントを読み込みできませんでした。下記のアカウントに関連付けられているデバイスを接続してください。",
+      "notice_plural" : "{{accountCount}}アカウントを読み込みできませんでした。下記のアカウントに関連付けられているデバイスを接続してください。",
+      "currency" : "1個の{{currency}}アカウントをアップデートする必要があります。",
+      "currency_plural" : "{{count}}個の{{currency}}アカウントをアップデートする必要があります。",
+      "start" : "アップデートを開始",
+      "continue" : "アップデートを続行"
     },
-    "progress": {
-      "headerTitle": "アカウントのアップデート",
-      "pending": {
-        "title": "{{currency}}アップデート中",
-        "subtitle": "アカウントがアップデートされるまでお待ちください。"
+    "progress" : {
+      "headerTitle" : "アカウントのアップデート",
+      "pending" : {
+        "title" : "{{currency}}アップデート中",
+        "subtitle" : "アカウントがアップデートされるまでお待ちください。"
       },
-      "notice": {
-        "title": "{{currency}} アップデート未完了",
-        "subtitle": "このデバイスでは、{{currency}}アカウントをアップデートできませんでした。",
-        "cta": "続行",
-        "ctaNextCurrency": "{{currency}}で続行"
+      "notice" : {
+        "title" : "{{currency}} アップデート未完了",
+        "subtitle" : "このデバイスでは、{{currency}}アカウントをアップデートできませんでした。",
+        "cta" : "続行",
+        "ctaNextCurrency" : "{{currency}}で続行"
       },
-      "done": {
-        "title": "{{currency}}アップデート完了",
-        "subtitle": "{{currency}}アカウントが正常にアップデートされました。",
-        "cta": "続行",
-        "ctaNextCurrency": "{{currency}}で続行",
-        "ctaDone": "完了"
+      "done" : {
+        "title" : "{{currency}}アップデート完了",
+        "subtitle" : "{{currency}}アカウントが正常にアップデートされました。",
+        "cta" : "続行",
+        "ctaNextCurrency" : "{{currency}}で続行",
+        "ctaDone" : "完了"
       },
-      "error": {
-        "cta": "再試行"
+      "error" : {
+        "cta" : "再試行"
       }
     },
     "connectDevice": {
       "headerTitle": "デバイスを接続"
     }
   },
-  "transfer": {
-    "recipient": {
-      "input": "アドレスを入力"
+  "transfer" : {
+    "recipient" : {
+      "input" : "アドレスを入力"
     },
-    "send": {
-      "title": "送付",
-      "description": "暗号資産を別のウォレットに送付。"
+    "send" : {
+      "title" : "送付",
+      "description" : "暗号資産を別のウォレットに送付。"
     },
-    "fees": {
-      "title": "手数料を編集"
+    "fees" : {
+      "title" : "手数料を編集"
     },
-    "receive": {
-      "title": "受け取る",
-      "description": "暗号資産を別のウォレットから受け取る。",
-      "titleReadOnly": "未確認のアドレス",
-      "headerTitle": "暗号資産",
-      "titleDevice": "デバイスを接続",
-      "verifySkipped": "受け取りアドレスが、Ledgerデバイス上で認証されませんでした。安全のため、{{accountType}}アドレスを認証してください。",
-      "verifyPending": "Ledgerデバイス上に表示された{{currencyName}}アドレスが、スマートフォン上に表示されたものと完全に一致していることを確認してください。",
-      "verified": "アドレスが確認されました。アドレスをコピーまたはスキャンした場合は、もう一度チェックしてください。",
-      "verifyAgain": "もう一度確認",
-      "noAccount": "アカウントが見つかりません",
-      "address": "アカウントのアドレス",
-      "copyAddress": "アドレスをコピー",
-      "shareAddress": "アドレスを共有",
-      "addressCopied": "アドレスをコピーしました！",
-      "taprootWarning": "送付元がtaprootに対応しているか確認してください",
-      "notSynced": {
-        "text": "同期中",
-        "desc": "トランザクションの数が多い場合やインターネット接続が遅い場合、しばらく時間がかかることがあります。"
+    "receive" : {
+      "title" : "受け取る",
+      "description" : "暗号資産を別のウォレットから受け取る。",
+      "titleReadOnly" : "未確認のアドレス",
+      "headerTitle" : "暗号資産",
+      "titleDevice" : "デバイスを接続",
+      "verifySkipped" : "受け取りアドレスが、Ledgerデバイス上で認証されませんでした。安全のため、{{accountType}}アドレスを認証してください。",
+      "verifyPending" : "Ledgerデバイス上に表示された{{currencyName}}アドレスが、スマートフォン上に表示されたものと完全に一致していることを確認してください。",
+      "verified" : "アドレスが確認されました。アドレスをコピーまたはスキャンした場合は、もう一度チェックしてください。",
+      "verifyAgain" : "もう一度確認",
+      "noAccount" : "アカウントが見つかりません",
+      "address" : "アカウントのアドレス",
+      "copyAddress" : "コピー",
+      "shareAddress" : "アドレスを共有",
+      "addressCopied" : "コピー済み",
+      "taprootWarning" : "送付元がtaprootに対応しているか確認してください",
+      "selectCrypto" : {
+        "title" : "暗号資産を選択"
       },
-      "readOnly": {
-        "title": "受け取る",
-        "text": "注意してください",
-        "desc": "認証されていないアドレスを表示しようとしています。安全のため、デバイス上でアドレスを認証してください。",
-        "verify": "{{accountType}}のアドレスが認証されませんでした。安全のため、デバイス上でアドレスを認証してください。"
+      "stepperHeader" : {
+        "range" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "connectDevice" : "デバイスを接続"
       },
-      "noResultsFound": "暗号資産が見つかりません",
-      "noResultsDesc": "スペルを確認してから、もう一度お試しください。"
-    },
-    "buy": {
-      "title": "購入",
-      "description": "暗号資産を現金で安全に購入。"
-    },
-    "sell": {
-      "title": "売却",
-      "description": "暗号資産を安全に売却して現金化。"
-    },
-    "exchange": {
-      "title": "購入/売却"
-    },
-    "swap": {
-      "title": "スワップ",
-      "description": "暗号資産を別の暗号資産と交換。",
-      "selectDevice": "お使いのデバイスを選択してください",
-      "broadcasting": "スワップをブロードキャスト中",
-      "loadingFees": "ネットワーク手数料を読み込み中…",
-      "landing": {
-        "header": "スワップ",
-        "title": "スワップへようこそ",
-        "whatIsSwap": "スワップとは？",
-        "disclaimer": "Ledgerデバイスから暗号資産を直接取引できます。このサービスは、米国を含む一部の国ではご利用いただけません。"
+      "selectAccount" : {
+        "title" : "アカウントを選択",
+        "subtitle" : "{{currencyTicker}}はこの口座に入金されます。"
       },
-      "unauthorizedRates": {
-        "cta": "認証をリセット",
-        "banner": "Wyreでスワップを行うには、KYCをリセットしてLedger Liveをアップデートする必要があります。",
-        "bannerCTA": "KYC（本人確認）をリセット"
+      "addAccount" : {
+        "title" : "ブロックチェーンを検索",
+        "subtitle" : "{{currencyTicker}}アカウントを所有しているか確認します。",
+        "foundAccounts" : "{{count}}件のアカウントが見つかりました",
+        "stopSynchronization" : "同期の停止"
       },
-      "main": {
-        "header": "スワップ"
+      "verifyAddress" : {
+        "title" : "アドレスの認証",
+        "subtitle" : "デバイス上に表示されているアドレスが、次のアドレスと一致しているかご確認ください。確認後、デバイスの「Approve(承認)」をクリックできます。",
+        "cancel" : {
+          "title" : "このアドレスを拒否しました",
+          "subtitle" : "これが誤操作によるものである場合は、下のボタンをクリックして再試行できます。",
+          "info" : "アドレスの不一致が確実な場合、お使いのスマートフォンが情報漏洩している可能性があります。<0>できるだけ早くお問い合わせいただく</0>ことをお勧めします。"
+        }
       },
-      "kyc": {
-        "disclaimer": "位置情報データが、コンプライアンスの目的で第三者団体と共有されることに同意します。",
-        "cta": "続行",
-        "wyre": {
-          "title": "KYC（本人確認）を完了する",
-          "subtitle": "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくはプライバシーポリシーをご確認ください。",
-          "pending": {
-            "cta": "続行",
-            "title": "KYC（本人確認）が提出されました。",
-            "subtitle": "KYC（本人確認）が提出され、承認待ちの状態です。",
-            "link": "KYC（本人確認）についての詳細"
+      "receiveConfirmation" : {
+        "title" : "{{currencyTicker}}を受け取る",
+        "addressVerified" : "認証済みアドレス",
+        "verifyAddress" : "タップしてアドレスを認証",
+        "adviceVerify" : "当社では常にLedgerデバイスでアドレス認証することを推奨しています",
+        "sendWarning" : "このアドレスには、 {{currencyName}} ({{currencyTicker}}) のみを送信します。その他の暗号資産を送信すると、資金が永久に失われる可能性があります。"
+      },
+      "securityVerify" : {
+        "title" : "安全上の理由から、当社ではLedgerデバイスでこのアドレスの認証を推奨しています。",
+        "subtitle1" : "アドレスを認証することで安全にご利用いただけます。Ledgerデバイスに表示されるアドレスが情報漏洩することはありません。",
+        "subtitle2" : "アドレスを認証することで、デバイスに表示されているアドレスがLedger Liveに表示されているアドレスと同一であることを確認できます。",
+        "verifyCta" : "アドレスを認証",
+        "dontVerifyCta" : "認証せずにアドレスを提示"
+      },
+      "securityDontVerify" : {
+        "title" : "本当によろしいですか？",
+        "subtitle" : "Ledger Liveに表示されているアドレスは認証されません。",
+        "doNotRemindAgain" : "今後、このメッセージを表示しない",
+        "no" : "いいえ",
+        "yes" : "はい"
+      },
+      "toastMessages" : {
+        "accountImported" : "{{currencyTicker}}アカウントをインポートしました。 ",
+        "why" : "その理由とは。",
+        "addressVerified" : "アドレスが認証されました"
+      },
+      "additionalInfoModal" : {
+        "title" : "アカウントをインポートした理由は？",
+        "subtitle" : "シードに以前の{{currencyTicker}}アカウントがあることが検出されました。このアカウントをインポートしました。",
+        "closeCta" : "了解"
+      },
+      "notSynced" : {
+        "text" : "同期中",
+        "desc" : "トランザクションの数が多い場合やインターネット接続が遅い場合、しばらく時間がかかることがあります。"
+      },
+      "readOnly" : {
+        "title" : "受け取る",
+        "text" : "注意してください",
+        "desc" : "認証されていないアドレスを表示しようとしています。安全のため、デバイス上でアドレスを認証してください。",
+        "verify" : "{{accountType}}のアドレスが認証されませんでした。安全のため、デバイス上でアドレスを認証してください。"
+      },
+      "noResultsFound" : "暗号資産が見つかりません",
+      "noResultsDesc" : "スペルを確認してから、もう一度お試しください。"
+    },
+    "buy" : {
+      "title" : "購入",
+      "description" : "暗号資産を現金で安全に購入。"
+    },
+    "sell" : {
+      "title" : "売却",
+      "description" : "暗号資産を安全に売却して現金化。"
+    },
+    "exchange" : {
+      "title" : "購入/売却"
+    },
+    "swap" : {
+      "title" : "スワップ",
+      "description" : "暗号資産を別の暗号資産と交換。",
+      "selectDevice" : "お使いのデバイスを選択してください",
+      "broadcasting" : "スワップをブロードキャスト中",
+      "loadingFees" : "ネットワーク手数料を読み込み中…",
+      "landing" : {
+        "header" : "スワップ",
+        "title" : "スワップへようこそ",
+        "whatIsSwap" : "スワップとは？",
+        "disclaimer" : "Ledgerデバイスから暗号資産を直接取引できます。このサービスは、米国を含む一部の国ではご利用いただけません。"
+      },
+      "unauthorizedRates" : {
+        "cta" : "認証をリセット",
+        "banner" : "Wyreでスワップを行うには、KYCをリセットしてLedger Liveをアップデートする必要があります。",
+        "bannerCTA" : "KYC（本人確認）をリセット"
+      },
+      "main" : {
+        "header" : "スワップ"
+      },
+      "kyc" : {
+        "disclaimer" : "位置情報データが、コンプライアンスの目的で第三者団体と共有されることに同意します。",
+        "cta" : "続行",
+        "wyre" : {
+          "title" : "KYC（本人確認）を完了する",
+          "subtitle" : "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくはプライバシーポリシーをご確認ください。",
+          "pending" : {
+            "cta" : "続行",
+            "title" : "KYC（本人確認）が提出されました。",
+            "subtitle" : "KYC（本人確認）が提出され、承認待ちの状態です。",
+            "link" : "KYC（本人確認）についての詳細"
           },
           "approved": {
             "cta": "続行",
@@ -3203,61 +3345,63 @@
       "name": "名前"
     }
   },
-  "AuthenticityRow": {
-    "title": "認証",
-    "subtitle": "正規"
+  "AuthenticityRow" : {
+    "title" : "認証",
+    "subtitle" : "正規"
   },
-  "RemoveRow": {
-    "title": "デバイスの削除"
+  "RemoveRow" : {
+    "title" : "デバイスの削除"
   },
-  "FirmwareVersionRow": {
-    "title": "ファームウェアのバージョン",
-    "subtitle": "V{{version}}"
+  "FirmwareVersionRow" : {
+    "title" : "ファームウェアのバージョン",
+    "subtitle" : "V{{version}}"
   },
-  "FirmwareUpdateRow": {
-    "title": "ファームウェアのバージョン{{version}}が利用可能",
-    "subtitle": "アップデートにはLedger Live Desktopを使用してください。",
-    "action": "更新"
+  "FirmwareUpdateRow" : {
+    "title" : "ファームウェアのバージョン{{version}}が利用可能",
+    "subtitle" : "アップデートにはLedger Live Desktopを使用してください。",
+    "action" : "更新"
   },
-  "FirmwareUpdate": {
-    "title": "ファームウェアをアップデート",
-    "preparing": "ファームウェアアップデートの準備中はデバイスをスリープ状態にせず、接続を維持してください。進捗状況をお知らせします",
-    "confirmIdentifierText": "デバイスの識別子が以下の識別子と同じであることを認証します。必要に応じて、PINコードを確認して入力します。",
-    "pleaseReinstallApps": "デバイスにアプリを再インストールしてください。",
-    "pleaseConfirmUpdate": "アップデートをデバイスで確認",
-    "finishUpdate": "{{deviceName}}でアップデートを完了します",
-    "identifierTitle": "識別子：",
-    "pleaseWaitDownload": "インストールが完了するまでお待ちください",
-    "preparingDevice": "デバイスの準備中",
-    "pleaseWaitUpdate": "アップデートが完了するまでお待ちください",
-    "waitForFirmwareUpdate": "デバイスのファームウェアアップデート完了までお待ちください",
-    "unlockDeviceWithPin": "PINコードでデバイスのロックを解除",
-    "reinstallApps": "アプリを再インストールします。",
-    "currentVersionNumber": "現在のバージョン",
-    "newVersionNumber": "新しいバージョン",
-    "success": "ファームウェアのアップデート完了",
-    "update": "更新",
-    "Notifications": {
-      "confirmOnDevice": "デバイスでの承認が必要です",
-      "preparingUpdate": "アップデートの転送が完了したら、完了時に通知します",
-      "installing": "インストール中 {{progress}}%"
+  "FirmwareUpdate" : {
+    "title" : "ファームウェアをアップデート",
+    "preparing" : "ファームウェアアップデートの準備中はデバイスをスリープ状態にせず、接続を維持してください。進捗状況をお知らせします",
+    "confirmIdentifierText" : "デバイスの識別子が以下の識別子と同じであることを認証します。必要に応じて、PINコードを確認して入力します。",
+    "pleaseReinstallApps" : "デバイスにアプリを再インストールしてください。",
+    "pleaseConfirmUpdate" : "アップデートをデバイスで確認",
+    "finishUpdate" : "{{deviceName}}でアップデートを完了します",
+    "identifierTitle" : "識別子：",
+    "pleaseWaitDownload" : "インストールが完了するまでお待ちください",
+    "preparingDevice" : "デバイスの準備中",
+    "pleaseWaitUpdate" : "アップデートが完了するまでお待ちください",
+    "waitForFirmwareUpdate" : "デバイスのファームウェアアップデート完了までお待ちください",
+    "unlockDeviceWithPin" : "PINコードでデバイスのロックを解除",
+    "reinstallApps" : "アプリを再インストールします。",
+    "currentVersionNumber" : "現在のバージョン",
+    "newVersionNumber" : "新しいバージョン",
+    "success" : "ファームウェアのアップデート完了",
+    "update" : "更新",
+    "Notifications" : {
+      "confirmOnDevice" : "デバイスでの承認が必要です",
+      "preparingUpdate" : "アップデートの転送が完了したら、完了時に通知します",
+      "installing" : "インストール中 {{progress}}%"
     },
-    "Installing": {
-      "title": "{{stepName}}...",
-      "subtitle": "デバイスにPINコードリクエストが届いた場合、PINコードを入力して完了してください。"
+    "Installing" : {
+      "title" : "{{stepName}}...",
+      "subtitle" : "デバイスにPINコードリクエストが届いた場合、PINコードを入力して完了してください。"
     },
-    "steps": {
-      "osu": "OSUをインストール中",
-      "flash-mcu": "MCUをアップデート中",
-      "flash-bootloader": "ブートローダーをアップデート中",
-      "flash": "デバイスをフラッシュ中",
-      "preparing": "アップデートを準備しています",
-      "firmware": "アップデートをダウンロードしています"
+    "steps" : {
+      "osu" : "OSUをインストール中",
+      "flash-mcu" : "MCUをアップデート中",
+      "flash-bootloader" : "ブートローダーをアップデート中",
+      "flash" : "デバイスをフラッシュ中",
+      "preparing" : "アップデートを準備しています",
+      "firmware" : "アップデートをダウンロードしています"
     },
-    "newVersion": "お使いの{{deviceName}}で{{version}}のアップデートが利用可能です",
-    "drawerUpdate": {
-      "title": "ファームウェアのアップデート",
-      "description": "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。"
+    "newVersion" : "お使いの{{deviceName}}で{{version}}のアップデートが利用可能です",
+    "drawerUpdate" : {
+      "title" : "ファームウェアのアップデート",
+      "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。",
+      "pleaseConnectUsbTitle" : "USB cable needed",
+      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3379,11 +3523,18 @@
       }
     }
   },
-  "celo": {
-    "info": {
-      "available": {
-        "title": "CELO利用可能",
-        "description": "これは利用可能額です。"
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "合計残高にはステーキング報酬は含まれません"
+      }
+    }
+  },
+  "celo" : {
+    "info" : {
+      "available" : {
+        "title" : "CELO利用可能",
+        "description" : "これは利用可能額です。"
       }
     }
   },
@@ -3704,49 +3855,92 @@
       }
     }
   },
-  "stellar": {
-    "memo": {
-      "title": "Memo(メモ)",
-      "warning": "メモを使用する場合は、受取人とメモのタイプをしっかりと確認してください。"
+  "stellar" : {
+    "token" : "資産",
+    "memo" : {
+      "title" : "Memo(メモ)",
+      "warning" : "メモを使用する場合は、受取人とメモのタイプをしっかりと確認してください。"
     },
-    "memoType": {
-      "MEMO_TEXT": "メモのテキスト",
-      "NO_MEMO": "メモなし",
-      "MEMO_ID": "メモID",
-      "MEMO_HASH": "メモハッシュ",
-      "MEMO_RETURN": "メモリターン"
+    "memoType" : {
+      "MEMO_TEXT" : "メモのテキスト",
+      "NO_MEMO" : "メモなし",
+      "MEMO_ID" : "メモID",
+      "MEMO_HASH" : "メモハッシュ",
+      "MEMO_RETURN" : "メモリターン"
+    },
+    "fee" : "ネットワーク手数料",
+    "feeAction" : "更新料",
+    "recommendedFee" : "推奨手数料",
+    "recommenndedFeeInfo" : "このトランザクションを推奨手数料より低額で提出可能ですが、完了しない場合があります",
+    "suggested" : "提案済み",
+    "networkCongestion" : "ネットワーク混雑",
+    "networkCongestionLevel" : {
+      "LOW" : "低速",
+      "MEDIUM" : "標準",
+      "HIGH" : "高速"
+    },
+    "assetCode" : "資産コード",
+    "assetIssuer" : "資産発行者",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "資産を追加",
+        "connectDevice" : "デバイスを接続",
+        "verification" : "認証",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "追加済みの資産",
+              "description" : "すでに、Stellarアカウントに{{token}}資産を所有しています。"
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}}資産が正常に追加されました！",
+              "text" : "Stellarアカウントで、{{token}}資産の受け取りや送付が可能になりました。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、トランザクションの不成立を確認した上で、もう一度やり直してください。"
+          }
+        }
+      }
     }
   },
-  "polkadot": {
-    "lockedBalance": "ボンド残高",
-    "unlockingBalance": "ボンド解除中の残高",
-    "unlockedBalance": "ボンド解除済みの残高",
-    "networkFees": "ネットワーク手数料は、Polkadotのコンセンサスアルゴリズムによって自動的に設定されるため、デバイス上で確認することはできません",
-    "bondedBalanceBelowMinimum": "ボンド残高が、下限額{{minimumBondBalance}}を下回っています。ノミネートが解除されてしまう可能性があります。",
-    "info": {
-      "available": {
-        "title": "DOTが利用可能",
-        "description": "この数量は、いつでも送金できます。"
+  "polkadot" : {
+    "lockedBalance" : "ボンド残高",
+    "unlockingBalance" : "ボンド解除中の残高",
+    "unlockedBalance" : "ボンド解除済みの残高",
+    "networkFees" : "ネットワーク手数料は、Polkadotのコンセンサスアルゴリズムによって自動的に設定されるため、デバイス上で確認することはできません",
+    "bondedBalanceBelowMinimum" : "ボンド残高が、下限額{{minimumBondBalance}}を下回っています。ノミネートが解除されてしまう可能性があります。",
+    "info" : {
+      "available" : {
+        "title" : "DOTが利用可能",
+        "description" : "この数量は、いつでも送金できます。"
       },
-      "locked": {
-        "title": "ボンドされた資産",
-        "description": "報酬を得るには、選出されたバリデーターに資産をボンドする必要があります。"
+      "locked" : {
+        "title" : "ボンドされた資産",
+        "description" : "報酬を得るには、選出されたバリデーターに資産をボンドする必要があります。"
       },
-      "unlocking": {
-        "title": "ボンド解除中の資産",
-        "description": "ボンド解除中の資産は、引き出せるようになるまで28日間ロックされます。"
+      "unlocking" : {
+        "title" : "ボンド解除中の資産",
+        "description" : "ボンド解除中の資産は、引き出せるようになるまで28日間ロックされます。"
       },
-      "unlocked": {
-        "title": "ボンド解除済み資産",
-        "description": "ボンド解除済み資産が、引き出し可能になりました。"
+      "unlocked" : {
+        "title" : "ボンド解除済み資産",
+        "description" : "ボンド解除済み資産が、引き出し可能になりました。"
       },
-      "electionOpen": {
-        "title": "バリデーターを選出中",
-        "description": "現在、新しいバリデーターを選出中です。そのため、最大15分間ほどステーキング処理を行うことができません。"
+      "electionOpen" : {
+        "title" : "バリデーターを選出中",
+        "description" : "現在、新しいバリデーターを選出中です。そのため、最大15分間ほどステーキング処理を行うことができません。"
       },
-      "minBondWarning": {
-        "title": "ボンド額が不足しています。",
-        "description": "ボンド残高が、ノミネートに必要な下限額を下回っています。ノミネートが解除されてしまう可能性があります。"
+      "minBondWarning" : {
+        "title" : "ボンド額が不足しています。",
+        "description" : "ボンド残高が、ノミネートに必要な下限額を下回っています。ノミネートが解除されてしまう可能性があります。"
       }
     },
     "nomination": {
@@ -4360,32 +4554,32 @@
     "gallery": {
       "allNft": "全てのNFT"
     },
-    "viewer": {
-      "properties": "プロパティ",
-      "description": "説明",
-      "tokenContract": "トークンアドレス",
-      "tokenContractCopied": "トークンアドレスがコピーされました！",
-      "tokenId": "トークンID",
-      "tokenIdCopied": "トークンIDがコピーされました！",
-      "quantity": "数量",
-      "attributes": {
-        "floorPrice": "フロア価格"
+    "viewer" : {
+      "properties" : "プロパティ",
+      "description" : "説明",
+      "tokenContract" : "トークンアドレス",
+      "tokenContractCopied" : "トークンアドレスがコピーされました！",
+      "tokenId" : "トークンID",
+      "tokenIdCopied" : "トークンIDがコピーされました！",
+      "quantity" : "数量",
+      "attributes" : {
+        "floorPrice" : "フロア価格"
       }
     },
-    "viewerModal": {
-      "viewOn": "表示",
-      "viewInExplorer": "エクスプローラーで表示",
-      "txDetails": "トランザクションの詳細"
+    "viewerModal" : {
+      "viewOn" : "表示",
+      "viewInExplorer" : "エクスプローラーで表示",
+      "txDetails" : "トランザクションの詳細"
     }
   },
-  "ApplicationVersion": "v{{version}}",
-  "analytics": {
-    "title": "アナリティクス",
-    "allocation": {
-      "title": "配分"
+  "ApplicationVersion" : "v{{version}}",
+  "analytics" : {
+    "title" : "アナリティクス",
+    "allocation" : {
+      "title" : "配分"
     },
-    "operations": {
-      "title": "取引履歴"
+    "operations" : {
+      "title" : "取引履歴"
     }
   }
 }
