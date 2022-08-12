@@ -1,19 +1,25 @@
 import Fil from "@zondax/ledger-filecoin";
 import { log } from "@ledgerhq/logs";
-import type { Account } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-import { MessageData, SignMessage, Result } from "../../hw/signMessage/types";
+import type {
+  MessageData,
+  SignMessage,
+  Result,
+} from "../../hw/signMessage/types";
 import { getBufferFromString, getPath, isError } from "./utils";
 
 import type { DerivationMode } from "../../derivation";
 
 export const prepareMessageToSign = (
-  { currency, freshAddressPath, derivationMode }: Account,
+  currency: CryptoCurrency,
+  path: string,
+  derivationMode: DerivationMode,
   message: string
 ): MessageData => {
   return {
     currency,
-    path: freshAddressPath,
+    path,
     derivationMode: derivationMode as DerivationMode,
     message: Buffer.from(message, "hex").toString(),
     rawMessage: "0x" + message,

@@ -1,6 +1,5 @@
-import Eth from "@ledgerhq/hw-app-eth";
-import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/index";
-import { isEIP712Message } from "@ledgerhq/hw-app-eth";
+import Eth, { isEIP712Message } from "@ledgerhq/hw-app-eth";
+import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/EIP712.types";
 import Transport from "@ledgerhq/hw-transport";
 import { TypedDataUtils } from "eth-sig-util";
 import { bufferToHex } from "ethereumjs-util";

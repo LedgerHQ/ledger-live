@@ -1,15 +1,17 @@
 import Btc from "@ledgerhq/hw-app-btc";
-import type { Account } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { MessageData, SignMessage } from "../../hw/signMessage/types";
 import type { DerivationMode } from "../../derivation";
 
 export const prepareMessageToSign = (
-  { currency, freshAddressPath, derivationMode }: Account,
+  currency: CryptoCurrency,
+  path: string,
+  derivationMode: DerivationMode,
   message: string
 ): MessageData => {
   return {
     currency,
-    path: freshAddressPath,
+    path,
     derivationMode: derivationMode as DerivationMode,
     message: Buffer.from(message, "hex").toString(),
     rawMessage: "0x" + message,
