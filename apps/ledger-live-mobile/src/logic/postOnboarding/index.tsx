@@ -1,4 +1,4 @@
-import { DeviceModelId } from "@ledgerhq/devices/lib/index";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices/lib/index";
 import {
   PostOnboardingAction,
   PostOnboardingActionId,
@@ -9,11 +9,11 @@ import { NavigatorName, ScreenName } from "../../const";
 const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claim,
   icon: Icons.GiftCardMedium,
-  title: "Claim lorem ipsum",
-  description: "Claim lorem ipsum dolor sit amet.",
+  title: "Claim my NFT",
+  description: "A special NFT for you.",
   tagLabel: "Free",
-  actionCompletedPopupLabel: "Claimed",
-  actionCompletedHubTitle: "Claimed completed hub title",
+  actionCompletedPopupLabel: "NFT claimed",
+  actionCompletedHubTitle: "Kickstart your Web3 journey.",
   navigationParams: [
     NavigatorName.PostOnboarding,
     {
@@ -30,11 +30,10 @@ const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalize,
   icon: Icons.BracketsMedium,
   featureFlagId: "customImage",
-  title: "Personalize lorem ipsum",
-  description:
-    "Personalize lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  actionCompletedPopupLabel: "Personalized",
-  actionCompletedHubTitle: "Personalize completeted hub title",
+  title: `Personalize my ${getDeviceModel(DeviceModelId.nanoFTS).productName}`,
+  description: "By customizing the screen.",
+  actionCompletedPopupLabel: "Device personalized",
+  actionCompletedHubTitle: "That screen is looking neat.",
   navigationParams: [
     NavigatorName.PostOnboarding,
     {
@@ -51,11 +50,10 @@ const migrateAssetsMock: PostOnboardingAction = {
   id: PostOnboardingActionId.migrateAssets,
   featureFlagId: "customImage",
   icon: Icons.TransferMedium,
-  title: "Migrate lorem ipsum",
-  description:
-    "Migrate lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  actionCompletedPopupLabel: "Migrated",
-  actionCompletedHubTitle: "Migrated hub title",
+  title: "Transfer assets to my Ledger",
+  description: "Easily secure assets from coinbase or another exchange.",
+  actionCompletedPopupLabel: "Assets transfered",
+  actionCompletedHubTitle: "Something about being a crypto pro.",
   navigationParams: [
     NavigatorName.PostOnboarding,
     {
