@@ -8,11 +8,10 @@ import { NavigatorName, ScreenName } from "../../const";
 
 const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claim,
-  icon: Icons.BracketsMedium,
+  icon: Icons.GiftCardMedium,
   title: "Claim lorem ipsum",
-  description:
-    "Claim lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sollicitudin turpis ac porttitor consectetur. Nunc bibendum sapien a purus dapibus, sit amet pellentesque ipsum vulputate.",
-  tagLabel: "Ipsum",
+  description: "Claim lorem ipsum dolor sit amet.",
+  tagLabel: "Free",
   actionCompletedPopupLabel: "Claimed",
   actionCompletedHubTitle: "Claimed completed hub title",
   navigationParams: [
@@ -33,8 +32,7 @@ const personalizeMock: PostOnboardingAction = {
   featureFlagId: "customImage",
   title: "Personalize lorem ipsum",
   description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sollicitudin turpis ac porttitor consectetur.",
-  tagLabel: "Ipsum",
+    "Personalize lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   actionCompletedPopupLabel: "Personalized",
   actionCompletedHubTitle: "Personalize completeted hub title",
   navigationParams: [
@@ -55,7 +53,7 @@ const migrateAssetsMock: PostOnboardingAction = {
   icon: Icons.TransferMedium,
   title: "Migrate lorem ipsum",
   description:
-    "Migrate lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sollicitudin turpis ac porttitor consectetur.",
+    "Migrate lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   actionCompletedPopupLabel: "Migrated",
   actionCompletedHubTitle: "Migrated hub title",
   navigationParams: [
