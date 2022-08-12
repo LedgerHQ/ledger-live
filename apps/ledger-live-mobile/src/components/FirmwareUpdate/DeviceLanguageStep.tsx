@@ -60,7 +60,6 @@ const DeviceLanguageStep = ({
 
   const installLanguage = useCallback(
     (language: Language) => {
-      console.log("install language:", language);
       setLanguageToInstall(language);
       setDeviceForAction(device);
     },
