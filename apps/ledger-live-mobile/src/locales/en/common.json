@@ -4526,9 +4526,11 @@
   "postOnboarding": {
     "hub": {
       "title": "Nice one.\nYou're all set.",
+      "allDoneTitle": "Nice work.\nYou're up and running.",
       "subtitle": "Here is what you can do next:",
       "skip": "Skip to the app",
-      "goToWallet": "Go to Ledger Live wallet"
+      "goToWallet": "Go to Ledger Live wallet",
+      "done": "You've just secured your future"
     },
     "walletCard": {
       "title": "Getting started",

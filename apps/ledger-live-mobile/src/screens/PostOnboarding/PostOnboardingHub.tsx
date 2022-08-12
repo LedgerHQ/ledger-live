@@ -1,17 +1,24 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Box, Flex, Icons, Notification, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Icons, Log, Notification, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { ScrollView } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import Animated, {
+  interpolate,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
 import {
   useClearLastActionCompletedCallback,
   usePostOnboardingHubState,
 } from "../../logic/postOnboarding/hooks";
 import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
 import { NavigatorName, ScreenName } from "../../const";
-import Button from "../../components/Button";
 
 const SafeContainer = styled(SafeAreaView).attrs({
   edges: ["left", "bottom", "right"],
@@ -25,7 +32,9 @@ const Divider = styled(Box).attrs({
   width: "100%",
 })``;
 
-export default () => {
+const AnimatedFlex = Animated.createAnimatedComponent(Flex);
+
+const PostOnboardingHub: React.FC<{}> = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
@@ -63,12 +72,60 @@ export default () => {
     setPopupOpened(false);
   }, [setPopupOpened]);
 
+  const animDoneValue = useSharedValue(0);
+
   const allDone = actionsState.every(action => action.completed);
+
+  const triggerEndAnimation = useCallback(() => {
+    let dead = false;
+    let timeout: NodeJS.Timeout;
+    const onAnimEnd = () => {
+      timeout = setTimeout(() => {
+        navigateToWallet();
+      }, 3000);
+    };
+    animDoneValue.value = withDelay(
+      3000,
+      withTiming(1, { duration: 1500 }, finished => {
+        if (finished && !dead) {
+          runOnJS(onAnimEnd)();
+        }
+      }),
+    );
+
+    return () => {
+      dead = true;
+      timeout && clearTimeout(timeout);
+    };
+  }, [navigateToWallet, animDoneValue]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (allDone) triggerEndAnimation();
+    }, [allDone, triggerEndAnimation]),
+  );
+
+  const doneContainerStyle = useAnimatedStyle(
+    () => ({
+      opacity: interpolate(animDoneValue.value, [0, 0.5, 1], [0, 1, 1]),
+    }),
+    [animDoneValue],
+  );
+
+  const doneContentStyle = useAnimatedStyle(
+    () => ({
+      opacity: interpolate(animDoneValue.value, [0, 0.5, 1], [0, 0, 1]),
+    }),
+    [animDoneValue],
+  );
+
   return (
     <SafeContainer>
       <Flex px={6} py={7} justifyContent="space-between" flex={1}>
         <Text variant="h1Inter" fontWeight="semiBold" mb="34px">
-          {actionCompletedHubTitle
+          {allDone
+            ? t("postOnboarding.hub.allDoneTitle")
+            : actionCompletedHubTitle
             ? t(actionCompletedHubTitle)
             : t("postOnboarding.hub.title")}
         </Text>
@@ -93,11 +150,7 @@ export default () => {
           />
         )}
         <Flex mt={8}>
-          {allDone ? (
-            <Button type="main" size="large" onPress={navigateToWallet}>
-              {t("postOnboarding.hub.goToWallet")}
-            </Button>
-          ) : (
+          {allDone ? null : (
             <Text
               variant="large"
               fontWeight="semiBold"
@@ -110,6 +163,28 @@ export default () => {
           )}
         </Flex>
       </Flex>
+      {allDone && (
+        <AnimatedFlex
+          style={[doneContainerStyle, StyleSheet.absoluteFillObject]}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Flex
+            backgroundColor="background.main"
+            style={StyleSheet.absoluteFillObject}
+          />
+          <AnimatedFlex style={doneContentStyle}>
+            <Flex flexDirection="column" alignItems="center" p={8}>
+              <Icons.CircledCheckSolidMedium color="success.c100" size={54} />
+              <Flex height={83} />
+              <Log>{t("postOnboarding.hub.done")}</Log>
+              <Flex height={100} />
+            </Flex>
+          </AnimatedFlex>
+        </AnimatedFlex>
+      )}
     </SafeContainer>
   );
 };
+
+export default PostOnboardingHub;
