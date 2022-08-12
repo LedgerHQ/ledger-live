@@ -40,12 +40,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       >
         <Flex flexDirection="row" alignItems="center" flexShrink={1}>
           <Icon size={24} color={completed ? "neutral.c70" : "primary.c80"} />
-          <Flex
-            ml={6}
-            flexDirection="column"
-            justifyContent="center"
-            flexShrink={1}
-          >
+          <Flex ml={6} flexDirection="column" justifyContent="center" flex={1}>
             <Text
               variant="largeLineHeight"
               fontWeight="medium"
@@ -66,9 +61,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           pl={6}
         >
           {tagLabel && (
-            <Flex mr={6}>
-              <Tag active>{tagLabel}</Tag>
-            </Flex>
+            <Tag mr={6} size="medium" type="color" uppercase={false}>
+              {tagLabel}
+            </Tag>
           )}
           {completed ? (
             <Icons.CheckAloneMedium color="success.c100" size={16} />
