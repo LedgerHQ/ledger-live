@@ -1,5 +1,5 @@
-import * as remote from "@electron/remote";
 import { shell, WebviewTag } from "electron";
+import * as remote from "@electron/remote";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import styled from "styled-components";
 
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
   RawPlatformSignedTransaction,
@@ -18,7 +19,6 @@ import {
   useListPlatformCurrencies,
   usePlatformUrl,
 } from "@ledgerhq/live-common/platform/react";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
 
 import TrackPage from "../../analytics/TrackPage";
 import useTheme from "../../hooks/useTheme";
@@ -26,21 +26,21 @@ import { accountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import Box from "../Box";
 
-import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
+import TopBar from "./TopBar";
 import { track } from "~/renderer/analytics/segment";
+import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
+import { TopBarConfig } from "./type";
 import {
-  broadcastTransactionLogic,
-  completeExchangeLogic,
-  CompleteExchangeRequest,
   receiveOnAccountLogic,
   requestAccountLogic,
+  signTransactionLogic,
+  broadcastTransactionLogic,
+  startExchangeLogic,
+  CompleteExchangeRequest,
+  completeExchangeLogic,
   RequestAccountParams,
   signMessageLogic,
-  signTransactionLogic,
-  startExchangeLogic,
 } from "./LiveAppSDKLogic";
-import TopBar from "./TopBar";
-import { WebPlatformPlayerConfig } from "./type";
 
 const tracking = trackingWrapper(track);
 
@@ -75,6 +75,10 @@ const Loader = styled.div`
   right: 0;
   bottom: 0;
 `;
+
+type WebPlatformPlayerConfig = {
+  topBarConfig?: TopBarConfig;
+};
 
 type Props = {
   manifest: AppManifest;

@@ -3,13 +3,12 @@ import React, { useCallback, useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import useTheme from "~/renderer/hooks/useTheme";
 
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useSelector } from "react-redux";
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
-import type { WebPlatformPlayerConfig } from "~/renderer/components/WebPlatformPlayer/type";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { languageSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "react-redux";
 
 type Props = {
   match: {
@@ -21,10 +20,9 @@ type Props = {
     url: string,
   },
   appId?: string,
-  webPlatformPlayerConfig?: WebPlatformPlayerConfig,
 };
 
-export default function PlatformApp({ match, appId: propsAppId, webPlatformPlayerConfig }: Props) {
+export default function PlatformApp({ match, appId: propsAppId }: Props) {
   const history = useHistory();
   const { state: urlParams, search } = useLocation();
   const appId = propsAppId || match.params?.appId;
@@ -55,12 +53,7 @@ export default function PlatformApp({ match, appId: propsAppId, webPlatformPlaye
   return (
     <Card grow style={{ overflow: "hidden" }}>
       {manifest ? (
-        <WebPlatformPlayer
-          config={webPlatformPlayerConfig}
-          manifest={manifest}
-          onClose={handleClose}
-          inputs={params}
-        />
+        <WebPlatformPlayer manifest={manifest} onClose={handleClose} inputs={params} />
       ) : null}
     </Card>
   );
