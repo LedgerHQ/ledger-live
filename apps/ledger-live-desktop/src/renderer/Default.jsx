@@ -221,8 +221,17 @@ export default function Default() {
                         <Route
                           path="/exchange"
                           render={(props: any) =>
+                            // FIXME: this should be a dedicated exchange component (cf. what has been done with card)
                             ptxSmartRouting?.enabled ? (
                               <PlatformApp
+                                webPlatformPlayerConfig={{
+                                  topBarConfig: {
+                                    shouldDisplayName: false,
+                                    shouldDisplayInfo: false,
+                                    shouldDisplayClose: false,
+                                    shouldDisplayNavigation: true,
+                                  },
+                                }}
                                 appId={ptxSmartRouting?.params?.liveAppId ?? "multibuy"}
                                 {...props}
                               />
