@@ -78,26 +78,14 @@ const AccountRow = ({
     if (navigationParams) {
       navigation.navigate(...navigationParams);
     } else if (account.type === "Account") {
-      navigation.navigate(NavigatorName.Portfolio, {
-        screen: NavigatorName.PortfolioAccounts,
-        params: {
-          screen: ScreenName.Account,
-          params: {
-            accountId,
-            isForwardedFromAccounts: true,
-          },
-        },
+      navigation.navigate(ScreenName.Account, {
+        accountId,
+        isForwardedFromAccounts: true,
       });
     } else if (account.type === "TokenAccount") {
-      navigation.navigate(NavigatorName.Portfolio, {
-        screen: NavigatorName.PortfolioAccounts,
-        params: {
-          screen: ScreenName.Account,
-          params: {
-            parentId: account?.parentId,
-            accountId: account.id,
-          },
-        },
+      navigation.navigate(ScreenName.Account, {
+        parentId: account?.parentId,
+        accountId: account.id,
       });
     }
   }, [account, accountId, navigation, navigationParams]);

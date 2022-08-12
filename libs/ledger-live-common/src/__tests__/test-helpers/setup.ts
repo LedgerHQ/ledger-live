@@ -18,7 +18,7 @@ expect.extend({
   },
 });
 
-setPlatformVersion("1.0.0");
+setPlatformVersion("1.1.0");
 
 setSupportedCurrencies([
   "bitcoin",
@@ -65,6 +65,7 @@ setSupportedCurrencies([
   "cardano",
   "cardano_testnet",
   "osmosis",
+  "filecoin",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

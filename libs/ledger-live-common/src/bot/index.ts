@@ -242,7 +242,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
 
   let body = "";
   let title = "";
-  const runURL = `https://github.com/LedgerHQ/ledger-live-common/actions/runs/${String(
+  const runURL = `https://github.com/LedgerHQ/ledger-live/actions/runs/${String(
     GITHUB_RUN_ID
   )}`;
   const success = mutationReports.length - errorCases.length;

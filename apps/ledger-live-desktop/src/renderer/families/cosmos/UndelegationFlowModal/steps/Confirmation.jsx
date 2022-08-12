@@ -49,7 +49,11 @@ export default function StepConfirmation({
     return (
       <Container>
         <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmed" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={t(`${currencyName}.undelegation.flow.steps.confirmation.success.title`)}
           description={

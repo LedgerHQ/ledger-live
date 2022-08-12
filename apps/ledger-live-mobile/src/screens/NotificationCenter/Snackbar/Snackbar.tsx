@@ -61,7 +61,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
     onPress(toast);
   }, [onPress, toast]);
 
-  const { title, type, icon } = toast;
+  const { title, text, type, icon } = toast;
 
   const Icon = icon && icons[icon];
 
@@ -108,7 +108,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
         variant={"primary"}
         Icon={Icon}
         title={type || title}
-        subtitle={type ? title : type}
+        subtitle={type ? title : text}
         linkText={cta}
         onLinkPress={handleOnPress}
         onClose={onClose && handleClose}

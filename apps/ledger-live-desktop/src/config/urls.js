@@ -128,8 +128,7 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360018131260?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=polkadot",
   cosmosStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-staking-rewards,?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=cosmos",
-  osmosisStakingRewards:
-    "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
+  osmosisStakingRewards: "https://support.ledger.com/hc/en-us/articles/6235986236957?docs=true",
   algorandStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=algorand",
   polkadotFeesInfo:

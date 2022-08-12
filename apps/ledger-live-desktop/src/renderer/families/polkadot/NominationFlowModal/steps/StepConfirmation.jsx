@@ -40,7 +40,11 @@ function StepConfirmation({
     return (
       <Container>
         <TrackPage category="Nomination Polkadot" name="Step Confirmed" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={<Trans i18nKey="polkadot.nominate.steps.confirmation.success.title" />}
           description={multiline(t("polkadot.nominate.steps.confirmation.success.text"))}
