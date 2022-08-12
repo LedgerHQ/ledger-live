@@ -31,14 +31,14 @@ const PostOnboardingNavigator = () => {
       }}
     >
       <Stack.Screen
+        name={ScreenName.PostOnboardingHub as "PostOnboardingHub"}
+        component={PostOnboardingHub}
+      />
+      <Stack.Screen
         name={
           ScreenName.PostOnboardingDebugScreen as "PostOnboardingDebugScreen"
         }
         component={PostOnboardingDebugScreen}
-      />
-      <Stack.Screen
-        name={ScreenName.PostOnboardingHub as "PostOnboardingHub"}
-        component={PostOnboardingHub}
       />
       <Stack.Screen
         name={

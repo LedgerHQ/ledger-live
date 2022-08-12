@@ -1,6 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices/lib/index";
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
+import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
 import SettingsRow from "../../components/SettingsRow";
 import {
   useNavigateToPostOnboardingHubCallback,
@@ -20,6 +21,9 @@ export default () => {
         title="Open post onboarding hub"
         onPress={navigateToPostOnboardingHub}
       />
+      <Flex m={6}>
+        <PostOnboardingEntryPointCard />
+      </Flex>
     </Flex>
   );
 };

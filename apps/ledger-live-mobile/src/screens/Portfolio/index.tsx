@@ -44,6 +44,8 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
+import { usePostOnboardingEntryPointVisibleOnWallet } from "../../logic/postOnboarding/hooks";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -170,8 +172,15 @@ function PortfolioScreen({ navigation }: Props) {
     [accounts],
   );
 
+  const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
+
   const data = useMemo(
     () => [
+      postOnboardingVisible && (
+        <Box m={6}>
+          <PostOnboardingEntryPointCard />
+        </Box>
+      ),
       !showAssets && (
         <Box mx={6} mt={3}>
           <AddAssetsCard />
@@ -271,6 +280,7 @@ function PortfolioScreen({ navigation }: Props) {
       closeAddModal,
       showCarousel,
       carouselVisibility,
+      postOnboardingVisible,
     ],
   );
 

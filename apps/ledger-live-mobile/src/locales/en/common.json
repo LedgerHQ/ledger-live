@@ -4529,6 +4529,10 @@
       "subtitle": "Here is what you can do next:",
       "skip": "Skip to the app",
       "goToWallet": "Go to Ledger Live wallet"
+    },
+    "walletCard": {
+      "title": "Getting started",
+      "description": "Click here to finish setting up your {{productName}} with Ledger Live"
     }
   }
 }
