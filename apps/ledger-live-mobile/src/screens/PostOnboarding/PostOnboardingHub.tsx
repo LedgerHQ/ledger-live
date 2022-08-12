@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box, Flex, Icons, Notification, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -10,7 +10,6 @@ import {
   usePostOnboardingHubState,
 } from "../../logic/postOnboarding/hooks";
 import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
-import ConfettiParty from "../../components/ConfettiParty";
 import { NavigatorName, ScreenName } from "../../const";
 import Button from "../../components/Button";
 
@@ -34,18 +33,25 @@ export default () => {
   const { actionCompletedHubTitle, actionCompletedPopupLabel } =
     lastActionCompleted ?? {};
 
-  // TODO: (design) "all done" state with confettis
-
   const clearLastActionCompleted = useClearLastActionCompletedCallback();
 
   useEffect(
     () => () => {
+      /**
+       * the last action context (specific title & popup) should only be visible
+       * the 1st time the hub is navigated to after that action was completed.
+       * */
       clearLastActionCompleted();
     },
     [clearLastActionCompleted],
   );
 
   useEffect(() => {
+    /**
+     * Necessary because this component doesn't necessarily unmount when
+     * navigating to another screen, so we need to open the popup again in case
+     * the user closed it and then completed a new action.
+     */
     setPopupOpened(true);
   }, [actionCompletedPopupLabel]);
 
@@ -104,12 +110,6 @@ export default () => {
           )}
         </Flex>
       </Flex>
-      {allDone && (
-        <View pointerEvents="none" style={StyleSheet.absoluteFillObject}>
-          {/* TODO: actually it's not this component we want */}
-          <ConfettiParty />
-        </View>
-      )}
     </SafeContainer>
   );
 };
