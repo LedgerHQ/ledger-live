@@ -38,7 +38,7 @@ export function Widget({ provider, type }: Props) {
       }
       localStorage.setItem("theme", "${dark ? "dark" : "light"}");
 
-      window.ledger = { postMessage: window.ReactNativeWebView.postMessage };
+      window.ledger = { postMessage: data => window.ReactNativeWebView.postMessage(data) };
 
       window.ledger.setToken = token => {
         const message = JSON.stringify({
