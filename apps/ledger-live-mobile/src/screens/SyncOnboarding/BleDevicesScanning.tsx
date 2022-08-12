@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { StackScreenProps } from "@react-navigation/stack";
-import { InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { BleErrorCode } from "react-native-ble-plx";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/lib/ble/hooks/useBleDevicesScanning";
 import { ScannedDevice } from "@ledgerhq/live-common/lib/ble/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useTranslation } from "react-i18next";
+import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { knownDevicesSelector } from "../../reducers/ble";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
@@ -18,6 +19,17 @@ import TransportBLE from "../../react-native-hw-transport-ble";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
 import RequiresBLE from "../../components/RequiresBLE";
 import LocationRequired from "../LocationRequired";
+import BleDeviceItem from "./BleDeviceItem";
+
+const BluetoothThingy = () => (
+  <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
+    <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={4}>
+      <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
+        <BluetoothMedium size={48} />
+      </Flex>
+    </Flex>
+  </Flex>
+);
 
 type Props = StackScreenProps<
   SyncOnboardingStackParamList,
@@ -89,7 +101,7 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
       };
 
       return (
-        <DeviceItem
+        <BleDeviceItem
           deviceMeta={deviceMeta}
           onSelect={() => onSelect(item, deviceMeta)}
         />
@@ -116,12 +128,26 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
 
   return (
     <RequiresBLE>
-      <OnboardingView
-        hasBackButton
-        title={t("syncOnboarding.scanning.title", {
-          productName: "Nano" /* TODO */,
-        })}
-      >
+      <OnboardingView hasBackButton>
+        <Flex mb={8} alignItems="center">
+          <BluetoothThingy />
+        </Flex>
+        <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold">
+          {t("syncOnboarding.scanning.title", {
+            productName: "Nano", // TODO
+          })}
+        </Text>
+        <Text
+          mb={8}
+          color="neutral.c70"
+          textAlign="center"
+          variant="body"
+          fontWeight="medium"
+        >
+          {t("syncOnboarding.scanning.description", {
+            productName: "Nano", // TODO
+          })}
+        </Text>
         <FlatList
           data={scannedDevices}
           renderItem={renderItem}
