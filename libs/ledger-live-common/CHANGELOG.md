@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 25.2.0-nightly.0
+
+### Minor Changes
+
+- [#764](https://github.com/LedgerHQ/ledger-live/pull/764) [`ebe1adfb7`](https://github.com/LedgerHQ/ledger-live/commit/ebe1adfb7d264da0f8c9e30b84c188eaa931d1e6) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development firmware detection to getDeviceInfo
+
 ## 25.1.0
 
 ### Minor Changes
