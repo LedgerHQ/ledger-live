@@ -99,7 +99,7 @@ const signOperation = ({
         const accountId = account.id;
 
         const fee = transaction.fees || new BigNumber(DEFAULT_FEES);
-        const extra = { memo: transaction.memo || {} };
+        const extra = { memo: transaction.memo || "" };
         const type: OperationType =
           transaction.mode === "undelegate"
             ? "UNDELEGATE"
