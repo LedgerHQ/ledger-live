@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 26.0.0-next.2
+
+### Major Changes
+
+- [#918](https://github.com/LedgerHQ/ledger-live/pull/918) [`a36d1de86`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - fix useAllAmount usage when fees are higher than balance
+
 ## 25.2.0-next.1
 
 ### Minor Changes
