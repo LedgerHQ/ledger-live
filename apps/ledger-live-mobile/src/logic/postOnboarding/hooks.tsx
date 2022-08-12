@@ -89,9 +89,12 @@ export function useNavigateToPostOnboardingHubCallback() {
  * @returns a callback function that can be called to initialize the post
  * onboarding for the given device model
  */
-function useInitPostOnboardingStateCallback(deviceModelId: DeviceModelId) {
+function useInitPostOnboardingStateCallback(
+  deviceModelId: DeviceModelId,
+  mock = false,
+) {
   const dispatch = useDispatch();
-  const actions = getPostOnboardingActionsForDevice(deviceModelId);
+  const actions = getPostOnboardingActionsForDevice(deviceModelId, mock);
   return useCallback(
     () =>
       dispatch(
@@ -113,9 +116,13 @@ function useInitPostOnboardingStateCallback(deviceModelId: DeviceModelId) {
  * onboarding for the given device model and navigate to the post onboarding
  * hub.
  */
-export function useStartPostOnboardingCallback(deviceModelId: DeviceModelId) {
+export function useStartPostOnboardingCallback(
+  deviceModelId: DeviceModelId,
+  mock = false,
+) {
   const initPostOnboardingState = useInitPostOnboardingStateCallback(
     deviceModelId,
+    mock,
   );
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   return useCallback(() => {

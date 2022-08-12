@@ -85,7 +85,13 @@ const ftsPostOnboardingActions: PostOnboardingAction[] = [
 
 export function getPostOnboardingActionsForDevice(
   deviceId: DeviceModelId,
+  mock = false,
 ): PostOnboardingAction[] {
-  if (deviceId === DeviceModelId.nanoFTS) return ftsPostOnboardingActions;
-  return []; // later on we can enable a post onboarding for other devices.
+  switch (deviceId) {
+    case DeviceModelId.nanoFTS:
+      if (mock) return ftsPostOnboardingActions;
+      return [];
+    default:
+      return [];
+  }
 }

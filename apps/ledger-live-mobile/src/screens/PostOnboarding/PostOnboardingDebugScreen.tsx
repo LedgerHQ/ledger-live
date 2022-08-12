@@ -9,7 +9,10 @@ import {
 } from "../../logic/postOnboarding/hooks";
 
 export default () => {
-  const handleInit = useStartPostOnboardingCallback(DeviceModelId.nanoFTS);
+  const handleInit = useStartPostOnboardingCallback(
+    DeviceModelId.nanoFTS,
+    true,
+  );
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   return (
     <Flex>
