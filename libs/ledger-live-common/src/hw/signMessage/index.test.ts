@@ -59,6 +59,12 @@ describe("prepareMessageToSign", () => {
       path: "44'/60'/0'/0/0",
       derivationMode: "ethM",
       message: eIP712Message,
+      hashes: {
+        domainHash:
+          "0x6137beb405d9ff777172aa879e33edb34a1460e701802746c5ef96e741710e59",
+        messageHash:
+          "0x5476346eb09179b1f7d245c11a27ae6c498a419d7fad4d984d5b1e0ad081662a",
+      },
     });
   });
 
