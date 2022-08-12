@@ -1,4 +1,10 @@
-import React, { useMemo, useCallback, useRef, useEffect } from "react";
+import React, {
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+  useState,
+} from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,36 +34,43 @@ export function Widget({ provider, type }: Props) {
 
   const ref = useRef<WebView>();
 
+  // workaround: iOS does not provide a method to clear localStorage for webview. When browser accessing /login, it automatically remove authToken from localStorage only on inital load. (FTX redirects to otx.ftx.com/sso with a new token after user submits login form. Then it re-redirects back to /login to setToken and closeWidget.)
+  const [redirected, setRedirected] = useState(false);
+
   const preload = useMemo(
-    () =>
-      `
-      ${
-        authToken
-          ? `localStorage.setItem("authToken", "${authToken}");`
-          : 'localStorage.removeItem("authToken");'
+    () => `
+      try {
+        window.ledger = {};
+        window.ledger.setToken = token => {
+          const message = JSON.stringify({
+            type: "setToken",
+            token,
+          });
+          window.ReactNativeWebView.postMessage(message);
+        };
+
+        window.ledger.closeWidget = () => {
+          const message = JSON.stringify({
+            type: "closeWidget",
+          });
+          window.ReactNativeWebView.postMessage(message);
+        };
+
+        if (location.pathname.includes("/login") && !${redirected}) {
+          localStorage.removeItem("authToken");
+        } else if (location.pathname.includes("/kyc")) {
+          localStorage.setItem("authToken", ${authToken});
+        }
+
+        localStorage.setItem("theme", "${dark ? "dark" : "light"}");
+
+      } catch(e) {
+        alert(e)
       }
-      localStorage.setItem("theme", "${dark ? "dark" : "light"}");
-
-      window.ledger = { postMessage: data => window.ReactNativeWebView.postMessage(data) };
-
-      window.ledger.setToken = token => {
-        const message = JSON.stringify({
-          type: "setToken",
-          token,
-        });
-        window.ledger.postMessage(message);
-      };
-
-      window.ledger.closeWidget = () => {
-        const message = JSON.stringify({
-          type: "closeWidget",
-        });
-        window.ledger.postMessage(message);
-      };
 
       true;
     `,
-    [authToken, dark],
+    [authToken, dark, redirected],
   );
 
   const handleMessage = useCallback(
@@ -65,6 +78,9 @@ export function Widget({ provider, type }: Props) {
       try {
         const data: Message = JSON.parse(e.nativeEvent.data);
         switch (data.type) {
+          case "navigation":
+            setRedirected(true);
+            break;
           case "setToken":
             dispatch(
               setSwapKYCStatus({

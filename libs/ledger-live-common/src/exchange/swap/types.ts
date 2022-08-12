@@ -333,5 +333,6 @@ export enum ActionRequired {
 }
 
 export type Message =
+  | { type: "navigation" }
   | { type: "setToken"; token: string }
   | { type: "closeWidget" };
