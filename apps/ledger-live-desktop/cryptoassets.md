@@ -19,6 +19,7 @@
 | Elrond | EGLD | YES | elrond |
 | Ethereum | ETH | YES | ethereum |
 | Ethereum Classic | ETC | YES | ethereum_classic |
+| Filecoin | FIL | YES | filecoin |
 | Hedera | HBAR | YES | hedera |
 | Horizen | ZEN | YES | zencash |
 | Komodo | KMD | YES | komodo |
@@ -57,7 +58,6 @@
 | Expanse | EXP | NO | expanse |
 | FIC | FIC | NO | fic |
 | Factom | FCT | NO | factom |
-| Filecoin | FIL | NO | filecoin |
 | Flow | FLOW | NO | flow |
 | GameCredits | GAME | NO | game_credits |
 | GoChain | GO | NO | gochain |

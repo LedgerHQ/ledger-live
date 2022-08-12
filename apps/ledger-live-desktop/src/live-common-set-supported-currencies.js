@@ -44,4 +44,5 @@ setSupportedCurrencies([
   "cosmos_testnet",
   "hedera",
   "cardano",
+  "filecoin",
 ]);

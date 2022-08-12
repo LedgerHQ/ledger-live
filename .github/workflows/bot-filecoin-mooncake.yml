@@ -6,7 +6,7 @@ on:
       - support/filecoin-*
 
 concurrency:
-  group: bot-seed4
+  group: bot-seed4-filecoin
 
 jobs:
   start-runner:
