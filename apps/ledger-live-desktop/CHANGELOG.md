@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.46.0-next.3
+
+### Minor Changes
+
+- [#855](https://github.com/LedgerHQ/ledger-live/pull/855) [`2258f1ae8`](https://github.com/LedgerHQ/ledger-live/commit/2258f1ae8e052761003d2c92efd2e5d00198439e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add banner to external integrations
+
 ## 2.46.0-next.2
 
 ### Patch Changes
