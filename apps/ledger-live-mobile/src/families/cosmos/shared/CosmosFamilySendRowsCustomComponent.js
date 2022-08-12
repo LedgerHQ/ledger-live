@@ -3,7 +3,6 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import type { Account } from "@ledgerhq/types-live";
 import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 import type { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
 import LText from "../../../components/LText";

@@ -12,7 +12,6 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurre
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 
-import type { CosmosDelegationInfo } from "@ledgerhq/live-common/families/cosmos/types";
 import { useSelector } from "react-redux";
 import Section from "../../screens/OperationDetails/Section";
 import { urls } from "../../config/urls";
