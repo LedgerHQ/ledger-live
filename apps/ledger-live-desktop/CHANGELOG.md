@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.46.0-next.4
+
+### Minor Changes
+
+- [#625](https://github.com/LedgerHQ/ledger-live/pull/625) [`258919421`](https://github.com/LedgerHQ/ledger-live/commit/25891942151e4fefbdf6de8cdcf4264c0317f90a) Thanks [@chabroA](https://github.com/chabroA)! - Add navigation option to WebPlatformPlayer
+
 ## 2.46.0-next.3
 
 ### Minor Changes
