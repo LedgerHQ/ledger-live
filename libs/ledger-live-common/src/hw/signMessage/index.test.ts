@@ -78,7 +78,7 @@ describe("prepareMessageToSign", () => {
     }
 
     // Then
-    expect(result).toBeNull();
+    expect(result).toBeUndefined();
     expect(error).toEqual(Error("Crypto does not support signMessage"));
   });
 });
