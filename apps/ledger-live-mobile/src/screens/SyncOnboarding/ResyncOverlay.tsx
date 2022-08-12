@@ -48,12 +48,20 @@ const ResyncOverlay = ({ isOpen, delay = 0 }: Props) => {
           borderRadius={radii[2]}
           p={6}
           flexDirection="row"
+          flexWrap="wrap"
           justifyContent="space-between"
         >
-          <Text pr={3} variant="body" textBreakStrategy="balanced">
+          <Text variant="body" textBreakStrategy="balanced" flexBasis="90%">
             {t("syncOnboarding.resyncOverlay.content")}
           </Text>
-          <InfiniteLoader color="black" size={24} />
+          <Flex
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="center"
+            flexBasis="10%"
+          >
+            <InfiniteLoader color="black" size={24} />
+          </Flex>
         </Flex>
       </Flex>
     </Flex>
