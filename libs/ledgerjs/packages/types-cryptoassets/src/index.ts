@@ -62,6 +62,7 @@ export type FiatCurrency = CurrencyCommon & {
  */
 export type ExplorerView = {
   tx?: string;
+  pending?: string;
   address?: string;
   token?: string;
 };

@@ -15,7 +15,11 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
+import {
+  getDefaultExplorerView,
+  getTransactionExplorer,
+  getPendingTransactionExplorer,
+} from "@ledgerhq/live-common/explorers";
 import {
   findOperationInAccount,
   getOperationAmountNumber,
@@ -166,7 +170,10 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
   const urlWhatIsThis =
     specific && specific.getURLWhatIsThis && specific.getURLWhatIsThis(operation);
   const urlFeesInfo = specific && specific.getURLFeesInfo && specific.getURLFeesInfo(operation);
-  const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
+  const url = !isConfirmed
+    ? getPendingTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash) ||
+      getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash)
+    : getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
   const uniqueSenders = uniq(senders);
 
   const OpDetailsExtra =

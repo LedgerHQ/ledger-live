@@ -11,6 +11,13 @@ export const getTransactionExplorer = (
   txHash: string
 ): string | null | undefined =>
   explorerView && explorerView.tx && explorerView.tx.replace("$hash", txHash);
+export const getPendingTransactionExplorer = (
+  explorerView: ExplorerView | null | undefined,
+  txHash: string
+): string | null | undefined =>
+  explorerView &&
+  explorerView.pending &&
+  explorerView.pending.replace("$hash", txHash);
 export const getAddressExplorer = (
   explorerView: ExplorerView | null | undefined,
   address: string
