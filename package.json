@@ -110,6 +110,9 @@
       "metro-transform-worker": "^0.67.0",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*"
+    },
+    "patchedDependencies": {
+      "usb@2.5.0": "patches/usb@2.5.0.patch"
     }
   }
 }
