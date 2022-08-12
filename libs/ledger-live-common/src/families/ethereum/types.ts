@@ -67,6 +67,10 @@ export type TypedMessageData = {
   verify?: boolean;
   derivationMode: DerivationMode;
   message: EIP712Message;
+  hashes: {
+    domainHash: string;
+    messageHash: string;
+  };
 };
 
 export type TransactionStatus = TransactionStatusCommon;

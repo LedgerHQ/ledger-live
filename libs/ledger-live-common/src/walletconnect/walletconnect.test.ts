@@ -51,6 +51,7 @@ describe("walletconnect", () => {
       })
     ).rejects.toThrow("wrong payload");
   });
+
   test("should parse personal_sign payloads", async () => {
     expect(
       await parseCallRequest(account, {
@@ -61,7 +62,7 @@ describe("walletconnect", () => {
           "0xCA220B75b7aF206bFCc67E2EcE06E2e144FA294a",
         ],
       })
-    ).toEqual({
+    ).toMatchObject({
       data: {
         currency: getCryptoCurrencyById("ethereum"),
         derivationMode: "",
@@ -69,6 +70,10 @@ describe("walletconnect", () => {
         rawMessage:
           "0x4d7920656d61696c206973206a6f686e40646f652e636f6d202d2031353337383336323036313031",
         path: "44'/60'/0'/0/0",
+        hashes: {
+          stringHash:
+            "0x4a15deb26c7084592efc4a5e5dbadfa43ea596391461421145705a1f86494ddd",
+        },
       },
       type: "message",
     });
@@ -85,7 +90,7 @@ describe("walletconnect", () => {
           "0xbfe79ce1b9258204beff46707c50b88a11e02feda203f7f269ab3cf0520fa62f",
         ],
       } as any)
-    ).toEqual({
+    ).toMatchObject({
       data: {
         currency: getCryptoCurrencyById("ethereum"),
         derivationMode: "",
@@ -94,6 +99,10 @@ describe("walletconnect", () => {
         rawMessage:
           "0xbfe79ce1b9258204beff46707c50b88a11e02feda203f7f269ab3cf0520fa62f",
         path: "44'/60'/0'/0/0",
+        hashes: {
+          stringHash:
+            "0x8e7d1635f8457e4ee06862eedde10b668d6e746962af6ba54807fb99493fc5cb",
+        },
       },
       type: "message",
     });
@@ -108,17 +117,23 @@ describe("walletconnect", () => {
         method: "eth_signTypedData",
         params: ["0xCA220B75b7aF206bFCc67E2EcE06E2e144FA294a", raw],
       })
-    ).toEqual({
+    ).toMatchObject({
       data: {
         currency: getCryptoCurrencyById("ethereum"),
         derivationMode: "",
         message: JSON.parse(raw),
         path: "44'/60'/0'/0/0",
-        rawMessage: raw,
+        hashes: {
+          domainHash:
+            "0x4ffaf9cb7df9fe0016d5ea8358cb61ec61875d98a856982d216015abbf371227",
+          messageHash:
+            "0x401419776f57f5162dd05a3072f5941868ac4decfa789e501598997c48a43488",
+        },
       },
       type: "message",
     });
   });
+
   test("should parse eth_sendTransaction payloads", async () => {
     const raw: WCPayloadTransaction = {
       data: "0x",

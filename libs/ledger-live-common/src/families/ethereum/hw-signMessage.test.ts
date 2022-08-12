@@ -62,7 +62,7 @@ describe("Eth hw-signMessage", () => {
       expect(signEIP712HashedMessage).toHaveBeenCalledTimes(1);
     });
 
-    it("should be using the signEIP712Message method with stringified message", async () => {
+    it("should be using the signEIP712Message method with EIP712Message message", async () => {
       setEnv("EXPERIMENTAL_EIP712", true);
 
       await hwSignMessage({} as any, {
@@ -75,7 +75,7 @@ describe("Eth hw-signMessage", () => {
       setEnv("EXPERIMENTAL_EIP712", false);
     });
 
-    it("should be using the signEIP712Message method XXX", async () => {
+    it("should be using the signEIP712HashedMessage method with EIP712Message message", async () => {
       await hwSignMessage({} as any, {
         path: "",
         message: eIP712Message as EIP712Message,

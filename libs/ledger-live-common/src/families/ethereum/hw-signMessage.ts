@@ -68,6 +68,10 @@ export const prepareMessageToSign = (
       path,
       derivationMode,
       message: parsedMessage,
+      hashes: {
+        domainHash: bufferToHex(domainHash(parsedMessage)),
+        messageHash: bufferToHex(messageHash(parsedMessage)),
+      },
     };
   }
 };
