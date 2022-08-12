@@ -45,7 +45,7 @@ const handlers: Record<
       lastActionCompleted: null,
     };
   },
-  POST_ONBOARDING_SET_ACTION_DONE: (
+  POST_ONBOARDING_SET_ACTION_COMPLETED: (
     state,
     action: { actionId: PostOnboardingActionId },
   ) => {
@@ -97,6 +97,12 @@ export const hubStateSelector = ({
     lastActionCompleted,
   };
 };
+
+export const postOnboardingDeviceModelIdSelector = ({
+  postOnboarding,
+}: {
+  postOnboarding: PostOnboardingState;
+}): PostOnboardingState["deviceModelId"] => postOnboarding.deviceModelId;
 
 export const walletPostOnboardingEntryPointVisibleSelector = ({
   postOnboarding,

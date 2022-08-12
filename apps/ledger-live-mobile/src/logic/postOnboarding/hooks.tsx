@@ -9,6 +9,7 @@ import {
 import { getPostOnboardingActionsForDevice, postOnboardingActions } from ".";
 import {
   hubStateSelector,
+  postOnboardingDeviceModelIdSelector,
   walletPostOnboardingEntryPointVisibleSelector,
 } from "../../reducers/postOnboarding";
 import { getFeature } from "../../components/FirebaseFeatureFlags";
@@ -16,7 +17,7 @@ import {
   clearPostOnboardingLastActionCompleted,
   hidePostOnboardingWalletEntryPoint,
   initPostOnboarding,
-  setPostOnboardingActionDone,
+  setPostOnboardingActionCompleted,
 } from "../../actions/postOnboarding";
 import { NavigatorName, ScreenName } from "../../const";
 
@@ -56,6 +57,14 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
  */
 export function usePostOnboardingEntryPointVisibleOnWallet(): boolean {
   return useSelector(walletPostOnboardingEntryPointVisibleSelector);
+}
+
+/**
+ *
+ * @returns the DeviceModelId of the device of the post onboarding.
+ */
+export function usePostOnboardingDeviceModelId() {
+  return useSelector(postOnboardingDeviceModelIdSelector);
 }
 
 /**
@@ -115,11 +124,18 @@ export function useStartPostOnboardingCallback(deviceModelId: DeviceModelId) {
   }, [initPostOnboardingState, navigateToPostOnboardingHub]);
 }
 
-export function useSetActionDoneCallback() {
+export function useHideWalletEntryPointCallback() {
+  const dispatch = useDispatch();
+  return useCallback(() => {
+    dispatch(hidePostOnboardingWalletEntryPoint());
+  }, [dispatch]);
+}
+
+export function useSetActionCompletedCallback() {
   const dispatch = useDispatch();
   return useCallback(
     (actionId: PostOnboardingActionId) =>
-      dispatch(setPostOnboardingActionDone(actionId)),
+      dispatch(setPostOnboardingActionCompleted(actionId)),
     [dispatch],
   );
 }

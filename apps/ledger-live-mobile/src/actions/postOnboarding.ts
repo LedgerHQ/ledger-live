@@ -18,10 +18,10 @@ export const initPostOnboarding = (
   actionsIds,
 });
 
-export const setPostOnboardingActionDone = (
+export const setPostOnboardingActionCompleted = (
   actionId: PostOnboardingActionId,
 ) => ({
-  type: "POST_ONBOARDING_SET_ACTION_DONE",
+  type: "POST_ONBOARDING_SET_ACTION_COMPLETED",
   actionId,
 });
 

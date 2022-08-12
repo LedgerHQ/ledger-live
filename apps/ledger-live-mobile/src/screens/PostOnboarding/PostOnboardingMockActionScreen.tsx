@@ -4,7 +4,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 
 import {
   useNavigateToPostOnboardingHubCallback,
-  useSetActionDoneCallback,
+  useSetActionCompletedCallback,
 } from "../../logic/postOnboarding/hooks";
 import { postOnboardingActions } from "../../logic/postOnboarding";
 import { NavigatorName, ScreenName } from "../../const";
@@ -16,37 +16,40 @@ const PostOnboardingMockActionScreen: React.FC<StackScreenProps<
 >> = ({ navigation, route }) => {
   const { params } = route;
   const { id } = params;
-  const setActionDone = useSetActionDoneCallback();
+  const setActionCompleted = useSetActionCompletedCallback();
   const navigateToHub = useNavigateToPostOnboardingHubCallback();
 
   const action = postOnboardingActions[id];
 
-  const finishAction = useCallback(() => {
-    setActionDone(id);
-  }, [setActionDone, id]);
+  const completeAction = useCallback(() => {
+    setActionCompleted(id);
+  }, [setActionCompleted, id]);
 
   const navigateToWallet = useCallback(() => {
     navigation.navigate(NavigatorName.Main, { screen: ScreenName.Portfolio });
   }, [navigation]);
 
-  const handleFinishAndGoToWallet = useCallback(() => {
-    finishAction();
+  const handleCompleteAndGoToWallet = useCallback(() => {
+    completeAction();
     navigateToWallet();
-  }, [finishAction, navigateToWallet]);
+  }, [completeAction, navigateToWallet]);
 
-  const handleFinishAndGoToHub = useCallback(() => {
-    finishAction();
+  const handleCompleteAndGoToHub = useCallback(() => {
+    completeAction();
     navigateToHub();
-  }, [finishAction, navigateToHub]);
+  }, [completeAction, navigateToHub]);
 
   return (
-    <Flex>
-      <Text>action: {action?.id}</Text>
-      <Button type="main" onPress={handleFinishAndGoToWallet}>
-        Finish action & go to Wallet
+    <Flex p={6}>
+      <Text>
+        This is a mock screen for the post onboarding action:{"\n"}
+        <Text fontWeight="bold">{action?.id}</Text>
+      </Text>
+      <Button mt={6} type="main" onPress={handleCompleteAndGoToWallet}>
+        Complete action & go to Wallet
       </Button>
-      <Button type="main" onPress={handleFinishAndGoToHub}>
-        Finish action & go back to onboarding hub
+      <Button mt={6} type="main" onPress={handleCompleteAndGoToHub}>
+        Complete action & go back to onboarding hub
       </Button>
     </Flex>
   );
