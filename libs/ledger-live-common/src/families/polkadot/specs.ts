@@ -74,7 +74,7 @@ const polkadot: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: pickSiblings(siblings, 1).freshAddress,
+              recipient: sibling.freshAddress,
             },
             {
               amount,
