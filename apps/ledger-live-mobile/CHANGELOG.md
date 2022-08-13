@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.5.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`092a887af`](https://github.com/LedgerHQ/ledger-live/commit/092a887af5a1405a1de3704bc5954c761cd53457)]:
+  - @ledgerhq/native-ui@0.8.4-nightly.0
+
 ## 3.5.1-nightly.0
 
 ### Patch Changes

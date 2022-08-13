@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.8.4-nightly.0
+
+### Patch Changes
+
+- [#891](https://github.com/LedgerHQ/ledger-live/pull/891) [`092a887af`](https://github.com/LedgerHQ/ledger-live/commit/092a887af5a1405a1de3704bc5954c761cd53457) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add h1Inter text variant (h1 with Inter font)
+
 ## 0.8.3
 
 ### Patch Changes
