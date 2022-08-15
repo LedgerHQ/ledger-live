@@ -1348,14 +1348,6 @@
       "link" : "Wie funktionieren ASA-Vermögenswerte?",
       "seeTokens" : "ASA anzeigen ({{tokenCount}})",
       "hideTokens" : "ASA ausblenden ({{tokenCount}})"
-    },
-    "stellar" : {
-      "title" : "Vermögenswerte",
-      "cta" : "Wert hinzufügen",
-      "placeholder" : "Sie können Vermögenswerte zu Ihrem {{currencyName}} Konto hinzufügen.",
-      "link" : "Erfahren Sie mehr über Stellar Vermögenswerte",
-      "seeTokens" : "Vermögenswerte ({{tokenCount}}) anzeigen",
-      "hideTokens" : "Vermögenswerte ({{tokenCount}})verbergen"
     }
   },
   "subAccounts" : {
@@ -1973,6 +1965,19 @@
     "switchButton" : "Zu {{language}} wechseln",
     "no" : "Lieber nicht"
   },
+  "deviceLocalization" : {
+    "language" : "Sprache",
+    "deviceLanguage" : "Geräte-Sprache",
+    "changeLanguage" : "Sprache wechseln",
+    "allowLanguageInstallation" : "Sprachinstallation zulassen",
+    "languageInstalled" : "Sprache erfolgreich gewechselt",
+    "installingLanguage" : "Sprache installieren",
+    "languages" : {
+      "english" : "Englisch",
+      "french" : "Französisch",
+      "spanish" : "Spanisch"
+    }
+  },
   "distribution" : {
     "asset" : "Vermögenswert",
     "price" : "Preis",
@@ -2001,13 +2006,6 @@
         "description2" : "Der Elrond eGold (EGLD) Token ist nativ im Elrond Netzwerk und wird für alle Transaktionen verwendet staken, intelligente Verträge, Governance und Validator-Belohnungen.",
         "description3" : "Wir arbeiten aktiv mit dem Elrond Team zusammen, um mehr Funktionalitäten wie Staking, native ESDT (Elrond Standard Digital Token) Unterstützung und mehr hinzuzufügen.",
         "website" : "Die Internet Scale Blockchain"
-      }
-    }
-  },
-  "cardano" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Der Gesamtkontostand enthält keine Stakingprämien"
       }
     }
   },
@@ -2585,31 +2583,6 @@
           },
           "pending" : {
             "title" : "Sende Transaktion..."
-          },
-          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
-        }
-      }
-    }
-  },
-  "stellar" : {
-    "addAsset" : {
-      "title" : "Wert hinzufügen",
-      "steps" : {
-        "assets" : {
-          "title" : "Vermögenswert",
-          "info" : "Das Hinzufügen eines Vermögenswerts erfordert das Senden einer Transaktion mit Mindestgebühren. Dies wird in Ihrem Transaktionsverlauf angezeigt",
-          "selectLabel" : "Wählen Sie einen Vermögenswert aus",
-          "disabledTooltip" : "Sie haben bereits diesen Vermögenswert in Ihrem Stellar-Konto"
-        },
-        "connectDevice" : {
-          "title" : "Gerät"
-        },
-        "confirmation" : {
-          "title" : "Bestätigung",
-          "success" : {
-            "title" : "{{token}}-Vermögenswert erfolgreich hinzugefügt",
-            "text" : "Sie können jetzt <0>{{token}}</0> Vermögenswerte auf Ihrem Stellar-Konto empfangen und senden.",
-            "cta" : "Details anzeigen"
           },
           "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
         }
@@ -3780,20 +3753,7 @@
         "MEMO_HASH" : "Memo Hash",
         "MEMO_RETURN" : "Memo-Rückgabe"
       },
-      "memoWarningText" : "Wenn Sie ein Memo verwenden, überprüfen Sie sorgfältig den verwendeten Typ mit dem Empfänger",
-      "fee" : "Gebühren",
-      "feeInfoText" : "Für Transaktionen im Stellar-Netzwerk wird eine Mindesttransaktionsgebühr von 0,00001 XLM erhoben.",
-      "suggested" : "Empfohlen",
-      "recommendedFee" : "Empfohlene Gebühren",
-      "recommenndedFeeInfo" : "Die Transaktion kann auch mit einer niedrigeren Gebühr als der empfohlenen eingereicht werden, aber sie wird möglicherweise nicht abgeschlossen.",
-      "networkCongestion" : "Netzüberlastung",
-      "networkCongestionLevel" : {
-        "LOW" : "Niedrig",
-        "MEDIUM" : "Medium",
-        "HIGH" : "Hoch"
-      },
-      "assetCode" : "Vermögenswerte-Code",
-      "assetIssuer" : "Emittent der Vermögenswerte"
+      "memoWarningText" : "Wenn Sie ein Memo verwenden, überprüfen Sie sorgfältig den verwendeten Typ mit dem Empfänger"
     },
     "cosmos" : {
       "memo" : "Memo",
@@ -3984,6 +3944,14 @@
     "HardResetFail" : {
       "title" : "Entschuldigung, die Verbindung konnte nicht zurückgesetzt werden",
       "description" : "Bitte versuchen Sie es erneut oder wenden Sie sich an den Ledger Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Sprachinstallation auf dem Gerät abgelehnt",
+      "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
+    },
+    "LanguageNotFound" : {
+      "title" : "Die Sprache wurde nicht gefunden",
+      "description" : "Die Sprache, die Sie installieren möchten, wurde nicht gefunden. Bitte versuchen Sie, eine andere Sprache zu installieren."
     },
     "LatestMCUInstalledError" : {
       "title" : "Entschuldigung, es gibt nichts zu aktualisieren",
@@ -4346,8 +4314,14 @@
     "FeeTooHigh" : {
       "title" : "Die Netzwerkgebühren liegen über 10 % des Betrags"
     },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo-Format ist falsch"
+    },
     "SourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign um {{currencyName}} zu senden"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Beim Senden an diesen Empfänger kann ein Memo erforderlich sein"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "Betrag muss größer sein als {{minAmountFromFormatted}}"
@@ -4415,47 +4389,6 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "Sie haben die Anzahl der verfügbaren Token überschritten"
-    },
-    "CardanoMinAmountError" : {
-      "title" : "Der Mindestbetrag, der versendet werden kann, ist {{amount}} ADA"
-    },
-    "CardanoNotEnoughFunds" : {
-      "title" : "Bitte vergewissern Sie sich, dass Sie ausreichend Geld für die Bezahlung der Gebühren haben"
-    },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo-Format ist falsch"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Beim Senden an diesen Empfänger kann ein Memo erforderlich sein"
-    },
-    "StellarAssetNotAccepted" : {
-      "title" : "Dieser Empfänger hat noch keine Trustline zu {{assetCode}}"
-    },
-    "StellarAssetRequired" : {
-      "title" : "Vor dem Hinzufügen einer Trustline sollte ein Stellar-Vermögenswert ausgewählt werden"
-    },
-    "StellarAssetNotFound" : {
-      "title" : "Der ausgewählte Stellar-Vermögenswert konnte nicht gefunden werden"
-    },
-    "StellarNotEnoughNativeBalance" : {
-      "title" : "Entschuldigung, Guthaben reicht nicht aus",
-      "description" : "Bitte vergewissern Sie sich, dass das Konto ausreichend gedeckt ist, um die Transaktionsgebühr zu decken."
-    },
-    "StellarFeeSmallerThanRecommended" : {
-      "title" : "Die gewählte Gebühr ist niedriger als die empfohlene Gebühr"
-    },
-    "StellarFeeSmallerThanBase" : {
-      "title" : "Die Mindesttransaktionsgebühr beträgt 0,00001 XLM"
-    },
-    "StellarNotEnoughNativeBalanceToAddTrustline" : {
-      "title" : "Entschuldigung, Guthaben reicht nicht aus",
-      "description" : "Vergewissern Sie sich, dass das Konto genügend Deckung für die neue Trustline aufweist."
-    },
-    "StellarMuxedAccountNotExist" : {
-      "title" : "Stellar-Konto existiert nicht"
-    },
-    "StellarSourceHasMultiSign" : {
-      "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
     }
   },
   "cryptoOrg" : {
@@ -4482,20 +4415,6 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
-    },
-    "send" : {
-      "memo" : {
-        "label" : "Memo (Optional)",
-        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
-      }
-    }
-  },
-  "drawers" : {
-    "selectCurrency" : {
-      "title" : "Vermögenswert auswählen"
-    },
-    "selectAccount" : {
-      "title" : "Konto auswählen"
     }
   }
 }
