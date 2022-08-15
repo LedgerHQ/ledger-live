@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "Bénéficiaire non valide"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Installation de la langue refusée sur l’appareil",
+      "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Langue non trouvée",
+      "description" : "Impossible de trouver la langue que vous souhaitez installer. Veuillez essayer d’installer une autre langue."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Pas de mise à jour disponible",
       "description" : "Si vous ne pouvez pas utiliser votre appareil, contactez l’Assistance Ledger."
@@ -560,14 +568,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "Le format d’adresse Legacy n’est plus pris en charge."
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Format du mémo incorrect"
-    },
     "SourceHasMultiSign" : {
       "title" : "Désactivez la multisignature pour envoyer des {{currencyName}}."
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Un mémo peut être nécessaire lors de l’envoi à ce bénéficiaire."
     },
     "StratisDown2021Warning" : {
       "description" : "La blockchain Stratis a évolué et pourrait ne plus fonctionner correctement. La blockchain Stratis d’origine continuera d’être prise en charge jusqu’au 16 octobre 2021."
@@ -644,7 +646,45 @@
       "title" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
     },
     "CardanoMinAmountError" : {
-      "title" : "Montant minimal d’ADA requis : {{amount}}"
+      "title" : "Montant minimal pouvant être envoyé : {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Format du mémo incorrect"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Un mémo peut être nécessaire lors de l’envoi à ce bénéficiaire."
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Ce bénéficiaire n’a pas encore de trustline avec {{assetCode}}"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Sélectionnez un actif Stellar avant d’ajouter une trustline"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "L’actif Stellar sélectionné n’a pas été trouvé"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Solde insuffisant",
+      "description" : "Veuillez vérifier que vous avez assez de fonds sur votre compte pour couvrir les frais de transaction."
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Frais définis inférieurs au montant recommandé"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Les frais de transaction minimaux sont de 0,00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Solde insuffisant",
+      "description" : "Veuillez vérifier que vous avez assez de fonds sur votre compte pour ajouter cette nouvelle trustline."
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Ce compte Stellar n’existe pas"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
     }
   },
   "bluetooth" : {
@@ -820,25 +860,26 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Vous aimez Ledger Live ?",
-      "description" : "L’app vous plaît ou vous pensez que nous pouvons l’améliorer ? Vos commentaires sont indispensables pour nous.",
+      "title" : "Que pensez-vous de l’app ?",
+      "description" : "Vos commentaires nous aident à perfectionner Ledger Live.",
       "cta" : {
-        "enjoy" : "C’est super",
-        "disappointed" : "Je suis déçu(e)",
+        "enjoy" : "Très satisfait(e)",
+        "disappointed" : "Déçu(e)",
         "notNow" : "Pas maintenant"
       }
     },
     "enjoy" : {
-      "title" : "Vous êtes super, vous aussi",
-      "description" : "Nous vous invitons à donner votre avis. Votre soutien nous est précieux et nous encourage à développer de nouvelles fonctionnalités.",
+      "title" : "Notez l’app",
+      "description" : "Nous vous invitons à partager votre avis. Votre soutien nous est précieux et nous encourage à développer de nouvelles fonctionnalités.",
       "cta" : {
-        "rate" : "Attribuez-nous 5 étoiles",
+        "rate" : "Noter 5 étoiles",
         "notNow" : "Pas maintenant"
       }
     },
     "disappointed" : {
       "title" : "Aidez-nous à faire mieux",
-      "description" : "Notre mission est d’améliorer l’app, et vos commentaires nous aident à répondre à vos besoins.",
+      "description" : "Si vous avez besoin d’aide ou souhaitez être recontacté(e), n’hésitez pas à utiliser notre chat en direct :",
+      "here" : "ici",
       "cta" : {
         "sendFeedback" : "Envoyer un commentaire",
         "notNow" : "Pas maintenant"
@@ -930,9 +971,9 @@
         "title" : "Gagner",
         "desc" : "Gagnez des récompenses passives et faites fructifier vos cryptos."
       },
-      "mint": {
-        "title": "Minter",
-        "desc": "Mintez et acquérez des NFT de collaborations exclusives sur le [ L ] Market."
+      "mint" : {
+        "title" : "Minter",
+        "desc" : "Mintez et acquérez les NFT de collaborations exclusives sur [ L ] Market"
       }
     },
     "comingSoon" : "Prochainement",
@@ -1050,7 +1091,7 @@
       "2" : {
         "label" : "Les bases",
         "title" : "Restez hors ligne",
-        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de vos cryptos avec votre Nano."
+        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction en cryptos avec votre Nano."
       },
       "3" : {
         "label" : "Les bases",
@@ -1216,7 +1257,7 @@
         "nextStep" : "Étape suivante"
       },
       "hideRecoveryPhrase" : {
-        "title" : "Cacher votre phrase de récupération",
+        "title" : "Cachez votre phrase de récupération",
         "desc" : "Votre phrase de récupération est votre seule façon d’accéder à vos cryptos si vous ne pouvez plus utiliser votre Nano. La garder en lieu sûr est crucial.",
         "bullets" : {
           "0" : {
@@ -1753,6 +1794,13 @@
         "howTo" : "Vous pouvez ajouter des actifs à votre compte Algorand.",
         "addAsa" : "Ajouter des ASA (actif)",
         "howAsaWorks" : "Le fonctionnement des ASA (actif)"
+      },
+      "stellar" : {
+        "seeMore" : "Afficher plus d’actifs",
+        "seeLess" : "Afficher moins d’actifs",
+        "addTokens" : "Ajouter des actifs",
+        "howTo" : "Vous pouvez ajouter des actifs à votre compte Stellar",
+        "addAsset" : "Ajouter un actif"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1949,12 @@
         "showTokens_plural" : "Afficher {{length}} ASA",
         "hideTokens" : "Cacher l’ASA",
         "hideTokens_plural" : "Cacher l’ASA"
+      },
+      "stellar" : {
+        "showTokens" : "Afficher {{length}} actif",
+        "showTokens_plural" : "Afficher {{length}} actifs",
+        "hideTokens" : "Cacher l’actif",
+        "hideTokens_plural" : "Cacher les actifs"
       }
     },
     "noResultsFound" : "Aucun actif trouvé",
@@ -2055,8 +2109,8 @@
       "privacyPolicy" : "Politique de confidentialité",
       "privacyPolicyDesc" : "Découvrez les données personnelles que nous collectons, à quelles fins et comment nous les utilisons.",
       "liveReview" : {
-        "title" : "Commentaires",
-        "desc" : "Faites-nous part de vos commentaires sur l’app",
+        "title" : "Avis",
+        "desc" : "Faites-nous part de vos commentaires sur l’app.",
         "ios" : "Donnez votre avis dans l’App Store",
         "android" : "Donnez votre avis dans le Google Play Store"
       }
@@ -2157,7 +2211,7 @@
       "verifyAgain" : "Revérifier",
       "noAccount" : "Aucun compte trouvé",
       "address" : "Adresse du compte",
-      "copyAddress" : "Copier l’adresse",
+      "copyAddress" : "Copier",
       "shareAddress" : "Partager l’adresse",
       "addressCopied" : "Adresse copiée",
       "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
@@ -3259,7 +3313,9 @@
     "newVersion" : "Nouvelle version {{version}} disponible pour votre {{deviceName}}",
     "drawerUpdate" : {
       "title" : "Mise à jour du micrologiciel",
-      "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur"
+      "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur",
+      "pleaseConnectUsbTitle" : "Câble USB nécessaire",
+      "pleaseConnectUsbDescription" : "Connectez votre {{deviceName}} à votre téléphone avec un câble USB pour lancer la mise à jour du micrologiciel."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3285,6 +3341,19 @@
       "es" : "Espagnol",
       "zh" : "Chinois",
       "de" : "Allemand"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Langue",
+    "deviceLanguage" : "Langue de l’appareil",
+    "changeLanguage" : "Changer la langue",
+    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
+    "languageInstalled" : "Votre appareil est maintenant en {{language}}.",
+    "installingLanguage" : "Installation de la langue",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3381,6 +3450,13 @@
       }
     }
   },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Le solde total ne comprend pas les récompenses de staking"
+      }
+    }
+  },
   "celo" : {
     "info" : {
       "available" : {
@@ -3401,7 +3477,7 @@
       },
       "undelegating" : {
         "title" : "Délégation interrompue",
-        "description" : "Les actifs dont la délégation est interrompue sont immobilisés pendant 21 jours avant d’être disponibles."
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 21 jours."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -3444,7 +3520,7 @@
               "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
             },
             "warning" : {
-              "description" : "Choisissez votre validateur judicieusement : une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement."
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             },
             "cta" : "Continuer"
           },
@@ -3734,6 +3810,7 @@
     }
   },
   "stellar" : {
+    "token" : "Actifs",
     "memo" : {
       "title" : "Mémo",
       "warning" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire."
@@ -3744,6 +3821,48 @@
       "MEMO_ID" : "Identifiant du mémo",
       "MEMO_HASH" : "Hash du mémo",
       "MEMO_RETURN" : "Retour du mémo"
+    },
+    "fee" : "Frais de réseau",
+    "feeAction" : "Mettre à jour les frais",
+    "recommendedFee" : "Frais recommandés",
+    "recommenndedFeeInfo" : "Vous pouvez émettre cette transaction avec des frais inférieurs à ceux recommandés, mais elle ne sera peut être pas traitée.",
+    "suggested" : "Suggérés",
+    "networkCongestion" : "Activité sur le réseau",
+    "networkCongestionLevel" : {
+      "LOW" : "Basse",
+      "MEDIUM" : "Moyenne",
+      "HIGH" : "Élevée"
+    },
+    "assetCode" : "Code de l’actif",
+    "assetIssuer" : "Émetteur de l’actif",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "Ajouter un actif",
+        "connectDevice" : "Connecter l’appareil",
+        "verification" : "Vérification",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "Actif déjà ajouté",
+              "description" : "Vous avez déjà des {{token}} dans votre compte Stellar."
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actif {{token}} bien ajouté",
+              "text" : "Vous pouvez maintenant recevoir et envoyer des <0>{{token}}</0> sur votre compte Stellar.",
+              "cta" : "Voir les détails"
+            },
+            "pending" : {
+              "title" : "Diffusion de la transaction..."
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4407,6 +4526,16 @@
     },
     "operations" : {
       "title" : "Historique des transactions"
+    }
+  },
+  "hedera" : {
+    "name" : "Hedera",
+    "createHederaAccountHelp" : {
+      "text" : "Consultez cet article d’assistance pour",
+      "link" : "découvrir comment créer un compte Hedera"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
     }
   }
 }
