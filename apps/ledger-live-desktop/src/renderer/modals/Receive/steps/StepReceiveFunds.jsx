@@ -228,7 +228,7 @@ const StepReceiveFunds = (props: StepProps) => {
                 <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
                   <Trans i18nKey="common.reverify" />
                 </Button>
-                <Button data-test-id="modal-continue-button" primary onClick={onClose}>
+                <Button data-test-id="modal-done-button" primary onClick={onClose}>
                   <Trans i18nKey="common.done" />
                 </Button>
               </Box>

@@ -548,7 +548,12 @@ export const renderError = ({
           {withOpenManager ? (
             <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
           ) : onRetry ? (
-            <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
+            <Button
+              data-test-id="modal-retry-button"
+              primary
+              ml={withExportLogs ? 4 : 0}
+              onClick={onRetry}
+            >
               <Trans i18nKey="common.retry" />
             </Button>
           ) : null}

@@ -1,8 +1,16 @@
 import { _electron as electron } from "playwright";
-import { test as base, expect, Page, ElectronApplication } from "@playwright/test";
+import {
+  test as base,
+  expect,
+  request,
+  Page,
+  ElectronApplication,
+  APIRequestContext,
+} from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
+// import { createSpeculosDevice } from "../../../../libs/ledger-live-common/src/load/speculos";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 
 export function generateUUID(): string {
@@ -17,6 +25,9 @@ type TestFixtures = {
   userdataOriginalFile: string;
   userdataFile: any;
   env: Record<string, any>;
+  speculosApp: any;
+  speculos: any; //
+  speculosApiContext: APIRequestContext;
   page: Page;
   featureFlags: { [key in FeatureId]?: Feature };
 };
@@ -37,14 +48,55 @@ const test = base.extend<TestFixtures>({
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
     use(fullFilePath);
   },
+  speculosApp: undefined,
+  speculos: async ({ speculosApp }, use) => {
+    if (speculosApp) {
+      const apduPort = "40000";
+      const apiPort = "5001";
+      const deviceProxy = "ws://localhost:8435";
+
+      /*
+      const device = await createSpeculosDevice(
+        {
+          model: "nanoS",
+          firmware: "2.0",
+          appName: speculosApp.appName,
+          appVersion: speculosApp.appVersion,
+          dependency: speculosApp.appDependency,
+          seed: "secret",
+          coinapps: "../../../../../coin-apps",
+        },
+        1,
+      );
+      */
+
+      use({ apduPort, apiPort, deviceProxy });
+    }
+  },
+  speculosApiContext: async ({ speculos }, use) => {
+    const context = await request.newContext({
+      baseURL: `http://localhost:${speculos.apiPort}`,
+    });
+    await context.delete("/events"); // Reset events
+    await use(context);
+    await context.dispose();
+  },
   page: async (
     {
+     
       lang,
+     
       theme,
+     
       userdata,
+     
       userdataDestinationPath,
+     
       userdataOriginalFile,
+     
       env,
+      speculos,
+   ,
       featureFlags,
     }: TestFixtures,
     use: (page: Page) => void,
@@ -66,6 +118,9 @@ const test = base.extend<TestFixtures>({
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
         LEDGER_MIN_HEIGHT: 768,
+        SPECULOS_APDU_PORT: speculos.apduPort,
+        SPECULOS_API_PORT: speculos.apiPort,
+        DEVICE_PROXY_URL: speculos.deviceProxy,
         FEATURE_FLAGS: JSON.stringify(featureFlags),
       },
       env,

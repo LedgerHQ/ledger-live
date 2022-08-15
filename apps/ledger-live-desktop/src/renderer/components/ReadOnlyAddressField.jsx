@@ -126,7 +126,7 @@ function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
               <Trans i18nKey="common.addressCopied" />
             </CopyFeedback>
           )}
-          <AddressWrapper>
+          <AddressWrapper data-test-id="receive-verify-address">
             <span>{addressSegments[0]}</span>
             <span>{addressSegments[1]}</span>
           </AddressWrapper>

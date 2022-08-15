@@ -93,6 +93,7 @@ export async function createSpeculosDevice(
   const vncPort = 41000 + idCounter;
   const buttonPort = 42000 + idCounter;
   const automationPort = 43000 + idCounter;
+  const apiPort = 44000 + idCounter;
 
   const sdk = inferSDK(firmware, model);
 
@@ -112,6 +113,8 @@ export async function createSpeculosDevice(
     `${buttonPort}:42000`,
     "-p",
     `${automationPort}:43000`,
+    "-p",
+    `${apiPort}:43000`,
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
@@ -139,6 +142,8 @@ export async function createSpeculosDevice(
     "42000",
     "--automation-port",
     "43000",
+    "--api-port",
+    "44000",
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
