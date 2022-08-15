@@ -1348,14 +1348,6 @@
       "link" : "كيف تعمل أصول (ASA)؟",
       "seeTokens" : "عرض ASA ({{tokenCount}})",
       "hideTokens" : "إخفاء ASA ({{tokenCount}})"
-    },
-    "stellar" : {
-      "title" : "أصول",
-      "cta" : "إضافة أصل",
-      "placeholder" : "يمكنك إضافة الأصول إلى حسابك {{currencyName}}.",
-      "link" : "تعرف على المزيد حول أصول Stellar",
-      "seeTokens" : "إظهار الأصول ({{tokenCount}})",
-      "hideTokens" : "إخفاء الأصول ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1973,6 +1965,19 @@
     "switchButton" : "التبديل إلى {{language}}",
     "no" : "أفضل عدم القيام بذلك"
   },
+  "deviceLocalization" : {
+    "language" : "اللغة",
+    "deviceLanguage" : "لغة الجهاز",
+    "changeLanguage" : "تغيير اللغة",
+    "allowLanguageInstallation" : "اسمح بتثبيت اللغة",
+    "languageInstalled" : "تم تغيير اللغة بنجاح",
+    "installingLanguage" : "جاري تثبيت اللغة",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "distribution" : {
     "asset" : "الأصل",
     "price" : "السعر",
@@ -2001,13 +2006,6 @@
         "description2" : "رمز Elrond eGold (EGLD) أصلي لشبكة Elrond وسيتم استخدامه لكل شيء من المعاملات، والتكديس، والعقود الذكية، والحوكمة، ومكافآت المدقق.",
         "description3" : "نحن نعمل بنشاط مع فريق Elrond لإضافة المزيد من الوظائف، مثل التكديس، دعم ESDT الأصلي (رمز Elrond الرقمي القياسي) ، وأكثر من ذلك.",
         "website" : "سلسلة كتل الإنترنت القابلة للتوسع"
-      }
-    }
-  },
-  "cardano" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "الرصيد الإجمالي لا يشمل مكافآت التكديس"
       }
     }
   },
@@ -2585,31 +2583,6 @@
           },
           "pending" : {
             "title" : "يتم بث المعاملة..."
-          },
-          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
-        }
-      }
-    }
-  },
-  "stellar" : {
-    "addAsset" : {
-      "title" : "إضافة أصل",
-      "steps" : {
-        "assets" : {
-          "title" : "أصل",
-          "info" : "إضافة أحد الأصول يتطلب إرسال معاملة بحد أدنى للرسوم. ستظهر هذه المعاملة في سجل المعاملات لديك",
-          "selectLabel" : "اختر أصل",
-          "disabledTooltip" : "لديك هذا الأصل بالفعل في حسابك Stellar"
-        },
-        "connectDevice" : {
-          "title" : "جهاز"
-        },
-        "confirmation" : {
-          "title" : "تأكيد",
-          "success" : {
-            "title" : "تمت إضافة أصل {{token}} بنجاح",
-            "text" : "يمكنك الآن تلقي وإرسال أصول <0>{{token}}</0> على حسابك Stellar.",
-            "cta" : "عرض التفاصيل"
           },
           "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
         }
@@ -3780,20 +3753,7 @@
         "MEMO_HASH" : "دالة تجزئة الملاحظة",
         "MEMO_RETURN" : "إرجاع الملاحظة"
       },
-      "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من النوع المستخدم مع المستلم",
-      "fee" : "رسوم",
-      "feeInfoText" : "إجراء معاملة على شبكة Stellar يتطلب حد أدنى من رسوم المعاملة يبلغ 0.00001 XLM",
-      "suggested" : "مُقترح",
-      "recommendedFee" : "الرسوم الموصى بها",
-      "recommenndedFeeInfo" : "ما زال بإمكانك إرسال هذه المعاملة برسوم أقل من الموصى بها ولكن ربّما لا تكتمل",
-      "networkCongestion" : "ازدحام الشبكة",
-      "networkCongestionLevel" : {
-        "LOW" : "منخفضة",
-        "MEDIUM" : "متوسط",
-        "HIGH" : "مرتفعة"
-      },
-      "assetCode" : "كود الأصل",
-      "assetIssuer" : "مُصدر الأصل"
+      "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من النوع المستخدم مع المستلم"
     },
     "cosmos" : {
       "memo" : "ملاحظة (تسمية الوجهة)",
@@ -3984,6 +3944,14 @@
     "HardResetFail" : {
       "title" : "عذراً، لا يمكن إعادة التعيين",
       "description" : "يرجى المحاولة مرة أخرى أو الاتصال بدعم ليدجر إذا استمرت المشكلة."
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "تم رفض تثبيت اللغة على الجهاز",
+      "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "لم يتم العثور على اللغة",
+      "description" : "لم يتم العثور على اللغة التي تحاول تثبيتها. يرجى محاولة تثبيت لغة أخرى."
     },
     "LatestMCUInstalledError" : {
       "title" : "عذراً، لا يوجد شيء للتحديث",
@@ -4346,8 +4314,14 @@
     "FeeTooHigh" : {
       "title" : "رسوم الشبكة أعلى من %10 من المبلغ"
     },
+    "StellarWrongMemoFormat" : {
+      "title" : "صيغة الملاحظة خاطئة"
+    },
     "SourceHasMultiSign" : {
       "title" : "يرجى تعطيل خاصية التوقيع المتعدد لإرسال {{currencyName}}"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "قد يلزم إضافة ملاحظة عند الإرسال إلى هذا المستلم"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "يجب أن يكون المبلغ على الأقل {{minAmountFromFormatted}}"
@@ -4415,47 +4389,6 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "لقد تجاوزت عدد رموز التوكن المتاحة"
-    },
-    "CardanoMinAmountError" : {
-      "title" : "الحد الأدنى للمبلغ القابل للإرسال هو {{amount}} ADA"
-    },
-    "CardanoNotEnoughFunds" : {
-      "title" : "يرجى التأكد أن لديك أرصدة مالية كافية لدفع الرسوم."
-    },
-    "StellarWrongMemoFormat" : {
-      "title" : "صيغة الملاحظة خاطئة"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "قد يلزم إضافة ملاحظة عند الإرسال إلى هذا المستلم"
-    },
-    "StellarAssetNotAccepted" : {
-      "title" : "هذا المستلم ليس لديه خط ثقة (trustline) إلى {{assetCode}} بعد."
-    },
-    "StellarAssetRequired" : {
-      "title" : "يجب اختيار أصل Stellar قبل إضافة خط ثقة (trustline)"
-    },
-    "StellarAssetNotFound" : {
-      "title" : "لا يمكن العثور على أصل Stellar الذي تم اختياره"
-    },
-    "StellarNotEnoughNativeBalance" : {
-      "title" : "عفواً، الأموال المتوفرة غير كافية",
-      "description" : "يرجى التأكد من أن الحساب به أموال كافية لتغطية رسوم المعاملة"
-    },
-    "StellarFeeSmallerThanRecommended" : {
-      "title" : "الرسوم التي تم تحديدها أقل من الرسوم الموصى بها"
-    },
-    "StellarFeeSmallerThanBase" : {
-      "title" : "الحد الأدنى لرسوم المعاملة هو 0.00001 XLM."
-    },
-    "StellarNotEnoughNativeBalanceToAddTrustline" : {
-      "title" : "عفواً، الأموال المتوفرة غير كافية",
-      "description" : "يرجى التأكد من أن الحساب به أموال كافية لتغطية خط الثقة (trustline) الجديد"
-    },
-    "StellarMuxedAccountNotExist" : {
-      "title" : "حساب Stellar غير موجود"
-    },
-    "StellarSourceHasMultiSign" : {
-      "title" : "يرجى تعطيل التوقيع المتعدد لإجراء معاملات Stellar"
     }
   },
   "cryptoOrg" : {
@@ -4482,20 +4415,6 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
-    },
-    "send" : {
-      "memo" : {
-        "label" : "ملاحظة (اختيارية)",
-        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
-      }
-    }
-  },
-  "drawers" : {
-    "selectCurrency" : {
-      "title" : "اختر أصل"
-    },
-    "selectAccount" : {
-      "title" : "اختر حساب"
     }
   }
 }
