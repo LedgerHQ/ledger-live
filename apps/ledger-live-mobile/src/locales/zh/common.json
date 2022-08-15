@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "无效的接收方"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "语言安装被设备端拒绝",
+      "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+    },
+    "LanguageNotFound" : {
+      "title" : "未找到语言",
+      "description" : "未找到您尝试安装的语言。请尝试安装其他语言。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "对不起，没有可更新的内容",
       "description" : "如果设备无法使用，请联系 Ledger 客服。"
@@ -930,9 +938,9 @@
         "title" : "赚取",
         "desc" : "赚取被动收入并增长加密资产"
       },
-      "mint": {
-        "title": "铸造",
-        "desc": "通过 [ L ] Market 市场上的独家合作来铸造 NFT"
+      "mint" : {
+        "title" : "铸造",
+        "desc" : "通过 [ L ] 市场上的独家合作来铸造 NFT"
       }
     },
     "comingSoon" : "敬请期待",
@@ -3285,6 +3293,19 @@
       "es" : "Español",
       "zh" : "中文（简体）",
       "de" : "Deutsch"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "语言",
+    "deviceLanguage" : "设备语言",
+    "changeLanguage" : "更改语言",
+    "allowLanguageInstallation" : "允许安装语言",
+    "languageInstalled" : "设备语言已更改为 {{language}}",
+    "installingLanguage" : "正在安装语言",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
     }
   },
   "FirmwareUpdateCheckId" : {
