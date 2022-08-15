@@ -1348,14 +1348,6 @@
       "link" : "Como os Ativos (ASA) funcionam?",
       "seeTokens" : "Mostrar ASA ({{tokenCount}})",
       "hideTokens" : "Ocultar ASA ({{tokenCount}})"
-    },
-    "stellar" : {
-      "title" : "Ativos",
-      "cta" : "Adicionar Ativo",
-      "placeholder" : "Você pode adicionar ativos à sua conta {{currencyName}}.",
-      "link" : "Saiba mais sobre os ativos Stellar",
-      "seeTokens" : "Mostrar Ativos ({{tokenCount}})",
-      "hideTokens" : "Ocultar Ativos ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1973,6 +1965,19 @@
     "switchButton" : "Alterar para {{language}}",
     "no" : "Eu prefiro não"
   },
+  "deviceLocalization" : {
+    "language" : "Idioma",
+    "deviceLanguage" : "Idioma do dispositivo",
+    "changeLanguage" : "Mudar Idioma",
+    "allowLanguageInstallation" : "Permitir instalação do idioma",
+    "languageInstalled" : "Idioma alterado com sucesso",
+    "installingLanguage" : "Instalando Idioma",
+    "languages" : {
+      "english" : "Inglês",
+      "french" : "Francês",
+      "spanish" : "Espanhol"
+    }
+  },
   "distribution" : {
     "asset" : "Ativo",
     "price" : "Preço",
@@ -2001,13 +2006,6 @@
         "description2" : "O Token Elrond eGold (EGLD) é nativo da Rede Elrond e será usado para tudo, desde transações, staking, contratos inteligentes, governança e recompensas para validadores.",
         "description3" : "Estamos trabalhando ativamente com a equipe da Elrond para adicionar mais funcionalidades, como staking, suporte nativo ao ESDT (Elrond Standard Digital Token) e muito mais.",
         "website" : "A Internet Scale Blockchain"
-      }
-    }
-  },
-  "cardano" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Total balance doesn't include staking rewards"
       }
     }
   },
@@ -2585,31 +2583,6 @@
           },
           "pending" : {
             "title" : "Transmitindo Transação..."
-          },
-          "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
-        }
-      }
-    }
-  },
-  "stellar" : {
-    "addAsset" : {
-      "title" : "Adicionar Ativo",
-      "steps" : {
-        "assets" : {
-          "title" : "Ativo",
-          "info" : "Para adicionar um ativo, é necessário enviar uma transação com taxas mínimas. Isto aparecerá no seu histórico de transações",
-          "selectLabel" : "Escolha um ativo",
-          "disabledTooltip" : "Você já tem este ativo em sua conta Stellar"
-        },
-        "connectDevice" : {
-          "title" : "Dispositivo"
-        },
-        "confirmation" : {
-          "title" : "Confirmação",
-          "success" : {
-            "title" : "Ativo {{token}} adicionado com sucesso",
-            "text" : "Agora você pode receber e enviar <0>{{token}}</0> ativos na sua conta Stellar.",
-            "cta" : "Ver Detalhes"
           },
           "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
         }
@@ -3780,20 +3753,7 @@
         "MEMO_HASH" : "Hash do memo",
         "MEMO_RETURN" : "Retorno do memo"
       },
-      "memoWarningText" : "Ao usar um memo, verifique cuidadosamente o tipo de memo usado com o destinatário",
-      "fee" : "Taxas",
-      "feeInfoText" : "As transações na rede Stellar requerem uma taxa de transação mínima de 0,00001 XLM",
-      "suggested" : "Sugerido",
-      "recommendedFee" : "Taxa Recomendada",
-      "recommenndedFeeInfo" : "Você pode enviar esta transação com uma taxa mais baixa do que a recomendada, mas ela pode não ser concluída",
-      "networkCongestion" : "congestionamento de rede",
-      "networkCongestionLevel" : {
-        "LOW" : "Baixo",
-        "MEDIUM" : "Médio",
-        "HIGH" : "Alto"
-      },
-      "assetCode" : "Código do ativo",
-      "assetIssuer" : "Emissor do ativo"
+      "memoWarningText" : "Ao usar um memo, verifique cuidadosamente o tipo de memo usado com o destinatário"
     },
     "cosmos" : {
       "memo" : "Memo",
@@ -3984,6 +3944,14 @@
     "HardResetFail" : {
       "title" : "Não foi possível redefinir",
       "description" : "Se o problema persistir, tente novamente ou contate o Suporte Ledger."
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Instalação de idioma recusada no dispositivo",
+      "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Idioma não encontrado",
+      "description" : "O idioma que você está tentando instalar não foi encontrado. Tente instalar outro idioma."
     },
     "LatestMCUInstalledError" : {
       "title" : "Não há nada para atualizar",
@@ -4346,8 +4314,14 @@
     "FeeTooHigh" : {
       "title" : "As taxas de rede estão acima de 10% da quantia"
     },
+    "StellarWrongMemoFormat" : {
+      "title" : "O formato do memo está incorreto"
+    },
     "SourceHasMultiSign" : {
       "title" : "Desative a assinatura múltipla para enviar {{currencyName}}"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Pode ser necessário um memo ao enviar a este destinatário"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "A quantia deve ser pelo menos {{minAmountFromFormatted}}"
@@ -4415,47 +4389,6 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "Você excedeu o número de tokens disponíveis"
-    },
-    "CardanoMinAmountError" : {
-      "title" : "Minimum sendable amount is {{amount}} ADA"
-    },
-    "CardanoNotEnoughFunds" : {
-      "title" : "Please ensure you have enough funds to pay for fees"
-    },
-    "StellarWrongMemoFormat" : {
-      "title" : "O formato do memo está incorreto"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Pode ser necessário um memo ao enviar a este destinatário"
-    },
-    "StellarAssetNotAccepted" : {
-      "title" : "Este destinatário ainda não tem uma trustline para {{assetCode}}"
-    },
-    "StellarAssetRequired" : {
-      "title" : "Um ativo Stellar deve ser selecionado antes de adicionar uma trustline"
-    },
-    "StellarAssetNotFound" : {
-      "title" : "Não foi possível encontrar o ativo Stellar selecionado"
-    },
-    "StellarNotEnoughNativeBalance" : {
-      "title" : "Fundos Insuficientes",
-      "description" : "Certifique-se de que a conta tenha fundos suficientes para cobrir a taxa de transação"
-    },
-    "StellarFeeSmallerThanRecommended" : {
-      "title" : "A taxa selecionada é menor do que a taxa recomendada"
-    },
-    "StellarFeeSmallerThanBase" : {
-      "title" : "A taxa mínima de transação é de 0,00001 XLM"
-    },
-    "StellarNotEnoughNativeBalanceToAddTrustline" : {
-      "title" : "Fundos Insuficientes",
-      "description" : "Certifique-se de que a conta tem fundos suficientes para cobrir a nova trustline"
-    },
-    "StellarMuxedAccountNotExist" : {
-      "title" : "A conta Stellar não existe"
-    },
-    "StellarSourceHasMultiSign" : {
-      "title" : "Desabilite a multiassinatura para fazer transações Stellar"
     }
   },
   "cryptoOrg" : {
@@ -4482,20 +4415,6 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Seu endereço {{name}} não pode ser confirmado no seu dispositivo Ledger. Use por sua própria conta e risco."
-    },
-    "send" : {
-      "memo" : {
-        "label" : "Memo (opcional)",
-        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
-      }
-    }
-  },
-  "drawers" : {
-    "selectCurrency" : {
-      "title" : "escolher ativo"
-    },
-    "selectAccount" : {
-      "title" : "escolher conta"
     }
   }
 }
