@@ -51,6 +51,7 @@ import DebugSkeletons from "~/renderer/components/debug/DebugSkeletons";
 import { DisableTransactionBroadcastWarning } from "~/renderer/components/debug/DisableTransactionBroadcastWarning";
 import { DebugWrapper } from "~/renderer/components/debug/shared";
 import useDeeplink from "~/renderer/hooks/useDeeplinking";
+import useStoryly from "~/renderer/hooks/useStoryly";
 import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
 import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
@@ -149,6 +150,7 @@ export default function Default() {
 
   useDeeplink();
   useUSBTroubleshooting();
+  useStoryly();
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
@@ -167,20 +169,6 @@ export default function Default() {
       history.push("/onboarding");
     }
   }, [history, hasCompletedOnboarding]);
-
-  useEffect(() => {
-    const script = document.createElement("script");
-
-    script.src = "https://web-story.storyly.io/v2/storyly-web.js";
-    script["custom-element"] = "storyly-web";
-    script.async = true;
-
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
 
   return (
     <>
