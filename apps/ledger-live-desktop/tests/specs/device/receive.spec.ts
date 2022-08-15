@@ -1,4 +1,3 @@
-/* eslint-disable jest/expect-expect */
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../models/Layout";
@@ -67,6 +66,7 @@ test.describe.parallel("Add accounts & Receive", () => {
 
       await test.step("Clipboard: copied text must be the same on device", async () => {
         // clipboard api seems not to work with electron
+        // await page.locator('receive-copy-address-button').click();
         // const clipText = await navigator.clipboard.readText();
         // expect(await (await device.getLastEvents()).recipientAddress).toBe(clipText);
       });

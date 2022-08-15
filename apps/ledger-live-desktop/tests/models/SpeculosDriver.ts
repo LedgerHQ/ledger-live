@@ -12,9 +12,6 @@ export class SpeculosDriver {
    */
   async pressLeftButton() {
     await this.request.post(`/button/left`, { data: { action: "press-and-release" } });
-    const screen = await this.request.get(`/events`);
-
-    return screen;
   }
 
   /**
