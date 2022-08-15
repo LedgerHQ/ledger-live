@@ -1348,14 +1348,6 @@
       "link" : "ASA(資産)の仕組みとは？",
       "seeTokens" : "ASAを表示({{tokenCount}})",
       "hideTokens" : "ASAを非表示({{tokenCount}})"
-    },
-    "stellar" : {
-      "title" : "資産",
-      "cta" : "資産を追加",
-      "placeholder" : "{{currencyName}}アカウントに資産を追加できます。",
-      "link" : "Stellar資産の詳細",
-      "seeTokens" : "資産を表示 ({{tokenCount}})",
-      "hideTokens" : "資産を非表示 ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1973,6 +1965,19 @@
     "switchButton" : "{{language}}に切り替える",
     "no" : "不要"
   },
+  "deviceLocalization" : {
+    "language" : "言語",
+    "deviceLanguage" : "デバイスの言語",
+    "changeLanguage" : "言語の変更",
+    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "languageInstalled" : "言語が変更されました",
+    "installingLanguage" : "言語をインストール",
+    "languages" : {
+      "english" : "英語",
+      "french" : "フランス語",
+      "spanish" : "スペイン語"
+    }
+  },
   "distribution" : {
     "asset" : "資産",
     "price" : "価格",
@@ -2001,13 +2006,6 @@
         "description2" : "Elrond eGold（EGLD）トークンは、Elrond Networkのネイティブトークンであり、トランザクション、ステーキング、スマートコントラクト、ガバナンス、バリデータの報酬など、さまざまな用途に使用されます。",
         "description3" : "LedgerはElrondチームと積極的に協力し、ステーキングやESDT（Elrond Standard Digital Token）のネイティブサポートなどの機能を追加していく予定です。",
         "website" : "The Internet Scale Blockchain"
-      }
-    }
-  },
-  "cardano" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "合計残高にはステーキング報酬は含まれません"
       }
     }
   },
@@ -2585,31 +2583,6 @@
           },
           "pending" : {
             "title" : "トランザクションをブロードキャスト中…"
-          },
-          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
-        }
-      }
-    }
-  },
-  "stellar" : {
-    "addAsset" : {
-      "title" : "資産を追加",
-      "steps" : {
-        "assets" : {
-          "title" : "資産",
-          "info" : "資産を追加するには、最少額の手数料でトランザクションを送信する必要があります。これは取引履歴に表示されます",
-          "selectLabel" : "資産を選択",
-          "disabledTooltip" : "すでに、Stellarアカウントに資産を所有しています"
-        },
-        "connectDevice" : {
-          "title" : "デバイス"
-        },
-        "confirmation" : {
-          "title" : "確認",
-          "success" : {
-            "title" : "{{token}}資産が正常に追加されました",
-            "text" : "Stellarアカウントで<0>{{token}}</0>資産の受け取りや、送付が可能になりました。",
-            "cta" : "詳細を表示"
           },
           "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
         }
@@ -3780,20 +3753,7 @@
         "MEMO_HASH" : "メモのハッシュ",
         "MEMO_RETURN" : "メモリターン"
       },
-      "memoWarningText" : "Memo(メモ)を使用する場合は、受取先とタイプを確認してください。",
-      "fee" : "手数料",
-      "feeInfoText" : "Stellarネットワークでの取引には、最低0.00001 XLMの取引手数料が必要です",
-      "suggested" : "提案済み",
-      "recommendedFee" : "推奨手数料",
-      "recommenndedFeeInfo" : "このトランザクションを推奨手数料より低額で提出可能ですが、完了しない場合があります",
-      "networkCongestion" : "ネットワーク混雑",
-      "networkCongestionLevel" : {
-        "LOW" : "低速",
-        "MEDIUM" : "標準",
-        "HIGH" : "高速"
-      },
-      "assetCode" : "資産コード",
-      "assetIssuer" : "資産発行者"
+      "memoWarningText" : "Memo(メモ)を使用する場合は、受取先とタイプを確認してください。"
     },
     "cosmos" : {
       "memo" : "メモ",
@@ -3984,6 +3944,14 @@
     "HardResetFail" : {
       "title" : "リセットできませんでした。",
       "description" : "問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにお問い合わせください。"
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "言語のインストールがデバイス上で拒否されました",
+      "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+    },
+    "LanguageNotFound" : {
+      "title" : "言語が見つかりません",
+      "description" : "インストールしようとしている言語が見つかりませんでした。他の言語のインストールをお試しください。"
     },
     "LatestMCUInstalledError" : {
       "title" : "アップデートの必要はありません。",
@@ -4346,8 +4314,14 @@
     "FeeTooHigh" : {
       "title" : "ネットワーク手数料が10%を超えています。"
     },
+    "StellarWrongMemoFormat" : {
+      "title" : "メモのフォーマットに誤りがあります。"
+    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "この受取先に送付するには、Memoが必要な場合があります。"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "{{minAmountFromFormatted}} 以上の数量でなければなりません。"
@@ -4415,47 +4389,6 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "利用可能なトークン数を超えています"
-    },
-    "CardanoMinAmountError" : {
-      "title" : "送付可能な最低金額は、{{amount}} ADAです"
-    },
-    "CardanoNotEnoughFunds" : {
-      "title" : "お支払いに十分な資金があることをご確認ください"
-    },
-    "StellarWrongMemoFormat" : {
-      "title" : "メモのフォーマットに誤りがあります。"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "この受取先に送付するには、Memoが必要な場合があります。"
-    },
-    "StellarAssetNotAccepted" : {
-      "title" : "この受取人にはまだ{{assetCode}}へのトラストラインがありません"
-    },
-    "StellarAssetRequired" : {
-      "title" : "Stellar資産はトラストライン追加前に選択する必要があります"
-    },
-    "StellarAssetNotFound" : {
-      "title" : "選択されたStellar資産が見つかりませんでした"
-    },
-    "StellarNotEnoughNativeBalance" : {
-      "title" : "資金が不足しています。",
-      "description" : "アカウントにトランザクション手数料をカバーできる十分な資金があることをご確認ください。"
-    },
-    "StellarFeeSmallerThanRecommended" : {
-      "title" : "選択された手数料は推奨手数料を下回っています"
-    },
-    "StellarFeeSmallerThanBase" : {
-      "title" : "最低トランザクション手数料は0.00001 XLMです"
-    },
-    "StellarNotEnoughNativeBalanceToAddTrustline" : {
-      "title" : "資金が不足しています。",
-      "description" : "アカウントに新しいトラストラインをカバーできる十分な資金があることをご確認ください。"
-    },
-    "StellarMuxedAccountNotExist" : {
-      "title" : "Stellarアカウントが存在しません"
-    },
-    "StellarSourceHasMultiSign" : {
-      "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     }
   },
   "cryptoOrg" : {
@@ -4482,20 +4415,6 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイス上で確認できません。リスクを理解した上で、自己責任でご利用ください。"
-    },
-    "send" : {
-      "memo" : {
-        "label" : "メモ (任意)",
-        "characterCount" : "{{memoLength}}/ {{memoMaxLength}}"
-      }
-    }
-  },
-  "drawers" : {
-    "selectCurrency" : {
-      "title" : "資産を選択"
-    },
-    "selectAccount" : {
-      "title" : "アカウントを選択"
     }
   }
 }
