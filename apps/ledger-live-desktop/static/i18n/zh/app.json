@@ -1348,14 +1348,6 @@
       "link" : "资产 (ASA) 如何运作？",
       "seeTokens" : "显示 ASA ({{tokenCount}})",
       "hideTokens" : "隐藏 ASA ({{tokenCount}})"
-    },
-    "stellar" : {
-      "title" : "多种资产",
-      "cta" : "添加资产",
-      "placeholder" : "您可以向您的 {{currencyName}} 账户添加资产。",
-      "link" : "详细了解 Stellar（恒星）资产",
-      "seeTokens" : "显示资产 ({{tokenCount}})",
-      "hideTokens" : "隐藏资产 ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1973,6 +1965,19 @@
     "switchButton" : "切换至{{language}}",
     "no" : "我不愿意"
   },
+  "deviceLocalization" : {
+    "language" : "语言",
+    "deviceLanguage" : "设备语言",
+    "changeLanguage" : "更改语言",
+    "allowLanguageInstallation" : "允许安装语言",
+    "languageInstalled" : "语言更改成功",
+    "installingLanguage" : "正在安装语言",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "distribution" : {
     "asset" : "资产",
     "price" : "价格",
@@ -2001,13 +2006,6 @@
         "description2" : "Elrond eGold (EGLD) 代币是 Elrond 网络的原生代币，将被用于交易、权益质押、智能合约、治理和验证者奖励等各个方面。",
         "description3" : "我们正在积极与 Elrond 团队合作，以增加更多的功能，如权益质押、原生 ESDT（Elrond 标准数字代币）支持等。",
         "website" : "互联网规模的区块链"
-      }
-    }
-  },
-  "cardano" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "总余额不包括权益质押奖励"
       }
     }
   },
@@ -2585,31 +2583,6 @@
           },
           "pending" : {
             "title" : "正在播送交易……"
-          },
-          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
-        }
-      }
-    }
-  },
-  "stellar" : {
-    "addAsset" : {
-      "title" : "添加资产",
-      "steps" : {
-        "assets" : {
-          "title" : "资产",
-          "info" : "添加资产需要以最低费用发送一笔交易。这笔交易将出现在您的交易记录中",
-          "selectLabel" : "选择一种资产",
-          "disabledTooltip" : "您的 Stellar（恒星）账户中已经有此资产"
-        },
-        "connectDevice" : {
-          "title" : "设备"
-        },
-        "confirmation" : {
-          "title" : "确认",
-          "success" : {
-            "title" : "已成功添加 {{token}} 资产",
-            "text" : "您现在可以在 Stellar（恒星）账户上接收和发送 <0>{{token}}</0> 资产了。",
-            "cta" : "查看详情"
           },
           "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
         }
@@ -3780,20 +3753,7 @@
         "MEMO_HASH" : "Memo Hash 标签哈希",
         "MEMO_RETURN" : "Memo 返回"
       },
-      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的类型。",
-      "fee" : "费用",
-      "feeInfoText" : "在 Stellar（恒星）网络上进行交易的最低交易费用为 0.00001 XLM",
-      "suggested" : "建议",
-      "recommendedFee" : "建议费用",
-      "recommenndedFeeInfo" : "您仍可以低于建议的费用提交此交易，但交易可能无法完成",
-      "networkCongestion" : "网络拥塞",
-      "networkCongestionLevel" : {
-        "LOW" : "低",
-        "MEDIUM" : "中",
-        "HIGH" : "高"
-      },
-      "assetCode" : "资产代码",
-      "assetIssuer" : "资产发行者"
+      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的类型。"
     },
     "cosmos" : {
       "memo" : "Memo",
@@ -3984,6 +3944,14 @@
     "HardResetFail" : {
       "title" : "抱歉，无法重置",
       "description" : "请重试，如果问题仍然存在则请联系 Ledger 客服。"
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "语言安装被设备端拒绝",
+      "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+    },
+    "LanguageNotFound" : {
+      "title" : "未找到语言",
+      "description" : "未找到您尝试安装的语言。请尝试安装其他语言。"
     },
     "LatestMCUInstalledError" : {
       "title" : "对不起，没有可更新的内容",
@@ -4346,8 +4314,14 @@
     "FeeTooHigh" : {
       "title" : "网络费用超过数额的10%"
     },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo 格式错误"
+    },
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "发送到该接收方时，或许需要添加 memo（目的地标签）"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "数额必须至少为 {{minAmountFromFormatted}}"
@@ -4415,47 +4389,6 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "您已超过可用代币的数量"
-    },
-    "CardanoMinAmountError" : {
-      "title" : "最小可发送数额为 {{amount}} ADA"
-    },
-    "CardanoNotEnoughFunds" : {
-      "title" : "请确保您的资金足够支付费用"
-    },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo 格式错误"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "发送到该接收方时，或许需要添加 memo（目的地标签）"
-    },
-    "StellarAssetNotAccepted" : {
-      "title" : "此接收人还没有 {{assetCode}} 的信任额度"
-    },
-    "StellarAssetRequired" : {
-      "title" : "应在添加信任额度之前先选择 Stellar（恒星）资产"
-    },
-    "StellarAssetNotFound" : {
-      "title" : "找不到所选的 Stellar（恒星）资产"
-    },
-    "StellarNotEnoughNativeBalance" : {
-      "title" : "抱歉，资金不足",
-      "description" : "请确保账户内的资金足够支付交易费用"
-    },
-    "StellarFeeSmallerThanRecommended" : {
-      "title" : "所选费用低于建议费用"
-    },
-    "StellarFeeSmallerThanBase" : {
-      "title" : "最低交易费用为 0.00001 XLM"
-    },
-    "StellarNotEnoughNativeBalanceToAddTrustline" : {
-      "title" : "抱歉，资金不足",
-      "description" : "请确保账户内的资金多于新的信任额度"
-    },
-    "StellarMuxedAccountNotExist" : {
-      "title" : "Stellar（恒星）账户不存在"
-    },
-    "StellarSourceHasMultiSign" : {
-      "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     }
   },
   "cryptoOrg" : {
@@ -4482,20 +4415,6 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
-    },
-    "send" : {
-      "memo" : {
-        "label" : "Memo（可选）",
-        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
-      }
-    }
-  },
-  "drawers" : {
-    "selectCurrency" : {
-      "title" : "选择资产"
-    },
-    "selectAccount" : {
-      "title" : "选择账户"
     }
   }
 }
