@@ -323,6 +323,14 @@
     "InvalidRecipient" : {
       "title" : "Destinatário inválido"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Instalação de idioma recusada no dispositivo",
+      "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Idioma não encontrado",
+      "description" : "O idioma que você está tentando instalar não foi encontrado. Tente instalar outro idioma."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Desculpe, nada para atualizar",
       "description" : "Entre em contato com o Suporte Ledger se você não conseguir usar seu dispositivo."
@@ -3402,8 +3410,8 @@
     "drawerUpdate" : {
       "title" : "Atualização de firmware",
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "Necessário cabo USB",
+      "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3429,6 +3437,19 @@
       "es" : "Espanhol",
       "zh" : "Chinês",
       "de" : "Alemão"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Idioma",
+    "deviceLanguage" : "Idioma do dispositivo",
+    "changeLanguage" : "Mudar Idioma",
+    "allowLanguageInstallation" : "Permitir instalação do idioma",
+    "languageInstalled" : "O idioma do dispositivo mudou para {{language}}.",
+    "installingLanguage" : "Instalando Idioma",
+    "languages" : {
+      "english" : "Inglês",
+      "french" : "Francês",
+      "spanish" : "Espanhol"
     }
   },
   "FirmwareUpdateCheckId" : {
