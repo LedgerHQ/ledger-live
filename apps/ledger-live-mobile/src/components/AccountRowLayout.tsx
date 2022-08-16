@@ -1,17 +1,12 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { TouchableOpacity } from "react-native";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { ValueChange } from "@ledgerhq/types-live";
-import { Flex, ProgressLoader, Text, Tag } from "@ledgerhq/native-ui";
+import { Flex, Text, Tag } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
-import { ensureContrast } from "../../colors";
-import Delta from "../../components/Delta";
-import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
-import counterValueFormatter from "../../../../libs/ledger-live-common/lib-es/market/utils/countervalueFormatter";
 
 type Props = {
   balance: BigNumber;
@@ -19,6 +14,7 @@ type Props = {
   currencyUnit?: Unit;
   countervalueChange?: ValueChange;
   name: string;
+  parentAccountName?: string;
   tag?: string | null | boolean;
   onPress?: () => void;
   progress?: number;
@@ -32,6 +28,7 @@ const AccountRowLayout = ({
   currency,
   currencyUnit,
   name,
+  parentAccountName,
   onPress,
   topLink,
   bottomLink,
@@ -56,64 +53,60 @@ const AccountRowLayout = ({
           flexDirection="row"
           justifyContent="space-between"
           alignItems={"center"}
-          bg={"pink"}
         >
           <Flex
             flexDirection="column"
             alignItems={"flex-start"}
-            bg={"red"}
             flexShrink={1}
             flexGrow={1}
+            mr={4}
           >
             <Flex
               flexGrow={1}
+              flexShrink={1}
               flexDirection="row"
-              alignItems="space-between"
-              bg={"yellow"}
+              alignItems="center"
             >
-              <Flex flexGrow={1} bg={"blue"}>
-                <Text
-                  variant="large"
-                  fontWeight="semiBold"
-                  color="neutral.c100"
-                  numberOfLines={1}
-                  flexGrow={1}
-                  bg={"purple"}
-                >
-                  {name}
-                </Text>
-              </Flex>
+              <Text
+                variant="large"
+                fontWeight="semiBold"
+                color="neutral.c100"
+                numberOfLines={1}
+                flexGrow={1}
+                flexShrink={1}
+              >
+                {name}
+              </Text>
               {tag && (
-                <Flex mx={3} flexShrink={0}>
-                  <Tag>{tag}</Tag>
-                </Flex>
+                <Tag flexShrink={0} ml={3}>
+                  {tag}
+                </Tag>
               )}
             </Flex>
 
-            <Tag type={"main"} active={true}>
-              test
-            </Tag>
+            {parentAccountName && (
+              <Tag type={"shade"} size={"small"}>
+                {parentAccountName}
+              </Tag>
+            )}
           </Flex>
 
           <Flex
             flexDirection="column"
             justifyContent={"flex-end"}
             alignItems={"flex-end"}
+            flexShrink={0}
+            flexGrow={0}
           >
             <Text
               variant="body"
               fontWeight="medium"
               color="neutral.c70"
-              bg={"green"}
+              flex={1}
             >
               <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
             </Text>
-            <Text
-              variant="large"
-              fontWeight="semiBold"
-              color="neutral.c100"
-              bg={"gray"}
-            >
+            <Text variant="large" fontWeight="semiBold" color="neutral.c100">
               <CounterValue
                 currency={currency}
                 value={balance}

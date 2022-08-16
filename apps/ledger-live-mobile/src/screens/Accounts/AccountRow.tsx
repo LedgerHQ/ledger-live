@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import {
   getAccountCurrency,
@@ -6,15 +6,13 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Currency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
-import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
-import { BigNumber } from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
-import { counterValueCurrencySelector } from "../../reducers/settings";
 import AccountRowLayout from "../../components/AccountRowLayout";
+import { parentAccountSelector } from "../../reducers/accounts";
 
 type Props = {
   account: Account | TokenAccount;
@@ -40,6 +38,10 @@ const AccountRow = ({
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
+  const parentAccount = useSelector(state =>
+    parentAccountSelector(state, { account }),
+  );
+
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
 
@@ -103,6 +105,7 @@ const AccountRow = ({
       topLink={topLink}
       bottomLink={bottomLink}
       hideDelta={hideDelta}
+      parentAccountName={parentAccount && getAccountName(parentAccount)}
     />
   );
 };

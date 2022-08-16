@@ -20,6 +20,7 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { track } from "../../analytics";
 import AccountHeaderRight from "./AccountHeaderRight";
 import CurrencyGradient from "../../components/CurrencyGradient";
+import { getAccountCurrency } from "../../../../../libs/ledger-live-common/lib-es/account";
 
 function AccountHeader({
   currentPositionY,
@@ -32,6 +33,7 @@ function AccountHeader({
 }) {
   const navigation = useNavigation();
   const { colors } = useTheme();
+  const currency = getAccountCurrency(account);
 
   const readOnlyModeEnabled =
     useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
@@ -122,9 +124,7 @@ function AccountHeader({
       >
         <Box height={"100%"} width={windowsWidth}>
           <CurrencyGradient
-            gradientColor={
-              getCurrencyColor(account.currency) || colors.primary.c80
-            }
+            gradientColor={getCurrencyColor(currency) || colors.primary.c80}
           />
         </Box>
       </Animated.View>

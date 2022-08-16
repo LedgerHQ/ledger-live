@@ -3,7 +3,6 @@ import { FlatList } from "react-native";
 import Animated from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/src/currencies";
 import { useTranslation } from "react-i18next";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
@@ -37,11 +36,11 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 const AssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
-  const { currencyId } = route?.params;
-  const currency = getCryptoCurrencyById(currencyId);
+  const { currency } = route.params;
+
   const cryptoAccounts = useMemo(
-    () => accounts.filter(a => getAccountCurrency(a).id === currencyId),
-    [accounts, currencyId],
+    () => accounts.filter(a => getAccountCurrency(a).id === currency.id),
+    [accounts, currency.id],
   );
 
   const allAccounts = useSelector(
@@ -72,8 +71,8 @@ const AssetScreen = ({ route }: Props) => {
       </SectionContainer>,
       <SectionContainer px={6}>
         <SectionTitle
-          title={t("portfolio.marketPriceSection.title", {
-            currencyTicker: currency.ticker,
+          title={t("asset.accountsSection.title", {
+            currencyName: currency.name,
           })}
         />
         <AccountsSection accounts={allAccounts}></AccountsSection>

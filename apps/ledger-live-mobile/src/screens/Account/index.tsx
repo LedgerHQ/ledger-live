@@ -169,7 +169,7 @@ const AccountScreenInner = ({
     ...listHeaderComponents,
     <SectionContainer px={6} isLast>
       <SectionTitle title={t("analytics.operations.title")} />
-      <OperationsHistorySection accounts={[account]} />
+      <OperationsHistorySection accounts={[account, parentAccount]} />
     </SectionContainer>,
   ];
 

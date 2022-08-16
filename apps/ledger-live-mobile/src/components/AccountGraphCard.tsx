@@ -9,7 +9,10 @@ import React, {
 import { useTheme } from "styled-components/native";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountCurrency,
+  getAccountUnit,
+} from "@ledgerhq/live-common/account/index";
 import {
   ValueChange,
   PortfolioRange,
@@ -36,7 +39,6 @@ import Graph from "./Graph";
 import Touchable from "./Touchable";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import { NoCountervaluePlaceholder } from "./CounterValue";
-import DiscreetModeButton from "./DiscreetModeButton";
 
 const { width } = getWindowDimensions();
 
@@ -88,6 +90,8 @@ function AccountGraphCard({
   onSwitchAccountCurrency,
   valueChange,
 }: Props) {
+  const currency = getAccountCurrency(account);
+
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -151,6 +155,7 @@ function AccountGraphCard({
         item={hoveredItem || history[history.length - 1]}
         valueChange={valueChange}
       />
+
       <Flex height={120} alignItems="center" justifyContent="center">
         {!loading ? (
           <Transitions.Fade duration={400} status="entering">
@@ -160,7 +165,7 @@ function AccountGraphCard({
               isLoading={!isAvailable}
               height={120}
               width={width}
-              color={getCurrencyColor(account?.currency) || colors.primary.c80}
+              color={getCurrencyColor(currency) || colors.primary.c80}
               data={history}
               mapValue={useCounterValue ? mapCounterValue : mapCryptoValue}
               onItemHover={setHoverItem}
