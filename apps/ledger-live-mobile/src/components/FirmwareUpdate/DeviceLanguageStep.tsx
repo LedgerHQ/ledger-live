@@ -21,6 +21,7 @@ import { localeIdToDeviceLanguage } from "../../languages";
 import ChangeDeviceLanguageAction from "../ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "../ChangeDeviceLanguagePrompt";
 import DeviceActionProgress from "../DeviceActionProgress";
+import { track } from "../../analytics";
 
 type Props = {
   oldDeviceInfo?: DeviceInfo;
@@ -89,6 +90,7 @@ const DeviceLanguageStep = ({
         oldDeviceInfo?.languageId !== undefined &&
         oldDeviceInfo?.languageId !== languageIds["english"]
       ) {
+        track("Page Manager FwUpdateReinstallLanguage");
         installLanguage("french");
       } else {
         dispatchEvent({ type: "languagePromptDismissed" });
@@ -106,14 +108,13 @@ const DeviceLanguageStep = ({
     installLanguage,
   ]);
 
-
   const deviceName = getDeviceModel(device.modelId).productName;
 
   return (
     <Flex alignItems="center">
       {isLanguagePromptOpen && deviceForAction === null && (
         <>
-          <Track event="FirmwareUpdateFirstDeviceLanguagePrompt" onMount />
+          <Track event="Page Manager FwUpdateDeviceLanguagePrompt" onMount />
           <ChangeDeviceLanguagePrompt
             titleWording={t("deviceLocalization.firmwareUpdatePrompt.title", {
               language: t(
@@ -131,7 +132,10 @@ const DeviceLanguageStep = ({
               },
             )}
             canSkip
-            onSkip={() => dispatchEvent({ type: "languagePromptDismissed" })}
+            onSkip={() => {
+              track("Page Manager FwUpdateDeviceLanguagePromptDismissed");
+              dispatchEvent({ type: "languagePromptDismissed" });
+            }}
             onConfirm={() =>
               installLanguage(
                 localeIdToDeviceLanguage[currentLocale] as Language,
@@ -144,6 +148,11 @@ const DeviceLanguageStep = ({
         <ChangeDeviceLanguageAction
           device={deviceForAction}
           language={languageToInstall}
+          onResult={() =>
+            track("Page Manager FwUpdateLanguageInstalled", {
+              selectedLanguage: languageToInstall,
+            })
+          }
           onContinue={() => {
             setDeviceForAction(null);
             dispatchEvent({ type: "languagePromptDismissed" });
