@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { BottomDrawer, Flex } from "@ledgerhq/native-ui";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { renderAllowManager as AllowManager } from "../../components/DeviceAction/rendering";
 

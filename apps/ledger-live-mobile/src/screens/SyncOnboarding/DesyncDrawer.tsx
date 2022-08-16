@@ -4,8 +4,7 @@ import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { ScreenName } from "../../const";
 
