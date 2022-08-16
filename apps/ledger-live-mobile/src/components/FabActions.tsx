@@ -10,15 +10,9 @@ import {
   filterRampCatalogEntries,
   getAllSupportedCryptoCurrencyIds,
 } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-
-import {
-  AccountLike,
-  Account,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
-
+import { AccountLike, Account } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Icons } from "@ledgerhq/native-ui";
-
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
@@ -262,8 +256,11 @@ const FabMarketActionsComponent: React.FC<Props> = ({
               navigationParams: [
                 NavigatorName.ReceiveFunds,
                 {
-                  screen: ScreenName.ReceiveSelectAccount,
-                  params: { selectedCurrency: currency },
+                  screen: ScreenName.ReceiveConfirmation,
+                  params: {
+                    parentId: defaultAccount?.parentId,
+                    accountId: defaultAccount.id,
+                  },
                 },
               ],
             },
@@ -375,7 +372,7 @@ const FabActions: React.FC<FabActionsProps> = ({
       navigationParams: [
         NavigatorName.ReceiveFunds,
         {
-          screen: ScreenName.ReceiveSelectAccount,
+          screen: ScreenName.ReceiveSelectCrypto,
         },
       ],
     };

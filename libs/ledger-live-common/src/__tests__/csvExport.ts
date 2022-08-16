@@ -6,6 +6,7 @@ import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "../countervalues/logic";
 import { getFiatCurrencyByTicker } from "../currencies";
 setEnv("MOCK", "1");
+setEnv("MOCK_COUNTERVALUES", "1");
 test("export CSV", async () => {
   const fiatCurrency = getFiatCurrencyByTicker("USD");
   const currencies = ["bitcoin", "ethereum", "ripple"].map(

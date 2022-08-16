@@ -172,7 +172,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           currencyName={currency.name}
         />
         <SyncSkipUnderPriority priority={100} />
-        <SyncOneAccountOnMount priority={100} accountId={account.id} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-init"
+          priority={100}
+          accountId={account.id}
+        />
         <KeyboardView style={{ flex: 1 }}>
           <NavigationScrollView
             style={[styles.container, { flex: 1 }]}

@@ -2,7 +2,7 @@
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
-setPlatformVersion("1.0.0");
+setPlatformVersion("1.1.0");
 
 setSupportedCurrencies([
   "bitcoin",

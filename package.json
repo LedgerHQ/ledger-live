@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.3.0",
+  "packageManager": "pnpm@7.9.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -91,12 +91,12 @@
     "actions": "pnpm --filter @actions/*"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.4.5",
-    "@changesets/cli": "^2.23.0",
+    "@changesets/changelog-github": "^0.4.6",
+    "@changesets/cli": "^2.24.3",
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "turbo": "1.3.1"
+    "turbo": "1.4.3"
   },
   "pnpm": {
     "overrides": {

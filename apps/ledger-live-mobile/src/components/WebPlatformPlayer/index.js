@@ -59,6 +59,7 @@ import {
   useListPlatformCurrencies,
   usePlatformUrl,
 } from "@ledgerhq/live-common/platform/react";
+import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
@@ -66,8 +67,10 @@ import { accountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
-import * as tracking from "./tracking";
 
+import { track } from "../../analytics/segment";
+
+const tracking = trackingWrapper(track);
 type Props = {
   manifest: AppManifest,
   inputs?: Object,

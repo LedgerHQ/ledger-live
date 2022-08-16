@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useCallback } from "react";
 
-import { App } from "@ledgerhq/live-common/types/manager";
+import { App } from "@ledgerhq/types-live";
 
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";

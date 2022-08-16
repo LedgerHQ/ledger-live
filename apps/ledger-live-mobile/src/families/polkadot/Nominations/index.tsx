@@ -11,7 +11,7 @@ import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import {
   canNominate,
   isStash,
