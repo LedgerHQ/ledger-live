@@ -35,8 +35,7 @@ function Header({
   const navigation = useNavigation();
   const { colors } = useTheme();
 
-  const readOnlyModeEnabled =
-    useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onBackButtonPress = useCallback(() => {
     if (readOnlyModeEnabled) {
