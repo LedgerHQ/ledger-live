@@ -323,6 +323,14 @@
     "InvalidRecipient" : {
       "title" : "Bénéficiaire non valide"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Installation de la langue refusée sur l’appareil",
+      "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Langue non trouvée",
+      "description" : "Impossible de trouver la langue que vous souhaitez installer. Veuillez essayer d’installer une autre langue."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Pas de mise à jour disponible",
       "description" : "Si vous ne pouvez pas utiliser votre appareil, contactez l’Assistance Ledger."
@@ -3431,6 +3439,19 @@
       "de" : "Allemand"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Langue",
+    "deviceLanguage" : "Langue de l’appareil",
+    "changeLanguage" : "Changer la langue",
+    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
+    "languageInstalled" : "Votre appareil est maintenant en {{language}}.",
+    "installingLanguage" : "Installation de la langue",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Identifiant",
     "description" : "Merci d’appuyer sur les deux boutons simultanément sur votre {{fullDeviceName}} si le même identifiant apparaît :"
@@ -3552,7 +3573,7 @@
       },
       "undelegating" : {
         "title" : "Délégation interrompue",
-        "description" : "Les actifs dont la délégation est interrompue sont immobilisés pendant 21 jours avant d’être disponibles."
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 21 jours."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -3595,7 +3616,7 @@
               "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
             },
             "warning" : {
-              "description" : "Choisissez votre validateur judicieusement : une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement."
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             },
             "cta" : "Continuer"
           },
