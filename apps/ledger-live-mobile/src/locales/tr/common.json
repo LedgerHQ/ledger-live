@@ -323,6 +323,14 @@
     "InvalidRecipient" : {
       "title" : "Geçersiz alıcı"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Dil yüklemesi cihaz tarafından reddedildi",
+      "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+    },
+    "LanguageNotFound" : {
+      "title" : "Dil bulunamadı",
+      "description" : "Yüklemek istediğiniz dil bulunamadı. Lütfen farklı bir dil yüklemeyi deneyin."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Üzgünüz, güncellenecek bir şey yok",
       "description" : "Cihazınızı kullanamıyorsanız lütfen Ledger Destek ile iletişime geçin."
@@ -3429,6 +3437,19 @@
       "es" : "İspanyolca",
       "zh" : "Çince",
       "de" : "Almanca"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Dil",
+    "deviceLanguage" : "Cihaz Dili",
+    "changeLanguage" : "Dili değiştir",
+    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
+    "languageInstalled" : "Cihaz dili {{language}} oldu",
+    "installingLanguage" : "Dil yükleniyor",
+    "languages" : {
+      "english" : "İngilizce",
+      "french" : "Fransızca",
+      "spanish" : "İspanyolca"
     }
   },
   "FirmwareUpdateCheckId" : {
