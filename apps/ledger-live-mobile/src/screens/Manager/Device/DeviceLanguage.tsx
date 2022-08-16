@@ -7,6 +7,7 @@ import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { track } from "../../../analytics";
 
 type Props = {
   pendingInstalls: boolean;
@@ -44,15 +45,16 @@ const DeviceLanguage: React.FC<Props> = ({
     () => setIsChangeLanguageOpen(false),
     [setIsChangeLanguageOpen],
   );
-  const openChangeLanguageModal = useCallback(
-    () => setIsChangeLanguageOpen(true),
-    [setIsChangeLanguageOpen],
-  );
+  const openChangeLanguageModal = useCallback(() => {
+    track("Page Manager ChangeLanguageEntered");
+    setIsChangeLanguageOpen(true);
+  }, [setIsChangeLanguageOpen]);
 
   const confirmInstall = useCallback(() => {
+    track("Page Manager LanguageInstallTriggered", { selectedLanguage });
     setShouldInstallLanguage(true);
     closeChangeLanguageModal();
-  }, [setShouldInstallLanguage, closeChangeLanguageModal]);
+  }, [setShouldInstallLanguage, closeChangeLanguageModal, selectedLanguage]);
   // this has to be done in two steps because we can only open the second modal after the first
   // one has been hidden. So we need to put this function attached to the onModalHide prop of the first
   // see https://github.com/react-native-modal/react-native-modal/issues/30
@@ -68,6 +70,7 @@ const DeviceLanguage: React.FC<Props> = ({
   }, [setShouldInstallLanguage, setDeviceForActionModal]);
 
   const refreshDeviceLanguage = useCallback(() => {
+    track("Page Manager LanguageInstalled", { language: selectedLanguage });
     onLanguageChange();
   }, [selectedLanguage]);
 
