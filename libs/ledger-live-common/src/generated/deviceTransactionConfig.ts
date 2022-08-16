@@ -1,10 +1,7 @@
 import algorand from "../families/algorand/deviceTransactionConfig";
 import bitcoin from "../families/bitcoin/deviceTransactionConfig";
-
 import cardano from "../families/cardano/deviceTransactionConfig";
-
 import celo from "../families/celo/deviceTransactionConfig";
-
 import cosmos from "../families/cosmos/deviceTransactionConfig";
 import crypto_org from "../families/crypto_org/deviceTransactionConfig";
 import elrond from "../families/elrond/deviceTransactionConfig";

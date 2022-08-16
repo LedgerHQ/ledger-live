@@ -113,6 +113,10 @@
       "metro-transform-worker": "^0.67.0",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*"
+    },
+    "patchedDependencies": {
+      "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
+      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch"
     }
   }
 }

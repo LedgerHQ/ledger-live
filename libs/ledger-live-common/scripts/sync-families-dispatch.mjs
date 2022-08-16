@@ -104,8 +104,8 @@ async function genTypesFile(families) {
   for (const family of families) {
     imprts += `import { Transaction as ${family}Transaction } from "../families/${family}/types";
 import { TransactionRaw as ${family}TransactionRaw } from "../families/${family}/types";
-import { TransactionStatus as ${family}TransactionStatus } from "../families/${family}/types;
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../families/${family}/types;
+import { TransactionStatus as ${family}TransactionStatus } from "../families/${family}/types";
+import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../families/${family}/types";
 `;
     exprtsT += `
   | ${family}Transaction`;
