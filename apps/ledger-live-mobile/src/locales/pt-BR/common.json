@@ -1626,19 +1626,19 @@
       "description" : "Importar ativos do Ledger Live Desktop"
     }
   },
-  "byteSize": {
-    "bytes": "{{size}} bytes",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+  "byteSize" : {
+    "bytes" : "{{size}} bytes",
+    "kbUnit" : "{{size}} Kb",
+    "mbUnit" : "{{size}} Mb"
   },
-  "numberCompactNotation": {
-    "d": "",
-    "K": "k",
-    "M": "m",
-    "B": "bn",
-    "T": "tn",
-    "Q": "qa",
-    "Qn": "qi"
+  "numberCompactNotation" : {
+    "d" : "",
+    "K" : "k",
+    "M" : "m",
+    "B" : "bn",
+    "T" : "tn",
+    "Q" : "qa",
+    "Qn" : "qi"
   },
   "time" : {
     "day" : "1D",
@@ -1771,6 +1771,17 @@
     "subaccountCount_plural" : "{{count}} subcontas"
   },
   "account" : {
+    "subHeader" : {
+      "moreInfo" : "Mais Informações",
+      "cardTitle" : "Powered by {{team}}",
+      "drawer" : {
+        "title" : "{{family}} integration",
+        "subTitle" : "The {{family}} integration has been done by the {{team}} team",
+        "description" : "Ledger Live is an open-source platform.",
+        "description2" : "Developers from anywhere in the world can integrate with our Ledger Live",
+        "description3" : "This integration has been carried out by {{team}} in collaboration with Ledger"
+      }
+    },
     "tokens" : {
       "contractAddress" : "Endereço do contrato",
       "viewInExplorer" : "Ver no explorer",
@@ -3402,8 +3413,8 @@
     "drawerUpdate" : {
       "title" : "Atualização de firmware",
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "Necessário cabo USB",
+      "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3740,33 +3751,6 @@
             "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
           }
         }
-      }
-    }
-  },
-  "cryptoOrg" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Crypto.org",
-        "moreInfo" : "Mais Informações",
-        "drawerTitle" : "Integração Crypto.org",
-        "title" : "O token Crypto.org (CRO) agora está disponível no Ledger Live",
-        "description" : "Agora você pode gerenciar e proteger seus tokens Crypto.org (CRO) através do Ledger Live.",
-        "description2" : "O token Crypto.org (CRO) é nativo da Crypto.org Chain e é usado para tudo entre transações, staking e vários recursos futuros.",
-        "website" : "Criptomoedas em todas as carteira"
-      }
-    }
-  },
-  "elrond" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Elrond",
-        "drawerTitle" : "Integração com Elrond",
-        "moreInfo" : "Mais Informações",
-        "title" : "O token Elrond eGold (EGLD) agora está disponível no Ledger Live",
-        "description" : "Agora você pode proteger seus tokens eGold (EGLD) e gerenciá-los com segurança através do Ledger Live.",
-        "description2" : "O Token Elrond eGold (EGLD) é nativo da Rede Elrond e será usado para tudo desde transações, staking, contratos inteligentes, governança e recompensas a validadores.",
-        "description3" : "Estamos trabalhando ativamente com a equipe Elrond para adicionar mais funcionalidade, como o staking, suporte nativo ao ESDT (Elrond Standard Digital Token), e mais.",
-        "website" : "A Blockchain de Escala de Internet"
       }
     }
   },
