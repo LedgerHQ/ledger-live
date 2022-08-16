@@ -12,6 +12,11 @@ overrides:
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
 
+patchedDependencies:
+  usb@2.5.0:
+    hash: mqlq3y3cpg47syea4aetieuabq
+    path: patches/usb@2.5.0.patch
+
 importers:
 
   .:
@@ -2021,7 +2026,7 @@ importers:
       '@ledgerhq/logs': link:../logs
       lodash: 4.17.21
       node-hid: 2.1.1
-      usb: 2.5.0
+      usb: 2.5.0_mqlq3y3cpg47syea4aetieuabq
     devDependencies:
       '@types/jest': 27.5.0
       '@types/node': 17.0.32
@@ -20259,10 +20264,10 @@ packages:
       lodash:
         optional: true
     dependencies:
+      7zip-bin: 5.1.1
       '@develar/schema-utils': 2.6.5
       '@electron/universal': 1.2.1
       '@malept/flatpak-bundler': 0.4.0
-      7zip-bin: 5.1.1
       async-exit-hook: 2.0.1
       bluebird-lst: 1.0.9
       builder-util: 23.3.3
@@ -22626,9 +22631,9 @@ packages:
   /builder-util/23.3.3:
     resolution: {integrity: sha512-MJZlUiq2PY5hjYv9+XNaoYdsITqvLgRDoHSFg/4nzpInbNxNjLQOolL04Zsyp+hgfcbFvMC4h0KkR1CMPHLWbA==}
     dependencies:
+      7zip-bin: 5.1.1
       '@types/debug': 4.1.7
       '@types/fs-extra': 9.0.13
-      7zip-bin: 5.1.1
       app-builder-bin: 4.0.0
       bluebird-lst: 1.0.9
       builder-util-runtime: 9.0.3
@@ -24027,8 +24032,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      is-text-path: 1.0.1
       JSONStream: 1.3.5
+      is-text-path: 1.0.1
       lodash: 4.17.21
       meow: 8.1.2
       split2: 3.2.2
@@ -33555,13 +33560,13 @@ packages:
       '@types/lodash': 4.14.182
       '@types/node': 12.20.52
       '@types/ws': 7.4.7
+      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.7
       json-stringify-safe: 5.0.1
-      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.7
@@ -39276,6 +39281,7 @@ packages:
     engines: {node: '>= 0.6'}
     hasBin: true
     dependencies:
+      JSONStream: 1.3.5
       browser-resolve: 1.11.3
       cached-path-relative: 1.1.0
       concat-stream: 1.5.2
@@ -39283,7 +39289,6 @@ packages:
       detective: 5.2.0
       duplexer2: 0.1.4
       inherits: 2.0.4
-      JSONStream: 1.3.5
       konan: 2.1.1
       readable-stream: 2.3.7
       resolve: 1.22.0
@@ -47988,10 +47993,10 @@ packages:
     engines: {node: '>=8.0.0'}
     hasBin: true
     dependencies:
+      JSONStream: 1.3.5
       ansi-escape-sequences: 5.1.2
       byte-size: 6.2.0
       common-log-format: 1.0.0
-      JSONStream: 1.3.5
       lodash.throttle: 4.1.1
       stream-via: 1.0.4
       table-layout: 1.0.2
@@ -50670,7 +50675,7 @@ packages:
       node-gyp-build: 4.4.0
     dev: false
 
-  /usb/2.5.0:
+  /usb/2.5.0_mqlq3y3cpg47syea4aetieuabq:
     resolution: {integrity: sha512-f8Lv1qSM7F2hokhke6zfUw+60winJvi6+yW5MyDt2Zn1Ajv3HCLPhMSzTY/QIKn4cp57N+c5MRuvZGSt0/3dAw==}
     engines: {node: '>=10.20.0 <11.x || >=12.17.0 <13.0 || >=14.0.0'}
     requiresBuild: true
@@ -50679,6 +50684,7 @@ packages:
       node-addon-api: 4.3.0
       node-gyp-build: 4.4.0
     dev: false
+    patched: true
 
   /use-composed-ref/1.3.0_react@17.0.2:
     resolution: {integrity: sha512-GLMG0Jc/jiKov/3Ulid1wbv3r54K9HlMW29IWcDFPEqFkSO2nS0MuefWgMJpeHQ9YJeXDL3ZUF+P3jdXlZX/cQ==}
