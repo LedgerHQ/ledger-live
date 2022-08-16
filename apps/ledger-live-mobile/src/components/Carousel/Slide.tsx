@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import Touchable from "../Touchable";
 import { track } from "../../analytics";
 import { SlideProps } from "./shared";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 const StyledTouchable = styled(Touchable)`
   flex: 1;
@@ -39,16 +40,19 @@ const Slide = ({
 }: SlideProps) => {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
+  const currentScreen = useCurrentRouteName();
   const onClick = useCallback(() => {
-    track("Portfolio Recommended OpenUrl", {
+    track("banner_clicked", {
+      banner: "Discover Web3",
       url,
+      screen: currentScreen,
     });
     if (onPress) {
       onPress(navigate);
     } else {
       Linking.openURL(url);
     }
-  }, [onPress, navigate, url]);
+  }, [onPress, navigate, url, currentScreen]);
   return (
     <StyledTouchable event={`${name} Carousel`} onPress={onClick}>
       <Flex

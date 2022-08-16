@@ -18,6 +18,8 @@ import { useTimeRange } from "../actions/settings";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import FormatDate from "./FormatDate";
+import { track } from "../analytics";
+import { useCurrentRouteName } from "../helpers/routeHooks";
 
 type Props = {
   areAccountsEmpty: boolean;
@@ -51,7 +53,7 @@ function GraphCard({
   graphCardEndPosition,
 }: Props) {
   const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
-
+  const currentScreen = useCurrentRouteName();
   const item = balanceHistory[balanceHistory.length - 1];
   const navigation = useNavigation();
 
@@ -67,9 +69,13 @@ function GraphCard({
 
   const updateTimeRange = useCallback(
     index => {
+      track("timeframe_clicked", {
+        timeframe: timeRangeItems[index],
+        screen: currentScreen,
+      });
       setTimeRange(timeRangeItems[index]);
     },
-    [setTimeRange, timeRangeItems],
+    [setTimeRange, timeRangeItems, currentScreen],
   );
 
   const mapGraphValue = useCallback(d => d.value || 0, []);

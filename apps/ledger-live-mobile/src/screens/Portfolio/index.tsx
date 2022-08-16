@@ -49,6 +49,11 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
+import {
+  useCurrentRouteName,
+  usePreviousRouteName,
+} from "../../helpers/routeHooks";
+import { track } from "../../analytics";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -70,6 +75,8 @@ const maxAssetsToDisplay = 5;
 
 function PortfolioScreen({ navigation }: Props) {
   const { t } = useTranslation();
+  const currentScreen = useCurrentRouteName();
+  const previousScreen = usePreviousRouteName();
   const carouselVisibility = useSelector(carouselVisibilitySelector);
   const showCarousel = useMemo(
     () => Object.values(carouselVisibility).some(Boolean),
@@ -85,9 +92,13 @@ function PortfolioScreen({ navigation }: Props) {
   const discreetMode = useSelector(discreetModeSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
-  const openAddModal = useCallback(() => setAddModalOpened(true), [
-    setAddModalOpened,
-  ]);
+  const openAddModal = useCallback(() => {
+    track("button_clicked", {
+      button: "Add Account",
+      screen: currentScreen,
+    });
+    setAddModalOpened(true);
+  }, [setAddModalOpened, currentScreen]);
   useProviders();
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [
@@ -234,7 +245,8 @@ function PortfolioScreen({ navigation }: Props) {
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
         <TrackScreen
-          category="Portfolio"
+          category="Wallet"
+          source={previousScreen}
           accountsLength={distribution.list && distribution.list.length}
           discreet={discreetMode}
         />
