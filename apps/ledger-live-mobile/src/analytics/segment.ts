@@ -33,6 +33,7 @@ import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
 import type { State } from "../reducers";
 import { NavigatorName } from "../const";
+import { idsToLanguage } from "@ledgerhq/types-live";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${
@@ -55,6 +56,9 @@ const extraProperties = store => {
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
+        deviceLanguage:
+          lastDevice.deviceInfo?.languageId &&
+          idsToLanguage[lastDevice.deviceInfo?.languageId],
         appLength: lastDevice?.appsInstalled,
         modelId: lastDevice.modelId,
       }
