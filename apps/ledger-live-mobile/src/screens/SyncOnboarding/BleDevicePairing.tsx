@@ -11,14 +11,16 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { CircledCheckSolidMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  CircledCheckSolidMedium,
+  CircledCrossSolidMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { ScreenName } from "../../const";
 import OnboardingView from "../Onboarding/OnboardingView";
-import Illustration from "../../images/illustration/Illustration";
 import RequiresBLE from "../../components/RequiresBLE";
-
-const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.png");
+import Animation from "../../components/Animation";
+import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -64,6 +66,7 @@ const BleDevicePairingInner = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const theme = colors.type as "dark" | "light";
 
   const productName =
     getDeviceModel(device.modelId).productName || device.modelId;
@@ -89,10 +92,9 @@ const BleDevicePairingInner = ({
               deviceName,
             })}
           </Text>
-          <Illustration
-            size={300}
-            darkSource={setupLedgerImg}
-            lightSource={setupLedgerImg}
+
+          <Animation
+            source={getDeviceAnimation({ device, key: "blePaired", theme })}
           />
         </Flex>
       </OnboardingView>
@@ -102,14 +104,17 @@ const BleDevicePairingInner = ({
     return (
       <OnboardingView
         hasCloseButton
-        title={`❌ ${t("syncOnboarding.pairing.error.title")}`}
         subTitle={t("syncOnboarding.pairing.error.subtitle", { productName })}
       >
-        <Illustration
-          size={300}
-          darkSource={setupLedgerImg}
-          lightSource={setupLedgerImg}
-        />
+        <Flex alignItems="center" justifyContent="center" p={5}>
+          <CircledCrossSolidMedium color={colors.error.c80} size={56} />
+        </Flex>
+        <Text mb={8} textAlign="center" variant="h4" fontWeight="semiBold">
+          {t("syncOnboarding.pairing.error.title")}
+        </Text>
+        <Text textAlign="center">
+          {t("syncOnboarding.pairing.error.subtitle", { productName })}
+        </Text>
       </OnboardingView>
     );
   }
@@ -131,11 +136,10 @@ const BleDevicePairingInner = ({
           color="neutral.c80"
         >
           {t("syncOnboarding.pairing.loading.subtitle", { productName })}
+          Currently in {colors.type}
         </Text>
-        <Illustration
-          size={300}
-          darkSource={setupLedgerImg}
-          lightSource={setupLedgerImg}
+        <Animation
+          source={getDeviceAnimation({ device, key: "blePairing", theme })}
         />
       </Flex>
     </OnboardingView>
