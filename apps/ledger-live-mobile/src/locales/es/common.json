@@ -560,14 +560,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "Este formato de dirección heredado ya no es compatible"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "El formato de Memo es incorrecto"
-    },
     "SourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para enviar {{currencyName}}"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Es posible que sea necesario un Memo al enviar a este receptor"
     },
     "StratisDown2021Warning" : {
       "description" : "La cadena de bloques Stratis ha evolucionado y es posible que ya no funcione correctamente. La compatibilidad con la cadena de bloques Stratis original se mantendrá hasta el 16 de octubre de 2021."
@@ -644,7 +638,45 @@
       "title" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
     },
     "CardanoMinAmountError" : {
-      "title" : "{{amount}} mínimos de ADA necesarios"
+      "title" : "Tienes que enviar un mínimo de {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Asegúrate de tener fondos suficientes para pagar las tarifas"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "El formato de Memo es incorrecto"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Es posible que sea necesario un Memo al enviar a este receptor"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Este receptor aún no tiene ninguna trustline para {{assetCode}}."
+    },
+    "StellarAssetRequired" : {
+      "title" : "Hay que seleccionar un activo Stellar para poder añadir una trustline."
+    },
+    "StellarAssetNotFound" : {
+      "title" : "No se ha podido encontrar el activo Stellar seleccionado."
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Fondos insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes para cubrir la tarifa de transacción."
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "La tarifa seleccionada es inferior a la tarifa recomendada."
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "La tarifa mínima de transacción es de 0,00001 XLM."
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Fondos insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes para cubrir la nueva trustline."
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "La cuenta de Stellar no existe."
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Desactiva la multifirma para realizar transacciones de Stellar."
     }
   },
   "bluetooth" : {
@@ -820,8 +852,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "¿Te gusta Ledger Live?",
-      "description" : "Ya sea para decirnos que te gusta o que hay algo que podríamos mejorar, valoramos mucho tus comentarios.",
+      "title" : "¿Qué te parece nuestra aplicación?",
+      "description" : "Tus comentarios son importantes para mejorar Ledger Live.",
       "cta" : {
         "enjoy" : "Es genial",
         "disappointed" : "Me ha decepcionado",
@@ -838,7 +870,8 @@
     },
     "disappointed" : {
       "title" : "Ayúdanos a construir un producto mejor para ti",
-      "description" : "Siempre queremos mejorar, y las reseñas honestas nos ayudan mucho a saber cómo.",
+      "description" : "Si necesitas más ayuda o quieres que nos pongamos en contacto contigo, usa nuestro chat",
+      "here" : "aquí",
       "cta" : {
         "sendFeedback" : "Enviar comentarios",
         "notNow" : "Ahora no"
@@ -930,9 +963,9 @@
         "title" : "Gana",
         "desc" : "Gana ingresos pasivos y haz crecer tus activos cripto"
       },
-      "mint": {
-        "title": "Acuñar",
-        "desc": "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
+      "mint" : {
+        "title" : "Acuñar",
+        "desc" : "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
       }
     },
     "comingSoon" : "próximamente",
@@ -1753,6 +1786,13 @@
         "howTo" : "Puedes agregar activos a la cuenta Algorand.",
         "addAsa" : "Agregar ASA (activo)",
         "howAsaWorks" : "¿Cómo funciona ASA (activo)?"
+      },
+      "stellar" : {
+        "seeMore" : "Ver más activos",
+        "seeLess" : "Ver menos activos",
+        "addTokens" : "Agregar activos",
+        "howTo" : "Puedes agregar activos a tu cuenta de Stellar.",
+        "addAsset" : "Añadir activo"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1941,12 @@
         "showTokens_plural" : "Mostrar {{length}} ASA",
         "hideTokens" : "Ocultar ASA",
         "hideTokens_plural" : "Ocultar ASA"
+      },
+      "stellar" : {
+        "showTokens" : "Mostrar {{length}} activo",
+        "showTokens_plural" : "Mostrar {{length}} activos",
+        "hideTokens" : "Ocultar activo",
+        "hideTokens_plural" : "Ocultar activos"
       }
     },
     "noResultsFound" : "No se encontraron activos",
@@ -3259,7 +3305,9 @@
     "newVersion" : "Actualización {{version}} disponible para {{deviceName}}",
     "drawerUpdate" : {
       "title" : "Actualización de firmware",
-      "description" : "Actualiza tu firmware Ledger Nano conectándolo a la aplicación Ledger Live Desktop"
+      "description" : "Actualiza tu firmware Ledger Nano conectándolo a la aplicación Ledger Live Desktop",
+      "pleaseConnectUsbTitle" : "Es necesario un cable USB",
+      "pleaseConnectUsbDescription" : "Para iniciar la actualización del firmware, conecta tu {{deviceName}} a tu teléfono mediante un cable USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3378,6 +3426,13 @@
             "broadcastError" : "Es posible que la transacción haya fallado. Vuelve a comprobarlo en unos minutos para asegurarte de que no se haya realizado la transacción antes de intentarlo de nuevo."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "El saldo total no incluye las recompensas de participación"
       }
     }
   },
@@ -3734,6 +3789,7 @@
     }
   },
   "stellar" : {
+    "token" : "Activos",
     "memo" : {
       "title" : "Memo",
       "warning" : "Al utilizar un Memo, verifica con cuidado su tipo con el receptor."
@@ -3744,6 +3800,48 @@
       "MEMO_ID" : "Memo ID",
       "MEMO_HASH" : "Memo Hash",
       "MEMO_RETURN" : "Devolución de memo"
+    },
+    "fee" : "Tarifa de red",
+    "feeAction" : "Actualizar tarifa",
+    "recommendedFee" : "Tarifa recomendada",
+    "recommenndedFeeInfo" : "Puedes enviar esta transacción con una tarifa inferior a la recomendada, pero es posible que no se complete.",
+    "suggested" : "Sugerida",
+    "networkCongestion" : "congestión de la red",
+    "networkCongestionLevel" : {
+      "LOW" : "Baja",
+      "MEDIUM" : "Media",
+      "HIGH" : "Alta"
+    },
+    "assetCode" : "Código del activo",
+    "assetIssuer" : "Emisor del activo",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "Añadir activo",
+        "connectDevice" : "Conectar dispositivo",
+        "verification" : "Verificación",
+        "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "Activo ya agregado",
+              "description" : "Ya tienes un activo {{token}} en tu cuenta de Stellar."
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "¡Activo {{token}} agregado correctamente!",
+              "text" : "Ya puedes recibir y enviar activos {{token}} en tu cuenta de Stellar.",
+              "cta" : "Ver detalles"
+            },
+            "pending" : {
+              "title" : "Transmitiendo transacción..."
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Vuelve a comprobarlo en unos minutos para asegurarte de que no se haya realizado la transacción antes de intentarlo de nuevo."
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4407,6 +4505,30 @@
     },
     "operations" : {
       "title" : "Historial de transacciones"
+    }
+  },
+  "hedera" : {
+    "name" : "Hedera",
+    "createHederaAccountHelp" : {
+      "text" : "Consulta este artículo de soporte para aprender",
+      "link" : "a crear una cuenta de Hedera"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "No se puede confirmar tu dirección {{name}} en tu dispositivo Ledger. Si lo usas es bajo tu propio riesgo."
+    }
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Nice one.\nYou're all set.",
+      "allDoneTitle" : "Nice work.\nYou're up and running.",
+      "subtitle" : "Here is what you can do next:",
+      "skip" : "Skip to the app",
+      "goToWallet" : "Go to Ledger Live wallet",
+      "done" : "You've just secured your future"
+    },
+    "walletCard" : {
+      "title" : "Getting started",
+      "description" : "Click here to finish setting up your {{productName}} with Ledger Live"
     }
   }
 }
