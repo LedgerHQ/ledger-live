@@ -2,13 +2,17 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { StackScreenProps } from "@react-navigation/stack";
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text, Button } from "@ledgerhq/native-ui";
+import {
+  ArrowLeftMedium,
+  BluetoothMedium,
+} from "@ledgerhq/native-ui/assets/icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { BleErrorCode } from "react-native-ble-plx";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { ScannedDevice } from "@ledgerhq/live-common/ble/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useTranslation } from "react-i18next";
-import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { knownDevicesSelector } from "../../reducers/ble";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
@@ -74,6 +78,10 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
     }
   }, [scanningBleError]);
 
+  const handleNavigateBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
   const onSelect = useCallback(
     (item: ScannedDevice, _deviceMeta) => {
       const deviceToPair = {
@@ -128,33 +136,45 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
 
   return (
     <RequiresBLE>
-      <OnboardingView hasBackButton>
-        <Flex mb={8} alignItems="center">
-          <BluetoothThingy />
+      <SafeAreaView>
+        <Flex bg="background.main" height="100%">
+          <Flex flexDirection="row" justifyContent="space-between">
+            <Button
+              Icon={ArrowLeftMedium}
+              size="medium"
+              onPress={handleNavigateBack}
+            />
+          </Flex>
+
+          <Flex px={4}>
+            <Flex mb={8} alignItems="center">
+              <BluetoothThingy />
+            </Flex>
+            <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold">
+              {t("syncOnboarding.scanning.title", {
+                productName: "Nano", // TODO
+              })}
+            </Text>
+            <Text
+              mb={8}
+              color="neutral.c70"
+              textAlign="center"
+              variant="body"
+              fontWeight="medium"
+            >
+              {t("syncOnboarding.scanning.description", {
+                productName: "Nano", // TODO
+              })}
+            </Text>
+            <FlatList
+              data={scannedDevices}
+              renderItem={renderItem}
+              keyExtractor={item => `${item.deviceId}-${Math.random()}`}
+              ListEmptyComponent={<InfiniteLoader size={58} />}
+            />
+          </Flex>
         </Flex>
-        <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold">
-          {t("syncOnboarding.scanning.title", {
-            productName: "Nano", // TODO
-          })}
-        </Text>
-        <Text
-          mb={8}
-          color="neutral.c70"
-          textAlign="center"
-          variant="body"
-          fontWeight="medium"
-        >
-          {t("syncOnboarding.scanning.description", {
-            productName: "Nano", // TODO
-          })}
-        </Text>
-        <FlatList
-          data={scannedDevices}
-          renderItem={renderItem}
-          keyExtractor={item => `${item.deviceId}-${Math.random()}`}
-          ListEmptyComponent={<InfiniteLoader size={58} />}
-        />
-      </OnboardingView>
+      </SafeAreaView>
     </RequiresBLE>
   );
 };
