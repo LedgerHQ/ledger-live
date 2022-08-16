@@ -1038,6 +1038,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Choisissez votre appareil"
     },
@@ -3552,7 +3553,7 @@
       },
       "undelegating" : {
         "title" : "Délégation interrompue",
-        "description" : "Les actifs dont la délégation est interrompue sont immobilisés pendant 21 jours avant d’être disponibles."
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 21 jours."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -3595,7 +3596,7 @@
               "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
             },
             "warning" : {
-              "description" : "Choisissez votre validateur judicieusement : une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement."
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             },
             "cta" : "Continuer"
           },
