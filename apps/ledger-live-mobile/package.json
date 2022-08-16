@@ -78,6 +78,7 @@
     "@ledgerhq/react-native-passcode-auth": "^2.1.0",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^",
     "@polkadot/reactnative-identicon": "2.2.1",
     "@polkadot/x-randomvalues": "9.1.1",
     "@react-native-async-storage/async-storage": "^1.15.17",
