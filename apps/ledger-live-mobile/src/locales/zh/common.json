@@ -560,14 +560,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "不再支持这种传统地址格式"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo 格式错误"
-    },
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "发送到该接收方时需要添加 memo"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratis 区块链已经进化，可能无法正确工作。对原有 Stratis 区块链的技术支持，将会持续到 2021 年 10 月 16 日。"
@@ -644,7 +638,45 @@
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
     },
     "CardanoMinAmountError" : {
-      "title" : "至少需要 {{amount}} 个 ADA"
+      "title" : "最小可发送数额为 {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "请确保您的资金足够支付费用"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo 格式错误"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "发送到该接收方时需要添加 memo"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "此接收人还没有 {{assetCode}} 的信任额度"
+    },
+    "StellarAssetRequired" : {
+      "title" : "应在添加信任额度之前先选择 Stellar（恒星）资产"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "找不到所选的 Stellar（恒星）资产"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金足够支付交易费用"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "所选费用低于建议费用"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低交易费用为 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金多于新的信任额度"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar（恒星）账户不存在"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     }
   },
   "bluetooth" : {
@@ -820,8 +852,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "喜欢 Ledger Live 吗？",
-      "description" : "无论您喜欢我们的产品还是觉得我们可以做得更好，我们都非常重视您的反馈。",
+      "title" : "您觉得我们的应用程序怎么样？",
+      "description" : "您的反馈对于改进 Ledger Live 非常重要。",
       "cta" : {
         "enjoy" : "做得很棒",
         "disappointed" : "我很失望",
@@ -838,7 +870,8 @@
     },
     "disappointed" : {
       "title" : "帮助我们打造更完善的产品",
-      "description" : "我们希望做得更好，您的真实反馈有助于我们了解有待改进的地方。",
+      "description" : "如果您需要更多帮助或希望得到我们的回复，请使用在线聊天",
+      "here" : "点击此处",
       "cta" : {
         "sendFeedback" : "发送反馈",
         "notNow" : "以后再说"
@@ -930,9 +963,9 @@
         "title" : "赚取",
         "desc" : "赚取被动收入并增长加密资产"
       },
-      "mint": {
-        "title": "铸造",
-        "desc": "通过 [ L ] Market 市场上的独家合作来铸造 NFT"
+      "mint" : {
+        "title" : "铸造",
+        "desc" : "通过 [ L ] 市场上的独家合作来铸造 NFT"
       }
     },
     "comingSoon" : "敬请期待",
@@ -1753,6 +1786,13 @@
         "howTo" : "您可以将资产添加到您的 Algorand 账户。",
         "addAsa" : "添加 ASA (资产)",
         "howAsaWorks" : "ASA (资产) 如何运作？"
+      },
+      "stellar" : {
+        "seeMore" : "查看更多资产",
+        "seeLess" : "查看更少资产",
+        "addTokens" : "添加资产",
+        "howTo" : "您可以将资产添加到 Stellar（恒星）账户。",
+        "addAsset" : "添加资产"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1941,12 @@
         "showTokens_plural" : "显示 {{length}} ASA",
         "hideTokens" : "隐藏 ASA",
         "hideTokens_plural" : "隐藏 ASA"
+      },
+      "stellar" : {
+        "showTokens" : "显示 {{length}} 种资产",
+        "showTokens_plural" : "显示 {{length}} 种资产",
+        "hideTokens" : "隐藏资产",
+        "hideTokens_plural" : "隐藏资产"
       }
     },
     "noResultsFound" : "未找到资产。",
@@ -3259,7 +3305,9 @@
     "newVersion" : "更新适用于您的 {{deviceName}} 的版本 {{version}}",
     "drawerUpdate" : {
       "title" : "固件更新",
-      "description" : "将您的 Ledger Nano 固件连接到桌面板的 Ledger Live 应用程序以更新"
+      "description" : "将您的 Ledger Nano 固件连接到桌面板的 Ledger Live 应用程序以更新",
+      "pleaseConnectUsbTitle" : "需要使用 USB 线",
+      "pleaseConnectUsbDescription" : "要开始固件更新，请使用 USB 线将 {{deviceName}} 插入手机。"
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3378,6 +3426,13 @@
             "broadcastError" : "您的交易可能已失败。请等待几分钟后再次查看，如果确认交易未成功，则再次尝试。"
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "总余额不包括权益质押奖励"
       }
     }
   },
@@ -3734,6 +3789,7 @@
     }
   },
   "stellar" : {
+    "token" : "多种资产",
     "memo" : {
       "title" : "Memo",
       "warning" : "当使用 Memo 标签时，请仔细核对接收方的类型。"
@@ -3744,6 +3800,48 @@
       "MEMO_ID" : "Memo ID",
       "MEMO_HASH" : "Memo Hash 标签哈希",
       "MEMO_RETURN" : "Memo 返回"
+    },
+    "fee" : "网络费用",
+    "feeAction" : "更新费用",
+    "recommendedFee" : "建议费用",
+    "recommenndedFeeInfo" : "您仍可以低于建议的费用提交此交易，但交易可能无法完成",
+    "suggested" : "建议",
+    "networkCongestion" : "网络拥塞",
+    "networkCongestionLevel" : {
+      "LOW" : "低",
+      "MEDIUM" : "中",
+      "HIGH" : "高"
+    },
+    "assetCode" : "资产代码",
+    "assetIssuer" : "资产发行者",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "添加资产",
+        "connectDevice" : "连接设备",
+        "verification" : "验证",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "资产已添加",
+              "description" : "您的 Stellar（恒星）账户中已有 {{token}} 资产。"
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "已成功添加 {{token}} 资产！",
+              "text" : "您现在可以在 Stellar（恒星）账户上接收和发送 {{token}} 资产了。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请在几分钟后查看并在确保您的交易的确没有通过后，才再次重试。"
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4407,6 +4505,30 @@
     },
     "operations" : {
       "title" : "交易历史"
+    }
+  },
+  "hedera" : {
+    "name" : "hedera",
+    "createHederaAccountHelp" : {
+      "text" : "要了解如何创建 Hedera 账户，",
+      "link" : "请参考此支持文章"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
+    }
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Nice one.\nYou're all set.",
+      "allDoneTitle" : "Nice work.\nYou're up and running.",
+      "subtitle" : "Here is what you can do next:",
+      "skip" : "Skip to the app",
+      "goToWallet" : "Go to Ledger Live wallet",
+      "done" : "You've just secured your future"
+    },
+    "walletCard" : {
+      "title" : "Getting started",
+      "description" : "Click here to finish setting up your {{productName}} with Ledger Live"
     }
   }
 }
