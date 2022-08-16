@@ -560,14 +560,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "レガシーアドレス形式はサポートを終了しました。"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "メモのフォーマットに誤りがあります。"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "この受取人に送金するには、Memo(メモ)が必要な場合があります"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratisブロックチェーンのメジャーアップデートが実施されたため、正しく動作しない可能性があります。旧Stratisブロックチェーンのサポートは、2021年10月16日まで引き続き提供されます。"
@@ -644,7 +638,45 @@
       "title" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
     },
     "CardanoMinAmountError" : {
-      "title" : "最低{{amount}} ADA以上必要"
+      "title" : "送付可能な最低金額は、{{amount}} ADAです"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "お支払いに十分な資金があることをご確認ください"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "メモのフォーマットに誤りがあります。"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "この受取人に送金するには、Memo(メモ)が必要な場合があります"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "この受取人にはまだ{{assetCode}}へのトラストラインがありません"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Stellar資産はトラストライン追加前に選択する必要があります"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "選択されたStellar資産が見つかりませんでした"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントにトランザクション手数料をカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "選択された手数料は推奨手数料を下回っています"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低トランザクション手数料は0.00001 XLMです"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに新しいトラストラインをカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellarアカウントが存在しません"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     }
   },
   "bluetooth" : {
@@ -820,8 +852,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Ledger Liveをお楽しみいただいていますか?",
-      "description" : "Ledger Liveの改善点等にお気づきでしょうか。弊社にとって、お客様のご意見やご感想は非常に大切です。",
+      "title" : "アプリの使い勝手はいかがですか？",
+      "description" : "ご意見は、Ledger Liveの改善に重要です。",
       "cta" : {
         "enjoy" : "素晴らしい",
         "disappointed" : "がっかりした",
@@ -838,7 +870,8 @@
     },
     "disappointed" : {
       "title" : "より良い製品の開発にぜひご協力ください",
-      "description" : "弊社は常に改善に取り組んでいます。お客様の率直なご意見をいただけますと、改善点の正確な把握に非常に役立ちます。",
+      "description" : "さらにサポートが必要な場合、またはお問合せを希望される場合は、ライブチャットを",
+      "here" : "ご利用ください",
       "cta" : {
         "sendFeedback" : "意見を送る",
         "notNow" : "後で"
@@ -930,9 +963,9 @@
         "title" : "報酬獲得",
         "desc" : "不労所得を獲得して暗号資産を運用する"
       },
-      "mint": {
-        "title": "ミント”,",
-        "desc": "[ L ] MarketでコラボNFTをミントしましょう"
+      "mint" : {
+        "title" : "ミント",
+        "desc" : "[ L ] Marketにおける専用コラボレーションからNFTをミント"
       }
     },
     "comingSoon" : "近日公開",
@@ -1753,6 +1786,13 @@
         "howTo" : "Algorandアカウントに資産を追加できます。",
         "addAsa" : "ASA（資産）の追加",
         "howAsaWorks" : "ASA（資産）の仕組み"
+      },
+      "stellar" : {
+        "seeMore" : "さらに資産を見る",
+        "seeLess" : "資産の表示を減らす",
+        "addTokens" : "資産を追加",
+        "howTo" : "Stellarアカウントに資産を追加できます。",
+        "addAsset" : "資産を追加"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1941,12 @@
         "showTokens_plural" : "{{length}}ASAを表示",
         "hideTokens" : "ASAを非表示",
         "hideTokens_plural" : "ASAを非表示"
+      },
+      "stellar" : {
+        "showTokens" : "{{length}}資産を表示",
+        "showTokens_plural" : "{{length}}資産を表示",
+        "hideTokens" : "資産を非表示",
+        "hideTokens_plural" : "資産を非表示"
       }
     },
     "noResultsFound" : "資産が見つかりません",
@@ -3259,7 +3305,9 @@
     "newVersion" : "お使いの{{deviceName}}で{{version}}のアップデートが利用可能です",
     "drawerUpdate" : {
       "title" : "ファームウェアのアップデート",
-      "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。"
+      "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。",
+      "pleaseConnectUsbTitle" : "USB cable needed",
+      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3378,6 +3426,13 @@
             "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、トランザクションが成立しなかったことを確認した上で、もう一度やり直してください。"
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "合計残高にはステーキング報酬は含まれません"
       }
     }
   },
@@ -3734,6 +3789,7 @@
     }
   },
   "stellar" : {
+    "token" : "資産",
     "memo" : {
       "title" : "Memo(メモ)",
       "warning" : "メモを使用する場合は、受取人とメモのタイプをしっかりと確認してください。"
@@ -3744,6 +3800,48 @@
       "MEMO_ID" : "メモID",
       "MEMO_HASH" : "メモハッシュ",
       "MEMO_RETURN" : "メモリターン"
+    },
+    "fee" : "ネットワーク手数料",
+    "feeAction" : "更新料",
+    "recommendedFee" : "推奨手数料",
+    "recommenndedFeeInfo" : "このトランザクションを推奨手数料より低額で提出可能ですが、完了しない場合があります",
+    "suggested" : "提案済み",
+    "networkCongestion" : "ネットワーク混雑",
+    "networkCongestionLevel" : {
+      "LOW" : "低速",
+      "MEDIUM" : "標準",
+      "HIGH" : "高速"
+    },
+    "assetCode" : "資産コード",
+    "assetIssuer" : "資産発行者",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "資産を追加",
+        "connectDevice" : "デバイスを接続",
+        "verification" : "認証",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "追加済みの資産",
+              "description" : "すでに、Stellarアカウントに{{token}}資産を所有しています。"
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}}資産が正常に追加されました！",
+              "text" : "Stellarアカウントで、{{token}}資産の受け取りや送付が可能になりました。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、トランザクションの不成立を確認した上で、もう一度やり直してください。"
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4407,6 +4505,30 @@
     },
     "operations" : {
       "title" : "取引履歴"
+    }
+  },
+  "hedera" : {
+    "name" : "Hedera",
+    "createHederaAccountHelp" : {
+      "text" : "Hederaアカウントの作成方法については、",
+      "link" : "こちらのサポート記事をご参照ください。"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    }
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Nice one.\nYou're all set.",
+      "allDoneTitle" : "Nice work.\nYou're up and running.",
+      "subtitle" : "Here is what you can do next:",
+      "skip" : "Skip to the app",
+      "goToWallet" : "Go to Ledger Live wallet",
+      "done" : "You've just secured your future"
+    },
+    "walletCard" : {
+      "title" : "Getting started",
+      "description" : "Click here to finish setting up your {{productName}} with Ledger Live"
     }
   }
 }
