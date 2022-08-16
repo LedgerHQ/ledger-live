@@ -323,6 +323,14 @@
     "InvalidRecipient" : {
       "title" : "Получатель недействителен"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Установка языка на устройстве невозможна",
+      "description" : "Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Язык не найден",
+      "description" : "Мы не смогли найти язык, который вы пытаетесь установить. Пожалуйста, попробуйте установить другой язык."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Кажется, обновлений нет",
       "description" : "Свяжитесь с Поддержкой, если у вас не получается использовать устройство."
@@ -2761,7 +2769,7 @@
       }
     },
     "stepperHeader" : {
-      "selectAccount" : "Счёт для пополнения",
+      "selectAccount" : "Счёт для списания",
       "recipientAddress" : "Адрес получателя",
       "selectAmount" : "Сумма",
       "summary" : "Сводка",
@@ -2956,7 +2964,7 @@
     },
     "validation" : {
       "message" : "Обязательно проверяйте соответствие адреса на экране устройства адресу, который вам предоставили.",
-      "success" : "Ваши голоса переданы",
+      "success" : "Вы успешно проголосовали",
       "info" : "",
       "button" : {
       }
@@ -3429,6 +3437,19 @@
       "es" : "Español",
       "zh" : "简体中文",
       "de" : "Deutsch"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Язык интерфейса",
+    "deviceLanguage" : "Язык устройства",
+    "changeLanguage" : "Поменять язык",
+    "allowLanguageInstallation" : "Разрешить установку языка",
+    "languageInstalled" : "Новый язык устройства — {{language}}",
+    "installingLanguage" : "Установка языка",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
     }
   },
   "FirmwareUpdateCheckId" : {
