@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "مستلم غير صحيح"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "تم رفض تثبيت اللغة على الجهاز",
+      "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "لم يتم العثور على اللغة",
+      "description" : "لم يتم العثور على اللغة التي تحاول تثبيتها. يرجى محاولة تثبيت لغة أخرى."
+    },
     "LatestMCUInstalledError" : {
       "title" : "عذراً، لا يوجد شيء للتحديث",
       "description" : "يرجى التواصل مع دعم Ledger إذا كنت لا تستطيع استخدام جهازك."
@@ -560,14 +568,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "صيغة العنوان القديم (legacy) لم تعد مدعومة"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "صيغة الملاحظة خاطئة"
-    },
     "SourceHasMultiSign" : {
       "title" : "يرجى تعطيل خاصية التوقيع المتعدد لإرسال {{currencyName}}"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "قد يلزم إضافة ملاحظة عند الإرسال إلى هذا المستلم"
     },
     "StratisDown2021Warning" : {
       "description" : "سلسلة كتل Stratis تطورت ومن الوارد ألا تعمل بشكل صحيح. سيتم توفير الدعم لسلسلة كتل Stratis الأصلية حتى 16 أكتوبر 2021."
@@ -644,7 +646,45 @@
       "title" : "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
     },
     "CardanoMinAmountError" : {
-      "title" : "{{amount}} ADA كحد أدنى"
+      "title" : "الحد الأدنى للمبلغ القابل للإرسال هو {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "رجاء التأكد أن لديك أرصدة مالية كافية لدفع الرسوم."
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "صيغة الملاحظة خاطئة"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "قد يلزم إضافة ملاحظة عند الإرسال إلى هذا المستلم"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "هذا المستلم ليس لديه خط ثقة (trustline) إلى {{assetCode}} بعد."
+    },
+    "StellarAssetRequired" : {
+      "title" : "يجب اختيار أصل Stellar قبل إضافة خط ثقة (trustline)"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "لا يمكن العثور على أصل Stellar الذي تم اختياره"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "عفواً، الأموال المتوفرة غير كافية",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية لتغطية رسوم المعاملة"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "الرسوم التي تم تحديدها أقل من الرسوم الموصى بها"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "الحد الأدنى لرسوم المعاملة هو 0.00001 XLM."
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "عفواً، الأموال المتوفرة غير كافية",
+      "description" : "يرجى التأكد من أن الحساب به أموال كافية لتغطية خط الثقة (trustline) الجديد"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "حساب Stellar غير موجود"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "يرجى تعطيل التوقيع المتعدد لإجراء معاملات Stellar"
     }
   },
   "bluetooth" : {
@@ -820,8 +860,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "هل يُعجبك Ledger Live؟",
-      "description" : "سواءً كان يُعجبك أو تشعر أننا يمكن أن نقوم بعمل أفضل. نحن نُقدّر رأيك.",
+      "title" : "هل يعجبك تطبيقنا ؟",
+      "description" : "ملاحظاتك مهمة لتحسين Ledger Live.",
       "cta" : {
         "enjoy" : "إنه رائع",
         "disappointed" : "لا يعجبني",
@@ -838,7 +878,8 @@
     },
     "disappointed" : {
       "title" : "ساعدنا على بناء مُنتج أفضل من أجلك",
-      "description" : "نحن نرغب في تطوير أنفسنا، ورأيك الصادق يُساعنا على معرفة ما نحتاج إلى تطويره.",
+      "description" : "إذا كنت بحاجة إلى مزيد من المساعدة أو ترغب في تواصلنا معك، يرجى استخدام الدردشة المباشرة.",
+      "here" : "هنا",
       "cta" : {
         "sendFeedback" : "أرسل الملاحظات",
         "notNow" : "ليس الآن"
@@ -929,6 +970,10 @@
       "earn" : {
         "title" : "اكسب",
         "desc" : "كسب دخل سلبي وتنمية أصولك المشفرة"
+      },
+      "mint" : {
+        "title" : "سَكَّ NFT",
+        "desc" : "سَكَّ الرموز غير القابلة للاستبدال (NFT) من خلال تعاونات حصرية على سوق [ L ]"
       }
     },
     "comingSoon" : "قريباً",
@@ -989,6 +1034,8 @@
     "stepLanguage" : {
       "title" : "اختر لغتك",
       "cta" : "متابعة",
+      "changeDeviceLanguage" : "هل تريد تغير لغة جهازك؟",
+      "changeDeviceLanguageDescription" : "Ledger Live الآن باللغة {{language}}. هل ترغب في استخدام اللغة {{language}} على جهازك أيضاً؟",
       "warning" : {
         "title" : "ابدأ باللغة الإنجليزية",
         "cta" : "فهمت!",
@@ -1749,6 +1796,13 @@
         "howTo" : "يمكنك إضافة أصول إلى حسابك Algorand.",
         "addAsa" : "إضافة ASA (أصل)",
         "howAsaWorks" : "كيف يعمل ASA (أصل)؟"
+      },
+      "stellar" : {
+        "seeMore" : "إظهار المزيد من الأصول",
+        "seeLess" : "إظهار أصول أقلّ",
+        "addTokens" : "إضافة أصول",
+        "howTo" : "يمكنك إضافة أصول إلى حسابك Stellar.",
+        "addAsset" : "إضافة أصل"
       }
     },
     "subaccounts" : {
@@ -1897,6 +1951,12 @@
         "showTokens_plural" : "عرض {{length}} ASA",
         "hideTokens" : "إخفاء ASA",
         "hideTokens_plural" : "إخفاء ASA"
+      },
+      "stellar" : {
+        "showTokens" : "إظهار {{length}} أصل",
+        "showTokens_plural" : "إظهار {{length}} أصل",
+        "hideTokens" : "إخفاء الأصل",
+        "hideTokens_plural" : "إخفاء الأصول"
       }
     },
     "noResultsFound" : "لم يتم العثور على أصل",
@@ -3255,7 +3315,9 @@
     "newVersion" : "التحديث {{version}} متاح لجهازك {{deviceName}}",
     "drawerUpdate" : {
       "title" : "تحديث البرنامج الثابت",
-      "description" : "قم بتحديث برنامج Ledger Nano الثابت عن طريق توصيله إلى تطبيق Ledger Live على سطح المكتب"
+      "description" : "قم بتحديث برنامج Ledger Nano الثابت عن طريق توصيله إلى تطبيق Ledger Live على سطح المكتب",
+      "pleaseConnectUsbTitle" : "كبل USB مطلوب",
+      "pleaseConnectUsbDescription" : "لبدء تحديث البرنامج الثابت، قم بتوصيل {{deviceName}} خاصتك بهاتفك الجوال باستخدام كبل USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3281,6 +3343,23 @@
       "es" : "Español",
       "zh" : "中文（简体）",
       "de" : "Deutsch"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "اللغة",
+    "deviceLanguage" : "لغة الجهاز",
+    "changeLanguage" : "تغيير اللغة",
+    "allowLanguageInstallation" : "السماح بتثبيت اللغة",
+    "languageInstalled" : "تم تغيير لغة الجهاز إلى {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "تعيين {{deviceName}} خاصتك باللغة {{language}}؟",
+      "description" : "اللغة {{language}} متاحة الآن لجهازك {{deviceName}}. يمكنك تعيينها الآن، أو تغيير لغة جهازك في أي وقت من My Ledger."
+    },
+    "installingLanguage" : "جاري تثبيت اللغة",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3374,6 +3453,13 @@
             "broadcastError" : "ربما تكون معاملتك قد فشلت. يرجى التحقق مرة أخرى بعد بضع دقائق للتأكد أن معاملتك لم تكتمل قبل المحاولة مرة أخرى."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "الرصيد الإجمالي لا يشمل مكافآت التكديس"
       }
     }
   },
@@ -3730,6 +3816,7 @@
     }
   },
   "stellar" : {
+    "token" : "أصول",
     "memo" : {
       "title" : "ملاحظة (تسمية الوجهة)",
       "warning" : "عند استخدام الملاحظة، تحقق بعناية من النوع مع المستلم."
@@ -3740,6 +3827,48 @@
       "MEMO_ID" : "مُعرّف الملاحظة",
       "MEMO_HASH" : "دالة تجزئة الملاحظة",
       "MEMO_RETURN" : "إرجاع الملاحظة"
+    },
+    "fee" : "رسوم الشبكة",
+    "feeAction" : "تعديل الرسوم",
+    "recommendedFee" : "الرسوم الموصى بها",
+    "recommenndedFeeInfo" : "ما زال بإمكانك إرسال هذه المعاملة برسوم أقل من الموصى بها ولكن ربّما لا تكتمل",
+    "suggested" : "مُقترح",
+    "networkCongestion" : "ازدحام الشبكة",
+    "networkCongestionLevel" : {
+      "LOW" : "منخفضة",
+      "MEDIUM" : "متوسط",
+      "HIGH" : "مرتفعة"
+    },
+    "assetCode" : "كود الأصل",
+    "assetIssuer" : "مُصدر الأصل",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "إضافة أصل",
+        "connectDevice" : "توصيل الجهاز",
+        "verification" : "التحقق",
+        "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "تمت إضافة الأصل بالفعل",
+              "description" : "لديك بالفعل أصل {{token}} في حسابك Stellar"
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "تمت إضافة أصل {{token}} بنجاح!",
+              "text" : "يمكنك الآن تلقي وإرسال أصول {{token}} على حسابك Stellar.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "pending" : {
+              "title" : "جاري بث المعاملة..."
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يرجى التحقق مرة أخرى بعد بضع دقائق للتأكد أن معاملتك لم تكتمل قبل المحاولة مرة أخرى."
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4403,6 +4532,16 @@
     },
     "operations" : {
       "title" : "سجل المعاملات"
+    }
+  },
+  "hedera" : {
+    "name" : "hedera",
+    "createHederaAccountHelp" : {
+      "text" : "يُرجى الاطلاع على مقالة الدعم هذه لمعرفة",
+      "link" : "كيفية إنشاء حساب Hedera"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
     }
   }
 }
