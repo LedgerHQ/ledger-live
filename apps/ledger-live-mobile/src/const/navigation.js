@@ -375,6 +375,13 @@ export const ScreenName = {
 
   // hedera
   HederaEditMemo: "HederaEditMemo",
+
+  // celo
+  CeloRegisterAccountSucess: "CeloRegisterAccountSucess",
+  CeloRegisterAccountError: "CeloRegisterAccountError",
+  CeloRegisterAccountStarted: "CeloRegisterAccountStarted",
+  CeloRegisterAccountSelectDevice: "CeloRegisterAccountSelectDevice",
+  CeloRegisterAccountConnectDevice: "CeloRegisterAccountConnectDevice",
 };
 
 export const NavigatorName = {
@@ -446,6 +453,9 @@ export const NavigatorName = {
 
   NotificationCenter: "NotificationCenter",
   Market: "Market",
+
+  // Celo
+  CeloRegisterAccountFlow: "CeloRegisterAccountFlow",
 
   // Tab
   Main: "Main",
