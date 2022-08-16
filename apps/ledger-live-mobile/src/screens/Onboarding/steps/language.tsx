@@ -34,6 +34,7 @@ import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { setLastSeenDevice } from "../../../actions/settings";
+import { track } from "../../../analytics";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
@@ -105,6 +106,9 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
         deviceLocalizationFeatureFlag.enabled
       ) {
+        track("Page LiveLanguageChange DeviceLanguagePrompt", {
+          selectedLanguage: potentialDeviceLanguage,
+        });
         setIsDeviceLanguagePromptOpen(true);
       } else {
         next();
@@ -149,6 +153,11 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
               device={deviceForChangeLanguageAction}
               onStart={() => setPreventPromptBackdropClick(true)}
               language={localeIdToDeviceLanguage[currentLocale] as Language}
+              onResult={() =>
+                track("Page LiveLanguageChange LanguageInstalled", {
+                  selectedLanguage: localeIdToDeviceLanguage[currentLocale],
+                })
+              }
               onContinue={() => {
                 setDeviceForChangeLanguageAction(null);
                 closeDeviceLanguagePrompt();
@@ -165,9 +174,12 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
                   ),
                 },
               )}
-              onConfirm={() =>
-                setDeviceForChangeLanguageAction(lastConnectedDevice)
-              }
+              onConfirm={() => {
+                track("Page LiveLanguageChange LanguageInstallTriggered", {
+                  selectedLanguage: localeIdToDeviceLanguage[currentLocale],
+                });
+                setDeviceForChangeLanguageAction(lastConnectedDevice);
+              }}
             />
           )}
         </Flex>
