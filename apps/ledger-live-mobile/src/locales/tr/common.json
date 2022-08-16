@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "Geçersiz alıcı"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Dil yüklemesi cihaz tarafından reddedildi",
+      "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+    },
+    "LanguageNotFound" : {
+      "title" : "Dil bulunamadı",
+      "description" : "Yüklemek istediğiniz dil bulunamadı. Lütfen farklı bir dil yüklemeyi deneyin."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Üzgünüz, güncellenecek bir şey yok",
       "description" : "Cihazınızı kullanamıyorsanız lütfen Ledger Destek ile iletişime geçin."
@@ -560,14 +568,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "Legacy adres biçimi artık desteklenmiyor"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo biçimi yanlış"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Bu alıcıya gönderirken bir memo gerekebilir"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratis blok zinciri evrimleşti ve artık düzgün çalışmayabilir. Orijinal Stratis blok zinciri desteği 16 Ekim 2021'e kadar sürdürülecektir."
@@ -644,7 +646,45 @@
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
     },
     "CardanoMinAmountError" : {
-      "title" : "En az {{amount}} ADA gerekli"
+      "title" : "En az {{amount}} ADA gönderilebilir"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Lütfen ücretleri ödemeye yetecek kadar fonunuz olduğundan emin olun"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo biçimi yanlış"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Bu alıcıya gönderirken bir memo gerekebilir"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Bu alıcının henüz {{assetCode}} için bir trustline'ı yok."
+    },
+    "StellarAssetRequired" : {
+      "title" : "Bir trustline eklemek için bir Stellar varlığı seçmelisiniz"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Seçilen Stellar varlığı bulunamadı"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta işlem ücretini karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Seçilen ücret önerilen ücretten az"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Minimum işlem ücreti 0,00001 XLM'dir"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta yeni trustline'ı karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar hesabı mevcut değil"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     }
   },
   "bluetooth" : {
@@ -820,8 +860,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Ledger Live'ı sevdiniz mi?",
-      "description" : "İster sevmiş ister daha iyi olabileceğini düşünüyor olun. Geri bildiriminiz bizim için gerçekten çok önemli.",
+      "title" : "Uygulamamızı beğendiniz mi?",
+      "description" : "Geri bildiriminiz Ledger Live'ı geliştirmemize yardımcı olacak.",
       "cta" : {
         "enjoy" : "Harika",
         "disappointed" : "Beğenmedim",
@@ -838,7 +878,8 @@
     },
     "disappointed" : {
       "title" : "Sizin için daha iyi bir ürün geliştirmemize yardımcı olun",
-      "description" : "Daha iyisini yapmak istiyoruz ve samimi geri bildiriminiz, neyi geliştirmemiz gerektiğini bilmemize yardımcı oluyor.",
+      "description" : "Başka bir konuda yardıma ihtiyacınız varsa ya da size dönüş yapmamızı isterseniz canlı sohbet işlevini kullanmak için lütfen",
+      "here" : "buraya tıklayın",
       "cta" : {
         "sendFeedback" : "Geri bildirim gönder",
         "notNow" : "Şimdi değil"
@@ -930,9 +971,9 @@
         "title" : "Kazanın",
         "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
       },
-      "mint": {
-        "title": "Mintleyin",
-        "desc": "[ L ] Market’teki özel iş birlikleri kapsamında NFT’ler mintleyin"
+      "mint" : {
+        "title" : "Mintleyin",
+        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mintleyin"
       }
     },
     "comingSoon" : "Çok yakında",
@@ -993,6 +1034,8 @@
     "stepLanguage" : {
       "title" : "Dilinizi seçin",
       "cta" : "Devam",
+      "changeDeviceLanguage" : "Change your device language?",
+      "changeDeviceLanguageDescription" : "Ledger Live is now in {{language}}. Do you want to use {{language}} on your device too?",
       "warning" : {
         "title" : "İngilizce olarak başlayın",
         "cta" : "Anladım!",
@@ -1753,6 +1796,13 @@
         "howTo" : "Algorand hesabınıza varlık ekleyebilirsiniz.",
         "addAsa" : "ASA Ekle (Varlık)",
         "howAsaWorks" : "ASA (varlık) nasıl çalışır?"
+      },
+      "stellar" : {
+        "seeMore" : "Diğer varlıkları gör",
+        "seeLess" : "Diğer varlıkları kapat",
+        "addTokens" : "Varlık ekle",
+        "howTo" : "Stellar hesabınıza varlık ekleyebilirsiniz.",
+        "addAsset" : "Varlık ekle"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1951,12 @@
         "showTokens_plural" : "{{length}} ASA göster",
         "hideTokens" : "ASA'yı Gizle",
         "hideTokens_plural" : "ASA'yı Gizle"
+      },
+      "stellar" : {
+        "showTokens" : "{{length}} varlığı göster",
+        "showTokens_plural" : "{{length}} varlığı göster",
+        "hideTokens" : "Varlığı gizle",
+        "hideTokens_plural" : "Varlıkları gizle"
       }
     },
     "noResultsFound" : "Varlık bulunamadı",
@@ -3259,7 +3315,9 @@
     "newVersion" : "{{deviceName}} cihazınız için {{version}} güncellemesi mevcut",
     "drawerUpdate" : {
       "title" : "Donanım Yazılımı Güncellemesi",
-      "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın"
+      "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın",
+      "pleaseConnectUsbTitle" : "USB cable needed",
+      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3285,6 +3343,23 @@
       "es" : "İspanyolca",
       "zh" : "Çince",
       "de" : "Almanca"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Dil",
+    "deviceLanguage" : "Cihaz Dili",
+    "changeLanguage" : "Dili değiştir",
+    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
+    "languageInstalled" : "Cihaz dili {{language}} oldu",
+    "firmwareUpdatePrompt" : {
+      "title" : "Set your {{deviceName}} in {{language}}?",
+      "description" : "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
+    },
+    "installingLanguage" : "Dil yükleniyor",
+    "languages" : {
+      "english" : "İngilizce",
+      "french" : "Fransızca",
+      "spanish" : "İspanyolca"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3378,6 +3453,13 @@
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Tekrar denemeden önce, işleminizin gerçekleşmediğinden emin olmak için birkaç dakika sonra yeniden kontrol edin."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Staking ödülleri toplam bakiyeye dahil edilmez"
       }
     }
   },
@@ -3734,6 +3816,7 @@
     }
   },
   "stellar" : {
+    "token" : "Varlıklar",
     "memo" : {
       "title" : "Memo",
       "warning" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın."
@@ -3744,6 +3827,48 @@
       "MEMO_ID" : "Memo Kimliği",
       "MEMO_HASH" : "Memo Hash",
       "MEMO_RETURN" : "Memo Dönüşü"
+    },
+    "fee" : "Ağ ücreti",
+    "feeAction" : "Güncelleme ücreti",
+    "recommendedFee" : "Önerilen ücret",
+    "recommenndedFeeInfo" : "Bu işlemi önerilenden daha düşük bir ücretle gönderebilirsiniz ancak tamamlanmayabilir",
+    "suggested" : "Önerilen",
+    "networkCongestion" : "ağ yoğunluğu",
+    "networkCongestionLevel" : {
+      "LOW" : "Düşük",
+      "MEDIUM" : "Orta",
+      "HIGH" : "Yüksek"
+    },
+    "assetCode" : "Varlık kodu",
+    "assetIssuer" : "Varlık yaratıcısı",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "Varlık ekle",
+        "connectDevice" : "Cihazı bağlayın",
+        "verification" : "Doğrulama",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "Varlık zaten eklendi",
+              "description" : "Stellar hesabınızda zaten {{token}} varlığı mevcut."
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}} varlığı başarıyla eklendi",
+              "text" : "Artık Stellar hesabınızla <0>{{token}}</0> varlıkları gönderip alabilirsiniz.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Tekrar denemeden önce, işleminizin gerçekleşmediğinden emin olmak için birkaç dakika sonra yeniden kontrol edin."
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4407,6 +4532,16 @@
     },
     "operations" : {
       "title" : "İşlem geçmişi"
+    }
+  },
+  "hedera" : {
+    "name" : "hedera",
+    "createHederaAccountHelp" : {
+      "text" : "Bu destek makalesini inceleyerek",
+      "link" : "Hedera hesabının nasıl oluşturulduğunu öğrenebilirsiniz"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
     }
   }
 }
