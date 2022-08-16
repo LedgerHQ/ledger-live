@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useTheme } from "styled-components";
-import { Text, SearchInput, Flex, Grid } from "../../..";
+import { Text, SearchInput, Flex, Grid, CryptoIcon } from "../../..";
 import * as cryptoIcons from "@ledgerhq/crypto-icons-ui/react";
 
 type CryptoIconsProps = {
@@ -22,7 +21,7 @@ const Container = styled(Flex).attrs({
   p: 4,
 })`
   overflow: hidden;
-  height: calc(100vh - 2em);
+  height: calc(100vh - 4em);
 `;
 
 const IconContainer = styled(Flex).attrs<{ active?: boolean }>({
@@ -69,8 +68,7 @@ const Story = {
 export default Story;
 
 const ListTemplate = (args: CryptoIconsProps) => {
-  const theme = useTheme();
-  const color = args.color || theme.colors.neutral.c100;
+  const color = args.color || undefined;
   const [search, setSearch] = useState("");
   const s = search.toLowerCase();
   const regexp = new RegExp(s, "i");
@@ -93,11 +91,10 @@ const ListTemplate = (args: CryptoIconsProps) => {
             const match = name.match(regexp);
             const active = s && match;
             const index = match?.index ?? 0;
-            const TagName = cryptoIcons[name] || "BTC";
             return (
               <IconContainer active={!!active}>
                 <Flex flex={1} justifyContent="center" alignItems="center">
-                  <TagName key={name} size={args.size} color={color} />
+                  <CryptoIcon key={name} name={name} size={args.size} color={color} />
                 </Flex>
                 <Text variant="extraSmall">
                   {active ? (
@@ -118,12 +115,9 @@ const ListTemplate = (args: CryptoIconsProps) => {
   );
 };
 const IconTemplate = (args: CryptoIconsProps) => {
-  const theme = useTheme();
-  const color = args.color || theme.colors.neutral.c100;
-  const { name } = args;
-  const TagName = cryptoIcons[name] || "BTC";
+  const color = args.color || undefined;
 
-  return <TagName {...args} color={color} />;
+  return <CryptoIcon {...args} color={color} />;
 };
 
 export const ListCryptoIcons = ListTemplate.bind({});

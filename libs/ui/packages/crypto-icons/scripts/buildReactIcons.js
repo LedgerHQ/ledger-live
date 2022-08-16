@@ -60,9 +60,13 @@ function reactTemplate({ template }, _, { imports, interfaces, componentName, __
 
     ${interfaces}
 
-    function ${componentName} ({ size = 16, color = "currentColor" }: Props): JSX.Element {
+    const DefaultColor = DEFAULT_COLOR;
+
+    function ${componentName} ({ size = 16, color = DefaultColor }: Props): JSX.Element {
       return ${jsx};
     }
+
+    ${componentName}.DefaultColor = DefaultColor;
 
     ${exports}
   `;
@@ -85,9 +89,13 @@ function reactNativeTemplate(
 
     ${interfaces}
 
-    function ${componentName} ({ size = 16, color = "neutral.c100" }: Props): JSX.Element {
+    const DefaultColor = DEFAULT_COLOR;
+
+    function ${componentName} ({ size = 16, color = DefaultColor }: Props): JSX.Element {
       return ${jsx};
     }
+
+    ${componentName}.DefaultColor = DefaultColor;
 
     ${exports}
   `;
@@ -96,10 +104,12 @@ function reactNativeTemplate(
 const convert = (svg, options, componentName, outputFile) => {
   svgr(svg, options, componentName)
     .then(result => {
+      const color = result.match(/fill=("(?!none)\S*")/)?.[1] || `"#000"`;
       let component = result
         .replace("xlinkHref=", "href=")
         .replace(/fill=("(?!none)\S*")/g, "")
-        .replace("import Svg,", "import ");
+        .replace("import Svg,", "import ")
+        .replace("DEFAULT_COLOR", color);
 
       if (!options.native)
         component = component.replace(/(<\s*\/?\s*)svg(\s*([^>]*)?\s*>)/gi, "$1Svg$2");
