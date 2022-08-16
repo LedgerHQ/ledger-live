@@ -18,7 +18,6 @@ export default function HelpSettings() {
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Help" />
       <LedgerSupportRow />
-      <ConfigureDeviceRow />
       <ExportLogsRow />
       <ClearCacheRow />
       {hasSwapLoginOrKYCInfo && <ResetThirdPartyDataRow />}
