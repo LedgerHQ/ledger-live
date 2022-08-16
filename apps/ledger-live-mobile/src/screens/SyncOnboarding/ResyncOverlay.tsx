@@ -5,10 +5,11 @@ import { useTranslation } from "react-i18next";
 
 type Props = {
   isOpen: boolean;
+  productName: string;
   delay?: number;
 };
 
-const ResyncOverlay = ({ isOpen, delay = 0 }: Props) => {
+const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
   const { t } = useTranslation();
   const [showContent, setShowContent] = useState<boolean>(false);
   const { colors, radii } = useTheme();
@@ -52,7 +53,7 @@ const ResyncOverlay = ({ isOpen, delay = 0 }: Props) => {
           justifyContent="space-between"
         >
           <Text variant="body" textBreakStrategy="balanced" flexBasis="90%">
-            {t("syncOnboarding.resyncOverlay.content")}
+            {t("syncOnboarding.resyncOverlay.content", { productName })}
           </Text>
           <Flex
             flexDirection="row"
