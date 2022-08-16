@@ -1,5 +1,5 @@
 import React from "react";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, SelectableList, Text } from "@ledgerhq/native-ui";
 import {
   DroprightMedium,

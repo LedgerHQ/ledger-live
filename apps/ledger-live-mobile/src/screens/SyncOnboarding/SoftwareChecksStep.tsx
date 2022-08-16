@@ -6,10 +6,10 @@ import {
   CircledCheckSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useGenuineCheck } from "@ledgerhq/live-common/lib/hw/hooks/useGenuineCheck";
-import { useGetLatestFirmware } from "@ledgerhq/live-common/lib/hw/hooks/useGetLatestFirmware";
-import { getDeviceModel } from "@ledgerhq/devices/lib/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
+import { useGetLatestFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestFirmware";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "styled-components/native";
 
 import GenuineCheckDrawer from "./GenuineCheckDrawer";
