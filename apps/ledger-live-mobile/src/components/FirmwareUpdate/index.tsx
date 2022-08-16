@@ -48,7 +48,6 @@ type FwUpdateStep =
   | "confirmUpdate"
   | "firmwareUpdated"
   | "promptLanguageChange";
-// | "reinstallLanguage"; TODO: part of FAT-129
 
 type FwUpdateState = {
   step: FwUpdateStep;

@@ -89,7 +89,7 @@ const DeviceLanguageStep = ({
         oldDeviceInfo?.languageId !== undefined &&
         oldDeviceInfo?.languageId !== languageIds["english"]
       ) {
-        installLanguage("french");
+        installLanguage(idsToLanguage[oldDeviceInfo.languageId]);
       } else {
         dispatchEvent({ type: "languagePromptDismissed" });
       }
