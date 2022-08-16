@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { Icons } from "@ledgerhq/native-ui";
+import Config from "react-native-config";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
@@ -34,13 +35,15 @@ export default function MainNavigator({
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
-  const { hideTabNavigation } = params || {};
+  const hideTabNavigation = Config.HIDE_BOTTOM_NAV || params?.hideTabNavigation;
 
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
-    () => ({ ...props }) => customTabBar({ ...props, colors, insets }),
-    [insets, colors],
+    () => ({ ...props }) =>
+      hideTabNavigation ? null : customTabBar({ ...props, colors, insets }),
+    [hideTabNavigation, colors, insets],
   );
+
   return (
     <Tab.Navigator
       tabBar={tabBar}
@@ -56,7 +59,6 @@ export default function MainNavigator({
           },
           hideTabNavigation ? { display: "none" } : {},
         ],
-
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.palette.primary.c80,
         tabBarInactiveTintColor: colors.palette.neutral.c70,

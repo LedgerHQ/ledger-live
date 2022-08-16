@@ -17053,7 +17053,6 @@ packages:
 
   /@types/node/12.20.55:
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
-    dev: true
 
   /@types/node/13.13.52:
     resolution: {integrity: sha512-s3nugnZumCC//n4moGGe6tkNMyYEdaDBitVjwPxXmR5lnMG5dHePinH2EdxkG3Rh1ghFHHixAG4NJhpJW1rthQ==}
@@ -53262,7 +53261,7 @@ packages:
     version: 0.1.0
     dependencies:
       '@stablelib/blake2xs': 0.10.4
-      '@types/node': 12.20.52
+      '@types/node': 12.20.55
       big-integer: 1.6.51
       chai: 4.3.6
       mocha: 6.2.3
