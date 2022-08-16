@@ -13,13 +13,15 @@ import {
   Text,
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
-import { OnboardingStep as DeviceOnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
+import {
+  OnboardingStep as DeviceOnboardingStep,
+  fromSeedPhraseTypeToNbOfSeedWords,
+} from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { fromSeedPhraseTypeToNbOfSeedWords } from "@ledgerhq/live-common/lib/hw/extractOnboardingState";
-import { getDeviceModel } from "@ledgerhq/devices/lib/index";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 import { ScreenName } from "../../const";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";

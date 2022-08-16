@@ -1,23 +1,22 @@
 import React, { useCallback, useEffect } from "react";
 import { NativeModules } from "react-native";
+import { useTheme } from "styled-components/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import {
   useBleDevicePairing,
   PairingError,
-} from "@ledgerhq/live-common/lib/ble/hooks/useBleDevicePairing";
-import { ScannedDevice } from "@ledgerhq/live-common/lib/ble/hooks/useBleDevicesScanning";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+} from "@ledgerhq/live-common/ble/hooks/useBleDevicePairing";
+import { ScannedDevice } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
-import { getDeviceModel } from "@ledgerhq/devices/lib/index";
-
+import { getDeviceModel } from "@ledgerhq/devices";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { CircledCheckSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { ScreenName } from "../../const";
 import OnboardingView from "../Onboarding/OnboardingView";
 import Illustration from "../../images/illustration/Illustration";
 import RequiresBLE from "../../components/RequiresBLE";
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { CircledCheckSolidMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useTheme } from "styled-components/native";
 
 const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.png");
 
