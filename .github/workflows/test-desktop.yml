@@ -19,7 +19,7 @@ jobs:
     name: "Check if the PR is a fork"
     uses: ./.github/workflows/pr-is-fork.yml
     with:
-      non-pr-result: true
+      non-pr-result: false
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
@@ -100,6 +100,48 @@ jobs:
           ref: ${{ github.event.inputs.ref || github.ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
+      - name: Install node-gyp globally
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          pnpm add -g node-gyp
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
+        with:
+          os: ${{ steps.os.outputs.result }}
+
+  test-desktop-app-mac-internal:
+    name: "Ledger Live Desktop Tests (macos-latest)"
+    needs: [pr-is-fork]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    runs-on: [ledger-live, macos]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      CI_OS: "macos-latest"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
+    steps:
+      - name: format os name
+        id: os
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: return "macos"
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_python: true
+          skip_ruby: true
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
@@ -111,7 +153,7 @@ jobs:
           os: ${{ steps.os.outputs.result }}
 
   report:
-    needs: [test-desktop-app]
+    needs: [test-desktop-app, test-desktop-app-mac-internal]
     runs-on: ubuntu-latest
     if: ${{ always()  && !cancelled() && github.event.pull_request != '' }}
     steps:

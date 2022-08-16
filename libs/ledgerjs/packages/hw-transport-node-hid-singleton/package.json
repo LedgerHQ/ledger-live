@@ -34,7 +34,7 @@
     "@ledgerhq/logs": "workspace:^",
     "lodash": "^4.17.21",
     "node-hid": "2.1.1",
-    "usb-detection": "4.13.0"
+    "usb": "2.5.0"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

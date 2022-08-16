@@ -1,0 +1,16 @@
+diff --git a/package.json b/package.json
+index 541e7a86506784d82e7a9d295911bbef4dddbc16..8f94ed8e22527d89537c414dd96ff597b2f0b8aa 100644
+--- a/package.json
++++ b/package.json
+@@ -36,11 +36,9 @@
+     "hardware"
+   ],
+   "scripts": {
+-    "prepare": "yarn compile",
+     "install": "node-gyp-build",
+     "rebuild": "node-gyp rebuild",
+     "clean": "git clean -dfx",
+-    "compile": "tsc && yarn lint && yarn docs",
+     "lint": "eslint . --ext .ts",
+     "watch": "tsc -w --preserveWatchOutput",
+     "test": "mocha --require coffeescript/register --grep Module test/*",
