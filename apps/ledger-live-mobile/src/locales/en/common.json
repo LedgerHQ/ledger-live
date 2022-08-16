@@ -1604,7 +1604,7 @@
       "helpCta": "Get help"
     },
     "resyncOverlay": {
-      "content": "It looks like connection to your {{productName}} was lost. We're trying to reconnect"
+      "content": "It looks like your connection to your {{productName}} was lost. Reconnecting"
     },
     "helpDrawer": {
       "title": "Need some help with your setup manual?",

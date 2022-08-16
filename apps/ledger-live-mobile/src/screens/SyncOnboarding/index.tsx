@@ -321,7 +321,11 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           <Button type="default" Icon={CloseMedium} onPress={handleClose} />
         </Flex>
         <Flex flex={1}>
-          <ResyncOverlay isOpen={!!timer && !stopPolling} delay={resyncDelay} />
+          <ResyncOverlay
+            isOpen={!!timer && !stopPolling}
+            delay={resyncDelay}
+            productName={productName}
+          />
           <ScrollContainer>
             <Flex px={7} pt={2}>
               <Flex mb={7} flexDirection="row" alignItems="center">
