@@ -323,6 +323,14 @@
     "InvalidRecipient" : {
       "title" : "유효하지 않은 수령인"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "장치에서 언어 설치가 거부되었습니다",
+      "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
+    },
+    "LanguageNotFound" : {
+      "title" : "언어를 찾을 수 없습니다",
+      "description" : "설치하려는 언어를 찾을 수 없습니다. 다른 언어를 설치해 보세요."
+    },
     "LatestMCUInstalledError" : {
       "title" : "죄송하지만 업데이트가 필요한 항목이 없습니다",
       "description" : "장치를 사용할 수 없다면 Ledger 지원 부서에 문의하세요."
@@ -3429,6 +3437,19 @@
       "es" : "스페인어",
       "zh" : "중국어",
       "de" : "독일어"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "언어",
+    "deviceLanguage" : "장치 언어",
+    "changeLanguage" : "언어 변경",
+    "allowLanguageInstallation" : "언어 설치 허용",
+    "languageInstalled" : "장치 언어가 {{language}}로 변경되었습니다",
+    "installingLanguage" : "언어 설치 중",
+    "languages" : {
+      "english" : "영어",
+      "french" : "프랑스어",
+      "spanish" : "스페인어"
     }
   },
   "FirmwareUpdateCheckId" : {
