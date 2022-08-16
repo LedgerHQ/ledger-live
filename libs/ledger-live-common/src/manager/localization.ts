@@ -3,7 +3,7 @@ import { satisfies as versionSatisfies } from "semver";
 
 const deviceVersionRangesForLocalization: { [key in DeviceModelId]?: string } =
   {
-    nanoX: ">=2.1.0 || =2.1.0-lo2 || =2.1.0-lo4",
+    nanoX: ">=2.1.0 || =2.1.0-lo2 || =2.1.0-lo4 || =2.1.0-lo5",
     nanoSP: ">=1.1.0 || =1.1.0-lo1",
   };
 
