@@ -1,7 +1,7 @@
 import "../../__tests__/test-helpers/setup";
 
 import { prepareMessageToSign } from "./hw-signMessage";
-import createCryptoCurrency from "../../__tests__/fixtures/cryptoCurrencies";
+import createCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
 
 describe("prepareMessageToSign", () => {
   it("returns a MessageData object when message to sign is a simple string", () => {

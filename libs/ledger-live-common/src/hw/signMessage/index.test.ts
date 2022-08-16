@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import createCryptoCurrency from "../../__tests__/fixtures/cryptoCurrencies";
+import createCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
 import { TypedMessageData } from "../../families/ethereum/types";
 import { prepareMessageToSign } from "./index";
 import { MessageData } from "./types";
