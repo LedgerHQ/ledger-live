@@ -81,7 +81,8 @@
     "seeMore": "See more",
     "moreInfo": "More info",
     "buyEth": "Buy Ethereum",
-    "popular": "popular"
+    "popular": "popular",
+    "comingSoon": "Coming soon"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -2115,6 +2116,36 @@
         "android": "Review in the Google Play store"
       }
     },
+    "notifications": {
+      "title": "Notifications",
+      "desc": "Manage your notifications",
+      "disabledNotifications": {
+        "title": "Your notifications are disabled",
+        "desc": "{{platform}} is blocking notifications from Ledger Live. To get notifications on your phone, visit your device’s settings to turn on Ledger Live notifications.",
+        "turnOnNotif": "Turn on notifications",
+        "goToSettings": "Go to system settings"
+      },
+      "allowed": {
+        "title": "Allow notifications",
+        "desc": "Receive notifications about your crypto, market tendencies and more"
+      },
+      "transactions": {
+        "title": "Transactions",
+        "desc": "Get notified when you receive or send crypto"
+      },
+      "market": {
+        "title": "Market",
+        "desc": "Receive significant market changes updates"
+      },
+      "announcement": {
+        "title": "Announcements",
+        "desc": "Receive important Ledger Live updates"
+      },
+      "price": {
+        "title": "Price Alerts",
+        "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
+      }
+    },
     "help": {
       "title": "Help",
       "header": "Help",
@@ -2146,6 +2177,14 @@
       "customManifest": {
         "title": "Load Custom Platform Manifest"
       }
+    }
+  },
+  "notifications": {
+    "prompt": {
+      "title": "Turn notifications on",
+      "desc": "Get important updates on Ledger Live, Ledger products and security. Opt out anytime.",
+      "allow": "Allow notifications",
+      "later": "Maybe later"
     }
   },
   "migrateAccounts": {
@@ -2211,10 +2250,67 @@
       "verifyAgain": "Check again",
       "noAccount": "No account found",
       "address": "Address for account",
-      "copyAddress": "Copy address",
+      "copyAddress": "Copy",
       "shareAddress": "Share address",
-      "addressCopied": "Address copied!",
+      "addressCopied": "Copied",
       "taprootWarning": "Make sure the sender supports taproot",
+      "selectCrypto": {
+        "title": "Select a crypto"
+      },
+      "stepperHeader": {
+        "range": "Step {{currentStep}} of {{totalSteps}}",
+        "connectDevice": "Connect Device"
+      },
+      "selectAccount": {
+        "title": "Select an account",
+        "subtitle": "Your {{currencyTicker}} will be deposited into this account."
+      },
+      "addAccount": {
+        "title": "Searching the blockchain",
+        "subtitle": "Checking to see if you already own {{currencyTicker}} accounts.",
+        "foundAccounts": "{{count}} accounts found",
+        "stopSynchronization": "Stop synchronization"
+      },
+      "verifyAddress": {
+        "title": "Verify address",
+        "subtitle": "Verify that the address displayed on your device matches this one below. Once you’re sure you can click approve on your device.",
+        "cancel": {
+          "title": "You just denied this address",
+          "subtitle": "If this was done by mistake, you can retry by clicking the button below.",
+          "info": "If you are sure the addresses don’t match, your phone may be comprimised. We recommend you <0>contact us as soon as possible.</0>"
+        }
+      },
+      "receiveConfirmation": {
+        "title": "Receive {{currencyTicker}}",
+        "addressVerified": "Address verified",
+        "verifyAddress": "Tap here to verify your address",
+        "adviceVerify": "We always recommend verifying your address with your Ledger device",
+        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss."
+      },
+      "securityVerify": {
+        "title": "For security we recommend verifying this address with your Ledger device.",
+        "subtitle1": "Verifying your address provides you security. The address displayed on your ledger device cannot be compromised.",
+        "subtitle2": "By verifying the address, you will be able to confirm that the address shown on your device is the same as the address shown in Ledger Live.",
+        "verifyCta": "Verify my address",
+        "dontVerifyCta": "Reveal my address whitout verifying"
+      },
+      "securityDontVerify": {
+        "title": "Are you sure?",
+        "subtitle": "The address displayed on Ledger Live will not be verified.",
+        "doNotRemindAgain": "Do not remind me again",
+        "no": "No",
+        "yes": "Yes"
+      },
+      "toastMessages": {
+        "accountImported": "We've imported a {{currencyTicker}} account for you. ",
+        "why": "Tell me why.",
+        "addressVerified": "Your address is verified"
+      },
+      "additionalInfoModal": {
+        "title": "Why we imported an account?",
+        "subtitle": "We detected that you had a previous {{currencyTicker}} account on your seed. We imported this account for you.",
+        "closeCta": "Ok, got it"
+      },
       "notSynced": {
         "text": "Synchronizing",
         "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."

@@ -174,7 +174,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
         style={[styles.root, { backgroundColor: colors.background }]}
         forceInset={forceInset}
       >
-        <KeyboardView style={styles.container}>
+        <KeyboardView style={styles.container} behavior="padding">
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
               <AmountInput
