@@ -1038,6 +1038,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Выберите устройство"
     },
@@ -2761,7 +2762,7 @@
       }
     },
     "stepperHeader" : {
-      "selectAccount" : "Счёт для пополнения",
+      "selectAccount" : "Счёт для списания",
       "recipientAddress" : "Адрес получателя",
       "selectAmount" : "Сумма",
       "summary" : "Сводка",
@@ -2956,7 +2957,7 @@
     },
     "validation" : {
       "message" : "Обязательно проверяйте соответствие адреса на экране устройства адресу, который вам предоставили.",
-      "success" : "Ваши голоса переданы",
+      "success" : "Вы успешно проголосовали",
       "info" : "",
       "button" : {
       }
