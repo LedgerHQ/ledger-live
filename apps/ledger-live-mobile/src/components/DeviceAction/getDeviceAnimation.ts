@@ -1,7 +1,9 @@
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import Config from "react-native-config";
 
-const animations = {
+// Animations associated to device actions
+const animations: { [modelId in DeviceModelId]: any } = {
   nanoS: {
     plugAndPinCode: {
       light: require("../../animations/nanoS/1PlugAndPinCode/light.json"),
@@ -161,18 +163,28 @@ const animations = {
     },
   },
 };
+
+export type GetDeviceAnimationProps = {
+  theme?: "light" | "dark";
+  key: string;
+  device: Device;
+};
+
+// Returns an animation associated to a device action
 export default function getDeviceAnimation({
   theme = "light",
   key,
   device,
-}: {
-  theme?: "light" | "dark";
-  key: string;
-  device: Device;
-}) {
-  const modelId = Config.OVERRIDE_MODEL_ID || device.modelId;
+}: GetDeviceAnimationProps) {
+  const modelId = (Config.OVERRIDE_MODEL_ID as DeviceModelId) || device.modelId;
   const wired = Config.OVERRIDE_WIRED || device.wired;
-  const animation = ["nanoS", "nanoSP", "blue", "nanoFTS"].includes(modelId)
+
+  const animation = [
+    DeviceModelId.nanoS,
+    DeviceModelId.nanoSP,
+    DeviceModelId.blue,
+    DeviceModelId.nanoFTS,
+  ].includes(modelId)
     ? animations[modelId][key]
     : animations.nanoX[wired ? "wired" : "bluetooth"][key];
   return animation[theme];
