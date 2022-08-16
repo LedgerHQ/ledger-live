@@ -24,10 +24,12 @@ const prefix = $.prefix;
 
 within(async () => {
   $.prefix = prefix;
-  await $`NODE_ENV=production pnpm tsc --project src/tsconfig.json`;
+  process.env.NODE_ENV = "production";
+  await $`pnpm tsc --project src/tsconfig.json`;
 });
 
 within(async () => {
   $.prefix = prefix;
-  await $`NODE_ENV=production pnpm tsc --project src/tsconfig.json -m ES6 --outDir lib-es`;
+  process.env.NODE_ENV = "production";
+  await $`pnpm tsc --project src/tsconfig.json -m ES6 --outDir lib-es`;
 });
