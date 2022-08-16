@@ -13,20 +13,22 @@ type Props = {
 };
 
 const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => (
-  <TouchableOpacity onPress={onSelect}>
-    <Flex
-      flexDirection="row"
-      backgroundColor="neutral.c30"
-      borderRadius={8}
-      padding={6}
-    >
-      <NanoFoldedMedium size={20} />
-      <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
-        {deviceMeta.deviceName}
-      </Text>
-      <DroprightMedium size={20} color="primary.c80" />
-    </Flex>
-  </TouchableOpacity>
+  <Flex mb={3}>
+    <TouchableOpacity onPress={onSelect}>
+      <Flex
+        flexDirection="row"
+        backgroundColor="neutral.c30"
+        borderRadius={8}
+        padding={6}
+      >
+        <NanoFoldedMedium size={20} />
+        <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
+          {deviceMeta.deviceName}
+        </Text>
+        <DroprightMedium size={20} color="primary.c80" />
+      </Flex>
+    </TouchableOpacity>
+  </Flex>
 );
 
 export default BleDeviceItem;
