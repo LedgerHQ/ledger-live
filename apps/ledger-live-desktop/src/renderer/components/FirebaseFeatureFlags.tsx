@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from "react";
+import React, { useCallback, useState, ReactNode } from "react";
 import isEqual from "lodash/isEqual";
 import { FeatureFlagsProvider } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
