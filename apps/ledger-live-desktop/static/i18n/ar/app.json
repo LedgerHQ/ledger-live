@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "التبديل بين مصادر تطبيقات المنصة المتعددة",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
+      "featureFlagsEdit" : "تعديل",
+      "featureFlagsRestore" : "استعادة",
+      "featureFlagsOverride" : "تجاوز",
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
       "addLocalAppButton" : "تصفح",
@@ -3220,15 +3225,15 @@
           },
           "1" : {
             "title" : "امتلك مفتاحك الخاص",
-            "desc" : "يتم حفظ مفتاحك الخاص في Nano الخاصة بك. يجب أن تكون أنت الشخص الوحيد الذي يمتلكه لتكون مُسيطر على أموالك."
+            "desc" : "Your private key is stored within your Nano.\nYou must be the only one to own it to be in control of your money"
           },
           "2" : {
             "title" : "ابق غير متصل بالإنترنت",
-            "desc" : "Nano الخاصة بك تعمل كمحفظة \"تخزين بارد\". هذا يعني أنها لا تكشف مفتاحك الخاص على الإنترنت أبداً، حتى عند استخدام التطبيق."
+            "desc" : "Your Nano works as a \"cold storage\" wallet.\nThis means that it never exposes your private key online, even when using the app"
           },
           "3" : {
             "title" : "التحقق من صحة المعاملات",
-            "desc" : "Ledger Live يتيح لك شراء وبيع وإدارة وتبادل وكسب الأصول المشفرة بينما تظل محمياً. ستتحقق من صحة كل معاملة أصول مشفرة باستخدام Nano الخاصة بك."
+            "desc" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected.\nYou will validate every crypto transaction with your Nano"
           },
           "4" : {
             "title" : "لنقوم بإعداد Nano الخاصة بك",
