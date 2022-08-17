@@ -11,13 +11,15 @@ type Props = {
   device: Device | null;
   language: Language;
   onClose?: () => void;
+  onError?: (error: Error) => void;
   onResult?: () => void;
 };
 
-const ChangeDeviceLanguageAction: React.FC<Props> = ({
+const ChangeDeviceLanguageActionModal: React.FC<Props> = ({
   device,
   language,
   onClose,
+  onError,
   onResult,
 }) => {
   const action = useMemo(
@@ -35,6 +37,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
     <DeviceActionModal
       action={action}
       onClose={onClose}
+      onError={onError}
       device={device}
       renderOnResult={() => (
         <DeviceLanguageInstalled
@@ -47,4 +50,4 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
   );
 };
 
-export default ChangeDeviceLanguageAction;
+export default ChangeDeviceLanguageActionModal;

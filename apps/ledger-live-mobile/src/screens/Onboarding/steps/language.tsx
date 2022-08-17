@@ -139,6 +139,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
           {deviceForChangeLanguageAction ? (
             <ChangeDeviceLanguageAction
               onResult={refreshDeviceInfo}
+              onError={refreshDeviceInfo}
               device={deviceForChangeLanguageAction}
               language={localeIdToDeviceLanguage[currentLocale] as Language}
               onContinue={() => {

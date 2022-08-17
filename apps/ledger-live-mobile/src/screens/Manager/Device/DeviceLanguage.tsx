@@ -115,6 +115,7 @@ const DeviceLanguage: React.FC<Props> = ({
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}
         language={selectedLanguage}
+        onError={refreshDeviceLanguage}
         onResult={refreshDeviceLanguage}
       />
     </>

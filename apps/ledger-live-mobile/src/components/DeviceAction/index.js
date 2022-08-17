@@ -110,6 +110,12 @@ export default function DeviceAction<R, H, P>({
     }
   }, [dispatch, device, deviceInfo]);
 
+  useEffect(() => {
+    if(error && onError) {
+      onError(error);
+    }
+  }, [error]);
+
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
       t,
@@ -271,7 +277,6 @@ export default function DeviceAction<R, H, P>({
   if (!isLoading && error) {
     /** @TODO Put that back if the app is still crashing */
     // track("DeviceActionError", error);
-    onError && onError(error);
 
     // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
     // into another handled case.

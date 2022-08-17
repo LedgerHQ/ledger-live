@@ -17,6 +17,7 @@ type Props = {
   language: Language;
   onContinue: () => void;
   onResult?: () => void;
+  onError?: () => void;
 };
 
 
@@ -25,6 +26,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
   language,
   onContinue,
   onResult,
+  onError,
 }) => {
   const showAlert = !device?.wired;
   const { t } = useTranslation();
@@ -46,6 +48,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
         <DeviceAction
           action={action}
           device={device}
+          onError={onError}
           renderOnResult={() => (
             <DeviceLanguageInstalled
               onContinue={onContinue}

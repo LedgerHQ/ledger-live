@@ -18,6 +18,7 @@ type Props = {
   // TODO: fix request type
   request?: any;
   onClose?: () => void;
+  onError?: (error: Error) => void;
   onModalHide?: () => void;
   onResult?: (payload: any) => Promise<void> | void;
   renderOnResult?: (p: any) => React.ReactNode;
@@ -31,6 +32,7 @@ export default function DeviceActionModal({
   request,
   onClose,
   onResult,
+  onError,
   renderOnResult,
   onModalHide,
   onSelectDeviceLink,
@@ -63,6 +65,7 @@ export default function DeviceActionModal({
                 <DeviceAction
                   action={action}
                   device={device}
+                  onError={onError}
                   request={request}
                   onResult={onResult ? p => setResult(p) : undefined}
                   renderOnResult={renderOnResult}
