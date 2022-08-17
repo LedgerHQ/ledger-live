@@ -128,7 +128,11 @@ export const fetchAccount = async (
       return balance.asset_type !== "native";
     });
   } catch (e) {
-    throw new NetworkError();
+    if (e instanceof NotFoundError) {
+      balance.balance = "0";
+    } else {
+      throw new NetworkError();
+    }
   }
 
   const formattedBalance = parseCurrencyUnit(
