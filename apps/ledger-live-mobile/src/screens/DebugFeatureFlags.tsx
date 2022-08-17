@@ -1,13 +1,14 @@
 import React, { useCallback, useState, useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import {
   defaultFeatures,
   useFeatureFlags,
 } from "@ledgerhq/live-common/featureFlags/index";
+import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
-import { BaseInput, Text, Flex, Button } from "@ledgerhq/native-ui";
+import { BaseInput, Text, Flex, Button, Box } from "@ledgerhq/native-ui";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Alert from "../components/Alert";
 
@@ -46,7 +47,7 @@ const EditSection = ({
           disabled={disabled}
           type="main"
           onPress={onOverride}
-          style={{ marginLeft: 8 }}
+          ml="3"
         >
           {t("settings.debug.featureFlagsOverride")}
         </Button>
@@ -58,13 +59,14 @@ export default function DebugPlayground() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const featureFlagsProvider = useFeatureFlags();
-  const [error, setError] = useState();
-  const [name, setName] = useState();
-  const [inputValues, setInputValues] = useState({});
+  const [error, setError] = useState<unknown | null>(null);
+  const [name, setName] = useState<FeatureId | null>(null);
+  const [prettyPrintedName, setPrettyPrintedName] = useState<FeatureId | null>(null);
+  const [inputValues, setInputValues] = useState<{[key in FeatureId]?: string | undefined}>({});
 
   const featureFlags = useMemo(() => {
-    const features = {};
-    Object.keys(defaultFeatures).forEach(key => {
+    const features: {[key in FeatureId]: Feature} = {};
+    Object.keys(defaultFeatures).forEach((key: FeatureId) => {
       const value = featureFlagsProvider.getFeature(key);
       if (value) {
         features[key] = value;
@@ -76,7 +78,8 @@ export default function DebugPlayground() {
 
   const handleInputChange = useCallback(
     value => {
-      setError();
+      setError(null);
+      if (!name) return;
       setInputValues(currentValues => ({
         ...currentValues,
         [name]: value,
@@ -86,22 +89,24 @@ export default function DebugPlayground() {
   );
 
   const handleRestoreFeature = useCallback(() => {
-    setError();
+    setError(null);
+    if (!name) return;
     setInputValues(currentValues => ({
       ...currentValues,
       [name]: undefined,
     }));
     featureFlagsProvider.resetFeature(name);
-    setName();
+    setName(null);
   }, [featureFlagsProvider, name]);
 
   const handleOverrideFeature = useCallback(() => {
-    setError();
+    setError(null);
+    if (!name) return;
     try {
       // Nb if value is invalid or missing, JSON parse will fail
       const newValue = JSON.parse(inputValues[name]);
       featureFlagsProvider.overrideFeature(name, newValue);
-      setName();
+      setName(null);
     } catch (e) {
       setError(e);
     }
@@ -110,22 +115,15 @@ export default function DebugPlayground() {
   return (
     <NavigationScrollView>
       <View style={[styles.root, { backgroundColor: colors.background }]}>
-        <Text>{t("settings.debug.featureFlagsTitle")}</Text>
-        {Object.entries(featureFlags).map(([flagName, value]) => (
+        <Text variant="large" color="neutral.c70">
+          {t("settings.debug.featureFlagsTitle")}
+        </Text>
+        {Object.entries(featureFlags).map(([flagName, value], index, arr) => (
           <View key={flagName}>
-            <Flex flexDirection="column" px={4} py={1}>
-              <View grow flex={1} mr={3}>
-                <View
-                  ff="Inter|SemiBold"
-                  color="palette.text.shade100"
-                  fontSize={14}
-                  mb={2}
-                >
-                  <Text>
-                    {value?.overridesRemote ? `${flagName} **` : flagName}
-                  </Text>
-                </View>
-              </View>
+            <Flex flexDirection="column" py={1}>
+              <Text>
+                {value?.overridesRemote ? `${flagName} **` : flagName}
+              </Text>
               {name !== flagName ? (
                 <Button
                   type="main"
@@ -144,12 +142,44 @@ export default function DebugPlayground() {
                   JSON.stringify(featureFlags[flagName])
                 }
                 disabled={!inputValues[flagName]}
-                error={error}
+                error={error as Error}
                 onChange={handleInputChange}
                 onOverride={handleOverrideFeature}
                 onRestore={handleRestoreFeature}
               />
             ) : null}
+            {prettyPrintedName !== flagName ? (
+              <Button
+                type="main"
+                outline
+                onPress={() => setPrettyPrintedName(flagName)}
+              >
+                {t("settings.debug.featureFlagsDisplayValue")}
+              </Button>
+            ) : (
+              <Button
+                type="main"
+                outline
+                onPress={() => setPrettyPrintedName("")}
+              >
+                {t("settings.debug.featureFlagsHideValue")}
+              </Button>
+            )}
+            {prettyPrintedName === flagName && (
+              <Flex backgroundColor="neutral.c30">
+                <ScrollView horizontal>
+                  <Text>{JSON.stringify(featureFlags[flagName], null, 2)}</Text>
+                </ScrollView>
+              </Flex>
+            )}
+            {index < arr.length - 1 && (
+              <Box
+                my={4}
+                width="100%"
+                height={1}
+                backgroundColor="neutral.c50"
+              />
+            )}
           </View>
         ))}
       </View>

@@ -2175,7 +2175,9 @@
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsOverride": "Override",
       "featureFlagsEdit": "Edit",
-      "featureFlagsRestore": "Restore"
+      "featureFlagsRestore": "Restore",
+      "featureFlagsDisplayValue": "Display value",
+      "featureFlagsHideValue": "Hide value"
     }
   },
   "notifications": {
