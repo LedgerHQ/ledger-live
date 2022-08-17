@@ -1,5 +1,6 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
+import isEqual from "lodash/isEqual";
 import remoteConfig from "@react-native-firebase/remote-config";
 import {
   FeatureFlagsProvider,
@@ -15,8 +16,16 @@ type Props = {
   children?: ReactNode;
 };
 
-const getFeature = (key: FeatureId) => {
+const getFeature = (
+  key: FeatureId,
+  localOverrides?: { [name: FeatureId]: Feature },
+) => {
   try {
+    // Nb prioritize local overrides
+    if (localOverrides[key]) {
+      return localOverrides[key];
+    }
+
     const value = remoteConfig().getValue(formatFeatureId(key));
     const feature = JSON.parse(value.asString());
     const currAppLanguage = useSelector(languageSelector);
@@ -54,8 +63,40 @@ export const getAllDivergedFlags = (): { [key in FeatureId]: boolean } => {
   return res;
 };
 
-export const FirebaseFeatureFlagsProvider = ({ children }: Props) => (
-  <FeatureFlagsProvider getFeature={getFeature}>
-    {children}
-  </FeatureFlagsProvider>
-);
+export const FirebaseFeatureFlagsProvider = ({ children }: Props) => {
+  const [localOverrides, setLocalOverrides] = useState({});
+
+  const overrideFeature = useCallback((key: FeatureId, value: Feature): void => {
+    const actualRemoteValue = getFeature(key);
+    if (!isEqual(actualRemoteValue, value)) {
+      const overridenValue = { ...value, overridesRemote: true };
+      setLocalOverrides(currentOverrides => ({
+        ...currentOverrides,
+        [key]: overridenValue,
+      }));
+    }
+  }, []);
+
+  const resetFeature = (key: FeatureId): void => {
+    setLocalOverrides(currentOverrides => ({
+      ...currentOverrides,
+      [key]: undefined,
+    }));
+  };
+
+  // Nb wrapped because the method is also called from outside.
+  const wrappedGetFeature = useCallback(
+    (key: FeatureId): Feature => getFeature(key, localOverrides),
+    [localOverrides],
+  );
+
+  return (
+    <FeatureFlagsProvider
+      getFeature={wrappedGetFeature}
+      overrideFeature={overrideFeature}
+      resetFeature={resetFeature}
+    >
+      {children}
+    </FeatureFlagsProvider>
+  );
+};

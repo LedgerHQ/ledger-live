@@ -154,7 +154,7 @@ const cosmos: AppSpec<Transaction> = {
           count
         )
           .minus(minAmount.times(2))
-          .times(0.5 * Math.random());
+          .times(0.25 * Math.random());
         invariant(remaining.gt(0), "not enough funds in account for delegate");
         const all = data.validators.filter(
           (v) =>
@@ -298,7 +298,7 @@ const cosmos: AppSpec<Transaction> = {
         const amount = (sourceDelegation as CosmosDelegation).amount
           .times(
             // most of the time redelegate all
-            Math.random() > 0.3 ? 1 : Math.random()
+            Math.random() > 0.2 ? 1 : Math.random()
           )
           .integerValue();
         invariant(amount.gt(0), "random amount to be positive");

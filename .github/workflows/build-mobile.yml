@@ -229,4 +229,4 @@ jobs:
         with:
           ruby-version: 2.7
       - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --no-frozen-lockfile --unsafe-perm
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm

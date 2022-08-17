@@ -7,6 +7,7 @@
     "@ledgerhq/react-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",
+    "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@playwright/test": "~1.17.0",
     "concurrently": "^6.4.0",
     "json": "^11.0.0",
