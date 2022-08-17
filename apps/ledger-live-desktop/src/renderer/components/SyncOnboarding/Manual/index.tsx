@@ -69,7 +69,7 @@ const SyncOnboardingManual = () => {
     },
     {
       key: StepKey.Seed,
-      status: "active",
+      status: "inactive",
       title: t("syncOnboarding.manual.recoveryContent.title"),
       renderBody: () => <RecoveryContent />,
       estimatedTime: 300,
