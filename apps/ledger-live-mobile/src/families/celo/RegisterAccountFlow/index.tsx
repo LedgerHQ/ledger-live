@@ -8,7 +8,7 @@ import { ScreenName } from "../../../const";
 import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
 import StepHeader from "../../../components/StepHeader";
 
-import SimpleOperationStarted from "./Started";
+import RegisterAccountStarted from "./01-Started";
 import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import ValidationSuccess from "./ValidationSuccess";
@@ -16,7 +16,7 @@ import ValidationError from "./ValidationError";
 
 const totalSteps = "3";
 
-function RebondFlow() {
+function RegisterAccountFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -29,12 +29,12 @@ function RebondFlow() {
     <Stack.Navigator screenOptions={stackNavigatorConfig}>
       <Stack.Screen
         name={ScreenName.CeloRegisterAccountStarted}
-        component={SimpleOperationStarted}
+        component={RegisterAccountStarted}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("polkadot.rebond.stepperHeader.amount")}
-              subtitle={t("polkadot.rebond.stepperHeader.stepRange", {
+              title={t("celo.register.stepperHeader.title")}
+              subtitle={t("celo.register.stepperHeader.stepRange", {
                 currentStep: "1",
                 totalSteps,
               })}
@@ -44,13 +44,13 @@ function RebondFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.PolkadotRebondSelectDevice}
+        name={ScreenName.CeloRegisterAccountSelectDevice}
         component={SelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("polkadot.rebond.stepperHeader.selectDevice")}
-              subtitle={t("polkadot.rebond.stepperHeader.stepRange", {
+              title={t("celo.register.stepperHeader.selectDevice")}
+              subtitle={t("celo.register.stepperHeader.stepRange", {
                 currentStep: "2",
                 totalSteps,
               })}
@@ -59,13 +59,13 @@ function RebondFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.PolkadotRebondConnectDevice}
+        name={ScreenName.CeloRegisterAccountConnectDevice}
         component={ConnectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("polkadot.rebond.stepperHeader.connectDevice")}
-              subtitle={t("polkadot.rebond.stepperHeader.stepRange", {
+              title={t("celo.register.stepperHeader.connectDevice")}
+              subtitle={t("celo.register.stepperHeader.stepRange", {
                 currentStep: "3",
                 totalSteps,
               })}
@@ -74,7 +74,7 @@ function RebondFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.PolkadotRebondValidationSuccess}
+        name={ScreenName.CeloRegisterAccountValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerTitle: "",
@@ -84,7 +84,7 @@ function RebondFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.PolkadotRebondValidationError}
+        name={ScreenName.CeloRegisterAccountValidationError}
         component={ValidationError}
         options={{ headerShown: false }}
       />
@@ -96,6 +96,6 @@ const options = {
   headerShown: false,
 };
 
-export { RebondFlow as component, options };
+export { RegisterAccountFlow as component, options };
 
 const Stack = createStackNavigator();

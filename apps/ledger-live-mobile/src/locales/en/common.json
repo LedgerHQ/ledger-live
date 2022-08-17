@@ -103,7 +103,12 @@
       "title": "Recipient account has not opted in the selected ASA."
     },
     "BluetoothRequired": {
-      "title": "Sorry, Bluetooth is disabled",
+      "title": "Sorry, Bluetooth is disabled",            "register": {
+        "success": {
+          "title": "Account registered successfully",
+          "text": "You will see your operation in history soon.",
+          "cta": "Lock"
+        }
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
     "FwUpdateBluetoothNotSupported": {
@@ -3445,6 +3450,28 @@
       "available": {
         "title": "CELO available",
         "description": "This amount is disposable."
+      }
+    },
+    "register": {
+      "stepperHeader": {
+        "title": "Register account",
+        "continue": "Continue",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "started": {
+            "description": "Before locking any Celo you need to register your account on-chain."
+          },
+          "verification": {
+            "success": {
+              "title": "Account registered successfully",
+              "text": "You will see your operation in history soon.",
+            }
+          }
+        }
       }
     }
   },

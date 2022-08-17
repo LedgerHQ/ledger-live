@@ -377,8 +377,8 @@ export const ScreenName = {
   HederaEditMemo: "HederaEditMemo",
 
   // celo
-  CeloRegisterAccountSucess: "CeloRegisterAccountSucess",
-  CeloRegisterAccountError: "CeloRegisterAccountError",
+  CeloRegisterAccountValidationSuccess: "CeloRegisterAccountValidationSuccess",
+  CeloRegisterAccountValidationError: "CeloRegisterAccountValidationError",
   CeloRegisterAccountStarted: "CeloRegisterAccountStarted",
   CeloRegisterAccountSelectDevice: "CeloRegisterAccountSelectDevice",
   CeloRegisterAccountConnectDevice: "CeloRegisterAccountConnectDevice",

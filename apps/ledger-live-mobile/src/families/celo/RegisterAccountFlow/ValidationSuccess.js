@@ -51,10 +51,10 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         onClose={onClose}
         onViewDetails={goToOperationDetails}
         title={
-          <Trans i18nKey="cosmos.redelegation.flow.steps.verification.success.title" />
+          <Trans i18nKey="celo.register.flow.steps.verification.success.title" />
         }
         description={
-          <Trans i18nKey="cosmos.redelegation.flow.steps.verification.success.text" />
+          <Trans i18nKey="celo.register.flow.steps.verification.success.text" />
         }
       />
     </View>
