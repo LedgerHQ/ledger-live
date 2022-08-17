@@ -5,10 +5,9 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { NavigatorName, ScreenName } from "../../const";
-// TODO: to put OnboardingView in components/move it in root ?
 import DiscoverCard from "../Discover/DiscoverCard";
 import Illustration from "../../images/illustration/Illustration";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
