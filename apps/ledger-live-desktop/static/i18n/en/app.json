@@ -2887,7 +2887,7 @@
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
-      "featureFlagsDesc": "Overriden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
       "featureFlagsOverride": "Override",
