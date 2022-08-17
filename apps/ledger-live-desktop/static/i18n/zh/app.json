@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "在多个平台应用源之间切换",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
+      "featureFlagsTitle" : "Ledger Live 中使用的已定义功能标志",
+      "featureFlagsDesc" : "如果重新启动应用程序，将重置覆盖的值。仅接受有效的 JSON 字符串。",
+      "featureFlagsEdit" : "编辑",
+      "featureFlagsRestore" : "重置",
+      "featureFlagsOverride" : "覆盖",
       "addLocalApp" : "添加一个本地应用程序",
       "addLocalAppDesc" : "浏览本地文件并使用本地清单添加本地应用程序",
       "addLocalAppButton" : "浏览",
@@ -3220,15 +3225,15 @@
           },
           "1" : {
             "title" : "保管好您的私钥",
-            "desc" : "您的私钥存储在 Nano 设备中，您必须是私钥的唯一持有者才能控制您的资金"
+            "desc" : "Your private key is stored within your Nano.\nYou must be the only one to own it to be in control of your money"
           },
           "2" : {
             "title" : "保持离线状态",
-            "desc" : "Nano 是一种“冷存储”钱包，这意味着它永远不会联网泄露您的私钥，即使在使用应用程序时也不会泄露"
+            "desc" : "Your Nano works as a \"cold storage\" wallet.\nThis means that it never exposes your private key online, even when using the app"
           },
           "3" : {
             "title" : "验证交易",
-            "desc" : "利用 Ledger Live，您可以买入、卖出、管理、兑换和赚取加密货币，同时保护您的加密货币<br/>您需要使用 Nano 核实每笔加密货币交易"
+            "desc" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected.\nYou will validate every crypto transaction with your Nano"
           },
           "4" : {
             "title" : "开始设置 Nano",
