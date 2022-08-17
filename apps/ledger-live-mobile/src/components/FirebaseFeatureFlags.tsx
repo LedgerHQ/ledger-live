@@ -29,12 +29,14 @@ const getFeature = (
     const feature = JSON.parse(value.asString());
 
     if (
-      (feature.languages_whitelisted &&
+      feature.enabled &&
+      ((feature.languages_whitelisted &&
         !feature.languages_whitelisted.includes(appLanguage)) ||
-      (feature.languages_blacklisted &&
-        feature.languages_blacklisted.includes(appLanguage))
+        (feature.languages_blacklisted &&
+          feature.languages_blacklisted.includes(appLanguage)))
     ) {
       return {
+        enabledOverridenForCurrentLanguage: true,
         ...feature,
         enabled: false,
       };

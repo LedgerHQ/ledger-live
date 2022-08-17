@@ -19,6 +19,10 @@ export type Feature = {
   languages_whitelisted?: [string];
   /** List of languages for which the feature is disabled */
   languages_blacklisted?: [string];
+  /** Whether the remote value of `enabled` was overriden due to `languages_whitelisted` or `languages_blacklisted` */
+  enabledOverridenForCurrentLanguage?: boolean;
+  /** Whether the remote value of this object was overriden locally */
+  overridesRemote?: boolean;
   /** Additional params */
   params?: any;
 };
