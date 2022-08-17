@@ -1,22 +1,18 @@
-// @flow
-
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import NavigationScrollView from "../components/NavigationScrollView";
-import LText from "../components/LText";
 import Button from "../components/Button";
 
 export default function DebugPlayground() {
-  const { colors } = useTheme();
   return (
     <NavigationScrollView>
-      <View style={[styles.root, { backgroundColor: colors.background }]}>
-        <LText tertiary>
+      <Flex style={styles.root}>
+        <Text>
           {
-            "Convenience screen for testing purposes, please leave empty when commiting."
+            "Convenience screen for testing purposes, please leave empty when committing."
           }
-        </LText>
+        </Text>
         <Button
           mt={2}
           type={"primary"}
@@ -24,7 +20,7 @@ export default function DebugPlayground() {
           onPress={undefined}
           title={"Action"}
         />
-      </View>
+      </Flex>
     </NavigationScrollView>
   );
 }
