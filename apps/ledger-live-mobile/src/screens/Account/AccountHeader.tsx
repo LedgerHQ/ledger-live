@@ -20,7 +20,7 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { track } from "../../analytics";
 import AccountHeaderRight from "./AccountHeaderRight";
 import CurrencyGradient from "../../components/CurrencyGradient";
-import { getAccountCurrency } from "../../../../../libs/ledger-live-common/lib-es/account";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 
 function AccountHeader({
   currentPositionY,
