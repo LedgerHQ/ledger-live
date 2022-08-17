@@ -23,12 +23,12 @@ type Props = CompositeScreenProps<
 export const DeviceModelSelection = ({ navigation }: Props) => {
   const { t } = useTranslation();
 
-  const setupNanoFTS = useCallback(() => {
+  const setupDevice = useCallback((deviceModelId: DeviceModelId) => {
     // On pairing success, navigate to the Sync Onboarding Companion
     navigation.navigate(NavigatorName.Base as "Base", {
       screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
       params: {
-        filterByDeviceModelId: DeviceModelId.nanoFTS,
+        filterByDeviceModelId: deviceModelId,
         areKnownDevicesDisplayed: false,
         onSuccessAddToKnownDevices: false,
         onSuccessNavigateToConfig: {
@@ -54,9 +54,6 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
     navigation.goBack();
   }, [navigation]);
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const setupNanoX = () => {};
-
   return (
     <SafeAreaView>
       <Flex bg="background.main" height="100%">
@@ -77,7 +74,7 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
             title={t("syncOnboarding.deviceSelection.nanoFTS.title")}
             titleProps={{ variant: "h3" }}
             subTitle={t("syncOnboarding.deviceSelection.nanoFTS.description")}
-            onPress={setupNanoFTS}
+            onPress={() => setupDevice(DeviceModelId.nanoFTS)}
             cardProps={{ mx: 0, mb: 4 }}
             Image={
               <Illustration
@@ -91,7 +88,7 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
             title={t("syncOnboarding.deviceSelection.nanoX.title")}
             titleProps={{ variant: "h3" }}
             subTitle={t("syncOnboarding.deviceSelection.nanoX.description")}
-            onPress={setupNanoX}
+            onPress={() => setupDevice(DeviceModelId.nanoX)}
             cardProps={{ mx: 0 }}
             Image={
               <Illustration
