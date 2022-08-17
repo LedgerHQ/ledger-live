@@ -36,7 +36,7 @@ const getFeature = (
           feature.languages_blacklisted.includes(appLanguage)))
     ) {
       return {
-        enabledOverridenForCurrentLanguage: true,
+        enabledOverriddenForCurrentLanguage: true,
         ...feature,
         enabled: false,
       };
