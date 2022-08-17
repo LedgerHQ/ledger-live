@@ -11,6 +11,8 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "../../const";
 import { localeSelector } from "../../reducers/settings";
 import DeltaVariation from "../Market/DeltaVariation";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   currency: CryptoCurrency;
@@ -18,6 +20,7 @@ type Props = {
 
 const MarketPrice = ({ currency }: Props) => {
   const { t } = useTranslation();
+  const currentScreen = useCurrentRouteName();
   const locale = useSelector(localeSelector);
   const navigation = useNavigation();
   const {
@@ -31,6 +34,10 @@ const MarketPrice = ({ currency }: Props) => {
   }, [currency]);
 
   const goToMarketPage = useCallback(() => {
+    track("market_data_clicked", {
+      currency,
+      screen: currentScreen,
+    });
     navigation.navigate(NavigatorName.Market, {
       screen: ScreenName.MarketDetail,
       params: {
@@ -43,19 +50,43 @@ const MarketPrice = ({ currency }: Props) => {
     <Flex flex={1} mt={6}>
       <TouchableOpacity onPress={goToMarketPage}>
         <Flex flex={1} flexDirection="row" alignItems="center">
-          <Flex flexDirection="column" pr={7} borderRightWidth={1} borderRightColor="neutral.c30">
-            <Text variant="small" fontWeight="medium" lineHeight="20px" color="neutral.c70">
-              {t("portfolio.marketPriceSection.currencyPrice", { currencyTicker: currency.ticker })}
+          <Flex
+            flexDirection="column"
+            pr={7}
+            borderRightWidth={1}
+            borderRightColor="neutral.c30"
+          >
+            <Text
+              variant="small"
+              fontWeight="medium"
+              lineHeight="20px"
+              color="neutral.c70"
+            >
+              {t("portfolio.marketPriceSection.currencyPrice", {
+                currencyTicker: currency.ticker,
+              })}
             </Text>
             <Text variant="large" fontWeight="medium">
-              {counterValueFormatter({ value: selectedCoinData?.price || 0, currency: counterCurrency, locale })}
+              {counterValueFormatter({
+                value: selectedCoinData?.price || 0,
+                currency: counterCurrency,
+                locale,
+              })}
             </Text>
           </Flex>
           <Flex flex={1} flexDirection="column" pl={7}>
-            <Text variant="small" fontWeight="medium" lineHeight="20px" color="neutral.c70">
+            <Text
+              variant="small"
+              fontWeight="medium"
+              lineHeight="20px"
+              color="neutral.c70"
+            >
               {t("portfolio.marketPriceSection.currencyPriceChange")}
             </Text>
-            <DeltaVariation percent value={selectedCoinData?.priceChangePercentage || 0} />
+            <DeltaVariation
+              percent
+              value={selectedCoinData?.priceChangePercentage || 0}
+            />
           </Flex>
           <Icons.DroprightMedium size={24} />
         </Flex>

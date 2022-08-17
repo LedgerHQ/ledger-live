@@ -17,15 +17,17 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { Icons, QuickActionList } from "@ledgerhq/native-ui";
 
+import { useTheme } from "styled-components/native";
+import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
+import { Linking } from "react-native";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { accountsCountSelector } from "../../reducers/accounts";
 import { NavigatorName, ScreenName } from "../../const";
 import FabAccountButtonBar from "./FabAccountButtonBar";
 import useAccountActions from "../../screens/Account/hooks/useAccountActions";
-import { useTheme } from "styled-components/native";
-import { QuickActionButtonProps } from "@ledgerhq/native-ui/components/cta/QuickAction/QuickActionButton";
-import { Linking } from "react-native";
 import useAssetActions from "./hooks/useAssetActions";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
@@ -203,6 +205,7 @@ const FabAssetActionsComponent: React.FC<Props> = ({
   ...props
 }) => {
   const navigation = useNavigation();
+  const currentScreen = useCurrentRouteName();
 
   const { mainActions } = useAssetActions({ currency, accounts });
 
@@ -220,6 +223,10 @@ const FabAssetActionsComponent: React.FC<Props> = ({
 
   const onPress = useCallback(
     (data: ActionButton) => {
+      track("button_clicked", {
+        button: data.label,
+        screen: currentScreen,
+      });
       const { navigationParams, linkUrl } = data;
       if (linkUrl) {
         Linking.openURL(linkUrl);
@@ -227,7 +234,7 @@ const FabAssetActionsComponent: React.FC<Props> = ({
         onNavigate(...navigationParams);
       }
     },
-    [onNavigate],
+    [onNavigate, currentScreen],
   );
 
   const quickActions: QuickActionButtonProps[] = mainActions.map(action => ({

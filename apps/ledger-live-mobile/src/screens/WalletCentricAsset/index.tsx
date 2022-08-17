@@ -10,6 +10,12 @@ import { Box } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
 import { useTheme } from "styled-components/native";
+import {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import { useNavigation } from "@react-navigation/native";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -23,18 +29,14 @@ import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import { FabAssetActions } from "../../components/FabActions";
 import AccountsSection from "./AccountsSection";
 import { NavigatorName } from "../../const";
-import {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
-import { useNavigation } from "@react-navigation/native";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
 import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
 import { usePortfolio } from "../../actions/portfolio";
 import { counterValueCurrencySelector } from "../../reducers/settings";
+import { TrackScreen } from "../../analytics";
+import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 type RouteParams = {
   currency: CryptoCurrency | TokenCurrency;
@@ -53,7 +55,8 @@ const AssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const { currency } = route.params;
+  const previousScreen = usePreviousRouteName();
+  const { currency } = route?.params;
   const cryptoAccounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
   );
@@ -108,7 +111,7 @@ const AssetScreen = ({ route }: Props) => {
         <SectionTitle
           title={t("account.quickActions")}
           containerProps={{ mb: 6 }}
-        ></SectionTitle>
+        />
         <FabAssetActions currency={currency} accounts={cryptoAccounts} />
       </SectionContainer>,
       ...(areCryptoAccountsEmpty
@@ -161,6 +164,11 @@ const AssetScreen = ({ route }: Props) => {
 
   return (
     <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+      <TrackScreen
+        category="Asset"
+        assetName={currency.name}
+        screen={previousScreen}
+      />
       <CurrencyBackgroundGradient
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}

@@ -6,12 +6,14 @@ import { AccountLikeArray, Operation } from "@ledgerhq/live-common/types/index";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "../../const";
-import { useSelector } from "react-redux";
 import { parentAccountSelector } from "../../reducers/accounts";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -28,6 +30,7 @@ const renderSectionHeader = ({ section }: { section: { day: Date } }) => (
 const OperationsHistory = ({ accounts }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const currentScreen = useCurrentRouteName();
   const { sections, completed } = useMemo(
     () =>
       groupAccountsOperationsByDay(accounts, {
@@ -68,6 +71,10 @@ const OperationsHistory = ({ accounts }: Props) => {
   );
 
   const goToAnalyticsOperations = useCallback(() => {
+    track("button_clicked", {
+      button: "See All",
+      screen: currentScreen,
+    });
     navigation.navigate(NavigatorName.Analytics, {
       screen: ScreenName.AnalyticsOperations,
       params: {
