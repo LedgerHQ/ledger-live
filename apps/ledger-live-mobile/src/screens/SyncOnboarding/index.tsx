@@ -43,9 +43,10 @@ type Props = StackScreenProps<
 
 const normalPollingPeriodMs = 1000;
 const shortPollingPeriodMs = 400;
-const desyncTimeoutMs = 120000;
-const shortResyncOverlayDisplayDelayMs = 1000;
-const longResyncOverlayDisplayDelayMs = 1000;
+const normalDesyncTimeoutMs = 60000;
+const longDesyncTimeoutMs = 300000;
+const normalResyncOverlayDisplayDelayMs = 1000;
+const longResyncOverlayDisplayDelayMs = 20000;
 const readyRedirectDelayMs = 2500;
 
 /* eslint-disable no-unused-vars */
@@ -152,7 +153,11 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   const [
     resyncOverlayDisplayDelayMs,
     setResyncOverlayDisplayDelayMs,
-  ] = useState<number>(shortResyncOverlayDisplayDelayMs);
+  ] = useState<number>(normalResyncOverlayDisplayDelayMs);
+
+  const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(
+    normalDesyncTimeoutMs,
+  );
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [companionSteps, setCompanionSteps] = useState<Step[]>(
@@ -171,14 +176,6 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     pollingPeriodMs,
     stopPolling,
   });
-
-  console.log(
-    `🧙‍♂️ OnboardingState polling = ${JSON.stringify(
-      deviceOnboardingState,
-    )} and allowedError: ${JSON.stringify(
-      allowedError,
-    )} and pollingPeriodMs: ${pollingPeriodMs}`,
-  );
 
   const handleClose = useCallback(() => {
     navigation.goBack();
@@ -251,8 +248,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   }, [deviceOnboardingState]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
-  // to a higher value. It avoids having a warning message while the connection is lost because
-  // the device is generating the seed.
+  // and timers to a higher value. It avoids having a warning message while the connection is lost 
+  // because the device is generating the seed.
   useEffect(() => {
     if (
       deviceOnboardingState?.seedPhraseType &&
@@ -270,8 +267,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 1
       ) {
         setResyncOverlayDisplayDelayMs(longResyncOverlayDisplayDelayMs);
-      } else {
-        setResyncOverlayDisplayDelayMs(shortResyncOverlayDisplayDelayMs);
+        setDesyncTimeoutMs(longDesyncTimeoutMs);
       }
     }
   }, [deviceOnboardingState]);
