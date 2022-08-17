@@ -1,27 +1,26 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import Animated from "react-native-reanimated";
 import { useSelector } from "react-redux";
-import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
 import { useTranslation } from "react-i18next";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
-import {
-  accountsSelector,
-  flattenAccountsByCryptoCurrencyScreenSelector,
-} from "../../reducers/accounts";
+import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import { FabAssetActions } from "../../components/FabActions";
 import AccountsSection from "./AccountsSection";
+import { NavigatorName } from "../../const";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useNavigation } from "@react-navigation/native";
 
 type RouteParams = {
-  currencyId: string;
+  currency: CryptoCurrency | TokenCurrency;
 };
 
 type Props = {
@@ -35,19 +34,23 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 
 const AssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
-  const accounts = useSelector(accountsSelector);
+  const navigation = useNavigation();
   const { currency } = route.params;
-
-  const cryptoAccounts = useMemo(
-    () => accounts.filter(a => getAccountCurrency(a).id === currency.id),
-    [accounts, currency.id],
-  );
-
-  const allAccounts = useSelector(
+  const cryptoAccounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
   );
 
-  console.log("allAccounts", allAccounts.length, allAccounts);
+  const onAddAccount = useCallback(() => {
+    if (currency && currency.type === "TokenCurrency") {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        token: currency,
+      });
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        currency,
+      });
+    }
+  }, [currency, navigation]);
 
   const data = useMemo(
     () => [
@@ -58,7 +61,7 @@ const AssetScreen = ({ route }: Props) => {
         ></SectionTitle>
         <FabAssetActions
           currency={currency}
-          accounts={accounts}
+          accounts={cryptoAccounts}
         ></FabAssetActions>
       </SectionContainer>,
       <SectionContainer px={6}>
@@ -74,8 +77,10 @@ const AssetScreen = ({ route }: Props) => {
           title={t("asset.accountsSection.title", {
             currencyName: currency.name,
           })}
+          seeMoreText={t("addAccounts.sections.creatable.title")}
+          onSeeAllPress={onAddAccount}
         />
-        <AccountsSection accounts={allAccounts}></AccountsSection>
+        <AccountsSection accounts={cryptoAccounts}></AccountsSection>
       </SectionContainer>,
       <SectionContainer px={6} isLast>
         <SectionTitle title={t("analytics.operations.title")} />

@@ -12,10 +12,10 @@ import {
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { ActionButton } from "../../../components/FabActions";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 type useAssetActionsProps = {
-  currency?: CryptoCurrency;
+  currency?: CryptoCurrency | TokenCurrency;
   accounts?: AccountLike[];
 };
 

@@ -10,6 +10,8 @@ import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "../../const";
+import { useSelector } from "react-redux";
+import { parentAccountSelector } from "../../reducers/accounts";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -46,10 +48,9 @@ const OperationsHistory = ({ accounts }: Props) => {
       section: SectionBase<any>;
     }) => {
       const account = accounts.find(a => a.id === item.accountId);
-      const parentAccount =
-        account && account.type !== "Account"
-          ? accounts.find(a => a.id === account.parentId)
-          : null;
+      const parentAccount = useSelector(state =>
+        parentAccountSelector(state, { account }),
+      );
 
       if (!account) return null;
 

@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { Icons, QuickActionList } from "@ledgerhq/native-ui";
 
@@ -185,7 +185,7 @@ export const FabAccountActionsComponent: React.FC<FabAccountActionsProps> = ({
 type Props = {
   account?: AccountLike;
   parentAccount?: Account;
-  currency?: CryptoCurrency;
+  currency?: CryptoCurrency | TokenCurrency;
   accounts?: AccountLike[];
 };
 
