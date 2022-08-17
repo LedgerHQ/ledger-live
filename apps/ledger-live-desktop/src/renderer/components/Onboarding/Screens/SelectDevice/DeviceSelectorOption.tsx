@@ -79,7 +79,7 @@ export function DeviceSelectorOption({
     <Container data-test-id={`v3-container-${id}`} {...{ id, isFirst, isLast }}>
       <ContentContainer>
         <DeviceIllustrationContainer>{Illu}</DeviceIllustrationContainer>
-        <DeviceName marginTop="32px" variant="h3">
+        <DeviceName marginTop="32px" variant="h2">
           {label}
         </DeviceName>
         <SelectButton data-test-id={`v3-${id}`} variant="main" onClick={onClick}>
