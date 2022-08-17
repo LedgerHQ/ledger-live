@@ -80,13 +80,13 @@ function PortfolioHeader({
 
   const WalletTitleAnimation = useAnimatedStyle(() => {
     const opacity =
-    ? 1
-    currentPositionY.value,
-    [graphCardEndPosition - 40, graphCardEndPosition],
-    [1, 0],
-    currentPositionY.value === 0
-        Extrapolate.CLAMP,
+      currentPositionY.value === 0
+        ? 1
         : interpolate(
+            currentPositionY.value,
+            [graphCardEndPosition - 40, graphCardEndPosition],
+            [1, 0],
+            Extrapolate.CLAMP,
           );
 
     return {
