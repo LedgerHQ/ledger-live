@@ -148,6 +148,11 @@ const DeviceLanguageStep = ({
         <ChangeDeviceLanguageAction
           device={deviceForAction}
           language={languageToInstall}
+          onError={(error: any) => {
+            track("Page Manager FwUpdateLanguageInstallError", {
+              error,
+            });
+          }}
           onResult={() =>
             track("Page Manager FwUpdateLanguageInstalled", {
               selectedLanguage: languageToInstall,

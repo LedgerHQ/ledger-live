@@ -118,7 +118,10 @@ const DeviceLanguage: React.FC<Props> = ({
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}
         language={selectedLanguage}
-        onError={refreshDeviceLanguage}
+        onError={error => {
+          track("Page Manager LanguageInstallError", { error });
+          refreshDeviceLanguage();
+        }}
         onResult={refreshDeviceLanguage}
       />
     </>
