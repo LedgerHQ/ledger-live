@@ -103,12 +103,7 @@
       "title": "Recipient account has not opted in the selected ASA."
     },
     "BluetoothRequired": {
-      "title": "Sorry, Bluetooth is disabled",            "register": {
-        "success": {
-          "title": "Account registered successfully",
-          "text": "You will see your operation in history soon.",
-          "cta": "Lock"
-        }
+      "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
     "FwUpdateBluetoothNotSupported": {
@@ -3468,7 +3463,7 @@
           "verification": {
             "success": {
               "title": "Account registered successfully",
-              "text": "You will see your operation in history soon.",
+              "text": "You will see your operation in history soon."
             }
           }
         }
