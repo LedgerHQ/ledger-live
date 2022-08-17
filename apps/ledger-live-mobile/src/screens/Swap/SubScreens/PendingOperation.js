@@ -87,7 +87,7 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
           <LText style={styles.description} color="grey">
             <Trans
               i18nKey={"transfer.swap.pendingOperation.description"}
-              values={{ targetCurrency }}
+              values={{ targetCurrency: targetCurrency.name }}
             />
           </LText>
         </View>
