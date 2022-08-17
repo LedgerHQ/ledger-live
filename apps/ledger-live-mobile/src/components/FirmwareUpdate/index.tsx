@@ -151,7 +151,8 @@ export default function FirmwareUpdate({
     step === "confirmRecoveryBackup" ||
     step === "firmwareUpdated" ||
     step === "error" ||
-    step === "confirmPin";
+    step === "confirmPin" ||
+    step === "promptLanguageChange";
 
   const onTryClose = useCallback(
     (restoreApps: boolean) => {
@@ -159,7 +160,7 @@ export default function FirmwareUpdate({
         onClose(restoreApps);
       }
     },
-    [canClose],
+    [canClose, onClose],
   );
 
   const onCloseAndReinstall = useCallback(() => onTryClose(true), [onTryClose]);

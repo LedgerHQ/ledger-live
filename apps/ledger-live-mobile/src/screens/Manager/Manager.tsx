@@ -160,6 +160,7 @@ const Manager = ({ navigation, route }: Props) => {
   const onCloseFirmwareUpdate = useCallback(
     (restoreApps?: boolean) => {
       setIsFirmwareUpdateOpen(false);
+      refreshDeviceInfo();
 
       // removes the firmwareUpdate param from the stack navigation so we don't open the modal again
       // if the user comes back to this page within the stack
@@ -179,7 +180,7 @@ const Manager = ({ navigation, route }: Props) => {
         });
       }
     },
-    [installedApps, navigation],
+    [installedApps, navigation, refreshDeviceInfo],
   );
 
   return (
