@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "Birden çok platform uygulama kaynağı arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "Overriden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "Edit",
+      "featureFlagsRestore" : "Restore",
+      "featureFlagsOverride" : "Override",
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
       "addLocalAppButton" : "Göz Atın",
@@ -3220,15 +3225,15 @@
           },
           "1" : {
             "title" : "Özel anahtarınıza sahip çıkın",
-            "desc" : "Özel anahtarınız Nano'nuzda saklanır. Fonlarınızın sadece sizin kontrolünüzde olması için ona başka hiç kimse erişmemelidir."
+            "desc" : "Your private key is stored within your Nano.\nYou must be the only one to own it to be in control of your money"
           },
           "2" : {
             "title" : "Çevrim dışı kalın",
-            "desc" : "Nano cihazınız \"soğuk depolama\" cüzdanı olarak çalışır. Yani özel anahtarınız, bu uygulamayı kullanırken bile asla çevrim içi olarak ifşa edilmez."
+            "desc" : "Your Nano works as a \"cold storage\" wallet.\nThis means that it never exposes your private key online, even when using the app"
           },
           "3" : {
             "title" : "İşlemleri onaylayın",
-            "desc" : "Ledger Live sayesinde güvenliğinizden feragat etmeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz.<br/>Her kripto işleminizi Nano cihazınızla onaylıyor olacaksınız."
+            "desc" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected.\nYou will validate every crypto transaction with your Nano"
           },
           "4" : {
             "title" : "Nano cihazınızı kuralım",
