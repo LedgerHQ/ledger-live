@@ -24,7 +24,7 @@ const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
       preventBackdropClick
       noCloseButton
     >
-      <Flex mb={200} pt={120}>
+      <Flex mb={250} pt={120}>
         <ConnectYourDevice
           t={t}
           device={device}
