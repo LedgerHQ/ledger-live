@@ -41,11 +41,12 @@ type Props = StackScreenProps<
   "SyncOnboardingCompanion"
 >;
 
-const pollingPeriodMs = 1000;
-const pollingTimeoutMs = 60000;
-const readyRedirectDelay = 2500;
-const shortResyncDelay = 1000;
-const longResyncDelay = 10000;
+const normalPollingPeriodMs = 1000;
+const shortPollingPeriodMs = 400;
+const desyncTimeoutMs = 120000;
+const shortResyncOverlayDisplayDelayMs = 1000;
+const longResyncOverlayDisplayDelayMs = 1000;
+const readyRedirectDelayMs = 2500;
 
 /* eslint-disable no-unused-vars */
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
@@ -143,9 +144,15 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     [t, productName, device, handleSoftwareCheckComplete],
   );
 
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [desyncTimer, setDesyncTimer] = useState<NodeJS.Timeout | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
-  const [resyncDelay, setResyncDelay] = useState<number>(shortResyncDelay);
+  const [pollingPeriodMs, setPollingPeriodMs] = useState<number>(
+    normalPollingPeriodMs,
+  );
+  const [
+    resyncOverlayDisplayDelayMs,
+    setResyncOverlayDisplayDelayMs,
+  ] = useState<number>(shortResyncOverlayDisplayDelayMs);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [companionSteps, setCompanionSteps] = useState<Step[]>(
@@ -165,11 +172,19 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     stopPolling,
   });
 
+  console.log(
+    `🧙‍♂️ OnboardingState polling = ${JSON.stringify(
+      deviceOnboardingState,
+    )} and allowedError: ${JSON.stringify(
+      allowedError,
+    )} and pollingPeriodMs: ${pollingPeriodMs}`,
+  );
+
   const handleClose = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
-  const handleTimerRunsOut = useCallback(() => {
+  const handleDesyncTimedOut = useCallback(() => {
     setDesyncDrawerOpen(true);
   }, [setDesyncDrawerOpen]);
 
@@ -193,13 +208,16 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   }, [fatalError]);
 
   useEffect(() => {
-    if (allowedError && !timer) {
-      setTimer(setTimeout(handleTimerRunsOut, pollingTimeoutMs));
-    } else if (!allowedError && timer) {
-      clearTimeout(timer);
-      setTimer(null);
+    if (allowedError && !desyncTimer) {
+      setDesyncTimer(setTimeout(handleDesyncTimedOut, desyncTimeoutMs));
+      // Accelerates the polling to resync as fast as possible with the device
+      setPollingPeriodMs(shortPollingPeriodMs);
+    } else if (!allowedError && desyncTimer) {
+      clearTimeout(desyncTimer);
+      setDesyncTimer(null);
+      setPollingPeriodMs(normalPollingPeriodMs);
     }
-  }, [allowedError, handleTimerRunsOut, timer]);
+  }, [allowedError, handleDesyncTimedOut, desyncTimer]);
 
   useEffect(() => {
     if (isDesyncDrawerOpen) {
@@ -251,9 +269,9 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         nbOfSeedWords &&
         deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 1
       ) {
-        setResyncDelay(longResyncDelay);
+        setResyncOverlayDisplayDelayMs(longResyncOverlayDisplayDelayMs);
       } else {
-        setResyncDelay(shortResyncDelay);
+        setResyncOverlayDisplayDelayMs(shortResyncOverlayDisplayDelayMs);
       }
     }
   }, [deviceOnboardingState]);
@@ -266,12 +284,12 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     if (companionStepKey === CompanionStepKey.Ready) {
       setTimeout(
         () => setCompanionStepKey(CompanionStepKey.Exit),
-        readyRedirectDelay / 2,
+        readyRedirectDelayMs / 2,
       );
     }
 
     if (companionStepKey === CompanionStepKey.Exit) {
-      setTimeout(handleDeviceReady, readyRedirectDelay / 2);
+      setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
     }
 
     setCompanionSteps(
@@ -316,8 +334,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         </Flex>
         <Flex flex={1}>
           <ResyncOverlay
-            isOpen={!!timer && !stopPolling}
-            delay={resyncDelay}
+            isOpen={!!desyncTimer && !stopPolling}
+            delay={resyncOverlayDisplayDelayMs}
             productName={productName}
           />
           <ScrollContainer>
