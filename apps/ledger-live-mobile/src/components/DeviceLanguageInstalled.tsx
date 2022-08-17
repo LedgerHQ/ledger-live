@@ -13,7 +13,7 @@ const DeviceLanguageInstalled: React.FC<{
     if (onMount) {
       onMount();
     }
-  }, [onMount]);
+  }, []);
   const { t } = useTranslation();
 
   return (

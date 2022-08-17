@@ -27,9 +27,13 @@ import {
 } from "../../../reducers/settings";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { from } from "rxjs";
 import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { setLastSeenDevice } from "../../../actions/settings";
 
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
@@ -48,9 +52,23 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
     lastSeenDeviceSelector,
   );
+
   const lastConnectedDevice = useSelector(
     lastConnectedDeviceSelector,
   ) as Device | null;
+
+  const refreshDeviceInfo = useCallback(() => {
+    if (lastConnectedDevice && lastSeenDevice) {
+      withDevice(lastConnectedDevice?.deviceId)(transport =>
+        from(getDeviceInfo(transport)),
+      )
+        .toPromise()
+        .then(deviceInfo => {
+          dispatch(setLastSeenDevice({ deviceInfo }));
+        });
+    }
+  }, [lastConnectedDevice, lastSeenDevice, dispatch]);
+
   const [
     deviceForChangeLanguageAction,
     setDeviceForChangeLanguageAction,
@@ -120,6 +138,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         <Flex alignItems="center">
           {deviceForChangeLanguageAction ? (
             <ChangeDeviceLanguageAction
+              onResult={refreshDeviceInfo}
               device={deviceForChangeLanguageAction}
               language={localeIdToDeviceLanguage[currentLocale] as Language}
               onContinue={() => {

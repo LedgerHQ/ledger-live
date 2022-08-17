@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import { DeviceModelInfo } from "@ledgerhq/types-live";
+import { DeviceModelInfo, DeviceInfo } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PortfolioRange } from "@ledgerhq/types-live";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
@@ -203,6 +203,15 @@ export const swapAcceptProvider = (providerId: string) => ({
 export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) => ({
   type: "LAST_SEEN_DEVICE_INFO",
   payload: dmi,
+});
+
+export const setLastSeenDevice = ({
+  deviceInfo
+}: {
+  deviceInfo: DeviceInfo,
+}) => ({
+  type: "LAST_SEEN_DEVICE",
+  payload: { deviceInfo },
 });
 
 export const addStarredMarketCoins = (payload: string) => ({
