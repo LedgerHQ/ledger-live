@@ -5,7 +5,7 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "../Discover/DiscoverCard";
