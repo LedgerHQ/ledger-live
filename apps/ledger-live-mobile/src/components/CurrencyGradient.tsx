@@ -7,8 +7,10 @@ import Svg, {
   Mask,
   G,
 } from "react-native-svg";
+import { useTheme } from "styled-components/native";
 
 function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
+  const { colors } = useTheme();
   return (
     <Svg
       width={541}
@@ -31,7 +33,7 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
         <Path fill="#fff" d="M0 0H541V454H0z" />
       </Mask>
       <G mask="url(#a)">
-        <Path fill="#272727" d="M0 0H541V454H0z" />
+        <Path fill={colors.background.main} d="M0 0H541V454H0z" />
         <Path
           fill="url(#paint0_linear_22_3)"
           fillOpacity={0.3}
@@ -59,8 +61,8 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
           y2={450.077}
           gradientUnits="userSpaceOnUse"
         >
-          <Stop stopColor="#131214" stopOpacity={0} />
-          <Stop offset={1} stopColor="#131214" />
+          <Stop stopColor={colors.background.main} stopOpacity={0} />
+          <Stop offset={1} stopColor={colors.background.main} />
         </LinearGradient>
       </Defs>
     </Svg>

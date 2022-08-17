@@ -129,17 +129,15 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
     setIsDisabledActionModalOpened(true);
   }, []);
 
-  const quickActions: QuickActionButtonProps[] = mainActions.map(action => {
-    return {
-      Icon: action.Icon,
-      children: action.label,
-      onPress: () => onPress(action),
-      disabled: action.disabled,
-      onPressWhenDisabled: action.modalOnDisabledClick
-        ? () => onPressWhenDisabled(action)
-        : undefined,
-    };
-  });
+  const quickActions: QuickActionButtonProps[] = mainActions.map(action => ({
+    Icon: action.Icon,
+    children: action.label,
+    onPress: () => onPress(action),
+    disabled: action.disabled,
+    onPressWhenDisabled: action.modalOnDisabledClick
+      ? () => onPressWhenDisabled(action)
+      : undefined,
+  }));
 
   return (
     <>
@@ -149,7 +147,7 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
           action={pressedDisabledAction}
           isOpen={isDisabledActionModalOpened}
           onClose={() => setIsDisabledActionModalOpened(false)}
-        ></pressedDisabledAction.modalOnDisabledClick.component>
+        />
       )}
       <QuickActionList
         data={quickActions}
@@ -157,7 +155,7 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
         numColumns={
           quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
         }
-      ></QuickActionList>
+      />
     </>
   );
 };
@@ -232,14 +230,12 @@ const FabAssetActionsComponent: React.FC<Props> = ({
     [onNavigate],
   );
 
-  const quickActions: QuickActionButtonProps[] = mainActions.map(action => {
-    return {
-      Icon: action.Icon,
-      children: action.label,
-      onPress: () => onPress(action),
-      disabled: action.disabled,
-    };
-  });
+  const quickActions: QuickActionButtonProps[] = mainActions.map(action => ({
+    Icon: action.Icon,
+    children: action.label,
+    onPress: () => onPress(action),
+    disabled: action.disabled,
+  }));
 
   return (
     <QuickActionList
@@ -248,7 +244,7 @@ const FabAssetActionsComponent: React.FC<Props> = ({
       numColumns={
         quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
       }
-    ></QuickActionList>
+    />
   );
 };
 

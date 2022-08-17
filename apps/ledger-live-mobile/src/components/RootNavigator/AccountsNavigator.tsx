@@ -13,12 +13,12 @@ import NftCollectionHeaderTitle from "../../screens/Nft/NftCollection/NftCollect
 import NftGalleryHeaderTitle from "../../screens/Nft/NftGallery/NftGalleryHeaderTitle";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
-
+import ReadOnlyAssets from "../../screens/Portfolio/ReadOnlyAssets";
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import { accountsSelector } from "../../reducers/accounts";
-import { track } from "../../analytics";
 
-import WalletCentricAsset from "../../screens/WalletCentricAsset";
+import Asset from "../../screens/WalletCentricAsset";
+import ReadOnlyAsset from "../../screens/WalletCentricAsset/ReadOnly";
 import Assets from "../../screens/Assets";
 
 export default function AccountsNavigator() {
@@ -68,15 +68,16 @@ export default function AccountsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Assets}
-        component={Assets}
+        component={readOnlyModeEnabled ? ReadOnlyAssets : Assets}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
         name={ScreenName.Asset}
-        component={WalletCentricAsset}
+        component={readOnlyModeEnabled ? ReadOnlyAsset : Asset}
         options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

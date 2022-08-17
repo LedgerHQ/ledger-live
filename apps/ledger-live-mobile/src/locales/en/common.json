@@ -1932,6 +1932,7 @@
     "modals": {
       "zeroBalanceDisabledAction": {
         "title": "You have no {{currencyTicker}} yet",
+        "start": "Buy or Receive some {{currencyTicker}} to start.",
         "description": "You need some {{currencyTicker}} to {{actionName}} with this account."
       }
     },

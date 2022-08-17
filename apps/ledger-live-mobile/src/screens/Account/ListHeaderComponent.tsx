@@ -8,9 +8,12 @@ import { AccountLike, Account, ValueChange } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 
-import { Box, Flex } from "@ledgerhq/native-ui";
+import { Box } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 
+import styled from "@ledgerhq/native-ui/components/styled";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components/native";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -26,15 +29,8 @@ import {
   FabAccountMainActionsComponent,
 } from "../../components/FabActions";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
-import styled from "@ledgerhq/native-ui/components/styled";
-import { useTranslation } from "react-i18next";
+import SectionContainer from "../WalletCentricSections/SectionContainer";
 import useAccountActions from "./hooks/useAccountActions";
-
-const SectionContainer = styled(Flex).attrs((p: { isLast: boolean }) => ({
-  py: 8,
-  borderBottomWidth: !p.isLast ? 1 : 0,
-  borderBottomColor: "neutral.c30",
-}))``;
 
 type Props = {
   account?: AccountLike;
@@ -49,6 +45,8 @@ type Props = {
   onAccountPress: () => void;
   onSwitchAccountCurrency: () => void;
   compoundSummary?: CompoundAccountSummary;
+  onAccountCardLayout: any;
+  t: any;
 };
 
 export function getListHeaderComponents({
@@ -64,12 +62,12 @@ export function getListHeaderComponents({
   onAccountPress,
   onSwitchAccountCurrency,
   compoundSummary,
+  onAccountCardLayout,
+  t,
 }: Props): {
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
 } {
-  const { t } = useTranslation();
-
   if (!account)
     return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
@@ -93,14 +91,12 @@ export function getListHeaderComponents({
     perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
 
   const stickyHeaderIndices = empty ? [] : [0];
+  const { colors } = useTheme();
 
   return {
     listHeaderComponents: [
-      <Header accountId={account.id} />,
-      !!AccountSubHeader && <AccountSubHeader />,
-
       !empty && (
-        <Box mx={6} mt={6}>
+        <Box mt={6} onLayout={onAccountCardLayout}>
           <AccountGraphCard
             account={account}
             range={range}
@@ -118,18 +114,27 @@ export function getListHeaderComponents({
           />
         </Box>
       ),
-      !empty && (
-        <SectionContainer px={6}>
-          <SectionTitle
-            title={t("account.quickActions")}
-            containerProps={{ mb: 6 }}
-          ></SectionTitle>
-          <FabAccountMainActionsComponent
-            account={account}
-            parentAccount={parentAccount}
-          />
-        </SectionContainer>
+      <Header accountId={account.id} />,
+      !!AccountSubHeader && (
+        <Box bg={colors.background.main}>
+          <AccountSubHeader />
+        </Box>
       ),
+      !empty && !!AccountHeader && (
+        <Box bg={colors.background.main}>
+          <AccountHeader account={account} parentAccount={parentAccount} />
+        </Box>
+      ),
+      <SectionContainer px={6} bg={colors.background.main}>
+        <SectionTitle
+          title={t("account.quickActions")}
+          containerProps={{ mb: 6 }}
+        />
+        <FabAccountMainActionsComponent
+          account={account}
+          parentAccount={parentAccount}
+        />
+      </SectionContainer>,
       ...(!empty &&
       (AccountBalanceSummaryFooter ||
         (compoundSummary && account.type === "TokenAccount") ||
@@ -140,7 +145,7 @@ export function getListHeaderComponents({
                 <SectionTitle
                   title={t("account.earn")}
                   containerProps={{ mx: 6, mb: 6 }}
-                ></SectionTitle>
+                />
                 {AccountHeader && (
                   <Box mx={6} mb={6}>
                     <AccountHeader
@@ -151,9 +156,7 @@ export function getListHeaderComponents({
                 )}
                 {AccountBalanceSummaryFooter && (
                   <Box mb={6}>
-                    <AccountBalanceSummaryFooter
-                      account={account}
-                    ></AccountBalanceSummaryFooter>
+                    <AccountBalanceSummaryFooter account={account} />
                   </Box>
                 )}
                 {compoundSummary && account.type === "TokenAccount" && (
@@ -162,7 +165,7 @@ export function getListHeaderComponents({
                       key="compoundSummary"
                       account={account}
                       compoundSummary={compoundSummary}
-                    ></CompoundSummary>
+                    />
                   </Box>
                 )}
                 <FabAccountActions

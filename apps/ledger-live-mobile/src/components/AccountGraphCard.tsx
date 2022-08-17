@@ -177,7 +177,7 @@ function AccountGraphCard({
           <InfiniteLoader size={32} />
         )}
       </Flex>
-      <Flex pt={16} px={6} bg={colors.background.main}>
+      <Flex bg="background.main">
         <GraphTabs
           activeIndex={activeRangeIndex}
           onChange={updateRange}
@@ -228,12 +228,7 @@ const GraphCardHeader = ({
   }
 
   return (
-    <Flex
-      flexDirection={"row"}
-      px={6}
-      pt={100}
-      justifyContent={"space-between"}
-    >
+    <Flex flexDirection={"row"} px={6} justifyContent={"space-between"}>
       <Touchable
         event="SwitchAccountCurrency"
         eventProperties={{ useCounterValue: shouldUseCounterValue }}

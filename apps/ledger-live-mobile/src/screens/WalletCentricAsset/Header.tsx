@@ -10,7 +10,10 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
-import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  ArrowLeftMedium,
+  SettingsMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Touchable from "../../components/Touchable";
 import { NavigatorName } from "../../const";
@@ -18,29 +21,21 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { track } from "../../analytics";
-import AccountHeaderRight from "./AccountHeaderRight";
 import CurrencyGradient from "../../components/CurrencyGradient";
-import { getAccountCurrency } from "../../../../../libs/ledger-live-common/lib-es/account";
 
-function AccountHeader({
+function Header({
   currentPositionY,
   graphCardEndPosition,
-  account,
+  currency,
 }: {
   currentPositionY: SharedValue<number>;
   graphCardEndPosition: number;
-  account: Account;
+  currency: Currency;
 }) {
   const navigation = useNavigation();
   const { colors } = useTheme();
-  const currency = getAccountCurrency(account);
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-
-  const onSettingsButtonPress = useCallback(() => {
-    // @ts-expect-error navigation ts issue
-    navigation.navigate(NavigatorName.NotificationCenter);
-  }, [navigation]);
 
   const onBackButtonPress = useCallback(() => {
     if (readOnlyModeEnabled) {
@@ -134,14 +129,16 @@ function AccountHeader({
       </Box>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <Text variant={"large"} fontWeight={"semiBold"}>
-          {account.name}
+          {currency.name}
         </Text>
       </Flex>
       <Box>
-        <AccountHeaderRight />
+        <Touchable onPress={() => {}}>
+          <SettingsMedium size={24} />
+        </Touchable>
       </Box>
     </Header>
   );
 }
 
-export default withDiscreetMode(AccountHeader);
+export default withDiscreetMode(Header);
