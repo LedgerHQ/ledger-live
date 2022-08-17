@@ -4,6 +4,7 @@ import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { ScreenName } from "../../const";
@@ -11,19 +12,23 @@ import { ScreenName } from "../../const";
 export type Props = {
   isOpen: boolean;
   onClose?: () => void;
-  productName: string;
+  device: Device;
 } & Pick<
   StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompanion">,
   "navigation"
 >;
 
-const DesyncDrawer = ({ isOpen, onClose, navigation, productName }: Props) => {
+const DesyncDrawer = ({ isOpen, onClose, navigation, device }: Props) => {
   const { t } = useTranslation();
+  const productName =
+    getDeviceModel(device.modelId).productName || device.modelId;
 
   const handleRetryPress = useCallback(() => {
     // Replace to avoid going back to this screen without re-rendering
-    navigation.replace(ScreenName.BleDevicesScanning as "BleDevicesScanning");
-  }, [navigation]);
+    navigation.replace(ScreenName.BleDevicesScanning as "BleDevicesScanning", {
+      filterByModelId: device.modelId,
+    });
+  }, [navigation, device]);
 
   const handleSupportPress = useCallback(() => {
     // TODO: add logic when user press "Support" button

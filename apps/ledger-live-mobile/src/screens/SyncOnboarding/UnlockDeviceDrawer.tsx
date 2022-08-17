@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { BottomDrawer, Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { renderConnectYourDevice as ConnectYourDevice } from "../../components/DeviceAction/rendering";
 
 export type Props = {
@@ -14,8 +14,8 @@ export type Props = {
 
 const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
   const { t } = useTranslation();
-  const { colors, dark } = useTheme();
-  const theme = dark ? "dark" : "light";
+  const { colors } = useTheme();
+  const theme = colors.type as "dark" | "light";
 
   return (
     <BottomDrawer
@@ -24,7 +24,7 @@ const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
       preventBackdropClick
       noCloseButton
     >
-      <Flex mb={300} pt={80}>
+      <Flex mb={200} pt={120}>
         <ConnectYourDevice
           t={t}
           device={device}
