@@ -144,7 +144,7 @@ export default function DebugPlayground() {
             <Flex flexDirection="column" py={1}>
               <Flex flexDirection="row" alignItems="center" my={3} flexWrap="wrap">
                 {value?.enabled ? <TagEnabled>{flagName}</TagEnabled> : <TagDisabled>{flagName}</TagDisabled>}
-                {value?.overridesRemote && <Tag my={1} mr={2}>local override</Tag>}
+                {value?.overridesRemote && <Tag my={1} mr={2}>overridden locally</Tag>}
                 {value?.enabledOverriddenForCurrentLanguage && <Tag my={1} mr={2}>disabled for current language</Tag>}
               </Flex>
               {name !== flagName ? (
