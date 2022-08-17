@@ -72,11 +72,13 @@
     "esbuild-utils": "1.0.0",
     "@actions/generate-release-message": "1.0.0",
     "@actions/pr-is-fork": "1.0.0",
-    "dummy-live-app": "0.1.0"
+    "dummy-live-app": "0.1.0",
+    "@ledgerhq/crypto-icons-ui": "0.1.0"
   },
   "changesets": [
     "blue-ligers-visit",
     "blue-trainers-hug",
+    "breezy-hairs-bathe",
     "breezy-plants-remain",
     "brown-nails-yell",
     "chatty-jeans-do",
@@ -87,7 +89,10 @@
     "great-waves-kiss",
     "hip-buckets-deny",
     "hip-readers-enjoy",
+    "hungry-flowers-compare",
+    "modern-ligers-cry",
     "plenty-geckos-report",
+    "selfish-panthers-bow",
     "silly-oranges-begin",
     "six-donuts-teach",
     "slimy-chicken-act",

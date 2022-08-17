@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.6.0-nightly.2
+
+### Minor Changes
+
+- [#756](https://github.com/LedgerHQ/ledger-live/pull/756) [`708f647d88`](https://github.com/LedgerHQ/ledger-live/commit/708f647d88ae484b5f1829fcab64139561bbd21f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent navigation without user confirmation with ongoing installs/uninstalls
+
+* [#814](https://github.com/LedgerHQ/ledger-live/pull/814) [`23c9bf9949`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development/QA tool for feature flags [mobile]
+
+### Patch Changes
+
+- Updated dependencies [[`432cfa8994`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb), [`23c9bf9949`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2)]:
+  - @ledgerhq/native-ui@0.9.0-nightly.1
+  - @ledgerhq/live-common@25.2.0-nightly.1
+  - @ledgerhq/types-live@6.23.0-nightly.3
+
 ## 3.5.1-nightly.1
 
 ### Patch Changes

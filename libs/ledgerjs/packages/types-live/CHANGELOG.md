@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.23.0-nightly.3
+
+### Minor Changes
+
+- [#814](https://github.com/LedgerHQ/ledger-live/pull/814) [`23c9bf9949`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development/QA tool for feature flags [Desktop]
+
 ## 6.23.0-nightly.2
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.46.0-nightly.4
+
+### Minor Changes
+
+- [#814](https://github.com/LedgerHQ/ledger-live/pull/814) [`23c9bf9949`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development/QA tool for feature flags [Desktop]
+
+### Patch Changes
+
+- Updated dependencies [[`432cfa8994`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb), [`23c9bf9949`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2)]:
+  - @ledgerhq/react-ui@0.9.0-nightly.0
+  - @ledgerhq/live-common@25.2.0-nightly.1
+  - @ledgerhq/types-live@6.23.0-nightly.3
+
 ## 2.45.2-nightly.3
 
 ### Patch Changes
