@@ -8,6 +8,7 @@ const main = async () => {
   const parsed = JSON.parse(imagesObject);
   let str = "";
   let hasFailed = false;
+  await core.summary.addHeading("Screenshot Results");
   for (const platform in parsed) {
     const current = parsed[platform];
     if (Array.isArray(current) && current.length) {
@@ -18,18 +19,37 @@ const main = async () => {
 | Actual | Diff | Expected |
 |:------:|:----:|:--------:|
 `;
+      await core.summary.addHeading(platform, 3);
       current.forEach(({ actual, diff, expected }) => {
         str += `| ${actual.name} | ${diff.name} | ${expected.name} |
 | ![${actual.name}](${actual.link}) | ![${diff.name}](${diff.link}) | ![${expected.name}](${expected.link}) |
 `;
       });
       str += "\n\n";
+      const mapped = [];
+      current.forEach(({ actual, diff, expected }) => {
+        mapped.push([actual.name, diff.name, expected.name]);
+        mapped.push([
+          `![${actual.name}](${actual.link})`,
+          `![${diff.name}](${diff.link})`,
+          `![${expected.name}](${expected.link})`,
+        ]);
+      });
+      const table = [
+        [
+          { data: "Actual", header: true },
+          { data: "Diff", header: true },
+          { data: "Expected", header: true },
+        ],
+        ...mapped,
+      ];
+      await core.summary.addTable(table);
     }
   }
 
   const imgDiffFailed = !!hasFailed;
 
-  str = `
+  let str2 = `
 @${actor}
 <details>
 <summary><b>Screenshots: ${imgDiffFailed ? "❌" : " ✅"}</b></summary>
@@ -51,6 +71,8 @@ ${str}`
 
 `;
 
+  str += str2;
+  await core.summary.addRaw(str2).write();
   core.setOutput("body", str);
 };
 

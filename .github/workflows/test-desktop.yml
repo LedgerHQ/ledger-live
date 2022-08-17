@@ -199,7 +199,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@develop
+        uses: ./tools/actions/prepare-comment-screenshots
         with:
           images: images.json
       - name: edit comment
@@ -219,3 +219,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr comment ${{ github.event.number }} --body "${{ steps.comment.outputs.body }}"
+      - name: add link to PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await core
+                    .summary
+                    .addLink(
+                      `https://github.com/LedgerHQ/ledger-live/pull/${{ github.event.number }}`,
+                      `https://github.com/LedgerHQ/ledger-live/pull/${{ github.event.number }}`
+                    )
+                    .write();
