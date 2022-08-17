@@ -127,8 +127,8 @@ export const fetchAccount = async (
     assets = account.balances?.filter((balance) => {
       return balance.asset_type !== "native";
     });
-  } catch (e) {
-    if (e instanceof NotFoundError) {
+  } catch (e: any) {
+    if (e instanceof NotFoundError || e?.response?.status === 400) {
       balance.balance = "0";
     } else {
       throw new NetworkError();
