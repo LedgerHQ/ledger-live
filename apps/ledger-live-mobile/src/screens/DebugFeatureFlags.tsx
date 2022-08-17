@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import {
   defaultFeatures,
@@ -8,10 +7,10 @@ import {
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
-import { BaseInput, Text, Flex, Button, Box, Icons, Icon, Tag } from "@ledgerhq/native-ui";
+import { BaseInput, Text, Flex, Button, Box, Tag } from "@ledgerhq/native-ui";
+import styled from "styled-components/native";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Alert from "../components/Alert";
-import styled from "styled-components/native";
 
 const Divider = styled(Box).attrs({width: "100%", my: 4, height: 1, bg: "neutral.c50"})``;
 
