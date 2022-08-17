@@ -568,6 +568,9 @@
   "lottieDebugger": {
     "buttonTitle": "Test"
   },
+  "storylyDebugger": {
+    "buttonTitle": "Test"
+  },
   "fullNode": {
     "status": "Status",
     "connect": "Connect",
@@ -3017,6 +3020,10 @@
         "testAnimations": {
           "title": "Test Lottie animations",
           "description": "Test all animations used in Ledger Live"
+        },
+        "testStories": {
+          "title": "Test Storyly stories",
+          "description": "Test all stories used in Ledger Live"
         }
       }
     },
