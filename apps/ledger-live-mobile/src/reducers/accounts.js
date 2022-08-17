@@ -207,7 +207,7 @@ export const accountsByCryptoCurrencyScreenSelector = (
 };
 
 export const flattenAccountsByCryptoCurrencyScreenSelector = (
-  currency?: CryptoCurrency,
+  currency?: CryptoCurrency | TokenCurrency,
 ) => (state: any) => {
   if (!currency) return emptyArray;
   return flattenAccountsByCryptoCurrencySelector(state, {

@@ -1,12 +1,10 @@
 import React, { useMemo, useState, useCallback } from "react";
-import { FlatList } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
-import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/src/currencies";
 import { useTranslation } from "react-i18next";
 import { Box } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -17,12 +15,20 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
-import { accountsSelector } from "../../reducers/accounts";
+import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import { FabAssetActions } from "../../components/FabActions";
+import AccountsSection from "./AccountsSection";
+import { NavigatorName } from "../../const";
+import {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import { useNavigation } from "@react-navigation/native";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
 import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
@@ -31,7 +37,7 @@ import { usePortfolio } from "../../actions/portfolio";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 
 type RouteParams = {
-  currencyId: string;
+  currency: CryptoCurrency | TokenCurrency;
 };
 
 type Props = {
@@ -45,19 +51,16 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 
 const AssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
-  const accounts = useSelector(accountsSelector);
-  const { currencyId } = route?.params;
-  const currency = getCryptoCurrencyById(currencyId);
   const { colors } = useTheme();
-  const cryptoAccounts = useMemo(
-    () => accounts.filter(a => getAccountCurrency(a).id === currencyId),
-    [accounts, currencyId],
+  const navigation = useNavigation();
+  const { currency } = route.params;
+  const cryptoAccounts = useSelector(
+    flattenAccountsByCryptoCurrencyScreenSelector(currency),
   );
   const areCryptoAccountsEmpty = useMemo(
     () => cryptoAccounts.every(account => isAccountEmpty(account)),
     [cryptoAccounts],
   );
-
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
@@ -75,6 +78,18 @@ const AssetScreen = ({ route }: Props) => {
     setGraphCardEndPosition(y + height / 10);
   }, []);
 
+  const onAddAccount = useCallback(() => {
+    if (currency && currency.type === "TokenCurrency") {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        token: currency,
+      });
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        currency,
+      });
+    }
+  }, [currency, navigation]);
+
   const data = useMemo(
     () => [
       <Box mt={6} onLayout={onAssetCardLayout}>
@@ -91,8 +106,8 @@ const AssetScreen = ({ route }: Props) => {
         <SectionTitle
           title={t("account.quickActions")}
           containerProps={{ mb: 6 }}
-        />
-        <FabAssetActions currency={currency} accounts={accounts} />
+        ></SectionTitle>
+        <FabAssetActions currency={currency} accounts={cryptoAccounts} />
       </SectionContainer>,
       ...(areCryptoAccountsEmpty
         ? [<EmptyAccountCard currencyTicker={currency.ticker} />]
@@ -104,6 +119,16 @@ const AssetScreen = ({ route }: Props) => {
           })}
         />
         <MarketPriceSection currency={currency} />
+      </SectionContainer>,
+      <SectionContainer px={6}>
+        <SectionTitle
+          title={t("asset.accountsSection.title", {
+            currencyName: currency.name,
+          })}
+          seeMoreText={t("addAccounts.sections.creatable.title")}
+          onSeeAllPress={onAddAccount}
+        />
+        <AccountsSection accounts={cryptoAccounts} />
       </SectionContainer>,
       ...(!areCryptoAccountsEmpty
         ? [
@@ -122,7 +147,6 @@ const AssetScreen = ({ route }: Props) => {
       graphCardEndPosition,
       currency,
       t,
-      accounts,
       areCryptoAccountsEmpty,
       cryptoAccounts,
     ],

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import {
   getAccountCurrency,
@@ -6,15 +6,13 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Currency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
-import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
-import { BigNumber } from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
-import { counterValueCurrencySelector } from "../../reducers/settings";
 import AccountRowLayout from "../../components/AccountRowLayout";
+import { parentAccountSelector } from "../../reducers/accounts";
 
 type Props = {
   account: Account | TokenAccount;
@@ -22,7 +20,6 @@ type Props = {
   navigation: any;
   isLast: boolean;
   onSetAccount: (arg: TokenAccount) => void;
-  portfolioValue: number;
   navigationParams?: any[];
   hideDelta?: boolean;
   topLink?: boolean;
@@ -33,7 +30,6 @@ const AccountRow = ({
   navigation,
   account,
   accountId,
-  portfolioValue,
   navigationParams,
   hideDelta,
   topLink,
@@ -42,6 +38,10 @@ const AccountRow = ({
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
+  const parentAccount = useSelector(state =>
+    parentAccountSelector(state, { account }),
+  );
+
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
 
@@ -49,25 +49,6 @@ const AccountRow = ({
     account.derivationMode !== undefined &&
     account.derivationMode !== null &&
     getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
-
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
-
-  const countervalue = useCalculate({
-    from: currency,
-    to: counterValueCurrency,
-    value:
-      account.balance instanceof BigNumber
-        ? account.balance.toNumber()
-        : account.balance,
-    disableRounding: true,
-  });
-
-  const portfolioPercentage = useMemo(
-    () => (countervalue ? countervalue / Math.max(1, portfolioValue) : 0), // never divide by potential zero, we dont want to go towards infinity
-    [countervalue, portfolioValue],
-  );
 
   const { countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
@@ -121,10 +102,10 @@ const AccountRow = ({
       name={name}
       countervalueChange={countervalueChange}
       tag={tag}
-      progress={portfolioPercentage}
       topLink={topLink}
       bottomLink={bottomLink}
       hideDelta={hideDelta}
+      parentAccountName={parentAccount && getAccountName(parentAccount)}
     />
   );
 };
