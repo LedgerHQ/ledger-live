@@ -28,7 +28,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   currentLanguage,
   onSuccess,
 }: Props) => {
-  const availableLanguages = useAvailableLanguagesForDevice(deviceInfo);
+  const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
 
   const [installing, setInstalling] = useState(false);
 
