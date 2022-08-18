@@ -72,17 +72,13 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
 
   const navigateToAccounts = useCallback(() => {
     // @ts-expect-error navigation type issue
-    navigation.navigate(NavigatorName.Portfolio, {
-      screen: NavigatorName.PortfolioAccounts,
+    navigation.navigate(NavigatorName.PortfolioAccounts, {
+      screen: ScreenName.Asset,
       params: {
-        screen: ScreenName.Accounts,
-        params: {
-          currencyId: currency.id,
-          currencyTicker: currency.ticker,
-        },
+        currency,
       },
     });
-  }, [currency.ticker, currency.id, navigation]);
+  }, [currency, navigation]);
 
   return (
     <Container onPress={navigateToAccounts}>

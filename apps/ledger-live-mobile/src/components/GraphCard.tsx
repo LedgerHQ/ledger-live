@@ -24,7 +24,7 @@ type Props = {
   portfolio: Portfolio;
   counterValueCurrency: Currency;
   useCounterValue?: boolean;
-  currentPositionY: SharedValue<number>;
+  currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
 };
 

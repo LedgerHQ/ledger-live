@@ -3,6 +3,7 @@
     "cancel": "Cancel",
     "apply": "Apply",
     "seeAll": "See all",
+    "seeAllWithNumber": "See all ({{number}})",
     "back": "Back",
     "delete": "Delete",
     "paste": "Paste",
@@ -4547,6 +4548,7 @@
     }
   },
   "asset": {
+    "title": "Your {{assetName}}",
     "accountsSection": {
       "title": "Your {{currencyName}} accounts"
     }

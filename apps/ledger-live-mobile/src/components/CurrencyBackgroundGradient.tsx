@@ -12,7 +12,7 @@ function BackgroundGradient({
   graphCardEndPosition,
   gradientColor,
 }: {
-  currentPositionY: SharedValue<number>;
+  currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
   gradientColor: string;
 }) {

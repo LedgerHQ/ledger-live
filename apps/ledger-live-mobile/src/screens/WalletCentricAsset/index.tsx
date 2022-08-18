@@ -65,7 +65,9 @@ const AssetScreen = ({ route }: Props) => {
     counterValueCurrencySelector,
   );
 
-  const assetPortfolio = usePortfolio(cryptoAccounts);
+  const assetPortfolio = usePortfolio(cryptoAccounts, {
+    flattenSourceAccounts: false,
+  });
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);
@@ -128,7 +130,11 @@ const AssetScreen = ({ route }: Props) => {
           seeMoreText={t("addAccounts.addNew")}
           onSeeAllPress={onAddAccount}
         />
-        <AccountsSection accounts={cryptoAccounts} />
+        <AccountsSection
+          accounts={cryptoAccounts}
+          currencyId={currency.id}
+          currencyTicker={currency.ticker}
+        />
       </SectionContainer>,
       ...(!areCryptoAccountsEmpty
         ? [
@@ -173,6 +179,8 @@ const AssetScreen = ({ route }: Props) => {
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
         currency={currency}
+        assetPortfolio={assetPortfolio}
+        counterValueCurrency={counterValueCurrency}
       />
     </TabBarSafeAreaView>
   );
