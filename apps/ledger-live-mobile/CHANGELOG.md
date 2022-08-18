@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.5.1
+
+### Patch Changes
+
+- [#972](https://github.com/LedgerHQ/ledger-live/pull/972) [`d39efbb170`](https://github.com/LedgerHQ/ledger-live/commit/d39efbb170d78d8d0289ba3972532d0c5a9fa75b) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fix issue during receive flow causing crash
+
+* [#972](https://github.com/LedgerHQ/ledger-live/pull/972) [`bbb229a824`](https://github.com/LedgerHQ/ledger-live/commit/bbb229a824f1006f4d0eaebd4363c01cb60cdbf3) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - analytics reborn issue
+
+- [#972](https://github.com/LedgerHQ/ledger-live/pull/972) [`d7e8766dbd`](https://github.com/LedgerHQ/ledger-live/commit/d7e8766dbdbe2172ff1004fcbeb9724c5e76ec38) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fix undefined issue on some accounts during receive flow
+
 ## 3.5.0
 
 ### Minor Changes
