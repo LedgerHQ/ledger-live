@@ -105,6 +105,7 @@ export type AppSpec<T extends Transaction> = {
 };
 export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;
+  appPath?: string;
   scanTime?: number;
   accountsBefore?: Account[];
   accountsAfter?: Account[];

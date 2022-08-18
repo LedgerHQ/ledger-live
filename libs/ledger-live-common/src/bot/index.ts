@@ -2,6 +2,7 @@
 import fs from "fs";
 import path from "path";
 import { BigNumber } from "bignumber.js";
+import uniq from "lodash/uniq";
 import groupBy from "lodash/groupBy";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
@@ -105,6 +106,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       }));
     }
   );
+  const allAppPaths = uniq(results.map((r) => r.appPath || "").sort());
   const allAccountsBefore = flatMap(results, (r) => r.accountsBefore || []);
   const allAccountsAfter = flatMap(results, (r) => r.accountsAfter || []);
   let countervaluesError;
@@ -501,6 +503,11 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "after-app.json"),
         makeAppJSON(allAccountsAfter),
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "coin-apps.json"),
+        JSON.stringify(allAppPaths),
         "utf-8"
       ),
     ]);

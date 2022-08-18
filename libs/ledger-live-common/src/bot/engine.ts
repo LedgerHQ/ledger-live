@@ -120,6 +120,7 @@ export async function runWithAppSpec<T extends Transaction>(
 
   try {
     device = await createSpeculosDevice(deviceParams);
+    appReport.appPath = device.appPath;
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {},
