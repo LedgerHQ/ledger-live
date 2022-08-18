@@ -21,6 +21,7 @@ export type Step<T, StepProps> = {
   footer?: React$ComponentType<StepProps>,
   onBack?: ?(StepProps) => void,
   noScroll?: boolean,
+  hideFooter?: boolean,
 };
 
 type Props<T, StepProps> = {
