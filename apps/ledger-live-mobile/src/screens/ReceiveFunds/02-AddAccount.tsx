@@ -91,13 +91,14 @@ function AddAccountsAccounts({ navigation, route }: Props) {
           const pa = { ...account };
 
           if (
+            !pa.subAccounts ||
             !pa.subAccounts.find(
               (a: { token: { id: any } }) => a.token.id === currency.id,
             ) // in case we dont already have one we create an empty token account
           ) {
             const tokenAcc = makeEmptyTokenAccount(pa, currency);
             tokenAcc.parentAccount = pa;
-            pa.subAccounts.push(tokenAcc);
+            pa.subAccounts = [...(pa.subAccounts || []), tokenAcc];
           }
 
           setScannedAccounts((accs: Account[]) => [...accs, pa]); // add the account with the newly added token account to the list of scanned accounts
