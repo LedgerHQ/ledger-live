@@ -55,7 +55,7 @@ const SectionTitle = ({
         fontWeight="semiBold"
         color="neutral.c60"
         uppercase
-        mt={2}
+        flexShrink={1}
       >
         {title}
       </Text>

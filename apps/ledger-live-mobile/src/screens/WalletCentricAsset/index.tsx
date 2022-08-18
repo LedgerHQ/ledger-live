@@ -65,7 +65,9 @@ const AssetScreen = ({ route }: Props) => {
     counterValueCurrencySelector,
   );
 
-  const assetPortfolio = usePortfolio(cryptoAccounts);
+  const assetPortfolio = usePortfolio(cryptoAccounts, {
+    flattenSourceAccounts: false,
+  });
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);

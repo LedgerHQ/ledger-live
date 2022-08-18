@@ -16,6 +16,7 @@ import {
   getCurrencyPortfolio,
   getAssetsDistribution,
   getPortfolioCount,
+  GetPortfolioOptionsType,
 } from "./";
 export function useBalanceHistoryWithCountervalue({
   account,
@@ -34,13 +35,15 @@ export function usePortfolio({
   accounts,
   range,
   to,
+  options,
 }: {
   accounts: Account[];
   range: PortfolioRange;
   to: Currency;
+  options?: GetPortfolioOptionsType;
 }) {
   const state = useCountervaluesState();
-  return getPortfolio(accounts, range, state, to);
+  return getPortfolio(accounts, range, state, to, options);
 }
 export function useCurrencyPortfolio({
   accounts: rawAccounts,
