@@ -1283,7 +1283,7 @@
       "noSearchResults" : "Lo sentimos, no hemos encontrado ningún resultado.",
       "retrySearchKeyword" : "Por favor, intenta de nuevo con otra palabra clave.",
       "retrySearchParams" : "Por favor, intenta de nuevo con otros parámetros.",
-      "trackFavAssets" : "Sigue a tus favoritas",
+      "trackFavAssets" : "Track your favorite",
       "clickOnStarIcon" : "Al hacer clic en el ícono de la estrella junto a un activo se añadirá automáticamente a tus destacados.",
       "browseAssets" : "Buscar activos"
     }
@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "Cambiar entre distintas fuentes de aplicaciones de plataforma",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsOverride" : "Anular",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
       "addLocalAppButton" : "Navegar",
@@ -4049,6 +4054,10 @@
     },
     "NetworkDown" : {
       "title" : "Parece que no hay conexión a Internet",
+      "description" : "Comprueba tu conexión a Internet."
+    },
+    "NetworkError" : {
+      "title" : "An error occurred during synchronization",
       "description" : "Comprueba tu conexión a Internet."
     },
     "NoAddressesFound" : {
