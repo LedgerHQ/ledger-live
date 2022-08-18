@@ -7,9 +7,11 @@ import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 export default function AccountHeaderRight() {
   const navigation = useNavigation();
+  const currentScreen = useCurrentRouteName();
   const route = useRoute();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
@@ -52,7 +54,11 @@ export default function AccountHeaderRight() {
   if (account.type === "Account") {
     return (
       <Touchable
-        event="AccountGoSettings"
+        event="button_clicked"
+        eventProperties={{
+          button: "Account Settings",
+          source: currentScreen,
+        }}
         onPress={() => {
           navigation.navigate(NavigatorName.AccountSettings, {
             screen: ScreenName.AccountSettingsMain,
