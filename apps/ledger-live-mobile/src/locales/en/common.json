@@ -2172,7 +2172,7 @@
     },
     "debug": {
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
-      "featureFlagsDesc": "Overriden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
       "featureFlagsOverride": "Override",
       "featureFlagsEdit": "Edit",
       "featureFlagsRestore": "Restore",
@@ -2278,7 +2278,7 @@
         "cancel": {
           "title": "You just denied this address",
           "subtitle": "If this was done by mistake, you can retry by clicking the button below.",
-          "info": "If you are sure the addresses don’t match, your phone may be comprimised. We recommend you <0>contact us as soon as possible.</0>"
+          "info": "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
         }
       },
       "receiveConfirmation": {
@@ -2293,7 +2293,7 @@
         "subtitle1": "Verifying your address provides you security. The address displayed on your ledger device cannot be compromised.",
         "subtitle2": "By verifying the address, you will be able to confirm that the address shown on your device is the same as the address shown in Ledger Live.",
         "verifyCta": "Verify my address",
-        "dontVerifyCta": "Reveal my address whitout verifying"
+        "dontVerifyCta": "Reveal my address without verifying"
       },
       "securityDontVerify": {
         "title": "Are you sure?",
@@ -2414,7 +2414,7 @@
       },
       "payoutModal": {
         "title": "Payout fees",
-        "description": "Payout fees are not shown on the device and substracted from the amount.",
+        "description": "Payout fees are not shown on the device and subtracted from the amount.",
         "cta": "Close"
       },
       "pendingOperation": {
