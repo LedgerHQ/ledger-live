@@ -1,12 +1,14 @@
 // @flow
 
 import React from "react";
-import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
-import { SideDrawer } from "~/renderer/components/SideDrawer";
+import styled from "styled-components";
+
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { SideDrawer } from "~/renderer/components/SideDrawer";
+
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 

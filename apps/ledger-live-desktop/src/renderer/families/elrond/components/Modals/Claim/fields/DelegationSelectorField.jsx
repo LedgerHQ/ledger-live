@@ -1,21 +1,22 @@
 // @flow
 
 import React, { useMemo, useCallback, useState, useEffect } from "react";
+import { BigNumber } from "bignumber.js";
+
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
+
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
-import { BigNumber } from "bignumber.js";
 
 const renderItem = item => {
-  const [provider] = item.data.providers;
-  const name = item.data.name || provider;
+  const name = item.data.identity.name || item.data.contract;
   const balance = denominate({
     input: item.data.delegation.claimableRewards,
-    showLastNonZeroDecimal: true,
+    decimals: 6,
   });
 
   return (
@@ -24,6 +25,7 @@ const renderItem = item => {
         <FirstLetterIcon label={name} mr={2} />
         <Text ff="Inter|Medium">{name}</Text>
       </Box>
+
       <Text ff="Inter|Regular">
         {balance} {constants.egldLabel}
       </Text>
@@ -31,7 +33,7 @@ const renderItem = item => {
   );
 };
 
-export default function DelegationSelectorField({
+const DelegationSelectorField = ({
   validators,
   delegations,
   contract,
@@ -40,19 +42,21 @@ export default function DelegationSelectorField({
   bridge,
   transaction,
   onUpdateTransaction,
-}: *) {
+}) => {
   const options = useMemo(
     () =>
       validators.reduce((total, validator) => {
         const item = {
           ...validator,
-          delegation: validator.providers
-            ? delegations.find(delegation => validator.providers.includes(delegation.contract))
-            : null,
+          delegation: delegations.find(
+            delegation =>
+              new BigNumber(delegation.claimableRewards).gt(0) &&
+              delegation.contract === validator.contract,
+          ),
         };
 
         return item.delegation
-          ? contract && validator.providers.includes(contract)
+          ? contract && validator.contract === contract
             ? [item, ...total]
             : [...total, item]
           : total;
@@ -74,7 +78,7 @@ export default function DelegationSelectorField({
   const filterOptions = useCallback(
     (option, needle) =>
       BigNumber(option.data.delegation.claimableRewards).gt(0) &&
-      option.data.name.toLowerCase().includes(needle.toLowerCase()),
+      option.data.identity.name.toLowerCase().includes(needle.toLowerCase()),
     [],
   );
 
@@ -118,4 +122,6 @@ export default function DelegationSelectorField({
       />
     </Box>
   );
-}
+};
+
+export default DelegationSelectorField;

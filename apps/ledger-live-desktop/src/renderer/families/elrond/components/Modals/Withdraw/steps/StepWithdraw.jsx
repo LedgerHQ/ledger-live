@@ -2,12 +2,10 @@
 
 import invariant from "invariant";
 import React, { Fragment, useCallback } from "react";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 
-import type { StepProps } from "../types";
-
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -18,18 +16,22 @@ import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 
-export default function StepWithdraw({
-  account,
-  parentAccount,
-  onUpdateTransaction,
-  transaction,
-  warning,
-  error,
-  t,
-  unbondings,
-  contract,
-  amount,
-}: StepProps) {
+import type { StepProps } from "../types";
+
+const StepWithdraw = (props: StepProps) => {
+  const {
+    account,
+    parentAccount,
+    onUpdateTransaction,
+    transaction,
+    warning,
+    error,
+    t,
+    unbondings,
+    contract,
+    amount,
+    name,
+  } = props;
   const bridge = getAccountBridge(account, parentAccount);
 
   const onDelegationChange = useCallback(
@@ -56,9 +58,10 @@ export default function StepWithdraw({
           <Trans
             i18nKey="elrond.withdraw.flow.steps.withdraw.description"
             values={{
+              validator: name,
               amount: `${denominate({
                 input: String(transaction.amount),
-                showLastNonZeroDecimal: true,
+                decimals: 6,
               })} ${constants.egldLabel}`,
             }}
           >
@@ -68,27 +71,24 @@ export default function StepWithdraw({
       )}
 
       <DelegationSelectorField
-        contract={contract}
-        unbondings={unbondings}
-        amount={amount}
-        t={t}
-        onChange={onDelegationChange}
-        bridge={bridge}
-        transaction={transaction}
-        onUpdateTransaction={onUpdateTransaction}
+        {...{
+          contract,
+          unbondings,
+          t,
+          amount,
+          bridge,
+          transaction,
+          onDelegationChange,
+          onUpdateTransaction,
+        }}
       />
     </Box>
   );
-}
+};
 
-export function StepWithdrawFooter({
-  transitionTo,
-  account,
-  parentAccount,
-  onClose,
-  status,
-  bridgePending,
-}: StepProps) {
+const StepWithdrawFooter = (props: StepProps) => {
+  const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
+
   invariant(account, "account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
@@ -107,4 +107,7 @@ export function StepWithdrawFooter({
       </Box>
     </Fragment>
   );
-}
+};
+
+export { StepWithdrawFooter };
+export default StepWithdraw;

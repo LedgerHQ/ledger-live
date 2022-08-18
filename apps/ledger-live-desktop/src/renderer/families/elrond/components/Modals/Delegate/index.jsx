@@ -10,7 +10,7 @@ interface State {
 }
 
 const INITIAL_STATE = {
-  stepId: "castDelegations",
+  stepId: "validator",
 };
 
 class DelegationModal extends PureComponent<{ name: string }, State> {
@@ -24,7 +24,7 @@ class DelegationModal extends PureComponent<{ name: string }, State> {
     const { stepId } = this.state;
     const { name } = this.props;
 
-    const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
+    const isModalLocked = ["amount", "connectDevice", "confirmation"].includes(stepId);
 
     return (
       <Modal

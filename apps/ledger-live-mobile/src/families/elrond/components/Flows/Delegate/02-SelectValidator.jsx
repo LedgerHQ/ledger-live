@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
       borderRadius: 5,
-
       marginRight: 12,
     },
     nameWrapper: {

@@ -1,125 +1,63 @@
 // @flow
 
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
-import type { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import invariant from "invariant";
+
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { BigNumber } from "bignumber.js";
-import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 
-import { ValidatorField, AmountField } from "../fields";
-import Text from "~/renderer/components/Text";
-import Alert from "~/renderer/components/Alert";
+import { ValidatorList } from "../fields";
+import type { StepProps } from "../types";
 
-import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
-
-export default function StepDelegation({
+const StepDelegation = ({
   account,
   parentAccount,
   onUpdateTransaction,
   transaction,
-  status,
   error,
   validators,
-}: StepProps) {
-  const [initialAmount, setInitialAmount] = useState(BigNumber(0));
-  const [value, setValue] = useState(BigNumber(0));
-  const bridge = getAccountBridge(account, parentAccount);
+}: StepProps) => {
+  invariant(account && transaction, "account and transaction required");
 
-  const updateDelegation = useCallback(
-    payload => {
-      onUpdateTransaction(transaction =>
-        bridge.updateTransaction(transaction, {
-          ...payload,
-          mode: "delegate",
-        }),
-      );
-    },
-    [bridge, onUpdateTransaction],
-  );
+  const { elrondResources } = account;
+  invariant(elrondResources, "elrondResources required");
 
-  const onChangeValidator = useCallback(
-    ({ providers: [recipient] }) => {
-      updateDelegation({ recipient });
-    },
-    [updateDelegation],
-  );
-
-  const onChangeAmount = useCallback(
-    (amount: BigNumber) => {
-      updateDelegation({ amount, recipient: transaction.recipient || validators[0].providers[0] });
-      setValue(amount);
-    },
-    [updateDelegation, transaction.recipient, validators],
-  );
-
-  useEffect(() => {
-    const fetchEstimation = async () => {
-      try {
-        const balance = await estimateMaxSpendable({ account, transaction });
-
-        setInitialAmount(BigNumber(balance));
-      } catch (error) {
-        setInitialAmount(BigNumber(0));
-      }
-    };
-
-    fetchEstimation();
-  }, [transaction, account]);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+  const onSelectValidator = (recipient: string) =>
+    onUpdateTransaction(transaction => bridge.updateTransaction(transaction, { recipient }));
 
   return (
     <Box flow={1}>
-      <TrackPage category="Delegation Flow" name="Step 1" />
+      <TrackPage category="Delegation Flow" name="Step Validator" />
+
       {error && <ErrorBanner error={error} />}
-      <Box horizontal={true} justifyContent="center" mb={2}>
-        <Text ff="Inter|Medium" fontSize={4}>
-          <Trans i18nKey="elrond.delegation.flow.steps.amount.subtitle">
-            <b></b>
-          </Trans>
-        </Text>
-      </Box>
 
-      <ValidatorField onChange={onChangeValidator} validators={validators} />
-
-      <StepRecipientSeparator />
-
-      <AmountField
-        amount={value}
-        onChange={onChangeAmount}
-        label={<Trans i18nKey="elrond.delegation.flow.steps.fields.amount" />}
-        {...{ account, status, initialAmount }}
-      />
-
-      <Alert info="primary" mt={2}>
-        <Trans i18nKey="elrond.delegation.flow.steps.amount.warning">
-          <b></b>
-        </Trans>
-      </Alert>
+      <ValidatorList {...{ account, transaction, validators, onSelectValidator }} />
     </Box>
   );
-}
+};
 
-export function StepDelegationFooter({
+const StepDelegationFooter = ({
   transitionTo,
   account,
   parentAccount,
   onClose,
   status,
   bridgePending,
-}: StepProps) {
+}: StepProps) => {
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
 
   return (
     <Fragment>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      <AccountFooter {...{ account, status, parentAccount }} />
 
       <Box horizontal={true}>
         <Button mr={1} secondary={true} onClick={onClose}>
@@ -130,11 +68,14 @@ export function StepDelegationFooter({
           id="delegate-continue-button"
           disabled={!canNext}
           primary={true}
-          onClick={() => transitionTo("connectDevice")}
+          onClick={() => transitionTo("amount")}
         >
           <Trans i18nKey="common.continue" />
         </Button>
       </Box>
     </Fragment>
   );
-}
+};
+
+export { StepDelegationFooter };
+export default StepDelegation;

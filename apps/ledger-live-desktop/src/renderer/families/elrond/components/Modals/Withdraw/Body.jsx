@@ -6,27 +6,24 @@ import { connect, useDispatch } from "react-redux";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import Track from "~/renderer/analytics/Track";
-
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-
-import type { StepProps, St } from "./types";
-import type { Operation } from "@ledgerhq/live-common/lib/types";
-
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
+import Track from "~/renderer/analytics/Track";
 
 import Stepper from "~/renderer/components/Stepper";
 import StepWithdraw, { StepWithdrawFooter } from "./steps/StepWithdraw";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/logger/logger";
+
+import type { StepProps, St } from "./types";
+import type { Operation } from "@ledgerhq/live-common/types/index";
 
 interface OwnProps {|
   stepId: StepId,
@@ -84,16 +81,18 @@ const mapDispatchToProps = {
   openModal,
 };
 
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
+const Body = (props: Props) => {
+  const {
+    t,
+    stepId,
+    device,
+    closeModal,
+    openModal,
+    onChangeStepId,
+    params,
+    name,
+  } = props;
+
   const [optimisticOperation, setOptimisticOperation] = useState(null);
   const [transactionError, setTransactionError] = useState(null);
   const [signed, setSigned] = useState(false);
@@ -193,6 +192,7 @@ const Body = ({
     unbondings: params.unbondings,
     contract: params.contract,
     amount: params.amount,
+    name: params.validator ? params.validator.identity.name : params.contract
   };
 
   return (

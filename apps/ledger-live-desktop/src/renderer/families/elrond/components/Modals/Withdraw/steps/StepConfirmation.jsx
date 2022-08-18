@@ -26,11 +26,13 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({ optimisticOperation, error, signed, transaction }) {
+const StepConfirmation = props => {
+  const { optimisticOperation, error, signed, transaction } = props;
+
   if (optimisticOperation) {
     const amount = `${denominate({
       input: String(transaction.amount),
-      showLastNonZeroDecimal: true,
+      decimals: 6,
     })} ${constants.egldLabel}`;
 
     return (
@@ -69,16 +71,11 @@ function StepConfirmation({ optimisticOperation, error, signed, transaction }) {
   }
 
   return null;
-}
+};
 
-export function StepConfirmationFooter({
-  account,
-  parentAccount,
-  onRetry,
-  error,
-  onClose,
-  optimisticOperation,
-}) {
+const StepConfirmationFooter = props => {
+  const { account, parentAccount, onRetry, error, onClose, optimisticOperation } = props;
+
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]
@@ -114,6 +111,7 @@ export function StepConfirmationFooter({
       ) : null}
     </Box>
   );
-}
+};
 
+export { StepConfirmationFooter };
 export default withTheme(StepConfirmation);

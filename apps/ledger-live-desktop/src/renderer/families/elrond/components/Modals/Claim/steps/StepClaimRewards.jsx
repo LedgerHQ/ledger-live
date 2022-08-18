@@ -75,7 +75,7 @@ export default function StepClaimRewards({
             values={{
               amount: `${denominate({
                 input: String(transaction.amount),
-                showLastNonZeroDecimal: true,
+                decimals: 6,
               })} ${constants.egldLabel}`,
             }}
           >

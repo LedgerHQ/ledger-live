@@ -5,7 +5,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Step } from "~/renderer/components/Stepper";
 import type { Account, Transaction, TransactionStatus, Operation } from "@ledgerhq/types-live";
 
-export type StepId = "castDelegations" | "connectDevice" | "confirmation";
+export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
 
 export type StepProps = {
   t: TFunction,

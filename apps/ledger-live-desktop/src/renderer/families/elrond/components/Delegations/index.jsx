@@ -2,12 +2,13 @@
 
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
-import type { Account as AccountType } from "@ledgerhq/types-live";
 
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
 import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
-import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
 import Delegation from "~/renderer/families/elrond/components/Delegations/components/Delegation";
+
+import type { Account as AccountType } from "@ledgerhq/types-live";
+import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
 
 interface DelegationsType {
   delegations: Array<DelegationType>;
@@ -37,10 +38,7 @@ const Delegations = ({ delegations, validators, account }: DelegationsType) => {
       {delegations.map(delegation => (
         <Delegation
           key={`delegation-${delegation.contract}`}
-          delegations={delegations}
-          validators={validators}
-          account={account}
-          {...delegation}
+          {...{ delegations, validators, account, ...delegation }}
         />
       ))}
     </Fragment>

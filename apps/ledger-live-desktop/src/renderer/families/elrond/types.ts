@@ -1,23 +1,38 @@
 // @flow
 
 export type ValidatorType = {
-  apr: any;
-  avatar: string;
-  description: string;
-  distribution: any;
-  identity: string;
-  location: string;
-  locked: string;
-  name: string;
-  providers: Array<string>;
-  rank: number;
-  score: number;
-  stake: string;
-  stakePercent: any;
-  topUp: string;
-  twitter: string;
-  validators: number;
-  website: string;
+  address: string;
+  apr: string;
+  aprValue: number;
+  automaticActivation: boolean;
+  changeableServiceFee: boolean;
+  checkCapOnRedelegate: boolean;
+  contract: string;
+  createdNonce: number;
+  explorerURL: string;
+  featured: boolean;
+  identity: {
+    key: string;
+    name: string;
+    avatar: string;
+    description: string;
+    location?: string;
+    twitter: string;
+    url: string;
+  };
+  initialOwnerFunds: string;
+  maxDelegateAmountAllowed: string;
+  maxDelegationCap: string;
+  numNodes: number;
+  numUsers: number;
+  owner: string;
+  ownerBelowRequiredBalanceThreshold: boolean;
+  serviceFee: string;
+  totalActiveStake: string;
+  totalUnStaked: string;
+  unBondPeriod: number;
+  withDelegationCap: boolean;
+  disabled?: boolean;
 };
 
 export type UnbondingType = {

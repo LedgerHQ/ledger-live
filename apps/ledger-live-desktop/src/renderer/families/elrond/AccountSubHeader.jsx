@@ -1,10 +1,11 @@
 // @flow
 
-import React from "react";
+import React, { useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
+
 import Box, { Card } from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { Trans, useTranslation } from "react-i18next";
 import Button from "~/renderer/components/Button";
 import AccountSubHeaderDrawer from "./AccountSubHeaderDrawer";
 import ChevronRight from "~/renderer/icons/ChevronRight";
@@ -36,34 +37,41 @@ const CustomButton = styled(Button)`
   padding-right: 14px;
 `;
 
-export default function AccountSubHeader() {
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+const AccountSubHeader = () => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { t } = useTranslation();
 
-  function openDrawer() {
+  const openDrawer = () => {
     setIsDrawerOpen(true);
-  }
+  };
 
-  function closeDrawer() {
+  const closeDrawer = () => {
     setIsDrawerOpen(false);
-  }
+  };
+
   return (
     <Card px={2} py={1} mb={3}>
       <CardContent>
         <CardHeaderContainer>
           <InfoCircle size={12} />
+
           <CardHeader>{t("elrond.account.subHeader.cardTitle")}</CardHeader>
         </CardHeaderContainer>
+
         <CustomButton outline={true} onClick={openDrawer}>
           <Box horizontal={true} flow={1} alignItems="center">
             <Box fontSize={3}>
               <Trans i18nKey="elrond.account.subHeader.moreInfo" />
             </Box>
+
             <ChevronRight size={12} />
           </Box>
         </CustomButton>
       </CardContent>
+
       <AccountSubHeaderDrawer isOpen={isDrawerOpen} closeDrawer={closeDrawer} />
     </Card>
   );
-}
+};
+
+export default AccountSubHeader;

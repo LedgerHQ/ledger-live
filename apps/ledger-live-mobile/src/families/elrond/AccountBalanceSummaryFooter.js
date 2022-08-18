@@ -54,25 +54,14 @@ const Summary = (props: Props) => {
   }, []);
 
   const fetchDelegations = useCallback(() => {
-    const fetchData = async () => {
-      try {
-        const delegations = await axios.get(
-          `${constants.delegations}/accounts/${account.freshAddress}/delegations`,
-        );
-
-        setDelegationResources(delegations.data);
-      } catch (error) {
-        setDelegationResources([]);
-      }
-    };
-
-    if (account.elrondResources && !account.elrondResources.delegations) {
-      fetchData();
-    }
+    setDelegationResources(account.elrondResources.delegations || []);
 
     return () =>
       setDelegationResources(account.elrondResources.delegations || []);
-  }, [account.elrondResources, account.freshAddress]);
+  }, [
+    account.freshAddress,
+    JSON.stringify(account.elrondResources.delegations),
+  ]);
 
   const total = useCallback(
     key =>

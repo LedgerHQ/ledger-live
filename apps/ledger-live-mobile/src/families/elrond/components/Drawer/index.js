@@ -190,7 +190,7 @@ const Drawer = (props: any) => {
                       >
                         {denominate({
                           input: drawer.meta.claimableRewards,
-                          showLastNonZeroDecimal: true,
+                          decimals: 6,
                         })}{" "}
                         {constants.egldLabel}
                       </LText>

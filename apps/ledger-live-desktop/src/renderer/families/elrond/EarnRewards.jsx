@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
+import axios from "axios";
 
 import type { Account } from "@ledgerhq/types-live";
 
@@ -24,7 +25,6 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-import axios from "axios";
 
 import Unbondings from "~/renderer/families/elrond/components/Unbondings";
 import Delegations from "~/renderer/families/elrond/components/Delegations";
@@ -58,7 +58,7 @@ const Delegation = (props: Props) => {
   ]);
 
   const findValidator = useCallback(
-    (needle: string) => validators.find(item => item.providers.includes(needle)),
+    (validator: string) => validators.find(item => item.contract === validator),
     [validators],
   );
 
@@ -113,10 +113,10 @@ const Delegation = (props: Props) => {
     [delegationResources, findValidator],
   );
 
-  const fetchValidators = () => {
+  const fetchValidators = useCallback(() => {
     const fetchData = async (): Promise<void> => {
       try {
-        const providers = await axios.get(constants.identities);
+        const providers = await axios.get(constants.providers);
 
         const randomize = providers =>
           providers
@@ -124,7 +124,7 @@ const Delegation = (props: Props) => {
             .sort((alpha, beta) => alpha.sort - beta.sort)
             .map(item => item.provider);
 
-        setValidators(randomize(providers.data.filter(validator => validator.providers)));
+        setValidators(randomize(providers.data));
       } catch (error) {
         setValidators([]);
       }
@@ -133,26 +133,10 @@ const Delegation = (props: Props) => {
     fetchData();
 
     return () => setValidators([]);
-  };
+  }, [constants.providers]);
 
   const fetchDelegations = useCallback(() => {
-    const fetchData = async () => {
-      try {
-        const delegations = await axios.get(
-          `${constants.delegations}/accounts/${account.freshAddress}/delegations`,
-        );
-
-        setDelegationResources(delegations.data);
-      } catch (error) {
-        setDelegationResources([]);
-      }
-    };
-
-    if (account.elrondResources && !account.elrondResources.delegations) {
-      fetchData();
-    } else {
-      setDelegationResources(account.elrondResources.delegations || []);
-    }
+    setDelegationResources(account.elrondResources.delegations || []);
 
     return () => setDelegationResources(account.elrondResources.delegations || []);
   }, [account.freshAddress, JSON.stringify(account.elrondResources.delegations)]);
@@ -253,7 +237,7 @@ const Delegation = (props: Props) => {
         </TableHeader>
 
         {hasDelegations ? (
-          <Delegations delegations={delegations} validators={validators} account={account} />
+          <Delegations {...{ delegations, validators, account }} />
         ) : (
           <Wrapper horizontal={true}>
             <Box style={{ maxWidth: "65%" }}>

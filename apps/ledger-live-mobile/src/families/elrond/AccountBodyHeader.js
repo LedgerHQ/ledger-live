@@ -71,14 +71,15 @@ const Staking = (props: Props) => {
 
   const onDrawer = useCallback(setDrawer, [setDrawer]);
   const findValidator = useCallback(
-    needle => validators.find(item => item.providers.includes(needle)),
+    (contract: string) =>
+      validators.find(validator => validator.contract === contract),
     [validators],
   );
 
   const fetchValidators = useCallback(() => {
     const fetchData = async () => {
       try {
-        const providers = await axios.get(constants.identities);
+        const providers = await axios.get(constants.providers);
 
         const randomize = providers =>
           providers
@@ -86,9 +87,7 @@ const Staking = (props: Props) => {
             .sort((alpha, beta) => alpha.sort - beta.sort)
             .map(item => item.provider);
 
-        setValidators(
-          randomize(providers.data.filter(validator => validator.providers)),
-        );
+        setValidators(randomize(providers.data));
       } catch (error) {
         setValidators([]);
       }
@@ -100,24 +99,14 @@ const Staking = (props: Props) => {
   }, []);
 
   const fetchDelegations = useCallback(() => {
-    const fetchData = async () => {
-      try {
-        const delegations = await axios.get(
-          `${constants.delegations}/accounts/${account.freshAddress}/delegations`,
-        );
+    setDelegationResources(account.elrondResources.delegations || []);
 
-        setDelegationResources(delegations.data);
-      } catch (error) {
-        setDelegationResources([]);
-      }
-    };
-
-    if (account.elrondResources && !account.elrondResources.delegations) {
-      fetchData();
-    }
-
-    return () => setDelegationResources(account.elrondResources.delegations);
-  }, [account.freshAddress, account.elrondResources]);
+    return () =>
+      setDelegationResources(account.elrondResources.delegations || []);
+  }, [
+    account.freshAddress,
+    JSON.stringify(account.elrondResources.delegations),
+  ]);
 
   const delegations = useMemo(() => {
     const transform = input =>

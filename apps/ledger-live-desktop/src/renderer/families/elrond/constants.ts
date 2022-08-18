@@ -12,22 +12,21 @@ const modals = {
 const constants = {
   devnet: {
     explorer: "https://devnet-explorer.elrond.com",
-    identities: "https://devnet-api.elrond.com/identities",
-    delegations: "https://devnet-delegation-api.elrond.com",
+    providers: "https://devnet-delegation-api.elrond.com/providers",
     egldLabel: "xEGLD",
     modals,
   },
   testnet: {
     explorer: "https://testnet-explorer.elrond.com",
-    identities: "https://testnet-api.elrond.com/identities",
-    delegations: "https://testnet-delegation-api.elrond.com",
+    providers: "https://testnet-delegation-api.elrond.com/providers",
+    figment: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq9lllllsf3mp40",
     egldLabel: "xEGLD",
     modals,
   },
   mainnet: {
     explorer: "https://explorer.elrond.com",
-    identities: "https://api.elrond.com/identities",
-    delegations: "https://delegation-api.elrond.com",
+    providers: "https://delegation-api.elrond.com/providers",
+    figment: "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqlhllllsr0pd0j",
     egldLabel: "EGLD",
     modals,
   },

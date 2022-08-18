@@ -2,12 +2,13 @@
 
 import React from "react";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/types-live";
 
-import TableContainer, { HeaderWrapper, TableHeader } from "~/renderer/components/TableContainer";
-import type { UnbondingType } from "~/renderer/families/elrond/types";
-import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
 import Unbonding from "~/renderer/families/elrond/components/Unbondings/components/Unbonding";
+import TableContainer, { HeaderWrapper, TableHeader } from "~/renderer/components/TableContainer";
+import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
+
+import type { Account } from "@ledgerhq/types-live";
+import type { UnbondingType } from "~/renderer/families/elrond/types";
 
 interface UnbondingsType {
   unbondings: Array<UnbondingType>;

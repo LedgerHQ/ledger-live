@@ -36,12 +36,12 @@ export default function StepConfirmation({
   const { t } = useTranslation();
 
   if (optimisticOperation) {
-    const validator = transaction && transaction.recipient;
-    const v = validator && validators.find(({ providers }) => providers.includes(validator));
+    const provider = transaction && transaction.recipient;
+    const v = provider && validators.find(validator => validator.contract === provider);
 
     const amount = `${denominate({
       input: String(transaction.amount),
-      showLastNonZeroDecimal: true,
+      decimals: 6,
     })} ${constants.egldLabel}`;
 
     return (
@@ -56,7 +56,7 @@ export default function StepConfirmation({
                 i18nKey="elrond.undelegation.flow.steps.confirmation.success.description"
                 values={{
                   amount,
-                  validator: v && v.name,
+                  validator: (v && v.identity.name) || v.contract,
                 }}
               >
                 <b></b>
