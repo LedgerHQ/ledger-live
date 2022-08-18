@@ -11,6 +11,7 @@ import BigNumber from "bignumber.js";
 export type ElrondResources = {
   nonce: number;
   delegations: ElrondDelegation[];
+  providers: any;
 };
 
 export type ElrondDelegation = {
@@ -33,6 +34,7 @@ export type UserUndelegated = {
 export type ElrondResourcesRaw = {
   nonce: number;
   delegations: ElrondDelegation[];
+  providers: any;
 };
 
 export type ElrondProtocolTransaction = {

@@ -12,6 +12,7 @@ import { reconciliateSubAccounts } from "./js-reconciliation";
 import { FEES_BALANCE } from "./constants";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { computeDelegationBalance } from "./logic";
+import { getProviders } from "./api/sdk";
 
 const getAccountShape: GetAccountShape = async (info) => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -52,6 +53,8 @@ const getAccountShape: GetAccountShape = async (info) => {
 
   const delegations = await getAccountDelegations(address);
 
+  const providers = await getProviders();
+
   const delegationBalance = computeDelegationBalance(delegations);
 
   const shape = {
@@ -65,9 +68,12 @@ const getAccountShape: GetAccountShape = async (info) => {
     elrondResources: {
       nonce,
       delegations,
+      providers,
     },
     subAccounts,
   };
+
+  console.log(shape);
 
   return { ...shape, operations };
 };

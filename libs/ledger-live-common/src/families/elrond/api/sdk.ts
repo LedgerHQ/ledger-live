@@ -39,11 +39,9 @@ export const getAccount = async (addr: string) => {
   };
 };
 
-export const getValidators = async () => {
-  const validators = await api.getValidators();
-  return {
-    validators,
-  };
+export const getProviders = async (): Promise<any> => {
+  const providers = await api.getProviders();
+  return providers;
 };
 
 export const getNetworkConfig = async (): Promise<NetworkConfig> => {

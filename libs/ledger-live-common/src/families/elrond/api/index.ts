@@ -1,7 +1,7 @@
 export {
   getAccount,
   getNetworkConfig,
-  getValidators,
+  getProviders,
   getOperations,
   getFees,
   broadcastTransaction,

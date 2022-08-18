@@ -40,17 +40,17 @@ export default class ElrondApi {
     };
   }
 
-  async getValidators() {
+  async getProviders(): Promise<any> {
     let data = [];
 
     try {
       const {
-        data: { validators },
+        data: { providers },
       } = await network({
         method: "GET",
-        url: `${this.API_URL}/validator/statistics`,
+        url: `${this.DELEGATION_API_URL}/providers`,
       });
-      data = validators;
+      data = providers;
     } catch (error) {
       return data;
     }
