@@ -1973,6 +1973,19 @@
     "switchButton" : "Alterar para {{language}}",
     "no" : "Eu prefiro não"
   },
+  "deviceLocalization" : {
+    "language" : "Idioma",
+    "deviceLanguage" : "Idioma do dispositivo",
+    "changeLanguage" : "Mudar Idioma",
+    "allowLanguageInstallation" : "Permitir instalação do idioma",
+    "languageInstalled" : "Idioma alterado com sucesso",
+    "installingLanguage" : "Instalando Idioma",
+    "languages" : {
+      "english" : "Inglês",
+      "french" : "Francês",
+      "spanish" : "Espanhol"
+    }
+  },
   "distribution" : {
     "asset" : "Ativo",
     "price" : "Preço",
@@ -2007,7 +2020,7 @@
   "cardano" : {
     "account" : {
       "subHeader" : {
-        "cardTitle" : "Total balance doesn't include staking rewards"
+        "cardTitle" : "O saldo total não inclui recompensas de staking"
       }
     }
   },
@@ -2878,6 +2891,11 @@
       "catalogServerDesc" : "Alterne entre múltiplas fontes de aplicativos da plataforma",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar a abertura da janela de ferramentas de desenvolvedor de aplicativos da plataforma",
+      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsOverride" : "Sobrepor",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
       "addLocalAppButton" : "Navegar",
@@ -3985,6 +4003,14 @@
       "title" : "Não foi possível redefinir",
       "description" : "Se o problema persistir, tente novamente ou contate o Suporte Ledger."
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Instalação de idioma recusada no dispositivo",
+      "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Idioma não encontrado",
+      "description" : "O idioma que você está tentando instalar não foi encontrado. Tente instalar outro idioma."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Não há nada para atualizar",
       "description" : "Se você não conseguir usar seu dispositivo, contate o Suporte Ledger."
@@ -4417,10 +4443,10 @@
       "title" : "Você excedeu o número de tokens disponíveis"
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum sendable amount is {{amount}} ADA"
+      "title" : "A quantia mínima a ser enviada é {{amount}} ADA"
     },
     "CardanoNotEnoughFunds" : {
-      "title" : "Please ensure you have enough funds to pay for fees"
+      "title" : "Certifique-se de ter fundos suficientes para pagar as taxas"
     },
     "StellarWrongMemoFormat" : {
       "title" : "O formato do memo está incorreto"
