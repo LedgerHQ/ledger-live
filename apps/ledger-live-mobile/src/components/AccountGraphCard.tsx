@@ -236,7 +236,10 @@ const GraphCardHeader = ({
         style={{ flexShrink: 1 }}
       >
         <Flex>
-          <Flex>
+          <Flex pb={4}>
+            <Text variant={"large"} fontWeight={"medium"}>
+              {account.name}
+            </Text>
             <Flex flexDirection="row">
               <Text
                 variant={"large"}

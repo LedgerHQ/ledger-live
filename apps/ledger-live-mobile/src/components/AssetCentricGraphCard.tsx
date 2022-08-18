@@ -100,7 +100,7 @@ function AssetCentricGraphCard({
   const BalanceOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
       currentPositionY.value,
-      [graphCardEndPosition, graphCardEndPosition + 20],
+      [graphCardEndPosition + 30, graphCardEndPosition + 50],
       [1, 0],
       Extrapolate.CLAMP,
     );
@@ -118,6 +118,7 @@ function AssetCentricGraphCard({
         alignItems={"center"}
         marginTop={9}
         marginBottom={9}
+        pt={10}
       >
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
