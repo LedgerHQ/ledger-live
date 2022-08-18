@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import { DeviceModelId, } from "@ledgerhq/devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 import Box from "~/renderer/components/Box";
 import { StepProps } from "..";
-import { renderFirmwareUpdating } from "~/renderer/components/DeviceAction/rendering";
-import useTheme from "~/renderer/hooks/useTheme";
 import { DeviceInfo, idsToLanguage, Language, languageIds } from "@ledgerhq/types-live";
+import { ProgressLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { useTranslation } from "react-i18next";
+import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
+import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -18,23 +19,14 @@ const Container = styled(Box).attrs(() => ({
   color: "palette.text.shade100",
 }))``;
 
-type BodyProps = {
-  modelId: DeviceModelId;
-};
-
-export const Body = ({ modelId }: BodyProps) => {
-  const type = useTheme("colors.palette.type");
-  return renderFirmwareUpdating({ modelId, type });
-};
 
 type Props = StepProps & { updatedDeviceInfo?: DeviceInfo };
 
-const StepUpdating = ({
-  deviceModelId,
+const StepDeviceLanguage = ({
   updatedDeviceInfo,
   device,
   deviceInfo: oldDeviceInfo,
-  transitionTo
+  transitionTo,
 }: Props) => {
   const currentLocale = useSelector(languageSelector) as Locale;
 
@@ -47,13 +39,9 @@ const StepUpdating = ({
     loaded: oldLanguagesLoaded,
   } = useAvailableLanguagesForDevice(oldDeviceInfo);
 
-  const [isLanguagePromptOpen, setIsLanguagePromptOpen] = useState<boolean>(
-    false,
-  );
+  const [isLanguagePromptOpen, setIsLanguagePromptOpen] = useState<boolean>(false);
 
-  const [languageToInstall, setLanguageToInstall] = useState<Language>(
-    "english",
-  );
+  const [languageToInstall, setLanguageToInstall] = useState<Language>("english");
   const [installingLanguage, setInstallingLanguage] = useState(false);
 
   const { t } = useTranslation();
@@ -108,12 +96,39 @@ const StepUpdating = ({
     installLanguage,
   ]);
 
+  const deviceName = getDeviceModel(device.modelId).productName;
 
   return (
     <Container>
-      <Body modelId={deviceModelId} />
+      {isLanguagePromptOpen && !installingLanguage && (
+        <>
+          {/* TODO: <Track event="FirmwareUpdateFirstDeviceLanguagePrompt" onMount /> */}
+          <ChangeDeviceLanguagePrompt
+            descriptionWording={t("deviceLocalization.firmwareUpdatePrompt.description", {
+              language: t(
+                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
+              ),
+              deviceName,
+            })}
+            onSkip={() => transitionTo("finish")}
+            onConfirm={() => installLanguage(localeIdToDeviceLanguage[currentLocale] as Language)}
+          />
+        </>
+      )}
+      {installingLanguage ? (
+        <ChangeDeviceLanguageAction
+          device={device}
+          language={languageToInstall}
+          onContinue={() => {
+            setInstallingLanguage(false);
+            transitionTo("finish");
+          }}
+        />
+      ) : (
+        !isLanguagePromptOpen && <ProgressLoader />
+      )}
     </Container>
   );
 };
 
-export default StepUpdating;
+export default StepDeviceLanguage;

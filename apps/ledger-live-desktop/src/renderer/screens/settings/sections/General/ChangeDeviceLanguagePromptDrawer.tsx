@@ -2,9 +2,6 @@ import React, { useCallback, useState } from "react";
 
 import { Flex, Drawer, Text, Button } from "@ledgerhq/react-ui";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
-import Illustration from "~/renderer/components/Illustration";
-import NanoXFoldedDark from "./assets/nano-x-folded-dark.svg";
-import NanoXFoldedLight from "./assets/nano-x-folded-light.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
 import { DeviceInfo } from "@ledgerhq/types-live";
@@ -13,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
 
 type Props = {
   onClose: () => void;
@@ -20,7 +18,11 @@ type Props = {
   isOpen: boolean;
 };
 
-const ChangeDeviceLanguagePrompt: React.FC<Props> = ({ onClose, isOpen, currentLanguage }) => {
+const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
+  onClose,
+  isOpen,
+  currentLanguage,
+}) => {
   const [installingLanguage, setInstallingLanguage] = useState(false);
 
   const currentDevice = useSelector(getCurrentDevice);
@@ -65,43 +67,20 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({ onClose, isOpen, currentL
             onContinue={onCloseDrawer}
           />
         ) : (
-          <>
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              flexDirection="column"
-              flex={1}
-              px={40}
-            >
-              <Illustration
-                width={251}
-                height={126}
-                lightSource={NanoXFoldedLight}
-                darkSource={NanoXFoldedDark}
-              />
-
-              <Text variant="h1" fontSize={20} mt={80}>
-                {t("deviceLocalization.changeDeviceLanguage")}
-              </Text>
-              <Text variant="body" textAlign="center" color="neutral.c80" mt={24}>
-                {t("deviceLocalization.changeDeviceLanguageDescription", {
-                  language: t(
-                    `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
-                  ),
-                })}
-              </Text>
-            </Flex>
-            <Flex alignSelf="flex-end" justifySelf="flex-end" columnGap={5}>
-              <Button onClick={onCloseDrawer}>{t("common.cancel")}</Button>
-              <Button variant="main" onClick={() => setInstallingLanguage(true)}>
-                {t("deviceLocalization.changeLanguage")}
-              </Button>
-            </Flex>
-          </>
+          <ChangeDeviceLanguagePrompt
+            onSkip={onCloseDrawer}
+            onConfirm={() => setInstallingLanguage(true)}
+            titleWording={t("deviceLocalization.changeDeviceLanguage")}
+            descriptionWording={t("deviceLocalization.changeDeviceLanguageDescription", {
+              language: t(
+                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
+              ),
+            })}
+          />
         )}
       </Flex>
     </Drawer>
   );
 };
 
-export default withV3StyleProvider(ChangeDeviceLanguagePrompt);
+export default withV3StyleProvider(ChangeDeviceLanguagePromptDrawer);

@@ -19,7 +19,7 @@ import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { idsToLanguage } from "@ledgerhq/types-live";
-import ChangeDeviceLanguagePrompt from "./ChangeDeviceLanguagePrompt";
+import ChangeDeviceLanguagePromptDrawer from "./ChangeDeviceLanguagePromptDrawer";
 
 export const languageLabels: { [key in Locale]: string } = {
   de: "Deutsch",
@@ -129,7 +129,7 @@ const LanguageSelect = () => {
         options={languages}
       />
 
-      <ChangeDeviceLanguagePrompt
+      <ChangeDeviceLanguagePromptDrawer
         isOpen={isDeviceLanguagePromptOpen}
         onClose={onClosePrompt}
         currentLanguage={(currentLanguage.value ?? getInitialLanguageLocale()) as Locale}
