@@ -1,6 +1,7 @@
-import React, { useMemo, useLayoutEffect, useState, useRef } from "react";
+import React, { useMemo, useLayoutEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
+import { useTheme } from "styled-components";
 
 import { StorylyInstanceID } from "./types";
 
@@ -12,11 +13,13 @@ type Props = {
 export const StorylyWrapper = ({ instanceID, storylySegments }: Props) => {
   const storylyRef = useRef();
   const language = useSelector(languageSelector);
+  const theme = useTheme();
 
   const segments = useMemo(() => {
-    const languageSegments = [language, ...(true && language !== "en" ? ["en"] : [])].map(
-      l => `lang_${l}`,
-    );
+    const languageSegments = [
+      language,
+      ...(((language as unknown) as string) !== "en" ? ["en"] : []),
+    ].map(l => `lang_${l}`);
     return [...languageSegments, ...(storylySegments ?? [])];
   }, [language, storylySegments]);
 
@@ -25,18 +28,26 @@ export const StorylyWrapper = ({ instanceID, storylySegments }: Props) => {
      * You can customize Storyly web, here is the documentation
      * https://integration.storyly.io/web/ui-customizations.html#story-group-text-color
      */
-    storylyRef.current.init({
-      token: instanceID,
-      layout: "classic",
-      segments: segments,
-      props: {
-        storyGroupAlign: "left",
-        storyGroupBorderRadius: "35",
-        storyGroupTextColor: "#FFFFFF",
-        storyGroupTextSeenColor: "#FFFFFF",
-        storyGroupIconBorderColorSeen: ["#461AF7", "#FF6E33"],
-      },
-    });
-  }, []);
+    storylyRef.current &&
+      storylyRef.current.init({
+        token: instanceID,
+        layout: "classic",
+        segments: segments,
+        props: {
+          storyGroupAlign: "left",
+          storyGroupBorderRadius: "35",
+          /**
+           * Story title color for not seen story
+           */
+          storyGroupTextColor: theme.colors.neutral.c100,
+          /**
+           * Story title color for already seen story
+           */
+          storyGroupTextSeenColor: theme.colors.neutral.c100,
+          storyGroupIconBorderColorNotSeen: [theme.colors.primary.c80, theme.colors.primary.c80],
+          storyGroupIconBorderColorSeen: [theme.colors.primary.c80, theme.colors.primary.c80],
+        },
+      });
+  }, [instanceID, segments, theme.colors]);
   return <storyly-web ref={storylyRef} />;
 };

@@ -5,7 +5,7 @@ import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection"
 import Button from "~/renderer/components/Button";
 import { openModal } from "~/renderer/actions/modals";
 
-const LottieTester = () => {
+const StorylyTester = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onOpenModal = useCallback(() => dispatch(openModal("MODAL_STORYLY_DEBUGGER")), [dispatch]);
@@ -19,4 +19,4 @@ const LottieTester = () => {
   );
 };
 
-export default LottieTester;
+export default StorylyTester;
