@@ -73,8 +73,6 @@ const getAccountShape: GetAccountShape = async (info) => {
     subAccounts,
   };
 
-  console.log(shape);
-
   return { ...shape, operations };
 };
 
