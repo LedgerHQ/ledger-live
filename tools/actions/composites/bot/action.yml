@@ -48,12 +48,15 @@ runs:
         GITHUB_WORKFLOW: ${{ github.workflow }}
         BOT_FILTER_FAMILY: ${{ inputs.BOT_FILTER_FAMILY }}
         SHOW_LEGACY_NEW_ACCOUNT: ${{ inputs.SHOW_LEGACY_NEW_ACCOUNT }}
-        EXPLORER: ${{ inputs.EXPLORER }}
+        explorerinput: ${{ inputs.EXPLORER }}
       run: |
         export COINAPPS=$PWD/coin-apps
         export NODE_ENV=production
         mkdir libs/ledger-live-common/botreport
         cd libs/ledger-live-common
+        if [ "$explorerinput" != "" ]; then
+          export EXPLORER=$explorerinput
+        fi
         node --prof lib/bot/cli.js
       shell: bash
     - name: submit bot report
