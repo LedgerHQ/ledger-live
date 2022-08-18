@@ -1283,7 +1283,7 @@
       "noSearchResults" : "عذراً، لم نجد أي نتائج بحث.",
       "retrySearchKeyword" : "يرجى إعادة محاولة البحث بكلمة رئيسية أخرى.",
       "retrySearchParams" : "يرجى إعادة محاولة البحث مع معلمات أخرى.",
-      "trackFavAssets" : "قم بتتبع المفضلة لديك",
+      "trackFavAssets" : "Track your favorite",
       "clickOnStarIcon" : "النقر على أيقونة النجمة بجوار أحد الأصول سيضفها تلقائياً إلى المفضلة لديك.",
       "browseAssets" : "تصفح الأصول"
     }
@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "التبديل بين مصادر تطبيقات المنصة المتعددة",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "تعديل",
+      "featureFlagsRestore" : "استعادة",
+      "featureFlagsOverride" : "تجاوز",
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
       "addLocalAppButton" : "تصفح",
@@ -4049,6 +4054,10 @@
     },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
+      "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
+    },
+    "NetworkError" : {
+      "title" : "An error occurred during synchronization",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
     },
     "NoAddressesFound" : {
