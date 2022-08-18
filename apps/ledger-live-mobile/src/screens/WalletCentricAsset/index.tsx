@@ -128,7 +128,11 @@ const AssetScreen = ({ route }: Props) => {
           seeMoreText={t("addAccounts.addNew")}
           onSeeAllPress={onAddAccount}
         />
-        <AccountsSection accounts={cryptoAccounts} />
+        <AccountsSection
+          accounts={cryptoAccounts}
+          currencyId={currency.id}
+          currencyTicker={currency.ticker}
+        />
       </SectionContainer>,
       ...(!areCryptoAccountsEmpty
         ? [
