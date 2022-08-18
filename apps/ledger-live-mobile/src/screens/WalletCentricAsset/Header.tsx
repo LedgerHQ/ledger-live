@@ -48,8 +48,7 @@ function Header({
 
   const unit = counterValueCurrency.units[0];
 
-  const readOnlyModeEnabled =
-    useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onBackButtonPress = useCallback(() => {
     if (readOnlyModeEnabled) {

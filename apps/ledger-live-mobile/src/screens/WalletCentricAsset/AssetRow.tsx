@@ -37,11 +37,11 @@ const AssetRow = ({
       navigation.navigate(NavigatorName.PortfolioAccounts, {
         screen: ScreenName.Asset,
         params: {
-          currencyId: currency.id,
+          currency: currency,
         },
       });
     }
-  }, [currency.id, navigation, navigationParams]);
+  }, [currency, navigation, navigationParams]);
 
   return (
     <AssetRowLayout
