@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo , ElementProps } from "react";
+import React, { useCallback, useState, useMemo , ElementProps, useEffect } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme, useIsFocused } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
@@ -29,6 +29,7 @@ import {
   canDelegate,
 } from "@ledgerhq/live-common/families/cosmos/logic";
 import { Text } from "@ledgerhq/native-ui";
+import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-common/families/cosmos/logic";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
@@ -49,8 +50,10 @@ import DelegationLabelRight from "./LabelRight";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import DateFromNow from "../../../components/DateFromNow";
+import AccountBanner from "../../../components/AccountBanner";
 import ValidatorImage from "../shared/ValidatorImage";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import { getAccountBannerProps as getCosmosBannerProps } from "../../../families/cosmos/utils";
 
 type Props = {
   account: Account,
@@ -82,6 +85,7 @@ function Delegations({ account }: Props) {
 
   const [delegation, setDelegation] = useState<CosmosMappedDelegation>();
   const [undelegation, setUndelegation] = useState<CosmosMappedUnbonding>();
+  const [banner, setBanner] = useState({display: false});
 
   const totalRewardsAvailable = delegations.reduce(
     (sum, d) => sum.plus(d.pendingRewards || 0),
@@ -124,6 +128,38 @@ function Delegations({ account }: Props) {
       },
     });
   }, [onNavigate, delegation, account]);
+
+  const fetchBannerData = async () => {
+    const state = await getCosmosBannerState({...account});
+    const bannerText = getCosmosBannerProps(state, {...account}, { t });
+    return {...state, ...bannerText}
+  }
+
+  useEffect(() => {
+    fetchBannerData().then((banner)=> {
+      return setBanner(banner)
+    });
+  }, []);
+
+  const onRedelegateLedger = () => {
+    const {validatorSrcAddress, ledgerValidator} = {...banner};
+    const worstValidator = delegations.find(delegation => delegation.validatorAddress === validatorSrcAddress)
+    onNavigate({
+      route: NavigatorName.CosmosRedelegationFlow,
+      screen: ScreenName.CosmosDefaultRedelegationAmount,
+      params: {
+        accountId: account.id,
+        validatorSrcAddress,
+        transaction: {
+          validators: [worstValidator]
+        },
+        validatorSrc: worstValidator.validator,
+        validator: ledgerValidator,
+        max: worstValidator.amount,
+        nextScreen: ScreenName.CosmosRedelegationSelectDevice
+      },
+    });
+  };
 
   const onCollectRewards = useCallback(() => {
     onNavigate({
@@ -426,7 +462,9 @@ function Delegations({ account }: Props) {
           </View>
         </>
       )}
-
+      { banner.display  && 
+        <AccountBanner style={styles.banner} {...banner} onDelegate={banner.redelegate ? onRedelegateLedger : onDelegate}/>
+      }
       {delegations.length === 0 ? (
         <AccountDelegationInfo
           title={t("account.delegation.info.title")}
@@ -499,9 +537,9 @@ export default function CosmosDelegations({ account }: Props) {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    marginHorizontal: 16,
-  },
+  // root: {
+  //   marginHorizontal: 16,
+  // },
   illustration: { alignSelf: "center", marginBottom: 16 },
   rewardsWrapper: {
     flexDirection: "row",
@@ -509,7 +547,6 @@ const styles = StyleSheet.create({
     alignContent: "center",
     paddingVertical: 16,
     marginBottom: 16,
-
     borderRadius: 4,
   },
   label: {
@@ -533,4 +570,8 @@ const styles = StyleSheet.create({
   valueText: {
     fontSize: 14,
   },
+  banner:{
+    marginBottom: 46,
+    marginHorizontal:90,
+  }
 });
