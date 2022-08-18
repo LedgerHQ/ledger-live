@@ -206,7 +206,7 @@ export async function runWithAppSpec<T extends Transaction>(
     const length = accounts.length;
     const totalTries = spec.multipleRuns || 1;
     // dynamic buffer with ids of accounts that need a resync (between runs)
-    let accountIdsNeedResync = [];
+    let accountIdsNeedResync: string[] = [];
 
     for (let j = 0; j < totalTries; j++) {
       for (let i = 0; i < length; i++) {
