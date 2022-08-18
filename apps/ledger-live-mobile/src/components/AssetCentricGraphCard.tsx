@@ -40,8 +40,8 @@ import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import Touchable from "./Touchable";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
-import { NoCountervaluePlaceholder } from "./CounterValue";
-import DiscreetModeButton from "./DiscreetModeButton";
+import ParentCurrencyIcon from "./ParentCurrencyIcon";
+import FormatDate from "./FormatDate";
 
 type FooterProps = {
   renderAccountSummary: () => ReactNode;
@@ -100,7 +100,7 @@ function AssetCentricGraphCard({
   const BalanceOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
       currentPositionY.value,
-      [graphCardEndPosition + 30, graphCardEndPosition + 50],
+      [graphCardEndPosition, graphCardEndPosition + 20],
       [1, 0],
       Extrapolate.CLAMP,
     );
@@ -121,6 +121,7 @@ function AssetCentricGraphCard({
       >
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
+            <ParentCurrencyIcon size={32} currency={currency} />
             {areAccountsEmpty ? (
               <Text variant={"h3"} color={"neutral.c100"}>
                 <CurrencyUnitValue unit={unit} value={0} />
@@ -131,20 +132,37 @@ function AssetCentricGraphCard({
                   {!balanceAvailable ? (
                     <BigPlaceholder mt="8px" />
                   ) : (
-                    <Text
-                      fontFamily="Inter"
-                      fontWeight="semiBold"
-                      fontSize="42px"
-                      color={"neutral.c100"}
-                      numberOfLines={1}
-                      adjustsFontSizeToFit
-                    >
-                      <CurrencyUnitValue
-                        unit={unit}
-                        value={hoveredItem ? hoveredItem.value : item.value}
-                        joinFragmentsSeparator=" "
-                      />
-                    </Text>
+                    <>
+                      <Text
+                        variant={"large"}
+                        fontWeight={"medium"}
+                        color={"neutral.c80"}
+                      >
+                        <CurrencyUnitValue
+                          unit={unit}
+                          value={
+                            hoveredItem
+                              ? hoveredItem.countervalue
+                              : item.countervalue
+                          }
+                          joinFragmentsSeparator=" "
+                        />
+                      </Text>
+                      <Text
+                        fontFamily="Inter"
+                        fontWeight="semiBold"
+                        fontSize="32px"
+                        color={"neutral.c100"}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                      >
+                        <CurrencyUnitValue
+                          unit={unit}
+                          value={hoveredItem ? hoveredItem.value : item.value}
+                          joinFragmentsSeparator=" "
+                        />
+                      </Text>
+                    </>
                   )}
                   <TransactionsPendingConfirmationWarning />
                 </Flex>

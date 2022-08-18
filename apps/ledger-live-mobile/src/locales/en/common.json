@@ -1622,6 +1622,9 @@
       "currencyPriceChange": "Last 24h change"
     }
   },
+  "asset": {
+    "title": "Your {{assetName}}"
+  },
   "addAccountsModal": {
     "ctaAdd": "Add accounts",
     "ctaImport": "Import Desktop accounts",
