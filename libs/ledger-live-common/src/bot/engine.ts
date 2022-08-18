@@ -204,6 +204,8 @@ export async function runWithAppSpec<T extends Transaction>(
     // we sequentially iterate on the initial account set to perform mutations
     const length = accounts.length;
     const totalTries = spec.multipleRuns || 1;
+    // dynamic buffer with ids of accounts that need a resync (between runs)
+    let accountIdsNeedResync = [];
 
     for (let j = 0; j < totalTries; j++) {
       for (let i = 0; i < length; i++) {
@@ -211,15 +213,24 @@ export async function runWithAppSpec<T extends Transaction>(
           "engine",
           `spec ${spec.name} sync all accounts (try ${j} run ${i})`
         );
-        // resync all accounts (necessary between mutations)
+        // resync all accounts that needs to be resynced
         t = now();
-        accounts = await promiseAllBatched(
+
+        const resynced = await promiseAllBatched(
           getEnv("SYNC_MAX_CONCURRENT"),
-          accounts,
+          accounts.filter((a) => accountIdsNeedResync.includes(a.id)),
           syncAccount
         );
+
+        accounts = accounts.map((a: Account) => {
+          const i = accountIdsNeedResync.indexOf(a.id);
+          return i !== -1 ? resynced[i] : a;
+        });
+
+        accountIdsNeedResync = [];
+
         appReport.accountsAfter = accounts;
-        const syncAllAccountsTime = now() - t;
+        const resyncAccountsTime = now() - t;
         const account = accounts[i];
         const report = await runOnAccount({
           appCandidate,
@@ -228,7 +239,8 @@ export async function runWithAppSpec<T extends Transaction>(
           account,
           accounts,
           mutationsCount,
-          syncAllAccountsTime,
+          resyncAccountsTime,
+          accountIdsNeedResync,
           preloadedData,
         });
         // eslint-disable-next-line no-console
@@ -277,8 +289,9 @@ export async function runOnAccount<T extends Transaction>({
   device,
   account,
   accounts,
+  accountIdsNeedResync,
   mutationsCount,
-  syncAllAccountsTime,
+  resyncAccountsTime,
   preloadedData,
 }: {
   appCandidate: any;
@@ -286,8 +299,9 @@ export async function runOnAccount<T extends Transaction>({
   device: any;
   account: any;
   accounts: any;
+  accountIdsNeedResync: string[];
   mutationsCount: Record<string, number>;
-  syncAllAccountsTime: number;
+  resyncAccountsTime: number;
   preloadedData: any;
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
@@ -295,7 +309,7 @@ export async function runOnAccount<T extends Transaction>({
   const report: MutationReport<T> = {
     spec,
     appCandidate,
-    syncAllAccountsTime,
+    resyncAccountsTime,
   };
 
   try {
@@ -462,6 +476,13 @@ export async function runOnAccount<T extends Transaction>({
       .toPromise();
     report.signedOperation = signedOperation;
     report.signedTime = now();
+
+    // at this stage, we are about to broadcast we assume we will need to resync sender and receiver accounts
+    if (report.destination) {
+      accountIdsNeedResync.push(report.destination.id);
+    }
+    accountIdsNeedResync.push(account.id);
+
     // broadcast the transaction
     const optimisticOperation = getEnv("DISABLE_TRANSACTION_BROADCAST")
       ? signedOperation.operation
@@ -475,6 +496,7 @@ export async function runOnAccount<T extends Transaction>({
       "engine",
       `spec ${spec.name}/${account.name}/${optimisticOperation.hash} broadcasted`
     );
+
     // wait the condition are good (operation confirmed)
     const testBefore = now();
 

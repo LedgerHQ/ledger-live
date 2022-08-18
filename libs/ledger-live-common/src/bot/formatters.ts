@@ -31,7 +31,7 @@ export function formatError(e: any) {
 }
 
 export function formatReportForConsole<T extends Transaction>({
-  syncAllAccountsTime,
+  resyncAccountsTime,
   appCandidate,
   account,
   maxSpendable,
@@ -54,7 +54,7 @@ export function formatReportForConsole<T extends Transaction>({
   error,
 }: MutationReport<T>): string {
   let str = "";
-  str += `all accounts sync in ${formatTime(syncAllAccountsTime)}\n`;
+  str += `necessary accounts resynced in ${formatTime(resyncAccountsTime)}\n`;
   str += `▬ ${formatAppCandidate(appCandidate)}\n`;
 
   if (account) {

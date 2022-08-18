@@ -112,7 +112,7 @@ export type SpecReport<T extends Transaction> = {
   fatalError?: Error;
 };
 export type MutationReport<T extends Transaction> = {
-  syncAllAccountsTime: number;
+  resyncAccountsTime: number;
   spec: AppSpec<T>;
   appCandidate: AppCandidate;
   account?: Account;
