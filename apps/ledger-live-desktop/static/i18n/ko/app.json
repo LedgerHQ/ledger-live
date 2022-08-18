@@ -1973,6 +1973,19 @@
     "switchButton" : "{{language}}로 전환",
     "no" : "다음을 선호하지 않습니다:"
   },
+  "deviceLocalization" : {
+    "language" : "언어",
+    "deviceLanguage" : "장치 언어",
+    "changeLanguage" : "언어 변경",
+    "allowLanguageInstallation" : "언어 설치 허용",
+    "languageInstalled" : "언어가 성공적으로 변경되었습니다",
+    "installingLanguage" : "언어 설치 중",
+    "languages" : {
+      "english" : "영어",
+      "french" : "프랑스어",
+      "spanish" : "스페인어"
+    }
+  },
   "distribution" : {
     "asset" : "자산",
     "price" : "가격",
@@ -2878,6 +2891,11 @@
       "catalogServerDesc" : "다중 플랫폼 앱 소스 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "Overriden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "Edit",
+      "featureFlagsRestore" : "Restore",
+      "featureFlagsOverride" : "Override",
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
@@ -3984,6 +4002,14 @@
     "HardResetFail" : {
       "title" : "죄송하지만 리셋할 수 없습니다",
       "description" : "문제가 지속되면 다시 시도하거나 Ledger 지원 부서에 연락하세요."
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "장치에서 언어 설치가 거부되었습니다",
+      "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
+    },
+    "LanguageNotFound" : {
+      "title" : "언어를 찾을 수 없습니다",
+      "description" : "설치하려는 언어를 찾을 수 없습니다. 다른 언어를 설치해 보세요."
     },
     "LatestMCUInstalledError" : {
       "title" : "죄송하지만 업데이트가 필요한 항목이 없습니다",
