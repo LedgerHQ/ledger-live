@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Touchable from "../../components/Touchable";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
@@ -46,6 +46,15 @@ function Header({
     }
     navigation.goBack();
   }, [navigation, readOnlyModeEnabled]);
+
+  const goToSettings = useCallback(() => {
+    navigation.navigate(NavigatorName.AccountSettings, {
+      screen: ScreenName.AccountCurrencySettings,
+      params: {
+        currencyId: currency.id,
+      },
+    });
+  }, [currency.id, navigation]);
 
   const WalletTitleAnimation = useAnimatedStyle(() => {
     const opacity =
@@ -133,7 +142,7 @@ function Header({
         </Text>
       </Flex>
       <Box>
-        <Touchable onPress={() => {}}>
+        <Touchable onPress={goToSettings}>
           <SettingsMedium size={24} />
         </Touchable>
       </Box>

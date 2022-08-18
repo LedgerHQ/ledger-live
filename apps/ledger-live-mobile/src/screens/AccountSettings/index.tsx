@@ -65,10 +65,6 @@ class AccountSettings extends PureComponent<Props, State> {
         <TrackScreen category="AccountSettings" />
         <AccountNameRow account={account} navigation={navigation} />
         <AccountUnitsRow account={account} navigation={navigation} />
-        <AccountCurrencyRow
-          currency={account.currency}
-          navigation={navigation}
-        />
         <AccountAdvancedLogsRow account={account} navigation={navigation} />
         <DeleteAccountRow onPress={this.onPress} />
         <DeleteAccountModal
