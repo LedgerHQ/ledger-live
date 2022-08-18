@@ -2,8 +2,15 @@ import { broadcastTransactionLogic, receiveOnAccountLogic } from "./logic";
 
 import { AppManifest } from "./types";
 import { createAccount } from "../mock/fixtures/cryptoCurrencies";
-import { OperationType, SignedOperation, SignedOperationRaw } from "@ledgerhq/types-live";
+import {
+  OperationType,
+  SignedOperation,
+  SignedOperationRaw,
+} from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+
+import * as converters from "./converters";
+import * as serializers from "./serializers";
 
 describe("receiveOnAccountLogic", () => {
   it("calls uiNavigation callback with an accountAddress", async () => {
@@ -12,6 +19,13 @@ describe("receiveOnAccountLogic", () => {
     const context = createContextContainingAccountId(accountId);
     const expectedResult = "Function called";
     const uiNavigation = jest.fn().mockResolvedValueOnce(expectedResult);
+    const convertedAccount = {
+      ...createPlatformAccount(),
+      address: "Converted address",
+    };
+    jest
+      .spyOn(converters, "accountToPlatformAccount")
+      .mockReturnValueOnce(convertedAccount);
 
     // When
     const result = await receiveOnAccountLogic(
@@ -22,8 +36,21 @@ describe("receiveOnAccountLogic", () => {
 
     // Then
     expect(uiNavigation).toBeCalledTimes(1);
-    expect(uiNavigation.mock.calls[0][2]).toBeTruthy();
+    expect(uiNavigation.mock.calls[0][2]).toEqual("Converted address");
     expect(result).toEqual(expectedResult);
+  });
+
+  it("calls the tracking for success", async () => {
+    // Given
+    const accountId = "12";
+    const context = createContextContainingAccountId(accountId);
+    const expectedResult = "Function called";
+    const uiNavigation = jest.fn().mockResolvedValueOnce(expectedResult);
+
+    // When
+    await receiveOnAccountLogic(context, accountId, uiNavigation);
+
+    // Then
     expect(context.tracking.platformReceiveRequested).toBeCalledTimes(1);
     expect(context.tracking.platformReceiveFail).toBeCalledTimes(0);
   });
@@ -41,16 +68,23 @@ describe("receiveOnAccountLogic", () => {
 
     // Then
     expect(uiNavigation).toBeCalledTimes(0);
+  });
+
+  it("calls the tracking when account cannot be found", async () => {
+    // Given
+    const accountId = "12";
+    const context = createContextContainingAccountId("10", "11");
+    const uiNavigation = jest.fn().mockResolvedValueOnce("Function called");
+
+    // When
+    await expect(async () => {
+      await receiveOnAccountLogic(context, accountId, uiNavigation);
+    }).rejects.toThrowError("Account required");
+
+    // Then
     expect(context.tracking.platformReceiveRequested).toBeCalledTimes(1);
     expect(context.tracking.platformReceiveFail).toBeCalledTimes(1);
   });
-});
-
-const signedOperation = createSignedOperation()
-jest.mock("./serializers", () => {
-  return {
-    deserializePlatformSignedTransaction: jest.fn(() => signedOperation),
-  };
 });
 
 describe("broadcastTransactionLogic", () => {
@@ -60,6 +94,10 @@ describe("broadcastTransactionLogic", () => {
     const context = createContextContainingAccountId(accountId);
     const rawSignedTransaction = createSignedOperationRaw();
     const expectedResult = "Function called";
+    const signedOperation = createSignedOperation();
+    jest
+      .spyOn(serializers, "deserializePlatformSignedTransaction")
+      .mockReturnValueOnce(signedOperation);
     const uiNavigation = jest.fn().mockResolvedValueOnce(expectedResult);
 
     // When
@@ -158,5 +196,18 @@ function createSignedOperationRaw(): SignedOperationRaw {
     operation: rawOperation,
     signature: "Signature",
     expirationDate: null,
+  };
+}
+
+function createPlatformAccount() {
+  return {
+    id: "12",
+    name: "",
+    address: "",
+    currency: "",
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
+    blockHeight: 0,
+    lastSyncDate: new Date(),
   };
 }
