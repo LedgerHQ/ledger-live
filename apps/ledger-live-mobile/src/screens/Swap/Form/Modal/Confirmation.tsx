@@ -149,7 +149,7 @@ export function Confirmation({
         swapOperation: {
           fromAccountId: fromAccount.id,
           fromParentAccount,
-          toAccountId: toAccount.id,
+          toAccountId: toAccount!.id,
           toParentAccount,
           toExists: false,
           operation,

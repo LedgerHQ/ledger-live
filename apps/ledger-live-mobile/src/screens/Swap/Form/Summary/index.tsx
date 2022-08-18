@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
@@ -13,6 +12,7 @@ import {
   getAccountName,
   getAccountUnit,
   getAccountCurrency,
+  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -49,9 +49,12 @@ export function Summary({
 
   const { from, to } = swap;
 
-  const fromUnit = useMemo(() => from.account && getAccountUnit(from.account), [
-    from.account,
-  ]);
+  const fromUnit = useMemo(
+    () =>
+      from?.account &&
+      getAccountUnit(getMainAccount(from.account, from.parentAccount)),
+    [from],
+  );
 
   const targetAccountName = useMemo(
     () => to.account && getAccountName(to.account),
@@ -63,7 +66,7 @@ export function Summary({
     [to.account],
   );
 
-  const fees = useMemo(() => status?.estimatedFees ?? "", [status]);
+  const estimatedFees = useMemo(() => status?.estimatedFees ?? "", [status]);
 
   const onEditProvider = useCallback(() => {
     navigation.navigate("SelectProvider", {
@@ -105,7 +108,7 @@ export function Summary({
     !provider ||
     !fromUnit ||
     !to.currency ||
-    !fees ||
+    !estimatedFees ||
     !ProviderIcon ||
     !exchangeRate
   ) {
@@ -155,7 +158,7 @@ export function Summary({
         onEdit={() => navigation.navigate("SelectFees", { transaction, swap })}
       >
         <Text>
-          <CurrencyUnitValue unit={fromUnit} value={fees} />
+          <CurrencyUnitValue unit={fromUnit} value={estimatedFees} />
         </Text>
       </Item>
 
