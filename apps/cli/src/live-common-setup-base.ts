@@ -51,7 +51,6 @@ setSupportedCurrencies([
   "osmosis",
   "arbitrum",
   "fantom",
-  "evmos",
   "moonbeam",
 ]);
 
