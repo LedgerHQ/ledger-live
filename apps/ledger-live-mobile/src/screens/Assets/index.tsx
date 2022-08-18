@@ -23,12 +23,13 @@ import TabBarSafeAreaView, {
 import AssetsNavigationHeader from "./AssetsNavigationHeader";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
+import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 const List = globalSyncRefreshControl(FlatList);
 
 function Assets() {
   const navigation = useNavigation();
-  const accounts = useSelector(accountsSelector);
+  const previousScreen = usePreviousRouteName();
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
 
@@ -67,7 +68,7 @@ function Assets() {
 
   return (
     <TabBarSafeAreaView>
-      <TrackScreen category="Accounts" accountsLength={accounts.length} />
+      <TrackScreen category="Assets List" source={previousScreen} />
       <Flex flex={1} bg={"background.main"}>
         <AssetsNavigationHeader />
         {syncPending && (

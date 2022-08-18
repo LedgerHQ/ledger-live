@@ -4,13 +4,19 @@ import { Flex } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import Touchable from "../../components/Touchable";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
+import { track } from "../../analytics";
 
 function AddAccount() {
   const navigation = useNavigation();
-
+  const currentScreen = useCurrentRouteName();
   const [isAddModalOpened, setIsAddModalOpened] = useState(false);
 
   function openAddModal() {
+    track("button_clicked", {
+      button: "Add Account",
+      screen: currentScreen,
+    });
     setIsAddModalOpened(true);
   }
 
