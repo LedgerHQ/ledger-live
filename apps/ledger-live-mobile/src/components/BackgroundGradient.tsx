@@ -17,7 +17,7 @@ function BackgroundGradient({
   currentPositionY,
   graphCardEndPosition,
 }: {
-  currentPositionY: SharedValue<number>;
+  currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
 }) {
   const BackgroundOverlayOpacity = useAnimatedStyle(() => {

@@ -10,8 +10,10 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
 import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import { BalanceHistoryWithCountervalue } from "@ledgerhq/live-common/portfolio/v2/types";
+import Animated from "react-native-reanimated";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
 import Touchable from "../../components/Touchable";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
@@ -29,14 +31,16 @@ function AccountHeader({
   counterValueCurrency,
   history,
   countervalueAvailable,
+  parentAccount,
 }: {
-  currentPositionY: SharedValue<number>;
+  currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
   account: AccountLike;
   useCounterValue?: boolean;
   counterValueCurrency: Currency;
   history: BalanceHistoryWithCountervalue;
   countervalueAvailable: boolean;
+  parentAccount?: Account;
 }) {
   const item = history[history.length - 1];
   const cryptoCurrencyUnit = getAccountUnit(account);
@@ -72,6 +76,10 @@ function AccountHeader({
     navigation.goBack();
   }, [navigation, readOnlyModeEnabled]);
 
+  const isToken = parentAccount && parentAccount.name !== undefined;
+
+  console.log(isToken, getAccountName(parentAccount), getAccountName(account));
+
   return (
     <CurrencyHeaderLayout
       currentPositionY={currentPositionY}
@@ -83,15 +91,16 @@ function AccountHeader({
       }
       centerAfterScrollElement={
         <Flex flexDirection={"column"} alignItems={"center"}>
-          {typeof items[1]?.value === "number" && account?.name ? (
-            <>
+          {typeof items[1]?.value === "number" ? (
+            <Flex width="80%" flexDirection={"column"} alignItems={"center"}>
               <Text
-                variant={"small"}
                 fontWeight={"semiBold"}
                 color={"neutral.c70"}
                 fontSize="11px"
+                numberOfLines={1}
               >
-                {account.name}
+                {getAccountName(account) +
+                  (isToken ? ` - ${getAccountName(parentAccount)}` : "")}
               </Text>
               <Text
                 variant={"small"}
@@ -101,7 +110,7 @@ function AccountHeader({
               >
                 <CurrencyUnitValue {...items[1]} />
               </Text>
-            </>
+            </Flex>
           ) : (
             <>
               <Placeholder width={100} containerHeight={18} />

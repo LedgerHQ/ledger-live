@@ -11,6 +11,7 @@ import {
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTranslation } from "react-i18next";
 import { Portfolio } from "@ledgerhq/types-live";
+import Animated from "react-native-reanimated";
 import Touchable from "../../components/Touchable";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
@@ -26,7 +27,7 @@ function Header({
   assetPortfolio,
   counterValueCurrency,
 }: {
-  currentPositionY: SharedValue<number>;
+  currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
   currency: Currency;
   assetPortfolio: Portfolio;

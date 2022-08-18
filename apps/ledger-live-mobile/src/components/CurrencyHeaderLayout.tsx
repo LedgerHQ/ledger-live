@@ -21,7 +21,7 @@ function CurrencyHeaderLayout({
   leftElement,
   currencyColor,
 }: {
-  currentPositionY: SharedValue<number>;
+  currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
   rightElement?: React.ReactNode;
   centerAfterScrollElement?: React.ReactNode;

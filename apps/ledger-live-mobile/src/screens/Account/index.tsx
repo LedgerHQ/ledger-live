@@ -210,6 +210,7 @@ const AccountScreenInner = ({
         counterValueCurrency={counterValueCurrency}
         history={history}
         countervalueAvailable={countervalueAvailable}
+        parentAccount={parentAccount}
       />
     </TabBarSafeAreaView>
   );
