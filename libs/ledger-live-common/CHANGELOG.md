@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 25.2.0-nightly.2
+
+### Patch Changes
+
+- [#730](https://github.com/LedgerHQ/ledger-live/pull/730) [`6e057f7163`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4) Thanks [@LFBarreto](https://github.com/LFBarreto)! - update ptx smart routing feature flag and live app web player undefined uri params
+
 ## 25.2.0-nightly.1
 
 ### Minor Changes

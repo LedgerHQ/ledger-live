@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.6.0-nightly.3
+
+### Minor Changes
+
+- [#730](https://github.com/LedgerHQ/ledger-live/pull/730) [`e1173f5f4c`](https://github.com/LedgerHQ/ledger-live/commit/e1173f5f4c521bdf50c9c1be431f63ae17aa2793) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Redirect buy sell in app links to live app implementation if feature flag is activated
+
+### Patch Changes
+
+- [#958](https://github.com/LedgerHQ/ledger-live/pull/958) [`68c50cd94b`](https://github.com/LedgerHQ/ledger-live/commit/68c50cd94bbe50a1bf284a2e9e5aed3781788754) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix getFeature being a hook and getting called outside of React
+
+* [#730](https://github.com/LedgerHQ/ledger-live/pull/730) [`6e057f7163`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4) Thanks [@LFBarreto](https://github.com/LFBarreto)! - update ptx smart routing feature flag and live app web player undefined uri params
+
+* Updated dependencies [[`68c50cd94b`](https://github.com/LedgerHQ/ledger-live/commit/68c50cd94bbe50a1bf284a2e9e5aed3781788754), [`6e057f7163`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4)]:
+  - @ledgerhq/types-live@6.23.0-nightly.4
+  - @ledgerhq/live-common@25.2.0-nightly.2
+
 ## 3.6.0-nightly.2
 
 ### Minor Changes

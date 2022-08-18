@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.23.0-nightly.4
+
+### Patch Changes
+
+- [#958](https://github.com/LedgerHQ/ledger-live/pull/958) [`68c50cd94b`](https://github.com/LedgerHQ/ledger-live/commit/68c50cd94bbe50a1bf284a2e9e5aed3781788754) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add properties to Feature type: "overridesRemote", "enabledOverriddenForCurrentLanguage"
+
 ## 6.23.0-nightly.3
 
 ### Minor Changes
