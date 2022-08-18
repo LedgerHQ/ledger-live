@@ -63,16 +63,16 @@ const darkGradients = [
     height: GRADIENT_HEIGHT,
     opacity: 0.8,
     stops: [
-      <Stop offset="0%" stopOpacity={0} stopColor="#131214" />,
-      <Stop offset="100%" stopOpacity={1} stopColor="#131214" />,
+      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
+      <Stop key="100%" offset="100%" stopOpacity={1} stopColor="#131214" />,
     ],
   },
   {
     height: 85,
     opacity: 0.8,
     stops: [
-      <Stop offset="0%" stopOpacity={0} stopColor="#131214" />,
-      <Stop offset="100%" stopOpacity={1} stopColor="#131214" />,
+      <Stop key="0%" offset="0%" stopOpacity={0} stopColor="#131214" />,
+      <Stop key="100%" offset="100%" stopOpacity={1} stopColor="#131214" />,
     ],
   },
 ];
@@ -91,7 +91,7 @@ const lightGradients = [
     opacity: 0.8,
     stops: [
       <Stop key="0%" offset="0" stopOpacity={0} stopColor="#ffffff" />,
-      <Stop offset="57%" stopOpacity={0.15} stopColor="#000000" />,
+      <Stop key="57%" offset="57%" stopOpacity={0.15} stopColor="#000000" />,
       <Stop key="100%" offset="100%" stopOpacity={0.15} stopColor="#000000" />,
     ],
   },
@@ -159,7 +159,7 @@ export default function CustomTabBar({
 
         if (index === 2) {
           return (
-            <>
+            <React.Fragment key={index}>
               <Flex flex={1} />
               <MiddleIconContainer
                 pointerEvents="box-none"
@@ -172,12 +172,13 @@ export default function CustomTabBar({
                   color={isFocused ? colors.primary.c80 : colors.neutral.c80}
                 />
               </MiddleIconContainer>
-            </>
+            </React.Fragment>
           );
         }
 
         return (
           <Touchable
+            key={index}
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}

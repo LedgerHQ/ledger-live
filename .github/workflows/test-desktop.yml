@@ -153,9 +153,9 @@ jobs:
           os: ${{ steps.os.outputs.result }}
 
   report:
-    needs: [test-desktop-app, test-desktop-app-mac-internal]
+    needs: [pr-is-fork, test-desktop-app, test-desktop-app-mac-internal]
     runs-on: ubuntu-latest
-    if: ${{ always()  && !cancelled() && github.event.pull_request != '' }}
+    if: ${{ always()  && !cancelled() && github.event.pull_request != '' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     steps:
       - uses: actions/checkout@v3
       - name: check if comment already exists exists

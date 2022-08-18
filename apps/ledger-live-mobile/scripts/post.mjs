@@ -8,6 +8,15 @@ const syncFamilies = async () =>
   await $`zx ./scripts/sync-families-dispatch.mjs`;
 
 const final = async () => {
+  // Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
+  // Why would anyone bundle an external lib available on CocoaPods anyway?
+  // It's been fixed in https://github.com/tradle/react-native-udp/pull/112 but as of today it's not part of any release
+  // See: https://github.com/Rapsssito/react-native-tcp-socket/issues/61#issuecomment-904842949
+  await fs.promises.rm("node_modules/react-native-tcp/ios/CocoaAsyncSocket", {
+    force: true,
+    recursive: true,
+  });
+
   // Create the dev .env file with APP_NAME if it doesn't exist
   const exists = fs.existsSync(".env");
   if (!exists) {
