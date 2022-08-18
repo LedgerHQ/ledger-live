@@ -20,6 +20,10 @@ import {
 import { getParentAccount } from "../account";
 import { listCurrencies } from "../currencies";
 
+/**
+ * TODO: we might want to use "searchParams.append" instead of "searchParams.set"
+ * to handle duplicated query params (example: "?foo=bar&foo=baz")
+ */
 export function usePlatformUrl(
   manifest: AppManifest,
   params: { background: string; text: string; loadDate?: Date },
