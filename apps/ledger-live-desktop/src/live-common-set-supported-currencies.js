@@ -40,6 +40,7 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
+  "ethereum_rinkeby",
   "cosmos_testnet",
   "hedera",
   "cardano",

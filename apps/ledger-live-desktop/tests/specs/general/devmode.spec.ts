@@ -8,7 +8,13 @@ import { SettingsPage } from "../../models/SettingsPage";
 import { DeviceAction } from "../../models/DeviceAction";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
-const currencies = ["bitcoin_testnet", "ethereum_ropsten", "ethereum_goerli", "MUON"];
+const currencies = [
+  "bitcoin_testnet",
+  "ethereum_ropsten",
+  "ethereum_goerli",
+  "ethereum_rinkeby",
+  "MUON",
+];
 
 test.skip("Enable dev mode from settings", async ({ page }) => {
   const layout = new Layout(page);

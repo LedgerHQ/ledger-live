@@ -3105,7 +3105,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "ethereum_goerli",
     coinType: 60,
-    name: "Ethereum Goerli",
+    name: "Goerli",
     managerAppName: "Ethereum",
     ticker: "ETH",
     deviceTicker: "ETH",
@@ -3126,6 +3126,34 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       {
         tx: "https://goerli.etherscan.io/tx/$hash",
         address: "https://goerli.etherscan.io/address/$address",
+      },
+    ],
+  },
+  ethereum_rinkeby: {
+    type: "CryptoCurrency",
+    id: "ethereum_rinkeby",
+    coinType: 60,
+    name: "Rinkeby",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "ethereum_rinkeby",
+    color: "#00ff00",
+    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    isTestnetFor: "ethereum",
+    disableCountervalue: true,
+    family: "ethereum",
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      baseChain: "rinkeby",
+      chainId: 4, // rinkeby
+      networkId: 4,
+      hardfork: "petersburg",
+    },
+    explorerViews: [
+      {
+        tx: "https://rinkeby.etherscan.io/tx/$hash",
+        address: "https://rinkeby.etherscan.io/address/$address",
       },
     ],
   },

@@ -196,6 +196,13 @@ const initialExplorerConfig: FullConfig = {
       version: "v3",
     },
   },
+  ethereum_rinkeby: {
+    id: "eth_rinkeby",
+    stable: {
+      base: "EXPLORER_STAGING",
+      version: "v3",
+    },
+  },
 
   ethereum_classic: {
     id: "etc",

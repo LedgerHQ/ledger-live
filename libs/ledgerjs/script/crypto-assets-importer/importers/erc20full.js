@@ -22,14 +22,16 @@ const WARN_IF_COUNTERVALUES = true;
 const lenseTicker = (a) => a[9] || a[2];
 
 module.exports = {
-  paths: [
-    "tokens/ethereum/erc20",
-    "tokens/ethereum_ropsten/erc20",
-  ],
+  paths: ["tokens/ethereum/erc20", "tokens/ethereum_ropsten/erc20"],
   output: "data/erc20.js",
 
   validate: (everything, countervaluesTickers) =>
-    ["ethereum", "ethereum_ropsten", "ethereum_goerli"].flatMap((cid) => {
+    [
+      "ethereum",
+      "ethereum_ropsten",
+      "ethereum_goerli",
+      "ethereum_rinkeby",
+    ].flatMap((cid) => {
       const all = everything.filter((a) => a[0] === cid);
       const fiatCollisions = all.filter(
         (a) =>

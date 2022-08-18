@@ -408,6 +408,7 @@ export function genAccount(
       "ethereum",
       "ethereum_ropsten",
       "ethereum_goerli",
+      "ethereum_rinkeby",
       "tron",
       "algorand",
     ].includes(currency.id)

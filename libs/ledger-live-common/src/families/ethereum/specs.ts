@@ -398,6 +398,29 @@ const ethereumGoerli: AppSpec<Transaction> = {
     maxAccount: 8,
   }),
 };
+const ethereumRinkeby: AppSpec<Transaction> = {
+  name: "Ethereum Rinkeby",
+  currency: getCryptoCurrencyById("ethereum_rinkeby"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Ethereum",
+  },
+  testTimeout,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(
+      maxSpendable.gt(
+        parseCurrencyUnit(
+          getCryptoCurrencyById("ethereum_rinkeby").units[0],
+          "0.01"
+        )
+      ),
+      "balance is too low"
+    );
+  },
+  mutations: ethereumBasicMutations({
+    maxAccount: 8,
+  }),
+};
 
 const bsc: AppSpec<Transaction> = {
   name: "BSC",
@@ -499,4 +522,5 @@ export default {
   ethereum,
   ethereumClassic,
   ethereumGoerli,
+  ethereumRinkeby,
 };

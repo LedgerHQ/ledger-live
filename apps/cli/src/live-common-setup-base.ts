@@ -41,13 +41,14 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
+  "ethereum_rinkeby",
   "cosmos_testnet",
   "crypto_org",
   "crypto_org_croeseid",
   "celo",
   "hedera",
   "cardano",
-  "solana"
+  "solana",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

@@ -6,7 +6,8 @@ const {
 } = require("../../../packages/cryptoassets/lib/currencies");
 
 const inferChainId = (common, folder) =>
-  getCryptoCurrencyById(path.basename(path.dirname(folder))).ethereumLikeInfo.chainId;
+  getCryptoCurrencyById(path.basename(path.dirname(folder))).ethereumLikeInfo
+    .chainId;
 
 const asUint4be = (n) => {
   const b = Buffer.alloc(4);
@@ -19,6 +20,7 @@ module.exports = {
     "tokens/ethereum/erc20",
     "tokens/ethereum_ropsten/erc20",
     "tokens/ethereum_goerli/erc20",
+    "tokens/ethereum_rinkeby/erc20",
     "tokens/bsc/bep20",
     "tokens/polygon/erc20",
   ],

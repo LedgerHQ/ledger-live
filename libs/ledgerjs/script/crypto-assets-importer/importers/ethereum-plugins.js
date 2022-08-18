@@ -1,12 +1,19 @@
 const path = require("path");
-const fs = require('fs');
+const fs = require("fs");
 const isEqual = require("lodash/isEqual");
 const { readFileJSON } = require("../utils");
 
 const mapObject = (obj, fn) => Object.fromEntries(Object.entries(obj).map(fn));
 
 module.exports = {
-  paths: ["dapps/ethereum", "dapps/bsc", "dapps/polygon", "dapps/ethereum_ropsten", "dapps/ethereum_goerli"],
+  paths: [
+    "dapps/ethereum",
+    "dapps/bsc",
+    "dapps/polygon",
+    "dapps/ethereum_ropsten",
+    "dapps/ethereum_goerli",
+    "dapps/ethereum_rinkeby",
+  ],
   output: "ethereum.json", // to be put in crypto assets list
 
   join: (d) => {
