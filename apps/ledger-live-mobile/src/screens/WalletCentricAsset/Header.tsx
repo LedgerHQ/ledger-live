@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { Portfolio } from "@ledgerhq/types-live";
 import Animated from "react-native-reanimated";
 import Touchable from "../../components/Touchable";
+import { NavigatorName, ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { track } from "../../analytics";
@@ -53,6 +54,15 @@ function Header({
     }
     navigation.goBack();
   }, [navigation, readOnlyModeEnabled]);
+
+  const goToSettings = useCallback(() => {
+    navigation.navigate(NavigatorName.AccountSettings, {
+      screen: ScreenName.AccountCurrencySettings,
+      params: {
+        currencyId: currency.id,
+      },
+    });
+  }, [currency.id, navigation]);
 
   return (
     <CurrencyHeaderLayout
@@ -104,7 +114,7 @@ function Header({
         </Flex>
       }
       rightElement={
-        <Touchable onPress={() => {}}>
+        <Touchable onPress={goToSettings}>
           <SettingsMedium size={24} />
         </Touchable>
       }
