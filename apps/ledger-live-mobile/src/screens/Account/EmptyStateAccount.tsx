@@ -54,7 +54,7 @@ function EmptyStateAccount({
 
   const goToReceiveFunds = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId: account.id,
         parentId: parentAccount && parentAccount.id,

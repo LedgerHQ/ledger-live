@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feat/filecoin
+      - support/filecoin-*
 
 concurrency:
   group: bot-seed4

@@ -32,12 +32,7 @@ const PurchaseDevice = () => {
   const [message, setMessage] = useState<PurchaseMessage | null>(null);
 
   const handleBack = useCallback(() => {
-    navigation.navigate(
-      NavigatorName.BuyDevice as never,
-      {
-        screen: ScreenName.GetDevice,
-      } as never,
-    );
+    navigation.goBack();
   }, [navigation]);
 
   const handleOpenDrawer = useCallback(() => {

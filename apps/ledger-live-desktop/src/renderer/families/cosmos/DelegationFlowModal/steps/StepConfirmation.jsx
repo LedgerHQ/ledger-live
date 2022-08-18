@@ -40,7 +40,11 @@ function StepConfirmation({
     return (
       <Container>
         <TrackPage category="Delegation Cosmos" name="Step Confirmed" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={<Trans i18nKey="cosmos.delegation.flow.steps.confirmation.success.title" />}
           description={multiline(t("cosmos.delegation.flow.steps.confirmation.success.text"))}
