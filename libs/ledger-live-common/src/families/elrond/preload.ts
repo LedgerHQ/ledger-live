@@ -1,7 +1,7 @@
 import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import type { ElrondPreloadData } from "./types";
-import { getValidators } from "./api";
+import { getProviders } from "./api";
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
 let currentPreloadedData: ElrondPreloadData = {
@@ -43,7 +43,7 @@ export const getPreloadStrategy = () => {
 };
 export const preload = async (): Promise<ElrondPreloadData> => {
   log("elrond/preload", "preloading elrond data...");
-  const validators = (await getValidators()) || [];
+  const validators = (await getProviders()) || [];
   return {
     validators,
   };
