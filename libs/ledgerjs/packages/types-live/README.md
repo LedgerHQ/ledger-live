@@ -50,6 +50,13 @@ Ledger Live main types.
 *   [FeatureId](#featureid)
 *   [Feature](#feature)
     *   [Properties](#properties-13)
+    *   [enabled](#enabled)
+    *   [languages_whitelisted](#languages_whitelisted)
+    *   [languages_whitelisted](#languages_whitelisted-1)
+    *   [languages_blacklisted](#languages_blacklisted)
+    *   [enabledOverriddenForCurrentLanguage](#enabledoverriddenforcurrentlanguage)
+    *   [overridesRemote](#overridesremote)
+    *   [params](#params)
 *   [DefaultFeatures](#defaultfeatures)
 *   [LedgerScriptParams](#ledgerscriptparams)
     *   [Properties](#properties-14)
@@ -450,19 +457,65 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Add others with union (e.g. "learn" | "market" | "foo")
 
-Type: (`"learn"` | `"pushNotifications"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))
+Type: (`"learn"` | `"pushNotifications"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"ptxSmartRoutingMobile"` | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))
 
 ### Feature
 
 We use objects instead of direct booleans for potential future improvements
 like feature versioning etc
 
-Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), params: any?}
+Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: any?}
 
 #### Properties
 
 *   `enabled` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+*   `languages_whitelisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
+*   `languages_blacklisted` **\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?** 
+*   `enabledOverriddenForCurrentLanguage` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+*   `overridesRemote` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `params` **any?** 
+
+#### enabled
+
+If false, the feature is disabled (for every languages regardless of the languages_whitelisted option)
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+#### languages_whitelisted
+
+You can optionnally use one of the two following options (languages_whitelisted and languages_blacklisted) (Only implemented on mobile for now)
+
+Type: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]
+
+#### languages_whitelisted
+
+List of languages for which the feature is enabled (it will be disabled by default for all of the others)
+
+Type: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]
+
+#### languages_blacklisted
+
+List of languages for which the feature is disabled
+
+Type: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]
+
+#### enabledOverriddenForCurrentLanguage
+
+Whether the remote value of `enabled` was overriden due to `languages_whitelisted` or `languages_blacklisted`
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+#### overridesRemote
+
+Whether the remote value of this object was overriden locally
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+#### params
+
+Additional params
+
+Type: any
 
 ### DefaultFeatures
 

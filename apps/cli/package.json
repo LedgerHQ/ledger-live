@@ -17,7 +17,7 @@
     "lib"
   ],
   "scripts": {
-    "prebuild": "./scripts/gen.sh",
+    "prebuild": "zx ./scripts/gen.mjs",
     "build": "tsc --project src/tsconfig.json",
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
     "watch": "tsc --watch --project src/tsconfig.json",

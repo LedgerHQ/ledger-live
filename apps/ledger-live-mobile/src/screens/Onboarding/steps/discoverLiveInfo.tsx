@@ -74,11 +74,9 @@ const Item = ({
     dispatch(setReadOnlyMode(true));
     onClick("Explore without a device");
 
-    // Fixme: Navigate to read only page ?
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    navigation.navigate(NavigatorName.Base, {
-      screen: NavigatorName.Main,
+    navigation.reset({
+      index: 0,
+      routes: [{ name: NavigatorName.Base } as never],
     });
   }, [dispatch, navigation, onClick]);
 

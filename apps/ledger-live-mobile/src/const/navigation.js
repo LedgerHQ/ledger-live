@@ -34,6 +34,7 @@ export const ScreenName = {
   DebugCrash: "DebugCrash",
   DebugDevices: "DebugDevices",
   DebugExport: "DebugExport",
+  DebugFeatureFlags: "DebugFeatureFlags",
   DebugHttpTransport: "DebugHttpTransport",
   DebugIcons: "DebugIcons",
   DebugLogs: "DebugLogs",
