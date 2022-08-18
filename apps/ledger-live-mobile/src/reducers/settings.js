@@ -167,7 +167,7 @@ export const INITIAL_STATE: SettingsState = {
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
-  firstConnectionHasDevice: false,
+  firstConnectionHasDevice: null,
   notifications: {
     allowed: false,
     transactions: false,
