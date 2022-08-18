@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity } from "react-native";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { ValueChange } from "@ledgerhq/types-live";
-import { Flex, Text, Tag } from "@ledgerhq/native-ui";
+import { Flex, Text, Tag, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -78,14 +78,19 @@ const AccountRowLayout = ({
                 {name}
               </Text>
               {tag && (
-                <Tag flexShrink={0} ml={3}>
+                <Tag flexShrink={0} ml={3} numberOfLines={1}>
                   {tag}
                 </Tag>
               )}
             </Flex>
 
             {parentAccountName && (
-              <Tag type={"shade"} size={"small"}>
+              <Tag
+                type={"shade"}
+                size={"small"}
+                numberOfLines={1}
+                ellipsizeMode="middle"
+              >
                 {parentAccountName}
               </Tag>
             )}
@@ -98,6 +103,13 @@ const AccountRowLayout = ({
             flexShrink={0}
             flexGrow={0}
           >
+            <Text variant="large" fontWeight="semiBold" color="neutral.c100">
+              <CounterValue
+                currency={currency}
+                value={balance}
+                joinFragmentsSeparator=""
+              />
+            </Text>
             <Text
               variant="body"
               fontWeight="medium"
@@ -106,14 +118,8 @@ const AccountRowLayout = ({
             >
               <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
             </Text>
-            <Text variant="large" fontWeight="semiBold" color="neutral.c100">
-              <CounterValue
-                currency={currency}
-                value={balance}
-                joinFragmentsSeparator=""
-              />
-            </Text>
           </Flex>
+          <Icons.DroprightMedium size={24} />
         </Flex>
       </Flex>
       {bottomLink && (

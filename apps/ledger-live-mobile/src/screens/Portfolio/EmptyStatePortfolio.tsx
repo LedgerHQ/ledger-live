@@ -58,7 +58,12 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
           />
         </Flex>
       ) : null}
-      <Flex flex={1} flexDirection="column" justifyContent="center">
+      <Flex
+        flex={1}
+        flexDirection="column"
+        justifyContent="center"
+        bg="background.main"
+      >
         <Box alignItems="center" mt={8}>
           <Illustration
             size={150}

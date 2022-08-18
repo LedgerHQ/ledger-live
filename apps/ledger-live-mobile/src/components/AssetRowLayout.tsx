@@ -77,7 +77,7 @@ const AssetRowLayout = ({
               </Flex>
               {tag && (
                 <Flex mx={3} flexShrink={0}>
-                  <Tag>{tag}</Tag>
+                  <Tag numberOfLines={1}>{tag}</Tag>
                 </Flex>
               )}
             </Flex>
