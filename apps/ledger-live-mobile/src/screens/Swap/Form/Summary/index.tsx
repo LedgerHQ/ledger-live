@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
