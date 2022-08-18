@@ -26,7 +26,7 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceIn
       <Icons.LanguageMedium color="neutral.c80" size={24} />
       <Flex ml={1} mr={5}>
         <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
-          Language
+          {t("deviceLocalization.language")}
         </Text>
       </Flex>
       <Button
