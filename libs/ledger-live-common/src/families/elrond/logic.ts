@@ -75,11 +75,11 @@ export const computeTransactionValue = async (
     totalSpent = amount;
   } else {
     totalSpent = t.useAllAmount
-      ? a.balance
+      ? a.spendableBalance
       : new BigNumber(t.amount).plus(estimatedFees);
 
     amount = t.useAllAmount
-      ? a.balance.minus(estimatedFees)
+      ? a.spendableBalance.minus(estimatedFees)
       : new BigNumber(t.amount);
   }
 

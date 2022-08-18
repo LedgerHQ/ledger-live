@@ -71,7 +71,7 @@ const estimateMaxSpendable = async ({
 
   const fees = await getEstimatedFees(tx);
 
-  if (fees.gt(mainAccount.balance)) {
+  if (fees.gt(mainAccount.spendableBalance)) {
     return new BigNumber(0);
   }
 
