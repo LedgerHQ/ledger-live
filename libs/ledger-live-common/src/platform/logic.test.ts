@@ -12,78 +12,94 @@ import BigNumber from "bignumber.js";
 import * as converters from "./converters";
 import * as serializers from "./serializers";
 
+// Given
+const mockPlatformReceiveRequested = jest.fn();
+const mockPlatformReceiveFail = jest.fn();
+const context = createContextContainingAccountId(
+  mockPlatformReceiveRequested,
+  mockPlatformReceiveFail,
+  "11",
+  "12"
+);
+
 describe("receiveOnAccountLogic", () => {
-  it("calls uiNavigation callback with an accountAddress", async () => {
+  const uiNavigation = jest.fn();
+
+  beforeEach(() => uiNavigation.mockClear());
+
+  describe("when nominal case", () => {
     // Given
     const accountId = "12";
-    const context = createContextContainingAccountId(accountId);
     const expectedResult = "Function called";
-    const uiNavigation = jest.fn().mockResolvedValueOnce(expectedResult);
-    const convertedAccount = {
-      ...createPlatformAccount(),
-      address: "Converted address",
-    };
-    jest
-      .spyOn(converters, "accountToPlatformAccount")
-      .mockReturnValueOnce(convertedAccount);
 
-    // When
-    const result = await receiveOnAccountLogic(
-      context,
-      accountId,
-      uiNavigation
-    );
+    beforeEach(() => {
+      mockPlatformReceiveRequested.mockClear();
+      mockPlatformReceiveFail.mockClear();
+      uiNavigation.mockResolvedValueOnce(expectedResult);
+    });
 
-    // Then
-    expect(uiNavigation).toBeCalledTimes(1);
-    expect(uiNavigation.mock.calls[0][2]).toEqual("Converted address");
-    expect(result).toEqual(expectedResult);
-  });
+    it("calls uiNavigation callback with an accountAddress", async () => {
+      // Given
+      const convertedAccount = {
+        ...createPlatformAccount(),
+        address: "Converted address",
+      };
+      jest
+        .spyOn(converters, "accountToPlatformAccount")
+        .mockReturnValueOnce(convertedAccount);
 
-  it("calls the tracking for success", async () => {
-    // Given
-    const accountId = "12";
-    const context = createContextContainingAccountId(accountId);
-    const expectedResult = "Function called";
-    const uiNavigation = jest.fn().mockResolvedValueOnce(expectedResult);
+      // When
+      const result = await receiveOnAccountLogic(
+        context,
+        accountId,
+        uiNavigation
+      );
 
-    // When
-    await receiveOnAccountLogic(context, accountId, uiNavigation);
+      // Then
+      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation.mock.calls[0][2]).toEqual("Converted address");
+      expect(result).toEqual(expectedResult);
+    });
 
-    // Then
-    expect(context.tracking.platformReceiveRequested).toBeCalledTimes(1);
-    expect(context.tracking.platformReceiveFail).toBeCalledTimes(0);
-  });
-
-  it("returns an error when account cannot be found", async () => {
-    // Given
-    const accountId = "12";
-    const context = createContextContainingAccountId("10", "11");
-    const uiNavigation = jest.fn().mockResolvedValueOnce("Function called");
-
-    // When
-    await expect(async () => {
+    it("calls the tracking for success", async () => {
+      // When
       await receiveOnAccountLogic(context, accountId, uiNavigation);
-    }).rejects.toThrowError("Account required");
 
-    // Then
-    expect(uiNavigation).toBeCalledTimes(0);
+      // Then
+      expect(mockPlatformReceiveRequested).toBeCalledTimes(1);
+      expect(mockPlatformReceiveFail).toBeCalledTimes(0);
+    });
   });
 
-  it("calls the tracking when account cannot be found", async () => {
+  describe("when account cannot be found", () => {
     // Given
-    const accountId = "12";
-    const context = createContextContainingAccountId("10", "11");
-    const uiNavigation = jest.fn().mockResolvedValueOnce("Function called");
+    const accountId = "10";
 
-    // When
-    await expect(async () => {
-      await receiveOnAccountLogic(context, accountId, uiNavigation);
-    }).rejects.toThrowError("Account required");
+    beforeEach(() => {
+      mockPlatformReceiveRequested.mockClear();
+      mockPlatformReceiveFail.mockClear();
+    });
 
-    // Then
-    expect(context.tracking.platformReceiveRequested).toBeCalledTimes(1);
-    expect(context.tracking.platformReceiveFail).toBeCalledTimes(1);
+    it("returns an error", async () => {
+      // When
+      await expect(async () => {
+        await receiveOnAccountLogic(context, accountId, uiNavigation);
+      }).rejects.toThrowError("Account required");
+
+      // Then
+      expect(uiNavigation).toBeCalledTimes(0);
+    });
+
+    it("calls the tracking", async () => {
+      // When
+      await expect(async () => {
+        await receiveOnAccountLogic(context, accountId, uiNavigation);
+      }).rejects.toThrowError("Account required");
+
+      // Then
+      expect(mockPlatformReceiveRequested).toBeCalledTimes(1);
+      expect(mockPlatformReceiveFail).toBeCalledTimes(1);
+    });
   });
 });
 
@@ -91,7 +107,6 @@ describe("broadcastTransactionLogic", () => {
   it("calls uiNavigation callback with a signedOperation", async () => {
     // Given
     const accountId = "12";
-    const context = createContextContainingAccountId(accountId);
     const rawSignedTransaction = createSignedOperationRaw();
     const expectedResult = "Function called";
     const signedOperation = createSignedOperation();
@@ -144,13 +159,17 @@ function createAppManifest(id = "1"): AppManifest {
   };
 }
 
-function createContextContainingAccountId(...accountIds: string[]) {
+function createContextContainingAccountId(
+  platformReceiveRequested: jest.Mock,
+  platformReceiveFail: jest.Mock,
+  ...accountIds: string[]
+) {
   return {
     manifest: createAppManifest(),
     accounts: [...accountIds.map((val) => createAccount(val)), createAccount()],
     tracking: {
-      platformReceiveRequested: jest.fn(),
-      platformReceiveFail: jest.fn(),
+      platformReceiveRequested,
+      platformReceiveFail,
     },
   };
 }
