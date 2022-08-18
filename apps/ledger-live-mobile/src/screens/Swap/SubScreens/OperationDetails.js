@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -21,7 +21,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/helpers";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { accountSelector } from "../../../reducers/accounts";
+import { flattenAccountsSelector } from "../../../reducers/accounts";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import LText from "../../../components/LText";
 import SectionSeparator from "../../../components/SectionSeparator";
@@ -45,12 +45,15 @@ export function OperationDetails({ route }: OperationDetailsProps) {
     toAmount,
     operation,
   } = swapOperation;
-  const fromAccount = useSelector(state =>
-    accountSelector(state, { accountId: fromAccountId }),
+  const accounts = useSelector(flattenAccountsSelector);
+  const fromAccount = useMemo(
+    () => accounts.find(a => a.id === fromAccountId),
+    [accounts, fromAccountId],
   );
-  const toAccount = useSelector(state =>
-    accountSelector(state, { accountId: toAccountId }),
-  );
+  const toAccount = useMemo(() => accounts.find(a => a.id === toAccountId), [
+    accounts,
+    toAccountId,
+  ]);
 
   const { colors } = useTheme();
   const swap =

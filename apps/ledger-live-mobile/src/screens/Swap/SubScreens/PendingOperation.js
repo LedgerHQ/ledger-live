@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -14,7 +14,7 @@ import IconClock from "../../../icons/Clock";
 import { rgba } from "../../../colors";
 import { TrackScreen } from "../../../analytics";
 import { PendingOperationProps } from "../types";
-import { accountSelector } from "../../../reducers/accounts";
+import { flattenAccountsSelector } from "../../../reducers/accounts";
 
 const forceInset = { bottom: "always" };
 
@@ -26,12 +26,15 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
     toAccountId,
     fromAccountId,
   } = route.params.swapOperation;
-  const fromAccount = useSelector(state =>
-    accountSelector(state, { accountId: fromAccountId }),
+  const accounts = useSelector(flattenAccountsSelector);
+  const fromAccount = useMemo(
+    () => accounts.find(a => a.id === fromAccountId),
+    [accounts, fromAccountId],
   );
-  const toAccount = useSelector(state =>
-    accountSelector(state, { accountId: toAccountId }),
-  );
+  const toAccount = useMemo(() => accounts.find(a => a.id === toAccountId), [
+    accounts,
+    toAccountId,
+  ]);
 
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
   const targetCurrency = toAccount && getAccountCurrency(toAccount);
