@@ -160,6 +160,15 @@ const DeviceCard = ({
             <Divider />
           </Flex>
         )}
+      <Flex flexDirection={"row"} mt={24} mx={4} mb={8}>
+        <Text
+          variant={"subtitle"}
+          fontWeight={"semiBold"}
+          color={"neutral.c20"}
+        >
+          {"Some UI"}
+        </Text>
+      </Flex>
       <DeviceAppStorage
         distribution={distribution}
         deviceModel={deviceModel}

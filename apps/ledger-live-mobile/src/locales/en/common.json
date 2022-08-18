@@ -3508,6 +3508,16 @@
   "manager": {
     "tabTitle": "My Ledger",
     "title": "My Ledger",
+    "selectDevice": {
+      "saved": "Saved ledgers",
+      "addNewCTA": "Add new +",
+      "buyDeviceCTA": "Need a new Ledger? Buy one",
+      "item": {
+        "usb": "Connected with USB",
+        "available": "Available. Tap to connect",
+        "unavailable": "Not connected"
+      }
+    },
     "connect": "Select your device",
     "appsCatalog": "App catalog",
     "installedApps": "Apps installed",

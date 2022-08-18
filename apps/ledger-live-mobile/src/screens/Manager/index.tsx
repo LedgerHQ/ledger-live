@@ -13,7 +13,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { removeKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";
 import { ManagerTab } from "./Manager";
-import SelectDevice from "../../components/SelectDevice";
+import SelectDevice from "../../components/SelectDevice2";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";
 import Button from "../../components/Button";
@@ -182,7 +182,9 @@ class ChooseDevice extends Component<
           <Trans i18nKey="manager.connect" />
         </Text>
         <SelectDevice
-          usbOnly={params?.firmwareUpdate}
+          // usbOnly={params?.firmwareUpdate}
+          // usbOnly
+          onWithoutDevice={()=>{}}
           autoSelectOnAdd
           onSelect={this.onSelectDevice}
           onStepEntered={this.onStepEntered}
