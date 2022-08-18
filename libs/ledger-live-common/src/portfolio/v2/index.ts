@@ -166,6 +166,12 @@ type Available = {
   countervalueSendSum: number;
 };
 
+const defaultGetPortfolioOptions = {
+  flattenSourceAccounts: true,
+};
+
+export type GetPortfolioOptionsType = typeof defaultGetPortfolioOptions;
+
 /**
  * calculate the total balance history for all accounts in a reference fiat unit
  * and using a CalculateCounterValue function (see countervalue helper)
@@ -176,9 +182,16 @@ export function getPortfolio(
   topAccounts: Account[],
   range: PortfolioRange,
   cvState: CounterValuesState,
-  cvCurrency: Currency
+  cvCurrency: Currency,
+  options?: GetPortfolioOptionsType
 ): Portfolio {
-  const accounts = flattenAccounts(topAccounts);
+  const { flattenSourceAccounts } = {
+    ...defaultGetPortfolioOptions,
+    ...options,
+  };
+  const accounts = flattenSourceAccounts
+    ? flattenAccounts(topAccounts)
+    : topAccounts;
   const count = getPortfolioCount(accounts, range);
   const { availables, unavailableAccounts } = accounts.reduce<{
     availables: Available[];
