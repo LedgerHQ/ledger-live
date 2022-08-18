@@ -123,9 +123,9 @@ const AssetScreen = ({ route }: Props) => {
       <SectionContainer px={6}>
         <SectionTitle
           title={t("asset.accountsSection.title", {
-            currencyName: currency.name,
+            currencyName: currency.ticker,
           })}
-          seeMoreText={t("addAccounts.sections.creatable.title")}
+          seeMoreText={t("addAccounts.addNew")}
           onSeeAllPress={onAddAccount}
         />
         <AccountsSection accounts={cryptoAccounts} />
@@ -146,9 +146,10 @@ const AssetScreen = ({ route }: Props) => {
       currentPositionY,
       graphCardEndPosition,
       currency,
-      t,
       areCryptoAccountsEmpty,
+      t,
       cryptoAccounts,
+      onAddAccount,
     ],
   );
 

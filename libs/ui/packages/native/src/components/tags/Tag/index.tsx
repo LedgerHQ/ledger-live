@@ -11,6 +11,8 @@ export interface TagProps extends FlexBoxProps {
   Icon?: IconType;
   uppercase?: boolean;
   children?: React.ReactNode;
+  numberOfLines?: number;
+  ellipsizeMode?: "head" | "middle" | "tail" | "clip";
 }
 
 const typeColor = {
@@ -25,6 +27,8 @@ export default function Tag({
   uppercase,
   Icon,
   children,
+  numberOfLines,
+  ellipsizeMode,
   ...props
 }: TagProps): JSX.Element {
   return (
@@ -52,6 +56,8 @@ export default function Tag({
         uppercase={uppercase !== false}
         textAlign="center"
         color={type === "shade" ? "neutral.c90" : "neutral.c00"}
+        numberOfLines={numberOfLines}
+        ellipsizeMode={ellipsizeMode}
       >
         {children}
       </Text>

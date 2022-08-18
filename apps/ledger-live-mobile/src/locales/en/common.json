@@ -2887,6 +2887,7 @@
     }
   },
   "addAccounts": {
+    "addNew": "Add new",
     "supportLinks": {
       "segwit_or_native_segwit": "Segwit or Native segwit?"
     },
