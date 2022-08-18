@@ -913,7 +913,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     units: [
       {
         name: "EGLD",
-        code: "egld",
+        code: "EGLD",
         magnitude: 18,
       },
     ],
@@ -3327,8 +3327,8 @@ export function listCryptoCurrencies(
       ? cryptocurrenciesArray
       : prodCryptoArray
     : withDevCrypto
-    ? cryptocurrenciesArrayWithoutTerminated
-    : prodCryptoArrayWithoutTerminated;
+      ? cryptocurrenciesArrayWithoutTerminated
+      : prodCryptoArrayWithoutTerminated;
 }
 
 /**
