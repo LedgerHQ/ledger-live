@@ -31,7 +31,7 @@ export function translateContent(content: any, locale = "en"): string {
   return content[locale] || content.en;
 }
 
-type WebPlatformContext = {
+export type WebPlatformContext = {
   manifest: AppManifest;
   accounts: AccountLike[];
   tracking: Record<string, TrackFunction>;
