@@ -19,6 +19,7 @@ type Props = {
   icon?: string | null,
   description: TranslatableString,
   url?: string | null,
+  uri?: string | null,
   isOpened: boolean,
   setIsOpened: (isOpened: boolean) => void,
 };
@@ -28,6 +29,7 @@ const InfoPanel = ({
   icon,
   description,
   url,
+  uri,
   isOpened,
   setIsOpened,
 }: Props) => {
@@ -91,6 +93,28 @@ const InfoPanel = ({
               style={{ ...styles.basicFontStyle, color: colors.live }}
             >
               {url}
+            </LText>
+            <View style={styles.externalLinkIcon}>
+              <ExternalLinkIcon size={14} color={colors.live} />
+            </View>
+          </TouchableOpacity>
+        </>
+      ) : null}
+      {__DEV__ && uri ? (
+        <>
+          <View style={styles.hr} />
+          <LText semibold style={styles.subSectionTitle}>
+            URI:
+          </LText>
+          <TouchableOpacity
+            style={styles.flexRow}
+            onPress={() => onLinkPress(uri)}
+          >
+            <LText
+              semibold
+              style={{ ...styles.basicFontStyle, color: colors.live }}
+            >
+              {uri}
             </LText>
             <View style={styles.externalLinkIcon}>
               <ExternalLinkIcon size={14} color={colors.live} />

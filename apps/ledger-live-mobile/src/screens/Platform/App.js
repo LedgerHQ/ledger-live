@@ -7,26 +7,28 @@ import {
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
 import type { StackScreenProps } from "@react-navigation/stack";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import TrackScreen from "../../analytics/TrackScreen";
 import WebPlatformPlayer from "../../components/WebPlatformPlayer";
 import GenericErrorView from "../../components/GenericErrorView";
+import { useLocale } from "../../context/Locale";
 
 const appManifestNotFoundError = new Error("App not found");
 
 const PlatformApp = ({ route }: StackScreenProps) => {
-  const { dark } = useTheme();
+  const { theme } = useTheme();
   const { platform: appId, ...params } = route.params;
   const { setParams } = useNavigation();
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
+  const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
   useEffect(() => {
     manifest?.name && setParams({ name: manifest.name });
   }, [manifest, setParams]);
-  const themeType = dark ? "dark" : "light";
 
   return manifest ? (
     <>
@@ -34,7 +36,8 @@ const PlatformApp = ({ route }: StackScreenProps) => {
       <WebPlatformPlayer
         manifest={manifest}
         inputs={{
-          theme: themeType,
+          theme,
+          lang: locale,
           ...params,
         }}
       />

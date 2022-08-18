@@ -3,10 +3,10 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "private": true,
   "scripts": {
-    "postinstall": "bash ./scripts/post.sh",
+    "postinstall": "zx ./scripts/post.mjs",
     "pod": "cd ios && bundle exec pod install --repo-update",
     "start": "react-native start",
     "ios": "react-native run-ios",
@@ -34,7 +34,7 @@
     "android:ci:playstore": "bundle exec fastlane android ci_playstore --env production",
     "preandroid:ci:nightly": "bundle install",
     "android:ci:nightly": "bundle exec fastlane android ci_nightly --env nightly",
-    "android:hermes:staging": "export HERMES_ENABLED_ANDROID=true && yarn android:staging",
+    "android:hermes:staging": "export HERMES_ENABLED_ANDROID=true && pnpm android:staging",
     "android:staging": "cd android && ./gradlew assembleStagingRelease",
     "android:install": "./scripts/install-and-run-apk.sh",
     "android:clean": "$ANDROID_HOME/platform-tools/adb shell pm clear com.ledger.live",

@@ -15,8 +15,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { WebView } from "react-native-webview";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import Color from "color";
+import { useNavigation } from "@react-navigation/native";
 import invariant from "invariant";
 
 import { JSONRPCRequest } from "json-rpc-2.0";
@@ -61,6 +60,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 
+import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
@@ -91,7 +91,7 @@ const ReloadButton = ({
       disabled={loading}
       onPress={() => !loading && onReload()}
     >
-      <UpdateIcon size={18} color={colors.grey} />
+      <UpdateIcon size={18} color={colors.neutral.c70} />
     </TouchableOpacity>
   );
 };
@@ -115,7 +115,7 @@ const InfoPanelButton = ({
       disabled={loading}
       onPress={onPress}
     >
-      <InfoIcon size={18} color={colors.grey} />
+      <InfoIcon size={18} color={colors.neutral.c70} />
     </TouchableOpacity>
   );
 };
@@ -123,7 +123,6 @@ const InfoPanelButton = ({
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
   const accounts = flattenAccounts(useSelector(accountsSelector));
-  const theme = useTheme();
   const navigation = useNavigation();
 
   const [loadDate, setLoadDate] = useState(Date.now());
@@ -135,8 +134,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const uri = usePlatformUrl(
     manifest,
     {
-      background: new Color(theme.colors.card).hex(),
-      text: new Color(theme.colors.text).hex(),
       loadDate,
     },
     inputs,
@@ -703,6 +700,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         name={manifest.name}
         icon={manifest.icon}
         url={manifest.homepageUrl}
+        uri={uri.toString()}
         description={manifest.content.description}
         isOpened={isInfoPanelOpened}
         setIsOpened={setIsInfoPanelOpened}
