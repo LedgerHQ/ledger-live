@@ -273,7 +273,7 @@ function MarketDetail({
 
         {filteredAccounts && filteredAccounts.length > 0 ? (
           <Flex mx={6} mt={8}>
-            <Text variant="h3">{t("distribution.title")}</Text>
+            <Text variant="h3">{t("accounts.title")}</Text>
             <FlatList
               data={filteredAccounts}
               renderItem={renderAccountItem}
