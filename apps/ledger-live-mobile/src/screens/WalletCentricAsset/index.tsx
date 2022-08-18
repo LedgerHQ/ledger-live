@@ -177,6 +177,8 @@ const AssetScreen = ({ route }: Props) => {
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
         currency={currency}
+        assetPortfolio={assetPortfolio}
+        counterValueCurrency={counterValueCurrency}
       />
     </TabBarSafeAreaView>
   );

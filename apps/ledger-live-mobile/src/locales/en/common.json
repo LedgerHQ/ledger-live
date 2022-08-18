@@ -4548,6 +4548,7 @@
     }
   },
   "asset": {
+    "title": "Your {{assetName}}",
     "accountsSection": {
       "title": "Your {{currencyName}} accounts"
     }

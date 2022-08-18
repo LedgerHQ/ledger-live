@@ -1,29 +1,6 @@
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  ReactNode,
-  memo,
-  useEffect,
-} from "react";
-import { useTheme } from "styled-components/native";
-import { AccountLike } from "@ledgerhq/types-live";
-import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import {
-  ValueChange,
-  PortfolioRange,
-  BalanceHistoryWithCountervalue,
-} from "@ledgerhq/live-common/portfolio/v2/types";
-import {
-  Box,
-  Flex,
-  Text,
-  Transitions,
-  InfiniteLoader,
-  GraphTabs,
-} from "@ledgerhq/native-ui";
-
+import React, { useState, useCallback, memo } from "react";
+import styled, { useTheme } from "styled-components/native";
+import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Animated, {
@@ -34,23 +11,32 @@ import Animated, {
 import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import { Item } from "./Graph/types";
-import { useBalanceHistoryWithCountervalue } from "../actions/portfolio";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
-import Touchable from "./Touchable";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
-import { NoCountervaluePlaceholder } from "./CounterValue";
-import DiscreetModeButton from "./DiscreetModeButton";
+import ParentCurrencyIcon from "./ParentCurrencyIcon";
+import FormatDate from "./FormatDate";
 
-type FooterProps = {
-  renderAccountSummary: () => ReactNode;
-};
+const Placeholder = styled(Flex).attrs({
+  backgroundColor: "neutral.c40",
+  borderRadius: "4px",
+})``;
+
+const BigPlaceholder = styled(Placeholder).attrs({
+  width: 189,
+  height: 18,
+})``;
+
+const SmallPlaceholder = styled(Placeholder).attrs({
+  width: 109,
+  height: 8,
+  borderRadius: "2px",
+})``;
 
 type Props = {
   assetPortfolio: Portfolio;
   counterValueCurrency: Currency;
-  currentPositionY: SharedValue<number>;
+  currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
   currency: Currency;
   areAccountsEmpty: boolean;
@@ -118,9 +104,11 @@ function AssetCentricGraphCard({
         alignItems={"center"}
         marginTop={9}
         marginBottom={9}
+        pt={10}
       >
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
+            <ParentCurrencyIcon size={32} currency={currency} />
             {areAccountsEmpty ? (
               <Text variant={"h3"} color={"neutral.c100"}>
                 <CurrencyUnitValue unit={unit} value={0} />
@@ -131,20 +119,37 @@ function AssetCentricGraphCard({
                   {!balanceAvailable ? (
                     <BigPlaceholder mt="8px" />
                   ) : (
-                    <Text
-                      fontFamily="Inter"
-                      fontWeight="semiBold"
-                      fontSize="42px"
-                      color={"neutral.c100"}
-                      numberOfLines={1}
-                      adjustsFontSizeToFit
-                    >
-                      <CurrencyUnitValue
-                        unit={unit}
-                        value={hoveredItem ? hoveredItem.value : item.value}
-                        joinFragmentsSeparator=" "
-                      />
-                    </Text>
+                    <>
+                      <Text
+                        variant={"large"}
+                        fontWeight={"medium"}
+                        color={"neutral.c80"}
+                      >
+                        <CurrencyUnitValue
+                          unit={unit}
+                          value={
+                            hoveredItem
+                              ? hoveredItem.countervalue
+                              : item.countervalue
+                          }
+                          joinFragmentsSeparator=" "
+                        />
+                      </Text>
+                      <Text
+                        fontFamily="Inter"
+                        fontWeight="semiBold"
+                        fontSize="32px"
+                        color={"neutral.c100"}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                      >
+                        <CurrencyUnitValue
+                          unit={unit}
+                          value={hoveredItem ? hoveredItem.value : item.value}
+                          joinFragmentsSeparator=" "
+                        />
+                      </Text>
+                    </>
                   )}
                   <TransactionsPendingConfirmationWarning />
                 </Flex>

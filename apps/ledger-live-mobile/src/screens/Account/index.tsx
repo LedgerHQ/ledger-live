@@ -206,6 +206,11 @@ const AccountScreenInner = ({
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
         account={account}
+        useCounterValue={useCounterValue}
+        counterValueCurrency={counterValueCurrency}
+        history={history}
+        countervalueAvailable={countervalueAvailable}
+        parentAccount={parentAccount}
       />
     </TabBarSafeAreaView>
   );

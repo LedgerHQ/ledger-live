@@ -35,7 +35,7 @@ function PortfolioHeader({
   counterValueCurrency,
   hidePortfolio,
 }: {
-  currentPositionY: SharedValue<number>;
+  currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
   portfolio: Portfolio;
   counterValueCurrency: Currency;
