@@ -54,10 +54,12 @@ export default function AddAccountsTokenCurrencyDisclaimer({
     if (parentTokenAccount && parentTokenAccount.type === "Account") {
       onClose();
       navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveSelectAccount,
+        screen: ScreenName.ReceiveConfirmation,
         params: {
           // prefilter with token curency
-          selectedCurrency: token,
+          accountId: parentTokenAccount.id,
+          currency: token,
+          createTokenAccount: true,
         },
       });
     } else {
