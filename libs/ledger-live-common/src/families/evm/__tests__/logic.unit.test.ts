@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-import explorers from "../explorers";
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "../../../account";
 import {
@@ -18,19 +18,23 @@ import {
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
-    const fakeEthereumCurrency: Partial<CryptoCurrency> = {
-      id: "ethereum_lite",
-    };
     const fakeNonExistingCurrency: Partial<CryptoCurrency> = { id: "kvn_lite" };
 
     describe("scanApiForCurrency", () => {
       it("should return the etherscan-like api for all compatible chains", () => {
-        const chains = Object.keys(explorers).map((chain) =>
-          scanApiForCurrency({ id: chain + "_lite" } as CryptoCurrency)
-        );
-        const apis = Object.values(explorers);
+        const evmCurrencies = listCryptoCurrencies()
+          .filter((c) => c.family === "evm")
+          .filter((c) => {
+            expect(c.ethereumLikeInfo).toBeDefined();
+            return !!c.ethereumLikeInfo?.explorer;
+          });
 
-        expect(chains).toEqual(apis);
+        const chains = evmCurrencies.map(scanApiForCurrency);
+        const explorers = evmCurrencies.map(
+          (c) => c.ethereumLikeInfo?.explorer
+        );
+
+        expect(chains).toEqual(explorers);
       });
       it("should return null for a crypto that has no explorer set", () => {
         expect(
@@ -161,16 +165,16 @@ describe("EVM Family", () => {
         const accountId = encodeAccountId({
           type: "js",
           version: "2",
-          currencyId: fakeEthereumCurrency.id!,
+          currencyId: "ethereum",
           xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
           derivationMode: "",
         });
 
         const expectedOperation: Operation = {
-          id: "js:2:ethereum_lite:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-OUT",
+          id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-OUT",
           hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
           accountId:
-            "js:2:ethereum_lite:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:",
+            "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:",
           blockHash:
             "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
           blockHeight: 14923692,

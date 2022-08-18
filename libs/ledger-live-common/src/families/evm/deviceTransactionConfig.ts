@@ -30,7 +30,7 @@ function getDeviceTransactionConfig({
         {
           type: "text",
           label: "Network",
-          value: account.currency.name.replace("Lite", "").trim(),
+          value: account.currency.name,
         }
       );
       break;

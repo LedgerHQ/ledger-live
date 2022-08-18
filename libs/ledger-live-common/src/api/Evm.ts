@@ -24,12 +24,14 @@ export async function withApi<T>(
   execute: (api: ethers.providers.JsonRpcProvider) => Promise<T>,
   retries = DEFAULT_RETRIES_RPC_METHODS
 ): Promise<T> {
-  if (!currency?.rpc) {
+  if (!currency?.ethereumLikeInfo?.rpc) {
     throw new Error("Currency doesn't have an RPC node provided");
   }
 
   try {
-    const provider = new ethers.providers.JsonRpcProvider(currency.rpc);
+    const provider = new ethers.providers.JsonRpcProvider(
+      currency?.ethereumLikeInfo?.rpc
+    );
     return await execute(provider);
   } catch (e) {
     if (retries) {

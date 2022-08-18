@@ -2,6 +2,7 @@ import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "../../operation";
 import {
   EtherscanOperation,
@@ -9,19 +10,20 @@ import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
 } from "./types";
-import APIS from "./explorers";
 
 /**
  * Returns the domain to use to get the Etherscan-like explorer.
  * If no API is found, just return null
  */
 export const scanApiForCurrency = (currency: CryptoCurrency): string | null => {
-  const mainApi = APIS[currency.id.replace("_lite", "")];
+  const mainApi = currency.ethereumLikeInfo?.explorer;
   if (mainApi) {
     return mainApi;
   }
 
-  const testnetApi = APIS[currency.isTestnetFor || ""];
+  const testnetApi = currency.isTestnetFor
+    ? getCryptoCurrencyById(currency.isTestnetFor)?.ethereumLikeInfo?.explorer
+    : "";
   if (testnetApi) {
     return testnetApi.replace(
       "api",

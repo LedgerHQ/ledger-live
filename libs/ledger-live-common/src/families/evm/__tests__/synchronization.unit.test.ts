@@ -17,9 +17,9 @@ const getAccountShapeParameters: GetAccountShapeArg0 = {
 };
 const mockAccount: Account = makeAccount("0xkvn", currency);
 const fakeOperation: Operation = {
-  id: "js:2:ethereum_lite:0xkvn:-0xH4sH-OUT",
+  id: "js:2:ethereum:0xkvn:-0xH4sH-OUT",
   hash: "0xH4sH",
-  accountId: "js:2:ethereum_lite:0xkvn:",
+  accountId: "js:2:ethereum:0xkvn:",
   blockHash:
     "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
   blockHeight: 9,
@@ -164,7 +164,7 @@ describe("EVM Family", () => {
                   {
                     ...fakeOperation,
                     hash: "0xN0tH4sH",
-                    id: "js:2:ethereum_lite:0xkvn:-0xN0tH4sH-OUT",
+                    id: "js:2:ethereum:0xkvn:-0xN0tH4sH-OUT",
                   },
                 ],
               },
