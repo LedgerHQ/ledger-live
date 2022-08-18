@@ -78,8 +78,6 @@ function AccountHeader({
 
   const isToken = parentAccount && parentAccount.name !== undefined;
 
-  console.log(isToken, getAccountName(parentAccount), getAccountName(account));
-
   return (
     <CurrencyHeaderLayout
       currentPositionY={currentPositionY}
