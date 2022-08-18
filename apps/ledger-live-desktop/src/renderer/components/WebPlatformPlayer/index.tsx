@@ -193,7 +193,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
                 canEditFees,
                 stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
                 transactionData: liveTx,
-                useApp: params.useApp,
+                useApp: params?.useApp,
                 account,
                 parentAccount,
                 onResult: (signedOperation: SignedOperation) => {
