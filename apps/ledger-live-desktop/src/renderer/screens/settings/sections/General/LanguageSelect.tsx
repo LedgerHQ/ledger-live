@@ -9,7 +9,11 @@ import {
 } from "~/config/languages";
 import useEnv from "~/renderer/hooks/useEnv";
 import { setLanguage } from "~/renderer/actions/settings";
-import { useSystemLanguageSelector, languageSelector } from "~/renderer/reducers/settings";
+import {
+  useSystemLanguageSelector,
+  languageSelector,
+  getInitialLanguageLocale,
+} from "~/renderer/reducers/settings";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
@@ -53,7 +57,9 @@ const LanguageSelect = () => {
   const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
   // TODO: reactivate this feature flag once QA is done
 
-  const availableDeviceLanguages = useAvailableLanguagesForDevice(lastSeenDevice?.deviceInfo);
+  const { availableLanguages: availableDeviceLanguages } = useAvailableLanguagesForDevice(
+    lastSeenDevice?.deviceInfo,
+  );
 
   const debugLanguage = useEnv("EXPERIMENTAL_LANGUAGES");
 
@@ -83,7 +89,8 @@ const LanguageSelect = () => {
   const handleChangeLanguage = useCallback(
     ({ value: languageKey }: ChangeLangArgs) => {
       const deviceLanguageId = lastSeenDevice?.deviceInfo.languageId;
-      const potentialDeviceLanguage = localeIdToDeviceLanguage[languageKey];
+      const potentialDeviceLanguage =
+        localeIdToDeviceLanguage[languageKey ?? getInitialLanguageLocale()];
       const langAvailableOnDevice =
         potentialDeviceLanguage !== undefined &&
         availableDeviceLanguages.includes(potentialDeviceLanguage);
@@ -110,11 +117,7 @@ const LanguageSelect = () => {
 
   return (
     <>
-      <Track
-        onUpdate
-        event="LanguageSelect"
-        currentRegion={currentLanguage.value}
-      />
+      <Track onUpdate event="LanguageSelect" currentRegion={currentLanguage.value} />
 
       <Select
         small
@@ -129,7 +132,7 @@ const LanguageSelect = () => {
       <ChangeDeviceLanguagePrompt
         isOpen={isDeviceLanguagePromptOpen}
         onClose={onClosePrompt}
-        currentLanguage={currentLanguage.value as Locale}
+        currentLanguage={(currentLanguage.value ?? getInitialLanguageLocale()) as Locale}
       />
     </>
   );
