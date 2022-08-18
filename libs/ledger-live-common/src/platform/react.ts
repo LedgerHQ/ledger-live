@@ -30,14 +30,18 @@ export function usePlatformUrl(
 
     if (inputs) {
       for (const key in inputs) {
-        if (Object.prototype.hasOwnProperty.call(inputs, key)) {
+        if (
+          Object.prototype.hasOwnProperty.call(inputs, key) &&
+          inputs[key] !== undefined
+        ) {
           url.searchParams.set(key, inputs[key]);
         }
       }
     }
 
-    url.searchParams.set("backgroundColor", params.background);
-    url.searchParams.set("textColor", params.text);
+    if (params.background)
+      url.searchParams.set("backgroundColor", params.background);
+    if (params.text) url.searchParams.set("textColor", params.text);
     if (params.loadDate) {
       url.searchParams.set("loadDate", params.loadDate.valueOf().toString());
     }

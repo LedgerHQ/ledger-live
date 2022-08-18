@@ -3,12 +3,13 @@ import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsSelector } from "../reducers/accounts";
 import {
   ratingsModalOpenSelector,
+  ratingsModalLockedSelector,
   ratingsCurrentRouteNameSelector,
   ratingsHappyMomentSelector,
   ratingsDataOfUserSelector,
@@ -20,6 +21,7 @@ import {
   setRatingsDataOfUser,
 } from "../actions/ratings";
 import { track } from "../analytics";
+import { setNotificationsModalLocked } from "../actions/notifications";
 
 export type RatingsHappyMoment = {
     /** Name of the route that will trigger the rating flow */
@@ -83,6 +85,7 @@ const useRatings = () => {
   const ratingsFeature = useFeature("ratings");
 
   const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
+  const isRatingsModalLocked = useSelector(ratingsModalLockedSelector);
   const ratingsOldRoute = useSelector(ratingsCurrentRouteNameSelector);
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
@@ -95,9 +98,15 @@ const useRatings = () => {
 
   const setRatingsModalOpenCallback = useCallback(
     isRatingsModalOpen => {
-      dispatch(setRatingsModalOpen(isRatingsModalOpen));
+      if (!isRatingsModalOpen) {
+        dispatch(setRatingsModalOpen(isRatingsModalOpen));
+        dispatch(setNotificationsModalLocked(false));
+      } else if (!isRatingsModalLocked) {
+        dispatch(setRatingsModalOpen(isRatingsModalOpen));
+        dispatch(setNotificationsModalLocked(true));
+      }
     },
-    [dispatch],
+    [dispatch, isRatingsModalLocked],
   );
 
   const areRatingsConditionsMet = useCallback(() => {
@@ -178,13 +187,15 @@ const useRatings = () => {
   const onRouteChange = useCallback(
     ratingsNewRoute => {
       if (ratingsHappyMoment?.timeout) {
+        dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
       }
 
-      if (!areRatingsConditionsMet()) return;
+      if (isRatingsModalLocked || !areRatingsConditionsMet()) return;
 
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
+          dispatch(setNotificationsModalLocked(true));
           const timeout = setTimeout(() => {
             setRatingsModalOpenCallback(true);
           }, happyMoment.timer);
@@ -199,6 +210,7 @@ const useRatings = () => {
       dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
     },
     [
+      isRatingsModalLocked,
       areRatingsConditionsMet,
       ratingsHappyMoment?.timeout,
       dispatch,
@@ -247,6 +259,8 @@ const useRatings = () => {
   );
 
   const handleSettingsRateApp = useCallback(() => {
+    if (isRatingsModalLocked) return;
+
     dispatch(
       setRatingsHappyMoment({
         route_name: "Settings",
@@ -259,7 +273,7 @@ const useRatings = () => {
       params: ratingsFeature?.params,
     });
     setRatingsModalOpenCallback(true);
-  }, [dispatch, ratingsFeature?.params, setRatingsModalOpenCallback]);
+  }, [isRatingsModalLocked, dispatch, ratingsFeature?.params, setRatingsModalOpenCallback]);
 
   const handleRatingsSetDateOfNextAllowedRequest = useCallback((delay, additionalParams) => {
     if (delay !== null && delay !== undefined) {

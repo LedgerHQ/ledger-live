@@ -4,7 +4,7 @@ import { SectionList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import type { Operation } from "@ledgerhq/live-common/types/index";
+import type { Operation } from "@ledgerhq/types-live";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 

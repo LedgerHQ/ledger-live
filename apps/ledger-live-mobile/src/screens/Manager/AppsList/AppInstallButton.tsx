@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import manager from "@ledgerhq/live-common/manager/index";
 
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import type { Action, State } from "@ledgerhq/live-common/apps/index";
 import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import styled from "styled-components/native";
@@ -79,7 +79,7 @@ export default function AppInstallButton({
 
   return (
     <TouchableOpacity onPress={installApp}>
-      <ButtonContainer borderColor="neutral.c40">
+      <ButtonContainer borderColor="neutral.c30">
         <Icons.PlusMedium size={18} color="neutral.c100"/>
       </ButtonContainer>
     </TouchableOpacity>

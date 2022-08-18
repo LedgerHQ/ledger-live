@@ -10,14 +10,8 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
-import {
-  Account,
-  Operation,
-  Currency,
-  Unit,
-  OperationType,
-} from "@ledgerhq/live-common/types/index";
-
+import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

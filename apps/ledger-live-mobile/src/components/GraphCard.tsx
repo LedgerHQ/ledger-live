@@ -1,7 +1,7 @@
 import React, { useCallback, useState, memo } from "react";
 import { TouchableOpacity } from "react-native";
-import { Currency } from "@ledgerhq/live-common/types/index";
-import { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Portfolio } from "@ledgerhq/types-live";
 import { BoxedIcon, Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { PieChartMedium } from "@ledgerhq/native-ui/assets/icons";

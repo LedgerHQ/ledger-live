@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Trans } from "react-i18next";
 
 import { Action } from "@ledgerhq/live-common/apps/index";
-import { App } from "@ledgerhq/live-common/types/manager";
+import { App } from "@ledgerhq/types-live";
 
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
