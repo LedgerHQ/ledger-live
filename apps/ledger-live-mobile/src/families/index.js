@@ -4,6 +4,7 @@ export * from "./ripple";
 export * from "./stellar";
 export * from "./tezos";
 export * from "./tron";
+export * from "./celo";
 export * from "./cosmos";
 export * from "./algorand";
 export * from "./polkadot";

@@ -164,6 +164,11 @@ export const ScreenName = {
   VoteValidationError: "VoteValidationError",
   VoteValidationSuccess: "VoteValidationSuccess",
 
+  // celo
+  CeloRegistrationStarted: "CeloRegistrationStarted",
+  CeloLockingStarted: "CeloLockingStarted",
+
+  // cosmos
   CosmosEditMemo: "CosmosEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
@@ -392,6 +397,9 @@ export const NavigatorName = {
   Base: "Base",
   BaseOnboarding: "BaseOnboarding",
   BuyDevice: "BuyDevice",
+  CeloTestNavigator: "CeloTestNavigator",
+  CeloRegistrationFlow: "CeloRegistrationFlow",
+  CeloLockingFlow: "CeloLockingFlow",
   CosmosClaimRewardsFlow: "CosmosClaimRewardsFlow",
   CosmosDelegationFlow: "CosmosDelegationFlow",
   CosmosRedelegationFlow: "CosmosRedelegationFlow",
