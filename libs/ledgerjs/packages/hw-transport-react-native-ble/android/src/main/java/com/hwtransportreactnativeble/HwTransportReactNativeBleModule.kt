@@ -24,12 +24,17 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
         onDisconnect?.let { it(any) }
     }
 
+    init {
+        Timber.plant(Timber.DebugTree())
+        Timber.d("init ble native module $this")
+    }
+
     @ReactMethod
     fun observeBluetooth() {
-        if (!planted) {
-            Timber.plant(Timber.DebugTree())
-            planted = true
-        }
+        // if (!planted) {
+        //     Timber.plant(Timber.DebugTree())
+        //     planted = true
+        // }
     }
 
     @ReactMethod
