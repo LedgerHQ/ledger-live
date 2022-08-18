@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { GetAccountShapeArg0 } from "../../../bridge/jsHelpers";
-import * as API from "../../../api/Evm";
+import * as rpcAPI from "../api/rpc";
+import * as etherscanAPI from "../api/etherscan";
 import * as synchronization from "../synchronization";
 import { decodeAccountId } from "../../../account";
 import { Account, Operation } from "@ledgerhq/types-live";
@@ -38,7 +39,7 @@ describe("EVM Family", () => {
     describe("With mocked getAccount", () => {
       beforeEach(() => {
         // Mocking getAccount to prevent network calls
-        jest.spyOn(API, "getAccount").mockImplementation(() =>
+        jest.spyOn(rpcAPI, "getAccount").mockImplementation(() =>
           Promise.resolve({
             blockHeight: 10,
             balance: new BigNumber(100),
@@ -54,7 +55,7 @@ describe("EVM Family", () => {
       describe("With no transactions fetched", () => {
         beforeAll(() => {
           jest
-            .spyOn(API, "getLatestTransactions")
+            .spyOn(etherscanAPI, "getLatestTransactions")
             .mockImplementation(() => Promise.resolve([]));
         });
 
@@ -116,7 +117,7 @@ describe("EVM Family", () => {
       describe("With transactions fetched", () => {
         beforeAll(() => {
           jest
-            .spyOn(API, "getLatestTransactions")
+            .spyOn(etherscanAPI, "getLatestTransactions")
             .mockImplementation(() => Promise.resolve([fakeOperation]));
         });
 
@@ -139,7 +140,7 @@ describe("EVM Family", () => {
       describe("With pending operations", () => {
         beforeAll(() => {
           jest
-            .spyOn(API, "getLatestTransactions")
+            .spyOn(etherscanAPI, "getLatestTransactions")
             .mockImplementation(() => Promise.resolve([]));
           jest
             .spyOn(synchronization, "getOperationStatus")

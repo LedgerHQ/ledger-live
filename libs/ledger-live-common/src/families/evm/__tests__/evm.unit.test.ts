@@ -1,10 +1,13 @@
 import { AssertionError } from "assert";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { DEFAULT_RETRIES_RPC_METHODS, withApi } from "../../../api/Evm";
+import { DEFAULT_RETRIES_RPC_METHODS, withApi } from "../api/rpc";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain",
-  rpc: "my-rpc.com",
+  ethereumLikeInfo: {
+    chainId: 1,
+    rpc: "my-rpc.com",
+  },
 };
 
 describe("EVM Family", () => {

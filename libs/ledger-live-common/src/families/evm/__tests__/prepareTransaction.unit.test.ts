@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import * as API from "../../../api/Evm";
+import * as API from "../api/rpc";
 import { prepareTransaction } from "../prepareTransaction";
 import { Transaction as EvmTransaction } from "../types";
 import { makeAccount } from "./utils";

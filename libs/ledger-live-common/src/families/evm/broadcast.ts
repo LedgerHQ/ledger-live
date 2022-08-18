@@ -1,5 +1,5 @@
 import type { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { broadcastTransaction } from "../../api/Evm";
+import { broadcastTransaction } from "./api/rpc";
 import { encodeOperationId } from "../../operation";
 import { Transaction as EvmTransaction } from "./types";
 

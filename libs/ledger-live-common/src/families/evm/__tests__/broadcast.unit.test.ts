@@ -5,7 +5,7 @@ import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import buildOptimisticOperation from "../buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../types";
 import { getEstimatedFees } from "../logic";
-import * as API from "../../../api/Evm";
+import * as API from "../api/rpc";
 import { makeAccount } from "./utils";
 import broadcast from "../broadcast";
 import { encodeOperationId } from "../../../operation";

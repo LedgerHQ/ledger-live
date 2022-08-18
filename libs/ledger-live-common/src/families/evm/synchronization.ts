@@ -1,12 +1,8 @@
 import { Account, Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { encodeAccountId } from "../../account";
-import {
-  getAccount,
-  getBlock,
-  getLatestTransactions,
-  getTransaction,
-} from "../../api/Evm";
+import { getAccount, getBlock, getTransaction } from "./api/rpc";
+import { getLatestTransactions } from "./api/etherscan";
 import {
   makeSync,
   makeScanAccounts,

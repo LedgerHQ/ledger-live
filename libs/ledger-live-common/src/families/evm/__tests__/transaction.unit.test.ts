@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { findCurrencyByTicker } from "../../../currencies";
-import * as API from "../../../api/Evm";
+import * as API from "../api/rpc";
 import {
   fromTransactionRaw,
   toTransactionRaw,

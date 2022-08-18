@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import * as API from "../../../api/Evm";
+import * as API from "../api/rpc";
 import signOperation from "../signOperation";
 import * as Device from "../../../hw/deviceAccess";
 import { Transaction as EvmTransaction } from "../types";
@@ -11,7 +11,10 @@ import { getEstimatedFees } from "../logic";
 
 const currency: CryptoCurrency = {
   ...findCryptoCurrencyById("ethereum")!,
-  rpc: "my-rpc.com",
+  ethereumLikeInfo: {
+    chainId: 1,
+    rpc: "my-rpc.com",
+  },
 };
 const account: Account = makeAccount(
   "0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176", // trump.eth

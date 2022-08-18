@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getFeesEstimation, getGasEstimation } from "../../api/Evm";
+import { getFeesEstimation, getGasEstimation } from "./api/rpc";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,

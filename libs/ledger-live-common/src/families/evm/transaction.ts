@@ -16,7 +16,7 @@ import {
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { getTransactionCount } from "../../api/Evm";
+import { getTransactionCount } from "./api/rpc";
 
 /**
  * Format the transaction for the CLI

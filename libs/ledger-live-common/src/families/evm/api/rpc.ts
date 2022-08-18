@@ -1,18 +1,8 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  EtherscanOperation,
-  Transaction as EvmTransaction,
-} from "../families/evm/types";
-import { transactionToEthersTransaction } from "../families/evm/transaction";
-import { makeLRUCache } from "../cache";
-import network from "../network";
-import {
-  etherscanOperationToOperation,
-  scanApiForCurrency,
-} from "../families/evm/logic";
+import { Transaction as EvmTransaction } from "../types";
+import { transactionToEthersTransaction } from "../transaction";
 
 export const DEFAULT_RETRIES_RPC_METHODS = 2;
 
@@ -160,44 +150,3 @@ export const getBlock = (
   withApi(currency, async (api) => {
     return api.getBlock(blockHeight);
   });
-
-/**
- * Get all the latest "normal" transactions (no tokens / NFTs)
- */
-export const getLatestTransactions = makeLRUCache<
-  [
-    currency: CryptoCurrency,
-    address: string,
-    accountId: string,
-    fromBlock: number
-  ],
-  Operation[]
->(
-  async (currency, address, accountId, fromBlock) => {
-    const apiDomain = scanApiForCurrency(currency);
-    if (!apiDomain) {
-      return [];
-    }
-
-    let url = `${apiDomain}/api?module=account&action=txlist&address=${address}&tag=latest&page=1`;
-    if (fromBlock) {
-      url += `&startBlock=${fromBlock}`;
-    }
-
-    try {
-      const { data }: { data: { result: EtherscanOperation[] } } =
-        await network({
-          method: "GET",
-          url,
-        });
-
-      return data.result
-        .map((tx) => etherscanOperationToOperation(accountId, address, tx))
-        .filter(Boolean) as Operation[];
-    } catch (e) {
-      return [];
-    }
-  },
-  (currency, address, accountId) => accountId,
-  { maxAge: 6 * 1000 }
-);
