@@ -19,7 +19,7 @@ import {
 } from "../currencies";
 import { isAccountEmpty, toAccountRaw } from "../account";
 import { runWithAppSpec } from "./engine";
-import { formatReportForConsole, formatError } from "./formatters";
+import { formatReportForConsole, formatError, formatTime } from "./formatters";
 import {
   initialState,
   loadCountervalues,
@@ -87,6 +87,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     }
   }
 
+  const timeBefore = Date.now();
   const results: Array<SpecReport<any>> = await promiseAllBatched(
     getEnv("BOT_MAX_CONCURRENT"),
     specs,
@@ -106,6 +107,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       }));
     }
   );
+  const totalDuration = Date.now() - timeBefore;
   const allAppPaths = uniq(results.map((r) => r.appPath || "").sort());
   const allAccountsBefore = flatMap(results, (r) => r.accountsBefore || []);
   const allAccountsAfter = flatMap(results, (r) => r.accountsAfter || []);
@@ -248,6 +250,8 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     GITHUB_RUN_ID
   )}`;
   const success = mutationReports.length - errorCases.length;
+
+  title += `⏲ ${formatTime(totalDuration)} `;
 
   if (success > 0) {
     title += `✅ ${success} txs `;
