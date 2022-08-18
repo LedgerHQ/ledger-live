@@ -1283,7 +1283,7 @@
       "noSearchResults" : "Não encontramos nenhum resultado de busca.",
       "retrySearchKeyword" : "Tente pesquisar novamente usando outra palavra-chave.",
       "retrySearchParams" : "Tente pesquisar novamente usando outros parâmetros.",
-      "trackFavAssets" : "Acompanhe seu favorito",
+      "trackFavAssets" : "Track your favorite",
       "clickOnStarIcon" : "Selecione o ícone de estrela ao lado de um ativo para adicioná-lo automaticamente aos seus favoritos.",
       "browseAssets" : "Pesquisar Ativos"
     }
@@ -2007,7 +2007,7 @@
   "cardano" : {
     "account" : {
       "subHeader" : {
-        "cardTitle" : "Total balance doesn't include staking rewards"
+        "cardTitle" : "O saldo total não inclui recompensas de staking"
       }
     }
   },
@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "Alterne entre múltiplas fontes de aplicativos da plataforma",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar a abertura da janela de ferramentas de desenvolvedor de aplicativos da plataforma",
+      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsOverride" : "Sobrepor",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
       "addLocalAppButton" : "Navegar",
@@ -4051,6 +4056,10 @@
       "title" : "A internet parece estar desconectada",
       "description" : "Verifique sua conexão à internet."
     },
+    "NetworkError" : {
+      "title" : "An error occurred during synchronization",
+      "description" : "Please check your internet connection."
+    },
     "NoAddressesFound" : {
       "title" : "Nenhuma conta encontrada",
       "description" : "Algo deu errado com o cálculo do endereço, tente novamente ou contate o Suporte Ledger"
@@ -4417,10 +4426,10 @@
       "title" : "Você excedeu o número de tokens disponíveis"
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum sendable amount is {{amount}} ADA"
+      "title" : "A quantia mínima a ser enviada é {{amount}} ADA"
     },
     "CardanoNotEnoughFunds" : {
-      "title" : "Please ensure you have enough funds to pay for fees"
+      "title" : "Certifique-se de ter fundos suficientes para pagar as taxas"
     },
     "StellarWrongMemoFormat" : {
       "title" : "O formato do memo está incorreto"
