@@ -137,7 +137,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
               openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
                 account,
                 parentAccount,
-                onResult: (account: Account, parentAccount: Account) => {
+                onResult: (_account: Account, _parentAccount: Account) => {
                   tracking.platformReceiveSuccess(manifest);
                   resolve(accountAddress);
                 },

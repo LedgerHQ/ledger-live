@@ -18,7 +18,7 @@ import {
   deserializePlatformTransaction,
   deserializePlatformSignedTransaction,
 } from "./serializers";
-import { TrackFunction } from "./tracking";
+import type { TrackFunction } from "./tracking";
 import { AppManifest } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
