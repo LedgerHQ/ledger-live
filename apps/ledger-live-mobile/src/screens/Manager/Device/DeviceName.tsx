@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { PenMedium } from "@ledgerhq/native-ui/assets/icons";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import { TouchableOpacity } from "react-native";
 import { deviceNameByDeviceIdSelectorCreator } from "../../../reducers/ble";
@@ -47,7 +48,7 @@ export default function DeviceNameRow({
       >
         {displayedName.toUpperCase()}
       </Text>
-      {id === "nanoX" && (
+      {(id === DeviceModelId.nanoX || id === DeviceModelId.nanoFTS) && (
         <Flex
           ml={3}
           backgroundColor={"palette.primary.c30"}

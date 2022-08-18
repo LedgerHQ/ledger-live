@@ -3459,6 +3459,10 @@
     "appNotInstalled": "Please install the {{appName}} app",
     "appNotInstalled_plural": "Please install the {{appName}} apps",
     "useAnotherDevice": "Use another device",
+    "deviceNotOnboarded": {
+      "title": "Your Ledger is not ready to use yet",
+      "description": "You need to setup {{deviceName}} first. We will guide you through the device setup process"
+    },
     "deviceInBootloader": {
       "title": "Device in Bootloader mode.",
       "description": "Click on \"Continue\" to update it."
@@ -3607,6 +3611,23 @@
   "manager": {
     "tabTitle": "My Ledger",
     "title": "My Ledger",
+    "selectDevice": {
+      "saved": {
+        "title": "Devices",
+        "description": "Manage your saved Ledgers"
+      },
+      "addNewCTA": "Add new",
+      "connectExistingLedger": "Connect an existing Ledger",
+      "connectExistingLedgerDescription": "Already have a Ledger that is set up? Pair it with bluetooth",
+      "setUpNewLedger": "Set up a new Ledger",
+      "setUpNewLedgerDescription": "Bought a new Ledger? Click here to set it up",
+      "buyDeviceCTA": "Need a new Ledger? Buy one",
+      "item": {
+        "usb": "Connected with USB",
+        "available": "Available. Tap to connect",
+        "unavailable": "Not connected"
+      }
+    },
     "connect": "Select your device",
     "appsCatalog": "App catalog",
     "installedApps": "Apps installed",
@@ -5337,6 +5358,8 @@
     }
   },
   "customImage": {
+    "title": "Lock screen picture",
+    "replace": "Replace",
     "drawer": {
       "title": "Choose an image",
       "options": {

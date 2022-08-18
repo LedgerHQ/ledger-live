@@ -3,7 +3,6 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
   TransitionPresets,
-  StackNavigationProp,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/native-ui";
@@ -88,21 +87,8 @@ import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 
-import {
-  BleDevicePairingFlow,
-  BleDevicePairingFlowParams,
-} from "../../screens/BleDevicePairingFlow/index";
-
-// TODO: types for each screens and navigators need to be set
-export type BaseNavigatorStackParamList = {
-  BleDevicePairingFlow: BleDevicePairingFlowParams;
-
-  // Hack: allows any other properties
-  [otherScreens: string]: undefined | object;
-};
-
-export type BaseNavigatorProps =
-  StackNavigationProp<BaseNavigatorStackParamList>;
+import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
+import { BaseNavigatorStackParamList } from "./BaseNavigatorTypes";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 

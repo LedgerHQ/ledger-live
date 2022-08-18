@@ -14,6 +14,7 @@ import CleanButton from "./CleanButton";
 import ResetButton from "./ResetButton";
 import ResetKYCButton from "./ResetKYCButton";
 import RepairDeviceButton from "./RepairDeviceButton";
+import LaunchOnboardingBtn from "./LaunchOnboardingBtn";
 
 const SectionHelp = () => {
   const { t } = useTranslation();
@@ -39,6 +40,12 @@ const SectionHelp = () => {
         </Row>
         <Row title={t("settings.exportLogs.title")} desc={t("settings.exportLogs.desc")}>
           <ExportLogsBtn />
+        </Row>
+        <Row
+          title={t("settings.profile.launchOnboarding")}
+          desc={t("settings.profile.launchOnboardingDesc")}
+        >
+          <LaunchOnboardingBtn />
         </Row>
         <Row
           title={t("settings.openUserDataDirectory.title")}

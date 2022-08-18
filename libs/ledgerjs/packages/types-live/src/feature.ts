@@ -2,6 +2,7 @@
 export type FeatureId =
   | "learn"
   | "pushNotifications"
+  | "llmNewDeviceSelection"
   | "llmUsbFirmwareUpdate"
   | "ratings"
   | "counterValue"
