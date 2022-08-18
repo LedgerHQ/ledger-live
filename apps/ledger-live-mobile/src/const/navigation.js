@@ -382,6 +382,11 @@ export const ScreenName = {
   CeloRegisterAccountStarted: "CeloRegisterAccountStarted",
   CeloRegisterAccountSelectDevice: "CeloRegisterAccountSelectDevice",
   CeloRegisterAccountConnectDevice: "CeloRegisterAccountConnectDevice",
+  CeloLockValidationSuccess: "CeloLockValidationSuccess",
+  CeloLockValidationError: "CeloLockValidationError",
+  CeloLockAmount: "CeloLockAmount",
+  CeloLockSelectDevice: "CeloLockSelectDevice",
+  CeloLockConnectDevice: "CeloLockConnectDevice",
 };
 
 export const NavigatorName = {
@@ -456,6 +461,7 @@ export const NavigatorName = {
 
   // Celo
   CeloRegisterAccountFlow: "CeloRegisterAccountFlow",
+  CeloLockFlow: "CeloLockFlow",
 
   // Tab
   Main: "Main",

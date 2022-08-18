@@ -3468,6 +3468,29 @@
           }
         }
       }
+    },
+    "lock": {
+      "stepperHeader": {
+        "title": "Lock assets",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "info": "Locked assets can be unlocked at any time, but unlocking takes 3 days.",
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "Assets successfully locked",
+              "text": "You will be able to vote validators once the network has confirmed your transaction."
+            }
+          }
+        }
+      }
     }
   },
   "cosmos": {
