@@ -30,6 +30,8 @@ import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
 import { getAllDivergedFlags } from "./src/components/FirebaseFeatureFlags";
 import { enabledExperimentalFeatures } from "./src/experimental";
+import { languageSelector } from "./src/reducers/settings";
+import { store } from "./src/context/LedgerStore";
 
 // we exclude errors related to user's environment, not fixable by us
 const excludedErrorName = [
@@ -143,7 +145,8 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
       tags[safekey(key)] = getEnv(key);
     });
     // if there are features on, we will add them in tags
-    const features = getAllDivergedFlags();
+    const appLanguage = languageSelector(store.getState());
+    const features = getAllDivergedFlags(appLanguage);
     Object.keys(features).forEach(key => {
       tags[safekey(`f_${key}`)] = features[key];
     });

@@ -568,7 +568,7 @@ const getFeesFromAccountActivation = async (
   const estimatedBandwidthCost = getEstimatedBlockSize(a, t);
 
   if (recipientAccount.length === 0 && available.lt(estimatedBandwidthCost)) {
-    return activationFees; // cost is around 0.1 TRX
+    return activationFees; // cost is around 1 TRX
   }
 
   return new BigNumber(0); // no fee
@@ -719,7 +719,10 @@ const getTransactionStatus = async (
   const totalSpent =
     account.type === "Account" ? amountSpent.plus(estimatedFees) : amountSpent;
 
-  if (!errors.recipient && ["send", "freeze"].includes(mode)) {
+  if (["send", "freeze"].includes(mode)) {
+    if (amount.eq(0)) {
+      errors.amount = new AmountRequired();
+    }
     if (amountSpent.eq(0)) {
       errors.amount = useAllAmount
         ? new NotEnoughBalance()
@@ -795,7 +798,9 @@ const estimateMaxSpendable = async ({
         transaction?.recipient || "0x0000000000000000000000000000000000000000",
       amount: new BigNumber(0),
     },
-    false
+    transaction && transaction.recipient
+      ? (await fetchTronContract(transaction.recipient)) !== undefined
+      : false
   );
   return account.type === "Account"
     ? BigNumber.max(0, account.spendableBalance.minus(fees))

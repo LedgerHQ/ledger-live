@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import ReadOnlyAccountRow from "../../Accounts/ReadOnly/ReadOnlyAccountRow";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
@@ -16,7 +16,7 @@ const ReadOnlyAssetsList = ({ assets }: ListProps) => {
       <ReadOnlyAccountRow
         navigation={navigation}
         currency={item}
-        screen="Assets"
+        screen="Wallet"
       />
     ),
     [navigation],

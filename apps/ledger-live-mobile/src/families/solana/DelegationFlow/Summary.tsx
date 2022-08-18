@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/types";
 import { assertUnreachable } from "@ledgerhq/live-common/families/solana/utils";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";

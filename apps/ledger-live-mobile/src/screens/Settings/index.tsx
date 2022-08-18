@@ -5,11 +5,12 @@ import { View, TouchableWithoutFeedback } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
+import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { accountsSelector } from "../../reducers/accounts";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
-import TrackScreen from "../../analytics/TrackScreen";
+import { track, TrackScreen } from "../../analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
@@ -28,6 +29,7 @@ export default function Settings({ navigation }: Props) {
   );
   const count = useRef(0);
   const debugTimeout = useRef(onTimeout);
+  const route = useRoute();
 
   function onTimeout(): void {
     timer.timeout(() => {
@@ -45,6 +47,14 @@ export default function Settings({ navigation }: Props) {
       onTimeout();
     }
   }, [debugVisible]);
+
+  const onNotifClick = useCallback(() => {
+    navigation.navigate(ScreenName.NotificationsSettings);
+    track("button_clicked", {
+      button: "Notifications",
+      screen: route.name,
+    });
+  }, [navigation, route.name]);
 
   return (
     <SettingsNavigationScrollView>
@@ -73,6 +83,15 @@ export default function Settings({ navigation }: Props) {
         onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         arrowRight
       />
+      <FeatureToggle feature="pushNotifications">
+        <SettingsCard
+          title={t("settings.notifications.title")}
+          desc={t("settings.notifications.desc")}
+          Icon={Icons.NotificationsMedium}
+          onClick={() => navigation.navigate(ScreenName.NotificationsSettings)}
+          arrowRight
+        />
+      </FeatureToggle>
       <SettingsCard
         title={t("settings.help.title")}
         desc={t("settings.help.desc")}

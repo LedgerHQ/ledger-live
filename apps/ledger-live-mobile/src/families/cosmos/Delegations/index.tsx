@@ -20,7 +20,7 @@ import type {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import {
   mapUnbondings,
   canRedelegate,
