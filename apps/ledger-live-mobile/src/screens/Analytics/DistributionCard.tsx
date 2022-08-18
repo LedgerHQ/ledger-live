@@ -78,10 +78,11 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
         screen: ScreenName.Accounts,
         params: {
           currencyId: currency.id,
+          currencyTicker: currency.ticker,
         },
       },
     });
-  }, [currency.id, navigation]);
+  }, [currency.ticker, currency.id, navigation]);
 
   return (
     <Container onPress={navigateToAccounts}>
