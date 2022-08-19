@@ -6,7 +6,7 @@ import buildOptimisticOperation from "../buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../types";
 import { getEstimatedFees } from "../logic";
 import * as API from "../api/rpc";
-import { makeAccount } from "./utils";
+import { makeAccount } from "../testUtils";
 import broadcast from "../broadcast";
 import { encodeOperationId } from "../../../operation";
 

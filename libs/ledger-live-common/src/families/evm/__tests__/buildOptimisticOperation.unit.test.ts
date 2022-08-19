@@ -4,7 +4,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import buildOptimisticOperation from "../buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../types";
-import { makeAccount } from "./utils";
+import { makeAccount } from "../testUtils";
 import { getEstimatedFees } from "../logic";
 import { encodeOperationId } from "../../../operation";
 

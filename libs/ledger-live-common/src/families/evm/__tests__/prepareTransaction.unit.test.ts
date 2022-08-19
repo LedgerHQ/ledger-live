@@ -4,7 +4,7 @@ import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import * as API from "../api/rpc";
 import { prepareTransaction } from "../prepareTransaction";
 import { Transaction as EvmTransaction } from "../types";
-import { makeAccount } from "./utils";
+import { makeAccount } from "../testUtils";
 
 const currency = findCryptoCurrencyById("ethereum")!;
 const account: Account = makeAccount("0xkvn", currency);

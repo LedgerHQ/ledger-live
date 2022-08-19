@@ -4,7 +4,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import getDeviceTransactionConfig from "../deviceTransactionConfig";
 import { Transaction as EvmTransaction } from "../types";
-import { makeAccount } from "./utils";
+import { makeAccount } from "../testUtils";
 import getTransactionStatus from "../getTransactionStatus";
 
 const currency: CryptoCurrency = findCryptoCurrencyById("ethereum")!;

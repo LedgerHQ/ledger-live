@@ -6,7 +6,7 @@ import * as API from "../api/rpc";
 import signOperation from "../signOperation";
 import * as Device from "../../../hw/deviceAccess";
 import { Transaction as EvmTransaction } from "../types";
-import { makeAccount } from "./utils";
+import { makeAccount } from "../testUtils";
 import { getEstimatedFees } from "../logic";
 
 const currency: CryptoCurrency = {

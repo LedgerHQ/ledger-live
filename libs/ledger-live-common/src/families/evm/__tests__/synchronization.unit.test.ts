@@ -6,7 +6,7 @@ import * as etherscanAPI from "../api/etherscan";
 import * as synchronization from "../synchronization";
 import { decodeAccountId } from "../../../account";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { makeAccount } from "./utils";
+import { makeAccount } from "../testUtils";
 
 const currency = findCryptoCurrencyById("ethereum")!;
 const getAccountShapeParameters: GetAccountShapeArg0 = {

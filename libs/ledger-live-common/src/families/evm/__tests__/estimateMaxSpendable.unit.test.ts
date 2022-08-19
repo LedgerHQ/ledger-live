@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/types-live";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { makeAccount } from "./utils";
+import { makeAccount } from "../testUtils";
 import BigNumber from "bignumber.js";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 import { getEstimatedFees } from "../logic";

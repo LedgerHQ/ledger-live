@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/errors";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 import getTransactionStatus from "../getTransactionStatus";
-import { makeAccount } from "./utils";
+import { makeAccount } from "../testUtils";
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
