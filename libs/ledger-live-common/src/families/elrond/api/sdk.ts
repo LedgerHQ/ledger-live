@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import ElrondApi from "./apiCalls";
 import {
   ElrondDelegation,
+  ElrondProvider,
   ElrondTransferOptions,
   ESDTToken,
   Transaction,
@@ -39,7 +40,7 @@ export const getAccount = async (addr: string) => {
   };
 };
 
-export const getProviders = async (): Promise<any> => {
+export const getProviders = async (): Promise<ElrondProvider[]> => {
   const providers = await api.getProviders();
   return providers;
 };

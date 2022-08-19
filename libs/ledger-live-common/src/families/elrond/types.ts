@@ -11,7 +11,7 @@ import BigNumber from "bignumber.js";
 export type ElrondResources = {
   nonce: number;
   delegations: ElrondDelegation[];
-  providers: any;
+  providers: ElrondProvider[];
 };
 
 export type ElrondDelegation = {
@@ -21,6 +21,19 @@ export type ElrondDelegation = {
   userActiveStake: string;
   claimableRewards: string;
   userUndelegatedList: UserUndelegated[];
+};
+
+export type ElrondProvider = {
+  contract: string;
+  owner: string;
+  serviceFee: string;
+  maxDelegationCap: string;
+  initialOwnerFunds: string;
+  totalActiveStake: string;
+  totalUnstaked: string;
+  maxDelegateAmountAllowed: string;
+  apr: string;
+  explorerURL: string;
 };
 
 export type UserUndelegated = {
@@ -34,7 +47,7 @@ export type UserUndelegated = {
 export type ElrondResourcesRaw = {
   nonce: number;
   delegations: ElrondDelegation[];
-  providers: any;
+  providers: ElrondProvider[];
 };
 
 export type ElrondProtocolTransaction = {
