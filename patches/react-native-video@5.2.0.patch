@@ -1,0 +1,48 @@
+diff --git a/android-exoplayer/build.gradle b/android-exoplayer/build.gradle
+index d005a58f293f29c7f87aa9482a42cac25a79c722..6a9922b095d56aaca163d8488f33cc23ae4f40b5 100644
+--- a/android-exoplayer/build.gradle
++++ b/android-exoplayer/build.gradle
+@@ -28,7 +28,7 @@ android {
+ 
+ dependencies {
+     implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
+-    implementation('com.google.android.exoplayer:exoplayer:2.13.2') {
++    implementation('com.google.android.exoplayer:exoplayer:2.13.3') {
+         exclude group: 'com.android.support'
+     }
+ 
+@@ -37,7 +37,7 @@ dependencies {
+     implementation "androidx.core:core:1.1.0"
+     implementation "androidx.media:media:1.1.0"
+ 
+-    implementation('com.google.android.exoplayer:extension-okhttp:2.13.2') {
++    implementation('com.google.android.exoplayer:extension-okhttp:2.13.3') {
+         exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+     }
+     implementation 'com.squareup.okhttp3:okhttp:${OKHTTP_VERSION}'
+diff --git a/android-exoplayer/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java b/android-exoplayer/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java
+index fe95fdf416c9499c6fb6970a100f9808d4b9d921..652f9ccb487791b64d9dd4963d67d121f3f3c503 100644
+--- a/android-exoplayer/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java
++++ b/android-exoplayer/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java
+@@ -183,10 +183,10 @@ class ReactExoplayerView extends FrameLayout implements
+             }
+         }
+     };
+-    
++
+     public double getPositionInFirstPeriodMsForCurrentWindow(long currentPosition) {
+         Timeline.Window window = new Timeline.Window();
+-        if(!player.getCurrentTimeline().isEmpty()) {    
++        if(!player.getCurrentTimeline().isEmpty()) {
+             player.getCurrentTimeline().getWindow(player.getCurrentWindowIndex(), window);
+         }
+         return window.windowStartTimeMs + currentPosition;
+@@ -947,7 +947,7 @@ class ReactExoplayerView extends FrameLayout implements
+                 // Special case for decoder initialization failures.
+                 MediaCodecRenderer.DecoderInitializationException decoderInitializationException =
+                         (MediaCodecRenderer.DecoderInitializationException) cause;
+-                if (decoderInitializationException.codecInfo.name == null) {
++                if (decoderInitializationException.codecInfo == null || decoderInitializationException.codecInfo.name == null) {
+                     if (decoderInitializationException.getCause() instanceof MediaCodecUtil.DecoderQueryException) {
+                         errorString = getResources().getString(R.string.error_querying_decoders);
+                     } else if (decoderInitializationException.secureDecoderRequired) {

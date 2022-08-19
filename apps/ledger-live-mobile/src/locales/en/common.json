@@ -1771,6 +1771,17 @@
     "subaccountCount_plural": "+{{count}} subaccounts"
   },
   "account": {
+    "subHeader": {
+      "moreInfo": "More info",
+      "cardTitle": "Powered by {{team}}",
+      "drawer": {
+        "title": "{{family}} integration",
+        "subTitle": "The {{family}} integration has been done by the {{team}} team",
+        "description": "Ledger Live is an open-source platform.",
+        "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
+        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
+      }
+    },
     "tokens": {
       "contractAddress": "Contract address",
       "viewInExplorer": "View in explorer",
@@ -2179,6 +2190,15 @@
       "customManifest": {
         "title": "Load Custom Platform Manifest"
       }
+    },
+    "debug": {
+      "featureFlagsTitle": "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsOverride": "Override",
+      "featureFlagsEdit": "Edit",
+      "featureFlagsRestore": "Restore",
+      "featureFlagsDisplayValue": "Display value",
+      "featureFlagsHideValue": "Hide value"
     }
   },
   "notifications": {
@@ -2279,7 +2299,7 @@
         "cancel": {
           "title": "You just denied this address",
           "subtitle": "If this was done by mistake, you can retry by clicking the button below.",
-          "info": "If you are sure the addresses don’t match, your phone may be comprimised. We recommend you <0>contact us as soon as possible.</0>"
+          "info": "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
         }
       },
       "receiveConfirmation": {
@@ -2294,7 +2314,7 @@
         "subtitle1": "Verifying your address provides you security. The address displayed on your ledger device cannot be compromised.",
         "subtitle2": "By verifying the address, you will be able to confirm that the address shown on your device is the same as the address shown in Ledger Live.",
         "verifyCta": "Verify my address",
-        "dontVerifyCta": "Reveal my address whitout verifying"
+        "dontVerifyCta": "Reveal my address without verifying"
       },
       "securityDontVerify": {
         "title": "Are you sure?",
@@ -2415,7 +2435,7 @@
       },
       "payoutModal": {
         "title": "Payout fees",
-        "description": "Payout fees are not shown on the device and substracted from the amount.",
+        "description": "Payout fees are not shown on the device and subtracted from the amount.",
         "cta": "Close"
       },
       "pendingOperation": {
@@ -3748,33 +3768,6 @@
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
           }
         }
-      }
-    }
-  },
-  "cryptoOrg": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Crypto.org",
-        "moreInfo": "More info",
-        "drawerTitle": "Crypto.org integration",
-        "title": "The Crypto.org (CRO) token is now available on Ledger Live",
-        "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
-        "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Cryptocurrency in every wallet"
-      }
-    }
-  },
-  "elrond": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Elrond",
-        "drawerTitle": "Elrond integration",
-        "moreInfo": "More info",
-        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
-        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
       }
     }
   },
