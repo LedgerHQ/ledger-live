@@ -67,11 +67,15 @@ export const isJwtExpired = (jwtToken: string): boolean => {
    * Note:
    * The JWT token should have at least an exp property (the expiration date of the token)
    */
-  const { exp } = jwtDecode<{ exp: number }>(jwtToken);
+  try {
+    const { exp } = jwtDecode<{ exp: number }>(jwtToken);
 
-  const currentTime = new Date().getTime() / 1000;
+    const currentTime = new Date().getTime() / 1000;
 
-  return currentTime > exp;
+    return currentTime > exp;
+  } catch (e) {
+    return false;
+  }
 };
 
 // Note: used in UI (LLD / LLM)

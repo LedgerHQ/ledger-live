@@ -40,20 +40,20 @@ export function Widget({ provider, type }: Props) {
   const preload = useMemo(
     () => `
       try {
-        window.ledger = {};
-        window.ledger.setToken = token => {
-          const message = JSON.stringify({
-            type: "setToken",
-            token,
-          });
-          window.ReactNativeWebView.postMessage(message);
-        };
-
-        window.ledger.closeWidget = () => {
-          const message = JSON.stringify({
-            type: "closeWidget",
-          });
-          window.ReactNativeWebView.postMessage(message);
+        window.ledger = {
+          setToken: token => {
+            const message = JSON.stringify({
+              type: "setToken",
+              token,
+            });
+            window.ReactNativeWebView.postMessage(message);
+          },
+          closeWidget: () => {
+            const message = JSON.stringify({
+              type: "closeWidget",
+            });
+            window.ReactNativeWebView.postMessage(message);
+          }
         };
 
         if (location.pathname.includes("/login") && !${redirected}) {
