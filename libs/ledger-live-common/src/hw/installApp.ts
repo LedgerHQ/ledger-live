@@ -2,7 +2,7 @@ import { Observable, throwError } from "rxjs";
 import { throttleTime, filter, map, catchError } from "rxjs/operators";
 import { ManagerAppDepInstallRequired } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
-import type { ApplicationVersion, App } from "../types/manager";
+import type { ApplicationVersion, App } from "@ledgerhq/types-live";
 import ManagerAPI from "../api/Manager";
 import { getDependencies } from "../apps/polyfill";
 export default function installApp(

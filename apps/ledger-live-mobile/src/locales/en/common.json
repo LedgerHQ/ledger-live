@@ -81,7 +81,8 @@
     "seeMore": "See more",
     "moreInfo": "More info",
     "buyEth": "Buy Ethereum",
-    "popular": "popular"
+    "popular": "popular",
+    "comingSoon": "Coming soon"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -560,14 +561,8 @@
     "NotSupportedLegacyAddress": {
       "title": "The legacy address format is no longer supported"
     },
-    "StellarWrongMemoFormat": {
-      "title": "Memo format is wrong"
-    },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
-    },
-    "StellarMemoRecommended": {
-      "title": "A memo may be needed when sending to this recipient"
     },
     "StratisDown2021Warning": {
       "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
@@ -644,7 +639,45 @@
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     },
     "CardanoMinAmountError": {
-      "title": "Minimum {{amount}} ADA required"
+      "title": "Minimum sendable amount is {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds": {
+      "title": "Please ensure you have enough funds to pay for fees"
+    },
+    "StellarWrongMemoFormat": {
+      "title": "Memo format is wrong"
+    },
+    "StellarMemoRecommended": {
+      "title": "A memo may be needed when sending to this recipient"
+    },
+    "StellarAssetNotAccepted": {
+      "title": "This recipient doesn't have a trustline to {{assetCode}} yet"
+    },
+    "StellarAssetRequired": {
+      "title": "A Stellar asset should be selected before adding a trustline"
+    },
+    "StellarAssetNotFound": {
+      "title": "Selected Stellar asset could not be found"
+    },
+    "StellarNotEnoughNativeBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the transaction fee"
+    },
+    "StellarFeeSmallerThanRecommended": {
+      "title": "The selected fee is lower than the recommended fee"
+    },
+    "StellarFeeSmallerThanBase": {
+      "title": "The minimum transaction fee is 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the new trustline"
+    },
+    "StellarMuxedAccountNotExist": {
+      "title": "Stellar account does not exist"
+    },
+    "StellarSourceHasMultiSign": {
+      "title": "Please disable multisign to make Stellar transactions"
     }
   },
   "bluetooth": {
@@ -820,8 +853,8 @@
   },
   "ratings": {
     "init": {
-      "title": "Enjoying Ledger Live?",
-      "description": "Whether you like it or feel we could be doing better. We really value your feedback.",
+      "title": "How do you like our app?",
+      "description": "Your feedback is important for improving Ledger Live.",
       "cta": {
         "enjoy": "It's great",
         "disappointed": "I am disappointed",
@@ -838,7 +871,8 @@
     },
     "disappointed": {
       "title": "Help us build a better product for you",
-      "description": "We want to do better, and your honest feedback helps us know what to improve.",
+      "description": "If you need more assistance or would like us to get back to you, please use our live chat",
+      "here": "here",
       "cta": {
         "sendFeedback": "Send feedback",
         "notNow": "Not now"
@@ -1737,6 +1771,17 @@
     "subaccountCount_plural": "+{{count}} subaccounts"
   },
   "account": {
+    "subHeader": {
+      "moreInfo": "More info",
+      "cardTitle": "Powered by {{team}}",
+      "drawer": {
+        "title": "{{family}} integration",
+        "subTitle": "The {{family}} integration has been done by the {{team}} team",
+        "description": "Ledger Live is an open-source platform.",
+        "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
+        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
+      }
+    },
     "tokens": {
       "contractAddress": "Contract address",
       "viewInExplorer": "View in explorer",
@@ -1753,6 +1798,13 @@
         "howTo": "You can add assets to your Algorand account.",
         "addAsa": "Add ASA (Asset)",
         "howAsaWorks": "How ASA (asset) works?"
+      },
+      "stellar": {
+        "seeMore": "See more assets",
+        "seeLess": "See less assets",
+        "addTokens": "Add assets",
+        "howTo": "You can add assets to your Stellar account.",
+        "addAsset": "Add asset"
       }
     },
     "subaccounts": {
@@ -1901,6 +1953,12 @@
         "showTokens_plural": "Show {{length}} ASA",
         "hideTokens": "Hide ASA",
         "hideTokens_plural": "Hide ASA"
+      },
+      "stellar": {
+        "showTokens": "Show {{length}} asset",
+        "showTokens_plural": "Show {{length}} assets",
+        "hideTokens": "Hide asset",
+        "hideTokens_plural": "Hide assets"
       }
     },
     "noResultsFound": "No asset found",
@@ -2061,6 +2119,36 @@
         "android": "Review in the Google Play store"
       }
     },
+    "notifications": {
+      "title": "Notifications",
+      "desc": "Manage your notifications",
+      "disabledNotifications": {
+        "title": "Your notifications are disabled",
+        "desc": "{{platform}} is blocking notifications from Ledger Live. To get notifications on your phone, visit your device’s settings to turn on Ledger Live notifications.",
+        "turnOnNotif": "Turn on notifications",
+        "goToSettings": "Go to system settings"
+      },
+      "allowed": {
+        "title": "Allow notifications",
+        "desc": "Receive notifications about your crypto, market tendencies and more"
+      },
+      "transactions": {
+        "title": "Transactions",
+        "desc": "Get notified when you receive or send crypto"
+      },
+      "market": {
+        "title": "Market",
+        "desc": "Receive significant market changes updates"
+      },
+      "announcement": {
+        "title": "Announcements",
+        "desc": "Receive important Ledger Live updates"
+      },
+      "price": {
+        "title": "Price Alerts",
+        "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
+      }
+    },
     "help": {
       "title": "Help",
       "header": "Help",
@@ -2092,6 +2180,23 @@
       "customManifest": {
         "title": "Load Custom Platform Manifest"
       }
+    },
+    "debug": {
+      "featureFlagsTitle": "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsOverride": "Override",
+      "featureFlagsEdit": "Edit",
+      "featureFlagsRestore": "Restore",
+      "featureFlagsDisplayValue": "Display value",
+      "featureFlagsHideValue": "Hide value"
+    }
+  },
+  "notifications": {
+    "prompt": {
+      "title": "Turn notifications on",
+      "desc": "Get important updates on Ledger Live, Ledger products and security. Opt out anytime.",
+      "allow": "Allow notifications",
+      "later": "Maybe later"
     }
   },
   "migrateAccounts": {
@@ -2157,10 +2262,67 @@
       "verifyAgain": "Check again",
       "noAccount": "No account found",
       "address": "Address for account",
-      "copyAddress": "Copy address",
+      "copyAddress": "Copy",
       "shareAddress": "Share address",
-      "addressCopied": "Address copied!",
+      "addressCopied": "Copied",
       "taprootWarning": "Make sure the sender supports taproot",
+      "selectCrypto": {
+        "title": "Select a crypto"
+      },
+      "stepperHeader": {
+        "range": "Step {{currentStep}} of {{totalSteps}}",
+        "connectDevice": "Connect Device"
+      },
+      "selectAccount": {
+        "title": "Select an account",
+        "subtitle": "Your {{currencyTicker}} will be deposited into this account."
+      },
+      "addAccount": {
+        "title": "Searching the blockchain",
+        "subtitle": "Checking to see if you already own {{currencyTicker}} accounts.",
+        "foundAccounts": "{{count}} accounts found",
+        "stopSynchronization": "Stop synchronization"
+      },
+      "verifyAddress": {
+        "title": "Verify address",
+        "subtitle": "Verify that the address displayed on your device matches this one below. Once you’re sure you can click approve on your device.",
+        "cancel": {
+          "title": "You just denied this address",
+          "subtitle": "If this was done by mistake, you can retry by clicking the button below.",
+          "info": "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
+        }
+      },
+      "receiveConfirmation": {
+        "title": "Receive {{currencyTicker}}",
+        "addressVerified": "Address verified",
+        "verifyAddress": "Tap here to verify your address",
+        "adviceVerify": "We always recommend verifying your address with your Ledger device",
+        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss."
+      },
+      "securityVerify": {
+        "title": "For security we recommend verifying this address with your Ledger device.",
+        "subtitle1": "Verifying your address provides you security. The address displayed on your ledger device cannot be compromised.",
+        "subtitle2": "By verifying the address, you will be able to confirm that the address shown on your device is the same as the address shown in Ledger Live.",
+        "verifyCta": "Verify my address",
+        "dontVerifyCta": "Reveal my address without verifying"
+      },
+      "securityDontVerify": {
+        "title": "Are you sure?",
+        "subtitle": "The address displayed on Ledger Live will not be verified.",
+        "doNotRemindAgain": "Do not remind me again",
+        "no": "No",
+        "yes": "Yes"
+      },
+      "toastMessages": {
+        "accountImported": "We've imported a {{currencyTicker}} account for you. ",
+        "why": "Tell me why.",
+        "addressVerified": "Your address is verified"
+      },
+      "additionalInfoModal": {
+        "title": "Why we imported an account?",
+        "subtitle": "We detected that you had a previous {{currencyTicker}} account on your seed. We imported this account for you.",
+        "closeCta": "Ok, got it"
+      },
       "notSynced": {
         "text": "Synchronizing",
         "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."
@@ -2263,7 +2425,7 @@
       },
       "payoutModal": {
         "title": "Payout fees",
-        "description": "Payout fees are not shown on the device and substracted from the amount.",
+        "description": "Payout fees are not shown on the device and subtracted from the amount.",
         "cta": "Close"
       },
       "pendingOperation": {
@@ -3257,7 +3419,9 @@
     "newVersion": "Update {{version}} available for your {{deviceName}}",
     "drawerUpdate": {
       "title": "Firmware Update",
-      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
+      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
+      "pleaseConnectUsbTitle": "USB cable needed",
+      "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3597,33 +3761,6 @@
       }
     }
   },
-  "cryptoOrg": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Crypto.org",
-        "moreInfo": "More info",
-        "drawerTitle": "Crypto.org integration",
-        "title": "The Crypto.org (CRO) token is now available on Ledger Live",
-        "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
-        "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Cryptocurrency in every wallet"
-      }
-    }
-  },
-  "elrond": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Elrond",
-        "drawerTitle": "Elrond integration",
-        "moreInfo": "More info",
-        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
-        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
-      }
-    }
-  },
   "tezos": {
     "AccountHeader": {
       "title": "You can earn rewards by delegating your account",
@@ -3739,6 +3876,7 @@
     }
   },
   "stellar": {
+    "token": "Assets",
     "memo": {
       "title": "Memo",
       "warning": "When using a Memo, carefully verify the type with the recipient."
@@ -3749,6 +3887,48 @@
       "MEMO_ID": "Memo ID",
       "MEMO_HASH": "Memo Hash",
       "MEMO_RETURN": "Memo Return"
+    },
+    "fee": "Network fee",
+    "feeAction": "Update fee",
+    "recommendedFee": "Recommended fee",
+    "recommenndedFeeInfo": "You can still submit this transaction with lower fee than recommended but it may not be completed",
+    "suggested": "Suggested",
+    "networkCongestion": "network congestion",
+    "networkCongestionLevel": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
+    "assetCode": "Asset code",
+    "assetIssuer": "Asset issuer",
+    "addAsset": {
+      "stepperHeader": {
+        "selectAsset": "Add asset",
+        "connectDevice": "Connect device",
+        "verification": "Verification",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "selectToken": {
+            "warning": {
+              "title": "Asset already added",
+              "description": "You already have {{token}} asset in your Stellar account."
+            }
+          },
+          "verification": {
+            "success": {
+              "title": "{{token}} asset successfully added!",
+              "text": "You can now receive and send {{token}} assets on your Stellar account.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+          }
+        }
+      }
     }
   },
   "polkadot": {
@@ -4402,8 +4582,8 @@
       "tokenId": "Token ID",
       "tokenIdCopied": "Token ID copied !",
       "quantity": "Quantity",
-      "attributes" : {
-        "floorPrice" : "Floor Price"
+      "attributes": {
+        "floorPrice": "Floor Price"
       }
     },
     "viewerModal": {
@@ -4420,6 +4600,16 @@
     },
     "operations": {
       "title": "Transaction history"
+    }
+  },
+  "hedera": {
+    "name": "hedera",
+    "createHederaAccountHelp": {
+      "text": "Please refer to this support article for",
+      "link": "how to create a Hedera account"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     }
   }
 }

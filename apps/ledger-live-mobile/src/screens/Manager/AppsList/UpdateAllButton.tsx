@@ -1,10 +1,9 @@
 import React, { memo, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
-
-
-import type { State, App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import { Button } from "@ledgerhq/native-ui";
 import UpdateAllModal from "../Modals/UpdateAllModal";
+import { State } from "@ledgerhq/live-common/apps/index";
 
 type Props = {
   onUpdateAll: () => void,

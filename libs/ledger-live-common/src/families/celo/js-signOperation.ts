@@ -2,13 +2,17 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Transaction } from "./types";
-import type { Account, Operation, SignOperationEvent } from "../../types";
 import { encodeOperationId } from "../../operation";
 import { CeloApp } from "./hw-app-celo";
 import buildTransaction from "./js-buildTransaction";
 import { rlpEncodedTx, encodeTransaction } from "@celo/wallet-base";
 import { tokenInfoByAddressAndChainId } from "@celo/wallet-ledger/lib/tokens";
 import { withDevice } from "../../hw/deviceAccess";
+import type {
+  Account,
+  Operation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 
 const buildOptimisticOperation = (
   account: Account,

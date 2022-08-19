@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import { StyleProp, TouchableOpacity, ViewStyle } from "react-native";
+import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { track } from "../../analytics";
 
@@ -48,7 +47,6 @@ const Tag = ({
       fontFamily="Inter"
       fontSize="6px"
       fontWeight="bold"
-      verticalAlign="center"
       uppercase
       color="neutral.c20"
     >

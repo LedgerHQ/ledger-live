@@ -1,17 +1,16 @@
 import { BigNumber } from "bignumber.js";
 import Transport from "@ledgerhq/hw-transport";
-import type {
-  Account,
-  AccountBridge,
-  Transaction,
-  TransactionStatus,
-  SignedOperation,
-  Operation,
-  CryptoCurrency,
-  SignOperationEvent,
-} from "../types";
+import type { Transaction, TransactionStatus } from "../generated/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { AppCandidate } from "../load/speculos";
+import {
+  Account,
+  AccountBridge,
+  Operation,
+  SignedOperation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 export type { AppCandidate };
 type DeviceActionEvent = {
   text: string;

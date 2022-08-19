@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/types/index";
+import type { TokenAccount, Account } from "@ledgerhq/types-live";
 
 import {
   makeCompoundSummaryForAccount,

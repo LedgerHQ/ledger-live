@@ -2,13 +2,13 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import { getAccountCurrency } from "../../account";
+import type { Transaction } from "../../generated/types";
+import { modes } from "./modules";
 import type {
-  Transaction,
   Account,
   AccountLike,
   AccountLikeArray,
-} from "../../types";
-import { modes } from "./modules";
+} from "@ledgerhq/types-live";
 
 function hexAsBuffer(hex) {
   if (!hex) return;

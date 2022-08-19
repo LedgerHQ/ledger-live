@@ -1,10 +1,14 @@
+import { useMemo } from "react";
 import { useFeatureFlags } from "./provider";
-import { Feature, FeatureId } from "./types";
+import { FeatureId, Feature } from "@ledgerhq/types-live";
 
 const useFeature = (key: FeatureId): Feature | null => {
   const featureFlags = useFeatureFlags();
-
-  return featureFlags.getFeature(key);
+  const value = useMemo(
+    () => featureFlags.getFeature(key),
+    [featureFlags, key]
+  );
+  return value;
 };
 
 export default useFeature;

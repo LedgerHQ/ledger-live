@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import type { AccountLikeArray, TokenAccount } from "../types";
 import {
   getSupplyMax,
   isCompoundTokenSupported,
@@ -8,6 +7,7 @@ import {
 import type { CompoundAccountSummary } from "./types";
 import { makeCompoundSummaryForAccount } from "./logic";
 import { findCompoundToken } from "../currencies";
+import { AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 export function useSupplyMax(account: TokenAccount): BigNumber {
   return useMemo(() => getSupplyMax(account), [account]);
 }

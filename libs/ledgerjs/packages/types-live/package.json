@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-live",
-  "version": "6.22.0",
+  "version": "6.23.0",
   "description": "Ledger Live main types.",
   "keywords": [
     "Ledger"
@@ -21,9 +21,12 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "bignumber.js": "9",
     "rxjs": "6"
+  },
+  "devDependencies": {
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

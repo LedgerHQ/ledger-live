@@ -1,6 +1,6 @@
 import React, { useCallback, memo } from "react";
 import { View, StyleSheet, VirtualizedList } from "react-native";
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import type { State } from "@ledgerhq/live-common/apps/index";
 import { useTheme } from "@react-navigation/native";
 import AppRow from "./AppRow";

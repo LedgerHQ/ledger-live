@@ -3,7 +3,6 @@ import { Subject } from "rxjs";
 import flatMap from "lodash/flatMap";
 import semver from "semver";
 import { getDeviceModel } from "@ledgerhq/devices";
-import type { App } from "../types/manager";
 import type {
   AppOp,
   State,
@@ -17,6 +16,7 @@ import {
   isCurrencySupported,
 } from "../currencies";
 import { LatestFirmwareVersionRequired, NoSuchAppOnProvider } from "../errors";
+import { App } from "@ledgerhq/types-live";
 
 export const initState = (
   {

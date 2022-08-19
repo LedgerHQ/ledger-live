@@ -34,12 +34,12 @@ export const ScreenName = {
   DebugCrash: "DebugCrash",
   DebugDevices: "DebugDevices",
   DebugExport: "DebugExport",
+  DebugFeatureFlags: "DebugFeatureFlags",
   DebugHttpTransport: "DebugHttpTransport",
   DebugIcons: "DebugIcons",
   DebugLogs: "DebugLogs",
   DebugLottie: "DebugLottie",
   DebugMocks: "DebugMocks",
-  DebugStoryly: "DebugStoryly",
   DebugMockGenerateAccounts: "DebugMockGenerateAccounts",
   DebugPlayground: "DebugPlayground",
   DebugSettings: "DebugSettings",
@@ -93,6 +93,7 @@ export const ScreenName = {
   NftGallery: "NftGallery",
   NftImageViewer: "NftImageViewer",
   NftViewer: "NftViewer",
+  NotificationsSettings: "NotificationsSettings",
 
   OperationDetails: "OperationDetails",
   PairDevices: "PairDevices",
@@ -102,9 +103,16 @@ export const ScreenName = {
   PortfolioOperationHistory: "PortfolioOperationHistory",
   PurchaseDevice: "PurchaseDevice",
   RateProviderSettings: "RateProviderSettings",
+
   ReceiveConfirmation: "ReceiveConfirmation",
+  ReceiveVerificationConfirmation: "ReceiveVerificationConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
+  ReceiveVerifyAddress: "ReceiveVerifyAddress",
+  ReceiveSelectCrypto: "ReceiveSelectCrypto",
   ReceiveSelectAccount: "ReceiveSelectAccount",
+  ReceiveAddAccountSelectDevice: "ReceiveAddAccountSelectDevice",
+  ReceiveAddAccount: "ReceiveAddAccount",
+
   RegionSettings: "RegionSettings",
   RepairDevice: "RepairDevice",
   Resources: "Resources",
@@ -129,8 +137,6 @@ export const ScreenName = {
   SignSummary: "SignSummary",
   SignValidationError: "SignValidationError",
   SignValidationSuccess: "SignValidationSuccess",
-  StellarEditMemoType: "StellarEditMemoType",
-  StellarEditMemoValue: "StellarEditMemoValue",
   Swap: "Swap",
   SwapError: "SwapError",
   SwapFormOrHistory: "SwapFormOrHistory",
@@ -242,6 +248,17 @@ export const ScreenName = {
     "PolkadotSimpleOperationValidationError",
   PolkadotSimpleOperationValidationSuccess:
     "PolkadotSimpleOperationValidationSuccess",
+
+  // Stellar
+  StellarEditMemoType: "StellarEditMemoType",
+  StellarEditMemoValue: "StellarEditMemoValue",
+  StellarEditCustomFees: "StellarEditCustomFees",
+  StellarAddAssetSelectAsset: "StellarAddAssetSelectAsset",
+  StellarAddAssetSelectDevice: "StellarAddAssetSelectDevice",
+  StellarAddAssetConnectDevice: "StellarAddAssetConnectDevice",
+  StellarAddAssetValidation: "StellarAddAssetValidation",
+  StellarAddAssetValidationError: "StellarAddAssetValidationError",
+  StellarAddAssetValidationSuccess: "StellarAddAssetValidationSuccess",
 
   LendingDashboard: "LendingDashboard",
   LendingClosedLoans: "LendingClosedLoans",
@@ -363,6 +380,9 @@ export const ScreenName = {
 
   // cardano
   CardanoEditMemo: "CardanoEditMemo",
+
+  // hedera
+  HederaEditMemo: "HederaEditMemo",
 };
 
 export const NavigatorName = {
@@ -370,7 +390,7 @@ export const NavigatorName = {
   /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
   // add "Navigator" postfix to distinguish this from ScreenName.Accounts
   Accounts: "AccountsNavigator",
-  Portfolio: "PorfolioNavigator",
+  Portfolio: "PortfolioNavigator",
   PortfolioAccounts: "PortfolioAccountsNavigator",
   AccountSettings: "AccountSettings",
   AddAccounts: "AddAccounts",
@@ -428,6 +448,9 @@ export const NavigatorName = {
 
   // Solana
   SolanaDelegationFlow: "SolanaDelegationFlow",
+
+  // Stellar
+  StellarAddAssetFlow: "StellarAddAssetFlow",
 
   NotificationCenter: "NotificationCenter",
   Market: "Market",

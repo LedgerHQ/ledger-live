@@ -1,11 +1,11 @@
-import { Account } from "../../types";
-import { Transaction } from "./types";
+import { CosmosAccount, Transaction } from "./types";
 import BigNumber from "bignumber.js";
-import { simulate } from "./api/Cosmos";
+import { defaultCosmosAPI } from "./api/Cosmos";
 import { getEnv } from "../../env";
 import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import { getMaxEstimatedBalance } from "./logic";
 import { CacheRes, makeLRUCache } from "../../cache";
+import type { Account } from "@ledgerhq/types-live";
 
 export const calculateFees: CacheRes<
   Array<{
@@ -24,7 +24,7 @@ export const calculateFees: CacheRes<
     estimatedFees: BigNumber;
     estimatedGas: BigNumber;
   }> => {
-    return await getEstimatedFees(account, transaction);
+    return await getEstimatedFees(account as CosmosAccount, transaction);
   },
   ({ account, transaction }) =>
     `${account.id}_${account.currency.id}_${transaction.amount.toString()}_${
@@ -34,12 +34,12 @@ export const calculateFees: CacheRes<
         ? transaction.validators.map((v) => v.address).join("-")
         : ""
     }_${transaction.memo ? transaction.memo.toString() : ""}_${
-      transaction.cosmosSourceValidator ? transaction.cosmosSourceValidator : ""
+      transaction.sourceValidator ? transaction.sourceValidator : ""
     }`
 );
 
 const getEstimatedFees = async (
-  account: Account,
+  account: CosmosAccount,
   transaction: Transaction
 ): Promise<any> => {
   let gasQty = new BigNumber(250000);
@@ -65,7 +65,7 @@ const getEstimatedFees = async (
       new Uint8Array(Buffer.from(account.seedIdentifier, "hex"))
     );
 
-    const gasUsed = await simulate(tx_bytes);
+    const gasUsed = await defaultCosmosAPI.simulate(tx_bytes);
 
     if (gasUsed.gt(0)) {
       gasQty = gasUsed
@@ -109,7 +109,7 @@ export const prepareTransaction = async (
   });
 
   if (transaction.useAllAmount) {
-    amount = getMaxEstimatedBalance(account, estimatedFees);
+    amount = getMaxEstimatedBalance(account as CosmosAccount, estimatedFees);
   }
 
   if (

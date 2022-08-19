@@ -1,4 +1,9 @@
-import React, { useState, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { StyleSheet, View, SectionList, FlatList } from "react-native";
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import Animated, { Value, event } from "react-native-reanimated";
@@ -14,7 +19,7 @@ import {
   AccountLike,
   TokenAccount,
   Operation,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-live";
 import debounce from "lodash/debounce";
 import {
   getAccountCapabilities,
@@ -98,7 +103,7 @@ const AccountScreenInner = ({
   } = useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-
+  
   const [opCount, setOpCount] = useState(100);
   const ref = useRef();
   const scrollY = useRef(new Value(0)).current;

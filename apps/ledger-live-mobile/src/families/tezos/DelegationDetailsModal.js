@@ -10,7 +10,7 @@ import {
   getTransactionExplorer,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Delegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import {
   getMainAccount,
@@ -178,7 +178,7 @@ export default function DelegationDetailsModal({
 
   const onReceive = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId,
         parentId,

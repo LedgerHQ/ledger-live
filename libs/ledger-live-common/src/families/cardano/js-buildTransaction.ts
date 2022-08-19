@@ -1,11 +1,12 @@
 import {
+  CardanoAccount,
   CardanoOutput,
   CardanoResources,
   PaymentCredential,
   Token,
   Transaction,
 } from "./types";
-import type { Account, TokenAccount } from "../../types";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import {
   Transaction as TyphonTransaction,
   types as TyphonTypes,
@@ -49,7 +50,7 @@ const buildSendTokenTransaction = async ({
   receiverAddress,
   changeAddress,
 }: {
-  a: Account;
+  a: CardanoAccount;
   t: Transaction;
   tokenAccount: TokenAccount;
   typhonTx: TyphonTransaction;
@@ -137,7 +138,7 @@ const buildSendAdaTransaction = async ({
   receiverAddress,
   changeAddress,
 }: {
-  a: Account;
+  a: CardanoAccount;
   t: Transaction;
   typhonTx: TyphonTransaction;
   receiverAddress: TyphonTypes.CardanoAddress;
@@ -213,13 +214,13 @@ const buildSendAdaTransaction = async ({
 
 /**
  *
- * @param {Account} a
+ * @param {CardanoAccount} a
  * @param {Transaction} t
  *
  * @returns {TyphonTransaction}
  */
 export const buildTransaction = async (
-  a: Account,
+  a: CardanoAccount,
   t: Transaction
 ): Promise<TyphonTransaction> => {
   const cardanoResources = a.cardanoResources as CardanoResources;

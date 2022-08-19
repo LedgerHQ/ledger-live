@@ -15,17 +15,16 @@ import {
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,
+  Operation,
   SignOperationEvent,
   SignOperationFnSignature,
-  TransactionStatus,
-} from "../../../types";
-import { Transaction } from "../types";
+} from "@ledgerhq/types-live";
+import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape, getAddress, getTxToBroadcast } from "./utils/utils";
 import { broadcastTx, fetchBalances, fetchEstimatedFees } from "./utils/api";
 import { getMainAccount } from "../../../account";
 import { close } from "../../../hw";
 import { toCBOR } from "./utils/serializer";
-import { Operation } from "../../../types/operation";
 import { calculateEstimatedFees, getPath, isError } from "../utils";
 import { log } from "@ledgerhq/logs";
 import { getAddressRaw, validateAddress } from "./utils/addresses";
@@ -83,12 +82,19 @@ const getTransactionStatus = async (
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
 
-  const totalSpent = useAllAmount ? balance : amount.plus(estimatedFees);
-  if (totalSpent.gt(a.spendableBalance)) {
-    errors.amount = new NotEnoughBalance();
+  let totalSpent;
+  if (useAllAmount) {
+    totalSpent = a.spendableBalance;
+    amount = totalSpent.minus(estimatedFees);
+    if (amount.lte(0) || totalSpent.gt(balance)) {
+      errors.amount = new NotEnoughBalance();
+    }
   } else {
-    amount = useAllAmount ? balance.minus(estimatedFees) : amount;
-    if (amount.lte(0)) errors.amount = new AmountRequired();
+    totalSpent = amount.plus(estimatedFees);
+    if (amount.eq(0)) {
+      errors.amount = new AmountRequired();
+    } else if (totalSpent.gt(a.spendableBalance))
+      errors.amount = new NotEnoughBalance();
   }
 
   // log("debug", "[getTransactionStatus] finish fn");

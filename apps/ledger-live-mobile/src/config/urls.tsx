@@ -22,6 +22,8 @@ export const urls = {
     zh:
       "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
   },
+  ratingsContact:
+    "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
   buyNanoX:
     "https://shop.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
@@ -133,6 +135,8 @@ export const urls = {
     "https://support.ledgerwallet.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral",
   maxSpendable:
     "https://support.ledger.com/hc/en-us/articles/360012960679?utm_source=ledger_live_mobile&utm_medium=self_referral",
+  receiveVerifyAddress:
+    "https://support.ledger.com/hc/en-us/categories/4404369571601-Support?support=true&utm_source=ledger_live_mobile&utm_medium=self_referral",
   elrond: {
     website: "https://elrond.com",
   },
@@ -164,7 +168,10 @@ export const urls = {
       "https://www.ledger.com/academy?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     tellMeMore:
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
-    mint:
-      "ledgerlive://discover/lmarket"
+    mint: "ledgerlive://discover/lmarket",
+  },
+  hedera: {
+    supportArticleLink:
+      "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
   },
 };

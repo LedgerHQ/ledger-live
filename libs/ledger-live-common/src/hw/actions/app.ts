@@ -33,14 +33,21 @@ import type {
   ConnectAppEvent,
   Input as ConnectAppInput,
 } from "../connectApp";
-import type { Account, CryptoCurrency, TokenCurrency } from "../../types";
 import { useReplaySubject } from "../../observable";
 import { getAccountName } from "../../account";
 import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { ConnectAppTimeout } from "../../errors";
 import perFamilyAccount from "../../generated/account";
-import type { DeviceInfo, FirmwareUpdateContext } from "../../types/manager";
+import type {
+  Account,
+  DeviceInfo,
+  FirmwareUpdateContext,
+} from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 type State = {
   isLoading: boolean;

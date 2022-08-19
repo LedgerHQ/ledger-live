@@ -2,7 +2,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import type { Account } from "@ledgerhq/live-common/types/account";
+import type { Account } from "@ledgerhq/types-live";
 
 import { openModal } from "~/renderer/actions/modals";
 

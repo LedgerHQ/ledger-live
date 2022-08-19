@@ -1,11 +1,5 @@
-import {
-  Account,
-  Operation,
-  OperationType,
-  SignOperationEvent,
-} from "../../types";
-import type { Transaction } from "./types";
-import { getAccount, getChainId } from "./api/Cosmos";
+import type { CosmosAccount, Transaction } from "./types";
+import { defaultCosmosAPI } from "./api/Cosmos";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
@@ -14,6 +8,12 @@ import { AminoTypes } from "@cosmjs/stargate";
 import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
 import { Secp256k1Signature } from "@cosmjs/crypto";
+import type {
+  Account,
+  Operation,
+  OperationType,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 
 const aminoTypes = new AminoTypes({ prefix: "cosmos" });
 
@@ -33,11 +33,11 @@ const signOperation = ({
       async function main() {
         const hwApp = new Cosmos(transport);
 
-        const { accountNumber, sequence } = await getAccount(
+        const { accountNumber, sequence } = await defaultCosmosAPI.getAccount(
           account.freshAddress
         );
 
-        const chainId = await getChainId();
+        const chainId = await defaultCosmosAPI.getChainId();
 
         o.next({ type: "device-signature-requested" });
 
@@ -55,7 +55,10 @@ const signOperation = ({
           ]),
         };
 
-        const unsignedPayload = await buildTransaction(account, transaction);
+        const unsignedPayload = await buildTransaction(
+          account as CosmosAccount,
+          transaction
+        );
 
         const msgs = unsignedPayload.map((msg) => aminoTypes.toAmino(msg));
 
@@ -94,7 +97,7 @@ const signOperation = ({
         ).toFixedLength();
 
         const tx_bytes = await postBuildTransaction(
-          account,
+          account as CosmosAccount,
           transaction,
           pubkey,
           unsignedPayload,
@@ -135,7 +138,7 @@ const signOperation = ({
 
         if (transaction.mode === "redelegate") {
           Object.assign(extra, {
-            cosmosSourceValidator: transaction.cosmosSourceValidator,
+            sourceValidator: transaction.sourceValidator,
           });
         }
 

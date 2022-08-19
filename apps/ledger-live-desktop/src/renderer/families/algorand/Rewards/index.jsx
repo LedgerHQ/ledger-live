@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 import Box from "~/renderer/components/Box/Box";

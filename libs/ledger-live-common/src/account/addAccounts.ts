@@ -1,5 +1,5 @@
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import uniqWith from "lodash/uniqWith";
-import type { Account, DerivationMode } from "../types";
 import { validateNameEdition } from "./accountName";
 import { clearAccount } from "./helpers";
 import { findAccountMigration } from "./support";

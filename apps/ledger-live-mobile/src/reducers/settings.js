@@ -10,15 +10,14 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { createSelector } from "reselect";
-import type {
-  CryptoCurrency,
-  Currency,
-  AccountLike,
-} from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import type {
+  DeviceModelInfo,
+  AccountLike,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
@@ -104,7 +103,14 @@ export type SettingsState = {
   marketCounterCurrency: ?string,
   marketFilterByStarredAccounts: boolean,
   sensitiveAnalytics: boolean,
-  firstConnectionHasDevice: boolean,
+  firstConnectionHasDevice: boolean | null,
+  notifications: {
+    allowed: boolean,
+    transactions: boolean,
+    market: boolean,
+    announcement: boolean,
+    price: boolean,
+  },
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -160,7 +166,14 @@ export const INITIAL_STATE: SettingsState = {
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
-  firstConnectionHasDevice: false,
+  firstConnectionHasDevice: null,
+  notifications: {
+    allowed: false,
+    transactions: false,
+    market: false,
+    announcement: false,
+    price: false,
+  },
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -447,6 +460,13 @@ const handlers: Object = {
     ...state,
     firstConnectionHasDevice: payload,
   }),
+  SET_NOTIFICATIONS: (state: SettingsState, { payload }) => ({
+    ...state,
+    notifications: {
+      ...state.notifications,
+      ...payload,
+    },
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -655,3 +675,6 @@ export const sensitiveAnalyticsSelector = (state: State) =>
 
 export const firstConnectionHasDeviceSelector = (state: State) =>
   state.settings.firstConnectionHasDevice;
+
+export const notificationsSelector = (state: State) =>
+  state.settings.notifications;

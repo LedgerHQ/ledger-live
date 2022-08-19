@@ -697,6 +697,17 @@
     }
   },
   "account": {
+    "subHeader": {
+      "moreInfo": "More info",
+      "cardTitle": "Powered by {{team}}",
+      "drawer": {
+        "title": "{{family}} integration",
+        "subTitle": "The {{family}} integration has been done by the {{team}} team",
+        "description": "Ledger Live is an open-source platform.",
+        "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
+        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
+      }
+    },
     "lastOperations": "Latest operations",
     "contractAddress": "Contract:",
     "openInExplorer": "Open in explorer",
@@ -733,8 +744,8 @@
     "frozenAssetsTooltip": "Frozen assets are used in the Tron voting process. This represents your total number of votes.",
     "bandwidthTooltip": "Freeze assets to gain bandwidth",
     "energyTooltip": "Freeze assets to gain energy",
-    "delegatedAssetsTooltip": "Delegated assets are used in the Cosmos voting process. This represents your total number of votes.",
-    "undelegatingTooltip": "Undelegated assets are in a timelock of 21 days, before being available."
+    "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
   },
   "exchange": {
     "chooseProvider": "Choose from {{providerCount}} provider",
@@ -1283,7 +1294,7 @@
       "noSearchResults": "Sorry, we did not find any search results.",
       "retrySearchKeyword": "Please retry the search with another keyword.",
       "retrySearchParams": "Please retry the search with another parameters.",
-      "trackFavAssets": "Track your favourite",
+      "trackFavAssets": "Track your favorite",
       "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
       "browseAssets": "Browse assets"
     }
@@ -1348,6 +1359,14 @@
       "link": "How Assets (ASA) works?",
       "seeTokens": "Show ASA ({{tokenCount}})",
       "hideTokens": "Hide ASA ({{tokenCount}})"
+    },
+    "stellar": {
+      "title": "Assets",
+      "cta": "Add asset",
+      "placeholder": "You can add assets to your {{currencyName}} account.",
+      "link": "Learn more about Stellar assets",
+      "seeTokens": "Show assets ({{tokenCount}})",
+      "hideTokens": "Hide assets ({{tokenCount}})"
     }
   },
   "subAccounts": {
@@ -1494,6 +1513,7 @@
       "memo": "Memo",
       "assetId": "Asset ID",
       "rewards": "Earned rewards",
+      "autoClaimedRewards": "Auto Claimed Rewards",
       "bondedAmount": "Bonded Amount",
       "unbondedAmount": "Unbonded Amount",
       "withdrawUnbondedAmount": "Withdrawn Amount",
@@ -1982,17 +2002,10 @@
     "value": "Value",
     "header": "Account allocation ({{count}})"
   },
-  "elrond": {
+  "cardano": {
     "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Elrond",
-        "moreInfo": "More info",
-        "drawerTitle": "Elrond integration",
-        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
-        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
+      "stakingRewardsBanner": {
+        "cardTitle": "Total balance doesn't include staking rewards"
       }
     }
   },
@@ -2327,6 +2340,180 @@
       }
     }
   },
+  "osmosis": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Powered by Figment",
+        "moreInfo": "More info",
+        "drawerTitle": "Powered by Figment",
+        "title": "The OSMO token is now available on Ledger Live",
+        "description": "You can now start to manage your OSMO tokens and secure them through Ledger Live.",
+        "description2": "The OSMO token is native to the Osmosis chain and is used for everything from transactions, staking and many upcoming features.",
+        "website": "Powered by Figment"
+      }
+    },
+    "memo": "Memo",
+    "memoPlaceholder": "Optional",
+    "memoWarningText": "When using a memo, carefully check the information with the recipient",
+    "delegation": {
+      "emptyState": {
+        "description": "You can earn OSMO rewards by delegating your assets.",
+        "info": "How Delegation works",
+        "delegation": "Earn rewards"
+      },
+      "commission": "Commission",
+      "totalStake": "Total Stake",
+      "claimRewards": "Claim rewards",
+      "header": "Delegation(s)",
+      "noRewards": "No rewards available",
+      "delegate": "Add",
+      "undelegate": "Undelegate",
+      "redelegate": "Redelegate",
+      "redelegateDisabledTooltip": "You can redelegate again <0>{{days}}</0>",
+      "redelegateMaxDisabledTooltip": "You cannot redelegate more than <0>7</0> validators at a time",
+      "undelegateDisabledTooltip": "You cannot undelegate more than <0>7</0> validators at a time",
+      "reward": "Claim rewards",
+      "currentDelegation": "Delegated: <0>{{amount}}</0>",
+      "estYield": "est. yield",
+      "activeTooltip": "Delegated amounts generate rewards",
+      "inactiveTooltip": "Undelegated amounts do not generate rewards",
+      "minSafeWarning": "Not enough funds",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by delegating your OSMO assets to a validator.",
+            "bullet": [
+              "You keep ownership of delegated assets",
+              "Delegate using your Ledger device",
+              "Assets will be available 14 days after undelegation"
+            ],
+            "warning": {
+              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+            }
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "flow": {
+        "title": "Claim rewards",
+        "steps": {
+          "claimRewards": {
+            "title": "Rewards",
+            "compound": "Compound",
+            "claim": "Cash in",
+            "compoundOrClaim": "Compound or cash in",
+            "compoundDescription": "Rewards will be added to delegated amount",
+            "claimDescription": "Rewards will be added to the available balance",
+            "compoundInfo": "You earned <0>{{amount}}</0>. By clicking Continue, they will be claimed now and automatically delegated to the same validator.",
+            "claimInfo": "You earned <0>{{amount}}</0> from the validator below. By clicking Continue, they will be claimed now and automatically added to the available balance.",
+            "selectLabel": "Select a delegation"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "label": "Confirmation",
+            "success": {
+              "title": "Rewards cashed in successfully",
+              "titleCompound": "Rewards compounded successfully",
+              "text": "Your rewards were added to your available balance",
+              "textCompound": "Your rewards <0>{{amount}}</0> were automatically delegated to <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "redelegation": {
+      "flow": {
+        "title": "Redelegate assets",
+        "steps": {
+          "starter": {
+            "title": "Redelegation",
+            "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a 14-day timelock.",
+            "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>7 pending redelegations</0>.",
+            "howDelegationWorks": "How delegation works?"
+          },
+          "validators": {
+            "title": "Validators",
+            "currentDelegation": "Current delegation",
+            "newDelegation": "New delegation",
+            "chooseValidator": "Choose a validator",
+            "warning": "You will have to wait <0>14 days</0> to redelegate from the new validator, if you change your mind again",
+            "amountLabel": "Amount to redelegate"
+          },
+          "device": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully redelegated your assets",
+              "text": "The redelegation will update once the blockchain has confirmed the transaction",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "header": "Undelegation(s)",
+      "headerTooltip": "Available after the 14-day timelock",
+      "inactiveTooltip": "Undelegated amounts do not generate rewards.",
+      "flow": {
+        "title": "Undelegate assets",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The undelegation process takes <0>14 days</0> to finalize.",
+            "warning": "Rewards will be immediately cashed in. The undelegated amount will be back in the available balance after the <0>14-day timelock</0>.",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to undelegate"
+            }
+          },
+          "device": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully undelegated your assets.",
+              "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "polkadot": {
     "lockedBalance": "Bonded",
     "lockedTooltip": "Assets must be bonded to nominated validators before earning rewards.",
@@ -2578,6 +2765,31 @@
           },
           "pending": {
             "title": "Broadcasting transaction..."
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      }
+    }
+  },
+  "stellar": {
+    "addAsset": {
+      "title": "Add asset",
+      "steps": {
+        "assets": {
+          "title": "Asset",
+          "info": "Adding an asset requires sending a transaction with minimum fees. This will appear in your transaction history",
+          "selectLabel": "Choose an asset",
+          "disabledTooltip": "You already have this asset on your Stellar account"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "{{token}} asset successfully added",
+            "text": "You can now receive and send <0>{{token}}</0> assets on your Stellar account.",
+            "cta": "View details"
           },
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
         }
@@ -2846,6 +3058,11 @@
       "catalogServerDesc": "Switch between multiple platform apps sources",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
+      "featureFlagsTitle": "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit": "Edit",
+      "featureFlagsRestore": "Restore",
+      "featureFlagsOverride": "Override",
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
       "addLocalAppButton": "Browse",
@@ -3699,8 +3916,10 @@
     "recipientWording": {
       "send": "recipient",
       "delegate": "validator",
+      "redelegate": "validator",
       "undelegate": "validator",
       "claimReward": "rewards recipient",
+      "claimRewardCompound": "validator that will receive the rewards",
       "optIn": "recipient",
       "nominate": "validator",
       "erc721": {
@@ -3751,7 +3970,20 @@
         "MEMO_HASH": "Memo Hash",
         "MEMO_RETURN": "Memo Return"
       },
-      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
+      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient",
+      "fee": "Fees",
+      "feeInfoText": "Transaction on the Stellar network require a minimum transaction fee of 0.00001 XLM",
+      "suggested": "Suggested",
+      "recommendedFee": "Recommended fee",
+      "recommenndedFeeInfo": "You can still submit this transaction with lower fee than recommended but it may not be completed",
+      "networkCongestion": "network congestion",
+      "networkCongestionLevel": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High"
+      },
+      "assetCode": "Asset code",
+      "assetIssuer": "Asset issuer"
     },
     "cosmos": {
       "memo": "Memo",
@@ -4304,14 +4536,8 @@
     "FeeTooHigh": {
       "title": "Network fees are above 10% of the amount"
     },
-    "StellarWrongMemoFormat": {
-      "title": "Memo format is wrong"
-    },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
-    },
-    "StellarMemoRecommended": {
-      "title": "A memo may be required when sending to this recipient"
     },
     "SwapExchangeRateAmountTooLow": {
       "title": "Amount must be at least {{minAmountFromFormatted}}"
@@ -4379,20 +4605,50 @@
     },
     "NotEnoughNftOwned": {
       "title": "You have exceeded the number of available tokens"
+    },
+    "CardanoMinAmountError": {
+      "title": "Minimum sendable amount is {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds": {
+      "title": "Please ensure you have enough funds to pay for fees"
+    },
+    "StellarWrongMemoFormat": {
+      "title": "Memo format is wrong"
+    },
+    "StellarMemoRecommended": {
+      "title": "A memo may be required when sending to this recipient"
+    },
+    "StellarAssetNotAccepted": {
+      "title": "This recipient doesn't have a trustline to {{assetCode}} yet"
+    },
+    "StellarAssetRequired": {
+      "title": "A Stellar asset should be selected before adding a trustline"
+    },
+    "StellarAssetNotFound": {
+      "title": "Selected Stellar asset could not be found"
+    },
+    "StellarNotEnoughNativeBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the transaction fee"
+    },
+    "StellarFeeSmallerThanRecommended": {
+      "title": "The selected fee is lower than the recommended fee"
+    },
+    "StellarFeeSmallerThanBase": {
+      "title": "The minimum transaction fee is 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the new trustline"
+    },
+    "StellarMuxedAccountNotExist": {
+      "title": "Stellar account does not exist"
+    },
+    "StellarSourceHasMultiSign": {
+      "title": "Please disable multisign to make Stellar transactions"
     }
   },
   "cryptoOrg": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Crypto.org",
-        "moreInfo": "More info",
-        "drawerTitle": "Crypto.org integration",
-        "title": "The Crypto.org (CRO) token is now available on Ledger Live",
-        "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
-        "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Cryptocurrency in every wallet"
-      }
-    },
     "memo": "Memo",
     "memoPlaceholder": "Optional",
     "memoWarningText": "When using a memo, carefully check the information with the recipient"
@@ -4405,6 +4661,20 @@
     },
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+    },
+    "send": {
+      "memo": {
+        "label": "Memo (optional)",
+        "characterCount": "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers": {
+    "selectCurrency": {
+      "title": "choose asset"
+    },
+    "selectAccount": {
+      "title": "choose account"
     }
   }
 }

@@ -4,7 +4,7 @@ import React, { useMemo, useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import {

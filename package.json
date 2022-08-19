@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.3.0",
+  "packageManager": "pnpm@7.9.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -87,16 +87,19 @@
     "ui:react": "pnpm --filter react-ui",
     "ui:native": "pnpm --filter native-ui",
     "ui:icons": "pnpm --filter icons-ui",
+    "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
     "ui:shared": "pnpm --filter shared-ui",
     "actions": "pnpm --filter @actions/*"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.4.5",
-    "@changesets/cli": "^2.23.0",
+    "@changesets/changelog-github": "^0.4.6",
+    "@changesets/cli": "^2.24.3",
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "turbo": "1.3.1"
+    "rimraf": "^3.0.2",
+    "turbo": "1.4.3",
+    "zx": "^7.0.7"
   },
   "pnpm": {
     "overrides": {
@@ -110,6 +113,10 @@
       "metro-transform-worker": "^0.67.0",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*"
+    },
+    "patchedDependencies": {
+      "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
+      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch"
     }
   }
 }

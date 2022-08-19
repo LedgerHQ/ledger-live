@@ -2,11 +2,8 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Linking, StyleSheet } from "react-native";
-import type {
-  AccountLike,
-  Account,
-  Transaction,
-} from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
 import {
   shortAddressPreview,

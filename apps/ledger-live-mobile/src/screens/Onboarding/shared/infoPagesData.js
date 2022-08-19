@@ -17,6 +17,8 @@ import pinCodeNanoSLight from "../assets/nanoS/pinCode/light.json";
 import pinCodeNanoSDark from "../assets/nanoS/pinCode/dark.json";
 import pinCodeNanoSPLight from "../assets/nanoSP/pinCode/light.json";
 import pinCodeNanoSPDark from "../assets/nanoSP/pinCode/dark.json";
+import pinCodeNanoFTSLight from "../assets/nanoFTS/pinCode/light.json";
+import pinCodeNanoFTSDark from "../assets/nanoFTS/pinCode/dark.json";
 
 import recoverNanoXLight from "../assets/nanoX/recover/light.json";
 import recoverNanoXDark from "../assets/nanoX/recover/dark.json";
@@ -24,6 +26,8 @@ import recoverNanoSLight from "../assets/nanoS/recover/light.json";
 import recoverNanoSDark from "../assets/nanoS/recover/dark.json";
 import recoverNanoSPLight from "../assets/nanoSP/recover/light.json";
 import recoverNanoSPDark from "../assets/nanoSP/recover/dark.json";
+import recoverNanoFTSLight from "../assets/nanoFTS/recover/light.json";
+import recoverNanoFTSDark from "../assets/nanoFTS/recover/dark.json";
 
 import confirmWordsNanoXLight from "../assets/nanoX/confirmWords/light.json";
 import confirmWordsNanoXDark from "../assets/nanoX/confirmWords/dark.json";
@@ -31,6 +35,8 @@ import confirmWordsNanoSLight from "../assets/nanoS/confirmWords/light.json";
 import confirmWordsNanoSDark from "../assets/nanoS/confirmWords/dark.json";
 import confirmWordsNanoSPLight from "../assets/nanoSP/confirmWords/light.json";
 import confirmWordsNanoSPDark from "../assets/nanoSP/confirmWords/dark.json";
+import confirmWordsNanoFTSLight from "../assets/nanoFTS/confirmWords/light.json";
+import confirmWordsNanoFTSDark from "../assets/nanoFTS/confirmWords/dark.json";
 
 import numberOfWordsNanoXLight from "../assets/nanoX/numberOfWords/light.json";
 import numberOfWordsNanoXDark from "../assets/nanoX/numberOfWords/dark.json";
@@ -38,6 +44,8 @@ import numberOfWordsNanoSLight from "../assets/nanoS/numberOfWords/light.json";
 import numberOfWordsNanoSDark from "../assets/nanoS/numberOfWords/dark.json";
 import numberOfWordsNanoSPLight from "../assets/nanoSP/numberOfWords/light.json";
 import numberOfWordsNanoSPDark from "../assets/nanoSP/numberOfWords/dark.json";
+import numberOfWordsNanoFTSLight from "../assets/nanoFTS/numberOfWords/light.json";
+import numberOfWordsNanoFTSDark from "../assets/nanoFTS/numberOfWords/dark.json";
 
 import powerOnNanoXLight from "../assets/nanoX/powerOn/light.json";
 import powerOnNanoXDark from "../assets/nanoX/powerOn/dark.json";
@@ -45,6 +53,8 @@ import powerOnNanoSLight from "../assets/nanoS/powerOn/light.json";
 import powerOnNanoSDark from "../assets/nanoS/powerOn/dark.json";
 import powerOnNanoSPLight from "../assets/nanoSP/powerOn/light.json";
 import powerOnNanoSPDark from "../assets/nanoSP/powerOn/dark.json";
+import powerOnNanoFTSLight from "../assets/nanoFTS/powerOn/light.json";
+import powerOnNanoFTSDark from "../assets/nanoFTS/powerOn/dark.json";
 
 import powerOnRecoveryNanoXLight from "../assets/nanoX/powerOnRecovery/light.json";
 import powerOnRecoveryNanoXDark from "../assets/nanoX/powerOnRecovery/dark.json";
@@ -52,6 +62,8 @@ import powerOnRecoveryNanoSLight from "../assets/nanoS/powerOnRecovery/light.jso
 import powerOnRecoveryNanoSDark from "../assets/nanoS/powerOnRecovery/dark.json";
 import powerOnRecoveryNanoSPLight from "../assets/nanoSP/powerOnRecovery/light.json";
 import powerOnRecoveryNanoSPDark from "../assets/nanoSP/powerOnRecovery/dark.json";
+import powerOnRecoveryNanoFTSLight from "../assets/nanoFTS/powerOnRecovery/light.json";
+import powerOnRecoveryNanoFTSDark from "../assets/nanoFTS/powerOnRecovery/dark.json";
 
 import importRecoveryPhrase from "../assets/importRecoveryPhrase.png";
 import syncCryptos from "../assets/syncCryptos.png";
@@ -179,6 +191,33 @@ export const lottieAnimations = {
     powerOnRecovery: {
       light: undefined,
       dark: undefined,
+    },
+    style: {},
+  },
+  nanoFTS: {
+    pinCode: {
+      light: pinCodeNanoFTSLight,
+      dark: pinCodeNanoFTSDark,
+    },
+    recover: {
+      light: recoverNanoFTSLight,
+      dark: recoverNanoFTSDark,
+    },
+    confirmWords: {
+      light: confirmWordsNanoFTSLight,
+      dark: confirmWordsNanoFTSDark,
+    },
+    numberOfWords: {
+      light: numberOfWordsNanoFTSLight,
+      dark: numberOfWordsNanoFTSDark,
+    },
+    powerOn: {
+      light: powerOnNanoFTSLight,
+      dark: powerOnNanoFTSDark,
+    },
+    powerOnRecovery: {
+      light: powerOnRecoveryNanoFTSLight,
+      dark: powerOnRecoveryNanoFTSDark,
     },
     style: {},
   },
@@ -504,7 +543,7 @@ const pinCodeScenes = (deviceModelId, theme: "dark" | "light") => [
 ];
 
 const getSetupDeviceScenes: (
-  deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue",
+  deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue" | "nanoFTS",
   theme: "dark" | "light",
 ) => OnboardingScene[] = (deviceModelId, theme) => [
   {

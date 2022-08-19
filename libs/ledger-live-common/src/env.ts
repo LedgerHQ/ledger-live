@@ -102,8 +102,23 @@ const envDefinitions = {
   },
   API_STELLAR_HORIZON_FETCH_LIMIT: {
     parser: intParser,
-    def: 200,
+    def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
+  },
+  API_STELLAR_HORIZON_STATIC_FEE: {
+    def: false,
+    parser: boolParser,
+    desc: "Static fee for Stellar account",
+  },
+  API_OSMOSIS_INDEXER: {
+    def: "https://osmosis.coin.ledger.com/indexer",
+    parser: stringParser,
+    desc: "Endpoint for Transaction Explorer/Indexer for Osmosis",
+  },
+  API_OSMOSIS_NODE: {
+    def: "https://osmosis.coin.ledger.com/node",
+    parser: stringParser,
+    desc: "Endpoint for Osmosis Node",
   },
   API_TEZOS_BAKER: {
     parser: stringParser,
@@ -395,6 +410,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values.",
   },
+  MOCK_COUNTERVALUES: {
+    def: "",
+    parser: stringParser,
+    desc: "switch the countervalues resolution into a MOCK mode for test purpose",
+  },
   MOCK_SWAP_KYC: {
     def: "",
     parser: stringParser,
@@ -548,6 +568,11 @@ const envDefinitions = {
     def: 2,
     parser: intParser,
     desc: "version used for ledger status api",
+  },
+  TEZOS_MAX_TX_QUERIES: {
+    def: 100,
+    parser: intParser,
+    desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
   PLATFORM_DEBUG: {
     def: false,

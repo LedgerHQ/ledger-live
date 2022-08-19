@@ -1,7 +1,6 @@
 import { from, concat } from "rxjs";
 import { map, mergeMap, ignoreElements } from "rxjs/operators";
 import manager from "@ledgerhq/live-common/manager/index";
-import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import openApp from "@ledgerhq/live-common/hw/openApp";
@@ -9,6 +8,7 @@ import quitApp from "@ledgerhq/live-common/hw/quitApp";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
 import { deviceOpt, inferManagerApp } from "../scan";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 export default {
   description: "Manage Ledger device's apps",
   args: [

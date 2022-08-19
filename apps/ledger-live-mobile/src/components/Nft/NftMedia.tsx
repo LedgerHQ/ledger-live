@@ -1,7 +1,7 @@
 import React from "react";
 import { VideoProperties } from "react-native-video";
 import { FastImageProps } from "react-native-fast-image";
-import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/live-common/types/index";
+import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Theme } from "@react-navigation/native";
 import { getMetadataMediaType } from "../../logic/nft";
@@ -13,7 +13,7 @@ type Props = {
   style?: Object;
   status: NFTResource["status"];
   metadata: NFTMetadata;
-  mediaFormat: NFTMediaSizes;
+  mediaFormat: NFTMediaSize;
   resizeMode?: FastImageProps["resizeMode"] | VideoProperties["resizeMode"];
   colors: Theme;
   transaprency?: boolean;

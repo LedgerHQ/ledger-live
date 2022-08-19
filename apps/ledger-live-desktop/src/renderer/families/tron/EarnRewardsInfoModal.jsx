@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";

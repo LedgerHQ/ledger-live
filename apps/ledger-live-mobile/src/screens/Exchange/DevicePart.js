@@ -5,11 +5,8 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import type {
-  AccountLike,
-  Account,
-  Transaction,
-} from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { createAction as initSellCreateAction } from "@ledgerhq/live-common/hw/actions/initSell";

@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 
 import { DeviceModel } from "@ledgerhq/devices";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 
@@ -31,7 +31,13 @@ const StorageRepartition = styled(Box)`
 const DeviceAppStorage = ({
   deviceModel,
   deviceInfo,
-  distribution: { freeSpaceBytes, appsSpaceBytes, shouldWarnMemory, apps },
+  distribution: {
+    totalAppsBytes,
+    freeSpaceBytes,
+    appsSpaceBytes,
+    shouldWarnMemory,
+    apps,
+  },
 }: Props) => {
   const appSizes = useMemo(
     () =>
@@ -68,7 +74,7 @@ const DeviceAppStorage = ({
               <Trans i18nKey="manager.storage.used" />
             </Text>{" "}
             <ByteSize
-              value={appsSpaceBytes}
+              value={totalAppsBytes}
               deviceModel={deviceModel}
               firmwareVersion={deviceInfo.version}
             />

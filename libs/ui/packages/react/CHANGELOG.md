@@ -1,5 +1,111 @@
 # @ledgerhq/react-ui
 
+## 0.8.3
+
+### Patch Changes
+
+- [#772](https://github.com/LedgerHQ/ledger-live/pull/772) [`9f5d214c72`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - fix button size
+
+* [#762](https://github.com/LedgerHQ/ledger-live/pull/762) [`eb74f06064`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add optional size prop to button
+
+## 0.8.3-next.0
+
+### Patch Changes
+
+- [#772](https://github.com/LedgerHQ/ledger-live/pull/772) [`9f5d214c7`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - fix button size
+
+* [#762](https://github.com/LedgerHQ/ledger-live/pull/762) [`eb74f0606`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add optional size prop to button
+
+## 0.8.2
+
+### Patch Changes
+
+- [#680](https://github.com/LedgerHQ/ledger-live/pull/680) [`a9da2596e`](https://github.com/LedgerHQ/ledger-live/commit/a9da2596ee15bb55449c4a12acfc2dd5432857e5) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Migrate Vertical timeline component from native to UI
+
+## 0.8.2-next.0
+
+### Patch Changes
+
+- [#680](https://github.com/LedgerHQ/ledger-live/pull/680) [`a9da2596e`](https://github.com/LedgerHQ/ledger-live/commit/a9da2596ee15bb55449c4a12acfc2dd5432857e5) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Migrate Vertical timeline component from native to UI
+
+## 0.8.1
+
+### Patch Changes
+
+- [#667](https://github.com/LedgerHQ/ledger-live/pull/667) [`e0516e387`](https://github.com/LedgerHQ/ledger-live/commit/e0516e3877fbbef458ec4da9e06bd9d7db09d0ee) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix background color of Popin & Drawer components
+
+* [#667](https://github.com/LedgerHQ/ledger-live/pull/667) [`3be077f54`](https://github.com/LedgerHQ/ledger-live/commit/3be077f547cce51d8640a13fd37583d7782ab8a2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix overlay color of Popin component
+
+- [#364](https://github.com/LedgerHQ/ledger-live/pull/364) [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8) Thanks [@elbywan](https://github.com/elbywan)! - #### Replace [webpack](https://webpack.js.org/) with [vite.js](https://vitejs.dev/) to speed up the ledger live desktop development process.
+
+  To fully embrace the "bundleless" vite.js approach, it is necessary to transpile our packages contained in the monorepository to the ESM format, and [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) have been added to silently map to commonjs or esm depending on the need.
+
+  #### 🔥 BREAKING CHANGES for `@ledgerhq/live-common`, `@ledgerhq/devices` and `@ledgerhq/hw-app-btc` consumers.
+
+  As highlighted [here](https://github.com/nodejs/node#39994), it is not possible to target folders directly when using subpath exports.
+
+  The workaround is to suffix the call with `/index` (or `/`).
+
+  For instance…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies";
+  ```
+
+  …must be rewritten to…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/index;";
+  ```
+
+  …or:
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/;";
+  ```
+
+- Updated dependencies [[`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8)]:
+  - @ledgerhq/icons-ui@0.2.7
+
+## 0.8.1-next.0
+
+### Patch Changes
+
+- [#667](https://github.com/LedgerHQ/ledger-live/pull/667) [`e0516e387`](https://github.com/LedgerHQ/ledger-live/commit/e0516e3877fbbef458ec4da9e06bd9d7db09d0ee) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix background color of Popin & Drawer components
+
+* [#667](https://github.com/LedgerHQ/ledger-live/pull/667) [`3be077f54`](https://github.com/LedgerHQ/ledger-live/commit/3be077f547cce51d8640a13fd37583d7782ab8a2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix overlay color of Popin component
+
+- [#364](https://github.com/LedgerHQ/ledger-live/pull/364) [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8) Thanks [@elbywan](https://github.com/elbywan)! - #### Replace [webpack](https://webpack.js.org/) with [vite.js](https://vitejs.dev/) to speed up the ledger live desktop development process.
+
+  To fully embrace the "bundleless" vite.js approach, it is necessary to transpile our packages contained in the monorepository to the ESM format, and [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) have been added to silently map to commonjs or esm depending on the need.
+
+  #### 🔥 BREAKING CHANGES for `@ledgerhq/live-common`, `@ledgerhq/devices` and `@ledgerhq/hw-app-btc` consumers.
+
+  As highlighted [here](https://github.com/nodejs/node#39994), it is not possible to target folders directly when using subpath exports.
+
+  The workaround is to suffix the call with `/index` (or `/`).
+
+  For instance…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies";
+  ```
+
+  …must be rewritten to…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/index;";
+  ```
+
+  …or:
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/;";
+  ```
+
+- Updated dependencies [[`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8)]:
+  - @ledgerhq/icons-ui@0.2.7-next.0
+
 ## 0.8.0
 
 ### Minor Changes

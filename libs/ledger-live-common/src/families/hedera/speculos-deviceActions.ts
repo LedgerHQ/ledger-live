@@ -53,6 +53,7 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Memo",
       button: "Rr",
+      expectedValue: ({ transaction }) => transaction.memo as string,
     },
     {
       title: "Confirm",

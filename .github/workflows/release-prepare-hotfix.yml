@@ -27,7 +27,7 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
 
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
 
@@ -51,7 +51,7 @@ jobs:
       - name: commit
         run: |
           git add .
-          git commit -m ":fire: hotfix release"
+          git commit -m ":fire: hotfix release [skip ci]"
 
       - name: push changes
         run: |

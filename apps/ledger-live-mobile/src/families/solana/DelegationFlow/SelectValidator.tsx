@@ -1,11 +1,11 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
-import { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { FlatList, StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -16,6 +16,7 @@ import Touchable from "../../../components/Touchable";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorImage from "../shared/ValidatorImage";
+import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 
 type Props = {
   account: AccountLike;
@@ -36,7 +37,8 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const validators = useValidators(account.currency);
+  const [searchQuery, setSearchQuery] = useState("");
+  const validators = useValidators(account.currency, searchQuery);
 
   const onItemPress = useCallback(
     (validator: ValidatorsAppValidator) => {
@@ -52,7 +54,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     ({ item }: { item: ValidatorsAppValidator }) => (
       <ValidatorRow account={account} validator={item} onPress={onItemPress} />
     ),
-    [onItemPress],
+    [onItemPress, account],
   );
 
   return (
@@ -61,6 +63,10 @@ export default function SelectValidator({ navigation, route }: Props) {
       forceInset={{ bottom: "always" }}
     >
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
+      <SelectValidatorSearchBox
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
       <View style={styles.header}>
         <ValidatorHead />
       </View>
@@ -158,30 +164,28 @@ const styles = StyleSheet.create({
 
 const keyExtractor = (v: ValidatorsAppValidator) => v.voteAccount;
 
-const ValidatorHead = () => {
-  return (
-    <View style={styles.validatorHead}>
+const ValidatorHead = () => (
+  <View style={styles.validatorHead}>
+    <Text
+      style={styles.validatorHeadText}
+      color="smoke"
+      numberOfLines={1}
+      fontWeight="semiBold"
+    >
+      <Trans i18nKey="delegation.validator" />
+    </Text>
+    <View style={styles.validatorHeadContainer}>
       <Text
         style={styles.validatorHeadText}
         color="smoke"
         numberOfLines={1}
         fontWeight="semiBold"
       >
-        <Trans i18nKey="delegation.validator" />
+        <Trans i18nKey="solana.delegation.totalStake" />
       </Text>
-      <View style={styles.validatorHeadContainer}>
-        <Text
-          style={styles.validatorHeadText}
-          color="smoke"
-          numberOfLines={1}
-          fontWeight="semiBold"
-        >
-          <Trans i18nKey="solana.delegation.totalStake" />
-        </Text>
-      </View>
     </View>
-  );
-};
+  </View>
+);
 const ValidatorRow = ({
   onPress,
   validator,

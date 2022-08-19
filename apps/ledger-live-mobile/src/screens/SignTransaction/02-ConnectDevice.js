@@ -8,7 +8,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type {
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/live-common/generated/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
