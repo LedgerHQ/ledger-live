@@ -3516,40 +3516,6 @@
         }
       }
     },
-    "simpleOperation": {
-      "modes": {
-        "register": {
-          "title": "Register account",
-          "description": "",
-          "info": "Before locking any Celo you need to register your account on-chain."
-        }
-      },
-      "steps": {
-        "info": {
-          "title": "Info"
-        },
-        "connectDevice": {
-          "title": "Device"
-        },
-        "confirmation": {
-          "title": "Confirmation",
-          "label": "Confirmation",
-          "modes": {
-            "register": {
-              "success": {
-                "title": "Account registered successfully",
-                "text": "You will see your operation in history soon.",
-                "cta": "Lock"
-              }
-            }
-          },
-          "pending": {
-            "title": "Broadcasting transaction..."
-          },
-          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
-        }
-      }
-    },
     "withdraw": {
       "title": "Withdraw assets",
       "steps": {
