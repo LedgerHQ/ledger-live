@@ -1,10 +1,7 @@
 // @flow
 
 import React from "react";
-import { useTranslation } from "react-i18next";
-import { Flex, Link, Text } from "@ledgerhq/native-ui";
-import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
-import AccountSubHeaderDrawer from "./AccountSubHeaderDrawer";
+import AccountSubHeader from "../../components/AccountSubHeader";
 
 function AccountSubHeader() {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
@@ -44,4 +41,9 @@ function AccountSubHeader() {
     </Flex>
   );
 }
-export default AccountSubHeader;
+
+function ElrondAccountSubHeader() {
+  return <AccountSubHeader family="Elrond" team="Elrond" />;
+}
+
+export default ElrondAccountSubHeader;

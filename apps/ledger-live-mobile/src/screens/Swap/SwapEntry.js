@@ -22,7 +22,7 @@ export const useProviders = () => {
   useEffect(() => {
     getProviders().then((providers: any) => {
       let resultProvider;
-      const disabledProviders = Config.SWAP_DISABLED_PROVIDERS || "";
+      const disabledProviders = Config.SWAP_DISABLED_PROVIDERS || "ftx,ftxus";
       const providersByName = providers.reduce((acc, providerData) => {
         if (!disabledProviders.includes(providerData.provider)) {
           acc[providerData.provider] = providerData;

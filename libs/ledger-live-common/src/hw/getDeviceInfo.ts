@@ -6,6 +6,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import getVersion from "./getVersion";
+import isDevFirmware from "./isDevFirmware";
 import getAppAndVersion from "./getAppAndVersion";
 import { PROVIDERS } from "../manager/provider";
 import { isDashboardName } from "./isDashboardName";
@@ -84,6 +85,9 @@ export default async function getDeviceInfo(
       mcuVersion +
       (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
   );
+
+  const hasDevFirmware = isDevFirmware(seVersion);
+
   return {
     version,
     mcuVersion,
@@ -92,6 +96,7 @@ export default async function getDeviceInfo(
     majMin,
     providerName: providerName || null,
     targetId,
+    hasDevFirmware,
     seTargetId,
     mcuTargetId,
     isOSU,
