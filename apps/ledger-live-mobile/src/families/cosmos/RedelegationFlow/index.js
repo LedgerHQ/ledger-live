@@ -66,7 +66,7 @@ function RedelegationFlow() {
                 from: route.params?.validatorSrc?.name ?? "",
                 to: route.params?.validator?.name ?? "",
               })}
-               subtitle={t("cosmos.redelegation.stepperHeader.stepRange", {
+              subtitle={t("cosmos.redelegation.stepperHeader.stepRange", {
                 currentStep: "1",
                 totalSteps,
               })}

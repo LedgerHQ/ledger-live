@@ -39,7 +39,7 @@ import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
-import {getBannerProps, AccountBanner} from './AccountBanner'
+import { getBannerProps, AccountBanner } from "./AccountBanner";
 
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -117,14 +117,14 @@ const AccountPage = ({
 
   const dispatch = useDispatch();
 
-  const [banner, setBanner] = useState({})
+  const [banner, setBanner] = useState({});
 
   useEffect(() => {
-      const fetchData = async () => {
-        const bannerProps = await getBannerProps(account, { t, dispatch });
-        setBanner(bannerProps)
-      }
-      fetchData()
+    const fetchData = async () => {
+      const bannerProps = await getBannerProps(account, { t, dispatch });
+      setBanner(bannerProps);
+    };
+    fetchData();
   }, [account]);
 
   return (
@@ -173,7 +173,7 @@ const AccountPage = ({
               ctoken={ctoken}
             />
           </Box>
-          {banner.display  && <AccountBanner {...banner} />}
+          {banner.display && <AccountBanner {...banner} />}
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
