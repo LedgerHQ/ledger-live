@@ -244,6 +244,18 @@ export async function runWithAppSpec<T extends Transaction>(
           accountIdsNeedResync,
           preloadedData,
         });
+        if (report.finalAccount) {
+          // optim: no need to resync if all went well with finalAccount
+          accountIdsNeedResync = accountIdsNeedResync.filter(
+            (id) => id !== report.finalAccount.id
+          );
+          accounts = accounts.map((a: Account) => {
+            if (a.id === report.finalAccount.id) {
+              return report.finalAccount;
+            }
+            return a;
+          });
+        }
         // eslint-disable-next-line no-console
         console.log(formatReportForConsole(report));
         mutationReports.push(report);
@@ -478,7 +490,7 @@ export async function runOnAccount<T extends Transaction>({
     report.signedOperation = signedOperation;
     report.signedTime = now();
 
-    // at this stage, we are about to broadcast we assume we will need to resync sender and receiver accounts
+    // at this stage, we are about to broadcast we assume we will need to resync receiver account
     if (report.destination) {
       accountIdsNeedResync.push(report.destination.id);
     }
