@@ -4,8 +4,10 @@ import {
   CeloValidatorGroup,
   CeloVote,
   CeloVoteStatus,
+  PendingStakingOperationAmounts,
 } from "./types";
 import { BigNumber } from "bignumber.js";
+import { Operation } from "@ledgerhq/types-live";
 
 export const PRELOAD_MAX_AGE = 10 * 60 * 1000; // 10 minutes, used for max age in preload strategy
 const LEDGER_BY_FIGMENT_VALIDATOR_GROUP_ADDRESS =
@@ -102,6 +104,61 @@ export const isAccountRegistrationPending = (
     !account.celoResources?.registrationStatus;
 
   return isAccountRegistrationPending;
+};
+
+const isOperationTrulyPending = (
+  operation: Operation,
+  activeOperations: Operation[]
+): boolean => {
+  if (
+    activeOperations.some(
+      (activeOperation) => activeOperation.hash === operation.hash
+    )
+  ) {
+    return false;
+  }
+
+  return true;
+};
+
+const initialPendingStakingOperationAmounts: PendingStakingOperationAmounts = {
+  vote: new BigNumber(0),
+  lock: new BigNumber(0),
+};
+
+export const getPendingStakingOperationAmounts = (
+  account: CeloAccount
+): PendingStakingOperationAmounts => {
+  const operationAmounts = account.pendingOperations.reduce(
+    (acc, currentOperation) => {
+      if (
+        currentOperation.type !== "VOTE" &&
+        currentOperation.type !== "LOCK"
+      ) {
+        return acc;
+      }
+      if (isOperationTrulyPending(currentOperation, account.operations)) {
+        const value = new BigNumber(currentOperation.value);
+        switch (currentOperation.type) {
+          case "VOTE":
+            return {
+              ...acc,
+              vote: acc.vote.plus(value),
+            };
+          case "LOCK":
+            return {
+              ...acc,
+              lock: acc.lock.plus(value),
+            };
+        }
+      }
+
+      return acc;
+    },
+    initialPendingStakingOperationAmounts
+  );
+
+  return operationAmounts;
 };
 
 const getValidatorGroupsByVotingActivity = (

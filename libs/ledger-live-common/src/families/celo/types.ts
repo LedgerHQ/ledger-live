@@ -126,3 +126,8 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 export type CeloAccount = Account & { celoResources: CeloResources };
 
 export type CeloAccountRaw = AccountRaw & { celoResources: CeloResourcesRaw };
+
+export type PendingStakingOperationAmounts = {
+  vote: BigNumber;
+  lock: BigNumber;
+};
