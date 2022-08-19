@@ -37,9 +37,11 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
     () =>
       currency.type === "TokenCurrency"
         ? parentAccounts.reduce((accs, pa) => {
-            const tokenAccounts = pa.subAccounts.filter(
-              acc => acc.token.id === currency.id,
-            );
+            const tokenAccounts = pa.subAccounts
+              ? pa.subAccounts.filter(
+                  (acc: any) => acc.token.id === currency.id,
+                )
+              : [];
 
             if (tokenAccounts.length > 0) {
               accs.push(...tokenAccounts);

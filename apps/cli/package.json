@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.2.0-next.2",
+  "version": "22.2.1-next.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "lib"
   ],
   "scripts": {
-    "prebuild": "./scripts/gen.sh",
+    "prebuild": "zx ./scripts/gen.mjs",
     "build": "tsc --project src/tsconfig.json",
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
     "watch": "tsc --watch --project src/tsconfig.json",

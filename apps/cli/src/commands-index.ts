@@ -97,5 +97,5 @@ export default {
   testGetTrustedInputFromTxHash,
   user,
   version,
-  walletconnect,
+  walletconnect
 };

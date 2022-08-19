@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.8.3",
+  "version": "0.9.0-next.0",
   "description": "Ledger Live - Mobile UI",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
   "scripts": {
     "android": "expo start --android",
     "build": "tsc -p tsconfig.prod.json && node scripts/postBuild",
-    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
+    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui -F crypto-icons-ui build",
     "build:storybook": "pnpm build-storybook -o web-build",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
@@ -42,6 +42,7 @@
     "ios": "expo start --ios",
     "lint": "eslint src storybook --ext .ts,.tsx,.js,.jsx --cache",
     "lint:fix": "pnpm lint --fix",
+    "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}'",
     "release": "yarn publish ./lib --access public",
     "expo": "expo start",
     "storybook": "start-storybook -p 6006",
@@ -50,6 +51,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@types/color": "^3.0.3",
@@ -153,6 +155,10 @@
     "styled-components": "^5.3.3",
     "typescript": "^4.4.4",
     "victory": "^35.5.5",
-    "webpack": "^4.46.0"
+    "webpack": "^4.46.0",
+    "stylelint": "^14.9.1",
+    "stylelint-config-recommended": "^8.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.10.0"
   }
 }

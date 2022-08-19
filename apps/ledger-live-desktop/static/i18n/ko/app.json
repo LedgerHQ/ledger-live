@@ -697,6 +697,17 @@
     }
   },
   "account": {
+    "subHeader": {
+      "moreInfo": "자세한 정보",
+      "cardTitle": "{{team}} 기반",
+      "drawer": {
+        "title": "{{family}} 통합",
+        "subTitle": "{{family}} 통합은 {{team}} 팀에서 수행했습니다.",
+        "description": "Ledger Live는 오픈 소스 플랫폼입니다.",
+        "description2": "전 세계 어디에서나 개발자가 Ledger Live와 통합할 수 있습니다.",
+        "description3": "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다."
+      }
+    },
     "lastOperations": "최신 운영",
     "contractAddress": "계약:",
     "openInExplorer": "탐색기에서 열기",
@@ -733,8 +744,8 @@
     "frozenAssetsTooltip": "트론 투표 과정에 동결 자산이 사용되었습니다. 총 투표 수를 나타내는 숫자입니다.",
     "bandwidthTooltip": "자산을 동결하여 대역폭을 확보합니다",
     "energyTooltip": "자산을 동결하여 에너지를 확보합니다",
-    "delegatedAssetsTooltip": "Cosmos(코스모스) 투표 과정에 위임 자산이 사용되었습니다. 총 투표 수를 나타내는 숫자입니다.",
-    "undelegatingTooltip": "위임 해제 자산은 21일 후 타임락이 해제되면 사용 가능합니다."
+    "delegatedTooltip": "투표 과정에 위임 자산이 사용됩니다. 이는 총 투표 수를 나타내는 숫자입니다.",
+    "undelegatingTooltip": "위임 해제 자산은 {{timelockInDays}}일 후 타임락이 해제되면 사용 가능합니다."
   },
   "exchange": {
     "chooseProvider": "{{providerCount}} 제공자에서 선택",
@@ -1502,6 +1513,7 @@
       "memo": "메모",
       "assetId": "자산 ID",
       "rewards": "받은 보상",
+      "autoClaimedRewards": "자동으로 청구된 보상",
       "bondedAmount": "본딩된 금액",
       "unbondedAmount": "언본딩된 금액",
       "withdrawUnbondedAmount": "출금된 금액",
@@ -1990,20 +2002,6 @@
     "value": "가치",
     "header": "계정 배분 ({{count}})"
   },
-  "elrond": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Elrond 제공",
-        "moreInfo": "자세한 정보",
-        "drawerTitle": "Elrond 통합",
-        "title": "이제 Ledger Live에서 Elrond eGold(EGLD) 토큰을 이용할 수 있습니다",
-        "description": "이제 Ledger Live로 eGold(EGLD) 토큰을 안전하게 보관하고 관리할 수 있습니다.",
-        "description2": "Elrond eGold(EGLD) 토큰은 Elrond 네트워크의 네이티브 토큰으로, 트랜잭션, 스테이킹, 스마트 계약, 거버넌스, 검증인 보상 등 모든 분야에 사용됩니다.",
-        "description3": "본사는 스테이킹, 네이티브 ESDT(Elrond 스탠다드 디지털 토큰) 지원 등의 다양한 기능을 추가하기 위해 Ellrond 팀과 활발히 협업 중입니다.",
-        "website": "인터넷 스케일 블록체인"
-      }
-    }
-  },
   "cardano": {
     "account": {
       "stakingRewardsBanner": {
@@ -2334,6 +2332,180 @@
             "success": {
               "title": "보상을 성공적으로 수령했습니다!",
               "text": "보상이 가용 잔금에 추가되었습니다",
+              "cta": "세부사항 보기"
+            },
+            "broadcastError": "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    }
+  },
+  "osmosis": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Figment 기반",
+        "moreInfo": "자세한 정보",
+        "drawerTitle": "Figment 기반",
+        "title": "이제 Ledger Live에서 OSMO 토큰을 사용할 수 있습니다.",
+        "description": "이제 Ledger Live로 OSMO 토큰을 관리하고 안전하게 보호할 수 있습니다.",
+        "description2": "OSMO 토큰은 OSMO 체인의 네이티브 토큰이며 트랜잭션과 스테이킹을 비롯하여 앞으로 공개될 다양한 기능에 사용됩니다.",
+        "website": "Figment 기반"
+      }
+    },
+    "memo": "메모",
+    "memoPlaceholder": "선택 사항",
+    "memoWarningText": "메모 기능을 사용할 때는 관련 정보를 수령인과 신중하게 확인하세요",
+    "delegation": {
+      "emptyState": {
+        "description": "자산을 위임하여 OSMO 보상을 받을 수 있습니다.",
+        "info": "위임은 어떤 원리인가요?",
+        "delegation": "보상 받기"
+      },
+      "commission": "커미션",
+      "totalStake": "총 스테이킹",
+      "claimRewards": "보상 수령",
+      "header": "위임",
+      "noRewards": "이용 가능한 보상이 없습니다",
+      "delegate": "추가",
+      "undelegate": "위임 해제",
+      "redelegate": "재위임",
+      "redelegateDisabledTooltip": "<0>{{days}}</0>에 재위임할 수 있습니다",
+      "redelegateMaxDisabledTooltip": "한 번에 <0>7</0>명 이상의 검증인을 재위임할 수 없습니다",
+      "undelegateDisabledTooltip": "한 번에 <0>7</0>명 이상의 검증인을 위임 해제할 수 없습니다",
+      "reward": "보상 수령",
+      "currentDelegation": "위임됨: <0>{{amount}}</0>",
+      "estYield": "추산 수익",
+      "activeTooltip": "위임된 금액이 보상을 생성합니다",
+      "inactiveTooltip": "위임되지 않은 금액은 보상을 생성하지 않습니다",
+      "minSafeWarning": "자금이 부족합니다",
+      "flow": {
+        "title": "위임하기",
+        "steps": {
+          "starter": {
+            "description": "OSMO 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
+            "bullet": [
+              "위임된 자산의 소유권은 귀하가 갖습니다",
+              "Ledger 장치를 이용하여 위임하세요",
+              "자산은 위임 해제 14일 후에 이용 가능합니다"
+            ],
+            "warning": {
+              "description": "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
+            }
+          },
+          "amount": {
+            "title": "금액"
+          },
+          "validator": {
+            "title": "검증인"
+          },
+          "connectDevice": {
+            "title": "장치"
+          },
+          "confirmation": {
+            "title": "확인",
+            "success": {
+              "title": "자산을 성공적으로 위임했습니다",
+              "text": "블록체인이 트랜잭션 검증을 완료하면 계정 잔금이 업데이트됩니다.",
+              "cta": "세부사항 보기"
+            },
+            "broadcastError": "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "flow": {
+        "title": "보상 수령",
+        "steps": {
+          "claimRewards": {
+            "title": "보상",
+            "compound": "컴파운드",
+            "claim": "현금화",
+            "compoundOrClaim": "컴파운드 또는 현금화",
+            "compoundDescription": "위임된 금액에 보상이 추가됩니다",
+            "claimDescription": "보상이 이용 가능 잔금에 추가됩니다",
+            "compoundInfo": "<0>{{amount}}</0>의 보상을 획득했습니다. '계속'을 클릭하면, 바로 보상을 수령하고 동일한 검증인에게 자동 위임합니다.",
+            "claimInfo": "아래 검증인으로부터 <0>{{amount}}</0>의 수익을 획득했습니다. '계속'을 클릭하면, 바로 보상을 수령하고 이용 가능 잔액에 자동 추가됩니다.",
+            "selectLabel": "위임 선택"
+          },
+          "connectDevice": {
+            "title": "장치"
+          },
+          "confirmation": {
+            "title": "확인",
+            "label": "확인",
+            "success": {
+              "title": "보상을 성공적으로 현금화 했습니다",
+              "titleCompound": "성공적으로 보상에 복리를 적용했습니다.",
+              "text": "보상이 이용 가능 잔액에 추가되었습니다",
+              "textCompound": "귀하의 보상이 <0>{{amount}}</0>자동으로 <0>{{validator}}</0>에게 위임되었습니다",
+              "cta": "세부사항 보기"
+            },
+            "pending": {
+              "title": "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError": "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "redelegation": {
+      "flow": {
+        "title": "자산 재위임",
+        "steps": {
+          "starter": {
+            "title": "재위임",
+            "description": "재위임 기능을 이용해 손쉽게 검증인을 변경하세요. 하지만 재위임 시 14일 타임 락이 적용되기 때문에, 다시 변경을 원하는 경우 14일을 기다려야 합니다.",
+            "warning": "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다. 최대 <0>7개의 대기 중 재위임</0>이 있을 수 있습니다.",
+            "howDelegationWorks": "위임은 어떤 원리인가요?"
+          },
+          "validators": {
+            "title": "검증인",
+            "currentDelegation": "현재 위임",
+            "newDelegation": "새로운 위임",
+            "chooseValidator": "검증인 선택",
+            "warning": "다시 마음이 바뀌어 새로운 검증인 교체하고 재위임하려면 <0>14일</0>을 기다려야 합니다",
+            "amountLabel": "재위임할 금액"
+          },
+          "device": {
+            "title": "장치"
+          },
+          "confirmation": {
+            "title": "확인",
+            "success": {
+              "title": "귀하의 자산을 성공적으로 재위임했습니다",
+              "text": "블록체인이 트랜잭션 확인을 마치고 나면 재위임이 업데이트됩니다.",
+              "cta": "세부사항 보기"
+            },
+            "broadcastError": "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "header": "위임 해제",
+      "headerTooltip": "141일 타임 락이 끝나면 이용할 수 있습니다",
+      "inactiveTooltip": "위임되지 않은 금액은 보상을 생성하지 않습니다",
+      "flow": {
+        "title": "위임 해제 자산",
+        "steps": {
+          "amount": {
+            "title": "금액",
+            "subtitle": "위임 해제 절차 완료까지 <0>14일</0>이 소요됩니다.",
+            "warning": "보상은 즉시 현금화할 수 있습니다. 위임 해제 금액은 <0>14일 시간 잠금 후에 가용 잔금으로 되돌아옵니다.",
+            "fields": {
+              "validator": "검증인",
+              "amount": "위임 해제 금액"
+            }
+          },
+          "device": {
+            "title": "장치"
+          },
+          "confirmation": {
+            "title": "확인",
+            "success": {
+              "title": "귀하의 자산을 성공적으로 위임 해제했습니다.",
+              "description": "<0>{{amount}}</0>가 <0>{{validator}}</0>로부터 위임 해제되었습니다",
               "cta": "세부사항 보기"
             },
             "broadcastError": "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
@@ -3739,8 +3911,10 @@
     "recipientWording": {
       "send": "수령인",
       "delegate": "검증인",
+      "redelegate": "검증인",
       "undelegate": "검증인",
       "claimReward": "보상 수령인",
+      "claimRewardCompound": "보상을 받을 검증인",
       "optIn": "수령인",
       "nominate": "검증인",
       "erc721": {
@@ -4470,17 +4644,6 @@
     }
   },
   "cryptoOrg": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Crypto.org에서 제공됨",
-        "moreInfo": "자세한 정보",
-        "drawerTitle": "Crypto.org 통합",
-        "title": "이제 Ledger Live에서 Crypto.org(CRO) 토큰을 사용할 수 있습니다",
-        "description": "이제 CRO(Crypto.org) 토큰 관리를 시작하고 Ledger Live를 통해 토큰을 보호할 수 있습니다.",
-        "description2": "Crypto.org(CRO) 토큰은 Crypto.org 체인의 기본 토큰이며 트랜잭션, 스테이킹 및 향후 많은 기능에 사용됩니다.",
-        "website": "모든 지갑의 암호화폐"
-      }
-    },
     "memo": "메모",
     "memoPlaceholder": "선택 사항",
     "memoWarningText": "메모 기능을 사용할 때는 해당 정보를 수령인과 신중하게 확인하세요"

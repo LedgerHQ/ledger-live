@@ -697,6 +697,17 @@
     }
   },
   "account": {
+    "subHeader": {
+      "moreInfo": "詳細はこちら",
+      "cardTitle": "Powered by {{team}}",
+      "drawer": {
+        "title": "{{family}}の統合",
+        "subTitle": "{{family}}の統合は{{team}}チームによって行われました",
+        "description": "Ledger Liveはオープンソースのプラットフォームです。",
+        "description2": "世界中の開発者がLedger Liveと統合できます",
+        "description3": "この統合は、 {{team}}がLedgerと共同で実施しました"
+      }
+    },
     "lastOperations": "最近の取引",
     "contractAddress": "コントラクト：",
     "openInExplorer": "エクスプローラーで開く",
@@ -733,8 +744,8 @@
     "frozenAssetsTooltip": "凍結された資産はTronの投票に使われます。こちらが合計票数です。",
     "bandwidthTooltip": "資産を凍結して、バンド幅を獲得",
     "energyTooltip": "資産を凍結して、エネルギーを獲得",
-    "delegatedAssetsTooltip": "デリゲートされた資産は、Cosmosの投票に使われます。こちらが合計票数です。",
-    "undelegatingTooltip": "デリゲートを解除した資産は、21日間のロック期間後に再び利用可能になります。"
+    "delegatedTooltip": "デリゲートされた資産は、投票プロセスで使用されます。これは、投票の総数を表します。",
+    "undelegatingTooltip": "デリゲートを解除した資産は、{{timelockInDays}}日間のロック期間後に再び利用可能になります。"
   },
   "exchange": {
     "chooseProvider": "{{providerCount}}プロバイダーから選択",
@@ -1502,6 +1513,7 @@
       "memo": "メモ",
       "assetId": "Asset ID",
       "rewards": "獲得した報酬",
+      "autoClaimedRewards": "自動獲得報酬",
       "bondedAmount": "ボンド済み額",
       "unbondedAmount": "ボンド解除済み額",
       "withdrawUnbondedAmount": "引き出し数量",
@@ -1990,20 +2002,6 @@
     "value": "価値",
     "header": "アカウント配分({{count}})"
   },
-  "elrond": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Elrond",
-        "moreInfo": "詳細はこちら",
-        "drawerTitle": "Elrondの統合",
-        "title": "Ledger Liveは、Elrond eGold（EGLD）トークン対応です。",
-        "description": "Ledger Liveで、eGold（EGLD）トークンを安全に保管・管理できるようになりました。",
-        "description2": "Elrond eGold（EGLD）トークンは、Elrond Networkのネイティブトークンであり、トランザクション、ステーキング、スマートコントラクト、ガバナンス、バリデータの報酬など、さまざまな用途に使用されます。",
-        "description3": "LedgerはElrondチームと積極的に協力し、ステーキングやESDT（Elrond Standard Digital Token）のネイティブサポートなどの機能を追加していく予定です。",
-        "website": "The Internet Scale Blockchain"
-      }
-    }
-  },
   "cardano": {
     "account": {
       "stakingRewardsBanner": {
@@ -2334,6 +2332,180 @@
             "success": {
               "title": "報酬を正常に獲得しました！",
               "text": "報酬が利用可能残高に加算されました。",
+              "cta": "詳細を表示"
+            },
+            "broadcastError": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    }
+  },
+  "osmosis": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Powered by Figment",
+        "moreInfo": "詳細はこちら",
+        "drawerTitle": "Powered by Figment",
+        "title": "OSMOトークンがLedger Liveでご利用可能になりました",
+        "description": "OSMOトークンを管理して、Ledger Liveで保護できるようになりました。",
+        "description2": "OsmosisチェーンのネイティブトークンであるOSMOトークンは、トランザクション、ステーキングに利用されています。今後さらに多くの機能へ対応予定です。",
+        "website": "Powered by Figment"
+      }
+    },
+    "memo": "Memo",
+    "memoPlaceholder": "任意",
+    "memoWarningText": "メモを使用する場合は、受取人と情報をしっかりと確認してください",
+    "delegation": {
+      "emptyState": {
+        "description": "資産をデリゲートすることで、OSMOで報酬を獲得できます。",
+        "info": "デリゲートの仕組み",
+        "delegation": "報酬を獲得する"
+      },
+      "commission": "コミッション",
+      "totalStake": "合計ステーキング量",
+      "claimRewards": "報酬獲得を申請",
+      "header": "デリゲート",
+      "noRewards": "受け取れる報酬はありません。",
+      "delegate": "追加",
+      "undelegate": "デリゲート解除",
+      "redelegate": "再デリゲート",
+      "redelegateDisabledTooltip": "<0>{{days}}</0>後に再デリゲート可能です",
+      "redelegateMaxDisabledTooltip": "一度に<0>7</0>件以上のバリデーターを再デリゲートすることはできません。",
+      "undelegateDisabledTooltip": "一度に<0>7</0>件以上のバリデーターのデリゲートを解除することはできません。",
+      "reward": "報酬獲得を申請",
+      "currentDelegation": "デリゲート: <0>{{amount}}</0>",
+      "estYield": "推定利回り",
+      "activeTooltip": "デリゲートして報酬を得る",
+      "inactiveTooltip": "デリゲートしていない金額は報酬を生成しません",
+      "minSafeWarning": "資金不足",
+      "flow": {
+        "title": "デリゲート",
+        "steps": {
+          "starter": {
+            "description": "OSMO資産をバリデーターにデリゲートすることで報酬を得ることができます。",
+            "bullet": [
+              "デリゲートされた資産の所有権を保持する",
+              "Ledgerデバイスを使ってデリゲートしましょう",
+              "資産はデリゲート解除から14日後に利用可能になります"
+            ],
+            "warning": {
+              "description": "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
+            }
+          },
+          "amount": {
+            "title": "数量"
+          },
+          "validator": {
+            "title": "バリデーター"
+          },
+          "connectDevice": {
+            "title": "デバイス"
+          },
+          "confirmation": {
+            "title": "確認",
+            "success": {
+              "title": "資産が正常にデリゲートされました。",
+              "text": "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta": "詳細を表示"
+            },
+            "broadcastError": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "flow": {
+        "title": "報酬獲得を申請",
+        "steps": {
+          "claimRewards": {
+            "title": "報酬",
+            "compound": "Compound",
+            "claim": "キャッシュイン",
+            "compoundOrClaim": "コンパウンドとキャッシュイン",
+            "compoundDescription": "報酬はデリゲート額に加算されます。",
+            "claimDescription": "報酬は利用可能残高に加算されます。",
+            "compoundInfo": "<0>{{amount}}</0>を獲得しました。続行をクリックすると、獲得した報酬が自動的に同じバリデーターにデリゲートされます。",
+            "claimInfo": "以下のバリデーターから<0>{{amount}}</0>を獲得しました。続行をクリックすると、獲得した報酬が自動的に同じバリデーターにデリゲートされます。",
+            "selectLabel": "デリゲートを選択"
+          },
+          "connectDevice": {
+            "title": "デバイス"
+          },
+          "confirmation": {
+            "title": "確認",
+            "label": "確認",
+            "success": {
+              "title": "報酬が正常にキャッシュ化されました",
+              "titleCompound": "報酬が正常にコンパウンドされました",
+              "text": "報酬が利用可能残高に加算されました。",
+              "textCompound": "報酬<0>{{amount}}</0>は自動的に<0>{{validator}}</0>にデリゲートされました",
+              "cta": "詳細を表示"
+            },
+            "pending": {
+              "title": "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "redelegation": {
+      "flow": {
+        "title": "資産を再デリゲートする",
+        "steps": {
+          "starter": {
+            "title": "再デリゲート",
+            "description": "再デリゲートを使用すると、別のバリデーターに簡単に変更できます。しかし、再び気が変わった場合は、再デリゲートによって14日間ロックされるため、待機する必要があります。",
+            "warning": "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。保留中の最大再デリゲート数は<0>7 つ</0>です。",
+            "howDelegationWorks": "デリゲートの仕組み"
+          },
+          "validators": {
+            "title": "バリデーター",
+            "currentDelegation": "現在のデリゲート",
+            "newDelegation": "新しいデリゲート",
+            "chooseValidator": "バリデーターを選ぶ",
+            "warning": "新しいバリデーターから再デリゲートを希望する場合には<0>14日間</0>待つ必要があります。",
+            "amountLabel": "再デリゲート額"
+          },
+          "device": {
+            "title": "デバイス"
+          },
+          "confirmation": {
+            "title": "確認",
+            "success": {
+              "title": "資産を正常に再デリゲートしました。",
+              "text": "ブロックチェーンがトランザクションを承認後、デリゲートが更新されます",
+              "cta": "詳細を表示"
+            },
+            "broadcastError": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "header": "デリゲート解除",
+      "headerTooltip": "14日間のロック後に利用可能",
+      "inactiveTooltip": "デリゲートされていない金額は報酬を生成しません。",
+      "flow": {
+        "title": "資産のデリゲートを解除",
+        "steps": {
+          "amount": {
+            "title": "数量",
+            "subtitle": "デリゲートの解除完了には、<0>14日</0>かかります。",
+            "warning": "報酬はすぐにキャッシュインされます。デリゲートされていない金額は、<0>14日間のタイムロック</0>後に利用可能な残高に戻ります。",
+            "fields": {
+              "validator": "バリデーター",
+              "amount": "デリゲート解除額"
+            }
+          },
+          "device": {
+            "title": "デバイス"
+          },
+          "confirmation": {
+            "title": "確認",
+            "success": {
+              "title": "資産のデリゲートを正常に解除しました。",
+              "description": "<0>{{amount}}</0>は<0>{{validator}}</0>からデリゲート解除されました。",
               "cta": "詳細を表示"
             },
             "broadcastError": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
@@ -3739,8 +3911,10 @@
     "recipientWording": {
       "send": "送付先",
       "delegate": "バリデーター",
+      "redelegate": "バリデーター",
       "undelegate": "バリデーター",
       "claimReward": "報酬受取先",
+      "claimRewardCompound": "報酬を受け取るバリデーター",
       "optIn": "受取先",
       "nominate": "バリデーター",
       "erc721": {
@@ -4470,17 +4644,6 @@
     }
   },
   "cryptoOrg": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Crypto.org",
-        "moreInfo": "詳細はこちら",
-        "drawerTitle": "Crypto.orgを統合",
-        "title": "Crypto.org(CRO)トークンがLedger Liveでご利用可能になりました",
-        "description": "Crypto.org(CRO)トークンを管理し、Ledger Liveを通じて保護することができます。",
-        "description2": "Crypto.orgチェーンのネイティブトークンであるCrypto.org(CRO)は、トランザクション、ステーキングに利用されています。今後さらに多くの機能へ対応予定です。",
-        "website": "全てのウォレットに暗号資産を"
-      }
-    },
     "memo": "メモ",
     "memoPlaceholder": "任意",
     "memoWarningText": "メモを使用する場合は、受取人と情報をしっかりと確認してください"
