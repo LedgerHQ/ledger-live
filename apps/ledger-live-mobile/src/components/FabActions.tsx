@@ -203,6 +203,7 @@ const FabMarketActionsComponent: React.FC<Props> = ({
                       currency &&
                       currency.ticker &&
                       currency.ticker.toUpperCase(),
+                    defaultCurrencyId: currency && currency.id,
                   },
                 },
               ],
@@ -224,6 +225,7 @@ const FabMarketActionsComponent: React.FC<Props> = ({
                       currency &&
                       currency.ticker &&
                       currency.ticker.toUpperCase(),
+                    defaultCurrencyId: currency && currency.id,
                   },
                 },
               ],
@@ -256,8 +258,11 @@ const FabMarketActionsComponent: React.FC<Props> = ({
               navigationParams: [
                 NavigatorName.ReceiveFunds,
                 {
-                  screen: ScreenName.ReceiveSelectAccount,
-                  params: { selectedCurrency: currency },
+                  screen: ScreenName.ReceiveConfirmation,
+                  params: {
+                    parentId: defaultAccount?.parentId,
+                    accountId: defaultAccount.id,
+                  },
                 },
               ],
             },
@@ -369,7 +374,7 @@ const FabActions: React.FC<FabActionsProps> = ({
       navigationParams: [
         NavigatorName.ReceiveFunds,
         {
-          screen: ScreenName.ReceiveSelectAccount,
+          screen: ScreenName.ReceiveSelectCrypto,
         },
       ],
     };

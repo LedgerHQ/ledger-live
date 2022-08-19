@@ -2555,7 +2555,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://www.mintscan.io/osmosis/txs/$hash",
-        address: "https://www.mintscan.io/osmosis/account/$address",
+        address: "https://www.mintscan.io/osmosis/validators/$address",
       },
     ],
   },

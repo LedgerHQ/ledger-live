@@ -12,6 +12,7 @@ import Illustration from "../../../images/illustration/Illustration";
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import { completeOnboarding } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
+import useNotifications from "../../../logic/notifications";
 
 const images = {
   light: {
@@ -47,6 +48,9 @@ function OnboardingStepPairNew() {
   >();
 
   const dispatch = useDispatch();
+  const {
+    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+  } = useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
   const { deviceModelId, showSeedWarning } = route.params;
@@ -97,7 +101,14 @@ function OnboardingStepPairNew() {
     navigation.replace(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
-  }, [dispatch, navigation, resetCurrentStep]);
+
+    triggerJustFinishedOnboardingNewDevicePushNotificationModal();
+  }, [
+    dispatch,
+    navigation,
+    resetCurrentStep,
+    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+  ]);
 
   const nextPage = useCallback(() => {
     onFinish();

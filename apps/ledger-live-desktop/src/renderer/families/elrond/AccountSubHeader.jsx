@@ -1,14 +1,7 @@
 // @flow
 
 import React from "react";
-import styled from "styled-components";
-import Box, { Card } from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import { Trans, useTranslation } from "react-i18next";
-import Button from "~/renderer/components/Button";
-import AccountSubHeaderDrawer from "./AccountSubHeaderDrawer";
-import ChevronRight from "~/renderer/icons/ChevronRight";
-import InfoCircle from "~/renderer/icons/InfoCircle";
+import AccountSubHeader from "../../components/AccountSubHeader/index";
 
 const CardContent = styled(Box)`
   display: flex;
@@ -66,4 +59,7 @@ export default function AccountSubHeader() {
       <AccountSubHeaderDrawer isOpen={isDrawerOpen} closeDrawer={closeDrawer} />
     </Card>
   );
+}
+export default function ElrondAccountSubHeader() {
+  return <AccountSubHeader family="Elrond" team="Elrond"></AccountSubHeader>;
 }
