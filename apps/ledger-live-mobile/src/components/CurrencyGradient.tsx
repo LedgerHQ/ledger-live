@@ -8,9 +8,11 @@ import Svg, {
   G,
 } from "react-native-svg";
 import { useTheme } from "styled-components/native";
+import { ensureContrast } from "../colors";
 
 function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
   const { colors } = useTheme();
+  const contrastedColor = ensureContrast(gradientColor, colors.background.main);
   return (
     <Svg
       width={541}
@@ -50,8 +52,8 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
           y2={450.077}
           gradientUnits="userSpaceOnUse"
         >
-          <Stop stopColor={gradientColor} />
-          <Stop offset={1} stopColor={gradientColor} stopOpacity={0} />
+          <Stop stopColor={contrastedColor} />
+          <Stop offset={1} stopColor={contrastedColor} stopOpacity={0} />
         </LinearGradient>
         <LinearGradient
           id="paint1_linear_22_3"

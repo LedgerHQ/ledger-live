@@ -111,6 +111,7 @@ export function getListHeaderComponents({
             countervalueChange={countervalueChange}
             counterValueUnit={counterValueCurrency.units[0]}
             cryptoCurrencyUnit={getAccountUnit(account)}
+            parentAccount={parentAccount}
           />
         </Box>
       ),

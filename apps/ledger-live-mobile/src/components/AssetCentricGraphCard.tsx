@@ -16,6 +16,7 @@ import Graph from "./Graph";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import ParentCurrencyIcon from "./ParentCurrencyIcon";
 import FormatDate from "./FormatDate";
+import { ensureContrast } from "../colors";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
@@ -95,6 +96,11 @@ function AssetCentricGraphCard({
       opacity,
     };
   }, [graphCardEndPosition]);
+
+  const graphColor = ensureContrast(
+    getCurrencyColor(currency),
+    colors.background.main,
+  );
 
   return (
     <Flex flexDirection="column">
@@ -188,7 +194,7 @@ function AssetCentricGraphCard({
         isLoading={!isAvailable}
         height={110}
         width={getWindowDimensions().width + 1}
-        color={getCurrencyColor(currency) || colors.primary.c80}
+        color={graphColor}
         data={balanceHistory}
         onItemHover={setHoverItem}
         mapValue={mapGraphValue}
