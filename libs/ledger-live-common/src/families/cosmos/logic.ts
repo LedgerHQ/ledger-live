@@ -18,8 +18,8 @@ import type { Transaction } from "../../generated/types";
 import { calculateFees } from "./js-prepareTransaction";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
-import { getAccountBridge } from "../../bridge"
-import { LEDGER_VALIDATOR_ADDRESS } from './utils'
+import { getAccountBridge } from "../../bridge";
+import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 
 export const COSMOS_MAX_REDELEGATIONS = 7;
 export const COSMOS_MAX_UNBONDINGS = 7;
@@ -254,23 +254,39 @@ export function getRedelegationCompletionDate(
 }
 
 export async function getAccountBannerState(account: Account) {
-  // Group current validator 
-  const cosmosResources = account.cosmosResources ? account.cosmosResources : { delegations: [], redelegations: []} 
-  const delegationAddresses = cosmosResources.delegations.map(delegation => { return delegation.validatorAddress});
-  const redelegationAddresses = cosmosResources.redelegations.map(redelegation => { return redelegation.validatorDstAddress});
+  // Group current validator
+  const cosmosResources = account.cosmosResources
+    ? account.cosmosResources
+    : { delegations: [], redelegations: [] };
+  const delegationAddresses = cosmosResources.delegations.map((delegation) => {
+    return delegation.validatorAddress;
+  });
+  const redelegationAddresses = cosmosResources.redelegations.map(
+    (redelegation) => {
+      return redelegation.validatorDstAddress;
+    }
+  );
   const validatorAdresses = [...delegationAddresses, ...redelegationAddresses];
 
   // Get ledger validator data
   const { validators } = getCurrentCosmosPreloadData();
-  const ledgerValidator = validators.find(validator => validator.validatorAddress === LEDGER_VALIDATOR_ADDRESS);
-  
+  const ledgerValidator = validators.find(
+    (validator) => validator.validatorAddress === LEDGER_VALIDATOR_ADDRESS
+  );
+
   // Find user current worst validator (default validator is ledger)
   let worstValidator = ledgerValidator;
-  for(let i=0; i<validatorAdresses.length; i++) {
+  for (let i = 0; i < validatorAdresses.length; i++) {
     const validatorAdress = validatorAdresses[i];
-    const validator = validators.find(validator => validator.validatorAddress === validatorAdress)
-    if(worstValidator && validator && worstValidator.commission < validator.commission) {
-      worstValidator = validator
+    const validator = validators.find(
+      (validator) => validator.validatorAddress === validatorAdress
+    );
+    if (
+      worstValidator &&
+      validator &&
+      worstValidator.commission < validator.commission
+    ) {
+      worstValidator = validator;
     }
   }
 
@@ -278,8 +294,10 @@ export async function getAccountBannerState(account: Account) {
   let validatorSrcAddress = "";
   let display = false;
 
-  if(worstValidator) {
-    if(worstValidator?.validatorAddress === ledgerValidator?.validatorAddress) {
+  if (worstValidator) {
+    if (
+      worstValidator?.validatorAddress === ledgerValidator?.validatorAddress
+    ) {
       // Not found worst validator than ledger
       const maxSpendable = await getAccountBridge(account, undefined)
         .estimateMaxSpendable({
@@ -287,10 +305,10 @@ export async function getAccountBannerState(account: Account) {
           parentAccount: undefined,
           transaction: undefined,
         })
-        .then(estimate => {
-          return +estimate
-        })    
-      if(maxSpendable > 0) {
+        .then((estimate) => {
+          return +estimate;
+        });
+      if (maxSpendable > 0) {
         // Delegate remaining ATOM (not staked)
         display = true;
       }
@@ -301,11 +319,11 @@ export async function getAccountBannerState(account: Account) {
       validatorSrcAddress = worstValidator.validatorAddress;
     }
   }
-          
-  return { 
-    display, 
-    redelegate, 
-    validatorSrcAddress, 
-    ledgerValidator
-  }
+
+  return {
+    display,
+    redelegate,
+    validatorSrcAddress,
+    ledgerValidator,
+  };
 }

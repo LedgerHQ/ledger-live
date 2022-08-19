@@ -1,6 +1,6 @@
 import { getAccountBannerState } from "./logic.ts";
-const preloadedData = require("./preloadedData");
-const bridge = require("../../bridge");
+import preloadedData = require("./preloadedData");
+import bridge = require("../../bridge");
 
 const ledgerValidator = {
   validatorAddress: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
