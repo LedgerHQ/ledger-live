@@ -674,7 +674,7 @@ DEPENDENCIES:
   - "react-native-adjust (from `../../../node_modules/.pnpm/react-native-adjust@4.29.6/node_modules/react-native-adjust`)"
   - "react-native-ble-plx (from `../../../node_modules/.pnpm/react-native-ble-plx@2.0.3/node_modules/react-native-ble-plx`)"
   - "react-native-config (from `../../../node_modules/.pnpm/react-native-config@1.4.4/node_modules/react-native-config`)"
-  - "react-native-fast-crypto (from `../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_jdmv3zyvsaug2f6l23zgrmwdli_react-native@0.68.2/node_modules/react-native-fast-crypto`)"
+  - "react-native-fast-crypto (from `../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_react-native@0.68.2/node_modules/react-native-fast-crypto`)"
   - "react-native-fingerprint-scanner (from `../../../node_modules/.pnpm/github.com+hieuvp+react-native-fingerprint-scanner@f1d136f605412d58e4de9e7e155d6f818ba24731_react-native@0.68.2/node_modules/react-native-fingerprint-scanner`)"
   - "react-native-flipper-performance-plugin (from `../../../node_modules/.pnpm/react-native-flipper-performance-plugin@0.2.1/node_modules/react-native-flipper-performance-plugin`)"
   - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.68.2/node_modules/@react-native-community/netinfo`)"
@@ -685,7 +685,7 @@ DEPENDENCIES:
   - "react-native-text-input-mask (from `../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.68.2/node_modules/react-native-text-input-mask`)"
   - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.5/node_modules/react-native-udp`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
-  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@5.2.0_lojvl6twgoj4rxeqeytmq4uduq/node_modules/react-native-video`)"
+  - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@5.2.0/node_modules/react-native-video`)"
   - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@11.18.2_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-webview`)"
   - "React-perflogger (from `../../../node_modules/.pnpm/react-native@0.68.2_shn3lkepuadv4od4dudas6ijbq/node_modules/react-native/ReactCommon/reactperflogger`)"
   - "React-RCTActionSheet (from `../../../node_modules/.pnpm/react-native@0.68.2_shn3lkepuadv4od4dudas6ijbq/node_modules/react-native/Libraries/ActionSheetIOS`)"
@@ -826,7 +826,7 @@ EXTERNAL SOURCES:
   react-native-config:
     :path: "../../../node_modules/.pnpm/react-native-config@1.4.4/node_modules/react-native-config"
   react-native-fast-crypto:
-    :path: "../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_jdmv3zyvsaug2f6l23zgrmwdli_react-native@0.68.2/node_modules/react-native-fast-crypto"
+    :path: "../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_react-native@0.68.2/node_modules/react-native-fast-crypto"
   react-native-fingerprint-scanner:
     :path: "../../../node_modules/.pnpm/github.com+hieuvp+react-native-fingerprint-scanner@f1d136f605412d58e4de9e7e155d6f818ba24731_react-native@0.68.2/node_modules/react-native-fingerprint-scanner"
   react-native-flipper-performance-plugin:
@@ -848,7 +848,7 @@ EXTERNAL SOURCES:
   react-native-version-number:
     :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-video:
-    :path: "../../../node_modules/.pnpm/react-native-video@5.2.0_lojvl6twgoj4rxeqeytmq4uduq/node_modules/react-native-video"
+    :path: "../../../node_modules/.pnpm/react-native-video@5.2.0/node_modules/react-native-video"
   react-native-webview:
     :path: "../../../node_modules/.pnpm/react-native-webview@11.18.2_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-webview"
   React-perflogger:

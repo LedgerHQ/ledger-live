@@ -16,15 +16,18 @@ import Animated, {
 } from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect } from "@react-navigation/native";
 
 import { Box, Flex, Button } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
-import { isCurrencySupported } from "@ledgerhq/live-common/lib/currencies";
-import { listTokens } from "@ledgerhq/live-common/lib/currencies";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
+import {
+  isCurrencySupported,
+  listTokens,
+  listSupportedCurrencies,
+  useCurrenciesByMarketcap,
+} from "@ledgerhq/live-common/lib/currencies";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
 import {
   discreetModeSelector,
@@ -53,10 +56,6 @@ import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
-import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { Currency } from "@ledgerhq/types-cryptoassets";
-import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 import { AnalyticsContext } from "../../../components/RootNavigator";
 import { useCurrentRouteName } from "../../../helpers/routeHooks";
 
