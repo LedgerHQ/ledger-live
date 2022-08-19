@@ -74,7 +74,7 @@ export const isJwtExpired = (jwtToken: string): boolean => {
 
     return currentTime > exp;
   } catch (e) {
-    return false;
+    return true;
   }
 };
 
