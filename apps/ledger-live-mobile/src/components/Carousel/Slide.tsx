@@ -43,7 +43,7 @@ const Slide = ({
   const currentScreen = useCurrentRouteName();
   const onClick = useCallback(() => {
     track("banner_clicked", {
-      banner: "Discover Web3",
+      banner: name,
       url,
       screen: currentScreen,
     });
