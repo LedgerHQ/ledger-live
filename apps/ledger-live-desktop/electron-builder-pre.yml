@@ -29,6 +29,7 @@ linux:
     - target: AppImage
       arch:
         - x64
+        - arm64
 
 win:
   artifactName: ${name}-${version}-${os}-${arch}.${ext}
@@ -40,6 +41,7 @@ win:
     - target: nsis
       arch:
         - x64
+        - arm64
 
 nsis:
   oneClick: false
