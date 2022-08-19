@@ -64,7 +64,7 @@ export default function NftCollectionsList({ account }: Props) {
   const navigateToReceive = useCallback(
     () =>
       navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveConnectDevice,
+        screen: ScreenName.ReceiveConfirmation,
         params: {
           accountId: account.id,
         },
@@ -74,23 +74,29 @@ export default function NftCollectionsList({ account }: Props) {
 
   const navigateToCollection = useCallback(
     collection =>
-      navigation.navigate(ScreenName.NftCollection, {
-        collection,
-        accountId: account.id,
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.NftCollection,
+        params: {
+          collection,
+          accountId: account.id,
+        },
       }),
     [account.id, navigation],
   );
 
   const navigateToGallery = useCallback(() => {
-    navigation.navigate(ScreenName.NftGallery, {
-      title: t("nft.gallery.allNft"),
-      accountId: account.id,
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.NftGallery,
+      params: {
+        title: t("nft.gallery.allNft"),
+        accountId: account.id,
+      },
     });
   }, [account.id, navigation, t]);
 
   const navigateToReceiveConnectDevice = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId: account.id,
       },

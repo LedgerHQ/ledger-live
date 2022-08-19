@@ -21,6 +21,7 @@ import {
 } from "../../families/polkadot/logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 
+const maxAccounts = 32;
 const currency = getCryptoCurrencyById("polkadot");
 // FIXME Should be replaced with EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN in logic.ts
 const POLKADOT_MIN_SAFE = parseCurrencyUnit(currency.units[0], "0.1");
@@ -52,10 +53,10 @@ const polkadot: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send 50%~",
-      maxRun: 2,
+      maxRun: 4,
       transaction: ({ account, siblings, bridge }) => {
         invariant((account as PolkadotAccount).polkadotResources, "polkadot");
-        const sibling = pickSiblings(siblings, 2);
+        const sibling = pickSiblings(siblings, maxAccounts);
         let amount = account.spendableBalance
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
@@ -74,7 +75,7 @@ const polkadot: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: pickSiblings(siblings, 1).freshAddress,
+              recipient: sibling.freshAddress,
             },
             {
               amount,

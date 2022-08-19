@@ -1,7 +1,15 @@
 /* eslint-disable import/named */
-import React, { useCallback, useMemo, useState, memo } from "react";
+import React, {
+  useCallback,
+  useMemo,
+  useState,
+  memo,
+  useEffect,
+  useContext,
+} from "react";
 import { useSelector } from "react-redux";
-import { FlatList } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -45,6 +53,11 @@ import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
+import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
+import { AnalyticsContext } from "../../../components/RootNavigator";
 import { useCurrentRouteName } from "../../../helpers/routeHooks";
 
 export { default as PortfolioTabIcon } from "../TabIcon";
@@ -184,6 +197,22 @@ function ReadOnlyPortfolio({ navigation }: Props) {
       t,
       currentRoute,
     ],
+  );
+
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
+
+  useFocusEffect(() => {
+    screen("ReadOnly", "Wallet", { source });
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Wallet");
+
+      return () => {
+        setSource("Wallet");
+      };
+    }, [setSource, setScreen]),
   );
 
   return (
