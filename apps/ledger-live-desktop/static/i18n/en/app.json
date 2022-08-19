@@ -568,6 +568,9 @@
   "lottieDebugger": {
     "buttonTitle": "Test"
   },
+  "storylyDebugger": {
+    "buttonTitle": "Test"
+  },
   "fullNode": {
     "status": "Status",
     "connect": "Connect",
@@ -1092,7 +1095,12 @@
       }
     },
     "manual": {
+      "recoveryContent": {
+        "title": "Recovery phrase",
+        "content": "Tap on the videos below to learn more about your secret recovery phrase"
+      },
       "softwareCheckContent": {
+        "title": "Software check",
         "genuineCheck": {
           "active": "Checking Nano",
           "completed": "Nano is authentic"
@@ -3189,6 +3197,10 @@
         "testAnimations": {
           "title": "Test Lottie animations",
           "description": "Test all animations used in Ledger Live"
+        },
+        "testStories": {
+          "title": "Test Storyly stories",
+          "description": "Test all stories used in Ledger Live"
         }
       }
     },
