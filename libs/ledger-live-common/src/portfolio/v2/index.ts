@@ -77,13 +77,15 @@ export function getBalanceHistory(
     date: now,
     value: account.balance.toNumber(),
   });
-  const t = new Date((conf.startOf(now) as any) - 1).getTime(); // end of yesterday
-
+  let t = new Date((conf.startOf(now) as any) - 1).getTime(); // end of yesterday
+  const increment = conf.increment;
+  let balanceIndex = balances.length - 1;
   for (let i = 0; i < count - 1; i++) {
-    history.unshift({
-      date: new Date(t - conf.increment * i),
-      value: balances[balances.length - 1 - i] ?? 0,
-    });
+    const date = new Date(t);
+    const value = balances[balanceIndex] ?? 0;
+    history.unshift({ date, value });
+    t -= increment;
+    balanceIndex--;
   }
 
   return history;

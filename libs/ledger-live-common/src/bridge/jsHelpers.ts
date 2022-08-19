@@ -97,16 +97,20 @@ export function mergeOps( // existing operations. sorted (newer to older). dedup
 Operation[] {
   // there is new fetched
   if (newFetched.length === 0) return existing;
+
   // efficient lookup map of id.
-  const existingIds = {};
+  const existingIds: Map<string, Operation> = new Map();
 
   for (const o of existing) {
-    existingIds[o.id] = o;
+    existingIds.set(o.id, o);
   }
 
   // only keep the newFetched that are not in existing. this array will be mutated
   let newOps = newFetched
-    .filter((o) => !existingIds[o.id] || !sameOp(existingIds[o.id], o))
+    .filter((o) => {
+      const maybeOp = existingIds.get(o.id);
+      return !maybeOp || !sameOp(maybeOp, o);
+    })
     .sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
   // Deduplicate new ops to guarantee operations don't have dups

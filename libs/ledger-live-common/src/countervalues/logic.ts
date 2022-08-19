@@ -74,6 +74,7 @@ export function importCountervalues(
   return {
     data,
     status,
+    // FIXME: this code is a performance issue. JS Unoptimized part
     cache: Object.entries(data).reduce(
       (prev, [key, val]) => ({
         ...prev,
