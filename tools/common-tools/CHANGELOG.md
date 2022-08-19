@@ -1,5 +1,17 @@
 # live-common-tools
 
+## 0.2.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`23c9bf994`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2), [`6e057f716`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4), [`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/live-common@26.1.0-next.0
+  - @ledgerhq/hw-transport@6.27.3-next.0
+  - @ledgerhq/hw-transport-http@6.27.3-next.0
+  - @ledgerhq/hw-transport-web-ble@6.27.3-next.0
+  - @ledgerhq/hw-transport-webhid@6.27.3-next.0
+  - @ledgerhq/hw-transport-webusb@6.27.3-next.0
+
 ## 0.2.4
 
 ### Patch Changes

@@ -1,5 +1,32 @@
 # @ledgerhq/live-common
 
+## 26.1.0-next.0
+
+### Minor Changes
+
+- [#814](https://github.com/LedgerHQ/ledger-live/pull/814) [`23c9bf994`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development/QA tool for feature flags [Desktop]
+
+### Patch Changes
+
+- [#730](https://github.com/LedgerHQ/ledger-live/pull/730) [`6e057f716`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4) Thanks [@LFBarreto](https://github.com/LFBarreto)! - update ptx smart routing feature flag and live app web player undefined uri params
+
+* [#970](https://github.com/LedgerHQ/ledger-live/pull/970) [`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311) Thanks [@alexandremgo](https://github.com/alexandremgo)! - BLE scanning and pairing hooks
+
+* Updated dependencies [[`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/hw-transport@6.27.3-next.0
+  - @ledgerhq/hw-app-algorand@6.27.3-next.0
+  - @ledgerhq/hw-app-btc@8.0.1-next.0
+  - @ledgerhq/hw-app-cosmos@6.27.3-next.0
+  - @ledgerhq/hw-app-eth@6.29.5-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.3-next.0
+  - @ledgerhq/hw-app-solana@6.27.3-next.0
+  - @ledgerhq/hw-app-str@6.27.3-next.0
+  - @ledgerhq/hw-app-tezos@6.27.3-next.0
+  - @ledgerhq/hw-app-trx@6.27.3-next.0
+  - @ledgerhq/hw-app-xrp@6.27.3-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.3-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.3-next.0
+
 ## 26.0.0
 
 ### Major Changes
