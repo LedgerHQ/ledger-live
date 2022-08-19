@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Text} from "@ledgerhq/react-ui"
+import { Flex, Alert, Text} from "@ledgerhq/react-ui"
 import Button from "~/renderer/components/ButtonV3";
 import type { Account } from "@ledgerhq/live-common/types/index";
 
@@ -36,11 +36,11 @@ const AccountBanner = ({title, description, cta, onClick}: BannerProps) => {
             showIcon={false}
             containerProps={{ mt: -4, mb: 4, mx: 0, p: 12 }}
             renderContent={({ color, textProps }) => (
-                <div style={{  display: "flex", alignItems: "center", width: "100%" }}>
-                    <div style={{ flex:1, width: "100%", display: "flex", flexDirection: "column" }}>
-                        <Text color="inherit" {...textProps} style={{ display: "flex", width: "100%", fontSize: "14px", fontWeight: 700 }}>{title}</Text>
-                        <Text color="inherit" {...textProps} style={{ display: "flex", width: "100%", fontSize: "14px", marginTop: "10px" }}> {description}</Text>
-                    </div>
+                <Flex style={{  alignItems: "center", width: "100%" }}>
+                    <Flex style={{ flex:1, flexDirection: "column" }}>
+                        <Text color="inherit" variant="body" fontWeight="bold">{title}</Text>
+                        <Text color="inherit" variant="body" style={{ marginTop: "10px" }}> {description}</Text>
+                    </Flex>
                     <Button
                         variant="color"
                         ml={12}
@@ -48,7 +48,7 @@ const AccountBanner = ({title, description, cta, onClick}: BannerProps) => {
                     >
                         {cta}
                     </Button>
-                </div>
+                </Flex>
             )}
         />
     );
