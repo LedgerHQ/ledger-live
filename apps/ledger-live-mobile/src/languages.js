@@ -33,7 +33,7 @@ export const localeIds: string[] = Object.keys(allLocales);
  */
 export const supportedLocales = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
-  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
+  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
 
 /**
  * This is the list of languages that are supported in terms of in-app translations
@@ -43,7 +43,7 @@ export const supportedLocales = Config.LEDGER_DEBUG_ALL_LANGS
  * or in the case of existing users, they will be prompted once to change their
  * Ledger Live language.
  */
-export const fullySupportedLocales = ["en", "fr", "ru", "es", "zh"];
+export const fullySupportedLocales = ["en", "fr", "ru", "es", "zh", "pt"];
 
 export const locales = supportedLocales.reduce((obj, key) => {
   obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
@@ -75,7 +75,7 @@ const languageLocaleToDefaultLocaleMap = {
   nl: "nl-NL",
   no: "no-NO",
   pl: "pl-PL",
-  pt: "pt-PT",
+  pt: "pt-BR",
   ru: "ru-RU",
   sr: "sr-SR",
   sv: "sv-SV",
