@@ -62,10 +62,9 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
+      - name: TurboRepo local caching server
+        uses: ./tools/actions/turborepo-gh-cache
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
@@ -103,10 +102,9 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
+      - name: TurboRepo local caching server
+        uses: ./tools/actions/turborepo-gh-cache
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots

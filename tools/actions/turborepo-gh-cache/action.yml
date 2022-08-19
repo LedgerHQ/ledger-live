@@ -1,0 +1,16 @@
+name: turborepo-gh-cache
+description: Starts a proxy server which uses Github actions cache API to cache turborepo outputs
+author: elbywan
+inputs:
+  server-token:
+    description: "An access token of the local turbo-server"
+    required: true
+
+runs:
+  using: node16
+  main: build/main.js
+  post: build/cleanup.js
+
+branding:
+  icon: archive
+  color: green

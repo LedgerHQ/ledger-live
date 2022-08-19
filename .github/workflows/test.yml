@@ -83,10 +83,9 @@ jobs:
         run: |
           npm i -g npm@8.12.2
           npm --version
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
+      - name: TurboRepo local caching server
+        uses: ./tools/actions/turborepo-gh-cache
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
