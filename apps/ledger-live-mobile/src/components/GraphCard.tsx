@@ -28,6 +28,7 @@ type Props = {
   useCounterValue?: boolean;
   currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
+  onItemHower: () => void;
 };
 
 const Placeholder = styled(Flex).attrs({
@@ -57,14 +58,10 @@ function GraphCard({
   const item = balanceHistory[balanceHistory.length - 1];
   const navigation = useNavigation();
 
-  const onPieChartButtonpress = useCallback(() => {
-    navigation.navigate(NavigatorName.Analytics);
-  }, [navigation]);
-
   const unit = counterValueCurrency.units[0];
 
-  const [hoveredItem, setHoverItem] = useState();
-  const [, setTimeRange, timeRangeItems] = useTimeRange();
+  const [hoveredItem, setItemHover] = useState();
+  const [timeRange, setTimeRange, timeRangeItems] = useTimeRange();
   const { colors } = useTheme();
 
   const updateTimeRange = useCallback(
@@ -99,6 +96,18 @@ function GraphCard({
       opacity,
     };
   }, [graphCardEndPosition]);
+
+  const onItemHover = useCallback(
+    (item: any) => {
+      track("graph_clicked", {
+        graph: "Wallet Graph",
+        timeframe: timeRange,
+        screen: currentScreen,
+      });
+      setItemHover(item);
+    },
+    [currentScreen, timeRange],
+  );
 
   return (
     <Flex>
@@ -180,7 +189,7 @@ function GraphCard({
         width={getWindowDimensions().width + 1}
         color={colors.primary.c80}
         data={balanceHistory}
-        onItemHover={setHoverItem}
+        onItemHover={onItemHover}
         mapValue={mapGraphValue}
         fill={colors.background.main}
       />

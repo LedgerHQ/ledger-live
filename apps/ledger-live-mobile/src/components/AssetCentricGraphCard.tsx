@@ -72,9 +72,13 @@ function AssetCentricGraphCard({
 
   const updateTimeRange = useCallback(
     index => {
+      track("timeframe_clicked", {
+        timeframe: timeRangeItems[index],
+        screen: currentScreen,
+      });
       setTimeRange(timeRangeItems[index]);
     },
-    [setTimeRange, timeRangeItems],
+    [setTimeRange, timeRangeItems, currentScreen],
   );
 
   const mapGraphValue = useCallback(d => d.value || 0, []);
@@ -107,7 +111,7 @@ function AssetCentricGraphCard({
   const onItemHover = useCallback(
     (item: any) => {
       track("graph_clicked", {
-        graph: "Wallet Graph",
+        graph: "Asset Graph",
         timeframe: itemRange,
         screen: currentScreen,
       });
