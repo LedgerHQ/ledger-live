@@ -1,8 +1,5 @@
 ---
-"ledger-live-desktop": minor
-"@ledgerhq/live-common": minor
-"@ledgerhq/live-cli": minor
-"@ledgerhq/cryptoassets": minor
+"live-mobile": minor
 ---
 
 Osmosis Send, Receive and Staking + Cosmos refactor
