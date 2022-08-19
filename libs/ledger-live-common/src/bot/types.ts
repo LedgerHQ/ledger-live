@@ -107,6 +107,7 @@ export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;
   appPath?: string;
   scanDuration?: number;
+  preloadDuration?: number;
   accountsBefore?: Account[];
   accountsAfter?: Account[];
   mutations?: MutationReport<T>[];

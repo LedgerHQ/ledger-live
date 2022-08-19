@@ -484,6 +484,9 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   // Add performance details
   body += "<details>\n";
   body += `<summary>Performance ⏲ ${formatTime(totalDuration)}</summary>\n\n`;
+  body += `- total currency preload: ${formatTime(
+    results.reduce((sum, r) => (r.preloadDuration || 0) + sum, 0)
+  )}\n`;
   body += `- total scan accounts: ${formatTime(
     results.reduce((sum, r) => (r.scanDuration || 0) + sum, 0)
   )}\n`;

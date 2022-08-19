@@ -127,11 +127,11 @@ export async function runWithAppSpec<T extends Transaction>(
     };
     let t = now();
     const preloadedData = await cache.prepareCurrency(currency);
-    const preloadTime = now() - t;
+    const preloadDuration = now() - t;
+    appReport.preloadDuration = preloadDuration;
     // Scan all existing accounts
+    const beforeScanTime = now();
     t = now();
-    let scanDuration = 0;
-    const firstSyncDurations = {};
     let accounts = await bridge
       .scanAccounts({
         currency,
@@ -141,12 +141,6 @@ export async function runWithAppSpec<T extends Transaction>(
       .pipe(
         filter((e) => e.type === "discovered"),
         map((e) => e.account),
-        tap((account) => {
-          const dt = now() - t;
-          firstSyncDurations[account.id] = dt;
-          t = now();
-          scanDuration += dt;
-        }),
         reduce<Account, Account[]>((all, a) => all.concat(a), []),
         timeoutWith(
           getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
@@ -156,7 +150,7 @@ export async function runWithAppSpec<T extends Transaction>(
         )
       )
       .toPromise();
-    appReport.scanDuration = scanDuration;
+    appReport.scanDuration = now() - beforeScanTime;
     // "Migrate" the FIRST and every {crossAccountFrequency} account to simulate an export/import (same logic as export to mobile) – default to every 10
     // this is made a subset of the accounts to help identify problem that would be specific to the "cross" or not.
     for (
@@ -172,21 +166,13 @@ export async function runWithAppSpec<T extends Transaction>(
       "unexpected empty accounts for " + currency.name
     );
     const preloadStats =
-      preloadTime > 10 ? ` (preload: ${formatTime(preloadTime)})` : "";
+      preloadDuration > 10 ? ` (preload: ${formatTime(preloadDuration)})` : "";
     reportLog(
       `Spec ${spec.name} found ${accounts.length} ${
         currency.name
       } accounts${preloadStats}. Will use ${formatAppCandidate(
         appCandidate as AppCandidate
-      )}\n${accounts
-        .map(
-          (a) =>
-            "(" +
-            formatTime(firstSyncDurations[a.id] || 0) +
-            ") " +
-            formatAccount(a, "head")
-        )
-        .join("\n")}\n`
+      )}\n${accounts.map((a) => formatAccount(a, "head")).join("\n")}\n`
     );
 
     if (accounts.every(isAccountEmpty)) {
@@ -700,6 +686,9 @@ function awaitAccountOperation({
   log("engine", "awaitAccountOperation on " + account.name);
   let syncCounter = 0;
   let acc = account;
+  let lastSync = now();
+  const loopDebounce = 1000;
+  const targetInterval = getEnv("SYNC_PENDING_INTERVAL");
 
   async function loop() {
     const operation = step(acc);
@@ -711,8 +700,10 @@ function awaitAccountOperation({
         operation,
       };
     }
+    const spent = now() - lastSync;
+    await delay(Math.max(loopDebounce, targetInterval - spent));
 
-    await delay(5000);
+    lastSync = now();
     log("engine", "sync #" + syncCounter++ + " on " + account.name);
     acc = await syncAccount(acc);
     const r = await loop();
