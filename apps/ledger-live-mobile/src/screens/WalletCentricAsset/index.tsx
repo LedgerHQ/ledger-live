@@ -35,8 +35,11 @@ import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradi
 import Header from "./Header";
 import { usePortfolio } from "../../actions/portfolio";
 import { counterValueCurrencySelector } from "../../reducers/settings";
-import { TrackScreen } from "../../analytics";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
+import { track, TrackScreen } from "../../analytics";
+import {
+  useCurrentRouteName,
+  usePreviousRouteName,
+} from "../../helpers/routeHooks";
 
 type RouteParams = {
   currency: CryptoCurrency | TokenCurrency;
@@ -55,6 +58,7 @@ const AssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation();
+  const currentScreen = useCurrentRouteName();
   const previousScreen = usePreviousRouteName();
   const { currency } = route?.params;
   const cryptoAccounts = useSelector(
@@ -84,6 +88,10 @@ const AssetScreen = ({ route }: Props) => {
   }, []);
 
   const onAddAccount = useCallback(() => {
+    track("button_clicked", {
+      button: "Add new",
+      screen: currentScreen,
+    });
     if (currency && currency.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
         token: currency,
@@ -93,7 +101,7 @@ const AssetScreen = ({ route }: Props) => {
         currency,
       });
     }
-  }, [currency, navigation]);
+  }, [currency, navigation, currentScreen]);
 
   const data = useMemo(
     () => [
