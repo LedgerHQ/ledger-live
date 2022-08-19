@@ -17,6 +17,7 @@ import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 import AnalyticsConsoleRow from "./AnalyticsConsoleRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenDebugPlayground from "./OpenDebugPlayground";
+import OpenDebugFeatureFlags from "./OpenDebugFeatureFlags";
 import OpenLottie from "./OpenDebugLottie";
 import OpenDebugLogs from "./OpenDebugLogs";
 import SkipLock from "../../../components/behaviour/SkipLock";
@@ -27,7 +28,6 @@ import MockModeRow from "../General/MockModeRow";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import OpenDebugEnv from "./OpenDebugEnv";
 import HasOrderedNanoRow from "./HasOrderedNanoRow";
-import OpenStoryly from "./OpenDebugStoryly";
 
 export function DebugMocks() {
   return (
@@ -48,9 +48,9 @@ export function DebugMocks() {
       <OpenDebugCrash />
       <OpenDebugStore />
       <OpenDebugEnv />
+      <OpenDebugFeatureFlags />
       <OpenDebugIcons />
       <OpenLottie />
-      <OpenStoryly />
       <OpenDebugPlayground />
       <ReadOnlyModeRow />
       <HasOrderedNanoRow/>
