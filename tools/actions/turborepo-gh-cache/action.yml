@@ -5,6 +5,9 @@ inputs:
   server-token:
     description: "An access token of the local turbo-server"
     required: true
+outputs:
+  port:
+    description: "The port the local server runs on"
 
 runs:
   using: node16

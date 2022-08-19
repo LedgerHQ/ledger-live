@@ -6,4 +6,5 @@ export const absoluteCacheDirectory = path.resolve(
   rootDirectory,
   cacheDirectory
 );
-export const logFileName = "server.log";
+export const logFileName = "__turbo_server.log";
+export const portFileName = "__turbo_port.txt";

@@ -41,13 +41,14 @@ jobs:
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
       - name: TurboRepo local caching server
+        id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Build dependencies
-        run: pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: Run code checkers
         run: pnpm desktop test:codecheck
 
@@ -104,6 +105,7 @@ jobs:
         run: |
           pnpm add -g node-gyp
       - name: TurboRepo local caching server
+        id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
@@ -111,6 +113,7 @@ jobs:
         id: test-desktop
         with:
           os: ${{ steps.os.outputs.result }}
+          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   test-desktop-app-mac-internal:
     name: "Ledger Live Desktop Tests (macos-latest)"
@@ -141,6 +144,7 @@ jobs:
           skip_python: true
           skip_ruby: true
       - name: TurboRepo local caching server
+        id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
@@ -148,6 +152,7 @@ jobs:
         id: test-desktop
         with:
           os: ${{ steps.os.outputs.result }}
+          turbo-server-port: ${{ steps.turborepo-cache-server.outputs.port }}
 
   report:
     needs: [pr-is-fork, test-desktop-app, test-desktop-app-mac-internal]

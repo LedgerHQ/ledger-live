@@ -4,11 +4,13 @@ import express from "express";
 import * as path from "path";
 import * as fs from "fs";
 import asyncHandler from "./utils/asyncHandler";
-import { cacheDirectory, absoluteCacheDirectory } from "./utils/constants";
+import {
+  cacheDirectory,
+  absoluteCacheDirectory,
+  portFileName,
+} from "./utils/constants";
 
 async function startServer() {
-  const port = process.env.PORT || 9080;
-
   const app = express();
   const serverToken = getInput("server-token", {
     required: true,
@@ -80,9 +82,12 @@ async function startServer() {
     })
   );
 
-  app.disable("etag").listen(port, () => {
+  const server = app.disable("etag").listen(0);
+  server.once("listening", () => {
+    const port = "" + server.address().port;
     console.log(`Cache dir: ${cacheDirectory}`);
     console.log(`Local Turbo server is listening at http://127.0.0.1:${port}`);
+    fs.writeFileSync(path.resolve(absoluteCacheDirectory, portFileName), port);
   });
 }
 
