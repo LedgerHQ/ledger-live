@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/react-ui",
-  "version": "0.8.3",
+  "version": "0.9.0-arm-builds.0",
   "description": "Ledger Live - Desktop UI",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": {
@@ -64,7 +64,7 @@
     "clean": "rimraf lib",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "lint:css":"stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
+    "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
     "typecheck": "tsc --p . --noEmit",
     "test": "pnpm -w -F ui test:react"
   },

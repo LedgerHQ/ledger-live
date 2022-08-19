@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.8.3",
+  "version": "0.9.0-arm-builds.0",
   "description": "Ledger Live - Mobile UI",
   "repository": {
     "type": "git",
@@ -42,7 +42,7 @@
     "ios": "expo start --ios",
     "lint": "eslint src storybook --ext .ts,.tsx,.js,.jsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "lint:css":"stylelint './src/**/*.{js,jsx,ts,tsx}'",
+    "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}'",
     "release": "yarn publish ./lib --access public",
     "expo": "expo start",
     "storybook": "start-storybook -p 6006",
