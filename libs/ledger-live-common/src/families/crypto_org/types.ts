@@ -1,8 +1,12 @@
-import type { BigNumber } from "bignumber.js";
-import type {
+import {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
 
 export type CryptoOrgResources = {
   bondedBalance: BigNumber;
@@ -35,3 +39,12 @@ export type NetworkInfo = {
 export type NetworkInfoRaw = {
   family: "crypto_org";
 };
+export type CryptoOrgAccount = Account & {
+  cryptoOrgResources: CryptoOrgResources;
+};
+export type CryptoOrgAccountRaw = AccountRaw & {
+  cryptoOrgResources: CryptoOrgResourcesRaw;
+};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

@@ -13,14 +13,14 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import {
-  useCosmosMappedDelegations,
-  useCosmosPreloadData,
+  useCosmosFamilyMappedDelegations,
+  useCosmosFamilyPreloadData,
 } from "@ledgerhq/live-common/families/cosmos/react";
 import type {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import {
   mapUnbondings,
   canRedelegate,
@@ -63,7 +63,7 @@ function Delegations({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account);
-  const delegations: CosmosMappedDelegation[] = useCosmosMappedDelegations(
+  const delegations: CosmosMappedDelegation[] = useCosmosFamilyMappedDelegations(
     mainAccount,
   );
 
@@ -71,7 +71,7 @@ function Delegations({ account }: Props) {
   const unit = getAccountUnit(mainAccount);
   const navigation = useNavigation();
 
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData('cosmos');
 
   const { cosmosResources } = mainAccount;
 

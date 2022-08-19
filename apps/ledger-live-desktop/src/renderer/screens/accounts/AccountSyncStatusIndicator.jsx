@@ -6,7 +6,7 @@ import { connect, useDispatch } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { useBridgeSync, useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 
 import Box from "~/renderer/components/Box";
 import { Rotating } from "~/renderer/components/Spinner";
@@ -144,7 +144,7 @@ const AccountSyncStatusIndicator = ({
   const onClick = useCallback(
     e => {
       e.stopPropagation();
-      sync({ type: "SYNC_ONE_ACCOUNT", accountId, priority: 10 });
+      sync({ type: "SYNC_ONE_ACCOUNT", accountId, priority: 10, reason: "user-click-one" });
       setUserAction(true);
       // a user action is kept in memory for a short time (which will correspond to a spinner time)
       clearTimeout(timeout.current);

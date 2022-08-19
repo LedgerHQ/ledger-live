@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getMainAccount,

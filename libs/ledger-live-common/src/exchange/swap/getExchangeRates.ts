@@ -1,3 +1,8 @@
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency, getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -7,12 +12,7 @@ import {
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
 import network from "../../network";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-  Transaction,
-  Unit,
-} from "../../types";
+import type { Transaction } from "../../generated/types";
 import { getAvailableProviders, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";

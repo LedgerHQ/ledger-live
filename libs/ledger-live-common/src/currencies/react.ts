@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { listAndFilterCurrencies } from "./helpers";
-import { Currency } from "../types";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CurrencyFilters } from "../platform/filters";
 
 export function useFilteredCurrencies({

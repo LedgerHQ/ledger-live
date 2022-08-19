@@ -2,13 +2,9 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
-import type {
-  Currency,
-  CryptoCurrency,
-  AccountLike,
-} from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
-
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";

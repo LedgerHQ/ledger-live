@@ -7,7 +7,7 @@ import type {
   Account,
   AccountLikeArray,
   Operation,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-live";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { ScreenName } from "../../../const";
 import { useFlattenSortAccounts } from "../../../actions/general";

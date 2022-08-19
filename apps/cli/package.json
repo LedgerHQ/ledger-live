@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.1.1",
+  "version": "22.2.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -61,6 +61,8 @@
     "ws": "^8.6.0"
   },
   "devDependencies": {
+    "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/command-line-args": "^5.2.0",
     "@types/lodash": "^4.14.177",
     "@types/node": "^17.0.15",

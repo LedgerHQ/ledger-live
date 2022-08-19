@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "../env";
-import type { SocketEvent } from "../types/manager";
+import type { SocketEvent } from "@ledgerhq/types-live";
 const warningsSubject = new Subject<string>();
 export const warnings: Observable<string> = warningsSubject.asObservable();
 const ALLOW_MANAGER_DELAY = 500;

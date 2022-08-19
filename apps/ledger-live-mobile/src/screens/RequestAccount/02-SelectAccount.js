@@ -4,12 +4,11 @@ import React, { useCallback, useMemo } from "react";
 import type { Node } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type {
-  Account,
-  AccountLike,
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { accountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";

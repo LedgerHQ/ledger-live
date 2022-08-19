@@ -13,7 +13,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import type { TFunction } from "react-i18next";
-import type { Account, Operation } from "@ledgerhq/live-common/types/index";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import type { StepId } from "./types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
@@ -100,7 +100,8 @@ function Body({
     return { account: accountProp, transaction };
   });
 
-  const steps = useSteps();
+  const currencyName = account.currency.name.toLowerCase();
+  const steps = useSteps(currencyName);
   const error = transactionError || bridgeError;
 
   const handleRetry = useCallback(() => {
@@ -144,7 +145,7 @@ function Body({
   }
 
   const stepperProps = {
-    title: t("cosmos.undelegation.flow.title"),
+    title: t(`${currencyName}.undelegation.flow.title`),
     device,
     account,
     transaction,

@@ -7,10 +7,14 @@ import { genAccount, genOperation } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { validateNameEdition } from "../account";
 import { delay } from "../promise";
-import type { Operation, Account } from "../types";
-import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import { getEnv } from "../env";
 import perFamilyMock from "../generated/mock";
+import {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+  Operation,
+} from "@ledgerhq/types-live";
 const MOCK_DATA_SEED = getEnv("MOCK") || "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
 const syncTimeouts = {};

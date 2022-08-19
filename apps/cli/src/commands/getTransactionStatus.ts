@@ -18,12 +18,12 @@ const getTransactionStatusFormatters = {
     "\n" +
     "STATUS " +
     formatTransactionStatus(transaction, status, account),
-  json: ({ status, transaction }) =>
+  json: ({ status, transaction, account }) =>
     "TRANSACTION " +
     JSON.stringify(toTransactionRaw(transaction)) +
     "\n" +
     "STATUS " +
-    JSON.stringify(toTransactionStatusRaw(status)),
+    JSON.stringify(toTransactionStatusRaw(status, account.currency.family)),
 };
 export default {
   description:

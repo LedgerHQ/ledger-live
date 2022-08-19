@@ -7,7 +7,7 @@ import fontFamily from "~/renderer/styles/styled/fontFamily";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 
-import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   getDefaultExplorerView,

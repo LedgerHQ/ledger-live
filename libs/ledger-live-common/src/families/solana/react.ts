@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
 import { useObservable } from "../../observable";
 import {

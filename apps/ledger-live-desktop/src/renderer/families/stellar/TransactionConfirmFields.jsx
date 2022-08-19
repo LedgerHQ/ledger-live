@@ -1,8 +1,8 @@
 // @flow
 import invariant from "invariant";
 import React from "react";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import styled from "styled-components";
-import type { Transaction } from "@ledgerhq/live-common/types/index";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
 import type { FieldComponentProps } from "~/renderer/components/TransactionConfirm";

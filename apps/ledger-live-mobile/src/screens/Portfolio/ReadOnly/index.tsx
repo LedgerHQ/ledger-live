@@ -53,7 +53,7 @@ import BuyDeviceBanner, {
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 import { AnalyticsContext } from "../../../components/RootNavigator";
 

@@ -1,5 +1,5 @@
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
-import { Currency } from "../types";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   PlatformCurrency,
   PlatformSupportedCurrency,

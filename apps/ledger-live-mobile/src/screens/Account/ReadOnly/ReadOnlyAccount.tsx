@@ -8,7 +8,7 @@ import {
   getCryptoCurrencyById,
   getTokenById,
 } from "@ledgerhq/live-common/currencies/index";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";

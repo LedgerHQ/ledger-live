@@ -47,7 +47,11 @@ function StepConfirmation({
           name="Withdraw Step 3 Success"
           eventProperties={{ currencyName: currency.name }}
         />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={<Trans i18nKey="lend.withdraw.steps.confirmation.success.title" />}
           description={multiline(t("lend.withdraw.steps.confirmation.success.text"))}

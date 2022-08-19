@@ -21,6 +21,9 @@ runs:
         pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
         pnpm desktop build:testing
       shell: bash
+    - name: Build Dummy SDK app for testing
+      run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
+      shell: bash
     - name: Update playwright snapshots [Linux => xvfb-run]
       if: inputs.os == 'ubuntu-latest'
       run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots

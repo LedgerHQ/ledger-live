@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import type { Transaction } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Platform, StyleSheet, View } from "react-native";
@@ -172,7 +172,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           currencyName={currency.name}
         />
         <SyncSkipUnderPriority priority={100} />
-        <SyncOneAccountOnMount priority={100} accountId={account.id} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-init"
+          priority={100}
+          accountId={account.id}
+        />
         <KeyboardView style={{ flex: 1 }}>
           <NavigationScrollView
             style={[styles.container, { flex: 1 }]}

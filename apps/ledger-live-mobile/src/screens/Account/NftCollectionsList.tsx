@@ -8,7 +8,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/live-common/types/index";
+import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import {
   ArrowBottomMedium,
   DroprightMedium,

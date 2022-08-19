@@ -9,7 +9,7 @@ import { FlatList, Image, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/types-live";
 import {
   starredMarketCoinsSelector,
   readOnlyModeEnabledSelector,

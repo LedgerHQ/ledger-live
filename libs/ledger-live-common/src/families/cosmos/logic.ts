@@ -12,9 +12,11 @@ import type {
   CosmosMappedUnbonding,
   CosmosRedelegation,
   CosmosMappedRedelegation,
+  CosmosAccount,
 } from "./types";
-import type { Unit, Account, Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import { calculateFees } from "./js-prepareTransaction";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 export const COSMOS_MAX_REDELEGATIONS = 7;
 export const COSMOS_MAX_UNBONDINGS = 7;
@@ -130,7 +132,7 @@ export const searchFilter: CosmosSearchFilter =
     return terms.toLowerCase().includes(query.toLowerCase().trim());
   };
 export function getMaxDelegationAvailable(
-  account: Account,
+  account: CosmosAccount,
   validatorsLength: number
 ): BigNumber {
   const numberOfDelegations = Math.min(
@@ -143,7 +145,7 @@ export function getMaxDelegationAvailable(
     .minus(COSMOS_MIN_SAFE);
 }
 export const getMaxEstimatedBalance = (
-  a: Account,
+  a: CosmosAccount,
   estimatedFees: BigNumber
 ): BigNumber => {
   const { cosmosResources } = a;
@@ -166,7 +168,7 @@ export const getMaxEstimatedBalance = (
   return amount;
 };
 
-export function canUndelegate(account: Account): boolean {
+export function canUndelegate(account: CosmosAccount): boolean {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmosResources should exist");
   return (
@@ -175,13 +177,13 @@ export function canUndelegate(account: Account): boolean {
   );
 }
 
-export function canDelegate(account: Account): boolean {
+export function canDelegate(account: CosmosAccount): boolean {
   const maxSpendableBalance = getMaxDelegationAvailable(account, 1);
   return maxSpendableBalance.gt(0);
 }
 
 export function canRedelegate(
-  account: Account,
+  account: CosmosAccount,
   delegation: CosmosDelegation
 ): boolean {
   const { cosmosResources } = account;
@@ -196,7 +198,7 @@ export function canRedelegate(
 }
 
 export async function canClaimRewards(
-  account: Account,
+  account: CosmosAccount,
   delegation: CosmosDelegation
 ): Promise<boolean> {
   const { cosmosResources } = account;
@@ -213,7 +215,7 @@ export async function canClaimRewards(
       useAllAmount: false,
       networkInfo: null,
       memo: null,
-      cosmosSourceValidator: null,
+      sourceValidator: null,
       validators: [
         {
           address: delegation.validatorAddress,
@@ -229,7 +231,7 @@ export async function canClaimRewards(
 }
 
 export function getRedelegation(
-  account: Account,
+  account: CosmosAccount,
   delegation: CosmosMappedDelegation
 ): CosmosRedelegation | null | undefined {
   const { cosmosResources } = account;
@@ -241,7 +243,7 @@ export function getRedelegation(
 }
 
 export function getRedelegationCompletionDate(
-  account: Account,
+  account: CosmosAccount,
   delegation: CosmosMappedDelegation
 ): Date | null | undefined {
   const currentRedelegation = getRedelegation(account, delegation);

@@ -1,4 +1,4 @@
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -32,7 +32,7 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const validators = useLedgerFirstShuffledValidatorsCosmos(searchQuery);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily("cosmos", searchQuery);
 
   const onItemPress = useCallback(
     (validator: CosmosValidatorItem) => {

@@ -5,7 +5,7 @@ import {
   FeatureFlagsProvider,
   defaultFeatures,
 } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId } from "@ledgerhq/live-common/types/index";
+import { FeatureId } from "@ledgerhq/types-live";
 
 import { formatFeatureId } from "./FirebaseRemoteConfig";
 

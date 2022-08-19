@@ -10,13 +10,13 @@ import {
   getCurrencyColor,
 } from "@ledgerhq/live-common/currencies/index";
 import { getMaxDelegationAvailable } from "@ledgerhq/live-common/families/cosmos/logic";
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import {
   CosmosValidatorItem,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -62,7 +62,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   invariant(account, "account must be defined");
 
-  const validators = useLedgerFirstShuffledValidatorsCosmos();
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily("cosmos");
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, undefined);
 

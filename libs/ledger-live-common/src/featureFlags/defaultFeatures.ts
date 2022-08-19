@@ -1,4 +1,4 @@
-import { DefaultFeatures } from "./types";
+import type { DefaultFeatures } from "@ledgerhq/types-live";
 
 export const defaultFeatures: DefaultFeatures = {
   learn: {
@@ -13,6 +13,9 @@ export const defaultFeatures: DefaultFeatures = {
       url: null,
       debug: false,
     },
+  },
+  currencyOsmosis: {
+    enabled: false,
   },
   ratings: {
     enabled: false,

@@ -7,7 +7,7 @@ import { activeAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import QRCodeExporter from "~/renderer/components/Exporter/QRCodeExporter";
 import ExportInstructions from "~/renderer/components/Exporter/ExportInstructions";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 type OwnProps = {};
 type Props = OwnProps & {

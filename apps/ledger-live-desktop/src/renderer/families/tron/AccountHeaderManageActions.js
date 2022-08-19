@@ -1,6 +1,6 @@
 // @flow
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";

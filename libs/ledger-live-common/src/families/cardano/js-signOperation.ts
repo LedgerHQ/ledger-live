@@ -2,13 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
-import type { CardanoResources, Transaction } from "./types";
-import type {
-  Account,
-  Operation,
-  SignedOperation,
-  SignOperationEvent,
-} from "../../types";
+import type { CardanoAccount, CardanoResources, Transaction } from "./types";
 
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
@@ -36,9 +30,15 @@ import {
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import { getNetworkParameters } from "./networks";
 import { MEMO_LABEL } from "./constants";
+import {
+  Account,
+  Operation,
+  SignedOperation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 
 const buildOptimisticOperation = (
-  account: Account,
+  account: CardanoAccount,
   transaction: TyphonTransaction,
   t: Transaction
 ): Operation => {
@@ -184,7 +184,7 @@ const signOperation = ({
           }
 
           const unsignedTransaction = await buildTransaction(
-            account,
+            account as CardanoAccount,
             transaction
           );
 
@@ -246,7 +246,7 @@ const signOperation = ({
           o.next({ type: "device-signature-granted" });
 
           const operation = buildOptimisticOperation(
-            account,
+            account as CardanoAccount,
             unsignedTransaction,
             transaction
           );
