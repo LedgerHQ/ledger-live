@@ -51,6 +51,7 @@ import DebugSkeletons from "~/renderer/components/debug/DebugSkeletons";
 import { DisableTransactionBroadcastWarning } from "~/renderer/components/debug/DisableTransactionBroadcastWarning";
 import { DebugWrapper } from "~/renderer/components/debug/shared";
 import useDeeplink from "~/renderer/hooks/useDeeplinking";
+import useStoryly from "~/renderer/hooks/useStoryly";
 import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
 import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
@@ -151,6 +152,7 @@ export default function Default() {
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
+  useStoryly();
 
   useProviders(); // prefetch data from swap providers here
 
