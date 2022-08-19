@@ -37,7 +37,7 @@ runs:
     - name: install and build
       run: |
         pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
-        pnpm build:cli
+        pnpm build:llc
       shell: bash
     - name: bot logic
       env:

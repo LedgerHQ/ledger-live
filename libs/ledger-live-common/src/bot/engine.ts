@@ -246,15 +246,13 @@ export async function runWithAppSpec<T extends Transaction>(
         });
         if (report.finalAccount) {
           // optim: no need to resync if all went well with finalAccount
+          const finalAccount: Account = report.finalAccount;
           accountIdsNeedResync = accountIdsNeedResync.filter(
-            (id) => id !== report.finalAccount.id
+            (id) => id !== finalAccount.id
           );
-          accounts = accounts.map((a: Account) => {
-            if (a.id === report.finalAccount.id) {
-              return report.finalAccount;
-            }
-            return a;
-          });
+          accounts = accounts.map((a: Account) =>
+            a.id === finalAccount.id ? finalAccount : a
+          );
         }
         // eslint-disable-next-line no-console
         console.log(formatReportForConsole(report));
