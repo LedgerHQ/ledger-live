@@ -515,7 +515,7 @@ const envDefinitions = {
     desc: "delay before the sync starts",
   },
   SYNC_PENDING_INTERVAL: {
-    def: 10 * 1000,
+    def: 20 * 1000,
     parser: intParser,
     desc: "delay between sync when an operation is still pending",
   },
