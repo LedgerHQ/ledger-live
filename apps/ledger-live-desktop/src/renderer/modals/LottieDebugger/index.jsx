@@ -268,10 +268,11 @@ const LottieDebugger = ({ name }: { name: string }) => {
     <Modal
       name={name}
       centered
-      render={() => (
+      render={({ onClose }: { onClose: void }) => (
         <ModalBody
+          onClose={onClose}
           onBack={undefined}
-          title={<Trans i18nKey="tron.manage.title" />}
+          title={<Trans i18nKey="settings.experimental.features.testAnimations.title" />}
           noScroll
           render={() => (
             <ScrollArea>
