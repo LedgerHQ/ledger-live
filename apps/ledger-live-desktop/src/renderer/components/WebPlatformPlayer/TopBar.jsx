@@ -1,27 +1,30 @@
 // @flow
 
-import React, { useCallback } from "react";
+import { WebviewTag } from "electron";
+import React, { RefObject, useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
-import type { TopBarConfig } from "./type";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { rgba } from "~/renderer/styles/helpers";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import type { TopBarConfig } from "./type";
 
 import Box, { Tabbable } from "~/renderer/components/Box";
 
-import IconInfoCircle from "~/renderer/icons/InfoCircle";
-import IconReload from "~/renderer/icons/UpdateCircle";
-import LightBulb from "~/renderer/icons/LightBulb";
+import ArrowRight from "~/renderer/icons/ArrowRight";
 import IconClose from "~/renderer/icons/Cross";
+import IconInfoCircle from "~/renderer/icons/InfoCircle";
+import LightBulb from "~/renderer/icons/LightBulb";
+import IconReload from "~/renderer/icons/UpdateCircle";
 
-import LiveAppIcon from "./LiveAppIcon";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
+import LiveAppIcon from "./LiveAppIcon";
 
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
+
 const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
@@ -113,8 +116,8 @@ export type Props = {
   onReload: Function,
   onClose?: Function,
   onHelp?: Function,
-  onOpenDevTools: Function,
   config?: TopBarConfig,
+  webviewRef: RefObject<WebviewTag>,
 };
 
 const WebPlatformTopBar = ({
@@ -122,8 +125,8 @@ const WebPlatformTopBar = ({
   onReload,
   onHelp,
   onClose,
-  onOpenDevTools,
   config = {},
+  webviewRef,
 }: Props) => {
   const { name, icon } = manifest;
 
@@ -131,14 +134,75 @@ const WebPlatformTopBar = ({
     shouldDisplayName = true,
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
+    shouldDisplayNavigation = false,
   } = config;
 
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoForward, setCanGoForward] = useState(false);
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const dispatch = useDispatch();
+
+  const handleDidNavigate = useCallback(() => {
+    const webview = webviewRef.current;
+
+    if (webview) {
+      setCanGoBack(webview.canGoBack());
+      setCanGoForward(webview.canGoForward());
+    }
+  }, [webviewRef]);
+
+  useEffect(() => {
+    const webview = webviewRef.current;
+
+    /**
+     * Handle webview navigation events.
+     * The two events are complementary to enccompass the webview's navigation
+     *
+     * `did-navigate` is emitted when a navigation is done. But this event is not
+     * emitted for in-page navigations, such as clicking anchor links or updating
+     * the window.location.hash.
+     * That's why we use did-navigate-in-page event for this purpose.
+     * cf. doc bellow:
+     *
+     * https://www.electronjs.org/docs/latest/api/webview-tag#event-did-navigate
+     * https://www.electronjs.org/docs/latest/api/webview-tag#event-did-navigate-in-page
+     */
+
+    if (webview && shouldDisplayNavigation) {
+      webview.addEventListener("did-navigate", handleDidNavigate);
+      webview.addEventListener("did-navigate-in-page", handleDidNavigate);
+
+      return () => {
+        webview.removeEventListener("did-navigate", handleDidNavigate);
+        webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
+      };
+    }
+  }, [handleDidNavigate, webviewRef, shouldDisplayNavigation]);
 
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
   }, [manifest, dispatch]);
+
+  const onOpenDevTools = useCallback(() => {
+    const webview = webviewRef.current;
+    if (webview) {
+      webview.openDevTools();
+    }
+  }, [webviewRef]);
+
+  const onGoBack = useCallback(() => {
+    const webview = webviewRef.current;
+    if (webview) {
+      webview.goBack();
+    }
+  }, [webviewRef]);
+
+  const onGoForward = useCallback(() => {
+    const webview = webviewRef.current;
+    if (webview) {
+      webview.goForward();
+    }
+  }, [webviewRef]);
 
   return (
     <Container>
@@ -157,6 +221,16 @@ const WebPlatformTopBar = ({
           <Trans i18nKey="common.sync.refresh" />
         </ItemContent>
       </ItemContainer>
+      {shouldDisplayNavigation && (
+        <>
+          <ItemContainer disabled={!canGoBack} isInteractive onClick={onGoBack}>
+            <ArrowRight flipped size={16} />
+          </ItemContainer>
+          <ItemContainer disabled={!canGoForward} isInteractive onClick={onGoForward}>
+            <ArrowRight size={16} />
+          </ItemContainer>
+        </>
+      )}
       {enablePlatformDevTools && (
         <>
           <Separator />
