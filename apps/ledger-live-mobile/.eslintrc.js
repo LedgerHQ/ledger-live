@@ -5,6 +5,7 @@ module.exports = {
     "airbnb",
     "prettier",
     "plugin:json/recommended",
+    "plugin:@typescript-eslint/recommended",
   ],
   settings: {
     "import/resolver": {
@@ -13,7 +14,7 @@ module.exports = {
       },
     },
   },
-  plugins: ["prettier", "detox"],
+  plugins: ["prettier", "detox", "@typescript-eslint"],
   rules: {
     "no-console": [
       "error",
@@ -94,6 +95,8 @@ module.exports = {
       "error",
       { ignore: ["^@ledgerhq/live-common/.*"] },
     ],
+
+    "@typescript-eslint/no-unused-vars": ["error"],
   },
   globals: {
     __DEV__: false,
