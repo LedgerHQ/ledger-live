@@ -164,6 +164,19 @@ export const ScreenName = {
   VoteValidationError: "VoteValidationError",
   VoteValidationSuccess: "VoteValidationSuccess",
 
+  // celo
+  CeloRegistrationValidationSuccess: "CeloRegistrationValidationSuccess",
+  CeloRegistrationValidationError: "CeloRegistrationValidationError",
+  CeloRegistrationStarted: "CeloRegistrationStarted",
+  CeloRegistrationAccountSelectDevice: "CeloRegistrationAccountSelectDevice",
+  CeloRegistrationConnectDevice: "CeloRegistrationConnectDevice",
+  CeloLockValidationSuccess: "CeloLockValidationSuccess",
+  CeloLockValidationError: "CeloLockValidationError",
+  CeloLockAmount: "CeloLockAmount",
+  CeloLockSelectDevice: "CeloLockSelectDevice",
+  CeloLockConnectDevice: "CeloLockConnectDevice",
+
+  // cosmos
   CosmosEditMemo: "CosmosEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
@@ -375,18 +388,6 @@ export const ScreenName = {
 
   // hedera
   HederaEditMemo: "HederaEditMemo",
-
-  // celo
-  CeloRegisterAccountValidationSuccess: "CeloRegisterAccountValidationSuccess",
-  CeloRegisterAccountValidationError: "CeloRegisterAccountValidationError",
-  CeloRegisterAccountStarted: "CeloRegisterAccountStarted",
-  CeloRegisterAccountSelectDevice: "CeloRegisterAccountSelectDevice",
-  CeloRegisterAccountConnectDevice: "CeloRegisterAccountConnectDevice",
-  CeloLockValidationSuccess: "CeloLockValidationSuccess",
-  CeloLockValidationError: "CeloLockValidationError",
-  CeloLockAmount: "CeloLockAmount",
-  CeloLockSelectDevice: "CeloLockSelectDevice",
-  CeloLockConnectDevice: "CeloLockConnectDevice",
 };
 
 export const NavigatorName = {
@@ -460,7 +461,8 @@ export const NavigatorName = {
   Market: "Market",
 
   // Celo
-  CeloRegisterAccountFlow: "CeloRegisterAccountFlow",
+  CeloTestNavigator: "CeloTestNavigator",
+  CeloRegistrationFlow: "CeloRegistrationFlow",
   CeloLockFlow: "CeloLockFlow",
 
   // Tab

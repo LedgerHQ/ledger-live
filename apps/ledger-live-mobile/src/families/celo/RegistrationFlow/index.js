@@ -28,7 +28,7 @@ function RegisterAccountFlow() {
   return (
     <Stack.Navigator screenOptions={stackNavigatorConfig}>
       <Stack.Screen
-        name={ScreenName.CeloRegisterAccountStarted}
+        name={ScreenName.CeloRegistrationStarted}
         component={RegisterAccountStarted}
         options={{
           headerTitle: () => (
@@ -44,7 +44,7 @@ function RegisterAccountFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CeloRegisterAccountSelectDevice}
+        name={ScreenName.CeloRegistrationAccountSelectDevice}
         component={SelectDevice}
         options={{
           headerTitle: () => (
@@ -59,7 +59,7 @@ function RegisterAccountFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CeloRegisterAccountConnectDevice}
+        name={ScreenName.CeloRegistrationConnectDevice}
         component={ConnectDevice}
         options={{
           headerTitle: () => (
@@ -74,7 +74,7 @@ function RegisterAccountFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CeloRegisterAccountValidationSuccess}
+        name={ScreenName.CeloRegistrationValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerTitle: "",
@@ -84,7 +84,7 @@ function RegisterAccountFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CeloRegisterAccountValidationError}
+        name={ScreenName.CeloRegistrationValidationError}
         component={ValidationError}
         options={{ headerShown: false }}
       />

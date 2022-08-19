@@ -41,7 +41,7 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
   invariant(transaction, "transaction required");
 
   const onNext = useCallback(() => {
-    navigation.navigate(ScreenName.CeloRegisterAccountSelectDevice, {
+    navigation.navigate(ScreenName.CeloRegistrationAccountSelectDevice, {
       ...route.params,
       transaction,
     });
