@@ -73,8 +73,9 @@ function getOperationType(
   transaction: Transaction,
   addr: string
 ): OperationType {
-  if (transaction.mode !== "send") {
-    switch (transaction.mode) {
+  if (transaction.action && transaction.action.category == "stake") {
+    const stakeAction = transaction.action.name;
+    switch (stakeAction) {
       case "delegate":
         return "DELEGATE";
       case "unDelegate":
