@@ -42,9 +42,7 @@ export default class ElrondApi {
   }
 
   async getProviders(): Promise<ElrondProvider[]> {
-    const {
-      data: { providers },
-    } = await network({
+    const { data: providers } = await network({
       method: "GET",
       url: `${this.DELEGATION_API_URL}/providers`,
     });
