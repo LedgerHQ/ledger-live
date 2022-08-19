@@ -1,5 +1,0 @@
----
-"ledger-live-desktop": patch
----
-
-Add Analytics 'reason' field in context of sync events
