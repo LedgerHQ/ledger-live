@@ -30,15 +30,18 @@ const final = async () => {
 
   try {
     await which("bundle");
+    try {
+      await $`bundle install`;
+    } catch (error) {
+      echo(chalk.red(error));
+    }
   } catch (error) {
     echo(
       chalk.red(
         "Error: `bundle` command is missing. Please install Bundler. https://bundler.io",
       ),
     );
-    await $`exit 1`;
   }
-  await $`bundle install`;
 
   if (os.platform() === "darwin") {
     cd("ios");

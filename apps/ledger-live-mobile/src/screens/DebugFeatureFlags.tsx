@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import {
   defaultFeatures,
@@ -8,9 +7,26 @@ import {
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
-import { BaseInput, Text, Flex, Button, Box } from "@ledgerhq/native-ui";
+import { BaseInput, Text, Flex, Button, Box, Tag } from "@ledgerhq/native-ui";
+import styled from "styled-components/native";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Alert from "../components/Alert";
+
+const Divider = styled(Box).attrs({width: "100%", my: 4, height: 1, bg: "neutral.c50"})``;
+
+const TagEnabled = styled(Tag).attrs({
+  bg: "success.c100",
+  uppercase: false,
+  type: "color",
+  mr: 2,
+})``;
+
+const TagDisabled = styled(Tag).attrs({
+  bg: "error.c100",
+  uppercase: false,
+  type: "color",
+  mr: 2,
+})``;
 
 type EditSectionProps = {
   error?: Error;
@@ -56,7 +72,6 @@ const EditSection = ({
   );
 };
 export default function DebugPlayground() {
-  const { colors } = useTheme();
   const { t } = useTranslation();
   const featureFlagsProvider = useFeatureFlags();
   const [error, setError] = useState<unknown | null>(null);
@@ -114,16 +129,24 @@ export default function DebugPlayground() {
 
   return (
     <NavigationScrollView>
-      <View style={[styles.root, { backgroundColor: colors.background }]}>
-        <Text variant="large" color="neutral.c70">
+      <View style={styles.root}>
+        <Text mb={6}>
           {t("settings.debug.featureFlagsTitle")}
         </Text>
-        {Object.entries(featureFlags).map(([flagName, value], index, arr) => (
+        <Flex flexDirection="row">
+          <Text>Legend: </Text>
+          <TagEnabled mx={2}>enabled flag</TagEnabled>
+          <TagDisabled mx={2} >disabled flag</TagDisabled>
+        </Flex>
+        <Divider />
+        {Object.entries(featureFlags).sort((a, b) => a[0].localeCompare(b[0])).map(([flagName, value], index, arr) => (
           <View key={flagName}>
             <Flex flexDirection="column" py={1}>
-              <Text>
-                {value?.overridesRemote ? `${flagName} **` : flagName}
-              </Text>
+              <Flex flexDirection="row" alignItems="center" my={3} flexWrap="wrap">
+                {value?.enabled ? <TagEnabled>{flagName}</TagEnabled> : <TagDisabled>{flagName}</TagDisabled>}
+                {value?.overridesRemote && <Tag my={1} mr={2}>overridden locally</Tag>}
+                {value?.enabledOverriddenForCurrentLanguage && <Tag my={1} mr={2}>disabled for current language</Tag>}
+              </Flex>
               {name !== flagName ? (
                 <Button
                   type="main"
@@ -173,12 +196,7 @@ export default function DebugPlayground() {
               </Flex>
             )}
             {index < arr.length - 1 && (
-              <Box
-                my={4}
-                width="100%"
-                height={1}
-                backgroundColor="neutral.c50"
-              />
+              <Divider />
             )}
           </View>
         ))}
