@@ -13,33 +13,21 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 const installLanguageExec = command("installLanguage");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : installLanguageExec);
 
-const DeviceLanguageInstalled = ({
-  onContinue
-}: {
-  onContinue: () => void;
-}) => {
+const DeviceLanguageInstalled = () => {
   const { t } = useTranslation();
 
   return (
-    <Flex height="100%" flexDirection="column" data-test-id="language-installed">
-      <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center">
-        <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c100" size={64} iconSize={24} />
-        <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
-          {t("deviceLocalization.languageInstalled")}
-        </Log>
-      </Flex>
-      <Flex flexDirection="column" rowGap={10}>
-        <Divider variant="light" />
-        <Flex alignSelf="end">
-          <Button
-            variant="main"
-            onClick={onContinue}
-            data-test-id="close-language-installation-button"
-          >
-            {t("common.close")}
-          </Button>
-        </Flex>
-      </Flex>
+    <Flex
+      flex={1}
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      data-test-id="language-installed"
+    >
+      <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c100" size={64} iconSize={24} />
+      <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
+        {t("deviceLocalization.languageInstalled")}
+      </Log>
     </Flex>
   );
 };
@@ -49,25 +37,15 @@ type Props = {
   onResult?: () => void;
   onError?: () => void;
   onSuccess: () => void;
-  onContinue: () => void;
 };
 
-const ChangeDeviceLanguageAction: React.FC<Props> = ({
-  language,
-  onContinue,
-  onError,
-  onSuccess,
-}) => {
-  const Result = useCallback(() => {
-    return <DeviceLanguageInstalled onContinue={onContinue} />;
-  }, [onContinue]);
-
+const ChangeDeviceLanguageAction: React.FC<Props> = ({ language, onError, onSuccess }) => {
   return (
     <DeviceAction
       action={action}
       request={language}
       onResult={onSuccess}
-      Result={Result}
+      Result={DeviceLanguageInstalled}
       onError={onError}
     />
   );

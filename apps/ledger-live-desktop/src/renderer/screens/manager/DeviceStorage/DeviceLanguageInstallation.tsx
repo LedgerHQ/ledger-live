@@ -31,12 +31,14 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
 
   const [installing, setInstalling] = useState(false);
+  const [installed, setInstalled] = useState(false);
 
   const { t } = useTranslation();
 
   const onCloseDrawer = useCallback(() => {
     onClose();
     setInstalling(false);
+    setInstalled(false);
   }, [onClose, setInstalling]);
 
   const onChange = useCallback(
@@ -56,8 +58,10 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
       <Flex flex={1} flexDirection="column" justifyContent="space-between" pt={2}>
         {installing ? (
           <ChangeDeviceLanguageAction
-            onContinue={onCloseDrawer}
-            onSuccess={onSuccess}
+            onSuccess={() => {
+              onSuccess();
+              setInstalled(true);
+            }}
             onError={onError}
             language={selectedLanguage}
           />
@@ -93,21 +97,24 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
                 />
               ))}
             </Radio>
+          </>
+        )}
+        {(!installing ||
+          installed) && (
             <Flex flexDirection="column" rowGap={10}>
               <Divider variant="light" />
               <Flex alignSelf="end">
                 <Button
                   data-test-id="install-language-button"
                   variant="main"
-                  onClick={onInstall}
-                  disabled={currentLanguage === selectedLanguage}
+                  onClick={installed ? onCloseDrawer : onInstall}
+                  disabled={!installing && (currentLanguage === selectedLanguage)}
                 >
-                  {t(`deviceLocalization.changeLanguage`)}
+                  {installed ? t(`common.close`) : t(`deviceLocalization.changeLanguage`)}
                 </Button>
               </Flex>
             </Flex>
-          </>
-        )}
+          )}
       </Flex>
     </Drawer>
   );

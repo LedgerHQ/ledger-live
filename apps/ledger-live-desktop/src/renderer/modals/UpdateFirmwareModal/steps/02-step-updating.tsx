@@ -1,26 +1,24 @@
-// @flow
 import React, { useEffect } from "react";
 import { timeout } from "rxjs/operators";
 import styled from "styled-components";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { command } from "~/renderer/commands";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { StepProps } from "../";
+import { StepProps } from "..";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { renderFirmwareUpdating } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
   color: "palette.text.shade100",
 }))``;
 
 type BodyProps = {
-  modelId: DeviceModelId,
+  modelId: DeviceModelId;
 };
 
 export const Body = ({ modelId }: BodyProps) => {
@@ -30,7 +28,12 @@ export const Body = ({ modelId }: BodyProps) => {
 
 type Props = StepProps;
 
-const StepUpdating = ({ firmware, deviceModelId, setError, transitionTo }: Props) => {
+const StepUpdating = ({
+  deviceModelId,
+  setError,
+  transitionTo,
+  setUpdatedDeviceInfo,
+}: Props) => {
   useEffect(() => {
     const sub = (getEnv("MOCK")
       ? mockedEventEmitter()
@@ -38,10 +41,11 @@ const StepUpdating = ({ firmware, deviceModelId, setError, transitionTo }: Props
     )
       .pipe(timeout(5 * 60 * 1000))
       .subscribe({
+        next: setUpdatedDeviceInfo,
         complete: () => {
-          transitionTo("finish");
+          transitionTo("deviceLanguage");
         },
-        error: error => {
+        error: (error: Error) => {
           setError(error);
           transitionTo("finish");
         },

@@ -8,18 +8,23 @@ import NanoXFoldedLight from "./assets/nano-x-folded-light.svg";
 import { useTranslation } from "react-i18next";
 
 type Props = {
-    onSkip: () => void;
-    onConfirm: () => void;
-    descriptionWording: string;
-    titleWording: string;
+  onSkip: () => void;
+  onConfirm: () => void;
+  descriptionWording: string;
+  titleWording: string;
 };
 
-const ChangeDeviceLanguagePrompt: React.FC<Props> = ({ onSkip, onConfirm, titleWording, descriptionWording }) => {
+const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
+  onSkip,
+  onConfirm,
+  titleWording,
+  descriptionWording,
+}) => {
   const { t } = useTranslation();
 
   return (
-    <>
-      <Flex alignItems="center" justifyContent="center" flexDirection="column" flex={1} px={40}>
+    <Flex flexDirection="column" flex={1}>
+      <Flex alignItems="center" justifyContent="center" flexDirection="column" flex={1}>
         <Illustration
           width={251}
           height={126}
@@ -27,20 +32,20 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({ onSkip, onConfirm, titleW
           darkSource={NanoXFoldedDark}
         />
 
-        <Text variant="h1" fontSize={20} mt={80}>
+        <Text variant="h1" fontSize={20} mt={24}>
           {titleWording}
         </Text>
         <Text variant="body" textAlign="center" color="neutral.c80" mt={24}>
           {descriptionWording}
         </Text>
       </Flex>
-      <Flex alignSelf="flex-end" justifySelf="flex-end" columnGap={5}>
+      <Flex alignSelf="flex-end" justifySelf="flex-end" columnGap={5} mt={24}>
         <Button onClick={onSkip}>{t("common.cancel")}</Button>
         <Button variant="main" onClick={onConfirm}>
           {t("deviceLocalization.changeLanguage")}
         </Button>
       </Flex>
-    </>
+    </Flex>
   );
 };
 

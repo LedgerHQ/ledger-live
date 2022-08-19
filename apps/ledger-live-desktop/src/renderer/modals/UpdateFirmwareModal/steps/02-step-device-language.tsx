@@ -1,26 +1,18 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import styled from "styled-components";
+import React, { useCallback, useEffect, useState } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
-import Box from "~/renderer/components/Box";
 import { StepProps } from "..";
-import { DeviceInfo, idsToLanguage, Language, languageIds } from "@ledgerhq/types-live";
-import { ProgressLoader } from "@ledgerhq/react-ui";
+import { idsToLanguage, Language, languageIds } from "@ledgerhq/types-live";
+import { Flex } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { useTranslation } from "react-i18next";
+import BigSpinner from "~/renderer/components/BigSpinner";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
 
-const Container = styled(Box).attrs(() => ({
-  alignItems: "center",
-  fontSize: 4,
-  color: "palette.text.shade100",
-}))``;
-
-
-type Props = StepProps & { updatedDeviceInfo?: DeviceInfo };
+type Props = StepProps;
 
 const StepDeviceLanguage = ({
   updatedDeviceInfo,
@@ -56,6 +48,7 @@ const StepDeviceLanguage = ({
     [device],
   );
 
+
   useEffect(() => {
     if (newLanguagesLoaded && oldLanguagesLoaded) {
       const deviceLanguageId = updatedDeviceInfo?.languageId;
@@ -89,7 +82,6 @@ const StepDeviceLanguage = ({
     newLanguagesLoaded,
     oldAvailableLanguages,
     oldLanguagesLoaded,
-    dispatchEvent,
     currentLocale,
     oldDeviceInfo,
     updatedDeviceInfo,
@@ -99,7 +91,7 @@ const StepDeviceLanguage = ({
   const deviceName = getDeviceModel(device.modelId).productName;
 
   return (
-    <Container>
+    <Flex justifyContent="center" flex={1}>
       {isLanguagePromptOpen && !installingLanguage && (
         <>
           {/* TODO: <Track event="FirmwareUpdateFirstDeviceLanguagePrompt" onMount /> */}
@@ -119,15 +111,15 @@ const StepDeviceLanguage = ({
         <ChangeDeviceLanguageAction
           device={device}
           language={languageToInstall}
-          onContinue={() => {
+          onSuccess={() => {
             setInstallingLanguage(false);
             transitionTo("finish");
           }}
         />
       ) : (
-        !isLanguagePromptOpen && <ProgressLoader />
+        !isLanguagePromptOpen && <BigSpinner size={50} />
       )}
-    </Container>
+    </Flex>
   );
 };
 

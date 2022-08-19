@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 
-import { Flex, Drawer, Text, Button } from "@ledgerhq/react-ui";
+import { Flex, Drawer, Button, Divider } from "@ledgerhq/react-ui";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
 import { useDispatch, useSelector } from "react-redux";
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
@@ -24,6 +24,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
   currentLanguage,
 }) => {
   const [installingLanguage, setInstallingLanguage] = useState(false);
+  const [languageInstalled, setLanguageInstalled] = useState(false);
 
   const currentDevice = useSelector(getCurrentDevice);
 
@@ -32,6 +33,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
 
   const onCloseDrawer = useCallback(() => {
     setInstallingLanguage(false);
+    setLanguageInstalled(false);
     onClose();
   }, [onClose]);
 
@@ -60,12 +62,30 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
         pt={2}
       >
         {installingLanguage ? (
-          <ChangeDeviceLanguageAction
-            language={localeIdToDeviceLanguage[currentLanguage]}
-            onSuccess={refreshDeviceInfo}
-            onError={refreshDeviceInfo}
-            onContinue={onCloseDrawer}
-          />
+          <>
+            <ChangeDeviceLanguageAction
+              language={localeIdToDeviceLanguage[currentLanguage]}
+              onSuccess={() => {
+                refreshDeviceInfo();
+                setLanguageInstalled(true);
+              }}
+              onError={refreshDeviceInfo}
+            />
+            {languageInstalled && (
+              <Flex flexDirection="column" rowGap={10} alignSelf="stretch">
+                <Divider variant="light" />
+                <Flex alignSelf="end">
+                  <Button
+                    variant="main"
+                    onClick={onCloseDrawer}
+                    data-test-id="close-language-installation-button"
+                  >
+                    {t("common.close")}
+                  </Button>
+                </Flex>
+              </Flex>
+            )}
+          </>
         ) : (
           <ChangeDeviceLanguagePrompt
             onSkip={onCloseDrawer}
