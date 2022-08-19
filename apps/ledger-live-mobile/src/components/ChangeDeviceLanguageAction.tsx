@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import DeviceAction from "./DeviceAction";
@@ -16,6 +16,7 @@ type Props = {
   device: Device;
   language: Language;
   onContinue: () => void;
+  onStart?: () => void;
   onResult?: () => void;
   onError?: () => void;
 };
@@ -24,6 +25,7 @@ type Props = {
 const ChangeDeviceLanguageAction: React.FC<Props> = ({
   device,
   language,
+  onStart,
   onContinue,
   onResult,
   onError,
@@ -41,6 +43,12 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
       ),
     [language, device?.deviceId],
   );
+
+  useEffect(() => {
+    if (onStart && device) {
+      onStart();
+    }
+  }, [device])
 
   return (
     <>

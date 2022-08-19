@@ -48,6 +48,9 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<
     boolean
   >(false);
+  const [preventPromptBackdropClick, setPreventPromptBackdropClick] = useState<
+    boolean
+  >(false);
 
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
     lastSeenDeviceSelector,
@@ -57,7 +60,8 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
     lastConnectedDeviceSelector,
   ) as Device | null;
 
-  const refreshDeviceInfo = useCallback(() => {
+  const onActionFinished = useCallback(() => {
+    setPreventPromptBackdropClick(false);
     if (lastConnectedDevice && lastSeenDevice) {
       withDevice(lastConnectedDevice?.deviceId)(transport =>
         from(getDeviceInfo(transport)),
@@ -134,13 +138,15 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
       <BottomDrawer
         isOpen={isDeviceLanguagePromptOpen}
         onClose={closeDeviceLanguagePrompt}
+        preventBackdropClick={preventPromptBackdropClick}
       >
         <Flex alignItems="center">
           {deviceForChangeLanguageAction ? (
             <ChangeDeviceLanguageAction
-              onResult={refreshDeviceInfo}
-              onError={refreshDeviceInfo}
+              onResult={onActionFinished}
+              onError={onActionFinished}
               device={deviceForChangeLanguageAction}
+              onStart={() => setPreventPromptBackdropClick(true)}
               language={localeIdToDeviceLanguage[currentLocale] as Language}
               onContinue={() => {
                 setDeviceForChangeLanguageAction(null);
