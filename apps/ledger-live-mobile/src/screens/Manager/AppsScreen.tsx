@@ -6,7 +6,7 @@ import {
   isCurrencySupported,
 } from "@ledgerhq/live-common/currencies/index";
 import { distribute, Action, State } from "@ledgerhq/live-common/apps/index";
-import { App } from "@ledgerhq/types-live";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
 import { Text, Flex } from "@ledgerhq/native-ui";
@@ -18,7 +18,6 @@ import { ManagerTab } from "./Manager";
 import AppFilter from "./AppsList/AppFilter";
 
 import DeviceCard from "./Device";
-import FirmwareManager from "./Firmware";
 import AppRow from "./AppsList/AppRow";
 
 import Searchbar from "./AppsList/Searchbar";
@@ -30,6 +29,7 @@ import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "../../components/Search";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
 type Props = {
   state: State;
@@ -46,8 +46,9 @@ type Props = {
   deviceId: string;
   initialDeviceName: string;
   navigation: any;
-  blockNavigation: boolean;
-  deviceInfo: any;
+  pendingInstalls: boolean;
+  deviceInfo: DeviceInfo;
+  device: Device;
   searchQuery?: string;
   updateModalOpened?: boolean;
   tab: ManagerTab;
@@ -64,8 +65,9 @@ const AppsScreen = ({
   updateModalOpened,
   deviceId,
   initialDeviceName,
+  device,
   navigation,
-  blockNavigation,
+  pendingInstalls,
   deviceInfo,
   searchQuery,
   optimisticState,
@@ -87,7 +89,7 @@ const AppsScreen = ({
 
   const [query, setQuery] = useState(searchQuery || "");
 
-  const { update, device, catalog } = useAppsSections(state, {
+  const { update, device: deviceApps, catalog } = useAppsSections(state, {
     query: "",
     appFilter,
     sort: sortOptions,
@@ -261,11 +263,12 @@ const AppsScreen = ({
               result={result}
               deviceId={deviceId}
               initialDeviceName={initialDeviceName}
-              blockNavigation={blockNavigation}
+              pendingInstalls={pendingInstalls}
               deviceInfo={deviceInfo}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               dispatch={dispatch}
-              appList={device}
+              device={device}
+              appList={deviceApps}
             />
             <Flex mt={6}>
               <FirmwareUpdateBanner />
@@ -304,7 +307,7 @@ const AppsScreen = ({
     ),
     [
       appFilter,
-      blockNavigation,
+      pendingInstalls,
       device,
       deviceId,
       deviceInfo,
