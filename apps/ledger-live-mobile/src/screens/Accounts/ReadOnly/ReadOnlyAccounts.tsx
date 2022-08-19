@@ -1,6 +1,7 @@
-import React, { useCallback, useMemo, memo, useEffect } from "react";
+import React, { useCallback, useMemo, memo, useContext } from "react";
 import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { Trans, useTranslation } from "react-i18next";
 import {
@@ -23,19 +24,18 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
-import { usePreviousRouteName } from "../../../helpers/routeHooks";
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
 type Props = {
   navigation: any;
   route: { params?: { currency?: string; search?: string } };
-  screen: "Wallet" | "Assets";
 };
 
 const maxReadOnlyCryptoCurrencies = 10;
 
-function ReadOnlyAccounts({ navigation, route, screen }: Props) {
+function ReadOnlyAccounts({ navigation, route }: Props) {
   const listSupportedTokens = useCallback(
     () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
     [],
@@ -61,7 +61,7 @@ function ReadOnlyAccounts({ navigation, route, screen }: Props) {
       <ReadOnlyAccountRow
         navigation={navigation}
         currency={item}
-        screen={screen}
+        screen="Assets"
       />
     ),
     [navigation],
@@ -103,7 +103,7 @@ function ReadOnlyAccounts({ navigation, route, screen }: Props) {
         }
       />
     ),
-    [renderItem],
+    [navigation, renderItem, t],
   );
 
   const renderEmptySearch = useCallback(
@@ -135,11 +135,21 @@ function ReadOnlyAccounts({ navigation, route, screen }: Props) {
     [t],
   );
 
-  const previousRoute = usePreviousRouteName();
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Assets");
+
+      return () => {
+        setSource("Assets");
+      };
+    }, [setSource, setScreen]),
+  );
 
   return (
     <TabBarSafeAreaView>
-      <TrackScreen category="ReadOnly" name="Assets" source={previousRoute} />
+      <TrackScreen category="ReadOnly" name="Assets" source={source} />
       <Flex flex={1} bg={"background.main"}>
         <AccountsNavigationHeader readOnly />
         <FilteredSearchBar

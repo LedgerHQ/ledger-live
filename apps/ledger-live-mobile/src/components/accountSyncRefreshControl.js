@@ -39,6 +39,7 @@ export default (ScrollListLike: any) => {
         type: "SYNC_ONE_ACCOUNT",
         accountId,
         priority: 10,
+        reason: "user-pull-to-refresh-one-account",
       });
       setLastClickTime(Date.now());
       setRefreshing(true);
