@@ -1,11 +1,12 @@
-name: "[Bot] 'Stellar on Silicium'"
+name: "[Bot] 'Mère Denis'"
 on:
   push:
     branches:
-      - feat/stellar
+      - support/bot-mere-denis
+      - support/bot-actions-perf
 
 concurrency:
-  group: bot-seed3-stellar
+  group: bot-seed1
 
 jobs:
   start-runner:
@@ -46,7 +47,5 @@ jobs:
         id: bot
         timeout-minutes: 120
         with:
-          SEED: ${{ secrets.SEED3 }}
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
-          SLACK_CHANNEL: ci-xlm-ll
-          BOT_FILTER_FAMILY: stellar
+          SEED: ${{ secrets.SEED1 }}
