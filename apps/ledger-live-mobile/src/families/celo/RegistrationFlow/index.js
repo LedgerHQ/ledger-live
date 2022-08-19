@@ -44,7 +44,7 @@ function RegisterAccountFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CeloRegistrationAccountSelectDevice}
+        name={ScreenName.CeloRegistrationSelectDevice}
         component={SelectDevice}
         options={{
           headerTitle: () => (

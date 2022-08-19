@@ -168,7 +168,7 @@ export const ScreenName = {
   CeloRegistrationValidationSuccess: "CeloRegistrationValidationSuccess",
   CeloRegistrationValidationError: "CeloRegistrationValidationError",
   CeloRegistrationStarted: "CeloRegistrationStarted",
-  CeloRegistrationAccountSelectDevice: "CeloRegistrationAccountSelectDevice",
+  CeloRegistrationSelectDevice: "CeloRegistrationSelectDevice",
   CeloRegistrationConnectDevice: "CeloRegistrationConnectDevice",
   CeloLockValidationSuccess: "CeloLockValidationSuccess",
   CeloLockValidationError: "CeloLockValidationError",

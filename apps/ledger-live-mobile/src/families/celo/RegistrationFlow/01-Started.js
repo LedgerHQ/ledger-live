@@ -41,7 +41,7 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
   invariant(transaction, "transaction required");
 
   const onNext = useCallback(() => {
-    navigation.navigate(ScreenName.CeloRegistrationAccountSelectDevice, {
+    navigation.navigate(ScreenName.CeloRegistrationSelectDevice, {
       ...route.params,
       transaction,
     });
@@ -66,7 +66,7 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <TrackScreen category="CeloRegisterAccountFlow" name="Started" />
+        <TrackScreen category="CeloRegistrationFlow" name="Started" />
         <Text fontWeight="semiBold" style={styles.title}>
           <Trans i18nKey="celo.register.flow.steps.started.description" />
         </Text>
