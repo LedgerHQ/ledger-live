@@ -134,8 +134,8 @@ export default function useAssetActions({
               navigationParams: [
                 NavigatorName.ReceiveFunds,
                 {
-                  screen: ScreenName.ReceiveSelectAccount,
-                  params: { selectedCurrency: currency },
+                  screen: ScreenName.ReceiveSelectCrypto,
+                  params: { currency },
                 },
               ],
             },

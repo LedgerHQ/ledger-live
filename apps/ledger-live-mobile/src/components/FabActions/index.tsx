@@ -304,7 +304,7 @@ const FabActions: React.FC<FabActionsProps> = ({
       navigationParams: [
         NavigatorName.ReceiveFunds,
         {
-          screen: ScreenName.ReceiveSelectAccount,
+          screen: ScreenName.ReceiveSelectCrypto,
         },
       ],
     };
