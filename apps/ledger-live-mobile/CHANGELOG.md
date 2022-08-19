@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.6.0-nightly.0
+
+### Minor Changes
+
+- [#961](https://github.com/LedgerHQ/ledger-live/pull/961) [`b06c9fdf5c`](https://github.com/LedgerHQ/ledger-live/commit/b06c9fdf5ccbbc68283dd73ea4c3ea0e380c1539) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Minor wording changes
+
+### Patch Changes
+
+- [#808](https://github.com/LedgerHQ/ledger-live/pull/808) [`7060810545`](https://github.com/LedgerHQ/ledger-live/commit/70608105451e29cbb543ee98d2a8a4cf5ada38df) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Fix redirection to stories from device selection screen
+
+* [#965](https://github.com/LedgerHQ/ledger-live/pull/965) [`186256abac`](https://github.com/LedgerHQ/ledger-live/commit/186256abac2ff3992a37ce15424bd1a3251e0c89) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Display more of the essential information in Feature Flags debugging screen
+
+- [#751](https://github.com/LedgerHQ/ledger-live/pull/751) [`be4ad4860c`](https://github.com/LedgerHQ/ledger-live/commit/be4ad4860c3954549c8ac955e1971f52cdb99679) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Fix redirection from upsell screen
+
+- Updated dependencies [[`2fd6f6244c`](https://github.com/LedgerHQ/ledger-live/commit/2fd6f6244c41158883ca44accf9cbda4fd8d3418), [`f28d403542`](https://github.com/LedgerHQ/ledger-live/commit/f28d4035426e741822108daf172f4509ce030751), [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311), [`2fd6f6244c`](https://github.com/LedgerHQ/ledger-live/commit/2fd6f6244c41158883ca44accf9cbda4fd8d3418)]:
+  - @ledgerhq/native-ui@0.9.0-nightly.2
+  - @ledgerhq/live-common@25.2.0-nightly.3
+  - @ledgerhq/hw-transport@6.27.3-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.3-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.3-nightly.0
+  - @ledgerhq/react-native-hid@6.28.5-nightly.0
+  - @ledgerhq/types-live@6.23.0-nightly.4
+
 ## 3.5.1
 
 ### Patch Changes

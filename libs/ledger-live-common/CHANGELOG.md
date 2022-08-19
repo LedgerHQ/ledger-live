@@ -1,5 +1,26 @@
 # @ledgerhq/live-common
 
+## 25.2.0-nightly.3
+
+### Patch Changes
+
+- [#970](https://github.com/LedgerHQ/ledger-live/pull/970) [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311) Thanks [@alexandremgo](https://github.com/alexandremgo)! - BLE scanning and pairing hooks
+
+- Updated dependencies [[`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/hw-transport@6.27.3-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.3-nightly.0
+  - @ledgerhq/hw-app-btc@8.0.1-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.27.3-nightly.0
+  - @ledgerhq/hw-app-eth@6.29.4-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.3-nightly.0
+  - @ledgerhq/hw-app-solana@6.27.3-nightly.0
+  - @ledgerhq/hw-app-str@6.27.3-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.3-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.3-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.3-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.3-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.3-nightly.0
+
 ## 25.2.0-nightly.2
 
 ### Patch Changes

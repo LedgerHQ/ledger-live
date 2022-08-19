@@ -1,5 +1,17 @@
 # live-common-tools
 
+## 0.2.4-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/live-common@25.2.0-nightly.3
+  - @ledgerhq/hw-transport@6.27.3-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.3-nightly.0
+  - @ledgerhq/hw-transport-web-ble@6.27.3-nightly.0
+  - @ledgerhq/hw-transport-webhid@6.27.3-nightly.0
+  - @ledgerhq/hw-transport-webusb@6.27.3-nightly.0
+
 ## 0.2.4-nightly.2
 
 ### Patch Changes

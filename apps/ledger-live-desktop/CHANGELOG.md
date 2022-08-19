@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.46.0-nightly.6
+
+### Minor Changes
+
+- [#961](https://github.com/LedgerHQ/ledger-live/pull/961) [`b06c9fdf5c`](https://github.com/LedgerHQ/ledger-live/commit/b06c9fdf5ccbbc68283dd73ea4c3ea0e380c1539) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Minor wording changes
+
+### Patch Changes
+
+- Updated dependencies [[`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/live-common@25.2.0-nightly.3
+  - @ledgerhq/hw-transport@6.27.3-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.3-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.27.4-nightly.0
+  - @ledgerhq/types-live@6.23.0-nightly.4
+
 ## 2.46.0-nightly.5
 
 ### Patch Changes

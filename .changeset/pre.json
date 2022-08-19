@@ -76,6 +76,7 @@
     "@ledgerhq/crypto-icons-ui": "0.1.0"
   },
   "changesets": [
+    "afraid-needles-own",
     "blue-ligers-visit",
     "blue-trainers-hug",
     "breezy-cars-attack",
@@ -83,6 +84,7 @@
     "breezy-plants-remain",
     "brown-nails-yell",
     "chatty-jeans-do",
+    "cold-clocks-travel",
     "early-dingos-repeat",
     "empty-seals-bow",
     "famous-pens-move",
@@ -92,20 +94,27 @@
     "hip-buckets-deny",
     "hip-readers-enjoy",
     "hungry-flowers-compare",
+    "light-snakes-bathe",
     "modern-ligers-cry",
     "plenty-geckos-report",
     "selfish-panthers-bow",
     "silly-oranges-begin",
     "six-donuts-teach",
     "slimy-chicken-act",
+    "smart-shoes-shake",
     "soft-dodos-check",
     "soft-rabbits-retire",
     "sour-horses-lay",
     "stale-dancers-beam",
+    "sweet-clocks-shave",
+    "tall-chefs-hear",
     "tender-mirrors-guess",
     "tidy-bugs-camp",
+    "twelve-gifts-jam",
     "twelve-oranges-play",
+    "violet-swans-watch",
     "violet-yaks-tan",
-    "weak-actors-help"
+    "weak-actors-help",
+    "young-ads-mate"
   ]
 }

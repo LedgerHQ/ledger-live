@@ -1,5 +1,15 @@
 # @ledgerhq/native-ui
 
+## 0.9.0-nightly.2
+
+### Minor Changes
+
+- [#968](https://github.com/LedgerHQ/ledger-live/pull/968) [`2fd6f6244c`](https://github.com/LedgerHQ/ledger-live/commit/2fd6f6244c41158883ca44accf9cbda4fd8d3418) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Tag component: change appearance (new design)
+
+* [#976](https://github.com/LedgerHQ/ledger-live/pull/976) [`f28d403542`](https://github.com/LedgerHQ/ledger-live/commit/f28d4035426e741822108daf172f4509ce030751) Thanks [@grsoares21](https://github.com/grsoares21)! - Add Divider component to the native ui
+
+- [#968](https://github.com/LedgerHQ/ledger-live/pull/968) [`2fd6f6244c`](https://github.com/LedgerHQ/ledger-live/commit/2fd6f6244c41158883ca44accf9cbda4fd8d3418) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Tag component: remove "active" prop
+
 ## 0.9.0-nightly.1
 
 ### Minor Changes

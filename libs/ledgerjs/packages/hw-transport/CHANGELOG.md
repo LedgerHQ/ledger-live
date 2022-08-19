@@ -1,5 +1,11 @@
 # @ledgerhq/hw-transport
 
+## 6.27.3-nightly.0
+
+### Patch Changes
+
+- [#970](https://github.com/LedgerHQ/ledger-live/pull/970) [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311) Thanks [@alexandremgo](https://github.com/alexandremgo)! - BLE scanning and pairing hooks
+
 ## 6.27.2
 
 ### Patch Changes
