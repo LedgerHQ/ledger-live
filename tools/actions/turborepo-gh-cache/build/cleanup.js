@@ -2179,7 +2179,7 @@ var absoluteCacheDirectory = path.resolve(
   rootDirectory,
   cacheDirectory
 );
-var logFileName = "server.log";
+var logFileName = "__turbo_server.log";
 
 // src/cleanup.ts
 var pid = Number.parseInt((0, import_core.getState)("pidToKill"));

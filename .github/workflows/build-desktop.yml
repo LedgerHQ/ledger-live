@@ -81,6 +81,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: TurboRepo local caching server
+        id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
@@ -89,7 +90,7 @@ jobs:
         with:
           os: linux
       - name: build the app
-        run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -129,6 +130,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: TurboRepo local caching server
+        id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
@@ -137,7 +139,7 @@ jobs:
         with:
           os: linux
       - name: build the app
-        run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -169,6 +171,7 @@ jobs:
           version: latest
           dest: ${{ runner.temp }}/setup-pnpm
       - name: TurboRepo local caching server
+        id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
@@ -178,7 +181,7 @@ jobs:
           os: win
       - name: build the app
         run: |
-          pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: upload windows
         uses: actions/upload-artifact@v3
@@ -211,6 +214,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: TurboRepo local caching server
+        id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
@@ -221,7 +225,7 @@ jobs:
       - name: build the app
         run: |
           eval "$(rbenv init - bash)"
-          pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: upload macOS app
         uses: actions/upload-artifact@v3
         with:
