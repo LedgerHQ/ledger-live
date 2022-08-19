@@ -463,7 +463,12 @@ function Delegations({ account }: Props) {
         </>
       )}
       { banner.display  && 
-        <AccountBanner style={styles.banner} {...banner} onDelegate={banner.redelegate ? onRedelegateLedger : onDelegate}/>
+        <View style={styles.banner}>
+          <AccountBanner  
+            {...banner} 
+            onPress={banner.redelegate ? onRedelegateLedger : onDelegate}
+          />
+        </View>
       }
       {delegations.length === 0 ? (
         <AccountDelegationInfo
@@ -537,9 +542,9 @@ export default function CosmosDelegations({ account }: Props) {
 }
 
 const styles = StyleSheet.create({
-  // root: {
-  //   marginHorizontal: 16,
-  // },
+  root: {
+    marginHorizontal: 16,
+  },
   illustration: { alignSelf: "center", marginBottom: 16 },
   rewardsWrapper: {
     flexDirection: "row",
@@ -571,7 +576,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   banner:{
-    marginBottom: 46,
-    marginHorizontal:90,
+    marginBottom: 16,
   }
 });
