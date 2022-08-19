@@ -150,8 +150,14 @@ function transactionToOperation(
     blockHeight: transaction.round,
     date: new Date(transaction.timestamp ? transaction.timestamp * 1000 : 0),
     extra: {},
-    senders: [transaction.sender ?? ""],
-    recipients: transaction.receiver ? [transaction.receiver] : [],
+    senders:
+      (type == "OUT" || type == "IN") && transaction.sender
+        ? [transaction.sender]
+        : [],
+    recipients:
+      (type == "OUT" || type == "IN") && transaction.receiver
+        ? [transaction.receiver]
+        : [],
     transactionSequenceNumber: isSender(transaction, addr)
       ? transaction.nonce
       : undefined,
@@ -159,6 +165,9 @@ function transactionToOperation(
       !transaction.status ||
       transaction.status === "fail" ||
       transaction.status === "invalid",
+    contract: new Address(transaction.receiver).isContractAddress()
+      ? transaction.receiver
+      : undefined,
   };
 }
 
