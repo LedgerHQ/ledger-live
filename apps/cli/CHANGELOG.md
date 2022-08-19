@@ -1,5 +1,16 @@
 # @ledgerhq/live-cli
 
+## 22.3.0-next.1
+
+### Minor Changes
+
+- [#492](https://github.com/LedgerHQ/ledger-live/pull/492) [`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2) Thanks [@grsoares21](https://github.com/grsoares21)! - Adds device action logic for installing and uninstalling language packs
+
+### Patch Changes
+
+- Updated dependencies [[`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2)]:
+  - @ledgerhq/live-common@26.1.0-next.1
+
 ## 22.2.1-next.0
 
 ### Patch Changes
