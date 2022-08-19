@@ -89,12 +89,7 @@ function OnboardingStepWelcome({ navigation }: any) {
             resizeMode={"cover"}
           />
         )}
-        <Svg
-          style={absoluteStyle}
-          width="100%"
-          height="100%"
-          preserveAspectRatio="xMinYMin slice"
-        >
+        <Svg style={absoluteStyle} width="100%" height="120%">
           <Defs>
             <LinearGradient
               id="myGradient"

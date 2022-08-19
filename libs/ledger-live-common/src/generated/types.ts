@@ -42,6 +42,10 @@ import { Transaction as neoTransaction } from "../families/neo/types";
 import { TransactionRaw as neoTransactionRaw } from "../families/neo/types";
 import { TransactionStatus as neoTransactionStatus } from "../families/neo/types";
 import { TransactionStatusRaw as neoTransactionStatusRaw } from "../families/neo/types";
+import { Transaction as osmosisTransaction } from "../families/osmosis/types";
+import { TransactionRaw as osmosisTransactionRaw } from "../families/osmosis/types";
+import { TransactionStatus as osmosisTransactionStatus } from "../families/osmosis/types";
+import { TransactionStatusRaw as osmosisTransactionStatusRaw } from "../families/osmosis/types";
 import { Transaction as polkadotTransaction } from "../families/polkadot/types";
 import { TransactionRaw as polkadotTransactionRaw } from "../families/polkadot/types";
 import { TransactionStatus as polkadotTransactionStatus } from "../families/polkadot/types";
@@ -79,12 +83,14 @@ export type Transaction =
   | filecoinTransaction
   | hederaTransaction
   | neoTransaction
+  | osmosisTransaction
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction
+  | tronTransaction;
+
 export type TransactionRaw =
   | algorandTransactionRaw
   | bitcoinTransactionRaw
@@ -97,12 +103,14 @@ export type TransactionRaw =
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | neoTransactionRaw
+  | osmosisTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw
+  | tronTransactionRaw;
+
 export type TransactionStatus =
   | algorandTransactionStatus
   | bitcoinTransactionStatus
@@ -115,12 +123,14 @@ export type TransactionStatus =
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | neoTransactionStatus
+  | osmosisTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
-  | tronTransactionStatus
+  | tronTransactionStatus;
+
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
   | bitcoinTransactionStatusRaw
@@ -133,9 +143,10 @@ export type TransactionStatusRaw =
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | neoTransactionStatusRaw
+  | osmosisTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
-  | tronTransactionStatusRaw
+  | tronTransactionStatusRaw;

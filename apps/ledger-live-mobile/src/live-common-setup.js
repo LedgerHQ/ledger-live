@@ -25,7 +25,7 @@ setGlobalOnBridgeError(e => logger.critical(e));
 
 setDeviceMode("polling");
 
-setPlatformVersion("1.0.0");
+setPlatformVersion("1.1.0");
 
 setSupportedCurrencies([
   "bitcoin",
@@ -66,6 +66,8 @@ setSupportedCurrencies([
   "elrond",
   "hedera",
   "cardano",
+  "osmosis",
+  "filecoin",
 ]);
 
 if (Config.VERBOSE) {
