@@ -40,7 +40,7 @@ export default function ValidationError({ navigation, route }: Props) {
       style={[styles.root, { backgroundColor: colors.background }]}
       forceInset={{ bottom: "always" }}
     >
-      <TrackScreen category="CeloUnlock" name="ValidationError" />
+      <TrackScreen category="CeloLock" name="ValidationError" />
       <ValidateError
         error={error}
         onRetry={retry}

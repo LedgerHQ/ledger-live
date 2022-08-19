@@ -78,14 +78,13 @@ function CeloTestNav() {
     });
   }, [onNavigate, account]);
 
-  // const onUnlock = useCallback(() => {
-  //   onNavigate({
-  //     route: NavigatorName.CosmosDelegationFlow,
-  //     screen: ScreenName.CosmosDelegationStarted,
-  //     params: {},
-  //   });
+  const onUnlock = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.CeloUnlockFlow,
+      screen: ScreenName.CeloUnlockAmount,
+    });
 
-  // }, [onNavigate]);
+  }, [onNavigate]);
 
   // const onActivate = useCallback(() => {
   //   onNavigate({
@@ -146,7 +145,7 @@ function CeloTestNav() {
       /> : null}
       <Button
         event="Celo Unlock Click"
-        onPress={onLock}
+        onPress={onUnlock}
         type="main"
         title={t("celo.manage.unlock.title")}
       />
