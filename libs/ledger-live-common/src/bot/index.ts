@@ -481,6 +481,45 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   });
   body += "\n</details>\n\n";
 
+  // Add performance details
+  body += "<details>\n";
+  body += `<summary>Performance ⏲ ${formatTime(totalDuration)}</summary>\n\n`;
+  body += `- total scan accounts: ${formatTime(
+    results.reduce((sum, r) => (r.scanDuration || 0) + sum, 0)
+  )}\n`;
+  function sumMutation(f) {
+    return results.reduce(
+      (sum, r) => sum + (r.mutations?.reduce((sum, m) => sum + f(m), 0) || 0),
+      0
+    );
+  }
+  body += `- in accounts resync: ${formatTime(
+    sumMutation((m) => m.resyncAccountsDuration || 0)
+  )}\n`;
+  body += `- in transaction status: ${formatTime(
+    sumMutation((m) =>
+      m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
+    )
+  )}\n`;
+  body += `- in signOperation: ${formatTime(
+    sumMutation((m) =>
+      m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
+    )
+  )}\n`;
+  body += `- in broadcast: ${formatTime(
+    sumMutation((m) =>
+      m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
+    )
+  )}\n`;
+  body += `- in operation confirmation: ${formatTime(
+    sumMutation((m) =>
+      m.broadcastedTime && m.confirmedTime
+        ? m.confirmedTime - m.broadcastedTime
+        : 0
+    )
+  )}\n`;
+  body += "\n</details>\n\n";
+
   const { BOT_REPORT_FOLDER } = process.env;
 
   const slackCommentTemplate = `${String(

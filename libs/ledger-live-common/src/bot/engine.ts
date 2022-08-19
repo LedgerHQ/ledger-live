@@ -130,7 +130,7 @@ export async function runWithAppSpec<T extends Transaction>(
     const preloadTime = now() - t;
     // Scan all existing accounts
     t = now();
-    let scanTime = 0;
+    let scanDuration = 0;
     const firstSyncDurations = {};
     let accounts = await bridge
       .scanAccounts({
@@ -145,7 +145,7 @@ export async function runWithAppSpec<T extends Transaction>(
           const dt = now() - t;
           firstSyncDurations[account.id] = dt;
           t = now();
-          scanTime += dt;
+          scanDuration += dt;
         }),
         reduce<Account, Account[]>((all, a) => all.concat(a), []),
         timeoutWith(
@@ -156,7 +156,7 @@ export async function runWithAppSpec<T extends Transaction>(
         )
       )
       .toPromise();
-    appReport.scanTime = scanTime;
+    appReport.scanDuration = scanDuration;
     // "Migrate" the FIRST and every {crossAccountFrequency} account to simulate an export/import (same logic as export to mobile) – default to every 10
     // this is made a subset of the accounts to help identify problem that would be specific to the "cross" or not.
     for (
@@ -231,7 +231,7 @@ export async function runWithAppSpec<T extends Transaction>(
         accountIdsNeedResync = [];
 
         appReport.accountsAfter = accounts;
-        const resyncAccountsTime = now() - t;
+        const resyncAccountsDuration = now() - t;
         const account = accounts[i];
         const report = await runOnAccount({
           appCandidate,
@@ -240,7 +240,7 @@ export async function runWithAppSpec<T extends Transaction>(
           account,
           accounts,
           mutationsCount,
-          resyncAccountsTime,
+          resyncAccountsDuration,
           accountIdsNeedResync,
           preloadedData,
         });
@@ -292,7 +292,7 @@ export async function runOnAccount<T extends Transaction>({
   accounts,
   accountIdsNeedResync,
   mutationsCount,
-  resyncAccountsTime,
+  resyncAccountsDuration,
   preloadedData,
 }: {
   appCandidate: any;
@@ -302,7 +302,7 @@ export async function runOnAccount<T extends Transaction>({
   accounts: any;
   accountIdsNeedResync: string[];
   mutationsCount: Record<string, number>;
-  resyncAccountsTime: number;
+  resyncAccountsDuration: number;
   preloadedData: any;
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
@@ -310,7 +310,7 @@ export async function runOnAccount<T extends Transaction>({
   const report: MutationReport<T> = {
     spec,
     appCandidate,
-    resyncAccountsTime,
+    resyncAccountsDuration,
   };
 
   try {
