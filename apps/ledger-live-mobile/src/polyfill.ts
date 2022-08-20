@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-
 import "@formatjs/intl-getcanonicallocales/polyfill";
 import "@formatjs/intl-locale/polyfill";
 import "@formatjs/intl-pluralrules/polyfill";
@@ -33,24 +32,26 @@ import "@formatjs/intl-datetimeformat/locale-data/tr";
 import "@formatjs/intl-datetimeformat/locale-data/ja";
 import "@formatjs/intl-datetimeformat/locale-data/ko";
 import "@formatjs/intl-datetimeformat/add-all-tz";
-
 // Fix error when adding Solana account
 import "@azure/core-asynciterator-polyfill";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 global.Buffer = require("buffer").Buffer;
 
 if (!console.assert) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   console.assert = () => {};
 }
 
 process.browser = true; // for readable-stream/lib/_stream_writable.js
-// FIXME shim want to set it to false tho...
 
+// FIXME shim want to set it to false tho...
 if (__DEV__ && process.env.NODE_ENV !== "test") {
   setTimeout(() => {
     // it logs weird things without the timeout...
     try {
       // just for tests
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       require("react-native").LogBox.ignoreLogs([
         "Warning: isMounted(...) is deprecated in plain JavaScript React classes. Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks.",
         "Setting a timer for a long period of time, i.e. multiple minutes, is a performance and correctness issue on Android as it keeps the timer module awake, and timers can only be called when the app is in the foreground. See https://github.com/facebook/react-native/issues/12981 for more info.",

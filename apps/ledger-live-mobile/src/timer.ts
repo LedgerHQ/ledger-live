@@ -1,8 +1,6 @@
-// @flow
-
 const timer = __DEV__
   ? {
-      timeout: (fn: Function, ms: number) => {
+      timeout: (fn: (..._: Array<any>) => any, ms: number) => {
         // hack for a bug in RN https://github.com/facebook/react-native/issues/9030
         const startTime = Date.now();
         const interval = setInterval(() => {
@@ -17,10 +15,9 @@ const timer = __DEV__
       },
     }
   : {
-      timeout: (fn: Function, ms: number) => {
+      timeout: (fn: (..._: Array<any>) => any, ms: number) => {
         const timeout = setTimeout(fn, ms);
         return () => clearTimeout(timeout);
       },
     };
-
 export default timer;

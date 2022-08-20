@@ -1,9 +1,6 @@
-/* eslint-disable import/no-unresolved */
-// @flow
 import "./polyfill";
 import "./live-common-setup";
 import "../e2e/e2e-bridge-setup";
-// $FlowFixMe
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, {
   Component,
@@ -44,7 +41,6 @@ import {
   useRemoteLiveAppContext,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import {
@@ -69,11 +65,12 @@ import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
+
 /* eslint-disable import/named */
 import WalletConnectProvider, {
-  // $FlowFixMe
   context as _wcContext,
 } from "./screens/WalletConnect/Provider";
+
 /* eslint-enable import/named */
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
@@ -92,13 +89,9 @@ import NotificationsProvider from "./screens/NotificationCenter/NotificationsPro
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "./components/NavBarColorHandler";
 import { setOsTheme } from "./actions/settings";
-// $FlowFixMe
 import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
-// $FlowFixMe
 import { FirebaseFeatureFlagsProvider } from "./components/FirebaseFeatureFlags";
-// $FlowFixMe
 import StyleProvider from "./StyleProvider";
-// $FlowFixMe
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
@@ -108,7 +101,6 @@ const themes = {
   light: lightTheme,
   dark: darkTheme,
 };
-
 checkLibs({
   NotEnoughBalance,
   React,
@@ -116,35 +108,32 @@ checkLibs({
   Transport,
   connect,
 });
-
 // useScreens();
 const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
 });
-
-// Fixme until third parties address this themselves
-// $FlowFixMe
+// Fixme until third parties address this themselves, still relevant?
 Text.defaultProps = Text.defaultProps || {};
-// $FlowFixMe
 Text.defaultProps.allowFontScaling = false;
 
 type AppProps = {
-  importDataString?: string,
+  importDataString?: string;
 };
 
 function App({ importDataString }: AppProps) {
   useAppStateListener();
-
   const getSettingsChanged = useCallback(
     (a, b) => a.settings !== b.settings,
     [],
   );
-
-  const getAccountsChanged = useCallback((oldState: State, newState: State): ?{
-    changed: string[],
-  } => {
+  const getAccountsChanged = useCallback((oldState: State, newState: State):
+    | {
+        changed: string[];
+      }
+    | null
+    | undefined => {
     if (oldState.accounts !== newState.accounts) {
       return {
         changed: newState.accounts.active
@@ -155,15 +144,14 @@ function App({ importDataString }: AppProps) {
           .map(a => a.id),
       };
     }
+
     return null;
   }, []);
-
   const rawState = useCountervaluesExport();
   const trackingPairs = useTrackingPairs();
   const pairIds = useMemo(() => trackingPairs.map(p => pairId(p)), [
     trackingPairs,
   ]);
-
   useDBSaveEffect({
     save: saveCountervalues,
     throttle: 2000,
@@ -173,28 +161,24 @@ function App({ importDataString }: AppProps) {
     }),
     lense: () => rawState,
   });
-
   useDBSaveEffect({
     save: saveSettings,
     throttle: 400,
     getChangesStats: getSettingsChanged,
     lense: settingsExportSelector,
   });
-
   useDBSaveEffect({
     save: saveAccounts,
     throttle: 500,
     getChangesStats: getAccountsChanged,
     lense: accountsExportSelector,
   });
-
   useDBSaveEffect({
     save: saveBle,
     throttle: 500,
     getChangesStats: (a, b) => a.ble !== b.ble,
     lense: bleSelector,
   });
-
   return (
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
@@ -214,7 +198,7 @@ function App({ importDataString }: AppProps) {
   );
 }
 
-function getProxyURL(url: ?string) {
+function getProxyURL(url: string | null | undefined) {
   if (typeof url === "string" && url.substr(0, 3) === "wc:") {
     return `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
   }
@@ -228,6 +212,7 @@ const linkingOptions = {
     const url = await Linking.getInitialURL();
     return getProxyURL(url);
   },
+
   subscribe(listener) {
     function onReceiveURL({ url: _url }: { url: string }) {
       const url = getProxyURL(_url);
@@ -235,12 +220,12 @@ const linkingOptions = {
     }
 
     Linking.addEventListener("url", onReceiveURL);
-
     return () => {
       // Clean up the event listeners
       Linking.removeEventListener("url", onReceiveURL);
     };
   },
+
   prefixes: ["ledgerlive://", "https://ledger.com"],
   config: {
     screens: {
@@ -253,6 +238,7 @@ const linkingOptions = {
            */
           [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+
           /**
            * @params ?platform: string
            * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
@@ -340,6 +326,7 @@ const linkingOptions = {
               [ScreenName.SendCoin]: "send",
             },
           },
+
           /**
            * ie: "ledgerlive://buy" -> will redirect to the main exchange page
            */
@@ -349,6 +336,7 @@ const linkingOptions = {
               [ScreenName.ExchangeBuy]: "buy/:currency?",
             },
           },
+
           /**
            * ie: "ledgerlive://swap" -> will redirect to the main swap page
            */
@@ -373,7 +361,6 @@ const linkingOptions = {
     },
   },
 };
-
 const linkingOptionsOnboarding = {
   ...linkingOptions,
   config: {
@@ -387,13 +374,12 @@ const linkingOptionsOnboarding = {
     },
   },
 };
-
 const platformManifestFilterParams = {
   private: true,
   branches: undefined, // will override & having it to undefined makes all branches valid
 };
 
-const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
+const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
@@ -401,7 +387,6 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const liveAppProviderInitialized =
     !!remoteLiveAppState.value || !!remoteLiveAppState.error;
   const filteredManifests = useFilteredManifests(platformManifestFilterParams);
-
   const linking = useMemo(
     () => ({
       ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
@@ -410,6 +395,7 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
         const url = new URL(`ledgerlive://${path}`);
         const { hostname, pathname } = url;
         const platform = pathname.split("/")[1];
+
         if (hostname === "discover" && platform) {
           /**
            * Upstream validation of "ledgerlive://discover/:platform":
@@ -426,6 +412,7 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
              */
             return getStateFromPath(path, config);
           }
+
           const manifest = filteredManifests.find(
             m => m.id.toLowerCase() === platform.toLowerCase(),
           );
@@ -434,6 +421,7 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
           url.searchParams.set("name", manifest.name);
           return getStateFromPath(url.href?.split("://")[1], config);
         }
+
         return getStateFromPath(path, config);
       },
     }),
@@ -445,39 +433,35 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
       liveAppProviderInitialized,
     ],
   );
-
   const [isReady, setIsReady] = React.useState(false);
-
   useEffect(() => {
     if (!wcContext.initDone) return;
     setIsReady(true);
   }, [wcContext.initDone]);
-
   React.useEffect(
     () => () => {
       isReadyRef.current = false;
     },
     [],
   );
-
   const theme = useSelector(themeSelector);
   const osTheme = useSelector(osThemeSelector);
-
   const compareOsTheme = useCallback(() => {
     const currentOsTheme = Appearance.getColorScheme();
+
     if (currentOsTheme && osTheme !== currentOsTheme) {
       dispatch(setOsTheme(currentOsTheme));
     }
   }, [dispatch, osTheme]);
-
   useEffect(() => {
     compareOsTheme();
+
     const osThemeChangeHandler = nextAppState =>
       nextAppState === "active" && compareOsTheme();
+
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
     return () => sub.remove();
   }, [compareOsTheme]);
-
   const resolvedTheme = useMemo(
     () =>
       ((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark",
@@ -508,22 +492,26 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
 const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
 
 export default class Root extends Component<
-  { importDataString?: string },
-  { appState: * },
+  {
+    importDataString?: string;
+  },
+  {
+    appState: any;
+  }
 > {
-  initTimeout: *;
+  initTimeout: any;
 
   componentWillUnmount() {
     clearTimeout(this.initTimeout);
   }
 
-  componentDidCatch(e: *) {
+  componentDidCatch(e: any) {
     logger.critical(e);
     throw e;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onInitFinished = () => {};
-
   onRebootStart = () => {
     clearTimeout(this.initTimeout);
     if (SplashScreen.show) SplashScreen.show(); // on iOS it seems to not be exposed
@@ -531,9 +519,7 @@ export default class Root extends Component<
 
   render() {
     const importDataString = __DEV__ ? this.props.importDataString : "";
-
     const provider = __DEV__ ? "staging" : "production";
-
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>

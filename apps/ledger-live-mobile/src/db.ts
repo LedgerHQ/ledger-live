@@ -1,4 +1,3 @@
-// @flow
 import { log } from "@ledgerhq/logs";
 import { atomicQueue } from "@ledgerhq/live-common/promise";
 import type { AccountRaw } from "@ledgerhq/types-live";
@@ -9,66 +8,58 @@ const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
 const ACCOUNTS_DB_PREFIX = "accounts.active.";
 const COUNTERVALUES_DB_PREFIX = "countervalues.";
-
 export async function clearDb() {
   const list = await store.keys();
   await store.delete(list.filter(k => k !== "user"));
 }
-
-export async function getUser(): Promise<{ id: string }> {
+export async function getUser(): Promise<{
+  id: string;
+}> {
   const user = await store.get("user");
   return user;
 }
-
 export async function setUser(user: { id: string }): Promise<void> {
   await store.update("user", user);
 }
-
 export async function updateUser(user: { id: string }): Promise<void> {
   await store.update("user", user);
 }
-
-export async function getSettings(): Promise<*> {
+export async function getSettings(): Promise<any> {
   const settings = await store.get("settings");
   return settings;
 }
-
-export async function saveSettings(obj: *): Promise<void> {
+export async function saveSettings(obj: any): Promise<void> {
   await store.save("settings", obj);
 }
-
-export async function getWCSession(): Promise<*> {
+export async function getWCSession(): Promise<any> {
   const wcsession = await store.get("wcsession");
   return wcsession;
 }
-
-export async function saveWCSession(obj: *): Promise<void> {
+export async function saveWCSession(obj: any): Promise<void> {
   await store.save("wcsession", obj);
 }
-
-export async function getNotifications(): Promise<*> {
+export async function getNotifications(): Promise<any> {
   const settings = await store.get("notifications");
   return settings;
 }
-
-export async function saveNotifications(obj: *): Promise<void> {
+export async function saveNotifications(obj: any): Promise<void> {
   await store.save("notifications", obj);
 }
-
 export const getCountervalues: typeof unsafeGetCountervalues = atomicQueue(
   unsafeGetCountervalues,
 );
-
 export const saveCountervalues: typeof unsafeSaveCountervalues = atomicQueue(
   unsafeSaveCountervalues,
 );
-
 export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
   const keys = await getKeys(COUNTERVALUES_DB_PREFIX);
 
   if (!keys.length) {
-    return { status: {} };
+    return {
+      status: {},
+    };
   }
+
   return (await store.get(keys)).reduce(
     (prev, val, i) => ({
       ...prev,
@@ -84,20 +75,23 @@ async function getKeys(prefix: string) {
 
 async function unsafeSaveCountervalues(
   state: CounterValuesStateRaw,
-  { changed, pairIds }: { changed: boolean, pairIds: string[] },
+  {
+    changed,
+    pairIds,
+  }: {
+    changed: boolean;
+    pairIds: string[];
+  },
 ): Promise<void> {
   if (!changed) return;
-
   const deletedKeys = (await getKeys(COUNTERVALUES_DB_PREFIX)).filter(
     k =>
       ![...pairIds, "status"].includes(k.replace(COUNTERVALUES_DB_PREFIX, "")),
   );
-
   const data = Object.entries(state).map(([key, val]) => [
     `${COUNTERVALUES_DB_PREFIX}${key}`,
     val,
   ]);
-
   await store.save(data);
 
   if (deletedKeys.length) {
@@ -105,12 +99,11 @@ async function unsafeSaveCountervalues(
   }
 }
 
-export async function getBle(): Promise<*> {
+export async function getBle(): Promise<any> {
   const ble = await store.get("ble");
   return ble;
 }
-
-export async function saveBle(obj: *): Promise<void> {
+export async function saveBle(obj: any): Promise<void> {
   await store.save("ble", obj);
 }
 
@@ -122,15 +115,17 @@ function onlyAccountsKeys(keys: string[]): Array<string> {
 }
 
 // get accounts specific method to aggregate all account keys into the correct format
-async function unsafeGetAccounts(): Promise<{ active: AccountRaw[] }> {
+async function unsafeGetAccounts(): Promise<{
+  active: AccountRaw[];
+}> {
   await migrateAccountsIfNecessary();
-
   const keys = await store.keys();
   const accountKeys = onlyAccountsKeys(keys);
 
   // if some account keys, we retrieve them and return
   if (accountKeys && accountKeys.length > 0) {
     let active = await store.get(accountKeys);
+
     if (keys.includes(ACCOUNTS_KEY_SORT)) {
       const ids = await store.get(ACCOUNTS_KEY_SORT);
       active = active
@@ -138,11 +133,16 @@ async function unsafeGetAccounts(): Promise<{ active: AccountRaw[] }> {
         .sort((a, b) => a[1] - b[1])
         .map(a => a[0]);
     }
-    return { active };
+
+    return {
+      active,
+    };
   }
 
   // fallback to empty state
-  return { active: [] };
+  return {
+    active: [],
+  };
 }
 
 /** save accounts method between SQLite db and redux store persist */
@@ -150,11 +150,14 @@ async function unsafeSaveAccounts(
   {
     active: newAccounts,
   }: {
-    active: any[],
+    active: any[];
   },
-  stats?: ?{
-    changed: string[],
-  },
+  stats?:
+    | {
+        changed: string[];
+      }
+    | null
+    | undefined,
 ): Promise<void> {
   log("db", "saving accounts...");
   const keys = await store.keys();
@@ -163,7 +166,10 @@ async function unsafeSaveAccounts(
   /** format data for DB persist */
   const dbData = newAccounts.map(({ data }) => [
     formatAccountDBKey(data.id),
-    { data, version: 1 },
+    {
+      data,
+      version: 1,
+    },
   ]);
 
   /** Find current DB accounts keys diff with app state to remove them */
@@ -173,7 +179,6 @@ async function unsafeSaveAccounts(
           dbData.every(([accountKey]) => accountKey !== key),
         )
       : [];
-
   // we only save those who effectively changed
   const dbDataWithOnlyChanges = !stats
     ? dbData
@@ -181,8 +186,7 @@ async function unsafeSaveAccounts(
 
   /** persist store data to DB */
   await store.save([
-    ...dbDataWithOnlyChanges,
-    // also store an index of ids to keep sort in memory
+    ...dbDataWithOnlyChanges, // also store an index of ids to keep sort in memory
     [ACCOUNTS_KEY_SORT, newAccounts.map(a => a.data.id)],
   ]);
 
@@ -190,6 +194,7 @@ async function unsafeSaveAccounts(
   if (deletedKeys.length > 0) {
     await store.delete(deletedKeys);
   }
+
   log(
     "db",
     "saved " +
@@ -202,7 +207,6 @@ async function unsafeSaveAccounts(
 export const getAccounts: typeof unsafeGetAccounts = atomicQueue(
   unsafeGetAccounts,
 );
-
 export const saveAccounts: typeof unsafeSaveAccounts = atomicQueue(
   unsafeSaveAccounts,
 );
@@ -212,10 +216,11 @@ async function migrateAccountsIfNecessary(): Promise<void> {
 
   /** check if old data is present */
   const hasOldAccounts = keys.includes(ACCOUNTS_KEY);
+
   if (hasOldAccounts) {
     log("db", "should migrateAccountsIfNecessary");
-
     let oldAccounts = null;
+
     try {
       /** fetch old accounts db data */
       oldAccounts = await store.get(ACCOUNTS_KEY);
@@ -223,13 +228,17 @@ async function migrateAccountsIfNecessary(): Promise<void> {
       /** catch possible "Row too big to fit into CursorWindow" */
       console.error(e);
     }
+
     /** format old data to be saved on an account based key */
     const accountsData = (oldAccounts && oldAccounts.active) || [];
-
     const newDBData = accountsData.map(({ data }) => [
       formatAccountDBKey(data.id),
-      { data, version: 1 },
+      {
+        data,
+        version: 1,
+      },
     ]);
+
     /** save new formatted data then remove old data from DB */
     await store.save(newDBData);
     await store.delete(ACCOUNTS_KEY);
