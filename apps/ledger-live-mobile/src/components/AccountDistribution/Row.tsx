@@ -1,5 +1,3 @@
-// @flow
-
 import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -21,18 +19,16 @@ import LText from "../LText";
 import ParentCurrencyIcon from "../ParentCurrencyIcon";
 import { ensureContrast } from "../../colors";
 import { localeSelector } from "../../reducers/settings";
-
 export type AccountDistributionItem = {
-  account: AccountLike,
-  distribution: number, // % of the total (normalized in 0-1)
-  amount: BigNumber,
-  currency: CryptoCurrency | TokenCurrency,
+  account: AccountLike;
+  distribution: number;
+  // % of the total (normalized in 0-1)
+  amount: BigNumber;
+  currency: CryptoCurrency | TokenCurrency;
 };
-
 type Props = {
-  item: AccountDistributionItem,
+  item: AccountDistributionItem;
 };
-
 export default function Row({
   item: { currency, distribution, account, amount },
 }: Props) {
@@ -40,9 +36,8 @@ export default function Row({
   const navigation = useNavigation();
   const { colors } = useTheme();
   const locale = useSelector(localeSelector);
-
   const onAccountPress = useCallback(
-    (parentAccount?: ?Account) => {
+    (parentAccount?: Account | null | undefined) => {
       navigation.navigate(ScreenName.Account, {
         accountId: account.id,
         parentId: parentAccount ? parentAccount.id : undefined,
@@ -50,7 +45,6 @@ export default function Row({
     },
     [account.id, navigation],
   );
-
   const parentAccount =
     account.type !== "Account"
       ? accounts.find(a => a.id === account.parentId)
@@ -58,7 +52,6 @@ export default function Row({
   const color = ensureContrast(getCurrencyColor(currency), colors.background);
   const percentage = Math.round(distribution * 1e4) / 1e2;
   const icon = <ParentCurrencyIcon currency={currency} size={18} />;
-
   return (
     <RectButton
       style={[
@@ -95,8 +88,22 @@ export default function Row({
             <CounterValue currency={currency} value={amount} />
           </LText>
         </View>
-        <View style={[styles.row, { marginTop: 16 }]}>
-          <View style={[styles.progress, { backgroundColor: colors.lightFog }]}>
+        <View
+          style={[
+            styles.row,
+            {
+              marginTop: 16,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.progress,
+              {
+                backgroundColor: colors.lightFog,
+              },
+            ]}
+          >
             <View
               style={[
                 styles.progress,
@@ -117,7 +124,6 @@ export default function Row({
     </RectButton>
   );
 }
-
 const styles = StyleSheet.create({
   row: {
     display: "flex",
@@ -130,7 +136,6 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     marginBottom: 8,
-
     borderRadius: 4,
     ...Platform.select({
       android: {

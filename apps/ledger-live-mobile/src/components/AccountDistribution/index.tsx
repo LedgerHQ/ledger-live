@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
@@ -11,7 +10,7 @@ import Row from "./Row";
 export default function AccountDistribution({
   accounts,
 }: {
-  accounts: Account[],
+  accounts: Account[];
 }) {
   const { t } = useTranslation();
   const total = accounts.reduce(
@@ -28,11 +27,12 @@ export default function AccountDistribution({
       })),
     [accounts, total],
   );
-
   return (
     <View>
       <LText bold secondary style={styles.distributionTitle}>
-        {t("distribution.listAccount", { count: accountDistribution.length })}
+        {t("distribution.listAccount", {
+          count: accountDistribution.length,
+        })}
       </LText>
       {accountDistribution.map(item => (
         <View style={styles.root} key={item.account.id}>
@@ -42,7 +42,6 @@ export default function AccountDistribution({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     paddingHorizontal: 16,
