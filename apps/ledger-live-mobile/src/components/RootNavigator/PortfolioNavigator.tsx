@@ -1,14 +1,8 @@
-/* eslint-disable import/no-unresolved */
-// @flow
-
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
-// $FlowFixMe
-// $FlowFixMe
-// $FlowFixMe
 import Portfolio from "../../screens/Portfolio";
 import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
 import AccountsNavigator from "./AccountsNavigator";

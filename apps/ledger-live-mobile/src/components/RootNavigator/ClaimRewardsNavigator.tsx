@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -13,7 +11,6 @@ import ValidationError from "../../screens/ClaimRewards/02-ValidationError";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "2";
-
 export default function ClaimRewardsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -66,10 +63,11 @@ export default function ClaimRewardsNavigator() {
       <Stack.Screen
         name={ScreenName.ClaimRewardsValidationError}
         component={ValidationError}
-        options={{ headerTitle: "" }}
+        options={{
+          headerTitle: "",
+        }}
       />
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

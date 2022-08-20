@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation, Trans } from "react-i18next";
@@ -64,10 +63,11 @@ export default function FirmwareUpdateNavigator() {
       <Stack.Screen
         name={ScreenName.FirmwareUpdateFailure}
         component={FirmwareUpdateFailure}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

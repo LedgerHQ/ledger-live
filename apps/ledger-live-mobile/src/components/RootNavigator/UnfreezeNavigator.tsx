@@ -1,62 +1,49 @@
-// @flow
-
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import Info from "../../screens/FreezeFunds/01-Info";
-import Amount from "../../screens/FreezeFunds/02-Amount";
+import Amount from "../../screens/UnfreezeFunds/01-Amount";
 import SelectDevice from "../../screens/SelectDevice";
 import ConnectDevice from "../../screens/ConnectDevice";
-import ValidationSuccess from "../../screens/FreezeFunds/04-ValidationSuccess";
-import ValidationError from "../../screens/FreezeFunds/04-ValidationError";
+import ValidationSuccess from "../../screens/UnfreezeFunds/03-ValidationSuccess";
+import ValidationError from "../../screens/UnfreezeFunds/03-ValidationError";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "3";
-
-export default function FreezeNavigator() {
-  const { colors } = useTheme();
+export default function UnfreezeNavigator() {
   const { t } = useTranslation();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors, true), [
-    colors,
-  ]);
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
-    <Stack.Navigator screenOptions={stackNavConfig}>
+    <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
-        name={ScreenName.FreezeInfo}
-        component={Info}
-        options={{
-          headerTitle: () => (
-            <StepHeader title={t("freeze.stepperHeader.info")} />
-          ),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.FreezeAmount}
+        name={ScreenName.UnfreezeAmount}
         component={Amount}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("freeze.stepperHeader.selectAmount")}
-              subtitle={t("freeze.stepperHeader.stepRange", {
+              title={t("unfreeze.stepperHeader.selectAmount")}
+              subtitle={t("unfreeze.stepperHeader.stepRange", {
                 currentStep: "1",
                 totalSteps,
               })}
             />
           ),
-          headerLeft: null,
         }}
       />
       <Stack.Screen
-        name={ScreenName.FreezeSelectDevice}
+        name={ScreenName.UnfreezeSelectDevice}
         component={SelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("freeze.stepperHeader.selectDevice")}
-              subtitle={t("freeze.stepperHeader.stepRange", {
+              title={t("unfreeze.stepperHeader.selectDevice")}
+              subtitle={t("unfreeze.stepperHeader.stepRange", {
                 currentStep: "2",
                 totalSteps,
               })}
@@ -65,13 +52,13 @@ export default function FreezeNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.FreezeConnectDevice}
+        name={ScreenName.UnfreezeConnectDevice}
         component={ConnectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("freeze.stepperHeader.connectDevice")}
-              subtitle={t("freeze.stepperHeader.stepRange", {
+              title={t("unfreeze.stepperHeader.connectDevice")}
+              subtitle={t("unfreeze.stepperHeader.stepRange", {
                 currentStep: "3",
                 totalSteps,
               })}
@@ -80,7 +67,7 @@ export default function FreezeNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.FreezeValidationSuccess}
+        name={ScreenName.UnfreezeValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerTitle: "",
@@ -90,12 +77,13 @@ export default function FreezeNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.FreezeValidationError}
+        name={ScreenName.UnfreezeValidationError}
         component={ValidationError}
-        options={{ headerTitle: "" }}
+        options={{
+          headerTitle: "",
+        }}
       />
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

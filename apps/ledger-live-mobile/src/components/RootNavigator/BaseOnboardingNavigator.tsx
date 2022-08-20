@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback, useMemo } from "react";
 import {
   createStackNavigator,
@@ -25,18 +24,18 @@ const hitSlop = {
   right: 24,
   top: 10,
 };
-
-export const ErrorHeaderInfo = ({ route, navigation }: *) => {
+export const ErrorHeaderInfo = ({ route, navigation }: any) => {
   const { colors } = useTheme();
   const openInfoModal = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingInfoModal, {
       sceneInfoKey: "pairNewErrorInfoModalProps",
     });
   }, [navigation]);
-
   return route.params.hasError ? (
     <TouchableOpacity
-      style={{ marginRight: 24 }}
+      style={{
+        marginRight: 24,
+      }}
       hitSlop={hitSlop}
       onPress={openInfoModal}
     >
@@ -44,7 +43,6 @@ export const ErrorHeaderInfo = ({ route, navigation }: *) => {
     </TouchableOpacity>
   ) : null;
 };
-
 export default function BaseOnboardingNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -71,7 +69,9 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.BuyDevice}
         component={BuyDeviceNavigator}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name={ScreenName.PairDevices}
@@ -105,5 +105,4 @@ export default function BaseOnboardingNavigator() {
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

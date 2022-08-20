@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -12,7 +11,6 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "3";
-
 export default function MigrateAccountsFlowNavigator() {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(
@@ -91,5 +89,4 @@ export default function MigrateAccountsFlowNavigator() {
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

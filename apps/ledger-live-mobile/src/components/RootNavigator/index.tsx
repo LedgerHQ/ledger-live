@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo, createContext, useState } from "react";
 import { useSelector } from "react-redux";
 import Config from "react-native-config";
@@ -10,19 +9,20 @@ import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 
 export const AnalyticsContext = createContext<{
-  source: undefined | string,
-  screen: undefined | string,
-  setSource: (source: undefined | string) => void,
-  setScreen: (screen: undefined | string) => void,
-}>({ source: undefined, setSource: () => {} });
-
+  source: undefined | string;
+  screen: undefined | string;
+  setSource: (_: undefined | string) => void;
+  setScreen: (_: undefined | string) => void;
+}>({
+  source: undefined,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setSource: () => {},
+});
 type Props = {
-  importDataString?: string,
+  importDataString?: string;
 };
-
 export default function RootNavigator({ importDataString }: Props) {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-
   const data = useMemo<string | false>(() => {
     if (!__DEV__ || !importDataString) {
       return false;
@@ -30,17 +30,13 @@ export default function RootNavigator({ importDataString }: Props) {
 
     return JSON.parse(Buffer.from(importDataString, "base64").toString("utf8"));
   }, [importDataString]);
-
   const goToOnboarding = !hasCompletedOnboarding && !Config.SKIP_ONBOARDING;
-
   const [analyticsSource, setAnalyticsSource] = useState<undefined | string>(
     undefined,
   );
-
   const [analyticsScreen, setAnalyticsScreen] = useState<undefined | string>(
     undefined,
   );
-
   return (
     <AnalyticsContext.Provider
       value={{
@@ -50,7 +46,11 @@ export default function RootNavigator({ importDataString }: Props) {
         setScreen: setAnalyticsScreen,
       }}
     >
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
         {data ? (
           <Stack.Screen
             name={NavigatorName.ImportAccounts}
@@ -73,5 +73,4 @@ export default function RootNavigator({ importDataString }: Props) {
     </AnalyticsContext.Provider>
   );
 }
-
 const Stack = createStackNavigator();

@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -67,5 +66,4 @@ export default function AccountSettingsNavigator() {
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

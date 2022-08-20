@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -13,11 +12,12 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "3";
-
 export default function SignMessageNavigator({
   route,
 }: {
-  route: { params: Record<String, any> },
+  route: {
+    params: Record<string, any>;
+  };
 }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -92,5 +92,4 @@ export default function SignMessageNavigator({
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -14,7 +13,6 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "4";
-
 export default function LendingSupplyFlowNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -104,5 +102,4 @@ export default function LendingSupplyFlowNavigator() {
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

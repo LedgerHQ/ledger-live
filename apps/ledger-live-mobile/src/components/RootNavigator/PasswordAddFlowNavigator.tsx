@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -20,7 +19,9 @@ export default function PasswordAddFlowNavigator() {
       <Stack.Screen
         name={ScreenName.PasswordAdd}
         component={PasswordAdd}
-        options={{ title: t("auth.addPassword.title") }}
+        options={{
+          title: t("auth.addPassword.title"),
+        }}
       />
       <Stack.Screen
         name={ScreenName.ConfirmPassword}
@@ -32,5 +33,4 @@ export default function PasswordAddFlowNavigator() {
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

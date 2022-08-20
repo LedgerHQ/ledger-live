@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -15,8 +14,7 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
 const goBackOptions = colors => ({ route: { params }, navigation }) => ({
   headerRight: () => (
-    <TouchableOpacity
-      // $FlowFixMe
+    <TouchableOpacity // $FlowFixMe
       onPress={() => {
         params?.endCallback && params.endCallback();
         const n = navigation.getParent() || navigation;
@@ -65,9 +63,7 @@ export default function LendingInfoNavigator() {
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();
-
 const styles = StyleSheet.create({
   buttons: {
     padding: 16,

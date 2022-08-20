@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -16,16 +15,17 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 type Route = {
-  params: ?{
-    currency: Currency,
-    token?: TokenCurrency,
-    returnToSwap?: boolean,
-    analyticsPropertyFlow?: string,
-  },
+  params:
+    | {
+        currency: Currency;
+        token?: TokenCurrency;
+        returnToSwap?: boolean;
+        analyticsPropertyFlow?: string;
+      }
+    | null
+    | undefined;
 };
-
 const totalSteps = "3";
-
 export default function AddAccountsNavigator({ route }: { route: Route }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -69,7 +69,13 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
         name={ScreenName.AddAccountsSelectDevice}
         component={AddAccountsSelectDevice}
         initialParams={{
-          ...(currency ? { currency, inline: true, returnToSwap } : {}),
+          ...(currency
+            ? {
+                currency,
+                inline: true,
+                returnToSwap,
+              }
+            : {}),
           analyticsPropertyFlow,
         }}
         options={{
@@ -118,7 +124,13 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
       <Stack.Screen
         name={ScreenName.AddAccountsTokenCurrencyDisclaimer}
         component={AddAccountsTokenCurrencyDisclaimer}
-        initialParams={token ? { token } : undefined}
+        initialParams={
+          token
+            ? {
+                token,
+              }
+            : undefined
+        }
         options={{
           title: t("addAccounts.tokens.title"),
         }}
@@ -126,5 +138,4 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

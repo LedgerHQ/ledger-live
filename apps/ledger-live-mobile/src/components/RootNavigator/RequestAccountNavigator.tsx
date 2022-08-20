@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -11,20 +10,14 @@ import AddAccountsNavigator from "./AddAccountsNavigator";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "2";
-
 export default function RequestAccountNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
     colors,
   ]);
-
   return (
-    <Stack.Navigator
-      screenOptions={{
-        ...stackNavConfig,
-      }}
-    >
+    <Stack.Navigator screenOptions={{ ...stackNavConfig }}>
       <Stack.Screen
         name={ScreenName.RequestAccountsSelectCrypto}
         component={RequestAccountSelectCrypto}
@@ -58,10 +51,11 @@ export default function RequestAccountNavigator() {
       <Stack.Screen
         name={NavigatorName.RequestAccountsAddAccounts}
         component={AddAccountsNavigator}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+        }}
       />
     </Stack.Navigator>
   );
 }
-
 const Stack = createStackNavigator();

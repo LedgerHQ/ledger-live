@@ -101,6 +101,7 @@ export function ManagerTabIcon(props: any) {
   );
 
   if (isNavLocked) {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     return <TouchableOpacity onPress={() => {}}>{content}</TouchableOpacity>;
   }
 
