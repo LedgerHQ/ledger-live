@@ -1,4 +1,3 @@
-// @flow
 import React, { PureComponent } from "react";
 import { StyleSheet, View, AppState } from "react-native";
 import { connect } from "react-redux";
@@ -15,27 +14,22 @@ import RequestBiometricAuth from "../../components/RequestBiometricAuth";
 const mapStateToProps = createStructuredSelector({
   privacy: privacySelector,
 });
-
 type State = {
-  isLocked: boolean,
-  biometricsError: ?Error,
-  appState: string,
-  skipLockCount: number,
-  setEnabled: (enabled: boolean) => void,
-  authModalOpen: boolean,
-  mounted: boolean,
+  isLocked: boolean;
+  biometricsError: Error | null | undefined;
+  appState: string;
+  skipLockCount: number;
+  setEnabled: (_: boolean) => void;
+  authModalOpen: boolean;
+  mounted: boolean;
 };
-
 type OwnProps = {
-  children: *,
+  children: any;
 };
-
-type Props = {
-  ...OwnProps,
-  t: *,
-  privacy: ?Privacy,
+type Props = OwnProps & {
+  t: any;
+  privacy: Privacy | null | undefined;
 };
-
 // as we needs to be resilient to reboots (not showing unlock again after a reboot)
 // we need to store this global variable to know if we need to isLocked initially
 let wasUnlocked = false;
@@ -47,12 +41,10 @@ class AuthPass extends PureComponent<Props, State> {
         skipLockCount: prevState.skipLockCount + (enabled ? 1 : -1),
       }));
   };
-
   state = {
     isLocked: !!this.props.privacy && !wasUnlocked,
     biometricsError: null,
     appState: AppState.currentState || "",
-
     skipLockCount: 0,
     setEnabled: this.setEnabled,
     authModalOpen: false,
@@ -61,8 +53,11 @@ class AuthPass extends PureComponent<Props, State> {
 
   static getDerivedStateFromProps({ privacy }, { isLocked }) {
     if (isLocked && !privacy) {
-      return { isLocked: false };
+      return {
+        isLocked: false,
+      };
     }
+
     return null;
   }
 
@@ -77,7 +72,6 @@ class AuthPass extends PureComponent<Props, State> {
   }
 
   appInBg: number;
-
   handleAppStateChange = nextAppState => {
     if (
       this.state.appState.match(/inactive|background/) &&
@@ -92,13 +86,17 @@ class AuthPass extends PureComponent<Props, State> {
     ) {
       this.appInBg = Date.now();
     }
-    if (this.state.mounted) this.setState({ appState: nextAppState });
-  };
 
+    if (this.state.mounted)
+      this.setState({
+        appState: nextAppState,
+      });
+  };
   // auth: try to auth with biometrics and fallback on password
   auth = () => {
     const { privacy } = this.props;
     const { isLocked, authModalOpen } = this.state;
+
     if (
       isLocked &&
       privacy &&
@@ -106,29 +104,33 @@ class AuthPass extends PureComponent<Props, State> {
       !authModalOpen &&
       this.state.mounted
     ) {
-      this.setState({ authModalOpen: true });
+      this.setState({
+        authModalOpen: true,
+      });
     }
   };
-
   onSuccess = () => {
-    if (this.state.mounted) this.setState({ authModalOpen: false });
+    if (this.state.mounted)
+      this.setState({
+        authModalOpen: false,
+      });
     this.unlock();
   };
-
   onError = error => {
     if (this.state.mounted) {
-      this.setState({ authModalOpen: false });
+      this.setState({
+        authModalOpen: false,
+      });
       this.setState({
         biometricsError: error,
       });
     }
   };
-
   // lock the app
   lock = () => {
     if (!this.props.privacy || this.state.skipLockCount) return;
-
     wasUnlocked = false;
+
     if (this.state.mounted) {
       this.setState(
         {
@@ -139,10 +141,10 @@ class AuthPass extends PureComponent<Props, State> {
       );
     }
   };
-
   // unlock the app
   unlock = () => {
     wasUnlocked = true;
+
     if (this.state.mounted) {
       this.setState({
         isLocked: false,
@@ -155,6 +157,7 @@ class AuthPass extends PureComponent<Props, State> {
     const { children, privacy } = this.props;
     const { isLocked, biometricsError, setEnabled, authModalOpen } = this.state;
     let lockScreen = null;
+
     if (isLocked && privacy) {
       lockScreen = (
         <View style={styles.container}>
@@ -172,6 +175,7 @@ class AuthPass extends PureComponent<Props, State> {
         </View>
       );
     }
+
     return (
       <SkipLockContext.Provider value={setEnabled}>
         {lockScreen}
@@ -192,7 +196,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// $FlowFixMe
 const m: React$AbstractComponent<OwnProps> = compose(
   withTranslation(),
   connect(mapStateToProps),

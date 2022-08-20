@@ -1,4 +1,3 @@
-// @flow
 import React, { Component } from "react";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
@@ -10,11 +9,9 @@ import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
 import { INITIAL_STATE, supportedCountervalues } from "../reducers/settings";
 
-// $FlowFixMe
 export const store = createStore(
   reducers,
-  undefined,
-  // $FlowFixMe
+  undefined, // $FlowFixMe
   compose(
     applyMiddleware(thunk),
     typeof __REDUX_DEVTOOLS_EXTENSION__ === "function"
@@ -22,16 +19,16 @@ export const store = createStore(
       : f => f,
   ),
 );
-
 export default class LedgerStoreProvider extends Component<
   {
-    onInitFinished: () => void,
-    children: (ready: boolean, store: *, initialCountervalues: *) => *,
+    onInitFinished: () => void;
+    // eslint-disable-next-line no-unused-vars
+    children: (ready: boolean, store: any, initialCountervalues: any) => any;
   },
   {
-    ready: boolean,
-    initialCountervalues: *,
-  },
+    ready: boolean;
+    initialCountervalues: any;
+  }
 > {
   state = {
     ready: false,
@@ -42,7 +39,7 @@ export default class LedgerStoreProvider extends Component<
     return this.init();
   }
 
-  componentDidCatch(e: *) {
+  componentDidCatch(e: any) {
     console.error(e);
     throw e;
   }
@@ -50,8 +47,8 @@ export default class LedgerStoreProvider extends Component<
   async init() {
     const bleData = await getBle();
     store.dispatch(importBle(bleData));
-
     const settingsData = await getSettings();
+
     if (
       settingsData &&
       settingsData.counterValue &&
@@ -61,16 +58,20 @@ export default class LedgerStoreProvider extends Component<
     ) {
       settingsData.counterValue = INITIAL_STATE.counterValue;
     }
-    store.dispatch(importSettings(settingsData));
 
+    store.dispatch(importSettings(settingsData));
     const accountsData = await getAccounts();
     store.dispatch(importAccounts(accountsData));
-
     const initialCountervalues = await getCountervalues();
-
-    this.setState({ ready: true, initialCountervalues }, () => {
-      this.props.onInitFinished();
-    });
+    this.setState(
+      {
+        ready: true,
+        initialCountervalues,
+      },
+      () => {
+        this.props.onInitFinished();
+      },
+    );
   }
 
   render() {

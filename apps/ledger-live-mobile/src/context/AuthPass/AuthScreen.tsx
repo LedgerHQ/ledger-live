@@ -1,4 +1,3 @@
-// @flow
 import React, { PureComponent } from "react";
 import { withTranslation, Trans } from "react-i18next";
 import {
@@ -32,30 +31,26 @@ import { VIBRATION_PATTERN_ERROR } from "../../constants";
 import { withTheme } from "../../colors";
 
 type State = {
-  passwordError: ?Error,
-  password: string,
-  passwordFocused: boolean,
-  isModalOpened: boolean,
-  secureTextEntry: boolean,
+  passwordError: Error | null | undefined;
+  password: string;
+  passwordFocused: boolean;
+  isModalOpened: boolean;
+  secureTextEntry: boolean;
 };
-
 type OwnProps = {
-  privacy: Privacy,
-  unlock: () => void,
-  lock: () => void,
-  biometricsError: ?Error,
+  privacy: Privacy;
+  unlock: () => void;
+  lock: () => void;
+  biometricsError: Error | null | undefined;
 };
-
-type Props = {
-  ...OwnProps,
-  reboot: (?boolean) => *,
-  t: TFunction,
-  colors: *,
+type Props = OwnProps & {
+  reboot: (arg0: boolean | null | undefined) => any;
+  t: TFunction;
+  colors: any;
 };
 
 function NormalHeader() {
   const { colors } = useTheme();
-
   return (
     <Flex alignItems="center" justifyContent="center">
       <Logos.LedgerLiveAltRegular
@@ -74,7 +69,7 @@ function NormalHeader() {
   );
 }
 
-class FormFooter extends PureComponent<*> {
+class FormFooter extends PureComponent<any> {
   render() {
     const {
       inputFocused,
@@ -117,11 +112,9 @@ class AuthScreen extends PureComponent<Props, State> {
     isModalOpened: false,
     secureTextEntry: true,
   };
-
   onHardReset = () => {
     this.props.reboot(true);
   };
-
   unlock = () => {
     this.setState({
       passwordError: null,
@@ -130,13 +123,13 @@ class AuthScreen extends PureComponent<Props, State> {
       isModalOpened: false,
     });
   };
-
   submitId = 0;
   submit = async () => {
     const id = ++this.submitId;
     const { password } = this.state;
     const { unlock } = this.props;
     if (!password) return;
+
     try {
       const options =
         Platform.OS === "ios"
@@ -145,9 +138,9 @@ class AuthScreen extends PureComponent<Props, State> {
               accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
               rules: Keychain.SECURITY_RULES.NONE,
             };
-
       const credentials = await Keychain.getGenericPassword(options);
       if (id !== this.submitId) return;
+
       if (credentials && credentials.password === password) {
         unlock();
       } else if (credentials) {
@@ -162,37 +155,47 @@ class AuthScreen extends PureComponent<Props, State> {
     } catch (err) {
       if (id !== this.submitId) return;
       console.log("could not load credentials"); // eslint-disable-line no-console
-      this.setState({ passwordError: err, password: "" });
+
+      this.setState({
+        passwordError: err,
+        password: "",
+      });
     }
   };
-
   onSubmit = () => {
     this.submit();
   };
-
   onChange = (password: string) => {
-    this.setState({ password, passwordError: null });
+    this.setState({
+      password,
+      passwordError: null,
+    });
   };
-
   onRequestClose = () => {
-    this.setState({ isModalOpened: false });
+    this.setState({
+      isModalOpened: false,
+    });
   };
-
   onPress = () => {
-    this.setState({ isModalOpened: true });
+    this.setState({
+      isModalOpened: true,
+    });
   };
-
   toggleSecureTextEntry = () => {
     const { secureTextEntry } = this.state;
-    this.setState({ secureTextEntry: !secureTextEntry });
+    this.setState({
+      secureTextEntry: !secureTextEntry,
+    });
   };
-
   onFocus = () => {
-    this.setState({ passwordFocused: true });
+    this.setState({
+      passwordFocused: true,
+    });
   };
-
   onBlur = () => {
-    this.setState({ passwordFocused: false });
+    this.setState({
+      passwordFocused: false,
+    });
   };
 
   render() {
@@ -206,10 +209,19 @@ class AuthScreen extends PureComponent<Props, State> {
     return (
       <KeyboardBackgroundDismiss>
         <SafeAreaView
-          style={[styles.root, { backgroundColor: colors.background }]}
+          style={[
+            styles.root,
+            {
+              backgroundColor: colors.background,
+            },
+          ]}
         >
           <KeyboardView>
-            <View style={{ flex: 1 }} />
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
 
             <View>
               <View style={styles.header}>
@@ -250,7 +262,11 @@ class AuthScreen extends PureComponent<Props, State> {
               />
             </View>
 
-            <View style={{ flex: 1 }} />
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
           </KeyboardView>
           {!passwordFocused && (
             <View style={styles.footer} pointerEvents="none">
@@ -267,17 +283,14 @@ class AuthScreen extends PureComponent<Props, State> {
       </KeyboardBackgroundDismiss>
     );
   }
-}
+} // @ts-expect-error
 
-// $FlowFixMe
-const m: React$ComponentType<OwnProps> = compose(
+const m: React.ComponentType<OwnProps> = compose(
   withTranslation(),
   withReboot,
   withTheme,
 )(AuthScreen);
-
 export default m;
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

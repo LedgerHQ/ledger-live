@@ -1,4 +1,3 @@
-/* @flow */
 import React from "react";
 import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
 import { Trans } from "react-i18next";
@@ -8,8 +7,8 @@ import type { Privacy } from "../../reducers/settings";
 import BiometricsIcon from "../../components/BiometricsIcon";
 
 type Props = {
-  privacy: Privacy,
-  lock: () => void,
+  privacy: Privacy;
+  lock: () => void;
 };
 
 function FailBiometrics({ privacy, lock }: Props) {
@@ -30,10 +29,7 @@ function FailBiometrics({ privacy, lock }: Props) {
         <LText semiBold secondary style={styles.title}>
           <Trans
             i18nKey="auth.failed.biometrics.title"
-            values={{
-              ...privacy,
-              biometricsType: privacy.biometricsType,
-            }}
+            values={{ ...privacy, biometricsType: privacy.biometricsType }}
           />
         </LText>
         <LText style={styles.description} color="grey">
@@ -45,7 +41,6 @@ function FailBiometrics({ privacy, lock }: Props) {
 }
 
 export default FailBiometrics;
-
 const styles = StyleSheet.create({
   root: {
     fontSize: 16,
