@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import ProgressCircle from "react-native-progress/Circle";
 import { getFontStyle } from "../LText";
+
 type Props = {
   progress?: number;
   viewFinderSize: number;

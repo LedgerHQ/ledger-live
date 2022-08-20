@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { rgba } from "../../colors";
+
 type Props = {
   viewFinderSize: number;
 };
