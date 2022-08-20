@@ -168,8 +168,7 @@ export const urls = {
       "https://www.ledger.com/academy?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     tellMeMore:
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
-    mint:
-      "ledgerlive://discover/lmarket"
+    mint: "ledgerlive://discover/lmarket",
   },
   hedera: {
     supportArticleLink:
