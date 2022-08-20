@@ -1,5 +1,3 @@
-// @flow
-/* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
 import merge from "lodash/merge";
 import {
@@ -35,11 +33,9 @@ export const intermediaryCurrency = (from: Currency, _to: Currency) => {
   if (from === ethereum || from.type === "TokenCurrency") return ethereum;
   return bitcoin;
 };
-
 export type CurrencySettings = {
-  confirmationsNb: number,
+  confirmationsNb: number;
 };
-
 export const timeRangeDaysByKey = {
   day: 1,
   week: 7,
@@ -47,72 +43,65 @@ export const timeRangeDaysByKey = {
   year: 365,
   all: -1,
 };
-
 export type Privacy = {
   // when we set the privacy, we also retrieve the biometricsType info
-  biometricsType: ?string,
+  biometricsType: string | null | undefined;
   // this tells if the biometrics was enabled by user yet
-  biometricsEnabled: boolean,
+  biometricsEnabled: boolean;
 };
-
 export type Theme = "system" | "light" | "dark";
-
 export type SettingsState = {
-  counterValue: string,
-  counterValueExchange: ?string,
-  reportErrorsEnabled: boolean,
-  analyticsEnabled: boolean,
-  privacy: ?Privacy,
-  currenciesSettings: {
-    [ticker: string]: CurrencySettings,
-  },
-  pairExchanges: {
-    [pair: string]: ?string,
-  },
-  selectedTimeRange: PortfolioRange,
-  orderAccounts: string,
-  hasCompletedOnboarding: boolean,
-  hasInstalledAnyApp: boolean,
-  readOnlyModeEnabled: boolean,
-  hasOrderedNano: boolean,
-  experimentalUSBEnabled: boolean,
-  countervalueFirst: boolean,
-  graphCountervalueFirst: boolean,
-  hideEmptyTokenAccounts: boolean,
-  blacklistedTokenIds: string[],
-  hiddenNftCollections: string[],
-  dismissedBanners: string[],
-  hasAvailableUpdate: boolean,
-  theme: Theme,
-  osTheme: ?string,
-  carouselVisibility: number | { [slideName: string]: boolean }, // number is the legacy type from LLM V2
-  discreetMode: boolean,
-  language: string,
-  languageIsSetByUser: boolean,
-  locale: ?string,
+  counterValue: string;
+  counterValueExchange: string | null | undefined;
+  reportErrorsEnabled: boolean;
+  analyticsEnabled: boolean;
+  privacy: Privacy | null | undefined;
+  currenciesSettings: Record<string, CurrencySettings>;
+  pairExchanges: Record<string, string | null | undefined>;
+  selectedTimeRange: PortfolioRange;
+  orderAccounts: string;
+  hasCompletedOnboarding: boolean;
+  hasInstalledAnyApp: boolean;
+  readOnlyModeEnabled: boolean;
+  hasOrderedNano: boolean;
+  experimentalUSBEnabled: boolean;
+  countervalueFirst: boolean;
+  graphCountervalueFirst: boolean;
+  hideEmptyTokenAccounts: boolean;
+  blacklistedTokenIds: string[];
+  hiddenNftCollections: string[];
+  dismissedBanners: string[];
+  hasAvailableUpdate: boolean;
+  theme: Theme;
+  osTheme: string | null | undefined;
+  carouselVisibility: number | Record<string, boolean>;
+  // number is the legacy type from LLM V2
+  discreetMode: boolean;
+  language: string;
+  languageIsSetByUser: boolean;
+  locale: string | null | undefined;
   swap: {
-    hasAcceptedIPSharing: false,
-    acceptedProviders: [],
-    selectableCurrencies: [],
-    KYC: {},
-  },
-  lastSeenDevice: ?DeviceModelInfo,
-  starredMarketCoins: string[],
-  lastConnectedDevice: ?Device,
-  marketRequestParams: MarketListRequestParams,
-  marketCounterCurrency: ?string,
-  marketFilterByStarredAccounts: boolean,
-  sensitiveAnalytics: boolean,
-  firstConnectionHasDevice: boolean | null,
+    hasAcceptedIPSharing: false;
+    acceptedProviders: [];
+    selectableCurrencies: [];
+    KYC: {};
+  };
+  lastSeenDevice: DeviceModelInfo | null | undefined;
+  starredMarketCoins: string[];
+  lastConnectedDevice: Device | null | undefined;
+  marketRequestParams: MarketListRequestParams;
+  marketCounterCurrency: string | null | undefined;
+  marketFilterByStarredAccounts: boolean;
+  sensitiveAnalytics: boolean;
+  firstConnectionHasDevice: boolean | null;
   notifications: {
-    allowed: boolean,
-    transactions: boolean,
-    market: boolean,
-    announcement: boolean,
-    price: boolean,
-  },
+    allowed: boolean;
+    transactions: boolean;
+    market: boolean;
+    announcement: boolean;
+    price: boolean;
+  };
 };
-
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
@@ -178,17 +167,15 @@ export const INITIAL_STATE: SettingsState = {
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
 
-const handlers: Object = {
+const handlers: Record<string, any> = {
   SETTINGS_IMPORT: (state: SettingsState, { settings }) => ({
     ...state,
     ...settings,
   }),
   SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => {
     const { developerModeEnabled, ...rest } = settings;
-
     if (developerModeEnabled !== undefined)
       setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
-
     return {
       ...state,
       ...rest,
@@ -212,121 +199,91 @@ const handlers: Object = {
     ...state,
     privacy,
   }),
-
   SETTINGS_SET_PRIVACY_BIOMETRICS: (state: SettingsState, { enabled }) => ({
     ...state,
-    privacy: {
-      ...state.privacy,
-      biometricsEnabled: enabled,
-    },
+    privacy: { ...state.privacy, biometricsEnabled: enabled },
   }),
-
   SETTINGS_DISABLE_PRIVACY: (state: SettingsState) => ({
     ...state,
     privacy: null,
   }),
-
   SETTINGS_SET_REPORT_ERRORS: (
     state: SettingsState,
     { reportErrorsEnabled },
-  ) => ({
-    ...state,
-    reportErrorsEnabled,
-  }),
-
+  ) => ({ ...state, reportErrorsEnabled }),
   SETTINGS_SET_ANALYTICS: (state: SettingsState, { analyticsEnabled }) => ({
     ...state,
     analyticsEnabled,
   }),
-
   SETTINGS_SET_COUNTERVALUE: (state: SettingsState, { counterValue }) => ({
     ...state,
     counterValue,
     counterValueExchange: null, // also reset the exchange
   }),
-
   SETTINGS_SET_ORDER_ACCOUNTS: (state: SettingsState, { orderAccounts }) => ({
     ...state,
     orderAccounts,
   }),
-
   SETTINGS_SET_PAIRS: (
     state: SettingsState,
     {
       pairs,
     }: {
       pairs: Array<{
-        from: Currency,
-        to: Currency,
-        exchange: *,
-      }>,
+        from: Currency;
+        to: Currency;
+        exchange: any;
+      }>;
     },
   ) => {
     const copy = { ...state };
     copy.pairExchanges = { ...copy.pairExchanges };
+
     for (const { to, from, exchange } of pairs) {
       copy.pairExchanges[pairHash(from, to)] = exchange;
     }
+
     return copy;
   },
-
   SETTINGS_SET_SELECTED_TIME_RANGE: (
     state,
     { payload: selectedTimeRange },
-  ) => ({
-    ...state,
-    selectedTimeRange,
-  }),
-
+  ) => ({ ...state, selectedTimeRange }),
   SETTINGS_COMPLETE_ONBOARDING: state => ({
     ...state,
     hasCompletedOnboarding: true,
   }),
-
   SETTINGS_INSTALL_APP_FIRST_TIME: (state, action) => ({
     ...state,
     hasInstalledAnyApp: action.hasInstalledAnyApp,
   }),
-
   SETTINGS_SET_READONLY_MODE: (state, action) => ({
     ...state,
     readOnlyModeEnabled: action.enabled,
   }),
-
   SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state, action) => ({
     ...state,
     experimentalUSBEnabled: action.enabled,
   }),
-
   SETTINGS_SWITCH_COUNTERVALUE_FIRST: state => ({
     ...state,
     graphCountervalueFirst: !state.graphCountervalueFirst,
   }),
-
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (state, { hideEmptyTokenAccounts }) => ({
     ...state,
     hideEmptyTokenAccounts,
   }),
   SHOW_TOKEN: (state: SettingsState, { payload: tokenId }) => {
     const ids = state.blacklistedTokenIds;
-    return {
-      ...state,
-      blacklistedTokenIds: ids.filter(id => id !== tokenId),
-    };
+    return { ...state, blacklistedTokenIds: ids.filter(id => id !== tokenId) };
   },
   BLACKLIST_TOKEN: (state: SettingsState, { payload: tokenId }) => {
     const ids = state.blacklistedTokenIds;
-    return {
-      ...state,
-      blacklistedTokenIds: [...ids, tokenId],
-    };
+    return { ...state, blacklistedTokenIds: [...ids, tokenId] };
   },
   HIDE_NFT_COLLECTION: (state: SettingsState, { payload: collectionId }) => {
     const ids = state.hiddenNftCollections;
-    return {
-      ...state,
-      hiddenNftCollections: [...ids, collectionId],
-    };
+    return { ...state, hiddenNftCollections: [...ids, collectionId] };
   },
   UNHIDE_NFT_COLLECTION: (state: SettingsState, { payload: collectionId }) => {
     const ids = state.hiddenNftCollections;
@@ -346,10 +303,7 @@ const handlers: Object = {
   DANGEROUSLY_OVERRIDE_STATE: (state: SettingsState): SettingsState => ({
     ...state,
   }),
-  SETTINGS_SET_THEME: (state, { payload: theme }) => ({
-    ...state,
-    theme,
-  }),
+  SETTINGS_SET_THEME: (state, { payload: theme }) => ({ ...state, theme }),
   SETTINGS_SET_OS_THEME: (state, { payload: osTheme }) => ({
     ...state,
     osTheme,
@@ -373,28 +327,22 @@ const handlers: Object = {
   }),
   SET_SWAP_SELECTABLE_CURRENCIES: (state: SettingsState, { payload }) => ({
     ...state,
-    swap: {
-      ...state.swap,
-      selectableCurrencies: payload,
-    },
+    swap: { ...state.swap, selectableCurrencies: payload },
   }),
   SET_SWAP_KYC: (state: SettingsState, { payload }) => {
     const { provider, id, status } = payload;
     const KYC = { ...state.swap.KYC };
 
     if (id && status) {
-      KYC[provider] = { id, status };
+      KYC[provider] = {
+        id,
+        status,
+      };
     } else {
       delete KYC[provider];
     }
 
-    return {
-      ...state,
-      swap: {
-        ...state.swap,
-        KYC,
-      },
-    };
+    return { ...state, swap: { ...state.swap, KYC } };
   },
   ACCEPT_SWAP_PROVIDER: (state: SettingsState, { payload }) => ({
     ...state,
@@ -407,13 +355,14 @@ const handlers: Object = {
   }),
   LAST_SEEN_DEVICE_INFO: (
     state: SettingsState,
-    { payload: dmi }: { payload: DeviceModelInfo },
+    {
+      payload: dmi,
+    }: {
+      payload: DeviceModelInfo;
+    },
   ) => ({
     ...state,
-    lastSeenDevice: {
-      ...(state.lastSeenDevice || {}),
-      ...dmi,
-    },
+    lastSeenDevice: { ...(state.lastSeenDevice || {}), ...dmi },
   }),
   ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
     ...state,
@@ -425,21 +374,19 @@ const handlers: Object = {
   }),
   SET_LAST_CONNECTED_DEVICE: (
     state: SettingsState,
-    { payload: lastConnectedDevice }: { payload: Device },
-  ) => ({
-    ...state,
-    lastConnectedDevice,
-  }),
+    {
+      payload: lastConnectedDevice,
+    }: {
+      payload: Device;
+    },
+  ) => ({ ...state, lastConnectedDevice }),
   SET_HAS_ORDERED_NANO: (state, action) => ({
     ...state,
     hasOrderedNano: action.enabled,
   }),
   SET_MARKET_REQUEST_PARAMS: (state: SettingsState, { payload }) => ({
     ...state,
-    marketRequestParams: {
-      ...state.marketRequestParams,
-      ...payload,
-    },
+    marketRequestParams: { ...state.marketRequestParams, ...payload },
   }),
   SET_MARKET_COUNTER_CURRENCY: (state: SettingsState, { payload }) => ({
     ...state,
@@ -448,10 +395,7 @@ const handlers: Object = {
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS: (
     state: SettingsState,
     { payload },
-  ) => ({
-    ...state,
-    marketFilterByStarredAccounts: payload,
-  }),
+  ) => ({ ...state, marketFilterByStarredAccounts: payload }),
   SET_SENSITIVE_ANALYTICS: (state: SettingsState, action) => ({
     ...state,
     sensitiveAnalytics: action.enabled,
@@ -462,21 +406,17 @@ const handlers: Object = {
   }),
   SET_NOTIFICATIONS: (state: SettingsState, { payload }) => ({
     ...state,
-    notifications: {
-      ...state.notifications,
-      ...payload,
-    },
+    notifications: { ...state.notifications, ...payload },
   }),
 };
 
-const storeSelector = (state: *): SettingsState => state.settings;
+const storeSelector = (state: any): SettingsState => state.settings;
 
 export const exportSelector = storeSelector;
 
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
 
-// $FlowFixMe
 export const counterValueCurrencySelector = createSelector(
   storeSelector,
   counterValueCurrencyLocalSelector,
@@ -485,13 +425,14 @@ export const counterValueCurrencySelector = createSelector(
 const counterValueExchangeLocalSelector = (s: SettingsState) =>
   s.counterValueExchange;
 
-// $FlowFixMe
 export const counterValueExchangeSelector = createSelector(
   storeSelector,
   counterValueExchangeLocalSelector,
 );
 
-const defaultCurrencySettingsForCurrency: Currency => CurrencySettings = crypto => {
+const defaultCurrencySettingsForCurrency: (
+  _: Currency,
+) => CurrencySettings = crypto => {
   const defaults = currencySettingsDefaults(crypto);
   return {
     confirmationsNb: defaults.confirmationsNb
@@ -504,78 +445,79 @@ const defaultCurrencySettingsForCurrency: Currency => CurrencySettings = crypto 
 // DEPRECATED
 export const currencySettingsSelector = (
   state: State,
-  { currency }: { currency: Currency },
+  {
+    currency,
+  }: {
+    currency: Currency;
+  },
 ) => ({
   ...defaultCurrencySettingsForCurrency(currency),
   ...state.settings.currenciesSettings[currency.ticker],
 });
-
-// $FlowFixMe
 export const privacySelector = createSelector(storeSelector, s => s.privacy);
-
-// $FlowFixMe
 export const reportErrorsEnabledSelector = createSelector(
   storeSelector,
   s => s.reportErrorsEnabled,
 );
-
-// $FlowFixMe
 export const analyticsEnabledSelector = createSelector(
   storeSelector,
   s => s.analyticsEnabled,
 );
-
-// $FlowFixMe
 export const experimentalUSBEnabledSelector = createSelector(
   storeSelector,
   s => s.experimentalUSBEnabled,
 );
-
 export const currencySettingsForAccountSelector = (
-  s: *,
-  { account }: { account: AccountLike },
-) => currencySettingsSelector(s, { currency: getAccountCurrency(account) });
-
+  s: any,
+  {
+    account,
+  }: {
+    account: AccountLike;
+  },
+) =>
+  currencySettingsSelector(s, {
+    currency: getAccountCurrency(account),
+  });
 export const exchangeSettingsForPairSelector = (
   state: State,
-  { from, to }: { from: Currency, to: Currency },
-): ?string => state.settings.pairExchanges[pairHash(from, to)];
-
+  {
+    from,
+    to,
+  }: {
+    from: Currency;
+    to: Currency;
+  },
+): string | null | undefined =>
+  state.settings.pairExchanges[pairHash(from, to)];
 export const confirmationsNbForCurrencySelector = (
   state: State,
-  { currency }: { currency: CryptoCurrency },
+  {
+    currency,
+  }: {
+    currency: CryptoCurrency;
+  },
 ): number => {
   const obj = state.settings.currenciesSettings[currency.ticker];
   if (obj) return obj.confirmationsNb;
   const defs = currencySettingsDefaults(currency);
   return defs.confirmationsNb ? defs.confirmationsNb.def : 0;
 };
-
 export const selectedTimeRangeSelector = (state: State) =>
   state.settings.selectedTimeRange;
-
 export const orderAccountsSelector = (state: State) =>
   state.settings.orderAccounts;
-
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
-
 export const hasInstalledAnyAppSelector = (state: State) =>
   state.settings.hasInstalledAnyApp;
-
 export const countervalueFirstSelector = (state: State) =>
   state.settings.graphCountervalueFirst;
-
 export const readOnlyModeEnabledSelector = (state: State) =>
   state.settings.readOnlyModeEnabled;
-
 export const blacklistedTokenIdsSelector = (state: State) =>
   state.settings.blacklistedTokenIds;
-
 export const hiddenNftCollectionsSelector = (state: State) =>
   state.settings.hiddenNftCollections;
-
-// $FlowFixMe
 export const exportSettingsSelector = createSelector(
   counterValueCurrencySelector,
   () => getEnv("MANAGER_DEV_MODE"),
@@ -593,18 +535,15 @@ export const exportSettingsSelector = createSelector(
     developerModeEnabled,
   }),
 );
-
 export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
-
 export const dismissedBannersSelector = (state: State) =>
   state.settings.dismissedBanners;
-
 export const hasAvailableUpdateSelector = (state: State) =>
   state.settings.hasAvailableUpdate;
-
 export const carouselVisibilitySelector = (state: State) => {
   const settingValue = state.settings.carouselVisibility;
+
   if (typeof settingValue === "number") {
     /**
      * Ensure correct behavior when using the legacy setting value from LLM v2:
@@ -614,67 +553,48 @@ export const carouselVisibilitySelector = (state: State) => {
     // $FlowFixMe
     return Object.fromEntries(SLIDES.map(slide => [slide.name, true]));
   }
+
   return settingValue;
 };
-
 export const discreetModeSelector = (state: State): boolean =>
   state.settings.discreetMode === true;
-
 export default handleActions(handlers, INITIAL_STATE);
-
 export const themeSelector = (state: State) => {
   const val = state.settings.theme;
   return val === "dusk" ? "dark" : val;
 };
-
 export const osThemeSelector = (state: State) => state.settings.osTheme;
-
 export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
-
 export const languageIsSetByUserSelector = (state: State) =>
   state.settings.languageIsSetByUser;
-
 export const localeSelector = (state: State) =>
   state.settings.locale || getDefaultLocale();
-
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
-
-export const swapSelectableCurrenciesSelector = (state: Object) =>
+export const swapSelectableCurrenciesSelector = (state: Record<string, any>) =>
   state.settings.swap.selectableCurrencies;
-
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
-
-export const swapKYCSelector = (state: Object) => state.settings.swap.KYC;
-
+export const swapKYCSelector = (state: Record<string, any>) =>
+  state.settings.swap.KYC;
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;
-
 export const starredMarketCoinsSelector = (state: State) =>
   state.settings.starredMarketCoins;
-
 export const lastConnectedDeviceSelector = (state: State) =>
   state.settings.lastConnectedDevice;
-
 export const hasOrderedNanoSelector = (state: State) =>
   state.settings.hasOrderedNano;
-
 export const marketRequestParamsSelector = (state: State) =>
   state.settings.marketRequestParams;
-
 export const marketCounterCurrencySelector = (state: State) =>
   state.settings.marketCounterCurrency;
-
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
-
 export const sensitiveAnalyticsSelector = (state: State) =>
   state.settings.sensitiveAnalytics;
-
 export const firstConnectionHasDeviceSelector = (state: State) =>
   state.settings.firstConnectionHasDevice;
-
 export const notificationsSelector = (state: State) =>
   state.settings.notifications;
