@@ -1,8 +1,6 @@
-/* @flow */
 import React from "react";
 import liveCommonPkg from "@ledgerhq/live-common/package.json";
 import { StyleSheet, View } from "react-native";
-
 import { rgba } from "../../colors";
 import QRCodeTopLayer from "./QRCodeTopLayer";
 import QRCodeBottomLayer from "./QRCodeBottomLayer";
@@ -10,13 +8,12 @@ import QRCodeRectangleViewport from "./QRCodeRectangleViewport";
 import LText from "../LText";
 
 type Props = {
-  width: number,
-  height: number,
-  progress?: number,
-  liveQrCode?: boolean,
-  instruction?: React$Node | string,
+  width: number;
+  height: number;
+  progress?: number;
+  liveQrCode?: boolean;
+  instruction?: React.ReactNode | string;
 };
-
 export default function CameraScreen({
   width,
   height,
@@ -27,14 +24,23 @@ export default function CameraScreen({
   // Make the viewfinder borders 2/3 of the screen shortest border
   const viewFinderSize = (width > height ? height : width) * (2 / 3);
   const wrapperStyle =
-    width > height ? { height, alignSelf: "stretch" } : { width, flexGrow: 1 };
-
+    width > height
+      ? {
+          height,
+          alignSelf: "stretch",
+        }
+      : {
+          width,
+          flexGrow: 1,
+        };
   return (
     <View style={wrapperStyle}>
       <View
         style={[
           styles.darken,
-          { backgroundColor: rgba("#142533", 0.4) },
+          {
+            backgroundColor: rgba("#142533", 0.4),
+          },
           styles.centered,
           styles.topCell,
         ]}
@@ -52,7 +58,6 @@ export default function CameraScreen({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   darken: {
     flexGrow: 1,

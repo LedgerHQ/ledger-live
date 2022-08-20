@@ -1,11 +1,8 @@
-// @flow
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-
 import { rgba } from "../../colors";
-
 type Props = {
-  viewFinderSize: number,
+  viewFinderSize: number;
 };
 
 function QRCodeReactangleViewport({ viewFinderSize }: Props) {
@@ -13,9 +10,19 @@ function QRCodeReactangleViewport({ viewFinderSize }: Props) {
   return (
     <View style={styles.row}>
       <View
-        style={[styles.darken, { backgroundColor: rgba("#142533", 0.4) }]}
+        style={[
+          styles.darken,
+          {
+            backgroundColor: rgba("#142533", 0.4),
+          },
+        ]}
       />
-      <View style={{ width: viewFinderSize, height: viewFinderSize }}>
+      <View
+        style={{
+          width: viewFinderSize,
+          height: viewFinderSize,
+        }}
+      >
         <View style={styles.innerRow}>
           <View style={[borderStyle, styles.borderLeft, styles.borderTop]} />
           <View style={borderStyle} />
@@ -31,7 +38,12 @@ function QRCodeReactangleViewport({ viewFinderSize }: Props) {
         </View>
       </View>
       <View
-        style={[styles.darken, { backgroundColor: rgba("#142533", 0.4) }]}
+        style={[
+          styles.darken,
+          {
+            backgroundColor: rgba("#142533", 0.4),
+          },
+        ]}
       />
     </View>
   );
@@ -66,5 +78,4 @@ const styles = StyleSheet.create({
     borderRightWidth: 6,
   },
 });
-
 export default memo<Props>(QRCodeReactangleViewport);
