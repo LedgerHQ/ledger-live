@@ -7,7 +7,6 @@ import Button from "./wrappedUi/Button";
 
 import { ScreenName } from "../const";
 import useCurrency from "../helpers/useCurrency";
-import { useCurrentRouteName } from "../helpers/routeHooks";
 import { track } from "../analytics";
 
 const iconBuy = Icons.PlusMedium;

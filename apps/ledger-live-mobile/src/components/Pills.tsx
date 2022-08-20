@@ -10,7 +10,7 @@ type Item = {
 type Props = {
   value: string;
   items: Item[];
-  onChange: (value: Item) => void;
+  onChange: (_: Item) => void;
   isDisabled?: boolean;
 };
 

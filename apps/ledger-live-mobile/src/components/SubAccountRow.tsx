@@ -24,7 +24,9 @@ import Delta from "./Delta";
 type Props = {
   account: SubAccount;
   parentAccount: Account;
+  // eslint-disable-next-line no-unused-vars
   onSubAccountPress: (subAccount: SubAccount) => any;
+  // eslint-disable-next-line no-unused-vars
   onSubAccountLongPress: (tokenAccount: TokenAccount, account: Account) => any;
   useCounterValue?: boolean;
 };
