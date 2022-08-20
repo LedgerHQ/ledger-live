@@ -1,4 +1,3 @@
-// @flow
 import React, {
   useState,
   useCallback,
@@ -17,15 +16,12 @@ import {
 import { WebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import invariant from "invariant";
-
 import { JSONRPCRequest } from "json-rpc-2.0";
-
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
 } from "@ledgerhq/live-common/platform/rawTypes";
-
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -40,7 +36,6 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import type { MessageData } from "@ledgerhq/live-common/hw/types";
-
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
   accountToPlatformAccount,
@@ -59,7 +54,6 @@ import {
   usePlatformUrl,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
@@ -67,24 +61,21 @@ import { accountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
-
 import { track } from "../../analytics/segment";
-
 const tracking = trackingWrapper(track);
 type Props = {
-  manifest: AppManifest,
-  inputs?: Object,
+  manifest: AppManifest;
+  inputs?: Record<string, any>;
 };
 
 const ReloadButton = ({
   onReload,
   loading,
 }: {
-  onReload: Function,
-  loading: boolean,
+  onReload: (..._: Array<any>) => any;
+  loading: boolean;
 }) => {
   const { colors } = useTheme();
-
   return (
     <TouchableOpacity
       style={styles.buttons}
@@ -100,8 +91,8 @@ const InfoPanelButton = ({
   loading,
   setIsInfoPanelOpened,
 }: {
-  loading: boolean,
-  setIsInfoPanelOpened: (isInfoPanelOpened: boolean) => void,
+  loading: boolean;
+  setIsInfoPanelOpened: (_: boolean) => void;
 }) => {
   const { colors } = useTheme();
 
@@ -121,16 +112,15 @@ const InfoPanelButton = ({
 };
 
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
-  const targetRef: { current: null | WebView } = useRef(null);
+  const targetRef: {
+    current: null | WebView;
+  } = useRef(null);
   const accounts = flattenAccounts(useSelector(accountsSelector));
   const navigation = useNavigation();
-
   const [loadDate, setLoadDate] = useState(Date.now());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
-
   const [device, setDevice] = useState();
-
   const uri = usePlatformUrl(
     manifest,
     {
@@ -138,10 +128,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     },
     inputs,
   );
-
   const listAccounts = useListPlatformAccounts(accounts);
   const listPlatformCurrencies = useListPlatformCurrencies();
-
   const requestAccount = useCallback(
     ({
       currencies: currencyIds,
@@ -150,13 +138,12 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     }: // TODO: use type RequestAccountParams from LedgerLiveApiSdk
     // }: RequestAccountParams) =>
     {
-      currencies?: string[],
-      allowAddAccount?: boolean,
-      includeTokens?: boolean,
+      currencies?: string[];
+      allowAddAccount?: boolean;
+      includeTokens?: boolean;
     }) =>
       new Promise((resolve, reject) => {
         tracking.platformRequestAccountRequested(manifest);
-
         const allCurrencies = listAndFilterCurrencies({
           currencies: currencyIds,
           includeTokens,
@@ -166,7 +153,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           currencyIds && currencyIds.length > 0
             ? currencyIds
             : allCurrencies.map(({ id }) => id);
-
         const foundAccounts = cryptoCurrencyIds?.length
           ? accounts.filter(a =>
               cryptoCurrencyIds.includes(
@@ -195,12 +181,14 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         // if single currency available redirect to select account directly
         if (currenciesDiff.length === 1) {
           const currency = findCryptoCurrencyById(currenciesDiff[0]);
+
           if (!currency) {
             tracking.platformRequestAccountFail(manifest);
             // @TODO replace with correct error
             reject(new Error("Currency not found"));
             return;
           }
+
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectAccount,
             params: {
@@ -247,7 +235,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       }),
     [manifest, accounts, navigation],
   );
-
   const receiveOnAccount = useCallback(
     ({ accountId }: { accountId: string }) => {
       tracking.platformReceiveRequested(manifest);
@@ -261,7 +248,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       const parentAccount = isTokenAccount(account)
         ? accounts.find(a => a.id === account.parentId)
         : null;
-
       return new Promise((resolve, reject) => {
         navigation.navigate(ScreenName.VerifyAccount, {
           account,
@@ -284,7 +270,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     },
     [manifest, accounts, navigation],
   );
-
   const signTransaction = useCallback(
     ({
       accountId,
@@ -293,13 +278,12 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     }: // TODO: use type SignTransactionParams from LedgerLiveApiSdk
     // }: SignTransactionParams) => {
     {
-      accountId: string,
-      transaction: RawPlatformTransaction,
-      params: any,
+      accountId: string;
+      transaction: RawPlatformTransaction;
+      params: any;
     }) => {
       const platformTransaction = deserializePlatformTransaction(transaction);
       const account = accounts.find(account => account.id === accountId);
-
       tracking.platformSignTransactionRequested(manifest);
 
       if (!account) {
@@ -330,23 +314,19 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         }
 
         const bridge = getAccountBridge(account, parentAccount);
-
         const { liveTx } = getPlatformTransactionSignFlowInfos(
           platformTransaction,
         );
-
         const t = bridge.createTransaction(account);
         const { recipient, ...txData } = liveTx;
         const t2 = bridge.updateTransaction(t, {
           recipient,
           subAccountId: isTokenAccount(account) ? account.id : undefined,
         });
-
         const tx = bridge.updateTransaction(t2, {
           userGasLimit: txData.gasLimit,
           ...txData,
         });
-
         navigation.navigate(NavigatorName.SignTransaction, {
           screen: ScreenName.SignTransactionSummary,
           params: {
@@ -377,14 +357,13 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     },
     [manifest, accounts, navigation],
   );
-
   const broadcastTransaction = useCallback(
     ({
       accountId,
       signedTransaction,
     }: {
-      accountId: string,
-      signedTransaction: RawPlatformSignedTransaction,
+      accountId: string;
+      signedTransaction: RawPlatformSignedTransaction;
     }) => {
       const account = accounts.find(account => account.id === accountId);
 
@@ -396,7 +375,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       const parentAccount = isTokenAccount(account)
         ? accounts.find(a => a.id === account.parentId)
         : null;
-
       return new Promise((resolve, reject) => {
         // @TODO replace with correct error
         if (!signedTransaction) {
@@ -426,11 +404,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     },
     [manifest, accounts],
   );
-
   const startExchange = useCallback(
     ({ exchangeType }: { exchangeType: number }) => {
       tracking.platformStartExchangeRequested(manifest);
-
       return new Promise((resolve, reject) => {
         navigation.navigate(NavigatorName.PlatformExchange, {
           screen: ScreenName.PlatformStartExchange,
@@ -439,9 +415,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               exchangeType,
             },
             onResult: (result: {
-              startExchangeResult?: number,
-              startExchangeError?: Error,
-              device: Device,
+              startExchangeResult?: number;
+              startExchangeError?: Error;
+              device: Device;
             }) => {
               if (result.startExchangeError) {
                 tracking.platformStartExchangeFail(manifest);
@@ -463,7 +439,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     },
     [manifest, navigation],
   );
-
   const completeExchange = useCallback(
     ({
       provider,
@@ -475,19 +450,18 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       feesStrategy,
       exchangeType,
     }: {
-      provider: string,
-      fromAccountId: string,
-      toAccountId: string,
-      transaction: RawPlatformTransaction,
-      binaryPayload: string,
-      signature: string,
-      feesStrategy: string,
-      exchangeType: number,
+      provider: string;
+      fromAccountId: string;
+      toAccountId: string;
+      transaction: RawPlatformTransaction;
+      binaryPayload: string;
+      signature: string;
+      feesStrategy: string;
+      exchangeType: number;
     }) => {
       // Nb get a hold of the actual accounts, and parent accounts
       const fromAccount = accounts.find(a => a.id === fromAccountId);
       let fromParentAccount;
-
       const toAccount = accounts.find(a => a.id === toAccountId);
       let toParentAccount;
 
@@ -503,20 +477,17 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       if (fromAccount.type === "TokenAccount") {
         fromParentAccount = accounts.find(a => a.id === fromAccount.parentId);
       }
+
       if (toAccount && toAccount.type === "TokenAccount") {
         toParentAccount = accounts.find(a => a.id === toAccount.parentId);
       }
 
       const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
       const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-
       // eslint-disable-next-line no-param-reassign
       transaction.family = mainFromAccount.currency.family;
-
       const platformTransaction = deserializePlatformTransaction(transaction);
-
       platformTransaction.feesStrategy = feesStrategy;
-
       let processedTransaction = accountBridge.createTransaction(
         mainFromAccount,
       );
@@ -524,7 +495,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         processedTransaction,
         platformTransaction,
       );
-
       tracking.platformCompleteExchangeRequested(manifest);
       return new Promise((resolve, reject) => {
         navigation.navigate(NavigatorName.PlatformExchange, {
@@ -545,7 +515,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               feesStrategy,
             },
             device,
-            onResult: (result: { operation?: any, error?: Error }) => {
+            onResult: (result: { operation?: any; error?: Error }) => {
               if (result.error) {
                 tracking.platformStartExchangeFail(manifest);
                 reject(result.error);
@@ -566,11 +536,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     },
     [accounts, manifest, navigation, device],
   );
-
   const signMessage = useCallback(
-    ({ accountId, message }: { accountId: string, message: string }) => {
+    ({ accountId, message }: { accountId: string; message: string }) => {
       tracking.platformSignMessageRequested(manifest);
-
       let formattedMessage: MessageData | null;
 
       try {
@@ -606,7 +574,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     },
     [accounts, manifest, navigation],
   );
-
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -631,7 +598,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       signMessage,
     ],
   );
-
   const handleSend = useCallback(
     (request: JSONRPCRequest) => {
       targetRef?.current?.postMessage(
@@ -643,9 +609,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     },
     [manifest],
   );
-
   const [receive] = useJSONRPCServer(handlers, handleSend);
-
   const handleMessage = useCallback(
     e => {
       // FIXME: event isn't the same on desktop & mobile
@@ -656,24 +620,20 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     },
     [receive],
   );
-
   const handleLoad = useCallback(() => {
     if (!widgetLoaded) {
       tracking.platformLoadSuccess(manifest);
       setWidgetLoaded(true);
     }
   }, [manifest, widgetLoaded]);
-
   const handleReload = useCallback(() => {
     tracking.platformReload(manifest);
     setLoadDate(Date.now());
     setWidgetLoaded(false);
   }, [manifest]);
-
   const handleError = useCallback(() => {
     tracking.platformLoadFail(manifest);
   }, [manifest]);
-
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -689,11 +649,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       ),
     });
   }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened]);
-
   useEffect(() => {
     tracking.platformLoad(manifest);
   }, [manifest]);
-
   return (
     <SafeAreaView style={[styles.root]}>
       <InfoPanel
@@ -764,5 +722,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
 });
-
 export default WebPlatformPlayer;

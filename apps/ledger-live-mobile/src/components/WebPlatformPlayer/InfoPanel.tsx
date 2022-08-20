@@ -1,13 +1,10 @@
-// @flow
 import React, { useCallback } from "react";
-
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
-
 import { languageSelector } from "../../reducers/settings";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 import AppIcon from "../../screens/Platform/AppIcon";
@@ -15,13 +12,13 @@ import BottomModal from "../BottomModal";
 import LText from "../LText";
 
 type Props = {
-  name: string,
-  icon?: string | null,
-  description: TranslatableString,
-  url?: string | null,
-  uri?: string | null,
-  isOpened: boolean,
-  setIsOpened: (isOpened: boolean) => void,
+  name: string;
+  icon?: string | null;
+  description: TranslatableString;
+  url?: string | null;
+  uri?: string | null;
+  isOpened: boolean;
+  setIsOpened: (isOpened: boolean) => void;
 };
 
 const InfoPanel = ({
@@ -35,20 +32,15 @@ const InfoPanel = ({
 }: Props) => {
   const settingsLocale = useSelector(languageSelector);
   const { colors } = useTheme();
-
   const onClose = useCallback(() => {
     setIsOpened(false);
   }, [setIsOpened]);
   const onLinkPress = useCallback(url => {
     Linking.openURL(url);
   }, []);
-
   return (
     <BottomModal
-      style={{
-        ...styles.root,
-        backgroundColor: colors.card,
-      }}
+      style={{ ...styles.root, backgroundColor: colors.card }}
       id="InfoPanelModal"
       isOpened={isOpened}
       onClose={onClose}
@@ -59,13 +51,7 @@ const InfoPanel = ({
             <AppIcon size={40} name={name} icon={icon} />
           </View>
         ) : null}
-        <LText
-          semidbold
-          style={{
-            ...styles.title,
-            color: colors.text,
-          }}
-        >
+        <LText semidbold style={{ ...styles.title, color: colors.text }}>
           {name}
         </LText>
       </View>
@@ -168,5 +154,4 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
   },
 });
-
 export default InfoPanel;
