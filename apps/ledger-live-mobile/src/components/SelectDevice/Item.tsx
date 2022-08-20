@@ -1,4 +1,3 @@
-// @flow
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -8,16 +7,16 @@ import IconArrowRight from "../../icons/ArrowRight";
 import Ellipsis from "../../icons/Ellipsis";
 
 type Props = {
-  event?: string,
-  disabled?: boolean,
-  withArrow?: boolean,
-  icon?: React$Node,
-  title?: React$Node,
-  description?: React$Node,
-  onPress?: () => any,
-  onMore?: () => any,
-  primary?: boolean,
-  testID?: string,
+  event?: string;
+  disabled?: boolean;
+  withArrow?: boolean;
+  icon?: React.ReactNode;
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  onPress?: () => any;
+  onMore?: () => any;
+  primary?: boolean;
+  testID?: string;
 };
 
 function Item({
@@ -33,7 +32,6 @@ function Item({
   testID,
 }: Props) {
   const { colors } = useTheme();
-
   return (
     <View style={styles.outer}>
       <View style={styles.inner}>
@@ -47,8 +45,12 @@ function Item({
               styles.root,
               disabled && styles.disabled,
               disabled
-                ? { backgroundColor: colors.card }
-                : { borderColor: colors.fog },
+                ? {
+                    backgroundColor: colors.card,
+                  }
+                : {
+                    borderColor: colors.fog,
+                  },
             ]}
           >
             {icon && <View style={styles.iconWrapper}>{icon}</View>}
@@ -90,7 +92,6 @@ function Item({
 }
 
 export default memo<Props>(Item);
-
 const styles = StyleSheet.create({
   outer: {
     marginBottom: 16,
