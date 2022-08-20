@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
@@ -9,15 +7,14 @@ import type { DeviceNames } from "../../screens/Onboarding/types";
 import { ErrorFooterGeneric, RenderError } from "./StepRenders";
 
 type Props = {
-  meta: ?Device,
-  onClose: () => void,
-  onRetry: () => void,
-  onStepDone: () => void,
-  step: Step,
-  error: ?Error,
-  deviceModelId: DeviceNames,
+  meta: Device | null | undefined;
+  onClose: () => void;
+  onRetry: () => void;
+  onStepDone: () => void;
+  step: Step;
+  error: Error | null | undefined;
+  deviceModelId: DeviceNames;
 };
-
 export default function SelectDeviceConnectModal({
   meta,
   onClose,

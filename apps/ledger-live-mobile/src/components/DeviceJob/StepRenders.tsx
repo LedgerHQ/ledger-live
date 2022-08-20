@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -8,8 +6,9 @@ import GenericSuccessView from "../GenericSuccessView";
 import GenericErrorView from "../GenericErrorView";
 import Button from "../Button";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 export const ErrorFooterGeneric = ({ onRetry }: { onRetry: () => void }) => (
   <Button
     event="DeviceJobErrorRetry"
@@ -19,15 +18,16 @@ export const ErrorFooterGeneric = ({ onRetry }: { onRetry: () => void }) => (
     onPress={onRetry}
   />
 );
-
 export const RenderError = ({
   error,
   onRetry,
   Footer,
 }: {
-  error: Error,
-  onRetry: () => void,
-  Footer: React$ComponentType<{ onRetry: () => void }>,
+  error: Error;
+  onRetry: () => void;
+  Footer: React.ComponentType<{
+    onRetry: () => void;
+  }>;
 }) => (
   <SafeAreaView forceInset={forceInset} style={styles.root}>
     <View style={styles.body}>
@@ -36,21 +36,19 @@ export const RenderError = ({
     <Footer onRetry={onRetry} />
   </SafeAreaView>
 );
-
 RenderError.defaultProps = {
   Footer: ErrorFooterGeneric,
 };
-
 export const RenderStep = ({
   icon,
   title,
   description,
   children,
 }: {
-  icon: React$Node,
-  title: React$Node,
-  description?: React$Node,
-  children?: React$Node,
+  icon: React.ReactNode;
+  title: React.ReactNode;
+  description?: React.ReactNode;
+  children?: React.ReactNode;
 }) => (
   <SafeAreaView forceInset={forceInset} style={styles.root}>
     <View style={styles.body}>
@@ -59,7 +57,6 @@ export const RenderStep = ({
     {children}
   </SafeAreaView>
 );
-
 const styles = StyleSheet.create({
   root: {
     flexDirection: "column",

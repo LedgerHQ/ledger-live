@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { Trans } from "react-i18next";
 import { from } from "rxjs";
@@ -20,7 +18,6 @@ import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
 import { rejectionOp } from "../../logic/debugReject";
-
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
 
@@ -33,7 +30,7 @@ const inferWordingValues = meta => {
 };
 
 export const connectingStep: Step = {
-  Body: ({ meta }: *) => {
+  Body: ({ meta }: any) => {
     const usbOnly = meta.modelId !== "nanoX";
     return (
       <RenderStep
@@ -61,15 +58,15 @@ export const connectingStep: Step = {
       />
     );
   },
-  run: meta =>
-    // $FlowFixMe
+  run: (
+    meta,
+  ) =>
     withDevice(meta.deviceId)(() => from([meta])).pipe(
       rejectionOp(() => new CantOpenDevice()),
     ),
 };
-
-export const accountApp: Account => Step = account => ({
-  Body: ({ meta }: *) => {
+export const accountApp: (_: Account) => Step = account => ({
+  Body: ({ meta }: any) => {
     const wordingValues = {
       ...inferWordingValues(meta),
       managerAppName: account.currency.managerAppName,
@@ -100,7 +97,9 @@ export const accountApp: Account => Step = account => ({
           from([
             {
               ...meta,
-              addressInfo: { address: account.freshAddress },
+              addressInfo: {
+                address: account.freshAddress,
+              },
             },
           ]),
         )
@@ -109,17 +108,12 @@ export const accountApp: Account => Step = account => ({
             deviceId: meta.deviceId,
           })
           .pipe(
-            map(addressInfo => ({
-              ...meta,
-              addressInfo,
-            })),
-            // $FlowFixMe
+            map(addressInfo => ({ ...meta, addressInfo })), // $FlowFixMe
             retryWhen(retryWhileErrors(genericCanRetryOnError)),
           ),
 });
-
 export const getDeviceName: Step = {
-  Body: ({ meta }: *) => (
+  Body: ({ meta }: any) => (
     <RenderStep
       icon={
         <DeviceNanoAction
@@ -133,7 +127,6 @@ export const getDeviceName: Step = {
       title={<Trans i18nKey="SelectDevice.steps.getDeviceName.title" />}
     />
   ),
-
   run: meta =>
     withDevice(meta.deviceId)(transport =>
       from(
@@ -144,9 +137,8 @@ export const getDeviceName: Step = {
       ),
     ),
 };
-
-export const editDeviceName: string => Step = deviceName => ({
-  Body: ({ meta }: *) => (
+export const editDeviceName: (_: string) => Step = deviceName => ({
+  Body: ({ meta }: any) => (
     <RenderStep
       icon={
         <DeviceNanoAction
@@ -160,7 +152,6 @@ export const editDeviceName: string => Step = deviceName => ({
       title={<Trans i18nKey="SelectDevice.steps.editDeviceName.title" />}
     />
   ),
-
   run: meta =>
     withDevice(meta.deviceId)(transport =>
       from(editDeviceNameTransport(transport, deviceName).then(() => meta)),
