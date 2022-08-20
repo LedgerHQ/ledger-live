@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Image, View, StyleSheet } from "react-native";
@@ -10,18 +8,21 @@ import BulletList, {
   BulletItemText,
 } from "../components/BulletList";
 
-type Props = { onClose: any, isOpened: any, onAccept: () => void };
-
+type Props = {
+  onClose: any;
+  isOpened: any;
+  onAccept: () => void;
+};
 export default function PasslockDisclaimerModal({
   isOpened,
   onClose,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onAccept = () => {},
 }: Props) {
   const accept = useCallback(() => {
     onClose();
     onAccept();
   }, [onClose, onAccept]);
-
   return (
     <BottomModal
       id="PasslockDisclaimerModal"
@@ -62,7 +63,6 @@ export default function PasslockDisclaimerModal({
     </BottomModal>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     padding: 16,
@@ -72,13 +72,19 @@ const styles = StyleSheet.create({
   wrapper: {
     paddingRight: 16,
   },
-  item: { paddingLeft: 0, marginRight: 16 },
+  item: {
+    paddingLeft: 0,
+    marginRight: 16,
+  },
   image: {
     alignSelf: "center",
     marginTop: 16,
     marginBottom: 8,
   },
-  buttonWrapper: { marginTop: 16, flexDirection: "row" },
+  buttonWrapper: {
+    marginTop: 16,
+    flexDirection: "row",
+  },
   buttonContainer: {
     flexGrow: 1,
     paddingHorizontal: 8,

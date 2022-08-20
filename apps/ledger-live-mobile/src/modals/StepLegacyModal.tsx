@@ -1,5 +1,3 @@
-/* @flow */
-
 import React from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -12,10 +10,9 @@ import LText from "../components/LText";
 import Circle from "../components/Circle";
 
 type Props = {
-  isOpened: boolean,
-  onClose: () => void,
+  isOpened: boolean;
+  onClose: () => void;
 };
-
 export default function StepLegacyModal({ isOpened, onClose }: Props) {
   const { colors } = useTheme();
   return (
@@ -43,7 +40,6 @@ export default function StepLegacyModal({ isOpened, onClose }: Props) {
     </BottomModal>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     padding: 16,

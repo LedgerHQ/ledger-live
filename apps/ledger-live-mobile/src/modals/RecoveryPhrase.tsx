@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Image, View, StyleSheet } from "react-native";
@@ -9,23 +7,25 @@ import BulletList, {
   BulletChevron,
   BulletItemText,
 } from "../components/BulletList";
-import LText from "../components/LText";
 
-type Props = { onClose: any, isOpened: any, onAccept: () => void };
-
-export default function PinModal({
+type Props = {
+  isOpened: any;
+  onClose: any;
+  onAccept: () => void;
+};
+export default function RecoveryPhraseModal({
   isOpened,
   onClose,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onAccept = () => {},
 }: Props) {
   const accept = useCallback(() => {
     onClose();
     onAccept();
   }, [onClose, onAccept]);
-
   return (
     <BottomModal
-      id="PinModal"
+      id="RecoveryPhraseModal"
       style={styles.root}
       isOpened={isOpened}
       onClose={onClose}
@@ -40,24 +40,23 @@ export default function PinModal({
           itemStyle={styles.item}
           list={[
             <BulletItemText style={styles.text} color="grey">
-              <Trans i18nKey="onboarding.stepSetupPin.modal.step1">
-                {"text"}
-                <LText semiBold>bold text</LText>
-                {"text"}
-              </Trans>
+              <Trans i18nKey="onboarding.stepWriteRecovery.modal.step1" />
             </BulletItemText>,
             <BulletItemText style={styles.text} color="grey">
-              <Trans i18nKey="onboarding.stepSetupPin.modal.step2" />
+              <Trans i18nKey="onboarding.stepWriteRecovery.modal.step2" />
             </BulletItemText>,
             <BulletItemText style={styles.text} color="grey">
-              <Trans i18nKey="onboarding.stepSetupPin.modal.step3" />
+              <Trans i18nKey="onboarding.stepWriteRecovery.modal.step3" />
+            </BulletItemText>,
+            <BulletItemText style={styles.text} color="grey">
+              <Trans i18nKey="onboarding.stepWriteRecovery.modal.step4" />
             </BulletItemText>,
           ]}
         />
       </View>
       <View style={styles.buttonWrapper}>
         <Button
-          event="PinGotIt"
+          event="RecoveryPhraseGotIt"
           type="primary"
           containerStyle={styles.buttonContainer}
           title={<Trans i18nKey="common.gotit" />}
@@ -67,7 +66,6 @@ export default function PinModal({
     </BottomModal>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     padding: 16,
@@ -77,13 +75,19 @@ const styles = StyleSheet.create({
   wrapper: {
     paddingRight: 16,
   },
-  item: { paddingLeft: 0, marginRight: 16 },
+  item: {
+    paddingLeft: 0,
+    marginRight: 16,
+  },
   image: {
     alignSelf: "center",
     marginTop: 16,
     marginBottom: 8,
   },
-  buttonWrapper: { marginTop: 16, flexDirection: "row" },
+  buttonWrapper: {
+    marginTop: 16,
+    flexDirection: "row",
+  },
   buttonContainer: {
     flexGrow: 1,
     paddingHorizontal: 8,

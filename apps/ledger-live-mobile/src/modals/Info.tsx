@@ -1,23 +1,22 @@
-// @flow
-
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import BottomModal from "../components/BottomModal";
 import LText from "../components/LText";
 
 type Props = {
-  data: ModalInfo[],
-  isOpened: boolean,
-  onClose: () => void,
+  data: ModalInfo[];
+  isOpened: boolean;
+  onClose: () => void;
 };
-
 export type ModalInfo = {
-  description: React$Node,
-  Icon?: () => React$Element<React$ElementType>,
-  title: React$Node,
-  footer?: React$Node,
+  description: React.ReactNode;
+  Icon?: () => React.ReactElement<
+    React.ComponentProps<React.ElementType>,
+    React.ElementType
+  >;
+  title: React.ReactNode;
+  footer?: React.ReactNode;
 };
-
 export default function InfoModal({ data, isOpened, onClose }: Props) {
   return (
     <BottomModal
@@ -45,7 +44,6 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
     </BottomModal>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     padding: 16,
