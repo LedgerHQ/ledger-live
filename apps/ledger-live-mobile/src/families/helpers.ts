@@ -4,7 +4,6 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 export function useFieldByFamily(field: string): BigNumber | null | undefined {
-  // $FlowFixMe
   return useRoute().params?.transaction[field];
 }
 export function useEditTxFeeByFamily() {

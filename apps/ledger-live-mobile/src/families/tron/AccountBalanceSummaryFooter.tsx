@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -8,9 +6,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/BigNumberToLocaleString";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-
 import type { Account } from "@ledgerhq/types-live";
-
 import invariant from "invariant";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
@@ -22,9 +18,8 @@ import InfoItem from "../../components/BalanceSummaryInfoItem";
 import { localeSelector } from "../../reducers/settings";
 
 type Props = {
-  account: Account,
+  account: Account;
 };
-
 type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
@@ -32,38 +27,29 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const locale = useSelector(localeSelector);
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const infoCandidates = useInfoCandidates();
-
   const { energy: formattedEnergy, bandwidth, tronPower } =
     account.tronResources || {};
-
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = bandwidth || {};
-
   const unit = getAccountUnit(account);
-
   const formattedBandwidth = useMemo(
-    () =>
-      freeLimit
-        .plus(gainedLimit)
-        .minus(gainedUsed)
-        .minus(freeUsed),
+    () => freeLimit.plus(gainedLimit).minus(gainedUsed).minus(freeUsed),
     [freeLimit, gainedLimit, gainedUsed, freeUsed],
   );
-
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
   }, []);
-
   const onPressInfoCreator = useCallback(
     (infoName: InfoName) => () => setInfoName(infoName),
     [],
   );
-
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       style={[styles.root]}
-      contentContainerStyle={{ paddingHorizontal: 16 }}
+      contentContainerStyle={{
+        paddingHorizontal: 16,
+      }}
     >
       <InfoModal
         isOpened={!!infoName}
@@ -107,10 +93,8 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 
 export default function AccountBalanceFooter({ account }: Props) {
   if (!account.tronResources) return null;
-
   return <AccountBalanceSummaryFooter account={account} />;
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -119,12 +103,11 @@ const styles = StyleSheet.create({
   },
 });
 
-function useInfoCandidates(): { [key: InfoName]: ModalInfo[] } {
+function useInfoCandidates(): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();
   const currency = getCryptoCurrencyById("tron");
   const TronIcon = getCryptoCurrencyIcon(currency);
   invariant(TronIcon, "Icon is expected");
-
   return {
     available: [
       {

@@ -1,16 +1,12 @@
-// @flow
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
-
 import { BigNumber } from "bignumber.js";
-
 import {
   MIN_TRANSACTION_AMOUNT,
   getLastVotedDate,
 } from "@ledgerhq/live-common/families/tron/react";
-
 import { Icons } from "@ledgerhq/native-ui";
 import FreezeIcon from "../../icons/Freeze";
 import UnfreezeIcon from "../../icons/Unfreeze";
@@ -25,12 +21,11 @@ const getActions = ({
   parentAccount,
   colors,
 }: {
-  account: Account,
-  parentAccount: Account,
-  colors: *,
+  account: Account;
+  parentAccount: Account;
+  colors: any;
 }) => {
   if (!account.tronResources) return null;
-
   const {
     spendableBalance,
     tronResources: {
@@ -39,34 +34,25 @@ const getActions = ({
       frozen,
     } = {},
   } = account;
-
   const accountId = account.id;
-
   const canFreeze =
     spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
-
   const timeToUnfreezeBandwidth =
     bandwidth && bandwidth.expiredAt ? +bandwidth.expiredAt : Infinity;
-
   const timeToUnfreezeEnergy =
     energy && energy.expiredAt ? +energy.expiredAt : Infinity;
-
   const effectiveTimeToUnfreeze = Math.min(
     timeToUnfreezeBandwidth,
     timeToUnfreezeEnergy,
   );
-
   const canUnfreeze =
     frozen &&
     BigNumber((bandwidth && bandwidth.amount) || 0)
       .plus((energy && energy.amount) || 0)
       .gt(MIN_TRANSACTION_AMOUNT) &&
     effectiveTimeToUnfreeze < Date.now();
-
   const canVote = tronPower > 0;
-
   const lastVotedDate = getLastVotedDate(account);
-
   return [
     {
       disabled: !canVote && !canFreeze,
@@ -75,7 +61,10 @@ const getActions = ({
         {
           screen: canVote ? ScreenName.VoteStarted : ScreenName.FreezeInfo,
           params: {
-            params: { accountId, parentId: parentAccount?.id },
+            params: {
+              accountId,
+              parentId: parentAccount?.id,
+            },
           },
         },
       ],
@@ -88,7 +77,9 @@ const getActions = ({
         NavigatorName.Freeze,
         {
           screen: canVote ? ScreenName.FreezeAmount : ScreenName.FreezeInfo,
-          params: { accountId },
+          params: {
+            accountId,
+          },
         },
       ],
       label: <Trans i18nKey="tron.manage.freeze.title" />,
@@ -101,14 +92,23 @@ const getActions = ({
         NavigatorName.Unfreeze,
         {
           screen: ScreenName.UnfreezeAmount,
-          params: { accountId },
+          params: {
+            accountId,
+          },
         },
       ],
       label: <Trans i18nKey="tron.manage.unfreeze.title" />,
       description: <Trans i18nKey="tron.manage.unfreeze.description" />,
       Icon: UnfreezeIcon,
       extra: !canUnfreeze && effectiveTimeToUnfreeze < Infinity && (
-        <View style={[styles.timeWarn, { backgroundColor: colors.lightFog }]}>
+        <View
+          style={[
+            styles.timeWarn,
+            {
+              backgroundColor: colors.lightFog,
+            },
+          ]}
+        >
           <ClockIcon color={colors.grey} size={16} />
           <LText style={styles.timeLabel} semiBold color="grey">
             <DateFromNow date={effectiveTimeToUnfreeze} />
@@ -124,7 +124,9 @@ const getActions = ({
         NavigatorName.TronVoteFlow,
         {
           screen: lastVotedDate ? "VoteSelectValidator" : "VoteStarted",
-          params: { accountId },
+          params: {
+            accountId,
+          },
         },
       ],
       label: <Trans i18nKey="tron.manage.vote.title" />,
@@ -150,7 +152,6 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
 });
-
 export default {
   getActions,
 };

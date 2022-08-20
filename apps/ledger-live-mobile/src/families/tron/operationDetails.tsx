@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
@@ -26,17 +24,18 @@ import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
-function getURLWhatIsThis(op: Operation): ?string {
+function getURLWhatIsThis(op: Operation): string | null | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
     return helpURL;
   }
+
   return undefined;
 }
 
 type OperationDetailsExtraProps = {
-  extra: { [key: string]: any },
-  type: string,
-  account: Account,
+  extra: Record<string, any>;
+  type: string;
+  account: Account;
 };
 
 function OperationDetailsExtra({
@@ -52,9 +51,9 @@ function OperationDetailsExtra({
     case "VOTE": {
       const { votes } = extra;
       if (!votes || !votes.length) return null;
-
       return <OperationDetailsVotes votes={votes} account={account} />;
     }
+
     case "FREEZE": {
       const value = formatCurrencyUnit(
         account.unit,
@@ -72,6 +71,7 @@ function OperationDetailsExtra({
         />
       );
     }
+
     case "UNFREEZE": {
       const value = formatCurrencyUnit(
         account.unit,
@@ -89,14 +89,15 @@ function OperationDetailsExtra({
         />
       );
     }
+
     default:
       return null;
   }
 }
 
 type OperationsDetailsVotesProps = {
-  votes: Array<Vote>,
-  account: Account,
+  votes: Array<Vote>;
+  account: Account;
 };
 
 function OperationDetailsVotes({
@@ -107,7 +108,6 @@ function OperationDetailsVotes({
   const sp = useTronSuperRepresentatives();
   const locale = useSelector(localeSelector);
   const formattedVotes = formatVotes(votes, sp);
-
   const redirectAddressCreator = useCallback(
     address => () => {
       const url = getAddressExplorer(
@@ -118,10 +118,11 @@ function OperationDetailsVotes({
     },
     [account],
   );
-
   return (
     <Section
-      title={t("operationDetails.extra.votes", { number: votes.length })}
+      title={t("operationDetails.extra.votes", {
+        number: votes.length,
+      })}
     >
       {formattedVotes &&
         formattedVotes.map(({ address, voteCount, validator }, i) => (
@@ -138,9 +139,9 @@ function OperationDetailsVotes({
 }
 
 type Props = {
-  operation: Operation,
-  currency: Currency,
-  unit: Unit,
+  operation: Operation;
+  currency: Currency;
+  unit: Unit;
 };
 
 const AmountCell = ({
@@ -148,7 +149,9 @@ const AmountCell = ({
   unit,
   currency,
   operation,
-}: Props & { amount: BigNumber }) =>
+}: Props & {
+  amount: BigNumber;
+}) =>
   !amount.isZero() ? (
     <>
       <LText semiBold numberOfLines={1} style={styles.topText}>
@@ -177,7 +180,6 @@ const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
   const amount = new BigNumber(
     operation.extra ? operation.extra.frozenAmount : 0,
   );
-
   return (
     <AmountCell
       amount={amount}
@@ -192,7 +194,6 @@ const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
   const amount = new BigNumber(
     operation.extra ? operation.extra.unfreezeAmount : 0,
   );
-
   return (
     <AmountCell
       amount={amount}
@@ -208,12 +209,13 @@ const VoteAmountCell = ({ operation }: Props) => {
     operation.extra && operation.extra.votes
       ? operation.extra.votes.reduce((sum, { voteCount }) => sum + voteCount, 0)
       : 0;
-
   return amount > 0 ? (
     <LText numberOfLines={1} semiBold style={[styles.topText, styles.voteText]}>
       <Trans
         i18nKey={"operationDetails.extra.votes"}
-        values={{ number: amount }}
+        values={{
+          number: amount,
+        }}
       />
     </LText>
   ) : null;
@@ -228,15 +230,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     flex: 1,
   },
-  voteText: { lineHeight: 40 },
+  voteText: {
+    lineHeight: 40,
+  },
 });
-
 const amountCell = {
   FREEZE: FreezeAmountCell,
   UNFREEZE: UnfreezeAmountCell,
   VOTE: VoteAmountCell,
 };
-
 export default {
   getURLWhatIsThis,
   OperationDetailsExtra,

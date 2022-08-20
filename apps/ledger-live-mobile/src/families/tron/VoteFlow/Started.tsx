@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -10,8 +9,11 @@ import LText from "../../../components/LText";
 import IlluVotes from "../IlluVotes";
 
 type Props = {
-  navigation: any,
-  route: { params: {} },
+  navigation: any;
+  route: {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    params: {};
+  };
 };
 
 function VoteStarted({ navigation, route }: Props) {
@@ -19,13 +21,18 @@ function VoteStarted({ navigation, route }: Props) {
   const onNext = useCallback(() => {
     navigation.replace(ScreenName.VoteSelectValidator, route.params);
   }, [navigation, route.params]);
-
   const onCancel = useCallback(() => {
     navigation.getParent().pop();
   }, [navigation]);
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <View style={styles.main}>
         <IlluVotes />
 
@@ -57,7 +64,6 @@ function VoteStarted({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-
     padding: 16,
   },
   main: {
@@ -68,7 +74,6 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     lineHeight: 22,
-
     textAlign: "center",
     marginVertical: 16,
   },
@@ -79,5 +84,4 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
-
 export default VoteStarted;

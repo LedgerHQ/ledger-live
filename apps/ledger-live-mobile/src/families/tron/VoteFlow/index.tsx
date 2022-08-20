@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -19,7 +18,6 @@ import VoteSelectDevice from "../../../screens/SelectDevice";
 import VoteConnectDevice from "../../../screens/ConnectDevice";
 import VoteValidationError from "./04-ValidationError";
 import VoteValidationSuccess from "./04-ValidationSuccess";
-
 const totalSteps = "4";
 
 function VoteFlow() {
@@ -115,7 +113,9 @@ function VoteFlow() {
       <Stack.Screen
         name={ScreenName.VoteValidationError}
         component={VoteValidationError}
-        options={{ headerTitle: "" }}
+        options={{
+          headerTitle: "",
+        }}
       />
       <Stack.Screen
         name={ScreenName.VoteValidationSuccess}
@@ -134,7 +134,5 @@ function VoteFlow() {
 const options = {
   headerShown: false,
 };
-
 export { VoteFlow as component, options };
-
 const Stack = createStackNavigator();

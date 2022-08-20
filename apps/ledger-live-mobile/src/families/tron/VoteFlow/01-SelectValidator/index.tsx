@@ -1,4 +1,3 @@
-/* @flow */
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
 import { StyleSheet, TouchableOpacity, FlatList } from "react-native";
@@ -26,38 +25,35 @@ import Info from "../../../../icons/Info";
 import SelectValidatorSearchBox from "./SearchBox";
 import Item from "./Item";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  fromStep2?: boolean,
+  accountId: string;
+  transaction: Transaction;
+  fromStep2?: boolean;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account and tron resources required");
   invariant(account.type === "Account", "not main account");
-
   const bridge = getAccountBridge(account, undefined);
   const tronResources = useMemo(() => account.tronResources || null, [account]);
   invariant(tronResources, "Tron resources required");
-
   const { tronPower } = tronResources;
-
   const { transaction, setTransaction } = useBridgeTransaction(() => {
     const tx = route.params.transaction;
 
     if (!tx) {
       const t = bridge.createTransaction(account);
       const { votes } = tronResources;
-
       return {
         account,
         transaction: bridge.updateTransaction(t, {
@@ -67,28 +63,32 @@ export default function SelectValidator({ navigation, route }: Props) {
       };
     }
 
-    return { account, transaction: tx };
+    return {
+      account,
+      transaction: tx,
+    };
   });
-
   invariant(transaction, "transaction is required");
   invariant(transaction.votes, "transaction.votes is required");
-
   const [searchQuery, setSearchQuery] = useState("");
   const superRepresentatives = useTronSuperRepresentatives();
-
   const { votes } = transaction;
-
   const sortedSuperRepresentatives = useSortedSr(
     searchQuery,
     superRepresentatives,
     votes || [],
   );
-
   const onSelectSuperRepresentative = useCallback(
     ({ address }, selected) => {
       const newVotes = selected
         ? votes.filter(v => v.address !== address)
-        : [...votes, { address, voteCount: 0 }];
+        : [
+            ...votes,
+            {
+              address,
+              voteCount: 0,
+            },
+          ];
       const tx = bridge.updateTransaction(transaction, {
         votes: newVotes,
       });
@@ -96,7 +96,6 @@ export default function SelectValidator({ navigation, route }: Props) {
     },
     [bridge, setTransaction, transaction, votes],
   );
-
   const onContinue = useCallback(() => {
     const { votes } = transaction;
     const tx =
@@ -122,14 +121,11 @@ export default function SelectValidator({ navigation, route }: Props) {
     bridge,
     route.params.fromStep2,
   ]);
-
   const remainingCount = SR_MAX_VOTES - votes.length;
-
   const disabled = useMemo(
     () => votes.length === 0 || votes.length > SR_MAX_VOTES,
     [votes],
   );
-
   const renderItem = useCallback(
     ({ item }) => (
       <Item
@@ -141,12 +137,16 @@ export default function SelectValidator({ navigation, route }: Props) {
     ),
     [onSelectSuperRepresentative, remainingCount, votes],
   );
-
   return (
     <>
       <TrackScreen category="Vote" name="SelectValidator" />
       <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
         forceInset={forceInset}
       >
         <SelectValidatorSearchBox
@@ -164,19 +164,15 @@ export default function SelectValidator({ navigation, route }: Props) {
     </>
   );
 }
-
 export function SelectValidatorHeaderLeft() {
   const { colors } = useTheme();
   const [infoModalOpen, setInfoModalOpen] = useState();
-
   const openInfoModal = useCallback(() => {
     setInfoModalOpen(true);
   }, [setInfoModalOpen]);
-
   const closeInfoModal = useCallback(() => {
     setInfoModalOpen(false);
   }, [setInfoModalOpen]);
-
   const infoModalData = [
     {
       Icon: () => <Trophy size={18} color={colors.live} />,
@@ -191,7 +187,6 @@ export function SelectValidatorHeaderLeft() {
       description: <Trans i18nKey="tron.info.candidates.description" />,
     },
   ];
-
   return (
     <>
       <TouchableOpacity style={styles.headerButton} onPress={openInfoModal}>
@@ -205,7 +200,6 @@ export function SelectValidatorHeaderLeft() {
     </>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -216,5 +210,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  topContainer: { paddingHorizontal: 32 },
+  topContainer: {
+    paddingHorizontal: 32,
+  },
 });

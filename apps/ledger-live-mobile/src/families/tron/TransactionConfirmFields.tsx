@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
@@ -18,7 +17,6 @@ import {
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
 import { localeSelector } from "../../reducers/settings";
-
 const styles = StyleSheet.create({
   infoText: {
     textAlign: "left",
@@ -50,11 +48,14 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
           >
             <Trans
               i18nKey={`ValidateOnDevice.infoWording.${transaction.mode}`}
-              values={{ resource: (transaction.resource || "").toLowerCase() }}
+              values={{
+                resource: (transaction.resource || "").toLowerCase(),
+              }}
             />
           </LText>
         </DataRow>
       );
+
     default:
       return null;
   }
@@ -62,9 +63,7 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
 
 const TronResourceField = ({ transaction }: { transaction: Transaction }) => {
   invariant(transaction.family === "tron", "tron transaction");
-
   const { resource } = transaction;
-
   return (
     resource && (
       <DataRow label="Resource">
@@ -81,11 +80,9 @@ function TronVotesField({ transaction }: { transaction: Transaction }) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const { votes } = transaction;
-
   const sp = useTronSuperRepresentatives();
   const formattedVotes =
     votes && votes.length > 0 ? formatVotes(votes, sp) : null;
-
   return formattedVotes ? (
     <>
       <HeaderRow
@@ -108,7 +105,6 @@ const fieldComponents = {
   "tron.resource": TronResourceField,
   "tron.votes": TronVotesField,
 };
-
 export default {
   fieldComponents,
   warning: Warning,

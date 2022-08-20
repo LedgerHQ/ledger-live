@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
@@ -10,8 +9,8 @@ export default function SelectValidatorFooter({
   disabled,
   onContinue,
 }: {
-  disabled: boolean,
-  onContinue: () => void,
+  disabled: boolean;
+  onContinue: () => void;
 }) {
   const { colors } = useTheme();
   const isKeyBoardVisible = useKeyboardVisible();
@@ -21,7 +20,14 @@ export default function SelectValidatorFooter({
   }
 
   return (
-    <View style={[styles.wrapper, { borderTopColor: colors.lightGrey }]}>
+    <View
+      style={[
+        styles.wrapper,
+        {
+          borderTopColor: colors.lightGrey,
+        },
+      ]}
+    >
       <View style={styles.continueWrapper}>
         <Button
           event="SelectValidatorContinue"
@@ -34,7 +40,6 @@ export default function SelectValidatorFooter({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   wrapper: {
     alignSelf: "stretch",

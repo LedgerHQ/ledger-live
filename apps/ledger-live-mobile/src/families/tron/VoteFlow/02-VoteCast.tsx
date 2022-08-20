@@ -1,4 +1,3 @@
-/* @flow */
 import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
@@ -30,18 +29,19 @@ import VoteRow from "./02-VoteRow";
 import VoteModal from "./02-VoteModal";
 import Check from "../../../icons/Check";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export default function VoteCast({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
@@ -51,7 +51,6 @@ export default function VoteCast({ route, navigation }: Props) {
   const { tronResources } = account;
   invariant(tronResources, "tron resources required");
   const { tronPower } = tronResources;
-
   const {
     transaction,
     status,
@@ -64,7 +63,6 @@ export default function VoteCast({ route, navigation }: Props) {
     if (!tx) {
       const t = bridge.createTransaction(account);
       const { votes } = tronResources;
-
       return {
         account,
         transaction: bridge.updateTransaction(t, {
@@ -74,32 +72,26 @@ export default function VoteCast({ route, navigation }: Props) {
       };
     }
 
-    return { account, transaction: tx };
+    return {
+      account,
+      transaction: tx,
+    };
   });
-
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "tron", "transaction tron");
-
   const { votes } = transaction;
-
   const sp = useTronSuperRepresentatives();
-
   const formattedVotes = useMemo(() => formatVotes(votes, sp), [sp, votes]);
-
   const votesRemaining = useMemo(
     () => tronPower - votes.reduce((sum, { voteCount }) => sum + voteCount, 0),
     [tronPower, votes],
   );
-
   const [editVote, setEditVote] = useState();
-
   const closeEditVote = useCallback(() => setEditVote(null), [setEditVote]);
-
   const onChange = useCallback(
     (vote: Vote) => {
       const nextVotes = [...votes];
       const index = votes.findIndex(v => v.address === vote.address);
-
       if (index >= 0) nextVotes[index] = vote;
       else if (nextVotes.length < 5) nextVotes.push(vote);
       setTransaction(
@@ -111,24 +103,23 @@ export default function VoteCast({ route, navigation }: Props) {
     },
     [votes, setTransaction, bridge, transaction, closeEditVote],
   );
-
   const openEditModal = useCallback(
     (vote: Vote, name: string) => {
-      setEditVote({ vote, name });
+      setEditVote({
+        vote,
+        name,
+      });
       setopenIndex(-1);
     },
     [setEditVote],
   );
-
   const [openIndex, setopenIndex] = useState(-1);
-
   const onOpen = useCallback(
     i => {
       setopenIndex(i);
     },
     [setopenIndex],
   );
-
   const onRemove = useCallback(
     (vote: Vote) => {
       setTransaction(
@@ -140,7 +131,6 @@ export default function VoteCast({ route, navigation }: Props) {
     },
     [votes, setTransaction, bridge, transaction, closeEditVote],
   );
-
   const onBack = useCallback(() => {
     navigation.push(ScreenName.VoteSelectValidator, {
       accountId: account.id,
@@ -149,7 +139,6 @@ export default function VoteCast({ route, navigation }: Props) {
       fromStep2: true,
     });
   }, [account, navigation, transaction, status]);
-
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.VoteSelectDevice, {
       accountId: account.id,
@@ -157,30 +146,29 @@ export default function VoteCast({ route, navigation }: Props) {
       status,
     });
   }, [account, navigation, transaction, status]);
-
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
-
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
-
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, transaction, bridge]);
-
   const error = bridgePending ? null : status.errors.vote;
-
   return (
     <>
       <TrackScreen category="Vote" name="VoteCast" />
       <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
         forceInset={forceInset}
       >
         <ScrollView style={[styles.root]}>
@@ -199,7 +187,12 @@ export default function VoteCast({ route, navigation }: Props) {
             <View style={styles.addMoreVotesContainer}>
               <TouchableOpacity
                 onPress={onBack}
-                style={[styles.addMoreVotes, { backgroundColor: colors.card }]}
+                style={[
+                  styles.addMoreVotes,
+                  {
+                    backgroundColor: colors.card,
+                  },
+                ]}
               >
                 <LText semiBold style={styles.addMoreVotesLabel} color="live">
                   <Trans i18nKey="vote.castVotes.addMoreVotes" />
@@ -234,7 +227,9 @@ export default function VoteCast({ route, navigation }: Props) {
               <LText style={styles.availableAmount} color="grey">
                 <Trans
                   i18nKey="vote.castVotes.votesRemaining"
-                  values={{ total: votesRemaining }}
+                  values={{
+                    total: votesRemaining,
+                  }}
                 >
                   <LText semiBold style={styles.availableAmount}>
                     text
@@ -287,12 +282,13 @@ export default function VoteCast({ route, navigation }: Props) {
     </>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  topContainer: { paddingHorizontal: 32 },
+  topContainer: {
+    paddingHorizontal: 32,
+  },
   bottomWrapper: {
     alignSelf: "stretch",
     alignItems: "center",
@@ -319,23 +315,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexGrow: 1,
     paddingVertical: 8,
-
     marginBottom: 8,
   },
   availableAmount: {
     marginHorizontal: 3,
   },
-  addMoreVotesContainer: { paddingHorizontal: 16 },
+  addMoreVotesContainer: {
+    paddingHorizontal: 16,
+  },
   addMoreVotes: {
     width: "100%",
     padding: 16,
     borderRadius: 4,
-
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: 5,
   },
-  addMoreVotesLabel: { fontSize: 16 },
-  votesSuccess: { marginLeft: 10 },
+  addMoreVotesLabel: {
+    fontSize: 16,
+  },
+  votesSuccess: {
+    marginLeft: 10,
+  },
 });
