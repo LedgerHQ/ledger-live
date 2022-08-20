@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
 import { AppState, Linking } from "react-native";
@@ -6,18 +5,18 @@ import type { T } from "../../types/common";
 import FallbackCameraBody from "../FallbackCameraBody";
 
 type Props = {
-  navigation: any,
-  t: T,
-  route: { params: RouteParams },
+  navigation: any;
+  t: T;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  screenName: string,
+  screenName: string;
 };
-
 type State = {
-  appSTate: string,
-  openSettingsPressed: boolean,
+  appSTate: string;
+  openSettingsPressed: boolean;
 };
 
 class FallBackCameraScreen extends PureComponent<Props, State> {
@@ -37,6 +36,7 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
   handleAppStateChange = nextAppState => {
     const { appState, openSettingsPressed } = this.state;
     const { navigation, route } = this.props;
+
     if (
       appState.match(/inactive|background/) &&
       nextAppState === "active" &&
@@ -45,11 +45,15 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
     ) {
       navigation.replace(route.params.screenName);
     }
-    this.setState({ appState: nextAppState });
-  };
 
+    this.setState({
+      appState: nextAppState,
+    });
+  };
   openNativeSettings = () => {
-    this.setState({ openSettingsPressed: true });
+    this.setState({
+      openSettingsPressed: true,
+    });
     Linking.openSettings();
   };
 
