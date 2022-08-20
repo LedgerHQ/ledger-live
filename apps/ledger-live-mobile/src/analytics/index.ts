@@ -1,4 +1,3 @@
-// @flow
 import Track from "./Track";
 import TrackScreen from "./TrackScreen";
 
