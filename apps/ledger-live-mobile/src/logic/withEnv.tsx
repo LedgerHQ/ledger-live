@@ -1,16 +1,19 @@
-// @flow
 import React from "react";
 import { changes, getAllEnvs } from "@ledgerhq/live-common/env";
 import type { EnvName } from "@ledgerhq/live-common/env";
 import hoistNonReactStatics from "hoist-non-react-statics";
 
-const withEnv = (name: EnvName, propName: string = "env") => (Comp: any) => {
-  class WithEnv extends React.Component<*, { env: any }> {
+const withEnv = (name: EnvName, propName = "env") => (Comp: any) => {
+  class WithEnv extends React.Component<
+    any,
+    {
+      env: any;
+    }
+  > {
     state = {
       env: getAllEnvs()[name],
     };
-
-    sub: *;
+    sub: any;
 
     componentDidMount() {
       this.subscribe();
@@ -25,7 +28,9 @@ const withEnv = (name: EnvName, propName: string = "env") => (Comp: any) => {
     subscribe = () => {
       this.sub = changes.subscribe(({ name: envName, value }) => {
         if (envName === name) {
-          this.setState({ env: value });
+          this.setState({
+            env: value,
+          });
         }
       });
     };
@@ -40,7 +45,6 @@ const withEnv = (name: EnvName, propName: string = "env") => (Comp: any) => {
   }
 
   hoistNonReactStatics(WithEnv, Comp);
-
   return WithEnv;
 };
 

@@ -1,5 +1,3 @@
-// @flow
-
 export default {
   url: (url: string): string =>
     url

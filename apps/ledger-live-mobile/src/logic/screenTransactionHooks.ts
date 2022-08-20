@@ -1,4 +1,3 @@
-/* @flow */
 import invariant from "invariant";
 import { concat, of, from } from "rxjs";
 import { concatMap, filter } from "rxjs/operators";
@@ -30,7 +29,7 @@ import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
 
 export const useTransactionChangeFromNavigation = (
-  setTransaction: Transaction => void,
+  setTransaction: (_: Transaction) => void,
 ) => {
   const route = useRoute();
   const navigationTransaction = route.params?.transaction;
@@ -42,48 +41,52 @@ export const useTransactionChangeFromNavigation = (
     }
   }, [setTransaction, navigationTransaction]);
 };
-
 export const useSignWithDevice = ({
   account,
   parentAccount,
   updateAccountWithUpdater,
   context,
 }: {
-  context: string,
-  account: AccountLike,
-  parentAccount: ?Account,
-  updateAccountWithUpdater: (string, (Account) => Account) => void,
+  context: string;
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  updateAccountWithUpdater: (
+    // eslint-disable-next-line no-unused-vars
+    arg0: string,
+    // eslint-disable-next-line no-unused-vars
+    arg1: (arg0: Account) => Account,
+  ) => void;
 }) => {
   const route = useRoute();
   const navigation = useNavigation();
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
   const subscription = useRef(null);
-
   const signWithDevice = useCallback(() => {
     const { deviceId, transaction } = route.params || {};
     const bridge = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
-
     navigation.setOptions({
       gestureEnabled: false,
     });
-
     setSigning(true);
-
     log("transaction-summary", `→ FROM ${formatAccount(mainAccount, "basic")}`);
     log(
       "transaction-summary",
       `✔️ transaction ${formatTransaction(transaction, mainAccount)}`,
     );
-
     subscription.current = bridge
-      .signOperation({ account: mainAccount, transaction, deviceId })
+      .signOperation({
+        account: mainAccount,
+        transaction,
+        deviceId,
+      })
       .pipe(
         // FIXME later we will need to treat more events
         filter(e => e.type === "signed"),
-        concatMap(e =>
-          // later we will have more events
+        concatMap((
+          e, // later we will have more events
+        ) =>
           concat(
             of(e),
             from(
@@ -92,7 +95,10 @@ export const useSignWithDevice = ({
                   account: mainAccount,
                   signedOperation: e.signedOperation,
                 })
-                .then(operation => ({ type: "broadcasted", operation })),
+                .then(operation => ({
+                  type: "broadcasted",
+                  operation,
+                })),
             ),
           ),
         ),
@@ -129,11 +135,13 @@ export const useSignWithDevice = ({
         },
         error: e => {
           let error = e;
+
           if (e && e.statusCode === 0x6985) {
             error = new UserRefusedOnDevice();
           } else {
             logger.critical(error);
           }
+
           navigation.replace(context + "ValidationError", {
             ...route.params,
             error,
@@ -148,32 +156,28 @@ export const useSignWithDevice = ({
     updateAccountWithUpdater,
     route.params,
   ]);
-
   useEffect(() => {
     signWithDevice();
     return () => {
       navigation.setOptions({
         gestureEnabled: Platform.OS === "ios",
       });
+
       if (subscription.current) {
         subscription.current.unsubscribe();
       }
-    };
-    // only this effect on mount
+    }; // only this effect on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return [signing, signed];
 };
-
 type SignTransactionArgs = {
-  account: AccountLike,
-  parentAccount: ?Account,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
 };
-
 export const broadcastSignedTx = async (
   account: AccountLike,
-  parentAccount: ?Account,
+  parentAccount: Account | null | undefined,
   signedOperation: SignedOperation,
 ): Promise<Operation> => {
   invariant(account, "account not present");
@@ -215,15 +219,17 @@ export function useSignedTxHandler({
   account,
   parentAccount,
 }: SignTransactionArgs & {
-  account: AccountLike,
-  parentAccount: ?Account,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
 }) {
   const navigation = useNavigation();
   const route = useRoute();
-  const broadcast = useBroadcast({ account, parentAccount });
+  const broadcast = useBroadcast({
+    account,
+    parentAccount,
+  });
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
-
   return useCallback(
     // TODO: fix type error
     // $FlowFixMe
@@ -234,20 +240,15 @@ export function useSignedTxHandler({
         }
 
         const operation = await broadcast(signedOperation);
-
         log(
           "transaction-summary",
           `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(
             operation,
           )}`,
         );
-
         navigation.replace(
           route.name.replace("ConnectDevice", "ValidationSuccess"),
-          {
-            ...route.params,
-            result: operation,
-          },
+          { ...route.params, result: operation },
         );
         dispatch(
           updateAccountWithUpdater(mainAccount.id, account =>
@@ -263,27 +264,24 @@ export function useSignedTxHandler({
         ) {
           logger.critical(error);
         }
+
         navigation.replace(
           route.name.replace("ConnectDevice", "ValidationError"),
-          {
-            ...route.params,
-            error,
-          },
+          { ...route.params, error },
         );
       }
     },
     [navigation, route, broadcast, mainAccount, dispatch],
   );
 }
-
 export function useSignedTxHandlerWithoutBroadcast({
   onSuccess,
 }: {
-  onSuccess: (signedOp: *) => void,
+  // eslint-disable-next-line no-unused-vars
+  onSuccess: (signedOp: any) => void;
 }) {
   const navigation = useNavigation();
   const route = useRoute();
-
   return useCallback(
     // TODO: fix type error
     // $FlowFixMe
@@ -293,7 +291,9 @@ export function useSignedTxHandlerWithoutBroadcast({
           throw transactionSignError;
         }
 
-        onSuccess({ signedOperation });
+        onSuccess({
+          signedOperation,
+        });
       } catch (error) {
         if (
           !(
@@ -303,6 +303,7 @@ export function useSignedTxHandlerWithoutBroadcast({
         ) {
           logger.critical(error);
         }
+
         navigation.replace(
           route.name.replace("ConnectDevice", "ValidationError"),
           { ...route.params, error },

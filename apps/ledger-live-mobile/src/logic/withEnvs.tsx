@@ -1,15 +1,18 @@
-// @flow
 import React from "react";
 import { changes, getAllEnvs } from "@ledgerhq/live-common/env";
 import hoistNonReactStatics from "hoist-non-react-statics";
 
 const withEnvs = (Comp: any) => {
-  class WithEnvs extends React.Component<*, { envs: { [string]: any } }> {
+  class WithEnvs extends React.Component<
+    any,
+    {
+      envs: Record<string, any>;
+    }
+  > {
     state = {
       envs: getAllEnvs(),
     };
-
-    sub: *;
+    sub: any;
 
     componentDidMount() {
       this.subscribe();
@@ -24,7 +27,9 @@ const withEnvs = (Comp: any) => {
     subscribe = () => {
       this.sub = changes.subscribe(() => {
         const envs = getAllEnvs();
-        this.setState({ envs });
+        this.setState({
+          envs,
+        });
       });
     };
 
@@ -35,7 +40,6 @@ const withEnvs = (Comp: any) => {
   }
 
   hoistNonReactStatics(WithEnvs, Comp);
-
   return WithEnvs;
 };
 

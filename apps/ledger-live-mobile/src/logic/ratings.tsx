@@ -1,4 +1,3 @@
-// @flow
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -25,6 +24,7 @@ import { setNotificationsModalLocked } from "../actions/notifications";
 
 export type RatingsHappyMoment = {
     /** Name of the route that will trigger the rating flow */
+    // eslint-disable-next-line camelcase
     route_name: string,
     /** In milliseconds, delay before triggering the rating flow */
     timer: number,

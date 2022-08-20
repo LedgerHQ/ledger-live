@@ -1,9 +1,9 @@
-// @flow
-
 import { Platform } from "react-native";
 
 const mega = 1048576;
-export const getAndroidArchitecture = (buildVersion?: ?string) => {
+export const getAndroidArchitecture = (
+  buildVersion?: string | null | undefined,
+) => {
   const buildVersionNumber = parseInt(buildVersion, 10);
   if (!buildVersionNumber) return "";
 
@@ -15,20 +15,20 @@ export const getAndroidArchitecture = (buildVersion?: ?string) => {
 
   return buildVersion;
 };
-
-export const getAndroidVersionCode = (buildVersion?: ?string) => {
+export const getAndroidVersionCode = (
+  buildVersion?: string | null | undefined,
+) => {
   const buildVersionNumber = parseInt(buildVersion, 10);
   if (!buildVersionNumber) return "";
-
   return Platform.OS === "android" && buildVersionNumber
     ? buildVersionNumber % mega
     : buildVersion;
 };
-
-export default (buildVersion?: ?string) => {
+export default (buildVersion?: string | null | undefined) => {
   if (Platform.OS === "android" && buildVersion) {
     return `${getAndroidArchitecture(buildVersion) ||
       ""} ${getAndroidVersionCode(buildVersion) || ""}`;
   }
+
   return buildVersion;
 };

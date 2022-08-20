@@ -31,6 +31,8 @@ import { track } from "../analytics";
 
 export type EventTrigger = {
     /** Name of the route that will trigger the push notification modal */
+    // camelcase perhps it should
+    // eslint-disable-next-line
     route_name: string,
     /** In milliseconds, delay before triggering the push notification modal */
     timer: number,
@@ -124,7 +126,8 @@ const useNotifications = () => {
                 }
             });
             // Needed to avoid a warning
-            fcm.setBackgroundMessageHandler(async remoteMessage => {
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            fcm.setBackgroundMessageHandler(async _ => {
             });
         }
     }, [notificationsToken, pushToast]);

@@ -14,7 +14,6 @@ const getChunks = (str, size) => {
   const strLength = str.length;
   const numChunks = Math.ceil(strLength / size);
   const chunks = new Array(numChunks);
-
   let i = 0;
   let o = 0;
 
@@ -39,6 +38,7 @@ const stringifyPairs = pairs =>
         ...chunks.map((chunk, index) => [key + CHUNKED_KEY + index, chunk]),
       ];
     }
+
     return [...acc, [key, data]];
   }, []);
 
@@ -47,9 +47,11 @@ const getCompressedValue = async (key, value) => {
     if (value && value.includes(CHUNKED_KEY)) {
       const numberOfChunk = Number(value.replace(CHUNKED_KEY, ""));
       const keys = [];
+
       for (let i = 0; i < numberOfChunk; i++) {
         keys.push(key + CHUNKED_KEY + i);
       }
+
       let values = [];
 
       // multiget will failed when you got keys with a tons of data
@@ -60,12 +62,14 @@ const getCompressedValue = async (key, value) => {
           ...(await AsyncStorage.multiGet(keys.splice(0, 5))),
         ];
       }
+
       const concatString = values.reduce(
         (acc, current) => acc + current[1],
         "",
       );
       return JSON.parse(concatString);
     }
+
     return JSON.parse(value);
   } catch (e) {
     return undefined;
@@ -83,6 +87,7 @@ const deviceStorage = {
       const value = await AsyncStorage.getItem(key);
       return getCompressedValue(key, value);
     }
+
     const values = await AsyncStorage.multiGet(key);
     const data = values.map(value => getCompressedValue(value[0], value[1]));
     return Promise.all(data).then(array => array.filter(Boolean));
@@ -96,6 +101,7 @@ const deviceStorage = {
    */
   save(key, value) {
     let pairs = [];
+
     if (!Array.isArray(key)) {
       pairs.push([key, value]);
     } else {
@@ -130,6 +136,7 @@ const deviceStorage = {
   async delete(key) {
     let keys;
     const existingKeys = await AsyncStorage.getAllKeys();
+
     if (!Array.isArray(key)) {
       keys = existingKeys.filter(existingKey => existingKey.include(key));
     } else {
@@ -137,6 +144,7 @@ const deviceStorage = {
         key.some(keyToDelete => existingKey.includes(keyToDelete)),
       );
     }
+
     return AsyncStorage.multiRemove(keys);
   },
 
@@ -162,14 +170,15 @@ const deviceStorage = {
         // if there is no current value populate it with the new value
         return deviceStorage.save(key, [value]);
       }
+
       if (Array.isArray(currentValue)) {
         return deviceStorage.save(key, [...currentValue, value]);
       }
+
       throw new Error(
         `Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`,
       );
     });
   },
 };
-
 module.exports = deviceStorage;

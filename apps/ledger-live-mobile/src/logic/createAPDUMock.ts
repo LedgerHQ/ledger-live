@@ -1,32 +1,29 @@
-// @flow
-
 import { Buffer } from "buffer";
 import { delay } from "@ledgerhq/live-common/promise";
 
 export type ApduMock = {
-  exchange: Buffer => Promise<Buffer>,
-  close: () => Promise<void>,
+  exchange: (_: Buffer) => Promise<Buffer>;
+  close: () => Promise<void>;
 };
-
 const genericErrorResponse = Buffer.from([0x6f, 0x42]);
 const successResponse = Buffer.from([0x90, 0x00]);
-
 export default (arg: {
-  getDeviceName: () => Promise<string>,
-  setDeviceName: string => Promise<void>,
+  getDeviceName: () => Promise<string>;
+  setDeviceName: (_: string) => Promise<void>;
   getAddress: () => Promise<{
-    publicKey: string,
-    address: string,
-    chainCode: string,
-  }>,
+    publicKey: string;
+    address: string;
+    chainCode: string;
+  }>;
   getAppAndVersion: () => Promise<{
-    name: string,
-    version: string,
-    flags: number,
-  }>,
+    name: string;
+    version: string;
+    flags: number;
+  }>;
 }): ApduMock => {
   async function exchange(input: Buffer) {
     await delay(100);
+
     /*
     const cla = input.readUInt8(0);
     const ins = input.readUInt8(1);
@@ -46,6 +43,7 @@ export default (arg: {
           "hex",
         );
       }
+
       case "e0d2": {
         // get name
         return Buffer.concat([
@@ -53,20 +51,20 @@ export default (arg: {
           successResponse,
         ]);
       }
+
       case "e0d4": {
         // set name
         arg.setDeviceName(await data.toString());
         return successResponse;
       }
+
       case "e040": {
         // get address
         try {
           const addr = await arg.getAddress();
-
           const pubKey = Buffer.from(addr.publicKey, "hex");
           const address = Buffer.from(addr.address, "ascii");
           const chainCode = Buffer.from(addr.chainCode, "hex");
-
           return Buffer.concat([
             Buffer.from([pubKey.length]),
             pubKey,
@@ -79,6 +77,7 @@ export default (arg: {
           return genericErrorResponse;
         }
       }
+
       case "b001": {
         // get app and version
         const data = await arg.getAppAndVersion();
@@ -96,6 +95,7 @@ export default (arg: {
           successResponse,
         ]);
       }
+
       default:
         return successResponse;
     }
@@ -105,5 +105,8 @@ export default (arg: {
     return delay(100);
   }
 
-  return { exchange, close };
+  return {
+    exchange,
+    close,
+  };
 };
