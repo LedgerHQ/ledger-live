@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { BridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,7 +8,11 @@ import { blacklistedTokenIdsSelector } from "../reducers/settings";
 import { track } from "../analytics/segment";
 import { prepareCurrency, hydrateCurrency } from "./cache";
 
-export const BridgeSyncProvider = ({ children }: { children: React$Node }) => {
+export const BridgeSyncProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const accounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const dispatch = useDispatch();
@@ -19,11 +21,9 @@ export const BridgeSyncProvider = ({ children }: { children: React$Node }) => {
       dispatch(updateAccountWithUpdater(accountId, updater)),
     [dispatch],
   );
-
   const recoverError = useCallback(error => {
     logger.critical(error);
   }, []);
-
   return (
     <BridgeSync
       accounts={accounts}

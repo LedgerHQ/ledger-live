@@ -1,7 +1,4 @@
-// @flow
-
-// This will be converted into string enum once TypeScript is supported in this project.
-
+// FIXME This will be converted into string enum once TypeScript is supported in this project.
 export const ScreenName = {
   /* eslint-disable sort-keys */
   AboutSettings: "AboutSettings",
@@ -94,7 +91,6 @@ export const ScreenName = {
   NftImageViewer: "NftImageViewer",
   NftViewer: "NftViewer",
   NotificationsSettings: "NotificationsSettings",
-
   OperationDetails: "OperationDetails",
   PairDevices: "PairDevices",
   PasswordAdd: "PasswordAdd",
@@ -103,7 +99,6 @@ export const ScreenName = {
   PortfolioOperationHistory: "PortfolioOperationHistory",
   PurchaseDevice: "PurchaseDevice",
   RateProviderSettings: "RateProviderSettings",
-
   ReceiveConfirmation: "ReceiveConfirmation",
   ReceiveVerificationConfirmation: "ReceiveVerificationConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
@@ -112,7 +107,6 @@ export const ScreenName = {
   ReceiveSelectAccount: "ReceiveSelectAccount",
   ReceiveAddAccountSelectDevice: "ReceiveAddAccountSelectDevice",
   ReceiveAddAccount: "ReceiveAddAccount",
-
   RegionSettings: "RegionSettings",
   RepairDevice: "RepairDevice",
   Resources: "Resources",
@@ -150,12 +144,10 @@ export const ScreenName = {
   SwapOperationDetails: "SwapOperationDetails",
   SwapPendingOperation: "SwapPendingOperation",
   SwapSummary: "SwapSummary",
-
   SwapV2FormSelectAccount: "SwapV2FormSelectAccount",
   SwapV2FormSelectCurrency: "SwapV2FormSelectCurrency",
   SwapV2FormSelectFees: "SwapV2FormSelectFees",
   SwapFormSelectProviderRate: "SwapFormSelectProviderRate",
-
   TezosDelegationFlow: "TezosDelegationFlow",
   Transfer: "Transfer",
   UnfreezeAmount: "UnfreezeAmount",
@@ -171,7 +163,6 @@ export const ScreenName = {
   VoteValidation: "VoteValidation",
   VoteValidationError: "VoteValidationError",
   VoteValidationSuccess: "VoteValidationSuccess",
-
   CosmosEditMemo: "CosmosEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
@@ -199,10 +190,8 @@ export const ScreenName = {
   CosmosClaimRewardsValidation: "CosmosClaimRewardsValidation",
   CosmosClaimRewardsValidationError: "CosmosClaimRewardsValidationError",
   CosmosClaimRewardsValidationSuccess: "CosmosClaimRewardsValidationSuccess",
-
   // crypto_org
   CryptoOrgEditMemo: "CryptoOrgEditMemo",
-
   AlgorandEditMemo: "AlgorandEditMemo",
   AlgorandClaimRewardsInfo: "AlgorandClaimRewardsInfo",
   AlgorandClaimRewardsStarted: "AlgorandClaimRewardsStarted",
@@ -218,7 +207,6 @@ export const ScreenName = {
   AlgorandOptInValidation: "AlgorandOptInValidation",
   AlgorandOptInValidationError: "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess: "AlgorandOptInValidationSuccess",
-
   // Polkadot
   PolkadotBondStarted: "PolkadotBondStarted",
   PolkadotBondAmount: "PolkadotBondAmount",
@@ -248,7 +236,6 @@ export const ScreenName = {
     "PolkadotSimpleOperationValidationError",
   PolkadotSimpleOperationValidationSuccess:
     "PolkadotSimpleOperationValidationSuccess",
-
   // Stellar
   StellarEditMemoType: "StellarEditMemoType",
   StellarEditMemoValue: "StellarEditMemoValue",
@@ -259,7 +246,6 @@ export const ScreenName = {
   StellarAddAssetValidation: "StellarAddAssetValidation",
   StellarAddAssetValidationError: "StellarAddAssetValidationError",
   StellarAddAssetValidationSuccess: "StellarAddAssetValidationSuccess",
-
   LendingDashboard: "LendingDashboard",
   LendingClosedLoans: "LendingClosedLoans",
   LendingHistory: "LendingHistory",
@@ -267,7 +253,6 @@ export const ScreenName = {
   LendingInfo1: "LendingInfo1",
   LendingInfo2: "LendingInfo2",
   LendingInfo3: "LendingInfo3",
-
   LendingEnableSelectAccount: "Lend ApproveSelectAccount",
   LendingEnableAmount: "Lend ApproveAmount",
   LendingEnableAmountAdvanced: "Lend ApproveAmountAdvanced",
@@ -278,7 +263,6 @@ export const ScreenName = {
   LendingEnableValidation: "Lend ApproveValidation",
   LendingEnableValidationError: "Lend ApproveValidationError",
   LendingEnableValidationSuccess: "Lend ApproveValidationSuccess",
-
   LendingSupplyAmount: "Lend SupplyAmount",
   LendingSupplySummary: "Lend SupplySummary",
   LendingSupplySelectDevice: "Lend SupplySelectDevice",
@@ -286,7 +270,6 @@ export const ScreenName = {
   LendingSupplyValidation: "Lend SupplyValidation",
   LendingSupplyValidationError: "Lend SupplyValidationError",
   LendingSupplyValidationSuccess: "Lend SupplyValidationSuccess",
-
   LendingWithdrawAmount: "Lend WithdrawAmount",
   LendingWithdrawSummary: "Lend WithdrawSummary",
   LendingWithdrawSelectDevice: "Lend WithdrawSelectDevice",
@@ -294,7 +277,6 @@ export const ScreenName = {
   LendingWithdrawValidation: "Lend WithdrawValidation",
   LendingWithdrawValidationError: "Lend WithdrawValidationError",
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
-
   OnboardingWelcome: "OnboardingWelcome",
   OnboardingDoYouHaveALedgerDevice: "OnboardingStepDoYouHaveALedgerDevice",
   OnboardingPostWelcomeSelection: "OnboardingPostWelcomeSelection",
@@ -304,7 +286,6 @@ export const ScreenName = {
   OnboardingDeviceSelection: "OnboardingDeviceSelection",
   OnboardingUseCase: "OnboardingUseCase",
   OnboardingModalDiscoverLive: "OnboardingModalDiscoverLive",
-
   OnboardingSetNewDeviceInfo: "OnboardingSetNewDeviceInfo",
   OnboardingSetNewDevice: "OnboardingSetNewDevice",
   OnboardingSetupDeviceInformation: "OnboardingSetupDeviceInformation",
@@ -313,18 +294,13 @@ export const ScreenName = {
   OnboardingBluetoothInformation: "OnboardingBluetoothInformation",
   OnboardingInfoModal: "OnboardingInfoModal",
   OnboardingRecoveryPhrase: "OnboardingRecoveryPhrase",
-
   OnboardingPairNew: "OnboardingPairNew",
   OnboardingImportAccounts: "OnboardingImportAccounts",
-
   OnboardingImportScan: "OnboardingImportScan",
   OnboardingImportSelectAccount: "OnboardingImportSelectAccount",
-
   OnboardingQuiz: "OnboardingQuiz",
   OnboardingQuizFinal: "OnboardingQuizFinal",
-
   OnboardingFinish: "OnboardingFinish",
-
   OnboardingLanguageModal: "OnboardingLanguageModal",
   OnboardingModalSetupNewDevice: "OnboardingModalSetupNewDevice",
   OnboardingModalSetupSteps: "OnboardingModalSetupSteps",
@@ -335,58 +311,44 @@ export const ScreenName = {
   OnboardingModalSyncDesktopInformation:
     "OnboardingModalSyncDesktopInformation",
   OnboardingModalRecoveryPhraseWarning: "OnboardingModalRecoveryPhraseWarning",
-
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
   PlatformStartExchange: "PlatformStartExchange",
   PlatformCompleteExchange: "PlatformCompleteExchange",
-
   WalletConnectScan: "WalletConnectScan",
   WalletConnectConnect: "WalletConnectConnect",
   WalletConnectDeeplinkingSelectAccount:
     "WalletConnectDeeplinkingSelectAccount",
-
   NotificationCenterNews: "NotificationCenterNews",
   NotificationCenterStatus: "NotificationCenterStatus",
-
   SignTransactionSummary: "SignTransactionSummary",
   SignTransactionSelectDevice: "SignTransactionSelectDevice",
   SignTransactionConnectDevice: "SignTransactionConnectDevice",
   SignTransactionValidationError: "SignTransactionValidationError",
-
   RequestAccountsSelectCrypto: "RequestAccountsSelectCrypto",
   RequestAccountsSelectAccount: "RequestAccountsSelectAccount",
-
   MarketList: "MarketList",
   MarketCurrencySelect: "MarketCurrencySelect",
   MarketDetail: "MarketDetail",
-
   VerifyAccount: "VerifyAccount",
-
   AnalyticsAllocation: "AnalyticsAllocation",
   AnalyticsOperations: "AnalyticsOperations",
-
   // solana
   SolanaEditMemo: "SolanaEditMemo",
   SolanaEditAmount: "SolanaEditAmount",
-
   PostBuyDeviceScreen: "PostBuyDeviceScreen",
   PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
-
   NoDeviceWallScreen: "NoDeviceWallScreen",
-
   DiscoverScreen: "DiscoverScreen",
   Learn: "Learn",
-
   // cardano
   CardanoEditMemo: "CardanoEditMemo",
-
   // hedera
   HederaEditMemo: "HederaEditMemo",
 };
-
 export const NavigatorName = {
   // Stack
+
   /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
   // add "Navigator" postfix to distinguish this from ScreenName.Accounts
   Accounts: "AccountsNavigator",
@@ -434,30 +396,25 @@ export const NavigatorName = {
   LendingEnableFlow: "LendingEnableFlow",
   LendingSupplyFlow: "LendingSupplyFlow",
   LendingWithdrawFlow: "LendingWithdrawFlow",
+
   /* eslint-disable sort-keys */
   SignTransaction: "SignTransaction",
   RequestAccount: "RequestAccount",
   RequestAccountsAddAccounts: "RequestAccountsAddAccounts",
-
   // Polkadot
   PolkadotBondFlow: "PolkadotBondFlow",
   PolkadotUnbondFlow: "PolkadotUnbondFlow",
   PolkadotRebondFlow: "PolkadotRebondFlow",
   PolkadotNominateFlow: "PolkadotNominateFlow",
   PolkadotSimpleOperationFlow: "PolkadotSimpleOperationFlow",
-
   // Solana
   SolanaDelegationFlow: "SolanaDelegationFlow",
-
   // Stellar
   StellarAddAssetFlow: "StellarAddAssetFlow",
-
   NotificationCenter: "NotificationCenter",
   Market: "Market",
-
   // Tab
   Main: "Main",
-
   // Root
   RootNavigator: "RootNavigator",
   Discover: "Discover",
