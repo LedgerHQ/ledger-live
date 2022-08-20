@@ -1,9 +1,9 @@
-/* @flow */
 import type { Opts, Res } from ".";
 
 export default ({ bold, semiBold, monospace }: Opts = {}): Res => {
   const family = monospace ? "monospace" : "Inter";
   let weight;
+
   if (semiBold) {
     weight = "SemiBold";
   } else if (bold) {
@@ -13,5 +13,8 @@ export default ({ bold, semiBold, monospace }: Opts = {}): Res => {
   }
 
   const fontFamily = monospace ? family : `${family}-${weight}`;
-  return { fontFamily, fontWeight: "normal" };
+  return {
+    fontFamily,
+    fontWeight: "normal",
+  };
 };
