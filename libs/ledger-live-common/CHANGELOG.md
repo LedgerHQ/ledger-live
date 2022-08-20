@@ -1,43 +1,120 @@
 # @ledgerhq/live-common
 
-## 25.2.0-nightly.3
+## 26.0.0
 
-### Patch Changes
+### Major Changes
 
-- [#970](https://github.com/LedgerHQ/ledger-live/pull/970) [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311) Thanks [@alexandremgo](https://github.com/alexandremgo)! - BLE scanning and pairing hooks
-
-- Updated dependencies [[`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
-  - @ledgerhq/hw-transport@6.27.3-nightly.0
-  - @ledgerhq/hw-app-algorand@6.27.3-nightly.0
-  - @ledgerhq/hw-app-btc@8.0.1-nightly.0
-  - @ledgerhq/hw-app-cosmos@6.27.3-nightly.0
-  - @ledgerhq/hw-app-eth@6.29.4-nightly.0
-  - @ledgerhq/hw-app-polkadot@6.27.3-nightly.0
-  - @ledgerhq/hw-app-solana@6.27.3-nightly.0
-  - @ledgerhq/hw-app-str@6.27.3-nightly.0
-  - @ledgerhq/hw-app-tezos@6.27.3-nightly.0
-  - @ledgerhq/hw-app-trx@6.27.3-nightly.0
-  - @ledgerhq/hw-app-xrp@6.27.3-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.3-nightly.0
-  - @ledgerhq/hw-transport-node-speculos@6.27.3-nightly.0
-
-## 25.2.0-nightly.2
-
-### Patch Changes
-
-- [#730](https://github.com/LedgerHQ/ledger-live/pull/730) [`6e057f7163`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4) Thanks [@LFBarreto](https://github.com/LFBarreto)! - update ptx smart routing feature flag and live app web player undefined uri params
-
-## 25.2.0-nightly.1
+- [#918](https://github.com/LedgerHQ/ledger-live/pull/918) [`a36d1de865`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - fix useAllAmount usage when fees are higher than balance
 
 ### Minor Changes
 
-- [#814](https://github.com/LedgerHQ/ledger-live/pull/814) [`23c9bf9949`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development/QA tool for feature flags [Desktop]
+- [#764](https://github.com/LedgerHQ/ledger-live/pull/764) [`ebe1adfb7d`](https://github.com/LedgerHQ/ledger-live/commit/ebe1adfb7d264da0f8c9e30b84c188eaa931d1e6) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development firmware detection to getDeviceInfo
 
-## 25.2.0-nightly.0
+* [#451](https://github.com/LedgerHQ/ledger-live/pull/451) [`134355d561`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Type libraries usage in LLC, LLD, LLM, CLI
+
+- [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
+
+### Patch Changes
+
+- [#665](https://github.com/LedgerHQ/ledger-live/pull/665) [`37159cbb9e`](https://github.com/LedgerHQ/ledger-live/commit/37159cbb9e0023b65593e4ed71557f80bf48989e) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Update @polkadot dependencies
+
+* [#664](https://github.com/LedgerHQ/ledger-live/pull/664) [`3dbd4d0781`](https://github.com/LedgerHQ/ledger-live/commit/3dbd4d0781569cd0bfce575854e706def2bd951f) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Update taquito dependency
+
+- [#803](https://github.com/LedgerHQ/ledger-live/pull/803) [`1a33d8641f`](https://github.com/LedgerHQ/ledger-live/commit/1a33d8641f9d1b4e4adfa262a179f124918e0ff5) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Reduce limit param in Stellar requests to avoid 503 "object too large" errors from infra
+
+* [#882](https://github.com/LedgerHQ/ledger-live/pull/882) [`807f3feb94`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8) Thanks [@Justkant](https://github.com/Justkant)! - fix: bump platform API version [LIVE-3181]
+
+- [#850](https://github.com/LedgerHQ/ledger-live/pull/850) [`f4b7894426`](https://github.com/LedgerHQ/ledger-live/commit/f4b7894426341f5b909ba3a2422ae2b8ecf31466) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - cardano address validation fix
+
+* [#779](https://github.com/LedgerHQ/ledger-live/pull/779) [`97eab434de`](https://github.com/LedgerHQ/ledger-live/commit/97eab434dee361716588b256146665c99c274af9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Refactoring of useOnboardingStatePolling bringing 2 changes:
+
+  - avoid re-rendering: the hook only updates its result on a new onboardingState or new allowedError, not at every run
+  - update of useOnboardingStatePolling args: getOnboardingStatePolling as an optional injected dependency to the hook. It is needed for LLD to have the polling working on the internal thread. It is set by default to live-common/hw/getOnboardingStatePolling so it is not needed to pass it as an arg to use the hook on LLM.
+
+* Updated dependencies [[`134355d561`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4), [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1), [`e2a9cfad63`](https://github.com/LedgerHQ/ledger-live/commit/e2a9cfad63f3c8fddf4660942a53545eabb03d6b)]:
+  - @ledgerhq/cryptoassets@6.32.0
+  - @ledgerhq/hw-app-eth@6.29.4
+
+## 26.0.0-next.2
+
+### Major Changes
+
+- [#918](https://github.com/LedgerHQ/ledger-live/pull/918) [`a36d1de86`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - fix useAllAmount usage when fees are higher than balance
+
+## 25.2.0-next.1
+
+### Minor Changes
+
+- [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e89`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
+
+### Patch Changes
+
+- Updated dependencies [[`0c12f3e89`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1)]:
+  - @ledgerhq/cryptoassets@6.32.0-next.1
+  - @ledgerhq/hw-app-eth@6.29.4-next.1
+
+## 25.2.0-next.0
 
 ### Minor Changes
 
 - [#764](https://github.com/LedgerHQ/ledger-live/pull/764) [`ebe1adfb7`](https://github.com/LedgerHQ/ledger-live/commit/ebe1adfb7d264da0f8c9e30b84c188eaa931d1e6) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development firmware detection to getDeviceInfo
+
+* [#451](https://github.com/LedgerHQ/ledger-live/pull/451) [`134355d56`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Type libraries usage in LLC, LLD, LLM, CLI
+
+### Patch Changes
+
+- [#665](https://github.com/LedgerHQ/ledger-live/pull/665) [`37159cbb9`](https://github.com/LedgerHQ/ledger-live/commit/37159cbb9e0023b65593e4ed71557f80bf48989e) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Update @polkadot dependencies
+
+* [#664](https://github.com/LedgerHQ/ledger-live/pull/664) [`3dbd4d078`](https://github.com/LedgerHQ/ledger-live/commit/3dbd4d0781569cd0bfce575854e706def2bd951f) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Update taquito dependency
+
+- [#803](https://github.com/LedgerHQ/ledger-live/pull/803) [`1a33d8641`](https://github.com/LedgerHQ/ledger-live/commit/1a33d8641f9d1b4e4adfa262a179f124918e0ff5) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Reduce limit param in Stellar requests to avoid 503 "object too large" errors from infra
+
+* [#882](https://github.com/LedgerHQ/ledger-live/pull/882) [`807f3feb9`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8) Thanks [@Justkant](https://github.com/Justkant)! - fix: bump platform API version [LIVE-3181]
+
+- [#850](https://github.com/LedgerHQ/ledger-live/pull/850) [`f4b789442`](https://github.com/LedgerHQ/ledger-live/commit/f4b7894426341f5b909ba3a2422ae2b8ecf31466) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - cardano address validation fix
+
+* [#779](https://github.com/LedgerHQ/ledger-live/pull/779) [`97eab434d`](https://github.com/LedgerHQ/ledger-live/commit/97eab434dee361716588b256146665c99c274af9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Refactoring of useOnboardingStatePolling bringing 2 changes:
+
+  - avoid re-rendering: the hook only updates its result on a new onboardingState or new allowedError, not at every run
+  - update of useOnboardingStatePolling args: getOnboardingStatePolling as an optional injected dependency to the hook. It is needed for LLD to have the polling working on the internal thread. It is set by default to live-common/hw/getOnboardingStatePolling so it is not needed to pass it as an arg to use the hook on LLM.
+
+* Updated dependencies [[`134355d56`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4), [`e2a9cfad6`](https://github.com/LedgerHQ/ledger-live/commit/e2a9cfad63f3c8fddf4660942a53545eabb03d6b)]:
+  - @ledgerhq/cryptoassets@6.32.0-next.0
+  - @ledgerhq/hw-app-eth@6.29.4-next.0
 
 ## 25.1.0
 

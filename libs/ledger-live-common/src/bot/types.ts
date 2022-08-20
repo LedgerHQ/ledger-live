@@ -105,14 +105,16 @@ export type AppSpec<T extends Transaction> = {
 };
 export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;
-  scanTime?: number;
+  appPath?: string;
+  scanDuration?: number;
+  preloadDuration?: number;
   accountsBefore?: Account[];
   accountsAfter?: Account[];
   mutations?: MutationReport<T>[];
   fatalError?: Error;
 };
 export type MutationReport<T extends Transaction> = {
-  syncAllAccountsTime: number;
+  resyncAccountsDuration: number;
   spec: AppSpec<T>;
   appCandidate: AppCandidate;
   account?: Account;

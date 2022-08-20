@@ -52,6 +52,12 @@ import MODAL_ALGORAND_OPT_IN from "../families/algorand/OptInFlowModal";
 import MODAL_ALGORAND_CLAIM_REWARDS from "../families/algorand/Rewards/ClaimRewardsFlowModal";
 import MODAL_ALGORAND_EARN_REWARDS_INFO from "../families/algorand/Rewards/EarnRewardsInfoModal";
 
+import MODAL_OSMOSIS_DELEGATE from "../families/osmosis/DelegationFlowModal";
+import MODAL_OSMOSIS_REWARDS_INFO from "../families/osmosis/DelegationFlowModal/Info";
+// import MODAL_COSMOS_CLAIM_REWARDS from "../families/cosmos/ClaimRewardsFlowModal";
+import MODAL_OSMOSIS_REDELEGATE from "../families/osmosis/RedelegationFlowModal";
+// import MODAL_COSMOS_UNDELEGATE from "../families/cosmos/UndelegationFlowModal";
+
 import MODAL_POLKADOT_MANAGE from "../families/polkadot/ManageModal";
 import MODAL_POLKADOT_REWARDS_INFO from "../families/polkadot/EarnRewardsInfoModal";
 import MODAL_POLKADOT_SIMPLE_OPERATION from "../families/polkadot/SimpleOperationFlowModal";
@@ -123,6 +129,9 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_ALGORAND_EARN_REWARDS_INFO,
   MODAL_POLKADOT_MANAGE,
   MODAL_POLKADOT_REWARDS_INFO,
+  MODAL_OSMOSIS_DELEGATE,
+  MODAL_OSMOSIS_REWARDS_INFO,
+  MODAL_OSMOSIS_REDELEGATE,
   MODAL_POLKADOT_SIMPLE_OPERATION,
   MODAL_POLKADOT_NOMINATE,
   MODAL_POLKADOT_BOND,

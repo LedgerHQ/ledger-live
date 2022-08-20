@@ -1,15 +1,12 @@
 # @ledgerhq/react-native-hw-transport-ble
 
-## 6.27.3-nightly.1
+## 6.27.3
 
 ### Patch Changes
 
-- [#970](https://github.com/LedgerHQ/ledger-live/pull/970) [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311) Thanks [@alexandremgo](https://github.com/alexandremgo)! - BLE scanning and pairing hooks
+- [`3cc45438a8`](https://github.com/LedgerHQ/ledger-live/commit/3cc45438a8aced1922742ff077946d1216f63525) Thanks [@elbywan](https://github.com/elbywan)! - Use commonjs imports for @ledgerhq/devices. Fixes #777.
 
-- Updated dependencies [[`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
-  - @ledgerhq/hw-transport@6.27.3-nightly.0
-
-## 6.27.3-nightly.0
+## 6.27.3-next.0
 
 ### Patch Changes
 

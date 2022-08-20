@@ -1,15 +1,20 @@
 # @ledgerhq/react-ui
 
-## 0.9.0-nightly.0
-
-### Minor Changes
-
-- [#935](https://github.com/LedgerHQ/ledger-live/pull/935) [`432cfa8994`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb) Thanks [@LFBarreto](https://github.com/LFBarreto)! - UI - Crypto icons added as a standalone package + added helper components to integrate them and ensure color contrast
+## 0.8.3
 
 ### Patch Changes
 
-- Updated dependencies [[`432cfa8994`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb)]:
-  - @ledgerhq/crypto-icons-ui@0.2.0-nightly.0
+- [#772](https://github.com/LedgerHQ/ledger-live/pull/772) [`9f5d214c72`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - fix button size
+
+* [#762](https://github.com/LedgerHQ/ledger-live/pull/762) [`eb74f06064`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add optional size prop to button
+
+## 0.8.3-next.0
+
+### Patch Changes
+
+- [#772](https://github.com/LedgerHQ/ledger-live/pull/772) [`9f5d214c7`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - fix button size
+
+* [#762](https://github.com/LedgerHQ/ledger-live/pull/762) [`eb74f0606`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add optional size prop to button
 
 ## 0.8.2
 
