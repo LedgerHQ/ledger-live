@@ -1,4 +1,3 @@
-/* @flow */
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
@@ -19,18 +18,18 @@ const options = {
   title: <Trans i18nKey="send.summary.fees" />,
   headerLeft: null,
 };
-
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  currentNavigation: string,
-  satPerByte: ?BigNumber,
-  setSatPerByte: Function,
+  accountId: string;
+  transaction: Transaction;
+  currentNavigation: string;
+  satPerByte: BigNumber | null | undefined;
+  setSatPerByte: (..._: Array<any>) => any;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
 
 function BitcoinEditCustomFees({ navigation, route }: Props) {
@@ -42,7 +41,6 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(transaction.family === "bitcoin", "not bitcoin family");
   invariant(account, "no account found");
-
   const [ownSatPerByte, setOwnSatPerByte] = useState(
     satPerByte ? satPerByte.toString() : "",
   );
@@ -53,9 +51,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
 
   const onValidateText = useCallback(() => {
     if (BigNumber(ownSatPerByte || 0).isZero()) return;
-
     Keyboard.dismiss();
-
     setSatPerByte(BigNumber(ownSatPerByte || 0));
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
@@ -76,17 +72,30 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
     navigation,
     transaction,
   ]);
-
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+    >
       <KeyboardView
-        style={[styles.body, { backgroundColor: colors.background }]}
+        style={[
+          styles.body,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
       >
         <NavigationScrollView>
           <View style={styles.inputBox}>
             <TextInput
               autoFocus
-              style={[styles.textInputAS, { color: colors.darkBlue }]}
+              style={[
+                styles.textInputAS,
+                {
+                  color: colors.darkBlue,
+                },
+              ]}
               keyboardType="number-pad"
               returnKeyType="done"
               maxLength={10}
@@ -94,7 +103,14 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
               onSubmitEditing={onValidateText}
               value={ownSatPerByte}
             />
-            <LText style={[styles.currency, { color: colors.grey }]}>
+            <LText
+              style={[
+                styles.currency,
+                {
+                  color: colors.grey,
+                },
+              ]}
+            >
               <Trans i18nKey="common.satPerByte" />
             </LText>
           </View>
@@ -115,7 +131,6 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
 }
 
 export { options, BitcoinEditCustomFees as component };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
