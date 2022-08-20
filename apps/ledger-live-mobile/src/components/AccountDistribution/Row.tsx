@@ -19,6 +19,7 @@ import LText from "../LText";
 import ParentCurrencyIcon from "../ParentCurrencyIcon";
 import { ensureContrast } from "../../colors";
 import { localeSelector } from "../../reducers/settings";
+
 export type AccountDistributionItem = {
   account: AccountLike;
   distribution: number;
