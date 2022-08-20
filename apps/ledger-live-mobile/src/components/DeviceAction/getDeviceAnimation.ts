@@ -1,4 +1,3 @@
-// @flow
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import Config from "react-native-config";
 
@@ -162,19 +161,17 @@ const animations = {
     },
   },
 };
-
 export default function getDeviceAnimation({
   theme = "light",
   key,
   device,
 }: {
-  theme?: "light" | "dark",
-  key: string,
-  device: Device,
+  theme?: "light" | "dark";
+  key: string;
+  device: Device;
 }) {
   const modelId = Config.OVERRIDE_MODEL_ID || device.modelId;
   const wired = Config.OVERRIDE_WIRED || device.wired;
-
   const animation = ["nanoS", "nanoSP", "blue", "nanoFTS"].includes(modelId)
     ? animations[modelId][key]
     : animations.nanoX[wired ? "wired" : "bluetooth"][key];

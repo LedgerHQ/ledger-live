@@ -1,4 +1,3 @@
-// @flow
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -30,16 +29,15 @@ import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 
 type Props<R, H, P> = {
-  onResult?: (payload: *) => Promise<void> | void,
-  onError?: (payload: *) => Promise<void> | void,
-  renderOnResult?: (payload: P) => React$Node,
-  action: Action<R, H, P>,
-  request?: R,
-  device: Device,
-  onSelectDeviceLink?: () => void,
-  analyticsPropertyFlow?: string,
+  onResult?: (_: any) => Promise<void> | void;
+  onError?: (_: any) => Promise<void> | void;
+  renderOnResult?: (_: P) => React.ReactNode;
+  action: Action<R, H, P>;
+  request?: R;
+  device: Device;
+  onSelectDeviceLink?: () => void;
+  analyticsPropertyFlow?: string;
 };
-
 export default function DeviceAction<R, H, P>({
   action,
   request = null,
@@ -93,7 +91,6 @@ export default function DeviceAction<R, H, P>({
     progress,
     listingApps,
   } = status;
-
   useEffect(() => {
     if (deviceInfo) {
       dispatch(
@@ -158,7 +155,6 @@ export default function DeviceAction<R, H, P>({
   if (requiresAppInstallation) {
     const { appName, appNames: maybeAppNames } = requiresAppInstallation;
     const appNames = maybeAppNames?.length ? maybeAppNames : [appName];
-
     return renderRequiresAppInstallation({
       t,
       navigation,
@@ -215,7 +211,10 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (initSellRequested && !initSellResult && !initSellError) {
-    return renderConfirmSell({ t, device: selectedDevice });
+    return renderConfirmSell({
+      t,
+      device: selectedDevice,
+    });
   }
 
   if (allowOpeningRequestedWording || requestOpenApp) {
@@ -290,16 +289,24 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (isLoading || (allowOpeningGranted && !appAndVersion)) {
-    return renderLoading({ t, colors, theme });
+    return renderLoading({
+      t,
+      colors,
+      theme,
+    });
   }
 
   if (deviceInfo && deviceInfo.isBootloader) {
-    return renderBootloaderStep({ onAutoRepair, t });
+    return renderBootloaderStep({
+      onAutoRepair,
+      t,
+    });
   }
 
   if (request && device && deviceSignatureRequested) {
     // $FlowFixMe
     const { account, parentAccount, status, transaction } = request;
+
     if (account && status && transaction) {
       navigation.setOptions({
         headerLeft: null,
@@ -367,20 +374,18 @@ export default function DeviceAction<R, H, P>({
   }
 
   return null;
-}
+} // work around for not updating state inside scope of main function with a callback
 
-// work around for not updating state inside scope of main function with a callback
 const RenderOnResultCallback = ({
   onResult,
   payload,
 }: {
-  onResult: (payload: *) => Promise<void> | void,
-  payload: *,
+  onResult: (_: any) => Promise<void> | void;
+  payload: any;
 }) => {
   // onDidMount
   useEffect(() => {
     onResult(payload);
   }, []);
-
   return null;
 };
