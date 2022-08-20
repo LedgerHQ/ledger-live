@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import {
   SafeAreaView,
@@ -13,32 +12,36 @@ import { useTheme } from "@react-navigation/native";
 import { rgba } from "../../colors";
 import Styles from "../../navigation/styles";
 import getWindowDimensions from "../../logic/getWindowDimensions";
-
 import LText from "../LText";
 import Close from "../../icons/Close";
-
 import { infoModalScenes } from "../../screens/Onboarding/shared/infoPagesData";
 
 export type SceneInfoProp = {
-  title?: React$Node,
-  desc?: React$Node,
-  link?: { label: React$Node, url: string },
+  title?: React.ReactNode;
+  desc?: React.ReactNode;
+  link?: {
+    label: React.ReactNode;
+    url: string;
+  };
   bullets?: {
-    Icon: *,
-    title?: React$Node,
-    label?: React$Node,
-    color?: string,
-    link?: { label: React$Node, url: string },
-  }[],
+    Icon: any;
+    title?: React.ReactNode;
+    label?: React.ReactNode;
+    color?: string;
+    link?: {
+      label: React.ReactNode;
+      url: string;
+    };
+  }[];
 };
-
 type Props = {
-  navigation: *,
+  navigation: any;
   route: {
-    params: { sceneInfoKey: string },
-  },
+    params: {
+      sceneInfoKey: string;
+    };
+  };
 };
-
 const hitSlop = {
   bottom: 10,
   left: 24,
@@ -46,21 +49,25 @@ const hitSlop = {
   top: 10,
 };
 const { height } = getWindowDimensions();
-
 export default function OnboardingInfoModal({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { sceneInfoKey } = route.params;
   const sceneInfoProps = infoModalScenes[sceneInfoKey];
   const close = useCallback(() => navigation.goBack(), [navigation]);
-
   const [primaryColor, textColor, bulletColor] = [
     colors.card,
     colors.darkBlue,
     colors.lightLive,
   ];
-
   return sceneInfoProps ? (
-    <SafeAreaView style={[styles.root, { backgroundColor: primaryColor }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: primaryColor,
+        },
+      ]}
+    >
       <View style={[styles.header]}>
         <View style={styles.topHeader}>
           <TouchableOpacity
@@ -85,12 +92,27 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                 </View>
               )}
               {title && (
-                <LText bold style={[styles.title, { color: textColor }]}>
+                <LText
+                  bold
+                  style={[
+                    styles.title,
+                    {
+                      color: textColor,
+                    },
+                  ]}
+                >
                   {title}
                 </LText>
               )}
               {desc && (
-                <LText style={[styles.desc, { color: textColor }]}>
+                <LText
+                  style={[
+                    styles.desc,
+                    {
+                      color: textColor,
+                    },
+                  ]}
+                >
                   {desc}
                 </LText>
               )}
@@ -101,7 +123,15 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                     Linking.canOpenURL(link.url) && Linking.openURL(link.url);
                   }}
                 >
-                  <LText semiBold style={[styles.link, { color: colors.live }]}>
+                  <LText
+                    semiBold
+                    style={[
+                      styles.link,
+                      {
+                        color: colors.live,
+                      },
+                    ]}
+                  >
                     {link.label}
                   </LText>
                 </TouchableOpacity>
@@ -140,13 +170,23 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                           {title && (
                             <LText
                               semiBold
-                              style={[styles.bulletTitle, { color: textColor }]}
+                              style={[
+                                styles.bulletTitle,
+                                {
+                                  color: textColor,
+                                },
+                              ]}
                             >
                               {title}
                             </LText>
                           )}
                           <LText
-                            style={[styles.bulletLabel, { color: textColor }]}
+                            style={[
+                              styles.bulletLabel,
+                              {
+                                color: textColor,
+                              },
+                            ]}
                           >
                             {label}
                           </LText>
@@ -159,7 +199,12 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                             >
                               <LText
                                 semiBold
-                                style={[styles.label, { color: colors.live }]}
+                                style={[
+                                  styles.label,
+                                  {
+                                    color: colors.live,
+                                  },
+                                ]}
                               >
                                 {bulletLink.label}
                               </LText>
@@ -178,7 +223,6 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
     </SafeAreaView>
   ) : null;
 }
-
 const styles = StyleSheet.create({
   modal: {
     height,
@@ -194,7 +238,9 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "flex-end",
   },
-  spacer: { flex: 1 },
+  spacer: {
+    flex: 1,
+  },
   header: {
     ...Styles.headerNoShadow,
     backgroundColor: "transparent",
@@ -214,8 +260,13 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     paddingHorizontal: 24,
   },
-  label: { fontSize: 13, lineHeight: 24 },
-  desc: { paddingHorizontal: 24 },
+  label: {
+    fontSize: 13,
+    lineHeight: 24,
+  },
+  desc: {
+    paddingHorizontal: 24,
+  },
   bulletContainer: {
     flexDirection: "column",
     marginVertical: 8,
@@ -245,7 +296,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
-  bulletLabel: { fontSize: 13, lineHeight: 16 },
+  bulletLabel: {
+    fontSize: 13,
+    lineHeight: 16,
+  },
   link: {
     fontSize: 13,
     marginTop: 16,

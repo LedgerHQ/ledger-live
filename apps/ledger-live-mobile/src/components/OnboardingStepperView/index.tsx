@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback, useMemo, useState } from "react";
 import {
   SafeAreaView,
@@ -14,38 +13,35 @@ import { NavigatorName, ScreenName } from "../../const";
 import ArrowLeft from "../../icons/ArrowLeft";
 import Question from "../../icons/Question";
 import Styles from "../../navigation/styles";
-
 import { InfoStepView } from "./OnboardingStepView";
 import type { InfoStepViewProps } from "./OnboardingStepView";
 import AnimatedSvgBackground from "../AnimatedSvgBackground";
 import Touchable from "../Touchable";
 
 export type OnboardingScene = {
-  id: string,
-  sceneProps: InfoStepViewProps,
-  type: "primary" | "secondary",
-  sceneInfoKey?: string,
+  id: string;
+  sceneProps: InfoStepViewProps;
+  type: "primary" | "secondary";
+  sceneInfoKey?: string;
 };
-
 type Props = {
-  scenes: OnboardingScene[],
-  navigation: *,
-  route: *,
-  onFinish: () => void,
-  hideStepper?: boolean,
-  hideBackButton?: boolean,
+  scenes: OnboardingScene[];
+  navigation: any;
+  route: any;
+  onFinish: () => void;
+  hideStepper?: boolean;
+  hideBackButton?: boolean;
 };
-
 const hitSlop = {
   bottom: 10,
   left: 24,
   right: 24,
   top: 10,
 };
-
-const initialLayout = { width: Dimensions.get("window").width };
+const initialLayout = {
+  width: Dimensions.get("window").width,
+};
 const headerHeight = 94;
-
 export default function OnboardingStepperView({
   scenes,
   navigation,
@@ -55,8 +51,11 @@ export default function OnboardingStepperView({
 }: Props) {
   const { colors } = useTheme();
   const [index, setIndex] = useState(0);
-  const [routes] = useState(scenes.map(({ id }) => ({ key: id })));
-
+  const [routes] = useState(
+    scenes.map(({ id }) => ({
+      key: id,
+    })),
+  );
   const onNext = useCallback(() => {
     if (index === scenes.length - 1) {
       onFinish();
@@ -64,14 +63,11 @@ export default function OnboardingStepperView({
       setIndex(Math.min(scenes.length - 1, index + 1));
     }
   }, [index, scenes.length, onFinish]);
-
   const onBack = useCallback(() => {
     if (index === 0) navigation.goBack();
     else setIndex(Math.max(0, index - 1));
   }, [navigation, index]);
-
   const currentScene = useMemo(() => scenes[index], [scenes, index]);
-
   const openInfoModal = useCallback(() => {
     navigation.navigate(NavigatorName.Onboarding, {
       screen: ScreenName.OnboardingInfoModal,
@@ -80,7 +76,6 @@ export default function OnboardingStepperView({
       },
     });
   }, [currentScene?.sceneInfoKey, navigation]);
-
   const sceneColors =
     currentScene?.type === "primary"
       ? [
@@ -101,7 +96,6 @@ export default function OnboardingStepperView({
           "rgba(67, 133, 240, 0.08)",
           "#fff",
         ];
-
   const renderScenes = SceneMap(
     scenes.reduce(
       (s, { sceneProps, id }) => ({
@@ -118,9 +112,15 @@ export default function OnboardingStepperView({
       {},
     ),
   );
-
   return scenes && scenes.length ? (
-    <SafeAreaView style={[styles.root, { backgroundColor: sceneColors[0] }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: sceneColors[0],
+        },
+      ]}
+    >
       <View style={[styles.header]}>
         <View style={styles.topHeader}>
           {hideBackButton ? null : (
@@ -134,8 +134,9 @@ export default function OnboardingStepperView({
           )}
           {currentScene?.sceneInfoKey && (
             <Touchable
-              event={`Onboarding - ${currentScene?.sceneProps.trackPage ||
-                ""} need help`}
+              event={`Onboarding - ${
+                currentScene?.sceneProps.trackPage || ""
+              } need help`}
               hitSlop={hitSlop}
               style={styles.buttons}
               onPress={openInfoModal}
@@ -164,7 +165,10 @@ export default function OnboardingStepperView({
       <AnimatedSvgBackground style={styles.svg} color={sceneColors[5]} />
       <TabView
         renderTabBar={() => null}
-        navigationState={{ index, routes }}
+        navigationState={{
+          index,
+          routes,
+        }}
         renderScene={renderScenes}
         onIndexChange={setIndex}
         initialLayout={initialLayout}
@@ -175,7 +179,6 @@ export default function OnboardingStepperView({
     </SafeAreaView>
   ) : null;
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -185,7 +188,9 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "space-between",
   },
-  spacer: { flex: 1 },
+  spacer: {
+    flex: 1,
+  },
   header: {
     ...Styles.headerNoShadow,
     backgroundColor: "transparent",
@@ -204,7 +209,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  sceneIndicator: { flex: 1, height: 2, marginHorizontal: 4 },
+  sceneIndicator: {
+    flex: 1,
+    height: 2,
+    marginHorizontal: 4,
+  },
   svg: {
     position: "absolute",
     top: 0,
