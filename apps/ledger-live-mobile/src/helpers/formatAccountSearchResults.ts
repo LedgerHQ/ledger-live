@@ -1,5 +1,3 @@
-// @flow
-
 import reduce from "lodash/reduce";
 import forEach from "lodash/forEach";
 import type {
@@ -10,9 +8,9 @@ import type {
 } from "@ledgerhq/types-live";
 
 export type SearchResult = {
-  account: AccountLike,
-  parentAccount?: AccountLike,
-  match?: boolean,
+  account: AccountLike;
+  parentAccount?: AccountLike;
+  match?: boolean;
 };
 
 const flattenStructuredSearchResults = structuredResults =>
@@ -42,10 +40,12 @@ export const formatSearchResults = (
             tokenAccounts: [],
           };
         }
+
         acc[account.id].match = true;
       } else {
         const parentId = account.parentId;
         const parentAccount = accounts.find((a: Account) => a.id === parentId);
+
         if (!acc[parentId]) {
           acc[parentId] = {
             account: parentAccount,
@@ -53,6 +53,7 @@ export const formatSearchResults = (
             match: false,
           };
         }
+
         acc[parentId].tokenAccounts = [
           ...acc[parentId].tokenAccounts,
           {
@@ -61,15 +62,18 @@ export const formatSearchResults = (
           },
         ];
       }
+
       return acc;
     },
     {},
   );
   return flattenStructuredSearchResults(formated);
 };
-
 export const formatSearchResultsTuples = (
-  searchResults: { account: AccountLike, subAccount: SubAccount }[],
+  searchResults: {
+    account: AccountLike;
+    subAccount: SubAccount;
+  }[],
 ): SearchResult[] => {
   const formated = reduce(
     searchResults,
@@ -77,6 +81,7 @@ export const formatSearchResultsTuples = (
       const accountId = tuple.subAccount
         ? tuple.subAccount.id
         : tuple.account.id;
+
       if (!acc[accountId]) {
         acc[accountId] = {
           account: tuple.subAccount || tuple.account,
@@ -84,6 +89,7 @@ export const formatSearchResultsTuples = (
           tokenAccounts: [],
         };
       }
+
       acc[accountId].match = true;
       return acc;
     },
