@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -15,14 +14,15 @@ import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import { localeSelector } from "../../reducers/settings";
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  transaction: Transaction,
-  route: { params: RouteParams },
-  gasLimit: ?BigNumber,
-  setGasLimit: Function,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  transaction: Transaction;
+  route: {
+    params: RouteParams;
+  };
+  gasLimit: BigNumber | null | undefined;
+  setGasLimit: (..._: Array<any>) => any;
 };
-
 export default function EthereumGasLimit({
   account,
   parentAccount,
@@ -35,7 +35,6 @@ export default function EthereumGasLimit({
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const navigation = useNavigation();
-
   const editGasLimit = useCallback(() => {
     navigation.navigate(ScreenName.EthereumEditGasLimit, {
       ...route.params,
@@ -46,7 +45,6 @@ export default function EthereumGasLimit({
       gasLimit,
     });
   }, [navigation, route.params, account.id, parentAccount, transaction]);
-
   return (
     <View style={styles.root}>
       <SummaryRow
@@ -66,7 +64,10 @@ export default function EthereumGasLimit({
           <LText
             style={[
               styles.link,
-              { color: colors.live, textDecorationColor: colors.live },
+              {
+                color: colors.live,
+                textDecorationColor: colors.live,
+              },
             ]}
             onPress={editGasLimit}
           >
@@ -77,7 +78,6 @@ export default function EthereumGasLimit({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

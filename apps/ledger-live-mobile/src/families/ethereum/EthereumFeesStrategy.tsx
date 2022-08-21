@@ -1,9 +1,6 @@
-/* @flow */
 import React, { useCallback, useState, useMemo, useEffect } from "react";
-
 import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
@@ -12,13 +9,14 @@ import { ScreenName } from "../../const";
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  transaction: Transaction,
-  navigation: any,
-  route: { params: RouteParams },
-  setTransaction: Function,
-  ...
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  transaction: Transaction;
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  setTransaction: (..._: Array<any>) => any;
 };
 
 const getCustomStrategy = transaction => {
@@ -57,18 +55,16 @@ export default function EthereumFeesStrategy({
         : defaultStrategies,
     [defaultStrategies, customStrategy],
   );
-
   useEffect(() => {
     const newCustomStrategy = getCustomStrategy(transaction);
+
     if (newCustomStrategy) {
       setCustomStrategy(newCustomStrategy);
     }
   }, [transaction, setCustomStrategy]);
-
   const onFeesSelected = useCallback(
     ({ amount, label, userGasLimit }) => {
       const bridge = getAccountBridge(account, parentAccount);
-
       setTransaction(
         bridge.updateTransaction(transaction, {
           gasPrice: amount,
@@ -79,7 +75,6 @@ export default function EthereumFeesStrategy({
     },
     [setTransaction, account, parentAccount, transaction],
   );
-
   const openCustomFees = useCallback(() => {
     navigation.navigate(ScreenName.EthereumCustomFees, {
       ...route.params,
@@ -88,7 +83,6 @@ export default function EthereumFeesStrategy({
       transaction,
     });
   }, [navigation, route.params, account.id, parentAccount, transaction]);
-
   return (
     <SelectFeesStrategy
       {...props}

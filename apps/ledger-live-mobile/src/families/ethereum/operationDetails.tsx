@@ -1,14 +1,12 @@
-// @flow
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { AccountLike } from "@ledgerhq/types-live";
-
 import Section from "../../screens/OperationDetails/Section";
 
 type OperationDetailsExtraProps = {
-  extra: { [key: string]: string },
-  type: string,
-  account: ?AccountLike,
+  extra: Record<string, string>;
+  type: string;
+  account: AccountLike | null | undefined;
 };
 
 const OperationDetailsExtra = ({ extra, type }: OperationDetailsExtraProps) => {

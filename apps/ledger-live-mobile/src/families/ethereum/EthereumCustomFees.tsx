@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useState, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
@@ -9,25 +8,23 @@ import { useTheme } from "@react-navigation/native";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
-
 import { accountScreenSelector } from "../../reducers/accounts";
 import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
 import SectionSeparator from "../../components/SectionSeparator";
 import Button from "../../components/Button";
 import EthereumGasLimit from "./SendRowGasLimit";
-
 import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,
   headerLeft: null,
 };
-
 const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
 let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
 
@@ -35,25 +32,22 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { transaction } = route.params;
-
   invariant(transaction.family === "ethereum", "not ethereum family");
   invariant(account, "no account found");
-
   const networkGasPrice =
     transaction.networkInfo && transaction.networkInfo.gasPrice;
+
   if (!lastNetworkGasPrice && networkGasPrice) {
     lastNetworkGasPrice = networkGasPrice;
   }
+
   const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
   const [gasPrice, setGasPrice] = useState(
     transaction.gasPrice || range.initial,
   );
-
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
-
   const onValidate = useCallback(() => {
     const bridge = getAccountBridge(account, parentAccount);
-
     const { currentNavigation } = route.params;
     navigation.navigate(currentNavigation, {
       ...route.params,
@@ -74,7 +68,6 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
     transaction,
     gasPrice,
   ]);
-
   return (
     <View style={styles.root}>
       <EditFeeUnitEthereum
@@ -115,9 +108,7 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
     </View>
   );
 }
-
 export { options, EthereumCustomFees as component };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

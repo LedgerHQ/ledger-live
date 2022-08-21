@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import { View, StyleSheet } from "react-native";
@@ -15,14 +14,13 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
-const GasSlider = React.memo(({ value, onChange, range }: *) => {
+const GasSlider = React.memo(({ value, onChange, range }: any) => {
   const { colors } = useTheme();
   const index = reverseRangeIndex(range, value);
   const setValueIndex = useCallback(
     i => onChange(projectRangeIndex(range, i)),
     [range, onChange],
   );
-
   return (
     <Slider
       value={index}
@@ -35,16 +33,14 @@ const GasSlider = React.memo(({ value, onChange, range }: *) => {
     />
   );
 });
-
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  transaction: Transaction,
-  gasPrice: BigNumber,
-  onChange: Function,
-  range: any,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  transaction: Transaction;
+  gasPrice: BigNumber;
+  onChange: (..._: Array<any>) => any;
+  range: any;
 };
-
 export default function EditFeeUnitEthereum({
   account,
   parentAccount,
@@ -55,33 +51,47 @@ export default function EditFeeUnitEthereum({
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-
   const mainAccount = getMainAccount(account, parentAccount);
-
   const feeCustomUnit = transaction.feeCustomUnit;
-
   const onChangeF = useCallback(
     value => {
       onChange(value);
     },
     [onChange],
   );
-
   const { networkInfo } = transaction;
   if (!networkInfo) return null;
   const { gasPrice: serverGas } = networkInfo;
-
   return (
     <View>
-      <View style={[styles.sliderContainer, { backgroundColor: colors.card }]}>
+      <View
+        style={[
+          styles.sliderContainer,
+          {
+            backgroundColor: colors.card,
+          },
+        ]}
+      >
         <View style={styles.gasPriceHeader}>
           <LText style={styles.gasPriceLabel} semiBold>
             {t("send.summary.gasPrice")}
           </LText>
           <View
-            style={[styles.gasPrice, { backgroundColor: colors.lightLive }]}
+            style={[
+              styles.gasPrice,
+              {
+                backgroundColor: colors.lightLive,
+              },
+            ]}
           >
-            <LText style={[styles.currencyUnitText, { color: colors.live }]}>
+            <LText
+              style={[
+                styles.currencyUnitText,
+                {
+                  color: colors.live,
+                },
+              ]}
+            >
               <CurrencyUnitValue
                 unit={mainAccount.unit || feeCustomUnit}
                 value={gasPrice}
@@ -109,7 +119,6 @@ export default function EditFeeUnitEthereum({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   sliderContainer: {
     paddingLeft: 0,

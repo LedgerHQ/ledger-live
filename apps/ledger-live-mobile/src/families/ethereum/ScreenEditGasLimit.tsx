@@ -1,4 +1,3 @@
-/* @flow */
 import { BigNumber } from "bignumber.js";
 import React, { useState, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
@@ -11,24 +10,25 @@ import KeyboardView from "../../components/KeyboardView";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import TextInput from "../../components/FocusedTextInput";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 const options = {
   title: <Trans i18nKey="send.summary.gasLimit" />,
   headerLeft: null,
 };
-
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  currentNavigation: string,
-  gasLimit: ?BigNumber,
-  setGasLimit: Function,
+  accountId: string;
+  transaction: Transaction;
+  currentNavigation: string;
+  gasLimit: BigNumber | null | undefined;
+  setGasLimit: (..._: Array<any>) => any;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
 
 function EthereumEditGasLimit({ navigation, route }: Props) {
@@ -36,24 +36,36 @@ function EthereumEditGasLimit({ navigation, route }: Props) {
   const { t } = useTranslation();
   const gasLimit = route.params?.gasLimit;
   const setGasLimit = route.params?.setGasLimit;
-
   const [ownGasLimit, setOwnGasLimit] = useState(gasLimit);
-
   const onValidateText = useCallback(() => {
     Keyboard.dismiss();
     navigation.goBack();
     setGasLimit(BigNumber(ownGasLimit || 0));
   }, [setGasLimit, ownGasLimit, navigation]);
-
   return (
-    <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+      forceInset={forceInset}
+    >
       <KeyboardView
-        style={[styles.body, { backgroundColor: colors.background }]}
+        style={[
+          styles.body,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
       >
         <NavigationScrollView>
           <TextInput
             autoFocus
-            style={[styles.textInputAS, { color: colors.darkBlue }]}
+            style={[
+              styles.textInputAS,
+              {
+                color: colors.darkBlue,
+              },
+            ]}
             defaultValue={gasLimit ? gasLimit.toString() : ""}
             keyboardType="numeric"
             returnKeyType="done"
@@ -78,7 +90,6 @@ function EthereumEditGasLimit({ navigation, route }: Props) {
 }
 
 export { options, EthereumEditGasLimit as component };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

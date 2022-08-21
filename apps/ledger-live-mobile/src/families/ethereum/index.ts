@@ -1,4 +1,3 @@
-// @flow
 import * as EthereumEditGasLimit from "./ScreenEditGasLimit";
 import * as EthereumCustomFees from "./EthereumCustomFees";
 
