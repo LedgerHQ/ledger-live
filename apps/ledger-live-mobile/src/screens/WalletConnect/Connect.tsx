@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useContext, useEffect } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { View, StyleSheet, Image } from "react-native";
@@ -8,22 +7,16 @@ import { useSelector } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-/* eslint-disable import/named */
+
 import {
-  // $FlowFixMe
   context,
-  // $FlowFixMe
   STATUS,
-  // $FlowFixMe
   setCurrentCallRequestError,
-  // $FlowFixMe
   disconnect,
-  // $FlowFixMe
   connect,
-  // $FlowFixMe
   approveSession,
 } from "./Provider";
-/* eslint-enable import/named */
+
 import Spinning from "../../components/Spinning";
 import BigSpinner from "../../icons/BigSpinner";
 import Disconnect from "../../icons/Disconnect";
@@ -38,11 +31,16 @@ import { TrackScreen } from "../../analytics";
 import AccountHeaderTitle from "../Account/AccountHeaderTitle";
 import { rgba } from "../../colors";
 
-const DottedLine = ({ colors }: { colors: * }) => (
+const DottedLine = ({ colors }: { colors: any }) => (
   <View style={styles.dottedLineContainer}>
     {_.map(_.range(0, 6), i => (
       <View
-        style={[styles.dot, { backgroundColor: rgba(colors.darkBlue, 0.2) }]}
+        style={[
+          styles.dot,
+          {
+            backgroundColor: rgba(colors.darkBlue, 0.2),
+          },
+        ]}
         key={i}
       />
     ))}
@@ -50,27 +48,25 @@ const DottedLine = ({ colors }: { colors: * }) => (
 );
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  uri?: string,
+  accountId: string;
+  uri?: string;
 };
-
 export default function Connect({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account } = useSelector(accountScreenSelector(route));
   const wcContext = useContext(context);
-
   useFocusEffect(() => {
     if (wcContext.currentCallRequestId) {
       setCurrentCallRequestError(new Error("Aborted"));
     }
   });
-
   useEffect(() => {
     const opts = {
       headerRight: () => (
@@ -83,6 +79,7 @@ export default function Connect({ route, navigation }: Props) {
         />
       ),
     };
+
     if (wcContext.status === STATUS.CONNECTED) {
       navigation.setOptions({
         ...opts,
@@ -153,7 +150,9 @@ export default function Connect({ route, navigation }: Props) {
             <View
               style={[
                 styles.accountContainer,
-                { borderColor: rgba(colors.darkBlue, 0.1) },
+                {
+                  borderColor: rgba(colors.darkBlue, 0.1),
+                },
               ]}
             >
               <View style={styles.accountTitleContainer}>
@@ -206,7 +205,9 @@ export default function Connect({ route, navigation }: Props) {
                 <Alert type="primary">
                   <Trans
                     i18nKey="walletconnect.info"
-                    values={{ name: wcContext.dappInfo?.name }}
+                    values={{
+                      name: wcContext.dappInfo?.name,
+                    }}
                   />
                 </Alert>
                 <View style={styles.messagesSeparator} />
@@ -267,7 +268,9 @@ export default function Connect({ route, navigation }: Props) {
         <View
           style={[
             styles.buttonsContainer,
-            { backgroundColor: colors.background },
+            {
+              backgroundColor: colors.background,
+            },
           ]}
         >
           <Button
@@ -306,7 +309,6 @@ export default function Connect({ route, navigation }: Props) {
     </>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
@@ -335,7 +337,6 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-
     paddingHorizontal: 8,
     paddingVertical: 16,
   },

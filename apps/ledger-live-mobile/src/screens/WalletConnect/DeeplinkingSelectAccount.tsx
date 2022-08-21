@@ -1,4 +1,3 @@
-/* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -24,28 +23,30 @@ import KeyboardView from "../../components/KeyboardView";
 import PlusIcon from "../../icons/Plus";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
-/* eslint-disable import/named */
-// $FlowFixMe
 import { connect as WCconnect } from "./Provider";
-/* eslint-enable import/named */
+
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-const forceInset = { bottom: "always" };
-
-type Props = {
-  accounts: Account[],
-  allAccounts: AccountLikeArray,
-  navigation: any,
-  route: { params: { uri: string } },
-  colors: *,
+const forceInset = {
+  bottom: "always",
 };
-
+type Props = {
+  accounts: Account[];
+  allAccounts: AccountLikeArray;
+  navigation: any;
+  route: {
+    params: {
+      uri: string;
+    };
+  };
+  colors: any;
+};
+// eslint-disable-next-line @typescript-eslint/ban-types
 type State = {};
 
 class SendFundsSelectAccount extends Component<Props, State> {
   renderList = items => {
     const { accounts } = this.props;
     const formatedList = formatSearchResults(items, accounts);
-
     return (
       <FlatList
         data={formatedList}
@@ -58,7 +59,6 @@ class SendFundsSelectAccount extends Component<Props, State> {
       />
     );
   };
-
   renderFooter = () => {
     const { colors } = this.props;
     return (
@@ -78,7 +78,6 @@ class SendFundsSelectAccount extends Component<Props, State> {
       </View>
     );
   };
-
   renderItem = ({ item: result }: { item: SearchResult }) => {
     const { account, match } = result;
     return (
@@ -96,7 +95,6 @@ class SendFundsSelectAccount extends Component<Props, State> {
       />
     );
   };
-
   renderEmptySearch = () => (
     <View style={styles.emptyResults}>
       <LText style={styles.emptyText} color="fog">
@@ -104,18 +102,26 @@ class SendFundsSelectAccount extends Component<Props, State> {
       </LText>
     </View>
   );
-
   keyExtractor = item => item.account.id;
 
   render() {
     const { allAccounts, colors } = this.props;
     return (
       <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
         forceInset={forceInset}
       >
         <TrackScreen category="WalletConnect" name="DeeplinkingSelectAccount" />
-        <KeyboardView style={{ flex: 1 }}>
+        <KeyboardView
+          style={{
+            flex: 1,
+          }}
+        >
           <View style={styles.searchContainer}>
             <FilteredSearchBar
               list={allAccounts.filter(
@@ -141,7 +147,6 @@ const mapStateToProps = createStructuredSelector({
   allAccounts: flattenAccountsEnforceHideEmptyTokenSelector,
   accounts: accountsSelector,
 });
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -178,7 +183,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
 });
-
 export default compose(
   // $FlowFixMe
   connect(mapStateToProps),

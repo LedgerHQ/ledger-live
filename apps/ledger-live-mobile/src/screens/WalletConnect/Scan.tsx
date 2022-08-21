@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useEffect, useContext } from "react";
 import Config from "react-native-config";
 import Clipboard from "@react-native-community/clipboard";
@@ -6,30 +5,29 @@ import { Trans } from "react-i18next";
 import Scanner from "../../components/Scanner";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
-/* eslint-disable import/named */
-// $FlowFixMe
 import { connect, context, STATUS } from "./Provider";
-/* eslint-enable import/named */
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
+  accountId: string;
 };
 
 const ScanWalletConnect = ({ navigation, route }: Props) => {
   const wcContext = useContext(context);
-
   useEffect(() => {
     let mockTO;
+
     if (Config.MOCK_SCAN_WALLETCONNECT) {
       mockTO = setTimeout(async () => {
         onResult(await Clipboard.getString());
       }, 2000);
     }
+
     return () => clearTimeout(mockTO);
   });
 
@@ -37,6 +35,7 @@ const ScanWalletConnect = ({ navigation, route }: Props) => {
     if (wcContext.status !== STATUS.DISCONNECTED) {
       return;
     }
+
     connect(uri);
     navigation.replace(ScreenName.WalletConnectConnect, {
       uri,

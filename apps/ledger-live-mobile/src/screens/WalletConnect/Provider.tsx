@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ProviderCommon from "@ledgerhq/live-common/walletconnect/Provider";
@@ -10,13 +9,15 @@ import { navigate, isReadyRef } from "../../rootnavigation";
 const useAccount = accountId => {
   const { account } = useSelector(
     accountScreenSelector({
-      params: { accountId },
+      params: {
+        accountId,
+      },
     }),
   );
   return account;
 };
 
-const Provider = ({ children }: { children: React$Node }) => {
+const Provider = ({ children }: { children: React.ReactNode }) => {
   const [isReady, setIsReady] = useState(false);
   useEffect(() => {
     if (isReady) {
@@ -26,11 +27,9 @@ const Provider = ({ children }: { children: React$Node }) => {
     const interval = setInterval(() => {
       setIsReady(!!isReadyRef.current);
     }, 500);
-
     // eslint-disable-next-line consistent-return
     return () => clearInterval(interval);
   });
-
   return (
     // $FlowFixMe
     <ProviderCommon
