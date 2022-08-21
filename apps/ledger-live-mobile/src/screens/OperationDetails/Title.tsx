@@ -1,25 +1,23 @@
 import React, { memo } from "react";
-
 import { useTheme } from "@react-navigation/native";
 import type { NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { BigNumber } from "bignumber.js";
-
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import DoubleCounterValue from "../../components/DoubleCountervalue";
 import Skeleton from "../../components/Skeleton";
 import LText from "../../components/LText";
 
 type Props = {
-  hasFailed: Boolean,
-  amount: BigNumber,
-  operation: Operation,
-  currency: Currency,
-  unit: Unit,
-  isNftOperation: Boolean,
-  status: string,
-  metadata: $PropertyType<NFTMetadataResponse, "result">,
-  styles: Object,
+  hasFailed: boolean;
+  amount: BigNumber;
+  operation: Operation;
+  currency: Currency;
+  unit: Unit;
+  isNftOperation: boolean;
+  status: string;
+  metadata: $PropertyType<NFTMetadataResponse, "result">;
+  styles: Record<string, any>;
 };
 
 const Title = ({
@@ -51,7 +49,12 @@ const Title = ({
         <LText
           numberOfLines={1}
           ellipsizeMode="middle"
-          style={[styles.titleTokenId, { color: colors.grey }]}
+          style={[
+            styles.titleTokenId,
+            {
+              color: colors.grey,
+            },
+          ]}
         >
           ID {operation.tokenId}
         </LText>
@@ -68,7 +71,12 @@ const Title = ({
       <LText
         semiBold
         numberOfLines={1}
-        style={[styles.currencyUnitValue, { color: valueColor }]}
+        style={[
+          styles.currencyUnitValue,
+          {
+            color: valueColor,
+          },
+        ]}
       >
         <CurrencyUnitValue
           showCode
@@ -90,5 +98,4 @@ const Title = ({
   );
 };
 
-// $FlowFixMe
 export default memo(Title);

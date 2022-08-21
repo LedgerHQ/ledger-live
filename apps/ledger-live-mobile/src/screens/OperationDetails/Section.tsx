@@ -1,16 +1,13 @@
-// @flow
-
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import LText from "../../components/LText";
 
 type Props = FieldWrapperProps & {
-  title: string,
-  value?: string | React$Node,
-  headerRight?: React$Node,
+  title: string;
+  value?: string | React.ReactNode;
+  headerRight?: React.ReactNode;
 };
-
 export default function Section({
   title,
   value,
@@ -36,11 +33,10 @@ export default function Section({
     </SectionWrapper>
   );
 }
-
 type FieldWrapperProps = {
-  onPress?: () => void,
-  children?: any,
-  style?: any,
+  onPress?: () => void;
+  children?: any;
+  style?: any;
 };
 
 function SectionWrapper({ onPress, children, style }: FieldWrapperProps) {
@@ -66,7 +62,6 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-
     marginRight: 8,
   },
   value: {},

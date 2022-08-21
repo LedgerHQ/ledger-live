@@ -1,27 +1,24 @@
-// @flow
-
 import React, { memo } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
-
 import { useTheme } from "@react-navigation/native";
 import BottomModal from "../../components/BottomModal";
 import Circle from "../../components/Circle";
 import IconInfo from "../../icons/Info";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-
 import { rgba } from "../../colors";
 import { urls } from "../../config/urls";
 
-const forceInset = { bottom: "always" };
-
-export type Props = {|
-  isOpened: boolean,
-  onClose: () => void,
-  currency: *,
-|};
+const forceInset = {
+  bottom: "always",
+};
+export type Props = {
+  isOpened: boolean;
+  onClose: () => void;
+  currency: any;
+};
 
 function Modal({ isOpened, onClose, currency }: Props) {
   const { colors } = useTheme();
@@ -80,5 +77,4 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
 });
-
 export default memo<Props>(Modal);

@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
@@ -7,21 +6,23 @@ import Touchable from "../../components/Touchable";
 import { withTheme } from "../../colors";
 
 type Props = {
-  data: string[],
-  title?: React$Node,
-  rightComp?: React$Node,
-  colors: *,
+  data: string[];
+  title?: React.ReactNode;
+  rightComp?: React.ReactNode;
+  colors: any;
 };
 type State = {
-  showAll: boolean,
+  showAll: boolean;
 };
+
 class DataList extends PureComponent<Props, State> {
   state = {
     showAll: false,
   };
-
   toggleShowAll = () => {
-    this.setState(({ showAll }) => ({ showAll: !showAll }));
+    this.setState(({ showAll }) => ({
+      showAll: !showAll,
+    }));
   };
 
   // TODO make it more generic with title definition in parent
@@ -32,7 +33,11 @@ class DataList extends PureComponent<Props, State> {
     const shouldShowMore = data.length > numToShow;
     return (
       <View>
-        <View style={{ flexDirection: "row" }}>
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
           {title ? (
             <LText style={styles.sectionTitle} color="grey">
               {title}
@@ -47,11 +52,19 @@ class DataList extends PureComponent<Props, State> {
               }}
             >
               {showAll ? (
-                <LText style={{ color: colors.live }}>
+                <LText
+                  style={{
+                    color: colors.live,
+                  }}
+                >
                   <Trans i18nKey="operationDetails.seeLess" />
                 </LText>
               ) : (
-                <LText style={{ color: colors.live }}>
+                <LText
+                  style={{
+                    color: colors.live,
+                  }}
+                >
                   <Trans i18nKey="operationDetails.seeAll" />
                 </LText>
               )}
@@ -82,5 +95,4 @@ const styles = StyleSheet.create({
   },
   value: {},
 });
-
 export default withTheme(DataList);

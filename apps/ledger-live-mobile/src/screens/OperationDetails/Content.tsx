@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
@@ -40,11 +39,10 @@ import DefaultOperationDetailsExtra from "./Extra";
 import Skeleton from "../../components/Skeleton";
 import Title from "./Title";
 import FormatDate from "../../components/FormatDate";
-
 type HelpLinkProps = {
-  event: string,
-  title: React$Node,
-  onPress: () => ?Promise<any>,
+  event: string;
+  title: React.ReactNode;
+  onPress: () => Promise<any> | null | undefined;
 };
 
 const HelpLink = ({ title, event, onPress }: HelpLinkProps) => {
@@ -58,13 +56,13 @@ const HelpLink = ({ title, event, onPress }: HelpLinkProps) => {
     </Touchable>
   );
 };
-type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  operation: Operation,
-  disableAllLinks?: Boolean,
-};
 
+type Props = {
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  operation: Operation;
+  disableAllLinks?: Boolean;
+};
 export default function Content({
   account,
   parentAccount,
@@ -75,7 +73,6 @@ export default function Content({
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [isModalOpened, setIsModalOpened] = useState(false);
-
   const onPress = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Account,
@@ -85,24 +82,22 @@ export default function Content({
       },
     });
   }, [account.id, navigation, parentAccount]);
-
   const onPressInfo = useCallback(() => {
     setIsModalOpened(true);
   }, []);
-
   const onModalClose = useCallback(() => {
     setIsModalOpened(false);
   }, []);
-
   const mainAccount = getMainAccount(account, parentAccount);
   const currencySettings = useSelector(s =>
-    currencySettingsForAccountSelector(s, { account: mainAccount }),
+    currencySettingsForAccountSelector(s, {
+      account: mainAccount,
+    }),
   );
   const currency = getAccountCurrency(account);
   const isToken = currency.type === "TokenCurrency";
   const unit = getAccountUnit(account);
   const parentUnit = getAccountUnit(mainAccount);
-
   const parentCurrency = getAccountCurrency(mainAccount);
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
@@ -116,15 +111,12 @@ export default function Content({
   const { hasFailed } = operation;
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
-
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
-
   const isConfirmed = isConfirmedOperation(
     operation,
     mainAccount,
     currencySettings.confirmationsNb,
   );
-
   const specific = byFamiliesOperationDetails[mainAccount.currency.family];
   const urlFeesInfo =
     specific && specific.getURLFeesInfo && specific.getURLFeesInfo(operation);
@@ -132,7 +124,6 @@ export default function Content({
     specific && specific.OperationDetailsExtra
       ? specific.OperationDetailsExtra
       : DefaultOperationDetailsExtra;
-
   const isNftOperation =
     ["NFT_IN", "NFT_OUT"].includes(type) &&
     operation.contract &&
@@ -150,7 +141,6 @@ export default function Content({
     () => nftStatus === "loading" || collectionStatus === "loading",
     [nftStatus, collectionStatus],
   );
-
   return (
     <>
       <View style={styles.header}>
@@ -189,19 +179,38 @@ export default function Content({
             ]}
           />
           {hasFailed ? (
-            <LText style={[styles.confirmation, { color: colors.alert }]}>
+            <LText
+              style={[
+                styles.confirmation,
+                {
+                  color: colors.alert,
+                },
+              ]}
+            >
               <Trans i18nKey="operationDetails.failed" />
             </LText>
           ) : isConfirmed ? (
             <LText
               semiBold
-              style={[styles.confirmation, { color: colors.green }]}
+              style={[
+                styles.confirmation,
+                {
+                  color: colors.green,
+                },
+              ]}
             >
               <Trans i18nKey="operationDetails.confirmed" />{" "}
               {confirmationsString && `(${confirmationsString})`}
             </LText>
           ) : (
-            <LText style={[styles.confirmation, { color: colors.grey }]}>
+            <LText
+              style={[
+                styles.confirmation,
+                {
+                  color: colors.grey,
+                },
+              ]}
+            >
               <Trans i18nKey="operationDetails.notConfirmed" />{" "}
               {confirmationsString && `(${confirmationsString})`}
             </LText>
@@ -235,11 +244,13 @@ export default function Content({
             const opAccount = (account.subAccounts || []).find(
               acc => acc.id === op.accountId,
             );
-
             if (!opAccount) return null;
-
             return (
-              <View style={{ marginHorizontal: 16 }}>
+              <View
+                style={{
+                  marginHorizontal: 16,
+                }}
+              >
                 <OperationRow
                   isSubOperation
                   key={op.id}
@@ -276,7 +287,9 @@ export default function Content({
 
       {internalOperations.length > 0 || subOperations.length > 0 ? (
         <Section
-          title={t("operationDetails.details", { currency: currency.name })}
+          title={t("operationDetails.details", {
+            currency: currency.name,
+          })}
           style={styles.infoContainer}
         />
       ) : null}
@@ -333,9 +346,7 @@ export default function Content({
                   title={t("common.learnMore")}
                 />
               </View>
-            ) : (
-              undefined
-            )
+            ) : undefined
           }
         >
           {operation.fee ? (
@@ -391,7 +402,11 @@ export default function Content({
             title={<Trans i18nKey="operationDetails.to" />}
             rightComp={
               uniqueRecipients.length > 1 ? (
-                <View style={{ marginLeft: "auto" }}>
+                <View
+                  style={{
+                    marginLeft: "auto",
+                  }}
+                >
                   <HelpLink
                     event="MultipleAddressesSupport"
                     onPress={() => Linking.openURL(urls.multipleAddresses)}
@@ -416,7 +431,6 @@ export default function Content({
     </>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     borderBottomWidth: 1,

@@ -1,4 +1,3 @@
-/* @flow */
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -19,23 +18,22 @@ import Content from "./Content";
 import Close from "../../icons/Close";
 import ArrowLeft from "../../icons/ArrowLeft";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type RouteParams = {
-  accountId: string,
-  operation: Operation,
-  disableAllLinks?: Boolean,
+  accountId: string;
+  operation: Operation;
+  disableAllLinks?: Boolean;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
-export const BackButton = ({ navigation }: { navigation: * }) => {
+export const BackButton = ({ navigation }: { navigation: any }) => {
   const { colors } = useTheme();
-
   return (
     <TouchableOpacity
       style={styles.buttons}
@@ -45,15 +43,12 @@ export const BackButton = ({ navigation }: { navigation: * }) => {
     </TouchableOpacity>
   );
 };
-
 // TODO: this button is generic and is used in places unrelated to operation details
 // move it to a generic place
-export const CloseButton = ({ navigation }: { navigation: * }) => {
+export const CloseButton = ({ navigation }: { navigation: any }) => {
   const { colors } = useTheme();
-
   return (
-    <TouchableOpacity
-      // $FlowFixMe
+    <TouchableOpacity // $FlowFixMe
       onPress={() => navigation.popToTop()}
       style={styles.buttons}
     >
@@ -77,10 +72,14 @@ function OperationDetails({ route }: Props) {
     specific &&
     specific.getURLWhatIsThis &&
     specific.getURLWhatIsThis(operation);
-
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="OperationDetails" />
@@ -100,7 +99,6 @@ function OperationDetails({ route }: Props) {
 }
 
 export default withDiscreetMode(OperationDetails);
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
