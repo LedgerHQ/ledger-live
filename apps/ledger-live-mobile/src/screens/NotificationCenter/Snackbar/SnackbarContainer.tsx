@@ -1,15 +1,12 @@
-// @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
-
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
-
 import { useSelector } from "react-redux";
 import Snackbar from "./Snackbar";
-import * as RootNavigation from "../../../rootnavigation.js";
+import * as RootNavigation from "../../../rootnavigation";
 import { NavigatorName, ScreenName } from "../../../const";
 import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 
@@ -17,7 +14,6 @@ export default function SnackbarContainer() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { dismissToast, toasts } = useToasts();
   const { t } = useTranslation();
-
   const navigate = useCallback(
     (toast: ToastData) => {
       if (toast.type === "announcement" || !toast.type) {
@@ -29,18 +25,17 @@ export default function SnackbarContainer() {
     },
     [dismissToast, toasts],
   );
-
   const handleDismissToast = useCallback(
     (toast: ToastData) => dismissToast(toast.id),
     [dismissToast],
   );
-
   const groupedSnackbarsItems = {
     id: uuid(),
-    title: t("notificationCenter.groupedToast.text", { count: toasts?.length }),
+    title: t("notificationCenter.groupedToast.text", {
+      count: toasts?.length,
+    }),
     icon: "info",
   };
-
   return hasCompletedOnboarding &&
     toasts &&
     toasts.length &&
@@ -67,7 +62,6 @@ export default function SnackbarContainer() {
     </View>
   ) : null;
 }
-
 const styles = StyleSheet.create({
   root: {
     position: "absolute",

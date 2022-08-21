@@ -7,11 +7,11 @@ import Animated, {
   useCode,
   EasingNode,
 } from "react-native-reanimated";
-// @ts-ignore
 import { useClock, timing } from "react-native-redash/lib/module/v1";
 import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { Notification } from "@ledgerhq/native-ui";
 import { InfoMedium, WarningMedium } from "@ledgerhq/native-ui/assets/icons";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
@@ -23,8 +23,8 @@ const AnimatedTouchableOpacity = Animated.createAnimatedComponent(
 type Props = {
   toast: ToastData;
   cta?: string;
-  onPress: (toast: ToastData) => void;
-  onClose?: (toast: ToastData) => void;
+  onPress: (_: ToastData) => void;
+  onClose?: (_: ToastData) => void;
 };
 
 const icons = {

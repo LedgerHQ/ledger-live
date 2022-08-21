@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback, useRef } from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
@@ -27,25 +26,25 @@ if (Config.MOCK || getEnv("MOCK")) {
 }
 
 type Props = {
-  children: React$Node,
+  children: React.ReactNode;
 };
-
 export default function NotificationsProvider({ children }: Props) {
   const { locale } = useLocale();
   const currenciesRaw: CryptoCurrency[] = useSelector(cryptoCurrenciesSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-
   const { currencies, tickers } = currenciesRaw.reduce(
     ({ currencies, tickers }, { id, ticker }) => ({
       currencies: [...currencies, id],
       tickers: [...tickers, ticker],
     }),
-    { currencies: [], tickers: [] },
+    {
+      currencies: [],
+      tickers: [],
+    },
   );
   // $FlowFixMe until live-common is bumped
   const { pushToast } = useToasts();
   const initDateRef = useRef();
-
   const context = {
     language: locale,
     currencies,
@@ -54,7 +53,6 @@ export default function NotificationsProvider({ children }: Props) {
     platform: Platform.OS,
     appVersion: VersionNumber.appVersion ?? undefined,
   };
-
   const onLoad = useCallback(
     () =>
       getNotifications().then(dbData => {
@@ -64,9 +62,7 @@ export default function NotificationsProvider({ children }: Props) {
           lastUpdateTime = new Date().getTime(),
           initDate = new Date().getTime(),
         } = dbData || {};
-
         initDateRef.current = initDate;
-
         return {
           announcements,
           seenIds,
@@ -75,7 +71,6 @@ export default function NotificationsProvider({ children }: Props) {
       }),
     [],
   );
-
   const onSave = useCallback(
     ({ announcements, seenIds, lastUpdateTime }) =>
       saveNotifications({
@@ -86,7 +81,6 @@ export default function NotificationsProvider({ children }: Props) {
       }),
     [initDateRef],
   );
-
   const onNewAnnouncement = useCallback(
     (announcement: Announcement) => {
       const {
@@ -96,13 +90,11 @@ export default function NotificationsProvider({ children }: Props) {
         utm_campaign: utmCampaign,
         published_at: publishedAt,
       } = announcement;
-
       track("Announcement Received", {
         uuid,
         utm_campaign: utmCampaign,
       });
       const publishedTime = new Date(publishedAt).getTime();
-
       if (
         publishedTime &&
         initDateRef.current &&
@@ -118,7 +110,6 @@ export default function NotificationsProvider({ children }: Props) {
     },
     [pushToast, initDateRef],
   );
-
   const onAnnouncementRead = useCallback(
     ({ uuid, utm_campaign: utmCampaign }) => {
       track("Announcement Viewed", {
@@ -128,7 +119,6 @@ export default function NotificationsProvider({ children }: Props) {
     },
     [],
   );
-
   return (
     <AnnouncementProvider
       autoUpdateDelay={60000}
@@ -140,7 +130,9 @@ export default function NotificationsProvider({ children }: Props) {
       fetchApi={notificationsApi}
     >
       <ServiceStatusProvider
-        context={{ tickers }}
+        context={{
+          tickers,
+        }}
         autoUpdateDelay={60000}
         networkApi={serviceStatusApi}
       >
