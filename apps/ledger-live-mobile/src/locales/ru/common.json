@@ -4333,7 +4333,7 @@
       "priceStatistics" : "Статистика цены",
       "price" : "Цена",
       "tradingVolume" : "Торговый объём",
-      "24hLowHight" : "Мин/Макс (24 часа)",
+      "24hLowHight" : "Макс/Мин (24 часа)",
       "7dLowHigh" : "Мин/Макс (Неделя)",
       "allTimeHigh" : "Исторический макс.",
       "allTimeLow" : "Исторический мин.",
