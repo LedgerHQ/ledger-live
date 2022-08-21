@@ -1,10 +1,7 @@
-// @flow
-
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-
 import LText from "../../components/LText";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 
@@ -20,11 +17,10 @@ const FilecoinField = ({
   transaction,
   field,
 }: {
-  transaction: *,
-  field: DeviceTransactionField,
+  transaction: any;
+  field: DeviceTransactionField;
 }) => {
   invariant(transaction.family === "filecoin", "filecoin transaction");
-
   return (
     <DataRow label={field.label}>
       <LText semiBold style={styles.text}>
@@ -40,7 +36,6 @@ const fieldComponents = {
   "filecoin.gasLimit": FilecoinField,
   "filecoin.method": FilecoinField,
 };
-
 export default {
   fieldComponents,
 };
