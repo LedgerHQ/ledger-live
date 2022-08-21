@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -14,20 +12,21 @@ import { someAccountsNeedMigrationSelector } from "../../reducers/accounts";
 export default function Banner() {
   const { colors } = useTheme();
   const navigation = useNavigation();
-
   const someAccountsNeedMigration = useSelector(
     someAccountsNeedMigrationSelector,
   );
-
   const navigateToAccountMigration = useCallback(() => {
     navigation.navigate(NavigatorName.MigrateAccountsFlow);
   }, [navigation]);
-
   if (!someAccountsNeedMigration) return null;
-
   return (
     <TouchableOpacity
-      style={[styles.root, { backgroundColor: colors.live }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.live,
+        },
+      ]}
       onPress={navigateToAccountMigration}
     >
       <View style={styles.logo}>
@@ -42,7 +41,6 @@ export default function Banner() {
     </TouchableOpacity>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     position: "absolute",

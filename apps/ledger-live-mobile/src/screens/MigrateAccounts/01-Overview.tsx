@@ -1,5 +1,3 @@
-// @flow
-
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
@@ -18,12 +16,12 @@ import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { migratableAccountsSelector } from "../../reducers/accounts";
 
 type Props = {
-  navigation: any,
-  route: any,
+  navigation: any;
+  route: any;
 };
-
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 export default function Overview({ route, navigation }: Props) {
   const { colors } = useTheme();
   const migratableAccounts = useSelector(migratableAccountsSelector);
@@ -37,7 +35,6 @@ export default function Overview({ route, navigation }: Props) {
         .sort(),
     [migratableAccounts],
   );
-
   const showNotice = route.params?.showNotice;
   const startMigration = useCallback(() => {
     navigation.navigate(ScreenName.MigrateAccountsConnectDevice, {
@@ -45,9 +42,14 @@ export default function Overview({ route, navigation }: Props) {
     });
   }, [navigation, currencyIds]);
 
-  const renderSectionHeader = ({ section }: { section: * }) => (
+  const renderSectionHeader = ({ section }: { section: any }) => (
     <LText
-      style={[styles.currencyTitle, { backgroundColor: colors.background }]}
+      style={[
+        styles.currencyTitle,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       color="smoke"
       semiBold
     >
@@ -62,12 +64,17 @@ export default function Overview({ route, navigation }: Props) {
     </LText>
   );
 
-  const renderItem = ({ item }: { item: * }) => (
+  const renderItem = ({ item }: { item: any }) => (
     <View style={styles.cardWrapper}>
       <AccountCard
         account={item}
         parentAccount={null}
-        style={[styles.card, { backgroundColor: colors.card }]}
+        style={[
+          styles.card,
+          {
+            backgroundColor: colors.card,
+          },
+        ]}
       />
     </View>
   );
@@ -98,7 +105,9 @@ export default function Overview({ route, navigation }: Props) {
           i18nKey={`migrateAccounts.overview.${
             showNotice ? "notice" : "subtitle"
           }`}
-          values={{ accountCount: migratableAccounts.length }}
+          values={{
+            accountCount: migratableAccounts.length,
+          }}
         />
       </LText>
       <SectionList
@@ -130,7 +139,6 @@ export default function Overview({ route, navigation }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -143,7 +151,6 @@ const styles = StyleSheet.create({
   title: {
     marginHorizontal: 20,
     marginTop: 16,
-
     fontSize: 16,
     marginBottom: 8,
   },

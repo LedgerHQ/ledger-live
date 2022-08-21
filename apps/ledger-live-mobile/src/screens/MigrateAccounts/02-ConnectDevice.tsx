@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -14,24 +12,23 @@ import SelectDevice from "../../components/SelectDevice";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 const action = createAction(connectApp);
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  currency: Currency,
-  appName?: string,
+  currency: Currency;
+  appName?: string;
 };
-
 export default function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const [device, setDevice] = useState<?Device>();
-
+  const [device, setDevice] = useState<Device | null | undefined>();
   const onResult = useCallback(
     result => {
       setDevice();
@@ -42,14 +39,17 @@ export default function ConnectDevice({ navigation, route }: Props) {
     },
     [navigation, route.params],
   );
-
   const onClose = useCallback(() => {
     setDevice();
   }, []);
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="MigrateAccount" name="ConnectDevice" />
@@ -64,13 +64,14 @@ export default function ConnectDevice({ navigation, route }: Props) {
         device={device}
         onResult={onResult}
         onClose={onClose}
-        request={{ currency: route.params.currency }}
+        request={{
+          currency: route.params.currency,
+        }}
         appName={route.params.appName}
       />
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

@@ -1,5 +1,3 @@
-// @flow
-
 import { migrateAccounts } from "@ledgerhq/live-common/account/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -25,16 +23,15 @@ import {
 } from "../../reducers/accounts";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 
-const forceInset = { bottom: "always" };
-
-type Props = {
-  navigation: any,
-  route: any,
+const forceInset = {
+  bottom: "always",
 };
-
+type Props = {
+  navigation: any;
+  route: any;
+};
 export default function Progress({ navigation, route }: Props) {
   const { colors } = useTheme();
-
   const accounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const migratableAccounts = useSelector(migratableAccountsSelector);
@@ -52,30 +49,24 @@ export default function Progress({ navigation, route }: Props) {
   const scanSubscription = useRef(null);
   const prevAccountCount = useRef(migratableAccounts.length);
   const prevCurrencyIds = useRef(currencyIds);
-
   const { currency, device } = route.params || {};
-
   const noticeAwareStatus =
     status === "done" && prevAccountCount.current === migratableAccounts.length
       ? "notice"
       : status;
-
   const finishedWithDevice =
     migratableAccounts.length &&
     prevCurrencyIds.current &&
     prevCurrencyIds.current[prevCurrencyIds.current.length - 1] === currency.id;
-
   const nextCurrency =
     migratableAccounts.length && !finishedWithDevice
       ? getCryptoCurrencyById(currencyIds[currencyIds.indexOf(currency.id) + 1])
       : null;
-
   const unsub = useCallback(() => {
     if (scanSubscription.current) {
       scanSubscription.current.unsubscribe();
     }
   }, [scanSubscription]);
-
   const navigateToNextStep = useCallback(() => {
     if (migratableAccounts.length) {
       if (finishedWithDevice) {
@@ -100,7 +91,6 @@ export default function Progress({ navigation, route }: Props) {
     currency,
     noticeAwareStatus,
   ]);
-
   const { deviceId } = device;
   const startScanAccountsDevice = useCallback(() => {
     const syncConfig = {
@@ -110,7 +100,11 @@ export default function Progress({ navigation, route }: Props) {
     };
     unsub();
     scanSubscription.current = getCurrencyBridge(currency)
-      .scanAccounts({ currency, deviceId, syncConfig })
+      .scanAccounts({
+        currency,
+        deviceId,
+        syncConfig,
+      })
       .pipe(
         reduce(
           (all: Account[], event: ScanAccountEvent) =>
@@ -122,7 +116,10 @@ export default function Progress({ navigation, route }: Props) {
         next: scannedAccounts => {
           dispatch(
             setAccounts(
-              migrateAccounts({ scannedAccounts, existingAccounts: accounts }),
+              migrateAccounts({
+                scannedAccounts,
+                existingAccounts: accounts,
+              }),
             ),
           );
           setStatus("done");
@@ -134,12 +131,10 @@ export default function Progress({ navigation, route }: Props) {
         },
       });
   }, [blacklistedTokenIds, unsub, currency, deviceId, dispatch, accounts]);
-
   useEffect(() => {
     startScanAccountsDevice();
     return unsub;
   }, [startScanAccountsDevice, unsub]);
-
   return (
     <SafeAreaView
       forceInset={forceInset}
@@ -163,7 +158,9 @@ export default function Progress({ navigation, route }: Props) {
           ) : (
             <Trans
               i18nKey={`migrateAccounts.progress.${noticeAwareStatus}.title`}
-              values={{ currency: currency.name }}
+              values={{
+                currency: currency.name,
+              }}
             />
           )}
         </LText>
@@ -173,7 +170,9 @@ export default function Progress({ navigation, route }: Props) {
           ) : (
             <Trans
               i18nKey={`migrateAccounts.progress.${noticeAwareStatus}.subtitle`}
-              values={{ currency: currency.name }}
+              values={{
+                currency: currency.name,
+              }}
             />
           )}
         </LText>
@@ -195,7 +194,9 @@ export default function Progress({ navigation, route }: Props) {
                       : "ctaNextCurrency"
                     : "ctaDone"
                 }`}
-                values={{ currency: nextCurrency && nextCurrency.name }}
+                values={{
+                  currency: nextCurrency && nextCurrency.name,
+                }}
               />
             }
             onPress={navigateToNextStep}
@@ -205,7 +206,6 @@ export default function Progress({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
