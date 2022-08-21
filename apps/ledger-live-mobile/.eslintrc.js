@@ -8,13 +8,19 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
   ],
   settings: {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"],
+    },
     "import/resolver": {
       node: {
         extensions: [".js", ".android.js", ".ios.js", ".ts", ".tsx"],
       },
+      typescript: {
+        alwaysTryTypes: true,
+      },
     },
   },
-  plugins: ["prettier", "detox", "@typescript-eslint"],
+  plugins: ["prettier", "detox", "@typescript-eslint", "import"],
   rules: {
     "no-console": [
       "error",

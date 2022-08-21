@@ -6,6 +6,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import StyledStatusBar from "./StyledStatusBar";
 import CameraScreen from "./CameraScreen";
 import FallBackCamera from "../screens/ImportAccounts/FallBackCamera";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 
 type Props = {

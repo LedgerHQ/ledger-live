@@ -5,8 +5,8 @@ import { concatMap } from "rxjs/operators";
 import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-common/env";
 import type { EnvName } from "@ledgerhq/live-common/env";
 
-import logger from "./logger";
 import { FeatureId } from "@ledgerhq/types-live";
+import logger from "./logger";
 
 export type FeatureCommon = {
   name: EnvName;
