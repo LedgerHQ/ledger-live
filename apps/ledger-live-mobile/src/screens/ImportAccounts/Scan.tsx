@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import {
@@ -8,28 +7,28 @@ import {
   progressOfFrames,
 } from "qrloop";
 import { decode } from "@ledgerhq/live-common/cross";
-
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import Scanner from "../../components/Scanner";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { withTheme } from "../../colors";
 
 type Props = {
-  navigation: any,
-  route: any,
-  colors: *,
+  navigation: any;
+  route: any;
+  colors: any;
 };
 
 class Scan extends PureComponent<
   Props,
   {
-    progress: number,
-    error: ?Error,
-    width: number,
-    height: number,
-  },
+    progress: number;
+    error: Error | null | undefined;
+    width: number;
+    height: number;
+  }
 > {
   state = {
     progress: 0,
@@ -39,27 +38,29 @@ class Scan extends PureComponent<
 
   componentDidMount() {
     const data = this.props.route.params?.data;
+
     if (data) {
       const frames = data.reduce(parseFramesReducer, null);
+
       if (areFramesComplete(frames)) {
         this.onResult(decode(framesToData(frames).toString()));
       }
     }
   }
 
-  lastData: ?string = null;
-
-  frames: * = null;
-
-  completed: boolean = false;
+  lastData: string | null | undefined = null;
+  frames: any = null;
+  completed = false;
 
   onBarCodeRead = (data: string) => {
     if (data && data !== this.lastData && !this.completed) {
       this.lastData = data;
+
       try {
         this.frames = parseFramesReducer(this.frames, data);
-
-        this.setState({ progress: progressOfFrames(this.frames) });
+        this.setState({
+          progress: progressOfFrames(this.frames),
+        });
 
         if (areFramesComplete(this.frames)) {
           try {
@@ -67,7 +68,10 @@ class Scan extends PureComponent<
             this.completed = true;
           } catch (error) {
             this.frames = null;
-            this.setState({ error, progress: 0 });
+            this.setState({
+              error,
+              progress: 0,
+            });
           }
         }
       } catch (e) {
@@ -75,14 +79,13 @@ class Scan extends PureComponent<
       }
     }
   };
-
   onCloseError = () => {
-    this.setState({ error: null });
+    this.setState({
+      error: null,
+    });
   };
-
   onResult = result => {
     const onFinish = this.props.route.params?.onFinish;
-
     this.props.navigation.replace(ScreenName.DisplayResult, {
       result,
       onFinish,
@@ -92,9 +95,15 @@ class Scan extends PureComponent<
   render() {
     const { progress, error } = this.state;
     const { colors } = this.props;
-
     return (
-      <View style={[styles.root, { backgroundColor: colors.darkBlue }]}>
+      <View
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.darkBlue,
+          },
+        ]}
+      >
         <TrackScreen category="ImportAccounts" name="Scan" />
         <Scanner onResult={this.onBarCodeRead} progress={progress} liveQrCode />
         <GenericErrorBottomModal error={error} onClose={this.onCloseError} />
@@ -106,7 +115,6 @@ class Scan extends PureComponent<
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-
     alignItems: "center",
     justifyContent: "center",
   },
@@ -115,5 +123,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
 export default withTheme(Scan);

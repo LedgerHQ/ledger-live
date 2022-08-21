@@ -1,4 +1,3 @@
-// @flow
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
@@ -9,8 +8,8 @@ import ResultSection from "./ResultSection";
 import CheckBox from "../../components/CheckBox";
 
 type Props = {
-  checked: boolean,
-  onSwitch: boolean => void,
+  checked: boolean;
+  onSwitch: (_: boolean) => void;
 };
 
 function DisplayResultSettingsSection({ checked, onSwitch }: Props) {
@@ -18,7 +17,14 @@ function DisplayResultSettingsSection({ checked, onSwitch }: Props) {
   return (
     <View style={styles.root}>
       <ResultSection mode="settings" />
-      <View style={[styles.row, { backgroundColor: colors.card }]}>
+      <View
+        style={[
+          styles.row,
+          {
+            backgroundColor: colors.card,
+          },
+        ]}
+      >
         <Icon name="settings" size={20} color={colors.grey} />
         <LText style={styles.label} semiBold>
           <Trans i18nKey="account.import.result.includeGeneralSettings" />
@@ -34,7 +40,6 @@ const styles = StyleSheet.create({
   row: {
     borderRadius: 4,
     paddingHorizontal: 8,
-
     paddingVertical: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -44,5 +49,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
 export default memo<Props>(DisplayResultSettingsSection);

@@ -1,9 +1,8 @@
-/* @flow */
 import { PureComponent } from "react";
 import { ScreenName } from "../../const";
 
 export default class FallBackCamera extends PureComponent<{
-  navigation: any,
+  navigation: any;
 }> {
   componentDidMount() {
     // TODO do it better way to not have flickering
