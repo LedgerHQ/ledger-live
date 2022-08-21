@@ -82,6 +82,7 @@
     "moreInfo" : "자세한 정보",
     "buyEth" : "이더리움 구매",
     "popular" : "인기 있는",
+    "getSupport" : "지원 받기",
     "comingSoon" : "곧 출시 예정"
   },
   "errors" : {
@@ -679,6 +680,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
     }
+  },
+  "crash" : {
+    "title" : "문제가 발생했습니다"
   },
   "bluetooth" : {
     "required" : "죄송하지만 블루투스가 비활성 상태인 것 같습니다",
@@ -2153,6 +2157,10 @@
       "clearCacheButton" : "제거",
       "exportLogs" : "로그 저장",
       "exportLogsDesc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
+      "resetThirdPartyData" : "타사 데이터 재설정",
+      "resetThirdPartyDataDesc" : "타사 트랜잭션 공급자에 액세스하는 데 사용되는 모든 타사 로컬 데이터를 삭제합니다.",
+      "resetThirdPartyDataModal" : "타사 로컬 데이터 삭제",
+      "resetThirdPartyDataModalDesc" : "타사 로컬 데이터 삭제 고객확인제도를 다시 제출하거나 다시 로그인해야 파트너가 제공하는 서비스를 이용할 수 있습니다.",
       "hardReset" : "Ledger Live 리셋",
       "hardResetDesc" : "귀하의 자산에는 영향을 주지 않습니다. 계정 데이터, 트랜잭션 내역, 설정을 포함하여 Ledger Live의 모든 데이터를 삭제합니다. Ledger 장치를 이용하여 빈 Ledger Live에 암호화폐를 다시 로드하고 관리합니다.",
       "repairDevice" : "Ledger 장치 복구",
@@ -2169,6 +2177,15 @@
       "customManifest" : {
         "title" : "커스텀 플랫폼 Manifest 불러오기"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsOverride" : "Override",
+      "featureFlagsEdit" : "Edit",
+      "featureFlagsRestore" : "Restore",
+      "featureFlagsDisplayValue" : "값 표시하기",
+      "featureFlagsHideValue" : "값 숨기기"
     }
   },
   "notifications" : {
@@ -2269,7 +2286,7 @@
         "cancel" : {
           "title" : "이 주소를 거부했습니다.",
           "subtitle" : "실수로 주소를 거부했다면 아래 버튼을 클릭하여 재시도하세요.",
-          "info" : "주소 불일치가 확인될 경우 귀하의 핸드폰에 손상이 있을 수 있습니다. <0>가능한 한 빨리 당사로 문의</0>할 것을 권고드립니다."
+          "info" : "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
         }
       },
       "receiveConfirmation" : {
@@ -2284,7 +2301,7 @@
         "subtitle1" : "주소 인증은 확실한 보안을 제공합니다. 귀하의 Ledger 장치에 표시되는 주소는 손상될 수 없습니다.",
         "subtitle2" : "주소 인증을 통해 장치에 보이는 주소가 Ledger Live에 보이는 주소와 일치하는지 확인할 수 있습니다.",
         "verifyCta" : "내 주소 확인",
-        "dontVerifyCta" : "인증 없이 내 주소 공개"
+        "dontVerifyCta" : "Reveal my address without verifying"
       },
       "securityDontVerify" : {
         "title" : "확실합니까?",
@@ -2405,7 +2422,7 @@
       },
       "payoutModal" : {
         "title" : "지불금 비용",
-        "description" : "지불금 비용은 장치에 표시되지 않으며 금액에서 빠집니다.",
+        "description" : "Payout fees are not shown on the device and subtracted from the amount.",
         "cta" : "닫기"
       },
       "pendingOperation" : {
@@ -2528,19 +2545,80 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "수신",
-          "to" : "발신",
-          "send" : "전송",
-          "payoutNetworkFees" : "지불금 비용",
-          "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
-          "receive" : "금액",
-          "receiveFloat" : "서비스 수수료 부과 전 수신 금액",
-          "provider" : "공급자",
-          "method" : "요율",
-          "fees" : "수수료"
+        "ratesDrawer" : {
+          "title" : "요율",
+          "quote" : "호가",
+          "receive" : "수령"
+        },
+        "placeholder" : "계정 선택",
+        "title" : "교환",
+        "cta" : "교환",
+        "from" : "수신",
+        "to" : "발신",
+        "loading" : "로딩...",
+        "disclaimer" : {
+          "title" : "이용약관",
+          "desc" : "\"수락\"을 클릭하여, {{providerName}}의 이용 약관에 따라 독점 관리되는 서비스임을 확인하고 수락합니다.",
+          "tos" : "이용약관",
+          "accept" : "수락"
+        },
+        "notAvailable" : {
+          "title" : "아직 스왑이 불가능한 지역입니다",
+          "content" : "조금만 기다려 주세요. <br/>조만간 해당 기능을 런칭을 앞두고 있습니다"
+        },
+        "amount" : {
+          "useMax" : "최대치 사용",
+          "available" : "총 이용 가능"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "공급자",
+            "rate" : "요율",
+            "fees" : "네트워크 수수료",
+            "target" : "보내는 계정"
+          },
+          "noAccount" : "{{name}}을 수령할 계정을 생성하세요",
+          "noAccountCTA" : "계정 추가"
+        },
+        "select" : {
+          "from" : {
+            "title" : "수신"
+          },
+          "to" : {
+            "title" : "발신"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "고객확인제도",
+            "required" : "고객확인제도를 완료해야 합니다",
+            "complete" : "고객확인제도 완료",
+            "update" : "고객확인제도 업데이트",
+            "rejected" : "고객확인제도가 거부되었습니다. 인증을 다시 시작하세요",
+            "rejectedContactProviderSupport" : "고객확인제도가 거부되었습니다. {{providerName}}지원팀에 문의해 주세요.",
+            "updateRequired" : "고객확인제도를 완료하거나 업데이트하세요",
+            "status" : {
+              "pending" : "고객확인제도 대기 중",
+              "approved" : "고객확인제도 승인됨",
+              "closed" : "고객확인제도 거부됨",
+              "upgradeRequired" : "고객확인제도 불충분"
+            }
+          },
+          "login" : {
+            "title" : "로그인",
+            "required" : "이 공급자로 로그인해야 합니다.",
+            "complete" : "로그인"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "이 공급자와 다중인증(MFA)을 설정해야 합니다.",
+            "complete" : "다중인증(MFA) 설정"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "고객님의 출금이 {{providerName}}에 의해 차단되었습니다.\n\n 자세한 내용은 해당 지원팀에 문의하세요."
+          }
         }
       }
     },
@@ -2995,7 +3073,6 @@
     "retry" : "다시 시도",
     "done" : "완료",
     "finalCta" : "계속",
-    "finalCtaForSwap" : "스왑으로 돌아가기",
     "synchronizing" : "동기화 중",
     "synchronizingDesc" : "사용자의 계정이 동기화 중입니다. 약간의 시간이 소요됩니다...",
     "noAccountToCreate" : "<1><0>{{currencyName}}</></> 계정을 생성할 수 없습니다. 절차를 다시 시작하고 계정을 동기화하세요.",
@@ -3072,7 +3149,17 @@
     "confirmSwap" : {
       "title" : "장치에서 스왑 거래를 확인하세요",
       "alert" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
-      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다."
+      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
+      "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
+    },
+    "swap2" : {
+      "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
+      "amountSent" : "전송 금액",
+      "amountReceived" : "수령 금액",
+      "provider" : "공급자",
+      "fees" : "네트워크 수수료",
+      "sourceAccount" : "송신 계정",
+      "targetAccount" : "보내는 계정"
     },
     "confirmSell" : {
       "title" : "장치에서 스왑 거래를 확인하세요",
@@ -3402,8 +3489,8 @@
     "drawerUpdate" : {
       "title" : "펌웨어 업데이트",
       "description" : "Ledger Nano 펌웨어를 Ledger Live 데스크탑 애플리케이션에 연결해 업데이트하세요",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "USB 케이블이 필요합니다",
+      "pleaseConnectUsbDescription" : "펌웨어 업데이트를 시작하려면 USB 케이블로 {{deviceName}} 장치를 핸드폰에 연결하세요."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
