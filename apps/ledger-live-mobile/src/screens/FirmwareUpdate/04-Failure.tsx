@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -10,18 +9,19 @@ import Button from "../../components/Button";
 import NeedHelp from "../../components/NeedHelp";
 import { ScreenName } from "../../const";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  deviceId: string,
-  error: Error,
+  deviceId: string;
+  error: Error;
 };
-
 export default function FirmwareUpdateFailure({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onRetry = useCallback(() => {
@@ -29,16 +29,19 @@ export default function FirmwareUpdateFailure({ navigation, route }: Props) {
       navigation.replace(ScreenName.FirmwareUpdateMCU, route.params);
     }
   }, [navigation, route.params]);
-
   const onClose = useCallback(() => {
     const n = navigation.getParent();
     if (n) n.goBack();
   }, [navigation]);
-
   const error = route.params.error;
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="FirmwareUpdate" name="Failure" />
@@ -59,13 +62,19 @@ export default function FirmwareUpdateFailure({ navigation, route }: Props) {
           containerStyle={styles.button}
         />
       </View>
-      <View style={[styles.footer, { borderColor: colors.lightFog }]}>
+      <View
+        style={[
+          styles.footer,
+          {
+            borderColor: colors.lightFog,
+          },
+        ]}
+      >
         <NeedHelp />
       </View>
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

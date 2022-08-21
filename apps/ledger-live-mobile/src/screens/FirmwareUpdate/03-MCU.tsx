@@ -1,4 +1,3 @@
-/* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -10,26 +9,28 @@ import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import { BulletItem } from "../../components/BulletList";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import Installing from "../../components/Installing";
 import { withTheme } from "../../colors";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-  colors: *,
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  colors: any;
 };
-
 type RouteParams = {
-  deviceId: string,
-  firmware: FirmwareUpdateContext,
+  deviceId: string;
+  firmware: FirmwareUpdateContext;
 };
-
 type State = {
-  installing: ?string,
-  progress: number,
+  installing: string | null | undefined;
+  progress: number;
 };
 
 class FirmwareUpdateMCU extends Component<Props, State> {
@@ -37,13 +38,11 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     installing: null,
     progress: 0,
   };
-
-  sub: *;
+  sub: any;
 
   async componentDidMount() {
     const { navigation, route } = this.props;
     const { deviceId, firmware } = this.props.route.params || {};
-
     this.sub = firmwareUpdateMain(deviceId, firmware).subscribe({
       next: patch => {
         this.setState(patch);
@@ -58,6 +57,7 @@ class FirmwareUpdateMCU extends Component<Props, State> {
       },
       error: error => {
         logger.critical(error);
+
         if (navigation.replace) {
           navigation.replace(ScreenName.FirmwareUpdateFailure, {
             ...route.params,
@@ -76,10 +76,14 @@ class FirmwareUpdateMCU extends Component<Props, State> {
     const { colors } = this.props;
     const { installing, progress } = this.state;
     const { width } = getWindowDimensions();
-
     return (
       <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
         forceInset={forceInset}
       >
         <TrackScreen category="FirmwareUpdate" name="MCU" />
@@ -131,5 +135,4 @@ const styles = StyleSheet.create({
     position: "relative",
   },
 });
-
 export default withTheme(FirmwareUpdateMCU);

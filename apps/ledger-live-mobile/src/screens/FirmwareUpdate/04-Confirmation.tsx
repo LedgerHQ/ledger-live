@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -9,26 +8,31 @@ import { ScreenName } from "../../const";
 import GenericSuccessView from "../../components/GenericSuccessView";
 import Button from "../../components/Button";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  deviceId: string,
+  deviceId: string;
 };
-
 export default function FirmwareUpdateConfirmation({ navigation }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
     navigation.navigate(ScreenName.Manager);
   }, [navigation]);
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="FirmwareUpdate" name="Confirmation" />
@@ -50,7 +54,6 @@ export default function FirmwareUpdateConfirmation({ navigation }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

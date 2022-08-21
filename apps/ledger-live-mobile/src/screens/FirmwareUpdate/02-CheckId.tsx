@@ -1,4 +1,3 @@
-/* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -14,25 +13,27 @@ import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
 import FirmwareProgress from "../../components/FirmwareProgress";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { withTheme } from "../../colors";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-  colors: *,
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  colors: any;
 };
-
 type RouteParams = {
-  deviceId: string,
-  firmware: FirmwareUpdateContext,
+  deviceId: string;
+  firmware: FirmwareUpdateContext;
 };
-
 type State = {
-  progress: number,
-  displayedOnDevice: boolean,
+  progress: number;
+  displayedOnDevice: boolean;
 };
 
 class FirmwareUpdateCheckId extends Component<Props, State> {
@@ -40,8 +41,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     progress: 0,
     displayedOnDevice: false,
   };
-
-  sub: *;
+  sub: any;
 
   componentDidMount() {
     const { navigation, route } = this.props;
@@ -52,6 +52,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
       if (navigation.replace) {
         navigation.replace(ScreenName.FirmwareUpdateConfirmation, route.params);
       }
+
       return;
     }
 
@@ -84,10 +85,14 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
     const { progress } = this.state;
     const { osu } = this.props.route.params?.firmware;
     const windowWidth = getWindowDimensions().width;
-
     return (
       <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
         forceInset={forceInset}
       >
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
@@ -108,7 +113,10 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
           <View
             style={[
               styles.idContainer,
-              { borderColor: colors.fog, maxWidth: windowWidth - 40 },
+              {
+                borderColor: colors.fog,
+                maxWidth: windowWidth - 40,
+              },
             ]}
           >
             {osu &&
@@ -121,7 +129,11 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
 
           <View style={styles.footer}>
             {progress === 0 ? (
-              <View style={{ padding: 10 }}>
+              <View
+                style={{
+                  padding: 10,
+                }}
+              >
                 <Spinning>
                   <LiveLogo color={colors.grey} size={40} />
                 </Spinning>
@@ -167,5 +179,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
 export default withTheme(FirmwareUpdateCheckId);

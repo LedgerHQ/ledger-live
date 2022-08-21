@@ -1,9 +1,7 @@
-/* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-
 import manager from "@ledgerhq/live-common/manager/index";
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
@@ -14,18 +12,19 @@ import SafeMarkdown from "../../components/SafeMarkdown";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  deviceId: string,
-  firmware: FirmwareUpdateContext,
+  deviceId: string;
+  firmware: FirmwareUpdateContext;
 };
-
 export default function FirmwareUpdateReleaseNotes({
   navigation,
   route,
@@ -34,14 +33,18 @@ export default function FirmwareUpdateReleaseNotes({
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.FirmwareUpdateCheckId, route.params);
   }, [navigation, route.params]);
-
   const firmware = route.params.firmware;
   if (!firmware) return null;
   const { osu } = firmware;
   const version = manager.getFirmwareVersion(osu);
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="FirmwareUpdate" name="ReleaseNotes" />
@@ -52,7 +55,9 @@ export default function FirmwareUpdateReleaseNotes({
         <LText style={styles.intro}>
           <Trans
             i18nKey="FirmwareUpdateReleaseNotes.introTitle"
-            values={{ version }}
+            values={{
+              version,
+            }}
           >
             {"You are about to install "}
             <LText semiBold>firmware version {version}.</LText>
@@ -65,13 +70,25 @@ export default function FirmwareUpdateReleaseNotes({
         </LText>
         {osu.notes ? (
           <View
-            style={[styles.markdownSection, { borderColor: colors.lightFog }]}
+            style={[
+              styles.markdownSection,
+              {
+                borderColor: colors.lightFog,
+              },
+            ]}
           >
             <SafeMarkdown markdown={osu.notes} />
           </View>
         ) : null}
       </NavigationScrollView>
-      <View style={[styles.footer, { backgroundColor: colors.background }]}>
+      <View
+        style={[
+          styles.footer,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
+      >
         <Button
           event="FirmwareUpdateReleaseNotesContinue"
           type="primary"
@@ -82,7 +99,6 @@ export default function FirmwareUpdateReleaseNotes({
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
