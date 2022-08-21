@@ -1,15 +1,11 @@
 import React, { useCallback, useMemo } from "react";
-import {
-  useNavigation,
-  useRoute,
-  getFocusedRouteNameFromRoute,
-} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
-import { ScrollView, Linking } from "react-native";
+import { ScrollView } from "react-native";
 import { snakeCase } from "lodash";
 import { NavigatorName, ScreenName } from "../../const";
 import {
@@ -26,7 +22,6 @@ import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../components/SetupDeviceBanner";
 import { useAnalytics } from "../../analytics";
-import { urls } from "../../config/urls";
 
 export default function TransferDrawer({ onClose }: ModalProps) {
   const navigation = useNavigation();

@@ -62,6 +62,7 @@ import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
 import { track } from "../../analytics/segment";
+
 const tracking = trackingWrapper(track);
 type Props = {
   manifest: AppManifest;

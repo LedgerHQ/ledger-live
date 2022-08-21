@@ -14,7 +14,6 @@ import DebugURLDrawer from "./DebugURLDrawer";
 import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
-import { NavigatorName, ScreenName } from "../../const";
 import { completeOnboarding, setReadOnlyMode } from "../../actions/settings";
 import { urls } from "../../config/urls";
 
