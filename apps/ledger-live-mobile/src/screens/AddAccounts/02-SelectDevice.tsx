@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
@@ -25,25 +23,23 @@ import {
 } from "../../actions/settings";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  currency: CryptoCurrency | TokenCurrency,
-  inline?: boolean,
-  returnToSwap?: boolean,
-  analyticsPropertyFlow?: string,
+  currency: CryptoCurrency | TokenCurrency;
+  inline?: boolean;
+  returnToSwap?: boolean;
+  analyticsPropertyFlow?: string;
 };
-
 const action = createAction(connectApp);
-
 export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const { currency, analyticsPropertyFlow } = route.params;
   const { colors } = useTheme();
-  const [device, setDevice] = useState<?Device>();
+  const [device, setDevice] = useState<Device | null | undefined>();
   const dispatch = useDispatch();
-
   const onSetDevice = useCallback(
     device => {
       dispatch(setLastConnectedDevice(device));
@@ -52,16 +48,15 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
     },
     [dispatch],
   );
-
   const onClose = useCallback(() => {
     setDevice();
   }, []);
-
   const onResult = useCallback(
     meta => {
       setDevice();
       const { inline } = route.params;
       const arg = { ...route.params, ...meta };
+
       if (inline) {
         navigation.replace(ScreenName.AddAccountsAccounts, arg);
       } else {
@@ -70,14 +65,12 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
     },
     [navigation, route],
   );
-
   useEffect(() => {
     // load ahead of time
     prepareCurrency(
       isTokenCurrency(currency) ? currency.parentCurrency : currency,
     );
   }, [currency]);
-
   return (
     <SafeAreaView
       style={[
@@ -115,7 +108,6 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

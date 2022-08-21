@@ -1,16 +1,11 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
-
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-
 import { findTokenAccountByCurrency } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import { accountsSelector } from "../../reducers/accounts";
-
 import CurrencyIcon from "../../components/CurrencyIcon";
 import Button from "../../components/Button";
 import Alert from "../../components/Alert";
@@ -20,14 +15,14 @@ import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
 
 type RouteParams = {
-  token: TokenCurrency,
+  token: TokenCurrency;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export default function AddAccountsTokenCurrencyDisclaimer({
   navigation,
   route,
@@ -35,20 +30,14 @@ export default function AddAccountsTokenCurrencyDisclaimer({
   const { colors } = useTheme();
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
-
   const token = route.params.token;
   const tokenName = `${token.name} (${token.ticker})`;
-
   const parentCurrency = token.parentCurrency;
-
   const accountData = findTokenAccountByCurrency(token, accounts);
-
   const parentTokenAccount = accountData ? accountData.parentAccount : null;
-
   const onClose = useCallback(() => {
     navigation.getParent().pop();
   }, [navigation]);
-
   // specific cta in case of token accounts
   const onTokenCta = useCallback(() => {
     if (parentTokenAccount && parentTokenAccount.type === "Account") {
@@ -77,9 +66,15 @@ export default function AddAccountsTokenCurrencyDisclaimer({
     route.params,
     parentCurrency,
   ]);
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <View style={styles.container}>
         <TrackScreen
           category="AddAccounts"
@@ -102,7 +97,9 @@ export default function AddAccountsTokenCurrencyDisclaimer({
           >
             <Trans
               i18nKey={`addAccounts.tokens.${token.tokenType}.disclaimer`}
-              values={{ tokenName }}
+              values={{
+                tokenName,
+              }}
             />
           </Alert>
         </View>
@@ -132,7 +129,6 @@ export default function AddAccountsTokenCurrencyDisclaimer({
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

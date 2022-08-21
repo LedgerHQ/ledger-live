@@ -1,10 +1,7 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
 import { useTheme } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
@@ -16,19 +13,18 @@ import IconCheck from "../../icons/Check";
 import CurrencyIcon from "../../components/CurrencyIcon";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  currency: CryptoCurrency,
-  deviceId: string,
+  currency: CryptoCurrency;
+  deviceId: string;
 };
-
 export default function AddAccountsSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const currency = route.params.currency;
-
   const primaryCTA = useCallback(() => {
     navigation.replace(NavigatorName.Main, {
       screen: NavigatorName.Portfolio,
@@ -36,18 +32,25 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
         screen: NavigatorName.PortfolioAccounts,
         params: {
           screen: ScreenName.Accounts,
-          params: { search: currency.name },
+          params: {
+            search: currency.name,
+          },
         },
       },
     });
   }, [currency, navigation]);
-
   const secondaryCTA = useCallback(() => {
     navigation.navigate(ScreenName.AddAccountsSelectCrypto);
   }, [navigation]);
-
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen
         category="AddAccounts"
         name="Success"
@@ -77,9 +80,8 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
     </View>
   );
 }
-
 type CurrencySuccessProps = {
-  currency: CryptoCurrency,
+  currency: CryptoCurrency;
 };
 
 function CurrencySuccess({ currency }: CurrencySuccessProps) {
@@ -121,7 +123,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     paddingHorizontal: 20,
-
     alignItems: "center",
     justifyContent: "center",
   },

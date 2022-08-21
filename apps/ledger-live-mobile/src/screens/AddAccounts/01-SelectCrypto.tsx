@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
@@ -12,7 +11,6 @@ import {
   useCurrenciesByMarketcap,
   listSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
-
 import { useTheme } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ScreenName } from "../../const";
@@ -22,11 +20,14 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 
 const SEARCH_KEYS = ["name", "ticker"];
-
 type Props = {
-  devMode: boolean,
-  navigation: any,
-  route: { params: { filterCurrencyIds?: string[] } },
+  devMode: boolean;
+  navigation: any;
+  route: {
+    params: {
+      filterCurrencyIds?: string[];
+    };
+  };
 };
 
 const keyExtractor = currency => currency.id;
@@ -46,7 +47,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { filterCurrencyIds = [] } = route.params || {};
   const currencyOsmosis = useFeature("currencyOsmosis");
-
   const cryptoCurrencies = useMemo(() => {
     const currencies = listSupportedCurrencies()
       .concat(listSupportedTokens())
@@ -63,7 +63,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
     return currencies.filter(c => c.family !== "osmosis");
   }, [currencyOsmosis, filterCurrencyIds]);
-
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
   const onPressCurrency = (currency: CryptoCurrency) => {
@@ -101,7 +100,14 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen category="AddAccounts" name="SelectCrypto" />
       <View style={styles.searchContainer}>
         <FilteredSearchBar
@@ -115,7 +121,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
