@@ -1,5 +1,3 @@
-// @flow
-
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -17,8 +15,8 @@ const Header = () => {
   ) : null;
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export default memo<{}>(Header);
-
 const styles = StyleSheet.create({
   root: {
     paddingTop: 16,
