@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { StyleSheet } from "react-native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -7,7 +6,7 @@ import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 
 type Props = {
-  transaction: Transaction,
+  transaction: Transaction;
 };
 
 const StellarMemoField = ({ transaction }: Props) => (
@@ -48,11 +47,9 @@ const fieldComponents = {
   "stellar.assetCode": StellarAssetCodeField,
   "stellar.assetIssuer": StellarAssetIssuerField,
 };
-
 export default {
   fieldComponents,
 };
-
 const deviceMemoLabels = {
   MEMO_TEXT: "Memo Text",
   NO_MEMO: "Memo",
@@ -60,7 +57,6 @@ const deviceMemoLabels = {
   MEMO_HASH: "Memo Hash",
   MEMO_RETURN: "Memo Return",
 };
-
 const styles = StyleSheet.create({
   text: {
     fontSize: 14,

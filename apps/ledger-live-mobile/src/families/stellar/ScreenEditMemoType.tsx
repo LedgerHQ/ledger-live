@@ -1,4 +1,3 @@
-/* @flow */
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
@@ -25,6 +24,7 @@ const mapStateToProps = (state: State, props: any) => ({
   onValueChange: ({ value }) => {
     const { navigation, route } = props;
     const { transaction, account } = route.params;
+
     if (value === "NO_MEMO") {
       const bridge = getAccountBridge(account);
       navigation.navigate(ScreenName.SendSummary, {
@@ -44,11 +44,12 @@ const mapStateToProps = (state: State, props: any) => ({
   },
 });
 
-// $FlowFixMe
 const Screen = connect(mapStateToProps)(
   makeGenericSelectScreen({
     id: "StellarEditMemoType",
-    itemEventProperties: item => ({ memoType: item.value }),
+    itemEventProperties: item => ({
+      memoType: item.value,
+    }),
     keyExtractor: item => item.value,
     formatItem: item => i18next.t(`stellar.memoType.${item.label}`),
     ListHeaderComponent: () => (
@@ -60,12 +61,10 @@ const Screen = connect(mapStateToProps)(
     ),
   }),
 );
-
 const options = {
   title: i18next.t("send.summary.memo.type"),
   headerLeft: null,
 };
-
 const styles = StyleSheet.create({
   memo: {
     marginBottom: 16,
@@ -75,5 +74,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
 export { Screen as component, options };

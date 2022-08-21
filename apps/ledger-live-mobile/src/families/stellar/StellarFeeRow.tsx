@@ -1,4 +1,3 @@
-// @flow
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
@@ -28,14 +27,15 @@ import { urls } from "../../config/urls";
 import { ScreenName } from "../../const";
 
 type Props = {
-  account: AccountLike,
-  transaction: Transaction,
-  parentAccount: Account,
-  navigation: any,
-  route: { params: * },
-  setTransaction: Function,
+  account: AccountLike;
+  transaction: Transaction;
+  parentAccount: Account;
+  navigation: any;
+  route: {
+    params: any;
+  };
+  setTransaction: (..._: Array<any>) => any;
 };
-
 export default function StellarFeeRow({
   account,
   parentAccount,
@@ -48,15 +48,11 @@ export default function StellarFeeRow({
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
-
   if (transaction.family !== "stellar") return null;
-
   const bridge = getAccountBridge(account, parentAccount);
   const suggestedFee = transaction.networkInfo.fees;
   const fees = transaction.fees;
-
   const isCustomFee = !fees.eq(suggestedFee);
-
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
 
@@ -82,10 +78,11 @@ export default function StellarFeeRow({
     fee,
     onSelect,
   }: {
-    label: React$Node,
-    isSelected: boolean,
-    fee: BigNumber | null,
-    onSelect: (isCustom: boolean) => void,
+    label: React.ReactNode;
+    isSelected: boolean;
+    fee: BigNumber | null;
+    // eslint-disable-next-line no-unused-vars
+    onSelect: (isCustom: boolean) => void;
   }) => (
     <TouchableOpacity
       onPress={onSelect}
@@ -154,7 +151,6 @@ export default function StellarFeeRow({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,
@@ -193,7 +189,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  feeLabel: { fontSize: 16, textTransform: "capitalize", marginLeft: 10 },
+  feeLabel: {
+    fontSize: 16,
+    textTransform: "capitalize",
+    marginLeft: 10,
+  },
   checkbox: {
     borderRadius: 24,
     width: 20,

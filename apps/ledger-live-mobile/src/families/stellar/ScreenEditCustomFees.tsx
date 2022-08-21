@@ -1,4 +1,3 @@
-/* @flow */
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
@@ -25,18 +24,19 @@ const options = {
   title: <Trans i18nKey="send.summary.fees" />,
   headerLeft: null,
 };
-
-const forceInset = { bottom: "always" };
-
-type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  currentNavigation: string,
+const forceInset = {
+  bottom: "always",
 };
-
+type RouteParams = {
+  accountId: string;
+  transaction: Transaction;
+  currentNavigation: string;
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
 
 function StellarEditCustomFees({ navigation, route }: Props) {
@@ -46,7 +46,6 @@ function StellarEditCustomFees({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(transaction.family === "stellar", "not stellar family");
   invariant(account, "no account found");
-
   const mainAccount = getMainAccount(account, parentAccount);
   const { networkCongestionLevel } = transaction?.networkInfo || {};
   const [customFee, setCustomFee] = useState(transaction.fees);
@@ -57,11 +56,9 @@ function StellarEditCustomFees({ navigation, route }: Props) {
 
   const onSubmit = useCallback(() => {
     Keyboard.dismiss();
-
     setCustomFee(BigNumber(customFee || 0));
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
-
     navigation.navigate(currentNavigation, {
       ...route.params,
       accountId: account.id,
@@ -77,11 +74,15 @@ function StellarEditCustomFees({ navigation, route }: Props) {
     navigation,
     transaction,
   ]);
-
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <KeyboardView
-        style={[styles.body, { backgroundColor: colors.background }]}
+        style={[
+          styles.body,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
       >
         <ScrollView
           contentContainerStyle={styles.root}
@@ -135,7 +136,6 @@ function StellarEditCustomFees({ navigation, route }: Props) {
 }
 
 export { options, StellarEditCustomFees as component };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

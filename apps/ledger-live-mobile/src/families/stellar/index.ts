@@ -1,4 +1,3 @@
-// @flow
 import * as StellarEditMemoValue from "./ScreenEditMemoValue";
 import * as StellarEditMemoType from "./ScreenEditMemoType";
 import * as StellarEditCustomFees from "./ScreenEditCustomFees";

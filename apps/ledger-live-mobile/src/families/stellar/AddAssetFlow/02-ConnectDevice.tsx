@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, SafeAreaView } from "react-native";
@@ -17,28 +16,27 @@ import {
 } from "../../../components/DeviceJob/steps";
 
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export default function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-
   invariant(account, "account is required");
-
   const mainAccount = getMainAccount(account, undefined);
-
   const { transaction, status } = useBridgeTransaction(() => {
     const transaction = route.params.transaction;
-    return { account, transaction };
+    return {
+      account,
+      transaction,
+    };
   });
-
   const onSelectDevice = useCallback(
     (meta: any) => {
       navigation.replace(ScreenName.StellarAddAssetValidation, {
@@ -50,11 +48,16 @@ export default function ConnectDevice({ navigation, route }: Props) {
     },
     [navigation, status, transaction, route.params],
   );
-
   if (!account) return null;
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
@@ -68,7 +71,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

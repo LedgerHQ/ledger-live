@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
@@ -15,17 +14,19 @@ import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TextInput from "../../components/FocusedTextInput";
 
-const forceInset = { bottom: "always" };
-
-type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+const forceInset = {
+  bottom: "always",
 };
-
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  memoType: string,
+  accountId: string;
+  transaction: Transaction;
+  memoType: string;
 };
 
 function StellarEditMemoValue({ navigation, route }: Props) {
@@ -34,15 +35,12 @@ function StellarEditMemoValue({ navigation, route }: Props) {
   const { t } = useTranslation();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-
   const [memoValue, setMemoValue] = useState(
     route.params.transaction.memoValue,
   );
-
   const onChangeMemoValue = useCallback((str: string) => {
     setMemoValue(str);
   }, []);
-
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction, memoType } = route.params;
@@ -54,11 +52,15 @@ function StellarEditMemoValue({ navigation, route }: Props) {
       }),
     });
   }, [navigation, route.params, account, memoValue]);
-
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <KeyboardView
-        style={[styles.body, { backgroundColor: colors.background }]}
+        style={[
+          styles.body,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
       >
         <ScrollView
           contentContainerStyle={styles.root}
@@ -68,7 +70,12 @@ function StellarEditMemoValue({ navigation, route }: Props) {
             <TextInput
               allowFontScaling={false}
               autoFocus
-              style={[styles.textInputAS, { color: colors.darkBlue }]}
+              style={[
+                styles.textInputAS,
+                {
+                  color: colors.darkBlue,
+                },
+              ]}
               defaultValue={memoValue ? memoValue.toString() : ""}
               keyboardType="default"
               returnKeyType="done"
@@ -96,9 +103,7 @@ const options = {
   title: i18next.t("send.summary.memo.value"),
   headerLeft: null,
 };
-
 export { StellarEditMemoValue as component, options };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

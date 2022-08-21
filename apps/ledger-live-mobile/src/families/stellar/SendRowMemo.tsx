@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
@@ -10,21 +9,18 @@ import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 
 type Props = {
-  account: Account,
-  transaction: Transaction,
+  account: Account;
+  transaction: Transaction;
 };
-
 export default function StellarMemoValueRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
-
   const editMemo = useCallback(() => {
     navigation.navigate(ScreenName.StellarEditMemoType, {
       account,
       transaction,
     });
   }, [navigation, account, transaction]);
-
   const memoType = transaction.memoType;
   const memoValue = transaction.memoValue;
   return (
@@ -62,7 +58,6 @@ export default function StellarMemoValueRow({ account, transaction }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   memoContainer: {
     flexDirection: "row",

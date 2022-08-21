@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import {
@@ -10,14 +9,11 @@ import {
 } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-
 import type { TokenCurrency, SubAccount } from "@ledgerhq/types-live";
-
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
@@ -36,10 +32,10 @@ const Row = ({
   onDisabledPress,
   disabled,
 }: {
-  item: TokenCurrency,
-  onPress: () => void,
-  onDisabledPress: () => void,
-  disabled: boolean,
+  item: TokenCurrency;
+  onPress: () => void;
+  onDisabledPress: () => void;
+  disabled: boolean;
 }) => {
   const { colors } = useTheme();
   const tokenId = item.id.split("/")[2];
@@ -51,11 +47,24 @@ const Row = ({
     >
       <FirstLetterIcon
         label={item.name}
-        labelStyle={disabled ? { color: colors.grey } : {}}
+        labelStyle={
+          disabled
+            ? {
+                color: colors.grey,
+              }
+            : {}
+        }
       />
       <LText
         semiBold
-        style={[styles.name, disabled ? { color: colors.grey } : {}]}
+        style={[
+          styles.name,
+          disabled
+            ? {
+                color: colors.grey,
+              }
+            : {},
+        ]}
       >
         {item.name}
       </LText>
@@ -85,29 +94,24 @@ const renderEmptyList = () => (
 );
 
 type RouteParams = {
-  accountId: string,
+  accountId: string;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
-
   invariant(account, "Account required");
-
   const mainAccount = getMainAccount(account);
   const bridge = getAccountBridge(mainAccount);
-
   invariant(mainAccount, "stellar Account required");
-
   const { transaction } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
-
     return {
       account,
       transaction: bridge.updateTransaction(t, {
@@ -115,12 +119,10 @@ export default function DelegationStarted({ navigation, route }: Props) {
       }),
     };
   });
-
   const onNext = useCallback(
     (assetId: string) => {
       const tokenId = assetId.split("/")[2];
       const [assetCode, assetIssuer] = tokenId.split(":");
-
       navigation.navigate(ScreenName.StellarAddAssetSelectDevice, {
         ...route.params,
         transaction: bridge.updateTransaction(transaction, {
@@ -131,18 +133,14 @@ export default function DelegationStarted({ navigation, route }: Props) {
     },
     [navigation, route.params, bridge, transaction],
   );
-
   const options = listTokensForCryptoCurrency(mainAccount.currency);
-
   const [infoModalOpen, setInfoModalOpen] = useState(false);
-
   const openModal = useCallback(token => setInfoModalOpen(token), [
     setInfoModalOpen,
   ]);
   const closeModal = useCallback(() => setInfoModalOpen(false), [
     setInfoModalOpen,
   ]);
-
   const renderList = useCallback(
     list => (
       <FlatList
@@ -165,9 +163,15 @@ export default function DelegationStarted({ navigation, route }: Props) {
     ),
     [mainAccount.subAccounts, onNext, openModal],
   );
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen category="DelegationFlow" name="Started" />
       <KeyboardView style={styles.keyboardView}>
         <View style={styles.searchContainer}>
@@ -197,7 +201,9 @@ export default function DelegationStarted({ navigation, route }: Props) {
             <LText style={styles.warnText} color="grey">
               <Trans
                 i18nKey={`stellar.addAsset.flow.steps.selectToken.warning.description`}
-                values={{ token: infoModalOpen }}
+                values={{
+                  token: infoModalOpen,
+                }}
               />
             </LText>
           </View>
@@ -206,12 +212,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  keyboardView: { flex: 1 },
+  keyboardView: {
+    flex: 1,
+  },
   searchContainer: {
     paddingTop: 16,
     flex: 1,
