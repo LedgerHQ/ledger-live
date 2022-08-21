@@ -1,10 +1,8 @@
-// @flow
 import React, { Component } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-
 import { NavigatorName } from "../const";
 import logger from "../logger";
 import Button from "../components/Button";
@@ -14,23 +12,22 @@ import SelectDevice from "../components/SelectDevice";
 import GenericErrorView from "../components/GenericErrorView";
 import Installing from "../components/Installing";
 import NavigationScrollView from "../components/NavigationScrollView";
-
 import { connectingStep } from "../components/DeviceJob/steps";
 import { TrackScreen } from "../analytics";
 import { withTheme } from "../colors";
 
-const forceInset = { bottom: "always" };
-
-type Props = {
-  navigation: any,
-  colors: *,
+const forceInset = {
+  bottom: "always",
 };
-
+type Props = {
+  navigation: any;
+  colors: any;
+};
 type State = {
-  ready: boolean,
-  error: ?Error,
-  progress: number,
-  selected: boolean,
+  ready: boolean;
+  error: Error | null | undefined;
+  progress: number;
+  selected: boolean;
 };
 
 class RepairDevice extends Component<Props, State> {
@@ -46,11 +43,14 @@ class RepairDevice extends Component<Props, State> {
   }
 
   onReady = () => {
-    this.setState({ ready: true });
+    this.setState({
+      ready: true,
+    });
   };
-
   onSelectDevice = (meta: any) => {
-    this.setState({ selected: true });
+    this.setState({
+      selected: true,
+    });
     this.sub = firmwareUpdateRepair(meta.deviceId).subscribe({
       next: patch => {
         this.setState(patch);
@@ -61,18 +61,18 @@ class RepairDevice extends Component<Props, State> {
       },
       error: error => {
         logger.critical(error);
-        this.setState({ error });
+        this.setState({
+          error,
+        });
       },
     });
   };
-
   sub: any;
 
   render() {
     const { colors } = this.props;
     const { ready, progress, error, selected } = this.state;
     const width = Dimensions.get("window").width;
-
     let body = null;
 
     if (error) {
@@ -122,7 +122,12 @@ class RepairDevice extends Component<Props, State> {
     return (
       <SafeAreaView
         forceInset={forceInset}
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
       >
         <TrackScreen category="Settings" name="RepairDevice" />
         {body}
@@ -153,5 +158,4 @@ const styles = StyleSheet.create({
     position: "relative",
   },
 });
-
 export default withTheme(RepairDevice);

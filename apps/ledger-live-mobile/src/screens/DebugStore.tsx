@@ -1,5 +1,4 @@
-// @flow
-
+/* eslint-disable no-console */
 import React, { useCallback, PureComponent } from "react";
 import { BigNumber } from "bignumber.js";
 import { Text, StyleSheet, View } from "react-native";
@@ -9,13 +8,19 @@ import NavigationScrollView from "../components/NavigationScrollView";
 import Button from "../components/Button";
 
 class CollapsibleThingy extends PureComponent<
-  { obj: Object, depth: number, colors: * },
-  { shown: {} },
+  {
+    obj: Record<string, any>;
+    depth: number;
+    colors: any;
+  },
+  {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    shown: {};
+  }
 > {
   state = {
     shown: {},
   };
-
   toggleCollapse = key =>
     this.setState(prevState => ({
       shown: { ...prevState.shown, [key]: !prevState.shown[key] },
@@ -24,7 +29,6 @@ class CollapsibleThingy extends PureComponent<
   render() {
     const { obj, depth = 0, colors } = this.props;
     const { shown } = this.state;
-
     return (
       <View>
         {Object.keys(obj || {}).map(key => {
@@ -33,17 +37,24 @@ class CollapsibleThingy extends PureComponent<
           const isObject = typeof value === "object";
           const isOpen = shown[rowKey];
           const bullet = isObject ? (isOpen ? "-" : "+") : "";
-
           return (
             <View
               key={rowKey}
               style={[
                 styles.wrapper,
-                { backgroundColor: colors.background, borderColor: colors.fog },
+                {
+                  backgroundColor: colors.background,
+                  borderColor: colors.fog,
+                },
               ]}
             >
               <Text
-                style={[styles.header, { backgroundColor: colors.background }]}
+                style={[
+                  styles.header,
+                  {
+                    backgroundColor: colors.background,
+                  },
+                ]}
                 onPress={
                   isObject ? () => this.toggleCollapse(rowKey) : undefined
                 }
@@ -63,7 +74,10 @@ class CollapsibleThingy extends PureComponent<
                   selectable
                   style={[
                     styles.value,
-                    { color: colors.smoke, backgroundColor: colors.background },
+                    {
+                      color: colors.smoke,
+                      backgroundColor: colors.background,
+                    },
                   ]}
                 >{`(${typeof value}) ${value}`}</Text>
               )}
@@ -78,7 +92,6 @@ class CollapsibleThingy extends PureComponent<
 export default function DebugStore() {
   const state = useSelector(s => s);
   const { colors } = useTheme();
-
   const dispatch = useDispatch();
 
   /**
@@ -89,26 +102,40 @@ export default function DebugStore() {
   */
   const onStoreDebug = useCallback(() => {
     window.BigNumber = BigNumber; // NB expose BigNumber to be able to modify the state easier
+
     // eslint-disable-next-line prefer-const
     let override = false;
     const appState = state;
-    // eslint-disable-next-line no-console
-    if (__DEV__) console.log({ state });
+    if (__DEV__)
+      console.log({
+        state,
+      });
     // eslint-disable-next-line no-debugger
     debugger;
+
     if (__DEV__ && override) {
-      dispatch({ action: "DANGEROUSLY_OVERRIDE_STATE", payload: appState });
+      dispatch({
+        action: "DANGEROUSLY_OVERRIDE_STATE",
+        payload: appState,
+      });
     }
   }, [dispatch, state]);
-
   return (
     <NavigationScrollView>
-      <View style={{ padding: 16, backgroundColor: "white", flex: 1 }}>
+      <View
+        style={{
+          padding: 16,
+          backgroundColor: "white",
+          flex: 1,
+        }}
+      >
         <Button
           event="DebugState"
           type="primary"
           title={"See on browser (debug on)"}
-          containerStyle={{ marginBottom: 16 }}
+          containerStyle={{
+            marginBottom: 16,
+          }}
           onPress={onStoreDebug}
         />
         <CollapsibleThingy obj={state} depth={1} colors={colors} />
@@ -116,7 +143,6 @@ export default function DebugStore() {
     </NavigationScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,

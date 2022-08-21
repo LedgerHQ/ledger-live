@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -8,13 +6,19 @@ import { useTheme } from "@react-navigation/native";
 import DeviceNanoAction from "../components/DeviceNanoAction";
 import NavigationScrollView from "../components/NavigationScrollView";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 export default function DebugIcons() {
   const { colors } = useTheme();
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <NavigationScrollView>
@@ -58,7 +62,6 @@ export default function DebugIcons() {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

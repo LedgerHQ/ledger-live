@@ -1,4 +1,3 @@
-// @flow
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { NativeModules } from "react-native";
@@ -7,25 +6,24 @@ import { lastConnectedDeviceSelector } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 
 type Props = {
-  onResult: (device: any) => void,
-  route?: { params: any },
+  // eslint-disable-next-line no-unused-vars
+  onResult: (device: any) => void;
+  route?: {
+    params: any;
+  };
 };
-
 let usbTimeout;
-
 export default function SkipSelectDevice({ onResult, route }: Props) {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const [hasUSB, setHasUSB] = useState(false);
   const knownDevices = useSelector(knownDevicesSelector);
   const forceSelectDevice = route?.params?.forceSelectDevice;
-
   useEffect(() => {
     const subscription = discoverDevices(() => true).subscribe(e => {
       setHasUSB(e.id.startsWith("usb|"));
     });
     return () => subscription.unsubscribe();
   }, [knownDevices]);
-
   useEffect(() => {
     if (
       !forceSelectDevice &&
@@ -51,6 +49,5 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     lastConnectedDevice,
     onResult,
   ]);
-
   return null;
 }

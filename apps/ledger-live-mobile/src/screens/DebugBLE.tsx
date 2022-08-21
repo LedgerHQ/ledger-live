@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component, memo } from "react";
 import {
   FlatList,
@@ -25,9 +23,7 @@ import Switch from "../components/Switch";
 const logsObservable = Observable.create(o => listen(log => o.next(log))).pipe(
   shareReplay(1000),
 );
-
 logsObservable.subscribe();
-
 const styles = StyleSheet.create({
   root: {
     paddingTop: 16,
@@ -35,7 +31,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapLogToColor = (colors: *, log: Log) => {
+const mapLogToColor = (colors: any, log: Log) => {
   if (log.type.includes("error")) return colors.alert;
   if (log.type === "verbose") return colors.grey;
   if (log.type.includes("frame")) return colors.live;
@@ -58,39 +54,50 @@ function LogItemComponent({ log }: { log: Log }) {
         flexDirection: "row",
       }}
     >
-      <LText selectable style={{ fontSize: 10, flex: 1, color }}>
+      <LText
+        selectable
+        style={{
+          fontSize: 10,
+          flex: 1,
+          color,
+        }}
+      >
         {text}
       </LText>
-      <LText style={{ marginRight: 5, fontSize: 8 }}>
-        {log.date
-          .toISOString()
-          .split("T")[1]
-          .replace("Z", "")}
+      <LText
+        style={{
+          marginRight: 5,
+          fontSize: 8,
+        }}
+      >
+        {log.date.toISOString().split("T")[1].replace("Z", "")}
       </LText>
     </View>
   );
 }
 
-const LogItem = memo<{ log: Log }>(LogItemComponent);
-
+const LogItem = memo<{
+  log: Log;
+}>(LogItemComponent);
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-  device: any,
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  device: any;
 };
-
 type RouteParams = {
-  deviceId: string,
+  deviceId: string;
 };
 
 class DebugBLE extends Component<
   Props,
   {
-    logs: Log[],
-    apdu: string,
-    bleframe: string,
-    useBLEframe: boolean,
-  },
+    logs: Log[];
+    apdu: string;
+    bleframe: string;
+    useBLEframe: boolean;
+  }
 > {
   state = {
     logs: [],
@@ -98,13 +105,16 @@ class DebugBLE extends Component<
     bleframe: "0800000000",
     useBLEframe: false,
   };
-
-  sub: *;
+  sub: any;
 
   componentDidMount() {
     this.sub = logsObservable.pipe(bufferTime(200)).subscribe(buffer => {
       this.setState(({ logs }) =>
-        buffer.length === 0 ? null : { logs: logs.concat(buffer) },
+        buffer.length === 0
+          ? null
+          : {
+              logs: logs.concat(buffer),
+            },
       );
     });
   }
@@ -114,13 +124,19 @@ class DebugBLE extends Component<
   }
 
   keyExtractor = (item: Log) => item.id;
-
   renderItem = ({ item }: { item: Log }) => (
-    <View style={{ transform: [{ scaleY: -1 }] }}>
+    <View
+      style={{
+        transform: [
+          {
+            scaleY: -1,
+          },
+        ],
+      }}
+    >
       <LogItem log={item} />
     </View>
   );
-
   addError = (error: Error, ctx: string) => {
     const date = new Date();
     this.setState(({ logs }) => ({
@@ -132,46 +148,41 @@ class DebugBLE extends Component<
       }),
     }));
   };
-
   onBLEframeChange = (bleframe: string) => {
     this.setState({
       bleframe,
     });
   };
-
   onAPDUChange = (apdu: string) => {
     this.setState({
       apdu,
     });
   };
-
   send = async () => {
     const { apdu, bleframe, useBLEframe } = this.state;
     const deviceId = this.props.route.params?.deviceId;
     const msg = Buffer.from(useBLEframe ? bleframe : apdu, "hex");
+
     try {
-      await withDevice(deviceId)(t =>
-        // $FlowFixMe
-        from(useBLEframe ? t.write(msg) : t.exchange(msg)),
-      ).toPromise();
+      await withDevice(deviceId)((
+        t, // $FlowFixMe
+      ) => from(useBLEframe ? t.write(msg) : t.exchange(msg))).toPromise();
     } catch (error) {
       this.addError(error, "send");
     }
   };
-
   inferMTU = async () => {
     const deviceId = this.props.route.params?.deviceId;
+
     try {
-      const mtu = await withDevice(deviceId)(t =>
-        // $FlowFixMe bro i know
-        from(t.inferMTU()),
-      ).toPromise();
+      const mtu = await withDevice(deviceId)((
+        t, // $FlowFixMe bro i know
+      ) => from(t.inferMTU())).toPromise();
       ToastAndroid.show("mtu set to " + mtu, ToastAndroid.SHORT);
     } catch (error) {
       this.addError(error, "inferMTU");
     }
   };
-
   currentConnectionPriority = "Balanced";
   toggleConnectionPriority = async () => {
     const deviceId = this.props.route.params?.deviceId;
@@ -181,11 +192,11 @@ class DebugBLE extends Component<
         (choices.indexOf(this.currentConnectionPriority) + 1) % choices.length
       ];
     this.currentConnectionPriority = nextPriority;
+
     try {
-      await withDevice(deviceId)(t =>
-        // $FlowFixMe bro i know
-        from(t.requestConnectionPriority(nextPriority)),
-      ).toPromise();
+      await withDevice(deviceId)((
+        t, // $FlowFixMe bro i know
+      ) => from(t.requestConnectionPriority(nextPriority))).toPromise();
       ToastAndroid.show(
         "connection priority set to " + nextPriority,
         ToastAndroid.SHORT,
@@ -194,36 +205,48 @@ class DebugBLE extends Component<
       this.addError(error, "changePrio");
     }
   };
-
   connect = async () => {
     const deviceId = this.props.route.params?.deviceId;
+
     try {
       await withDevice(deviceId)(() => from([{}])).toPromise();
     } catch (error) {
       this.addError(error, "connect");
     }
   };
-
   disconnect = async () => {
     const deviceId = this.props.route.params?.deviceId;
+
     try {
       await disconnect(deviceId);
     } catch (error) {
       this.addError(error, "disconnect");
     }
   };
-
   onBleFrameChange = () => {
-    this.setState(({ useBLEframe }) => ({ useBLEframe: !useBLEframe }));
+    this.setState(({ useBLEframe }) => ({
+      useBLEframe: !useBLEframe,
+    }));
   };
 
   render() {
     const deviceId = this.props.route.params?.deviceId;
     const { logs, useBLEframe } = this.state;
     return (
-      <KeyboardView style={{ flex: 1 }}>
+      <KeyboardView
+        style={{
+          flex: 1,
+        }}
+      >
         <FlatList
-          style={{ flex: 1, transform: [{ scaleY: -1 }] }}
+          style={{
+            flex: 1,
+            transform: [
+              {
+                scaleY: -1,
+              },
+            ],
+          }}
           data={logs.slice().reverse()}
           renderItem={this.renderItem}
           keyExtractor={this.keyExtractor}
@@ -265,11 +288,29 @@ class DebugBLE extends Component<
           />
           <Switch value={useBLEframe} onValueChange={this.onBleFrameChange} />
         </View>
-        <LText style={{ fontSize: 10, margin: 8 }}>{deviceId}</LText>
-        <View style={{ maxHeight: 80 }}>
-          <ScrollView horizontal style={{ padding: 16 }}>
+        <LText
+          style={{
+            fontSize: 10,
+            margin: 8,
+          }}
+        >
+          {deviceId}
+        </LText>
+        <View
+          style={{
+            maxHeight: 80,
+          }}
+        >
+          <ScrollView
+            horizontal
+            style={{
+              padding: 16,
+            }}
+          >
             <Button
-              containerStyle={{ marginRight: 8 }}
+              containerStyle={{
+                marginRight: 8,
+              }}
               event="DebugBLEPRIO"
               outline
               type="primary"
@@ -277,7 +318,9 @@ class DebugBLE extends Component<
               onPress={this.toggleConnectionPriority}
             />
             <Button
-              containerStyle={{ marginRight: 8 }}
+              containerStyle={{
+                marginRight: 8,
+              }}
               event="DebugBLEMTU"
               outline
               type="primary"
@@ -285,7 +328,9 @@ class DebugBLE extends Component<
               onPress={this.inferMTU}
             />
             <Button
-              containerStyle={{ marginRight: 8 }}
+              containerStyle={{
+                marginRight: 8,
+              }}
               event="DebugBLECO"
               type="primary"
               title="Connect"

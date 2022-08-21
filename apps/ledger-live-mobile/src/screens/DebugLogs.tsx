@@ -1,4 +1,3 @@
-// @flow
 import React, { useEffect, useCallback, useState } from "react";
 import { listen } from "@ledgerhq/logs";
 import { ScrollView, View, StyleSheet } from "react-native";
@@ -13,7 +12,6 @@ export default function DebugLogs() {
     log => setLogs(currentLogs => [log, ...currentLogs]),
     [],
   );
-
   useEffect(() => listen(prependToLogs), [prependToLogs]);
   const onExport = useExportLogs();
 
@@ -48,7 +46,6 @@ export default function DebugLogs() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   wrapper: {
     padding: 20,

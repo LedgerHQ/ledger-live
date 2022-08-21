@@ -1,40 +1,39 @@
-// @flow
-
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 import * as Sentry from "@sentry/react-native";
-
 import Button from "../components/Button";
 import GenericErrorView from "../components/GenericErrorView";
 
 class DebugBLE extends Component<
   {
-    navigation: *,
+    navigation: any;
   },
   {
-    renderCrash: boolean,
-    renderErrorModal: boolean,
-  },
+    renderCrash: boolean;
+    renderErrorModal: boolean;
+  }
 > {
   state: {
-    renderCrash: boolean,
-    renderErrorModal: boolean,
+    renderCrash: boolean;
+    renderErrorModal: boolean;
   } = {
     renderCrash: false,
     renderErrorModal: false,
   };
-
   jsCrash: () => Error = () => {
     throw new Error("DEBUG jsCrash");
   };
-
   nativeCrash: () => void = () => {
     Sentry.nativeCrash();
   };
-
-  displayRenderCrash: () => void = () => this.setState({ renderCrash: true });
+  displayRenderCrash: () => void = () =>
+    this.setState({
+      renderCrash: true,
+    });
   displayErrorModal: () => void = () =>
-    this.setState({ renderErrorModal: true });
+    this.setState({
+      renderErrorModal: true,
+    });
 
   render(): any {
     const { renderCrash, renderErrorModal } = this.state;
@@ -77,6 +76,7 @@ class DebugBLE extends Component<
 
 const CrashingComponent = ({ handled }: { handled?: boolean }) => {
   const error = new Error("DEBUG render crash error");
+
   if (handled) {
     return <GenericErrorView error={error} />;
   }
@@ -93,5 +93,4 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
 });
-
 export default DebugBLE;

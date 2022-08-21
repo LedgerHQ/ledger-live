@@ -1,4 +1,3 @@
-// @flow
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import Config from "react-native-config";
 import { View, StyleSheet } from "react-native";
@@ -20,20 +19,20 @@ export default function DebugSwap() {
   const [configIDWrapper, setConfigIDWrapper] = useState(
     Config.SWAP_OVERRIDE_KYC_USER_ID || "",
   );
-
   const onToggleWyreId = useCallback(() => {
     // $FlowFixMe debugs dont need typing
     setConfigIDWrapper(configIDWrapper ? "" : "wadus");
   }, [configIDWrapper]);
-
   const onFlushWyreKYC = useCallback(() => {
-    dispatch(setSwapKYCStatus({ provider: "wyre" }));
+    dispatch(
+      setSwapKYCStatus({
+        provider: "wyre",
+      }),
+    );
   }, [dispatch]);
-
   const currentDisabledProviders = useMemo(() => configWrapper.split(","), [
     configWrapper,
   ]);
-
   const onToggleProvider = useCallback(
     provider => {
       if (currentDisabledProviders.includes(provider)) {
@@ -46,15 +45,12 @@ export default function DebugSwap() {
     },
     [currentDisabledProviders],
   );
-
   useEffect(() => {
     Config.SWAP_DISABLED_PROVIDERS = configWrapper;
   }, [configWrapper]);
-
   useEffect(() => {
     Config.SWAP_OVERRIDE_KYC_USER_ID = configIDWrapper;
   }, [configIDWrapper]);
-
   return (
     <View style={styles.wrapper}>
       <Alert type={"danger"}>
@@ -102,7 +98,6 @@ export default function DebugSwap() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   wrapper: {
     padding: 20,

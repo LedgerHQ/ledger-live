@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component, memo } from "react";
 import { View } from "react-native";
 import Slider from "react-native-slider";
@@ -15,32 +13,31 @@ import LText from "../components/LText";
 import TranslatedError from "../components/TranslatedError";
 
 type GraphProps = {
-  width: number,
-  height: number,
-  data: number[],
+  width: number;
+  height: number;
+  data: number[];
 };
 
 function GraphComponent({ width, height, data }: GraphProps) {
   const { colors } = useTheme();
-  const points = data.map((value, index) => ({ value, index }));
+  const points = data.map((value, index) => ({
+    value,
+    index,
+  }));
   const maxY = maxBy(data, v => v);
-
   const x = scale
     .scaleLinear()
     .range([0, width])
     .domain([0, data.length - 1]);
-
   const y = scale
     .scaleLinear()
     .range([height - 10, 10])
     .domain([0, maxY]);
-
   const line = shape
     .line()
     .x(d => x(d.index))
     .y(d => y(d.value))
     .curve(shape.curveLinear)(points);
-
   return (
     <Svg height={height} width={width}>
       <Path d={line} stroke={colors.live} strokeWidth={4} fill="none" />
@@ -63,26 +60,26 @@ const benchmark = ({ inputAPDUSize, outputAPDUSize }) => {
 };
 
 const speedStatusSize = 10;
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-  device: any,
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  device: any;
 };
-
 type RouteParams = {
-  deviceId: string,
+  deviceId: string;
 };
 
 class DebugBLEBenchmark extends Component<
   Props,
   {
-    exchangeStats: [number, number][],
-    speedStats: number[],
-    inputAPDUSize: number,
-    outputAPDUSize: number,
-    error: ?Error,
-  },
+    exchangeStats: [number, number][];
+    speedStats: number[];
+    inputAPDUSize: number;
+    outputAPDUSize: number;
+    error: Error | null | undefined;
+  }
 > {
   state = {
     exchangeStats: [],
@@ -91,8 +88,7 @@ class DebugBLEBenchmark extends Component<
     outputAPDUSize: 100,
     error: null,
   };
-
-  sub: *;
+  sub: any;
 
   componentDidMount() {
     this.benchmark();
@@ -109,9 +105,11 @@ class DebugBLEBenchmark extends Component<
       exchangeStats: [],
       speedStats: Array(speedStatusSize).fill(0),
     });
+
     if (this.sub) {
       this.sub.unsubscribe();
     }
+
     const deviceId = this.props.route.params?.deviceId;
     this.sub = withDevice(deviceId)(t => {
       const loop = () => {
@@ -123,19 +121,22 @@ class DebugBLEBenchmark extends Component<
               const exchangeStats = [[Date.now(), dataExchanged]]
                 .concat(prev.exchangeStats)
                 .slice(0, 5);
-
               let speed = 0;
+
               if (exchangeStats.length > 2) {
                 const [lastTime] = exchangeStats[0];
                 let totalBytes = 0;
+
                 for (let i = 0; i < exchangeStats.length - 1; i++) {
                   totalBytes += exchangeStats[i][1];
                 }
+
                 const [firstTime] = exchangeStats[exchangeStats.length - 1];
                 speed = totalBytes / ((lastTime - firstTime) / 1000);
               }
 
               const speedStats = prev.speedStats.concat(speed);
+
               if (speedStats.length > 10) {
                 speedStats.splice(0, speedStats.length - 10);
               }
@@ -149,10 +150,13 @@ class DebugBLEBenchmark extends Component<
           }),
         );
       };
+
       return loop();
     }).subscribe({
       error: error => {
-        this.setState({ error });
+        this.setState({
+          error,
+        });
       },
     });
   };
@@ -160,7 +164,6 @@ class DebugBLEBenchmark extends Component<
   render() {
     const { speedStats, inputAPDUSize, outputAPDUSize, error } = this.state;
     const speed = speedStats[speedStats.length - 1] || 0;
-
     return (
       <View
         style={{
@@ -171,39 +174,69 @@ class DebugBLEBenchmark extends Component<
           justifyContent: "center",
         }}
       >
-        <LText style={{ color: "red" }}>
+        <LText
+          style={{
+            color: "red",
+          }}
+        >
           <TranslatedError error={error} />
         </LText>
 
         <Graph width={300} height={200} data={speedStats} />
-        <LText bold style={{ fontSize: 20, marginBottom: 10 }}>
+        <LText
+          bold
+          style={{
+            fontSize: 20,
+            marginBottom: 10,
+          }}
+        >
           {speed.toFixed(1)} byte/s
         </LText>
 
-        <View style={{ padding: 40 }}>
-          <View style={{ flexDirection: "row" }}>
+        <View
+          style={{
+            padding: 40,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+            }}
+          >
             <LText>input apdu size</LText>
             <Slider
-              style={{ width: 150 }}
+              style={{
+                width: 150,
+              }}
               minimumValue={5}
               maximumValue={260}
               step={1}
               onValueChange={inputAPDUSize => {
-                this.setState({ inputAPDUSize });
+                this.setState({
+                  inputAPDUSize,
+                });
               }}
               value={inputAPDUSize}
             />
             <LText bold>{inputAPDUSize}</LText>
           </View>
-          <View style={{ flexDirection: "row" }}>
+          <View
+            style={{
+              flexDirection: "row",
+            }}
+          >
             <LText>output apdu size</LText>
             <Slider
-              style={{ width: 150 }}
+              style={{
+                width: 150,
+              }}
               minimumValue={5}
               maximumValue={255}
               step={1}
               onValueChange={outputAPDUSize => {
-                this.setState({ outputAPDUSize });
+                this.setState({
+                  outputAPDUSize,
+                });
               }}
               value={outputAPDUSize}
             />

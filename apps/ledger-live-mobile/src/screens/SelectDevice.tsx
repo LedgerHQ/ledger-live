@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { useDispatch as useReduxDispatch } from "react-redux";
@@ -14,21 +13,22 @@ import SelectDeviceComp from "../components/SelectDevice";
 import NavigationScrollView from "../components/NavigationScrollView";
 import { setLastConnectedDevice, setReadOnlyMode } from "../actions/settings";
 import SkipSelectDevice from "./SkipSelectDevice";
-
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams, name: string },
+  navigation: any;
+  route: {
+    params: RouteParams;
+    name: string;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  status: TransactionStatus,
-  appName?: string,
+  accountId: string;
+  transaction: Transaction;
+  status: TransactionStatus;
+  appName?: string;
 };
-
 export default function SelectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const dispatchRedux = useReduxDispatch();
@@ -49,10 +49,14 @@ export default function SelectDevice({ navigation, route }: Props) {
     },
     [dispatchRedux, onNavigate],
   );
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <NavigationScrollView
@@ -70,7 +74,6 @@ export default function SelectDevice({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

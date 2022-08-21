@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useState, useCallback } from "react";
 import { View, Text } from "react-native";
 import Config from "react-native-config";
@@ -11,12 +9,11 @@ import TextInput from "../components/TextInput";
 export default function DebugEnv() {
   const [value, setValue] = useState();
   const [status, setStatus] = useState();
-
   const onSetEnv = useCallback(() => {
     if (!value) return;
-
     // Attempt to parse this input
     const match = /([\w]+)=([\w]+)/.exec(value);
+
     if (!match || match.length !== 3) {
       setStatus("Can't parse input");
     } else if (match[2] === "0") {
@@ -29,10 +26,14 @@ export default function DebugEnv() {
       setEnvUnsafe(match[1], match[2]);
     }
   }, [value]);
-
   return (
     <NavigationScrollView>
-      <View style={{ padding: 16, flex: 1 }}>
+      <View
+        style={{
+          padding: 16,
+          flex: 1,
+        }}
+      >
         <Text>{status}</Text>
         <TextInput
           maxLength={100}
@@ -43,7 +44,9 @@ export default function DebugEnv() {
           event="DebugEnv"
           type="primary"
           title={"Set env"}
-          containerStyle={{ marginBottom: 16 }}
+          containerStyle={{
+            marginBottom: 16,
+          }}
           onPress={onSetEnv}
         />
       </View>

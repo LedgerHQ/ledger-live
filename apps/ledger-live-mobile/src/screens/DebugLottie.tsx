@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useMemo, useState } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -15,11 +13,12 @@ import Alert from "../components/Alert";
 import Check from "../icons/Check";
 import { lottieAnimations } from "./Onboarding/shared/infoPagesData";
 
-const forceInset = { bottom: "always" };
+const forceInset = {
+  bottom: "always",
+};
 
 const DebugLottie = () => {
   const { colors } = useTheme();
-
   const keys = useMemo(
     () => [
       "plugAndPinCode",
@@ -42,7 +41,6 @@ const DebugLottie = () => {
     ],
     [],
   );
-
   const [modelId, setModelId] = useState(Config.OVERRIDE_MODEL_ID || "nanoS");
   const [wired, setWired] = useState(false);
   const [key, setKey] = useState<any>("plugAndPinCode");
@@ -51,39 +49,50 @@ const DebugLottie = () => {
     if (keys.includes(key)) {
       // Normal deviceAction animations
       return getDeviceAnimation({
-        device: { modelId, wired: wired && modelId === "nanoX" },
+        device: {
+          modelId,
+          wired: wired && modelId === "nanoX",
+        },
         key,
         theme: "light",
       });
     }
+
     if (onBoardingKeys.includes(key)) {
       return lottieAnimations[modelId][key].light;
     }
-    return null;
-    // Onboarding animations
-  }, [key, keys, modelId, onBoardingKeys, wired]);
 
+    return null; // Onboarding animations
+  }, [key, keys, modelId, onBoardingKeys, wired]);
   const animation2 = useMemo(() => {
     if (keys.includes(key)) {
       // Normal deviceAction animations
       return getDeviceAnimation({
-        device: { modelId, wired: wired && modelId === "nanoX" },
+        device: {
+          modelId,
+          wired: wired && modelId === "nanoX",
+        },
         key,
         theme: "dark",
       });
     }
+
     if (onBoardingKeys.includes(key)) {
       return lottieAnimations[modelId][key].dark;
     }
-    return null;
-    // Onboarding animations
-  }, [key, keys, modelId, onBoardingKeys, wired]);
 
+    return null; // Onboarding animations
+  }, [key, keys, modelId, onBoardingKeys, wired]);
   const allKeys = [...keys, ...onBoardingKeys];
   return (
     <SafeAreaView
       forceInset={forceInset}
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
     >
       <Alert type="warning">
         {
@@ -94,10 +103,18 @@ const DebugLottie = () => {
         {!key ? "Select Animation" : `Showing '${key}'`}
       </LText>
       <ScrollView>
-        <View style={{ borderWidth: 1 }}>
+        <View
+          style={{
+            borderWidth: 1,
+          }}
+        >
           {animation && <Animation source={animation} />}
         </View>
-        <View style={{ backgroundColor: "#121212" }}>
+        <View
+          style={{
+            backgroundColor: "#121212",
+          }}
+        >
           {animation2 && <Animation source={animation2} />}
         </View>
       </ScrollView>
@@ -144,14 +161,18 @@ const DebugLottie = () => {
         />
       </View>
       <Button
-        containerStyle={{ marginTop: 8 }}
+        containerStyle={{
+          marginTop: 8,
+        }}
         type="primary"
         title={`Show ${wired ? "Bluetooth" : "Wired"}`}
         disabled={modelId !== "nanoX" || !keys.includes(key)}
         onPress={() => setWired(wired => !wired)}
       />
       <Button
-        containerStyle={{ marginTop: 8 }}
+        containerStyle={{
+          marginTop: 8,
+        }}
         type="primary"
         title="Animation key"
         onPress={() => setKeyModalVisible(true)}
@@ -166,13 +187,18 @@ const DebugLottie = () => {
                   setModelId("nanoX");
                   setWired(false);
                 }
+
                 setKey(_key);
                 setKeyModalVisible(false);
               }}
               style={[styles.button]}
             >
               <LText
-                {...(key === _key ? { semiBold: true } : {})}
+                {...(key === _key
+                  ? {
+                      semiBold: true,
+                    }
+                  : {})}
                 style={[styles.buttonLabel]}
               >
                 {_key}
@@ -217,7 +243,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textTransform: "capitalize",
   },
-  modal: { padding: 8 },
+  modal: {
+    padding: 8,
+  },
 });
-
 export default DebugLottie;

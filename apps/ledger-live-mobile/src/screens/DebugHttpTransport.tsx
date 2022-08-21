@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Component } from "react";
 import {
   StyleSheet,
@@ -18,37 +16,39 @@ import KeyboardView from "../components/KeyboardView";
 import Button from "../components/Button";
 import { withTheme } from "../colors";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
+// eslint-disable-next-line @typescript-eslint/ban-types
 type OwnProps = {};
-
-type Props = {
-  ...OwnProps,
-  navigation: *,
-  addKnownDevice: (*) => void,
-  colors: *,
+type Props = OwnProps & {
+  navigation: any;
+  // eslint-disable-next-line no-unused-vars
+  addKnownDevice: (arg0: any) => void;
+  colors: any;
 };
 
 class DebugHttpTransport extends Component<
   Props,
   {
-    text: string,
-  },
+    text: string;
+  }
 > {
   state = {
     text: "",
   };
-
   onChangeText = (text: string) => {
-    this.setState({ text });
+    this.setState({
+      text,
+    });
   };
-
   onAdd = () => {
     const m = this.state.text
       .trim()
       .match(/^((?:[0-9]{1,3}\.){3}[0-9]{1,3})(:([0-9]+))?/);
     if (!m) return;
     let [, ip, , port] = m; // eslint-disable-line prefer-const
+
     if (!port) port = 8435;
     this.props.addKnownDevice({
       id: `httpdebug|ws://${ip}:${port}`,
@@ -72,7 +72,11 @@ class DebugHttpTransport extends Component<
       >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={{ flex: 1 }}>
+            <View
+              style={{
+                flex: 1,
+              }}
+            >
               <TextInput
                 value={text}
                 onChangeText={this.onChangeText}
@@ -82,7 +86,12 @@ class DebugHttpTransport extends Component<
                 clearButtonMode="always"
                 placeholder="192.168.0.1"
                 returnKeyType="done"
-                style={[getFontStyle({ semiBold: true }), styles.input]}
+                style={[
+                  getFontStyle({
+                    semiBold: true,
+                  }),
+                  styles.input,
+                ]}
               />
               <View style={styles.buttonContainer}>
                 <Button
@@ -120,12 +129,10 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
 });
-
-const m: React$ComponentType<OwnProps> = compose(
+const m: React.ComponentType<OwnProps> = compose(
   connect(null, {
     addKnownDevice,
   }),
   withTheme,
 )(DebugHttpTransport);
-
 export default m;
