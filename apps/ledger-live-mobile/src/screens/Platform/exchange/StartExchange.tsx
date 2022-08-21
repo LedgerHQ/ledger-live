@@ -19,7 +19,7 @@ type Props = {
   route: {
     params: {
       request: { exchangeType: number },
-      onResult: (result: Result) => void,
+      onResult: (_: Result) => void,
     },
   },
 };

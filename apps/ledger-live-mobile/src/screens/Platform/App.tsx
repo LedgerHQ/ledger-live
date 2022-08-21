@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useEffect } from "react";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/LocalLiveAppProvider";
 import {
@@ -15,7 +13,7 @@ import WebPlatformPlayer from "../../components/WebPlatformPlayer";
 import GenericErrorView from "../../components/GenericErrorView";
 import { useLocale } from "../../context/Locale";
 
-const appManifestNotFoundError = new Error("App not found");
+const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 
 const PlatformApp = ({ route }: StackScreenProps) => {
   const { theme } = useTheme();
@@ -27,9 +25,11 @@ const PlatformApp = ({ route }: StackScreenProps) => {
   const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
   useEffect(() => {
-    manifest?.name && setParams({ name: manifest.name });
+    manifest?.name &&
+      setParams({
+        name: manifest.name,
+      });
   }, [manifest, setParams]);
-
   return manifest ? (
     <>
       <TrackScreen category="Platform" name="App" />

@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -10,7 +8,6 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-
 import { urls } from "../../config/urls";
 import IconClose from "../../icons/Close";
 import LText from "../../components/LText";
@@ -21,7 +18,6 @@ const CatalogTwitterBanner = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [isDismiss, dismiss] = useBanner("CatalogTwitterBanner");
-
   const sendTweet = useCallback(() => {
     const twitterURL = new URL(urls.banners.twitterIntent);
     twitterURL.searchParams.set(
@@ -29,10 +25,8 @@ const CatalogTwitterBanner = () => {
       t("platform.catalog.twitterBanner.tweetText"),
     );
     twitterURL.searchParams.set("hashtags", "LedgerLiveApp");
-
     Linking.openURL(twitterURL.toString());
   }, [t]);
-
   return !isDismiss ? (
     <View
       style={[
@@ -99,5 +93,4 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
 });
-
 export default CatalogTwitterBanner;

@@ -1,18 +1,12 @@
-// @flow
-
 import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
-
 import { useLocale } from "../../context/Locale";
-
 import LText from "../../components/LText";
 import IconChevron from "../../icons/ArrowRight";
-
 import AppIcon from "./AppIcon";
 
 function getBranchStyle(branch, colors) {
@@ -24,6 +18,7 @@ function getBranchStyle(branch, colors) {
         borderColor: colors.lightFog,
         backgroundColor: colors.lightFog,
       };
+
     case "experimental":
       return {
         color: colors.darkBlue,
@@ -31,6 +26,7 @@ function getBranchStyle(branch, colors) {
         borderColor: colors.orange,
         backgroundColor: "transparent",
       };
+
     case "debug":
       return {
         color: colors.darkBlue,
@@ -38,6 +34,7 @@ function getBranchStyle(branch, colors) {
         borderColor: colors.grey,
         backgroundColor: "transparent",
       };
+
     default:
       return {
         color: colors.darkBlue,
@@ -49,8 +46,8 @@ function getBranchStyle(branch, colors) {
 }
 
 type Props = {
-  manifest: AppManifest,
-  onPress: (manifest: AppManifest) => void,
+  manifest: AppManifest;
+  onPress: (_: AppManifest) => void;
 };
 
 const AppCard = ({ manifest, onPress }: Props) => {
@@ -58,22 +55,18 @@ const AppCard = ({ manifest, onPress }: Props) => {
   const { locale } = useLocale();
   const { t } = useTranslation();
   const isDisabled = manifest.branch === "soon";
-
   const handlePress = useCallback(
     () => (!isDisabled && onPress ? onPress(manifest) : null),
     [onPress, manifest, isDisabled],
   );
-
   const { color, badgeColor, borderColor, backgroundColor } = useMemo(
     () => getBranchStyle(manifest.branch, colors),
     [colors, manifest.branch],
   );
-
   const description = useMemo(
     () => translateContent(manifest.content.shortDescription, locale),
     [locale, manifest.content.shortDescription],
   );
-
   return (
     <TouchableOpacity disabled={isDisabled} onPress={handlePress}>
       <View
@@ -98,14 +91,27 @@ const AppCard = ({ manifest, onPress }: Props) => {
         />
         <View style={styles.content}>
           <View style={styles.header}>
-            <LText variant="h3" style={[{ color }]} numberOfLines={1} semiBold>
+            <LText
+              variant="h3"
+              style={[
+                {
+                  color,
+                },
+              ]}
+              numberOfLines={1}
+              semiBold
+            >
               {manifest.name}
             </LText>
             {manifest.branch !== "stable" && (
               <LText
                 style={[
                   styles.branch,
-                  { color: badgeColor, borderColor, backgroundColor },
+                  {
+                    color: badgeColor,
+                    borderColor,
+                    backgroundColor,
+                  },
                 ]}
                 semiBold
               >
@@ -116,7 +122,12 @@ const AppCard = ({ manifest, onPress }: Props) => {
             )}
           </View>
           <LText
-            style={[styles.description, { color: colors.smoke }]}
+            style={[
+              styles.description,
+              {
+                color: colors.smoke,
+              },
+            ]}
             numberOfLines={2}
           >
             {description}
@@ -182,5 +193,4 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
 });
-
 export default memo<Props>(AppCard);

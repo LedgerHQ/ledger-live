@@ -1,17 +1,13 @@
-// @flow
-
 import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
-
 import { useSelector } from "react-redux";
 import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
 import { ScreenName } from "../../const";
-
 import CatalogTwitterBanner from "./CatalogTwitterBanner";
 import DAppDisclaimer from "./DAppDisclaimer";
 import type { Props as DisclaimerProps } from "./DAppDisclaimer";
@@ -24,29 +20,35 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { useFilteredManifests } from "./shared";
 
 type RouteParams = {
-  defaultAccount: ?AccountLike,
-  defaultParentAccount: ?Account,
-  platform?: ?string,
+  defaultAccount: AccountLike | null | undefined;
+  defaultParentAccount: Account | null | undefined;
+  platform?: string | null | undefined;
 };
-
-type DisclaimerOpts = $Diff<DisclaimerProps, { isOpened: boolean }> | null;
-
+type DisclaimerOpts = $Diff<
+  DisclaimerProps,
+  {
+    isOpened: boolean;
+  }
+> | null;
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
-const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
+const PlatformCatalog = ({
+  route,
+}: {
+  route: {
+    params: RouteParams;
+  };
+}) => {
   const { platform, ...routeParams } = route.params ?? {};
   const navigation = useNavigation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-
   const filteredManifests = useFilteredManifests();
-
   // Disclaimer State
   const [disclaimerOpts, setDisclaimerOpts] = useState<DisclaimerOpts>(null);
   const [disclaimerOpened, setDisclaimerOpened] = useState<boolean>(false);
   const [disclaimerDisabled, setDisclaimerDisabled] = useBanner(
     DAPP_DISCLAIMER_ID,
   );
-
   const handlePressCard = useCallback(
     (manifest: AppManifest) => {
       const openDApp = () =>
@@ -77,7 +79,6 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
       readOnlyModeEnabled,
     ],
   );
-
   useEffect(() => {
     // platform can be predefined when coming from a deeplink
     if (platform && filteredManifests) {
@@ -92,7 +93,6 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
       }
     }
   }, [platform, filteredManifests, navigation, routeParams]);
-
   return (
     <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
       <AnimatedHeaderView
@@ -137,5 +137,4 @@ const styles = StyleSheet.create({
     paddingBottom: TAB_BAR_SAFE_HEIGHT,
   },
 });
-
 export default PlatformCatalog;

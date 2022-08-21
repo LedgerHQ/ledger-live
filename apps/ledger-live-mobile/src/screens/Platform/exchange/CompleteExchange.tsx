@@ -35,7 +35,7 @@ type Props = {
         feesStrategy: string,
       },
       device: Device,
-      onResult: (result: Result) => void,
+      onResult: (_: Result) => void,
     },
   },
 };

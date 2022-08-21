@@ -1,15 +1,13 @@
-// @flow
 import React, { memo, useState, useCallback } from "react";
 import { Image, View, StyleSheet } from "react-native";
 import { useTheme } from "styled-components/native";
-
 import LText from "../../components/LText";
 
 type Props = {
-  name?: string,
-  icon?: string | null,
-  size?: number,
-  isDisabled?: boolean,
+  name?: string;
+  icon?: string | null;
+  size?: number;
+  isDisabled?: boolean;
 };
 
 function AppIcon({ size = 48, name, icon, isDisabled }: Props) {
@@ -17,10 +15,8 @@ function AppIcon({ size = 48, name, icon, isDisabled }: Props) {
   const [imageLoaded, setImageLoaded] = useState(true);
   const handleImageLoad = useCallback(() => setImageLoaded(true), []);
   const handleImageError = useCallback(() => setImageLoaded(false), []);
-
   const firstLetter =
     typeof name === "string" && name[0] ? name[0].toUpperCase() : "";
-
   return (
     <View
       style={[
@@ -34,44 +30,75 @@ function AppIcon({ size = 48, name, icon, isDisabled }: Props) {
       ]}
     >
       {!imageLoaded && firstLetter ? (
-        <LText semiBold variant="h2" style={{ lineHeight: size }}>
+        <LText
+          semiBold
+          variant="h2"
+          style={{
+            lineHeight: size,
+          }}
+        >
           {firstLetter}
         </LText>
       ) : icon ? (
         isDisabled ? (
           <>
             <Image
-              source={{ uri: icon }}
+              source={{
+                uri: icon,
+              }}
               style={[
                 styles.image,
                 styles.disabledTopLayer,
-                { width: size, height: size },
+                {
+                  width: size,
+                  height: size,
+                },
               ]}
               fadeDuration={200}
               onLoad={handleImageLoad}
               onError={handleImageError}
             />
             <Image
-              source={{ uri: icon }}
+              source={{
+                uri: icon,
+              }}
               style={[
                 styles.image,
                 styles.disabledBottomLayer,
-                { width: size, height: size, tintColor: colors.fog },
+                {
+                  width: size,
+                  height: size,
+                  tintColor: colors.fog,
+                },
               ]}
               fadeDuration={200}
             />
           </>
         ) : (
           <Image
-            source={{ uri: icon }}
-            style={[styles.image, { width: size, height: size }]}
+            source={{
+              uri: icon,
+            }}
+            style={[
+              styles.image,
+              {
+                width: size,
+                height: size,
+              },
+            ]}
             fadeDuration={200}
             onLoad={handleImageLoad}
             onError={handleImageError}
           />
         )
       ) : (
-        <LText semiBold variant="h2" style={{ lineHeight: size }}>
+        <LText
+          semiBold
+          variant="h2"
+          style={{
+            lineHeight: size,
+          }}
+        >
           {firstLetter}
         </LText>
       )}
@@ -101,5 +128,4 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
 });
-
 export default memo<Props>(AppIcon);
