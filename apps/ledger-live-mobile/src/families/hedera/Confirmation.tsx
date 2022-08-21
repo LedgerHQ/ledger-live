@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -16,7 +14,7 @@ import {
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
-
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -37,30 +35,31 @@ import SkipLock from "../../components/behaviour/SkipLock";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  account: ?(TokenAccount | Account),
-  parentAccount: ?Account,
-  navigation: any,
-  route: { params: RouteParams },
-  readOnlyModeEnabled: boolean,
+  account: (TokenAccount | Account) | null | undefined;
+  parentAccount: Account | null | undefined;
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  readOnlyModeEnabled: boolean;
 };
-
 type RouteParams = {
-  account?: AccountLike,
-  accountId: string,
-  modelId: DeviceModelId,
-  wired: boolean,
-  device?: Device,
-  onSuccess?: (address?: string) => void,
-  onError?: () => void,
+  account?: AccountLike;
+  accountId: string;
+  modelId: DeviceModelId;
+  wired: boolean;
+  device?: Device;
+  // eslint-disable-next-line no-unused-vars
+  onSuccess?: (address?: string) => void;
+  onError?: () => void;
 };
-
 export default function ReceiveConfirmation({ navigation, route }: Props) {
   const { colors, dark } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-
   const [verified] = useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
   const onModalHide = useRef(() => {});
@@ -88,6 +87,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
   function onDone(): void {
     const n = navigation.getParent();
+
     if (n) {
       n.pop();
     }
@@ -110,7 +110,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
       gestureEnabled: Platform.OS === "ios",
     });
   }, [allowNavigation, colors, navigation]);
-
   if (!account) return null;
   const { width } = getWindowDimensions();
   const unsafe = !route.params.device?.deviceId;
@@ -121,10 +120,14 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     mainAccount.freshAddress;
   const currency = getAccountCurrency(account);
   const name = mainAccount.name;
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen
@@ -141,7 +144,9 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         </>
       )}
       <NavigationScrollView
-        style={{ flex: 1 }}
+        style={{
+          flex: 1,
+        }}
         contentContainerStyle={styles.root}
       >
         <View style={styles.container}>
@@ -154,8 +159,14 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
               <View
                 style={[
                   styles.qrWrapper,
-                  { borderColor: colors.lightFog },
-                  dark ? { backgroundColor: "white" } : {},
+                  {
+                    borderColor: colors.lightFog,
+                  },
+                  dark
+                    ? {
+                        backgroundColor: "white",
+                      }
+                    : {},
                 ]}
               >
                 <QRCode size={QRSize} value={address} ecl="H" />
@@ -205,7 +216,9 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
             <Alert type="security" mt={4}>
               <Trans
                 i18nKey="hedera.currentAddress.messageIfVirtual"
-                values={{ name }}
+                values={{
+                  name,
+                }}
               />
             </Alert>
           }
@@ -218,7 +231,14 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         useNativeDriver
         hideModalContentWhileAnimating
       >
-        <View style={[styles.qrZoomWrapper, { backgroundColor: "#FFF" }]}>
+        <View
+          style={[
+            styles.qrZoomWrapper,
+            {
+              backgroundColor: "#FFF",
+            },
+          ]}
+        >
           <QRCode size={width - 66} value={address} ecl="H" />
         </View>
       </ReactNativeModal>
@@ -253,7 +273,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -271,7 +290,6 @@ const styles = StyleSheet.create({
   },
   qrWrapper: {
     borderWidth: 1,
-
     padding: 16,
     borderRadius: 4,
     shadowOpacity: 0.03,

@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -13,16 +12,18 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import TextInput from "../../components/FocusedTextInput";
 
-const forceInset = { bottom: "always" };
-
-type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+const forceInset = {
+  bottom: "always",
 };
-
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
 type RouteParams = {
-  account: Account,
-  transaction: Transaction,
+  account: Account;
+  transaction: Transaction;
 };
 
 function HederaEditMemo({ navigation, route }: Props) {
@@ -30,7 +31,6 @@ function HederaEditMemo({ navigation, route }: Props) {
   const { t } = useTranslation();
   const [memo, setMemo] = useState(route.params.transaction.memo);
   const account = route.params.account;
-
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
@@ -41,11 +41,15 @@ function HederaEditMemo({ navigation, route }: Props) {
       }),
     });
   }, [navigation, route.params, account, memo]);
-
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <KeyboardView
-        style={[styles.body, { backgroundColor: colors.background }]}
+        style={[
+          styles.body,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
       >
         <ScrollView
           contentContainerStyle={styles.root}
@@ -54,7 +58,12 @@ function HederaEditMemo({ navigation, route }: Props) {
           <TextInput
             allowFontScaling={false}
             autoFocus
-            style={[styles.textInputAS, { color: colors.darkBlue }]}
+            style={[
+              styles.textInputAS,
+              {
+                color: colors.darkBlue,
+              },
+            ]}
             defaultValue={memo}
             keyboardType="default"
             returnKeyType="done"
@@ -81,9 +90,7 @@ const options = {
   title: i18next.t("send.summary.memo.title"),
   headerLeft: null,
 };
-
 export { HederaEditMemo as component, options };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
