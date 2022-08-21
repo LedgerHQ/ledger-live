@@ -1,4 +1,3 @@
-/* @flow */
 import invariant from "invariant";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -35,37 +34,38 @@ import RecipientInput from "../../components/RecipientInput";
 const withoutHiddenError = error =>
   error instanceof RecipientRequired ? null : error;
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  parentId: string,
-  transaction: Transaction,
-  justScanned?: boolean,
+  accountId: string;
+  parentId: string;
+  transaction: Transaction;
+  justScanned?: boolean;
 };
-
 export default function SendSelectRecipient({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-
   const {
     transaction,
     setTransaction,
     status,
     bridgePending,
     bridgeError,
-  } = useBridgeTransaction(() => ({ account, parentAccount }));
-
+  } = useBridgeTransaction(() => ({
+    account,
+    parentAccount,
+  }));
   const shouldSkipAmount =
     transaction.family === "ethereum" && transaction.mode === "erc721.transfer";
   const isNftSend = isNftTransaction(transaction);
-
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
   const navigationTransaction = route.params?.transaction;
@@ -77,11 +77,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       setTransaction(navigationTransaction);
     }
   }, [setTransaction, navigationTransaction]);
-
   const onRecipientFieldFocus = useCallback(() => {
     track("SendRecipientFieldFocused");
   }, []);
-
   const onPressScan = useCallback(() => {
     navigation.navigate(ScreenName.ScanRecipient, {
       accountId: route.params?.accountId,
@@ -89,38 +87,34 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       transaction,
     });
   }, [navigation, transaction, route.params]);
-
   const onChangeText = useCallback(
     recipient => {
       if (!account) return;
       const bridge = getAccountBridge(account, parentAccount);
-      setTransaction(bridge.updateTransaction(transaction, { recipient }));
+      setTransaction(
+        bridge.updateTransaction(transaction, {
+          recipient,
+        }),
+      );
     },
     [account, parentAccount, setTransaction, transaction],
   );
   const clear = useCallback(() => onChangeText(""), [onChangeText]);
-
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
-
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-
   invariant(account, "account is needed ");
-
   const currency = getAccountCurrency(account);
-
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
-
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
-
   const onPressContinue = useCallback(async () => {
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
     if (shouldSkipAmount) {
@@ -152,18 +146,19 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     parentAccount,
     transaction,
   ]);
-
   const input = React.createRef();
-
   if (!account || !transaction) return null;
-
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
-
   return (
     <>
       <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
         forceInset={forceInset}
       >
         <TrackScreen
@@ -177,9 +172,18 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           priority={100}
           accountId={account.id}
         />
-        <KeyboardView style={{ flex: 1 }}>
+        <KeyboardView
+          style={{
+            flex: 1,
+          }}
+        >
           <NavigationScrollView
-            style={[styles.container, { flex: 1 }]}
+            style={[
+              styles.container,
+              {
+                flex: 1,
+              },
+            ]}
             keyboardShouldPersistTaps="handled"
           >
             <Button
@@ -193,14 +197,18 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               <View
                 style={[
                   styles.separatorLine,
-                  { borderBottomColor: colors.lightFog },
+                  {
+                    borderBottomColor: colors.lightFog,
+                  },
                 ]}
               />
               <LText color="grey">{<Trans i18nKey="common.or" />}</LText>
               <View
                 style={[
                   styles.separatorLine,
-                  { borderBottomColor: colors.lightFog },
+                  {
+                    borderBottomColor: colors.lightFog,
+                  },
                 ]}
               />
             </View>
@@ -266,7 +274,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 }
 
-const IconQRCode = ({ size, color }: { size: number, color: string }) => (
+const IconQRCode = ({ size, color }: { size: number; color: string }) => (
   <Icon name="qrcode" size={size} color={color} />
 );
 
@@ -290,7 +298,6 @@ const styles = StyleSheet.create({
   },
   separatorLine: {
     flex: 1,
-
     borderBottomWidth: 1,
     marginHorizontal: 8,
   },

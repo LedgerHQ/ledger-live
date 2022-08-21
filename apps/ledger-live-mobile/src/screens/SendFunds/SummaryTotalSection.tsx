@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -20,27 +19,28 @@ import Info from "../../icons/Info";
 import { withTheme } from "../../colors";
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  amount: *,
-  colors: *,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  amount: any;
+  colors: any;
 };
-
 type State = {
-  isModalOpened: boolean,
+  isModalOpened: boolean;
 };
 
 class SummaryTotalSection extends PureComponent<Props, State> {
   state = {
     isModalOpened: false,
   };
-
   onRequestClose = () => {
-    this.setState({ isModalOpened: false });
+    this.setState({
+      isModalOpened: false,
+    });
   };
-
   onPress = () => {
-    this.setState({ isModalOpened: true });
+    this.setState({
+      isModalOpened: true,
+    });
   };
 
   render() {
@@ -57,7 +57,10 @@ class SummaryTotalSection extends PureComponent<Props, State> {
               <Info size={12} color={colors.grey} />
             </Touchable>
           }
-          titleProps={{ semiBold: true, style: styles.title }}
+          titleProps={{
+            semiBold: true,
+            style: styles.title,
+          }}
         >
           <View style={styles.summary}>
             <LText semiBold style={styles.summaryValueText}>
@@ -102,6 +105,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
     );
   }
 }
+
 const styles = StyleSheet.create({
   summary: {
     flex: 1,
@@ -116,5 +120,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
 export default withTheme(SummaryTotalSection);

@@ -1,4 +1,3 @@
-/* @flow */
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useState, useCallback, Component, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
@@ -36,25 +35,25 @@ import Info from "../../icons/Info";
 import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
 import { isCurrencySupported } from "../Exchange/coinifyConfig";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 const WARN_FROM_UTXO_COUNT = 50;
-
 export type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  currentNavigation?: string,
-  nextNavigation?: string,
-  overrideAmountLabel?: string,
-  hideTotal?: boolean,
-  appName?: string,
+  accountId: string;
+  transaction: Transaction;
+  currentNavigation?: string;
+  nextNavigation?: string;
+  overrideAmountLabel?: string;
+  hideTotal?: boolean;
+  appName?: string;
 };
-
 const defaultParams = {
   currentNavigation: ScreenName.SendSummary,
   nextNavigation: ScreenName.SendSelectDevice,
@@ -68,7 +67,6 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
   };
   const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-
   const {
     transaction,
     setTransaction,
@@ -79,18 +77,14 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
     account,
     parentAccount,
   }));
-
   const isNFTSend = isNftTransaction(transaction);
-
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
-
   const [continuing, setContinuing] = useState(false);
   const [highFeesOpen, setHighFeesOpen] = useState(false);
   const [highFeesWarningPassed, setHighFeesWarningPassed] = useState(false);
   const [utxoWarningOpen, setUtxoWarningOpen] = useState(false);
   const [utxoWarningPassed, setUtxoWarningPassed] = useState(false);
-
   const navigateToNext = useCallback(() => {
     navigation.navigate(nextNavigation, {
       ...route.params,
@@ -99,12 +93,13 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
       selectDeviceLink: true,
     });
   }, [navigation, nextNavigation, route.params, transaction, status]);
-
   useEffect(() => {
     if (!continuing) {
       return;
     }
+
     const { warnings, txInputs } = status;
+
     if (
       Object.keys(warnings).includes("feeTooHigh") &&
       !highFeesWarningPassed
@@ -112,20 +107,21 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
       setHighFeesOpen(true);
       return;
     }
+
     if (
       txInputs &&
       txInputs.length >= WARN_FROM_UTXO_COUNT &&
       !utxoWarningPassed
     ) {
       const to = setTimeout(
-        () => setUtxoWarningOpen(true),
-        // looks like you can not open close a bottom modal
+        () => setUtxoWarningOpen(true), // looks like you can not open close a bottom modal
         // and open another one very fast
         highFeesWarningPassed ? 1000 : 0,
       );
       // eslint-disable-next-line consistent-return
       return () => clearTimeout(to);
     }
+
     setContinuing(false);
     setUtxoWarningPassed(false);
     setHighFeesWarningPassed(false);
@@ -138,27 +134,22 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
     utxoWarningPassed,
     navigateToNext,
   ]);
-
   const onPassUtxoWarning = useCallback(() => {
     setUtxoWarningOpen(false);
     setUtxoWarningPassed(true);
   }, []);
-
   const onRejectUtxoWarning = useCallback(() => {
     setUtxoWarningOpen(false);
     setContinuing(false);
   }, []);
-
   const onAcceptFees = useCallback(() => {
     setHighFeesOpen(false);
     setHighFeesWarningPassed(true);
   }, []);
-
   const onRejectFees = useCallback(() => {
     setHighFeesOpen(false);
     setContinuing(false);
   }, [setHighFeesOpen]);
-
   const { amount, totalSpent, errors } = status;
   const { transaction: transactionError } = errors;
   const error = errors[Object.keys(errors)[0]];
@@ -168,7 +159,6 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
     account &&
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
-
   const onBuyEth = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
@@ -178,12 +168,16 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
       },
     });
   }, [navigation, account?.id, currency?.id]);
-
   if (!account || !transaction || !transaction.recipient) return null; // FIXME why is recipient sometimes empty?
 
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen
@@ -206,7 +200,12 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
         ) : null}
         <SummaryFromSection account={account} parentAccount={parentAccount} />
         <VerticalConnector
-          style={[styles.verticalConnector, { borderColor: colors.lightFog }]}
+          style={[
+            styles.verticalConnector,
+            {
+              borderColor: colors.lightFog,
+            },
+          ]}
         />
         <SummaryToSection recipient={transaction.recipient} />
         {status.warnings.recipient ? (
@@ -244,7 +243,11 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
         />
         {error ? (
           <View style={styles.gasPriceError}>
-            <View style={{ padding: 4 }}>
+            <View
+              style={{
+                padding: 4,
+              }}
+            >
               <Info size={12} color={colors.alert} />
             </View>
             <LText style={[styles.error, styles.gasPriceErrorText]}>
@@ -363,7 +366,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class VerticalConnector extends Component<*> {
+class VerticalConnector extends Component<any> {
   render() {
     const { style } = this.props;
     return <View style={style} />;

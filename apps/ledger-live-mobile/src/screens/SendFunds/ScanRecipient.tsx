@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import Config from "react-native-config";
@@ -11,17 +10,18 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import Scanner from "../../components/Scanner";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-  account: AccountLike,
-  parentAccount: ?Account,
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
 };
-
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
-
+// eslint-disable-next-line @typescript-eslint/ban-types
 type State = {};
 
 class ScanRecipient extends PureComponent<Props, State> {
@@ -35,13 +35,16 @@ class ScanRecipient extends PureComponent<Props, State> {
     const { account, parentAccount, route } = this.props;
     if (!account) return;
     const bridge = getAccountBridge(account, parentAccount);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { amount, address, currency, ...rest } = decodeURIScheme(result);
     const transaction = route.params?.transaction;
-    const patch: Object = {};
+    const patch: Record<string, any> = {};
     patch.recipient = address;
+
     if (amount) {
       patch.amount = amount;
     }
+
     for (const k in rest) {
       if (k in transaction) {
         patch[k] = rest[k];
@@ -58,7 +61,6 @@ class ScanRecipient extends PureComponent<Props, State> {
 
   render() {
     const { navigation } = this.props;
-
     return (
       <Scanner
         navigation={navigation}
@@ -72,6 +74,6 @@ class ScanRecipient extends PureComponent<Props, State> {
 const mapStateToProps = (state, { route }) =>
   accountScreenSelector(route)(state);
 
-const m: React$ComponentType<{}> = connect(mapStateToProps)(ScanRecipient);
-
+// eslint-disable-next-line @typescript-eslint/ban-types
+const m: React.ComponentType<{}> = connect(mapStateToProps)(ScanRecipient);
 export default m;

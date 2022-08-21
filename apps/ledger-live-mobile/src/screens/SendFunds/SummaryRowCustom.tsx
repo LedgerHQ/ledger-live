@@ -3,10 +3,10 @@ import { View, StyleSheet } from "react-native";
 import LText from "../../components/LText/index";
 
 export default class SummaryRowCustom extends PureComponent<{
-  onPress: () => void,
-  label: string,
-  data: *,
-  iconLeft: *,
+  onPress: () => void;
+  label: string;
+  data: any;
+  iconLeft: any;
 }> {
   render() {
     const { label, data, iconLeft } = this.props;
@@ -23,7 +23,6 @@ export default class SummaryRowCustom extends PureComponent<{
     );
   }
 }
-
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",

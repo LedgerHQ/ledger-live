@@ -1,23 +1,21 @@
-// @flow
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-
 import LText from "../../components/LText/index";
 import Touchable from "../../components/Touchable";
 
 type Props = {
-  title: React$Node,
-  titleProps?: *,
-  additionalInfo?: *,
-  children: React$Node,
-  onPress?: () => void,
-  event?: string,
+  title: React.ReactNode;
+  titleProps?: any;
+  additionalInfo?: any;
+  children: React.ReactNode;
+  onPress?: () => void;
+  event?: string;
 };
-
+// eslint-disable-next-line @typescript-eslint/ban-types
 type State = {};
 
 class SummaryRow extends Component<Props, State> {
-  render(): React$Node {
+  render(): React.ReactNode {
     const {
       title,
       children,
@@ -58,7 +56,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 16,
   },
-
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -71,5 +68,4 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
   },
 });
-
 export default SummaryRow;

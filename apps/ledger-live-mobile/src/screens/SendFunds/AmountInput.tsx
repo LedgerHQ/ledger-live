@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -14,14 +13,13 @@ import CurrencyInput from "../../components/CurrencyInput";
 import TranslatedError from "../../components/TranslatedError";
 
 type Props = {
-  account: AccountLike,
-  value: BigNumber,
-  onChange: BigNumber => void,
-  error?: ?Error,
-  warning?: ?Error,
-  editable?: boolean,
+  account: AccountLike;
+  value: BigNumber;
+  onChange: (_: BigNumber) => void;
+  error?: Error | null | undefined;
+  warning?: Error | null | undefined;
+  editable?: boolean;
 };
-
 export default function AmountInput({
   onChange,
   value: cryptoAmount,
@@ -43,7 +41,6 @@ export default function AmountInput({
     cryptoAmount,
   });
   const [active, setActive] = useState<"crypto" | "fiat" | "none">("none");
-
   const onChangeFiatAmount = useCallback(
     (fiatAmount: BigNumber) => {
       const amount = calculateCryptoAmount(fiatAmount);
@@ -51,17 +48,14 @@ export default function AmountInput({
     },
     [onChange, calculateCryptoAmount],
   );
-
   const onCryptoFieldFocus = useCallback(() => {
     setActive("crypto");
     track("SendAmountCryptoFocused");
   }, []);
-
   const onFiatFieldFocus = useCallback(() => {
     setActive("fiat");
     track("SendAmountFiatFocused");
   }, []);
-
   const isCrypto = active === "crypto";
   return (
     <View style={styles.container}>
@@ -120,7 +114,6 @@ export default function AmountInput({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

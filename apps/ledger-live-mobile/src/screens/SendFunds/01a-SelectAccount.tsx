@@ -1,4 +1,3 @@
-/* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -8,7 +7,6 @@ import { compose } from "redux";
 import { Trans } from "react-i18next";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import type { Account, AccountLikeArray } from "@ledgerhq/types-live";
-
 import {
   isAccountEmpty,
   getAccountSpendableBalance,
@@ -30,29 +28,31 @@ import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-const forceInset = { bottom: "always" };
-
-type Props = {
-  accounts: Account[],
-  allAccounts: AccountLikeArray,
-  navigation: any,
-  route: { params?: { currency?: string } },
-  colors: *,
+const forceInset = {
+  bottom: "always",
 };
-
+type Props = {
+  accounts: Account[];
+  allAccounts: AccountLikeArray;
+  navigation: any;
+  route: {
+    params?: {
+      currency?: string;
+    };
+  };
+  colors: any;
+};
 type State = {
-  error: *,
+  error: any;
 };
 
 class SendFundsSelectAccount extends Component<Props, State> {
   state = {
     error: null,
   };
-
   renderList = items => {
     const { accounts } = this.props;
     const formatedList = formatSearchResults(items, accounts);
-
     return (
       <FlatList
         data={formatedList}
@@ -64,7 +64,6 @@ class SendFundsSelectAccount extends Component<Props, State> {
       />
     );
   };
-
   renderItem = ({ item: result }: { item: SearchResult }) => {
     const { account, match } = result;
     const balance = getAccountSpendableBalance(account);
@@ -75,7 +74,9 @@ class SendFundsSelectAccount extends Component<Props, State> {
             ? undefined
             : [
                 styles.tokenCardStyle,
-                { borderLeftColor: this.props.colors.fog },
+                {
+                  borderLeftColor: this.props.colors.fog,
+                },
               ]
         }
       >
@@ -100,7 +101,6 @@ class SendFundsSelectAccount extends Component<Props, State> {
       </View>
     );
   };
-
   renderEmptySearch = () => (
     <View style={styles.emptyResults}>
       <LText style={styles.emptyText} color="fog">
@@ -108,7 +108,6 @@ class SendFundsSelectAccount extends Component<Props, State> {
       </LText>
     </View>
   );
-
   keyExtractor = item => item.account.id;
 
   render() {
@@ -117,11 +116,20 @@ class SendFundsSelectAccount extends Component<Props, State> {
     const initialCurrencySelected = params?.currency;
     return (
       <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
         forceInset={forceInset}
       >
         <TrackScreen category="SendFunds" name="SelectAccount" />
-        <KeyboardView style={{ flex: 1 }}>
+        <KeyboardView
+          style={{
+            flex: 1,
+          }}
+        >
           <View style={styles.searchContainer}>
             <FilteredSearchBar
               list={allAccounts.filter(account => !isAccountEmpty(account))}
@@ -136,7 +144,11 @@ class SendFundsSelectAccount extends Component<Props, State> {
         {this.state.error ? (
           <GenericErrorBottomModal
             error={this.state.error}
-            onClose={() => this.setState({ error: null })}
+            onClose={() =>
+              this.setState({
+                error: null,
+              })
+            }
           />
         ) : null}
       </SafeAreaView>
@@ -148,7 +160,6 @@ const mapStateToProps = createStructuredSelector({
   allAccounts: flattenAccountsEnforceHideEmptyTokenSelector,
   accounts: accountsSelector,
 });
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -182,11 +193,10 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
 });
-
-const m: React$ComponentType<{}> = compose(
+// eslint-disable-next-line @typescript-eslint/ban-types
+const m: React.ComponentType<{}> = compose(
   connect(mapStateToProps),
   withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   withTheme,
 )(SendFundsSelectAccount);
-
 export default m;

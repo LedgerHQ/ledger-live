@@ -1,5 +1,3 @@
-// @flow
-
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
@@ -11,9 +9,9 @@ import Info from "../../icons/Info";
 import TrackScreen from "../../analytics/TrackScreen";
 
 type Props = {
-  isOpened: boolean,
-  onClose: () => void,
-  onPress: Function,
+  isOpened: boolean;
+  onClose: () => void;
+  onPress: (..._: Array<any>) => any;
 };
 
 function ConfirmationModal({ isOpened, onClose, onPress, ...rest }: Props) {
@@ -29,7 +27,14 @@ function ConfirmationModal({ isOpened, onClose, onPress, ...rest }: Props) {
       {isOpened ? (
         <TrackScreen category="LendingNoTokenAccountInfoModal" />
       ) : null}
-      <View style={[styles.icon, { backgroundColor: colors.lightOrange }]}>
+      <View
+        style={[
+          styles.icon,
+          {
+            backgroundColor: colors.lightOrange,
+          },
+        ]}
+      >
         <Info size={24} color={colors.orange} />
       </View>
       <LText secondary semiBold style={styles.title}>
@@ -85,5 +90,4 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
 });
-
 export default memo<Props>(ConfirmationModal);

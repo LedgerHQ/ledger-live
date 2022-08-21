@@ -1,4 +1,3 @@
-/* @flow */
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
@@ -15,9 +14,10 @@ import CurrencyIcon from "../../components/CurrencyIcon";
 import Wallet from "../../icons/Wallet";
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
 };
+
 function SummaryFromSection({ account }: Props) {
   const { colors } = useTheme();
   const currency = getAccountCurrency(account);
@@ -30,7 +30,11 @@ function SummaryFromSection({ account }: Props) {
         </Circle>
       }
       data={
-        <View style={{ flexDirection: "row" }}>
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
           <View style={styles.currencyIcon}>
             <CurrencyIcon size={14} currency={currency} />
           </View>
@@ -42,6 +46,7 @@ function SummaryFromSection({ account }: Props) {
     />
   );
 }
+
 const styles = StyleSheet.create({
   summaryRowText: {
     fontSize: 16,
@@ -52,5 +57,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
 export default memo<Props>(SummaryFromSection);

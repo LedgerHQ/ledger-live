@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
@@ -13,10 +12,10 @@ import CounterValue from "../../components/CounterValue";
 import LText from "../../components/LText";
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  amount: *,
-  overrideAmountLabel?: string,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  amount: any;
+  overrideAmountLabel?: string;
 };
 export default class SummaryAmountSection extends PureComponent<Props> {
   render() {

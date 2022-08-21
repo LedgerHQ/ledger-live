@@ -1,4 +1,3 @@
-/* @flow */
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet } from "react-native";
@@ -7,10 +6,10 @@ import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "../../components/Circle";
 import LText from "../../components/LText";
 import QRcode from "../../icons/QRcode";
-
 type Props = {
-  recipient: string,
+  recipient: string;
 };
+
 function SummaryToSection({ recipient }: Props) {
   const { colors } = useTheme();
   return (
@@ -29,10 +28,10 @@ function SummaryToSection({ recipient }: Props) {
     />
   );
 }
+
 const styles = StyleSheet.create({
   summaryRowText: {
     fontSize: 16,
   },
 });
-
 export default memo<Props>(SummaryToSection);
