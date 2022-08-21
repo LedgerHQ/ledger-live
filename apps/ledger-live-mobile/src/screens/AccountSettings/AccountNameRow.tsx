@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet } from "react-native";
@@ -8,14 +7,13 @@ import SettingsRow from "../../components/SettingsRow";
 import LText from "../../components/LText";
 
 type Props = {
-  navigation: *,
-  account: Account,
+  navigation: any;
+  account: Account;
 };
 
 class AccountNameRow extends PureComponent<Props> {
   render() {
     const { navigation, account } = this.props;
-
     return (
       <SettingsRow
         event="AccountNameRow"
@@ -43,7 +41,6 @@ class AccountNameRow extends PureComponent<Props> {
 }
 
 export default AccountNameRow;
-
 const styles = StyleSheet.create({
   accountName: {
     flexShrink: 1,

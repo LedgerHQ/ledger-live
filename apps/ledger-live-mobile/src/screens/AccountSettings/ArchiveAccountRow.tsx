@@ -1,4 +1,3 @@
-/* @flow */
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -23,6 +22,6 @@ function ArchiveAccountRow() {
   );
 }
 
-const m: React$ComponentType<{}> = memo(ArchiveAccountRow);
-
+// eslint-disable-next-line @typescript-eslint/ban-types
+const m: React.ComponentType<{}> = memo(ArchiveAccountRow);
 export default m;

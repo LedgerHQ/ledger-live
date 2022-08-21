@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
@@ -6,14 +5,13 @@ import { ScreenName } from "../../const";
 import SettingsRow from "../../components/SettingsRow";
 
 type Props = {
-  navigation: *,
-  account: Account,
+  navigation: any;
+  account: Account;
 };
 
 class AccountAdvancedLogsRow extends PureComponent<Props> {
   render() {
     const { navigation, account } = this.props;
-
     return (
       <SettingsRow
         event="AccountAdvancedLogsRow"

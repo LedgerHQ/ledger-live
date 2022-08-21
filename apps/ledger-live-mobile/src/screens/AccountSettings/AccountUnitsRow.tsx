@@ -1,4 +1,3 @@
-/* @flow */
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
@@ -8,8 +7,8 @@ import SettingsRow from "../../components/SettingsRow";
 import LText from "../../components/LText";
 
 type Props = {
-  navigation: *,
-  account: Account,
+  navigation: any;
+  account: Account;
 };
 
 function AccountUnitsRow({ navigation, account }: Props) {
@@ -27,7 +26,12 @@ function AccountUnitsRow({ navigation, account }: Props) {
         })
       }
     >
-      <LText semiBold style={{ color: colors.grey }}>
+      <LText
+        semiBold
+        style={{
+          color: colors.grey,
+        }}
+      >
         {account.unit.code}
       </LText>
     </SettingsRow>

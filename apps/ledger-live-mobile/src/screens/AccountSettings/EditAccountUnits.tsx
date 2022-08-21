@@ -1,4 +1,3 @@
-/* @flow */
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
@@ -10,34 +9,27 @@ import Touchable from "../../components/Touchable";
 import NavigationScrollView from "../../components/NavigationScrollView";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
+  accountId: string;
 };
-
 export default function EditAccountUnits({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const { account } = useSelector(accountScreenSelector(route));
-
   invariant(account?.type === "Account", "account must be a main account");
-
   const onPressItem = useCallback(
     (item: any) => {
-      const newAccount = {
-        ...account,
-        unit: item,
-      };
+      const newAccount = { ...account, unit: item };
       dispatch(updateAccount(newAccount));
       navigation.goBack();
     },
     [account, navigation, dispatch],
   );
-
   const accountUnits = account.currency.units;
-
   return (
     <NavigationScrollView>
       <View style={styles.body}>
@@ -69,7 +61,6 @@ export default function EditAccountUnits({ navigation, route }: Props) {
     </NavigationScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

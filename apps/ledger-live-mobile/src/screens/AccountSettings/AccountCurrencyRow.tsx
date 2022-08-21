@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -6,8 +5,8 @@ import { ScreenName } from "../../const";
 import SettingsRow from "../../components/SettingsRow";
 
 type Props = {
-  navigation: *,
-  currency: CryptoCurrency,
+  navigation: any;
+  currency: CryptoCurrency;
 };
 
 class AccountCurrencyRow extends PureComponent<Props> {
