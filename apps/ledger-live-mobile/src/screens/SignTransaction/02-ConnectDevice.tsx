@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React, { memo } from "react";
 import { StyleSheet } from "react-native";
@@ -21,51 +20,50 @@ import { useSignedTxHandlerWithoutBroadcast } from "../../logic/screenTransactio
 import { navigateToSelectDevice } from "../ConnectDevice";
 
 const action = createAction(connectApp);
-
 type Props = {
-  navigation: any,
+  navigation: any;
   route: {
-    params: RouteParams,
-    name: string,
-  },
+    params: RouteParams;
+    name: string;
+  };
 };
-
 type RouteParams = {
-  device: Device,
-  accountId: string,
-  transaction: Transaction,
-  status: TransactionStatus,
-  appName?: string,
-  onSuccess: (payload: *) => void,
-  onError: (error: Error) => void,
+  device: Device;
+  accountId: string;
+  transaction: Transaction;
+  status: TransactionStatus;
+  appName?: string;
+  // eslint-disable-next-line no-unused-vars
+  onSuccess: (payload: any) => void;
+  onError: (_: Error) => void;
 };
 
 function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-
   const { appName, onSuccess } = route.params;
-
   const mainAccount = getMainAccount(account, parentAccount);
-
   const { transaction, status } = useBridgeTransaction(() => ({
     account: mainAccount,
     transaction: route.params.transaction,
   }));
-
   const tokenCurrency =
     account.type === "TokenAccount" ? account.token : undefined;
-
   const handleTx = useSignedTxHandlerWithoutBroadcast({
     onSuccess,
   });
-
   // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
   const dependencies = [mainAccount];
-
   return transaction ? (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen
         category={route.name.replace("ConnectDevice", "")}
         name="ConnectDevice"
@@ -96,5 +94,4 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
-
 export default memo<Props>(ConnectDevice);
