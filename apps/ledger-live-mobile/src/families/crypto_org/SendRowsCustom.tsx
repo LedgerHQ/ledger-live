@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -10,22 +9,19 @@ import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 
 type Props = {
-  account: Account,
-  transaction: Transaction,
+  account: Account;
+  transaction: Transaction;
 };
-
 export default function CryptoSendRowsCustom({ account, transaction }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
-
   const editMemo = useCallback(() => {
     navigation.navigate(ScreenName.CryptoOrgEditMemo, {
       account,
       transaction,
     });
   }, [navigation, account, transaction]);
-
   return (
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
@@ -56,7 +52,6 @@ export default function CryptoSendRowsCustom({ account, transaction }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   memoContainer: {
     flexDirection: "row",
