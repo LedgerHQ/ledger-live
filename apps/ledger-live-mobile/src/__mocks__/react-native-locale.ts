@@ -1,9 +1,7 @@
-// @flow
-
 const NativeLocale = {
-  decimalStyle: (number: *) => `${number}`,
-  numberFromDecimalString: (number: *) => parseFloat(number),
-  dateFormat: (date: *, _1: *, _2: *) => date.toString(),
+  decimalStyle: (number: any) => `${number}`,
+  numberFromDecimalString: (number: any) => parseFloat(number),
+  dateFormat: (date: any, _1: any, _2: any) => date.toString(),
   currencyCode: "USD",
   currencySymbol: "$",
   decimalSeparator: ".",
@@ -19,7 +17,6 @@ const NativeLocale = {
   quotationBeginDelimiterKey: "“",
   quotationEndDelimiterKey: "”",
 };
-
 const m = {
   constants() {
     return NativeLocale;
@@ -38,9 +35,8 @@ const m = {
     return valid.indexOf(style) >= 0;
   },
 
-  dateFormat(date: *, dateStyle: string, timeStyle: string) {
+  dateFormat(date: any, dateStyle: string, timeStyle: string) {
     return NativeLocale.dateFormat(date, dateStyle, timeStyle);
   },
 };
-
 export default m;

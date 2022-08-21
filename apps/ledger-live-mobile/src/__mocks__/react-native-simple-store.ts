@@ -1,7 +1,6 @@
 import merge from "lodash/merge";
 
 const cache = {};
-
 const deviceStorage = {
   /**
    * Get a one or more value for a key or array of keys from AsyncStorage
@@ -13,6 +12,7 @@ const deviceStorage = {
       const value = cache[key];
       return Promise.resolve(value);
     }
+
     return Promise.resolve(key.map(k => cache[k]));
   },
 
@@ -30,6 +30,7 @@ const deviceStorage = {
         cache[key] = value;
       });
     }
+
     return Promise.resolve();
   },
 
@@ -59,6 +60,7 @@ const deviceStorage = {
     } else {
       delete cache[key];
     }
+
     return Promise.resolve();
   },
 
@@ -78,13 +80,16 @@ const deviceStorage = {
    */
   push(key, value) {
     const currentValue = cache[key];
+
     if (!currentValue) {
       // if there is no current value populate it with the new value
       return deviceStorage.save(key, [value]);
     }
+
     if (Array.isArray(currentValue)) {
       return deviceStorage.save(key, [...currentValue, value]);
     }
+
     return Promise.reject(
       new Error(
         `Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`,
@@ -92,5 +97,4 @@ const deviceStorage = {
     );
   },
 };
-
 module.exports = deviceStorage;
