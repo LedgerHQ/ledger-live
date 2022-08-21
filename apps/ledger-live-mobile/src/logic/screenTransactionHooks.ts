@@ -84,23 +84,24 @@ export const useSignWithDevice = ({
       .pipe(
         // FIXME later we will need to treat more events
         filter(e => e.type === "signed"),
-        concatMap((
-          e, // later we will have more events
-        ) =>
-          concat(
-            of(e),
-            from(
-              bridge
-                .broadcast({
-                  account: mainAccount,
-                  signedOperation: e.signedOperation,
-                })
-                .then(operation => ({
-                  type: "broadcasted",
-                  operation,
-                })),
+        concatMap(
+          (
+            e, // later we will have more events
+          ) =>
+            concat(
+              of(e),
+              from(
+                bridge
+                  .broadcast({
+                    account: mainAccount,
+                    signedOperation: e.signedOperation,
+                  })
+                  .then(operation => ({
+                    type: "broadcasted",
+                    operation,
+                  })),
+              ),
             ),
-          ),
         ),
       )
       .subscribe({

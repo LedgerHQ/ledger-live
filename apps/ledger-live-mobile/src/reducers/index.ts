@@ -13,12 +13,12 @@ import type { RatingsState } from "./ratings";
 import type { NotificationsState } from "./notifications";
 
 export type State = {
-  accounts: AccountsState,
-  settings: SettingsState,
-  appstate: AppState,
-  ble: BleState,
-  ratings: RatingsState,
-  notifications: NotificationsState,
+  accounts: AccountsState;
+  settings: SettingsState;
+  appstate: AppState;
+  ble: BleState;
+  ratings: RatingsState;
+  notifications: NotificationsState;
 };
 
 const appReducer = combineReducers({

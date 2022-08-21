@@ -42,7 +42,7 @@
     "android:release": "./scripts/android-release.sh",
     "mock-android": "pnpm android:mock && pnpm android:install",
     "staging-android": "pnpm android:staging && pnpm android:install",
-    "prettier": "prettier --write \"src/**/*.js\"",
+    "prettier": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint src --ext .js,.json",
     "lint:fix": "pnpm lint --fix",
     "flow": "flow",

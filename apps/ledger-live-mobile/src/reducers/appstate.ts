@@ -4,32 +4,38 @@ import { NetworkDown } from "@ledgerhq/errors";
 import type { State } from ".";
 
 export type AsyncState = {
-  isConnected: boolean | null,
+  isConnected: boolean | null;
 };
 
-export type BackgroundEvent = {
-  type: "confirmPin"
-} | {
-  type: "downloadingUpdate",
-  progress?: number
-} | {
-  type: "confirmUpdate"
-} | {
-  type: "flashingMcu",
-  progress?: number,
-  installing?: string | null,
-} | {
-  type: "firmwareUpdated"
-} | {
-  type: "error",
-  error: any
-};
+export type BackgroundEvent =
+  | {
+      type: "confirmPin";
+    }
+  | {
+      type: "downloadingUpdate";
+      progress?: number;
+    }
+  | {
+      type: "confirmUpdate";
+    }
+  | {
+      type: "flashingMcu";
+      progress?: number;
+      installing?: string | null;
+    }
+  | {
+      type: "firmwareUpdated";
+    }
+  | {
+      type: "error";
+      error: any;
+    };
 
 export type AppState = {
-  isConnected: boolean | null,
-  hasConnectedDevice: boolean,
-  modalLock: boolean,
-  backgroundEvents: Array<BackgroundEvent>,
+  isConnected: boolean | null;
+  hasConnectedDevice: boolean;
+  modalLock: boolean;
+  backgroundEvents: Array<BackgroundEvent>;
 };
 
 const initialState: AppState = {
@@ -61,10 +67,10 @@ const handlers: Object = {
   }),
   DEQUEUE_BACKGROUND_EVENT: (state: AppState) => {
     const [_, ...tail] = state.backgroundEvents;
-    return ({
+    return {
       ...state,
       backgroundEvents: tail,
-    });
+    };
   },
   CLEAR_BACKGROUND_EVENTS: (state: AppState) => ({
     ...state,
@@ -79,10 +85,10 @@ export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
 export const hasConnectedDeviceSelector = (state: State) =>
   state.appstate.hasConnectedDevice;
 
-  export const backgroundEventsSelector = (state: State) =>
+export const backgroundEventsSelector = (state: State) =>
   state.appstate.backgroundEvents;
 
-  export const nextBackgroundEventSelector = (state: State) =>
+export const nextBackgroundEventSelector = (state: State) =>
   state.appstate.backgroundEvents[0];
 
 const globalNetworkDown = new NetworkDown();

@@ -195,22 +195,20 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
       : accounts,
 );
 const emptyArray = [];
-export const accountsByCryptoCurrencyScreenSelector = (
-  currency: CryptoCurrency,
-) => (state: any) => {
-  if (!currency) return emptyArray;
-  return accountsTuplesByCurrencySelector(state, {
-    currency,
-  });
-};
-export const flattenAccountsByCryptoCurrencyScreenSelector = (
-  currency?: CryptoCurrency,
-) => (state: any) => {
-  if (!currency) return emptyArray;
-  return flattenAccountsByCryptoCurrencySelector(state, {
-    currencies: [currency.id],
-  });
-};
+export const accountsByCryptoCurrencyScreenSelector =
+  (currency: CryptoCurrency) => (state: any) => {
+    if (!currency) return emptyArray;
+    return accountsTuplesByCurrencySelector(state, {
+      currency,
+    });
+  };
+export const flattenAccountsByCryptoCurrencyScreenSelector =
+  (currency?: CryptoCurrency) => (state: any) => {
+    if (!currency) return emptyArray;
+    return flattenAccountsByCryptoCurrencySelector(state, {
+      currencies: [currency.id],
+    });
+  };
 export const accountCryptoCurrenciesSelector = createSelector(
   cryptoCurrenciesSelector,
   (_, { currencies }) => currencies,
@@ -306,15 +304,14 @@ export const subAccountByCurrencyOrderedSelector: OutputSelector<
       );
   },
 );
-export const subAccountByCurrencyOrderedScreenSelector = (route: any) => (
-  state: any,
-) => {
-  const currency = route?.params?.currency || {};
-  if (!currency) return [];
-  return subAccountByCurrencyOrderedSelector(state, {
-    currency,
-  });
-};
+export const subAccountByCurrencyOrderedScreenSelector =
+  (route: any) => (state: any) => {
+    const currency = route?.params?.currency || {};
+    if (!currency) return [];
+    return subAccountByCurrencyOrderedSelector(state, {
+      currency,
+    });
+  };
 export const hasLendEnabledAccountsSelector: OutputSelector<
   State,
   void,

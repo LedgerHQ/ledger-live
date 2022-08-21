@@ -204,12 +204,10 @@ async function unsafeSaveAccounts(
   );
 }
 
-export const getAccounts: typeof unsafeGetAccounts = atomicQueue(
-  unsafeGetAccounts,
-);
-export const saveAccounts: typeof unsafeSaveAccounts = atomicQueue(
-  unsafeSaveAccounts,
-);
+export const getAccounts: typeof unsafeGetAccounts =
+  atomicQueue(unsafeGetAccounts);
+export const saveAccounts: typeof unsafeSaveAccounts =
+  atomicQueue(unsafeSaveAccounts);
 
 async function migrateAccountsIfNecessary(): Promise<void> {
   const keys = await store.keys();

@@ -75,10 +75,9 @@ const handlers: Record<string, any> = {
 // Selectors
 export const exportSelector = (s: State) => s.ble;
 export const knownDevicesSelector = (s: State) => s.ble.knownDevices;
-export const deviceNameByDeviceIdSelectorCreator = (deviceId: string) => (
-  s: State,
-) => {
-  const d = s.ble.knownDevices.find(d => d.id === deviceId);
-  return d ? d.name : "";
-};
+export const deviceNameByDeviceIdSelectorCreator =
+  (deviceId: string) => (s: State) => {
+    const d = s.ble.knownDevices.find(d => d.id === deviceId);
+    return d ? d.name : "";
+  };
 export default handleActions(handlers, initialState);
