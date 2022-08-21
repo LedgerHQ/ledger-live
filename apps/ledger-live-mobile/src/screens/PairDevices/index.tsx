@@ -1,4 +1,3 @@
-// @flow
 import React, { useReducer, useCallback, useEffect, useRef } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -29,37 +28,38 @@ import Paired from "./Paired";
 import Scanning from "./Scanning";
 import ScanningTimeout from "./ScanningTimeout";
 import RenderError from "./RenderError";
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
-type PairDevicesProps = {
-  ...Props,
-  knownDevices: DeviceLike[],
-  hasCompletedOnboarding: boolean,
-  addKnownDevice: DeviceLike => void,
-  installAppFirstTime: (value: boolean) => void,
+type PairDevicesProps = Props & {
+  knownDevices: DeviceLike[];
+  hasCompletedOnboarding: boolean;
+  addKnownDevice: (arg0: DeviceLike) => void;
+  installAppFirstTime: (value: boolean) => void;
 };
-
 type RouteParams = {
-  onDone?: (device: Device) => void,
+  onDone?: (device: Device) => void;
 };
-
 type BleDevice = {
-  id: string,
-  name: string,
-  modelId: DeviceModelId,
+  id: string;
+  name: string;
+  modelId: DeviceModelId;
 };
-
 export default function PairDevices(props: PairDevicesProps) {
   const { colors } = useTheme();
   return (
     <RequiresBLE>
       <SafeAreaView
         forceInset={forceInset}
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
       >
         <PairDevicesInner {...props} />
       </SafeAreaView>
@@ -70,58 +70,72 @@ export default function PairDevices(props: PairDevicesProps) {
 function PairDevicesInner({ navigation, route }: Props) {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatchRedux = useDispatch();
-
   const [
     { error, status, device, skipCheck, genuineAskedOnDevice, name },
     dispatch,
   ] = useReducer(reducer, initialState);
-
   const unmounted = useRef(false);
-
   useEffect(
     () => () => {
       unmounted.current = true;
     },
     [],
   );
-
   const onTimeout = useCallback(() => {
-    dispatch({ type: "timeout" });
+    dispatch({
+      type: "timeout",
+    });
   }, [dispatch]);
-
   const onRetry = useCallback(() => {
-    navigation.setParams({ hasError: false });
-    dispatch({ type: "scanning" });
+    navigation.setParams({
+      hasError: false,
+    });
+    dispatch({
+      type: "scanning",
+    });
   }, [dispatch, navigation]);
-
   const onError = useCallback(
     (error: Error) => {
       logger.critical(error);
-      navigation.setParams({ hasError: true });
-      dispatch({ type: "error", payload: error });
+      navigation.setParams({
+        hasError: true,
+      });
+      dispatch({
+        type: "error",
+        payload: error,
+      });
     },
     [dispatch, navigation],
   );
-
   const onSelect = useCallback(
-    async (bleDevice: BleDevice, deviceMeta: *) => {
+    async (bleDevice: BleDevice, deviceMeta: any) => {
       const device = {
         deviceName: bleDevice.name,
         deviceId: bleDevice.id,
         modelId: "nanoX",
         wired: false,
       };
-      dispatch({ type: "pairing", payload: device });
+      dispatch({
+        type: "pairing",
+        payload: device,
+      });
+
       try {
         const transport = await TransportBLE.open(bleDevice);
         if (unmounted.current) return;
+
         try {
           const deviceInfo = await getDeviceInfo(transport);
-          if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line no-console
+          if (__DEV__)
+            console.log({
+              deviceInfo,
+            }); // eslint-disable-line no-console
+
           if (unmounted.current) return;
-
-          dispatch({ type: "genuinecheck", payload: device });
-
+          dispatch({
+            type: "genuinecheck",
+            payload: device,
+          });
           let appsInstalled;
           await listApps(transport, deviceInfo)
             .pipe(
@@ -129,6 +143,7 @@ function PairDevicesInner({ navigation, route }: Props) {
               tap(e => {
                 if (e.type === "result") {
                   appsInstalled = e.result && e.result.installed.length;
+
                   if (!hasCompletedOnboarding) {
                     const hasAnyAppInstalled =
                       e.result && e.result.installed.length > 0;
@@ -140,6 +155,7 @@ function PairDevicesInner({ navigation, route }: Props) {
 
                   return;
                 }
+
                 dispatch({
                   type: "allowManager",
                   payload: e.type === "allow-manager-requested",
@@ -147,13 +163,10 @@ function PairDevicesInner({ navigation, route }: Props) {
               }),
             )
             .toPromise();
-
           if (unmounted.current) return;
-
           const name =
             (await getDeviceName(transport)) || device.deviceName || "";
           if (unmounted.current) return;
-
           dispatchRedux(
             addKnownDevice({
               id: device.deviceId,
@@ -163,7 +176,6 @@ function PairDevicesInner({ navigation, route }: Props) {
               modelId: deviceMeta?.modelId,
             }),
           );
-
           dispatchRedux(
             setLastSeenDeviceInfo({
               modelId: device.modelId,
@@ -171,11 +183,12 @@ function PairDevicesInner({ navigation, route }: Props) {
               appsInstalled,
             }),
           );
-
           dispatchRedux(setReadOnlyMode(false));
-
           if (unmounted.current) return;
-          dispatch({ type: "paired", skipCheck: false });
+          dispatch({
+            type: "paired",
+            skipCheck: false,
+          });
         } finally {
           transport.close();
           await TransportBLE.disconnect(device.deviceId).catch(() => {});
@@ -189,9 +202,11 @@ function PairDevicesInner({ navigation, route }: Props) {
     },
     [dispatch, dispatchRedux, hasCompletedOnboarding, onError],
   );
-
   const onBypassGenuine = useCallback(() => {
-    navigation.setParams({ hasError: true });
+    navigation.setParams({
+      hasError: true,
+    });
+
     if (device) {
       dispatchRedux(
         addKnownDevice({
@@ -199,12 +214,16 @@ function PairDevicesInner({ navigation, route }: Props) {
           name: name ?? device.deviceName ?? "",
         }),
       );
-      dispatch({ type: "paired", skipCheck: true });
+      dispatch({
+        type: "paired",
+        skipCheck: true,
+      });
     } else {
-      dispatch({ type: "scanning" });
+      dispatch({
+        type: "scanning",
+      });
     }
   }, [device, dispatchRedux, name, dispatch, navigation]);
-
   const onDone = useCallback(
     (device: Device) => {
       navigation.goBack();
@@ -227,32 +246,37 @@ function PairDevicesInner({ navigation, route }: Props) {
   switch (status) {
     case "scanning":
       return (
-        <Scanning
-          // $FlowFixMe
+        <Scanning // $FlowFixMe
           onSelect={onSelect}
           onError={onError}
           onTimeout={onTimeout}
         />
       );
+
     case "timeout":
       return <ScanningTimeout onRetry={onRetry} />;
+
     case "pairing":
       return <PendingPairing />;
+
     case "genuinecheck":
       return (
         <PendingGenuineCheck genuineAskedOnDevice={genuineAskedOnDevice} />
       );
+
     case "paired":
       return device ? (
         <Paired device={device} genuine={!skipCheck} onContinue={onDone} />
       ) : null;
+
     default:
       return null;
   }
 }
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 const initialState: State = {
   status: "scanning",
   device: null,
@@ -266,10 +290,13 @@ function reducer(state, action) {
   switch (action.type) {
     case "timeout":
       return { ...state, status: "timeout" };
+
     case "retry":
       return { ...state, status: "scanning", error: null, device: null };
+
     case "error":
       return { ...state, error: action.payload };
+
     case "pairing":
       return {
         ...state,
@@ -277,10 +304,13 @@ function reducer(state, action) {
         genuineAskedOnDevice: false,
         device: action.payload,
       };
+
     case "genuinecheck":
       return { ...state, status: "genuinecheck", device: action.payload };
+
     case "allowManager":
       return { ...state, genuineAskedOnDevice: action.payload };
+
     case "paired":
       return {
         ...state,
@@ -288,24 +318,24 @@ function reducer(state, action) {
         error: null,
         skipCheck: action.skipCheck,
       };
+
     case "scanning":
       return { ...state, status: "scanning", error: null, device: null };
+
     default:
       return state;
   }
 }
 
 type State = {
-  status: Status,
-  device: ?Device,
-  name: ?string,
-  error: ?Error,
-  skipCheck: boolean,
-  genuineAskedOnDevice: boolean,
+  status: Status;
+  device: Device | null | undefined;
+  name: string | null | undefined;
+  error: Error | null | undefined;
+  skipCheck: boolean;
+  genuineAskedOnDevice: boolean;
 };
-
 type Status = "scanning" | "pairing" | "genuinecheck" | "paired" | "timedout";
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

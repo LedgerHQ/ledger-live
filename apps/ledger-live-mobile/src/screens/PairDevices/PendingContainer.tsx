@@ -1,8 +1,5 @@
-// @flow
-
 import { View, StyleSheet } from "react-native";
 import React, { PureComponent } from "react";
-
 import { useTheme } from "@react-navigation/native";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
@@ -16,7 +13,7 @@ export const PendingSpinner = () => {
   );
 };
 
-class PendingContainer extends PureComponent<*> {
+class PendingContainer extends PureComponent<any> {
   render() {
     const { children } = this.props;
     return (
@@ -35,5 +32,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
 export default PendingContainer;
