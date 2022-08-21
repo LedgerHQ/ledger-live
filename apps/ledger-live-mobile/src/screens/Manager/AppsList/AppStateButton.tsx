@@ -14,11 +14,12 @@ import AppProgressButton from "./AppProgressButton";
 type Props = {
   app: App,
   state: State,
-  dispatch: (action: Action) => void,
+  dispatch: (_: Action) => void,
   notEnoughMemoryToInstall: boolean,
   isInstalled: boolean,
-  setAppInstallWithDependencies: (params: { app: App, dependencies: App[] }) => void,
-  setAppUninstallWithDependencies: (params: { dependents: App[], app: App }) => void,
+  setAppInstallWithDependencies: (_: { app: App, dependencies: App[] }) => void,
+  setAppUninstallWithDependencies: (_: { dependents: App[], app: App }) => void,
+  // eslint-disable-next-line no-unused-vars
   storageWarning: (appName: string) => void,
 };
 

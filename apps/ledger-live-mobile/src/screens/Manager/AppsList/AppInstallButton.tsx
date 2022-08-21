@@ -14,10 +14,10 @@ import { installAppFirstTime } from "../../../actions/settings";
 type Props = {
   app: App,
   state: State,
-  dispatch: (action: Action) => void,
+  dispatch: (_: Action) => void,
   notEnoughMemoryToInstall: boolean,
-  setAppInstallWithDependencies: (params: { app: App, dependencies: App[] }) => void,
-  storageWarning: (appName: string) => void,
+  setAppInstallWithDependencies: (_: { app: App, dependencies: App[] }) => void,
+  storageWarning: (_: string) => void,
 };
 
 const ButtonContainer = styled(Box).attrs({

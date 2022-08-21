@@ -1,4 +1,3 @@
-// @flow
 import React, { memo, useMemo } from "react";
 import { Image } from "react-native";
 import manager from "@ledgerhq/live-common/manager/index";

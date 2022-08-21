@@ -9,7 +9,7 @@ import { Icons, Box } from "@ledgerhq/native-ui";
 type Props = {
   app: App,
   state: State,
-  dispatch: (action: Action) => void,
+  dispatch: (_: Action) => void,
 };
 
 const ButtonContainer = styled(Box).attrs({
@@ -26,7 +26,7 @@ export default function AppUpdateButton({
   dispatch: dispatchProps,
 }: Props) {
   const { name } = app;
-  const { installed, updateAllQueue } = state;
+  const { installed } = state;
 
   const canUpdate = useMemo(
     () => installed.some(({ name, updated }) => name === app.name && !updated),

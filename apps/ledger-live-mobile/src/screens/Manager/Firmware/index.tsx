@@ -4,15 +4,12 @@ import { TouchableOpacity, Linking } from "react-native";
 import { Trans } from "react-i18next";
 
 import type { State } from "@ledgerhq/live-common/apps/index";
-
 import manager from "@ledgerhq/live-common/manager/index";
-
 import styled from "styled-components/native";
 import { Box, Text, Flex, Icons } from "@ledgerhq/native-ui";
+
 import FirmwareUpdateModal from "../Modals/FirmwareUpdateModal";
-
 import { urls } from "../../../config/urls";
-
 import { setAvailableUpdate } from "../../../actions/settings";
 
 type Props = {

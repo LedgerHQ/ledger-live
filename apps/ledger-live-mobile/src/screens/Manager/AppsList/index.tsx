@@ -4,24 +4,30 @@ import type { App } from "@ledgerhq/types-live";
 import type { State } from "@ledgerhq/live-common/apps/index";
 import { useTheme } from "@react-navigation/native";
 import AppRow from "./AppRow";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 type Props = {
-  apps: Array<App>,
-  isInstalledView: boolean,
-  active: boolean,
-  state: State,
-  dispatch: *,
-  renderNoResults?: (*) => Node,
-  setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
-  setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
-  setStorageWarning: () => void,
-  optimisticState: State,
+  apps: Array<App>;
+  isInstalledView: boolean;
+  active: boolean;
+  state: State;
+  dispatch: any;
+  renderNoResults?: (_: any) => Node;
+  setAppInstallWithDependencies: (_: {
+    app: App;
+    dependencies: App[];
+  }) => void;
+  setAppUninstallWithDependencies: (_: {
+    dependents: App[];
+    app: App;
+  }) => void;
+  setStorageWarning: () => void;
+  optimisticState: State;
 };
-
 const { height } = getWindowDimensions();
 
-const renderRow = ({ item }: { item: * }) => <AppRow {...item} />;
+const renderRow = ({ item }: { item: any }) => <AppRow {...item} />;
 
 const AppsList = ({
   apps,
@@ -37,7 +43,6 @@ const AppsList = ({
 }: Props) => {
   const viewHeight = active ? "auto" : height - 267;
   const { colors } = useTheme();
-
   const getItem = useCallback(
     (data, index) => ({
       app: data[index],
@@ -63,17 +68,24 @@ const AppsList = ({
       optimisticState,
     ],
   );
-
   if (!apps || apps.length <= 0)
     return (
-      <View style={[styles.renderNoResult, { backgroundColor: colors.card }]}>
+      <View
+        style={[
+          styles.renderNoResult,
+          {
+            backgroundColor: colors.card,
+          },
+        ]}
+      >
         {renderNoResults && renderNoResults()}
       </View>
     );
-
   return (
     <VirtualizedList
-      style={{ height: viewHeight || 0 }}
+      style={{
+        height: viewHeight || 0,
+      }}
       listKey={isInstalledView ? "Installed" : "Catalog"}
       data={apps}
       renderItem={renderRow}
@@ -87,7 +99,6 @@ AppsList.defaultProps = {
   animation: true,
   renderNoResults: () => null,
 };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -99,5 +110,4 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
 });
-
 export default memo(AppsList);

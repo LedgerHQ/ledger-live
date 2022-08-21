@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { installAppFirstTime } from "../../../actions/settings";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
-
 import Button from "../../../components/Button";
 import SearchIcon from "../../../icons/Search";
 import NoResults from "../../../icons/NoResults";
@@ -26,13 +25,12 @@ import Styles from "../../../navigation/styles";
 import AppRow from "../AppsList/AppRow";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import AppIcon from "../AppsList/AppIcon";
-
 type PlaceholderProps = {
-  query: string,
-  addAccount: () => void,
-  onInstall: (name: string) => void,
-  installed: InstalledItem[],
-  apps: App[],
+  query: string;
+  addAccount: () => void;
+  onInstall: (name: string) => void;
+  installed: InstalledItem[];
+  apps: App[];
 };
 
 const Placeholder = ({
@@ -53,7 +51,6 @@ const Placeholder = ({
       ),
     [query],
   );
-
   const parentInstalled = useMemo(
     () =>
       found &&
@@ -61,7 +58,6 @@ const Placeholder = ({
       installed.find(({ name }) => name === found.parentCurrency.name),
     [found, installed],
   );
-
   const parent = useMemo(
     () =>
       found &&
@@ -69,12 +65,10 @@ const Placeholder = ({
       apps.find(({ name }) => name === found.parentCurrency.name),
     [found, apps],
   );
-
   const install = useCallback(() => parent && onInstall(parent.name), [
     parent,
     onInstall,
   ]);
-
   return found && parent ? (
     <NavigationScrollView>
       <View style={[styles.noResult]}>
@@ -118,7 +112,9 @@ const Placeholder = ({
               title={
                 <Trans
                   i18nKey="manager.intallParentApp"
-                  values={{ appName: parent.name }}
+                  values={{
+                    appName: parent.name,
+                  }}
                 />
               }
             />
@@ -133,7 +129,14 @@ const Placeholder = ({
       </View>
     </NavigationScrollView>
   ) : (
-    <View style={[styles.noResult, { backgroundColor: colors.card }]}>
+    <View
+      style={[
+        styles.noResult,
+        {
+          backgroundColor: colors.card,
+        },
+      ]}
+    >
       <View style={styles.noResultIcon}>
         <NoResults color={colors.fog} />
       </View>
@@ -146,21 +149,26 @@ const Placeholder = ({
     </View>
   );
 };
+
 const { height } = getWindowDimensions();
-
 type Props = {
-  state: State,
-  dispatch: Action => void,
-  isInstalledView: boolean,
-  apps?: App[],
-  disabled: boolean,
-  setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
-  setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
-  navigation: *,
-  searchQuery?: string,
-  optimisticState: State,
+  state: State;
+  dispatch: (_: Action) => void;
+  isInstalledView: boolean;
+  apps?: App[];
+  disabled: boolean;
+  setAppInstallWithDependencies: (_: {
+    app: App;
+    dependencies: App[];
+  }) => void;
+  setAppUninstallWithDependencies: (_: {
+    dependents: App[];
+    app: App;
+  }) => void;
+  navigation: any;
+  searchQuery?: string;
+  optimisticState: State;
 };
-
 export default ({
   state,
   dispatch,
@@ -183,22 +191,20 @@ export default ({
   const [depInstall, setDepsInstall] = useState();
   const [depUninstall, setDepsUninstall] = useState();
   const [query, setQuery] = useState(searchQuery || null);
-
   const openSearchModal = useCallback(() => {
     setQuery("");
     setIsOpen(true);
     setDepsInstall();
     setDepsUninstall();
   }, []);
-
   const closeSearchModal = useCallback(deps => {
     setIsOpen(false);
+
     if (deps) {
       if (deps.dependencies) setDepsInstall(deps);
       else if (deps.dependents) setDepsUninstall(deps);
     }
   }, []);
-
   const onModalHide = useCallback(() => {
     if (depInstall) setAppInstallWithDependencies(depInstall);
     else if (depUninstall) setAppUninstallWithDependencies(depUninstall);
@@ -208,9 +214,7 @@ export default ({
     setAppInstallWithDependencies,
     setAppUninstallWithDependencies,
   ]);
-
   const clear = useCallback(() => setQuery(""), [setQuery]);
-
   const filterOptions: FilterOptions = useMemo(
     () => ({
       query,
@@ -219,29 +223,32 @@ export default ({
     }),
     [query],
   );
-
   const sortedApps: Array<App> = useSortedFilteredApps(
     apps || state.apps,
     filterOptions,
-    { type: "marketcap", order: "desc" },
+    {
+      type: "marketcap",
+      order: "desc",
+    },
   );
-
   const addAccount = useCallback(() => {
     navigation.navigate(NavigatorName.AddAccounts);
     setIsOpen(false);
   }, [navigation]);
-
   const onInstall = useCallback(
     name => {
       if (!hasInstalledAnyApp) {
         reduxDispatch(installAppFirstTime(true));
       }
-      dispatch({ type: "install", name });
+
+      dispatch({
+        type: "install",
+        name,
+      });
       setIsOpen(false);
     },
     [dispatch, reduxDispatch, hasInstalledAnyApp],
   );
-
   const NoResult = useMemo(
     () =>
       sortedApps.length <= 0 && (
@@ -262,9 +269,8 @@ export default ({
       state.installed,
     ],
   );
-
   const renderRow = useCallback(
-    ({ item, index }: { item: App, index: number }) => (
+    ({ item, index }: { item: App; index: number }) => (
       <AppRow
         app={item}
         index={index}
@@ -280,7 +286,6 @@ export default ({
     [state, dispatch, isInstalledView, closeSearchModal, optimisticState],
   );
   const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH", []);
-
   const placeholder = useMemo(
     () =>
       !isInstalledView
@@ -293,21 +298,28 @@ export default ({
   const focusInput = useCallback(() => {
     if (textInput && textInput.current) textInput.current.focus();
   }, []);
-
   const onFocus = useCallback(() => {
     if (listRef && listRef.current) {
-      listRef.current.scrollToIndex({ index: 0 });
+      listRef.current.scrollToIndex({
+        index: 0,
+      });
     }
   }, [listRef]);
-
   return (
     <>
       <Touchable
         activeOpacity={0.5}
-        style={[styles.searchBarInput, { backgroundColor: colors.background }]}
+        style={[
+          styles.searchBarInput,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
         onPress={openSearchModal}
         event="ManagerAppSearchModalOpen"
-        eventProperties={{ open: true }}
+        eventProperties={{
+          open: true,
+        }}
         disabled={disabled}
       >
         <View style={styles.searchBarIcon}>
@@ -328,9 +340,28 @@ export default ({
         onModalShow={focusInput}
         onModalHide={onModalHide}
       >
-        <View style={{ height, backgroundColor: colors.card }}>
-          <View style={[styles.header, { backgroundColor: colors.background }]}>
-            <View style={[styles.searchBar, { backgroundColor: colors.card }]}>
+        <View
+          style={{
+            height,
+            backgroundColor: colors.card,
+          }}
+        >
+          <View
+            style={[
+              styles.header,
+              {
+                backgroundColor: colors.background,
+              },
+            ]}
+          >
+            <View
+              style={[
+                styles.searchBar,
+                {
+                  backgroundColor: colors.card,
+                },
+              ]}
+            >
               <View style={styles.searchBarIcon}>
                 <SearchIcon size={16} color={colors.smoke} />
               </View>
@@ -343,7 +374,9 @@ export default ({
                 style={[
                   styles.searchBarText,
                   styles.searchBarInput,
-                  { color: colors.smoke },
+                  {
+                    color: colors.smoke,
+                  },
                 ]}
                 placeholder={placeholder}
                 placeholderTextColor={colors.smoke}
@@ -364,7 +397,14 @@ export default ({
             </Touchable>
           </View>
           {NoResult}
-          <View style={[styles.searchList, { backgroundColor: colors.card }]}>
+          <View
+            style={[
+              styles.searchList,
+              {
+                backgroundColor: colors.card,
+              },
+            ]}
+          >
             <VirtualizedList
               listKey="SEARCH"
               keyExtractor={keyExtractor}
@@ -380,7 +420,6 @@ export default ({
     </>
   );
 };
-
 const styles = StyleSheet.create({
   modal: {
     height,
@@ -463,7 +502,6 @@ const styles = StyleSheet.create({
   noResultText: {
     fontSize: 17,
     lineHeight: 21,
-
     marginBottom: 16,
     textAlign: "center",
   },
@@ -483,5 +521,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 32,
   },
-  placeholderButton: { height: 48, marginBottom: 16 },
+  placeholderButton: {
+    height: 48,
+    marginBottom: 16,
+  },
 });

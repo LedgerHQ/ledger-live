@@ -12,8 +12,8 @@ import { Icons, Box } from "@ledgerhq/native-ui";
 type Props = {
   app: App,
   state: State,
-  dispatch: (action: Action) => void,
-  setAppUninstallWithDependencies: (params: { dependents: App[], app: App }) => void,
+  dispatch: (_: Action) => void,
+  setAppUninstallWithDependencies: (_: { dependents: App[], app: App }) => void,
   size: number,
 };
 

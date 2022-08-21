@@ -15,16 +15,10 @@ import ByteSize from "../../../components/ByteSize";
 type Props = {
   app: App;
   state: State;
-  dispatch: (action: Action) => void;
+  dispatch: (_: Action) => void;
   isInstalledView: boolean;
-  setAppInstallWithDependencies: (params: {
-    app: App;
-    dependencies: App[];
-  }) => void;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   setStorageWarning: () => void;
   managerTabs: any;
   optimisticState: State;

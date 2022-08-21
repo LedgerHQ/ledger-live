@@ -3,16 +3,15 @@ import { StyleSheet, View } from "react-native";
 import type { BaseButtonProps } from "../../../components/Button";
 import Button from "../../../components/Button";
 import BottomModal from "../../../components/BottomModal";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
-
 type Props = {
-  isOpened: boolean,
-  onClose: () => void,
-  children: Node,
-  actions: Array<BaseButtonProps>,
-  ...
+  isOpened: boolean;
+  onClose: () => void;
+  children: Node;
+  actions: Array<BaseButtonProps>;
 };
 
 const ActionModal = ({
@@ -27,7 +26,9 @@ const ActionModal = ({
     isOpened={isOpened}
     onClose={onClose}
     preventBackdropClick={false}
-    containerStyle={{ paddingBottom: 116 }}
+    containerStyle={{
+      paddingBottom: 116,
+    }}
     coverScreen
   >
     <View style={styles.root}>
@@ -69,5 +70,4 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
 });
-
 export default memo(ActionModal);

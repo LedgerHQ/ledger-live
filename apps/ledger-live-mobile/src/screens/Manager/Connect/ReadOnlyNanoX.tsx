@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
@@ -14,6 +13,7 @@ import { urls } from "../../../config/urls";
 import { withOnboardingContext } from "../../Onboarding/onboardingContext";
 import type { OnboardingStepProps } from "../../Onboarding/types";
 import DeviceNanoAction from "../../../components/DeviceNanoAction";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const hitSlop = {
@@ -22,10 +22,13 @@ const hitSlop = {
   right: 16,
   bottom: 16,
 };
-
 const { width } = getWindowDimensions();
 
-class ReadOnlyNanoX extends PureComponent<OnboardingStepProps & { colors: * }> {
+class ReadOnlyNanoX extends PureComponent<
+  OnboardingStepProps & {
+    colors: any;
+  }
+> {
   buy = () => Linking.openURL(urls.buyNanoX);
   onboarding = async () => {
     this.props.setShowWelcome(false);
@@ -44,7 +47,14 @@ class ReadOnlyNanoX extends PureComponent<OnboardingStepProps & { colors: * }> {
   render() {
     const { colors } = this.props;
     return (
-      <View style={[styles.root, { backgroundColor: colors.card }]}>
+      <View
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.card,
+          },
+        ]}
+      >
         <TrackScreen category="Manager" name="ReadOnlyNanoX" />
         <View style={styles.image}>
           <DeviceNanoAction screen="empty" width={width * 0.8} />
@@ -87,7 +97,6 @@ class ReadOnlyNanoX extends PureComponent<OnboardingStepProps & { colors: * }> {
 }
 
 export default compose(withOnboardingContext, withTheme)(ReadOnlyNanoX);
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
