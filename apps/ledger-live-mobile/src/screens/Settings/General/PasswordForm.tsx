@@ -10,7 +10,7 @@ import { withTheme } from "../../../colors";
 import Button from "../../../components/wrappedUi/Button";
 
 type Props = {
-  onChange: (value: string) => void;
+  onChange: (_: string) => void;
   onSubmit: () => void;
   error?: Error;
   placeholder: string;
