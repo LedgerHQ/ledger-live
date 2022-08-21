@@ -1,4 +1,3 @@
-/* @flow */
 import React from "react";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

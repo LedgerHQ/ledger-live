@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { Trans } from "react-i18next";

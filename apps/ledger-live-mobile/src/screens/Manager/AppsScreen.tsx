@@ -1,4 +1,3 @@
-// @flow
 import React, { useState, useCallback, useMemo, memo } from "react";
 import { FlatList } from "react-native";
 import {

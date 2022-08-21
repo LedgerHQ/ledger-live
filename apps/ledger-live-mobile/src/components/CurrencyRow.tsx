@@ -1,4 +1,3 @@
-// @flow
 import React, { PureComponent } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import type {

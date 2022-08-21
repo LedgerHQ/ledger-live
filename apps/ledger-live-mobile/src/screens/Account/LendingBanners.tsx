@@ -1,4 +1,3 @@
-/* @flow */
 import invariant from "invariant";
 import React from "react";
 import { View, StyleSheet } from "react-native";

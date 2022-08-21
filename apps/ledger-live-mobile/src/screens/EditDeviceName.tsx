@@ -1,5 +1,3 @@
-// @flow
-
 import React, { memo, useCallback, useState } from "react";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";

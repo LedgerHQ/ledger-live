@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { Icons } from "@ledgerhq/native-ui";

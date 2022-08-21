@@ -15,10 +15,8 @@ import { ScreenName } from "../../const";
 import { ManagerTab } from "./Manager";
 import SelectDevice from "../../components/SelectDevice";
 import TrackScreen from "../../analytics/TrackScreen";
-// @FlowFixMe
 import { track } from "../../analytics";
 import Button from "../../components/Button";
-// @FlowFixMe
 import type { DeviceLike } from "../../reducers/ble";
 import Trash from "../../icons/Trash";
 import BottomModal from "../../components/BottomModal";
@@ -27,7 +25,9 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import Illustration from "../../images/illustration/Illustration";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const darkImg = require("../../images/illustration/Dark/_079.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const lightImg = require("../../images/illustration/Light/_079.png");
 
 const action = createAction(connectManager);

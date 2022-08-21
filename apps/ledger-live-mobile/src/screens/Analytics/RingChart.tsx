@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from "react";
 import * as d3shape from "d3-shape";
 import { View } from "react-native";

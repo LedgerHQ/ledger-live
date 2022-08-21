@@ -1,4 +1,3 @@
-// @flow
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
