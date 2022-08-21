@@ -82,6 +82,7 @@
     "moreInfo" : "Mais Informações",
     "buyEth" : "Comprar Ethereum",
     "popular" : "populares",
+    "getSupport" : "Obter Ajuda",
     "comingSoon" : "Em Breve"
   },
   "errors" : {
@@ -679,6 +680,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Desabilite a multiassinatura para fazer transações Stellar"
     }
+  },
+  "crash" : {
+    "title" : "Algo deu errado"
   },
   "bluetooth" : {
     "required" : "Desculpe, parece que o Bluetooth está desabilitado",
@@ -2153,6 +2157,10 @@
       "clearCacheButton" : "Limpar",
       "exportLogs" : "Salvar registros",
       "exportLogsDesc" : "Salvar registros do Ledger Live pode ser necessário para fins de solução de problemas.",
+      "resetThirdPartyData" : "Redefinir dados de terceiros",
+      "resetThirdPartyDataDesc" : "Apague todos seus dados locais de terceiros, usados para acessar o provedor de transações terceirizado.",
+      "resetThirdPartyDataModal" : "Exclua seus dados locais de terceiros",
+      "resetThirdPartyDataModalDesc" : "Exclua seus dados locais de terceiros Você pode precisar reenviar seu KYC e/ou fazer login novamente para acessar os serviços fornecidos por nossos parceiros.",
       "hardReset" : "Redefinir Ledger Live",
       "hardResetDesc" : "Isso não tem impacto nos seus ativos. Apaga todos os dados no Ledger Live, incluindo dados de conta, históricos de transações e configurações. Use seu dispositivo Ledger para recarregar e gerenciar seus criptoativos em um Ledger Live vazio.",
       "repairDevice" : "Reparar seu dispositivo Ledger",
@@ -2169,6 +2177,15 @@
       "customManifest" : {
         "title" : "Carregar o Manifesto da Plataforma Personalizada"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsOverride" : "Override",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsDisplayValue" : "Display value",
+      "featureFlagsHideValue" : "Hide value"
     }
   },
   "notifications" : {
@@ -2269,7 +2286,7 @@
         "cancel" : {
           "title" : "Você acabou de negar este endereço",
           "subtitle" : "Se isto foi feito por engano, você pode tentar novamente clicando no botão abaixo.",
-          "info" : "Se você tiver certeza de que os endereços não coincidem, seu celular pode estar comprometido. Recomendamos que você <0>entre em contato conosco o mais rápido possível.</0>"
+          "info" : "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
         }
       },
       "receiveConfirmation" : {
@@ -2284,7 +2301,7 @@
         "subtitle1" : "A verificação de seu endereço lhe proporciona segurança. O endereço exibido em seu dispositivo ledger não pode ser comprometido.",
         "subtitle2" : "Ao verificar o endereço, você poderá confirmar que o endereço mostrado em seu dispositivo é o mesmo que o endereço mostrado no Ledger Live.",
         "verifyCta" : "Verificar meu endereço",
-        "dontVerifyCta" : "Revelar meu endereço sem verificar"
+        "dontVerifyCta" : "Reveal my address without verifying"
       },
       "securityDontVerify" : {
         "title" : "Tem certeza?",
@@ -2405,7 +2422,7 @@
       },
       "payoutModal" : {
         "title" : "Taxas de pagamento",
-        "description" : "As taxas de pagamento não são mostradas no dispositivo e subtraídas da quantia.",
+        "description" : "Payout fees are not shown on the device and subtracted from the amount.",
         "cta" : "Fechar"
       },
       "pendingOperation" : {
@@ -2528,19 +2545,80 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "De",
-          "to" : "Para",
-          "send" : "Enviar",
-          "payoutNetworkFees" : "Taxas de pagamento",
-          "payoutNetworkFeesTooltip" : "Esta quantia não será mostrada no seu dispositivo",
-          "receive" : "Quantia",
-          "receiveFloat" : "Quantia a receber antes das taxas de serviço",
-          "provider" : "Provedor",
-          "method" : "Taxa",
-          "fees" : "Taxas"
+        "ratesDrawer" : {
+          "title" : "Taxa",
+          "quote" : "Cotação",
+          "receive" : "Receber"
+        },
+        "placeholder" : "Selecionar Conta",
+        "title" : "Negociar",
+        "cta" : "Negociar",
+        "from" : "De",
+        "to" : "Para",
+        "loading" : "Carregando...",
+        "disclaimer" : {
+          "title" : "Termos e condições",
+          "desc" : "Ao clicar em \"Aceitar\", reconheço e aceito que este serviço é regido exclusivamente pelos Termos e condições da {{providerName}}.",
+          "tos" : "Termos e condições",
+          "accept" : "Aceitar"
+        },
+        "notAvailable" : {
+          "title" : "A troca ainda não está disponível na sua região",
+          "content" : "Aguarde mais um pouco, lançaremos este recurso em breve"
+        },
+        "amount" : {
+          "useMax" : "Usar o máximo",
+          "available" : "Total Disponível"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Provedor",
+            "rate" : "Taxa",
+            "fees" : "Taxas de rede",
+            "target" : "Conta de destino"
+          },
+          "noAccount" : "Crie uma conta para receber {{name}}",
+          "noAccountCTA" : "Adicionar Conta"
+        },
+        "select" : {
+          "from" : {
+            "title" : "De"
+          },
+          "to" : {
+            "title" : "Para"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "Você precisa concluir seu KYC",
+            "complete" : "Concluir KYC",
+            "update" : "Atualizar KYC",
+            "rejected" : "KYC reprovado, inicie novamente a verificação",
+            "rejectedContactProviderSupport" : "KYC rejeitada, contate o suporte {{providerName}}.",
+            "updateRequired" : "Conclua ou atualize seu KYC",
+            "status" : {
+              "pending" : "KYC pendente",
+              "approved" : "KYC aprovado",
+              "closed" : "KYC rejeitado",
+              "upgradeRequired" : "KYC insuficiente"
+            }
+          },
+          "login" : {
+            "title" : "Login",
+            "required" : "Você precisa fazer login com este provedor",
+            "complete" : "Login"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Você precisa configurar o MFA com este provedor",
+            "complete" : "Configurar MFA"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Seu saque foi bloqueado por {{providerName}}.\n\n Entre em contato com o suporte deles para obter mais informações."
+          }
         }
       }
     },
@@ -2995,7 +3073,6 @@
     "retry" : "Tentar Novamente",
     "done" : "Feito",
     "finalCta" : "Continuar",
-    "finalCtaForSwap" : "Voltar para troca",
     "synchronizing" : "Sincronizando",
     "synchronizingDesc" : "Suas contas estão sendo sincronizadas. Isto pode demorar um pouco...",
     "noAccountToCreate" : "Não foi possível criar a conta <1><0>{{currencyName}}</>< />. Reinicie o processo e sincronize suas contas.",
@@ -3072,7 +3149,17 @@
     "confirmSwap" : {
       "title" : "Confirmar a operação de troca no dispositivo",
       "alert" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
-      "acceptTerms" : "Ao validar esta transação, eu aceito\nos termos de uso da <0><0>{{provider}}</0></0>"
+      "acceptTerms" : "Ao validar esta transação, eu aceito\nos termos de uso da <0><0>{{provider}}</0></0>",
+      "notice" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los."
+    },
+    "swap2" : {
+      "notice" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
+      "amountSent" : "Quantia a enviar",
+      "amountReceived" : "Quantia a receber",
+      "provider" : "Provedor",
+      "fees" : "Taxas de rede",
+      "sourceAccount" : "Conta de origem",
+      "targetAccount" : "Conta de destino"
     },
     "confirmSell" : {
       "title" : "Confirmar operação de venda no dispositivo",
@@ -3402,8 +3489,8 @@
     "drawerUpdate" : {
       "title" : "Atualização de firmware",
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "Necessário cabo USB",
+      "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
