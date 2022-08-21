@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from "react";
 import { AppState, Linking } from "react-native";
 import { Trans } from "react-i18next";
@@ -8,12 +6,12 @@ import Button from "../../components/Button";
 
 export default class AppPermissionsButton extends PureComponent<
   {
-    onRetry: Function,
+    onRetry: (..._: Array<any>) => any;
   },
   {
-    appState: ?string,
-    buttonPressed: boolean,
-  },
+    appState: string | null | undefined;
+    buttonPressed: boolean;
+  }
 > {
   state = {
     appState: AppState.currentState,
@@ -28,9 +26,10 @@ export default class AppPermissionsButton extends PureComponent<
     AppState.removeEventListener("change", this.handleAppStateChange);
   }
 
-  handleAppStateChange = (nextAppState: ?string) => {
+  handleAppStateChange = (nextAppState: string | null | undefined) => {
     const { appState, buttonPressed } = this.state;
     const { onRetry } = this.props;
+
     if (
       appState &&
       appState.match(/inactive|background/) &&
@@ -39,12 +38,15 @@ export default class AppPermissionsButton extends PureComponent<
     ) {
       onRetry();
     } else {
-      this.setState({ appState: nextAppState });
+      this.setState({
+        appState: nextAppState,
+      });
     }
   };
-
   openAppSettings = () => {
-    this.setState({ buttonPressed: true });
+    this.setState({
+      buttonPressed: true,
+    });
     Linking.openSettings();
   };
 

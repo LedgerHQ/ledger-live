@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from "react";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import { Trans } from "react-i18next";
@@ -7,7 +5,7 @@ import SettingsIcon from "../../icons/SettingsIcon";
 import Button from "../../components/Button";
 
 export default class LocationServicesButton extends PureComponent<{
-  onRetry: Function,
+  onRetry: (..._: Array<any>) => any;
 }> {
   openLocationServicesSetting = () => {
     LocationServicesDialogBox.checkLocationServicesIsEnabled({

@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
@@ -9,10 +7,9 @@ import AppPermissionsButton from "./AppPermissionsButton";
 import LText from "../../components/LText";
 
 type Props = {
-  onRetry: Function,
-  errorType: "disabled" | "unauthorized",
+  onRetry: (..._: Array<any>) => any;
+  errorType: "disabled" | "unauthorized";
 };
-
 export default function LocationRequired({ errorType, onRetry }: Props) {
   return (
     <View style={styles.container}>
@@ -40,7 +37,6 @@ export default function LocationRequired({ errorType, onRetry }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
