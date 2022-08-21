@@ -1,4 +1,3 @@
-/* @flow */
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useEffect, useState } from "react";
@@ -36,12 +35,12 @@ import DateFromNow from "../../components/DateFromNow";
 const getUnfreezeData = (
   account: Account,
 ): {
-  unfreezeBandwidth: BigNumber,
-  unfreezeEnergy: BigNumber,
-  canUnfreezeBandwidth: boolean,
-  canUnfreezeEnergy: boolean,
-  bandwidthExpiredAt: Date,
-  energyExpiredAt: Date,
+  unfreezeBandwidth: BigNumber;
+  unfreezeEnergy: BigNumber;
+  canUnfreezeBandwidth: boolean;
+  canUnfreezeEnergy: boolean;
+  bandwidthExpiredAt: Date;
+  energyExpiredAt: Date;
 } => {
   const { tronResources } = account;
   const {
@@ -51,18 +50,22 @@ const getUnfreezeData = (
   /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
   const { amount: bandwidthAmount, expiredAt: bandwidthExpiredAt } =
     bandwidth || {};
+
   // eslint-disable-next-line no-underscore-dangle
   const _bandwidthExpiredAt = +new Date(bandwidthExpiredAt);
 
   const { amount: energyAmount, expiredAt: energyExpiredAt } = energy || {};
+
   // eslint-disable-next-line no-underscore-dangle
   const _energyExpiredAt = +new Date(energyExpiredAt);
 
   const unfreezeBandwidth = BigNumber(bandwidthAmount || 0);
+
   const canUnfreezeBandwidth =
     unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
 
   const unfreezeEnergy = BigNumber(energyAmount || 0);
+
   const canUnfreezeEnergy =
     unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
 
@@ -76,31 +79,33 @@ const getUnfreezeData = (
   };
 };
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
-
 export default function UnfreezeAmount({ route }: Props) {
   const { account: accountLike, parentAccount } = useSelector(
     accountScreenSelector(route),
   );
+
   if (!accountLike) {
     return null;
   }
+
   const account = getMainAccount(accountLike, parentAccount);
   return <UnfreezeAmountInner account={account} />;
 }
-
 type InnerProps = {
-  account: Account,
+  account: Account;
 };
 
 function UnfreezeAmountInner({ account }: InnerProps) {
@@ -108,10 +113,8 @@ function UnfreezeAmountInner({ account }: InnerProps) {
   const navigation = useNavigation();
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
-
   const { tronResources } = account;
   invariant(tronResources, "tron resources expected");
-
   const {
     unfreezeBandwidth,
     unfreezeEnergy,
@@ -120,7 +123,6 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     bandwidthExpiredAt,
     energyExpiredAt,
   } = useMemo(() => getUnfreezeData(account), [account]);
-
   const {
     transaction,
     setTransaction,
@@ -129,18 +131,17 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     bridgeError,
   } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(account);
-
     const transaction = bridge.updateTransaction(t, {
       mode: "unfreeze",
       resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
     });
-
-    return { account, transaction };
+    return {
+      account,
+      transaction,
+    };
   });
-
   const resource =
     transaction && transaction.resource ? transaction.resource : "";
-
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.UnfreezeSelectDevice, {
       accountId: account.id,
@@ -148,41 +149,43 @@ function UnfreezeAmountInner({ account }: InnerProps) {
       status,
     });
   }, [account, navigation, transaction, status]);
-
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
-
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
-
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [bridge, setTransaction, transaction]);
-
   const onChangeResource = useCallback(
     (resource: string) => {
-      setTransaction(bridge.updateTransaction(transaction, { resource }));
+      setTransaction(
+        bridge.updateTransaction(transaction, {
+          resource,
+        }),
+      );
     },
     [bridge, transaction, setTransaction],
   );
-
   const error = useMemo(() => {
     const e = Object.values(status.errors)[0];
     return e instanceof Error ? e : null;
   }, [status.errors]);
   const warning = status.warnings.amount;
-
   return (
     <>
       <TrackScreen category="UnfreezeFunds" name="Amount" />
       <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
         forceInset={forceInset}
       >
         <View style={styles.container}>
@@ -229,7 +232,12 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.selectCard, { backgroundColor: colors.card }]}
+              style={[
+                styles.selectCard,
+                {
+                  backgroundColor: colors.card,
+                },
+              ]}
               disabled={!canUnfreezeEnergy}
               onPress={() => onChangeResource("ENERGY")}
             >
@@ -248,7 +256,9 @@ function UnfreezeAmountInner({ account }: InnerProps) {
                   <View
                     style={[
                       styles.timeWarn,
-                      { backgroundColor: colors.lightFog },
+                      {
+                        backgroundColor: colors.lightFog,
+                      },
                     ]}
                   >
                     <ClockIcon color={colors.grey} size={12} />
@@ -274,14 +284,18 @@ function UnfreezeAmountInner({ account }: InnerProps) {
             <View
               style={[
                 styles.infoSection,
-                { backgroundColor: colors.lightLive },
+                {
+                  backgroundColor: colors.lightLive,
+                },
               ]}
             >
               <Info size={16} color={colors.live} />
               <LText style={styles.infoText} numberOfLines={3} color="live">
                 <Trans
                   i18nKey="unfreeze.amount.info"
-                  values={{ resource: (resource || "").toLowerCase() }}
+                  values={{
+                    resource: (resource || "").toLowerCase(),
+                  }}
                 />
               </LText>
             </View>
@@ -333,12 +347,13 @@ function UnfreezeAmountInner({ account }: InnerProps) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-
     paddingTop: 16,
     paddingHorizontal: 16,
     alignItems: "stretch",
   },
-  container: { flex: 1 },
+  container: {
+    flex: 1,
+  },
   label: {
     fontSize: 14,
     paddingVertical: 8,
@@ -347,19 +362,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     height: 55,
     borderRadius: 4,
-
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
     marginVertical: 6,
     elevation: 1,
   },
-  selectCardLabelContainer: { marginLeft: 8 },
-  frozenAmount: { flex: 1, textAlign: "right", marginRight: 16 },
+  selectCardLabelContainer: {
+    marginLeft: 8,
+  },
+  frozenAmount: {
+    flex: 1,
+    textAlign: "right",
+    marginRight: 16,
+  },
   infoSection: {
     flexShrink: 1,
     flexDirection: "row",
-
     alignItems: "center",
     justifyContent: "center",
     padding: 16,
@@ -367,7 +386,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 16,
   },
-  infoText: { marginLeft: 16, flex: 1 },
+  infoText: {
+    marginLeft: 16,
+    flex: 1,
+  },
   bottomWrapper: {
     alignSelf: "stretch",
     alignItems: "center",
@@ -401,7 +423,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
     borderRadius: 4,
-
     paddingVertical: 2,
     paddingHorizontal: 7,
   },
