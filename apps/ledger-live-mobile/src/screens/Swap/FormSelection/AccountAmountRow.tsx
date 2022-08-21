@@ -1,15 +1,10 @@
-// @flow
 import React from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
-
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-
 import { AmountRequired } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
-
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type {
   TokenCurrency,
@@ -18,32 +13,36 @@ import type {
 import type { SwapTransaction } from "@ledgerhq/live-common/exchange/swap/types";
 import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";
-
 import LText from "../../../components/LText";
 import AccountSelect from "./AccountSelect";
 import CurrencyInput from "../../../components/CurrencyInput";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import TranslatedError from "../../../components/TranslatedError";
+// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "../../../components/LText/getFontStyle";
 import CounterValue from "../../../components/CounterValue";
 import CurrencyTargetSelect from "./CurrencyTargetSelect";
 
 type Props = {
-  navigation: *,
-  route: { params: SwapRouteParams },
-  swap: SwapDataType,
-  setFromAccount: (account?: Account | TokenAccount) => void,
-  setFromAmount: (amount: BigNumber) => void,
-  setToCurrency: (currency?: TokenCurrency | CryptoCurrency) => void,
-  useAllAmount: boolean,
-  transaction: SwapTransaction,
-  bridgePending: boolean,
-  rate: any,
-  fromAmountError?: Error,
-  providers: any,
-  provider: any,
+  navigation: any;
+  route: {
+    params: SwapRouteParams;
+  };
+  swap: SwapDataType;
+  // eslint-disable-next-line no-unused-vars
+  setFromAccount: (account?: Account | TokenAccount) => void;
+  // eslint-disable-next-line no-unused-vars
+  setFromAmount: (amount: BigNumber) => void;
+  // eslint-disable-next-line no-unused-vars
+  setToCurrency: (currency?: TokenCurrency | CryptoCurrency) => void;
+  useAllAmount: boolean;
+  transaction: SwapTransaction;
+  bridgePending: boolean;
+  rate: any;
+  fromAmountError?: Error;
+  providers: any;
+  provider: any;
 };
-
 export default function AccountAmountRow({
   navigation,
   route,
@@ -64,18 +63,14 @@ export default function AccountAmountRow({
     to: { currency: toCurrency },
     rates: { status: ratesStatus },
   } = swap;
-
   const fromUnit = account && getAccountUnit(account);
   const toUnit = toCurrency?.units[0];
-
   const hideError =
     bridgePending ||
     (useAllAmount &&
       fromAmountError &&
       fromAmountError instanceof AmountRequired);
-
   const toValue = rate?.toAmount;
-
   return (
     <View>
       <View>
@@ -115,7 +110,14 @@ export default function AccountAmountRow({
           />
         </LText>
       </View>
-      <View style={[styles.divider, { backgroundColor: colors.fog }]} />
+      <View
+        style={[
+          styles.divider,
+          {
+            backgroundColor: colors.fog,
+          },
+        ]}
+      />
       <View>
         <LText semiBold color="grey" style={styles.label}>
           <Trans i18nKey="transfer.swap.form.to" />
@@ -163,7 +165,6 @@ export default function AccountAmountRow({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
@@ -193,7 +194,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   active: {
-    ...getFontStyle({ semiBold: true }),
+    ...getFontStyle({
+      semiBold: true,
+    }),
     fontSize: 30,
   },
   error: {
@@ -205,5 +208,8 @@ const styles = StyleSheet.create({
     height: 32,
     padding: 0,
   },
-  subText: { textAlign: "right", fontSize: 13 },
+  subText: {
+    textAlign: "right",
+    fontSize: 13,
+  },
 });

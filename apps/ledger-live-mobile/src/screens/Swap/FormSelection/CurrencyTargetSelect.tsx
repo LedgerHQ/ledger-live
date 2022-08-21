@@ -1,16 +1,13 @@
-// @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-
 import type {
   TokenCurrency,
   CryptoCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";
-
 import SearchIcon from "../../../icons/Search";
 import LText from "../../../components/LText";
 import { ScreenName } from "../../../const";
@@ -18,14 +15,16 @@ import Chevron from "../../../icons/Chevron";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 
 type Props = {
-  navigation: *,
-  route: { params: SwapRouteParams },
-  swap: SwapDataType,
-  setToCurrency: (currency?: TokenCurrency | CryptoCurrency) => void,
-  providers: any,
-  provider: any,
+  navigation: any;
+  route: {
+    params: SwapRouteParams;
+  };
+  swap: SwapDataType;
+  // eslint-disable-next-line no-unused-vars
+  setToCurrency: (currency?: TokenCurrency | CryptoCurrency) => void;
+  providers: any;
+  provider: any;
 };
-
 export default function CurrencyTargetSelect({
   swap,
   navigation,
@@ -35,9 +34,7 @@ export default function CurrencyTargetSelect({
   provider,
 }: Props) {
   const { colors } = useTheme();
-
   const value = swap.to.currency;
-
   const onPressItem = useCallback(() => {
     navigation.navigate(ScreenName.SwapV2FormSelectCurrency, {
       ...route.params,
@@ -47,7 +44,6 @@ export default function CurrencyTargetSelect({
       provider,
     });
   }, [navigation, provider, providers, route.params, setToCurrency, swap]);
-
   return (
     <TouchableOpacity style={styles.root} onPress={onPressItem}>
       <View style={styles.root}>
@@ -64,7 +60,12 @@ export default function CurrencyTargetSelect({
                 {value.type === "TokenCurrency" && value.parentCurrency ? (
                   <LText
                     semiBold
-                    style={[styles.currencyLabel, { borderColor: colors.grey }]}
+                    style={[
+                      styles.currencyLabel,
+                      {
+                        borderColor: colors.grey,
+                      },
+                    ]}
                     color="grey"
                     numberOfLines={1}
                     ellipsizeMode="clip"
@@ -95,7 +96,6 @@ export default function CurrencyTargetSelect({
     </TouchableOpacity>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",

@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { useCallback, useMemo } from "react";
 import {
   View,
@@ -11,13 +9,11 @@ import {
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-
 import {
   accountWithMandatoryTokens,
   flattenAccounts,
 } from "@ledgerhq/live-common/account/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-
 import type { SearchResult } from "../../../helpers/formatAccountSearchResults";
 import { accountsSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
@@ -27,25 +23,22 @@ import AccountCard from "../../../components/AccountCard";
 import KeyboardView from "../../../components/KeyboardView";
 import { formatSearchResults } from "../../../helpers/formatAccountSearchResults";
 import { NavigatorName, ScreenName } from "../../../const";
-
 import type { SwapRouteParams } from "..";
 import AddIcon from "../../../icons/Plus";
 import { swapSelectableCurrenciesSelector } from "../../../reducers/settings";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-
 type Props = {
-  navigation: any,
-  route: { params: SwapRouteParams },
+  navigation: any;
+  route: {
+    params: SwapRouteParams;
+  };
 };
-
 export default function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { swap, target, selectedCurrency, setAccount, provider } = route.params;
-
   const unfilteredAccounts = useSelector(accountsSelector);
   const selectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
-
   const accounts = useMemo(
     () =>
       unfilteredAccounts.filter(
@@ -53,11 +46,9 @@ export default function SelectAccount({ navigation, route }: Props) {
       ),
     [selectableCurrencies, unfilteredAccounts],
   );
-
   const enhancedAccounts = useMemo(() => {
     if (!selectedCurrency)
       return accounts.map(acc => accountWithMandatoryTokens(acc, []));
-
     const filteredAccounts = accounts.filter(
       acc =>
         acc.currency.id ===
@@ -65,14 +56,15 @@ export default function SelectAccount({ navigation, route }: Props) {
           ? selectedCurrency.parentCurrency.id
           : selectedCurrency.id),
     );
+
     if (selectedCurrency.type === "TokenCurrency") {
       return filteredAccounts.map(acc =>
         accountWithMandatoryTokens(acc, [selectedCurrency]),
       );
     }
+
     return filteredAccounts;
   }, [accounts, selectedCurrency]);
-
   const allAccounts = selectedCurrency
     ? flattenAccounts(enhancedAccounts).filter(
         acc =>
@@ -82,8 +74,8 @@ export default function SelectAccount({ navigation, route }: Props) {
     : flattenAccounts(enhancedAccounts);
 
   const keyExtractor = item => item.account.id;
-  const isFrom = target === "from";
 
+  const isFrom = target === "from";
   const renderItem = useCallback(
     ({ item: result }: { item: SearchResult }) => {
       const { account } = result;
@@ -103,7 +95,8 @@ export default function SelectAccount({ navigation, route }: Props) {
               setAccount && setAccount(account);
               navigation.navigate(ScreenName.SwapForm, {
                 ...route.params,
-                transaction: undefined, // reset transaction after switching source account
+                transaction: undefined,
+                // reset transaction after switching source account
                 swap: {
                   ...route.params.swap,
                   from: {
@@ -120,11 +113,9 @@ export default function SelectAccount({ navigation, route }: Props) {
     },
     [colors.fog, setAccount, navigation, route.params],
   );
-
   const elligibleAccountsForSelectedCurrency = allAccounts.filter(account =>
     isFrom ? account.balance.gt(0) : swap.from?.account?.id !== account.id,
   );
-
   const onAddAccount = useCallback(() => {
     navigation.navigate(NavigatorName.AddAccounts, {
       screen: ScreenName.AddAccountsSelectCrypto,
@@ -138,7 +129,6 @@ export default function SelectAccount({ navigation, route }: Props) {
       },
     });
   }, [navigation, route.params, selectableCurrencies]);
-
   const renderList = useCallback(
     items => {
       // $FlowFixMe
@@ -158,7 +148,9 @@ export default function SelectAccount({ navigation, route }: Props) {
               <View
                 style={[
                   styles.iconContainer,
-                  { backgroundColor: colors.lightLive },
+                  {
+                    backgroundColor: colors.lightLive,
+                  },
                 ]}
               >
                 <AddIcon size={14} color={colors.live} />
@@ -173,9 +165,15 @@ export default function SelectAccount({ navigation, route }: Props) {
     },
     [colors.lightLive, colors.live, enhancedAccounts, onAddAccount, renderItem],
   );
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen
         category="Swap Form"
         name={`Edit ${isFrom ? "Source" : "Target"} Account`}
@@ -201,7 +199,6 @@ export default function SelectAccount({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   addAccountButton: {
     flex: 1,

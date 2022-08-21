@@ -1,11 +1,8 @@
-// @flow
-
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-
 import type {
   Transaction,
   TransactionStatus,
@@ -19,17 +16,14 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import {
   addPendingOperation,
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-
 import { renderLoading } from "../../components/DeviceAction/rendering";
 import { ScreenName } from "../../const";
 import { updateAccountWithUpdater } from "../../actions/accounts";
@@ -41,23 +35,24 @@ import { swapKYCSelector } from "../../reducers/settings";
 
 const silentSigningAction = createAction(connectApp);
 const swapAction = initSwapCreateAction(connectApp, initSwap);
-
 export type DeviceMeta = {
-  result: { installed: any },
-  device: Device,
-  deviceInfo: DeviceInfo,
+  result: {
+    installed: any;
+  };
+  device: Device;
+  deviceInfo: DeviceInfo;
+};
+type Props = {
+  swap: Exchange;
+  rate: ExchangeRate;
+  provider: string;
+  transaction: Transaction;
+  deviceMeta: DeviceMeta;
+  onError: (_: Error) => void;
+  onCancel: () => void;
+  status: TransactionStatus;
 };
 
-type Props = {
-  swap: Exchange,
-  rate: ExchangeRate,
-  provider: string,
-  transaction: Transaction,
-  deviceMeta: DeviceMeta,
-  onError: (error: Error) => void,
-  onCancel: () => void,
-  status: TransactionStatus,
-};
 const Confirmation = ({
   swap,
   rate,
@@ -72,7 +67,6 @@ const Confirmation = ({
     from: { account: fromAccount, parentAccount: fromParentAccount },
     to: { account: toAccount, parentAccount: toParentAccount },
   } = swap;
-
   const exchange = useMemo(
     () => ({
       fromAccount,
@@ -82,10 +76,8 @@ const Confirmation = ({
     }),
     [fromAccount, fromParentAccount, toAccount, toParentAccount],
   );
-
   const swapKYC = useSelector(swapKYCSelector);
   const providerKYC = swapKYC[provider];
-
   const [swapData, setSwapData] = useState(null);
   const [signedOperation, setSignedOperation] = useState(null);
   const dispatch = useDispatch();
@@ -99,12 +91,10 @@ const Confirmation = ({
       : null;
   const targetCurrency = getAccountCurrency(toAccount);
   const navigation = useNavigation();
-
   const onComplete = useCallback(
     result => {
       const { operation, swapId } = result;
       const mainAccount = getMainAccount(fromAccount, fromParentAccount);
-
       if (!mainAccount) return;
       dispatch(
         updateAccountWithUpdater(mainAccount.id, account =>
@@ -143,13 +133,15 @@ const Confirmation = ({
       exchange,
     ],
   );
-
   useEffect(() => {
     if (swapData && signedOperation) {
       const { swapId } = swapData;
       broadcast(signedOperation).then(
         operation => {
-          onComplete({ operation, swapId });
+          onComplete({
+            operation,
+            swapId,
+          });
         },
         error => {
           onError(error);
@@ -157,9 +149,7 @@ const Confirmation = ({
       );
     }
   }, [broadcast, onComplete, onError, signedOperation, swapData]);
-
   const { t } = useTranslation();
-
   return (
     <BottomModal
       id="SwapConfirmationFeedback"
@@ -172,7 +162,10 @@ const Confirmation = ({
         footer={
           <View style={styles.footerContainer}>
             {signedOperation ? (
-              renderLoading({ t, description: t("transfer.swap.broadcasting") })
+              renderLoading({
+                t,
+                description: t("transfer.swap.broadcasting"),
+              })
             ) : !swapData ? (
               <DeviceAction
                 onClose={() => undefined}
@@ -229,5 +222,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
-
 export default Confirmation;

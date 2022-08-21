@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
@@ -16,12 +14,11 @@ const Connect = ({
   setResult,
   provider,
 }: {
-  setResult: (result: any) => void,
-  provider?: string,
+  setResult: (_: any) => void;
+  provider?: string;
 }) => {
   const [device, setDevice] = useState(null);
   const [result] = useState();
-
   const onModalHide = useCallback(() => {
     if (result) {
       // Nb need this in order to wait for the first modal to hide
@@ -29,10 +26,16 @@ const Connect = ({
       setResult(result);
     }
   }, [result, setResult]);
-
   const { colors } = useTheme();
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen
         category="Swap Form"
         name="ConnectDeviceListApps"
@@ -69,5 +72,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
 export default Connect;

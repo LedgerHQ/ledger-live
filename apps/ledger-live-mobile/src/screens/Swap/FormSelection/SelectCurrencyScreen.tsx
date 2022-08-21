@@ -1,12 +1,9 @@
-// @flow
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { getSupportedCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
-
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { SwapRouteParams } from "..";
@@ -18,11 +15,12 @@ import CurrencyRow from "../../../components/CurrencyRow";
 import LText from "../../../components/LText";
 
 const SEARCH_KEYS = ["name", "ticker"];
-
 type Props = {
-  devMode: boolean,
-  navigation: any,
-  route: { params: SwapRouteParams },
+  devMode: boolean;
+  navigation: any;
+  route: {
+    params: SwapRouteParams;
+  };
 };
 
 const keyExtractor = currency => currency.id;
@@ -41,9 +39,10 @@ export default function SwapFormSelectCurrencyScreen({
 }: Props) {
   const { colors } = useTheme();
   const { swap, providers, provider, setCurrency } = route.params;
-
-  const selectableCurrencies = getSupportedCurrencies({ providers, provider });
-
+  const selectableCurrencies = getSupportedCurrencies({
+    providers,
+    provider,
+  });
   const maybeFilteredCurrencies = swap.from.account
     ? selectableCurrencies.filter(
         c => c !== getAccountCurrency(swap.from.account),
@@ -52,13 +51,10 @@ export default function SwapFormSelectCurrencyScreen({
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(
     maybeFilteredCurrencies,
   );
-
   const onPressCurrency = useCallback(
     (currency: CryptoCurrency) => {
       setCurrency && setCurrency(currency);
-      navigation.navigate(ScreenName.SwapForm, {
-        ...route.params,
-      });
+      navigation.navigate(ScreenName.SwapForm, { ...route.params });
     },
     [navigation, route.params, setCurrency],
   );
@@ -77,7 +73,14 @@ export default function SwapFormSelectCurrencyScreen({
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen
         category="Swap Form"
         name="Edit Target Currency"
@@ -97,7 +100,6 @@ export default function SwapFormSelectCurrencyScreen({
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

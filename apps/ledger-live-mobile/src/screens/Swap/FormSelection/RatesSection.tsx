@@ -1,18 +1,14 @@
-// @flow
-
 import { useTheme } from "@react-navigation/native";
 import React, { useMemo, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { BigNumber } from "bignumber.js";
-
 import {
   getAccountUnit,
   getAccountName,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-
 import type {
   Account,
   TokenAccount,
@@ -28,7 +24,6 @@ import type {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";
-
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import { NavigatorName, ScreenName } from "../../../const";
 import GenericInputLink from "./GenericInputLink";
@@ -44,22 +39,26 @@ export const providerIcons = {
   changelly: Changelly,
   wyre: Wyre,
 };
-
 type Props = {
-  navigation: *,
-  route: { params: SwapRouteParams },
-  swap: SwapDataType,
-  transaction: SwapTransaction,
-  status: *,
-  rate: ExchangeRate,
+  navigation: any;
+  route: {
+    params: SwapRouteParams;
+  };
+  swap: SwapDataType;
+  transaction: SwapTransaction;
+  status: any;
+  rate: ExchangeRate;
   setToAccount: (
+    // eslint-disable-next-line no-unused-vars
     currency: TokenCurrency | CryptoCurrency,
+    // eslint-disable-next-line no-unused-vars
     account: Account | TokenAccount,
+    // eslint-disable-next-line no-unused-vars
     parentAccount?: Account | TokenAccount,
-  ) => void,
-  providers: any,
-  provider: any,
-  accounts: AccountLikeArray,
+  ) => void;
+  providers: any;
+  provider: any;
+  accounts: AccountLikeArray;
 };
 export default function RatesSection({
   navigation,
@@ -74,16 +73,13 @@ export default function RatesSection({
   accounts,
 }: Props) {
   const { colors } = useTheme();
-
   const {
     from: { account: fromAccount },
     to: { account: toAccount, currency: toCurrency },
   } = swap;
-
   const fromUnit = useMemo(() => fromAccount && getAccountUnit(fromAccount), [
     fromAccount,
   ]);
-
   const onEditRateProvider = useCallback(() => {
     navigation.navigate(ScreenName.SwapFormSelectProviderRate, {
       ...route.params,
@@ -104,7 +100,6 @@ export default function RatesSection({
     toCurrency,
     transaction,
   ]);
-
   const onEditToAccount = useCallback(() => {
     const setAccount = acc =>
       setToAccount(
@@ -112,6 +107,7 @@ export default function RatesSection({
         acc,
         acc.parentId && accounts.find(({ id }) => id === acc.parentId),
       );
+
     navigation.navigate(ScreenName.SwapV2FormSelectAccount, {
       ...route.params,
       swap,
@@ -131,7 +127,6 @@ export default function RatesSection({
     swap,
     toCurrency,
   ]);
-
   const onEditFees = useCallback(() => {
     navigation.navigate(ScreenName.SwapV2FormSelectFees, {
       ...route.params,
@@ -152,7 +147,6 @@ export default function RatesSection({
     toCurrency,
     transaction,
   ]);
-
   const onAddAccount = useCallback(() => {
     const params = {
       returnToSwap: true,
@@ -176,30 +170,20 @@ export default function RatesSection({
     if (toCurrency.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
         screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
-        params: {
-          ...params,
-          token: toCurrency,
-        },
+        params: { ...params, token: toCurrency },
       });
     } else {
       navigation.navigate(NavigatorName.AddAccounts, {
         screen: ScreenName.AddAccountsSelectDevice,
-        params: {
-          ...params,
-          currency: toCurrency,
-        },
+        params: { ...params, currency: toCurrency },
       });
     }
   }, [toCurrency, navigation, swap, setToAccount, accounts]);
-
   const ProviderIcon = providerIcons[provider];
-
   const { magnitudeAwareRate, tradeMethod } = rate || {};
   const toAccountName = toAccount ? getAccountName(toAccount) : null;
-
   const { rates: { value: rates = [] } = {} } = swap;
   const canEdit = rates.filter(r => r.provider === provider).length > 1;
-
   return rate && swap.rates.status !== "loading" ? (
     <Animatable.View animation="fadeIn" useNativeDriver duration={400}>
       <GenericInputLink
@@ -268,7 +252,9 @@ export default function RatesSection({
           <View
             style={[
               styles.addAccountsection,
-              { backgroundColor: colors.lightLive },
+              {
+                backgroundColor: colors.lightLive,
+              },
             ]}
           >
             <LText
@@ -279,7 +265,9 @@ export default function RatesSection({
             >
               <Trans
                 i18nKey="transfer.swap.form.noAccount"
-                values={{ currency: toCurrency.name }}
+                values={{
+                  currency: toCurrency.name,
+                }}
               />
             </LText>
             <Button
@@ -295,14 +283,19 @@ export default function RatesSection({
     </Animatable.View>
   ) : null;
 }
-
 const styles = StyleSheet.create({
-  valueLabel: { marginLeft: 4, fontSize: 14, lineHeight: 20 },
+  valueLabel: {
+    marginLeft: 4,
+    fontSize: 14,
+    lineHeight: 20,
+  },
   label: {
     fontSize: 16,
     lineHeight: 19,
   },
-  providerLabel: { textTransform: "capitalize" },
+  providerLabel: {
+    textTransform: "capitalize",
+  },
   addAccountsection: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -316,6 +309,10 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     flex: 1,
   },
-  addAccountButton: { height: 40 },
-  addAccountButtonLabel: { fontSize: 12 },
+  addAccountButton: {
+    height: 40,
+  },
+  addAccountButtonLabel: {
+    fontSize: 12,
+  },
 });

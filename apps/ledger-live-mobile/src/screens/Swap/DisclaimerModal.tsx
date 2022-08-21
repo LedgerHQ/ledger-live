@@ -1,10 +1,8 @@
-// @flow
 import React from "react";
 import { Linking, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/AntDesign";
 import { useTheme } from "@react-navigation/native";
-
 import { Flex } from "@ledgerhq/native-ui";
 import Circle from "../../components/Circle";
 import BottomModal from "../../components/BottomModal";
@@ -18,9 +16,9 @@ const DisclaimerModal = ({
   onContinue,
   provider,
 }: {
-  onClose: () => void,
-  onContinue: () => void,
-  provider: string,
+  onClose: () => void;
+  onContinue: () => void;
+  provider: string;
 }) => {
   const { colors } = useTheme();
   return (
@@ -42,7 +40,9 @@ const DisclaimerModal = ({
       <LText style={styles.desc} color="smoke">
         <Trans
           i18nKey={"transfer.swap.form.summary.disclaimer.desc"}
-          values={{ provider }}
+          values={{
+            provider,
+          }}
         >
           <LText style={styles.capitalize} color="smoke" />
         </Trans>
@@ -102,7 +102,8 @@ const styles = StyleSheet.create({
   firstButton: {
     marginTop: 24,
   },
-  capitalize: { textTransform: "capitalize" },
+  capitalize: {
+    textTransform: "capitalize",
+  },
 });
-
 export default DisclaimerModal;

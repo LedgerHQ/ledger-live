@@ -1,5 +1,3 @@
-// @flow
-
 import {
   accountWithMandatoryTokens,
   flattenAccounts,
@@ -49,34 +47,36 @@ import AccountAmountRow from "./FormSelection/AccountAmountRow";
 import RatesSection from "./FormSelection/RatesSection";
 
 export type SwapRouteParams = {
-  swap: SwapDataType,
-  exchangeRate: ExchangeRate,
-  currenciesStatus: CurrenciesStatus,
-  selectableCurrencies: (CryptoCurrency | TokenCurrency)[],
-  transaction?: SwapTransaction,
-  status?: TransactionStatus,
-  selectedCurrency: CryptoCurrency | TokenCurrency,
-  providers: any,
-  provider: any,
-  installedApps: any,
-  target: "from" | "to",
-  rateExpiration?: Date,
-  rate?: ExchangeRate,
-  rates?: ExchangeRate[],
-  tradeMethod?: string,
-  setAccount?: (account?: Account | TokenAccount) => void,
-  setCurrency?: (currency?: TokenCurrency | CryptoCurrency) => void,
+  swap: SwapDataType;
+  exchangeRate: ExchangeRate;
+  currenciesStatus: CurrenciesStatus;
+  selectableCurrencies: (CryptoCurrency | TokenCurrency)[];
+  transaction?: SwapTransaction;
+  status?: TransactionStatus;
+  selectedCurrency: CryptoCurrency | TokenCurrency;
+  providers: any;
+  provider: any;
+  installedApps: any;
+  target: "from" | "to";
+  rateExpiration?: Date;
+  rate?: ExchangeRate;
+  rates?: ExchangeRate[];
+  tradeMethod?: string;
+  // eslint-disable-next-line no-unused-vars
+  setAccount?: (account?: Account | TokenAccount) => void;
+  // eslint-disable-next-line no-unused-vars
+  setCurrency?: (currency?: TokenCurrency | CryptoCurrency) => void;
 };
-
 export const ratesExpirationThreshold = 60000;
-
 type Props = {
-  route: { params: SwapRouteParams },
-  navigation: *,
-  defaultAccount: ?AccountLike,
-  defaultParentAccount: ?Account,
-  providers: any,
-  provider: any,
+  route: {
+    params: SwapRouteParams;
+  };
+  navigation: any;
+  defaultAccount: AccountLike | null | undefined;
+  defaultParentAccount: Account | null | undefined;
+  providers: any;
+  provider: any;
 };
 
 function SwapForm({
@@ -88,19 +88,17 @@ function SwapForm({
 }: Props) {
   const { colors } = useTheme();
   const accounts = useSelector(accountsSelector);
-
   const [rate, setRate] = useState(null);
-
-  const selectableCurrencies = getSupportedCurrencies({ providers, provider });
-
+  const selectableCurrencies = getSupportedCurrencies({
+    providers,
+    provider,
+  });
   const maybeFilteredCurrencies = defaultAccount?.balance.gt(0)
     ? selectableCurrencies.filter(c => c !== getAccountCurrency(defaultAccount))
     : selectableCurrencies;
-
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(
     maybeFilteredCurrencies,
   );
-
   const defaultCurrency = route?.params?.swap?.from.account
     ? sortedCryptoCurrencies.find(
         c => c !== getAccountCurrency(route?.params?.swap?.from.account),
@@ -111,13 +109,11 @@ function SwapForm({
           !defaultAccount ||
           c !== getAccountCurrency(defaultAccount),
       );
-
   useEffect(() => {
     if (route.params?.rate) {
       setRate(route.params.rate);
     }
   }, [route.params?.rate]);
-
   const {
     status,
     transaction,
@@ -134,15 +130,12 @@ function SwapForm({
     accounts,
     setExchangeRate: setRate,
   });
-
   const swapAcceptedproviders = useSelector(swapAcceptedProvidersSelector);
   const alreadyAcceptedTerms = (swapAcceptedproviders || []).includes(provider);
-
   const dispatch = useDispatch();
   const [confirmed, setConfirmed] = useState(false);
   const [deviceMeta, setDeviceMeta] = useState();
   const showDeviceConnect = confirmed && alreadyAcceptedTerms && !deviceMeta;
-
   useEffect(() => {
     if (
       !!defaultCurrency &&
@@ -151,42 +144,34 @@ function SwapForm({
       setToCurrency(defaultCurrency);
     }
   }, [defaultCurrency, swap.to, swap.from, setToCurrency]);
-
   useEffect(() => {
     if (!!defaultAccount && !swap.from?.account) {
       setFromAccount(defaultAccount);
     }
   }, [defaultAccount, swap.from, setFromAccount]);
-
   const [error, setError] = useState(null);
-
   const [maxSpendable, setMaxSpendable] = useState();
-
   const {
     from: { account: fromAccount, parentAccount: fromParentAccount },
     refetchRates,
   } = swap;
-
   const resetError = useCallback(() => {
     setError();
   }, []);
-
   const fromUnit = useMemo(() => fromAccount && getAccountUnit(fromAccount), [
     fromAccount,
   ]);
-
   const onContinue = useCallback(() => {
     setConfirmed(true);
   }, []);
-
   const onReset = useCallback(() => {
     setConfirmed(false);
     setConfirmed(false);
   }, []);
-
   useEffect(() => {
     let expirationInterval;
     let rateExpiration;
+
     if (rate && rate.tradeMethod === "fixed") {
       rateExpiration = new Date(
         new Date().getTime() + ratesExpirationThreshold,
@@ -203,10 +188,8 @@ function SwapForm({
 
     return () => clearInterval(expirationInterval);
   }, [rate, refetchRates]);
-
   useEffect(() => {
     if (!fromAccount) return;
-
     let cancelled = false;
     getAccountBridge(fromAccount, fromParentAccount)
       .estimateMaxSpendable({
@@ -216,26 +199,21 @@ function SwapForm({
       })
       .then(estimate => {
         if (cancelled) return;
-
         setMaxSpendable(estimate);
       });
-
     // eslint-disable-next-line consistent-return
     return () => {
       cancelled = true;
     };
   }, [fromAccount, fromParentAccount, transaction]);
-
   useEffect(() => {
     // update tx after a form navigation from fees edit to main screen
     if (route.params?.transaction) {
       setTransaction(route.params.transaction);
     }
   }, [route.params, setTransaction]);
-
   const exchangeRatesState = swap?.rates;
   const swapError = fromAmountError || exchangeRatesState?.error;
-
   const isSwapReady =
     !bridgePending &&
     exchangeRatesState.status !== "loading" &&
@@ -243,9 +221,15 @@ function SwapForm({
     !swapError &&
     rate &&
     swap.to.account;
-
   const swapBody = (
-    <KeyboardView style={[styles.root, { backgroundColor: colors.background }]}>
+    <KeyboardView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen category="Swap Form" providerName={provider} />
       <View>
         <AccountAmountRow
@@ -370,7 +354,6 @@ function SwapForm({
       </View>
     </KeyboardView>
   );
-
   return showDeviceConnect ? (
     <Connect provider={provider} setResult={setDeviceMeta} />
   ) : (
@@ -389,41 +372,35 @@ export default function SwapFormEntry(props: Props) {
   } = props;
   const provider = route?.params?.provider || initProvider;
   const accounts = useSelector(accountsSelector);
-
   const enhancedAccounts = useMemo(
     () => accounts.map(acc => accountWithMandatoryTokens(acc, [])),
     [accounts],
   );
-
   const allAccounts = flattenAccounts(enhancedAccounts);
-
-  const selectableCurrencies = getSupportedCurrencies({ providers, provider });
-
+  const selectableCurrencies = getSupportedCurrencies({
+    providers,
+    provider,
+  });
   const elligibleAccountsForSelectedCurrency = allAccounts.filter(
     account =>
       account.balance.gt(0) &&
       selectableCurrencies.some(c => c === getAccountCurrency(account)),
   );
-
   const defaultAccount =
     initDefaultAccount || elligibleAccountsForSelectedCurrency[0];
-
   const [noAssetModalOpen, setNoAssetModalOpen] = useState(!defaultAccount);
-
   const onNavigateToBuyCrypto = useCallback(() => {
     setNoAssetModalOpen(false);
     navigation.replace(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
     });
   }, [navigation]);
-
   const onNavigateBack = useCallback(() => {
     if (noAssetModalOpen) {
       setNoAssetModalOpen(false);
       navigation.goBack();
     }
   }, [navigation, noAssetModalOpen]);
-
   return defaultAccount ? (
     <SwapForm {...props} defaultAccount={defaultAccount} />
   ) : (
@@ -440,7 +417,6 @@ export default function SwapFormEntry(props: Props) {
     />
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

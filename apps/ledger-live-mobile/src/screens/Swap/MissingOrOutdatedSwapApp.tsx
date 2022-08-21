@@ -1,10 +1,8 @@
-// @flow
 import React from "react";
 import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import { StyleSheet, View } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
-
 import { ScreenName, NavigatorName } from "../../const";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
@@ -15,10 +13,11 @@ import AppIcon from "../Manager/AppsList/AppIcon";
 const MissingOrOutdatedSwapApp = ({
   outdated = false,
 }: {
-  outdated?: boolean,
+  outdated?: boolean;
 }) => {
   const { colors } = useTheme();
   const { navigate } = useNavigation();
+
   const onPress = () => {
     navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
@@ -27,14 +26,22 @@ const MissingOrOutdatedSwapApp = ({
             tab: MANAGER_TABS.INSTALLED_APPS,
             updateModalOpened: true,
           }
-        : { searchQuery: "Exchange" },
+        : {
+            searchQuery: "Exchange",
+          },
     });
   };
 
   const key = outdated ? "outdatedApp" : "missingApp";
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen category="Swap" name="MissingOrOutdatedExchangeApp" />
       <View style={styles.illustration}>
         <AppIcon size={60} icon="exchange" />
@@ -90,5 +97,4 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
-
 export default MissingOrOutdatedSwapApp;

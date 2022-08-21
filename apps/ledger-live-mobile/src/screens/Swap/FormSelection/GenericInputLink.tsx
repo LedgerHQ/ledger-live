@@ -1,20 +1,17 @@
-// @flow
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-
 import LText from "../../../components/LText";
 import InfoModal from "../../../components/InfoModal";
 import InfoIcon from "../../../icons/Info";
 
 type Props = {
-  label: React$Node,
-  tooltip?: React$Node,
-  children: React$Node,
-  onEdit?: () => void,
+  label: React.ReactNode;
+  tooltip?: React.ReactNode;
+  children: React.ReactNode;
+  onEdit?: () => void;
 };
-
 export default function GenericInputLink({
   label,
   tooltip,
@@ -22,12 +19,9 @@ export default function GenericInputLink({
   onEdit,
 }: Props) {
   const { colors } = useTheme();
-
   const [tooltipOpen, setTooltipOpen] = useState();
-
   const openTooltip = useCallback(() => setTooltipOpen(true), []);
   const closeTooltip = useCallback(() => setTooltipOpen(false), []);
-
   return (
     <View style={styles.root}>
       <TouchableOpacity style={styles.label} onPress={openTooltip}>
@@ -56,7 +50,6 @@ export default function GenericInputLink({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     width: "100%",
@@ -71,12 +64,22 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
-  tooltipText: { fontSize: 14, lineHeight: 20, marginRight: 4 },
+  tooltipText: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginRight: 4,
+  },
   value: {
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
   },
-  editText: { fontSize: 12, margin: 0 },
-  editButton: { paddingLeft: 8, paddingVertical: 4 },
+  editText: {
+    fontSize: 12,
+    margin: 0,
+  },
+  editButton: {
+    paddingLeft: 8,
+    paddingVertical: 4,
+  },
 });

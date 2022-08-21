@@ -1,11 +1,9 @@
-// @flow
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-
 import type { SwapRouteParams } from "..";
 import { providerIcons } from "./RatesSection";
 import CounterValue from "../../../components/CounterValue";
@@ -17,27 +15,24 @@ import Unlock from "../../../icons/Unlock";
 import { TrackScreen } from "../../../analytics";
 
 type Props = {
-  route: { params: SwapRouteParams },
-  navigation: *,
+  route: {
+    params: SwapRouteParams;
+  };
+  navigation: any;
 };
-
 export default function SelectProviderRateScreen({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { swap = {}, rate, transaction, provider } = route.params;
-
   const {
     from: { account: fromAccount } = {},
     to: { currency: toCurrency } = {},
     rates: { value: rates = [] } = {},
   } = swap;
   const filteredRates = rates.filter(r => r.provider === provider);
-
   const fromUnit = useMemo(() => fromAccount && getAccountUnit(fromAccount), [
     fromAccount,
   ]);
-
   const toUnit = toCurrency?.units[0];
-
   const onSelectRate = useCallback(
     newRate => {
       navigation.navigate(ScreenName.SwapForm, {
@@ -48,7 +43,6 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
     },
     [navigation, route.params],
   );
-
   const renderItem = useCallback(
     ({ item }) => {
       const { magnitudeAwareRate, provider, tradeMethod, payoutNetworkFees } =
@@ -56,7 +50,6 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
       const ProviderIcon = providerIcons[provider];
       const isSelected =
         provider === rate?.provider && item.rate === rate?.rate;
-
       const toValue =
         rate && transaction
           ? transaction.amount
@@ -68,7 +61,9 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
           style={[
             styles.row,
             styles.listItem,
-            { borderColor: isSelected ? colors.live : colors.lightFog },
+            {
+              borderColor: isSelected ? colors.live : colors.lightFog,
+            },
           ]}
           onPress={() => onSelectRate(item)}
         >
@@ -135,7 +130,6 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
       transaction,
     ],
   );
-
   return (
     <View style={styles.root}>
       <TrackScreen category="Swap Form" name="Edit Rate" provider={provider} />
@@ -143,7 +137,6 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -169,7 +162,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
-  valueLabel: { marginLeft: 4, fontSize: 14, lineHeight: 20 },
+  valueLabel: {
+    marginLeft: 4,
+    fontSize: 14,
+    lineHeight: 20,
+  },
   inputText: {
     textAlign: "right",
     fontSize: 23,
@@ -177,6 +174,12 @@ const styles = StyleSheet.create({
     height: 32,
     padding: 0,
   },
-  subText: { fontSize: 13, lineHeight: 14, paddingTop: 4 },
-  alignRight: { textAlign: "right" },
+  subText: {
+    fontSize: 13,
+    lineHeight: 14,
+    paddingTop: 4,
+  },
+  alignRight: {
+    textAlign: "right",
+  },
 });

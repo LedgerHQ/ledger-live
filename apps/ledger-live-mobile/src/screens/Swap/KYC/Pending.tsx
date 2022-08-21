@@ -1,4 +1,3 @@
-// @flow
 import React, { useEffect, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,29 +7,30 @@ import { Trans } from "react-i18next";
 import { getKYCStatus } from "@ledgerhq/live-common/exchange/swap/index";
 import { swapKYCSelector } from "../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../actions/settings";
-
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import IconCheck from "../../../icons/Check";
 import IconClose from "../../../icons/Close";
 import { rgba } from "../../../colors";
 
-const forceInset = { bottom: "always" };
+const forceInset = {
+  bottom: "always",
+};
 
 const Pending = ({
   onContinue,
   status = "pending",
 }: {
-  onContinue: () => void,
-  status?: string,
+  onContinue: () => void;
+  status?: string;
 }) => {
   // FIXME if we ever have dynamic KYC fields, or more than one provider with KYC, backend to provide the fields
   const swapKYC = useSelector(swapKYCSelector);
   const dispatch = useDispatch();
   const providerKYC = swapKYC.wyre;
-
   const onUpdateKYCStatus = useCallback(() => {
     let cancelled = false;
+
     async function updateKYCStatus() {
       if (!providerKYC?.id) return;
       const res = await getKYCStatus("wyre", providerKYC.id);
@@ -43,30 +43,36 @@ const Pending = ({
         }),
       );
     }
+
     updateKYCStatus();
     return () => {
       cancelled = true;
     };
   }, [dispatch, providerKYC]);
-
   useEffect(() => {
     // Fixme Again, relying on provider specific status wording.
     if (providerKYC && providerKYC.status !== "approved") {
       onUpdateKYCStatus();
     }
   }, [onUpdateKYCStatus, providerKYC]);
-
   const { colors } = useTheme();
   const rejected = status === "closed";
-
   const onResetKYC = useCallback(() => {
-    dispatch(setSwapKYCStatus({ provider: "wyre" }));
+    dispatch(
+      setSwapKYCStatus({
+        provider: "wyre",
+      }),
+    );
     onContinue();
   }, [dispatch, onContinue]);
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <View style={styles.wrapper}>
@@ -119,7 +125,6 @@ const styles = StyleSheet.create({
     width: 50,
     borderRadius: 50,
     marginBottom: 16,
-
     alignItems: "center",
     justifyContent: "center",
   },
@@ -157,5 +162,4 @@ const styles = StyleSheet.create({
   },
   continueWrapper: {},
 });
-
 export default Pending;

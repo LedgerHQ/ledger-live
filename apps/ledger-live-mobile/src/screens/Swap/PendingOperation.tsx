@@ -1,10 +1,8 @@
-// @flow
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { ScreenName } from "../../const";
 import LText from "../../components/LText";
@@ -14,7 +12,9 @@ import IconClock from "../../icons/Clock";
 import { rgba } from "../../colors";
 import { TrackScreen } from "../../analytics";
 
-const forceInset = { bottom: "always" };
+const forceInset = {
+  bottom: "always",
+};
 
 const PendingOperation = () => {
   const { colors } = useTheme();
@@ -28,9 +28,7 @@ const PendingOperation = () => {
     fromAccount,
     fromParentAccount,
   } = route.params;
-
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
-
   const onComplete = useCallback(() => {
     navigation.navigate(ScreenName.OperationDetails, {
       accountId: fromAccount.id,
@@ -39,10 +37,14 @@ const PendingOperation = () => {
       key: operation.id,
     });
   }, [fromAccount.id, fromParentAccount, navigation, operation]);
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen
@@ -57,14 +59,18 @@ const PendingOperation = () => {
           <View
             style={[
               styles.iconWrapper,
-              { backgroundColor: rgba(colors.success, 0.1) },
+              {
+                backgroundColor: rgba(colors.success, 0.1),
+              },
             ]}
           >
             <IconCheck color={colors.success} size={20} />
             <View
               style={[
                 styles.wrapperClock,
-                { backgroundColor: colors.background },
+                {
+                  backgroundColor: colors.background,
+                },
               ]}
             >
               <IconClock color={colors.grey} size={14} />
@@ -99,7 +105,9 @@ const PendingOperation = () => {
           <LText style={styles.description} color="grey">
             <Trans
               i18nKey={"transfer.swap.pendingOperation.description"}
-              values={{ targetCurrency }}
+              values={{
+                targetCurrency,
+              }}
             />
           </LText>
         </View>
@@ -137,7 +145,6 @@ const styles = StyleSheet.create({
     width: 50,
     borderRadius: 50,
     marginBottom: 16,
-
     alignItems: "center",
     justifyContent: "center",
   },
@@ -170,5 +177,4 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
 });
-
 export default PendingOperation;

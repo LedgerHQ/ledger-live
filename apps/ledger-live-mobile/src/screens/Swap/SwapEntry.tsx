@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useState, useEffect } from "react";
 import Config from "react-native-config";
 import { StyleSheet, View } from "react-native";
@@ -27,8 +25,10 @@ export const useProviders = () => {
         if (!disabledProviders.includes(providerData.provider)) {
           acc[providerData.provider] = providerData;
         }
+
         return acc;
       }, {});
+
       // Prio to changelly if both are available
       if ("wyre" in providersByName && "changelly" in providersByName) {
         resultProvider = providersByName.changelly;
@@ -37,6 +37,7 @@ export const useProviders = () => {
           p => !disabledProviders.includes(p.provider),
         );
       }
+
       // Only set as available currencies from this provider, on swp-agg this changes
       if (resultProvider) {
         dispatch(
@@ -51,7 +52,10 @@ export const useProviders = () => {
       }
     });
   }, [dispatch]);
-  return { providers, provider };
+  return {
+    providers,
+    provider,
+  };
 };
 
 const SwapEntrypoint = () => {
@@ -59,13 +63,14 @@ const SwapEntrypoint = () => {
   const { replace } = useNavigation();
   const route = useRoute();
   const swapKYC = useSelector(swapKYCSelector);
-
   const { provider, providers } = useProviders();
-
   useEffect(() => {
     if (!providers?.length || !provider) return;
+
     if (provider === "wyre" && swapKYC?.wyre?.status !== "approved") {
-      replace(ScreenName.SwapKYC, { provider });
+      replace(ScreenName.SwapKYC, {
+        provider,
+      });
     } else {
       replace(ScreenName.SwapFormOrHistory, {
         providers,
@@ -75,9 +80,15 @@ const SwapEntrypoint = () => {
       });
     }
   }, [replace, provider, providers, swapKYC, route?.params]);
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       {!providers ? (
         <View style={styles.loading}>
           <Spinning clockwise>
@@ -109,5 +120,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
 export default SwapEntrypoint;

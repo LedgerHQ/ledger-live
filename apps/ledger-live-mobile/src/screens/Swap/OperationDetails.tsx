@@ -11,7 +11,6 @@ import {
   Linking,
   TouchableOpacity,
 } from "react-native";
-
 import type { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   getDefaultExplorerView,
@@ -22,7 +21,6 @@ import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/helpers";
-
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
@@ -32,17 +30,15 @@ import CurrencyIcon from "../../components/CurrencyIcon";
 import { urls } from "../../config/urls";
 import ExternalLink from "../../icons/ExternalLink";
 import FormatDate from "../../components/FormatDate";
-
 import SwapStatusIndicator, { getStatusColor } from "./SwapStatusIndicator";
-
 import Footer from "../OperationDetails/Footer";
 
 type Props = {
   route: {
     params: {
-      swapOperation: MappedSwapOperation,
-    },
-  },
+      swapOperation: MappedSwapOperation;
+    };
+  };
 };
 
 const OperationDetails = ({ route }: Props) => {
@@ -55,33 +51,39 @@ const OperationDetails = ({ route }: Props) => {
     toAmount,
     operation,
   } = swapOperation;
-
   const { colors } = useTheme();
   const accounts = useSelector(flattenAccountsSelector);
   const fromAccount = accounts.find(a => a.id === swapOperation.fromAccount.id);
   const swap =
     fromAccount && fromAccount.swapHistory.find(s => s.swapId === swapId);
   const status = Config.DEBUG_SWAP_STATUS || swap.status;
-
   const fromCurrency = fromAccount && getAccountCurrency(fromAccount);
   const toCurrency = toAccount && getAccountCurrency(toAccount);
   const statusColorKey = getStatusColor(status, colors, true);
-  const dotStyles = { backgroundColor: colors[statusColorKey] };
-  const textColorStyles = { color: colors[statusColorKey] };
-
+  const dotStyles = {
+    backgroundColor: colors[statusColorKey],
+  };
+  const textColorStyles = {
+    color: colors[statusColorKey],
+  };
   const url =
     fromCurrency?.type === "CryptoCurrency" &&
     getTransactionExplorer(
       getDefaultExplorerView(fromCurrency),
       operation.hash,
     );
-
   const openProvider = useCallback(() => {
     Linking.openURL(urls.swap.providers[provider].main);
   }, [provider]);
-
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
@@ -145,7 +147,11 @@ const OperationDetails = ({ route }: Props) => {
             <FormatDate date={operation.date} />
           </LText>
 
-          <SectionSeparator style={{ marginBottom: 32 }} />
+          <SectionSeparator
+            style={{
+              marginBottom: 32,
+            }}
+          />
 
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.from"} />
@@ -172,7 +178,11 @@ const OperationDetails = ({ route }: Props) => {
             />
           </LText>
 
-          <SectionSeparator style={{ marginBottom: 32 }} />
+          <SectionSeparator
+            style={{
+              marginBottom: 32,
+            }}
+          />
 
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.to"} />
@@ -227,7 +237,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 22,
     textAlign: "center",
-
     marginRight: 6,
   },
   status: {
@@ -257,7 +266,11 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
   arrow: {
-    transform: [{ rotate: "90deg" }],
+    transform: [
+      {
+        rotate: "90deg",
+      },
+    ],
     marginVertical: 8,
   },
   toAmount: {
@@ -276,7 +289,6 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 8,
-
     fontSize: 14,
     lineHeight: 19,
   },
@@ -295,5 +307,4 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-
 export default OperationDetails;

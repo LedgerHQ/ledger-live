@@ -1,8 +1,5 @@
-// @flow
-
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -13,13 +10,11 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/index";
 import type { KYCData } from "@ledgerhq/live-common/exchange/swap/types";
 import { ScreenName } from "../../../const";
-
 import IconWyre from "../../../icons/swap/Wyre";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import Pending from "./Pending";
 import Field from "./Field";
-
 import { swapKYCSelector } from "../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../actions/settings";
 
@@ -28,17 +23,14 @@ const KYC = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setLoading] = useState(false);
   const [hasSubmittedOnce, setHasSubmittedOnce] = useState(false);
-
   const { navigate } = useNavigation();
   const swapKYC = useSelector(swapKYCSelector);
   const dispatch = useDispatch();
   const { colors } = useTheme();
-
   const countryOptions = Object.entries(countries).map(([value, label]) => ({
     value,
     label,
   }));
-
   // TODO Might need a better setup if this form gets more complicated
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -49,7 +41,6 @@ const KYC = () => {
   const [state, setState] = useState({});
   const [country] = useState(countryOptions[0]);
   const [postalCode, setPostalCode] = useState("");
-
   const requiredFields = useMemo(
     () => ({
       firstName,
@@ -62,7 +53,6 @@ const KYC = () => {
     }),
     [city, dateOfBirth, firstName, lastName, postalCode, state, street1],
   );
-
   const kycData: KYCData = useMemo(
     () => ({
       firstName,
@@ -89,18 +79,18 @@ const KYC = () => {
       street2,
     ],
   );
-
   const onSelectState = useCallback(() => {
-    navigate(ScreenName.SwapKYCStates, { onStateSelect: setState });
+    navigate(ScreenName.SwapKYCStates, {
+      onStateSelect: setState,
+    });
   }, [navigate]);
-
   const isValidDate = useMemo(
     () => !dateOfBirth || /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(dateOfBirth),
     [dateOfBirth],
   );
-
   const onValidateFields = useCallback(() => {
     const errors = {};
+
     for (const field in requiredFields) {
       if (
         !requiredFields[field] ||
@@ -110,18 +100,18 @@ const KYC = () => {
         errors[field] = t(`swap.kyc.wyre.form.${field}Error`);
       }
     }
+
     return errors;
   }, [isValidDate, requiredFields, t]);
-
   useEffect(() => {
     setErrors(onValidateFields);
   }, [onValidateFields, requiredFields, t]);
-
   const onSubmit = useCallback(() => {
     setHasSubmittedOnce(true);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     if (Object.entries(errors).length) return () => {};
-
     let cancelled = false;
+
     async function onSubmitKYC() {
       setLoading(true);
       // $FlowFixMe
@@ -136,19 +126,28 @@ const KYC = () => {
       );
       setLoading(false);
     }
-    onSubmitKYC();
 
+    onSubmitKYC();
     return () => {
       cancelled = true;
     };
   }, [dispatch, errors, kycData]);
-
   const color = colors.text;
   const borderColor = colors.fog;
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <View style={{ flex: 1 }}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
+      <View
+        style={{
+          flex: 1,
+        }}
+      >
         {swapKYC.wyre ? (
           <Pending
             status={swapKYC.wyre.status}
@@ -234,7 +233,15 @@ const KYC = () => {
                 <LText style={styles.label} color={"smoke"}>
                   <Trans i18nKey={"transfer.swap.kyc.wyre.form.country"} />
                 </LText>
-                <LText style={[styles.input, { color, borderColor }]}>
+                <LText
+                  style={[
+                    styles.input,
+                    {
+                      color,
+                      borderColor,
+                    },
+                  ]}
+                >
                   {country?.label}
                 </LText>
                 <Field
@@ -305,5 +312,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
 export default KYC;

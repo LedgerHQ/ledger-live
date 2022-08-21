@@ -1,5 +1,3 @@
-// @flow
-
 import {
   isSwapOperationPending,
   operationStatusList,
@@ -13,8 +11,8 @@ import IconSwap from "../../icons/Swap";
 
 export const getStatusColor = (
   status: string,
-  colors: *,
-  colorKey?: boolean = false,
+  colors: any,
+  colorKey = false,
 ) => {
   let key = "grey";
 
@@ -37,8 +35,8 @@ const SwapStatusIndicator = ({
   status,
   small,
 }: {
-  status: string,
-  small?: boolean,
+  status: string;
+  small?: boolean;
 }) => {
   const { colors } = useTheme();
   const statusColor = getStatusColor(status, colors);
@@ -47,7 +45,6 @@ const SwapStatusIndicator = ({
     width: small ? 38 : 54,
     height: small ? 38 : 54,
   };
-
   return (
     <View style={[styles.status, sizeDependantStyles]}>
       <IconSwap color={statusColor} size={small ? 16 : 26} />
@@ -87,5 +84,4 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
 });
-
 export default SwapStatusIndicator;
