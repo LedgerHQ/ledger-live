@@ -2194,7 +2194,7 @@
         "steps" : {
           "starter" : {
             "title" : "Redélégation",
-            "description" : "Utilisez la redélégation pour passer facilement d’un validateur à un autre. Notez que si vous changez à nouveau d’avis, vous devrez patienter. Lorsque vous redéléguez, vos actifs sont immobilisés pendant 21 jours.",
+            "description" : "Redéléguez pour passer facilement d’un validateur à un autre. Notez que si vous changez à nouveau d’avis, vous devrez patienter. Lorsque vous redéléguez, vos actifs sont immobilisés pendant 21 jours.",
             "warning" : "Choisissez votre validateur judicieusement. Une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement. Vous pouvez avoir un maximum de <0>7 redélégations en attente</0>.",
             "howDelegationWorks" : "Fonctionnement de la délégation"
           },
@@ -2223,7 +2223,7 @@
     },
     "undelegation" : {
       "header" : "Délégation(s) interrompue(s)",
-      "headerTooltip" : "Disponible après le verrouillage de 21 jours",
+      "headerTooltip" : "Disponibles après le gel de 21 jours",
       "inactiveTooltip" : "Les montants dont la délégation est interrompue ne génèrent plus de récompenses.",
       "flow" : {
         "title" : "Interrompre la délégation des actifs",
@@ -3452,7 +3452,7 @@
         },
         "validateTransactions" : {
           "title" : "Validez vos transactions",
-          "description" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction en cryptos avec votre Nano."
+          "description" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de cryptos avec votre Nano."
         },
         "setUpNanoWallet" : {
           "title" : "Configurez votre Nano",
