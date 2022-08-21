@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, createRef } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { FlatList, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -45,7 +45,6 @@ export default function MarketSection() {
       <TouchableOpacity
         onPress={() => {
           selectCurrency(item.id, item, "24h");
-          // @ts-ignore issue in react navigation types
           navigation.navigate(NavigatorName.Market, {
             screen: ScreenName.MarketDetail,
             params: {

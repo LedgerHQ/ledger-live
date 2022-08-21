@@ -1,4 +1,3 @@
-/* @flow */
 import React from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -38,7 +37,6 @@ export default function NoOpStatePortfolio() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     margin: 16,

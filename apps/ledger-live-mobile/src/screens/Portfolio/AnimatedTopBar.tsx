@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -19,15 +17,13 @@ import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 import { scrollToTop } from "../../navigation/utils";
 
 type Props = {
-  scrollY: typeof Animated.Value,
-  portfolio: Portfolio,
-  counterValueCurrency: Currency,
-  pending: boolean,
-  error: ?Error,
+  scrollY: typeof Animated.Value;
+  portfolio: Portfolio;
+  counterValueCurrency: Currency;
+  pending: boolean;
+  error: Error | null | undefined;
 };
-
 const { call, cond, interpolateNode, lessThan, useCode } = Animated;
-
 export default function AnimatedTopBar({
   scrollY,
   portfolio,
@@ -38,13 +34,11 @@ export default function AnimatedTopBar({
   const { colors } = useTheme();
   const { top } = useSafeArea();
   const [isShown, setIsShown] = useState(false);
-
   const opacity = interpolateNode(scrollY, {
     inputRange: [90, 150],
     outputRange: [0, 1],
     extrapolate: "clamp",
   });
-
   useCode(
     () =>
       cond(
@@ -58,22 +52,42 @@ export default function AnimatedTopBar({
       ),
     [isShown],
   );
-
   const contentStyle = [
     styles.content,
-    { height: Platform.OS === "ios" ? top + 56 : 56 },
+    {
+      height: Platform.OS === "ios" ? top + 56 : 56,
+    },
   ];
-
   return (
     <Animated.View
-      style={[styles.root, { opacity, backgroundColor: colors.card }]}
+      style={[
+        styles.root,
+        {
+          opacity,
+          backgroundColor: colors.card,
+        },
+      ]}
       pointerEvents={isShown ? "auto" : "none"}
     >
       <TouchableWithoutFeedback onPress={scrollToTop}>
-        <View style={[styles.outer, { paddingTop: extraStatusBarPadding }]}>
+        <View
+          style={[
+            styles.outer,
+            {
+              paddingTop: extraStatusBarPadding,
+            },
+          ]}
+        >
           <View>
             {pending ? (
-              <View style={[...contentStyle, { marginBottom: 8 }]}>
+              <View
+                style={[
+                  ...contentStyle,
+                  {
+                    marginBottom: 8,
+                  },
+                ]}
+              >
                 <HeaderSynchronizing />
               </View>
             ) : error ? (
@@ -93,7 +107,6 @@ export default function AnimatedTopBar({
     </Animated.View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     zIndex: 2,

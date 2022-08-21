@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
@@ -10,11 +8,10 @@ import Space from "../../components/Space";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
 type Props = {
-  portfolio: Portfolio,
-  counterValueCurrency: Currency,
-  style?: any,
+  portfolio: Portfolio;
+  counterValueCurrency: Currency;
+  style?: any;
 };
-
 export default function BalanceHeader({
   portfolio,
   counterValueCurrency,
@@ -37,7 +34,6 @@ export default function BalanceHeader({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   content: {
     justifyContent: "center",

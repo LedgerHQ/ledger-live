@@ -1,12 +1,4 @@
-/* eslint-disable import/named */
-import React, {
-  useCallback,
-  useMemo,
-  useState,
-  memo,
-  useEffect,
-  useContext,
-} from "react";
+import React, { useCallback, useMemo, useState, memo, useContext } from "react";
 import { useSelector } from "react-redux";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -27,8 +19,9 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import {
-  discreetModeSelector,
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
   carouselVisibilitySelector,
@@ -38,7 +31,6 @@ import globalSyncRefreshControl from "../../../components/globalSyncRefreshContr
 
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
 import Header from "../Header";
-import TrackScreen from "../../../analytics/TrackScreen";
 import { screen, track } from "../../../analytics";
 import { NavigatorName } from "../../../const";
 import ReadOnlyAssets from "./ReadOnlyAssets";
@@ -52,8 +44,6 @@ import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { Currency } from "@ledgerhq/types-cryptoassets";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 import { AnalyticsContext } from "../../../components/RootNavigator";
 
@@ -162,7 +152,6 @@ function PortfolioScreen({ navigation }: Props) {
     counterValueCurrencySelector,
   );
   const portfolio = usePortfolio();
-  const discreetMode = useSelector(discreetModeSelector);
   useProviders();
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);

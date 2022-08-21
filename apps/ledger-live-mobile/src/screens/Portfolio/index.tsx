@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
 import { FlatList } from "react-native";

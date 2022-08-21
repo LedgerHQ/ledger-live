@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
@@ -10,11 +8,10 @@ import { networkErrorSelector } from "../../reducers/appstate";
 import AnimatedTopBar from "./AnimatedTopBar";
 
 type Props = {
-  portfolio: Portfolio,
-  counterValueCurrency: Currency,
-  scrollY: any,
+  portfolio: Portfolio;
+  counterValueCurrency: Currency;
+  scrollY: any;
 };
-
 export default function StickyHeader({
   scrollY,
   counterValueCurrency,
@@ -23,7 +20,6 @@ export default function StickyHeader({
   const isUpToDate = useSelector(isUpToDateSelector);
   const networkError = useSelector(networkErrorSelector);
   const globalSyncState = useGlobalSyncState();
-
   return (
     <AnimatedTopBar
       scrollY={scrollY}

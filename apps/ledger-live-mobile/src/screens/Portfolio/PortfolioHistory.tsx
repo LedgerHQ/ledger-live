@@ -1,4 +1,3 @@
-// @flow
 import React, { memo, useState, useCallback } from "react";
 import { SectionList } from "react-native";
 import { useSelector } from "react-redux";
@@ -15,11 +14,7 @@ import {
   flattenAccountsSelector,
 } from "../../reducers/accounts";
 
-import NoOperationFooter from "../../components/NoOperationFooter";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
-
-import EmptyStatePortfolio from "./EmptyStatePortfolio";
-import NoOpStatePortfolio from "./NoOpStatePortfolio";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import LoadingFooter from "../../components/LoadingFooter";
