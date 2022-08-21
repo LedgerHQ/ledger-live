@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -8,7 +7,6 @@ import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-
 import { useTheme } from "@react-navigation/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
@@ -18,16 +16,14 @@ import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
 type Props = {
-  account: AccountLike,
-  transaction: Transaction,
+  account: AccountLike;
+  transaction: Transaction;
 };
-
 export default function TezosFeeRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
-
   if (transaction.family !== "tezos") return null;
   const fees = transaction.fees;
   const unit = getAccountUnit(account);
@@ -42,7 +38,11 @@ export default function TezosFeeRow({ account, transaction }: Props) {
         </View>
       }
     >
-      <View style={{ alignItems: "flex-end" }}>
+      <View
+        style={{
+          alignItems: "flex-end",
+        }}
+      >
         <View style={styles.accountContainer}>
           {fees ? (
             <LText style={styles.valueText}>
@@ -59,7 +59,6 @@ export default function TezosFeeRow({ account, transaction }: Props) {
     </SummaryRow>
   );
 }
-
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,

@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -14,7 +13,6 @@ import DelegationSelectDevice from "../../../screens/SelectDevice";
 import DelegationConnectDevice from "../../../screens/ConnectDevice";
 import DelegationValidationSuccess from "./ValidationSuccess";
 import DelegationValidationError from "./ValidationError";
-
 const totalSteps = "3";
 
 function DelegationFlow() {
@@ -121,7 +119,5 @@ function DelegationFlow() {
 const options = {
   headerShown: false,
 };
-
 export { DelegationFlow as component, options };
-
 const Stack = createStackNavigator();

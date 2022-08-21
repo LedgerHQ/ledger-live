@@ -1,5 +1,3 @@
-/* @flow */
-
 import invariant from "invariant";
 import React, { useState, useCallback, useEffect } from "react";
 import {
@@ -38,8 +36,9 @@ import TranslatedError from "../../../components/TranslatedError";
 import ExternalLink from "../../../components/ExternalLink";
 import Info from "../../../icons/Info";
 import BakerImage from "../BakerImage";
-
-const forceInset = { bottom: "always" };
+const forceInset = {
+  bottom: "always",
+};
 
 const keyExtractor = baker => baker.address;
 
@@ -75,18 +74,19 @@ const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
     </View>
   );
 };
+
 const BakerRow = ({
   onPress,
   baker,
 }: {
-  onPress: Baker => void,
-  baker: Baker,
+  // eslint-disable-next-line no-unused-vars
+  onPress: (arg0: Baker) => void;
+  baker: Baker;
 }) => {
   const { colors } = useTheme();
   const onPressT = useCallback(() => {
     onPress(baker);
   }, [baker, onPress]);
-
   return (
     <Touchable
       event="DelegationFlowChoseBaker"
@@ -101,7 +101,10 @@ const BakerRow = ({
           <View
             style={[
               styles.overdelegatedIndicator,
-              { backgroundColor: colors.orange, borderColor: colors.white },
+              {
+                backgroundColor: colors.orange,
+                borderColor: colors.white,
+              },
             ]}
           />
         ) : null}
@@ -142,18 +145,18 @@ const ModalIcon = () => {
 };
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: any,
-  route: { params: RouteParams },
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  status: TransactionStatus,
+  accountId: string;
+  transaction: Transaction;
+  status: TransactionStatus;
 };
-
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -166,7 +169,6 @@ export default function SelectValidator({ navigation, route }: Props) {
   if (Platform.OS === "ios") {
     const keyboardDidShow = event => {
       const { height } = event.endCoordinates;
-
       setKeyboardHeight(height);
     };
 
@@ -185,7 +187,6 @@ export default function SelectValidator({ navigation, route }: Props) {
         "keyboardDidHide",
         keyboardDidHide,
       );
-
       return () => {
         keyboardDidShowListener.remove();
         keyboardDidHideListener.remove();
@@ -194,7 +195,6 @@ export default function SelectValidator({ navigation, route }: Props) {
   }
 
   invariant(account, "account is undefined");
-
   const {
     transaction,
     setTransaction,
@@ -211,9 +211,7 @@ export default function SelectValidator({ navigation, route }: Props) {
       }),
     };
   });
-
   invariant(transaction, "transaction is undefined");
-
   let error = bridgeError || status.errors.recipient;
 
   if (error instanceof RecipientRequired) {
@@ -223,13 +221,15 @@ export default function SelectValidator({ navigation, route }: Props) {
   const onChangeText = useCallback(
     recipient => {
       const bridge = getAccountBridge(account, parentAccount);
-      setTransaction(bridge.updateTransaction(transaction, { recipient }));
+      setTransaction(
+        bridge.updateTransaction(transaction, {
+          recipient,
+        }),
+      );
     },
     [account, parentAccount, setTransaction, transaction],
   );
-
   const clear = useCallback(() => onChangeText(""), [onChangeText]);
-
   const continueCustom = useCallback(() => {
     setEditingCustom(false);
     navigation.navigate(ScreenName.DelegationSummary, {
@@ -237,23 +237,18 @@ export default function SelectValidator({ navigation, route }: Props) {
       transaction,
     });
   }, [navigation, transaction, route.params]);
-
   const enableCustomValidator = useCallback(() => {
     setEditingCustom(true);
   }, []);
-
   const disableCustomValidator = useCallback(() => {
     setEditingCustom(false);
   }, []);
-
   const displayInfos = useCallback(() => {
     setShowInfos(true);
   }, []);
-
   const hideInfos = useCallback(() => {
     setShowInfos(false);
   }, []);
-
   const onItemPress = useCallback(
     (baker: Baker) => {
       const bridge = getAccountBridge(account, parentAccount);
@@ -267,15 +262,18 @@ export default function SelectValidator({ navigation, route }: Props) {
     },
     [navigation, account, parentAccount, route.params],
   );
-
   const renderItem = useCallback(
     ({ item }) => <BakerRow baker={item} onPress={onItemPress} />,
     [onItemPress],
   );
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
@@ -304,7 +302,13 @@ export default function SelectValidator({ navigation, route }: Props) {
           disabled: bridgePending || !!status.errors.recipient,
           pending: bridgePending,
         }}
-        style={keyboardHeight ? { marginBottom: keyboardHeight } : undefined}
+        style={
+          keyboardHeight
+            ? {
+                marginBottom: keyboardHeight,
+              }
+            : undefined
+        }
         containerStyle={styles.infoModalContainerStyle}
       >
         <TextInput
@@ -312,7 +316,13 @@ export default function SelectValidator({ navigation, route }: Props) {
           placeholderTextColor={colors.fog}
           style={[
             styles.addressInput,
-            error ? { color: colors.alert } : { color: colors.darkBlue },
+            error
+              ? {
+                  color: colors.alert,
+                }
+              : {
+                  color: colors.darkBlue,
+                },
           ]}
           onChangeText={onChangeText}
           onInputCleared={clear}
@@ -358,7 +368,6 @@ export default function SelectValidator({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -425,7 +434,9 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   addressInput: {
-    ...getFontStyle({ semiBold: true }),
+    ...getFontStyle({
+      semiBold: true,
+    }),
     fontSize: 20,
     paddingVertical: 16,
   },

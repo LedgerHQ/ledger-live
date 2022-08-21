@@ -1,14 +1,11 @@
-/* @flow */
-
 import React from "react";
 import { StyleSheet, Image, View } from "react-native";
 
 type Props = {
-  left: React$Node,
-  right: React$Node,
-  undelegation?: boolean,
+  left: React.ReactNode;
+  right: React.ReactNode;
+  undelegation?: boolean;
 };
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: "row",

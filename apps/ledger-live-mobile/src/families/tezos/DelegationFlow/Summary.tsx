@@ -164,7 +164,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     invariant(transaction.family === "tezos", "tezos tx");
 
     // make sure the mode is in sync (an account changes can reset it)
-    const patch: Object = {
+    const patch: any = {
       mode: route.params?.mode ?? "delegate",
     };
 

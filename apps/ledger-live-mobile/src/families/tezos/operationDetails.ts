@@ -1,4 +1,3 @@
-// @flow
 import type { Operation } from "@ledgerhq/types-live";
 
 export default {

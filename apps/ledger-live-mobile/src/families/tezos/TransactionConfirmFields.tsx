@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Linking, StyleSheet } from "react-native";
@@ -30,7 +29,6 @@ const styles = StyleSheet.create({
 const TezosStorageLimit = ({ transaction }: { transaction: Transaction }) => {
   const locale = useSelector(localeSelector);
   invariant(transaction.family === "tezos", "tezos transaction");
-
   return (
     <DataRow label="Storage Limit">
       <LText semiBold style={styles.text}>
@@ -47,9 +45,9 @@ const TezosDelegateValidator = ({
   parentAccount,
   transaction,
 }: {
-  account: AccountLike,
-  parentAccount: ?Account,
-  transaction: Transaction,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  transaction: Transaction;
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const baker = useBaker(transaction.recipient);
@@ -58,9 +56,7 @@ const TezosDelegateValidator = ({
   const openBaker = useCallback(() => {
     if (bakerURL) Linking.openURL(bakerURL);
   }, [bakerURL]);
-
   invariant(transaction.family === "tezos", "tezos transaction");
-
   return (
     <DataRow label="Validator">
       <LText semiBold onPress={openBaker} style={styles.text}>
@@ -74,7 +70,6 @@ const fieldComponents = {
   "tezos.delegateValidator": TezosDelegateValidator,
   "tezos.storageLimit": TezosStorageLimit,
 };
-
 export default {
   fieldComponents,
 };

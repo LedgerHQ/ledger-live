@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, Linking } from "react-native";
@@ -20,6 +18,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Icon from "react-native-vector-icons/dist/Feather";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import IconReceive from "../../icons/Receive";
 import LText from "../../components/LText";
@@ -36,13 +35,12 @@ import BakerImage from "./BakerImage";
 import DelegatingContainer from "./DelegatingContainer";
 
 type Props = {
-  isOpened: boolean,
-  onClose: () => void,
-  account: AccountLike,
-  parentAccount: ?Account,
-  delegation: Delegation,
+  isOpened: boolean;
+  onClose: () => void;
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  delegation: Delegation;
 };
-
 const styles = StyleSheet.create({
   modal: {
     position: "relative",
@@ -81,14 +79,12 @@ const styles = StyleSheet.create({
     width: "50%",
     alignItems: "flex-end",
   },
-
   footerBtn: {
     width: 80,
     alignItems: "center",
   },
   footerBtnLabel: {
     marginTop: 8,
-
     fontSize: 14,
     textAlign: "center",
   },
@@ -104,16 +100,18 @@ const Property = ({
   children,
   last,
 }: {
-  label: React$Node,
-  children: React$Node,
-  last?: boolean,
+  label: React.ReactNode;
+  children: React.ReactNode;
+  last?: boolean;
 }) => {
   const { colors } = useTheme();
   return (
     <View
       style={[
         styles.propertyRow,
-        { borderBottomColor: colors.lightFog },
+        {
+          borderBottomColor: colors.lightFog,
+        },
         last ? styles.propertyRowLast : null,
       ]}
     >
@@ -131,10 +129,10 @@ const FooterBtn = ({
   event,
   onPress,
 }: {
-  label: React$Node,
-  icon: React$Node,
-  event: *,
-  onPress: () => void,
+  label: React.ReactNode;
+  icon: React.ReactNode;
+  event: any;
+  onPress: () => void;
 }) => (
   <Touchable event={event} style={styles.footerBtn} onPress={onPress}>
     {icon}
@@ -160,22 +158,17 @@ export default function DelegationDetailsModal({
   const amount = account.balance;
   const days = differenceInCalendarDays(Date.now(), delegation.operation.date);
   const color = getCurrencyColor(currency);
-
   const explorerView = getDefaultExplorerView(mainAccount.currency);
   const bakerURL = getAddressExplorer(explorerView, delegation.address);
   const txURL = getTransactionExplorer(explorerView, delegation.operation.hash);
-
   const accountId = account.id;
   const parentId = parentAccount && parentAccount.id;
-
   const onOpenBaker = useCallback(() => {
     if (bakerURL) Linking.openURL(bakerURL);
   }, [bakerURL]);
-
   const onOpenTransaction = useCallback(() => {
     if (txURL) Linking.openURL(txURL);
   }, [txURL]);
-
   const onReceive = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveConfirmation,
@@ -186,7 +179,6 @@ export default function DelegationDetailsModal({
     });
     onClose();
   }, [accountId, parentId, navigation, onClose]);
-
   const onChangeValidator = useCallback(() => {
     // FIXME how to get rid of Started step in nav stack?
     navigation.navigate(NavigatorName.TezosDelegationFlow, {
@@ -198,7 +190,6 @@ export default function DelegationDetailsModal({
     });
     onClose();
   }, [accountId, parentId, navigation, onClose]);
-
   const onEndDelegation = useCallback(() => {
     // FIXME how to get rid of Started step in nav stack?
     navigation.navigate(NavigatorName.TezosDelegationFlow, {
@@ -211,9 +202,7 @@ export default function DelegationDetailsModal({
     });
     onClose();
   }, [accountId, parentId, navigation, onClose]);
-
   const height = Math.min(getWindowDimensions().height - 400, 280);
-
   return (
     // TODO use DelegationDrawer component
     <BottomModal
@@ -242,7 +231,11 @@ export default function DelegationDetailsModal({
           </LText>
         </View>
 
-        <NavigationScrollView style={{ height }}>
+        <NavigationScrollView
+          style={{
+            height,
+          }}
+        >
           {baker ? (
             <Property label={<Trans i18nKey="delegation.validator" />}>
               <LText
@@ -283,7 +276,9 @@ export default function DelegationDetailsModal({
                 <Trans
                   i18nKey="delegation.durationDays"
                   count={days}
-                  values={{ count: days }}
+                  values={{
+                    count: days,
+                  }}
                 />
               ) : (
                 <Trans i18nKey="delegation.durationDays0" />
