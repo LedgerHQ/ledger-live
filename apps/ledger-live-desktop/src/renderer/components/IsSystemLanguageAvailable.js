@@ -7,7 +7,7 @@ import { languageSelector, getInitialLanguageLocale } from "~/renderer/reducers/
 import { pushedLanguages } from "~/config/languages";
 
 // To reset os language proposition, change this date !
-const lastAskedLanguageAvailable = "2021-09-23";
+const lastAskedLanguageAvailable = "2022-09-23";
 
 export function hasAnsweredLanguageAvailable() {
   return global.localStorage.getItem("hasAnsweredLanguageAvailable") === lastAskedLanguageAvailable;
