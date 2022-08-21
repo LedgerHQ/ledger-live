@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import Scanner from "../../components/Scanner";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
+// eslint-disable-next-line import/named
 import { connect, context, STATUS } from "./Provider";
 
 type Props = {

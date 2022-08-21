@@ -83,7 +83,7 @@ type Props = {
 
 type ChooseDeviceProps = Props & {
   isFocused: boolean;
-  removeKnownDevice: (d: string) => void;
+  removeKnownDevice: (_: string) => void;
 };
 
 class ChooseDevice extends Component<
@@ -91,7 +91,7 @@ class ChooseDevice extends Component<
   {
     showMenu: boolean;
     device?: Device;
-    result?: Object;
+    result?: any;
   }
 > {
   state = {
@@ -119,7 +119,7 @@ class ChooseDevice extends Component<
     this.setState({ device });
   };
 
-  onSelect = (result: Object) => {
+  onSelect = (result: any) => {
     this.setState({ device: undefined, result });
     const {
       route: { params = {} },
@@ -136,11 +136,13 @@ class ChooseDevice extends Component<
     this.setState({ device: undefined });
   };
 
-  onStepEntered = (i: number, meta: Object) => {
+  onStepEntered = (i: number, meta: any) => {
     if (i === 2) {
       // we also preload as much info as possible in case of a MCU
       manager.getLatestFirmwareForDevice(meta.deviceInfo).then(
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
       );
     }
@@ -149,6 +151,7 @@ class ChooseDevice extends Component<
   remove = async () => {
     const { removeKnownDevice } = this.props;
     removeKnownDevice(this.chosenDevice.deviceId);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     await disconnect(this.chosenDevice.deviceId).catch(() => {});
     this.onHideMenu();
   };

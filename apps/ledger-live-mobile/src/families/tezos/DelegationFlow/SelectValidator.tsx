@@ -36,6 +36,7 @@ import TranslatedError from "../../../components/TranslatedError";
 import ExternalLink from "../../../components/ExternalLink";
 import Info from "../../../icons/Info";
 import BakerImage from "../BakerImage";
+
 const forceInset = {
   bottom: "always",
 };

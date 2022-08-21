@@ -18,13 +18,14 @@ import Content from "./Content";
 import Close from "../../icons/Close";
 import ArrowLeft from "../../icons/ArrowLeft";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+
 const forceInset = {
   bottom: "always",
 };
 type RouteParams = {
   accountId: string;
   operation: Operation;
-  disableAllLinks?: Boolean;
+  disableAllLinks?: boolean;
 };
 type Props = {
   navigation: any;

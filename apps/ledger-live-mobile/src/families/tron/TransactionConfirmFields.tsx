@@ -17,6 +17,7 @@ import {
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
 import { localeSelector } from "../../reducers/settings";
+
 const styles = StyleSheet.create({
   infoText: {
     textAlign: "left",

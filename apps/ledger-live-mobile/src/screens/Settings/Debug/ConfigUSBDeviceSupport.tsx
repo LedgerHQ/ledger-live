@@ -4,6 +4,7 @@ import Switch from "../../../components/Switch";
 import SettingsRow from "../../../components/SettingsRow";
 import { setExperimentalUSBSupport } from "../../../actions/settings";
 import { experimentalUSBEnabledSelector } from "../../../reducers/settings";
+
 export default function ConfigUSBDeviceSupport() {
   const dispatch = useDispatch();
   const experimentalUSBEnabled = useSelector(experimentalUSBEnabledSelector);

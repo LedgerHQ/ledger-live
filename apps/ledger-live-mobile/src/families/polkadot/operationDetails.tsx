@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { StyleSheet, Linking } from "react-native";
+import { Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import startCase from "lodash/startCase";
 import { BigNumber } from "bignumber.js";
@@ -406,19 +406,6 @@ const createOperationIcon =
         type={type}
       />
     );
-
-const styles = StyleSheet.create({
-  amountText: {
-    fontSize: 14,
-    flex: 1,
-  },
-  topText: {
-    fontSize: 14,
-    flex: 1,
-    marginBottom: 3,
-  },
-  nominateText: { lineHeight: 40 },
-});
 
 const amountCell = {
   BOND: BondAmountCell,

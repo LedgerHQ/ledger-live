@@ -44,7 +44,7 @@ type OwnProps = {
   biometricsError: Error | null | undefined;
 };
 type Props = OwnProps & {
-  reboot: (arg0: boolean | null | undefined) => any;
+  reboot: (_: boolean | null | undefined) => any;
   t: TFunction;
   colors: any;
 };
@@ -279,7 +279,7 @@ class AuthScreen extends PureComponent<Props, State> {
       </KeyboardBackgroundDismiss>
     );
   }
-} // @ts-expect-error
+}
 
 const m: React.ComponentType<OwnProps> = compose(
   withTranslation(),

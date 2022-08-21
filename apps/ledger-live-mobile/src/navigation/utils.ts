@@ -5,6 +5,7 @@ import {
   useIsFocused,
   useScrollToTop as useNativeScrollToTop,
 } from "@react-navigation/native";
+
 const scrollSubject = new Subject();
 export function useScrollToTop(
   ref: React.MutableRefObject<ScrollView | undefined>,

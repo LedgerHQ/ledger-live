@@ -99,7 +99,7 @@ module.exports = {
     // See: https://github.com/import-js/eslint-plugin-import/issues/1810
     "import/no-unresolved": [
       "error",
-      { ignore: ["^@ledgerhq/live-common/.*"] },
+      { ignore: ["^@ledgerhq/live-common/.*", "^@ledgerhq/native-ui/.*"] },
     ],
 
     "@typescript-eslint/no-unused-vars": ["error"],

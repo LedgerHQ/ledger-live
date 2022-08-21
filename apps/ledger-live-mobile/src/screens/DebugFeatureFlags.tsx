@@ -80,10 +80,12 @@ export default function DebugPlayground() {
     null,
   );
   const [inputValues, setInputValues] = useState<{
+    // eslint-disable-next-line no-unused-vars
     [key in FeatureId]?: string | undefined;
   }>({});
 
   const featureFlags = useMemo(() => {
+    // eslint-disable-next-line no-unused-vars
     const features: { [key in FeatureId]: Feature } = {};
     Object.keys(defaultFeatures).forEach((key: FeatureId) => {
       const value = featureFlagsProvider.getFeature(key);

@@ -34,12 +34,12 @@ import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.js
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 
 type Props = {
-  onBluetoothDeviceAction?: (device: Device) => void;
-  onSelect: (device: Device) => void;
+  onBluetoothDeviceAction?: (_: Device) => void;
+  onSelect: (_: Device) => void;
   onWithoutDevice?: () => void;
   withArrows?: boolean;
   usbOnly?: boolean;
-  filter?: (transportModule: TransportModule) => boolean;
+  filter?: (_: TransportModule) => boolean;
   autoSelectOnAdd?: boolean;
   hideAnimation?: boolean;
 };

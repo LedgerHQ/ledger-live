@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
+
 type Props = {
   error: Error | null | undefined;
   field?: "title" | "description";

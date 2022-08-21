@@ -18,6 +18,7 @@ import { ScreenName } from "../../../../const";
 import { acceptLendingTerms } from "../../../../logic/terms";
 import { urls } from "../../../../config/urls";
 import PreventNativeBack from "../../../../components/PreventNativeBack";
+
 type Props = {
   route: {
     params: {

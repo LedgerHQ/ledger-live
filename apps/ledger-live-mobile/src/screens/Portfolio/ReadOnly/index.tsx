@@ -45,6 +45,7 @@ import BuyDeviceBanner, {
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(

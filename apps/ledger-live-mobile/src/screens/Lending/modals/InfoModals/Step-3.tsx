@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import BaseInfoModal from "../BaseModal";
 import termsImg from "../../../../images/lending-info-3.png";
 import { Track } from "../../../../analytics";
+
 type Props = {
   route: {
     params: {

@@ -35,8 +35,8 @@ class NftMedia extends React.PureComponent<Props, State> {
     const noSource = status === "loaded" && !uri;
 
     if (noData || metadataError || noSource) {
-      uri = metadata?.medias?.["preview"]?.uri;
-      mediaType = metadata?.medias?.["preview"]?.mediaType;
+      uri = metadata?.medias?.preview?.uri;
+      mediaType = metadata?.medias?.preview?.mediaType;
       contentType = getMetadataMediaType(metadata, "preview");
     }
 
@@ -47,7 +47,7 @@ class NftMedia extends React.PureComponent<Props, State> {
         {...this.props}
         colors={colors}
         src={uri}
-        srcFallback={metadata?.medias?.["preview"]?.uri}
+        srcFallback={metadata?.medias?.preview?.uri}
         mediaType={mediaType}
       />
     );

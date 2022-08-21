@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import ReactNativeModal from "react-native-modal";
 import { useTheme } from "@react-navigation/native";
 import type { BaseButtonProps } from "./Button";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Close from "../icons/Close";
 import LText from "./LText";

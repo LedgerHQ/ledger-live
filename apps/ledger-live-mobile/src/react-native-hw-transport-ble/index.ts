@@ -2,6 +2,7 @@ import Config from "react-native-config";
 import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
 import makeMock from "./makeMock";
 import createAPDUMock from "../logic/createAPDUMock";
+
 const names = {};
 const transport = Config.MOCK
   ? makeMock({

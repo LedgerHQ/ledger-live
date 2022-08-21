@@ -65,12 +65,9 @@ function OnboardingStepWelcome({ navigation }: any) {
   );
 
   const next = useCallback(() => {
-    // TODO: Remove this stupid type check as soon as we convert useTermsAccept to TS
-    if (typeof setAccepted !== "boolean") setAccepted();
+    setAccepted();
     dispatch(setAnalytics(true));
 
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate({ name: ScreenName.OnboardingDoYouHaveALedgerDevice });
   }, [setAccepted, dispatch, navigation]);
 

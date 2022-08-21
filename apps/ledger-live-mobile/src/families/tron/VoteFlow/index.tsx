@@ -18,6 +18,7 @@ import VoteSelectDevice from "../../../screens/SelectDevice";
 import VoteConnectDevice from "../../../screens/ConnectDevice";
 import VoteValidationError from "./04-ValidationError";
 import VoteValidationSuccess from "./04-ValidationSuccess";
+
 const totalSteps = "4";
 
 function VoteFlow() {

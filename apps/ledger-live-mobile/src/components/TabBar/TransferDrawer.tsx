@@ -20,7 +20,7 @@ import {
 import { Props as ModalProps } from "../BottomModal";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
-import SetupDeviceBanner from "../components/SetupDeviceBanner";
+import SetupDeviceBanner from "../SetupDeviceBanner";
 import { useAnalytics } from "../../analytics";
 
 export default function TransferDrawer({ onClose }: ModalProps) {

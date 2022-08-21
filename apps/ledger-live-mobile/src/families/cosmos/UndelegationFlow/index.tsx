@@ -11,6 +11,7 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import UndelegationValidationError from "./03-ValidationError";
 import UndelegationValidationSuccess from "./03-ValidationSuccess";
+
 const totalSteps = "3";
 
 function UndelegationFlow() {

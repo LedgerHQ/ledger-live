@@ -10,6 +10,7 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import ValidationSuccess from "./03-ValidationSuccess";
 import ValidationError from "./03-ValidationError";
+
 const totalSteps = "3";
 
 function RebondFlow() {

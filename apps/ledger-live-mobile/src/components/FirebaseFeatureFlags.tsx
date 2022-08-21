@@ -56,7 +56,7 @@ const getFeature = (
  */
 export const getAllDivergedFlags = (
   appLanguage: string,
-// eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
 ): { [key in FeatureId]: boolean } => {
   // eslint-disable-next-line no-unused-vars
   const res: { [key in FeatureId]: boolean } = {};

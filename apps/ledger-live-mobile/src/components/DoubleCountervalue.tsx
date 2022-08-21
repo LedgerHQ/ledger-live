@@ -36,10 +36,13 @@ function DoubleCounterValue({
   date,
   compareDate = new Date(),
   withPlaceholder,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   placeholderProps,
   Wrapper,
   currency,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tooltipDateLabel,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tooltipCompareDateLabel,
   ...props
 }: Props) {

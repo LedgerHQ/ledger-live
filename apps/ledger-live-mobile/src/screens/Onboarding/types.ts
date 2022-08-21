@@ -30,12 +30,13 @@ export type OnboardingStepProps = OnboardingContextType & {
   next: Noop;
   prev: Noop;
 };
-export type SetOnboardingModeType = (arg0: OnboardingMode) => Promise<void>;
-export type SetOnboardingDeviceModelType = (arg0: DeviceNames) => Promise<void>;
+export type SetOnboardingModeType = (_: OnboardingMode) => Promise<void>;
+export type SetOnboardingDeviceModelType = (_: DeviceNames) => Promise<void>;
 export type OnboardingContextProviderProps = {
   children: any;
 };
 type OnboardingMode = "full" | "alreadyInitialized" | "restore" | "qr";
 export type DeviceNames = "nanoS" | "nanoX" | "blue";
+// eslint-disable-next-line no-unused-vars
 type StepNavigateType = (arg0: any, arg1: any) => void;
-type Noop = (arg0: any) => any;
+type Noop = (_: any) => any;

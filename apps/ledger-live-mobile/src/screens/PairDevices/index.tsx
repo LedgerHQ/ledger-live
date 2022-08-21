@@ -28,6 +28,7 @@ import Paired from "./Paired";
 import Scanning from "./Scanning";
 import ScanningTimeout from "./ScanningTimeout";
 import RenderError from "./RenderError";
+
 type Props = {
   navigation: any;
   route: {
@@ -37,11 +38,11 @@ type Props = {
 type PairDevicesProps = Props & {
   knownDevices: DeviceLike[];
   hasCompletedOnboarding: boolean;
-  addKnownDevice: (arg0: DeviceLike) => void;
-  installAppFirstTime: (value: boolean) => void;
+  addKnownDevice: (_: DeviceLike) => void;
+  installAppFirstTime: (_: boolean) => void;
 };
 type RouteParams = {
-  onDone?: (device: Device) => void;
+  onDone?: (_: Device) => void;
 };
 type BleDevice = {
   id: string;
@@ -127,6 +128,7 @@ function PairDevicesInner({ navigation, route }: Props) {
         try {
           const deviceInfo = await getDeviceInfo(transport);
           if (__DEV__)
+            // eslint-disable-next-line no-console
             console.log({
               deviceInfo,
             }); // eslint-disable-line no-console
@@ -191,6 +193,7 @@ function PairDevicesInner({ navigation, route }: Props) {
           });
         } finally {
           transport.close();
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           await TransportBLE.disconnect(device.deviceId).catch(() => {});
           await delay(500);
         }

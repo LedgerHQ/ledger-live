@@ -9,6 +9,7 @@ import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

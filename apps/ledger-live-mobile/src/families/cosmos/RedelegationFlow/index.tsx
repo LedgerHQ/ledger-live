@@ -15,6 +15,7 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import RedelegationValidationError from "./04-ValidationError";
 import RedelegationValidationSuccess from "./04-ValidationSuccess";
+
 const totalSteps = "3";
 
 function RedelegationFlow() {

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
-import { StyleSheet, View, SectionList, FlatList } from "react-native";
+import { StyleSheet, SectionList, FlatList } from "react-native";
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import Animated, { Value, event } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";

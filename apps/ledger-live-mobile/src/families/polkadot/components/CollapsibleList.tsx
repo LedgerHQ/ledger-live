@@ -1,4 +1,3 @@
-import { useTheme } from "@react-navigation/native";
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 
@@ -22,7 +21,6 @@ const CollapsibleList = ({
   renderItem,
   renderShowMore,
 }: Props) => {
-  const { colors } = useTheme();
   const [collapsed, setCollapsed] = useState(true);
 
   const toggleCollapsed = useCallback(() => {

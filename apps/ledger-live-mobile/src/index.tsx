@@ -87,6 +87,7 @@ import RatingsModal from "./screens/RatingsModal";
 import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
+// eslint-disable-next-line import/no-unresolved
 import NavBarColorHandler from "./components/NavBarColorHandler";
 import { setOsTheme } from "./actions/settings";
 import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";

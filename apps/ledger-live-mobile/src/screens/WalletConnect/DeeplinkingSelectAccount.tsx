@@ -23,6 +23,7 @@ import KeyboardView from "../../components/KeyboardView";
 import PlusIcon from "../../icons/Plus";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
+// eslint-disable-next-line import/named
 import { connect as WCconnect } from "./Provider";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];

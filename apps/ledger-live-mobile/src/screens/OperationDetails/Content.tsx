@@ -39,6 +39,7 @@ import DefaultOperationDetailsExtra from "./Extra";
 import Skeleton from "../../components/Skeleton";
 import Title from "./Title";
 import FormatDate from "../../components/FormatDate";
+
 type HelpLinkProps = {
   event: string;
   title: React.ReactNode;
@@ -61,7 +62,7 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   operation: Operation;
-  disableAllLinks?: Boolean;
+  disableAllLinks?: boolean;
 };
 export default function Content({
   account,

@@ -15,6 +15,7 @@ import ClaimRewardsSelectDevice from "../../../screens/SelectDevice";
 import ClaimRewardsConnectDevice from "../../../screens/ConnectDevice";
 import ClaimRewardsValidationError from "./04-ValidationError";
 import ClaimRewardsValidationSuccess from "./04-ValidationSuccess";
+
 const totalSteps = "3";
 
 function ClaimRewardsFlow() {

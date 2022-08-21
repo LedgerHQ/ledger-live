@@ -10,6 +10,7 @@ import { accountsSelector } from "../../../reducers/accounts";
 import { exportSettingsSelector } from "../../../reducers/settings";
 import LText from "../../../components/LText";
 import NavigationScrollView from "../../../components/NavigationScrollView";
+
 export type Props = {
   accounts: any;
   settings: any;
@@ -79,6 +80,7 @@ class ExportAccounts extends PureComponent<Props, State> {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const m: React.ComponentType<{}> = connect(
   createStructuredSelector({
     accounts: accountsSelector,

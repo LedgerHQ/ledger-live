@@ -14,6 +14,7 @@ import {
   connectingStep,
   accountApp,
 } from "../../../components/DeviceJob/steps";
+
 type RouteParams = {
   accountId: string;
   transaction: Transaction;

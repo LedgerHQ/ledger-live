@@ -8,7 +8,9 @@ import ValidateError from "../../components/ValidateError";
 import { urls } from "../../config/urls";
 
 import {
+  // eslint-disable-next-line import/named
   context as _wcContext,
+  // eslint-disable-next-line import/named
   setCurrentCallRequestError,
 } from "../WalletConnect/Provider";
 

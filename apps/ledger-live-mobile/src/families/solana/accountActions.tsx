@@ -2,8 +2,8 @@ import React from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
-import { NavigatorName, ScreenName } from "../../const";
 import { SolanaAccount } from "@ledgerhq/live-common/lib/families/solana/types";
+import { NavigatorName, ScreenName } from "../../const";
 
 const getActions = ({
   account,

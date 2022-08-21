@@ -5,7 +5,10 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { CommonActions } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useApps } from "./shared";
+// eslint-disable-next-line import/no-cycle
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { TrackScreen } from "../../analytics";
@@ -17,8 +20,6 @@ import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRou
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
-import { CommonActions } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
 

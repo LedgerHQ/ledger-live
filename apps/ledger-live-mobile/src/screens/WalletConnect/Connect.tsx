@@ -9,11 +9,17 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 
 import {
+  // eslint-disable-next-line import/named
   context,
+  // eslint-disable-next-line import/named
   STATUS,
+  // eslint-disable-next-line import/named
   setCurrentCallRequestError,
+  // eslint-disable-next-line import/named
   disconnect,
+  // eslint-disable-next-line import/named
   connect,
+  // eslint-disable-next-line import/named
   approveSession,
 } from "./Provider";
 

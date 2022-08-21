@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { Flex, Icon, SearchInput, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, memo, useState, useRef, useEffect } from "react";
@@ -8,10 +7,7 @@ import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import Search from "../../components/Search";
 import { supportedCountervalues } from "../../reducers/settings";
-import {
-  setMarketCounterCurrency,
-  setMarketRequestParams,
-} from "../../actions/settings";
+import { setMarketCounterCurrency } from "../../actions/settings";
 
 const RenderEmptyList = ({
   theme,

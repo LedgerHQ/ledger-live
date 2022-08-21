@@ -62,6 +62,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const [verified] = useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const onModalHide = useRef(() => {});
   const [error] = useState(null);
   const [zoom, setZoom] = useState(false);

@@ -19,6 +19,7 @@ import type {
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
+// eslint-disable-next-line import/no-cycle
 import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 
@@ -84,6 +85,7 @@ export type SettingsState = {
     hasAcceptedIPSharing: false;
     acceptedProviders: [];
     selectableCurrencies: [];
+    // eslint-disable-next-line @typescript-eslint/ban-types
     KYC: {};
   };
   lastSeenDevice: DeviceModelInfo | null | undefined;

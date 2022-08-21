@@ -11,8 +11,11 @@ import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 
 import {
+  // eslint-disable-next-line import/named
   context as _wcContext,
+  // eslint-disable-next-line import/named
   setCurrentCallRequestResult,
+  // eslint-disable-next-line import/named
   STATUS,
 } from "../WalletConnect/Provider";
 

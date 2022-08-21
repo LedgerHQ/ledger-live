@@ -53,6 +53,7 @@ class DeveloperModeRow extends PureComponent<Props> {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 const m: React.ComponentType<{}> = connect(
   mapStateToProps,
   mapDispatchToProps,

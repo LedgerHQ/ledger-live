@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import BaseInfoModal from "../BaseModal";
 import termsImg from "../../../../images/lending-info-2.png";
 import { ScreenName } from "../../../../const";
+
 type Props = {
   route: {
     params: {

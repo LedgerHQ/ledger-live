@@ -6,6 +6,7 @@ import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "../../components/Circle";
 import LText from "../../components/LText";
 import QRcode from "../../icons/QRcode";
+
 type Props = {
   recipient: string;
 };

@@ -22,7 +22,7 @@ const NftCardView = ({
   metadata,
 }: {
   nft: ProtoNFT;
-  style?: Object;
+  style?: any;
   status: NFTResource["status"];
   metadata: NFTMetadata;
 }) => {

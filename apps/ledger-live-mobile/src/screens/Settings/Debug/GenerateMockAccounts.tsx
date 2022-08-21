@@ -40,6 +40,7 @@ export default function GenerateMockAccountsButton({
           [
             {
               text: "Cancel",
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
               onPress: () => {},
             },
             {

@@ -11,6 +11,7 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import ValidationSuccess from "./04-ValidationSuccess";
 import ValidationError from "./04-ValidationError";
+
 const totalSteps = "3";
 
 function BondFlow() {

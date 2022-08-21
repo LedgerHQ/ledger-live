@@ -3,6 +3,7 @@ import { Buffer } from "buffer";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import SettingsRow from "../../../components/SettingsRow";
+
 type Props = {
   title: string;
   dataStr: any;

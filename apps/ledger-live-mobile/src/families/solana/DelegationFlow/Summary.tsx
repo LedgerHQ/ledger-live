@@ -101,18 +101,16 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [validators, validator, delegationAction]);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
-      return {
-        account,
-        parentAccount,
-        transaction: tx({
-          delegationAction,
-          defaultValidator: validators[0],
-          amount: route.params.amount,
-          chosenValidator,
-        }),
-      };
-    });
+    useBridgeTransaction(() => ({
+      account,
+      parentAccount,
+      transaction: tx({
+        delegationAction,
+        defaultValidator: validators[0],
+        amount: route.params.amount,
+        chosenValidator,
+      }),
+    }));
 
   useEffect(() => {
     setTransaction(
@@ -398,6 +396,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// eslint-disable-next-line consistent-return
 function txModelByDelegationAction(
   delegationAction: DelegationAction,
   defaultValidator: ValidatorsAppValidator,

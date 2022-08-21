@@ -4,6 +4,7 @@ import { useServiceStatus } from "@ledgerhq/live-common/notifications/ServiceSta
 import Switch from "../../../components/Switch";
 import SettingsRow from "../../../components/SettingsRow";
 import { toggleMockIncident } from "./__mocks__/serviceStatus";
+
 export default function ToggleMockServiceStatusButton({
   title,
 }: {

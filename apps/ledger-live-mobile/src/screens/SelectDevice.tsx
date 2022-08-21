@@ -13,6 +13,7 @@ import SelectDeviceComp from "../components/SelectDevice";
 import NavigationScrollView from "../components/NavigationScrollView";
 import { setLastConnectedDevice, setReadOnlyMode } from "../actions/settings";
 import SkipSelectDevice from "./SkipSelectDevice";
+
 const forceInset = {
   bottom: "always",
 };

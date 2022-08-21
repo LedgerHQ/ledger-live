@@ -13,6 +13,7 @@ import DelegationSelectDevice from "../../../screens/SelectDevice";
 import DelegationConnectDevice from "../../../screens/ConnectDevice";
 import DelegationValidationSuccess from "./ValidationSuccess";
 import DelegationValidationError from "./ValidationError";
+
 const totalSteps = "3";
 
 function DelegationFlow() {

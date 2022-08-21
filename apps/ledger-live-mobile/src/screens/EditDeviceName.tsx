@@ -30,6 +30,7 @@ const mapDispatchToProps = {
 type Props = {
   navigation: any;
   route: { params: RouteParams };
+  // eslint-disable-next-line no-unused-vars
   saveBleDeviceName: (d: string, v: string) => void;
 };
 

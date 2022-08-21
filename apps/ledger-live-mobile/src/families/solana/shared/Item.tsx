@@ -10,7 +10,7 @@ import FirstLetterIcon from "../../../components/FirstLetterIcon";
 
 type Props = {
   validatorWithMeta: SolanaValidatorWithMeta;
-  onSelect: (validatorWithMeta: SolanaValidatorWithMeta) => void;
+  onSelect: (_: SolanaValidatorWithMeta) => void;
   unit: Unit;
 };
 

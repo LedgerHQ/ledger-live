@@ -10,6 +10,7 @@ import Svg, {
   Use,
   Rect,
 } from "react-native-svg";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();

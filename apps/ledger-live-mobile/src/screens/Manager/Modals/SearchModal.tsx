@@ -23,11 +23,14 @@ import Touchable from "../../../components/Touchable";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import Styles from "../../../navigation/styles";
 import AppRow from "../AppsList/AppRow";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import AppIcon from "../AppsList/AppIcon";
+
 type PlaceholderProps = {
   query: string;
   addAccount: () => void;
+  // eslint-disable-next-line no-unused-vars
   onInstall: (name: string) => void;
   installed: InstalledItem[];
   apps: App[];

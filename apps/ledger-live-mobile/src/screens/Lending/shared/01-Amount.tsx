@@ -29,6 +29,7 @@ import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal
 import CurrencyInput from "../../../components/CurrencyInput";
 import TranslatedError from "../../../components/TranslatedError";
 import Switch from "../../../components/Switch";
+
 type Props = {
   navigation: any;
   route: {

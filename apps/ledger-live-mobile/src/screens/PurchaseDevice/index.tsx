@@ -45,8 +45,7 @@ const PurchaseDevice = () => {
       nanoSP: Config.ADJUST_BUY_NANOSP_EVENT_ID,
     };
     const id = data.value?.deviceId
-      ? // @ts-ignore issue in typing
-        ids[data.value.deviceId] || Config.ADJUST_BUY_GENERIC_EVENT_ID
+      ? ids[data.value.deviceId] || Config.ADJUST_BUY_GENERIC_EVENT_ID
       : Config.ADJUST_BUY_GENERIC_EVENT_ID;
 
     if (!id) {

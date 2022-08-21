@@ -70,7 +70,7 @@ class RingChart extends PureComponent<Props> {
       <View>
         <Svg width={size} height={size} viewBox="0 0 76 76">
           <G transform="translate(38, 38)">
-            {(this.paths.items || []).map(({ pathData, color, id }, i) => (
+            {(this.paths.items || []).map(({ pathData, color, id }) => (
               <Path
                 key={id}
                 stroke={colors.background.main}

@@ -45,7 +45,7 @@ const initialState: AppState = {
   backgroundEvents: [],
 };
 
-const handlers: Object = {
+const handlers: any = {
   SYNC_IS_CONNECTED: (
     state: AppState,
     { isConnected }: { isConnected: boolean | null },
@@ -66,6 +66,7 @@ const handlers: Object = {
     backgroundEvents: [...state.backgroundEvents, event],
   }),
   DEQUEUE_BACKGROUND_EVENT: (state: AppState) => {
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     const [_, ...tail] = state.backgroundEvents;
     return {
       ...state,

@@ -1,4 +1,3 @@
-// $flow
 import React from "react";
 import { View, ScrollView, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
@@ -14,6 +13,7 @@ type Props = {
   description: string;
   children?: React.ReactNode;
   ctaLabel: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   onNext: () => {};
   disabled?: boolean;
   header?: React.ReactNode;

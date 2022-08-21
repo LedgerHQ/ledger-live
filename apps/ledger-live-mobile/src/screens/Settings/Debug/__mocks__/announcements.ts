@@ -4,6 +4,7 @@ import type {
   RawAnnouncement,
 } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { getEnv } from "@ledgerhq/live-common/env";
+
 const announcementsPool: RawAnnouncement[] = [
   {
     uuid: "announcement-id-a",

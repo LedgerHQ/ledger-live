@@ -3,6 +3,7 @@ import type {
   ServiceStatusSummary,
   Incident,
 } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
+
 const statuses = {
   page: {
     id: "767c5rcj7z12",

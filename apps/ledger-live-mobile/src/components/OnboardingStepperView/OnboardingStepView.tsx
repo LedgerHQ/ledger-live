@@ -249,6 +249,7 @@ export function InfoStepView({
             ]}
             disabled={isDisabled}
             onPress={
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
               isDisabled ? () => {} : ctaWarningModal ? onOpenInfoModal : onNext
             }
             testID={isDisabled ? undefined : ctaEvent}

@@ -1,7 +1,6 @@
 import React, { memo, useCallback, useEffect, useReducer } from "react";
 import { SectionList } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { Icons, Flex, Text } from "@ledgerhq/native-ui";
 import Touchable from "../../../components/Touchable";
