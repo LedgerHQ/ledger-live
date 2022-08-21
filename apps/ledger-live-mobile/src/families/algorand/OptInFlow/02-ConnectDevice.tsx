@@ -1,54 +1,47 @@
-// @flow
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { StyleSheet, ScrollView } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "../../../../reducers/accounts";
-import { ScreenName } from "../../../../const";
-import { TrackScreen } from "../../../../analytics";
-import SelectDevice from "../../../../components/SelectDevice";
+import { accountScreenSelector } from "../../../reducers/accounts";
+import { ScreenName } from "../../../const";
+import { TrackScreen } from "../../../analytics";
+import SelectDevice from "../../../components/SelectDevice";
 import {
   connectingStep,
   accountApp,
-} from "../../../../components/DeviceJob/steps";
-
-const forceInset = { bottom: "always" };
-
+} from "../../../components/DeviceJob/steps";
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export default function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-
   invariant(
     account && account.algorandResources,
     "account and algorand resources required",
   );
-
   const mainAccount = getMainAccount(account, undefined);
-
   const { transaction, status } = useBridgeTransaction(() => {
     const transaction = route.params.transaction;
-
-    return { account, transaction };
+    return {
+      account,
+      transaction,
+    };
   });
-
   const onSelectDevice = useCallback(
     (meta: any) => {
-      navigation.replace(ScreenName.AlgorandClaimRewardsValidation, {
+      navigation.replace(ScreenName.AlgorandOptInValidation, {
         ...route.params,
         ...meta,
         transaction,
@@ -57,19 +50,21 @@ export default function ConnectDevice({ navigation, route }: Props) {
     },
     [navigation, status, transaction, route.params],
   );
-
   if (!account) return null;
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
     >
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <TrackScreen category="AlgorandClaimRewards" name="ConnectDevice" />
+        <TrackScreen category="AlgorandOptIn" name="ConnectDevice" />
         <SelectDevice
           onSelect={onSelectDevice}
           steps={[connectingStep, accountApp(mainAccount)]}
@@ -78,7 +73,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

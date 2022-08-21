@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -8,7 +7,6 @@ import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../../../const";
 import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
-
 import ExternalLink from "../../../../components/ExternalLink";
 import BulletList, {
   BulletGreenCheck,
@@ -18,17 +16,18 @@ import { urls } from "../../../../config/urls";
 import { TrackScreen } from "../../../../analytics";
 import Illustration from "../../../../images/illustration/Illustration";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type RouteParams = {
-  accountId: string,
+  accountId: string;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export default function ClaimRewardsStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onNext = useCallback(() => {
@@ -38,14 +37,17 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
       params: route.params,
     });
   }, [navigation, route.params]);
-
   const howClaimRewardsWorks = useCallback(() => {
     Linking.openURL(urls.algorandStaking);
   }, []);
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <NavigationScrollView
@@ -76,7 +78,12 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
           ))}
         />
         <View
-          style={[styles.howClaimRewardsWorks, { borderColor: colors.live }]}
+          style={[
+            styles.howClaimRewardsWorks,
+            {
+              borderColor: colors.live,
+            },
+          ]}
         >
           <ExternalLink
             event="AlgorandHowRewardsWork"
@@ -103,7 +110,6 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -133,7 +139,6 @@ const styles = StyleSheet.create({
   howClaimRewardsWorks: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-
     flexDirection: "row",
   },
   warning: {

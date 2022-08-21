@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -24,7 +23,6 @@ function OptInFlow() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-
   return (
     <Stack.Navigator
       screenOptions={{
@@ -126,7 +124,5 @@ function OptInFlow() {
 const options = {
   headerShown: false,
 };
-
 export { OptInFlow as component, options };
-
 const Stack = createStackNavigator();

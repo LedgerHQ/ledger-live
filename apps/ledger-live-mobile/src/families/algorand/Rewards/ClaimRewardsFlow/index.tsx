@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -25,7 +24,6 @@ function ClaimRewardsFlow() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-
   return (
     <Stack.Navigator
       screenOptions={{
@@ -144,7 +142,5 @@ function ClaimRewardsFlow() {
 const options = {
   headerShown: false,
 };
-
 export { ClaimRewardsFlow as component, options };
-
 const Stack = createStackNavigator();

@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -6,7 +5,6 @@ import type { Account, OperationType, Operation } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-
 import { useSelector } from "react-redux";
 import { Icons } from "@ledgerhq/native-ui";
 import Section from "../../screens/OperationDetails/Section";
@@ -15,11 +13,11 @@ import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
 type Props = {
   extra: {
-    rewards?: BigNumber,
-    memo?: string,
-    assetId?: string,
-  },
-  account: Account,
+    rewards?: BigNumber;
+    memo?: string;
+    assetId?: string;
+  };
+  account: Account;
 };
 
 function OperationDetailsExtra({ extra, account }: Props) {
@@ -37,7 +35,6 @@ function OperationDetailsExtra({ extra, account }: Props) {
           discreet,
         })
       : null;
-
   return (
     <>
       {formattedRewards && (
@@ -60,10 +57,10 @@ function OperationDetailsExtra({ extra, account }: Props) {
 }
 
 type OperationIconProps = {
-  type: OperationType,
-  size: number,
-  confirmed: boolean,
-  operation: Operation,
+  type: OperationType;
+  size: number;
+  confirmed: boolean;
+  operation: Operation;
 };
 
 const OperationIcon = ({
@@ -94,20 +91,25 @@ const OperationIcon = ({
 };
 
 const styles = StyleSheet.create({
-  operationIconContainer: { position: "relative" },
+  operationIconContainer: {
+    position: "relative",
+  },
   operationMainIcon: {
     position: "relative",
     zIndex: 1,
     borderRadius: 100,
   },
-  operationSecondaryIcon: { position: "absolute", zIndex: 0, right: 0, top: 0 },
+  operationSecondaryIcon: {
+    position: "absolute",
+    zIndex: 0,
+    right: 0,
+    top: 0,
+  },
 });
-
 const operationStatusIcon = {
   OUT: OperationIcon,
   IN: OperationIcon,
 };
-
 export default {
   OperationDetailsExtra,
   operationStatusIcon,

@@ -1,10 +1,8 @@
-// @flow
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-
 import {
   getAccountUnit,
   getMainAccount,
@@ -12,7 +10,6 @@ import {
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../../const";
@@ -27,35 +24,29 @@ import TranslatedError from "../../../../components/TranslatedError";
 import Illustration from "../../../../images/illustration/Illustration";
 
 type RouteParams = {
-  accountId: string,
+  accountId: string;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const locale = useSelector(localeSelector);
-
   invariant(account, "Account required");
-
   const mainAccount = getMainAccount(account, undefined);
   const bridge = getAccountBridge(mainAccount, undefined);
-
   invariant(
     mainAccount && mainAccount.algorandResources,
     "algorand Account required",
   );
   const { rewards } = mainAccount.algorandResources;
-
   const unit = getAccountUnit(mainAccount);
-
   const { transaction, status } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
-
     return {
       account,
       transaction: bridge.updateTransaction(t, {
@@ -63,27 +54,30 @@ export default function DelegationStarted({ navigation, route }: Props) {
       }),
     };
   });
-
   const formattedRewards = formatCurrencyUnit(unit, rewards, {
     showCode: true,
     disableRounding: true,
     locale,
   });
-
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.AlgorandClaimRewardsSelectDevice, {
       ...route.params,
       transaction,
     });
   }, [navigation, route.params, transaction]);
-
   const warning =
     status.warnings &&
     Object.keys(status.warnings).length > 0 &&
     Object.values(status.warnings)[0];
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
@@ -100,7 +94,9 @@ export default function DelegationStarted({ navigation, route }: Props) {
           <Trans
             secondary
             i18nKey="algorand.claimRewards.flow.steps.starter.title"
-            values={{ amount: formattedRewards }}
+            values={{
+              amount: formattedRewards,
+            }}
           />
         </LText>
         <View style={styles.warning}>
@@ -135,7 +131,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -160,7 +155,10 @@ const styles = StyleSheet.create({
   warningText: {
     textAlign: "center",
   },
-  warningSection: { padding: 16, height: 80 },
+  warningSection: {
+    padding: 16,
+    height: 80,
+  },
   footer: {
     padding: 16,
   },
