@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback } from "react";
 import { StyleSheet, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -8,37 +7,40 @@ import { ScreenName } from "../../const";
 import ValidateError from "../../components/ValidateError";
 import { urls } from "../../config/urls";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  deviceId: string,
-  transaction: any,
-  error: Error,
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  error: Error;
 };
-
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
     navigation.getParent().pop();
   }, [navigation]);
-
   const contactUs = useCallback(() => {
     Linking.openURL(urls.contact);
   }, []);
-
   const retry = useCallback(() => {
     navigation.navigate(ScreenName.ClaimRewardsSelectDevice, route.params);
   }, [navigation, route.params]);
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="ClaimRewards" name="ValidationError" />
@@ -51,7 +53,6 @@ export default function ValidationError({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
