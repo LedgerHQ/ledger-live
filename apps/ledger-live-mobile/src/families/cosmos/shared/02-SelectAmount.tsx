@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
 import {
@@ -12,16 +11,13 @@ import {
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
-
 import type {
   CosmosValidatorItem,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { localeSelector } from "../../../reducers/settings";
@@ -33,60 +29,51 @@ import Check from "../../../icons/Check";
 import KeyboardView from "../../../components/KeyboardView";
 
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  validator: CosmosValidatorItem,
-  validatorSrc?: CosmosValidatorItem,
-  min?: BigNumber,
-  max?: BigNumber,
-  value?: BigNumber,
-  redelegatedBalance?: BigNumber,
-  mode: string,
-  nextScreen: string,
+  accountId: string;
+  transaction: Transaction;
+  validator: CosmosValidatorItem;
+  validatorSrc?: CosmosValidatorItem;
+  min?: BigNumber;
+  max?: BigNumber;
+  value?: BigNumber;
+  redelegatedBalance?: BigNumber;
+  mode: string;
+  nextScreen: string;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
 
 function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const locale = useSelector(localeSelector);
-
   invariant(
     account && account.cosmosResources && route.params.transaction,
     "account and cosmos transaction required",
   );
-
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
-
   const initialValue = useMemo(() => route?.params?.value ?? BigNumber(0), [
     route,
   ]);
-
   const redelegatedBalance = route?.params?.redelegatedBalance ?? BigNumber(0);
   const mode = route?.params?.mode ?? "delegation";
-
   const [value, setValue] = useState(() => initialValue);
-
   const initialMax = useMemo(() => route?.params?.max ?? BigNumber(0), [route]);
-
   const max = useMemo(() => initialMax.minus(value.minus(initialValue)), [
     initialValue,
     initialMax,
     value,
   ]);
-
   const min = useMemo(() => route?.params?.min ?? BigNumber(0), [route]);
-
   const onNext = useCallback(() => {
     const tx = route.params.transaction;
     const validators = tx.validators;
     const validatorAddress = route.params.validator.validatorAddress;
-
     const i = validators.findIndex(
       ({ address }) => address === validatorAddress,
     );
@@ -94,14 +81,16 @@ function DelegationAmount({ navigation, route }: Props) {
     if (i >= 0) {
       validators[i].amount = value;
     } else {
-      validators.push({ address: validatorAddress, amount: value });
+      validators.push({
+        address: validatorAddress,
+        amount: value,
+      });
     }
 
     const filteredValidators =
       tx.mode === "delegate"
         ? validators.filter(v => !v.amount.eq(0))
         : validators;
-
     const transaction = bridge.updateTransaction(
       tx,
       tx.mode === "delegate"
@@ -113,24 +102,18 @@ function DelegationAmount({ navigation, route }: Props) {
             validators: filteredValidators,
           },
     );
-
     navigation.navigate(route.params.nextScreen, {
       ...route.params,
       transaction,
       fromSelectAmount: true,
     });
   }, [navigation, route.params, bridge, value]);
-
   const [ratioButtons] = useState(
     [0.25, 0.5, 0.75, 1].map(ratio => ({
       label: `${ratio * 100}%`,
-      value: initialMax
-        .plus(initialValue)
-        .multipliedBy(ratio)
-        .integerValue(),
+      value: initialMax.plus(initialValue).multipliedBy(ratio).integerValue(),
     })),
   );
-
   const error = useMemo(
     () =>
       max.lt(0) ||
@@ -138,7 +121,6 @@ function DelegationAmount({ navigation, route }: Props) {
       (route.params.transaction.mode === "redelegate" && value.eq(0)),
     [value, max, min, route.params.transaction],
   );
-
   let behaviorParam;
 
   if (Platform.OS === "ios") {
@@ -146,7 +128,14 @@ function DelegationAmount({ navigation, route }: Props) {
   }
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background.main,
+        },
+      ]}
+    >
       <KeyboardView behavior={behaviorParam}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
@@ -168,7 +157,9 @@ function DelegationAmount({ navigation, route }: Props) {
                         ? {
                             backgroundColor: colors.primary.c80,
                           }
-                        : { borderColor: colors.neutral.c60 },
+                        : {
+                            borderColor: colors.neutral.c60,
+                          },
                     ]}
                     onPress={() => {
                       Keyboard.dismiss();
@@ -191,7 +182,9 @@ function DelegationAmount({ navigation, route }: Props) {
             <View
               style={[
                 styles.footer,
-                { backgroundColor: colors.background.main },
+                {
+                  backgroundColor: colors.background.main,
+                },
               ]}
             >
               {error && !value.eq(0) && (
@@ -297,7 +290,6 @@ function DelegationAmount({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-
     padding: 16,
   },
   main: {
@@ -311,7 +303,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "stretch",
   },
-  inputStyle: { textAlign: "center", fontSize: 40, fontWeight: "600" },
+  inputStyle: {
+    textAlign: "center",
+    fontSize: 40,
+    fontWeight: "600",
+  },
   ratioButtonContainer: {
     flexDirection: "row",
     justifyContent: "center",
@@ -324,12 +320,13 @@ const styles = StyleSheet.create({
     width: 60,
     borderWidth: 1,
     borderRadius: 4,
-
     backgroundColor: "rgba(0,0,0,0)",
     paddingVertical: 8,
   },
   ratioPrimaryButton: {},
-  ratioLabel: { textAlign: "center" },
+  ratioLabel: {
+    textAlign: "center",
+  },
   footer: {
     alignSelf: "stretch",
     padding: 8,
@@ -355,5 +352,4 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
 });
-
 export default DelegationAmount;

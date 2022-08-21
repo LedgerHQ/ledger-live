@@ -1,16 +1,13 @@
-// @flow
 import React, { memo, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-
 import type {
   CosmosMappedValidator,
   CosmosMappedDelegation,
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-
 import { useTheme } from "@react-navigation/native";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 import LText from "../../../components/LText";
@@ -19,13 +16,18 @@ import ArrowRight from "../../../icons/ArrowRight";
 import ValidatorImage from "./ValidatorImage";
 
 type Props = {
-  item: CosmosMappedValidator | CosmosMappedDelegation,
-  disabled: boolean,
-  value: ?BigNumber,
-  showVal?: boolean,
-  onSelect: (validator: CosmosValidatorItem, value: ?BigNumber) => void,
-  unit: Unit,
-  delegatedValue?: BigNumber,
+  item: CosmosMappedValidator | CosmosMappedDelegation;
+  disabled: boolean;
+  value: BigNumber | null | undefined;
+  showVal?: boolean;
+  onSelect: (
+    // eslint-disable-next-line no-unused-vars
+    validator: CosmosValidatorItem,
+    // eslint-disable-next-line no-unused-vars
+    value: BigNumber | null | undefined,
+  ) => void;
+  unit: Unit;
+  delegatedValue?: BigNumber;
 };
 
 function Item({
@@ -39,18 +41,14 @@ function Item({
 }: Props) {
   const { colors } = useTheme();
   const { validator } = item;
-
   const { validatorAddress, estimatedYearlyRewardsRate, name } =
     validator || {};
-
   const select = useCallback(() => validator && onSelect(validator, value), [
     onSelect,
     validator,
     value,
   ]);
-
   const isDisabled = (!value || value.gt(0)) && disabled;
-
   return (
     <TouchableOpacity
       onPress={select}
@@ -131,7 +129,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
-
     marginRight: 12,
   },
   nameWrapper: {
@@ -144,9 +141,16 @@ const styles = StyleSheet.create({
   subText: {
     fontSize: 13,
   },
-  valueContainer: { alignItems: "flex-end" },
-  value: { flexDirection: "row", alignItems: "center" },
-  valueLabel: { paddingHorizontal: 8, fontSize: 16 },
+  valueContainer: {
+    alignItems: "flex-end",
+  },
+  value: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  valueLabel: {
+    paddingHorizontal: 8,
+    fontSize: 16,
+  },
 });
-
 export default memo<Props>(Item);

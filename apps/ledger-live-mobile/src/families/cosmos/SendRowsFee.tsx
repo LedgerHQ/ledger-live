@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -17,20 +16,17 @@ import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
 type Props = {
-  account: AccountLike,
-  transaction: Transaction,
+  account: AccountLike;
+  transaction: Transaction;
 };
-
 export default function CosmosFeeRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
-
   const fees = transaction.fees;
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
-
   return (
     <SummaryRow
       onPress={extraInfoFees}
@@ -41,7 +37,11 @@ export default function CosmosFeeRow({ account, transaction }: Props) {
         </View>
       }
     >
-      <View style={{ alignItems: "flex-end" }}>
+      <View
+        style={{
+          alignItems: "flex-end",
+        }}
+      >
         <View style={styles.accountContainer}>
           {fees ? (
             <LText style={styles.valueText}>
@@ -58,7 +58,6 @@ export default function CosmosFeeRow({ account, transaction }: Props) {
     </SummaryRow>
   );
 }
-
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,

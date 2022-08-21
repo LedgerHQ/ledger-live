@@ -1,14 +1,10 @@
-// @flow
-
 import React, { useCallback, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-
 import type { Account } from "@ledgerhq/types-live";
-
 import invariant from "invariant";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
@@ -16,36 +12,35 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
 
 type Props = {
-  account: Account,
+  account: Account;
 };
-
 type InfoName = "available" | "delegated" | "undelegating";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo();
-
   const { spendableBalance, cosmosResources } = account;
   const { delegatedBalance, unbondingBalance } = cosmosResources || {};
-
   const unit = getAccountUnit(account);
-
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
   }, []);
-
   const onPressInfoCreator = useCallback(
     (infoName: InfoName) => () => setInfoName(infoName),
     [],
   );
-
   return (
     (delegatedBalance.gt(0) || unbondingBalance.gt(0)) && (
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={[styles.root, { paddingHorizontal: 16 }]}
+        style={[
+          styles.root,
+          {
+            paddingHorizontal: 16,
+          },
+        ]}
       >
         <InfoModal
           isOpened={!!infoName}
@@ -97,10 +92,8 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 
 export default function AccountBalanceFooter({ account }: Props) {
   if (!account.cosmosResources || account.balance.lte(0)) return null;
-
   return <AccountBalanceSummaryFooter account={account} />;
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -110,12 +103,11 @@ const styles = StyleSheet.create({
   },
 });
 
-function useInfo(): { [key: InfoName]: ModalInfo[] } {
+function useInfo(): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();
   const currency = getCryptoCurrencyById("cosmos");
   const CosmosIcon = getCryptoCurrencyIcon(currency);
   invariant(CosmosIcon, "Icon is expected");
-
   return {
     available: [
       {

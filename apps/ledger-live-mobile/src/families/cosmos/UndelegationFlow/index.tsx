@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -12,7 +11,6 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import UndelegationValidationError from "./03-ValidationError";
 import UndelegationValidationSuccess from "./03-ValidationSuccess";
-
 const totalSteps = "3";
 
 function UndelegationFlow() {
@@ -98,7 +96,5 @@ function UndelegationFlow() {
 const options = {
   headerShown: false,
 };
-
 export { UndelegationFlow as component, options };
-
 const Stack = createStackNavigator();

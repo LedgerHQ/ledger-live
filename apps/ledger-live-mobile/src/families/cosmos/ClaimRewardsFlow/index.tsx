@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -11,12 +10,11 @@ import {
 import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
 import ClaimRewardsSelectValidator from "./01-SelectValidator";
-import ClaimRewardsMethod from "./02-SelectMethod.js";
+import ClaimRewardsMethod from "./02-SelectMethod";
 import ClaimRewardsSelectDevice from "../../../screens/SelectDevice";
 import ClaimRewardsConnectDevice from "../../../screens/ConnectDevice";
 import ClaimRewardsValidationError from "./04-ValidationError";
 import ClaimRewardsValidationSuccess from "./04-ValidationSuccess";
-
 const totalSteps = "3";
 
 function ClaimRewardsFlow() {
@@ -122,7 +120,5 @@ function ClaimRewardsFlow() {
 const options = {
   headerShown: false,
 };
-
 export { ClaimRewardsFlow as component, options };
-
 const Stack = createStackNavigator();

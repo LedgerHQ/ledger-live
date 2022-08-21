@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -20,17 +19,16 @@ import {
 import Info from "../../icons/Info";
 
 type FieldProps = {
-  account: Account,
-  transaction: Transaction,
+  account: Account;
+  transaction: Transaction;
   field: {
-    type: string,
-    label: string,
-  },
+    type: string;
+    label: string;
+  };
 };
 
 function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
   const { t } = useTranslation();
-
   const unit = getAccountUnit(account);
   const { validators } = useCosmosFamilyPreloadData("cosmos");
   const mappedDelegations = mapDelegationInfo(
@@ -38,9 +36,7 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
     validators,
     unit,
   );
-
   const { validator, formattedAmount, address } = mappedDelegations[0];
-
   return (
     <>
       <TextValueField
@@ -67,7 +63,6 @@ function CosmosValidatorNameField({ field, transaction: tx }: FieldProps) {
   const validator = validators.find(
     v => v.validatorAddress === tx.validators[0].address,
   );
-
   return (
     <TextValueField
       label={field.label}
@@ -81,13 +76,14 @@ function CosmosSourceValidatorNameField({
   transaction: { sourceValidator },
 }: FieldProps) {
   const { validators } = useCosmosFamilyPreloadData("cosmos");
+
   if (!sourceValidator) {
     return null;
   }
+
   const validator = validators.find(
     v => v.validatorAddress === sourceValidator,
   );
-
   return (
     <TextValueField
       label={field.label}
@@ -99,7 +95,6 @@ function CosmosSourceValidatorNameField({
 function Warning({ transaction }: FieldProps) {
   invariant(transaction.family === "cosmos", "cosmos transaction");
   const { colors } = useTheme();
-
   const { t } = useTranslation();
 
   switch (transaction.mode) {
@@ -119,6 +114,7 @@ function Warning({ transaction }: FieldProps) {
           </LText>
         </DataRow>
       );
+
     default:
       return null;
   }
@@ -129,12 +125,10 @@ const fieldComponents = {
   "cosmos.validatorName": CosmosValidatorNameField,
   "cosmos.sourceValidatorName": CosmosSourceValidatorNameField,
 };
-
 export default {
   fieldComponents,
   warning: Warning,
 };
-
 const styles = StyleSheet.create({
   text: {
     textAlign: "right",
@@ -144,6 +138,10 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginLeft: 8,
   },
-  lineLabel: { justifyContent: "flex-end" },
-  validatorLabel: { fontSize: 12 },
+  lineLabel: {
+    justifyContent: "flex-end",
+  },
+  validatorLabel: {
+    fontSize: 12,
+  },
 });

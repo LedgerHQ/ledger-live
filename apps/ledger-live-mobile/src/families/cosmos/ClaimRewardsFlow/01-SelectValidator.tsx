@@ -1,78 +1,70 @@
-// @flow
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
-
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
-
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getMainAccount,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-
 import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
-
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import Item from "../shared/Item";
 
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
 
 function ClaimRewardsSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-
   invariant(account, "account required");
-
   const mainAccount = getMainAccount(account, undefined);
   const bridge = getAccountBridge(account, undefined);
-
   const { cosmosResources } = mainAccount;
-
   invariant(cosmosResources, "cosmosResources required");
-
   const { transaction } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
-
     return {
       account,
       transaction: bridge.updateTransaction(t, {
         mode: "claimReward",
         validators: [],
+
         /** @TODO remove this once the bridge handles it */
         recipient: mainAccount.freshAddress,
       }),
     };
   });
-
   invariant(
     transaction && transaction.validators,
     "transaction and validators required",
   );
-
   const unit = getAccountUnit(account);
-
   const delegations = useCosmosFamilyMappedDelegations(
     mainAccount,
     "claimReward",
   );
-
   const onSelect = useCallback(
     (validator, value) => {
       const tx = bridge.updateTransaction(transaction, {
-        validators: [{ address: validator.validatorAddress, amount: value }],
+        validators: [
+          {
+            address: validator.validatorAddress,
+            amount: value,
+          },
+        ],
       });
       navigation.navigate(ScreenName.CosmosClaimRewardsMethod, {
         ...route.params,
@@ -83,7 +75,6 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
     },
     [navigation, route.params, transaction, bridge],
   );
-
   const renderItem = useCallback(
     ({ item }) => (
       <Item
@@ -96,9 +87,15 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
     ),
     [unit, onSelect],
   );
-
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <View style={styles.main}>
         <FlatList
           style={styles.list}
@@ -120,7 +117,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  list: { width: "100%" },
+  list: {
+    width: "100%",
+  },
 });
-
 export default ClaimRewardsSelectValidator;
