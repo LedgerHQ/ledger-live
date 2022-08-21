@@ -47,22 +47,17 @@ export default function PolkadotSimpleOperationStarted({
   const bridge = getAccountBridge(account, parentAccount);
   const { polkadotResources } = mainAccount;
   invariant(polkadotResources, "polkadotResources required");
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    const transaction = bridge.updateTransaction(t, {
-      mode,
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const t = bridge.createTransaction(mainAccount);
+      const transaction = bridge.updateTransaction(t, {
+        mode,
+      });
+      return {
+        account: mainAccount,
+        transaction,
+      };
     });
-    return {
-      account: mainAccount,
-      transaction,
-    };
-  });
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.PolkadotSimpleOperationSelectDevice, {
       accountId: account.id,

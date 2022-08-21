@@ -23,13 +23,8 @@ type RowProps = {
   item: ClosedLoanHistory;
 };
 export default function ClosedLoansRow({ item }: RowProps) {
-  const {
-    account,
-    parentAccount,
-    endDate,
-    interestsEarned,
-    amountSupplied,
-  } = item;
+  const { account, parentAccount, endDate, interestsEarned, amountSupplied } =
+    item;
   const { token } = account;
   const { colors } = useTheme();
   const name = getAccountName(parentAccount || account);

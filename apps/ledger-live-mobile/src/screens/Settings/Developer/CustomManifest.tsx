@@ -26,12 +26,8 @@ export default function CustomManifest({
   navigation: NavigationProp;
 }) {
   const { colors } = useTheme();
-  const {
-    manifest,
-    disabled,
-    addLocalManifest,
-    onChange,
-  } = useCustomManifest();
+  const { manifest, disabled, addLocalManifest, onChange } =
+    useCustomManifest();
   const onOpen = useCallback(() => {
     const json = JSON.parse(manifest);
     Array.isArray(json)

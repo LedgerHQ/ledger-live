@@ -128,30 +128,37 @@ function App({ importDataString }: AppProps) {
     (a, b) => a.settings !== b.settings,
     [],
   );
-  const getAccountsChanged = useCallback((oldState: State, newState: State):
-    | {
-        changed: string[];
+  const getAccountsChanged = useCallback(
+    (
+      oldState: State,
+      newState: State,
+    ):
+      | {
+          changed: string[];
+        }
+      | null
+      | undefined => {
+      if (oldState.accounts !== newState.accounts) {
+        return {
+          changed: newState.accounts.active
+            .filter(a => {
+              const old = oldState.accounts.active.find(b => a.id === b.id);
+              return !old || old !== a;
+            })
+            .map(a => a.id),
+        };
       }
-    | null
-    | undefined => {
-    if (oldState.accounts !== newState.accounts) {
-      return {
-        changed: newState.accounts.active
-          .filter(a => {
-            const old = oldState.accounts.active.find(b => a.id === b.id);
-            return !old || old !== a;
-          })
-          .map(a => a.id),
-      };
-    }
 
-    return null;
-  }, []);
+      return null;
+    },
+    [],
+  );
   const rawState = useCountervaluesExport();
   const trackingPairs = useTrackingPairs();
-  const pairIds = useMemo(() => trackingPairs.map(p => pairId(p)), [
-    trackingPairs,
-  ]);
+  const pairIds = useMemo(
+    () => trackingPairs.map(p => pairId(p)),
+    [trackingPairs],
+  );
   useDBSaveEffect({
     save: saveCountervalues,
     throttle: 2000,

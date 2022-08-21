@@ -13,7 +13,7 @@ import Alert from "../../components/Alert";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
 type Props = {
-  account: AccountLike,
+  account: AccountLike;
 };
 
 const LendingBanners = ({ account }: Props) => {
@@ -99,7 +99,7 @@ const LendingBanners = ({ account }: Props) => {
   }
 
   return [lendingInfoBanner, lendingWarningBanner];
-}
+};
 
 const styles = StyleSheet.create({
   bannerBox: {

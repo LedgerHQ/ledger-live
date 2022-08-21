@@ -105,10 +105,10 @@ export default function AmountScreen({
     [blur, onChange],
   );
   const maxChoiceButtons = useSupplyMaxChoiceButtons(max);
-  const amountButtons = useMemo(() => !onChangeSendMax && maxChoiceButtons, [
-    maxChoiceButtons,
-    onChangeSendMax,
-  ]);
+  const amountButtons = useMemo(
+    () => !onChangeSendMax && maxChoiceButtons,
+    [maxChoiceButtons, onChangeSendMax],
+  );
   const { amount, useAllAmount } = transaction;
   const unit = getAccountUnit(account);
   const error = amount.eq(0) || bridgePending ? null : status.errors.amount;

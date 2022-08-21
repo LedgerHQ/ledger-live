@@ -60,11 +60,8 @@ function MarketCurrencySelect({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { colors } = useTheme();
-  const {
-    counterCurrency,
-    supportedCounterCurrencies,
-    setCounterCurrency,
-  } = useMarketData();
+  const { counterCurrency, supportedCounterCurrencies, setCounterCurrency } =
+    useMarketData();
   const [search, setSearch] = useState("");
   const ref = useRef();
 
@@ -160,9 +157,10 @@ function MarketCurrencySelect({ navigation }: { navigation: any }) {
         items={items}
         render={renderList}
         // This props is badly type
-        renderEmptySearch={(() => () => (
-          <RenderEmptyList theme={colors.palette.type} search={search} />
-        ))()}
+        renderEmptySearch={(
+          () => () =>
+            <RenderEmptyList theme={colors.palette.type} search={search} />
+        )()}
       />
     </Flex>
   );

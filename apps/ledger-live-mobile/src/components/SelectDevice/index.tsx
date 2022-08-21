@@ -63,7 +63,7 @@ export default function SelectDevice({
     deviceInfo => {
       const { modelId, wired } = deviceInfo;
 
-      dispatch(setLastConnectedDevice(deviceInfo));  
+      dispatch(setLastConnectedDevice(deviceInfo));
       if (wired) {
         track("Device selection", {
           modelId,

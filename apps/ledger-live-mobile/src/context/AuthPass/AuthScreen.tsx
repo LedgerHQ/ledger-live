@@ -200,12 +200,8 @@ class AuthScreen extends PureComponent<Props, State> {
 
   render() {
     const { t, privacy, biometricsError, lock, colors } = this.props;
-    const {
-      passwordError,
-      isModalOpened,
-      secureTextEntry,
-      passwordFocused,
-    } = this.state;
+    const { passwordError, isModalOpened, secureTextEntry, passwordFocused } =
+      this.state;
     return (
       <KeyboardBackgroundDismiss>
         <SafeAreaView

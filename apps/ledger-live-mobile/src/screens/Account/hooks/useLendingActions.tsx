@@ -9,7 +9,7 @@ import Supply from "../../../icons/Supply";
 import Withdraw from "../../../icons/Withdraw";
 
 type Props = {
-  account: AccountLike,
+  account: AccountLike;
 };
 
 export default function AccountActions({ account }: Props) {

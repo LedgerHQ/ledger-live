@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
 import { StyleSheet, View, SectionList, FlatList } from "react-native";
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import Animated, { Value, event } from "react-native-reanimated";
@@ -95,15 +90,11 @@ const AccountScreenInner = ({
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
-  const {
-    countervalueAvailable,
-    countervalueChange,
-    cryptoChange,
-    history,
-  } = useBalanceHistoryWithCountervalue({ account, range });
+  const { countervalueAvailable, countervalueChange, cryptoChange, history } =
+    useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  
+
   const [opCount, setOpCount] = useState(100);
   const ref = useRef();
   const scrollY = useRef(new Value(0)).current;

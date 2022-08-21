@@ -29,9 +29,10 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
     rates: { value: rates = [] } = {},
   } = swap;
   const filteredRates = rates.filter(r => r.provider === provider);
-  const fromUnit = useMemo(() => fromAccount && getAccountUnit(fromAccount), [
-    fromAccount,
-  ]);
+  const fromUnit = useMemo(
+    () => fromAccount && getAccountUnit(fromAccount),
+    [fromAccount],
+  );
   const toUnit = toCurrency?.units[0];
   const onSelectRate = useCallback(
     newRate => {

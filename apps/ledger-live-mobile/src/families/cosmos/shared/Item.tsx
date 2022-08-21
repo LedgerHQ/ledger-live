@@ -43,11 +43,10 @@ function Item({
   const { validator } = item;
   const { validatorAddress, estimatedYearlyRewardsRate, name } =
     validator || {};
-  const select = useCallback(() => validator && onSelect(validator, value), [
-    onSelect,
-    validator,
-    value,
-  ]);
+  const select = useCallback(
+    () => validator && onSelect(validator, value),
+    [onSelect, validator, value],
+  );
   const isDisabled = (!value || value.gt(0)) && disabled;
   return (
     <TouchableOpacity

@@ -43,17 +43,12 @@ export default function EnableAdvanced({ navigation, route }: Props) {
     "token account required",
   );
   const bridge = getAccountBridge(account, parentAccount);
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => ({
-    transaction: route.params.transaction,
-    account,
-    parentAccount,
-  }));
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => ({
+      transaction: route.params.transaction,
+      account,
+      parentAccount,
+    }));
   invariant(transaction, "transaction required");
   const onContinue = useCallback(() => {
     navigation.replace(ScreenName.LendingEnableAmount, {

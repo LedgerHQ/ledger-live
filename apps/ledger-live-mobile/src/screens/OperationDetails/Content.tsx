@@ -128,10 +128,8 @@ export default function Content({
     ["NFT_IN", "NFT_OUT"].includes(type) &&
     operation.contract &&
     operation.tokenId;
-  const {
-    status: collectionStatus,
-    metadata: collectionMetadata,
-  } = useNftCollectionMetadata(operation.contract, currency.id);
+  const { status: collectionStatus, metadata: collectionMetadata } =
+    useNftCollectionMetadata(operation.contract, currency.id);
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     operation.contract,
     operation.tokenId,

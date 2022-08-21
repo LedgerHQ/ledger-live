@@ -32,7 +32,10 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily("cosmos", searchQuery);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    "cosmos",
+    searchQuery,
+  );
 
   const onItemPress = useCallback(
     (validator: CosmosValidatorItem) => {

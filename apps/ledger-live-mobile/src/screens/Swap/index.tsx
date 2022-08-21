@@ -158,9 +158,10 @@ function SwapForm({
   const resetError = useCallback(() => {
     setError();
   }, []);
-  const fromUnit = useMemo(() => fromAccount && getAccountUnit(fromAccount), [
-    fromAccount,
-  ]);
+  const fromUnit = useMemo(
+    () => fromAccount && getAccountUnit(fromAccount),
+    [fromAccount],
+  );
   const onContinue = useCallback(() => {
     setConfirmed(true);
   }, []);

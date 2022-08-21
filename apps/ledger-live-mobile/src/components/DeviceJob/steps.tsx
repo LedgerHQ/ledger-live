@@ -58,9 +58,7 @@ export const connectingStep: Step = {
       />
     );
   },
-  run: (
-    meta,
-  ) =>
+  run: meta =>
     withDevice(meta.deviceId)(() => from([meta])).pipe(
       rejectionOp(() => new CantOpenDevice()),
     ),

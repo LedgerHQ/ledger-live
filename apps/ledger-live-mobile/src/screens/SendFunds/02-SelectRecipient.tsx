@@ -53,16 +53,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => ({
-    account,
-    parentAccount,
-  }));
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => ({
+      account,
+      parentAccount,
+    }));
   const shouldSkipAmount =
     transaction.family === "ethereum" && transaction.mode === "erc721.transfer";
   const isNftSend = isNftTransaction(transaction);

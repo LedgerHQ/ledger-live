@@ -122,7 +122,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
       onContentSizeChange={onScrollViewContentChange}
       showsHorizontalScrollIndicator={false}
       snapToInterval={WIDTH + 16}
-      decelerationRate={'fast'}
+      decelerationRate={"fast"}
     >
       {slides.map(({ id, Component }, index) => (
         <CarouselCardContainer

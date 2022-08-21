@@ -123,23 +123,18 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     bandwidthExpiredAt,
     energyExpiredAt,
   } = useMemo(() => getUnfreezeData(account), [account]);
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "unfreeze",
-      resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const t = bridge.createTransaction(account);
+      const transaction = bridge.updateTransaction(t, {
+        mode: "unfreeze",
+        resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
+      });
+      return {
+        account,
+        transaction,
+      };
     });
-    return {
-      account,
-      transaction,
-    };
-  });
   const resource =
     transaction && transaction.resource ? transaction.resource : "";
   const onContinue = useCallback(() => {

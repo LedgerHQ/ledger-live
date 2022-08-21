@@ -195,22 +195,17 @@ export default function SelectValidator({ navigation, route }: Props) {
   }
 
   invariant(account, "account is undefined");
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const bridge = getAccountBridge(account, parentAccount);
-    return {
-      account,
-      parentAccount,
-      transaction: bridge.updateTransaction(route.params?.transaction, {
-        recipient: "",
-      }),
-    };
-  });
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const bridge = getAccountBridge(account, parentAccount);
+      return {
+        account,
+        parentAccount,
+        transaction: bridge.updateTransaction(route.params?.transaction, {
+          recipient: "",
+        }),
+      };
+    });
   invariant(transaction, "transaction is undefined");
   let error = bridgeError || status.errors.recipient;
 

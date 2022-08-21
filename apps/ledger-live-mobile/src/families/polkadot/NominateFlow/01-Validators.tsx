@@ -75,47 +75,44 @@ function NominateSelectValidator({ navigation, route }: Props) {
   >();
   const { polkadotResources } = mainAccount;
   invariant(polkadotResources, "polkadotResources required");
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const tx = route.params.transaction;
 
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
-      const initialValidators = (
-        mainAccount.polkadotResources?.nominations || []
-      )
-        .filter(nomination => !!nomination.status)
-        .map(nomination => nomination.address);
+      if (!tx) {
+        const t = bridge.createTransaction(mainAccount);
+        const initialValidators = (
+          mainAccount.polkadotResources?.nominations || []
+        )
+          .filter(nomination => !!nomination.status)
+          .map(nomination => nomination.address);
+        return {
+          account,
+          transaction: bridge.updateTransaction(t, {
+            mode: "nominate",
+            validators: initialValidators,
+          }),
+        };
+      }
+
       return {
         account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "nominate",
-          validators: initialValidators,
-        }),
+        transaction: tx,
       };
-    }
-
-    return {
-      account,
-      transaction: tx,
-    };
-  });
+    });
   invariant(
     transaction && transaction.validators,
     "transaction and validators required",
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const validators = useMemo(() => transaction.validators || [], [
-    transaction.validators,
-  ]);
-  const nominations = useMemo(() => polkadotResources.nominations || [], [
-    polkadotResources.nominations,
-  ]);
+  const validators = useMemo(
+    () => transaction.validators || [],
+    [transaction.validators],
+  );
+  const nominations = useMemo(
+    () => polkadotResources.nominations || [],
+    [polkadotResources.nominations],
+  );
   // Addresses that are no longer validators
   const nonValidators = useMemo(
     () =>

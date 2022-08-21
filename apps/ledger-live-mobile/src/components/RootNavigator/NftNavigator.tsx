@@ -9,9 +9,10 @@ import { CloseButton, BackButton } from "../../screens/OperationDetails";
 
 const NftNavigator = () => {
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors, true), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig} detachInactiveScreens>

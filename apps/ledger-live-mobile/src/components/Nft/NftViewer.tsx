@@ -114,13 +114,12 @@ const NftViewer = ({ route }: Props) => {
     nft?.tokenId,
     nft?.currencyId,
   );
-  const currency = useMemo(() => getCryptoCurrencyById(nft.currencyId), [
-    nft.currencyId,
-  ]);
-  const {
-    status: collectionStatus,
-    metadata: collectionMetadata,
-  } = useNftCollectionMetadata(nft?.contract, nft?.currencyId);
+  const currency = useMemo(
+    () => getCryptoCurrencyById(nft.currencyId),
+    [nft.currencyId],
+  );
+  const { status: collectionStatus, metadata: collectionMetadata } =
+    useNftCollectionMetadata(nft?.contract, nft?.currencyId);
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -243,9 +242,10 @@ const NftViewer = ({ route }: Props) => {
     return null;
   }, [isLoading, nftMetadata]);
 
-  const mediaType = useMemo(() => getMetadataMediaType(nftMetadata, "big"), [
-    nftMetadata,
-  ]);
+  const mediaType = useMemo(
+    () => getMetadataMediaType(nftMetadata, "big"),
+    [nftMetadata],
+  );
 
   const NftComponent = useCallback(
     () => (

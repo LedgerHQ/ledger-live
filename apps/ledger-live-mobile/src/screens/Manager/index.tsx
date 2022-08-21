@@ -154,7 +154,10 @@ class ChooseDevice extends Component<
   };
 
   componentDidMount() {
-    this.setState(state => ({ ...state, device: this.props.route.params?.device }));
+    this.setState(state => ({
+      ...state,
+      device: this.props.route.params?.device,
+    }));
   }
 
   render() {

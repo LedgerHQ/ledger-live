@@ -30,16 +30,12 @@ export default function AmountInput({
 }: Props) {
   const { t } = useTranslation();
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const {
-    cryptoUnit,
-    fiatAmount,
-    fiatUnit,
-    calculateCryptoAmount,
-  } = useSendAmount({
-    account,
-    fiatCurrency,
-    cryptoAmount,
-  });
+  const { cryptoUnit, fiatAmount, fiatUnit, calculateCryptoAmount } =
+    useSendAmount({
+      account,
+      fiatCurrency,
+      cryptoAmount,
+    });
   const [active, setActive] = useState<"crypto" | "fiat" | "none">("none");
   const onChangeFiatAmount = useCallback(
     (fiatAmount: BigNumber) => {

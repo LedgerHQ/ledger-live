@@ -43,14 +43,8 @@ type Props = {
 
 const OperationDetails = ({ route }: Props) => {
   const { swapOperation } = route.params;
-  const {
-    swapId,
-    provider,
-    toAccount,
-    fromAmount,
-    toAmount,
-    operation,
-  } = swapOperation;
+  const { swapId, provider, toAccount, fromAmount, toAmount, operation } =
+    swapOperation;
   const { colors } = useTheme();
   const accounts = useSelector(flattenAccountsSelector);
   const fromAccount = accounts.find(a => a.id === swapOperation.fromAccount.id);

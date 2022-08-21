@@ -7,9 +7,9 @@ import type { DistributionItem } from "./DistributionCard";
 import { ensureContrast, withTheme } from "../../colors";
 
 type Props = {
-  data: Array<DistributionItem>,
-  size: number,
-  colors: any,
+  data: Array<DistributionItem>;
+  size: number;
+  colors: any;
 };
 
 class RingChart extends PureComponent<Props> {

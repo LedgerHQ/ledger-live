@@ -16,9 +16,8 @@ import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
 
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(
-  TouchableHighlight,
-);
+const AnimatedTouchableOpacity =
+  Animated.createAnimatedComponent(TouchableHighlight);
 
 type Props = {
   toast: ToastData;

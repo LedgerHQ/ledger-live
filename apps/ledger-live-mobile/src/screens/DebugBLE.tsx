@@ -164,9 +164,11 @@ class DebugBLE extends Component<
     const msg = Buffer.from(useBLEframe ? bleframe : apdu, "hex");
 
     try {
-      await withDevice(deviceId)((
-        t, // $FlowFixMe
-      ) => from(useBLEframe ? t.write(msg) : t.exchange(msg))).toPromise();
+      await withDevice(deviceId)(
+        (
+          t, // $FlowFixMe
+        ) => from(useBLEframe ? t.write(msg) : t.exchange(msg)),
+      ).toPromise();
     } catch (error) {
       this.addError(error, "send");
     }
@@ -175,9 +177,11 @@ class DebugBLE extends Component<
     const deviceId = this.props.route.params?.deviceId;
 
     try {
-      const mtu = await withDevice(deviceId)((
-        t, // $FlowFixMe bro i know
-      ) => from(t.inferMTU())).toPromise();
+      const mtu = await withDevice(deviceId)(
+        (
+          t, // $FlowFixMe bro i know
+        ) => from(t.inferMTU()),
+      ).toPromise();
       ToastAndroid.show("mtu set to " + mtu, ToastAndroid.SHORT);
     } catch (error) {
       this.addError(error, "inferMTU");
@@ -194,9 +198,11 @@ class DebugBLE extends Component<
     this.currentConnectionPriority = nextPriority;
 
     try {
-      await withDevice(deviceId)((
-        t, // $FlowFixMe bro i know
-      ) => from(t.requestConnectionPriority(nextPriority))).toPromise();
+      await withDevice(deviceId)(
+        (
+          t, // $FlowFixMe bro i know
+        ) => from(t.requestConnectionPriority(nextPriority)),
+      ).toPromise();
       ToastAndroid.show(
         "connection priority set to " + nextPriority,
         ToastAndroid.SHORT,

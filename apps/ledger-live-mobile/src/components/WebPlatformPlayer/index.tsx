@@ -314,9 +314,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         }
 
         const bridge = getAccountBridge(account, parentAccount);
-        const { liveTx } = getPlatformTransactionSignFlowInfos(
-          platformTransaction,
-        );
+        const { liveTx } =
+          getPlatformTransactionSignFlowInfos(platformTransaction);
         const t = bridge.createTransaction(account);
         const { recipient, ...txData } = liveTx;
         const t2 = bridge.updateTransaction(t, {
@@ -488,9 +487,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       transaction.family = mainFromAccount.currency.family;
       const platformTransaction = deserializePlatformTransaction(transaction);
       platformTransaction.feesStrategy = feesStrategy;
-      let processedTransaction = accountBridge.createTransaction(
-        mainFromAccount,
-      );
+      let processedTransaction =
+        accountBridge.createTransaction(mainFromAccount);
       processedTransaction = accountBridge.updateTransaction(
         processedTransaction,
         platformTransaction,

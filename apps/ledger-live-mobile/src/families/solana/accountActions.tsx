@@ -5,9 +5,14 @@ import { Trans } from "react-i18next";
 import { NavigatorName, ScreenName } from "../../const";
 import { SolanaAccount } from "@ledgerhq/live-common/lib/families/solana/types";
 
-const getActions = ({ account, parentAccount }: { account: SolanaAccount,  parentAccount: Account }) => {
+const getActions = ({
+  account,
+  parentAccount,
+}: {
+  account: SolanaAccount;
+  parentAccount: Account;
+}) => {
   const delegationDisabled = account.solanaResources?.stakes.length > 1;
-
 
   return [
     {
@@ -20,8 +25,8 @@ const getActions = ({ account, parentAccount }: { account: SolanaAccount,  paren
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,
             delegationAction: {
-              kind: "new"
-            }
+              kind: "new",
+            },
           },
         },
       ],

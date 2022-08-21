@@ -56,11 +56,10 @@ const Item = ({
   onSelect: (account: AccountLike, parentAccount: Account) => void;
 }) => {
   const { account, parentAccount, match } = result;
-  const onPress = useCallback(() => onSelect(account, parentAccount), [
-    account,
-    onSelect,
-    parentAccount,
-  ]);
+  const onPress = useCallback(
+    () => onSelect(account, parentAccount),
+    [account, onSelect, parentAccount],
+  );
   return (
     <View>
       <AccountCard

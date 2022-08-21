@@ -57,18 +57,18 @@ function DelegationAmount({ navigation, route }: Props) {
   );
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
-  const initialValue = useMemo(() => route?.params?.value ?? BigNumber(0), [
-    route,
-  ]);
+  const initialValue = useMemo(
+    () => route?.params?.value ?? BigNumber(0),
+    [route],
+  );
   const redelegatedBalance = route?.params?.redelegatedBalance ?? BigNumber(0);
   const mode = route?.params?.mode ?? "delegation";
   const [value, setValue] = useState(() => initialValue);
   const initialMax = useMemo(() => route?.params?.max ?? BigNumber(0), [route]);
-  const max = useMemo(() => initialMax.minus(value.minus(initialValue)), [
-    initialValue,
-    initialMax,
-    value,
-  ]);
+  const max = useMemo(
+    () => initialMax.minus(value.minus(initialValue)),
+    [initialValue, initialMax, value],
+  );
   const min = useMemo(() => route?.params?.min ?? BigNumber(0), [route]);
   const onNext = useCallback(() => {
     const tx = route.params.transaction;

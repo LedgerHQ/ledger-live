@@ -91,9 +91,10 @@ export function TransferTabIcon() {
 
   const openAnimValue = useSharedValue(initialIsModalOpened ? 1 : 0);
 
-  const getIsModalOpened = useCallback(() => openAnimValue.value === 1, [
-    openAnimValue,
-  ]);
+  const getIsModalOpened = useCallback(
+    () => openAnimValue.value === 1,
+    [openAnimValue],
+  );
 
   const backdropProps = useAnimatedProps(() => ({
     pointerEvents: openAnimValue.value === 1 ? "auto" : "box-none",

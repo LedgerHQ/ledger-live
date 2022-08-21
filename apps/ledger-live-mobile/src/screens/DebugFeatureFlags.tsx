@@ -12,7 +12,12 @@ import styled from "styled-components/native";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Alert from "../components/Alert";
 
-const Divider = styled(Box).attrs({width: "100%", my: 4, height: 1, bg: "neutral.c50"})``;
+const Divider = styled(Box).attrs({
+  width: "100%",
+  my: 4,
+  height: 1,
+  bg: "neutral.c50",
+})``;
 
 const TagEnabled = styled(Tag).attrs({
   bg: "success.c100",
@@ -59,12 +64,7 @@ const EditSection = ({
         <Button onPress={onRestore}>
           {t("settings.debug.featureFlagsRestore")}
         </Button>
-        <Button
-          disabled={disabled}
-          type="main"
-          onPress={onOverride}
-          ml="3"
-        >
+        <Button disabled={disabled} type="main" onPress={onOverride} ml="3">
           {t("settings.debug.featureFlagsOverride")}
         </Button>
       </Flex>
@@ -76,11 +76,15 @@ export default function DebugPlayground() {
   const featureFlagsProvider = useFeatureFlags();
   const [error, setError] = useState<unknown | null>(null);
   const [name, setName] = useState<FeatureId | null>(null);
-  const [prettyPrintedName, setPrettyPrintedName] = useState<FeatureId | null>(null);
-  const [inputValues, setInputValues] = useState<{[key in FeatureId]?: string | undefined}>({});
+  const [prettyPrintedName, setPrettyPrintedName] = useState<FeatureId | null>(
+    null,
+  );
+  const [inputValues, setInputValues] = useState<{
+    [key in FeatureId]?: string | undefined;
+  }>({});
 
   const featureFlags = useMemo(() => {
-    const features: {[key in FeatureId]: Feature} = {};
+    const features: { [key in FeatureId]: Feature } = {};
     Object.keys(defaultFeatures).forEach((key: FeatureId) => {
       const value = featureFlagsProvider.getFeature(key);
       if (value) {
@@ -130,76 +134,93 @@ export default function DebugPlayground() {
   return (
     <NavigationScrollView>
       <View style={styles.root}>
-        <Text mb={6}>
-          {t("settings.debug.featureFlagsTitle")}
-        </Text>
+        <Text mb={6}>{t("settings.debug.featureFlagsTitle")}</Text>
         <Flex flexDirection="row">
           <Text>Legend: </Text>
           <TagEnabled mx={2}>enabled flag</TagEnabled>
-          <TagDisabled mx={2} >disabled flag</TagDisabled>
+          <TagDisabled mx={2}>disabled flag</TagDisabled>
         </Flex>
         <Divider />
-        {Object.entries(featureFlags).sort((a, b) => a[0].localeCompare(b[0])).map(([flagName, value], index, arr) => (
-          <View key={flagName}>
-            <Flex flexDirection="column" py={1}>
-              <Flex flexDirection="row" alignItems="center" my={3} flexWrap="wrap">
-                {value?.enabled ? <TagEnabled>{flagName}</TagEnabled> : <TagDisabled>{flagName}</TagDisabled>}
-                {value?.overridesRemote && <Tag my={1} mr={2}>overridden locally</Tag>}
-                {value?.enabledOverriddenForCurrentLanguage && <Tag my={1} mr={2}>disabled for current language</Tag>}
+        {Object.entries(featureFlags)
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([flagName, value], index, arr) => (
+            <View key={flagName}>
+              <Flex flexDirection="column" py={1}>
+                <Flex
+                  flexDirection="row"
+                  alignItems="center"
+                  my={3}
+                  flexWrap="wrap"
+                >
+                  {value?.enabled ? (
+                    <TagEnabled>{flagName}</TagEnabled>
+                  ) : (
+                    <TagDisabled>{flagName}</TagDisabled>
+                  )}
+                  {value?.overridesRemote && (
+                    <Tag my={1} mr={2}>
+                      overridden locally
+                    </Tag>
+                  )}
+                  {value?.enabledOverriddenForCurrentLanguage && (
+                    <Tag my={1} mr={2}>
+                      disabled for current language
+                    </Tag>
+                  )}
+                </Flex>
+                {name !== flagName ? (
+                  <Button
+                    type="main"
+                    onPress={() => {
+                      setName(flagName);
+                    }}
+                  >
+                    {t("settings.debug.featureFlagsEdit")}
+                  </Button>
+                ) : null}
               </Flex>
-              {name !== flagName ? (
+              {name === flagName ? (
+                <EditSection
+                  value={
+                    inputValues[flagName] ||
+                    JSON.stringify(featureFlags[flagName])
+                  }
+                  disabled={!inputValues[flagName]}
+                  error={error as Error}
+                  onChange={handleInputChange}
+                  onOverride={handleOverrideFeature}
+                  onRestore={handleRestoreFeature}
+                />
+              ) : null}
+              {prettyPrintedName !== flagName ? (
                 <Button
                   type="main"
-                  onPress={() => {
-                    setName(flagName);
-                  }}
+                  outline
+                  onPress={() => setPrettyPrintedName(flagName)}
                 >
-                  {t("settings.debug.featureFlagsEdit")}
+                  {t("settings.debug.featureFlagsDisplayValue")}
                 </Button>
-              ) : null}
-            </Flex>
-            {name === flagName ? (
-              <EditSection
-                value={
-                  inputValues[flagName] ||
-                  JSON.stringify(featureFlags[flagName])
-                }
-                disabled={!inputValues[flagName]}
-                error={error as Error}
-                onChange={handleInputChange}
-                onOverride={handleOverrideFeature}
-                onRestore={handleRestoreFeature}
-              />
-            ) : null}
-            {prettyPrintedName !== flagName ? (
-              <Button
-                type="main"
-                outline
-                onPress={() => setPrettyPrintedName(flagName)}
-              >
-                {t("settings.debug.featureFlagsDisplayValue")}
-              </Button>
-            ) : (
-              <Button
-                type="main"
-                outline
-                onPress={() => setPrettyPrintedName("")}
-              >
-                {t("settings.debug.featureFlagsHideValue")}
-              </Button>
-            )}
-            {prettyPrintedName === flagName && (
-              <Flex backgroundColor="neutral.c30">
-                <ScrollView horizontal>
-                  <Text>{JSON.stringify(featureFlags[flagName], null, 2)}</Text>
-                </ScrollView>
-              </Flex>
-            )}
-            {index < arr.length - 1 && (
-              <Divider />
-            )}
-          </View>
-        ))}
+              ) : (
+                <Button
+                  type="main"
+                  outline
+                  onPress={() => setPrettyPrintedName("")}
+                >
+                  {t("settings.debug.featureFlagsHideValue")}
+                </Button>
+              )}
+              {prettyPrintedName === flagName && (
+                <Flex backgroundColor="neutral.c30">
+                  <ScrollView horizontal>
+                    <Text>
+                      {JSON.stringify(featureFlags[flagName], null, 2)}
+                    </Text>
+                  </ScrollView>
+                </Flex>
+              )}
+              {index < arr.length - 1 && <Divider />}
+            </View>
+          ))}
       </View>
     </NavigationScrollView>
   );

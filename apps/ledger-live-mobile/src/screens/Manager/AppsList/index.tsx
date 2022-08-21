@@ -14,14 +14,8 @@ type Props = {
   state: State;
   dispatch: any;
   renderNoResults?: (_: any) => Node;
-  setAppInstallWithDependencies: (_: {
-    app: App;
-    dependencies: App[];
-  }) => void;
-  setAppUninstallWithDependencies: (_: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   setStorageWarning: () => void;
   optimisticState: State;
 };

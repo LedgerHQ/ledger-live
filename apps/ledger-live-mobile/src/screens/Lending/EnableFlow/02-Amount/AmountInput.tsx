@@ -47,17 +47,12 @@ export default function SendAmount({ navigation, route }: Props) {
     "token account required",
   );
   const bridge = getAccountBridge(account, parentAccount);
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => ({
-    transaction: route.params.transaction,
-    account,
-    parentAccount,
-  }));
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => ({
+      transaction: route.params.transaction,
+      account,
+      parentAccount,
+    }));
   const onChange = useCallback(
     amount => {
       if (!amount.isNaN()) {

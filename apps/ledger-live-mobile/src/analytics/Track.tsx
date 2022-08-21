@@ -21,14 +21,8 @@ class Track extends PureComponent<{
   }
 
   track = () => {
-    const {
-      event,
-      onMount,
-      onUnmount,
-      onUpdate,
-      mandatory,
-      ...properties
-    } = this.props;
+    const { event, onMount, onUnmount, onUpdate, mandatory, ...properties } =
+      this.props;
     track(event, properties, mandatory ?? null);
   };
 

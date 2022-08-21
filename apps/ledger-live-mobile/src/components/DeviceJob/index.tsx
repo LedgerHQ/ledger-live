@@ -41,9 +41,12 @@ const chainSteps = (
               meta,
             });
           }),
-          mergeMap((
-            meta, // for a given step, we chain the previous step result in. we also provide events of onDone taps (allow to interrupt the UI).
-          ) => runStep(step, meta, onDoneO.pipe(filter(index => index === i)))),
+          mergeMap(
+            (
+              meta, // for a given step, we chain the previous step result in. we also provide events of onDone taps (allow to interrupt the UI).
+            ) =>
+              runStep(step, meta, onDoneO.pipe(filter(index => index === i))),
+          ),
           tap(meta => {
             // we need to emit globally the meta incremental updates
             o.next({

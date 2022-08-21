@@ -77,9 +77,10 @@ export default function RatesSection({
     from: { account: fromAccount },
     to: { account: toAccount, currency: toCurrency },
   } = swap;
-  const fromUnit = useMemo(() => fromAccount && getAccountUnit(fromAccount), [
-    fromAccount,
-  ]);
+  const fromUnit = useMemo(
+    () => fromAccount && getAccountUnit(fromAccount),
+    [fromAccount],
+  );
   const onEditRateProvider = useCallback(() => {
     navigation.navigate(ScreenName.SwapFormSelectProviderRate, {
       ...route.params,

@@ -54,33 +54,28 @@ export default function SendAmount({ navigation, route }: Props) {
     account && account.type === "TokenAccount",
     "token account required",
   );
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const bridge = getAccountBridge(account, parentAccount);
-    const ctoken = findCompoundToken(account.token);
-    // $FlowFixMe
-    const t = bridge.createTransaction(account);
-    const transaction =
-      tx ||
-      bridge.updateTransaction(t, {
-        recipient: ctoken?.contractAddress || "",
-        mode: "erc20.approve",
-        useAllAmount: true,
-        gasPrice: null,
-        userGasLimit: null,
-        subAccountId: account.id,
-      });
-    return {
-      account,
-      parentAccount,
-      transaction,
-    };
-  });
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const bridge = getAccountBridge(account, parentAccount);
+      const ctoken = findCompoundToken(account.token);
+      // $FlowFixMe
+      const t = bridge.createTransaction(account);
+      const transaction =
+        tx ||
+        bridge.updateTransaction(t, {
+          recipient: ctoken?.contractAddress || "",
+          mode: "erc20.approve",
+          useAllAmount: true,
+          gasPrice: null,
+          userGasLimit: null,
+          subAccountId: account.id,
+        });
+      return {
+        account,
+        parentAccount,
+        transaction,
+      };
+    });
   invariant(transaction, "transaction required");
   const { amount } = transaction;
   const { spendableBalance } = account;

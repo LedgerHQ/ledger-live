@@ -4,12 +4,8 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange"
 import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import type {
-  Operation
-} from "@ledgerhq/types-live";
-import type {
-  Transaction
-} from "@ledgerhq/live-common/generated/types";
+import type { Operation } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,27 +13,27 @@ import DeviceActionModal from "../../../components/DeviceActionModal";
 import { useBroadcast } from "../../../components/useBroadcast";
 
 type Result = {
-  operation?: Operation,
-  error?: Error,
+  operation?: Operation;
+  error?: Error;
 };
 
 type Props = {
-  navigation: any,
+  navigation: any;
   route: {
     params: {
       request: {
-        exchangeType: number,
-        provider: string,
-        exchange: Exchange,
-        transaction: Transaction,
-        binaryPayload: string,
-        signature: string,
-        feesStrategy: string,
-      },
-      device: Device,
-      onResult: (_: Result) => void,
-    },
-  },
+        exchangeType: number;
+        provider: string;
+        exchange: Exchange;
+        transaction: Transaction;
+        binaryPayload: string;
+        signature: string;
+        feesStrategy: string;
+      };
+      device: Device;
+      onResult: (_: Result) => void;
+    };
+  };
 };
 
 const PlatformCompleteExchange: React.FC<Props> = ({
@@ -46,10 +42,8 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   },
   navigation,
 }) => {
-  const {
-    fromAccount: account,
-    fromParentAccount: parentAccount,
-  } = request.exchange;
+  const { fromAccount: account, fromParentAccount: parentAccount } =
+    request.exchange;
   let tokenCurrency;
   if (account.type === "TokenAccount") tokenCurrency = account.token;
 
@@ -124,7 +118,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
       )}
     </SafeAreaView>
   );
-}
+};
 
 const exchangeAction = createAction(completeExchange);
 const sendAction = txCreateAction(connectApp);

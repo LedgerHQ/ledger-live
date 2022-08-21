@@ -50,22 +50,17 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const [maxSpendable, setMaxSpendable] = useState(null);
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "unbond",
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const t = bridge.createTransaction(mainAccount);
+      const transaction = bridge.updateTransaction(t, {
+        mode: "unbond",
+      });
+      return {
+        account: mainAccount,
+        transaction,
+      };
     });
-    return {
-      account: mainAccount,
-      transaction,
-    };
-  });
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;

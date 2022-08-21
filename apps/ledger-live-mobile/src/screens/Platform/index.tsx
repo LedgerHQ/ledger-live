@@ -46,9 +46,8 @@ const PlatformCatalog = ({
   // Disclaimer State
   const [disclaimerOpts, setDisclaimerOpts] = useState<DisclaimerOpts>(null);
   const [disclaimerOpened, setDisclaimerOpened] = useState<boolean>(false);
-  const [disclaimerDisabled, setDisclaimerDisabled] = useBanner(
-    DAPP_DISCLAIMER_ID,
-  );
+  const [disclaimerDisabled, setDisclaimerDisabled] =
+    useBanner(DAPP_DISCLAIMER_ID);
   const handlePressCard = useCallback(
     (manifest: AppManifest) => {
       const openDApp = () =>

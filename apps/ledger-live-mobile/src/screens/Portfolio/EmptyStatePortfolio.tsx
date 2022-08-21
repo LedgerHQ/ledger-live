@@ -24,13 +24,15 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
 
-  const openAddModal = useCallback(() => setAddModalOpened(true), [
-    setAddModalOpened,
-  ]);
+  const openAddModal = useCallback(
+    () => setAddModalOpened(true),
+    [setAddModalOpened],
+  );
 
-  const closeAddModal = useCallback(() => setAddModalOpened(false), [
-    setAddModalOpened,
-  ]);
+  const closeAddModal = useCallback(
+    () => setAddModalOpened(false),
+    [setAddModalOpened],
+  );
 
   const navigateToManager = useCallback(() => {
     // @ts-expect-error navigation ts issue

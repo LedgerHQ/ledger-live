@@ -67,16 +67,12 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
   };
   const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-  } = useBridgeTransaction(() => ({
-    transaction: route.params.transaction,
-    account,
-    parentAccount,
-  }));
+  const { transaction, setTransaction, status, bridgePending } =
+    useBridgeTransaction(() => ({
+      transaction: route.params.transaction,
+      account,
+      parentAccount,
+    }));
   const isNFTSend = isNftTransaction(transaction);
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);

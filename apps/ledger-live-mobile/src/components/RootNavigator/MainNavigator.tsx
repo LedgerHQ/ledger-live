@@ -44,7 +44,9 @@ export default function MainNavigator({
 
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
-    () => ({ ...props }) => customTabBar({ ...props, colors, insets }),
+    () =>
+      ({ ...props }) =>
+        customTabBar({ ...props, colors, insets }),
     [insets, colors],
   );
 

@@ -20,10 +20,10 @@ import EmptyStateAccountIllu from "../../images/EmptyStateAccount";
 import { withTheme } from "../../colors";
 
 type Props = {
-  account: AccountLike,
-  parentAccount?: Account,
-  navigation: any,
-  colors: any,
+  account: AccountLike;
+  parentAccount?: Account;
+  navigation: any;
+  colors: any;
 };
 
 function EmptyStateAccount({

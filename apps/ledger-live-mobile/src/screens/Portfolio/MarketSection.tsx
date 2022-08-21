@@ -26,12 +26,8 @@ export default function MarketSection() {
   const navigation = useNavigation();
   const { locale } = useLocale();
 
-  const {
-    refresh,
-    counterCurrency,
-    marketData,
-    selectCurrency,
-  } = useMarketData();
+  const { refresh, counterCurrency, marketData, selectCurrency } =
+    useMarketData();
 
   useEffect(() => {
     if (!topGainers.length && marketData?.length) {

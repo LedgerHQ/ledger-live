@@ -32,9 +32,10 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
   const currency = route.params?.currency;
   const token = route.params?.token;
   const returnToSwap = route.params?.returnToSwap;
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
   const analyticsPropertyFlow = route.params?.analyticsPropertyFlow;
   return (
     <Stack.Navigator

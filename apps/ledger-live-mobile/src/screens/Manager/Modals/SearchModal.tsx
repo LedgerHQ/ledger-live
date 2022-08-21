@@ -65,10 +65,10 @@ const Placeholder = ({
       apps.find(({ name }) => name === found.parentCurrency.name),
     [found, apps],
   );
-  const install = useCallback(() => parent && onInstall(parent.name), [
-    parent,
-    onInstall,
-  ]);
+  const install = useCallback(
+    () => parent && onInstall(parent.name),
+    [parent, onInstall],
+  );
   return found && parent ? (
     <NavigationScrollView>
       <View style={[styles.noResult]}>
@@ -157,14 +157,8 @@ type Props = {
   isInstalledView: boolean;
   apps?: App[];
   disabled: boolean;
-  setAppInstallWithDependencies: (_: {
-    app: App;
-    dependencies: App[];
-  }) => void;
-  setAppUninstallWithDependencies: (_: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   navigation: any;
   searchQuery?: string;
   optimisticState: State;

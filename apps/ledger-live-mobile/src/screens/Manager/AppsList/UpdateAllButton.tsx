@@ -6,9 +6,9 @@ import { State } from "@ledgerhq/live-common/apps/index";
 import UpdateAllModal from "../Modals/UpdateAllModal";
 
 type Props = {
-  onUpdateAll: () => void,
-  apps: App[],
-  state: State,
+  onUpdateAll: () => void;
+  apps: App[];
+  state: State;
 };
 
 const UpdateAllButton = ({ onUpdateAll, apps, state }: Props) => {

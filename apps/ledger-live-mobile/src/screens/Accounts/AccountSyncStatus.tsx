@@ -82,9 +82,9 @@ function StatusError() {
 }
 
 type Props = {
-  isUpToDateAccount: boolean,
-  pending: boolean,
-  error: ?Error,
+  isUpToDateAccount: boolean;
+  pending: boolean;
+  error: ?Error;
 };
 
 function AccountSyncStatus({ isUpToDateAccount, pending, error }: Props) {

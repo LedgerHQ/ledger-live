@@ -10,17 +10,16 @@ import AppUpdateButton from "./AppUpdateButton";
 
 import AppProgressButton from "./AppProgressButton";
 
-
 type Props = {
-  app: App,
-  state: State,
-  dispatch: (_: Action) => void,
-  notEnoughMemoryToInstall: boolean,
-  isInstalled: boolean,
-  setAppInstallWithDependencies: (_: { app: App, dependencies: App[] }) => void,
-  setAppUninstallWithDependencies: (_: { dependents: App[], app: App }) => void,
+  app: App;
+  state: State;
+  dispatch: (_: Action) => void;
+  notEnoughMemoryToInstall: boolean;
+  isInstalled: boolean;
+  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   // eslint-disable-next-line no-unused-vars
-  storageWarning: (appName: string) => void,
+  storageWarning: (appName: string) => void;
 };
 
 const Container = styled(Flex).attrs({
@@ -43,20 +42,20 @@ const AppStateButton = ({
   const { installed, installQueue, uninstallQueue, updateAllQueue } = state;
   const { name } = app;
 
-  const installing = useMemo(() => installQueue.includes(name), [
-    installQueue,
-    name,
-  ]);
+  const installing = useMemo(
+    () => installQueue.includes(name),
+    [installQueue, name],
+  );
 
-  const updating = useMemo(() => updateAllQueue.includes(name), [
-    updateAllQueue,
-    name,
-  ]);
+  const updating = useMemo(
+    () => updateAllQueue.includes(name),
+    [updateAllQueue, name],
+  );
 
-  const uninstalling = useMemo(() => uninstallQueue.includes(name), [
-    uninstallQueue,
-    name,
-  ]);
+  const uninstalling = useMemo(
+    () => uninstallQueue.includes(name),
+    [uninstallQueue, name],
+  );
 
   const canUpdate = useMemo(
     () => installed.some(({ name, updated }) => name === app.name && !updated),
@@ -72,13 +71,7 @@ const AppStateButton = ({
       case updating:
         return <AppProgressButton state={state} name={name} updating />;
       case canUpdate:
-        return (
-          <AppUpdateButton
-            app={app}
-            state={state}
-            dispatch={dispatch}
-          />
-        );
+        return <AppUpdateButton app={app} state={state} dispatch={dispatch} />;
       case isInstalled:
         return (
           <AppUninstallButton

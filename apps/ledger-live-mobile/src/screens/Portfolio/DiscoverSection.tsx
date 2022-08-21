@@ -31,9 +31,8 @@ function DiscoverSection() {
 
   const [disclaimerOpts, setDisclaimerOpts] = useState<any>(null);
   const [disclaimerOpened, setDisclaimerOpened] = useState<boolean>(false);
-  const [disclaimerDisabled, setDisclaimerDisabled] = useBanner(
-    DAPP_DISCLAIMER_ID,
-  );
+  const [disclaimerDisabled, setDisclaimerDisabled] =
+    useBanner(DAPP_DISCLAIMER_ID);
 
   const handlePressCard = useCallback(
     (manifest: AppManifest) => {

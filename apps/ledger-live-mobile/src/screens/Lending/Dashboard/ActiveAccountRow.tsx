@@ -27,13 +27,8 @@ type RowProps = {
 export default function ActiveAccountRow({ item }: RowProps) {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const {
-    account,
-    parentAccount,
-    totalSupplied,
-    accruedInterests,
-    status,
-  } = item;
+  const { account, parentAccount, totalSupplied, accruedInterests, status } =
+    item;
   const { token } = account;
   const name = getAccountName(parentAccount || account);
   const accountName = getAccountName(account);

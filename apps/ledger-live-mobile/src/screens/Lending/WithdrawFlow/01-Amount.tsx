@@ -41,30 +41,25 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   const ctoken = findCompoundToken(account.token);
   const unit = getAccountUnit(account);
   const tokenUnit = ctoken?.units[0];
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    // $FlowFixMe
-    const t = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(t, {
-      recipient: ctoken?.contractAddress || "",
-      mode: "compound.withdraw",
-      useAllAmount: true,
-      amount: max,
-      subAccountId: account.id,
-      gasPrice: null,
-      userGasLimit: null,
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      // $FlowFixMe
+      const t = bridge.createTransaction(account);
+      const transaction = bridge.updateTransaction(t, {
+        recipient: ctoken?.contractAddress || "",
+        mode: "compound.withdraw",
+        useAllAmount: true,
+        amount: max,
+        subAccountId: account.id,
+        gasPrice: null,
+        userGasLimit: null,
+      });
+      return {
+        account,
+        parentAccount,
+        transaction,
+      };
     });
-    return {
-      account,
-      parentAccount,
-      transaction,
-    };
-  });
   invariant(transaction, "transaction required");
   const onChangeSendMax = useCallback(
     (useAllAmount: boolean) => {

@@ -135,12 +135,14 @@ export default function DelegationStarted({ navigation, route }: Props) {
   );
   const options = listTokensForCryptoCurrency(mainAccount.currency);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
-  const openModal = useCallback(token => setInfoModalOpen(token), [
-    setInfoModalOpen,
-  ]);
-  const closeModal = useCallback(() => setInfoModalOpen(false), [
-    setInfoModalOpen,
-  ]);
+  const openModal = useCallback(
+    token => setInfoModalOpen(token),
+    [setInfoModalOpen],
+  );
+  const closeModal = useCallback(
+    () => setInfoModalOpen(false),
+    [setInfoModalOpen],
+  );
   const renderList = useCallback(
     list => (
       <FlatList

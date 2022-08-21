@@ -27,8 +27,11 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const locale = useSelector(localeSelector);
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const infoCandidates = useInfoCandidates();
-  const { energy: formattedEnergy, bandwidth, tronPower } =
-    account.tronResources || {};
+  const {
+    energy: formattedEnergy,
+    bandwidth,
+    tronPower,
+  } = account.tronResources || {};
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = bandwidth || {};
   const unit = getAccountUnit(account);
   const formattedBandwidth = useMemo(

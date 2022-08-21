@@ -93,24 +93,19 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const [maxSpendable, setMaxSpendable] = useState(null);
   const [infoModalOpen, setInfoModalOpen] = useState();
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "bond",
-      recipient: mainAccount.freshAddress,
-      rewardDestination: "Stash",
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const t = bridge.createTransaction(mainAccount);
+      const transaction = bridge.updateTransaction(t, {
+        mode: "bond",
+        recipient: mainAccount.freshAddress,
+        rewardDestination: "Stash",
+      });
+      return {
+        account: mainAccount,
+        transaction,
+      };
     });
-    return {
-      account: mainAccount,
-      transaction,
-    };
-  });
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;

@@ -55,23 +55,14 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const [maxSpendable, setMaxSpendable] = useState(null);
-  const {
-    modalInfos,
-    modalInfoName,
-    openInfoModal,
-    closeInfoModal,
-  } = useModalInfo();
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => ({
-    transaction: route.params.transaction,
-    account,
-    parentAccount,
-  }));
+  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } =
+    useModalInfo();
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => ({
+      transaction: route.params.transaction,
+      account,
+      parentAccount,
+    }));
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;

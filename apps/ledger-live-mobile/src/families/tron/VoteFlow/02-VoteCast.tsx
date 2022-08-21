@@ -51,32 +51,27 @@ export default function VoteCast({ route, navigation }: Props) {
   const { tronResources } = account;
   invariant(tronResources, "tron resources required");
   const { tronPower } = tronResources;
-  const {
-    transaction,
-    status,
-    setTransaction,
-    bridgeError,
-    bridgePending,
-  } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+  const { transaction, status, setTransaction, bridgeError, bridgePending } =
+    useBridgeTransaction(() => {
+      const tx = route.params.transaction;
 
-    if (!tx) {
-      const t = bridge.createTransaction(account);
-      const { votes } = tronResources;
+      if (!tx) {
+        const t = bridge.createTransaction(account);
+        const { votes } = tronResources;
+        return {
+          account,
+          transaction: bridge.updateTransaction(t, {
+            mode: "vote",
+            votes,
+          }),
+        };
+      }
+
       return {
         account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "vote",
-          votes,
-        }),
+        transaction: tx,
       };
-    }
-
-    return {
-      account,
-      transaction: tx,
-    };
-  });
+    });
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "tron", "transaction tron");
   const { votes } = transaction;
