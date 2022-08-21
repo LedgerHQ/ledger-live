@@ -40,7 +40,7 @@ const iconsComponent = {
   NFT_OUT: Icons.ArrowTopMedium,
 };
 
-export const OperationStatusIcon = ({
+const OperationStatusIcon = ({
   type,
   confirmed,
   failed,

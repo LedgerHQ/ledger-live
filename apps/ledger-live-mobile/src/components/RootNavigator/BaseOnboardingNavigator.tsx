@@ -9,6 +9,7 @@ import { TouchableOpacity } from "react-native";
 import { ScreenName, NavigatorName } from "../../const";
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
+// eslint-disable-next-line import/no-cycle
 import OnboardingNavigator from "./OnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
@@ -16,6 +17,7 @@ import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 import Question from "../../icons/Question";
+// eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 
 const hitSlop = {

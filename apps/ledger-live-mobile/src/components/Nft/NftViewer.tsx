@@ -55,7 +55,7 @@ const Section = ({
 }: {
   title: string;
   value?: any;
-  style?: Object;
+  style?: any;
   children?: React$Node;
   copyAvailable?: boolean;
   copiedString?: string;

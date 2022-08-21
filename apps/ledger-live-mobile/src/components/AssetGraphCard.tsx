@@ -10,6 +10,7 @@ import type {
 } from "@ledgerhq/live-common/portfolio/v2/types";
 import { ensureContrast } from "../colors";
 import { useTimeRange } from "../actions/settings";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Delta from "./Delta";
 import FormatDate from "./FormatDate";

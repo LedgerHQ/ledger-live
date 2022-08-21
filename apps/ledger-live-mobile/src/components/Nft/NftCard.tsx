@@ -12,7 +12,7 @@ import LText from "../LText";
 
 type Props = {
   nft: ProtoNFT;
-  style?: Object;
+  style?: any;
 };
 
 const NftCardView = ({

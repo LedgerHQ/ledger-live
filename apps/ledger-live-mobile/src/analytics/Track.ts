@@ -1,4 +1,5 @@
 import { PureComponent } from "react";
+// eslint-disable-next-line import/no-cycle
 import { track } from "./segment";
 
 class Track extends PureComponent<{

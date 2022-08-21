@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { TouchableOpacity } from "react-native";
+// eslint-disable-next-line import/no-cycle
 import { track } from "../analytics";
 
 const defaultHitSlop = {

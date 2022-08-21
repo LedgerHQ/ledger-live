@@ -11,6 +11,7 @@ import {
 import { useTheme } from "@react-navigation/native";
 import { rgba } from "../../colors";
 import Styles from "../../navigation/styles";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import LText from "../LText";
 import Close from "../../icons/Close";

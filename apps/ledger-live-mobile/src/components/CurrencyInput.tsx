@@ -10,6 +10,7 @@ import noop from "lodash/noop";
 import clamp from "lodash/clamp";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { localeSelector } from "../reducers/settings";
+// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "./LText/getFontStyle";
 import { withTheme } from "../colors";
 import TextInput from "./FocusedTextInput";

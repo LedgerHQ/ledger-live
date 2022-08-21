@@ -21,6 +21,7 @@ class Track extends PureComponent<{
   }
 
   track = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { event, onMount, onUnmount, onUpdate, mandatory, ...properties } =
       this.props;
     track(event, properties, mandatory ?? null);

@@ -20,6 +20,7 @@ import {
   getAndroidVersionCode,
 } from "../logic/cleanBuildVersion";
 import getOrCreateUser from "../user";
+// eslint-disable-next-line import/no-cycle
 import {
   analyticsEnabledSelector,
   languageSelector,

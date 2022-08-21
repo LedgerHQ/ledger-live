@@ -13,6 +13,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../families/tezos/DelegatingContainer";
 import { rgba } from "../colors";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import BottomModal from "./BottomModal";
 import Circle from "./Circle";

@@ -39,7 +39,8 @@ export function useIsNavLocked(): boolean {
 /** use Effect to trigger lock navigation updates and callback to retrieve catched navigation actions */
 export const useLockNavigation = (
   when: boolean,
-  callback: (...args: any[]) => void = () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  callback: (..._: any[]) => void = () => {},
   navigation: any,
 ) => {
   useEffect(() => {

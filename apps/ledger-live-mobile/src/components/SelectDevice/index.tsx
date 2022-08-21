@@ -20,6 +20,7 @@ import { knownDevicesSelector } from "../../reducers/ble";
 import { setHasConnectedDevice } from "../../actions/appstate";
 import DeviceItem from "./DeviceItem";
 import BluetoothEmpty from "./BluetoothEmpty";
+// eslint-disable-next-line import/no-unresolved
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";

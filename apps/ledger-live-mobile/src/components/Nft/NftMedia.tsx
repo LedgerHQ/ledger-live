@@ -10,7 +10,7 @@ import NftImage from "./NftImage";
 import NftVideo from "./NftVideo";
 
 type Props = {
-  style?: Object;
+  style?: any;
   status: NFTResource["status"];
   metadata: NFTMetadata;
   mediaFormat: NFTMediaSize;

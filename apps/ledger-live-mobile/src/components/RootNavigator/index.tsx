@@ -4,7 +4,9 @@ import Config from "react-native-config";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigatorName } from "../../const";
 import { hasCompletedOnboardingSelector } from "../../reducers/settings";
+// eslint-disable-next-line import/no-cycle
 import BaseNavigator from "./BaseNavigator";
+// eslint-disable-next-line import/no-cycle
 import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 

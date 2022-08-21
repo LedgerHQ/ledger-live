@@ -18,7 +18,7 @@ type Props = {
   url?: string | null;
   uri?: string | null;
   isOpened: boolean;
-  setIsOpened: (isOpened: boolean) => void;
+  setIsOpened: (_: boolean) => void;
 };
 
 const InfoPanel = ({

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Animated } from "react-native";
+// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "./getFontStyle";
 
 export { getFontStyle };

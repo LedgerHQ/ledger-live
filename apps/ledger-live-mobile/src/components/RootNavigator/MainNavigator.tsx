@@ -8,15 +8,19 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "../../const";
 import { PortfolioTabIcon } from "../../screens/Portfolio";
+// eslint-disable-next-line import/no-cycle
 import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
+// eslint-disable-next-line import/no-cycle
 import MarketNavigator from "./MarketNavigator";
+// eslint-disable-next-line import/no-cycle
 import PortfolioNavigator from "./PortfolioNavigator";
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
+// eslint-disable-next-line import/no-cycle
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
 
