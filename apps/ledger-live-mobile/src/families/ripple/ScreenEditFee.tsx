@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
@@ -11,33 +10,30 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import KeyboardView from "../../components/KeyboardView";
 import EditFeeUnit from "../../components/EditFeeUnit";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 const options = {
   title: i18n.t("send.fees.title"),
   headerLeft: null,
 };
-
 type Props = {
-  route: { params: RouteParams },
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
 
 function RippleEditFee({ route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-
   if (!account) return null;
   invariant(account.type === "Account", "account must be Account type");
-
   const transaction = route.params?.transaction;
-
   if (!transaction) return null;
-
   return (
     <SafeAreaView
       style={[
@@ -56,7 +52,6 @@ function RippleEditFee({ route }: Props) {
 }
 
 export { options, RippleEditFee as component };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

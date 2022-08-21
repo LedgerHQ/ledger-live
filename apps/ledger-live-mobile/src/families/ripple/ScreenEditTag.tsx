@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -18,19 +17,19 @@ import { track } from "../../analytics";
 import TextInput from "../../components/FocusedTextInput";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
-
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 const uint32maxPlus1 = BigNumber(2).pow(32);
-
 const options = {
   title: i18n.t("send.summary.tag"),
   headerLeft: null,
@@ -41,15 +40,13 @@ function RippleEditTag({ route, navigation }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
   const transaction = route.params?.transaction;
-
-  const [tag, setTag] = useState<?BigNumber>(() => {
+  const [tag, setTag] = useState<BigNumber | null | undefined>(() => {
     if (transaction.tag) {
       return BigNumber(transaction.tag);
     }
 
     return undefined;
   });
-
   const onTagFieldFocus = useCallback(() => {
     track("SendTagFieldFocusedXRP");
   }, []);
@@ -75,17 +72,31 @@ function RippleEditTag({ route, navigation }: Props) {
       }),
     });
   }, [navigation, account, tag, transaction]);
-
   return (
-    <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+      }}
+      forceInset={forceInset}
+    >
       <KeyboardView
-        style={[styles.body, { backgroundColor: colors.background }]}
+        style={[
+          styles.body,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
       >
         <NavigationScrollView keyboardShouldPersistTaps="always">
           <TextInput
             allowFontScaling={false}
             autoFocus
-            style={[styles.textInputAS, { color: colors.darkBlue }]}
+            style={[
+              styles.textInputAS,
+              {
+                color: colors.darkBlue,
+              },
+            ]}
             defaultValue={tag ? tag.toString() : ""}
             keyboardType="numeric"
             returnKeyType="done"
@@ -110,7 +121,6 @@ function RippleEditTag({ route, navigation }: Props) {
 }
 
 export { options, RippleEditTag as component };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

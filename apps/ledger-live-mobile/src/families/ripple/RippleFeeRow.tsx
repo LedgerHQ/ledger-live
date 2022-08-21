@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
@@ -14,29 +13,24 @@ import { urls } from "../../config/urls";
 import { ScreenName } from "../../const";
 
 type Props = {
-  account: AccountLike,
-  transaction: Transaction,
+  account: AccountLike;
+  transaction: Transaction;
 };
-
 export default function RippleFeeRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
-
   const openFees = useCallback(() => {
     navigation.navigate(ScreenName.RippleEditFee, {
       accountId: account.id,
       transaction,
     });
   }, [navigation, account, transaction]);
-
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
-
   if (account.type !== "Account") return null;
   const fee = transaction.fee;
   const feeCustomUnit = transaction.feeCustomUnit;
-
   return (
     <SummaryRow
       onPress={extraInfoFees}
@@ -47,7 +41,11 @@ export default function RippleFeeRow({ account, transaction }: Props) {
         </View>
       }
     >
-      <View style={{ alignItems: "flex-end" }}>
+      <View
+        style={{
+          alignItems: "flex-end",
+        }}
+      >
         <View style={styles.accountContainer}>
           {fee ? (
             <LText style={styles.valueText}>
@@ -80,7 +78,6 @@ export default function RippleFeeRow({ account, transaction }: Props) {
     </SummaryRow>
   );
 }
-
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,
