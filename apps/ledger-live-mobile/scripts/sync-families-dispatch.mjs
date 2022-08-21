@@ -37,7 +37,7 @@ const targets = [
 ];
 
 async function genTarget(target) {
-  let imports = `// @flow`;
+  let imports = ``;
   let exprts = `export default {`;
   const outpath = path.join(generatedPath, `${target}.js`);
 

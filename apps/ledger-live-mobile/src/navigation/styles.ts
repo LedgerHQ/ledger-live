@@ -1,4 +1,3 @@
-// @flow
 import { StyleSheet, Platform } from "react-native";
 
 let headerStyle = {};
@@ -16,12 +15,9 @@ if (Platform.OS === "ios") {
 function Styles() {
   return StyleSheet.create({
     header: {
-      ...headerStyle,
-      // $FlowFixMe
+      ...headerStyle, // $FlowFixMe
     },
-    headerNoShadow: {
-      ...headerStyle,
-    },
+    headerNoShadow: { ...headerStyle },
     transparentHeader: {
       backgroundColor: "transparent",
       shadowOpacity: 0,

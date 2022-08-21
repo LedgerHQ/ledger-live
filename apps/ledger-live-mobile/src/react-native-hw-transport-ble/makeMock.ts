@@ -1,5 +1,3 @@
-// @flow
-
 import Transport from "@ledgerhq/hw-transport";
 import { from } from "rxjs";
 import { take, first, filter } from "rxjs/operators";
@@ -8,38 +6,37 @@ import { hookRejections } from "../logic/debugReject";
 import { e2eBridgeSubject } from "../../e2e/bridge/client";
 
 export type DeviceMock = {
-  id: string,
-  name: string,
-  apduMock: ApduMock,
+  id: string;
+  name: string;
+  apduMock: ApduMock;
 };
-
 type Opts = {
-  createTransportDeviceMock: (id: string, name: string) => DeviceMock,
+  // eslint-disable-next-line no-unused-vars
+  createTransportDeviceMock: (id: string, name: string) => DeviceMock;
 };
-
 const defaultOpts = {
-  observeState: from([{ type: "PoweredOn", available: true }]),
+  observeState: from([
+    {
+      type: "PoweredOn",
+      available: true,
+    },
+  ]),
 };
-
 export default (opts: Opts) => {
   // $FlowFixMe
   const { observeState, createTransportDeviceMock } = {
     ...defaultOpts,
     ...opts,
   };
-
   return class BluetoothTransportMock extends Transport {
     static isSupported = (): Promise<boolean> => Promise.resolve(true);
-
-    static observeState = (o: *) => observeState.subscribe(o);
-
+    static observeState = (o: any) => observeState.subscribe(o);
     static list = () => Promise.resolve([]);
-
     static disconnect = (_id: string) => Promise.resolve();
-
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     static setLogLevel = (_param: string) => {};
 
-    static listen(observer: *) {
+    static listen(observer: any) {
       return e2eBridgeSubject
         .pipe(
           filter(msg => msg.type === "add"),
@@ -56,7 +53,7 @@ export default (opts: Opts) => {
         });
     }
 
-    static async open(device: *) {
+    static async open(device: any) {
       await e2eBridgeSubject
         .pipe(
           filter(msg => msg.type === "open"),
@@ -81,6 +78,7 @@ export default (opts: Opts) => {
       return hookRejections(this.device.apduMock.exchange(apdu));
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     setScrambleKey() {}
 
     close(): Promise<void> {

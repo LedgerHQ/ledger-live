@@ -5,16 +5,12 @@ import {
   useIsFocused,
   useScrollToTop as useNativeScrollToTop,
 } from "@react-navigation/native";
-
 const scrollSubject = new Subject();
-
 export function useScrollToTop(
   ref: React.MutableRefObject<ScrollView | undefined>,
 ) {
   const isFocused = useIsFocused();
-
   useNativeScrollToTop(ref);
-
   useEffect(() => {
     const subscription = scrollSubject.subscribe(() => {
       if (!ref.current || !isFocused) {
@@ -26,7 +22,9 @@ export function useScrollToTop(
         ref.current.scrollTo();
       } else if (typeof ref.current.scrollToOffset === "function") {
         // this handles FlatList
-        ref.current.scrollToOffset({ offset: 0 });
+        ref.current.scrollToOffset({
+          offset: 0,
+        });
       } else if (typeof ref.current.scrollToLocation === "function") {
         // this handles SectionList
         scrollSectionListToTop(ref.current);
@@ -40,17 +38,19 @@ export function useScrollToTop(
         typeof ref.current.getNode === "function" &&
         typeof ref.current.getNode().scrollToOffset === "function"
       ) {
-        ref.current.getNode().scrollToOffset({ animated: true, offset: 0 });
+        ref.current.getNode().scrollToOffset({
+          animated: true,
+          offset: 0,
+        });
       }
     });
-
     return () => {
       subscription.unsubscribe();
     };
   }, [isFocused, ref]);
 }
 
-function scrollSectionListToTop(compRef: React$Node): void {
+function scrollSectionListToTop(compRef: React.ReactNode): void {
   compRef.scrollToLocation({
     itemIndex: 0,
     sectionIndex: 0,

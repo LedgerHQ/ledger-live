@@ -1,12 +1,8 @@
-// @flow
-
 import Config from "react-native-config";
 import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
 import makeMock from "./makeMock";
 import createAPDUMock from "../logic/createAPDUMock";
-
 const names = {};
-
 const transport = Config.MOCK
   ? makeMock({
       // TODO E2E: This could be dynamically set in bridge/server.js
@@ -40,5 +36,4 @@ const transport = Config.MOCK
       },
     })
   : BleTransport;
-
 export default transport;
