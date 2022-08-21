@@ -1,8 +1,6 @@
-// @flow
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -67,6 +65,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   );
 
   const onResult = useCallback(
+    // eslint-disable-next-line consistent-return
     payload => {
       if (!account) {
         return null;

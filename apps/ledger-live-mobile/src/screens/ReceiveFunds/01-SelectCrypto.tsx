@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, FlatList } from "react-native";
@@ -16,7 +15,6 @@ import {
 import {Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { Account, TokenAccount } from "@ledgerhq/live-common/src/types";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
 import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";

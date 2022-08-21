@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useEffect, useState } from "react";
 import { TouchableOpacity, Share } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,9 +15,9 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
 import { useRoute } from "@react-navigation/native";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
@@ -51,7 +49,7 @@ type RouteParams = {
   device?: Device,
   currency?: Currency,
   createTokenAccount?: boolean,
-  onSuccess?: (address?: string) => void,
+  onSuccess?: (_?: string) => void,
   onError?: () => void,
 };
 

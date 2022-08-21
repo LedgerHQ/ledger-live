@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";

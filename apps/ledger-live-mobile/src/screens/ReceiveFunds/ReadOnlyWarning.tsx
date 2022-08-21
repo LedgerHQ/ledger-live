@@ -1,4 +1,3 @@
-/* @flow */
 import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
@@ -8,12 +7,21 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 import AlertTriangle from "../../icons/AlertTriangle";
 
-type Props = { continue: () => void };
+type Props = {
+  continue: () => void;
+};
 
 function ReadOnlyWarning({ continue: onContinue }: Props) {
   const { colors } = useTheme();
   return (
-    <View style={[styles.root, { backgroundColor: colors.card }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.card,
+        },
+      ]}
+    >
       <TrackScreen category="Manager" name="ReadOnlyNanoX" />
       <View style={styles.alert}>
         <AlertTriangle size={32} color={colors.live} />
@@ -36,7 +44,6 @@ function ReadOnlyWarning({ continue: onContinue }: Props) {
 }
 
 export default memo<Props>(ReadOnlyWarning);
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

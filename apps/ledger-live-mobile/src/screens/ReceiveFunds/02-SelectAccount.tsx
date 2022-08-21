@@ -24,7 +24,7 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
   const currency = route.params?.currency;
   const routerRoute = useRoute();
   const { t } = useTranslation();
-  const [selectedAccount, setSelectedAccount] = useState<String | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   const accounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
