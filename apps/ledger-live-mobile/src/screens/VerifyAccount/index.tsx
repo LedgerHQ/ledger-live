@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -13,7 +11,6 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
@@ -25,45 +22,42 @@ import VerifyAddress from "./VerifyAddress";
 import BottomModal from "../../components/BottomModal";
 
 const action = createAction(connectApp);
-
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  parentId: string,
-  title: string,
-  account: Account,
-  onSuccess: (account: Account) => void,
-  onError: (error: Error) => void,
-  onClose: () => void,
+  accountId: string;
+  parentId: string;
+  title: string;
+  account: Account;
+  onSuccess: (_: Account) => void;
+  onError: (_: Error) => void;
+  onClose: () => void;
 };
-
 export default function VerifyAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { parentAccount } = useSelector(accountScreenSelector(route));
-  const [device, setDevice] = useState<?Device>();
+  const [device, setDevice] = useState<Device | null | undefined>();
   const [skipDevice, setSkipDevice] = useState<boolean>(false);
   const { account, onSuccess, onError, onClose } = route.params;
-
   const mainAccount = getMainAccount(account, parentAccount);
-
   const error = useMemo(
     () => (account ? getReceiveFlowError(account, parentAccount) : null),
     [account, parentAccount],
   );
-
   const onDone = useCallback(() => {
     const n = navigation.getParent();
+
     if (n) {
       n.pop();
     }
   }, [navigation]);
-
   const onConfirm = useCallback(
     (confirmed, error) => {
       if (confirmed) {
@@ -71,25 +65,22 @@ export default function VerifyAccount({ navigation, route }: Props) {
       } else if (error) {
         onError(error);
       }
+
       onDone();
     },
     [account, onSuccess, onError, onDone],
   );
-
   const onConfirmSkip = useCallback(() => {
     onSuccess(account);
     onDone();
   }, [account, onSuccess, onDone]);
-
   const onSkipDevice = useCallback(() => {
     setSkipDevice(true);
   }, []);
-
   const handleClose = useCallback(() => {
     onClose();
     onDone();
   }, [onClose, onDone]);
-
   if (!account) return null;
 
   if (error) {
@@ -104,10 +95,14 @@ export default function VerifyAccount({ navigation, route }: Props) {
 
   const tokenCurrency =
     account && account.type === "TokenAccount" && account.token;
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="VerifyAccount" name="ConnectDevice" />
@@ -127,7 +122,10 @@ export default function VerifyAccount({ navigation, route }: Props) {
           action={action}
           device={device}
           onClose={handleClose}
-          request={{ account: mainAccount, tokenCurrency }}
+          request={{
+            account: mainAccount,
+            tokenCurrency,
+          }}
           renderOnResult={({ device }) => (
             <VerifyAddress
               account={mainAccount}
@@ -150,7 +148,6 @@ export default function VerifyAccount({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
