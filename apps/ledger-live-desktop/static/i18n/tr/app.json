@@ -1283,7 +1283,7 @@
       "noSearchResults" : "Üzgünüz, herhangi bir arama sonucu bulamadık.",
       "retrySearchKeyword" : "Lütfen aramayı başka bir anahtar kelime ile yeniden deneyin.",
       "retrySearchParams" : "Lütfen aramayı farklı bir değişkenle yeniden deneyin.",
-      "trackFavAssets" : "Favorilerinizi takip edin",
+      "trackFavAssets" : "Track your favorite",
       "clickOnStarIcon" : "Bir varlığın yanındaki yıldız simgesine tıklamak onu otomatik bir şekilde favori varlıklarınız arasına ekler.",
       "browseAssets" : "Varlıklara göz atın"
     }
@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "Birden çok platform uygulama kaynağı arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "Edit",
+      "featureFlagsRestore" : "Restore",
+      "featureFlagsOverride" : "Override",
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
       "addLocalAppButton" : "Göz Atın",
