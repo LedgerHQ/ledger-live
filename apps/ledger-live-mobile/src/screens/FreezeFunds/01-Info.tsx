@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, View, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -13,32 +12,36 @@ import BulletList, { BulletGreenCheck } from "../../components/BulletList";
 import IlluRewards from "../../icons/images/Rewards";
 import { urls } from "../../config/urls";
 
-const forceInset = { bottom: "always" };
-
-type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+const forceInset = {
+  bottom: "always",
 };
-
+type Props = {
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
+};
+// eslint-disable-next-line @typescript-eslint/ban-types
 type RouteParams = {};
-
 export default function FreezeInfo({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.FreezeAmount, route.params);
   }, [navigation, route.params]);
-
   const onCancel = useCallback(() => {
     navigation.popToTop();
   }, [navigation]);
-
   const howVotingWorks = useCallback(() => {
     Linking.openURL(urls.tronStaking);
   }, []);
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <ScrollView
@@ -64,7 +67,14 @@ export default function FreezeInfo({ navigation, route }: Props) {
             </LText>
           ))}
         />
-        <View style={[styles.howVotingWorks, { borderColor: colors.live }]}>
+        <View
+          style={[
+            styles.howVotingWorks,
+            {
+              borderColor: colors.live,
+            },
+          ]}
+        >
           <ExternalLink
             event="FreezeInfoHowVotingWorks"
             onPress={howVotingWorks}
@@ -95,7 +105,6 @@ export default function FreezeInfo({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

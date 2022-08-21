@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -20,36 +19,30 @@ import Button from "../../components/Button";
 import LText from "../../components/LText";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  deviceId: string,
-  transaction: any,
-  result: Operation,
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  result: Operation;
 };
-
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account && account.type === "Account", "account is required");
-
   const time = useTimer(60);
   const isLoading = useTronPowerLoading(account);
-
   const transaction = route.params.transaction;
   const resource = transaction.resource || "";
-
   const accountId = account.id;
-
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
-
   const onClose = useCallback(() => {
     navigation.getParent().pop();
   }, [navigation]);
-
   const goToVote = useCallback(() => {
     onClose();
     const screenName = lastVotedDate
@@ -63,9 +56,15 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       },
     });
   }, [lastVotedDate, accountId, navigation, onClose]);
-
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen category="FreezeFunds" name="ValidationSuccess" />
       <PreventNativeBack />
       <ValidateSuccess
@@ -75,7 +74,9 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         description={
           <Trans
             i18nKey="freeze.validation.info"
-            values={{ resource: resource.toLowerCase() }}
+            values={{
+              resource: resource.toLowerCase(),
+            }}
           />
         }
         primaryButton={
@@ -99,9 +100,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
                  * Just make sure to reimplement this basic formatting in case the timer starts from >60s
                  * */
                 time > 0 ? (
-                  `0:${Number(time)
-                    .toString()
-                    .padStart(2, "0")}`
+                  `0:${Number(time).toString().padStart(2, "0")}`
                 ) : (
                   <Trans i18nKey="freeze.validation.button.vote" />
                 )
@@ -127,7 +126,6 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -143,5 +141,7 @@ const styles = StyleSheet.create({
     marginTop: 48,
     marginBottom: 16,
   },
-  label: { fontSize: 12 },
+  label: {
+    fontSize: 12,
+  },
 });
