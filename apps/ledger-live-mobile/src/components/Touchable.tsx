@@ -94,6 +94,7 @@ export default class Touchable extends Component<
       onPress,
       children,
       event,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       eventProperties,
       touchableTestID,
       ...rest

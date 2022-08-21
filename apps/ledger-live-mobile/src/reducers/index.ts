@@ -30,7 +30,7 @@ const appReducer = combineReducers({
   notifications,
 });
 
-const rootReducer = (state: State, action: *) => {
+const rootReducer = (state: State, action: any) => {
   if (__DEV__ && action.type === "DANGEROUSLY_OVERRIDE_STATE") {
     appReducer({ ...action.payload }, action);
   }
