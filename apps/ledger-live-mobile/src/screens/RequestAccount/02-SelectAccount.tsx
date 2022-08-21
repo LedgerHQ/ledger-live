@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { useCallback, useMemo } from "react";
 import type { Node } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
@@ -32,19 +30,19 @@ const SEARCH_KEYS = [
   "subAccount.token.name",
   "subAccount.token.ticker",
 ];
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  currencies: string[],
-  currency: CryptoCurrency | TokenCurrency,
-  allowAddAccount?: boolean,
-
-  onSuccess: (account: AccountLike, parentAccount: Account) => void,
-  onError: (error: Error) => void,
+  currencies: string[];
+  currency: CryptoCurrency | TokenCurrency;
+  allowAddAccount?: boolean;
+  // eslint-disable-next-line no-unused-vars
+  onSuccess: (account: AccountLike, parentAccount: Account) => void;
+  onError: (_: Error) => void;
 };
 
 const keyExtractor = item => item.account.id;
@@ -53,17 +51,16 @@ const Item = ({
   item: result,
   onSelect,
 }: {
-  item: SearchResult,
-  onSelect: (account: AccountLike, parentAccount: Account) => void,
+  item: SearchResult;
+  // eslint-disable-next-line no-unused-vars
+  onSelect: (account: AccountLike, parentAccount: Account) => void;
 }) => {
   const { account, parentAccount, match } = result;
-
   const onPress = useCallback(() => onSelect(account, parentAccount), [
     account,
     onSelect,
     parentAccount,
   ]);
-
   return (
     <View>
       <AccountCard
@@ -81,9 +78,9 @@ const List = ({
   renderItem,
   renderFooter,
 }: {
-  items: AccountLike[],
-  renderItem: ({ item: AccountLike }) => Node,
-  renderFooter: () => Node,
+  items: AccountLike[];
+  renderItem: (_: { item: AccountLike }) => Node;
+  renderFooter: () => Node;
 }) => {
   const formatedList = useMemo(() => formatSearchResultsTuples(items), [items]);
   return (
@@ -103,11 +100,9 @@ const List = ({
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { currency, allowAddAccount, onSuccess, onError } = route.params;
-
   const accounts: AccountLike[] = useSelector(
     accountsByCryptoCurrencyScreenSelector(currency),
   );
-
   const onSelect = useCallback(
     (account: AccountLike, parentAccount: Account) => {
       onSuccess(account, parentAccount);
@@ -116,12 +111,10 @@ function SelectAccount({ navigation, route }: Props) {
     },
     [navigation, onSuccess],
   );
-
   const renderItem = useCallback(
     ({ item }) => <Item item={item} onSelect={onSelect} />,
     [onSelect],
   );
-
   const onAddAccount = useCallback(() => {
     navigation.navigate(NavigatorName.RequestAccountsAddAccounts, {
       screen: ScreenName.AddAccountsSelectDevice,
@@ -136,7 +129,6 @@ function SelectAccount({ navigation, route }: Props) {
       },
     });
   }, [currency, navigation, onError, route.params]);
-
   const renderFooter = useCallback(
     () =>
       allowAddAccount ? (
@@ -148,7 +140,9 @@ function SelectAccount({ navigation, route }: Props) {
             title={
               <Trans
                 i18nKey="requestAccount.selectAccount.addAccount"
-                values={{ currency: currency.name }}
+                values={{
+                  currency: currency.name,
+                }}
               />
             }
             onPress={onAddAccount}
@@ -157,14 +151,12 @@ function SelectAccount({ navigation, route }: Props) {
       ) : null,
     [allowAddAccount, currency.name, onAddAccount],
   );
-
   const renderList = useCallback(
     items => (
       <List items={items} renderItem={renderItem} renderFooter={renderFooter} />
     ),
     [renderFooter, renderItem],
   );
-
   const renderEmptySearch = useCallback(
     () => (
       <View style={styles.emptyResults}>
@@ -175,9 +167,15 @@ function SelectAccount({ navigation, route }: Props) {
     ),
     [],
   );
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen category="RequestAccount" name="SelectAccount" />
       <KeyboardView>
         <View style={styles.searchContainer}>
@@ -243,5 +241,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
-
 export default SelectAccount;

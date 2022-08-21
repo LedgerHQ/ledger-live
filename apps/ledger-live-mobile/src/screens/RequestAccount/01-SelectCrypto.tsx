@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
@@ -14,17 +13,17 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 
 const SEARCH_KEYS = ["name", "ticker"];
-
 type Props = {
-  devMode: boolean,
-  navigation: any,
-  route: { params: RouteParams },
+  devMode: boolean;
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 type RouteParams = {
-  currencies: Currency[],
-  allowAddAccount?: boolean,
-  accounts: AccountLike[],
+  currencies: Currency[];
+  allowAddAccount?: boolean;
+  accounts: AccountLike[];
 };
 
 const keyExtractor = currency => currency.id;
@@ -43,9 +42,7 @@ export default function RequestAccountsSelectCrypto({
 }: Props) {
   const { colors } = useTheme();
   const { currencies } = route.params;
-
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(currencies);
-
   const onPressCurrency = useCallback(
     (currency: CryptoCurrency) => {
       navigation.navigate(ScreenName.RequestAccountsSelectAccount, {
@@ -55,12 +52,10 @@ export default function RequestAccountsSelectCrypto({
     },
     [navigation, route.params],
   );
-
   const renderItem = useCallback(
     ({ item }) => <CurrencyRow currency={item} onPress={onPressCurrency} />,
     [onPressCurrency],
   );
-
   const renderList = useCallback(
     items => (
       <FlatList
@@ -75,9 +70,15 @@ export default function RequestAccountsSelectCrypto({
     ),
     [renderItem],
   );
-
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen category="RequestAccounts" name="SelectCrypto" />
       <KeyboardView>
         <View style={styles.searchContainer}>
@@ -93,7 +94,6 @@ export default function RequestAccountsSelectCrypto({
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
