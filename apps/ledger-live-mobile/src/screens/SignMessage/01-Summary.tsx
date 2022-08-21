@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -19,22 +18,23 @@ import WalletIcon from "../../icons/Wallet";
 import LText from "../../components/LText";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export type RouteParams = {
-  accountId: string,
-  message: MessageData | TypedMessageData,
-  onConfirmationHandler?: (MessageData | TypedMessageData) => void,
-  onFailHandler?: Error => void,
-  currentNavigation?: string,
-  nextNavigation?: string,
+  accountId: string;
+  message: MessageData | TypedMessageData;
+  onConfirmationHandler?: (_: MessageData | TypedMessageData) => void;
+  onFailHandler?: (_: Error) => void;
+  currentNavigation?: string;
+  nextNavigation?: string;
 };
-
 const defaultParams = {
   currentNavigation: ScreenName.SignSummary,
   nextNavigation: ScreenName.SignSelectDevice,
@@ -48,20 +48,20 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
   };
   const { account } = useSelector(accountScreenSelector(route));
   const { nextNavigation, message } = route.params;
-
   const navigateToNext = useCallback(() => {
-    navigation.navigate(nextNavigation, {
-      ...route.params,
-    });
+    navigation.navigate(nextNavigation, { ...route.params });
   }, [navigation, nextNavigation, route.params]);
-
   const onContinue = useCallback(() => {
     navigateToNext();
   }, [navigateToNext]);
-
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="SignMessage" name="Summary" />
@@ -70,7 +70,9 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: colors.lightLive },
+              {
+                backgroundColor: colors.lightLive,
+              },
             ]}
           >
             <WalletIcon color={colors.live} size={16} />
@@ -93,7 +95,12 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
           </View>
         </View>
         <View
-          style={[styles.separator, { backgroundColor: colors.separator }]}
+          style={[
+            styles.separator,
+            {
+              backgroundColor: colors.separator,
+            },
+          ]}
         />
         <ScrollView style={styles.scrollContainer}>
           <LText style={styles.message}>
@@ -122,7 +129,6 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-
     flexDirection: "column",
   },
   body: {
@@ -179,5 +185,4 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
 });
-
 export default SignSummary;

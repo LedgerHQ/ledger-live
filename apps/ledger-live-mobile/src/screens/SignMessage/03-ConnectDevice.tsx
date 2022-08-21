@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
@@ -17,28 +16,24 @@ import { ScreenName } from "../../const";
 import { navigateToSelectDevice } from "../ConnectDevice";
 
 const action = createAction(connectApp);
-
 type Props = {
-  navigation: any,
+  navigation: any;
   route: {
-    params: RouteParams,
-    name: string,
-  },
+    params: RouteParams;
+    name: string;
+  };
 };
-
 type RouteParams = {
-  device: Device,
-  accountId: string,
-  message: TypedMessageData | MessageData,
-  appName?: string,
-  onConfirmationHandler?: (MessageData | TypedMessageData) => void,
-  onFailHandler?: Error => void,
+  device: Device;
+  accountId: string;
+  message: TypedMessageData | MessageData;
+  appName?: string;
+  onConfirmationHandler?: (_: MessageData | TypedMessageData) => void;
+  onFailHandler?: (_: Error) => void;
 };
-
 export default function ConnectDevice({ route, navigation }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-
   const mainAccount = getMainAccount(account, parentAccount);
 
   const onResult = result => {
@@ -59,8 +54,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
     () => (
       <SafeAreaView style={styles.root}>
         <TrackScreen category={"SignMessage"} name="ConnectDevice" />
-        <DeviceAction
-          // $FlowFixMe
+        <DeviceAction // $FlowFixMe
           action={action}
           request={{
             account: mainAccount,
@@ -73,13 +67,11 @@ export default function ConnectDevice({ route, navigation }: Props) {
           onResult={onResult}
         />
       </SafeAreaView>
-    ),
-    // prevent rerendering caused by optimistic update (i.e. exclude account related deps)
+    ), // prevent rerendering caused by optimistic update (i.e. exclude account related deps)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [route.params.message],
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
