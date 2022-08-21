@@ -1,4 +1,3 @@
-// @flow
 import Config from "react-native-config";
 import type {
   CryptoCurrency,
@@ -23,10 +22,8 @@ const supportedCurrenciesIds = {
   ],
   sell: ["bitcoin"],
 };
-
 export const getSupportedCurrencies = (mode: "buy" | "sell" = "buy") =>
   supportedCurrenciesIds[mode];
-
 const config = {
   sandbox: {
     url: "https://trade-ui.sandbox.coinify.com/widget",
@@ -37,11 +34,9 @@ const config = {
     partnerId: "191f0c7f-076d-459f-bf2d-833465bfadc2",
   },
 };
-
 export const isCurrencySupported = (
   currency: TokenCurrency | CryptoCurrency,
   mode: "buy" | "sell" = "buy",
 ) => supportedCurrenciesIds[mode].includes(currency.id);
-
 export const getConfig = () =>
   Config.COINIFY_SANDBOX ? config.sandbox : config.production;

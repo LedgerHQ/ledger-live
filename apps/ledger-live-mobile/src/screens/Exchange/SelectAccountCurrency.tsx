@@ -1,5 +1,3 @@
-// @flow
-
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -23,12 +21,11 @@ import { accountsSelector } from "../../reducers/accounts";
 import { useCurrencyAccountSelect } from "./hooks";
 
 type Props = {
-  flow: string,
-  allCurrencies: Array<TokenCurrency | CryptoCurrency>,
-  defaultCurrencyId?: ?string,
-  defaultAccountId?: ?string,
+  flow: string;
+  allCurrencies: Array<TokenCurrency | CryptoCurrency>;
+  defaultCurrencyId?: string | null | undefined;
+  defaultAccountId?: string | null | undefined;
 };
-
 export default function SelectAccountCurrency({
   flow,
   allCurrencies,
@@ -52,21 +49,18 @@ export default function SelectAccountCurrency({
     defaultCurrencyId,
     defaultAccountId,
   });
-
   const onCurrencyChange = useCallback(
     (selectedCurrency: CryptoCurrency | TokenCurrency) => {
       setCurrency(selectedCurrency);
     },
     [setCurrency],
   );
-
   const onAccountChange = useCallback(
     (selectedAccount: Account | AccountLike) => {
       setAccount(selectedAccount);
     },
     [setAccount],
   );
-
   const onSelectCurrency = useCallback(() => {
     navigation.navigate(NavigatorName.ExchangeStack, {
       screen: ScreenName.ExchangeSelectCurrency,
@@ -76,7 +70,6 @@ export default function SelectAccountCurrency({
       },
     });
   }, [navigation, flow, onCurrencyChange]);
-
   const onSelectAccount = useCallback(() => {
     navigation.navigate(NavigatorName.ExchangeStack, {
       screen: ScreenName.ExchangeSelectAccount,
@@ -87,7 +80,6 @@ export default function SelectAccountCurrency({
       },
     });
   }, [navigation, currency, flow, onAccountChange]);
-
   const onContinue = useCallback(() => {
     if (account) {
       navigation.navigate(NavigatorName.ProviderList, {
@@ -96,7 +88,6 @@ export default function SelectAccountCurrency({
         currency,
         type: flow === "buy" ? "onRamp" : "offRamp",
       });
-
       track(
         `${flow.charAt(0).toUpperCase()}${flow.slice(
           1,
@@ -108,7 +99,6 @@ export default function SelectAccountCurrency({
       );
     }
   }, [account, currency, flow, navigation]);
-
   const onAddAccount = useCallback(() => {
     if (currency && currency.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
@@ -122,13 +112,14 @@ export default function SelectAccountCurrency({
       });
     }
   }, [currency, flow, navigation]);
-
   return (
     <View style={styles.body}>
       <View
         style={[
           styles.accountAndCurrencySelect,
-          { borderColor: colors.border },
+          {
+            borderColor: colors.border,
+          },
         ]}
       >
         <LText secondary semiBold>
@@ -137,12 +128,20 @@ export default function SelectAccountCurrency({
             : t("exchange.sell.wantToSell")}
         </LText>
         <TouchableOpacity onPress={onSelectCurrency}>
-          <View style={[styles.select, { borderColor: colors.border }]}>
+          <View
+            style={[
+              styles.select,
+              {
+                borderColor: colors.border,
+              },
+            ]}
+          >
             <View style={styles.name}>
               {currency ? (
                 <View>
                   <CurrencyRow
                     currency={currency}
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
                     onPress={() => {}}
                     iconSize={32}
                   />
@@ -162,7 +161,14 @@ export default function SelectAccountCurrency({
               {t("exchange.buy.selectAccount")}
             </LText>
             <TouchableOpacity onPress={onSelectAccount}>
-              <View style={[styles.select, { borderColor: colors.border }]}>
+              <View
+                style={[
+                  styles.select,
+                  {
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
                 {account || subAccount ? (
                   <AccountCard
                     style={styles.card}
@@ -220,7 +226,6 @@ export default function SelectAccountCurrency({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   body: {
     flex: 1,

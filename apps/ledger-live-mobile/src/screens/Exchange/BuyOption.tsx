@@ -9,6 +9,7 @@ type BuyOptionProps = {
   name: string;
   icon: React.ReactNode;
   supportedCoinsCount: number;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   onPress: Function;
   isActive: boolean;
 };

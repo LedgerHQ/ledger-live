@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
@@ -9,7 +8,6 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-
 import { useTheme } from "@react-navigation/native";
 import { track } from "../../analytics/segment";
 import { TrackScreen } from "../../analytics";
@@ -21,18 +19,19 @@ import { NavigatorName, ScreenName } from "../../const";
 import { useRampCatalogCurrencies } from "./hooks";
 
 const SEARCH_KEYS = ["name", "ticker"];
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 type Props = {
-  devMode: boolean,
-  navigation: any,
+  devMode: boolean;
+  navigation: any;
   route: {
     params?: {
-      currency?: string,
-      mode: "buy" | "sell",
-      onCurrencyChange: (currency: CryptoCurrency | TokenCurrency) => void,
-    },
-  },
+      currency?: string;
+      mode: "buy" | "sell";
+      onCurrencyChange: (_: CryptoCurrency | TokenCurrency) => void;
+    };
+  };
 };
 
 const keyExtractor = currency => currency.id;
@@ -53,14 +52,11 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
     mode = "buy",
     onCurrencyChange,
   } = params;
-
   const rampCatalog = useRampCatalog();
   const cryptoCurrencies = useRampCatalogCurrencies(
     mode === "buy" ? rampCatalog.value.onRamp : rampCatalog.value.offRamp,
   );
-
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
-
   const onPressCurrency = useCallback(
     (currency: CryptoCurrency) => {
       if (onCurrencyChange) {
@@ -75,7 +71,6 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
     },
     [mode, navigation, onCurrencyChange],
   );
-
   const onPressToken = useCallback(
     (token: TokenCurrency) => {
       if (onCurrencyChange) {
@@ -90,7 +85,6 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
     },
     [mode, navigation, onCurrencyChange],
   );
-
   const onPressItem = useCallback(
     (currencyOrToken: CryptoCurrency | TokenCurrency) => {
       track("Buy Crypto Continue Button", {
@@ -121,7 +115,12 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
 
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="Exchange" name="SelectCrypto" />
@@ -140,7 +139,6 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

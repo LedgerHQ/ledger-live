@@ -1,4 +1,3 @@
-// @flow
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -8,7 +7,6 @@ import Coinify from "../../icons/Coinify";
 
 export default function PoweredByCoinify() {
   const { colors } = useTheme();
-
   return (
     <View style={styles.root}>
       <LText color="grey" semiBold style={styles.label}>
@@ -18,7 +16,6 @@ export default function PoweredByCoinify() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",

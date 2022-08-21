@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { WebView } from "react-native-webview";
 import querystring from "querystring";
@@ -23,19 +22,17 @@ import { DevicePart } from "./DevicePart";
 import SkipDeviceVerification from "./SkipDeviceVerification";
 
 const action = createAction(connectApp);
-
 type CoinifyWidgetConfig = {
-  primaryColor?: string,
-  partnerId: string,
-  cryptoCurrencies?: string | null,
-  address?: string | null,
-  targetPage: string,
-  confirmMessages?: boolean,
-  transferOutMedia?: string,
-  transferInMedia?: string,
-  confirmMessages?: *,
+  primaryColor?: string;
+  partnerId: string;
+  cryptoCurrencies?: string | null;
+  address?: string | null;
+  targetPage: string;
+  confirmMessages?: boolean;
+  transferOutMedia?: string;
+  transferInMedia?: string;
+  confirmMessages?: any;
 };
-
 const injectedCode = `
   var originalPostMessage = window.postMessage
   window.postMessage = e => window.ReactNativeWebView.postMessage(JSON.stringify(e))
@@ -74,16 +71,14 @@ const injectedCode = `
     }
   }, false);
 `;
-
 type Props = {
-  account?: AccountLike,
-  parentAccount?: ?Account,
-  mode: string,
-  device?: Device,
-  verifyAddress?: boolean,
-  skipDevice?: Boolean,
+  account?: AccountLike;
+  parentAccount?: Account | null | undefined;
+  mode: string;
+  device?: Device;
+  verifyAddress?: boolean;
+  skipDevice?: boolean;
 };
-
 let resolvePromise = null;
 export default function CoinifyWidget({
   mode,
@@ -95,17 +90,14 @@ export default function CoinifyWidget({
   const tradeId = useRef(null);
   const { colors } = useTheme();
   const [requestingAction, setRequestingAction] = useState<
-    "none" | "connect" | "verify",
+    "none" | "connect" | "verify"
   >("none");
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const webView = useRef();
-
   const currency = account ? getAccountCurrency(account) : null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-
   const coinifyConfig = getConfig();
-
   const widgetConfig: CoinifyWidgetConfig = {
     fontColor: "#142533",
     primaryColor: colors.live,
@@ -114,18 +106,19 @@ export default function CoinifyWidget({
     address: mainAccount ? mainAccount.freshAddress : null,
     targetPage: mode,
   };
-
   useEffect(() => {
     if (mode === "buy" && account) {
       track("Coinify Start Buy Widget", {
         currencyName: getAccountCurrency(account).name,
       });
     }
+
     if (mode === "sell" && account) {
       track("Coinify Start Sell Widget", {
         currencyName: getAccountCurrency(account).name,
       });
     }
+
     if (mode === "trade-history") {
       track("Coinify Start History Widget");
     }
@@ -153,12 +146,15 @@ export default function CoinifyWidget({
       if (type !== "event") {
         return;
       }
+
       switch (event) {
         case "misc.opened-external-link":
           if (Linking.canOpenURL(context.url)) {
             Linking.openURL(context.url);
           }
+
           break;
+
         case "trade.receive-account-changed":
           if (context.address === mainAccount?.freshAddress) {
             track("Coinify Confirm Buy Start", {
@@ -169,26 +165,33 @@ export default function CoinifyWidget({
           } else {
             // TODO this is a problem, it should not occur.
           }
+
           break;
+
         case "trade.trade-placed":
           track("Coinify Widget Event Trade Placed", {
             currencyName: account && getAccountCurrency(account).name,
           });
           break;
+
         case "trade.trade-prepared":
           if (mode === "sell" && currency) {
             setRequestingAction("connect");
             setIsOpen(true);
           }
+
           break;
+
         case "trade.trade-created":
           tradeId.current = context.id;
+
           if (mode === "sell") {
             if (resolvePromise) {
               resolvePromise(context);
               resolvePromise = null;
             }
           }
+
           if (mode === "buy") {
             webView?.current?.postMessage(
               JSON.stringify({
@@ -205,18 +208,20 @@ export default function CoinifyWidget({
               medium: context?.transferIn?.medium,
             });
           }
+
           break;
+
         default:
           break;
       }
     },
     [currency, account, mainAccount, mode],
   );
-
   const setTransactionId = useCallback(
     txId =>
       new Promise(resolve => {
         resolvePromise = resolve;
+
         if (webView.current) {
           webView.current.postMessage(
             JSON.stringify({
@@ -242,11 +247,11 @@ export default function CoinifyWidget({
       }),
     [],
   );
-
   const settleTrade = useCallback(
     confirmed => {
       setIsOpen(false);
       setRequestingAction("none");
+
       if (account && webView.current) {
         if (mode === "buy") {
           webView.current.postMessage(
@@ -271,6 +276,7 @@ export default function CoinifyWidget({
               },
             }),
           );
+
           if (confirmed) {
             track("Coinify Confirm Sell End", {
               currencyName: getAccountCurrency(account).name,
@@ -281,20 +287,15 @@ export default function CoinifyWidget({
     },
     [account, mode, mainAccount?.freshAddress],
   );
-
   const onResult = useCallback(() => {
     setRequestingAction("verify");
   }, []);
-
   const tokenCurrency =
     account && account.type === "TokenAccount" ? account.token : null;
-
   const url = `${coinifyConfig.url}?${querystring.stringify(widgetConfig)}`;
-
   return (
     <View style={[styles.root]}>
-      <WebView
-        // $FlowFixMe
+      <WebView // $FlowFixMe
         ref={webView}
         startInLoadingState={true}
         renderLoading={() =>
@@ -326,7 +327,10 @@ export default function CoinifyWidget({
               <DeviceAction
                 action={action}
                 device={device}
-                request={{ account: mainAccount, tokenCurrency }}
+                request={{
+                  account: mainAccount,
+                  tokenCurrency,
+                }}
                 onResult={onResult}
                 analyticsPropertyFlow="buy"
               />
@@ -362,13 +366,13 @@ function VerifyAddress({
   device,
   onResult,
 }: {
-  account: Account,
-  device: ?Device,
-  onResult: (confirmed: boolean, error?: Error) => void,
+  account: Account;
+  device: Device | null | undefined;
+  // eslint-disable-next-line no-unused-vars
+  onResult: (confirmed: boolean, error?: Error) => void;
 }) {
   const { dark } = useTheme();
   const { t } = useTranslation();
-
   const onConfirmAddress = useCallback(async () => {
     try {
       if (!device) return;
@@ -383,13 +387,10 @@ function VerifyAddress({
       onResult(false, err);
     }
   }, [account, device, onResult]);
-
   useEffect(() => {
     onConfirmAddress();
   }, [onConfirmAddress]);
-
   if (!device) return null;
-
   return renderVerifyAddress({
     t,
     currencyName: getAccountCurrency(account).name,
@@ -421,6 +422,7 @@ const styles = StyleSheet.create({
     flex: 0,
     width: "100%",
     height: "100%",
+
     /**
      * This is required to prevent a crash when navigating back.
      * The issue is caused by an incompatibility between the

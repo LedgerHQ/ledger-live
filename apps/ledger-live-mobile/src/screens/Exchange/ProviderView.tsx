@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { RampLiveAppCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -11,27 +9,27 @@ import WebPlatformPlayer from "../../components/WebPlatformPlayer";
 import { TrackScreen } from "../../analytics";
 
 type TradeParams = {
-  type: "onRamp" | "offRamp",
-  cryptoCurrencyId: string,
-  fiatCurrencyId: string,
-  fiatAmount?: number,
-  cryptoAmount?: number,
+  type: "onRamp" | "offRamp";
+  cryptoCurrencyId: string;
+  fiatCurrencyId: string;
+  fiatAmount?: number;
+  cryptoAmount?: number;
 };
-
 type ProviderViewProps = {
-  navigation: any,
-  route: { params: RouteParams, name: string },
+  navigation: any;
+  route: {
+    params: RouteParams;
+    name: string;
+  };
 };
-
 type RouteParams = {
-  provider: RampLiveAppCatalogEntry,
-  accountId: string,
-  accountAddress: string,
-  trade: TradeParams,
-  icon: string,
-  name: string,
+  provider: RampLiveAppCatalogEntry;
+  accountId: string;
+  accountAddress: string;
+  trade: TradeParams;
+  icon: string;
+  name: string;
 };
-
 export default function ProviderView({ route }: ProviderViewProps) {
   const { provider, trade, accountId, accountAddress } = route.params;
   const manifest = useRemoteLiveAppManifest(provider.appId);
@@ -52,7 +50,6 @@ export default function ProviderView({ route }: ProviderViewProps) {
     fiatAmount: trade.fiatAmount,
     cryptoAmount: trade.cryptoAmount,
   });
-
   return (
     <>
       <TrackScreen
@@ -62,6 +59,7 @@ export default function ProviderView({ route }: ProviderViewProps) {
         trade={trade}
       />
       <WebPlatformPlayer
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         onClose={() => {}}
         manifest={manifest}
         inputs={inputs}

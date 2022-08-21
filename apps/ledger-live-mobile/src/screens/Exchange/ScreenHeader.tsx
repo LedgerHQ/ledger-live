@@ -1,15 +1,12 @@
-// @flow
-
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import AppIcon from "../Platform/AppIcon";
 import LText from "../../components/LText";
 
 type Props = {
-  icon: string,
-  name: string,
+  icon: string;
+  name: string;
 };
-
 export default function ScreenHeader({ icon, name }: Props) {
   return (
     <View style={styles.root}>
@@ -18,7 +15,6 @@ export default function ScreenHeader({ icon, name }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     display: "flex",

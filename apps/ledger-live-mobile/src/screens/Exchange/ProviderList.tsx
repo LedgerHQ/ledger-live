@@ -1,5 +1,3 @@
-// @flow
-
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import {
@@ -32,8 +30,9 @@ import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 import AppIcon from "../Platform/AppIcon";
 
-const forceInset = { bottom: "always" };
-
+const forceInset = {
+  bottom: "always",
+};
 const assetMap = {
   applepay: <ApplePay />,
   googlepay: <GooglePay />,
@@ -43,14 +42,16 @@ const assetMap = {
   sepa: <Sepa />,
   visa: <Visa />,
 };
-
 type ProviderItemProps = {
-  provider: RampLiveAppCatalogEntry,
+  provider: RampLiveAppCatalogEntry;
   onClick: (
+    // eslint-disable-next-line no-unused-vars
     provider: RampLiveAppCatalogEntry,
+    // eslint-disable-next-line no-unused-vars
     icon: string,
+    // eslint-disable-next-line no-unused-vars
     name: string,
-  ) => void,
+  ) => void;
 };
 
 const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
@@ -59,11 +60,9 @@ const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
   );
   const { colors } = useTheme();
   const manifest = useRemoteLiveAppManifest(provider.appId);
-
   const onItemClick = useCallback(() => {
     onClick(provider, manifest.icon, manifest.name);
   }, [provider, manifest, onClick]);
-
   const onMorePMsClick = useCallback(() => {
     setDisplayedPMs([...provider.paymentProviders]);
   }, [provider.paymentProviders]);
@@ -95,7 +94,12 @@ const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
           {displayedPMs.map(paymentProvider => (
             <View
               key={paymentProvider}
-              style={[styles.pm, { borderColor: colors.border }]}
+              style={[
+                styles.pm,
+                {
+                  borderColor: colors.border,
+                },
+              ]}
             >
               {assetMap[paymentProvider] ? (
                 assetMap[paymentProvider]
@@ -107,7 +111,12 @@ const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
           {provider.paymentProviders.length > 4 && displayedPMs.length <= 4 && (
             <TouchableOpacity
               onPress={onMorePMsClick}
-              style={[styles.pm, { borderColor: colors.border }]}
+              style={[
+                styles.pm,
+                {
+                  borderColor: colors.border,
+                },
+              ]}
             >
               <LText style={styles.pmLabel}>
                 +{provider.paymentProviders.length - 4} more
@@ -122,17 +131,18 @@ const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
 };
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams, name: string },
+  navigation: any;
+  route: {
+    params: RouteParams;
+    name: string;
+  };
 };
-
 type RouteParams = {
-  accountId: string,
-  accountAddress: string,
-  currency: CryptoCurrency | TokenCurrency,
-  type: "onRamp" | "offRamp",
+  accountId: string;
+  accountAddress: string;
+  currency: CryptoCurrency | TokenCurrency;
+  type: "onRamp" | "offRamp";
 };
-
 export default function ProviderList({ route }: Props) {
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -140,11 +150,9 @@ export default function ProviderList({ route }: Props) {
   const rampCatalog = useRampCatalog();
   const { currency, type, accountId, accountAddress } = route.params;
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-
   const filteredProviders = filterRampCatalogEntries(rampCatalog.value[type], {
     cryptoCurrencies: currency.id ? [currency.id] : undefined,
   });
-
   const onProviderClick = useCallback(
     (provider: RampCatalogEntry, icon: string, name: string) => {
       navigation.navigate(NavigatorName.ProviderView, {
@@ -170,7 +178,6 @@ export default function ProviderList({ route }: Props) {
       fiatCurrency.ticker,
     ],
   );
-
   return (
     <SafeAreaView
       style={[
@@ -195,7 +202,6 @@ export default function ProviderList({ route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -8,32 +6,36 @@ import { useSelector } from "react-redux";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
-
 import CoinifyWidget from "./CoinifyWidget";
 
 type RouteParams = {
-  account: AccountLike,
-  parentId: string,
-  device: Device,
-  mode: string,
-  skipDevice?: Boolean,
+  account: AccountLike;
+  parentId: string;
+  device: Device;
+  mode: string;
+  skipDevice?: boolean;
 };
-
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: {
+    params: RouteParams;
+  };
 };
-
 export default function CoinifyWidgetScreen({ route }: Props) {
   const { colors } = useTheme();
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const { account, mode, device, skipDevice } = route.params;
-
-  const forceInset = { bottom: "always" };
-
+  const forceInset = {
+    bottom: "always",
+  };
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.card }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.card,
+        },
+      ]}
       forceInset={forceInset}
     >
       <CoinifyWidget
@@ -47,7 +49,6 @@ export default function CoinifyWidgetScreen({ route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

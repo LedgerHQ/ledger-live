@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -12,17 +10,23 @@ import Button from "../../components/Button";
 import Alert from "../../components/Alert";
 
 type Props = {
-  settleTrade: Function,
-  account: Account,
+  settleTrade: (..._: Array<any>) => any;
+  account: Account;
 };
 
 const SkipDeviceVerification = ({ settleTrade, account }: Props) => {
   const currency = getAccountCurrency(account);
   const { colors } = useTheme();
-
   return (
     <View style={styles.root}>
-      <LText style={[styles.title, { color: colors.darkBlue }]}>
+      <LText
+        style={[
+          styles.title,
+          {
+            color: colors.darkBlue,
+          },
+        ]}
+      >
         <Trans
           i18nKey="exchange.buy.skipDeviceVerification.address"
           values={{
@@ -39,7 +43,10 @@ const SkipDeviceVerification = ({ settleTrade, account }: Props) => {
       <View
         style={[
           styles.addressContainer,
-          { backgroundColor: colors.background, borderColor: colors.fog },
+          {
+            backgroundColor: colors.background,
+            borderColor: colors.fog,
+          },
         ]}
       >
         <LText style={styles.address} semiBold>
@@ -118,5 +125,4 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
 });
-
 export default SkipDeviceVerification;

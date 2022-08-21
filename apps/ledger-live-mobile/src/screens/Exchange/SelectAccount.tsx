@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
@@ -25,19 +23,17 @@ import { NavigatorName, ScreenName } from "../../const";
 import { getAccountTuplesForCurrency } from "./hooks";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-
 type Props = {
-  navigation: any,
+  navigation: any;
   route: {
     params: {
-      mode: "buy" | "sell",
-      currency: CryptoCurrency | TokenCurrency,
-      onAccountChange: (selectedAccount: Account | AccountLike) => void,
-      analyticsPropertyFlow?: string,
-    },
-  },
+      mode: "buy" | "sell";
+      currency: CryptoCurrency | TokenCurrency;
+      onAccountChange: (_: Account | AccountLike) => void;
+      analyticsPropertyFlow?: string;
+    };
+  };
 };
-
 export default function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const {
@@ -46,14 +42,11 @@ export default function SelectAccount({ navigation, route }: Props) {
     analyticsPropertyFlow,
     onAccountChange,
   } = route.params;
-
   const accounts = useSelector(accountsSelector);
-
   const availableAccounts = useMemo(
     () => (currency ? getAccountTuplesForCurrency(currency, accounts) : []),
     [currency, accounts],
   );
-
   const enhancedAccounts = useMemo(() => {
     const filteredAccounts = availableAccounts
       .map(t => t.account)
@@ -66,16 +59,18 @@ export default function SelectAccount({ navigation, route }: Props) {
               ? currency.parentCurrency.id
               : currency.id),
       );
+
     if (currency.type === "TokenCurrency") {
       return filteredAccounts.map(acc =>
         accountWithMandatoryTokens(acc, [currency]),
       );
     }
+
     return filteredAccounts;
   }, [availableAccounts, currency]);
-
   const allAccounts = useMemo(() => {
     const accounts = enhancedAccounts;
+
     if (currency.type === "TokenCurrency") {
       const subAccounts = availableAccounts.map(t => t.subAccount);
 
@@ -86,10 +81,10 @@ export default function SelectAccount({ navigation, route }: Props) {
 
     return accounts;
   }, [enhancedAccounts, currency.type, availableAccounts]);
-
   const { t } = useTranslation();
 
   const keyExtractor = item => item.account.id;
+
   const renderItem = useCallback(
     ({ item: result }: { item: SearchResult }) => {
       const { account } = result;
@@ -98,7 +93,12 @@ export default function SelectAccount({ navigation, route }: Props) {
           style={
             account.type === "Account"
               ? undefined
-              : [styles.tokenCardStyle, { borderLeftColor: colors.fog }]
+              : [
+                  styles.tokenCardStyle,
+                  {
+                    borderLeftColor: colors.fog,
+                  },
+                ]
           }
         >
           <AccountCard
@@ -120,7 +120,6 @@ export default function SelectAccount({ navigation, route }: Props) {
     },
     [colors.fog, onAccountChange, navigation, mode],
   );
-
   const elligibleAccountsForSelectedCurrency = useMemo(
     () =>
       allAccounts.filter(
@@ -131,7 +130,6 @@ export default function SelectAccount({ navigation, route }: Props) {
       ),
     [allAccounts, currency.id],
   );
-
   const onAddAccount = useCallback(() => {
     if (currency && currency.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
@@ -145,7 +143,6 @@ export default function SelectAccount({ navigation, route }: Props) {
       });
     }
   }, [analyticsPropertyFlow, currency, navigation]);
-
   const renderList = useCallback(
     items => {
       // $FlowFixMe seriously WTF (60 errors just on this 😱)
@@ -180,12 +177,19 @@ export default function SelectAccount({ navigation, route }: Props) {
     return (
       <View style={styles.emptyStateBody}>
         <View
-          style={[styles.iconContainer, { backgroundColor: colors.lightLive }]}
+          style={[
+            styles.iconContainer,
+            {
+              backgroundColor: colors.lightLive,
+            },
+          ]}
         >
           <InfoIcon size={22} color={colors.live} />
         </View>
         <LText semiBold style={styles.title}>
-          {t("exchange.buy.emptyState.title", { currency: currency.name })}
+          {t("exchange.buy.emptyState.title", {
+            currency: currency.name,
+          })}
         </LText>
         <LText style={styles.description} color="smoke">
           {t("exchange.buy.emptyState.description", {
@@ -206,9 +210,20 @@ export default function SelectAccount({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen category="ReceiveFunds" name="SelectAccount" />
-      <KeyboardView style={{ flex: 1 }}>
+      <KeyboardView
+        style={{
+          flex: 1,
+        }}
+      >
         <View style={styles.searchContainer}>
           <FilteredSearchBar
             keys={SEARCH_KEYS}
@@ -228,7 +243,6 @@ export default function SelectAccount({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   addAccountButton: {
     flex: 1,

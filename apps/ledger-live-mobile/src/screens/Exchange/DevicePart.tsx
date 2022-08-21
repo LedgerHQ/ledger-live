@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useMemo, useState } from "react";
 import {
   getMainAccount,
@@ -26,7 +24,7 @@ import { renderError } from "../../components/DeviceAction/rendering";
 const initSellExec = ({
   deviceId,
 }: {
-  deviceId: string,
+  deviceId: string;
 }): Observable<SellRequestEvent> =>
   withDevice(deviceId)(transport => from(getTransactionId(transport)));
 
@@ -41,13 +39,13 @@ const checkSignatureAndPrepareCmd = ({
   parentAccount,
   status,
 }: {
-  deviceId: string,
-  transaction: Transaction,
-  binaryPayload: *,
-  payloadSignature: *,
-  account: AccountLike,
-  parentAccount: ?Account,
-  status: *,
+  deviceId: string;
+  transaction: Transaction;
+  binaryPayload: any;
+  payloadSignature: any;
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  status: any;
 }): Observable<SellRequestEvent> =>
   withDevice(deviceId)(transport =>
     from(
@@ -63,13 +61,12 @@ const checkSignatureAndPrepareCmd = ({
   );
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  getCoinifyContext: string => Promise<any>,
-  device: Device,
-  onResult: (bool?: boolean) => void,
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  getCoinifyContext: (_: string) => Promise<any>;
+  device: Device;
+  onResult: (_?: boolean) => void;
 };
-
 export function DevicePart({
   account,
   parentAccount,
@@ -78,23 +75,21 @@ export function DevicePart({
   onResult,
 }: Props) {
   const { t } = useTranslation();
-
   const tokenCurrency =
     account && account.type === "TokenAccount" ? account.token : null;
   const [sellData, setSellData] = useState(null);
   const [error, setError] = useState(null);
-  const broadcast = useBroadcast({ account, parentAccount });
-
+  const broadcast = useBroadcast({
+    account,
+    parentAccount,
+  });
   const handleTransactionId = useCallback(
     async (nonce: string) => {
       const mainAccount = getMainAccount(account, parentAccount);
       const mainCurrency = getAccountCurrency(mainAccount);
-
       const coinifyContext = await getCoinifyContext(nonce);
-
       const bridge = getAccountBridge(account, parentAccount);
       const t1 = bridge.createTransaction(mainAccount);
-
       const t2 = bridge.updateTransaction(t1, {
         amount: parseCurrencyUnit(
           mainCurrency.units[0],
@@ -118,7 +113,6 @@ export function DevicePart({
     },
     [getCoinifyContext, account, parentAccount],
   );
-
   const action2 = useMemo(
     () =>
       initSellCreateAction(
@@ -151,7 +145,11 @@ export function DevicePart({
   );
 
   if (error) {
-    return renderError({ t, error, onRetry: () => onResult(false) });
+    return renderError({
+      t,
+      error,
+      onRetry: () => onResult(false),
+    });
   }
 
   // When the device is done with the sell init
@@ -170,6 +168,7 @@ export function DevicePart({
               onResult(false);
               return;
             }
+
             setError(initSellError);
           } else {
             setSellData(initSellResult);
@@ -184,8 +183,7 @@ export function DevicePart({
     <DeviceAction
       key={"send"}
       action={action}
-      device={device}
-      // $FlowFixMe
+      device={device} // $FlowFixMe
       request={{
         tokenCurrency,
         parentAccount,
