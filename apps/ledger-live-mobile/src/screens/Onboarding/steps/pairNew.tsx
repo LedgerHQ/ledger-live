@@ -112,11 +112,6 @@ function OnboardingStepPairNew() {
 
   const nextPage = useCallback(() => {
     onFinish();
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    // navigation.navigate(ScreenName.OnboardingFinish, {
-    //  ...route.params,
-    // });
   }, [onFinish]);
 
   return (

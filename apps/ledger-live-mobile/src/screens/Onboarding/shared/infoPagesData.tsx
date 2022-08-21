@@ -1,16 +1,12 @@
-// @flow
 import React from "react";
 import { Platform } from "react-native";
 import { Trans } from "react-i18next";
 import type { OnboardingScene } from "../../../components/OnboardingStepperView";
-
 import setupDeviceStartImage from "../assets/getStarted.png";
 import pinCodeImage from "../assets/pinCodeImage.png";
-
 import recoveryPhrase from "../assets/recoveryPhrase.png";
 import recoverySheet from "../assets/recoverySheet.png";
 import hideRecoveryPhrase from "../assets/hideRecoveryPhrase.png";
-
 import pinCodeNanoXLight from "../assets/nanoX/pinCode/light.json";
 import pinCodeNanoXDark from "../assets/nanoX/pinCode/dark.json";
 import pinCodeNanoSLight from "../assets/nanoS/pinCode/light.json";
@@ -19,7 +15,6 @@ import pinCodeNanoSPLight from "../assets/nanoSP/pinCode/light.json";
 import pinCodeNanoSPDark from "../assets/nanoSP/pinCode/dark.json";
 import pinCodeNanoFTSLight from "../assets/nanoFTS/pinCode/light.json";
 import pinCodeNanoFTSDark from "../assets/nanoFTS/pinCode/dark.json";
-
 import recoverNanoXLight from "../assets/nanoX/recover/light.json";
 import recoverNanoXDark from "../assets/nanoX/recover/dark.json";
 import recoverNanoSLight from "../assets/nanoS/recover/light.json";
@@ -28,7 +23,6 @@ import recoverNanoSPLight from "../assets/nanoSP/recover/light.json";
 import recoverNanoSPDark from "../assets/nanoSP/recover/dark.json";
 import recoverNanoFTSLight from "../assets/nanoFTS/recover/light.json";
 import recoverNanoFTSDark from "../assets/nanoFTS/recover/dark.json";
-
 import confirmWordsNanoXLight from "../assets/nanoX/confirmWords/light.json";
 import confirmWordsNanoXDark from "../assets/nanoX/confirmWords/dark.json";
 import confirmWordsNanoSLight from "../assets/nanoS/confirmWords/light.json";
@@ -37,7 +31,6 @@ import confirmWordsNanoSPLight from "../assets/nanoSP/confirmWords/light.json";
 import confirmWordsNanoSPDark from "../assets/nanoSP/confirmWords/dark.json";
 import confirmWordsNanoFTSLight from "../assets/nanoFTS/confirmWords/light.json";
 import confirmWordsNanoFTSDark from "../assets/nanoFTS/confirmWords/dark.json";
-
 import numberOfWordsNanoXLight from "../assets/nanoX/numberOfWords/light.json";
 import numberOfWordsNanoXDark from "../assets/nanoX/numberOfWords/dark.json";
 import numberOfWordsNanoSLight from "../assets/nanoS/numberOfWords/light.json";
@@ -46,7 +39,6 @@ import numberOfWordsNanoSPLight from "../assets/nanoSP/numberOfWords/light.json"
 import numberOfWordsNanoSPDark from "../assets/nanoSP/numberOfWords/dark.json";
 import numberOfWordsNanoFTSLight from "../assets/nanoFTS/numberOfWords/light.json";
 import numberOfWordsNanoFTSDark from "../assets/nanoFTS/numberOfWords/dark.json";
-
 import powerOnNanoXLight from "../assets/nanoX/powerOn/light.json";
 import powerOnNanoXDark from "../assets/nanoX/powerOn/dark.json";
 import powerOnNanoSLight from "../assets/nanoS/powerOn/light.json";
@@ -55,7 +47,6 @@ import powerOnNanoSPLight from "../assets/nanoSP/powerOn/light.json";
 import powerOnNanoSPDark from "../assets/nanoSP/powerOn/dark.json";
 import powerOnNanoFTSLight from "../assets/nanoFTS/powerOn/light.json";
 import powerOnNanoFTSDark from "../assets/nanoFTS/powerOn/dark.json";
-
 import powerOnRecoveryNanoXLight from "../assets/nanoX/powerOnRecovery/light.json";
 import powerOnRecoveryNanoXDark from "../assets/nanoX/powerOnRecovery/dark.json";
 import powerOnRecoveryNanoSLight from "../assets/nanoS/powerOnRecovery/light.json";
@@ -64,12 +55,9 @@ import powerOnRecoveryNanoSPLight from "../assets/nanoSP/powerOnRecovery/light.j
 import powerOnRecoveryNanoSPDark from "../assets/nanoSP/powerOnRecovery/dark.json";
 import powerOnRecoveryNanoFTSLight from "../assets/nanoFTS/powerOnRecovery/light.json";
 import powerOnRecoveryNanoFTSDark from "../assets/nanoFTS/powerOnRecovery/dark.json";
-
 import importRecoveryPhrase from "../assets/importRecoveryPhrase.png";
 import syncCryptos from "../assets/syncCryptos.png";
-
 import onboardingQuizImage from "../assets/onboardingQuiz.png";
-
 import Clock from "../../../icons/Clock";
 import Edit from "../../../icons/Edit";
 import Check from "../../../icons/Check";
@@ -82,7 +70,6 @@ import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
 import NanoDeviceCancelIcon from "../../../icons/NanoDeviceCancelIcon";
 import NanoDeviceCheckIcon from "../../../icons/NanoDeviceCheckIcon";
-
 import { urls } from "../../../config/urls";
 
 export const lottieAnimations = {
@@ -165,7 +152,10 @@ export const lottieAnimations = {
       light: powerOnRecoveryNanoXLight,
       dark: powerOnRecoveryNanoXDark,
     },
-    style: { width: "110%", left: "5%" },
+    style: {
+      width: "110%",
+      left: "5%",
+    },
   },
   blue: {
     pinCode: {
@@ -222,7 +212,6 @@ export const lottieAnimations = {
     style: {},
   },
 };
-
 const recoveryWarningInfoModalProps = [
   {
     Icon: WarningOutline,
@@ -235,7 +224,6 @@ const recoveryWarningInfoModalProps = [
     },
   },
 ];
-
 const pinCodeInfoModalProps = [
   {
     title: (
@@ -301,7 +289,6 @@ const pinCodeInfoModalProps = [
     ],
   },
 ];
-
 const recoveryPhraseInfoModalProps = [
   {
     title: (
@@ -348,7 +335,6 @@ const recoveryPhraseInfoModalProps = [
     ],
   },
 ];
-
 const hideRecoveryPhraseInfoModalProps = [
   {
     title: (
@@ -408,7 +394,6 @@ const hideRecoveryPhraseInfoModalProps = [
     ],
   },
 ];
-
 const pairNewErrorInfoModalProps = [
   {
     title: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.title" />,
@@ -477,7 +462,6 @@ const pairNewErrorInfoModalProps = [
       ]
     : []),
 ];
-
 export const infoModalScenes = {
   recoveryWarningInfoModalProps,
   pinCodeInfoModalProps,
@@ -543,7 +527,9 @@ const pinCodeScenes = (deviceModelId, theme: "dark" | "light") => [
 ];
 
 const getSetupDeviceScenes: (
+  // eslint-disable-next-line no-unused-vars
   deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue" | "nanoFTS",
+  // eslint-disable-next-line no-unused-vars
   theme: "dark" | "light",
 ) => OnboardingScene[] = (deviceModelId, theme) => [
   {
@@ -957,7 +943,12 @@ const importAccountsScenes = [
           label: (
             <Trans i18nKey="onboarding.stepImportAccounts.bullets.0.label">
               {""}
-              <LText semiBold style={{ color: "#FFF" }} />
+              <LText
+                semiBold
+                style={{
+                  color: "#FFF",
+                }}
+              />
               {""}
             </Trans>
           ),
@@ -986,5 +977,4 @@ const importAccountsScenes = [
     id: "importRecoveryPhrase",
   },
 ];
-
 export { getSetupDeviceScenes, getRecoveryPhraseScenes, importAccountsScenes };

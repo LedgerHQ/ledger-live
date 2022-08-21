@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 
-import { DeviceModelId } from "@ledgerhq/devices";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../../../const";
 import { DeviceNames } from "../../types";
@@ -180,8 +179,6 @@ function OnboardingStepNewDevice() {
   );
 
   const nextPage = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingPreQuizModal, {
       onNext: () =>
         navigation.navigate(ScreenName.OnboardingQuiz, { ...route.params }),

@@ -12,6 +12,7 @@ import { track, screen, updateIdentify } from "../../../analytics";
 import { setFirstConnectionHasDevice } from "../../../actions/settings";
 import { AnalyticsContext } from "../../../components/RootNavigator";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const RenderVertical = require("../../../../apps/ledger-live-mobile/assets/images/devices/3DRenderVertical.png");
 
 function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
@@ -35,8 +36,6 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
       screen: "Has Device?",
     });
 
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate({
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {
@@ -54,8 +53,6 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
       screen: "Has Device?",
     });
 
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate({
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {

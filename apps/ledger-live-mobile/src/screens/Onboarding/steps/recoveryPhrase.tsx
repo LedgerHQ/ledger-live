@@ -166,8 +166,6 @@ function OnboardingStepRecoveryPhrase() {
   );
 
   const nextPage = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingPairNew, {
       ...route.params,
       showSeedWarning: false,

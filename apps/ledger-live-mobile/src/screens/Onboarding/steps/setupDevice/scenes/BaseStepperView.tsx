@@ -36,8 +36,6 @@ const InfoButton = ({ target }: { target: Metadata["drawer"] }) => {
       <Button
         Icon={Icons.InfoRegular}
         onPress={() =>
-          // TODO: FIX @react-navigation/native using Typescript
-          // @ts-ignore next-line
           navigation.navigate(target.route, { screen: target.screen })
         }
       />
@@ -75,6 +73,7 @@ const ImageHeader = ({
         <SlideIndicator
           slidesLength={metadata.length}
           activeIndex={activeIndex}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           onChange={() => {}}
         />
       )}

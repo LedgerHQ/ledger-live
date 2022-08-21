@@ -42,6 +42,7 @@ const Item = ({
   title: string;
   imageProps: ImageProps;
   displayNavigationButtons?: boolean;
+  currentIndex?: number;
 }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -64,8 +65,6 @@ const Item = ({
 
   const buyLedger = useCallback(() => {
     onClick("Buy a Ledger");
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(NavigatorName.BuyDevice);
   }, [navigation, onClick]);
 
