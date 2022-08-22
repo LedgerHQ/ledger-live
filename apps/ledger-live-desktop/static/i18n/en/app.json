@@ -745,7 +745,19 @@
     "bandwidthTooltip": "Freeze assets to gain bandwidth",
     "energyTooltip": "Freeze assets to gain energy",
     "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
-    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available.",
+    "banner": {
+      "redelegation": {
+        "title": "In case you didn’t know...",
+        "description": "The Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta": "Redelegate with Ledger"
+      },
+      "delegation": {
+        "title": "In case you didn’t know...",
+        "description": "The Ledger validator stakes your {{asset}} at a low commission of {{commission}}%.",
+        "cta": "Stake with Ledger"
+      }
+    }
   },
   "exchange": {
     "chooseProvider": "Choose from {{providerCount}} provider",

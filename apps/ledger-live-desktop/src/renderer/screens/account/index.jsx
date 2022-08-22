@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { compose } from "redux";
 import { connect, useSelector } from "react-redux";
 import { withTranslation } from "react-i18next";
@@ -39,6 +39,10 @@ import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
+import { getBannerProps, AccountBanner } from "./AccountBanner";
+
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const mapStateToProps = (
   state,
@@ -111,6 +115,18 @@ const AccountPage = ({
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency, bgColor);
 
+  const dispatch = useDispatch();
+
+  const [banner, setBanner] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const bannerProps = await getBannerProps(account, { t, dispatch });
+      setBanner(bannerProps);
+    };
+    fetchData();
+  }, [account]);
+
   return (
     <Box key={account.id}>
       <TrackPage
@@ -157,6 +173,7 @@ const AccountPage = ({
               ctoken={ctoken}
             />
           </Box>
+          {banner.display && <AccountBanner {...banner} />}
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
