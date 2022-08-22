@@ -1294,7 +1294,7 @@
       "noSearchResults" : "对不起，我们没有找到任何搜索结果。",
       "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
       "retrySearchParams" : "请用其他参数重新进行搜索。",
-      "trackFavAssets" : "追踪您最喜爱的",
+      "trackFavAssets" : "追踪您的收藏",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
       "browseAssets" : "浏览资产"
     }
@@ -1984,6 +1984,19 @@
     },
     "switchButton" : "切换至{{language}}",
     "no" : "我不愿意"
+  },
+  "deviceLocalization" : {
+    "language" : "语言",
+    "deviceLanguage" : "设备语言",
+    "changeLanguage" : "更改语言",
+    "allowLanguageInstallation" : "允许安装语言",
+    "languageInstalled" : "语言更改成功",
+    "installingLanguage" : "正在安装语言",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
   },
   "distribution" : {
     "asset" : "资产",
@@ -3046,6 +3059,11 @@
       "catalogServerDesc" : "在多个平台应用源之间切换",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
+      "featureFlagsTitle" : "Ledger Live 中使用的已定义功能标志",
+      "featureFlagsDesc" : "如果重新启动应用程序，将重置覆盖的值。仅接受有效的 JSON 字符串。",
+      "featureFlagsEdit" : "编辑",
+      "featureFlagsRestore" : "重置",
+      "featureFlagsOverride" : "覆盖",
       "addLocalApp" : "添加一个本地应用程序",
       "addLocalAppDesc" : "浏览本地文件并使用本地清单添加本地应用程序",
       "addLocalAppButton" : "浏览",
@@ -4155,6 +4173,14 @@
       "title" : "抱歉，无法重置",
       "description" : "请重试，如果问题仍然存在则请联系 Ledger 客服。"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "语言安装被设备端拒绝",
+      "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+    },
+    "LanguageNotFound" : {
+      "title" : "未找到语言",
+      "description" : "未找到您尝试安装的语言。请尝试安装其他语言。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "对不起，没有可更新的内容",
       "description" : "如果设备无法使用，请联系 Ledger 客服。"
@@ -4219,6 +4245,10 @@
     },
     "NetworkDown" : {
       "title" : "抱歉，网络连接似乎已断开",
+      "description" : "请检查您的网络连接。"
+    },
+    "NetworkError" : {
+      "title" : "同步期间发生错误",
       "description" : "请检查您的网络连接。"
     },
     "NoAddressesFound" : {
