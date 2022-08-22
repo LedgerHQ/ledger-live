@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent, NativeModules } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
