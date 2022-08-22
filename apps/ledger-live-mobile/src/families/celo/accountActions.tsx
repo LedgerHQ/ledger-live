@@ -10,13 +10,13 @@ import invariant from "invariant";
 const getActions = ({ account }: { account: CeloAccount }) => {
   invariant(account, "celo account not found");
   const { celoResources } = account;
-  invariant(celoResources, "not found celo resources not parsed");
+  invariant(celoResources, "celo resources not parsed");
 
   return [
     {
       disabled: false,
       navigationParams: [
-        NavigatorName.CeloTestNavigator,
+        NavigatorName.CeloManageAssetsNavigator,
         {
           screen: ScreenName.CosmosDelegationStarted,
           params: {

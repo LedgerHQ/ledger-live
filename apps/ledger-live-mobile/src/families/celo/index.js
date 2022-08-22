@@ -1,6 +1,6 @@
 // @flow
-import * as CeloTestNavigator from "./TestNavigator";
+import * as CeloManageAssetsNavigator from "./ManageAssetsNavigator";
 import * as CeloRegistrationFlow from "./RegistrationFlow";
 import * as CeloLockFlow from "./LockFlow";
 
-export { CeloTestNavigator, CeloRegistrationFlow, CeloLockFlow };
+export { CeloManageAssetsNavigator, CeloRegistrationFlow, CeloLockFlow };
