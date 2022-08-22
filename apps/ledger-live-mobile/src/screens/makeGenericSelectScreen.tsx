@@ -6,6 +6,7 @@ import SettingsRow from "../components/SettingsRow";
 
 type EntryProps<Item> = {
   item: Item;
+  // eslint-disable-next-line no-unused-vars
   onPress: (value: Item) => void;
   selected: boolean;
 };
@@ -13,10 +14,12 @@ type EntryComponent<Item> = React.Component<EntryProps<Item>>;
 
 type Opts<Item> = {
   id: string;
-  itemEventProperties: (value: Item) => Object;
-  keyExtractor: (value: Item) => string;
-  formatItem?: (value: Item) => React.ReactElement;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  itemEventProperties: (_: Item) => Object;
+  keyExtractor: (_: Item) => string;
+  formatItem?: (_: Item) => React.ReactElement;
   Entry?: EntryComponent<Item>;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   navigationOptions?: Object;
   ListHeaderComponent?: any;
   // TODO in future: searchable: boolean
@@ -59,6 +62,7 @@ export default function makeGenericSelectScreen<Item>(opts: Opts<Item>) {
   return class GenericSelectScreen extends Component<{
     selectedKey?: string;
     items: Item[];
+    // eslint-disable-next-line no-unused-vars
     onValueChange: (items: Item, props: any) => void;
     navigation: any;
     cancelNavigateBack?: boolean;

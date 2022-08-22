@@ -9,7 +9,6 @@ import {
   Account,
   TokenAccount,
   Currency,
-  AccountLike,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -33,7 +32,7 @@ import AccountCard from "../../components/AccountCard";
 type RouteParams = {
   currency: CryptoCurrency | TokenCurrency;
   device: Device;
-  onSuccess?: (params?: any) => void;
+  onSuccess?: (_?: any) => void;
 };
 
 type Props = {
@@ -51,7 +50,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   const [error, setError] = useState(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [cancelled, setCancelled] = useState(false);
-  const [selectedAccount, setSelectedAccount] = useState<String | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   const scanSubscription = useRef<any>();
 
@@ -122,7 +121,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     startSubscription();
   }, []);
 
-  const stopSubscription = useCallback((syncUI: boolean = true) => {
+  const stopSubscription = useCallback((syncUI = true) => {
     if (scanSubscription.current) {
       scanSubscription.current.unsubscribe();
       scanSubscription.current = null;

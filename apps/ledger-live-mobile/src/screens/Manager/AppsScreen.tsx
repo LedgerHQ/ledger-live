@@ -1,4 +1,3 @@
-// @flow
 import React, { useState, useCallback, useMemo, memo } from "react";
 import { FlatList } from "react-native";
 import {
@@ -13,12 +12,12 @@ import { Text, Flex } from "@ledgerhq/native-ui";
 
 import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+// eslint-disable-next-line import/no-cycle
 import { ManagerTab } from "./Manager";
 
 import AppFilter from "./AppsList/AppFilter";
 
 import DeviceCard from "./Device";
-import FirmwareManager from "./Firmware";
 import AppRow from "./AppsList/AppRow";
 
 import Searchbar from "./AppsList/Searchbar";
@@ -33,15 +32,9 @@ import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 
 type Props = {
   state: State;
-  dispatch: (action: Action) => void;
-  setAppInstallWithDependencies: (params: {
-    app: App;
-    dependencies: App[];
-  }) => void;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  dispatch: (_: Action) => void;
+  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   setStorageWarning: () => void;
   deviceId: string;
   initialDeviceName: string;

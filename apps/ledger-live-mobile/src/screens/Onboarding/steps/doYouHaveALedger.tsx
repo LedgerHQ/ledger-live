@@ -10,9 +10,11 @@ import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 import { track, screen, updateIdentify } from "../../../analytics";
 import { setFirstConnectionHasDevice } from "../../../actions/settings";
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
 
-const RenderVertical = require("../../../../apps/ledger-live-mobile/assets/images/devices/3DRenderVertical.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const RenderVertical = require("../../../assets/images/devices/3DRenderVertical.png");
 
 function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   const { t } = useTranslation();
@@ -35,8 +37,6 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
       screen: "Has Device?",
     });
 
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate({
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {
@@ -54,8 +54,6 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
       screen: "Has Device?",
     });
 
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate({
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {

@@ -6,7 +6,7 @@ import { Flex, Icons } from "@ledgerhq/native-ui";
 
 type Props = {
   searchQuery?: string;
-  onQueryUpdate: (query: string) => void;
+  onQueryUpdate: (_: string) => void;
 };
 
 const SearchbarContainer = styled(Flex).attrs({

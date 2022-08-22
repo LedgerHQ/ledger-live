@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
@@ -18,14 +16,14 @@ import SkipSelectDevice from "../SkipSelectDevice";
 import { setLastConnectedDevice } from "../../actions/settings";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  currency: CryptoCurrency,
-  inline?: boolean,
-  analyticsPropertyFlow?: string,
+  currency: CryptoCurrency;
+  inline?: boolean;
+  analyticsPropertyFlow?: string;
 };
 
 const action = createAction(connectApp);
