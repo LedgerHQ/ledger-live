@@ -35,7 +35,7 @@ import {
   canDelegate,
 } from "@ledgerhq/live-common/families/cosmos/logic";
 import { Text } from "@ledgerhq/native-ui";
-import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-common/families/cosmos/logic";
+import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";

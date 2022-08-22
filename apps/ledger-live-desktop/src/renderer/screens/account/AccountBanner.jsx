@@ -6,7 +6,7 @@ import { Flex, Alert, Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/ButtonV3";
 import type { Account } from "@ledgerhq/live-common/types/index";
 
-import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-common/families/cosmos/logic";
+import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
 import { getAccountBannerProps as getCosmosBannerProps } from "~/renderer/families/cosmos/utils";
 
 const getBannerProps = async (account: Account, hooks) => {
