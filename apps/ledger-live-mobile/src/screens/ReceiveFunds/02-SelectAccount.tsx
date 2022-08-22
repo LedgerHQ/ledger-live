@@ -4,8 +4,9 @@ import { useSelector } from "react-redux";
 
 import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { AccountLike, Currency } from "@ledgerhq/live-common/lib/types";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
+import { AccountLike } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useRoute } from "@react-navigation/native";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";

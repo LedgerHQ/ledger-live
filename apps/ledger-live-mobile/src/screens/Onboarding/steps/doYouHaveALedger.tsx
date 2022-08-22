@@ -14,7 +14,7 @@ import { setFirstConnectionHasDevice } from "../../../actions/settings";
 import { AnalyticsContext } from "../../../components/RootNavigator";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const RenderVertical = require("../../../assets/images/devices/3DRenderVertical.png");
+const RenderVertical = require("../../../../assets/images/devices/3DRenderVertical.png");
 
 function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   const { t } = useTranslation();
