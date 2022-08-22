@@ -1985,6 +1985,19 @@
     "switchButton" : "Zu {{language}} wechseln",
     "no" : "Lieber nicht"
   },
+  "deviceLocalization" : {
+    "language" : "Sprache",
+    "deviceLanguage" : "Geräte-Sprache",
+    "changeLanguage" : "Sprache wechseln",
+    "allowLanguageInstallation" : "Sprachinstallation zulassen",
+    "languageInstalled" : "Sprache erfolgreich gewechselt",
+    "installingLanguage" : "Sprache installieren",
+    "languages" : {
+      "english" : "Englisch",
+      "french" : "Französisch",
+      "spanish" : "Spanisch"
+    }
+  },
   "distribution" : {
     "asset" : "Vermögenswert",
     "price" : "Preis",
@@ -3046,6 +3059,11 @@
       "catalogServerDesc" : "Wechseln Sie zwischen mehreren Plattform-App-Quellen",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
+      "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
+      "featureFlagsEdit" : "Bearbeiten",
+      "featureFlagsRestore" : "Wiederherstellen",
+      "featureFlagsOverride" : "Überschreiben",
       "addLocalApp" : "Lokale App hinzufügen",
       "addLocalAppDesc" : "Durchsuchen Sie lokale Dateien und fügen Sie eine lokale App mit einem lokalen Manifest hinzu",
       "addLocalAppButton" : "Durchsuchen",
@@ -4155,6 +4173,14 @@
       "title" : "Entschuldigung, die Verbindung konnte nicht zurückgesetzt werden",
       "description" : "Bitte versuchen Sie es erneut oder wenden Sie sich an den Ledger Kundenservice, falls das Problem weiterhin besteht."
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Sprachinstallation auf dem Gerät abgelehnt",
+      "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
+    },
+    "LanguageNotFound" : {
+      "title" : "Die Sprache wurde nicht gefunden",
+      "description" : "Die Sprache, die Sie installieren möchten, wurde nicht gefunden. Bitte versuchen Sie, eine andere Sprache zu installieren."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Entschuldigung, es gibt nichts zu aktualisieren",
       "description" : "Bitte kontaktieren Sie den Ledger-Support, wenn Sie Ihr Gerät nicht verwenden können."
@@ -4219,6 +4245,10 @@
     },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
+      "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
+    },
+    "NetworkError" : {
+      "title" : "Während der Synchronisierung ist ein Fehler aufgetreten",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
     },
     "NoAddressesFound" : {
