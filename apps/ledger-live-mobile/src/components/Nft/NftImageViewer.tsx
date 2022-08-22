@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/types-live";
+import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import NftMedia from "./NftMedia";
 
@@ -12,7 +12,7 @@ type Props = {
 
 type RouteParams = {
   metadata: NFTMetadata;
-  mediaFormat: NFTMediaSizes;
+  mediaFormat: NFTMediaSize;
   status: NFTResource["status"];
 };
 

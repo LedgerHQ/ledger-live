@@ -3,19 +3,15 @@ import { TouchableOpacity, Share } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation, Trans } from "react-i18next";
-import type {
-  Account,
-  TokenAccount,
-  AccountLike,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
 import {
+  makeEmptyTokenAccount,
   getMainAccount,
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
 import { useRoute } from "@react-navigation/native";
 // eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
