@@ -1,6 +1,6 @@
 // @flow
 import React, { useState, useCallback, useMemo, memo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import {
   listTokens,
   isCurrencySupported,
@@ -30,6 +30,7 @@ import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "../../components/Search";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 
 type Props = {
   state: State;
@@ -303,6 +304,7 @@ const AppsScreen = ({
         ListEmptyComponent={renderNoResults}
         keyExtractor={item => item.name}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
       />
     ),
     [
@@ -348,5 +350,11 @@ const AppsScreen = ({
     </Flex>
   );
 };
+
+const styles = StyleSheet.create({
+  list: {
+    paddingBottom: TAB_BAR_SAFE_HEIGHT,
+  },
+});
 
 export default memo<Props>(AppsScreen);
