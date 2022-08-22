@@ -745,7 +745,19 @@
     "bandwidthTooltip" : "Congele ativos para ganhar Largura de Banda",
     "energyTooltip" : "Congele ativos para ganhar Energia",
     "delegatedTooltip" : "Ativos delegados são utilizados no processo de votação. Isso representa seu número total de votos.",
-    "undelegatingTooltip" : "Ativos desdelegados ficam bloqueados por um período de {{timelockInDays}} dias, antes de ficarem disponíveis."
+    "undelegatingTooltip" : "Ativos desdelegados ficam bloqueados por um período de {{timelockInDays}} dias, antes de ficarem disponíveis.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta" : "Redelegate with Ledger"
+      },
+      "delegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes your {{asset}} at a low commission of {{commission}}%.",
+        "cta" : "Stake with Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "Escolha entre {{providerCount}} provedor",
@@ -1294,7 +1306,7 @@
       "noSearchResults" : "Não encontramos nenhum resultado de busca.",
       "retrySearchKeyword" : "Tente pesquisar novamente usando outra palavra-chave.",
       "retrySearchParams" : "Tente pesquisar novamente usando outros parâmetros.",
-      "trackFavAssets" : "Acompanhe seu favorito",
+      "trackFavAssets" : "Track your favorite",
       "clickOnStarIcon" : "Selecione o ícone de estrela ao lado de um ativo para adicioná-lo automaticamente aos seus favoritos.",
       "browseAssets" : "Pesquisar Ativos"
     }
@@ -3046,6 +3058,11 @@
       "catalogServerDesc" : "Alterne entre múltiplas fontes de aplicativos da plataforma",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar a abertura da janela de ferramentas de desenvolvedor de aplicativos da plataforma",
+      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsOverride" : "Sobrepor",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
       "addLocalAppButton" : "Navegar",
@@ -4220,6 +4237,10 @@
     "NetworkDown" : {
       "title" : "A internet parece estar desconectada",
       "description" : "Verifique sua conexão à internet."
+    },
+    "NetworkError" : {
+      "title" : "An error occurred during synchronization",
+      "description" : "Please check your internet connection."
     },
     "NoAddressesFound" : {
       "title" : "Nenhuma conta encontrada",
