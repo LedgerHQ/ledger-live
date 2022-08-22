@@ -76,13 +76,10 @@ const SyncOnboardingManual = () => {
     },
     {
       key: StepKey.SoftwareCheck,
-      status: "active",
+      status: "inactive",
       title: t("syncOnboarding.manual.softwareCheckContent.title"),
       renderBody: () => (
-        <SoftwareCheckContent
-          genuineCheckStatus="completed"
-          firmwareUpdateStatus="updateAvailable"
-        />
+        <SoftwareCheckContent genuineCheckStatus="active" firmwareUpdateStatus="inactive" />
       ),
     },
     {
