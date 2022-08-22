@@ -62,7 +62,7 @@ import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/
 import { getAccountBannerProps as getCosmosBannerProps } from "../../../families/cosmos/utils";
 
 type Props = {
-  account: Account;
+  account: Account,
 };
 
 type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
@@ -103,9 +103,9 @@ function Delegations({ account }: Props) {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName;
-      screen?: typeof ScreenName;
-      params?: { [key: string]: any };
+      route: typeof NavigatorName | typeof ScreenName,
+      screen?: typeof ScreenName,
+      params?: { [key: string]: any },
     }) => {
       setDelegation();
       navigation.navigate(route, {
