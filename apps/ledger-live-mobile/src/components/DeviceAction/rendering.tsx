@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
-import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
+import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
@@ -108,6 +108,7 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
 })``;
 
 type RawProps = {
+  // eslint-disable-next-line no-unused-vars
   t: (key: string, options?: { [key: string]: string | number }) => string;
   colors?: any;
   theme?: "light" | "dark";

@@ -30,6 +30,7 @@ import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import { Item } from "./Graph/types";
 import { useBalanceHistoryWithCountervalue } from "../actions/portfolio";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import Touchable from "./Touchable";

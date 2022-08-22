@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { ProgressLoader, Text } from "@ledgerhq/native-ui";
 
 type Props = {
-  progress?: number,
+  progress?: number;
 };
 
 function DeviceActionProgress({ progress }: Props) {
@@ -14,7 +14,7 @@ function DeviceActionProgress({ progress }: Props) {
       strokeWidth={8}
     >
       <Text color="primary.c80" variant="paragraph" fontWeight="semiBold">
-        {progress && progress < 1 ? `${Math.round(progress * 100)}%`: ""}
+        {progress && progress < 1 ? `${Math.round(progress * 100)}%` : ""}
       </Text>
     </ProgressLoader>
   );
