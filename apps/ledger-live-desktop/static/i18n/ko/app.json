@@ -745,7 +745,19 @@
     "bandwidthTooltip" : "자산을 동결하여 대역폭을 확보합니다",
     "energyTooltip" : "자산을 동결하여 에너지를 확보합니다",
     "delegatedTooltip" : "투표 과정에 위임 자산이 사용됩니다. 이는 총 투표 수를 나타내는 숫자입니다.",
-    "undelegatingTooltip" : "위임 해제 자산은 {{timelockInDays}}일 후 타임락이 해제되면 사용 가능합니다."
+    "undelegatingTooltip" : "위임 해제 자산은 {{timelockInDays}}일 후 타임락이 해제되면 사용 가능합니다.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta" : "Redelegate with Ledger"
+      },
+      "delegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes your {{asset}} at a low commission of {{commission}}%.",
+        "cta" : "Stake with Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "{{providerCount}} 제공자에서 선택",
@@ -1294,7 +1306,7 @@
       "noSearchResults" : "죄송합니다. 검색 결과를 찾지 못했습니다.",
       "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
       "retrySearchParams" : "다른 매개변수로 검색을 다시 시도해 주세요.",
-      "trackFavAssets" : "즐겨찾기를 찾아보세요",
+      "trackFavAssets" : "선호 항목 트래킹",
       "clickOnStarIcon" : "자산 옆에 있는 별 아이콘을 클릭하면 자산이 자동으로 즐겨찾기에 추가됩니다.",
       "browseAssets" : "자산 찾기"
     }
@@ -3046,6 +3058,11 @@
       "catalogServerDesc" : "다중 플랫폼 앱 소스 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
+      "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
+      "featureFlagsEdit" : "편집",
+      "featureFlagsRestore" : "복구",
+      "featureFlagsOverride" : "재정의",
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
@@ -4219,6 +4236,10 @@
     },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
+      "description" : "인터넷 연결을 확인하세요."
+    },
+    "NetworkError" : {
+      "title" : "동기화 중 오류가 발생했습니다",
       "description" : "인터넷 연결을 확인하세요."
     },
     "NoAddressesFound" : {
