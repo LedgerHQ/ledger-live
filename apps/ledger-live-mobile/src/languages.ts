@@ -68,6 +68,7 @@ export const locales = supportedLocales.reduce((obj: LocaleIndexed<any>, key) =>
 
 /** For the "language" setting which is used for translations. */
 export const DEFAULT_LANGUAGE_LOCALE = "en";
+
 /** This allows us to have the language set by default to the system language
  * if & only if that language is supported.
  */
@@ -76,7 +77,6 @@ export const getDefaultLanguageLocale = (
 ) =>
   RNLocalize.findBestAvailableLanguage(fullySupportedLocales)?.languageTag ||
   fallbackLocale;
-
 const languageLocaleToDefaultLocaleMap = {
   de: "de-DE",
   el: "el-GR",
@@ -101,6 +101,7 @@ const languageLocaleToDefaultLocaleMap = {
 
 /** For the "region" setting which is used for dates & numbers formatting. */
 export const DEFAULT_LOCALE = "en-US";
+
 /** This allows us to have the region set by default to the region corresponding
  * to the system language if & only if that language is supported. */
 export const getDefaultLocale = () => {

@@ -5,7 +5,7 @@ import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import type { State } from ".";
 
 export type AsyncState = {
-  isConnected: boolean | null,
+  isConnected: boolean | null;
 };
 
 export type FwUpdateBackgroundEvent = {
@@ -44,7 +44,7 @@ const initialState: AppState = {
   backgroundEvents: [],
 };
 
-const handlers: Object = {
+const handlers: any = {
   SYNC_IS_CONNECTED: (
     state: AppState,
     { isConnected }: { isConnected: boolean | null },
@@ -65,11 +65,12 @@ const handlers: Object = {
     backgroundEvents: [...state.backgroundEvents, event],
   }),
   DEQUEUE_BACKGROUND_EVENT: (state: AppState) => {
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     const [_, ...tail] = state.backgroundEvents;
-    return ({
+    return {
       ...state,
       backgroundEvents: tail,
-    });
+    };
   },
   CLEAR_BACKGROUND_EVENTS: (state: AppState) => ({
     ...state,
@@ -84,10 +85,10 @@ export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
 export const hasConnectedDeviceSelector = (state: State) =>
   state.appstate.hasConnectedDevice;
 
-  export const backgroundEventsSelector = (state: State) =>
+export const backgroundEventsSelector = (state: State) =>
   state.appstate.backgroundEvents;
 
-  export const nextBackgroundEventSelector = (state: State) =>
+export const nextBackgroundEventSelector = (state: State) =>
   state.appstate.backgroundEvents[0];
 
 const globalNetworkDown = new NetworkDown();

@@ -2,6 +2,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { satisfies as versionSatisfies } from "semver";
 
+// eslint-disable-next-line no-unused-vars
 const deviceVersionRangesForUpdate: { [key in DeviceModelId]?: string } = {
   nanoS: ">=1.6.1",
   nanoX: ">=1.2.4-6 || =2.1.0-lo2 || =2.1.0-lo4",

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import React, { useMemo } from "react";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -78,7 +77,6 @@ export default function MarketStats({
     totalVolume,
     high24h,
     low24h,
-    marketCapChangePercentage24h,
     circulatingSupply,
     totalSupply,
     maxSupply,

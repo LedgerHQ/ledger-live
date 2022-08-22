@@ -1,4 +1,3 @@
-import { useTheme } from "@react-navigation/native";
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 
@@ -9,7 +8,9 @@ type Props = {
   children?: React.ReactNode;
   uncollapsedItems: Array<any>;
   collapsedItems: Array<any>;
+  // eslint-disable-next-line no-unused-vars
   renderItem: (item: any, index: number, isLast: boolean) => React.ReactNode;
+  // eslint-disable-next-line no-unused-vars
   renderShowMore: (collapsed: boolean) => React.ReactNode;
 };
 
@@ -20,7 +21,6 @@ const CollapsibleList = ({
   renderItem,
   renderShowMore,
 }: Props) => {
-  const { colors } = useTheme();
   const [collapsed, setCollapsed] = useState(true);
 
   const toggleCollapsed = useCallback(() => {

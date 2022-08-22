@@ -20,8 +20,9 @@ type Props = {
   onClose?: () => void;
   onError?: (error: Error) => void;
   onModalHide?: () => void;
+  // eslint-disable-next-line no-unused-vars
   onResult?: (payload: any) => Promise<void> | void;
-  renderOnResult?: (p: any) => React.ReactNode;
+  renderOnResult?: (_: any) => React.ReactNode;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
 };

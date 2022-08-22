@@ -53,9 +53,10 @@ const ManagerIconWithUpate = ({
 export default function ManagerNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
 
   return (
     <Stack.Navigator
@@ -101,6 +102,7 @@ export function ManagerTabIcon(props: any) {
   );
 
   if (isNavLocked) {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     return <TouchableOpacity onPress={() => {}}>{content}</TouchableOpacity>;
   }
 

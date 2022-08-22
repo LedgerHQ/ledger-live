@@ -6,7 +6,10 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { CommonActions } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useApps } from "./shared";
+// eslint-disable-next-line import/no-cycle
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { TrackScreen } from "../../analytics";
@@ -18,8 +21,6 @@ import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRou
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
-import { CommonActions } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
@@ -94,14 +95,11 @@ const Manager = ({ navigation, route }: Props) => {
   /** storage warning modal state */
   const [storageWarning, setStorageWarning] = useState(null);
   /** install app with dependencies modal state */
-  const [appInstallWithDependencies, setAppInstallWithDependencies] = useState(
-    null,
-  );
+  const [appInstallWithDependencies, setAppInstallWithDependencies] =
+    useState(null);
   /** uninstall app with dependencies modal state */
-  const [
-    appUninstallWithDependencies,
-    setAppUninstallWithDependencies,
-  ] = useState(null);
+  const [appUninstallWithDependencies, setAppUninstallWithDependencies] =
+    useState(null);
 
   /** open error modal each time a new error appears in state.currentError */
   useEffect(() => {
@@ -149,13 +147,15 @@ const Manager = ({ navigation, route }: Props) => {
     setAppUninstallWithDependencies(null);
   }, [setAppUninstallWithDependencies]);
 
-  const closeQuitManagerModal = useCallback(() => setQuitManagerAction(null), [
-    setQuitManagerAction,
-  ]);
+  const closeQuitManagerModal = useCallback(
+    () => setQuitManagerAction(null),
+    [setQuitManagerAction],
+  );
 
-  const resetStorageWarning = useCallback(() => setStorageWarning(null), [
-    setStorageWarning,
-  ]);
+  const resetStorageWarning = useCallback(
+    () => setStorageWarning(null),
+    [setStorageWarning],
+  );
 
   const onCloseFirmwareUpdate = useCallback(
     (restoreApps?: boolean) => {
