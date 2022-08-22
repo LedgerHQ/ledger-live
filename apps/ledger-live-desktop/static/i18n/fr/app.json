@@ -1294,7 +1294,7 @@
       "noSearchResults" : "Nous n’avons trouvé aucun résultat.",
       "retrySearchKeyword" : "Veuillez réessayer avec un autre mot-clé.",
       "retrySearchParams" : "Veuillez réessayer avec des paramètres différents.",
-      "trackFavAssets" : "Surveillez vos favoris",
+      "trackFavAssets" : "Track your favorite",
       "clickOnStarIcon" : "Cliquez sur l’étoile à côté d’un actif pour l’ajouter à vos favoris.",
       "browseAssets" : "Parcourir les actifs"
     }
@@ -1984,6 +1984,19 @@
     },
     "switchButton" : "Basculer en {{language}}",
     "no" : "Non, merci"
+  },
+  "deviceLocalization" : {
+    "language" : "Langue",
+    "deviceLanguage" : "Langue de l’appareil",
+    "changeLanguage" : "Changer la langue",
+    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
+    "languageInstalled" : "La langue a bien été modifiée",
+    "installingLanguage" : "Installation de la langue",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
   },
   "distribution" : {
     "asset" : "Actif",
@@ -3046,6 +3059,11 @@
       "catalogServerDesc" : "Choisissez entre plusieurs sources pour les Platform Apps.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
       "enablePlatformDevToolsDesc" : "Autorisez la fenêtre Outils de développement Platform.",
+      "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "Modifier",
+      "featureFlagsRestore" : "Restaurer",
+      "featureFlagsOverride" : "Remplacer",
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
       "addLocalAppButton" : "Naviguer",
@@ -4155,6 +4173,14 @@
       "title" : "Échec de la réinitialisation",
       "description" : "Si le problème persiste, veuillez réessayer ou contacter l’Assistance Ledger."
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Installation de la langue refusée sur l’appareil",
+      "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Langue non trouvée",
+      "description" : "Impossible de trouver la langue que vous souhaitez installer. Veuillez essayer d’installer une autre langue."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Pas de mise à jour disponible",
       "description" : "Si vous ne pouvez pas utiliser votre appareil, contactez l’Assistance Ledger."
@@ -4219,6 +4245,10 @@
     },
     "NetworkDown" : {
       "title" : "Pas de connexion Internet",
+      "description" : "Veuillez vérifier votre connexion Internet."
+    },
+    "NetworkError" : {
+      "title" : "Erreur survenue lors de la synchronisation",
       "description" : "Veuillez vérifier votre connexion Internet."
     },
     "NoAddressesFound" : {
