@@ -1,6 +1,6 @@
 // @flow
 import React, { useState, useCallback, useMemo, memo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import {
   listTokens,
   isCurrencySupported,
@@ -303,6 +303,7 @@ const AppsScreen = ({
         ListEmptyComponent={renderNoResults}
         keyExtractor={item => item.name}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
       />
     ),
     [
@@ -348,5 +349,11 @@ const AppsScreen = ({
     </Flex>
   );
 };
+
+const styles = StyleSheet.create({
+  list: {
+    paddingBottom: 55,
+  },
+});
 
 export default memo<Props>(AppsScreen);
