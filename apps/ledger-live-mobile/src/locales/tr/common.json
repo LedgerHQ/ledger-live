@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "Geçersiz alıcı"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Dil yüklemesi cihaz tarafından reddedildi",
+      "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+    },
+    "LanguageNotFound" : {
+      "title" : "Dil bulunamadı",
+      "description" : "Yüklemek istediğiniz dil bulunamadı. Lütfen farklı bir dil yüklemeyi deneyin."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Üzgünüz, güncellenecek bir şey yok",
       "description" : "Cihazınızı kullanamıyorsanız lütfen Ledger Destek ile iletişime geçin."
@@ -820,8 +828,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Ledger Live'ı sevdiniz mi?",
-      "description" : "İster sevmiş ister daha iyi olabileceğini düşünüyor olun. Geri bildiriminiz bizim için gerçekten çok önemli.",
+      "title" : "Uygulamamızı beğendiniz mi?",
+      "description" : "Geri bildiriminiz Ledger Live'ı geliştirmemize yardımcı olacak.",
       "cta" : {
         "enjoy" : "Harika",
         "disappointed" : "Beğenmedim",
@@ -838,7 +846,8 @@
     },
     "disappointed" : {
       "title" : "Sizin için daha iyi bir ürün geliştirmemize yardımcı olun",
-      "description" : "Daha iyisini yapmak istiyoruz ve samimi geri bildiriminiz, neyi geliştirmemiz gerektiğini bilmemize yardımcı oluyor.",
+      "description" : "Başka bir konuda yardıma ihtiyacınız varsa ya da size dönüş yapmamızı isterseniz canlı sohbet işlevini kullanmak için lütfen",
+      "here" : "buraya tıklayın",
       "cta" : {
         "sendFeedback" : "Geri bildirim gönder",
         "notNow" : "Şimdi değil"
@@ -930,9 +939,9 @@
         "title" : "Kazanın",
         "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
       },
-      "mint": {
-        "title": "Mintleyin",
-        "desc": "[ L ] Market’teki özel iş birlikleri kapsamında NFT’ler mintleyin"
+      "mint" : {
+        "title" : "Mint'leyin",
+        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mint'leyin"
       }
     },
     "comingSoon" : "Çok yakında",
@@ -993,6 +1002,8 @@
     "stepLanguage" : {
       "title" : "Dilinizi seçin",
       "cta" : "Devam",
+      "changeDeviceLanguage" : "Cihazınızın dili değiştirilsin mi?",
+      "changeDeviceLanguageDescription" : "Ledger Live artık {{language}} görüntüleniyor. Cihazınızı da {{language}} kullanmak ister misiniz?",
       "warning" : {
         "title" : "İngilizce olarak başlayın",
         "cta" : "Anladım!",
@@ -3259,7 +3270,9 @@
     "newVersion" : "{{deviceName}} cihazınız için {{version}} güncellemesi mevcut",
     "drawerUpdate" : {
       "title" : "Donanım Yazılımı Güncellemesi",
-      "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın"
+      "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın",
+      "pleaseConnectUsbTitle" : "USB kablosu gerekli",
+      "pleaseConnectUsbDescription" : "Donanım yazılımı güncellemesini başlatmak için {{deviceName}} cihazınızı bir USB kablosuyla cep telefonunuza bağlayın."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3285,6 +3298,23 @@
       "es" : "İspanyolca",
       "zh" : "Çince",
       "de" : "Almanca"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Dil",
+    "deviceLanguage" : "Cihaz Dili",
+    "changeLanguage" : "Dili değiştir",
+    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
+    "languageInstalled" : "Cihaz dili {{language}} oldu",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
+      "description" : "{{deviceName}} cihazınızı artık {{language}} kullanabilirsiniz. Cihaz dilini şimdi ayarlayabilir ya da daha sonra My Ledger'dan istediğiniz zaman değiştirebilirsiniz."
+    },
+    "installingLanguage" : "Dil yükleniyor",
+    "languages" : {
+      "english" : "İngilizce",
+      "french" : "Fransızca",
+      "spanish" : "İspanyolca"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3378,6 +3408,13 @@
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Tekrar denemeden önce, işleminizin gerçekleşmediğinden emin olmak için birkaç dakika sonra yeniden kontrol edin."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Staking ödülleri toplam bakiyeye dahil edilmez"
       }
     }
   },
@@ -4147,7 +4184,7 @@
       "tabTitle" : "Satın Al",
       "selectCurrency" : "Bir para birimi seçin",
       "selectAccount" : "Bir hesap seçin",
-      "wantToBuy" : "Satın almak istiyorum",
+      "wantToBuy" : "Almak istediğim varlık:",
       "connectDevice" : "Cihazınızı bağlayın",
       "title" : "Ortağımız üzerinden kripto satın alın",
       "coinifyTitle" : "Ortağımız üzerinden kripto satın alın",
