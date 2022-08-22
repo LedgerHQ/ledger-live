@@ -1,7 +1,7 @@
 /* @flow */
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -44,34 +44,44 @@ type Props = {
 type RouteParams = {
   accountId: string,
   transaction: Transaction,
+  amount?: number,
 };
 
-export default function UnlockAmount({ navigation, route }: Props) {
+export default function VoteAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
 
   const bridge = getAccountBridge(account, parentAccount);
-  const mainAccount = getMainAccount(account, parentAccount);
-
-  const [maxSpendable, setMaxSpendable] = useState(null);
 
   const {
     transaction,
     setTransaction,
     status,
     bridgePending,
+    bridgeError,
   } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
-
-    const transaction = bridge.updateTransaction(t, {
-      mode: "unlock",
-    });
-
-    return { account: mainAccount, transaction };
+    console.log("ROUTE PARAMS TRANSACTION: ", route.params.transaction);
+    return {
+      account,
+      transaction: {
+        ...route.params.transaction,
+        amount: new BigNumber(route.params.amount ?? 0),
+      },
+      // transaction: {
+      //   ...bridge.createTransaction(account),
+      //   amount: new BigNumber(route.params.amount ?? 0),
+      //   mode: "vote",
+      // },
+    };
   });
 
-  const debouncedTransaction = useDebounce(transaction, 500);
+  console.log("transaction is: ", transaction);
+  //   const mainAccount = getMainAccount(account, parentAccount);
+
+  const [maxSpendable, setMaxSpendable] = useState(null);
+
+  // const debouncedTransaction = useDebounce(route.params.transaction, 500);
 
   useEffect(() => {
     if (!account) return;
@@ -81,47 +91,61 @@ export default function UnlockAmount({ navigation, route }: Props) {
       .estimateMaxSpendable({
         account,
         parentAccount,
-        transaction: debouncedTransaction,
+        transaction,
       })
       .then(estimate => {
         if (cancelled) return;
 
         setMaxSpendable(estimate);
-      });
+      })
+      .catch(e => console.log(e));
 
     // eslint-disable-next-line consistent-return
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, debouncedTransaction]);
+  }, [account, parentAccount, transaction]);
 
-  const onChange = useCallback(
-    amount => {
-      if (!amount.isNaN()) {
-        setTransaction(bridge.updateTransaction(transaction, { amount }));
-      }
-    },
-    [setTransaction, transaction, bridge],
-  );
+  // const onChange = useCallback(
+  //   amount => {
+  //     if (!amount.isNaN()) {
+  //       console.log("AMOUNT: ", amount);
+  //       console.log("transaction: ", route.params.transaction);
+  //       const transaction = bridge.updateTransaction(route.params.transaction, { amount });
+  //     }
+  //   },
+  //   [route.params.transaction, bridge],
+  // );
 
-  const toggleUseAllAmount = useCallback(() => {
-    if (!transaction) return;
+  const onChange = (amount: BigNumber) => {
+    setTransaction(bridge.updateTransaction(transaction, { amount }));
+  };
 
+  const toggleUseAllAmount = () => {
     setTransaction(
       bridge.updateTransaction(transaction, {
-        amount: BigNumber(0),
         useAllAmount: !transaction.useAllAmount,
       }),
     );
-  }, [setTransaction, account, parentAccount, transaction]);
+  };
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.CeloUnlockSelectDevice, {
-      accountId: account.id,
+    // navigation.navigate(ScreenName.CeloUnlockSelectDevice, {
+    //   accountId: account.id,
+    //   transaction,
+    //   status,
+    // });
+
+    //is this necessary? can we exclude transaction here?
+    // const transaction = bridge.updateTransaction(transaction);
+
+    navigation.navigate(ScreenName.CeloVoteSummary, {
+      ...route.params,
       transaction,
-      status,
+      amount: status.amount.toNumber(),
+      fromSelectAmount: true,
     });
-  }, [account, navigation, transaction, status]);
+  }, [account, navigation, transaction]);
 
   const blur = useCallback(() => Keyboard.dismiss(), []);
 
@@ -140,7 +164,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="UnlockFlow" name="Amount" />
+      <TrackScreen category="VoteFlow" name="Amount" />
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
       >
@@ -179,15 +203,15 @@ export default function UnlockAmount({ navigation, route }: Props) {
                 >
                   <TranslatedError error={error || warning} />
                 </LText>
-                <LText style={styles.info}>
-                  <Trans i18nKey={`celo.unlock.flow.steps.amount.info`} />
-                </LText>
+                {/* <LText style={styles.info}>
+                  <Trans i18nKey={`celo.vote.flow.steps.amount.info`} />
+                </LText> */}
               </View>
               <View style={styles.bottomWrapper}>
                 <View style={styles.available}>
                   <View style={styles.availableLeft}>
                     <LText>
-                      <Trans i18nKey="celo.unlock.flow.steps.amount.available" />
+                      <Trans i18nKey="celo.vote.flow.steps.amount.available" />
                     </LText>
                     <LText semiBold>
                       {maxSpendable ? (
@@ -204,7 +228,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
                   {typeof useAllAmount === "boolean" ? (
                     <View style={styles.availableRight}>
                       <LText style={styles.maxLabel}>
-                        <Trans i18nKey="celo.unlock.flow.steps.amount.max" />
+                        <Trans i18nKey="celo.vote.flow.steps.amount.max" />
                       </LText>
                       <Switch
                         style={styles.switch}
@@ -221,7 +245,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
                 />
                 <View style={styles.continueWrapper}>
                   <Button
-                    event="CeloUnlockAmountContinue"
+                    event="CeloVoteAmountContinue"
                     type="primary"
                     title={
                       <Trans
