@@ -101,10 +101,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       validators
         .reduce(
           (data, validator) => {
-            if (
-              validator.validator.validatorAddress ===
-              transaction?.sourceValidator
-            )
+            if (validator.validatorAddress === transaction?.sourceValidator)
               return data;
 
             if (
