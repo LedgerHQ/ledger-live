@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "Receptor no válido"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Se ha rechazado la instalación del idioma en el dispositivo",
+      "description" : "Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "No se ha encontrado el idioma",
+      "description" : "No se ha encontrado el idioma que estás intentando instalar. Prueba a instalar otro idioma."
+    },
     "LatestMCUInstalledError" : {
       "title" : "No hay nada que actualizar",
       "description" : "Contacta al Soporte de Ledger si no puedes utilizar tu dispositivo."
@@ -820,8 +828,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "¿Te gusta Ledger Live?",
-      "description" : "Ya sea para decirnos que te gusta o que hay algo que podríamos mejorar, valoramos mucho tus comentarios.",
+      "title" : "¿Qué te parece nuestra aplicación?",
+      "description" : "Tus comentarios son importantes para mejorar Ledger Live.",
       "cta" : {
         "enjoy" : "Es genial",
         "disappointed" : "Me ha decepcionado",
@@ -838,7 +846,8 @@
     },
     "disappointed" : {
       "title" : "Ayúdanos a construir un producto mejor para ti",
-      "description" : "Siempre queremos mejorar, y las reseñas honestas nos ayudan mucho a saber cómo.",
+      "description" : "Si necesitas más ayuda o quieres que nos pongamos en contacto contigo, usa nuestro chat",
+      "here" : "aquí",
       "cta" : {
         "sendFeedback" : "Enviar comentarios",
         "notNow" : "Ahora no"
@@ -930,9 +939,9 @@
         "title" : "Gana",
         "desc" : "Gana ingresos pasivos y haz crecer tus activos cripto"
       },
-      "mint": {
-        "title": "Acuñar",
-        "desc": "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
+      "mint" : {
+        "title" : "Acuñar",
+        "desc" : "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
       }
     },
     "comingSoon" : "próximamente",
@@ -993,6 +1002,8 @@
     "stepLanguage" : {
       "title" : "Elige tu idioma",
       "cta" : "Continuar",
+      "changeDeviceLanguage" : "¿Deseas cambiar el idioma de tu dispositivo?",
+      "changeDeviceLanguageDescription" : "Ledger Live está ahora disponible en {{language}}. ¿Quieres usar tu dispositivo en {{language}} también?",
       "warning" : {
         "title" : "Comenzar en español",
         "cta" : "¡Entendido!",
@@ -3259,7 +3270,9 @@
     "newVersion" : "Actualización {{version}} disponible para {{deviceName}}",
     "drawerUpdate" : {
       "title" : "Actualización de firmware",
-      "description" : "Actualiza tu firmware Ledger Nano conectándolo a la aplicación Ledger Live Desktop"
+      "description" : "Actualiza tu firmware Ledger Nano conectándolo a la aplicación Ledger Live Desktop",
+      "pleaseConnectUsbTitle" : "Es necesario un cable USB",
+      "pleaseConnectUsbDescription" : "Para iniciar la actualización del firmware, conecta tu {{deviceName}} a tu teléfono mediante un cable USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3285,6 +3298,23 @@
       "es" : "Español",
       "zh" : "中文",
       "de" : "Alemán"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Idioma",
+    "deviceLanguage" : "Idioma del dispositivo",
+    "changeLanguage" : "Cambiar idioma",
+    "allowLanguageInstallation" : "Permitir instalación de idioma",
+    "languageInstalled" : "Idioma del dispositivo cambiado a {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "¿Establecer tu {{deviceName}} en {{language}}?",
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes establecerlo ahora o cambiar el idioma de tu dispositivo en cualquier momento desde My Ledger."
+    },
+    "installingLanguage" : "Instalando idioma",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3378,6 +3408,13 @@
             "broadcastError" : "Es posible que la transacción haya fallado. Vuelve a comprobarlo en unos minutos para asegurarte de que no se haya realizado la transacción antes de intentarlo de nuevo."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "El saldo total no incluye las recompensas de participación"
       }
     }
   },
