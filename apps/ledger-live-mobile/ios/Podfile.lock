@@ -625,7 +625,7 @@ PODS:
     - ZXingObjC/Core
 
 DEPENDENCIES:
-  - BleTransport (from `https://github.com/LedgerHQ/hw-transport-ios-ble.git`, commit `e8614bd7622c181121ba6857da1238ba684ab4d3`)
+  - BleTransport (from `https://github.com/LedgerHQ/hw-transport-ios-ble.git`, commit `c277a47c8b37604175365435d8a6ef1dd62561c3`)
   - Bluejay (from `https://github.com/DantePuglisi/bluejay.git`, branch `fail-when-wrong-characteristic-property`)
   - "boost (from `../../../node_modules/.pnpm/react-native@0.68.2_shn3lkepuadv4od4dudas6ijbq/node_modules/react-native/third-party-podspecs/boost.podspec`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.68.2_shn3lkepuadv4od4dudas6ijbq/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
@@ -1070,6 +1070,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: eb037899c6d11563519a6019b47eb2dda44381ca
+PODFILE CHECKSUM: 275e0e7f3a673d46330600afc59b79178246661d
 
 COCOAPODS: 1.11.2
