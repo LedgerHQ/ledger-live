@@ -745,7 +745,19 @@
     "bandwidthTooltip" : "Geler des actifs pour gagner de la Bande passante",
     "energyTooltip" : "Geler des actifs pour gagner de l’Énergie",
     "delegatedTooltip" : "Les actifs délégués sont utilisés pour voter. Cela représente votre nombre total de votes.",
-    "undelegatingTooltip" : "Les actifs dont la délégation est interrompue sont disponibles après {{timelockInDays}} jours."
+    "undelegatingTooltip" : "Les actifs dont la délégation est interrompue sont disponibles après {{timelockInDays}} jours.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta" : "Redelegate with Ledger"
+      },
+      "delegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes your {{asset}} at a low commission of {{commission}}%.",
+        "cta" : "Stake with Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "Choisissez parmi {{providerCount}} prestataire",
@@ -1294,7 +1306,7 @@
       "noSearchResults" : "Nous n’avons trouvé aucun résultat.",
       "retrySearchKeyword" : "Veuillez réessayer avec un autre mot-clé.",
       "retrySearchParams" : "Veuillez réessayer avec des paramètres différents.",
-      "trackFavAssets" : "Surveillez vos favoris",
+      "trackFavAssets" : "Track your favorite",
       "clickOnStarIcon" : "Cliquez sur l’étoile à côté d’un actif pour l’ajouter à vos favoris.",
       "browseAssets" : "Parcourir les actifs"
     }
@@ -3046,6 +3058,11 @@
       "catalogServerDesc" : "Choisissez entre plusieurs sources pour les Platform Apps.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
       "enablePlatformDevToolsDesc" : "Autorisez la fenêtre Outils de développement Platform.",
+      "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "Modifier",
+      "featureFlagsRestore" : "Restaurer",
+      "featureFlagsOverride" : "Remplacer",
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
       "addLocalAppButton" : "Naviguer",
@@ -4219,6 +4236,10 @@
     },
     "NetworkDown" : {
       "title" : "Pas de connexion Internet",
+      "description" : "Veuillez vérifier votre connexion Internet."
+    },
+    "NetworkError" : {
+      "title" : "Erreur survenue lors de la synchronisation",
       "description" : "Veuillez vérifier votre connexion Internet."
     },
     "NoAddressesFound" : {
