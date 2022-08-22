@@ -466,7 +466,7 @@ export const NavigatorName = {
   Market: "Market",
 
   // Celo
-  CeloTestNavigator: "CeloTestNavigator",
+  CeloManageAssetsNavigator: "CeloManageAssetsNavigator",
   CeloRegistrationFlow: "CeloRegistrationFlow",
   CeloLockFlow: "CeloLockFlow",
   CeloUnlockFlow: "CeloUnlockFlow",

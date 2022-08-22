@@ -13,26 +13,20 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Platform } from "react-native";
-import type { Account } from "@ledgerhq/types-live";
-import StepHeader from "../../../components/StepHeader";
-import { Alert, Flex, Text } from "@ledgerhq/native-ui";
-import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
-import ConnectDevice from "../../../screens/ConnectDevice";
-import SelectDevice from "../../../screens/SelectDevice";
-import DelegationStarted from "./01-Started";
 import Button from "../../../components/Button";
 import { ScreenName, NavigatorName } from "../../../const";
 import { useSelector } from "react-redux";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { useRoute } from "@react-navigation/native";
 import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-function CeloTestNav() {
+function ManageAssetsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
   const navigation = useNavigation();
+  navigation.setOptions({ title: t('celo.manage.title') })
 
   const routeParams = useRoute().params;
   const { account } = useSelector(accountScreenSelector(routeParams));
@@ -122,18 +116,20 @@ function CeloTestNav() {
 
   // }, [onNavigate]);
 
-  const isRegistered = account.celoResources?.registrationStatus;
+  const isRegistered = (account as CeloAccount).celoResources?.registrationStatus;
 
   return (
+    <SafeAreaView
+    style={{ flex: 1, justifyContent: 'space-between', alignItems: 'center' }}
+  >
     <View>
-      <Text> TEST TEST TEST </Text>
-      <Text> TEST TEST TEST </Text>
       {!isRegistered ? (
         <Button
           event="Celo Account Registration Click"
           onPress={onAccountRegistration}
           type="main"
-          title={t("celo.simpleOperation.modes.register.title")}
+          title={t("celo.register.stepperHeader.title")}
+          containerStyle={styles.button}
         />
       ) : null}
 
@@ -141,26 +137,32 @@ function CeloTestNav() {
         event="Celo Lock Click"
         onPress={onLock}
         type="main"
-        title={t("celo.manage.lock.title")}
+        title={t("celo.manage.lock.title")}      
+        containerStyle={styles.button}
       /> : null}
       <Button
         event="Celo Unlock Click"
         onPress={onUnlock}
         type="main"
         title={t("celo.manage.unlock.title")}
+        containerStyle={styles.button}
+        disabled={true}
       />
-
       <Button
         event="Celo Withdraw Click"
         onPress={onLock}
         type="main"
         title={t("celo.manage.withdraw.title")}
+        containerStyle={styles.button}
+        disabled={true}
       />
       <Button
         event="Celo Vote Click"
         onPress={onLock}
         type="main"
         title={t("celo.manage.activate.title")}
+        containerStyle={styles.button}
+        disabled={true}
       />
 
       <Button
@@ -168,13 +170,24 @@ function CeloTestNav() {
         onPress={onLock}
         type="main"
         title={t("celo.manage.revoke.title")}
+        containerStyle={styles.button}
+        disabled={true}
       />
     </View>
+    </SafeAreaView>
   );
 }
 
 const options = {
-  headerShown: false,
+  headerShown: true,
 };
 
-export { CeloTestNav as component, options };
+const styles = StyleSheet.create({
+  button: {
+    marginTop: 10,
+    width: 240,
+  },
+});
+
+
+export { ManageAssetsNavigator as component, options };
