@@ -12,11 +12,22 @@ module.exports = {
       "@typescript-eslint/parser": [".ts", ".tsx"],
     },
     "import/resolver": {
-      node: {
-        extensions: [".js", ".android.js", ".ios.js", ".ts", ".tsx"],
-      },
       typescript: {
         alwaysTryTypes: true,
+        extensions: [
+          ".android.ts",
+          ".android.js",
+          ".ios.ts",
+          ".ios.js",
+          ".ts",
+          ".tsx",
+          ".d.ts",
+          ".js",
+          ".jsx",
+          ".json",
+          ".node",
+          ".png",
+        ],
       },
     },
   },
@@ -94,14 +105,6 @@ module.exports = {
     "react/jsx-fragments": "warn",
     "react/no-deprecated": "warn",
     "prettier/prettier": "error",
-
-    // Ignore live-common for the moment because this rule does not work with subpath exports
-    // See: https://github.com/import-js/eslint-plugin-import/issues/1810
-    "import/no-unresolved": [
-      "error",
-      { ignore: ["^@ledgerhq/live-common/.*", "^@ledgerhq/native-ui/.*"] },
-    ],
-
     "@typescript-eslint/no-unused-vars": ["error"],
   },
   globals: {

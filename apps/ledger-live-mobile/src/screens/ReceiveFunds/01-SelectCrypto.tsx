@@ -1,20 +1,20 @@
 import React, { useCallback, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, FlatList } from "react-native";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/types-cryptoassets";
 import {
   isCurrencySupported,
   listTokens,
   useCurrenciesByMarketcap,
   listSupportedCurrencies,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
-import { Account, TokenAccount } from "@ledgerhq/live-common/src/types";
 import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";

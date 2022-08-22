@@ -4,18 +4,17 @@ import { concat, from } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import {
   CryptoCurrency,
-  Account,
-  TokenAccount,
   Currency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/types-cryptoassets";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { replaceAccounts } from "../../actions/accounts";
 import logger from "../../logger";
 import { ScreenName } from "../../const";
