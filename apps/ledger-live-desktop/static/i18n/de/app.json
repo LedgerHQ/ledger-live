@@ -745,7 +745,19 @@
     "bandwidthTooltip" : "Vermögenswerte sperren, um Bandbreite zu gewinnen",
     "energyTooltip" : "Vermögenswerte sperren, um Energie zu gewinnen",
     "delegatedTooltip" : "Delegierte Vermögenswerte werden im Abstimmungsprozess verwendet. Dies entspricht Ihrer Gesamtzahl an Stimmen.",
-    "undelegatingTooltip" : "Nicht delegierte Vermögenswerte befinden sich in einer Zeitsperre von{{timelockInDays}} Tagen, bevor sie verfügbar sind."
+    "undelegatingTooltip" : "Nicht delegierte Vermögenswerte befinden sich in einer Zeitsperre von{{timelockInDays}} Tagen, bevor sie verfügbar sind.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta" : "Redelegate with Ledger"
+      },
+      "delegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes your {{asset}} at a low commission of {{commission}}%.",
+        "cta" : "Stake with Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "Wählen Sie aus {{providerCount}} Anbieter",
@@ -3046,6 +3058,11 @@
       "catalogServerDesc" : "Wechseln Sie zwischen mehreren Plattform-App-Quellen",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
+      "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
+      "featureFlagsEdit" : "Bearbeiten",
+      "featureFlagsRestore" : "Wiederherstellen",
+      "featureFlagsOverride" : "Überschreiben",
       "addLocalApp" : "Lokale App hinzufügen",
       "addLocalAppDesc" : "Durchsuchen Sie lokale Dateien und fügen Sie eine lokale App mit einem lokalen Manifest hinzu",
       "addLocalAppButton" : "Durchsuchen",
@@ -4219,6 +4236,10 @@
     },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
+      "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
+    },
+    "NetworkError" : {
+      "title" : "Während der Synchronisierung ist ein Fehler aufgetreten",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
     },
     "NoAddressesFound" : {
