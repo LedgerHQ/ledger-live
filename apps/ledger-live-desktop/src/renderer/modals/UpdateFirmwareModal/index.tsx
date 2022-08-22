@@ -16,6 +16,7 @@ import StepFullFirmwareInstall from "./steps/01-step-install-full-firmware";
 import StepFlashMcu from "./steps/02-step-flash-mcu";
 import StepDeviceLanguage from "./steps/02-step-device-language";
 import StepUpdating from "./steps/02-step-updating";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import StepConfirmation, { StepConfirmFooter } from "./steps/03-step-confirmation";
 
 type MaybeError = Error | undefined | null;
@@ -85,6 +86,7 @@ const UpdateModal = ({
   const [nonce, setNonce] = useState(0);
   const { t } = useTranslation();
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
+  const deviceLocalizationFeatureFlag = { enabled: true }; //useFeature("deviceLocalization");
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
@@ -148,11 +150,19 @@ const UpdateModal = ({
       } else {
         steps.push(updatingStep);
       }
-      steps.push(deviceLanguageStep);
+
+      if (
+        firmware &&
+        isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
+        deviceLocalizationFeatureFlag.enabled
+      ) {
+        steps.push(deviceLanguageStep);
+      }
+
       steps.push(finalStep);
       return steps;
     },
-    [t, firmware, withFinal],
+    [t, firmware, withFinal, deviceModelId, deviceLocalizationFeatureFlag],
   );
 
   const steps = useMemo(() => createSteps({ withResetStep }), [createSteps, withResetStep]);
@@ -169,7 +179,7 @@ const UpdateModal = ({
 
   const handleReset = useCallback(() => {
     setErr(null);
-    setStateStepId("deviceLanguage");//setStateStepId(steps[0].id);
+    setStateStepId(steps[0].id);
     setNonce(curr => curr++);
   }, [steps]);
 

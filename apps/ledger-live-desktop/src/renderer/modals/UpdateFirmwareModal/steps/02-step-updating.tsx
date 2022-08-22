@@ -9,6 +9,7 @@ import { StepProps } from "..";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { renderFirmwareUpdating } from "~/renderer/components/DeviceAction/rendering";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import useTheme from "~/renderer/hooks/useTheme";
 
 const Container = styled(Box).attrs(() => ({
@@ -29,11 +30,14 @@ export const Body = ({ modelId }: BodyProps) => {
 type Props = StepProps;
 
 const StepUpdating = ({
+  firmware,
   deviceModelId,
   setError,
   transitionTo,
   setUpdatedDeviceInfo,
 }: Props) => {
+  const deviceLocalizationFeatureFlag = { enabled: true }; //useFeature("deviceLocalization");
+
   useEffect(() => {
     const sub = (getEnv("MOCK")
       ? mockedEventEmitter()
@@ -43,7 +47,11 @@ const StepUpdating = ({
       .subscribe({
         next: setUpdatedDeviceInfo,
         complete: () => {
-          transitionTo("deviceLanguage");
+          const shouldGoToLanguageStep =
+            firmware &&
+            isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
+            deviceLocalizationFeatureFlag.enabled;
+          transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
         },
         error: (error: Error) => {
           setError(error);
@@ -56,7 +64,14 @@ const StepUpdating = ({
         sub.unsubscribe();
       }
     };
-  }, [setError, transitionTo]);
+  }, [
+    setError,
+    transitionTo,
+    firmware,
+    deviceModelId,
+    setUpdatedDeviceInfo,
+    deviceLocalizationFeatureFlag,
+  ]);
 
   return (
     <Container>
