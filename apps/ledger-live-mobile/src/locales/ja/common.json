@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "無効な送付先"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "言語のインストールがデバイス上で拒否されました",
+      "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+    },
+    "LanguageNotFound" : {
+      "title" : "言語が見つかりません",
+      "description" : "インストールしようとしている言語が見つかりませんでした。他の言語のインストールをお試しください。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "アップデートの必要はありません。",
       "description" : "デバイスを使用できない場合は、Ledgerサポートに連絡してください。"
@@ -820,8 +828,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Ledger Liveをお楽しみいただいていますか?",
-      "description" : "Ledger Liveの改善点等にお気づきでしょうか。弊社にとって、お客様のご意見やご感想は非常に大切です。",
+      "title" : "アプリの使い勝手はいかがですか？",
+      "description" : "ご意見は、Ledger Liveの改善に重要です。",
       "cta" : {
         "enjoy" : "素晴らしい",
         "disappointed" : "がっかりした",
@@ -838,7 +846,8 @@
     },
     "disappointed" : {
       "title" : "より良い製品の開発にぜひご協力ください",
-      "description" : "弊社は常に改善に取り組んでいます。お客様の率直なご意見をいただけますと、改善点の正確な把握に非常に役立ちます。",
+      "description" : "さらにサポートが必要な場合、またはお問合せを希望される場合は、ライブチャットを",
+      "here" : "ご利用ください",
       "cta" : {
         "sendFeedback" : "意見を送る",
         "notNow" : "後で"
@@ -930,9 +939,9 @@
         "title" : "報酬獲得",
         "desc" : "不労所得を獲得して暗号資産を運用する"
       },
-      "mint": {
-        "title": "ミント”,",
-        "desc": "[ L ] MarketでコラボNFTをミントしましょう"
+      "mint" : {
+        "title" : "ミント",
+        "desc" : "[ L ] Marketにおける専用コラボレーションからNFTをミント"
       }
     },
     "comingSoon" : "近日公開",
@@ -993,6 +1002,8 @@
     "stepLanguage" : {
       "title" : "言語を選択",
       "cta" : "続行",
+      "changeDeviceLanguage" : "Change your device language?",
+      "changeDeviceLanguageDescription" : "Ledger Live is now in {{language}}. Do you want to use {{language}} on your device too?",
       "warning" : {
         "title" : "ご利用ガイド（英語版）",
         "cta" : "了解！",
@@ -3259,7 +3270,9 @@
     "newVersion" : "お使いの{{deviceName}}で{{version}}のアップデートが利用可能です",
     "drawerUpdate" : {
       "title" : "ファームウェアのアップデート",
-      "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。"
+      "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。",
+      "pleaseConnectUsbTitle" : "USBケーブルが必要です",
+      "pleaseConnectUsbDescription" : "ファームウェアのアップデートを開始するには、 {{deviceName}}をUSBケーブルでスマートフォンに接続します。"
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3285,6 +3298,23 @@
       "es" : "Spanish",
       "zh" : "中国語",
       "de" : "ドイツ語"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "言語",
+    "deviceLanguage" : "デバイスの言語",
+    "changeLanguage" : "言語の変更",
+    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}}を{{language}}に設定しますか？",
+      "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
+    },
+    "installingLanguage" : "言語をインストール",
+    "languages" : {
+      "english" : "英語",
+      "french" : "フランス語",
+      "spanish" : "スペイン語"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3378,6 +3408,13 @@
             "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、トランザクションが成立しなかったことを確認した上で、もう一度やり直してください。"
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "合計残高にはステーキング報酬は含まれません"
       }
     }
   },
