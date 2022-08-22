@@ -1,5 +1,9 @@
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import { NavigationContainer, useNavigation, useTheme } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  useNavigation,
+  useTheme,
+} from "@react-navigation/native";
 import { View, StyleSheet, Linking } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
@@ -59,21 +63,19 @@ function CeloTestNav() {
       params: {
         accountId: account?.id,
         // any other relevant param
-      }
+      },
     });
-    
   }, [onNavigate, account]);
 
   const onLock = useCallback(() => {
     onNavigate({
-      route: NavigatorName.CeloLockingFlow,
-      screen: ScreenName.CeloLockingStarted,
+      route: NavigatorName.CeloLockFlow,
+      screen: ScreenName.CeloLockAmount,
       params: {
         accountId: account?.id,
         // any other relevant param
-      }
+      },
     });
-    
   }, [onNavigate, account]);
 
   // const onUnlock = useCallback(() => {
@@ -82,7 +84,7 @@ function CeloTestNav() {
   //     screen: ScreenName.CosmosDelegationStarted,
   //     params: {},
   //   });
-    
+
   // }, [onNavigate]);
 
   // const onActivate = useCallback(() => {
@@ -91,7 +93,7 @@ function CeloTestNav() {
   //     screen: ScreenName.CosmosDelegationStarted,
   //     params: {},
   //   });
-    
+
   // }, [onNavigate]);
 
   // const onWithdraw = useCallback(() => {
@@ -100,7 +102,7 @@ function CeloTestNav() {
   //     screen: ScreenName.CosmosDelegationStarted,
   //     params: {},
   //   });
-    
+
   // }, [onNavigate]);
 
   // const onVote = useCallback(() => {
@@ -109,7 +111,7 @@ function CeloTestNav() {
   //     screen: ScreenName.CosmosDelegationStarted,
   //     params: {},
   //   });
-    
+
   // }, [onNavigate]);
 
   // const onRevoke = useCallback(() => {
@@ -118,55 +120,57 @@ function CeloTestNav() {
   //     screen: ScreenName.CosmosDelegationStarted,
   //     params: {},
   //   });
-    
+
   // }, [onNavigate]);
 
+  const isRegistered = account.celoResources?.registrationStatus;
+
   return (
-      <View>
-        <Text> TEST TEST TEST </Text>
-        <Text> TEST TEST TEST </Text>
-      <Button
+    <View>
+      <Text> TEST TEST TEST </Text>
+      <Text> TEST TEST TEST </Text>
+      {!isRegistered ? (
+        <Button
           event="Celo Account Registration Click"
           onPress={onAccountRegistration}
           type="main"
           title={t("celo.simpleOperation.modes.register.title")}
         />
+      ) : null}
+
+      {isRegistered ? <Button
+        event="Celo Lock Click"
+        onPress={onLock}
+        type="main"
+        title={t("celo.manage.lock.title")}
+      /> : null}
+      <Button
+        event="Celo Unlock Click"
+        onPress={onLock}
+        type="main"
+        title={t("celo.manage.unlock.title")}
+      />
 
       <Button
-          event="Celo Lock Click"
-          onPress={onLock}
-          type="main"
-          title={t("celo.manage.lock.title")}
-        />
+        event="Celo Withdraw Click"
+        onPress={onLock}
+        type="main"
+        title={t("celo.manage.withdraw.title")}
+      />
       <Button
-          event="Celo Unlock Click"
-          onPress={onLock}
-          type="main"
-          title={t("celo.manage.unlock.title")}
-        />
+        event="Celo Vote Click"
+        onPress={onLock}
+        type="main"
+        title={t("celo.manage.activate.title")}
+      />
 
       <Button
-          event="Celo Withdraw Click"
-          onPress={onLock}
-          type="main"
-          title={t("celo.manage.withdraw.title")}
-        />
-      <Button
-          event="Celo Vote Click"
-          onPress={onLock}
-          type="main"
-          title={t("celo.manage.activate.title")}
-        />
-
-      <Button
-          event="Celo Revoke Click"
-          onPress={onLock}
-          type="main"
-          title={t("celo.manage.revoke.title")}
-        />
-        
-      </View>
-
+        event="Celo Revoke Click"
+        onPress={onLock}
+        type="main"
+        title={t("celo.manage.revoke.title")}
+      />
+    </View>
   );
 }
 

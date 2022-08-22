@@ -3487,34 +3487,6 @@
         "description": "Revoke your vote for validator group"
       }
     },
-    "lock": {
-      "title": "Lock assets",
-      "steps": {
-        "amount": {
-          "title": "Amount",
-          "amountLabel": "Amount to lock",
-          "availableLabel": "Available",
-          "maxLabel": "Max",
-          "info": "Locked assets can be unlocked at any time, but unlocking takes 3 days."
-        },
-        "connectDevice": {
-          "title": "Device"
-        },
-        "confirmation": {
-          "title": "Confirmation",
-          "success": {
-            "title": "Assets successfully locked",
-            "text": "You can vote for validators once the network has confirmed the transaction.",
-            "textVote": "You will be able to vote validators once the network has confirmed your transaction.",
-            "cta": "View details"
-          },
-          "pending": {
-            "title": "Locking your assets..."
-          },
-          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
-        }
-      }
-    },
     "unlock": {
       "title": "Unlock assets",
       "steps": {
@@ -3539,40 +3511,6 @@
           },
           "pending": {
             "title": "Unlocking your assets..."
-          },
-          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
-        }
-      }
-    },
-    "simpleOperation": {
-      "modes": {
-        "register": {
-          "title": "Register account",
-          "description": "",
-          "info": "Before locking any Celo you need to register your account on-chain."
-        }
-      },
-      "steps": {
-        "info": {
-          "title": "Info"
-        },
-        "connectDevice": {
-          "title": "Device"
-        },
-        "confirmation": {
-          "title": "Confirmation",
-          "label": "Confirmation",
-          "modes": {
-            "register": {
-              "success": {
-                "title": "Account registered successfully",
-                "text": "You will see your operation in history soon.",
-                "cta": "Lock"
-              }
-            }
-          },
-          "pending": {
-            "title": "Broadcasting transaction..."
           },
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
         }
@@ -3671,6 +3609,51 @@
           "pending": "Pending",
           "awaitingActivation": "Awaiting activation",
           "info": "Only revokable votes are shown on this modal"
+        }
+      }
+    },
+    "register": {
+      "stepperHeader": {
+        "title": "Register account",
+        "continue": "Continue",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "started": {
+            "description": "Before locking any Celo you need to register your account on-chain."
+          },
+          "verification": {
+            "success": {
+              "title": "Account registered successfully",
+              "text": "You will see your operation in history soon."
+            }
+          }
+        }
+      }
+    },
+    "lock": {
+      "stepperHeader": {
+        "title": "Lock assets",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "info": "Locked assets can be unlocked at any time, but unlocking takes 3 days.",
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "Assets successfully locked",
+              "text": "You will be able to vote validators once the network has confirmed your transaction."
+            }
+          }
         }
       }
     }

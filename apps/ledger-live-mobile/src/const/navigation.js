@@ -165,8 +165,16 @@ export const ScreenName = {
   VoteValidationSuccess: "VoteValidationSuccess",
 
   // celo
+  CeloRegistrationValidationSuccess: "CeloRegistrationValidationSuccess",
+  CeloRegistrationValidationError: "CeloRegistrationValidationError",
   CeloRegistrationStarted: "CeloRegistrationStarted",
-  CeloLockingStarted: "CeloLockingStarted",
+  CeloRegistrationSelectDevice: "CeloRegistrationSelectDevice",
+  CeloRegistrationConnectDevice: "CeloRegistrationConnectDevice",
+  CeloLockValidationSuccess: "CeloLockValidationSuccess",
+  CeloLockValidationError: "CeloLockValidationError",
+  CeloLockAmount: "CeloLockAmount",
+  CeloLockSelectDevice: "CeloLockSelectDevice",
+  CeloLockConnectDevice: "CeloLockConnectDevice",
 
   // cosmos
   CosmosEditMemo: "CosmosEditMemo",
@@ -397,9 +405,6 @@ export const NavigatorName = {
   Base: "Base",
   BaseOnboarding: "BaseOnboarding",
   BuyDevice: "BuyDevice",
-  CeloTestNavigator: "CeloTestNavigator",
-  CeloRegistrationFlow: "CeloRegistrationFlow",
-  CeloLockingFlow: "CeloLockingFlow",
   CosmosClaimRewardsFlow: "CosmosClaimRewardsFlow",
   CosmosDelegationFlow: "CosmosDelegationFlow",
   CosmosRedelegationFlow: "CosmosRedelegationFlow",
@@ -454,6 +459,11 @@ export const NavigatorName = {
 
   NotificationCenter: "NotificationCenter",
   Market: "Market",
+
+  // Celo
+  CeloTestNavigator: "CeloTestNavigator",
+  CeloRegistrationFlow: "CeloRegistrationFlow",
+  CeloLockFlow: "CeloLockFlow",
 
   // Tab
   Main: "Main",

@@ -8,11 +8,10 @@ import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
 import invariant from "invariant";
 
 const getActions = ({ account }: { account: CeloAccount }) => {
-
   invariant(account, "celo account not found");
-  const {celoResources } = account;
+  const { celoResources } = account;
   invariant(celoResources, "not found celo resources not parsed");
-  
+
   return [
     {
       disabled: false,
