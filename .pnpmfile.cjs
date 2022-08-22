@@ -148,6 +148,9 @@ function readPackage(pkg, context) {
       addDependencies("react-native-locale", {
         fbjs: "*",
       }),
+      addDependencies("react-native-tcp", {
+        "stream-browserify": "*",
+      }),
       addDependencies("postcss-loader", {
         "postcss-flexbugs-fixes": "*",
         "postcss-preset-env": "*",
