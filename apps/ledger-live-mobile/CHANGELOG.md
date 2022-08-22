@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.7.0-next.2
+
+### Patch Changes
+
+- [#1013](https://github.com/LedgerHQ/ledger-live/pull/1013) [`7d7b38fa6c`](https://github.com/LedgerHQ/ledger-live/commit/7d7b38fa6c6089e60194b536131777d2035ef892) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix rendering of last app item in manager
+
 ## 3.7.0-next.1
 
 ### Minor Changes
