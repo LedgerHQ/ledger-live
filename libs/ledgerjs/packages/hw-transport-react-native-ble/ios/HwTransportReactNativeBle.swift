@@ -105,9 +105,9 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         
         let peripheral = PeripheralIdentifier(uuid: UUID(uuidString: uuid)!, name: "")
         var consumed = false /// Callbacks can only be called once in rn
-
+        
         DispatchQueue.main.async {
-            BleTransport.shared.connect(toPeripheralID: peripheral, timeout: .seconds(5)){
+            BleTransport.shared.connect(toPeripheralID: peripheral){
                 /// Disconnect callback is called regardless of the original -connect- having resolved already
                 /// we use this to notify exchanges (background or foreground) about the disconnection.
                 if consumed {

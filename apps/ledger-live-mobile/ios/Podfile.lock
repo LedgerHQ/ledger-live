@@ -943,7 +943,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   BleTransport:
-    :commit: e8614bd7622c181121ba6857da1238ba684ab4d3
+    :commit: c277a47c8b37604175365435d8a6ef1dd62561c3
     :git: https://github.com/LedgerHQ/hw-transport-ios-ble.git
   Bluejay:
     :commit: ceba79e911449d7ab29aa234d749962befbc9d16
