@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "Bénéficiaire non valide"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Installation de la langue refusée sur l’appareil",
+      "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Langue non trouvée",
+      "description" : "Impossible de trouver la langue que vous souhaitez installer. Veuillez essayer d’installer une autre langue."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Pas de mise à jour disponible",
       "description" : "Si vous ne pouvez pas utiliser votre appareil, contactez l’Assistance Ledger."
@@ -799,7 +807,7 @@
       "lido" : {
         "title" : "Staking d’ETH avec Lido",
         "description" : "Gagnez des récompenses en mettant vos ETH en staking sur Lido.",
-        "cta" : "Staker dès aujourd’hui"
+        "cta" : "Staker maintenant"
       },
       "market" : {
         "title" : "Marché des cryptos",
@@ -820,25 +828,26 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Vous aimez Ledger Live ?",
-      "description" : "L’app vous plaît ou vous pensez que nous pouvons l’améliorer ? Vos commentaires sont indispensables pour nous.",
+      "title" : "Que pensez-vous de l’app ?",
+      "description" : "Vos commentaires nous aident à perfectionner Ledger Live.",
       "cta" : {
-        "enjoy" : "C’est super",
-        "disappointed" : "Je suis déçu(e)",
+        "enjoy" : "Très satisfait(e)",
+        "disappointed" : "Déçu(e)",
         "notNow" : "Pas maintenant"
       }
     },
     "enjoy" : {
-      "title" : "Vous êtes super, vous aussi",
-      "description" : "Nous vous invitons à donner votre avis. Votre soutien nous est précieux et nous encourage à développer de nouvelles fonctionnalités.",
+      "title" : "On est ravis",
+      "description" : "Nous vous invitons à partager votre avis. Votre soutien nous est précieux et nous encourage à développer de nouvelles fonctionnalités.",
       "cta" : {
-        "rate" : "Attribuez-nous 5 étoiles",
+        "rate" : "Noter 5 étoiles",
         "notNow" : "Pas maintenant"
       }
     },
     "disappointed" : {
       "title" : "Aidez-nous à faire mieux",
-      "description" : "Notre mission est d’améliorer l’app, et vos commentaires nous aident à répondre à vos besoins.",
+      "description" : "Si vous avez besoin d’aide ou souhaitez être recontacté(e), n’hésitez pas à utiliser notre chat en direct :",
+      "here" : "ici",
       "cta" : {
         "sendFeedback" : "Envoyer un commentaire",
         "notNow" : "Pas maintenant"
@@ -930,9 +939,9 @@
         "title" : "Gagner",
         "desc" : "Gagnez des récompenses passives et faites fructifier vos cryptos."
       },
-      "mint": {
-        "title": "Minter",
-        "desc": "Mintez et acquérez des NFT de collaborations exclusives sur le [ L ] Market."
+      "mint" : {
+        "title" : "Minter",
+        "desc" : "Mintez et acquérez les NFT de collaborations exclusives sur [ L ] Market"
       }
     },
     "comingSoon" : "Prochainement",
@@ -993,6 +1002,8 @@
     "stepLanguage" : {
       "title" : "Choisir la langue",
       "cta" : "Continuer",
+      "changeDeviceLanguage" : "Voulez-vous changer la langue de votre Ledger ?",
+      "changeDeviceLanguageDescription" : "Ledger Live est maintenant en {{language}}. Souhaitez-vous également utiliser votre Ledger en {{language}} ?",
       "warning" : {
         "title" : "À noter",
         "cta" : "Compris",
@@ -1050,7 +1061,7 @@
       "2" : {
         "label" : "Les bases",
         "title" : "Restez hors ligne",
-        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de vos cryptos avec votre Nano."
+        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de cryptos avec votre Nano."
       },
       "3" : {
         "label" : "Les bases",
@@ -1216,7 +1227,7 @@
         "nextStep" : "Étape suivante"
       },
       "hideRecoveryPhrase" : {
-        "title" : "Cacher votre phrase de récupération",
+        "title" : "Cachez votre phrase de récupération",
         "desc" : "Votre phrase de récupération est votre seule façon d’accéder à vos cryptos si vous ne pouvez plus utiliser votre Nano. La garder en lieu sûr est crucial.",
         "bullets" : {
           "0" : {
@@ -2047,7 +2058,7 @@
     },
     "about" : {
       "title" : "À propos",
-      "desc" : "Informations, Conditions d’utilisation et Politique de confidentialité de l’app",
+      "desc" : "Informations, Conditions d’utilisation et Politique de confidentialité de l’app.",
       "appDescription" : "Protégez, achetez, vendez, échangez, faites fructifier et gérez vos cryptos avec Ledger Live. La plateforme tout-en-un.",
       "appVersion" : "Version",
       "termsConditions" : "Conditions d’utilisation",
@@ -2055,8 +2066,8 @@
       "privacyPolicy" : "Politique de confidentialité",
       "privacyPolicyDesc" : "Découvrez les données personnelles que nous collectons, à quelles fins et comment nous les utilisons.",
       "liveReview" : {
-        "title" : "Commentaires",
-        "desc" : "Faites-nous part de vos commentaires sur l’app",
+        "title" : "Avis",
+        "desc" : "Faites-nous part de vos commentaires sur l’app.",
         "ios" : "Donnez votre avis dans l’App Store",
         "android" : "Donnez votre avis dans le Google Play Store"
       }
@@ -2157,7 +2168,7 @@
       "verifyAgain" : "Revérifier",
       "noAccount" : "Aucun compte trouvé",
       "address" : "Adresse du compte",
-      "copyAddress" : "Copier l’adresse",
+      "copyAddress" : "Copier",
       "shareAddress" : "Partager l’adresse",
       "addressCopied" : "Adresse copiée",
       "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
@@ -3259,7 +3270,9 @@
     "newVersion" : "Nouvelle version {{version}} disponible pour votre {{deviceName}}",
     "drawerUpdate" : {
       "title" : "Mise à jour du micrologiciel",
-      "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur"
+      "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur",
+      "pleaseConnectUsbTitle" : "Câble USB nécessaire",
+      "pleaseConnectUsbDescription" : "Connectez votre {{deviceName}} à votre téléphone avec un câble USB pour lancer la mise à jour du micrologiciel."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3285,6 +3298,23 @@
       "es" : "Espagnol",
       "zh" : "Chinois",
       "de" : "Allemand"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Langue",
+    "deviceLanguage" : "Langue de l’appareil",
+    "changeLanguage" : "Changer la langue",
+    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
+    "languageInstalled" : "Votre appareil est maintenant en {{language}}.",
+    "firmwareUpdatePrompt" : {
+      "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
+      "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
+    },
+    "installingLanguage" : "Installation de la langue",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3381,6 +3411,13 @@
       }
     }
   },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Le solde total ne comprend pas les récompenses de staking"
+      }
+    }
+  },
   "celo" : {
     "info" : {
       "available" : {
@@ -3401,7 +3438,7 @@
       },
       "undelegating" : {
         "title" : "Délégation interrompue",
-        "description" : "Les actifs dont la délégation est interrompue sont immobilisés pendant 21 jours avant d’être disponibles."
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 21 jours."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -3444,7 +3481,7 @@
               "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
             },
             "warning" : {
-              "description" : "Choisissez votre validateur judicieusement : une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement."
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             },
             "cta" : "Continuer"
           },
