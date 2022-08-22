@@ -1097,7 +1097,7 @@
         "firmwareUpdate": {
           "inactive": "Software check",
           "active": "Checking for software updates",
-          "updateAvailable": "Software update available 2.2.0",
+          "updateAvailable": "Software update available {{firmwareVersion}}",
           "recommendation": "We recommend downloading the update now",
           "downloadUpdate": "Download update",
           "skipUpdate": "Skip for now",

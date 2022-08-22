@@ -122,7 +122,9 @@ const SoftwareCheckContent = ({
             : firmwareUpdateStatus === Status.active
             ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.active")
             : firmwareUpdateStatus === Status.updateAvailable
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.updateAvailable")
+            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.updateAvailable", {
+                firmwareVersion: "2.0.2",
+              })
             : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.completed")
         }
         subText={
