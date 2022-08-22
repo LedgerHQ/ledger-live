@@ -1,5 +1,4 @@
-// @flow
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { Icons } from "@ledgerhq/native-ui";
 
@@ -9,15 +8,19 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "../../const";
 import { PortfolioTabIcon } from "../../screens/Portfolio";
+// eslint-disable-next-line import/no-cycle
 import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
+// eslint-disable-next-line import/no-cycle
 import MarketNavigator from "./MarketNavigator";
+// eslint-disable-next-line import/no-cycle
 import PortfolioNavigator from "./PortfolioNavigator";
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
+// eslint-disable-next-line import/no-cycle
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
 
@@ -45,7 +48,9 @@ export default function MainNavigator({
 
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
-    () => ({ ...props }) => customTabBar({ ...props, colors, insets }),
+    () =>
+      ({ ...props }) =>
+        customTabBar({ ...props, colors, insets }),
     [insets, colors],
   );
 

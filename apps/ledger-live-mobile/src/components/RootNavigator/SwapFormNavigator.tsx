@@ -30,9 +30,10 @@ export default function SwapFormNavigator({
   const { colors } = useTheme();
   const { params: routeParams } = route;
 
-  const tabNavigationConfig = useMemo(() => getLineTabNavigatorConfig(colors), [
-    colors,
-  ]);
+  const tabNavigationConfig = useMemo(
+    () => getLineTabNavigatorConfig(colors),
+    [colors],
+  );
 
   return (
     <Tab.Navigator {...tabNavigationConfig}>

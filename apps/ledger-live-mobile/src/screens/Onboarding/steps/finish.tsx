@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -16,6 +14,7 @@ import { NavigatorName } from "../../../const";
 import Button from "../../../components/wrappedUi/Button";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const source = require("../../../../assets/videos/onboarding.mp4");
 
 const StyledSafeAreaView = styled(SafeAreaView)`

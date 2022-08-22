@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useCallback } from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -44,7 +43,7 @@ function PortfolioHeader({
   hidePortfolio: boolean;
 }) {
   const navigation = useNavigation();
-  const { colors, space } = useTheme();
+  const { colors } = useTheme();
 
   const { allIds, seenIds } = useAnnouncements();
   const { incidents } = useFilteredServiceStatus();

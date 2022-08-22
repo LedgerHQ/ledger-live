@@ -10,11 +10,11 @@ import styled from "styled-components/native";
 import { Icons, Box } from "@ledgerhq/native-ui";
 
 type Props = {
-  app: App,
-  state: State,
-  dispatch: (action: Action) => void,
-  setAppUninstallWithDependencies: (params: { dependents: App[], app: App }) => void,
-  size: number,
+  app: App;
+  state: State;
+  dispatch: (_: Action) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
+  size: number;
 };
 
 const ButtonContainer = styled(Box).attrs({
@@ -42,8 +42,13 @@ const AppUninstallButton = ({
 
   return (
     <TouchableOpacity onPress={uninstallApp}>
-      <ButtonContainer width={size} height={size} borderRadius={size} borderColor="error.c100">
-        <Icons.TrashMedium size={size * 0.375} color="error.c100"/>
+      <ButtonContainer
+        width={size}
+        height={size}
+        borderRadius={size}
+        borderColor="error.c100"
+      >
+        <Icons.TrashMedium size={size * 0.375} color="error.c100" />
       </ButtonContainer>
     </TouchableOpacity>
   );

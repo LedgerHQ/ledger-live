@@ -24,6 +24,7 @@ type Props = {
   nomination: PolkadotNomination;
   validator?: PolkadotValidator;
   account: Account;
+  // eslint-disable-next-line no-unused-vars
   onPress: (nomination: PolkadotNomination) => void;
   isLast?: boolean;
 };
