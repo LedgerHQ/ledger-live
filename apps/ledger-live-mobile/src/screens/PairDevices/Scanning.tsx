@@ -14,8 +14,9 @@ import DeviceItem from "../../components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 
 type Props = {
+  // eslint-disable-next-line no-unused-vars
   onSelect: (device: Device, deviceMeta: any) => Promise<void>;
-  onError: (error: Error) => void;
+  onError: (_: Error) => void;
   onTimeout: () => void;
 };
 

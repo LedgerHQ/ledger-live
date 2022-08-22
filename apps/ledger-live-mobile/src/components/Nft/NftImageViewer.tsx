@@ -4,8 +4,6 @@ import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import NftMedia from "./NftMedia";
 
-// import PanAndZoomView from "../PanAndZoomView";
-
 type Props = {
   route: {
     params: RouteParams;

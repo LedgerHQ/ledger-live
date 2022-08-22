@@ -5,15 +5,22 @@ module.exports = {
     "airbnb",
     "prettier",
     "plugin:json/recommended",
+    "plugin:@typescript-eslint/recommended",
   ],
   settings: {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"],
+    },
     "import/resolver": {
       node: {
         extensions: [".js", ".android.js", ".ios.js", ".ts", ".tsx"],
       },
+      typescript: {
+        alwaysTryTypes: true,
+      },
     },
   },
-  plugins: ["prettier", "detox"],
+  plugins: ["prettier", "detox", "@typescript-eslint", "import"],
   rules: {
     "no-console": [
       "error",
@@ -92,8 +99,10 @@ module.exports = {
     // See: https://github.com/import-js/eslint-plugin-import/issues/1810
     "import/no-unresolved": [
       "error",
-      { ignore: ["^@ledgerhq/live-common/.*"] },
+      { ignore: ["^@ledgerhq/live-common/.*", "^@ledgerhq/native-ui/.*"] },
     ],
+
+    "@typescript-eslint/no-unused-vars": ["error"],
   },
   globals: {
     __DEV__: false,

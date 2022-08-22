@@ -168,6 +168,7 @@ function readPackage(pkg, context) {
       addPeerDependencies("react-lottie", {
         "prop-types": "*",
       }),
+      addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
       // I'm not adding it as a dependency because if I did,

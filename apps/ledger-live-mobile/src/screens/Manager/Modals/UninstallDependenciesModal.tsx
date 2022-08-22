@@ -14,13 +14,14 @@ import BottomModal from "../../../components/BottomModal";
 import CollapsibleList from "../../../components/CollapsibleList";
 import ListTreeLine from "../../../icons/ListTreeLine";
 
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
 
 type Props = {
   appUninstallWithDependencies: { app: App; dependents: App[] };
-  dispatch: (action: Action) => void;
+  dispatch: (_: Action) => void;
   onClose: () => void;
 };
 

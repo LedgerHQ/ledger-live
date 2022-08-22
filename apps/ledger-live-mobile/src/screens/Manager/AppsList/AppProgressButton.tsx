@@ -30,6 +30,7 @@ export default function AppProgressButton({
 
   return (
     <ProgressLoader
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       onPress={() => {}}
       progress={progress}
       infinite={!progress && isCurrentAppOp}

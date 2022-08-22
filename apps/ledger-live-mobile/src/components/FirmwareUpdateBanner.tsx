@@ -4,10 +4,12 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { ScreenName, NavigatorName } from "../const";
 import { Alert, BottomDrawer, Text } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { ScreenName, NavigatorName } from "../const";
 import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
@@ -15,9 +17,7 @@ import {
 } from "../reducers/settings";
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useLatestFirmware from "../hooks/useLatestFirmware";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { isFirmwareUpdateVersionSupported } from "../logic/firmwareUpdate";
 
 const FirmwareUpdateBanner = () => {

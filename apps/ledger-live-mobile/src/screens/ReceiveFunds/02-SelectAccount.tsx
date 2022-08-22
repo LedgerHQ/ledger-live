@@ -24,7 +24,7 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
   const currency = route.params?.currency;
   const routerRoute = useRoute();
   const { t } = useTranslation();
-  const [selectedAccount, setSelectedAccount] = useState<String | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   const accounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
@@ -37,9 +37,11 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
     () =>
       currency.type === "TokenCurrency"
         ? parentAccounts.reduce((accs, pa) => {
-            const tokenAccounts = pa.subAccounts.filter(
-              acc => acc.token.id === currency.id,
-            );
+            const tokenAccounts = pa.subAccounts
+              ? pa.subAccounts.filter(
+                  (acc: any) => acc.token.id === currency.id,
+                )
+              : [];
 
             if (tokenAccounts.length > 0) {
               accs.push(...tokenAccounts);

@@ -697,6 +697,17 @@
     }
   },
   "account" : {
+    "subHeader" : {
+      "moreInfo" : "Más información",
+      "cardTitle" : "Con tecnología de {{team}}",
+      "drawer" : {
+        "title" : "integración con {{family}}",
+        "subTitle" : "La integración con {{family}} ha sido realizada por el equipo {{team}}",
+        "description" : "Ledger Live es una plataforma de código abierto.",
+        "description2" : "Los desarrolladores de todo el mundo pueden integrar con Ledger Live",
+        "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger"
+      }
+    },
     "lastOperations" : "Operaciones recientes",
     "contractAddress" : "Contrato:",
     "openInExplorer" : "Abrir en el explorador",
@@ -733,8 +744,8 @@
     "frozenAssetsTooltip" : "Los activos inmovilizados se utilizan en el proceso de votación de TRON. Esto representa tu cantidad total de votos.",
     "bandwidthTooltip" : "Inmoviliza activos para ganar Ancho de banda",
     "energyTooltip" : "Inmoviliza activos para ganar Energía",
-    "delegatedAssetsTooltip" : "Los activos delegados se utilizan en el proceso de votación de Cosmos. Esto representa tu cantidad total de votos.",
-    "undelegatingTooltip" : "Los activos desdelegados sufren un bloqueo temporal de 21 días antes de estar disponibles."
+    "delegatedTooltip" : "Los activos delegados se utilizan en el proceso de votación. Esto representa tus votos totales.",
+    "undelegatingTooltip" : "Los activos desdelegados sufren un bloqueo temporal de {{timelockInDays}} días antes de estar disponibles."
   },
   "exchange" : {
     "chooseProvider" : "Elegir de {{providerCount}} proveedor",
@@ -1502,6 +1513,7 @@
       "memo" : "Memo",
       "assetId" : "ID de activo",
       "rewards" : "Recompensas recibidas",
+      "autoClaimedRewards" : "Recompensas Autoreclamadas",
       "bondedAmount" : "Importe vinculado",
       "unbondedAmount" : "Importe desvinculado",
       "withdrawUnbondedAmount" : "Importe retirado",
@@ -1990,23 +2002,9 @@
     "value" : "Valor",
     "header" : "Asignación de cuenta ({{count}})"
   },
-  "elrond" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Desarrollado por Elrond",
-        "moreInfo" : "Más información",
-        "drawerTitle" : "Integración con Elrond",
-        "title" : "El token Elrond eGold (EGLD) ya está disponible en Ledger Live",
-        "description" : "Ahora puedes proteger de forma segura tus tokens eGold (EGLD) y administrarlos a través de Ledger Live.",
-        "description2" : "El token eGold (EGLD) de Elrond es nativo de la red Elrond y se utiliza para todo tipo de acciones, desde transacciones, puesta en participación y contratos inteligentes, hasta gobernanza y recompensas de validadores.",
-        "description3" : "Estamos trabajando activamente con el equipo de Elrond para agregar más funcionalidades, como la puesta en participación, compatibilidad con ESDT (Elrond Standard Digital Token) nativo y más.",
-        "website" : "La cadena de bloques de Internet Scale"
-      }
-    }
-  },
   "cardano" : {
     "account" : {
-      "subHeader" : {
+      "stakingRewardsBanner" : {
         "cardTitle" : "El saldo total no incluye las recompensas de participación"
       }
     }
@@ -2330,6 +2328,176 @@
             "success" : {
               "title" : "¡Recompensas reclamadas correctamente!",
               "text" : "Tus recompensas fueron añadidas a tu saldo disponible",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    }
+  },
+  "osmosis" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Con tecnología de Figment",
+        "moreInfo" : "Más información",
+        "drawerTitle" : "Con tecnología de Figment",
+        "title" : "El token OSMO ya está disponible en Ledger Live",
+        "description" : "Ahora puedes gestionar tus tokens OSMO y protegerlos con Ledger Live.",
+        "description2" : "El token OSMO es nativo de la cadena Osmosis y se utiliza para transacciones, puesta en participación y muchas más opciones próximamente.",
+        "website" : "Con tecnología de Figment"
+      }
+    },
+    "memo" : "Memo",
+    "memoPlaceholder" : "Opcional",
+    "memoWarningText" : "Cuando utilices un memo, asegúrate de que el receptor confirme la información",
+    "delegation" : {
+      "emptyState" : {
+        "description" : "Puedes recibir recompensas OSMO delegando tus activos.",
+        "info" : "Cómo funciona la delegación",
+        "delegation" : "Recibir recompensas"
+      },
+      "commission" : "Comisión",
+      "totalStake" : "Participación total",
+      "claimRewards" : "Reclamar recompensas",
+      "header" : "Delegaciones",
+      "noRewards" : "No hay recompensas disponibles",
+      "delegate" : "Agregar",
+      "undelegate" : "Desdelegar",
+      "redelegate" : "Redelegar",
+      "redelegateDisabledTooltip" : "Puedes volver a delegar <0>{{days}}</0>",
+      "redelegateMaxDisabledTooltip" : "No puedes redelegar más de <0>7</0> validadores a la vez.",
+      "undelegateDisabledTooltip" : "No puedes desdelegar más de <0>7</0> validadores a la vez.",
+      "reward" : "Reclamar recompensas",
+      "currentDelegation" : "Delegado: <0>{{amount}}</0>",
+      "estYield" : "rendimiento est.",
+      "activeTooltip" : "Los importes delegados generan recompensas",
+      "inactiveTooltip" : "Los importes no delegados no generan recompensas",
+      "minSafeWarning" : "No hay fondos suficientes",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "starter" : {
+            "description" : "Puedes recibir recompensas delegando tus activos OSMO a un validador.",
+            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Los activos estarán disponibles 14 días después de la desdelegación"],
+            "warning" : {
+              "description" : "Elige tu validador con cuidado: Puedes perder irreversiblemente parte de tus activos delegados si el validador no se comporta apropiadamente."
+            }
+          },
+          "amount" : {
+            "title" : "Importe"
+          },
+          "validator" : {
+            "title" : "Validadores"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has delegado tus activos con éxito",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "Reclamar recompensas",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "Recompensas",
+            "compound" : "Compound",
+            "claim" : "Cobrar",
+            "compoundOrClaim" : "Compound o cobro",
+            "compoundDescription" : "Se añadirán recompensas al importe delegado",
+            "claimDescription" : "Las recompensas se agregarán al saldo disponible",
+            "compoundInfo" : "Has ganado <0>{{amount}}</0>. Al hacer clic en \"Continuar\", serán reclamados y delegados automáticamente al mismo validador.",
+            "claimInfo" : "Has ganado <0>{{amount}}</0> del siguiente validador. Al hacer clic sobre \"Continuar\", serán reclamados y agregados automáticamente al saldo disponible.",
+            "selectLabel" : "Seleccionar una delegación"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "label" : "Confirmación",
+            "success" : {
+              "title" : "Recompensas cobradas con éxito",
+              "titleCompound" : "Recompensas enviadas a Compound con éxito",
+              "text" : "Tus recompensas fueron añadidas a tu saldo disponible",
+              "textCompound" : "Tus recompensas de<0>{{amount}}</0> fueron delegadas automáticamente a <0>{{validator}}</0>",
+              "cta" : "Ver detalles"
+            },
+            "pending" : {
+              "title" : "Transmitiendo transacción..."
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "redelegation" : {
+      "flow" : {
+        "title" : "Redelegar activos",
+        "steps" : {
+          "starter" : {
+            "title" : "Redelegación",
+            "description" : "Utiliza la redelegación para cambiar con facilidad de un validador a otro. Aunque debe tener en cuenta de que si cambias de opinión de nuevo, deberás esperar ya que la redelegación genera un bloqueo de 14 días.",
+            "warning" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente. Puedes tener un máximo de <0>7 redelegaciones pendientes</0>.",
+            "howDelegationWorks" : "¿Cómo funciona la delegación?"
+          },
+          "validators" : {
+            "title" : "Validadores",
+            "currentDelegation" : "Delegación actual",
+            "newDelegation" : "Nueva delegación",
+            "chooseValidator" : "Elegir un validador",
+            "warning" : "Deberás esperar <0>14 días</0> para redelegarlas desde el nuevo validador, si cambias de opinión de nuevo.",
+            "amountLabel" : "Importe a redelegar"
+          },
+          "device" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has redelegado tus activos correctamente",
+              "text" : "La redelegación se actualizará una vez que la cadena de bloques haya confirmado la transacción",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "Desdelegaciones",
+      "headerTooltip" : "Disponible después de un bloqueo temporal de 14 días",
+      "inactiveTooltip" : "Los importes desdelegados no generan recompensas.",
+      "flow" : {
+        "title" : "Desdelegar activos",
+        "steps" : {
+          "amount" : {
+            "title" : "Importe",
+            "subtitle" : "El proceso de desdelegación tarda <0>14 días</0> en finalizar.",
+            "warning" : "Las recompensas se cobran inmediatamente. Los montos no delegados volverán al saldo disponible luego del <0>bloqueo de tiempo de 14 días</0>.",
+            "fields" : {
+              "validator" : "Validador",
+              "amount" : "Importe a desdelegar"
+            }
+          },
+          "device" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has desdelegado con éxito tus activos.",
+              "description" : "<0>{{amount}}</0> fueron desdelegados de <0>{{validator}}</0>.",
               "cta" : "Ver detalles"
             },
             "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
@@ -3732,8 +3900,10 @@
     "recipientWording" : {
       "send" : "receptor",
       "delegate" : "validador",
+      "redelegate" : "validador",
       "undelegate" : "validador",
       "claimReward" : "receptor de recompensas",
+      "claimRewardCompound" : "validador que recibirá las recompensas",
       "optIn" : "receptor",
       "nominate" : "validador",
       "erc721" : {
@@ -4459,17 +4629,6 @@
     }
   },
   "cryptoOrg" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Con tecnología desarrollada por Crypto.org",
-        "moreInfo" : "Más información",
-        "drawerTitle" : "Integración con Crypto.org",
-        "title" : "El token de Crypto.org (CRO) ya está disponible en Ledger Live",
-        "description" : "Ahora puedes gestionar tus tokens de Crypto.org (CRO) y protegerlos con Ledger Live.",
-        "description2" : "El token Crypto.org (CRO) es nativo de la cadena Crypto.org y se utiliza para todas las transacciones, puesta en participación y muchas características futuras.",
-        "website" : "Criptomonedas en todas las billeteras"
-      }
-    },
     "memo" : "Memo",
     "memoPlaceholder" : "Opcional",
     "memoWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"

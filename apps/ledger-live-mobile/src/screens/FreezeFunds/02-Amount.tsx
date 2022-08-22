@@ -78,22 +78,17 @@ export default function FreezeAmount({ navigation, route }: Props) {
 
   const [infoModalOpen, setInfoModalOpen] = useState();
 
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(account);
+  const { transaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const t = bridge.createTransaction(account);
 
-    const transaction = bridge.updateTransaction(t, {
-      mode: "freeze",
-      resource: "BANDWIDTH",
+      const transaction = bridge.updateTransaction(t, {
+        mode: "freeze",
+        resource: "BANDWIDTH",
+      });
+
+      return { account, transaction };
     });
-
-    return { account, transaction };
-  });
 
   const options = [
     {
