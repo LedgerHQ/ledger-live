@@ -73,7 +73,8 @@
     "metro-extra-config": "1.0.0",
     "migrate-branch": "0.0.1",
     "native-modules-tools": "1.0.2",
-    "pnpm-utils": "1.0.0"
+    "pnpm-utils": "1.0.0",
+    "@actions/turborepo-gh-cache": "1.0.0"
   },
   "changesets": [
     "afraid-needles-own",
@@ -89,8 +90,10 @@
     "hungry-flowers-compare",
     "large-numbers-remain",
     "light-snakes-bathe",
+    "many-beans-speak",
     "modern-ligers-cry",
     "plenty-geckos-report-separated",
+    "polite-phones-roll",
     "rare-guests-cheer",
     "selfish-panthers-bow",
     "smart-shoes-shake",
@@ -98,12 +101,15 @@
     "sour-horses-lay",
     "stale-dancers-beam",
     "strong-penguins-call-separated",
+    "strong-penguins-call",
     "sweet-clocks-shave",
     "tall-chefs-hear",
+    "tender-shrimps-refuse",
     "twelve-gifts-jam",
     "violet-swans-watch",
     "violet-yaks-tan",
     "weak-kiwis-sip-separated",
+    "weak-kiwis-sip",
     "young-ads-mate"
   ]
 }
