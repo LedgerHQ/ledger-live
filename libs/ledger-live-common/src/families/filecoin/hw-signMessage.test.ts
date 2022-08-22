@@ -1,12 +1,12 @@
 import "../../__tests__/test-helpers/setup";
 
 import { prepareMessageToSign } from "./hw-signMessage";
-import createCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
+import createFixtureCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
 
 describe("prepareMessageToSign", () => {
   it("returns a MessageData object when message to sign is a simple string", () => {
     // Given
-    const currency = createCryptoCurrency("bitcoin");
+    const currency = createFixtureCryptoCurrency("bitcoin");
     const path = "44'/60'/0'/0/0";
     const derivationMode = "";
     const message = "4d6573736167652064652074657374";

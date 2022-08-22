@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import createCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
+import createFixtureCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
 import { TypedMessageData } from "../../families/ethereum/types";
 import { prepareMessageToSign } from "./index";
 import { MessageData } from "./types";
@@ -24,7 +24,7 @@ jest.mock("../../generated/hw-signMessage", () => {
 describe("prepareMessageToSign", () => {
   it("calls the perFamily function if it's exist and returns this function results", () => {
     // Given
-    const crypto = createCryptoCurrency("signExistFamily");
+    const crypto = createFixtureCryptoCurrency("signExistFamily");
     const account = createAccount(crypto);
     const message = "whatever";
 
@@ -45,7 +45,7 @@ describe("prepareMessageToSign", () => {
 
   it("returns an error if account is not linked to a crypto able to sign a message", () => {
     // Given
-    const crypto = createCryptoCurrency("mycoin");
+    const crypto = createFixtureCryptoCurrency("mycoin");
     const account = createAccount(crypto);
     const message = "whatever";
 

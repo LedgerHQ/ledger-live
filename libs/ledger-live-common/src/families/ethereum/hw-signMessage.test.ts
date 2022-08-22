@@ -4,7 +4,7 @@ import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712";
 import testEIP712Message from "@ledgerhq/hw-app-eth/tests/sample-messages/0.json";
 import ethSignMessage, { prepareMessageToSign } from "./hw-signMessage";
 import { setEnv } from "../../env";
-import createCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
+import createFixtureCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
 
 const hwSignMessage = ethSignMessage.signMessage;
 
@@ -45,7 +45,7 @@ jest.mock("@ledgerhq/hw-app-eth", () => {
 describe("prepareMessageToSign", () => {
   it("returns a MessageData object when message to sign is a simple string", () => {
     // Given
-    const currency = createCryptoCurrency("ethereum");
+    const currency = createFixtureCryptoCurrency("ethereum");
     const path = "44'/60'/0'/0/0";
     const derivationMode = "ethM";
     const message = "4d6573736167652064652074657374";
@@ -71,7 +71,7 @@ describe("prepareMessageToSign", () => {
 
   it("returns a TypedMessageData object when message to sign is an EIP712Message", () => {
     // Given
-    const currency = createCryptoCurrency("ethereum");
+    const currency = createFixtureCryptoCurrency("ethereum");
     const path = "44'/60'/0'/0/0";
     const derivationMode = "ethM";
     // testEIP712MessageHex
