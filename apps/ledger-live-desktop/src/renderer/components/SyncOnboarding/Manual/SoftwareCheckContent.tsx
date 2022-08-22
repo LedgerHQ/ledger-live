@@ -123,7 +123,7 @@ const SoftwareCheckContent = ({
             ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.active")
             : firmwareUpdateStatus === Status.updateAvailable
             ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.updateAvailable", {
-                firmwareVersion: "2.0.2",
+                firmwareVersion: "2.0.2", // FIX HERE TO REMOVE HARDCODED VERSION
               })
             : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.completed")
         }
