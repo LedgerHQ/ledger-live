@@ -30,6 +30,7 @@ import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "../../components/Search";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 
 type Props = {
   state: State;
@@ -352,7 +353,7 @@ const AppsScreen = ({
 
 const styles = StyleSheet.create({
   list: {
-    paddingBottom: 55,
+    paddingBottom: TAB_BAR_SAFE_HEIGHT,
   },
 });
 
