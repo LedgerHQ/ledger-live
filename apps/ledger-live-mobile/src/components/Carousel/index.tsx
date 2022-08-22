@@ -7,6 +7,7 @@ import styled from "styled-components/native";
 import { setCarouselVisibility } from "../../actions/settings";
 import { track } from "../../analytics";
 import { getDefaultSlides, SLIDES, WIDTH } from "./shared";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 const DismissCarousel = styled(TouchableOpacity)`
   position: absolute;
@@ -59,6 +60,7 @@ type Props = {
 
 const Carousel = ({ cardsVisibility }: Props) => {
   const dispatch = useDispatch();
+  const currentScreen = useCurrentRouteName();
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentPositionX, setCurrentPositionX] = useState(0);
 
@@ -83,13 +85,15 @@ const Carousel = ({ cardsVisibility }: Props) => {
     cardId => {
       const slide = SLIDES.find(slide => slide.name === cardId);
       if (slide) {
-        track("Portfolio Recommended CloseUrl", {
+        track("button_clicked", {
+          button: "Close Card",
           url: slide.url,
+          screen: currentScreen,
         });
       }
       dispatch(setCarouselVisibility({ ...cardsVisibility, [cardId]: false }));
     },
-    [dispatch, cardsVisibility],
+    [dispatch, cardsVisibility, currentScreen],
   );
 
   const onScrollEnd = useCallback(event => {
@@ -122,7 +126,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
       onContentSizeChange={onScrollViewContentChange}
       showsHorizontalScrollIndicator={false}
       snapToInterval={WIDTH + 16}
-      decelerationRate={'fast'}
+      decelerationRate={"fast"}
     >
       {slides.map(({ id, Component }, index) => (
         <CarouselCardContainer

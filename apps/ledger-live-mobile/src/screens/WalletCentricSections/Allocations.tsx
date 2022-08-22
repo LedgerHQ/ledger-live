@@ -9,10 +9,15 @@ import { ensureContrast } from "../../colors";
 import { NavigatorName, ScreenName } from "../../const";
 import { useDistribution } from "../../actions/general";
 import RingChart from "../Analytics/RingChart";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 const NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY = 4;
 
-const AllocationCaption = ({ assetAllocation, colors }: {
+const AllocationCaption = ({
+  assetAllocation,
+  colors,
+}: {
   assetAllocation: any;
   colors: any;
 }) => {
@@ -25,7 +30,7 @@ const AllocationCaption = ({ assetAllocation, colors }: {
 
   return (
     <Flex flexDirection="row" alignItems="center" mb={3}>
-      <Flex bg={currencyColor} width={8} height={8} borderRadius={4} mr={2}/>
+      <Flex bg={currencyColor} width={8} height={8} borderRadius={4} mr={2} />
       <Text variant="body" fontWeight="semiBold">
         {assetAllocation.currency?.ticker}
       </Text>
@@ -35,15 +40,20 @@ const AllocationCaption = ({ assetAllocation, colors }: {
 
 const Allocations = () => {
   const { t } = useTranslation();
+  const currentScreen = useCurrentRouteName();
   const navigation = useNavigation();
   const distribution = useDistribution();
   const { colors } = useTheme();
 
   const goToAnalyticsAllocations = useCallback(() => {
+    track("analytics_clicked", {
+      analytics: "Allocations",
+      screen: currentScreen,
+    });
     navigation.navigate(NavigatorName.Analytics, {
       screen: ScreenName.AnalyticsAllocation,
     });
-  }, [navigation]);
+  }, [navigation, currentScreen]);
 
   const distributionListFormatted = useMemo(() => {
     if (distribution.list.length <= NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY) {

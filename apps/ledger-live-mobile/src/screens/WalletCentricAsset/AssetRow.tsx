@@ -4,6 +4,8 @@ import { BigNumber } from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import { usePortfolio } from "../../actions/portfolio";
 import AssetRowLayout from "../../components/AssetRowLayout";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   asset: any;
@@ -24,6 +26,7 @@ const AssetRow = ({
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
+  const currentScreen = useCurrentRouteName();
   const currency = asset.currency;
   const name = currency.name;
   const unit = currency.units[0];
@@ -31,17 +34,21 @@ const AssetRow = ({
   const { countervalueChange } = usePortfolio(asset.accounts);
 
   const onAssetPress = useCallback(() => {
+    track("asset_clicked", {
+      asset: currency.id,
+      screen: currentScreen,
+    });
     if (navigationParams) {
       navigation.navigate(...navigationParams);
     } else {
       navigation.navigate(NavigatorName.PortfolioAccounts, {
         screen: ScreenName.Asset,
         params: {
-          currency: currency,
+          currency,
         },
       });
     }
-  }, [currency, navigation, navigationParams]);
+  }, [currency.id, navigation, navigationParams]);
 
   return (
     <AssetRowLayout

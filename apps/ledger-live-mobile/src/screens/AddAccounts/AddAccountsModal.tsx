@@ -1,14 +1,15 @@
 import React, { useCallback } from "react";
-import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BottomDrawer, Box, Flex, Text } from "@ledgerhq/native-ui";
+import { BottomDrawer } from "@ledgerhq/native-ui";
 import { NavigatorName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import Illustration from "../../images/illustration/Illustration";
 import NanoXFolded from "../../images/devices/NanoXFolded";
 
 import ChoiceCard from "../../components/ChoiceCard";
+import { track, TrackScreen } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 const images = {
   light: {
@@ -33,25 +34,50 @@ export default function AddAccountsModal({
   isOpened,
 }: Props) {
   const { t } = useTranslation();
+  const currentScreen = useCurrentRouteName();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onClickAdd = useCallback(() => {
+    track("button_clicked", {
+      button: "With your Ledger",
+      drawer: "AddAccountsModal",
+      screen: currentScreen,
+    });
     navigation.navigate(NavigatorName.AddAccounts);
     onClose();
-  }, [navigation, onClose]);
+  }, [navigation, onClose, currentScreen]);
 
   const onClickImport = useCallback(() => {
+    track("button_clicked", {
+      button: "Import from Desktop",
+      drawer: "AddAccountsModal",
+      screen: currentScreen,
+    });
     navigation.navigate(NavigatorName.ImportAccounts);
     onClose();
-  }, [navigation, onClose]);
+  }, [navigation, onClose, currentScreen]);
+
+  const onPressClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      drawer: "AddAccountsModal",
+      screen: currentScreen,
+    });
+    onClose();
+  }, [onClose, currentScreen]);
 
   return (
     <BottomDrawer
       testId="AddAccountsModal"
       isOpen={isOpened}
-      onClose={onClose}
+      onClose={onPressClose}
       title={t("portfolio.emptyState.addAccounts.addAccounts")}
     >
+      <TrackScreen
+        category="Add/Import accounts"
+        type="drawer"
+        screen={currentScreen}
+      />
       {!readOnlyModeEnabled && (
         <ChoiceCard
           title={t("addAccountsModal.add.title")}

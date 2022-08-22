@@ -1,11 +1,13 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AccountRow from "../Accounts/AccountRow";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { Button } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
+import AccountRow from "../Accounts/AccountRow";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "../../const";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 const NB_MAX_ACCOUNTS_TO_DISPLAY: number = 3;
 
@@ -21,6 +23,7 @@ const AccountsSection = ({
   currencyTicker,
 }: ListProps) => {
   const navigation = useNavigation();
+  const currentScreen = useCurrentRouteName();
   const { t } = useTranslation();
 
   const renderItem = useCallback(
@@ -36,6 +39,10 @@ const AccountsSection = ({
   );
 
   const goToAccountsScreen = useCallback(() => {
+    track("button_clicked", {
+      button: "See All",
+      screen: currentScreen,
+    });
     navigation.navigate(NavigatorName.Portfolio, {
       screen: NavigatorName.PortfolioAccounts,
       params: {
@@ -46,7 +53,7 @@ const AccountsSection = ({
         },
       },
     });
-  }, [navigation, currencyId, currencyTicker]);
+  }, [navigation, currencyId, currencyTicker, currentScreen]);
 
   return (
     <>

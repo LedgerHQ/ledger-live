@@ -15,6 +15,7 @@ import styled, { useTheme } from "styled-components/native";
 import Animated, {
   Extrapolate,
   interpolate,
+  SharedValue,
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
@@ -27,6 +28,8 @@ import Placeholder from "../../components/Placeholder";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import DiscreetModeButton from "../../components/DiscreetModeButton";
 import getWindowDimensions from "../../logic/getWindowDimensions";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 function PortfolioHeader({
   currentPositionY,
@@ -42,16 +45,21 @@ function PortfolioHeader({
   hidePortfolio: boolean;
 }) {
   const navigation = useNavigation();
-  const { colors, space } = useTheme();
+  const currentRoute = useCurrentRouteName();
+  const { colors } = useTheme();
 
   const { allIds, seenIds } = useAnnouncements();
   const { incidents } = useFilteredServiceStatus();
   const { t } = useTranslation();
 
   const onNotificationButtonPress = useCallback(() => {
+    track("button_clicked", {
+      button: "Notification Center",
+      screen: currentRoute,
+    });
     // @ts-expect-error navigation ts issue
     navigation.navigate(NavigatorName.NotificationCenter);
-  }, [navigation]);
+  }, [navigation, currentRoute]);
 
   const onStatusErrorButtonPress = useCallback(() => {
     // @ts-expect-error navigation ts issue
@@ -59,11 +67,14 @@ function PortfolioHeader({
       screen: ScreenName.NotificationCenterStatus,
     });
   }, [navigation]);
-
   const onSettingsButtonPress = useCallback(() => {
+    track("button_clicked", {
+      button: "Settings",
+      screen: currentRoute,
+    });
     // @ts-expect-error navigation ts issue
     navigation.navigate(NavigatorName.Settings);
-  }, [navigation]);
+  }, [currentRoute, navigation]);
 
   const notificationsCount = allIds.length - seenIds.length;
 

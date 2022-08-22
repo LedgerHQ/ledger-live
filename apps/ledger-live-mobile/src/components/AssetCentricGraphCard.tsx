@@ -17,6 +17,8 @@ import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirm
 import ParentCurrencyIcon from "./ParentCurrencyIcon";
 import FormatDate from "./FormatDate";
 import { ensureContrast } from "../colors";
+import { track } from "../analytics";
+import { useCurrentRouteName } from "../helpers/routeHooks";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
@@ -53,8 +55,8 @@ function AssetCentricGraphCard({
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-
-  const [, setTimeRange, timeRangeItems] = useTimeRange();
+  const currentScreen = useCurrentRouteName();
+  const [itemRange, setTimeRange, timeRangeItems] = useTimeRange();
   const [loading, setLoading] = useState(false);
   const {
     countervalueChange,
@@ -70,9 +72,13 @@ function AssetCentricGraphCard({
 
   const updateTimeRange = useCallback(
     index => {
+      track("timeframe_clicked", {
+        timeframe: timeRangeItems[index],
+        screen: currentScreen,
+      });
       setTimeRange(timeRangeItems[index]);
     },
-    [setTimeRange, timeRangeItems],
+    [setTimeRange, timeRangeItems, currentScreen],
   );
 
   const mapGraphValue = useCallback(d => d.value || 0, []);
@@ -100,6 +106,18 @@ function AssetCentricGraphCard({
   const graphColor = ensureContrast(
     getCurrencyColor(currency),
     colors.background.main,
+  );
+
+  const onItemHover = useCallback(
+    (item: any) => {
+      track("graph_clicked", {
+        graph: "Asset Graph",
+        timeframe: itemRange,
+        screen: currentScreen,
+      });
+      setHoverItem(item);
+    },
+    [currentScreen, itemRange],
   );
 
   return (
@@ -196,7 +214,7 @@ function AssetCentricGraphCard({
         width={getWindowDimensions().width + 1}
         color={graphColor}
         data={balanceHistory}
-        onItemHover={setHoverItem}
+        onItemHover={onItemHover}
         mapValue={mapGraphValue}
         fill={colors.background.main}
       />
