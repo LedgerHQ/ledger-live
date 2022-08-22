@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "مستلم غير صحيح"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "تم رفض تثبيت اللغة على الجهاز",
+      "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "لم يتم العثور على اللغة",
+      "description" : "لم يتم العثور على اللغة التي تحاول تثبيتها. يرجى محاولة تثبيت لغة أخرى."
+    },
     "LatestMCUInstalledError" : {
       "title" : "عذراً، لا يوجد شيء للتحديث",
       "description" : "يرجى التواصل مع دعم Ledger إذا كنت لا تستطيع استخدام جهازك."
@@ -820,8 +828,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "هل يُعجبك Ledger Live؟",
-      "description" : "سواءً كان يُعجبك أو تشعر أننا يمكن أن نقوم بعمل أفضل. نحن نُقدّر رأيك.",
+      "title" : "هل يعجبك تطبيقنا ؟",
+      "description" : "ملاحظاتك مهمة لتحسين Ledger Live.",
       "cta" : {
         "enjoy" : "إنه رائع",
         "disappointed" : "لا يعجبني",
@@ -838,7 +846,8 @@
     },
     "disappointed" : {
       "title" : "ساعدنا على بناء مُنتج أفضل من أجلك",
-      "description" : "نحن نرغب في تطوير أنفسنا، ورأيك الصادق يُساعنا على معرفة ما نحتاج إلى تطويره.",
+      "description" : "إذا كنت بحاجة إلى مزيد من المساعدة أو ترغب في تواصلنا معك، يرجى استخدام الدردشة المباشرة.",
+      "here" : "هنا",
       "cta" : {
         "sendFeedback" : "أرسل الملاحظات",
         "notNow" : "ليس الآن"
@@ -929,6 +938,10 @@
       "earn" : {
         "title" : "اكسب",
         "desc" : "كسب دخل سلبي وتنمية أصولك المشفرة"
+      },
+      "mint" : {
+        "title" : "سَكَّ NFT",
+        "desc" : "سَكَّ الرموز غير القابلة للاستبدال (NFT) من خلال تعاونات حصرية على سوق [ L ]"
       }
     },
     "comingSoon" : "قريباً",
@@ -989,6 +1002,8 @@
     "stepLanguage" : {
       "title" : "اختر لغتك",
       "cta" : "متابعة",
+      "changeDeviceLanguage" : "هل تريد تغير لغة جهازك؟",
+      "changeDeviceLanguageDescription" : "Ledger Live الآن باللغة {{language}}. هل ترغب في استخدام اللغة {{language}} على جهازك أيضاً؟",
       "warning" : {
         "title" : "ابدأ باللغة الإنجليزية",
         "cta" : "فهمت!",
@@ -3255,7 +3270,9 @@
     "newVersion" : "التحديث {{version}} متاح لجهازك {{deviceName}}",
     "drawerUpdate" : {
       "title" : "تحديث البرنامج الثابت",
-      "description" : "قم بتحديث برنامج Ledger Nano الثابت عن طريق توصيله إلى تطبيق Ledger Live على سطح المكتب"
+      "description" : "قم بتحديث برنامج Ledger Nano الثابت عن طريق توصيله إلى تطبيق Ledger Live على سطح المكتب",
+      "pleaseConnectUsbTitle" : "كبل USB مطلوب",
+      "pleaseConnectUsbDescription" : "لبدء تحديث البرنامج الثابت، قم بتوصيل {{deviceName}} خاصتك بهاتفك الجوال باستخدام كبل USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3281,6 +3298,23 @@
       "es" : "Español",
       "zh" : "中文（简体）",
       "de" : "Deutsch"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "اللغة",
+    "deviceLanguage" : "لغة الجهاز",
+    "changeLanguage" : "تغيير اللغة",
+    "allowLanguageInstallation" : "السماح بتثبيت اللغة",
+    "languageInstalled" : "تم تغيير لغة الجهاز إلى {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "تعيين {{deviceName}} خاصتك باللغة {{language}}؟",
+      "description" : "اللغة {{language}} متاحة الآن لجهازك {{deviceName}}. يمكنك تعيينها الآن، أو تغيير لغة جهازك في أي وقت من My Ledger."
+    },
+    "installingLanguage" : "جاري تثبيت اللغة",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3374,6 +3408,13 @@
             "broadcastError" : "ربما تكون معاملتك قد فشلت. يرجى التحقق مرة أخرى بعد بضع دقائق للتأكد أن معاملتك لم تكتمل قبل المحاولة مرة أخرى."
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "الرصيد الإجمالي لا يشمل مكافآت التكديس"
       }
     }
   },
