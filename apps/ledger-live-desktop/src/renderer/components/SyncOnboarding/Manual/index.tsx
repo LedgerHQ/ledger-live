@@ -79,7 +79,7 @@ const SyncOnboardingManual = () => {
       status: "inactive",
       title: t("syncOnboarding.manual.softwareCheckContent.title"),
       renderBody: () => (
-        <SoftwareCheckContent genuineCheckStatus="active" firmwareUpdateStatus="inactive" />
+        <SoftwareCheckContent genuineCheckStatus="inactive" firmwareUpdateStatus="inactive" />
       ),
     },
     {
