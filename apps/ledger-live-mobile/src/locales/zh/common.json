@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "无效的接收方"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "语言安装被设备端拒绝",
+      "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+    },
+    "LanguageNotFound" : {
+      "title" : "未找到语言",
+      "description" : "未找到您尝试安装的语言。请尝试安装其他语言。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "对不起，没有可更新的内容",
       "description" : "如果设备无法使用，请联系 Ledger 客服。"
@@ -820,8 +828,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "喜欢 Ledger Live 吗？",
-      "description" : "无论您喜欢我们的产品还是觉得我们可以做得更好，我们都非常重视您的反馈。",
+      "title" : "您觉得我们的应用程序怎么样？",
+      "description" : "您的反馈对于改进 Ledger Live 非常重要。",
       "cta" : {
         "enjoy" : "做得很棒",
         "disappointed" : "我很失望",
@@ -838,7 +846,8 @@
     },
     "disappointed" : {
       "title" : "帮助我们打造更完善的产品",
-      "description" : "我们希望做得更好，您的真实反馈有助于我们了解有待改进的地方。",
+      "description" : "如果您需要更多帮助或希望得到我们的回复，请使用在线聊天",
+      "here" : "点击此处",
       "cta" : {
         "sendFeedback" : "发送反馈",
         "notNow" : "以后再说"
@@ -930,9 +939,9 @@
         "title" : "赚取",
         "desc" : "赚取被动收入并增长加密资产"
       },
-      "mint": {
-        "title": "铸造",
-        "desc": "通过 [ L ] Market 市场上的独家合作来铸造 NFT"
+      "mint" : {
+        "title" : "铸造",
+        "desc" : "通过 [ L ] 市场上的独家合作来铸造 NFT"
       }
     },
     "comingSoon" : "敬请期待",
@@ -993,6 +1002,8 @@
     "stepLanguage" : {
       "title" : "选择您的语言",
       "cta" : "继续",
+      "changeDeviceLanguage" : "要更改您的设备语言？",
+      "changeDeviceLanguageDescription" : "Ledger Live 现在支持{{language}}。您也想在设备上使用{{language}}吗？",
       "warning" : {
         "title" : "以英语开始",
         "cta" : "知道了！",
@@ -3259,7 +3270,9 @@
     "newVersion" : "更新适用于您的 {{deviceName}} 的版本 {{version}}",
     "drawerUpdate" : {
       "title" : "固件更新",
-      "description" : "将您的 Ledger Nano 固件连接到桌面板的 Ledger Live 应用程序以更新"
+      "description" : "将您的 Ledger Nano 固件连接到桌面板的 Ledger Live 应用程序以更新",
+      "pleaseConnectUsbTitle" : "需要使用 USB 线",
+      "pleaseConnectUsbDescription" : "要开始固件更新，请使用 USB 线将 {{deviceName}} 插入手机。"
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3285,6 +3298,23 @@
       "es" : "Español",
       "zh" : "中文（简体）",
       "de" : "Deutsch"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "语言",
+    "deviceLanguage" : "设备语言",
+    "changeLanguage" : "更改语言",
+    "allowLanguageInstallation" : "允许安装语言",
+    "languageInstalled" : "设备语言已更改为 {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "将您的 {{deviceName}} 设置为 {{language}}？",
+      "description" : "您的 {{deviceName}} 现已可以使用 {{language}}。您可以立即设置语言，或随时在 My Ledger（我的 Ledger）中更改设备语言。"
+    },
+    "installingLanguage" : "正在安装语言",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3378,6 +3408,13 @@
             "broadcastError" : "您的交易可能已失败。请等待几分钟后再次查看，如果确认交易未成功，则再次尝试。"
           }
         }
+      }
+    }
+  },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "总余额不包括权益质押奖励"
       }
     }
   },
