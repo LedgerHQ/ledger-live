@@ -29,7 +29,7 @@ const estimateMaxSpendable = async ({
   }
 
   const dummyRecipient =
-    "addr_test1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq0uk53y";
+    "addr1qyqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqv2t5am";
   const a = getMainAccount(account, parentAccount);
   const t: Transaction = {
     ...createTransaction(),
