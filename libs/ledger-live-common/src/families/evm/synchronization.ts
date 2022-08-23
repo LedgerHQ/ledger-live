@@ -1,14 +1,27 @@
 import { Account, Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { encodeAccountId } from "../../account";
 import { getAccount, getBlock, getTransaction } from "./api/rpc";
-import { getLatestTransactions } from "./api/etherscan";
+import { encodeAccountId } from "../../account";
+import etherscanLikeApi from "./api/etherscan";
 import {
   makeSync,
   makeScanAccounts,
   mergeOps,
   GetAccountShape,
 } from "../../bridge/jsHelpers";
+
+const getExplorerApi = (currency: CryptoCurrency) => {
+  const apiType = currency?.ethereumLikeInfo?.explorer?.type;
+
+  switch (apiType) {
+    case "etherscan":
+    case "blockscout":
+      return etherscanLikeApi;
+
+    default:
+      throw new Error("API type not supported");
+  }
+};
 
 /**
  * Synchronization process
@@ -31,13 +44,20 @@ export const getAccountShape: GetAccountShape = async (info) => {
     }
     return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
   }, null as Operation | null);
-  // This method could not be working if an etherscan-like api doesn't exist in explorers.ts
-  const lastOperations = await getLatestTransactions(
-    currency,
-    address,
-    accountId,
-    latestOperation?.blockHeight ? latestOperation.blockHeight : 0
-  );
+  // This method could not be working if the integration doesn't have an API to retreive the operations
+  const lastOperations = await (async () => {
+    try {
+      const { getLatestTransactions } = await getExplorerApi(currency);
+      return await getLatestTransactions(
+        currency,
+        address,
+        accountId,
+        latestOperation?.blockHeight ? latestOperation.blockHeight : 0
+      );
+    } catch (e) {
+      return [];
+    }
+  })();
 
   // Trying to confirm pending operations that we are sure of
   // because they were made in the live
