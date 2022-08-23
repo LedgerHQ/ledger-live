@@ -98,14 +98,14 @@ function ManageAssetsNavigator() {
 
   // }, [onNavigate]);
 
-  // const onVote = useCallback(() => {
-  //   onNavigate({
-  //     route: NavigatorName.CosmosDelegationFlow,
-  //     screen: ScreenName.CosmosDelegationStarted,
-  //     params: {},
-  //   });
+  const onVote = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.CeloVoteFlow,
+      screen: ScreenName.CeloVoteStarted,
+      params: {},
+    });
 
-  // }, [onNavigate]);
+  }, [onNavigate]);
 
   // const onRevoke = useCallback(() => {
   //   onNavigate({
@@ -117,6 +117,7 @@ function ManageAssetsNavigator() {
   // }, [onNavigate]);
 
   const isRegistered = (account as CeloAccount).celoResources?.registrationStatus;
+  const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
 
   return (
     <SafeAreaView
@@ -158,11 +159,11 @@ function ManageAssetsNavigator() {
       />
       <Button
         event="Celo Vote Click"
-        onPress={onLock}
+        onPress={onVote}
         type="main"
         title={t("celo.manage.activate.title")}
         containerStyle={styles.button}
-        disabled={true}
+        disabled={!votingEnabled}
       />
 
       <Button
