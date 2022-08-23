@@ -3444,6 +3444,9 @@
     }
   },
   "celo": {
+    "delegation": {
+      "totalVotes": "Total Votes"
+    },
     "info": {
       "available": {
         "title": "CELO available",
@@ -3534,28 +3537,37 @@
       }
     },
     "vote": {
-      "title": "Vote",
-      "steps": {
-        "amount": {
-          "title": "Amount"
-        },
-        "connectDevice": {
-          "title": "Device"
-        },
-        "confirmation": {
-          "title": "Confirmation",
-          "success": {
-            "title": "You have successfully voted",
-            "text": "You will see your operation in history soon.",
-            "cta": "View details"
+      "iVote": "I vote",
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by delegating your CELO assets to a validator.",
+            "bullet": {
+              "0": "You keep ownership of delegated assets",
+              "1": "Delegate using your Ledger device",
+              "2": "Assets will be available after undelegation"
+            },
+            "warning": {
+              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+            },
+            "cta": "Continue"
           },
-          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
-        },
-        "validatorGroup": {
-          "title": "Validator Group",
-          "ledgerByFigmentTC": "Ledger by Figment T&Cs",
-          "totalVotes": "Total Votes",
-          "commission": "Commission"
+          "amount": {
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully voted",
+              "text": "You will see your operation in history soon."
+            }
+          }
         }
       }
     },
