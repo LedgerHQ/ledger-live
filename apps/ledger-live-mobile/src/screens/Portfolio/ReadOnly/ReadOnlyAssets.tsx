@@ -16,7 +16,7 @@ const ReadOnlyAssetsList = ({ assets }: ListProps) => {
       <ReadOnlyAccountRow
         navigation={navigation}
         currency={item}
-        screen="Assets"
+        screen="Wallet"
       />
     ),
     [navigation],

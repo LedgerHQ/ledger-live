@@ -108,7 +108,7 @@ const cosmos: CurrenciesData<Transaction> = {
             family: "cosmos",
             networkInfo: null,
             validators: [],
-            cosmosSourceValidator: null,
+            sourceValidator: null,
             fees: null,
             gas: null,
             memo: null,
@@ -139,7 +139,7 @@ const cosmos: CurrenciesData<Transaction> = {
             family: "cosmos",
             networkInfo: null,
             validators: [],
-            cosmosSourceValidator: null,
+            sourceValidator: null,
             fees: null,
             gas: null,
             memo: "test",
@@ -187,7 +187,7 @@ const cosmos: CurrenciesData<Transaction> = {
                 amount: new BigNumber(100),
               },
             ],
-            cosmosSourceValidator:
+            sourceValidator:
               "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
             mode: "redelegate",
           }),
@@ -210,7 +210,7 @@ const cosmos: CurrenciesData<Transaction> = {
                 amount: new BigNumber(0),
               },
             ],
-            cosmosSourceValidator:
+            sourceValidator:
               "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: {
@@ -231,7 +231,7 @@ const cosmos: CurrenciesData<Transaction> = {
                 amount: new BigNumber(100),
               },
             ],
-            cosmosSourceValidator:
+            sourceValidator:
               "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: {

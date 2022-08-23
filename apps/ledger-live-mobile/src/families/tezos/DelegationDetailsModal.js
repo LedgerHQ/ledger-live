@@ -178,7 +178,7 @@ export default function DelegationDetailsModal({
 
   const onReceive = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId,
         parentId,

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/react-ui",
-  "version": "0.8.1",
+  "version": "0.8.3",
   "description": "Ledger Live - Desktop UI",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": {
@@ -58,7 +58,7 @@
   "scripts": {
     "storybook": "start-storybook -p 6006 -s ./src",
     "build": "tsc -p tsconfig.prod.json && node scripts/transpile && node scripts/postBuild",
-    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
+    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui -F crypto-icons-ui build",
     "build:storybook": "build-storybook -s ./src",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
@@ -70,6 +70,7 @@
   "dependencies": {
     "@floating-ui/react-dom": "^0.4.0",
     "@ledgerhq/icons-ui": "workspace:^",
+    "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@tippyjs/react": "^4.2.6",
     "@types/color": "^3.0.2",
