@@ -144,7 +144,7 @@ const AccountSyncStatusIndicator = ({
   const onClick = useCallback(
     e => {
       e.stopPropagation();
-      sync({ type: "SYNC_ONE_ACCOUNT", accountId, priority: 10 });
+      sync({ type: "SYNC_ONE_ACCOUNT", accountId, priority: 10, reason: "user-click-one" });
       setUserAction(true);
       // a user action is kept in memory for a short time (which will correspond to a spinner time)
       clearTimeout(timeout.current);

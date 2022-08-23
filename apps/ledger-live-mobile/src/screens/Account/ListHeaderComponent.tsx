@@ -4,12 +4,8 @@ import {
   getMainAccount,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import {
-  AccountLike,
-  Account,
-  Currency,
-} from "@ledgerhq/live-common/types/index";
-import { ValueChange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { AccountLike, Account, ValueChange } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 
 import { Box } from "@ledgerhq/native-ui";
@@ -27,37 +23,39 @@ import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 import { FabAccountActions } from "../../components/FabActions";
 
-const renderAccountSummary = (
-  account: AccountLike,
-  parentAccount: Account,
-  compoundSummary: CompoundAccountSummary,
-) => () => {
-  const mainAccount = getMainAccount(account, parentAccount);
-  const AccountBalanceSummaryFooter =
-    perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
+const renderAccountSummary =
+  (
+    account: AccountLike,
+    parentAccount: Account,
+    compoundSummary: CompoundAccountSummary,
+  ) =>
+  () => {
+    const mainAccount = getMainAccount(account, parentAccount);
+    const AccountBalanceSummaryFooter =
+      perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
 
-  const footers = [];
+    const footers = [];
 
-  if (compoundSummary && account.type === "TokenAccount") {
-    footers.push(
-      <CompoundSummary
-        key="compoundSummary"
-        account={account}
-        compoundSummary={compoundSummary}
-      />,
-    );
-  }
+    if (compoundSummary && account.type === "TokenAccount") {
+      footers.push(
+        <CompoundSummary
+          key="compoundSummary"
+          account={account}
+          compoundSummary={compoundSummary}
+        />,
+      );
+    }
 
-  if (AccountBalanceSummaryFooter)
-    footers.push(
-      <AccountBalanceSummaryFooter
-        account={account}
-        key="accountbalancesummary"
-      />,
-    );
-  if (!footers.length) return null;
-  return footers;
-};
+    if (AccountBalanceSummaryFooter)
+      footers.push(
+        <AccountBalanceSummaryFooter
+          account={account}
+          key="accountbalancesummary"
+        />,
+      );
+    if (!footers.length) return null;
+    return footers;
+  };
 
 type Props = {
   account?: AccountLike;

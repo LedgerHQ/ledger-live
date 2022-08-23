@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -50,6 +50,7 @@ type Props = FlexBoxProps & {
   style?: any;
   index: number;
   showHint: boolean;
+  // eslint-disable-next-line no-unused-vars
   onAccountNameChange?: (name: string, changedAccount: Account) => void;
   useFullBalance?: boolean;
 };
@@ -128,6 +129,7 @@ type SelectableAccountProps = {
   rowIndex: number;
   listIndex: number;
   navigation: any;
+  // eslint-disable-next-line no-unused-vars
   onAccountNameChange?: (name: string, changedAccount: Account) => void;
   colors: any;
   useFullBalance?: boolean;

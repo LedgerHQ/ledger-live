@@ -13,7 +13,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
 import Animated, { Value, event } from "react-native-reanimated";
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import { Operation, ProtoNFT } from "@ledgerhq/live-common/types/index";
+import { Operation, ProtoNFT } from "@ledgerhq/types-live";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import LoadingFooter from "../../../components/LoadingFooter";
@@ -74,10 +74,10 @@ const NftCollection = ({ route }: Props) => {
 
   // nfts' list related -----
   const [nftCount, setNftCount] = useState(MAX_NFT_FIRST_RENDER);
-  const nfts = useMemo(() => collection?.slice(0, nftCount), [
-    nftCount,
-    collection,
-  ]);
+  const nfts = useMemo(
+    () => collection?.slice(0, nftCount),
+    [nftCount, collection],
+  );
   const sendToken = () => {
     navigation.navigate(NavigatorName.SendFunds, {
       screen: ScreenName.SendNft,

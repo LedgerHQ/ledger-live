@@ -1,11 +1,11 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
-import { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { FlatList, StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -191,7 +191,7 @@ const ValidatorRow = ({
   validator,
   account,
 }: {
-  onPress: (v: ValidatorsAppValidator) => void;
+  onPress: (_: ValidatorsAppValidator) => void;
   validator: ValidatorsAppValidator;
   account: AccountLike;
 }) => {

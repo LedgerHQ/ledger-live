@@ -6,7 +6,7 @@ import {
   mergeOps,
 } from "../../bridge/jsHelpers";
 import { encodeAccountId } from "../../account";
-import { getAccountInfo } from "./api/Cosmos";
+import { defaultCosmosAPI } from "./api/Cosmos";
 import { pubkeyToAddress, decodeBech32Pubkey } from "@cosmjs/amino";
 import { encodeOperationId } from "../../operation";
 import { CosmosDelegationInfo } from "./types";
@@ -122,7 +122,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
                 address: attributes.destination_validator,
                 amount: attributes.amount.replace(currency.units[1].code, ""),
               });
-              op.extra.cosmosSourceValidator = attributes.source_validator;
+              op.extra.sourceValidator = attributes.source_validator;
             }
             break;
 
@@ -184,7 +184,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     redelegations,
     unbondings,
     withdrawAddress,
-  } = await getAccountInfo(xpubOrAddress, currency);
+  } = await defaultCosmosAPI.getAccountInfo(xpubOrAddress, currency);
 
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);

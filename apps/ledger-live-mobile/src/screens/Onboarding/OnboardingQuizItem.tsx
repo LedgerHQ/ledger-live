@@ -20,8 +20,9 @@ type Props = {
     image: any;
     answers: Answer[];
   };
+  // eslint-disable-next-line no-unused-vars
   onNext: (correct: boolean) => void;
-  setBg: (bg: string) => void;
+  setBg: (_: string) => void;
   cta: string;
 };
 

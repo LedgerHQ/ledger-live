@@ -4,7 +4,7 @@ import { Checkbox as RNCheckbox } from "@ledgerhq/native-ui";
 
 type Props = {
   isChecked: boolean;
-  onChange?: (value: boolean) => void;
+  onChange?: (_: boolean) => void;
   disabled?: boolean;
 };
 

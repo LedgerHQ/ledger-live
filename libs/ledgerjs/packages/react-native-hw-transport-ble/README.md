@@ -9,6 +9,21 @@
 
     yarn add @ledgerhq/react-native-hw-transport-ble
 
+
+---
+
+## Are you adding Ledger support to your software wallet?
+
+You may be using this package to open a Bluetooth connexion between your mobile application and the device.
+
+For a smooth and quick integration:
+
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+
+---
+
+
 ### Pre-requisite
 
 -   [**Install and link library `react-native-ble-plx` + configure your app for Bluetooth permissions**](https://github.com/Polidea/react-native-ble-plx) (Open the link for documentation)
@@ -186,3 +201,5 @@ Globally disconnect a BLE device by its ID
 ##### Parameters
 
 -   `id` **any** 
+
+

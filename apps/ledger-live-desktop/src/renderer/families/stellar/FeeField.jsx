@@ -10,7 +10,8 @@ import Text from "~/renderer/components/Text";
 import Label from "~/renderer/components/Label";
 import Alert from "~/renderer/components/Alert";
 import invariant from "invariant";
-import type { Account, Transaction, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
 
 const FeeField = ({
   onChange,

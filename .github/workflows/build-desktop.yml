@@ -25,7 +25,7 @@ jobs:
     name: "Check if the PR is a fork"
     uses: ./.github/workflows/pr-is-fork.yml
     with:
-      non-pr-result: true
+      non-pr-result: false
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
@@ -71,28 +71,26 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: linux
-
       - name: build the app
-        run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -123,7 +121,7 @@ jobs:
         with:
           ruby-version: 2.7
           bundler-cache: true
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
@@ -131,20 +129,17 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: linux
-
       - name: build the app
-        run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -171,25 +166,22 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
-
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
+          dest: ${{ runner.temp }}/setup-pnpm
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: win
-
       - name: build the app
         run: |
-          pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: upload windows
         uses: actions/upload-artifact@v3
@@ -212,31 +204,28 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: mac
-
       - name: build the app
         run: |
           eval "$(rbenv init - bash)"
-          pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: upload macOS app
         uses: actions/upload-artifact@v3
         with:

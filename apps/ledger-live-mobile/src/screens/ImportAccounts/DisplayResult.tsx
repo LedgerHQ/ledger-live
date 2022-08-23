@@ -7,10 +7,12 @@ import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { Result } from "@ledgerhq/live-common/cross";
-import { ImportItem } from "@ledgerhq/live-common/account/index";
-import { importAccountsMakeItems } from "@ledgerhq/live-common/account/index";
+import {
+  ImportItem,
+  importAccountsMakeItems,
+} from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 
 import { compose } from "redux";
@@ -35,11 +37,11 @@ type Props = {
   navigation: any;
   route: { params: RouteParams };
   accounts: Account[];
-  importAccounts: (d: {
+  importAccounts: (_: {
     items: ImportItem[];
     selectedAccounts: string[];
   }) => void;
-  importDesktopSettings: (settings: any) => void;
+  importDesktopSettings: (_: any) => void;
 };
 
 type RouteParams = {
