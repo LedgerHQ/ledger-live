@@ -1,40 +1,37 @@
-import invariant from "invariant";
-import { Observable, from, of } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import {
+  FeeMarketEIP1559Transaction,
+  FeeMarketEIP1559TxData,
+  Transaction as LegacyEthereumTx,
+} from "@ethereumjs/tx";
 import eip55 from "eip55";
 import { encode } from "rlp";
-import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
-import { FeeNotLoaded } from "@ledgerhq/errors";
-import Eth from "@ledgerhq/hw-app-eth";
-import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
-import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
-import type { Transaction } from "./types";
 import type {
   Operation,
   Account,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import { log } from "@ledgerhq/logs";
+import Eth from "@ledgerhq/hw-app-eth";
+import { BigNumber } from "bignumber.js";
+import { mergeMap } from "rxjs/operators";
+import { Observable, from, of } from "rxjs";
+import { FeeNotLoaded } from "@ledgerhq/errors";
+import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
+import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
+import { erc20SignatureInfo } from "./modules/erc20";
+import { apiForCurrency } from "../../api/Ethereum";
+import { withDevice } from "../../hw/deviceAccess";
+import { isNFTActive } from "../../nft";
+import { getEnv } from "../../env";
+import { modes } from "./modules";
+import type { Transaction } from "./types";
 import {
   getGasLimit,
   buildEthereumTx,
   EIP1559ShouldBeUsed,
 } from "./transaction";
-import { apiForCurrency } from "../../api/Ethereum";
-import { withDevice } from "../../hw/deviceAccess";
-import { modes } from "./modules";
-import { isNFTActive } from "../../nft";
-import { getEnv } from "../../env";
-import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
-import {
-  FeeMarketEIP1559TxData,
-  Transaction as EthereumTx,
-} from "@ethereumjs/tx";
-import { erc20SignatureInfo } from "./modules/erc20";
-import {
-  FeeMarketEIP1559Transaction,
-  Transaction as LegacyEthereumTx,
-} from "@ethereumjs/tx";
 
 export const signOperation = ({
   account,
@@ -59,18 +56,18 @@ export const signOperation = ({
             async function main() {
               // First, we need to create a partial tx and send to the device
               const { freshAddressPath, freshAddress } = account;
-              const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } =
+              const { gasPrice, maxBaseFeePerGas, maxPriorityFeePerGas } =
                 transaction;
               const gasLimit = getGasLimit(transaction);
 
               let dataMissing = !new BigNumber(gasLimit).gt(0);
               let missingDataString = "";
               if (EIP1559ShouldBeUsed(account.currency)) {
-                missingDataString = ` maxFeePerGas=${String(
-                  maxFeePerGas
+                missingDataString = ` maxBaseFeePerGas=${String(
+                  maxBaseFeePerGas
                 )} maxPriorityFeePerGas=${String(maxPriorityFeePerGas)}`;
                 dataMissing =
-                  dataMissing && (!maxFeePerGas || !maxPriorityFeePerGas);
+                  dataMissing && (!maxBaseFeePerGas || !maxPriorityFeePerGas);
               } else {
                 missingDataString = ` gasPrice=${String(gasPrice)}`;
                 dataMissing = dataMissing && !gasPrice;
