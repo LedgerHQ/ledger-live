@@ -126,8 +126,8 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
   );
 
   const receiveOnAccount = useCallback(
-    ({ accountId }: { accountId: string }) => {
-      return receiveOnAccountLogic(
+    ({ accountId }: { accountId: string }) =>
+      receiveOnAccountLogic(
         { manifest, accounts, tracking },
         accountId,
         (account: AccountLike, parentAccount: Account | null, accountAddress: string) => {
@@ -150,8 +150,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
             ),
           );
         },
-      );
-    },
+      ),
     [manifest, accounts, dispatch],
   );
 
