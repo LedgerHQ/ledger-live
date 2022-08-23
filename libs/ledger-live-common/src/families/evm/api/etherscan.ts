@@ -3,7 +3,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EtherscanOperation } from "../types";
 import { makeLRUCache } from "../../../cache";
 import network from "../../../network";
-import { etherscanOperationToOperation, scanApiForCurrency } from "../logic";
+import { etherscanOperationToOperation } from "../logic";
 
 /**
  * Get all the latest "normal" transactions (no tokens / NFTs)
@@ -18,7 +18,7 @@ export const getLatestTransactions = makeLRUCache<
   Operation[]
 >(
   async (currency, address, accountId, fromBlock) => {
-    const apiDomain = scanApiForCurrency(currency);
+    const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
     if (!apiDomain) {
       return [];
     }
@@ -45,3 +45,7 @@ export const getLatestTransactions = makeLRUCache<
   (currency, address, accountId) => accountId,
   { maxAge: 6 * 1000 }
 );
+
+export default {
+  getLatestTransactions,
+};

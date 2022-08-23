@@ -1,5 +1,3 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "../../../account";
@@ -8,7 +6,6 @@ import {
   etherscanOperationToOperation,
   getEstimatedFees,
   legacyTransactionHasFees,
-  scanApiForCurrency,
 } from "../logic";
 import {
   EtherscanOperation,
@@ -18,31 +15,6 @@ import {
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
-    const fakeNonExistingCurrency: Partial<CryptoCurrency> = { id: "kvn_lite" };
-
-    describe("scanApiForCurrency", () => {
-      it("should return the etherscan-like api for all compatible chains", () => {
-        const evmCurrencies = listCryptoCurrencies()
-          .filter((c) => c.family === "evm")
-          .filter((c) => {
-            expect(c.ethereumLikeInfo).toBeDefined();
-            return !!c.ethereumLikeInfo?.explorer;
-          });
-
-        const chains = evmCurrencies.map(scanApiForCurrency);
-        const explorers = evmCurrencies.map(
-          (c) => c.ethereumLikeInfo?.explorer
-        );
-
-        expect(chains).toEqual(explorers);
-      });
-      it("should return null for a crypto that has no explorer set", () => {
-        expect(
-          scanApiForCurrency(fakeNonExistingCurrency as CryptoCurrency)
-        ).toBe(null);
-      });
-    });
-
     describe("legacyTransactionHasFees", () => {
       it("should return true for legacy tx with fees", () => {
         const tx: Partial<EvmTransactionLegacy> = {
