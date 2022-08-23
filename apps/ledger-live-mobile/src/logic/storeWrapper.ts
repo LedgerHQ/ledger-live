@@ -181,4 +181,4 @@ const deviceStorage = {
     });
   },
 };
-module.exports = deviceStorage;
+export default deviceStorage;

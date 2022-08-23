@@ -3,24 +3,37 @@ module.exports = {
   extends: [
     "@react-native-community",
     "airbnb",
-    "prettier",
     "plugin:json/recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
   ],
   settings: {
     "import/parsers": {
       "@typescript-eslint/parser": [".ts", ".tsx"],
     },
     "import/resolver": {
-      node: {
-        extensions: [".js", ".android.js", ".ios.js", ".ts", ".tsx"],
-      },
       typescript: {
         alwaysTryTypes: true,
+        extensions: [
+          ".android.ts",
+          ".android.js",
+          ".ios.ts",
+          ".ios.js",
+          ".ts",
+          ".tsx",
+          ".d.ts",
+          ".js",
+          ".jsx",
+          ".json",
+          ".node",
+          ".png",
+        ],
       },
     },
   },
-  plugins: ["prettier", "detox", "@typescript-eslint", "import"],
+  plugins: ["detox"],
   rules: {
     "no-console": [
       "error",
@@ -53,6 +66,7 @@ module.exports = {
     "import/extensions": 0,
     "import/no-mutable-exports": 0,
     "import/prefer-default-export": 0,
+    "import/namespace": ["error", { allowComputed: true }],
     "no-use-before-define": 0,
     "react/sort-comp": 0,
     "react/jsx-boolean-value": 0,
@@ -93,15 +107,6 @@ module.exports = {
     "react-native/no-inline-styles": "warn",
     "react/jsx-fragments": "warn",
     "react/no-deprecated": "warn",
-    "prettier/prettier": "error",
-
-    // Ignore live-common for the moment because this rule does not work with subpath exports
-    // See: https://github.com/import-js/eslint-plugin-import/issues/1810
-    "import/no-unresolved": [
-      "error",
-      { ignore: ["^@ledgerhq/live-common/.*", "^@ledgerhq/native-ui/.*"] },
-    ],
-
     "@typescript-eslint/no-unused-vars": ["error"],
   },
   globals: {
