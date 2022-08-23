@@ -1,4 +1,3 @@
-// @flow
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,6 +17,8 @@ import { swapKYCSelector } from "../../../../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../../../../actions/settings";
 import { Pending } from "./Pending";
 import { Field } from "./Field";
+
+c;
 
 export function WyreKYC() {
   const { t } = useTranslation();

@@ -12,7 +12,7 @@ import { SwapIcon } from "../../icons/swap/index";
 export const getStatusColor = (
   status: string,
   colors: any,
-  colorKey: boolean = false,
+  colorKey = false,
 ) => {
   let key = "grey";
 

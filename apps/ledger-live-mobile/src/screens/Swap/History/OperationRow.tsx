@@ -16,7 +16,6 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   const { fromAccount, toAccount, ...routeParams } = item;
   const { swapId, fromAmount, toAmount, status } = routeParams;
   const navigation = useNavigation();
-
   const onOpenOperationDetails = useCallback(() => {
     navigation.navigate("OperationDetails", {
       swapOperation: {
@@ -32,11 +31,21 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
       <View
         style={[
           styles.root,
-          { backgroundColor: colors.card, borderBottomColor: colors.lightFog },
+          {
+            backgroundColor: colors.card,
+            borderBottomColor: colors.lightFog,
+          },
         ]}
       >
         <SwapStatusIndicator small status={status} />
-        <View style={[styles.accountWrapper, { marginLeft: 18 }]}>
+        <View
+          style={[
+            styles.accountWrapper,
+            {
+              marginLeft: 18,
+            },
+          ]}
+        >
           <LText numberOfLines={1} semiBold style={styles.name}>
             {getAccountName(fromAccount)}
           </LText>
@@ -51,7 +60,14 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
         <View style={styles.arrow}>
           <Icon name="ArrowRightLight" size={30} color="neutral.c70" />
         </View>
-        <View style={[styles.accountWrapper, { alignItems: "flex-end" }]}>
+        <View
+          style={[
+            styles.accountWrapper,
+            {
+              alignItems: "flex-end",
+            },
+          ]}
+        >
           <LText numberOfLines={1} semiBold style={styles.name}>
             {getAccountName(toAccount)}
           </LText>
@@ -93,5 +109,4 @@ const styles = StyleSheet.create({
     width: "35%",
   },
 });
-
 export default OperationRow;

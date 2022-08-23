@@ -50,10 +50,10 @@ export function OperationDetails({ route }: OperationDetailsProps) {
     () => accounts.find(a => a.id === fromAccountId),
     [accounts, fromAccountId],
   );
-  const toAccount = useMemo(() => accounts.find(a => a.id === toAccountId), [
-    accounts,
-    toAccountId,
-  ]);
+  const toAccount = useMemo(
+    () => accounts.find(a => a.id === toAccountId),
+    [accounts, toAccountId],
+  );
 
   const { colors } = useTheme();
   const swap =

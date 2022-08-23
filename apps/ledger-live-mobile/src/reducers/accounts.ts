@@ -126,7 +126,7 @@ export const exportSelector = (s: any) => ({
   active: s.accounts.active.map(accountModel.encode),
 });
 
-export const accountsSelector = (s: *): Account[] => s.accounts.active;
+export const accountsSelector = (s: any): Account[] => s.accounts.active;
 
 // NB some components don't need to refresh every time an account is updated, usually it's only
 // when the balance/name/length/starred/swapHistory of accounts changes.
@@ -151,7 +151,7 @@ export const shallowAccountsSelector: OutputSelector<
   Account[]
 > = shallowAccountsSelectorCreator(accountsSelector, a => a);
 
-export const migratableAccountsSelector = (s: *): Account[] =>
+export const migratableAccountsSelector = (s: any): Account[] =>
   s.accounts.active.filter(canBeMigrated);
 
 export const flattenAccountsSelector = createSelector(
