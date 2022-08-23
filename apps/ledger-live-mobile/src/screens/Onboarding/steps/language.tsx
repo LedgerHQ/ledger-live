@@ -149,14 +149,14 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
           {deviceForChangeLanguageAction ? (
             <ChangeDeviceLanguageAction
               onError={(error: any) => {
-                refreshDeviceInfo();
+                onActionFinished();
                 track("Page LiveLanguageChange LanguageInstallError", { error });
               }}
               device={deviceForChangeLanguageAction}
               onStart={() => setPreventPromptBackdropClick(true)}
               language={localeIdToDeviceLanguage[currentLocale] as Language}
               onResult={() => {
-                refreshDeviceInfo();
+                onActionFinished();
                 track("Page LiveLanguageChange LanguageInstalled", {
                   selectedLanguage: localeIdToDeviceLanguage[currentLocale],
                 });
