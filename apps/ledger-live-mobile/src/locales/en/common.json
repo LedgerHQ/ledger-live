@@ -1775,6 +1775,17 @@
     "subaccountCount_plural": "+{{count}} subaccounts"
   },
   "account": {
+    "subHeader": {
+      "moreInfo": "More info",
+      "cardTitle": "Powered by {{team}}",
+      "drawer": {
+        "title": "{{family}} integration",
+        "subTitle": "The {{family}} integration has been done by the {{team}} team",
+        "description": "Ledger Live is an open-source platform.",
+        "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
+        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
+      }
+    },
     "tokens": {
       "contractAddress": "Contract address",
       "viewInExplorer": "View in explorer",
@@ -3825,33 +3836,6 @@
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
           }
         }
-      }
-    }
-  },
-  "cryptoOrg": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Crypto.org",
-        "moreInfo": "More info",
-        "drawerTitle": "Crypto.org integration",
-        "title": "The Crypto.org (CRO) token is now available on Ledger Live",
-        "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
-        "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Cryptocurrency in every wallet"
-      }
-    }
-  },
-  "elrond": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Elrond",
-        "drawerTitle": "Elrond integration",
-        "moreInfo": "More info",
-        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
-        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
       }
     }
   },
