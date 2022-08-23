@@ -103,8 +103,13 @@ export type CryptoCurrency = CurrencyCommon & {
     networkId?: number;
     baseChain?: string;
     hardfork?: string;
-    rpc?: string; // used by evm light integration
-    explorer?: string; // used by evm light integration
+    // used by evm light integration
+    rpc?: string;
+    // used by evm light integration
+    explorer?: {
+      uri: string;
+      type: "etherscan" | "blockscout";
+    };
   };
   explorerViews: ExplorerView[];
   terminated?: {
