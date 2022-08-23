@@ -15,13 +15,11 @@ const images = {
     pairNew: require("../../../images/illustration/Light/_ConnectYourNano.png"),
     setupNano: require("../../../images/illustration/Light/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Light/_RestoreRecoveryPhrase.png"),
-    syncCrypto: require("../../../images/illustration/Light/_SyncCrypto.png"),
   },
   dark: {
     pairNew: require("../../../images/illustration/Dark/_ConnectYourNano.png"),
     setupNano: require("../../../images/illustration/Dark/_NewNano.png"),
     restoreRecoveryPhrase: require("../../../images/illustration/Dark/_RestoreRecoveryPhrase.png"),
-    syncCrypto: require("../../../images/illustration/Dark/_SyncCrypto.png"),
   },
 };
 
@@ -126,19 +124,6 @@ const OnboardingStepUseCaseSelection = () => {
                   labelBadge: t("onboarding.stepUseCase.firstUse.label"),
                   title: t("onboarding.stepUseCase.restoreDevice.subTitle"),
                   event: "Onboarding - Restore",
-                },
-                {
-                  onPress: () =>
-                    navigateTo(ScreenName.OnboardingImportAccounts),
-                  Image: (
-                    <Illustration
-                      size={130}
-                      darkSource={images.dark.syncCrypto}
-                      lightSource={images.light.syncCrypto}
-                    />
-                  ),
-                  title: t("onboarding.stepUseCase.desktopSync.subTitle"),
-                  event: "Onboarding - Setup Import Accounts",
                 },
               ],
             },

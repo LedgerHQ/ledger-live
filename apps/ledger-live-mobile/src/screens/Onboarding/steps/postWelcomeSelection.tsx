@@ -18,6 +18,8 @@ const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger
 const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const discoverLiveImg = require("../../../images/illustration/Shared/_DiscoverLive.png");
+const syncCryptoLightImg = require("../../../images/illustration/Light/_SyncCrypto.png");
+const syncCryptoDarkImg = require("../../../images/illustration/Dark/_SyncCrypto.png");
 
 type PostWelcomeDiscoverCardProps = {
   title: string;
@@ -96,7 +98,7 @@ function PostWelcomeSelection({
   }`;
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
-
+  const { theme } = useTheme();
   useFocusEffect(
     useCallback(() => {
       setScreen(screenName);
@@ -126,6 +128,13 @@ function PostWelcomeSelection({
       source: screenName,
     });
   }, [navigation, screenName]);
+
+  const syncCryptos = useCallback(() => {
+    track("Onboarding PostWelcome - Sync Cryptos");
+    navigation.navigate(ScreenName.OnboardingImportAccounts, {
+      source: screenName,
+    });
+  });
 
   const onCardClick = useCallback(
     (data: DataType, value: string) => {
@@ -158,6 +167,11 @@ function PostWelcomeSelection({
 
   const pressBuy = useCallback(
     (data: DataType) => onCardClick(data, "Buy a Nano X"),
+    [onCardClick],
+  );
+
+  const pressSync = useCallback(
+    (data: DataType) => onCardClick(data, "Sync Cryptos"),
     [onCardClick],
   );
 
@@ -201,6 +215,17 @@ function PostWelcomeSelection({
           onPress={pressExplore}
           onValidate={exploreLedger}
           imageSource={discoverLiveImg}
+        />
+        <PostWelcomeDiscoverCard
+          title={t("onboarding.stepUseCase.desktopSync.subTitle")}
+          event="Onboarding PostWelcome - Sync Cryptos"
+          testID={`Onboarding PostWelcome - Selection|SyncCryptos`}
+          selectedOption={selectedOption}
+          onPress={pressSync}
+          onValidate={syncCryptos}
+          imageSource={
+            theme === "dark" ? syncCryptoDarkImg : syncCryptoLightImg
+          }
         />
         {!userHasDevice && (
           <PostWelcomeDiscoverCard
