@@ -553,7 +553,7 @@ export async function runOnAccount<T extends Transaction>({
     );
   } catch (error: any) {
     console.error(error);
-    log("mutation-error", spec.name + ": " + formatError(error));
+    log("mutation-error", spec.name + ": " + formatError(error, true));
     report.error = error;
   }
 
