@@ -5,8 +5,8 @@ import {
   DerivationMode,
   getDerivationScheme,
   runDerivationScheme,
-} from "../../../derivation";
-import { decodeAccountId, shortAddressPreview } from "../../../account";
+} from "../../derivation";
+import { decodeAccountId, shortAddressPreview } from "../../account";
 
 export const makeAccount = (
   address: string,
