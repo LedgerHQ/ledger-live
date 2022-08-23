@@ -30,7 +30,7 @@ import { track, screen } from "../../../analytics";
 import Button from "../../../components/wrappedUi/Button";
 import MarketGraph from "./MarketGraph";
 import { FabMarketActions } from "../../../components/FabActions";
-import { NavigatorName, ScreenName } from "../../../const";
+import { ScreenName } from "../../../const";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
@@ -110,10 +110,10 @@ function MarketDetail({
 
   const { range } = chartRequestParams;
 
-  const dateRangeFormatter = useMemo(() => getDateFormatter(locale, range), [
-    locale,
-    range,
-  ]);
+  const dateRangeFormatter = useMemo(
+    () => getDateFormatter(locale, range),
+    [locale, range],
+  );
 
   const renderAccountItem = useCallback(
     ({ item, index }: { item: Account; index: number }) => (

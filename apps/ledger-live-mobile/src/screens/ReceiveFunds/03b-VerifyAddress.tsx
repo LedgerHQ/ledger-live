@@ -41,24 +41,25 @@ const illustrations = {
 };
 
 type Props = {
-  account?: (TokenAccount | Account),
-  parentAccount?: Account,
-  navigation: any,
-  route: { params: RouteParams },
-  readOnlyModeEnabled: boolean,
+  account?: TokenAccount | Account;
+  parentAccount?: Account;
+  navigation: any;
+  route: { params: RouteParams };
+  readOnlyModeEnabled: boolean;
 };
 
 type RouteParams = {
-  account?: AccountLike,
-  accountId: string,
-  parentId?: string,
-  modelId: DeviceModelId,
-  wired: boolean,
-  device?: Device,
-  currency?: Currency,
-  createTokenAccount?: boolean,
-  onSuccess?: (address?: string) => void,
-  onError?: () => void,
+  account?: AccountLike;
+  accountId: string;
+  parentId?: string;
+  modelId: DeviceModelId;
+  wired: boolean;
+  device?: Device;
+  currency?: Currency;
+  createTokenAccount?: boolean;
+  // eslint-disable-next-line no-unused-vars
+  onSuccess?: (address?: string) => void;
+  onError?: () => void;
 };
 
 const AnimationContainer = styled(Flex).attrs({
@@ -78,11 +79,11 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const lastRoute = usePreviousRouteName();
 
   const onModalClose = useCallback(() => {
-    setError(null)
+    setError(null);
   }, []);
 
   const sub = useRef();
-  
+
   const { onSuccess, onError, device } = route.params;
 
   const verifyOnDevice = useCallback(
@@ -90,17 +91,22 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       if (!account) return;
       const mainAccount = getMainAccount(account, parentAccount);
 
-      sub.current = (mainAccount.id.startsWith("mock")
-        ? of({}).pipe(delay(1000), rejectionOp())
-        : getAccountBridge(mainAccount).receive(mainAccount, {
-            deviceId: device.deviceId,
-            verify: true,
-          })
+      sub.current = (
+        mainAccount.id.startsWith("mock")
+          ? of({}).pipe(delay(1000), rejectionOp())
+          : getAccountBridge(mainAccount).receive(mainAccount, {
+              deviceId: device.deviceId,
+              verify: true,
+            })
       ).subscribe({
         complete: () => {
-          if (onSuccess)
-            onSuccess(mainAccount.freshAddress)
-          else navigation.navigate(ScreenName.ReceiveVerificationConfirmation, { ...route.params, verified: true, createTokenAccount: false });
+          if (onSuccess) onSuccess(mainAccount.freshAddress);
+          else
+            navigation.navigate(ScreenName.ReceiveVerificationConfirmation, {
+              ...route.params,
+              verified: true,
+              createTokenAccount: false,
+            });
         },
         error: (error: any) => {
           if (error && error.name !== "UserRefusedAddress") {
@@ -115,33 +121,37 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   );
 
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency = route.params?.currency || (account && getAccountCurrency(account));
+  const currency =
+    route.params?.currency || (account && getAccountCurrency(account));
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
       button: "Retry",
-      screen: routerRoute.name
-    })
+      screen: routerRoute.name,
+    });
     onModalClose();
     if (device) {
       verifyOnDevice(device);
     }
-  },[device, onModalClose, routerRoute.name, verifyOnDevice]);
+  }, [device, onModalClose, routerRoute.name, verifyOnDevice]);
 
   const goBack = useCallback(() => {
     track("button_clicked", {
       button: "Cancel",
-      screen: routerRoute.name
-    })
-    navigation.navigate(ScreenName.ReceiveConfirmation, { ...route.params, verified: false });
+      screen: routerRoute.name,
+    });
+    navigation.navigate(ScreenName.ReceiveConfirmation, {
+      ...route.params,
+      verified: false,
+    });
   }, [navigation, route.params, routerRoute.name]);
 
   const redirectToSupport = useCallback(() => {
     track("message_clicked", {
       message: "contact us asap",
       screen: routerRoute.name,
-      url: urls.receiveVerifyAddress
-    })
+      url: urls.receiveVerifyAddress,
+    });
     Linking.openURL(urls.receiveVerifyAddress);
   }, [routerRoute.name]);
 
@@ -157,41 +167,87 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
     <>
       <PreventNativeBack />
       <SkipLock />
-        { error ? <>
-          <TrackScreen category="Receive" name="Address Verification Denied" source={lastRoute} />
+      {error ? (
+        <>
+          <TrackScreen
+            category="Receive"
+            name="Address Verification Denied"
+            source={lastRoute}
+          />
           <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
-            <Illustration lightSource={illustrations.light}
+            <Illustration
+              lightSource={illustrations.light}
               darkSource={illustrations.dark}
-              size={240} />
-            <LText variant="h4" bold textAlign="center" mb={6}>{t("transfer.receive.verifyAddress.cancel.title")}</LText>
-            <LText variant="body" color="neutral.c70" textAlign="center" mb={6}>{t("transfer.receive.verifyAddress.cancel.subtitle")}</LText>
-        
+              size={240}
+            />
+            <LText variant="h4" bold textAlign="center" mb={6}>
+              {t("transfer.receive.verifyAddress.cancel.title")}
+            </LText>
+            <LText variant="body" color="neutral.c70" textAlign="center" mb={6}>
+              {t("transfer.receive.verifyAddress.cancel.subtitle")}
+            </LText>
+
             <TouchableOpacity onPress={redirectToSupport}>
-              <LText variant="body"  color="neutral.c70" textALign="center">
-                <Trans i18nKey="transfer.receive.verifyAddress.cancel.info"><LText color="primary.c80" style={{ textDecorationLine: "underline" }} /></Trans>
+              <LText variant="body" color="neutral.c70" textALign="center">
+                <Trans i18nKey="transfer.receive.verifyAddress.cancel.info">
+                  <LText
+                    color="primary.c80"
+                    style={{ textDecorationLine: "underline" }}
+                  />
+                </Trans>
               </LText>
             </TouchableOpacity>
-            </Flex>
-            <Flex p={6} flexDirection="row" justifyContent="space-between" alignItems="center">
-              <Button flex={1} type="secondary" outline onPress={goBack}>{t("common.cancel")}</Button>
-              <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>{t("common.retry")}</Button>
           </Flex>
-        </> : <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
-          <TrackScreen category="ReceiveFunds" name="Verify Address" source={lastRoute}/>
-          <LText variant="h4" textAlign="center" mb={6}>{t("transfer.receive.verifyAddress.title")}</LText>
-        <LText variant="body" color="neutral.c70" textAlign="center">{t("transfer.receive.verifyAddress.subtitle")}</LText>
-        <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>
-          <LText semiBold textAlign="center">
-            {mainAccount.freshAddress}
+          <Flex
+            p={6}
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Button flex={1} type="secondary" outline onPress={goBack}>
+              {t("common.cancel")}
+            </Button>
+            <Button
+              flex={1}
+              type="main"
+              ml={6}
+              outline={false}
+              onPress={onRetry}
+            >
+              {t("common.retry")}
+            </Button>
+          </Flex>
+        </>
+      ) : (
+        <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
+          <TrackScreen
+            category="ReceiveFunds"
+            name="Verify Address"
+            source={lastRoute}
+          />
+          <LText variant="h4" textAlign="center" mb={6}>
+            {t("transfer.receive.verifyAddress.title")}
           </LText>
+          <LText variant="body" color="neutral.c70" textAlign="center">
+            {t("transfer.receive.verifyAddress.subtitle")}
+          </LText>
+          <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>
+            <LText semiBold textAlign="center">
+              {mainAccount.freshAddress}
+            </LText>
+          </Flex>
+          <AnimationContainer>
+            <Animation
+              style={{ width: "100%" }}
+              source={getDeviceAnimation({
+                device,
+                key: "validate",
+                theme: type,
+              })}
+            />
+          </AnimationContainer>
         </Flex>
-        <AnimationContainer>
-        <Animation
-          style={{ width: "100%" }}
-          source={getDeviceAnimation({ device, key: "validate", theme: type })}
-        />
-        </AnimationContainer>
-        </Flex>}
+      )}
     </>
   );
 }

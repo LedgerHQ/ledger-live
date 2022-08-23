@@ -10,18 +10,18 @@ export const MIN_MODAL_HEIGHT = 30;
 
 const ScreenContainer = styled(Flex).attrs(p => ({
   edges: ["bottom"],
-  flex: 2, 
+  flex: 2,
   p: p.p ?? 6,
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,
 }))``;
 
 /* shitty hack to make the screen overflow under the empty space that is above the iOS menu bar at the bottom */
-const bottomMenuBarOverflow = Platform.OS === "ios" ? 50 : 0
+const bottomMenuBarOverflow = Platform.OS === "ios" ? 50 : 0;
 
 const SafeContainer = styled(SafeAreaView)`
   flex: 1;
-  margin-bottom: -${bottomMenuBarOverflow}px; 
+  margin-bottom: -${bottomMenuBarOverflow}px;
 `;
 
 const InnerContainer = styled(Flex).attrs({
@@ -30,12 +30,13 @@ const InnerContainer = styled(Flex).attrs({
   paddingBottom: bottomMenuBarOverflow,
 })``;
 
-type Props = StackScreenProps<{}> & { 
-  children: React.ReactNode, 
-  contentContainerProps?: FlexBoxProps,
-  deadZoneProps?: FlexBoxProps,
-  backgroundColor?: string,
- };
+// eslint-disable-next-line @typescript-eslint/ban-types
+type Props = StackScreenProps<{}> & {
+  children: React.ReactNode;
+  contentContainerProps?: FlexBoxProps;
+  deadZoneProps?: FlexBoxProps;
+  backgroundColor?: string;
+};
 
 export default function NavigationModalContainer({
   navigation,
@@ -55,10 +56,11 @@ export default function NavigationModalContainer({
         />
       </Flex>
 
-      <ScreenContainer backgroundColor={backgroundColor} {...contentContainerProps}>
-        <InnerContainer>
-          {children}
-        </InnerContainer>
+      <ScreenContainer
+        backgroundColor={backgroundColor}
+        {...contentContainerProps}
+      >
+        <InnerContainer>{children}</InnerContainer>
       </ScreenContainer>
     </SafeContainer>
   );
