@@ -63,6 +63,11 @@ setSupportedCurrencies([
   "hedera",
   "cardano",
   "osmosis",
+  "fantom",
+  "cronos",
+  "moonbeam",
+  "songbird",
+  "flare",
 ]);
 
 if (Config.VERBOSE) {

@@ -49,7 +49,6 @@ setSupportedCurrencies([
   "cardano",
   "solana",
   "osmosis",
-  "arbitrum",
   "fantom",
   "moonbeam",
 ]);
