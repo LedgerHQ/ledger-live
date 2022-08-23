@@ -73,7 +73,8 @@
     "@actions/generate-release-message": "1.0.0",
     "@actions/pr-is-fork": "1.0.0",
     "dummy-live-app": "0.1.0",
-    "@ledgerhq/crypto-icons-ui": "0.1.0"
+    "@ledgerhq/crypto-icons-ui": "0.1.0",
+    "@actions/turborepo-gh-cache": "1.0.0"
   },
   "changesets": [
     "afraid-needles-own",
@@ -88,6 +89,7 @@
     "light-snakes-bathe",
     "modern-ligers-cry",
     "plenty-geckos-report-separated",
+    "red-spies-shake",
     "selfish-panthers-bow",
     "smart-shoes-shake",
     "soft-rabbits-retire-separated",

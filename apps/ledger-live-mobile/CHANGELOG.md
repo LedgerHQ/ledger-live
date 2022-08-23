@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.7.0-nightly.1
+
+### Patch Changes
+
+- [#1000](https://github.com/LedgerHQ/ledger-live/pull/1000) [`dc3fd1841e`](https://github.com/LedgerHQ/ledger-live/commit/dc3fd1841e3e8b164f047fe84efd3776e16f8ff1) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Migration from JavaScript to TypeScript for LLM
+
 ## 3.7.0-nightly.0
 
 ### Minor Changes
