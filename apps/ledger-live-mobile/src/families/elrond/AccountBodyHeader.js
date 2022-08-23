@@ -76,37 +76,12 @@ const Staking = (props: Props) => {
     [validators],
   );
 
-  const fetchValidators = useCallback(() => {
-    const fetchData = async () => {
-      try {
-        const providers = await axios.get(constants.providers);
-
-        const randomize = providers =>
-          providers
-            .map(provider => ({ provider, sort: Math.random() }))
-            .sort((alpha, beta) => alpha.sort - beta.sort)
-            .map(item => item.provider);
-
-        setValidators(randomize(providers.data));
-      } catch (error) {
-        setValidators([]);
-      }
-    };
-
-    fetchData();
-
-    return () => setValidators([]);
-  }, []);
-
   const fetchDelegations = useCallback(() => {
     setDelegationResources(account.elrondResources.delegations || []);
 
     return () =>
       setDelegationResources(account.elrondResources.delegations || []);
-  }, [
-    account.freshAddress,
-    JSON.stringify(account.elrondResources.delegations),
-  ]);
+  }, [JSON.stringify(account.elrondResources.delegations)]);
 
   const delegations = useMemo(() => {
     const transform = input =>
@@ -160,7 +135,6 @@ const Staking = (props: Props) => {
     [delegations],
   );
 
-  useEffect(fetchValidators, [fetchValidators]);
   useEffect(fetchDelegations, [fetchDelegations]);
 
   return (

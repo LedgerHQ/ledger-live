@@ -41,18 +41,20 @@ const Dropdown = (props: Props) => {
   const { delegations, onChange, contract } = props;
   const { t } = useTranslation();
 
-  const options = useMemo(
+  const [defaultOption, ...options] = useMemo(
     () =>
       delegations.reduce(
         (total, delegation) =>
-          delegation.contract === contract ? [delegation, ...total] : [...total, delegation],
+          delegation.contract === contract
+            ? [delegation].concat(total)
+            : total.concat([delegation]),
         [],
       ),
     [delegations, contract],
   );
 
   const [query, setQuery] = useState("");
-  const [value, setValue] = useState(options[0]);
+  const [value, setValue] = useState(defaultOption);
 
   const noOptionsMessageCallback = useCallback(
     needle =>
@@ -86,7 +88,7 @@ const Dropdown = (props: Props) => {
       <Label>{t("elrond.undelegation.flow.steps.amount.fields.validator")}</Label>
       <Select
         value={value}
-        options={options}
+        options={[defaultOption].concat(options)}
         renderValue={Item}
         renderOption={Item}
         onInputChange={setQuery}

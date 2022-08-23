@@ -1,24 +1,18 @@
 // @flow
 /* eslint-disable consistent-return */
+
+import React, { Fragment } from "react";
 import { BigNumber } from "bignumber.js";
-import React, { useMemo } from "react";
-import type { ComponentType } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import type {
-  CosmosDelegationInfo,
-  CosmosValidatorItem,
-} from "@ledgerhq/live-common/families/cosmos/types";
-import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
-import type { Operation, Account } from "@ledgerhq/types-live";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
-import { urls } from "~/config/urls";
-import { openURL } from "~/renderer/linking";
+import Box from "~/renderer/components/Box/Box";
+import Text from "~/renderer/components/Text";
+import Ellipsis from "~/renderer/components/Ellipsis";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import CounterValue from "~/renderer/components/CounterValue";
 import {
   OpDetailsTitle,
   Address,
@@ -27,54 +21,49 @@ import {
   B,
   OpDetailsSection,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import Box from "~/renderer/components/Box/Box";
-import Text from "~/renderer/components/Text";
-import Ellipsis from "~/renderer/components/Ellipsis";
-import FormattedVal from "~/renderer/components/FormattedVal";
-import CounterValue from "~/renderer/components/CounterValue";
+
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
+import { denominate } from "~/renderer/families/elrond/helpers";
+import { constants } from "~/renderer/families/elrond/constants";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
-function getURLFeesInfo(op: Operation): ?string {
+import type { ComponentType } from "react";
+import type { Operation, Account } from "@ledgerhq/types-live";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+
+const getURLFeesInfo = (op: Operation): ?string => {
   if (op.fee.gt(200000)) {
-    return urls.cosmosStakingRewards;
+    return urls.elrondStaking;
   }
-}
+};
 
-function getURLWhatIsThis(op: Operation): ?string {
+const getURLWhatIsThis = (op: Operation): ?string => {
   if (op.type !== "IN" && op.type !== "OUT") {
-    return urls.cosmosStakingRewards;
+    return urls.elrondStaking;
   }
-}
+};
 
-const redirectAddress = (currency: Currency, address: string) => () => {
-  /** $FlowFixMe */
-  const url = getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+const redirectAddress = (address: string) => () => {
+  openURL(
+    address === constants.figment
+      ? urls.ledgerValidator
+      : `${constants.explorer}/providers/${address}`,
+  );
 };
 
 type OperationDetailsDelegationProps = {
-  discreet: boolean,
-  unit: Unit,
   currency: Currency,
-  delegations: Array<CosmosDelegationInfo>,
   account: Account,
   isTransactionField?: boolean,
-  cosmosValidators: CosmosValidatorItem[],
+  operation: Operation,
 };
 
-export const OperationDetailsDelegation = ({
-  discreet,
-  unit,
-  currency,
-  delegations,
-  account,
-  isTransactionField,
-  cosmosValidators,
-}: OperationDetailsDelegationProps) => {
-  const mappedDelegationInfo = useMemo(
-    () => mapDelegationInfo(delegations, cosmosValidators, unit),
-    [delegations, cosmosValidators, unit],
+const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
+  const { isTransactionField, account, operation } = props;
+  const formattedValidator = account.elrondResources.providers.find(
+    v => v.contract === operation.contract,
   );
 
   return (
@@ -85,44 +74,48 @@ export const OperationDetailsDelegation = ({
         </OpDetailsTitle>
       )}
 
-      {mappedDelegationInfo.map(({ formattedAmount, validator, address }, i) => (
-        <OpDetailsData key={address + i}>
-          <OpDetailsVoteData>
-            <Box>
-              <Text>
-                <Trans
-                  i18nKey="operationDetails.extra.votesAddress"
-                  values={{
-                    votes: formattedAmount,
-                    name: validator?.name ?? address,
-                  }}
-                >
-                  <Text ff="Inter|SemiBold">{""}</Text>
-                  {""}
-                  <Text ff="Inter|SemiBold">{""}</Text>
-                </Trans>
-              </Text>
-            </Box>
-            <Address onClick={redirectAddress(currency, address)}>{address}</Address>
-          </OpDetailsVoteData>
-        </OpDetailsData>
-      ))}
+      <OpDetailsData key={operation.contract}>
+        <OpDetailsVoteData>
+          <Box>
+            <Text>
+              <Trans
+                i18nKey="operationDetails.extra.votesAddress"
+                values={{
+                  votes: `${denominate({ input: operation.value, decimals: 6 })} ${
+                    constants.egldLabel
+                  }`,
+                  name: formattedValidator
+                    ? formattedValidator.identity.name || operation.contract
+                    : operation.contract,
+                }}
+              >
+                <Text ff="Inter|SemiBold">{""}</Text>
+                {""}
+                <Text ff="Inter|SemiBold">{""}</Text>
+              </Trans>
+            </Text>
+          </Box>
+
+          <Address onClick={redirectAddress(operation.contract)}>{operation.contract}</Address>
+        </OpDetailsVoteData>
+      </OpDetailsData>
     </OpDetailsSection>
   );
 };
 
 type OperationDetailsExtraProps = {
-  extra: { [key: string]: any },
+  extra: { [key: string]: string },
   type: string,
   account: Account,
+  operation: Operation,
 };
 
-const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
+  const { extra, type, account, operation } = props;
+
   const unit = getAccountUnit(account);
-  const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const { validators: cosmosValidators } = useCosmosPreloadData();
 
   const formatConfig = {
     disableRounding: true,
@@ -136,131 +129,114 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
 
   switch (type) {
     case "DELEGATE": {
-      const { validators: delegations } = extra;
-      if (!delegations || !delegations.length) return null;
+      const { providers } = account.elrondResources;
+      if (!providers || providers.length <= 0) return null;
 
-      return (
-        <OperationDetailsDelegation
-          discreet={discreet}
-          unit={unit}
-          currency={currency}
-          delegations={delegations}
-          account={account}
-          cosmosValidators={cosmosValidators}
-        />
-      );
+      return <OperationDetailsDelegation {...{ account, operation }} />;
     }
+
     case "UNDELEGATE": {
-      const { validators } = extra;
-      if (!validators || validators.length <= 0) return null;
+      const { providers } = account.elrondResources;
+      if (!providers || providers.length <= 0) return null;
 
-      const validator = extra.validators[0];
-
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
-
-      const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
+      const formattedValidator = providers.find(v => v.contract === operation.contract);
+      const formattedAmount = formatCurrencyUnit(unit, BigNumber(operation.value), formatConfig);
 
       ret = (
-        <>
+        <Fragment>
           <B />
+
           <OpDetailsSection>
             <OpDetailsTitle>
               <Trans i18nKey={"operationDetails.extra.undelegatedFrom"} />
             </OpDetailsTitle>
+
             <OpDetailsData>
-              <Address onClick={redirectAddress(currency, validator.address)}>
-                {formattedValidator ? formattedValidator.name : validator.address}
+              <Address onClick={redirectAddress(operation.contract)}>
+                {formattedValidator
+                  ? formattedValidator.identity.name || formattedValidator.contract
+                  : operation.contract}
               </Address>
             </OpDetailsData>
           </OpDetailsSection>
+
           <B />
+
           <OpDetailsSection>
             <OpDetailsTitle>
               <Trans i18nKey={"operationDetails.extra.undelegatedAmount"} />
             </OpDetailsTitle>
+
             <OpDetailsData>{formattedAmount}</OpDetailsData>
           </OpDetailsSection>
-        </>
+        </Fragment>
       );
       break;
     }
-    case "REDELEGATE": {
-      const { cosmosSourceValidator, validators } = extra;
-      if (!validators || validators.length <= 0 || !cosmosSourceValidator) return null;
 
-      const validator = extra.validators[0];
+    case "WITHDRAW_UNBONDED": {
+      const { providers } = account.elrondResources;
+      if (!providers || providers.length <= 0) return null;
 
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
-
-      const formattedSourceValidator = cosmosValidators.find(
-        v => v.validatorAddress === cosmosSourceValidator,
-      );
-
-      const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
+      const formattedValidator = providers.find(v => v.contract === operation.contract);
+      const formattedAmount = formatCurrencyUnit(unit, BigNumber(operation.value), formatConfig);
 
       ret = (
-        <>
-          <B />
-          <OpDetailsSection>
-            <OpDetailsTitle>
-              <Trans i18nKey={"operationDetails.extra.redelegatedFrom"} />
-            </OpDetailsTitle>
-            <OpDetailsData>
-              <Address onClick={redirectAddress(currency, cosmosSourceValidator)}>
-                {formattedSourceValidator ? formattedSourceValidator.name : cosmosSourceValidator}
-              </Address>
-            </OpDetailsData>
-          </OpDetailsSection>
+        <Fragment>
           <B />
 
           <OpDetailsSection>
             <OpDetailsTitle>
-              <Trans i18nKey={"operationDetails.extra.redelegatedTo"} />
+              <Trans i18nKey={"operationDetails.extra.withdrawnFrom"} />
             </OpDetailsTitle>
+
             <OpDetailsData>
-              <Address onClick={redirectAddress(currency, validator.address)}>
-                {formattedValidator ? formattedValidator.name : validator.address}
+              <Address onClick={redirectAddress(operation.contract)}>
+                {formattedValidator
+                  ? formattedValidator.identity.name || formattedValidator.contract
+                  : operation.contract}
               </Address>
             </OpDetailsData>
           </OpDetailsSection>
+
+          <B />
+
           <OpDetailsSection>
             <OpDetailsTitle>
-              <Trans i18nKey={"operationDetails.extra.redelegatedAmount"} />
+              <Trans i18nKey={"operationDetails.extra.withdrawnAmount"} />
             </OpDetailsTitle>
+
             <OpDetailsData>{formattedAmount}</OpDetailsData>
           </OpDetailsSection>
-        </>
+        </Fragment>
       );
       break;
     }
+
     case "REWARD": {
-      const { validators } = extra;
-      if (!validators || validators.length <= 0) return null;
+      const { providers } = account.elrondResources;
+      if (!providers || providers.length <= 0) return null;
 
-      const validator = extra.validators[0];
-
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
+      const formattedValidator = providers.find(v => v.contract === operation.contract);
 
       ret = (
-        <>
+        <Fragment>
           <B />
+
           <OpDetailsSection>
             <OpDetailsTitle>
               <Trans i18nKey={"operationDetails.extra.rewardFrom"} />
             </OpDetailsTitle>
+
             <OpDetailsData>
-              <Address onClick={redirectAddress(currency, validator.address)}>
-                {formattedValidator ? formattedValidator.name : validator.address}
+              <Address onClick={redirectAddress(operation.contract)}>
+                {formattedValidator
+                  ? formattedValidator.identity.name || formattedValidator.contract
+                  : operation.contract}
               </Address>
             </OpDetailsData>
           </OpDetailsSection>
-        </>
+        </Fragment>
       );
       break;
     }
@@ -269,19 +245,21 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   }
 
   return (
-    <>
+    <Fragment>
       {ret}
+
       {extra.memo && (
         <OpDetailsSection>
           <OpDetailsTitle>
             <Trans i18nKey={"operationDetails.extra.memo"} />
           </OpDetailsTitle>
+
           <OpDetailsData>
             <Ellipsis ml={2}>{extra.memo}</Ellipsis>
           </OpDetailsData>
         </OpDetailsSection>
       )}
-    </>
+    </Fragment>
   );
 };
 
@@ -289,35 +267,6 @@ type Props = {
   operation: Operation,
   currency: Currency,
   unit: Unit,
-};
-
-const RedelegateAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount =
-    operation.extra && operation.extra.validators
-      ? BigNumber(operation.extra.validators[0].amount)
-      : BigNumber(0);
-
-  return (
-    !amount.isZero() && (
-      <>
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
-          color={"palette.text.shade80"}
-        />
-
-        <CounterValue
-          color="palette.text.shade60"
-          fontSize={3}
-          date={operation.date}
-          currency={currency}
-          value={amount}
-        />
-      </>
-    )
-  );
 };
 
 const UndelegateAmountCell = ({ operation, currency, unit }: Props) => {
@@ -328,7 +277,7 @@ const UndelegateAmountCell = ({ operation, currency, unit }: Props) => {
 
   return (
     !amount.isZero() && (
-      <>
+      <Fragment>
         <FormattedVal
           val={amount}
           unit={unit}
@@ -344,16 +293,16 @@ const UndelegateAmountCell = ({ operation, currency, unit }: Props) => {
           currency={currency}
           value={amount}
         />
-      </>
+      </Fragment>
     )
   );
 };
 
 const amountCellExtra: { [key: string]: ComponentType<any> } = {
-  REDELEGATE: RedelegateAmountCell,
   UNDELEGATE: UndelegateAmountCell,
 };
 
+export { OperationDetailsDelegation };
 export default {
   getURLFeesInfo,
   getURLWhatIsThis,

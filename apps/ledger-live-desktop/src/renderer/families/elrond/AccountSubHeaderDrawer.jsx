@@ -32,8 +32,10 @@ const Description = styled(Text)`
   font-size: 13px;
 `;
 
-export function AccountSubHeaderDrawer({ isOpen, closeDrawer }: Props) {
+const AccountSubHeaderDrawer = (props: Props) => {
+  const { isOpen, closeDrawer } = props;
   const { t } = useTranslation();
+
   return (
     <SideDrawer
       title={t("elrond.account.subHeader.drawerTitle")}
@@ -62,6 +64,7 @@ export function AccountSubHeaderDrawer({ isOpen, closeDrawer }: Props) {
       </Box>
     </SideDrawer>
   );
-}
+};
 
+export { AccountSubHeaderDrawer };
 export default AccountSubHeaderDrawer;

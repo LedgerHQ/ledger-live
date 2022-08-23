@@ -1,11 +1,13 @@
 // @flow
 
 import React, { useMemo, useState } from "react";
-import styled from "styled-components";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import styled from "styled-components";
+
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
+
 import { constants } from "~/renderer/families/elrond/constants";
 
 const InputLeft = styled(Box).attrs(() => ({
@@ -57,16 +59,17 @@ const AmountButton = styled.button.attrs(() => ({
   }
 `;
 
-export default function AmountField({
-  amount,
-  initialAmount,
-  account,
-  onChange,
-  status: { errors, warnings },
-  label,
-}: *) {
-  const unit = getAccountUnit(account);
+const AmountField = props => {
+  const {
+    amount,
+    initialAmount,
+    account,
+    onChange,
+    status: { errors, warnings },
+    label,
+  } = props;
 
+  const unit = getAccountUnit(account);
   const [focused, setFocused] = useState(false);
 
   const onAmountChange = (amount, unit) => {
@@ -128,4 +131,6 @@ export default function AmountField({
       />
     </Box>
   );
-}
+};
+
+export default AmountField;

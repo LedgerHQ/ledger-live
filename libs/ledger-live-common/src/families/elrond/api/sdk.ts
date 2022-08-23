@@ -139,6 +139,7 @@ function transactionToOperation(
   tokenIdentifier?: string
 ): Operation {
   const type = getOperationType(transaction, addr);
+
   return {
     id: encodeOperationId(accountId, transaction.txHash ?? "", type),
     accountId,

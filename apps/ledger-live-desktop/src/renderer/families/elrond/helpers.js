@@ -1,12 +1,22 @@
 // @flow
 
-function format(
+import type { ValidatorType } from "~/renderer/families/elrond/types";
+
+type DenominateType = {
+  input: string,
+  denomination?: number,
+  decimals?: number,
+  showLastNonZeroDecimal?: boolean,
+  addCommas?: boolean,
+};
+
+const format = (
   big: string,
   denomination = 18,
   decimals = 2,
   showLastNonZeroDecimal: boolean,
   addCommas: boolean,
-) {
+) => {
   showLastNonZeroDecimal =
     typeof showLastNonZeroDecimal !== "undefined" ? showLastNonZeroDecimal : false;
   let array = big.toString().split("");
@@ -63,23 +73,12 @@ function format(
   }
 
   return decimals === 0 ? string.split(".").join("") : string;
-}
+};
 
-interface DenominateType {
-  input: string;
-  denomination?: number;
-  decimals?: number;
-  showLastNonZeroDecimal?: boolean;
-  addCommas?: boolean;
-}
+const denominate = (args: DenominateType): string => {
+  const { denomination, decimals, showLastNonZeroDecimal = false, addCommas = true } = args;
+  let { input } = args;
 
-export function denominate({
-  input,
-  denomination,
-  decimals,
-  showLastNonZeroDecimal = false,
-  addCommas = true,
-}: DenominateType): string {
   if (input === "...") {
     return input;
   }
@@ -87,9 +86,9 @@ export function denominate({
     input = "0";
   }
   return format(input, denomination, decimals, showLastNonZeroDecimal, addCommas);
-}
+};
 
-export function nominate(input: string, paramDenomination?: number) {
+const nominate = (input: string, paramDenomination?: number) => {
   const parts = input.toString().split(".");
   const denomination = paramDenomination !== undefined ? paramDenomination : 18;
 
@@ -112,4 +111,17 @@ export function nominate(input: string, paramDenomination?: number) {
   }
 
   return transformed;
+};
+
+interface SortedValidatorType {
+  provider: ValidatorType;
+  sort: number;
 }
+
+const randomizeProviders = (providers: Array<ValidatorType>): Array<ValidatorType> =>
+  providers
+    .map((provider: ProviderType) => ({ provider, sort: Math.random() }))
+    .sort((alpha: SortedValidatorType, beta: SortedValidatorType) => alpha.sort - beta.sort)
+    .map((item: SortedValidatorType) => item.provider);
+
+export { nominate, denominate, randomizeProviders };

@@ -5,15 +5,6 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
-import axios from "axios";
-
-import type { Account } from "@ledgerhq/types-live";
-
-import { urls } from "~/config/urls";
-import { openURL } from "~/renderer/linking";
-import { openModal } from "~/renderer/actions/modals";
-import { denominate } from "~/renderer/families/elrond/helpers";
-import { constants } from "~/renderer/families/elrond/constants";
 
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -28,6 +19,14 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 
 import Unbondings from "~/renderer/families/elrond/components/Unbondings";
 import Delegations from "~/renderer/families/elrond/components/Delegations";
+
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
+import { openModal } from "~/renderer/actions/modals";
+import { denominate, randomizeProviders } from "~/renderer/families/elrond/helpers";
+import { constants } from "~/renderer/families/elrond/constants";
+
+import type { Account } from "@ledgerhq/types-live";
 
 interface Props {
   account: Account;
@@ -47,10 +46,13 @@ const withDelegation = (Component: any) => (props: any) =>
 
 const Delegation = (props: Props) => {
   const { account } = props;
-  const [validators, setValidators] = useState([]);
   const [delegationResources, setDelegationResources] = useState(
     account.elrondResources.delegations || [],
   );
+
+  const validators = useMemo(() => randomizeProviders(account.elrondResources.providers), [
+    account.elrondResources.providers,
+  ]);
 
   const dispatch = useDispatch();
   const delegationEnabled = useMemo(() => BigNumber(denominate({ input: account.balance })).gt(1), [
@@ -113,33 +115,11 @@ const Delegation = (props: Props) => {
     [delegationResources, findValidator],
   );
 
-  const fetchValidators = useCallback(() => {
-    const fetchData = async (): Promise<void> => {
-      try {
-        const providers = await axios.get(constants.providers);
-
-        const randomize = providers =>
-          providers
-            .map(provider => ({ provider, sort: Math.random() }))
-            .sort((alpha, beta) => alpha.sort - beta.sort)
-            .map(item => item.provider);
-
-        setValidators(randomize(providers.data));
-      } catch (error) {
-        setValidators([]);
-      }
-    };
-
-    fetchData();
-
-    return () => setValidators([]);
-  }, [constants.providers]);
-
   const fetchDelegations = useCallback(() => {
     setDelegationResources(account.elrondResources.delegations || []);
 
     return () => setDelegationResources(account.elrondResources.delegations || []);
-  }, [account.freshAddress, JSON.stringify(account.elrondResources.delegations)]);
+  }, [JSON.stringify(account.elrondResources.delegations)]);
 
   const onEarnRewards = useCallback(() => {
     dispatch(
@@ -178,7 +158,6 @@ const Delegation = (props: Props) => {
   const hasDelegations = delegations.length > 0;
   const hasUnbondings = unbondings.length > 0;
 
-  useEffect(fetchValidators, []);
   useEffect(fetchDelegations, [fetchDelegations]);
 
   return (

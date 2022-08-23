@@ -1,29 +1,26 @@
 // @flow
 
-import { BigNumber } from "bignumber.js";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, Fragment } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { StepProps } from "../types";
+import { BigNumber } from "bignumber.js";
+
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { ValidatorField, AmountField } from "../fields";
 import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 
-export default function StepAmount({
-  account,
-  onUpdateTransaction,
-  status,
-  error,
-  contract,
-  amount,
-  delegations,
-}: StepProps) {
+import { ValidatorField, AmountField } from "../fields";
+
+import type { StepProps } from "../types";
+
+const StepAmount = (props: StepProps) => {
+  const { account, onUpdateTransaction, status, error, contract, amount, delegations } = props;
+
   const [initialAmount, setInitialAmount] = useState(BigNumber(amount));
   const [value, setValue] = useState(BigNumber(amount));
   const bridge = getAccountBridge(account);
@@ -93,33 +90,30 @@ export default function StepAmount({
       </Alert>
     </Box>
   );
-}
+};
 
-export function StepAmountFooter({
-  transitionTo,
-  account,
-  parentAccount,
-  onClose,
-  status,
-  bridgePending,
-}: StepProps) {
+const StepAmountFooter = (props: StepProps) => {
+  const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
   const { t } = useTranslation();
-
   const { errors } = status;
+
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
 
   return (
-    <>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+    <Fragment>
+      <AccountFooter {...{ account, status, parentAccount }} />
       <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
+        <Button mr={1} secondary={true} onClick={onClose}>
           {t("common.cancel")}
         </Button>
-        <Button disabled={!canNext} primary onClick={() => transitionTo("device")}>
+        <Button disabled={!canNext} primary={true} onClick={() => transitionTo("device")}>
           {t("common.continue")}
         </Button>
       </Box>
-    </>
+    </Fragment>
   );
-}
+};
+
+export { StepAmountFooter };
+export default StepAmount;

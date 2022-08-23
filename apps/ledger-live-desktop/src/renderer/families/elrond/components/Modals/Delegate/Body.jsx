@@ -127,7 +127,7 @@ const Body = ({
       account,
       parentAccount: undefined,
       transaction: bridge.updateTransaction(transaction, {
-        recipient: defaultValidator.contract
+        recipient: defaultValidator ? defaultValidator.contract : ''
       }),
     };
   });

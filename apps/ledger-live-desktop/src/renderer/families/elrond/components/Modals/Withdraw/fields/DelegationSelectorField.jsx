@@ -48,10 +48,16 @@ const DelegationSelectorField = props => {
   const options = useMemo(
     () =>
       unbondings.reduce(
-        (total, unbonding) =>
-          unbonding.amount === amount && unbonding.contract === contract
-            ? [unbonding, ...total]
-            : [...total, unbonding],
+        (total, unbonding) => {
+          const current = Object.assign(unbonding, {
+            disabled: unbonding.seconds > 0,
+          });
+
+          return unbonding.amount === amount && unbonding.contract === contract
+            ? [current].concat(total)
+            : total.concat([current]);
+        },
+
         [],
       ),
     [unbondings, amount, contract],
@@ -113,6 +119,7 @@ const DelegationSelectorField = props => {
         placeholder={t("common.selectAccount")}
         noOptionsMessage={noOptionsMessageCallback}
         onChange={onValueChange}
+        isOptionDisabled={option => option.disabled}
       />
     </Box>
   );

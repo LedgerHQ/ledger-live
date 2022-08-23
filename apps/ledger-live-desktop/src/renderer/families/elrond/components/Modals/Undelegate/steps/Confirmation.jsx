@@ -2,8 +2,9 @@
 
 import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import styled from "styled-components";
+
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
@@ -11,12 +12,13 @@ import Button from "~/renderer/components/Button";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
-import type { StepProps } from "../types";
+
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
-
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+
+import type { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -26,13 +28,8 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-export default function StepConfirmation({
-  optimisticOperation,
-  error,
-  signed,
-  transaction,
-  validators,
-}: StepProps) {
+const StepConfirmation = (props: StepProps) => {
+  const { optimisticOperation, error, signed, transaction, validators } = props;
   const { t } = useTranslation();
 
   if (optimisticOperation) {
@@ -77,22 +74,16 @@ export default function StepConfirmation({
             title={t("elrond.undelegation.flow.steps.confirmation.broadcastError")}
           />
         ) : null}
-        <ErrorDisplay error={error} withExportLogs />
+        <ErrorDisplay error={error} withExportLogs={true} />
       </Container>
     );
   }
 
   return null;
-}
+};
 
-export function StepConfirmationFooter({
-  account,
-  parentAccount,
-  error,
-  onClose,
-  onRetry,
-  optimisticOperation,
-}: StepProps) {
+const StepConfirmationFooter = (props: StepProps) => {
+  const { account, parentAccount, error, onClose, onRetry, optimisticOperation } = props;
   const { t } = useTranslation();
 
   const concernedOperation = optimisticOperation
@@ -117,6 +108,7 @@ export function StepConfirmationFooter({
       <Button ml={2} onClick={onClose}>
         {t("common.close")}
       </Button>
+
       {concernedOperation ? (
         <Button
           primary={true}
@@ -131,4 +123,7 @@ export function StepConfirmationFooter({
       ) : null}
     </Box>
   );
-}
+};
+
+export { StepConfirmationFooter };
+export default StepConfirmation;

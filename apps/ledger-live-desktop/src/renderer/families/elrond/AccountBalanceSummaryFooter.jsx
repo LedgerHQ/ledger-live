@@ -35,7 +35,7 @@ const Summary = (props: Props) => {
     setDelegationResources(account.elrondResources.delegations || []);
 
     return () => setDelegationResources(account.elrondResources.delegations || []);
-  }, [account.freshAddress, JSON.stringify(account.elrondResources.delegations)]);
+  }, [JSON.stringify(account.elrondResources.delegations)]);
 
   const available = useMemo(() => account.spendableBalance, [account.spendableBalance]);
   const delegations = useMemo(

@@ -20,14 +20,8 @@ import { openModal } from "~/renderer/actions/modals";
 
 import type { UnbondingType } from "~/renderer/families/elrond/types";
 
-const Unbonding = ({
-  account,
-  contract,
-  seconds,
-  validator,
-  amount,
-  unbondings,
-}: UnbondingType) => {
+const Unbonding = (props: UnbondingType) => {
+  const { account, contract, seconds, validator, amount, unbondings } = props;
   const [counter, setCounter] = useState(seconds);
 
   const name = useMemo(() => (validator ? validator.identity.name || contract : contract), [

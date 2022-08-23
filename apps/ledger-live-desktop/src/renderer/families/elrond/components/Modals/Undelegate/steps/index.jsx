@@ -2,12 +2,15 @@
 
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
+
 import StepAmount, { StepAmountFooter } from "./Amount";
 import StepConfirmation, { StepConfirmationFooter } from "./Confirmation";
+
 import type { StepProps, St } from "../types";
 
-export function useSteps(): St[] {
+const useSteps = (): St[] => {
   const { t } = useTranslation();
 
   return useMemo<St[]>(
@@ -34,4 +37,6 @@ export function useSteps(): St[] {
     ],
     [t],
   );
-}
+};
+
+export { useSteps };

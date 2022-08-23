@@ -58,10 +58,7 @@ const Summary = (props: Props) => {
 
     return () =>
       setDelegationResources(account.elrondResources.delegations || []);
-  }, [
-    account.freshAddress,
-    JSON.stringify(account.elrondResources.delegations),
-  ]);
+  }, [JSON.stringify(account.elrondResources.delegations)]);
 
   const total = useCallback(
     key =>

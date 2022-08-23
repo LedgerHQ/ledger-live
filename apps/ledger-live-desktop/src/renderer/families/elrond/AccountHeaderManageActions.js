@@ -1,14 +1,11 @@
 // @flow
 
-import { useCallback, useState, useMemo, useEffect } from "react";
+import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import invariant from "invariant";
-import axios from "axios";
 
-import { denominate } from "~/renderer/families/elrond/helpers";
+import { denominate, randomizeProviders } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
@@ -20,21 +17,20 @@ type Props = {
   parentAccount: ?Account,
 };
 
-const AccountHeaderActions = ({ account, parentAccount }: Props) => {
-  const [validators, setValidators] = useState([]);
-
+const AccountHeaderActions = (props: Props) => {
+  const { account, parentAccount } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const mainAccount = getMainAccount(account, parentAccount);
 
-  const { elrondResources } = mainAccount;
-  invariant(elrondResources, "elrond account expected");
   const earnRewardEnabled = useMemo(() => BigNumber(denominate({ input: account.balance })).gt(1), [
     account.balance,
   ]);
 
-  const hasDelegations = elrondResources.delegations.length > 0;
+  const validators = useMemo(() => randomizeProviders(account.elrondResources.providers), [
+    account.elrondResources.providers,
+  ]);
 
+  const hasDelegations = account.elrondResources.delegations.length > 0;
   const onClick = useCallback(() => {
     if (hasDelegations) {
       dispatch(
@@ -52,30 +48,6 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       );
     }
   }, [dispatch, account, validators, hasDelegations]);
-
-  const fetchValidators = useCallback(() => {
-    const fetchData = async (): Promise<void> => {
-      try {
-        const providers = await axios.get(constants.providers);
-
-        const randomize = providers =>
-          providers
-            .map(provider => ({ provider, sort: Math.random() }))
-            .sort((alpha, beta) => alpha.sort - beta.sort)
-            .map(item => item.provider);
-
-        setValidators(randomize(providers.data));
-      } catch (error) {
-        setValidators([]);
-      }
-    };
-
-    fetchData();
-
-    return () => setValidators([]);
-  }, [constants.providers]);
-
-  useEffect(fetchValidators, [fetchValidators]);
 
   if (parentAccount) return null;
 
