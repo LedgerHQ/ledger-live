@@ -8,7 +8,7 @@ import {
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
-import { useGetLatestFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestFirmware";
+import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "styled-components/native";
 
@@ -134,7 +134,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     latestFirmware,
     error: latestFirmwareGettingError,
     status: latestFirmwareGettingStatus,
-  } = useGetLatestFirmware({
+  } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateStatus === "ongoing",
     deviceId: device.deviceId,
   });
