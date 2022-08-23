@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 
 import SendFeeMode from "~/renderer/components/SendFeeMode";
-import SelectFeeStrategy from "~/renderer/components/SelectFeeStrategy";
+import SelectFeeStrategy from "./SelectFeeStrategy";
 import GasLimitField from "./GasLimitField";
 import GasPriceField from "./GasPriceField";
 import MaxBaseFeeField from "./MaxBaseFeeField";
