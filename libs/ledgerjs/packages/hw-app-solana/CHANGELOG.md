@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-solana
 
+## 6.28.0
+
+### Major Changes
+
+- Add signOffchainMessage
+
 ## 6.27.2
 
 ### Patch Changes

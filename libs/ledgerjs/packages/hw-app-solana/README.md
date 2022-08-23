@@ -7,7 +7,7 @@
 
 Ledger Hardware Wallet Solana JavaScript bindings.
 
-***
+---
 
 ## Are you adding Ledger support to your software wallet?
 
@@ -15,10 +15,10 @@ You may be using this package to communicate with the Solana Nano App.
 
 For a smooth and quick integration:
 
-*   See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
-*   Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
-***
+---
 
 ## Notes
 
@@ -38,17 +38,20 @@ If ledger returns error `6808` - enable blind signature in settings (not needed 
 
 #### Table of Contents
 
-*   [Solana](#solana)
-    *   [Parameters](#parameters)
-    *   [Examples](#examples)
-    *   [getAddress](#getaddress)
-        *   [Parameters](#parameters-1)
-        *   [Examples](#examples-1)
-    *   [signTransaction](#signtransaction)
-        *   [Parameters](#parameters-2)
-        *   [Examples](#examples-2)
-    *   [getAppConfiguration](#getappconfiguration)
-        *   [Examples](#examples-3)
+- [Solana](#solana)
+  - [Parameters](#parameters)
+  - [Examples](#examples)
+  - [getAddress](#getaddress)
+    - [Parameters](#parameters-1)
+    - [Examples](#examples-1)
+  - [signTransaction](#signtransaction)
+    - [Parameters](#parameters-2)
+    - [Examples](#examples-2)
+  - [signOffchainMessage](#signoffchainmessage)
+    - [Parameters](#parameters-3)
+    - [Examples](#examples-3)
+  - [getAppConfiguration](#getappconfiguration)
+    - [Examples](#examples-4)
 
 ### Solana
 
@@ -56,8 +59,8 @@ Solana API
 
 #### Parameters
 
-*   `transport` **Transport** a transport for sending commands to a device
-*   `scrambleKey` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a scramble key (optional, default `"solana_default_scramble_key"`)
+- `transport` **Transport** a transport for sending commands to a device
+- `scrambleKey` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a scramble key (optional, default `"solana_default_scramble_key"`)
 
 #### Examples
 
@@ -75,13 +78,13 @@ all derivation-path indexes will be promoted to hardened indexes.
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP32 path
-*   `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** flag to show display (optional, default `false`)
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP32 path
+- `display` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** flag to show display (optional, default `false`)
 
 ##### Examples
 
 ```javascript
-solana.getAddress("44'/501'/0'").then(r => r.address)
+solana.getAddress("44'/501'/0'").then((r) => r.address);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{address: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the address field
@@ -92,13 +95,30 @@ Sign a Solana transaction.
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP32 path
-*   `txBuffer` **[Buffer](https://nodejs.org/api/buffer.html)** serialized transaction
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP32 path
+- `txBuffer` **[Buffer](https://nodejs.org/api/buffer.html)** serialized transaction
 
 ##### Examples
 
 ```javascript
-solana.signTransaction("44'/501'/0'", txBuffer).then(r => r.signature)
+solana.signTransaction("44'/501'/0'", txBuffer).then((r) => r.signature);
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the signature field
+
+#### signOffchainMessage
+
+Sign a Solana off-chain message.
+
+##### Parameters
+
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP32 path
+- `msgBuffer` **[Buffer](https://nodejs.org/api/buffer.html)** serialized off-chain message
+
+##### Examples
+
+```javascript
+solana.signOffchainMessage("44'/501'/0'", msgBuffer).then((r) => r.signature);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** an object with the signature field
@@ -110,7 +130,7 @@ Get application configuration.
 ##### Examples
 
 ```javascript
-solana.getAppConfiguration().then(r => r.version)
+solana.getAppConfiguration().then((r) => r.version);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<AppConfig>** application config object
