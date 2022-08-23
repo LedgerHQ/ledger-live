@@ -4,11 +4,12 @@ import styled from "styled-components";
 import { useTranslation, Trans } from "react-i18next";
 import type { BigNumber } from "bignumber.js";
 
-import Box from "~/renderer/components/Box";
+import Box, { Tabbable }  from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
+import Clock from "~/renderer/icons/Clock";
 
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
@@ -35,20 +36,20 @@ type Props = {
   suffixPerByte?: boolean,
 };
 
-const FeesWrapper = styled(Box)`
-  flex-direction: row;
+const FeesWrapper = styled(Tabbable)`
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  gap: 6px;
 
   border: ${p =>
     `1px solid ${
       p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider
     }`};
-  ${p => (p.selected ? "box-shadow: 0px 0px 0px 4px rgba(138, 128, 219, 0.3);" : "")}
   padding: 20px 16px;
-  width: 100%;
   font-family: "Inter";
   border-radius: 4px;
+  width: 140px;
   ${p => (p.disabled ? `background: ${p.theme.colors.palette.background.default};` : "")};
 
   &:hover {
@@ -66,8 +67,19 @@ const FeesHeader = styled(Box)`
 `;
 
 const FeesValue = styled(Box)`
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ApproximateTransactionTime = styled(Box)`
   flex-direction: row;
   align-items: center;
+  border-radius: 3px;
+  background-color: ${p =>
+    p.selected
+      ? p.theme.colors.palette.primary.main
+      : p.theme.colors.palette.text.shade20};
+  padding: 5px 6px;
 `;
 
 const SelectFeeStrategy = ({
@@ -86,7 +98,7 @@ const SelectFeeStrategy = ({
   strategies = mapStrategies ? strategies.map(mapStrategies) : strategies;
 
   return (
-    <Box alignItems="center" flow={2}>
+    <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
       {strategies.map(s => {
         const selected = transaction.feesStrategy === s.label;
         const amount = s.displayedAmount || s.amount;
@@ -97,33 +109,22 @@ const SelectFeeStrategy = ({
             selected={selected}
             disabled={disabled}
             onClick={() => {
-              !disabled && onClick({ amount: s.amount, feesStrategy: label });
+              !disabled && onClick({ amount: s.amount, feesStrategy: label, txParameters: s.txParameters });
             }}
           >
             <FeesHeader horizontal alignItems="center" selected={selected} disabled={disabled}>
               {label === "medium" ? (
-                <TachometerMedium size={14} />
+                <TachometerMedium size={13} />
               ) : label === "slow" ? (
-                <TachometerLow size={14} />
+                <TachometerLow size={13} />
               ) : (
-                <TachometerHigh size={14} />
+                <TachometerHigh size={13} />
               )}
-              <Text fontSize={0} ff="Inter|ExtraBold" uppercase ml={1}>
+              <Text fontSize={0} ff="Inter|ExtraBold" uppercase ml={1} letterSpacing="0.1em">
                 <Trans i18nKey={`fees.${label}`} />
               </Text>
             </FeesHeader>
             <FeesValue>
-              {s.displayedAmount ? (
-                <CounterValue
-                  currency={feesCurrency}
-                  value={amount}
-                  color={disabled ? "palette.text.shade20" : "palette.text.shade50"}
-                  fontSize={3}
-                  mr={2}
-                  showCode
-                  alwaysShowValue
-                />
-              ) : null}
               <FormattedVal
                 noShrink
                 inline
@@ -148,7 +149,31 @@ const SelectFeeStrategy = ({
                 }
                 alwaysShowValue
               />
+              {s.displayedAmount ? (
+                <CounterValue
+                  inline
+                  currency={feesCurrency}
+                  value={amount}
+                  color={disabled ? "palette.text.shade20" : "palette.text.shade50"}
+                  fontSize={3}
+                  showCode
+                  alwaysShowValue
+                />
+              ) : null}
             </FeesValue>
+            {feesCurrency.id === 'ethereum' &&
+            <ApproximateTransactionTime selected={selected}>
+              <Clock size={12} />
+              <Text fontSize={2} fontWeight="500" ml={1}>
+                {label === "medium" ? (
+                  <>≈ 30 <Trans i18nKey={"time.second_short"} /></>
+                ) : label === "slow" ? (
+                  <>≈ 2-3 <Trans i18nKey={"time.minute_short"} /></>
+                ) : (
+                  <>≈ 15 <Trans i18nKey={"time.second_short"} /></>
+                )}
+              </Text>
+            </ApproximateTransactionTime>}
           </FeesWrapper>
         );
       })}
