@@ -11,14 +11,21 @@ import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
 import type { Transaction } from "./types";
 import type { Operation, Account, SignOperationEvent } from "../../types";
-import { getGasLimit, buildEthereumTx, EIP1559ShouldBeUsed } from "./transaction";
+import {
+  getGasLimit,
+  buildEthereumTx,
+  EIP1559ShouldBeUsed,
+} from "./transaction";
 import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";
 import { modes } from "./modules";
 import { isNFTActive } from "../../nft";
 import { getEnv } from "../../env";
 import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
-import { FeeMarketEIP1559Transaction, Transaction as LegacyEthereumTx } from "@ethereumjs/tx";
+import {
+  FeeMarketEIP1559Transaction,
+  Transaction as LegacyEthereumTx,
+} from "@ethereumjs/tx";
 export const signOperation = ({
   account,
   deviceId,
@@ -42,14 +49,18 @@ export const signOperation = ({
             async function main() {
               // First, we need to create a partial tx and send to the device
               const { freshAddressPath, freshAddress } = account;
-              const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = transaction;
+              const { gasPrice, maxBaseFeePerGas, maxPriorityFeePerGas } =
+                transaction;
               const gasLimit = getGasLimit(transaction);
 
               let dataMissing = !new BigNumber(gasLimit).gt(0);
-              let missingDataString = ''
+              let missingDataString = "";
               if (EIP1559ShouldBeUsed(account.currency)) {
-                missingDataString = ` maxFeePerGas=${String(maxFeePerGas)} maxPriorityFeePerGas=${String(maxPriorityFeePerGas)}`;
-                dataMissing = dataMissing && (!maxFeePerGas || !maxPriorityFeePerGas);
+                missingDataString = ` maxBaseFeePerGas=${String(
+                  maxBaseFeePerGas
+                )} maxPriorityFeePerGas=${String(maxPriorityFeePerGas)}`;
+                dataMissing =
+                  dataMissing && (!maxBaseFeePerGas || !maxPriorityFeePerGas);
               } else {
                 missingDataString = ` gasPrice=${String(gasPrice)}`;
                 dataMissing = dataMissing && !gasPrice;
@@ -57,7 +68,9 @@ export const signOperation = ({
               if (dataMissing) {
                 log(
                   "ethereum-error",
-                  `buildTransaction missingData: ${missingDataString} gasLimit=${String(gasLimit)}`
+                  `buildTransaction missingData: ${missingDataString} gasLimit=${String(
+                    gasLimit
+                  )}`
                 );
                 throw new FeeNotLoaded();
               }
@@ -73,7 +86,9 @@ export const signOperation = ({
               let txHex: string;
               if (EIP1559ShouldBeUsed(account.currency)) {
                 const returnHashedMessage = false;
-                txHex = tx.getMessageToSign(returnHashedMessage).toString("hex");;
+                txHex = tx
+                  .getMessageToSign(returnHashedMessage)
+                  .toString("hex");
               } else {
                 const rawData = tx.raw();
                 rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
@@ -155,12 +170,12 @@ export const signOperation = ({
               const recipients = [to];
               let fee = new BigNumber(0);
               if (EIP1559ShouldBeUsed(account.currency)) {
-                if (maxFeePerGas && maxPriorityFeePerGas)
-                  fee = (maxFeePerGas).times(gasLimit);
-                  // fee = (maxFeePerGas.plus(maxPriorityFeePerGas)).times(gasLimit);
+                if (maxBaseFeePerGas && maxPriorityFeePerGas)
+                  fee = maxBaseFeePerGas
+                    .plus(maxPriorityFeePerGas)
+                    .times(gasLimit);
               } else {
-                if (gasPrice)
-                  fee = gasPrice.times(gasLimit);
+                if (gasPrice) fee = gasPrice.times(gasLimit);
               }
               const transactionSequenceNumber = nonce;
               const accountId = account.id;

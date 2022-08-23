@@ -21,13 +21,13 @@ export type EthereumGasLimitRequest = {
 export type NetworkInfo = {
   family: "ethereum";
   gasPrice?: Range;
-  maxFeePerGas?: BigNumber;
+  nextBaseFeePerGas?: BigNumber;
   maxPriorityFeePerGas?: Range;
 };
 export type NetworkInfoRaw = {
   family: "ethereum";
   gasPrice?: RangeRaw;
-  maxFeePerGas?: string;
+  nextBaseFeePerGas?: string;
   maxPriorityFeePerGas?: RangeRaw;
 };
 export type { TransactionMode, ModeModule };
@@ -37,7 +37,7 @@ export type Transaction = TransactionCommon & {
   nonce?: number;
   data?: Buffer;
   gasPrice?: BigNumber | null | undefined;
-  maxFeePerGas?: BigNumber | null | undefined;
+  maxBaseFeePerGas?: BigNumber | null | undefined;
   maxPriorityFeePerGas?: BigNumber | null | undefined;
   userGasLimit: BigNumber | null | undefined;
   estimatedGasLimit: BigNumber | null | undefined;
@@ -55,7 +55,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   nonce?: number;
   data?: string;
   gasPrice?: string | null | undefined;
-  maxFeePerGas?: string | null | undefined;
+  maxBaseFeePerGas?: string | null | undefined;
   maxPriorityFeePerGas?: string | null | undefined;
   userGasLimit: string | null | undefined;
   estimatedGasLimit: string | null | undefined;

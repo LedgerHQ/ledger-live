@@ -30,9 +30,8 @@ const stringParser = (v: unknown): string | null | undefined =>
   typeof v === "string" ? v : undefined;
 
 const stringArrayParser = (v: any): string[] | null | undefined => {
-  const v_array = typeof v === 'string' ? v.split(",") : null;
-  if (Array.isArray(v_array) && v_array.length > 0)
-    return v_array
+  const v_array = typeof v === "string" ? v.split(",") : null;
+  if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
 
 const envDefinitions = {
@@ -317,7 +316,10 @@ const envDefinitions = {
     desc: "enable an experimental swap interface",
   },
   EXPLORER: {
-    def: "https://explorers.api.live.ledger.com",
+    // FIXME: STAGING EXPLORER NEEDS TO BE USED FOR TESTING
+    // IT NEEDS TO BE CHANGED TO THE PROD EXPLORER AFTERWARDS
+    def: "https://explorers.api-01.live.ledger-stg.com",
+    // def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },

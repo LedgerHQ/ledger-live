@@ -330,7 +330,9 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       async (currency) => {
         const { data } = await network({
           method: "GET",
-          url: `${baseURL}/gastracker/barometer${EIP1559ShouldBeUsed(currency) ? '?display=eip1559' : ''}`,
+          url: `${baseURL}/gastracker/barometer${
+            EIP1559ShouldBeUsed(currency) ? "?display=eip1559" : ""
+          }`,
         });
         return {
           low: new BigNumber(data.low),
