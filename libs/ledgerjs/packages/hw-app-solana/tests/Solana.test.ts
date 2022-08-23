@@ -67,6 +67,25 @@ test("signTransaction", async () => {
   );
 });
 
+test("signOffchainMessage", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+    => e00701003a01028000002c800001f5ff736f6c616e61206f6666636861696e00001c004c6f6e67204f66662d436861696e2054657374204d6573736167652e
+    <= dd23d8f798aeb0085f97f3aae20e52866bf529e0d880959784ff0e91beaf6f2eb73b7b0ef484801399066b92561f6c523b27f9579e17d0f8106b33edc5f45b07
+    `)
+  );
+  const solana = new Solana(transport);
+  const message = Buffer.from(
+    "ff736f6c616e61206f6666636861696e00001c004c6f6e67204f66662d436861696e2054657374204d6573736167652e",
+    "hex"
+  );
+  const { signature } = await solana.signOffchainMessage("44'/501'", message);
+  const result = signature.toString("hex");
+  expect(result).toEqual(
+    "dd23d8f798aeb0085f97f3aae20e52866bf529e0d880959784ff0e91beaf6f2eb73b7b0ef484801399066b92561f6c523b27f9579e17d0f8106b33edc5f45b07"
+  );
+});
+
 test("chunked payload (payload length > MAX_PAYLOAD)", async () => {
   const transport = await openTransportReplayer(
     RecordStore.fromString(`
