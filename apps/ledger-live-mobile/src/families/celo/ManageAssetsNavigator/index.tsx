@@ -72,14 +72,13 @@ function ManageAssetsNavigator() {
     });
   }, [onNavigate, account]);
 
-  // const onUnlock = useCallback(() => {
-  //   onNavigate({
-  //     route: NavigatorName.CosmosDelegationFlow,
-  //     screen: ScreenName.CosmosDelegationStarted,
-  //     params: {},
-  //   });
+  const onUnlock = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.CeloUnlockFlow,
+      screen: ScreenName.CeloUnlockAmount,
+    });
 
-  // }, [onNavigate]);
+  }, [onNavigate]);
 
   // const onActivate = useCallback(() => {
   //   onNavigate({
@@ -118,6 +117,7 @@ function ManageAssetsNavigator() {
   // }, [onNavigate]);
 
   const isRegistered = (account as CeloAccount).celoResources?.registrationStatus;
+  const unlockingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
 
   return (
     <SafeAreaView
@@ -143,11 +143,11 @@ function ManageAssetsNavigator() {
       /> : null}
       <Button
         event="Celo Unlock Click"
-        onPress={onLock}
+        onPress={onUnlock}
         type="main"
         title={t("celo.manage.unlock.title")}
         containerStyle={styles.button}
-        disabled={true}
+        disabled={!unlockingEnabled}
       />
       <Button
         event="Celo Withdraw Click"

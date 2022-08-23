@@ -146,6 +146,9 @@
         }
       }
     },
+    "CeloAllFundsWarning": {
+      "title": "Ensure you have enough balance left for future transaction fees"
+    },
     "ClaimRewardsFeesWarning": {
       "title": "The rewards are smaller than the estimated fees to claim them.",
       "description": ""
@@ -3488,31 +3491,25 @@
       }
     },
     "unlock": {
-      "title": "Unlock assets",
-      "steps": {
-        "amount": {
-          "title": "Amount",
-          "amountLabel": "Amount to unlock",
-          "availableLabel": "Locked",
-          "maxLabel": "Max",
-          "info": "Unlocked assets can be withdrawn after the 3-day unlocking period.",
-          "learnMore": "Learn More"
-        },
-        "connectDevice": {
-          "title": "Device"
-        },
-        "confirmation": {
-          "title": "Confirmation",
-          "label": "Confirmation",
-          "success": {
-            "title": "Unlock transaction sent successfully",
-            "text": "Unlocked assets can be withdrawn in 3 days.",
-            "cta": "View details"
+      "stepperHeader": {
+        "title": "Unlock assets",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "info": "Unlocked assets can be withdrawn after the 3-day unlocking period.",
+            "available": "Available",
+            "max": "Max"
           },
-          "pending": {
-            "title": "Unlocking your assets..."
-          },
-          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          "verification": {
+            "success": {
+              "title": "Unlock transaction sent successfully",
+              "text": "Unlocked assets can be withdrawn in 3 days."
+            }
+          }
         }
       }
     },
