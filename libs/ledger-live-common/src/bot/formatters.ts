@@ -8,6 +8,7 @@ import {
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
 import type { Transaction } from "../generated/types";
+import { getContext } from "./bot-test-context";
 
 const formatTimeMinSec = (t: number) => {
   const totalsecs = Math.round(t / 1000);
@@ -31,9 +32,13 @@ export function formatAppCandidate(appCandidate: AppCandidate): string {
 }
 
 export function formatError(e: any, longform = false): string {
-  let out;
-  if (!e || typeof e !== "object" || e instanceof Error) {
+  let out = "";
+  if (!e || typeof e !== "object") {
     out = String(e);
+  } else if (e instanceof Error) {
+    const ctx = getContext(e);
+    if (ctx) out += `TEST ${ctx}\n`;
+    out += String(e);
   } else {
     try {
       out = "raw object: " + JSON.stringify(e);
@@ -42,9 +47,9 @@ export function formatError(e: any, longform = false): string {
     }
   }
   if (longform) {
-    return out.slice(0, 400); // safemax
+    return out.slice(0, 500);
   }
-  return out.replace(/[`]/g, "").replace(/\n/g, " ").slice(0, 160);
+  return out.replace(/[`]/g, "").replace(/\n/g, " ").slice(0, 200);
 }
 
 export function formatReportForConsole<T extends Transaction>({
@@ -168,7 +173,7 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (error) {
-    str += `⚠️ ${formatError(error)}\n`;
+    str += `⚠️ ${formatError(error, true)}\n`;
   }
 
   return str;

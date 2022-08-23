@@ -96,7 +96,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       specsLogs.push(logs);
       return runWithAppSpec(spec, (message) => {
         log("bot", message);
-        console.log(message);
+        if (process.env.CI) console.log(message);
         logs.push(message);
       }).catch((fatalError) => ({
         spec,
@@ -116,7 +116,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     trackingPairs: inferTrackingPairForAccounts(allAccountsAfter, usd),
     autofillGaps: true,
   }).catch((e) => {
-    console.error(e);
+    if (process.env.CI) console.error(e);
     countervaluesError = e;
     return null;
   });
@@ -178,7 +178,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     (s) => s.unavailableMutations
   );
 
-  if (specFatals.length) {
+  if (specFatals.length && process.env.CI) {
     console.error(`================== SPEC ERRORS =====================\n`);
     specFatals.forEach((c) => {
       console.error(c.fatalError);
@@ -186,7 +186,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     });
   }
 
-  if (errorCases.length) {
+  if (errorCases.length && process.env.CI) {
     console.error(`================== MUTATION ERRORS =====================\n`);
     errorCases.forEach((c) => {
       console.error(formatReportForConsole(c));
@@ -332,7 +332,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     body += `<summary>${specFatals.length} critical spec errors</summary>\n\n`;
     specFatals.forEach(({ spec, fatalError }) => {
       body += `**Spec ${spec.name} failed!**\n`;
-      body += "```\n" + formatError(fatalError) + "\n```\n\n";
+      body += "```\n" + formatError(fatalError, true) + "\n```\n\n";
       slackBody += `❌ *Spec ${spec.name}*: \`${formatError(fatalError)}\`\n`;
     });
     body += "</details>\n\n";
@@ -342,12 +342,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     body += "<details>\n";
     body += `<summary>${errorCases.length} mutation errors</summary>\n\n`;
     errorCases.forEach((c) => {
-      body +=
-        "```\n" +
-        formatReportForConsole(c) +
-        "\n" +
-        formatError(c.error) +
-        "\n```\n\n";
+      body += "```\n" + formatReportForConsole(c) + "\n```\n\n";
     });
     body += "</details>\n\n";
   }
