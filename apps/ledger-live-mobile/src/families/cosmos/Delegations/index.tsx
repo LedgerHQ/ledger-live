@@ -1,5 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo, ElementProps, useEffect } from "react";
+import React, {
+  useCallback,
+  useState,
+  useMemo,
+  ElementProps,
+  useEffect,
+} from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -52,7 +58,7 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import DateFromNow from "../../../components/DateFromNow";
 import AccountBanner from "../../../components/AccountBanner";
-import { getAccountBannerProps as getCosmosBannerProps } from "../../../families/cosmos/utils";
+import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
 
 type Props = {
@@ -138,9 +144,7 @@ function Delegations({ account }: Props) {
   };
 
   useEffect(() => {
-    fetchBannerData().then(banner => {
-      return setBanner(banner);
-    });
+    fetchBannerData().then(banner => setBanner(banner));
   }, []);
 
   const onRedelegateLedger = () => {

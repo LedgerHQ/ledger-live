@@ -1,7 +1,7 @@
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountBridge } from "../../bridge";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
-import type { CosmosAccount, CosmosValidatorItem } from "./types";
+import type { CosmosAccount } from "./types";
 
 export async function getAccountBannerState(account: CosmosAccount) {
   // Group current validator

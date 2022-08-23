@@ -1,7 +1,6 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import Button from "./wrappedUi/Button";
-import { useRoute } from "@react-navigation/native";
 
 type Props = {
   description: string;
@@ -9,22 +8,15 @@ type Props = {
     text: string;
     id: string;
   };
-  onClick: () => {};
+  onPress: () => void;
 };
 
-export default function AccountBanner({
-  description,
-  cta,
-  onPress,
-  relegate,
-}: Props) {
-  const route = useRoute();
-
+export default function AccountBanner({ description, cta, onPress }: Props) {
   return (
     <Alert
       type="info"
       showIcon={false}
-      renderContent={({ color, textProps }) => (
+      renderContent={({ textProps }) => (
         <Flex flexDirection="row" alignItems="center">
           <Flex flex={1} width={"100%"}>
             <Text
