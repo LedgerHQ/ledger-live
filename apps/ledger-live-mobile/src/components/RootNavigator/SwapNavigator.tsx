@@ -40,6 +40,7 @@ export default function SwapNavigator() {
         options={{
           ...noNanoBuyNanoWallScreenOptions.options,
           title: t("transfer.swap2.form.title"),
+          headerLeft: () => null,
         }}
       />
 
