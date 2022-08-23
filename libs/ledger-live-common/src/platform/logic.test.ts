@@ -1,5 +1,6 @@
 import {
   broadcastTransactionLogic,
+  completeExchangeLogic,
   receiveOnAccountLogic,
   signMessageLogic,
   WebPlatformContext,
@@ -7,8 +8,8 @@ import {
 
 import { AppManifest } from "./types";
 import {
-  createAccount,
-  createCryptoCurrency,
+  createFixtureAccount,
+  createFixtureCryptoCurrency,
 } from "../mock/fixtures/cryptoCurrencies";
 import {
   OperationType,
@@ -23,6 +24,8 @@ import * as serializers from "./serializers";
 import * as signMessage from "../hw/signMessage/index";
 import { DerivationMode } from "../derivation";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { RawPlatformTransaction } from "./rawTypes";
+import { setSupportedCurrencies } from "../currencies";
 
 describe("receiveOnAccountLogic", () => {
   // Given
@@ -46,7 +49,7 @@ describe("receiveOnAccountLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "12";
+    const accountId = "ethereumjs:2:ethereum:0x012:";
     const expectedResult = "Function called";
 
     beforeEach(() => uiNavigation.mockResolvedValueOnce(expectedResult));
@@ -86,7 +89,7 @@ describe("receiveOnAccountLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "10";
+    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
 
     it("returns an error", async () => {
       // When
@@ -111,6 +114,118 @@ describe("receiveOnAccountLogic", () => {
   });
 });
 
+describe("completeExchangeLogic", () => {
+  // Given
+  const mockPlatformCompleteExchangeRequested = jest.fn();
+  const context = createContextContainingAccountId(
+    {
+      platformCompleteExchangeRequested: mockPlatformCompleteExchangeRequested,
+    },
+    "11",
+    "12"
+  );
+  const uiNavigation = jest.fn();
+
+  beforeAll(() => {
+    setSupportedCurrencies(["bitcoin", "ethereum"]);
+  });
+  afterAll(() => {
+    setSupportedCurrencies([]);
+  });
+
+  beforeEach(() => {
+    mockPlatformCompleteExchangeRequested.mockClear();
+    uiNavigation.mockClear();
+  });
+
+  describe("when nominal case", () => {
+    // Given
+    const expectedResult = "Function called";
+
+    beforeEach(() => uiNavigation.mockResolvedValueOnce(expectedResult));
+
+    it("calls uiNavigation callback with an accountAddress", async () => {
+      // Given
+      const fromAccount = createFixtureAccount("17");
+      context.accounts = [...context.accounts, fromAccount];
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId: "ethereumjs:2:ethereum:0x017:",
+        toAccountId: "ethereumjs:2:ethereum:0x042:",
+        transaction: createRawEtherumTransaction(),
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "feeStrategy",
+        exchangeType: 8,
+      };
+
+      // When
+      const result = await completeExchangeLogic(
+        context,
+        completeExchangeRequest,
+        uiNavigation
+      );
+
+      // Then
+      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation.mock.calls[0][0]).toEqual({
+        provider: "provider",
+        exchange: {
+          fromAccount,
+          fromParentAccount: null,
+          toAccount: undefined,
+          toParentAccount: null,
+        },
+        transaction: {
+          amount: new BigNumber("1000"),
+          data: Buffer.from([]),
+          estimatedGasLimit: null,
+          family: "ethereum",
+          feeCustomUnit: { code: "Gwei", magnitude: 9, name: "Gwei" },
+          feesStrategy: "medium",
+          gasLimit: new BigNumber("NaN"),
+          gasPrice: new BigNumber("NaN"),
+          mode: "send",
+          networkInfo: null,
+          nonce: 8,
+          recipient: "0x0123456",
+          useAllAmount: false,
+          userGasLimit: null,
+        },
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "feeStrategy",
+        exchangeType: 8,
+      });
+      expect(result).toEqual(expectedResult);
+    });
+
+    it("calls the tracking for success", async () => {
+      // Given
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId: "ethereumjs:2:ethereum:0x012:",
+        toAccountId: "ethereumjs:2:ethereum:0x042:",
+        transaction: createRawEtherumTransaction(),
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "feeStrategy",
+        exchangeType: 8,
+      };
+
+      // When
+      await completeExchangeLogic(
+        context,
+        completeExchangeRequest,
+        uiNavigation
+      );
+
+      // Then
+      expect(mockPlatformCompleteExchangeRequested).toBeCalledTimes(1);
+    });
+  });
+});
+
 describe("broadcastTransactionLogic", () => {
   // Given
   const mockplatformBroadcastFail = jest.fn();
@@ -130,7 +245,7 @@ describe("broadcastTransactionLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "12";
+    const accountId = "ethereumjs:2:ethereum:0x012:";
     const rawSignedTransaction = createSignedOperationRaw();
 
     it("calls uiNavigation callback with a signedOperation", async () => {
@@ -172,7 +287,7 @@ describe("broadcastTransactionLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "10";
+    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
     const rawSignedTransaction = createSignedOperationRaw();
 
     it("returns an error", async () => {
@@ -237,7 +352,7 @@ describe("signMessageLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "12";
+    const accountId = "ethereumjs:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
     const spyPrepareMessageToSign = jest.spyOn(
       signMessage,
@@ -279,7 +394,7 @@ describe("signMessageLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "10";
+    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
     const messageToSign = "Message to sign";
 
     it("returns an error", async () => {
@@ -357,7 +472,7 @@ describe("signMessageLogic", () => {
 
   describe("when inner call prepareMessageToSign raise an error", () => {
     // Given
-    const accountId = "12";
+    const accountId = "ethereumjs:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
     const spyPrepareMessageToSign = jest.spyOn(
       signMessage,
@@ -434,7 +549,10 @@ function createContextContainingAccountId(
 ): WebPlatformContext {
   return {
     manifest: createAppManifest(),
-    accounts: [...accountIds.map((val) => createAccount(val)), createAccount()],
+    accounts: [
+      ...accountIds.map((val) => createFixtureAccount(val)),
+      createFixtureAccount(),
+    ],
     tracking,
   };
 }
@@ -498,7 +616,7 @@ function createPlatformAccount() {
 
 function createMessageData() {
   return {
-    currency: createCryptoCurrency("eth"),
+    currency: createFixtureCryptoCurrency("eth"),
     path: "path",
     derivationMode: "ethM" as DerivationMode,
     message: "default message",
@@ -533,11 +651,23 @@ function createTokenCurrency(): TokenCurrency {
     type: "TokenCurrency",
     id: "3",
     contractAddress: "",
-    parentCurrency: createCryptoCurrency("eth"),
+    parentCurrency: createFixtureCryptoCurrency("eth"),
     tokenType: "",
     //-- CurrencyCommon
     name: "",
     ticker: "",
     units: [],
+  };
+}
+
+function createRawEtherumTransaction(): RawPlatformTransaction {
+  return {
+    family: "ethereum" as any,
+    amount: "1000",
+    recipient: "0x0123456",
+    nonce: 8,
+    data: "Some data...",
+    gasPrice: "0,7",
+    gasLimit: "1,2",
   };
 }

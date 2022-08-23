@@ -96,5 +96,6 @@ export function listSupportedCurrencies(): CryptoCurrency[] {
     : userSupportedCurrencies.concat(experimentals);
 }
 export function isCurrencySupported(currency: CryptoCurrency): boolean {
+  console.log("*********** \n", listSupportedCurrencies());
   return listSupportedCurrencies().includes(currency);
 }
