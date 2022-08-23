@@ -22,7 +22,6 @@ import * as converters from "./converters";
 import * as serializers from "./serializers";
 import * as signMessage from "../hw/signMessage/index";
 import { DerivationMode } from "../derivation";
-import _ from "lodash";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 describe("receiveOnAccountLogic", () => {
