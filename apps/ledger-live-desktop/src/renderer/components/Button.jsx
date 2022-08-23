@@ -260,7 +260,7 @@ const ChildrenWrapper = styled.div`
 export const Base: ThemedComponent<*> = styled.button.attrs(p => ({
   ff: "Inter|SemiBold",
   fontSize: p.fontSize || (!p.small ? 4 : 3),
-  px: !p.small ? 4 : 3,
+  px: p.px ? p.px : !p.small ? 4 : 3,
   py: !p.small ? 2 : 0,
   color: p.color || p.theme.colors.palette.text.shade60,
   bg: "transparent",

@@ -66,8 +66,8 @@ const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Pr
           <Label color="p.theme.colors.palette.text.shade100">
             {gasLimit.toString()}
           </Label>
-          <Button onClick={() => setEditable(true)}>
-            <Box horizontal alignItems="center" >
+          <Button onClick={() => setEditable(true)} ml={1} px={2}>
+            <Box horizontal alignItems="center">
               <Trans i18nKey="send.steps.details.edit" />
             </Box>
           </Button>
