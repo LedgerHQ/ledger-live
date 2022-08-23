@@ -50,12 +50,6 @@
     "sync-locales": "./scripts/sync-locales.sh",
     "test-deep-links": "ws --spa ./deep-links-test-page.html"
   },
-  "jest": {
-    "preset": "react-native",
-    "transform": {
-      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
-    }
-  },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",
     "@babel/plugin-transform-named-capturing-groups-regex": "^7.16.8",

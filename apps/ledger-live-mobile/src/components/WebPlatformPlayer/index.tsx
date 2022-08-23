@@ -71,6 +71,8 @@ import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
 import { track } from "../../analytics/segment";
+import prepareSignTransaction from "./liveSDKLogic";
+import { SignedOperation } from "@ledgerhq/types-live";
 
 const tracking = trackingWrapper(track);
 
