@@ -104,37 +104,14 @@ export default function VoteSummary({ navigation, route }: Props) {
   invariant(transaction.family === "celo", "transaction celo");
 
   useEffect(() => {
-    if (!route.params.fromSelectAmount) {
-      return;
-    }
-
-    const tmpTransaction = route.params.transaction;
-
-    if (tmpTransaction) {
-      updateTransaction(_ => tmpTransaction);
-    }
-
-    if (
-      route.params.amount &&
-      !new BigNumber(route.params.amount).eq(transaction.amount)
-    ) {
-      setTransaction(
-        bridge.updateTransaction(transaction, {
-          amount: new BigNumber(route.params.amount),
-        }),
-      );
-    }
-
-    if (chosenValidator.address !== transaction.recipient) {
-      setTransaction(
-        bridge.updateTransaction(transaction, {
-          recipient: chosenValidator.address,
-          amount: transaction.amount,
-        }),
-      );
-    }
+    setTransaction(
+      bridge.updateTransaction(transaction, {
+        amount: new BigNumber(route.params.amount ?? new BigNumber(0)),
+        recipient: chosenValidator.address,
+      }),
+    );
   }, [
-    route.params,
+    route.params.amount,
     updateTransaction,
     bridge,
     setTransaction,
