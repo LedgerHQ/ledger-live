@@ -1,7 +1,7 @@
 /* @flow */
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -14,15 +14,12 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import {
   getAccountUnit,
-  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -32,9 +29,8 @@ import Button from "../../../components/Button";
 import KeyboardView from "../../../components/KeyboardView";
 import CurrencyInput from "../../../components/CurrencyInput";
 import TranslatedError from "../../../components/TranslatedError";
-
-import { getFirstStatusError, hasStatusError } from "../../helpers";
 import SendRowsFee from "../SendRowsFee";
+import { getFirstStatusError } from "../../helpers";
 
 type Props = {
   navigation: any,
@@ -50,72 +46,44 @@ type RouteParams = {
 export default function VoteAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  invariant(account, "account is required");
 
-  const bridge = getAccountBridge(account, parentAccount);
+  invariant(account?.type === "Account", "must be account");
+
+  const [maxSpendable, setMaxSpendable] = useState(0);
+
+  const bridge = getAccountBridge(account);
 
   const {
     transaction,
     setTransaction,
     status,
     bridgePending,
-    bridgeError,
   } = useBridgeTransaction(() => {
-    console.log("ROUTE PARAMS TRANSACTION: ", route.params.transaction);
     return {
       account,
       transaction: {
         ...route.params.transaction,
         amount: new BigNumber(route.params.amount ?? 0),
+        mode: "vote",
       },
-      // transaction: {
-      //   ...bridge.createTransaction(account),
-      //   amount: new BigNumber(route.params.amount ?? 0),
-      //   mode: "vote",
-      // },
     };
   });
 
-  console.log("transaction is: ", transaction);
-  //   const mainAccount = getMainAccount(account, parentAccount);
-
-  const [maxSpendable, setMaxSpendable] = useState(null);
-
-  // const debouncedTransaction = useDebounce(route.params.transaction, 500);
+  invariant(transaction, "transaction must be defined");
 
   useEffect(() => {
-    if (!account) return;
-
     let cancelled = false;
     bridge
-      .estimateMaxSpendable({
-        account,
-        parentAccount,
-        transaction,
-      })
+      .estimateMaxSpendable({ account, transaction: transaction })
       .then(estimate => {
         if (cancelled) return;
+        setMaxSpendable(estimate.toNumber());
+      });
 
-        setMaxSpendable(estimate);
-      })
-      .catch(e => console.log(e));
-
-    // eslint-disable-next-line consistent-return
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, transaction]);
-
-  // const onChange = useCallback(
-  //   amount => {
-  //     if (!amount.isNaN()) {
-  //       console.log("AMOUNT: ", amount);
-  //       console.log("transaction: ", route.params.transaction);
-  //       const transaction = bridge.updateTransaction(route.params.transaction, { amount });
-  //     }
-  //   },
-  //   [route.params.transaction, bridge],
-  // );
+  }, [transaction, setMaxSpendable]);
 
   const onChange = (amount: BigNumber) => {
     setTransaction(bridge.updateTransaction(transaction, { amount }));
@@ -129,38 +97,24 @@ export default function VoteAmount({ navigation, route }: Props) {
     );
   };
 
-  const onContinue = useCallback(() => {
-    // navigation.navigate(ScreenName.CeloUnlockSelectDevice, {
-    //   accountId: account.id,
-    //   transaction,
-    //   status,
-    // });
-
-    //is this necessary? can we exclude transaction here?
-    // const transaction = bridge.updateTransaction(transaction);
-
+  const onContinue = () => {
     navigation.navigate(ScreenName.CeloVoteSummary, {
       ...route.params,
-      transaction,
       amount: status.amount.toNumber(),
-      fromSelectAmount: true,
     });
-  }, [account, navigation, transaction]);
+  };
 
   const blur = useCallback(() => Keyboard.dismiss(), []);
-
-  if (!account || !transaction) return null;
 
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-
+  const currency = getAccountCurrency(account);
   const error =
     amount.eq(0) || bridgePending
       ? null
       : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
-  const hasErrors = hasStatusError(status);
 
   return (
     <>
@@ -203,9 +157,6 @@ export default function VoteAmount({ navigation, route }: Props) {
                 >
                   <TranslatedError error={error || warning} />
                 </LText>
-                {/* <LText style={styles.info}>
-                  <Trans i18nKey={`celo.vote.flow.steps.amount.info`} />
-                </LText> */}
               </View>
               <View style={styles.bottomWrapper}>
                 <View style={styles.available}>
@@ -257,7 +208,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                       />
                     }
                     onPress={onContinue}
-                    disabled={!!hasErrors || bridgePending}
+                    disabled={!!status.errors.amount || bridgePending}
                   />
                 </View>
               </View>
@@ -333,9 +284,5 @@ const styles = StyleSheet.create({
   },
   switch: {
     opacity: 0.99,
-  },
-  info: {
-    textAlign: "center",
-    paddingTop: 16,
-  },
+  }
 });

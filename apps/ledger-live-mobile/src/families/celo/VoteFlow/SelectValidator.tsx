@@ -1,4 +1,3 @@
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
@@ -34,8 +33,6 @@ export default function SelectValidator({ navigation, route }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const validators = useValidatorGroups(searchQuery);
-
-  // console.log("VALIDATORS: ", validators);
 
   const onItemPress = useCallback(
     (validator: CeloValidatorGroup) => {

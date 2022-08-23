@@ -72,18 +72,30 @@ function VoteFlow() {
       <Stack.Screen
         name={ScreenName.CeloVoteAmount}
         component={VoteAmount}
-        options={({
-          route,
-        }: {
-          route: { params: { validator: CeloValidatorGroup } };
-        }) => ({
-          headerRight: null,
+        options={{
+          gestureEnabled: false,
           headerTitle: () => (
             <StepHeader title={t("send.stepperHeader.selectAmount")} />
           ),
-        })}
+        }}
       />
 
+      <Stack.Screen
+        name={ScreenName.CeloVoteConnectDevice}
+        component={ConnectDevice}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("celo.vote.stepperHeader.connectDevice")}
+              subtitle={t("celo.vote.stepperHeader.stepRange", {
+                currentStep: "3",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
       <Stack.Screen
         name={ScreenName.CeloVoteSelectDevice}
         component={SelectDevice}
@@ -99,22 +111,12 @@ function VoteFlow() {
           ),
         }}
       />
-
       <Stack.Screen
-        name={ScreenName.CeloVoteConnectDevice}
-        component={ConnectDevice}
+        name={ScreenName.CeloVoteValidationSuccess}
+        component={DelegationValidationSuccess}
         options={{
-          headerLeft: undefined,
+          headerShown: false,
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader
-              title={t("celo.vote.stepperHeader.connectDevice")}
-              subtitle={t("celo.vote.stepperHeader.stepRange", {
-                currentStep: "3",
-                totalSteps,
-              })}
-            />
-          ),
         }}
       />
       <Stack.Screen
@@ -122,16 +124,6 @@ function VoteFlow() {
         component={DelegationValidationError}
         options={{
           headerShown: false,
-          gestureEnabled: false,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.CeloVoteValidationSuccess}
-        component={DelegationValidationSuccess}
-        options={{
-          headerLeft: undefined,
-          headerRight: undefined,
-          headerTitle: "",
           gestureEnabled: false,
         }}
       />
