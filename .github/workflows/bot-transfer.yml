@@ -40,7 +40,6 @@ jobs:
       - name: Retrieving coin apps
         uses: actions/checkout@v3
         with:
-          ref: ledger-live-bot
           repository: LedgerHQ/coin-apps
           token: ${{ secrets.GH_PAT }}
           path: coin-apps

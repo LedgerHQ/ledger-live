@@ -7,7 +7,7 @@ import { withTheme } from "../colors";
 
 type Props = {
   secureTextEntry: boolean;
-  onChange: (_: string) => void;
+  onChange: (value: string) => void;
   onSubmit: () => void;
   toggleSecureTextEntry: () => void;
   placeholder: string;

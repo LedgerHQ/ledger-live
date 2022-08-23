@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import React from "react";
 
 import Illustration from "../images/illustration/Illustration";

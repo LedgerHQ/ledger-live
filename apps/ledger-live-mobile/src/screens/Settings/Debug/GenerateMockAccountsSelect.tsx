@@ -60,7 +60,6 @@ export const GenerateMockAccountSelectScreen = () => {
             reboot();
           },
         },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         { text: "Cancel", onPress: () => {} },
       ],
       { cancelable: true },
@@ -109,7 +108,10 @@ export default function GenerateMockAccount() {
     <SettingsRow
       title="Generate mock accounts"
       desc="Select for which currencies you want to generate an account"
-      onPress={() => navigation.navigate(ScreenName.DebugMockGenerateAccounts)}
+      onPress={
+        // @ts-ignore
+        () => navigation.navigate(ScreenName.DebugMockGenerateAccounts)
+      }
     />
   );
 }

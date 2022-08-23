@@ -9,22 +9,25 @@ import DeviceActionModal from "../../../components/DeviceActionModal";
 import SelectDevice from "../../../components/SelectDevice";
 
 type Result = {
-  startExchangeResult?: number;
-  startExchangeError?: Error;
-  device: Device;
+  startExchangeResult?: number,
+  startExchangeError?: Error,
+  device: Device,
 };
 
 type Props = {
-  navigation: any;
+  navigation: any,
   route: {
     params: {
-      request: { exchangeType: number };
-      onResult: (_: Result) => void;
-    };
-  };
+      request: { exchangeType: number },
+      onResult: (result: Result) => void,
+    },
+  },
 };
 
-const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
+const PlatformStartExchange: React.FC<Props> = ({
+  navigation,
+  route,
+}) => {
   const [device, setDevice] = useState<Device>();
 
   const onClose = useCallback(() => {
@@ -50,7 +53,7 @@ const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
       />
     </SafeAreaView>
   );
-};
+}
 
 const action = createAction(connectApp, startExchange);
 

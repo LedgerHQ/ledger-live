@@ -20,6 +20,7 @@ export function Connect({
 }) {
   const [device, setDevice] = useState<Device>();
   const [result] = useState();
+
   const onModalHide = useCallback(() => {
     if (result) {
       // Nb need this in order to wait for the first modal to hide

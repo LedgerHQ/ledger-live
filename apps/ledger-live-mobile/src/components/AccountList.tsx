@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
@@ -13,7 +12,7 @@ import AccountCard from "./AccountCard";
 type Props = {
   list: SearchResult[];
   showAddAccount?: boolean;
-  onPress: (_: AccountLike) => void;
+  onPress: (account: AccountLike) => void;
   onAddAccount?: () => void;
 };
 

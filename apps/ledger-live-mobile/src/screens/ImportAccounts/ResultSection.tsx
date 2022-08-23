@@ -1,6 +1,7 @@
+// @flow
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
-import { Text, Flex } from "@ledgerhq/native-ui";
+import { Text, Flex, InvertTheme } from "@ledgerhq/native-ui";
 
 type Props = { mode: string };
 

@@ -1,8 +1,9 @@
 import React, { memo, useCallback, useEffect, useReducer } from "react";
-import { SectionList } from "react-native";
+import { StyleSheet, SectionList } from "react-native";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";
-import { Icons, Flex, Text } from "@ledgerhq/native-ui";
+import { Icons, Box, Flex, Text } from "@ledgerhq/native-ui";
 import Touchable from "../../../components/Touchable";
 
 import ActionModal from "./ActionModal";
@@ -117,12 +118,12 @@ const filterReducer = (state, { type, payload }) => {
 
 type Props = {
   filter: string;
-  setFilter: (_: string | null | undefined) => void;
+  setFilter: (filter: string | null | undefined) => void;
   sort: string;
   setSort: () => void;
   order: string;
   setOrder: () => void;
-  isOpened: boolean;
+  isOpened: Boolean;
   onClose: () => void;
 };
 
@@ -137,6 +138,7 @@ const FilterModalComponent = ({
   onClose,
 }: Props) => {
   const [state, dispatch] = useReducer(filterReducer, initialFilterState);
+  const { colors } = useTheme();
 
   useEffect(() => {
     dispatch({

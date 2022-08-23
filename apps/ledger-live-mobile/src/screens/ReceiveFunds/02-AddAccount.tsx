@@ -4,17 +4,19 @@ import { concat, from } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
 import {
   CryptoCurrency,
+  Account,
+  TokenAccount,
   Currency,
+  AccountLike,
   TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+} from "@ledgerhq/live-common/lib/types";
+import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
 import { replaceAccounts } from "../../actions/accounts";
 import logger from "../../logger";
 import { ScreenName } from "../../const";
@@ -31,7 +33,7 @@ import AccountCard from "../../components/AccountCard";
 type RouteParams = {
   currency: CryptoCurrency | TokenCurrency;
   device: Device;
-  onSuccess?: (_?: any) => void;
+  onSuccess?: (params?: any) => void;
 };
 
 type Props = {
@@ -49,7 +51,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   const [error, setError] = useState(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [cancelled, setCancelled] = useState(false);
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<String | null>(null);
 
   const scanSubscription = useRef<any>();
 
@@ -89,14 +91,13 @@ function AddAccountsAccounts({ navigation, route }: Props) {
           const pa = { ...account };
 
           if (
-            !pa.subAccounts ||
             !pa.subAccounts.find(
               (a: { token: { id: any } }) => a.token.id === currency.id,
             ) // in case we dont already have one we create an empty token account
           ) {
             const tokenAcc = makeEmptyTokenAccount(pa, currency);
             tokenAcc.parentAccount = pa;
-            pa.subAccounts = [...(pa.subAccounts || []), tokenAcc];
+            pa.subAccounts.push(tokenAcc);
           }
 
           setScannedAccounts((accs: Account[]) => [...accs, pa]); // add the account with the newly added token account to the list of scanned accounts
@@ -120,7 +121,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     startSubscription();
   }, []);
 
-  const stopSubscription = useCallback((syncUI = true) => {
+  const stopSubscription = useCallback((syncUI: boolean = true) => {
     if (scanSubscription.current) {
       scanSubscription.current.unsubscribe();
       scanSubscription.current = null;

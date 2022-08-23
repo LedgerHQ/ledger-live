@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
+import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BottomDrawer } from "@ledgerhq/native-ui";
+import { BottomDrawer, Box, Flex, Text } from "@ledgerhq/native-ui";
 import { NavigatorName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import Illustration from "../../images/illustration/Illustration";

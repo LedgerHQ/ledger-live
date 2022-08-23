@@ -5,12 +5,12 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-import invariant from "invariant";
 import { TrackScreen } from "../../../analytics";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
+import invariant from "invariant";
 
 type Props = {
   navigation: any;

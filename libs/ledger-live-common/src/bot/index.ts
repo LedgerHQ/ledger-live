@@ -2,7 +2,6 @@
 import fs from "fs";
 import path from "path";
 import { BigNumber } from "bignumber.js";
-import uniq from "lodash/uniq";
 import groupBy from "lodash/groupBy";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
@@ -19,7 +18,7 @@ import {
 } from "../currencies";
 import { isAccountEmpty, toAccountRaw } from "../account";
 import { runWithAppSpec } from "./engine";
-import { formatReportForConsole, formatError, formatTime } from "./formatters";
+import { formatReportForConsole, formatError } from "./formatters";
 import {
   initialState,
   loadCountervalues,
@@ -87,7 +86,6 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     }
   }
 
-  const timeBefore = Date.now();
   const results: Array<SpecReport<any>> = await promiseAllBatched(
     getEnv("BOT_MAX_CONCURRENT"),
     specs,
@@ -107,8 +105,6 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       }));
     }
   );
-  const totalDuration = Date.now() - timeBefore;
-  const allAppPaths = uniq(results.map((r) => r.appPath || "").sort());
   const allAccountsBefore = flatMap(results, (r) => r.accountsBefore || []);
   const allAccountsAfter = flatMap(results, (r) => r.accountsAfter || []);
   let countervaluesError;
@@ -250,8 +246,6 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     GITHUB_RUN_ID
   )}`;
   const success = mutationReports.length - errorCases.length;
-
-  title += `⏲ ${formatTime(totalDuration)} `;
 
   if (success > 0) {
     title += `✅ ${success} txs `;
@@ -481,48 +475,6 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   });
   body += "\n</details>\n\n";
 
-  // Add performance details
-  body += "<details>\n";
-  body += `<summary>Performance ⏲ ${formatTime(totalDuration)}</summary>\n\n`;
-  body += `- total currency preload: ${formatTime(
-    results.reduce((sum, r) => (r.preloadDuration || 0) + sum, 0)
-  )}\n`;
-  body += `- total scan accounts: ${formatTime(
-    results.reduce((sum, r) => (r.scanDuration || 0) + sum, 0)
-  )}\n`;
-  function sumMutation(f) {
-    return results.reduce(
-      (sum, r) => sum + (r.mutations?.reduce((sum, m) => sum + f(m), 0) || 0),
-      0
-    );
-  }
-  body += `- in accounts resync: ${formatTime(
-    sumMutation((m) => m.resyncAccountsDuration || 0)
-  )}\n`;
-  body += `- in transaction status: ${formatTime(
-    sumMutation((m) =>
-      m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
-    )
-  )}\n`;
-  body += `- in signOperation: ${formatTime(
-    sumMutation((m) =>
-      m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
-    )
-  )}\n`;
-  body += `- in broadcast: ${formatTime(
-    sumMutation((m) =>
-      m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
-    )
-  )}\n`;
-  body += `- in operation confirmation: ${formatTime(
-    sumMutation((m) =>
-      m.broadcastedTime && m.confirmedTime
-        ? m.confirmedTime - m.broadcastedTime
-        : 0
-    )
-  )}\n`;
-  body += "\n</details>\n\n";
-
   const { BOT_REPORT_FOLDER } = process.env;
 
   const slackCommentTemplate = `${String(
@@ -549,11 +501,6 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "after-app.json"),
         makeAppJSON(allAccountsAfter),
-        "utf-8"
-      ),
-      fs.promises.writeFile(
-        path.join(BOT_REPORT_FOLDER, "coin-apps.json"),
-        JSON.stringify(allAppPaths),
         "utf-8"
       ),
     ]);

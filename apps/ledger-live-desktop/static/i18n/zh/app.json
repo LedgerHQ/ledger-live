@@ -697,17 +697,6 @@
     }
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "更多信息",
-      "cardTitle" : "由 {{team}} 提供支持",
-      "drawer" : {
-        "title" : "{{family}} 集成",
-        "subTitle" : "{{family}} 集成已由 {{team}} 团队完成",
-        "description" : "Ledger Live 是一个开源平台。",
-        "description2" : "全球各地的开发者都可以与我们的 Ledger Live 相集成",
-        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。"
-      }
-    },
     "lastOperations" : "近期操作",
     "contractAddress" : "合约：",
     "openInExplorer" : "在浏览器中打开",
@@ -744,8 +733,8 @@
     "frozenAssetsTooltip" : "冻结资产被用于 Tron 投票过程。这表示了您的投票总数。",
     "bandwidthTooltip" : "冻结资产以获得带宽",
     "energyTooltip" : "冻结资产以获得能量",
-    "delegatedTooltip" : "委托资产用于投票流程。这代表您的总得票数。",
-    "undelegatingTooltip" : "取消委托的资产在 {{timelockInDays}} 天锁定期后才能使用。"
+    "delegatedAssetsTooltip" : "已委托资产被用于 Cosmos 投票过程。这表示了您的投票总数。",
+    "undelegatingTooltip" : "解除委托的资产会有 21 天的时间锁，之后才可用。"
   },
   "exchange" : {
     "chooseProvider" : "从 {{providerCount}} 个供应商中选择",
@@ -1513,7 +1502,6 @@
       "memo" : "Memo",
       "assetId" : "资产 ID",
       "rewards" : "已赚取的奖励",
-      "autoClaimedRewards" : "自动领取的奖励",
       "bondedAmount" : "已绑定数额",
       "unbondedAmount" : "已解绑数额",
       "withdrawUnbondedAmount" : "已提取数额",
@@ -2002,9 +1990,23 @@
     "value" : "价值",
     "header" : "账户配置 ({{count}})"
   },
+  "elrond" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "由 Elrond 提供支持",
+        "moreInfo" : "更多信息",
+        "drawerTitle" : "Elrond 集成",
+        "title" : "Elrond eGold (EGLD) 代币现已在 Ledger Live 上可用",
+        "description" : "您现在可以安全地保护您的 eGold (EGLD) 代币，并通过 Ledger Live 管理它们。",
+        "description2" : "Elrond eGold (EGLD) 代币是 Elrond 网络的原生代币，将被用于交易、权益质押、智能合约、治理和验证者奖励等各个方面。",
+        "description3" : "我们正在积极与 Elrond 团队合作，以增加更多的功能，如权益质押、原生 ESDT（Elrond 标准数字代币）支持等。",
+        "website" : "互联网规模的区块链"
+      }
+    }
+  },
   "cardano" : {
     "account" : {
-      "stakingRewardsBanner" : {
+      "subHeader" : {
         "cardTitle" : "总余额不包括权益质押奖励"
       }
     }
@@ -2328,176 +2330,6 @@
             "success" : {
               "title" : "已成功申请奖励！",
               "text" : "奖励已经添加到您的可用余额中",
-              "cta" : "查看详情"
-            },
-            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
-          }
-        }
-      }
-    }
-  },
-  "osmosis" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "由 Figment 提供支持",
-        "moreInfo" : "更多信息",
-        "drawerTitle" : "由 Figment 提供支持",
-        "title" : "Ledger Live 现已支持 OSMO 代币",
-        "description" : "您现在可以通过 Ledger Live 管理并保护您的 OSMO 代币。",
-        "description2" : "OSMO 代币是 Osmosis 链的原生代币，可用于交易、权益质押以及即将推出的许多功能。",
-        "website" : "由 Figment 提供支持"
-      }
-    },
-    "memo" : "Memo",
-    "memoPlaceholder" : "可选",
-    "memoWarningText" : "当使用 Memo 标签时，请与接收人仔细核对信息",
-    "delegation" : {
-      "emptyState" : {
-        "description" : "您可以通过委托资产赚取 OSMO 奖励。",
-        "info" : "委托机制如何运作",
-        "delegation" : "赚取奖励"
-      },
-      "commission" : "佣金",
-      "totalStake" : "质押总额",
-      "claimRewards" : "申领奖励",
-      "header" : "委托",
-      "noRewards" : "没有奖励可用",
-      "delegate" : "添加",
-      "undelegate" : "解除委托",
-      "redelegate" : "重新委托",
-      "redelegateDisabledTooltip" : "您可以再次重新委托 <0>{{days}}</0>",
-      "redelegateMaxDisabledTooltip" : "每次重新委托的验证者不能多于 <0>7</0> 个",
-      "undelegateDisabledTooltip" : "每次取消委托的验证者不能多于 <0>7</0> 个",
-      "reward" : "申领奖励",
-      "currentDelegation" : "已委托：<0>{{amount}}</0>",
-      "estYield" : "预估收益",
-      "activeTooltip" : "已委托的数额会生成奖励",
-      "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
-      "minSafeWarning" : "资金不足",
-      "flow" : {
-        "title" : "委托",
-        "steps" : {
-          "starter" : {
-            "description" : "您可以通过将 OSMO 资产委托给验证者来赚取奖励。",
-            "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产将在取消委托 14 天后可用"],
-            "warning" : {
-              "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
-            }
-          },
-          "amount" : {
-            "title" : "数额"
-          },
-          "validator" : {
-            "title" : "验证者"
-          },
-          "connectDevice" : {
-            "title" : "设备"
-          },
-          "confirmation" : {
-            "title" : "确认",
-            "success" : {
-              "title" : "您的资产已经成功委托。",
-              "text" : "该交易一经区块链确认，就会更新您的账户余额。",
-              "cta" : "查看详情"
-            },
-            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "申领奖励",
-        "steps" : {
-          "claimRewards" : {
-            "title" : "奖励",
-            "compound" : "Compound",
-            "claim" : "兑现",
-            "compoundOrClaim" : "复利或兑现",
-            "compoundDescription" : "奖励将被添加至已委托的数额",
-            "claimDescription" : "奖励将被添加至可用余额",
-            "compoundInfo" : "您已赚取了<0>{{amount}}</0>。点击 Continue（继续）后，它们将被即刻申领并被自动委托给同一个验证者。",
-            "claimInfo" : "您已从下方的验证者赚取了 <0>{{amount}}</0>。点击 Continue（继续）后，它们将被即刻申领并被自动添加到可用余额。",
-            "selectLabel" : "选择委托"
-          },
-          "connectDevice" : {
-            "title" : "设备"
-          },
-          "confirmation" : {
-            "title" : "确认",
-            "label" : "确认",
-            "success" : {
-              "title" : "奖励已成功兑现",
-              "titleCompound" : "奖励已成功复利",
-              "text" : "您的奖励已经添加进您的可用余额中。",
-              "textCompound" : "你的奖励 <0>{{amount}}</0> 被自动委托给 <0>{{validator}} </0>",
-              "cta" : "查看详情"
-            },
-            "pending" : {
-              "title" : "正在播送交易……"
-            },
-            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "重新委托资产",
-        "steps" : {
-          "starter" : {
-            "title" : "重新委托",
-            "description" : "利用重新委托，轻松从一个验证者更改为另一验证者。但如果再次改变主意，那么需要等待一段时间，因为重新委托会触发 14 天的锁定期。",
-            "warning" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。您最多可以有<0> 7 个待定重新委托</0>。",
-            "howDelegationWorks" : "委托机制如何运作？"
-          },
-          "validators" : {
-            "title" : "验证者",
-            "currentDelegation" : "当前委托",
-            "newDelegation" : "新的委托",
-            "chooseValidator" : "选择一个验证者",
-            "warning" : "如果再次改变主意，那么必须等待 <0>14 天</0>才能从新验证者重新委托。",
-            "amountLabel" : "要重新委托的数额"
-          },
-          "device" : {
-            "title" : "设备"
-          },
-          "confirmation" : {
-            "title" : "确认",
-            "success" : {
-              "title" : "您的资产已成功重新委托",
-              "text" : "一旦区块链确认该交易，就会更新重新委托信息",
-              "cta" : "查看详情"
-            },
-            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
-          }
-        }
-      }
-    },
-    "undelegation" : {
-      "header" : "解除委托",
-      "headerTooltip" : "14 天锁定期后可用",
-      "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
-      "flow" : {
-        "title" : "解除资产委托",
-        "steps" : {
-          "amount" : {
-            "title" : "数额",
-            "subtitle" : "取消委托过程需要 <0>14 天</0>才能完成。",
-            "warning" : "奖励将立即兑现。取消委托的数额在 <0>14 天锁定期</0>后才会返还至可用余额。",
-            "fields" : {
-              "validator" : "验证者",
-              "amount" : "要解除委托的数额"
-            }
-          },
-          "device" : {
-            "title" : "设备"
-          },
-          "confirmation" : {
-            "title" : "确认",
-            "success" : {
-              "title" : "您的资产已成功解除委托",
-              "description" : "<0>{{amount}}</0>已从<0>{{validator}}</0>解除委托",
               "cta" : "查看详情"
             },
             "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
@@ -3900,10 +3732,8 @@
     "recipientWording" : {
       "send" : "接收方",
       "delegate" : "验证者",
-      "redelegate" : "验证者",
       "undelegate" : "验证者",
       "claimReward" : "奖励接收方",
-      "claimRewardCompound" : "将接收奖励的验证者",
       "optIn" : "接收方",
       "nominate" : "验证者",
       "erc721" : {
@@ -4629,6 +4459,17 @@
     }
   },
   "cryptoOrg" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "由 Crypto.org 提供支持",
+        "moreInfo" : "更多信息",
+        "drawerTitle" : "Crypto.org 集成",
+        "title" : "Crypto.org (CRO) 代币现在可以在 Ledger Live 上使用",
+        "description" : "您现在可以开始管理您的 Crypto.org (CRO) 代币，并通过 Ledger Live 保护它们。",
+        "description2" : "Crypto.org (CRO) 代币是 Crypto.org 链的原生币种，用于所有交易、质押和许多即将到来的功能。",
+        "website" : "每个钱包里的加密货币"
+      }
+    },
     "memo" : "Memo",
     "memoPlaceholder" : "可选",
     "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的信息。"

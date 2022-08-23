@@ -11,7 +11,7 @@ import Button from "../../../components/Button";
 type Props = {
   state: State;
   appsToUpdate: App[];
-  dispatch: (_: Action) => void;
+  dispatch: (a: Action) => void;
   isModalOpened?: boolean;
 };
 

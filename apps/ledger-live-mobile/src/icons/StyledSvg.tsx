@@ -1,3 +1,4 @@
+import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 import { system } from "styled-system";
 import styled from "styled-components/native";

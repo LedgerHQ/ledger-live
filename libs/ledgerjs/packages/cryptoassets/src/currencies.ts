@@ -533,7 +533,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ticker: "tADA",
     scheme: "cardano_testnet",
     isTestnetFor: "cardano",
-    disableCountervalue: true,
     color: "#0A1D2C",
     family: "cardano",
     blockAvgTime: 20,
@@ -2556,7 +2555,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://www.mintscan.io/osmosis/txs/$hash",
-        address: "https://www.mintscan.io/osmosis/validators/$address",
+        address: "https://www.mintscan.io/osmosis/account/$address",
       },
     ],
   },
@@ -3177,7 +3176,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     isTestnetFor: "crypto_org",
-    disableCountervalue: true,
     explorerViews: [
       {
         tx: "https://crypto.org/explorer/croeseid/tx/$hash",
@@ -3196,7 +3194,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#000",
     family: "solana",
     isTestnetFor: "solana",
-    disableCountervalue: true,
     units: [
       {
         name: "SOL",
@@ -3231,7 +3228,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#000",
     family: "solana",
     isTestnetFor: "solana",
-    disableCountervalue: true,
     units: [
       {
         name: "SOL",

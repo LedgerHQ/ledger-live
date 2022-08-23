@@ -1,5 +1,7 @@
 node_modules
-src/locales
+src/locales/index.js
 generated
 scripts
-e2e/bridge
+*.ts
+*.tsx
+*.d.ts

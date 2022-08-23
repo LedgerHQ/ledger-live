@@ -1,18 +1,3 @@
-# 2.46.0
-
-We're releasing a slew of new features and improvements. Here is what’s new in Ledger Live 👇
-
-### 🚀 Features
-
-- We've added **Filecoin support** to the Ledger Live roaster. Beginning today, you can send and receive its native currency FIL.
-- **Empowering our external partners**. With more coins and tokens added to the Ledger platform, the account pages now display banners stating if integration has been done externally and by who.
-
-### 🐛 Fixes
-
-We've tidied up some minor bugs.
-
-Don’t forget to update your Ledger Live app so that you can access these new features.
-
 # 2.45.0
 
 We're back with another roundup of handy new features and improvements.

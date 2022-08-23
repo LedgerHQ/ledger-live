@@ -308,7 +308,7 @@ const cosmos: AppSpec<Transaction> = {
             {
               mode: "redelegate",
               memo: "LedgerLiveBot",
-              sourceValidator: (sourceDelegation as CosmosDelegation)
+              cosmosSourceValidator: (sourceDelegation as CosmosDelegation)
                 .validatorAddress,
               validators: [
                 {
@@ -341,7 +341,7 @@ const cosmos: AppSpec<Transaction> = {
               .find(
                 (d) =>
                   d.validatorDstAddress === v.address &&
-                  d.validatorSrcAddress === transaction.sourceValidator
+                  d.validatorSrcAddress === transaction.cosmosSourceValidator
               );
             invariant(d, "redelegated %s must be found in account", v.address);
             expect({

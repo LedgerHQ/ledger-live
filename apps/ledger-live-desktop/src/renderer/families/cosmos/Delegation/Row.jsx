@@ -25,17 +25,17 @@ import ChevronRight from "~/renderer/icons/ChevronRight";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
-import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
+import CosmosLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
 
-export const Wrapper: ThemedComponent<*> = styled.div`
+const Wrapper: ThemedComponent<*> = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 20px;
 `;
 
-export const Column: ThemedComponent<{ clickable?: boolean }> = styled(TableLine).attrs(p => ({
+const Column: ThemedComponent<{ clickable?: boolean }> = styled(TableLine).attrs(p => ({
   ff: "Inter|SemiBold",
   color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
@@ -51,7 +51,7 @@ export const Column: ThemedComponent<{ clickable?: boolean }> = styled(TableLine
       : ``}
 `;
 
-export const Ellipsis: ThemedComponent<{}> = styled.div`
+const Ellipsis: ThemedComponent<{}> = styled.div`
   flex: 1;
   display: block;
   overflow: hidden;
@@ -59,14 +59,14 @@ export const Ellipsis: ThemedComponent<{}> = styled.div`
   white-space: nowrap;
 `;
 
-export const Divider: ThemedComponent<*> = styled.div`
+const Divider: ThemedComponent<*> = styled.div`
   width: 100%;
   height: 1px;
   margin-bottom: ${p => p.theme.space[1]}px;
   background-color: ${p => p.theme.colors.palette.divider};
 `;
 
-export const ManageDropDownItem = ({
+const ManageDropDownItem = ({
   item,
   isActive,
 }: {
@@ -75,6 +75,7 @@ export const ManageDropDownItem = ({
 }) => {
   return (
     <>
+      {item.key === "MODAL_COSMOS_CLAIM_REWARDS" && <Divider />}
       <ToolTip content={item.tooltip} containerStyle={{ width: "100%" }}>
         <DropDownItem disabled={item.disabled} isActive={isActive}>
           <Box horizontal alignItems="center" justifyContent="center">
@@ -177,7 +178,7 @@ export function Row({
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <CosmosFamilyLedgerValidatorIcon
+          <CosmosLedgerValidatorIcon
             validator={validator ?? { validatorAddress, name: validatorAddress }}
           />
         </Box>
@@ -201,21 +202,7 @@ export function Row({
       <Column>{formattedAmount}</Column>
       <Column>{formattedPendingRewards}</Column>
       <Column>
-        <DropDown
-          items={dropDownItems}
-          renderItem={({ item, isActive }) => {
-            if (item.key === "MODAL_COSMOS_CLAIM_REWARDS")
-              return (
-                <>
-                  <Divider />
-                  <ManageDropDownItem item={item} isActive={isActive} />
-                </>
-              );
-
-            return <ManageDropDownItem item={item} isActive={isActive} />;
-          }}
-          onChange={onSelect}
-        >
+        <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
           {({ isOpen, value }) => (
             <Box flex horizontal alignItems="center">
               <Trans i18nKey="common.manage" />
@@ -253,7 +240,7 @@ export function UnbondingRow({
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <CosmosFamilyLedgerValidatorIcon
+          <CosmosLedgerValidatorIcon
             validator={validator ?? { validatorAddress, name: validatorAddress }}
           />
         </Box>

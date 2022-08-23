@@ -2,7 +2,7 @@ import React from "react";
 import { Image, ImageProps, ImageSourcePropType } from "react-native";
 import { useTheme } from "styled-components/native";
 
-const Illustration = ({
+export const Illustration = ({
   lightSource,
   darkSource,
   size,

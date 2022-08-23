@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 
-import { Linking } from "react-native";
+import { Linking, Image } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import {

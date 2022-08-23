@@ -40,6 +40,8 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
-        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+      - name: Run flow
+        run: pnpm mobile flow
       # - name: Run code checkers
-      #   run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      #   run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:9080" --token="yolo" --team="foo"

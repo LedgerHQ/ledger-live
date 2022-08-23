@@ -110,16 +110,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Static fee for Stellar account",
   },
-  API_OSMOSIS_INDEXER: {
-    def: "https://osmosis.coin.ledger.com/indexer",
-    parser: stringParser,
-    desc: "Endpoint for Transaction Explorer/Indexer for Osmosis",
-  },
-  API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/node",
-    parser: stringParser,
-    desc: "Endpoint for Osmosis Node",
-  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
@@ -530,7 +520,7 @@ const envDefinitions = {
     desc: "maximum limit to synchronize accounts concurrently to limit overload",
   },
   BOT_MAX_CONCURRENT: {
-    def: 5,
+    def: 4,
     parser: intParser,
     desc: "maximum limit to run bot spec in parallel",
   },

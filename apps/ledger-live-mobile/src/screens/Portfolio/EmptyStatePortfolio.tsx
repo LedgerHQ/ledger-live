@@ -1,3 +1,5 @@
+/* eslint-disable import/named */
+/* @flow */
 import React, { memo, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
@@ -7,9 +9,13 @@ import { hasInstalledAnyAppSelector } from "../../reducers/settings";
 import { NavigatorName } from "../../const";
 import Button from "../../components/Button";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
+// @ts-ignore issue with flow
 import noAccountsImgDark from "../../images/illustration/Dark/_048.png";
+// @ts-ignore issue with flow
 import noAccountsImgLight from "../../images/illustration/Light/_048.png";
+// @ts-ignore issue with flow
 import noAppsImgDark from "../../images/illustration/Dark/_056.png";
+// @ts-ignore issue with flow
 import noAppsImgLight from "../../images/illustration/Light/_056.png";
 import HelpLink from "../../components/HelpLink";
 import { urls } from "../../config/urls";
@@ -24,15 +30,13 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
 
-  const openAddModal = useCallback(
-    () => setAddModalOpened(true),
-    [setAddModalOpened],
-  );
+  const openAddModal = useCallback(() => setAddModalOpened(true), [
+    setAddModalOpened,
+  ]);
 
-  const closeAddModal = useCallback(
-    () => setAddModalOpened(false),
-    [setAddModalOpened],
-  );
+  const closeAddModal = useCallback(() => setAddModalOpened(false), [
+    setAddModalOpened,
+  ]);
 
   const navigateToManager = useCallback(() => {
     // @ts-expect-error navigation ts issue
@@ -47,6 +51,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
     <>
       {showHelp ? (
         <Flex alignSelf="flex-end" mx={6}>
+          {/* @ts-expect-error */}
           <HelpLink
             url={hasInstalledAnyApp ? urls.addAccount : urls.goToManager}
             color="grey"

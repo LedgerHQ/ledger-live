@@ -7,8 +7,8 @@ import styled from "styled-components";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
-  useCosmosFamilyPreloadData,
-  useCosmosFamilyMappedDelegations,
+  useCosmosPreloadData,
+  useCosmosMappedDelegations,
 } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapUnbondings, canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
@@ -56,11 +56,9 @@ const Delegation = ({ account }: Props) => {
 
   const delegationEnabled = canDelegate(account);
 
-  const mappedDelegations = useCosmosFamilyMappedDelegations(account);
+  const mappedDelegations = useCosmosMappedDelegations(account);
 
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = useCosmosFamilyPreloadData(currencyName);
-
+  const { validators } = useCosmosPreloadData();
   const unit = getAccountUnit(account);
 
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);

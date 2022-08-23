@@ -44,17 +44,48 @@ jobs:
       - name: Retrieving coin apps
         uses: actions/checkout@v3
         with:
-          ref: ledger-live-bot
           repository: LedgerHQ/coin-apps
           token: ${{ secrets.GH_PAT }}
           path: coin-apps
-      - uses: ./tools/actions/composites/bot
-        id: bot
-        timeout-minutes: 120
+      - uses: pnpm/action-setup@v2.0.1
         with:
-          EXPLORER: https://explorers.api-01.live.ledger-stg.com
-          SHOW_LEGACY_NEW_ACCOUNT: "1"
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: pull docker image
+        run: docker pull ghcr.io/ledgerhq/speculos
+      - name: install and build
+        run: |
+          pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
+          pnpm build:cli
+      - name: bot logic
+        env:
           SEED: ${{ secrets.SEED2 }}
-          SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
-          SLACK_CHANNEL: explorer-bot-stg
+          BOT_REPORT_FOLDER: botreport
+          VERBOSE_FILE: botreport/logs.txt
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_WORKFLOW: ${{ github.workflow }}
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
           BOT_FILTER_FAMILY: ethereum
+          EXPLORER: https://explorers.api-01.live.ledger-stg.com
+        run: |
+          mkdir libs/ledger-live-common/botreport
+          COINAPPS=$PWD/coin-apps pnpm common ci-test-bot
+        timeout-minutes: 120
+      - name: submit bot report
+        uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@develop
+        with:
+          path: libs/ledger-live-common/botreport/
+          githubSha: ${{github.sha}}
+          githubToken: ${{github.token}}
+          slackApiToken: ${{secrets.SLACK_API_TOKEN}}
+          slackChannel: explorer-bot-stg
+      - name: upload logs to github artifacts
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: botreport
+          path: libs/ledger-live-common/botreport/

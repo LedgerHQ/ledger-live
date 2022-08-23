@@ -14,6 +14,7 @@ import DebugURLDrawer from "./DebugURLDrawer";
 import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
+import { NavigatorName, ScreenName } from "../../const";
 import { completeOnboarding, setReadOnlyMode } from "../../actions/settings";
 import { urls } from "../../config/urls";
 
@@ -45,7 +46,8 @@ const PurchaseDevice = () => {
       nanoSP: Config.ADJUST_BUY_NANOSP_EVENT_ID,
     };
     const id = data.value?.deviceId
-      ? ids[data.value.deviceId] || Config.ADJUST_BUY_GENERIC_EVENT_ID
+      ? // @ts-ignore issue in typing
+        ids[data.value.deviceId] || Config.ADJUST_BUY_GENERIC_EVENT_ID
       : Config.ADJUST_BUY_GENERIC_EVENT_ID;
 
     if (!id) {

@@ -10,7 +10,9 @@ import { Box } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import TextInput from "../../components/TextInput";
+import KeyboardView from "../../components/KeyboardView";
 import { getFontStyle } from "../../components/LText";
+import NavigationScrollView from "../../components/NavigationScrollView";
 import { withTheme } from "../../colors";
 import Button from "../../components/wrappedUi/Button";
 
@@ -21,7 +23,6 @@ const forceInset = { bottom: "always" };
 type Props = {
   navigation: any;
   route: { params: RouteParams };
-  // eslint-disable-next-line @typescript-eslint/ban-types
   updateAccount: Function;
   account: Account;
   colors: any;
@@ -31,7 +32,6 @@ type RouteParams = {
   account: any;
   accountId?: string;
   accountName?: string;
-  // eslint-disable-next-line no-unused-vars
   onAccountNameChange: (name: string, changedAccount: Account) => void;
 };
 
@@ -58,8 +58,10 @@ class EditAccountName extends PureComponent<Props, State> {
   onNameEndEditing = () => {
     const { updateAccount, account, navigation } = this.props;
     const { accountName } = this.state;
-    const { onAccountNameChange, account: accountFromAdd } =
-      this.props.route.params;
+    const {
+      onAccountNameChange,
+      account: accountFromAdd,
+    } = this.props.route.params;
 
     const isImportingAccounts = !!accountFromAdd;
     const cleanAccountName = accountName.trim();
@@ -115,7 +117,6 @@ class EditAccountName extends PureComponent<Props, State> {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 const m: React.ComponentType<{}> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTheme,

@@ -7,7 +7,7 @@ export default function SelectValidatorSearchBox({
   setSearchQuery,
 }: {
   searchQuery: string;
-  setSearchQuery: (_: string) => void;
+  setSearchQuery: (query: string) => void;
 }) {
   const { t } = useTranslation();
 

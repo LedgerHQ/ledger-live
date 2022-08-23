@@ -1,17 +1,5 @@
 # @ledgerhq/react-native-hw-transport-ble
 
-## 6.27.3
-
-### Patch Changes
-
-- [`3cc45438a8`](https://github.com/LedgerHQ/ledger-live/commit/3cc45438a8aced1922742ff077946d1216f63525) Thanks [@elbywan](https://github.com/elbywan)! - Use commonjs imports for @ledgerhq/devices. Fixes #777.
-
-## 6.27.3-next.0
-
-### Patch Changes
-
-- [`3cc45438a`](https://github.com/LedgerHQ/ledger-live/commit/3cc45438a8aced1922742ff077946d1216f63525) Thanks [@elbywan](https://github.com/elbywan)! - Use commonjs imports for @ledgerhq/devices. Fixes #777.
-
 ## 6.27.2
 
 ### Patch Changes

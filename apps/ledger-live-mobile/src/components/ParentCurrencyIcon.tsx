@@ -12,12 +12,7 @@ type Props = {
   borderColor?: string;
 };
 
-const ParentCurrencyIcon = ({
-  currency,
-  size,
-  hideParentIcon = false,
-  borderColor = "background.main",
-}: Props) => {
+const ParentCurrencyIcon = ({ currency, size, hideParentIcon = false, borderColor = "background.main" }: Props) => {
   const { colors } = useTheme();
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),

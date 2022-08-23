@@ -89,8 +89,10 @@ function NotificationSettingsRow({
 function NotificationsSettings() {
   const { t } = useTranslation();
   const notifications = useSelector(notificationsSelector);
-  const { getIsNotifEnabled, handlePushNotificationsPermission } =
-    useNotifications();
+  const {
+    getIsNotifEnabled,
+    handlePushNotificationsPermission,
+  } = useNotifications();
   const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState();
 
   const refreshNotifPermission = useCallback(() => {

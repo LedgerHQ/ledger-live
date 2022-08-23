@@ -15,8 +15,10 @@ import { ScreenName } from "../../const";
 import { ManagerTab } from "./Manager";
 import SelectDevice from "../../components/SelectDevice";
 import TrackScreen from "../../analytics/TrackScreen";
+// @FlowFixMe
 import { track } from "../../analytics";
 import Button from "../../components/Button";
+// @FlowFixMe
 import type { DeviceLike } from "../../reducers/ble";
 import Trash from "../../icons/Trash";
 import BottomModal from "../../components/BottomModal";
@@ -25,9 +27,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import Illustration from "../../images/illustration/Illustration";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const darkImg = require("../../images/illustration/Dark/_079.png");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const lightImg = require("../../images/illustration/Light/_079.png");
 
 const action = createAction(connectManager);
@@ -83,7 +83,7 @@ type Props = {
 
 type ChooseDeviceProps = Props & {
   isFocused: boolean;
-  removeKnownDevice: (_: string) => void;
+  removeKnownDevice: (d: string) => void;
 };
 
 class ChooseDevice extends Component<
@@ -91,7 +91,7 @@ class ChooseDevice extends Component<
   {
     showMenu: boolean;
     device?: Device;
-    result?: any;
+    result?: Object;
   }
 > {
   state = {
@@ -119,7 +119,7 @@ class ChooseDevice extends Component<
     this.setState({ device });
   };
 
-  onSelect = (result: any) => {
+  onSelect = (result: Object) => {
     this.setState({ device: undefined, result });
     const {
       route: { params = {} },
@@ -136,13 +136,11 @@ class ChooseDevice extends Component<
     this.setState({ device: undefined });
   };
 
-  onStepEntered = (i: number, meta: any) => {
+  onStepEntered = (i: number, meta: Object) => {
     if (i === 2) {
       // we also preload as much info as possible in case of a MCU
       manager.getLatestFirmwareForDevice(meta.deviceInfo).then(
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
       );
     }
@@ -151,16 +149,12 @@ class ChooseDevice extends Component<
   remove = async () => {
     const { removeKnownDevice } = this.props;
     removeKnownDevice(this.chosenDevice.deviceId);
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     await disconnect(this.chosenDevice.deviceId).catch(() => {});
     this.onHideMenu();
   };
 
   componentDidMount() {
-    this.setState(state => ({
-      ...state,
-      device: this.props.route.params?.device,
-    }));
+    this.setState(state => ({ ...state, device: this.props.route.params?.device }));
   }
 
   render() {

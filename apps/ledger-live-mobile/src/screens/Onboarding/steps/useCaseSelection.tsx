@@ -39,6 +39,7 @@ const OnboardingStepUseCaseSelection = () => {
 
   const navigateTo = useCallback(
     (screen: string, params?: any) => {
+      // @ts-expect-error issue in navigation types
       navigation.navigate(screen, {
         ...route.params,
         ...params,

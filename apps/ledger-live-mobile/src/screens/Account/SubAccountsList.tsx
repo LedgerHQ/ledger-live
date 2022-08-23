@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 
 type Props = {
   parentAccount: Account;
-  onAccountPress: (_: SubAccount) => void;
+  onAccountPress: (subAccount: SubAccount) => void;
   accountId: string;
   useCounterValue?: boolean;
 };

@@ -1,3 +1,4 @@
+// @flow
 import { useEffect, useState } from "react";
 import { BehaviorSubject } from "rxjs";
 
@@ -39,8 +40,7 @@ export function useIsNavLocked(): boolean {
 /** use Effect to trigger lock navigation updates and callback to retrieve catched navigation actions */
 export const useLockNavigation = (
   when: boolean,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  callback: (..._: any[]) => void = () => {},
+  callback: (...args: any[]) => void = () => {},
   navigation: any,
 ) => {
   useEffect(() => {

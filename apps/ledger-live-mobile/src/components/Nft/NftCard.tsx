@@ -12,7 +12,7 @@ import LText from "../LText";
 
 type Props = {
   nft: ProtoNFT;
-  style?: any;
+  style?: Object;
 };
 
 const NftCardView = ({
@@ -22,7 +22,7 @@ const NftCardView = ({
   metadata,
 }: {
   nft: ProtoNFT;
-  style?: any;
+  style?: Object;
   status: NFTResource["status"];
   metadata: NFTMetadata;
 }) => {

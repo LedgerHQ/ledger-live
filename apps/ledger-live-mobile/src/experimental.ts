@@ -2,30 +2,34 @@ import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { concatMap } from "rxjs/operators";
-import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-common/env";
+import {
+  setEnvUnsafe,
+  isEnvDefault,
+  changes,
+} from "@ledgerhq/live-common/env";
 import type { EnvName } from "@ledgerhq/live-common/env";
 
-import { FeatureId } from "@ledgerhq/types-live";
 import logger from "./logger";
+import { FeatureId } from "@ledgerhq/types-live";
 
 export type FeatureCommon = {
-  name: EnvName;
-  title: string;
-  description: string;
-  shadow?: boolean;
-  rolloutFeatureFlag?: FeatureId;
+  name: EnvName,
+  title: string,
+  description: string,
+  shadow?: boolean,
+  rolloutFeatureFlag?: FeatureId,
 };
 
 export type FeatureToggle = {
-  type: "toggle";
-  valueOn?: any;
-  valueOff?: any;
+  type: "toggle",
+  valueOn?: any,
+  valueOff?: any,
 };
 
 export type FeatureInteger = {
-  type: "integer";
-  minValue?: number;
-  maxValue?: number;
+  type: "integer",
+  minValue?: number,
+  maxValue?: number,
 };
 
 export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
@@ -33,6 +37,7 @@ export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 // comma-separated list of currencies that we want to enable as experimental, e.g:
 // const experimentalCurrencies = "solana,cardano";
 const experimentalCurrencies = "";
+
 
 export const experimentalFeatures: Feature[] = [
   ...(experimentalCurrencies.length
@@ -179,3 +184,4 @@ export function useExperimental(): boolean {
 
   return state;
 }
+

@@ -58,8 +58,9 @@ const scenes = [
 function OnboardingStepRecoveryPhrase() {
   const navigation = useNavigation();
   const { theme } = useTheme();
-  const route =
-    useRoute<RouteProp<{ params: { deviceModelId: DeviceNames } }, "params">>();
+  const route = useRoute<
+    RouteProp<{ params: { deviceModelId: DeviceNames } }, "params">
+  >();
 
   const { deviceModelId, showSeedWarning } = route.params;
 
@@ -165,6 +166,8 @@ function OnboardingStepRecoveryPhrase() {
   );
 
   const nextPage = useCallback(() => {
+    // TODO: FIX @react-navigation/native using Typescript
+    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingPairNew, {
       ...route.params,
       showSeedWarning: false,

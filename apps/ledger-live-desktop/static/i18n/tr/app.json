@@ -697,17 +697,6 @@
     }
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "Daha fazla bilgi",
-      "cardTitle" : "{{team}} desteğiyle",
-      "drawer" : {
-        "title" : "{{family}} entegrasyonu",
-        "subTitle" : "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
-        "description" : "Ledger Live, açık kaynaklı bir platformdur.",
-        "description2" : "Dünyanın her yerinden developer'lar Ledger Live ile entegre olabilir",
-        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir."
-      }
-    },
     "lastOperations" : "Son işlemler",
     "contractAddress" : "Sözleşme:",
     "openInExplorer" : "Tarayıcıda aç",
@@ -744,8 +733,8 @@
     "frozenAssetsTooltip" : "Donmuş varlıklar Tron oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
     "bandwidthTooltip" : "Bant genişliği elde etmek için varlık dondurun",
     "energyTooltip" : "Enerji kazanmak için varlık dondurun",
-    "delegatedTooltip" : "Yetkisi devredilen varlıklar oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
-    "undelegatingTooltip" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce {{timelockInDays}} gün boyunca zaman kilidinde tutulurlar."
+    "delegatedAssetsTooltip" : "Yetkisi devredilen varlıklar Cosmos oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
+    "undelegatingTooltip" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce 21 gün boyunca zaman kilidinde tutulurlar."
   },
   "exchange" : {
     "chooseProvider" : "{{providerCount}} sağlayıcı arasından birini seçin",
@@ -1513,7 +1502,6 @@
       "memo" : "Memo",
       "assetId" : "Varlık Kimliği",
       "rewards" : "Kazanılan ödüller",
-      "autoClaimedRewards" : "Otomatik Alınan Ödüller",
       "bondedAmount" : "Bağlanmış Tutar",
       "unbondedAmount" : "Çözülmüş Tutar",
       "withdrawUnbondedAmount" : "Çekilen Tutar",
@@ -2002,9 +1990,23 @@
     "value" : "Değer",
     "header" : "Hesap dağılımı ({{count}})"
   },
+  "elrond" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Elrond desteğiyle",
+        "moreInfo" : "Daha fazla bilgi",
+        "drawerTitle" : "Elrond entegrasyonu",
+        "title" : "Elrond eGold (EGLD) token'ı artık Ledger Live'da kullanılabilir",
+        "description" : "eGold (EGLD) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
+        "description2" : "Elrond Network'e özgü olan Elrond eGold (EGLD) Token, bu ağ üzerindeki her türlü işlem, staking, akıllı sözleşme, yönetişim ve doğrulayıcı ödülleri için kullanılır.",
+        "description3" : "Elrond ekibiyle aktif bir işbirliği gerçekleştirerek staking işlemleri, dahili ESDT (Elrond Standart Dijital Token) desteği ve daha birçok işlevi eklemek için çalışıyoruz.",
+        "website" : "İnternet Ölçeğinde Blok Zinciri"
+      }
+    }
+  },
   "cardano" : {
     "account" : {
-      "stakingRewardsBanner" : {
+      "subHeader" : {
         "cardTitle" : "Staking ödülleri toplam bakiyeye dahil edilmez"
       }
     }
@@ -2328,176 +2330,6 @@
             "success" : {
               "title" : "Ödüller başarıyla alındı!",
               "text" : "Ödülleriniz mevcut bakiyenize eklendi.",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    }
-  },
-  "osmosis" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Figment desteğiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "Figment desteğiyle",
-        "title" : "OSMO token artık Ledger Live'da",
-        "description" : "Artık OSMO token'larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
-        "description2" : "OSMO token, Osmosis zincirinin native token'ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
-        "website" : "Figment desteğiyle"
-      }
-    },
-    "memo" : "Memo",
-    "memoPlaceholder" : "Opsiyonel",
-    "memoWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin",
-    "delegation" : {
-      "emptyState" : {
-        "description" : "Varlıklarınızın yetkisini devrederek OSMO ödülleri kazanabilirsiniz.",
-        "info" : "Yetki Devri nasıl çalışır?",
-        "delegation" : "Ödüller kazanın"
-      },
-      "commission" : "Komisyon",
-      "totalStake" : "Toplam Stake",
-      "claimRewards" : "Ödüllerinizi alın",
-      "header" : "Yetki Devirleri",
-      "noRewards" : "Ödül yok",
-      "delegate" : "Ekle",
-      "undelegate" : "Yetki İptali",
-      "redelegate" : "Yetki devret",
-      "redelegateDisabledTooltip" : "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
-      "redelegateMaxDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcıya yeniden yetki devredebilirsiniz.",
-      "undelegateDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
-      "reward" : "Ödüllerinizi alın",
-      "currentDelegation" : "Yetkisi devredilen tutar: <0>{{amount}}</0>",
-      "estYield" : "tahmini getiri",
-      "activeTooltip" : "Yetkisi devredilen tutarlar üzerinden ödül kazanırsınız",
-      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız",
-      "minSafeWarning" : "Yetersiz fon miktarı",
-      "flow" : {
-        "title" : "Yetki Devredin",
-        "steps" : {
-          "starter" : {
-            "description" : "OSMO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetkisi iptal edilen varlıklar 14 gün sonra yeniden kullanılabilir"],
-            "warning" : {
-              "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
-            }
-          },
-          "amount" : {
-            "title" : "Tutar"
-          },
-          "validator" : {
-            "title" : "Doğrulayıcılar"
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
-              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "Ödüllerinizi alın",
-        "steps" : {
-          "claimRewards" : {
-            "title" : "Ödüller",
-            "compound" : "Birleştir",
-            "claim" : "Hesaba al",
-            "compoundOrClaim" : "Birleştir veya hesaba al",
-            "compoundDescription" : "Ödülleriniz, yetki devrinde kullanılan tutara eklenecek",
-            "claimDescription" : "Ödüller mevcut bakiyeye eklenecek",
-            "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
-            "claimInfo" : "Aşağıdaki doğrulayıcıdan <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
-            "selectLabel" : "Bir yetkili seçin"
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "label" : "Onaylayın",
-            "success" : {
-              "title" : "Ödüller başarıyla hesaba alındı",
-              "titleCompound" : "Ödüller başarıyla birleştirildi",
-              "text" : "Ödülleriniz mevcut bakiyenize eklendi.",
-              "textCompound" : "<0>{{amount}}</0> tutarındaki ödülünüz otomatik olarak <0>{{validator}}</0> hesabına devredildi",
-              "cta" : "Ayrıntıları göster"
-            },
-            "pending" : {
-              "title" : "İşlem yayınlanıyor..."
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "Varlıkların Yetkisini Yeniden Devredin",
-        "steps" : {
-          "starter" : {
-            "title" : "Yetkinin Yeniden Devri",
-            "description" : "Yetkinin Yeniden Devrini kullanarak yetkiyi kolayca bir doğrulayıcıdan diğerine devredebilirsiniz. Fikrinizi değiştirdiğiniz takdirde beklemeniz gerekir çünkü yetkiyi yeniden devretmek 14 günlük bir zaman kilidini etkinleştirir.",
-            "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz. Aynı anda en fazla <0>7 tane yetki devri beklemede</0> olabilir.",
-            "howDelegationWorks" : "Yetki devri nasıl çalışır?"
-          },
-          "validators" : {
-            "title" : "Doğrulayıcılar",
-            "currentDelegation" : "Mevcut yetkili",
-            "newDelegation" : "Yeni yetkili",
-            "chooseValidator" : "Doğrulayıcı seçin",
-            "warning" : "Fikrinizin tekrar değiştiği takdirde, yeni doğrulayıcının yetkisini başkasına devretmek için <0>14 gün</0> beklemeniz gerekir",
-            "amountLabel" : "Yetkisi devredilecek tutar"
-          },
-          "device" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
-              "text" : "İşlem blok zinciri tarafından onaylandığında yetkinizin yeniden devri gerçekleşecek",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    },
-    "undelegation" : {
-      "header" : "Yetki İptalleri",
-      "headerTooltip" : "14 günlük zaman kilidinden sonra kullanılabilir",
-      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
-      "flow" : {
-        "title" : "Varlıkların Yetkisini İptal Edin",
-        "steps" : {
-          "amount" : {
-            "title" : "Tutar",
-            "subtitle" : "Yetki iptal etme işleminin sonuçlanması <0>14 gün</0> sürer.",
-            "warning" : "Ödüller hemen hesaba alınır. Yetkisi iptal edilen tutar <0>14 günlük zaman kilidinden sonra kullanılabilir bakiyeye geri döner.",
-            "fields" : {
-              "validator" : "Doğrulayıcı",
-              "amount" : "Yetkisi iptal edilecek tutar"
-            }
-          },
-          "device" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
-              "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi",
               "cta" : "Ayrıntıları göster"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
@@ -3900,10 +3732,8 @@
     "recipientWording" : {
       "send" : "alıcı",
       "delegate" : "doğrulayıcı",
-      "redelegate" : "doğrulayıcı",
       "undelegate" : "doğrulayıcı",
       "claimReward" : "ödüllerin alıcısı",
-      "claimRewardCompound" : "ödülleri alacak olan doğrulayıcı",
       "optIn" : "alıcı",
       "nominate" : "doğrulayıcı",
       "erc721" : {
@@ -4629,6 +4459,17 @@
     }
   },
   "cryptoOrg" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Crypto.org desteğiyle",
+        "moreInfo" : "Daha fazla bilgi",
+        "drawerTitle" : "Crypto.org entegrasyonu",
+        "title" : "Crypto.org (CRO) token'ı artık Ledger Live'da",
+        "description" : "Crypto.org (CRO) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
+        "description2" : "Crypto.org (CRO), Crypto.org zincirinin ana token'ıdır ve ağ üzerindeki işlemler, staking ve yakında çıkacak pek çok özellik için kullanılır.",
+        "website" : "Her cüzdanda kripto para"
+      }
+    },
     "memo" : "Memo",
     "memoPlaceholder" : "Opsiyonel",
     "memoWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"

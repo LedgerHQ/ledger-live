@@ -42,9 +42,9 @@ export interface StoriesIndicatorProps extends FlexBoxProps {
 
 const ProgressBar = styled.View`
   background-color: ${(p) => p.theme.colors.primary.c100};
-  border-radius: ${(p) => p.theme.radii[2]}px;
   height: 100%;
   width: 100%;
+  border-radius: ${(p) => p.theme.radii[2]}px;
 `;
 
 const AnimatedProgressBar = Animated.createAnimatedComponent(ProgressBar);

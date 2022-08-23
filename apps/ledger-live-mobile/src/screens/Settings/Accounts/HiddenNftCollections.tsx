@@ -48,8 +48,10 @@ const HiddenNftCollectionRow = ({
   const nfts = account?.nfts || [];
   const nft = nfts.find(nft => nft?.contract === contractAddress);
 
-  const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(contractAddress, nft?.currencyId);
+  const {
+    status: collectionStatus,
+    metadata: collectionMetadata,
+  } = useNftCollectionMetadata(contractAddress, nft?.currencyId);
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     contractAddress,
     nft?.tokenId,

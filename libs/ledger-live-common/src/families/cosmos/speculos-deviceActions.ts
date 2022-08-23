@@ -31,7 +31,8 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Validator Source",
       button: "Rr",
-      expectedValue: ({ transaction }) => transaction.sourceValidator || "",
+      expectedValue: ({ transaction }) =>
+        transaction.cosmosSourceValidator || "",
     },
     {
       title: "Validator Dest",

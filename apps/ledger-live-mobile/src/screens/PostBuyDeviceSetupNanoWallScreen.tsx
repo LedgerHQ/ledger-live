@@ -3,11 +3,11 @@ import { Text, Box } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet } from "react-native";
-import { ModalHeaderCloseButton } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
 import Button from "../components/wrappedUi/Button";
 import { NavigatorName, ScreenName } from "../const";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
+import { ModalHeaderCloseButton } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
 import { TrackScreen } from "../analytics";
 import { useCurrentRouteName } from "../helpers/routeHooks";
 

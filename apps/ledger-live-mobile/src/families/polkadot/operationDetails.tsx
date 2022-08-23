@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { Linking } from "react-native";
+import { StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import startCase from "lodash/startCase";
 import { BigNumber } from "bignumber.js";
@@ -42,7 +42,10 @@ function getURLWhatIsThis(op: Operation): string | undefined {
 function formatPalletMethod(palletMethod?: string): string {
   if (!palletMethod) return "";
 
-  return palletMethod.split(".").map(startCase).join(" - ");
+  return palletMethod
+    .split(".")
+    .map(startCase)
+    .join(" - ");
 }
 
 type OperationDetailsExtraProps = {
@@ -384,28 +387,38 @@ const NominateAmountCell = ({ operation }: Props) => {
   ) : null;
 };
 
-const createOperationIcon =
-  Icon =>
-  ({
-    confirmed,
-    failed,
-    size = 24,
-    type,
-  }: {
-    confirmed?: boolean;
-    failed?: boolean;
-    size?: number;
-    type: OperationType;
-  }) =>
-    (
-      <OperationStatusWrapper
-        size={size}
-        Icon={Icon}
-        confirmed={confirmed}
-        failed={failed}
-        type={type}
-      />
-    );
+const createOperationIcon = Icon => ({
+  confirmed,
+  failed,
+  size = 24,
+  type,
+}: {
+  confirmed?: boolean;
+  failed?: boolean;
+  size?: number;
+  type: OperationType;
+}) => (
+  <OperationStatusWrapper
+    size={size}
+    Icon={Icon}
+    confirmed={confirmed}
+    failed={failed}
+    type={type}
+  />
+);
+
+const styles = StyleSheet.create({
+  amountText: {
+    fontSize: 14,
+    flex: 1,
+  },
+  topText: {
+    fontSize: 14,
+    flex: 1,
+    marginBottom: 3,
+  },
+  nominateText: { lineHeight: 40 },
+});
 
 const amountCell = {
   BOND: BondAmountCell,

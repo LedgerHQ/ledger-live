@@ -8,17 +8,16 @@ import {
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
-
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
 import ValidatorImage from "../shared/ValidatorImage";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 
 type Props = {
   delegation: CosmosMappedDelegation | CosmosMappedUnbonding;
   currency: Currency;
-  onPress: (_: CosmosMappedDelegation | CosmosMappedUnbonding) => void;
+  onPress: (delegation: CosmosMappedDelegation | CosmosMappedUnbonding) => void;
   isLast?: boolean;
 };
 

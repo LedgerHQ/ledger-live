@@ -19,7 +19,7 @@ export const formatTransaction = (
     recipient,
     validators,
     memo,
-    sourceValidator,
+    cosmosSourceValidator,
     useAllAmount,
   }: Transaction,
   account: Account
@@ -50,7 +50,9 @@ ${
             v.address
         )
         .join("\n")
-}${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
+}${
+  !cosmosSourceValidator ? "" : "\n  source validator=" + cosmosSourceValidator
+}
 with fees=${fees ? formatCurrencyUnit(getAccountUnit(account), fees) : "?"}${
   !memo ? "" : `\n  memo=${memo}`
 }`;
@@ -69,7 +71,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fees: tr.fees ? new BigNumber(tr.fees) : null,
     gas: tr.gas ? new BigNumber(tr.gas) : null,
     memo: tr.memo,
-    sourceValidator: tr.sourceValidator,
+    cosmosSourceValidator: tr.cosmosSourceValidator,
     validators: tr.validators
       ? tr.validators.map((v) => ({ ...v, amount: new BigNumber(v.amount) }))
       : [],
@@ -90,7 +92,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     fees: t.fees ? t.fees.toString() : null,
     gas: t.gas ? t.gas.toString() : null,
     memo: t.memo,
-    sourceValidator: t.sourceValidator,
+    cosmosSourceValidator: t.cosmosSourceValidator,
     validators: t.validators
       ? t.validators.map((v) => ({ ...v, amount: v.amount.toString() }))
       : [],

@@ -8,6 +8,12 @@ const StyledSVG = styled(Svg)`
   width: 100%;
 `;
 
+type StopType = {
+  offset: string;
+  stopOpacity: number;
+  stopColor: string;
+};
+
 type Props = {
   height: number;
   opacity: number;

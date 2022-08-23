@@ -156,10 +156,9 @@ const FabMarketActionsComponent: React.FC<Props> = ({
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
 
-  const defaultAccount = useMemo(
-    () => (accounts ? accounts[0] : undefined),
-    [accounts],
-  );
+  const defaultAccount = useMemo(() => (accounts ? accounts[0] : undefined), [
+    accounts,
+  ]);
 
   const swapSelectableCurrencies = useSelector(
     swapSelectableCurrenciesSelector,

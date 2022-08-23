@@ -16,7 +16,6 @@ import OnboardingTerms from "../../screens/Onboarding/steps/terms";
 import OnboardingDeviceSelection from "../../screens/Onboarding/steps/deviceSelection";
 import OnboardingUseCase from "../../screens/Onboarding/steps/useCaseSelection";
 import OnboardingNewDeviceInfo from "../../screens/Onboarding/steps/newDeviceInfo";
-// eslint-disable-next-line import/no-cycle
 import OnboardingNewDiscoverLiveInfo from "../../screens/Onboarding/steps/discoverLiveInfo";
 import OnboardingNewDevice from "../../screens/Onboarding/steps/setupDevice";
 import OnboardingRecoveryPhrase from "../../screens/Onboarding/steps/recoveryPhrase";
@@ -38,18 +37,14 @@ import OnboardingBluetoothInformation from "../../screens/Onboarding/steps/setup
 import OnboardingWarning from "../../screens/Onboarding/steps/setupDevice/drawers/Warning";
 import OnboardingSyncDesktopInformation from "../../screens/Onboarding/steps/setupDevice/drawers/SyncDesktopInformation";
 import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setupDevice/drawers/RecoveryPhraseWarning";
-// eslint-disable-next-line import/no-cycle
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
-// eslint-disable-next-line import/no-cycle
 import GetDeviceScreen from "../../screens/GetDeviceScreen";
-// eslint-disable-next-line import/no-cycle
 import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
 
 const Stack = createStackNavigator();
 const OnboardingCarefulWarningStack = createStackNavigator();
 const OnboardingPreQuizModalStack = createStackNavigator();
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 function OnboardingCarefulWarning(props: StackScreenProps<{}>) {
   const options: Partial<StackNavigationOptions> = {
     header: props => (
@@ -98,7 +93,6 @@ function OnboardingCarefulWarning(props: StackScreenProps<{}>) {
     </NavigationModalContainer>
   );
 }
-// eslint-disable-next-line @typescript-eslint/ban-types
 function OnboardingPreQuizModalNavigator(props: StackScreenProps<{}>) {
   const options: Partial<StackNavigationOptions> = {
     header: props => (

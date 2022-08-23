@@ -1,3 +1,4 @@
+// @flow
 import React, { memo, useState, useCallback } from "react";
 import { SectionList } from "react-native";
 import { useSelector } from "react-redux";
@@ -14,7 +15,11 @@ import {
   flattenAccountsSelector,
 } from "../../reducers/accounts";
 
+import NoOperationFooter from "../../components/NoOperationFooter";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
+
+import EmptyStatePortfolio from "./EmptyStatePortfolio";
+import NoOpStatePortfolio from "./NoOpStatePortfolio";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import LoadingFooter from "../../components/LoadingFooter";
@@ -23,88 +28,87 @@ import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type Props = {
-  navigation: any;
+  navigation: any,
 };
 
-export const PortfolioHistoryList = withDiscreetMode(
-  ({
-    onEndReached,
-    opCount = 5,
-    navigation,
+export const PortfolioHistoryList = withDiscreetMode(({
+  onEndReached,
+  opCount = 5,
+  navigation,
+}: {
+  onEndReached?: () => void,
+  opCount?: number,
+  navigation: any,
+}) => {
+  const accounts = useSelector(accountsSelector);
+  const allAccounts = useSelector(flattenAccountsSelector);
+
+  const refreshAccountsOrdering = useRefreshAccountsOrdering();
+  useFocusEffect(refreshAccountsOrdering);
+
+  const { sections, completed } = groupAccountsOperationsByDay(accounts, {
+    count: opCount,
+    withSubAccounts: true,
+  });
+
+  function ListEmptyComponent() {
+    return null;
+  }
+
+  function keyExtractor(item: Operation) {
+    return item.id;
+  }
+
+  function renderItem({
+    item,
+    index,
+    section,
   }: {
-    onEndReached?: () => void;
-    opCount?: number;
-    navigation: any;
-  }) => {
-    const accounts = useSelector(accountsSelector);
-    const allAccounts = useSelector(flattenAccountsSelector);
+    item: Operation,
+    index: number,
+    section: SectionBase<any>,
+  }) {
+    const account = allAccounts.find(a => a.id === item.accountId);
+    const parentAccount =
+      account && account.type !== "Account"
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
 
-    const refreshAccountsOrdering = useRefreshAccountsOrdering();
-    useFocusEffect(refreshAccountsOrdering);
-
-    const { sections, completed } = groupAccountsOperationsByDay(accounts, {
-      count: opCount,
-      withSubAccounts: true,
-    });
-
-    function ListEmptyComponent() {
-      return null;
-    }
-
-    function keyExtractor(item: Operation) {
-      return item.id;
-    }
-
-    function renderItem({
-      item,
-      index,
-      section,
-    }: {
-      item: Operation;
-      index: number;
-      section: SectionBase<any>;
-    }) {
-      const account = allAccounts.find(a => a.id === item.accountId);
-      const parentAccount =
-        account && account.type !== "Account"
-          ? accounts.find(a => a.id === account.parentId)
-          : null;
-
-      if (!account) return null;
-
-      return (
-        <OperationRow
-          operation={item}
-          parentAccount={parentAccount}
-          account={account}
-          multipleAccounts
-          isLast={section.data.length - 1 === index}
-        />
-      );
-    }
-
-    function renderSectionHeader({ section }: { section: { day: Date } }) {
-      return <SectionHeader section={section} />;
-    }
-
-    const onTransactionButtonPress = useCallback(() => {
-      navigation.navigate(ScreenName.PortfolioOperationHistory);
-    }, [navigation]);
+    if (!account) return null;
 
     return (
-      <SectionList
-        // $FlowFixMe
-        sections={sections}
-        style={{ flex: 1, paddingHorizontal: 16 }}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        // $FlowFixMe
-        renderSectionHeader={renderSectionHeader}
-        stickySectionHeadersEnabled={false}
-        onEndReached={onEndReached}
-        ListFooterComponent={
-          !completed ? (
-            !onEndReached ? (
+      <OperationRow
+        operation={item}
+        parentAccount={parentAccount}
+        account={account}
+        multipleAccounts
+        isLast={section.data.length - 1 === index}
+      />
+    );
+  }
+
+  function renderSectionHeader({ section }: { section: { day: Date } }) {
+    return <SectionHeader section={section} />;
+  }
+
+  const onTransactionButtonPress = useCallback(() => {
+    navigation.navigate(ScreenName.PortfolioOperationHistory);
+  }, [navigation]);
+
+  return (
+    <SectionList
+      // $FlowFixMe
+      sections={sections}
+      style={{ flex: 1, paddingHorizontal: 16 }}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      // $FlowFixMe
+      renderSectionHeader={renderSectionHeader}
+      stickySectionHeadersEnabled={false}
+      onEndReached={onEndReached}
+      ListFooterComponent={
+        !completed ? (
+          !onEndReached ? (
               <Button
                 event="View Transactions"
                 type="main"
@@ -112,18 +116,19 @@ export const PortfolioHistoryList = withDiscreetMode(
                 title={<Trans i18nKey="common.seeAll" />}
                 onPress={onTransactionButtonPress}
               />
-            ) : (
-              <LoadingFooter />
-            )
-          ) : accounts.every(isAccountEmpty) ? null : sections.length ? (
-            <NoMoreOperationFooter />
-          ) : null
-        }
-        ListEmptyComponent={ListEmptyComponent}
-      />
-    );
-  },
-);
+          ) : (
+            <LoadingFooter />
+          )
+        ) : accounts.every(isAccountEmpty) ? null : sections.length ? (
+          <NoMoreOperationFooter />
+        ) : (
+          null
+        )
+      }
+      ListEmptyComponent={ListEmptyComponent}
+    />
+  );
+})
 
 function PortfolioHistory({ navigation }: Props) {
   const [opCount, setOpCount] = useState(50);

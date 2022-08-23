@@ -15,10 +15,16 @@ import ByteSize from "../../../components/ByteSize";
 type Props = {
   app: App;
   state: State;
-  dispatch: (_: Action) => void;
+  dispatch: (action: Action) => void;
   isInstalledView: boolean;
-  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
+  setAppInstallWithDependencies: (params: {
+    app: App;
+    dependencies: App[];
+  }) => void;
+  setAppUninstallWithDependencies: (params: {
+    dependents: App[];
+    app: App;
+  }) => void;
   setStorageWarning: () => void;
   managerTabs: any;
   optimisticState: State;
@@ -65,10 +71,10 @@ const AppRow = ({
   const { name, bytes, version: appVersion, displayName } = app;
   const { installed, deviceInfo } = state;
 
-  const isInstalled = useMemo(
-    () => installed.find(i => i.name === name),
-    [installed, name],
-  );
+  const isInstalled = useMemo(() => installed.find(i => i.name === name), [
+    installed,
+    name,
+  ]);
 
   const version = (isInstalled && isInstalled.version) || appVersion;
   const availableVersion =
@@ -79,10 +85,10 @@ const AppRow = ({
     name,
   );
 
-  const onSizePress = useCallback(
-    () => setStorageWarning(name),
-    [setStorageWarning, name],
-  );
+  const onSizePress = useCallback(() => setStorageWarning(name), [
+    setStorageWarning,
+    name,
+  ]);
 
   return (
     <RowContainer>

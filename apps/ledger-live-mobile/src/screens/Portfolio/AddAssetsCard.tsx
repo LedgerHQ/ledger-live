@@ -9,19 +9,17 @@ import PileOfBitcoinDark from "../../images/illustration/Dark/_002.png";
 import PileOfBitcoinLight from "../../images/illustration/Light/_002.png";
 import { NavigatorName } from "../../const";
 
-const AddAssetsCard = () => {
+export const AddAssetsCard = () => {
   const navigation = useNavigation();
   const [isAddModalOpened, setAddModalOpened] = useState(false);
 
-  const openAddModal = useCallback(
-    () => setAddModalOpened(true),
-    [setAddModalOpened],
-  );
+  const openAddModal = useCallback(() => setAddModalOpened(true), [
+    setAddModalOpened,
+  ]);
 
-  const closeAddModal = useCallback(
-    () => setAddModalOpened(false),
-    [setAddModalOpened],
-  );
+  const closeAddModal = useCallback(() => setAddModalOpened(false), [
+    setAddModalOpened,
+  ]);
 
   const goToBuy = useCallback(
     () => navigation.navigate(NavigatorName.Exchange),

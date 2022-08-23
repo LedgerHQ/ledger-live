@@ -43,6 +43,7 @@ import { swapKYCSelector } from "../../../../reducers/settings";
 
 const silentSigningAction = createAction(connectApp);
 const swapAction = initSwapCreateAction(connectApp, initSwap);
+
 export type DeviceMeta = {
   result: { installed: any };
   device: Device;
@@ -82,8 +83,10 @@ export function Confirmation({
     }),
     [fromAccount, fromParentAccount, toAccount, toParentAccount],
   );
+
   const swapKYC = useSelector(swapKYCSelector);
   const providerKYC = swapKYC[provider];
+
   const [swapData, setSwapData] = useState(null);
   const [signedOperation, setSignedOperation] = useState(null);
   const dispatch = useDispatch();
@@ -100,6 +103,7 @@ export function Confirmation({
     [toAccount],
   );
   const navigation = useNavigation();
+
   const onComplete = useCallback(
     result => {
       if (!fromAccount || !targetCurrency || !exchangeRate) {
@@ -174,15 +178,13 @@ export function Confirmation({
       toParentAccount,
     ],
   );
+
   useEffect(() => {
     if (swapData && signedOperation) {
       const { swapId } = swapData;
       broadcast(signedOperation).then(
         operation => {
-          onComplete({
-            operation,
-            swapId,
-          });
+          onComplete({ operation, swapId });
         },
         error => {
           onError(error);
@@ -190,7 +192,9 @@ export function Confirmation({
       );
     }
   }, [broadcast, onComplete, onError, signedOperation, swapData]);
+
   const { t } = useTranslation();
+
   return (
     <BottomModal
       id="SwapConfirmationFeedback"
@@ -203,10 +207,7 @@ export function Confirmation({
         footer={
           <View style={styles.footerContainer}>
             {signedOperation ? (
-              renderLoading({
-                t,
-                description: t("transfer.swap.broadcasting"),
-              })
+              renderLoading({ t, description: t("transfer.swap.broadcasting") })
             ) : !swapData ? (
               <DeviceAction
                 key={"initSwap"}

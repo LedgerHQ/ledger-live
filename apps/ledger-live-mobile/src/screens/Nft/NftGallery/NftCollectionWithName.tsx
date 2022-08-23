@@ -27,7 +27,7 @@ const NftCollectionWithNameList = ({
 }: {
   account: Account;
   collection: ProtoNFT[];
-  contentContainerStyle?: any;
+  contentContainerStyle?: Object;
   status: NFTResource["status"];
   metadata?: NFTMetadata;
 }) => {
@@ -86,7 +86,7 @@ const NftCollectionWithNameMemo = memo(NftCollectionWithNameList);
 // the rerender of all Nft Collections whenever the NFT cache changes (whenever a new NFT is loaded)
 type Props = {
   collection: ProtoNFT[];
-  contentContainerStyle?: any;
+  contentContainerStyle?: Object;
   account: Account;
 };
 

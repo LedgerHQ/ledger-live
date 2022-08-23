@@ -49,7 +49,6 @@ export async function createSpeculosDevice(
 ): Promise<{
   transport: SpeculosTransport;
   id: string;
-  appPath: string;
 }> {
   const { model, firmware, appName, appVersion, seed, coinapps, dependency } =
     arg;
@@ -203,7 +202,6 @@ export async function createSpeculosDevice(
   return {
     id: speculosID,
     transport,
-    appPath,
   };
 }
 export type AppCandidate = {

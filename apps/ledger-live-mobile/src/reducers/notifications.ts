@@ -1,23 +1,25 @@
+// @flow
+/* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
 import type { State } from ".";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 
 export type NotificationsState = {
   /** Boolean indicating whether the push notifications modal is opened or closed */
-  isPushNotificationsModalOpen: boolean;
+  isPushNotificationsModalOpen: boolean,
   /** Type of the push notifications modal to display (either the generic one or the market one) */
-  notificationsModalType: string;
+  notificationsModalType: string,
   /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
-  currentRouteName?: string;
+  currentRouteName?: string,
   /** The event that triggered the oppening of the push notifications modal */
-  eventTriggered?: EventTrigger;
+  eventTriggered?: EventTrigger,
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
-  dataOfUser?: DataOfUser;
+  dataOfUser?: DataOfUser,
   /**
    * Used to avoid having multiple different modals opened at the same time (for example the push notifications and the ratings ones)
    * If true, it means another modal is already opened or being opened
    */
-  isPushNotificationsModalLocked: boolean;
+  isPushNotificationsModalLocked: boolean,
 };
 
 const initialState: NotificationsState = {
@@ -29,7 +31,7 @@ const initialState: NotificationsState = {
   dataOfUser: null,
 };
 
-const handlers: any = {
+const handlers: Object = {
   NOTIFICATIONS_SET_MODAL_OPEN: (
     state: NotificationsState,
     { isPushNotificationsModalOpen }: { isPushNotificationsModalOpen: boolean },
@@ -39,9 +41,7 @@ const handlers: any = {
   }),
   NOTIFICATIONS_SET_MODAL_LOCKED: (
     state: NotificationsState,
-    {
-      isPushNotificationsModalLocked,
-    }: { isPushNotificationsModalLocked: boolean },
+    { isPushNotificationsModalLocked }: { isPushNotificationsModalLocked: boolean },
   ) => ({
     ...state,
     isPushNotificationsModalLocked,
@@ -89,10 +89,8 @@ export const notificationsModalTypeSelector = (s: State) =>
 export const notificationsCurrentRouteNameSelector = (s: State) =>
   s.notifications.currentRouteName;
 
-export const notificationsEventTriggeredSelector = (s: State) =>
-  s.notifications.eventTriggered;
+export const notificationsEventTriggeredSelector = (s: State) => s.notifications.eventTriggered;
 
-export const notificationsDataOfUserSelector = (s: State) =>
-  s.notifications.dataOfUser;
+export const notificationsDataOfUserSelector = (s: State) => s.notifications.dataOfUser;
 
 export default handleActions(handlers, initialState);

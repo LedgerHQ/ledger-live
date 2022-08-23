@@ -111,7 +111,6 @@ export const ManagerUninstallBTCDep = createCustomErrorClass(
   "ManagerUninstallBTCDep"
 );
 export const NetworkDown = createCustomErrorClass("NetworkDown");
-export const NetworkError = createCustomErrorClass("NetworkError");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
 export const NotEnoughBalanceToDelegate = createCustomErrorClass(

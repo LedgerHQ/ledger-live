@@ -15,8 +15,8 @@ type Props = {
   disabled?: boolean;
   withArrow?: boolean;
   description?: React.ReactNode;
-  onSelect?: (_: Device) => any;
-  onBluetoothDeviceAction?: (_: Device) => any;
+  onSelect?: (arg0: Device) => any;
+  onBluetoothDeviceAction?: (arg0: Device) => any;
 };
 
 const iconByFamily: Record<string, IconType> = {
