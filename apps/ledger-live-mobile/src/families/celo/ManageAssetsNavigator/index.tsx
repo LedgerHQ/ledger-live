@@ -117,6 +117,7 @@ function ManageAssetsNavigator() {
   // }, [onNavigate]);
 
   const isRegistered = (account as CeloAccount).celoResources?.registrationStatus;
+  const unlockingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
 
   return (
     <SafeAreaView
@@ -146,7 +147,7 @@ function ManageAssetsNavigator() {
         type="main"
         title={t("celo.manage.unlock.title")}
         containerStyle={styles.button}
-        disabled={true}
+        disabled={!unlockingEnabled}
       />
       <Button
         event="Celo Withdraw Click"
