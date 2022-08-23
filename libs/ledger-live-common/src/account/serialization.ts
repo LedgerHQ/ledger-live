@@ -811,8 +811,8 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     case "bitcoin": {
       const bitcoinResourcesRaw = (rawAccount as BitcoinAccountRaw)
         .bitcoinResources;
-        (res as BitcoinAccount).bitcoinResources =
-          fromBitcoinResourcesRaw(bitcoinResourcesRaw);
+      (res as BitcoinAccount).bitcoinResources =
+        fromBitcoinResourcesRaw(bitcoinResourcesRaw);
       break;
     }
     case "algorand": {
