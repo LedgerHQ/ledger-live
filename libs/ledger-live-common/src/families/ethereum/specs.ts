@@ -15,7 +15,7 @@ import {
 import { getSupplyMax } from "./modules/compound";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
-import { getGasLimit } from "./transaction";
+import { EIP1559ShouldBeUsed, getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
@@ -46,9 +46,11 @@ const ethereumBasicMutations = ({ maxAccount }) => [
         Date.now() - operation.date > 60000,
         "operation time to be older than 60s"
       );
-      const estimatedGas = getGasLimit(transaction).times(
-        transaction.gasPrice || 0
-      );
+      let gasPrice = EIP1559ShouldBeUsed(account.currency) ?
+        transaction.maxBaseFeePerGas.plus(transaction.maxPriorityFeePerGas) :
+        transaction.gasPrice;
+      gasPrice = gasPrice || 0;
+      const estimatedGas = getGasLimit(transaction).times(gasPrice);
       expect(operation.fee.toNumber()).toBeLessThanOrEqual(
         estimatedGas.toNumber()
       );
@@ -379,7 +381,7 @@ const ethereumGoerli: AppSpec<Transaction> = {
   name: "Ethereum Goerli",
   currency: getCryptoCurrencyById("ethereum_goerli"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+  model: DeviceModelId.nanoS,
     appName: "Ethereum",
   },
   testTimeout,

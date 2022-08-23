@@ -119,9 +119,9 @@ export const formatTransaction = (
   })();
   let feesMessage: string;
   if (EIP1559ShouldBeUsed(mainAccount.currency)) {
-    feesMessage = `with maxFeePerGas=${formatCurrencyUnit(
+    feesMessage = `with maxBaseFeePerGas=${formatCurrencyUnit(
       mainAccount.currency.units[1] || mainAccount.currency.units[0],
-      t.maxFeePerGas || new BigNumber(0)
+      t.maxBaseFeePerGas || new BigNumber(0)
     )}\n`
       + `with maxPriorityFeePerGas=${formatCurrencyUnit(
       mainAccount.currency.units[1] || mainAccount.currency.units[0],
@@ -141,15 +141,8 @@ with gasLimit=${gasLimit.toString()}`;
 };
 
 const defaultGasLimit = new BigNumber(0x5208);
-const defaultPriorityFee = new BigNumber(0x01);
-const defaultBaseFee = new BigNumber(0xFF);
 export const getGasLimit = (t: Transaction): BigNumber =>
   t.userGasLimit || t.estimatedGasLimit || defaultGasLimit;
-export const getMaxPriorityFeePerGas = (t: Transaction): BigNumber =>
-  t.maxPriorityFeePerGas || defaultPriorityFee;
-export const getMaxFeePerGass = (t: Transaction): BigNumber =>
-  t.maxPriorityFeePerGas || t.maxFeePerGas || defaultBaseFee;
-  // KZQ only for testing now
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -161,7 +154,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     data: tr.data ? Buffer.from(tr.data, "hex") : undefined,
     family: tr.family,
     gasPrice: tr.gasPrice ? new BigNumber(tr.gasPrice) : null,
-    maxFeePerGas: tr.maxFeePerGas ? new BigNumber(tr.maxFeePerGas) : null,
+    maxBaseFeePerGas: tr.maxBaseFeePerGas ? new BigNumber(tr.maxBaseFeePerGas) : null,
     maxPriorityFeePerGas: tr.maxPriorityFeePerGas ? new BigNumber(tr.maxPriorityFeePerGas) : null,
     userGasLimit: tr.userGasLimit ? new BigNumber(tr.userGasLimit) : null,
     estimatedGasLimit: tr.estimatedGasLimit
@@ -172,7 +165,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       gasPrice: networkInfo.gasPrice ? fromRangeRaw(networkInfo.gasPrice) : undefined,
-      maxFeePerGas: networkInfo.maxFeePerGas ? new BigNumber(networkInfo.maxFeePerGas) : undefined,
+      nextBaseFeePerGas: networkInfo.nextBaseFeePerGas ? new BigNumber(networkInfo.nextBaseFeePerGas) : undefined,
       maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas ? fromRangeRaw(networkInfo.maxPriorityFeePerGas) : undefined,
     },
     allowZeroAmount: tr.allowZeroAmount,
@@ -193,7 +186,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     data: t.data ? t.data.toString("hex") : undefined,
     gasPrice: t.gasPrice ? t.gasPrice.toString() : null,
-    maxFeePerGas: t.maxFeePerGas ? t.maxFeePerGas.toString() : null,
+    maxBaseFeePerGas: t.maxBaseFeePerGas ? t.maxBaseFeePerGas.toString() : null,
     maxPriorityFeePerGas: t.maxPriorityFeePerGas ? t.maxPriorityFeePerGas.toString() : null,
     userGasLimit: t.userGasLimit ? t.userGasLimit.toString() : null,
     estimatedGasLimit: t.estimatedGasLimit
@@ -204,7 +197,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       gasPrice: networkInfo.gasPrice ? toRangeRaw(networkInfo.gasPrice) : undefined,
-      maxFeePerGas: networkInfo?.maxFeePerGas?.toString(),
+      nextBaseFeePerGas: networkInfo?.nextBaseFeePerGas?.toString(),
       maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas ? toRangeRaw(networkInfo.maxPriorityFeePerGas) : undefined,
     },
     allowZeroAmount: t.allowZeroAmount,
@@ -258,7 +251,7 @@ export function buildEthereumTx(
   nonce: number
 ) {
   const { currency } = account;
-  const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = transaction;
+  const { gasPrice, maxBaseFeePerGas, maxPriorityFeePerGas } = transaction;
   const subAccount = inferTokenAccount(account, transaction);
   invariant(
     !subAccount || subAccount.type === "TokenAccount",
@@ -282,10 +275,8 @@ export function buildEthereumTx(
   );
   let tx: FeeMarketEIP1559Transaction | LegacyEthereumTx
   if (EIP1559ShouldBeUsed(currency)) {
-    const maxFeePerGasNow = maxPriorityFeePerGas
-    ethTxObject.maxFeePerGas = `0x${new BigNumber(maxFeePerGasNow || 0).toString(16)}`;
+    ethTxObject.maxFeePerGas = `0x${new BigNumber(maxBaseFeePerGas || 0).plus(new BigNumber(maxPriorityFeePerGas || 0)).toString(16)}`;
     ethTxObject.maxPriorityFeePerGas = `0x${new BigNumber(maxPriorityFeePerGas || 0).toString(16)}`;
-    // ethTxObject.type = "0x02";
     log("ethereum", "buildFeeMarketEIP1559Transaction", ethTxObject);
     tx = new FeeMarketEIP1559Transaction(ethTxObject, { common });
   } else {
@@ -309,7 +300,11 @@ export function inferEthereumGasLimitRequest(
     amplifier: "1",
   };
 
-  if (transaction.gasPrice) {
+  if (EIP1559ShouldBeUsed(account.currency)) {
+    if (transaction.maxBaseFeePerGas && transaction.maxPriorityFeePerGas) {
+      r.gasPrice = "0x" + transaction.maxBaseFeePerGas.plus(transaction.maxPriorityFeePerGas).toString();
+    }
+  } else if (transaction.gasPrice) {
     r.gasPrice = "0x" + transaction.gasPrice.toString();
   }
 
