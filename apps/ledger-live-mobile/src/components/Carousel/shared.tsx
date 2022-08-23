@@ -1,6 +1,5 @@
 import React from "react";
 import { urls } from "../../config/urls";
-// eslint-disable-next-line import/no-cycle
 import Slide, { SlideProps } from "./Slide";
 import Illustration from "../../images/illustration/Illustration";
 import { width } from "../../helpers/normalizeSize";

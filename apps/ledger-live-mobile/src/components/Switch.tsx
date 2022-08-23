@@ -3,7 +3,7 @@ import { Switch as RNSwitch } from "@ledgerhq/native-ui";
 
 type SwitchProps = {
   value: boolean;
-  onValueChange?: (_: boolean) => void;
+  onValueChange?: (value: boolean) => void;
   disabled?: boolean;
   label?: string;
 };

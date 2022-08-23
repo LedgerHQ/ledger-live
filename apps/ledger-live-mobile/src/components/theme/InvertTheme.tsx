@@ -1,5 +1,6 @@
-import React from "react";
-import { useTheme } from "styled-components/native";
+import React, { useMemo } from "react";
+import { ThemeProvider, useTheme } from "styled-components/native";
+import { defaultTheme, palettes } from "@ledgerhq/native-ui/styles";
 import StyleProvider from "../../StyleProvider";
 
 export default function InvertTheme({

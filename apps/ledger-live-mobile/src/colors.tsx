@@ -9,17 +9,29 @@ export const ensureContrast = (color1: string, color2: string) => {
   const lRatio = colorL1 > colorL2 ? colorL1 / colorL2 : colorL2 / colorL1;
 
   if (lRatio < 1.5) {
-    return color(color1).rotate(180).negate().string();
+    return color(color1)
+      .rotate(180)
+      .negate()
+      .string();
   }
   return color1;
 };
 
 export const rgba = (c: string, a: number) =>
-  color(c).alpha(a).rgb().toString();
+  color(c)
+    .alpha(a)
+    .rgb()
+    .toString();
 
-export const darken = (c: string, a: number) => color(c).darken(a).toString();
+export const darken = (c: string, a: number) =>
+  color(c)
+    .darken(a)
+    .toString();
 
-export const lighten = (c: string, a: number) => color(c).lighten(a).toString();
+export const lighten = (c: string, a: number) =>
+  color(c)
+    .lighten(a)
+    .toString();
 
 export function withTheme(Component: React.ElementType) {
   return (props: any) => {

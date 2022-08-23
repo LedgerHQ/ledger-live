@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback } from "react";
 import { TouchableOpacity, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
@@ -16,8 +15,8 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  closeModal: any;
-  setStep: any;
+  closeModal: Function;
+  setStep: Function;
 };
 
 const Disappointed = ({ closeModal, setStep }: Props) => {

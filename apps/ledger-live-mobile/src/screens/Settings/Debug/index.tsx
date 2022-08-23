@@ -53,7 +53,7 @@ export function DebugMocks() {
       <OpenLottie />
       <OpenDebugPlayground />
       <ReadOnlyModeRow />
-      <HasOrderedNanoRow />
+      <HasOrderedNanoRow/>
       <MockModeRow />
       <AnalyticsConsoleRow />
       <AddMockAnnouncementButton title="Mock a new announcement" />

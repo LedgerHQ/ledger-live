@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import {
   Flex,
   Text,
@@ -31,8 +30,10 @@ const ConfirmRecoveryStep = ({
   device,
 }: Props) => {
   const { t } = useTranslation();
-  const [confirmRecoveryPhraseBackup, setConfirmRecoveryPhraseBackup] =
-    useState(false);
+  const [
+    confirmRecoveryPhraseBackup,
+    setConfirmRecoveryPhraseBackup,
+  ] = useState(false);
 
   const toggleConfirmRecoveryPhraseBackup = useCallback(() => {
     track("FirmwareUpdateSeedDisclaimerChecked");

@@ -10,11 +10,11 @@ import FilterModalComponent from "../Modals/FilterModal";
 
 type Props = {
   filter: string;
-  setFilter: (_: string) => void;
+  setFilter: (filter: string) => void;
   sort: string;
-  setSort: (_: string) => void;
+  setSort: (sort: string) => void;
   order: string;
-  setOrder: (_: string) => void;
+  setOrder: (order: string) => void;
   disabled: boolean;
   filters: string[];
 };
@@ -36,6 +36,7 @@ const AppFilter = ({
   order,
   setOrder,
   disabled,
+  filters = [],
 }: Props) => {
   const [isOpened, setOpenModal] = useState(false);
   const openModal = useCallback(() => setOpenModal(true), [setOpenModal]);

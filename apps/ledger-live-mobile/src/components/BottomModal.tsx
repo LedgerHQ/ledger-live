@@ -20,7 +20,6 @@ export type Props = {
 
 const BottomModal = ({
   isOpened,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onClose = () => {},
   children,
   style,

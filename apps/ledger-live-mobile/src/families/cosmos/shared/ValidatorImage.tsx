@@ -4,6 +4,7 @@ import Circle from "../../../components/Circle";
 import FirstLetterIcon from "../../../components/FirstLetterIcon";
 import LedgerLogo from "../../../icons/LiveLogo";
 
+
 type Props = {
   size?: number;
   isLedger?: boolean;

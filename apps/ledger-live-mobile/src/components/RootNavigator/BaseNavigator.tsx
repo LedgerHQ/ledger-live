@@ -20,14 +20,10 @@ import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
 import WalletConnectScan from "../../screens/WalletConnect/Scan";
 import WalletConnectConnect from "../../screens/WalletConnect/Connect";
 import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
-// eslint-disable-next-line import/no-unresolved
 import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
-// eslint-disable-next-line import/no-cycle
 import Main from "./MainNavigator";
-// eslint-disable-next-line import/no-cycle
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
-// eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import SendFundsNavigator from "./SendFundsNavigator";
@@ -46,7 +42,6 @@ import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
-// eslint-disable-next-line import/no-cycle
 import SwapNavigator from "./SwapNavigator";
 import LendingNavigator from "./LendingNavigator";
 import LendingInfoNavigator from "./LendingInfoNavigator";
@@ -68,7 +63,6 @@ import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
 import PlatformApp from "../../screens/Platform/App";
-// eslint-disable-next-line import/no-cycle
 import AccountsNavigator from "./AccountsNavigator";
 
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
@@ -80,7 +74,6 @@ import ExchangeStackNavigator from "./ExchangeStackNavigator";
 
 import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
 import Learn from "../../screens/Learn";
-// eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 

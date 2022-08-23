@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
   root: { paddingTop: 16, paddingBottom: 64 },
 });
 
-const SettingsNavigationScrollView = styled(NavigationScrollView).attrs({
+export const SettingsNavigationScrollView = styled(NavigationScrollView).attrs({
   contentContainerStyle: styles.root,
 })``;
 

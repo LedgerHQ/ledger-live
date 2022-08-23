@@ -11,7 +11,7 @@ import { Text } from "@ledgerhq/native-ui";
 import Skeleton from "./Skeleton";
 
 type Props = {
-  style?: any;
+  style?: Object;
   operation: Operation;
   account: AccountLike;
   parentAccount?: Account | null;

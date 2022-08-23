@@ -1,3 +1,5 @@
+// @flow
+
 import React, { memo, useCallback, useState } from "react";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
@@ -30,7 +32,6 @@ const mapDispatchToProps = {
 type Props = {
   navigation: any;
   route: { params: RouteParams };
-  // eslint-disable-next-line no-unused-vars
   saveBleDeviceName: (d: string, v: string) => void;
 };
 

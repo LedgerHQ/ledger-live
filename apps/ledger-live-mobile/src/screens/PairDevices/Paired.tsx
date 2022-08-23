@@ -9,7 +9,7 @@ import { TrackScreen } from "../../analytics";
 
 type Props = {
   device: Device;
-  onContinue: (_: Device) => void;
+  onContinue: (device: Device) => void;
   genuine: boolean;
 };
 

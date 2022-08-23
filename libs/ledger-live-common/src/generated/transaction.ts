@@ -9,7 +9,6 @@ import ethereum from "../families/ethereum/transaction";
 import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
 import neo from "../families/neo/transaction";
-import osmosis from "../families/osmosis/transaction";
 import polkadot from "../families/polkadot/transaction";
 import ripple from "../families/ripple/transaction";
 import solana from "../families/solana/transaction";
@@ -29,7 +28,6 @@ export default {
   filecoin,
   hedera,
   neo,
-  osmosis,
   polkadot,
   ripple,
   solana,

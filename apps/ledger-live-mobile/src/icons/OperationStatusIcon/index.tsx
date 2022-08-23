@@ -5,7 +5,6 @@ import {
   DEFAULT_BOX_SIZE,
   DEFAULT_ICON_SIZE,
   DEFAULT_BADGE_SIZE,
-  // eslint-disable-next-line import/no-unresolved
 } from "@ledgerhq/native-ui/components/Icon/BoxedIcon";
 
 const iconsComponent = {
@@ -40,7 +39,7 @@ const iconsComponent = {
   NFT_OUT: Icons.ArrowTopMedium,
 };
 
-const OperationStatusIcon = ({
+export const OperationStatusIcon = ({
   type,
   confirmed,
   failed,

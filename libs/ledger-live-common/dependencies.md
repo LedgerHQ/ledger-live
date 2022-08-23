@@ -15,11 +15,9 @@ yarn upgrade-interactive -i --latest
 | @celo/wallet-ledger                         | Celo coin integration                                             | monthly                                                              |
 | @cosmjs/amino                               | Cosmos coin integration                                           | monthly                                                              |
 | @cosmjs/crypto                              | Cosmos coin integration                                           | monthly                                                              |
-| @cosmjs/ledger-amino                        | Osmosis coin integration                                          | TBD, planning to remove soon                                         |
 | @cosmjs/proto-signing                       | Cosmos coin integration                                           | monthly                                                              |
 | @cosmjs/stargate                            | Cosmos coin integration                                           | monthly                                                              |
 | @crypto-com/chain-jslib                     | Crypto.com coin integration                                       | monthly                                                              |
-| @keplr-wallet/cosmos                        | Osmosis coin integration                                          | TBD, planning to remove                                              |
 | @ethereumjs/common                          | Ethereum coin integration                                         | monthly                                                              |
 | @ethereumjs/tx                              | Ethereum coin integration                                         | monthly                                                              |
 | @ledgerhq/compressjs                        | used for LiveQR feature                                           | stable                                                               |
@@ -88,7 +86,6 @@ yarn upgrade-interactive -i --latest
 | json-rpc-2.0                                | Ethereum coin integration                                         | monthly                                                              |
 | leb128                                      | Filecoin coin integration                                         | monthly                                                              |
 | lodash                                      | generic helper                                                    | monthly                                                              |
-| long                                        | Osmosis coin integration                                          | monthly                                                              |
 | lru-cache                                   | generic helper                                                    | monthly                                                              |
 | numeral                                     | for very concise amount display (on graph)                        | monthly – **TBD if can be dropped**                                  |
 | object-hash                                 | Solana coin integration                                           | monthly                                                              |

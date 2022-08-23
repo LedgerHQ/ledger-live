@@ -10,5 +10,4 @@ export type TopBarConfig = {
   shouldDisplayName?: boolean,
   shouldDisplayInfo?: boolean,
   shouldDisplayClose?: boolean,
-  shouldDisplayNavigation?: boolean,
 };

@@ -41,10 +41,9 @@ pnpm i
 ```
 
 ## Dev
-
 ```bash
 # launch a watch mode on the source files and recompiles on the fly
-pnpm dev:cli
+pnpm dev:cli 
 ```
 
 ## Run
@@ -63,7 +62,7 @@ pnpm build:cli
 
 # Documentation
 
-`````
+```
 Usage: ledger-live <command> ...
 
 Usage: ledger-live cosmosValidators
@@ -253,7 +252,7 @@ Usage: ledger-live generateTestTransaction # Generate a test for transaction (li
  -E, --excludeUTXO <String>   : exclude utxo by their txhash@index (example: -E hash@3 -E hash@0)
      --rbf                    : enable replace-by-fee
      --bitcoin-pick-strategy <String>: utxo picking strategy, one of: DEEP_OUTPUTS_FIRST | OPTIMIZE_SIZE | MERGE_OUTPUTS
-     --sourceValidator <String>: for redelegate, add a source validator
+     --cosmosSourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
      --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
@@ -315,7 +314,7 @@ Usage: ledger-live getTransactionStatus # Prepare a transaction and returns 'Tra
  -E, --excludeUTXO <String>   : exclude utxo by their txhash@index (example: -E hash@3 -E hash@0)
      --rbf                    : enable replace-by-fee
      --bitcoin-pick-strategy <String>: utxo picking strategy, one of: DEEP_OUTPUTS_FIRST | OPTIMIZE_SIZE | MERGE_OUTPUTS
-     --sourceValidator <String>: for redelegate, add a source validator
+     --cosmosSourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
      --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
@@ -458,7 +457,7 @@ Usage: ledger-live send       # Send crypto-assets
  -E, --excludeUTXO <String>   : exclude utxo by their txhash@index (example: -E hash@3 -E hash@0)
      --rbf                    : enable replace-by-fee
      --bitcoin-pick-strategy <String>: utxo picking strategy, one of: DEEP_OUTPUTS_FIRST | OPTIMIZE_SIZE | MERGE_OUTPUTS
-     --sourceValidator <String>: for redelegate, add a source validator
+     --cosmosSourceValidator <String>: for redelegate, add a source validator
      --cosmosValidator <String>: address of recipient validator that will receive the delegate
      --cosmosAmountValidator <String>: Amount that the validator will receive
      --tokenId <String>       : determine the tokenId of an NFT (related to the --colection)
@@ -584,4 +583,4 @@ Usage: ledger-live walletconnect # Create a walletconnect session
                     :::::::-.`
                     ....``
 
-`````
+```

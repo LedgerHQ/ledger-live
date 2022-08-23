@@ -17,7 +17,7 @@ import CurrencyIcon from "../../../../components/CurrencyIcon";
 type Props = {
   confirmationsNb: number;
   navigation: any;
-  updateCurrencySettings: any;
+  updateCurrencySettings: Function;
   defaults: any;
   currency: CryptoCurrency;
 };

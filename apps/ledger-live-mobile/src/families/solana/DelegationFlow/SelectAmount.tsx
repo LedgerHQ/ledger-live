@@ -18,7 +18,6 @@ import {
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import { Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import CancelButton from "../../../components/CancelButton";
@@ -26,6 +25,7 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import ExternalLink from "../../../components/ExternalLink";
 import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
 import KeyboardView from "../../../components/KeyboardView";
+import { Text } from "@ledgerhq/native-ui";
 import RetryButton from "../../../components/RetryButton";
 import Touchable from "../../../components/Touchable";
 import { urls } from "../../../config/urls";
@@ -58,8 +58,14 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account);
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => ({
+  const {
+    transaction,
+    setTransaction,
+    status,
+    bridgePending,
+    bridgeError,
+  } = useBridgeTransaction(() => {
+    return {
       account,
       transaction: {
         ...bridge.createTransaction(account),
@@ -72,24 +78,31 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
           },
         },
       },
-    }));
+    };
+  });
 
   invariant(transaction, "transaction must be defined");
 
   useEffect(() => {
     let cancelled = false;
-    bridge.estimateMaxSpendable({ account, transaction }).then(estimate => {
-      if (cancelled) return;
-      setMaxSpendable(estimate.toNumber());
-    });
+    bridge
+      .estimateMaxSpendable({ account, transaction: transaction })
+      .then(estimate => {
+        if (cancelled) return;
+        setMaxSpendable(estimate.toNumber());
+      });
 
     return () => {
       cancelled = true;
     };
   }, [transaction, setMaxSpendable]);
 
-  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } =
-    useModalInfo();
+  const {
+    modalInfos,
+    modalInfoName,
+    openInfoModal,
+    closeInfoModal,
+  } = useModalInfo();
 
   const onChange = (amount: BigNumber) => {
     setTransaction(bridge.updateTransaction(transaction, { amount }));
@@ -244,7 +257,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 function useModalInfo(): {
   modalInfos: Record<ModalInfoName, ModalInfo[]>;
   modalInfoName: ModalInfoName | null;
-  openInfoModal: (_: ModalInfoName) => void;
+  openInfoModal: (infoName: ModalInfoName) => void;
   closeInfoModal: () => void;
 } {
   const { t } = useTranslation();

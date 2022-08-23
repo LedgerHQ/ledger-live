@@ -19,7 +19,7 @@ type Props = {
   stakeWithMeta: SolanaStakeWithMeta;
   currency: Currency;
   unit: Unit;
-  onPress: (_: SolanaStakeWithMeta) => void;
+  onPress: (stakeWithMeta: SolanaStakeWithMeta) => void;
   isLast?: boolean;
 };
 

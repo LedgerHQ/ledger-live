@@ -41,7 +41,7 @@ export interface BaseButtonProps extends Omit<ButtonProps, "type"> {
   type?: string;
   // for analytics
   event?: string;
-  eventProperties?: any;
+  eventProperties?: Object;
   // for testing
   testID?: string;
 }

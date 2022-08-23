@@ -34,7 +34,7 @@ const AccountBodyHeader = function() {
       <CardContent>
         <CardHeaderContainer>
           <InfoCircle size={12} />
-          <CardHeader>{t("cardano.account.stakingRewardsBanner.cardTitle")}</CardHeader>
+          <CardHeader>{t("cardano.account.subHeader.cardTitle")}</CardHeader>
         </CardHeaderContainer>
       </CardContent>
     </Card>

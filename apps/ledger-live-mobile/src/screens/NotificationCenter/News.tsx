@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SectionList, RefreshControl, View } from "react-native";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { groupAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/helpers";

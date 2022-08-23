@@ -13,7 +13,7 @@ const Bar = styled.div<{ on?: boolean; fill: string | number }>`
   transition: all 600ms linear;
   height: 4px;
   border-radius: 2px;
-  /* Disable left/right border radius to match the handler */
+  // Disable left/right border radius to match the handler
   border-top-${(p) => (p.on ? "right" : "left")}-radius: 0;
   border-bottom-${(p) => (p.on ? "right" : "left")}-radius: 0;
   flex: ${(p) => p.fill};

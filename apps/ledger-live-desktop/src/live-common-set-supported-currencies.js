@@ -28,7 +28,6 @@ setSupportedCurrencies([
   "decred",
   "digibyte",
   "algorand",
-  "osmosis",
   "qtum",
   "bitcoin_gold",
   "komodo",
@@ -44,5 +43,4 @@ setSupportedCurrencies([
   "cosmos_testnet",
   "hedera",
   "cardano",
-  "filecoin",
 ]);

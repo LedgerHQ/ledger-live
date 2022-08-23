@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
 import type { CardanoAccount, Transaction } from "./types";
@@ -29,7 +28,7 @@ const estimateMaxSpendable = async ({
   }
 
   const dummyRecipient =
-    "addr1qyqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqv2t5am";
+    "addr_test1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq0uk53y";
   const a = getMainAccount(account, parentAccount);
   const t: Transaction = {
     ...createTransaction(),
@@ -43,7 +42,6 @@ const estimateMaxSpendable = async ({
   try {
     typhonTransaction = await buildTransaction(a as CardanoAccount, t);
   } catch (error) {
-    log("cardano-error", "Failed to estimate max spendable: " + String(error));
     return new BigNumber(0);
   }
   const transactionAmount = typhonTransaction

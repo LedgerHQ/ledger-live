@@ -1,24 +1,19 @@
 // @flow
 
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
+import Box from "~/renderer/components/Box";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import TabBar from "~/renderer/components/TabBar";
+import Card from "~/renderer/components/Box/Card";
+import OnRamp from "./Buy";
+import OffRamp from "./Sell";
+import { useExchangeProvider } from "./hooks";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import type { RampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
-import Box from "~/renderer/components/Box";
-import Card from "~/renderer/components/Box/Card";
-import TabBar from "~/renderer/components/TabBar";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import OnRamp from "./Buy";
-import { useExchangeProvider } from "./hooks";
-import OffRamp from "./Sell";
-
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
-import useTheme from "~/renderer/hooks/useTheme";
 
 const Container: ThemedComponent<{ selectable: boolean, pb: number }> = styled(Box)`
   flex: 1;
@@ -52,41 +47,7 @@ type QueryParams = {
   defaultTicker?: string,
 };
 
-const DEFAULT_MULTIBUY_APP_ID = "multibuy";
-
-// Exchange (Buy / Sell) as a live app screen
-const LiveAppExchange = ({ appId }: { appId: string }) => {
-  const { state: urlParams } = useLocation();
-
-  const manifest = useRemoteLiveAppManifest(appId);
-
-  const themeType = useTheme("colors.palette.type");
-
-  return (
-    <Card grow style={{ overflow: "hidden" }}>
-      {manifest ? (
-        <WebPlatformPlayer
-          config={{
-            topBarConfig: {
-              shouldDisplayName: false,
-              shouldDisplayInfo: false,
-              shouldDisplayClose: false,
-              shouldDisplayNavigation: true,
-            },
-          }}
-          manifest={manifest}
-          inputs={{
-            theme: themeType,
-            ...urlParams,
-          }}
-        />
-      ) : null}
-    </Card>
-  );
-};
-
-// Legacy native Exchange (Buy / Sell) screen, should be deprecated soonish
-const LegacyExchange = () => {
+const Exchange = () => {
   const rampCatalog = useRampCatalog();
 
   const location = useLocation();
@@ -122,19 +83,6 @@ const LegacyExchange = () => {
       </Card>
     </Container>
   );
-};
-
-const Exchange = () => {
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
-
-  if (ptxSmartRouting?.enabled) {
-    return (
-      <LiveAppExchange appId={ptxSmartRouting?.params?.liveAppId ?? DEFAULT_MULTIBUY_APP_ID} />
-    );
-  }
-
-  return <LegacyExchange />;
 };
 
 export default Exchange;

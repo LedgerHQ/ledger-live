@@ -9,10 +9,8 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { Account } from "@ledgerhq/types-live";
 import { Result } from "@ledgerhq/live-common/cross";
-import {
-  ImportItem,
-  importAccountsMakeItems,
-} from "@ledgerhq/live-common/account/index";
+import { ImportItem } from "@ledgerhq/live-common/account/index";
+import { importAccountsMakeItems } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 
 import { compose } from "redux";
@@ -37,11 +35,11 @@ type Props = {
   navigation: any;
   route: { params: RouteParams };
   accounts: Account[];
-  importAccounts: (_: {
+  importAccounts: (d: {
     items: ImportItem[];
     selectedAccounts: string[];
   }) => void;
-  importDesktopSettings: (_: any) => void;
+  importDesktopSettings: (settings: any) => void;
 };
 
 type RouteParams = {

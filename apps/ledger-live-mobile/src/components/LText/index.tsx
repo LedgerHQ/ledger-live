@@ -2,7 +2,6 @@ import React, { useMemo, memo } from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
 import { FontWeightTypes } from "@ledgerhq/native-ui/components/Text/getTextStyle";
-// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "./getFontStyle";
 
 export { getFontStyle };
@@ -56,10 +55,10 @@ const inferFontWeight = ({
  * @deprecated Please, prefer using the Text component from our design-system if possible.
  */
 function LText({ color, children, semiBold, bold, ...props }: Opts) {
-  const fontWeight = useMemo(
-    () => inferFontWeight({ semiBold, bold }),
-    [semiBold, bold],
-  );
+  const fontWeight = useMemo(() => inferFontWeight({ semiBold, bold }), [
+    semiBold,
+    bold,
+  ]);
   return (
     <Text {...props} fontWeight={fontWeight} color={color}>
       {children}

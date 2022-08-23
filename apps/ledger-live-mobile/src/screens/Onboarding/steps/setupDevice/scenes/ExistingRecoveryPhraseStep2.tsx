@@ -7,12 +7,14 @@ const items = [
   {
     title:
       "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.2.title",
-    desc: "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.2.label",
+    desc:
+      "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.2.label",
   },
   {
     title:
       "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.3.title",
-    desc: "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.3.label",
+    desc:
+      "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.3.label",
   },
   {
     title:

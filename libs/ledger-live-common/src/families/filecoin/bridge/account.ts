@@ -82,19 +82,12 @@ const getTransactionStatus = async (
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
 
-  let totalSpent;
-  if (useAllAmount) {
-    totalSpent = a.spendableBalance;
-    amount = totalSpent.minus(estimatedFees);
-    if (amount.lte(0) || totalSpent.gt(balance)) {
-      errors.amount = new NotEnoughBalance();
-    }
+  const totalSpent = useAllAmount ? balance : amount.plus(estimatedFees);
+  if (totalSpent.gt(a.spendableBalance)) {
+    errors.amount = new NotEnoughBalance();
   } else {
-    totalSpent = amount.plus(estimatedFees);
-    if (amount.eq(0)) {
-      errors.amount = new AmountRequired();
-    } else if (totalSpent.gt(a.spendableBalance))
-      errors.amount = new NotEnoughBalance();
+    amount = useAllAmount ? balance.minus(estimatedFees) : amount;
+    if (amount.lte(0)) errors.amount = new AmountRequired();
   }
 
   // log("debug", "[getTransactionStatus] finish fn");

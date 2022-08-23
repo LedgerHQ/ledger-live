@@ -14,8 +14,8 @@ export const defaultNavigationOptions = {
 
 export const getStackNavigatorConfig = (
   c: any,
-  closable = false,
-  onClose?: any,
+  closable: boolean = false,
+  onClose?: Function,
 ) => ({
   ...defaultNavigationOptions,
   cardStyle: { backgroundColor: c.background.main || c.background },

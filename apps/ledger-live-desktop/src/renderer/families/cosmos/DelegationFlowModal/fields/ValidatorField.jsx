@@ -3,7 +3,7 @@ import React, { useState, useCallback, useMemo } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
 
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -11,7 +11,7 @@ import Text from "~/renderer/components/Text";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import { Trans } from "react-i18next";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
+import ValidatorRow from "~/renderer/families/cosmos/shared/components/ValidatorRow";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -42,8 +42,7 @@ const ValidatorField = ({
   const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
   const unit = getAccountUnit(account);
-  const currencyName = account.currency.name.toLowerCase();
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName, search);
+  const validators = useLedgerFirstShuffledValidatorsCosmos(search);
 
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
 

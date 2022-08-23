@@ -20,7 +20,6 @@ import { knownDevicesSelector } from "../../reducers/ble";
 import { setHasConnectedDevice } from "../../actions/appstate";
 import DeviceItem from "./DeviceItem";
 import BluetoothEmpty from "./BluetoothEmpty";
-// eslint-disable-next-line import/no-unresolved
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";
@@ -34,12 +33,12 @@ import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.js
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 
 type Props = {
-  onBluetoothDeviceAction?: (_: Device) => void;
-  onSelect: (_: Device) => void;
+  onBluetoothDeviceAction?: (device: Device) => void;
+  onSelect: (device: Device) => void;
   onWithoutDevice?: () => void;
   withArrows?: boolean;
   usbOnly?: boolean;
-  filter?: (_: TransportModule) => boolean;
+  filter?: (transportModule: TransportModule) => boolean;
   autoSelectOnAdd?: boolean;
   hideAnimation?: boolean;
 };
@@ -64,7 +63,7 @@ export default function SelectDevice({
     deviceInfo => {
       const { modelId, wired } = deviceInfo;
 
-      dispatch(setLastConnectedDevice(deviceInfo));
+      dispatch(setLastConnectedDevice(deviceInfo));  
       if (wired) {
         track("Device selection", {
           modelId,

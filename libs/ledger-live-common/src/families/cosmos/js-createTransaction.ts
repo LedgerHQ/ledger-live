@@ -16,7 +16,7 @@ const createTransaction = (): Transaction => ({
   useAllAmount: false,
   networkInfo: null,
   memo: null,
-  sourceValidator: null,
+  cosmosSourceValidator: null,
   validators: [] as CosmosDelegationInfo[],
 });
 

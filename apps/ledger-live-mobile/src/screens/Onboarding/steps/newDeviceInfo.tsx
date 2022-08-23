@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useTranslation } from "react-i18next";
-import { Flex, Carousel, Text, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, Carousel, Text, Link, Button, Icons } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -55,6 +55,8 @@ const FooterNextButton = ({ label }: { label: string }) => {
   const route = useRoute();
 
   const next = useCallback(() => {
+    // TODO: FIX @react-navigation/native using Typescript
+    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingSetNewDevice, { ...route.params });
   }, [navigation, route.params]);
 

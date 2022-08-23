@@ -26,6 +26,7 @@ export function SelectFees({ navigation, route }: SelectFeesProps) {
     },
     [navigation, route.params],
   );
+
   return (
     <SafeAreaView style={[styles.root]}>
       <TrackScreen
@@ -57,6 +58,7 @@ export function SelectFees({ navigation, route }: SelectFeesProps) {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,

@@ -15,7 +15,7 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  closeModal: any;
+  closeModal: Function;
 };
 
 const Enjoy = ({ closeModal }: Props) => {

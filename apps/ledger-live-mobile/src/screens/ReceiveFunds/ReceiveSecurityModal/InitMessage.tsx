@@ -14,8 +14,8 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  setStep: any;
-  onVerifyAddress: any;
+  setStep: Function;
+  onVerifyAddress: Function;
 };
 
 const InitMessage = ({ setStep, onVerifyAddress }: Props) => {

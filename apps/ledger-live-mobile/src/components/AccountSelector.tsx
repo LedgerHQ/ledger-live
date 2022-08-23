@@ -13,7 +13,7 @@ const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
 type Props = {
   list: AccountLike[];
-  onSelectAccount: (_: AccountLike) => void;
+  onSelectAccount: (account: AccountLike) => void;
   showAddAccount?: boolean;
   onAddAccount?: () => void;
   initialCurrencySelected?: string;

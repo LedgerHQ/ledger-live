@@ -10,7 +10,7 @@ import { ScreenName } from "../const";
 
 type Props = {
   initialQuery?: string;
-  renderList: (_: any[]) => ReactNode;
+  renderList: (list: any[]) => ReactNode;
   renderEmptySearch: () => ReactNode;
   keys?: string[];
   list: any[];

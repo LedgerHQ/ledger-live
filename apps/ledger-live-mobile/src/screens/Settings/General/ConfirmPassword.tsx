@@ -14,7 +14,7 @@ import { VIBRATION_PATTERN_ERROR } from "../../../constants";
 
 type Props = {
   t: T;
-  setPrivacy: (_: Privacy) => void;
+  setPrivacy: (privacy: Privacy) => void;
   navigation: any;
   route: any;
 };

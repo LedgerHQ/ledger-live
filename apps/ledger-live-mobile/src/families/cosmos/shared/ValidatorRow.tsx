@@ -15,7 +15,7 @@ const ValidatorRow = ({
   validator,
   account,
 }: {
-  onPress: (_: CosmosValidatorItem) => void;
+  onPress: (v: CosmosValidatorItem) => void;
   validator: CosmosValidatorItem;
   account: AccountLike;
 }) => {

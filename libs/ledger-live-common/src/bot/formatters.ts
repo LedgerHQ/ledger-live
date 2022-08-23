@@ -8,20 +8,9 @@ import {
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
 import type { Transaction } from "../generated/types";
-
-const formatTimeMinSec = (t: number) => {
-  const totalsecs = Math.round(t / 1000);
-  const min = Math.floor(totalsecs / 60);
-  const sec = totalsecs - min * 60;
-  if (!sec) return `${min}min`;
-  return `${min}min ${sec}s`;
-};
-
-export const formatTime = (t: number): string =>
+export const formatTime = (t: number) =>
   t > 3000
-    ? t > 100000
-      ? formatTimeMinSec(t)
-      : `${Math.round(t / 100) / 10}s`
+    ? `${Math.round(t / 100) / 10}s`
     : `${t < 5 ? t.toFixed(2) : t.toFixed(0)}ms`;
 
 const formatDt = (from, to) => (from && to ? formatTime(to - from) : "?");
@@ -42,7 +31,7 @@ export function formatError(e: any) {
 }
 
 export function formatReportForConsole<T extends Transaction>({
-  resyncAccountsDuration,
+  syncAllAccountsTime,
   appCandidate,
   account,
   maxSpendable,
@@ -65,9 +54,7 @@ export function formatReportForConsole<T extends Transaction>({
   error,
 }: MutationReport<T>): string {
   let str = "";
-  str += `necessary accounts resynced in ${formatTime(
-    resyncAccountsDuration
-  )}\n`;
+  str += `all accounts sync in ${formatTime(syncAllAccountsTime)}\n`;
   str += `▬ ${formatAppCandidate(appCandidate)}\n`;
 
   if (account) {

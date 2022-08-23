@@ -14,9 +14,6 @@ export const defaultFeatures: DefaultFeatures = {
       debug: false,
     },
   },
-  currencyOsmosis: {
-    enabled: false,
-  },
   ratings: {
     enabled: false,
     params: {

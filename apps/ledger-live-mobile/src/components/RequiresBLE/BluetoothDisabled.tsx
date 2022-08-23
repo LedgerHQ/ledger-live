@@ -39,5 +39,4 @@ function BluetoothDisabled() {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export default memo<{}>(BluetoothDisabled);

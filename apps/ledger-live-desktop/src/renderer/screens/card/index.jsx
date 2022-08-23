@@ -1,8 +1,8 @@
 // @flow
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import useTheme from "~/renderer/hooks/useTheme";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
@@ -33,7 +33,6 @@ export default function CardPlatformApp() {
               shouldDisplayName: false,
               shouldDisplayInfo: false,
               shouldDisplayClose: false,
-              shouldDisplayNavigation: true,
             },
           }}
           manifest={manifest}

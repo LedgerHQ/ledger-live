@@ -1,3 +1,4 @@
+/* @flow */
 import React, { Component } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 

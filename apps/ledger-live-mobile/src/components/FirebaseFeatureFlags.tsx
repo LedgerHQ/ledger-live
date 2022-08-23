@@ -12,13 +12,11 @@ import { formatFeatureId } from "./FirebaseRemoteConfig";
 
 import { languageSelector } from "../reducers/settings";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type Props = PropsWithChildren<{}>;
 
 const getFeature = (
   key: FeatureId,
   appLanguage: string,
-  // eslint-disable-next-line no-unused-vars
   localOverrides?: { [key in FeatureId]?: Feature },
 ) => {
   try {
@@ -56,9 +54,7 @@ const getFeature = (
  */
 export const getAllDivergedFlags = (
   appLanguage: string,
-  // eslint-disable-next-line no-unused-vars
 ): { [key in FeatureId]: boolean } => {
-  // eslint-disable-next-line no-unused-vars
   const res: { [key in FeatureId]: boolean } = {};
   Object.keys(defaultFeatures).forEach(key => {
     const value = getFeature(key, appLanguage);

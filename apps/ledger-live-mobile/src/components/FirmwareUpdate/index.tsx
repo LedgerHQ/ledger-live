@@ -4,13 +4,6 @@ import { NativeModules } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Button, Icons } from "@ledgerhq/native-ui";
-import { DeviceInfo } from "@ledgerhq/types-live";
-import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
-import {
-  DisconnectedDevice,
-  DisconnectedDeviceDuringOperation,
-  WebsocketConnectionError,
-} from "@ledgerhq/errors";
 import {
   BackgroundEvent,
   nextBackgroundEventSelector,
@@ -21,6 +14,7 @@ import {
 } from "../../actions/appstate";
 import BottomModal from "../BottomModal";
 import GenericErrorView from "../GenericErrorView";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import ConfirmRecoveryStep from "./ConfirmRecoveryStep";
 import FlashMcuStep from "./FlashMcuStep";
@@ -29,12 +23,17 @@ import ConfirmPinStep from "./ConfirmPinStep";
 import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
 import { track } from "../../analytics";
+import { BluetoothNotSupportedError } from "@ledgerhq/live-common/errors";
+import {
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+  WebsocketConnectionError,
+} from "@ledgerhq/errors";
 
 type Props = {
   device: Device;
   deviceInfo: DeviceInfo;
   isOpen: boolean;
-  // eslint-disable-next-line no-unused-vars
   onClose: (restoreApps?: boolean) => void;
   hasAppsToRestore: boolean;
 };

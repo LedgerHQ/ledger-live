@@ -697,17 +697,6 @@
     }
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "Mehr Infos",
-      "cardTitle" : "Powered by {{team}}",
-      "drawer" : {
-        "title" : "{{family}}-Integration",
-        "subTitle" : "Die {{family}}-Integration wurde vom {{team}}-Team durchgeführt",
-        "description" : "Ledger Live ist eine Open-Source-Plattform.",
-        "description2" : "Entwickler von überall auf der Welt können sich in unser Ledger Live integrieren",
-        "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt"
-      }
-    },
     "lastOperations" : "Letzte Aktionen",
     "contractAddress" : "Vertrag:",
     "openInExplorer" : "Öffnen im Explorer",
@@ -744,8 +733,8 @@
     "frozenAssetsTooltip" : "Gesperrte Vermögenswerte werden bei der Tron-Abstimmung verwendet. Diese stellen Ihre Gesamtanzahl an Stimmen dar.",
     "bandwidthTooltip" : "Vermögenswerte sperren, um Bandbreite zu gewinnen",
     "energyTooltip" : "Vermögenswerte sperren, um Energie zu gewinnen",
-    "delegatedTooltip" : "Delegierte Vermögenswerte werden im Abstimmungsprozess verwendet. Dies entspricht Ihrer Gesamtzahl an Stimmen.",
-    "undelegatingTooltip" : "Nicht delegierte Vermögenswerte befinden sich in einer Zeitsperre von{{timelockInDays}} Tagen, bevor sie verfügbar sind."
+    "delegatedAssetsTooltip" : "Delegierte Vermögenswerte werden im Cosmos-Abstimmungsprozess verwendet. Diese stellen Ihre Gesamtzahl an Stimmen dar.",
+    "undelegatingTooltip" : "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 21 Tagen, bevor sie verfügbar sind."
   },
   "exchange" : {
     "chooseProvider" : "Wählen Sie aus {{providerCount}} Anbieter",
@@ -1513,7 +1502,6 @@
       "memo" : "Memo",
       "assetId" : "Vermögenswert-ID",
       "rewards" : "Verdiente Prämien",
-      "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
       "bondedAmount" : "Gebundener Betrag",
       "unbondedAmount" : "Ungebundener Betrag",
       "withdrawUnbondedAmount" : "Abgehobener Betrag",
@@ -2002,9 +1990,23 @@
     "value" : "Wert",
     "header" : "Kontozuteilung ({{count}})"
   },
+  "elrond" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Betrieben von Elrond",
+        "moreInfo" : "Mehr Infos",
+        "drawerTitle" : "Elrond Integration",
+        "title" : "Elrond eGold (EGLD) Token ist jetzt auf Ledger Live verfügbar",
+        "description" : "Sie können jetzt Ihre eGold (EGLD) Token sicher sichern und über Ledger Live verwalten.",
+        "description2" : "Der Elrond eGold (EGLD) Token ist nativ im Elrond Netzwerk und wird für alle Transaktionen verwendet staken, intelligente Verträge, Governance und Validator-Belohnungen.",
+        "description3" : "Wir arbeiten aktiv mit dem Elrond Team zusammen, um mehr Funktionalitäten wie Staking, native ESDT (Elrond Standard Digital Token) Unterstützung und mehr hinzuzufügen.",
+        "website" : "Die Internet Scale Blockchain"
+      }
+    }
+  },
   "cardano" : {
     "account" : {
-      "stakingRewardsBanner" : {
+      "subHeader" : {
         "cardTitle" : "Der Gesamtkontostand enthält keine Stakingprämien"
       }
     }
@@ -2328,176 +2330,6 @@
             "success" : {
               "title" : "Prämien erfolgreich eingefordert!",
               "text" : "Ihre Prämien wurden zu Ihrem verfügbaren Guthaben hinzugefügt",
-              "cta" : "Details anzeigen"
-            },
-            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
-          }
-        }
-      }
-    }
-  },
-  "osmosis" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "Mehr Infos",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "Der OSMO-Token ist jetzt auf Ledger Live verfügbar",
-        "description" : "Sie können jetzt damit beginnen, Ihre OSMO-Token zu verwalten und sie über Ledger Live zu sichern.",
-        "description2" : "Der OSMO-Token ist Teil der Osmosis-Chain und wird für alle Transaktionen, Staking und viele zukünftige Funktionen verwendet.",
-        "website" : "Powered by Figment"
-      }
-    },
-    "memo" : "Memo",
-    "memoPlaceholder" : "Optional",
-    "memoWarningText" : "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren.",
-    "delegation" : {
-      "emptyState" : {
-        "description" : "Sie können OSMO-Prämien verdienen, indem Sie Ihre Vermögenswerte übertragen.",
-        "info" : "So funktioniert Delegierung",
-        "delegation" : "Verdienen Sie Belohnungen"
-      },
-      "commission" : "Provision",
-      "totalStake" : "Staking-Gesamtbetrag",
-      "claimRewards" : "Prämien beanspruchen",
-      "header" : "Delegierung(en)",
-      "noRewards" : "Keine Prämien verfügbar",
-      "delegate" : "Hinzufügen",
-      "undelegate" : "Delegierung aufheben",
-      "redelegate" : "Erneut delegieren",
-      "redelegateDisabledTooltip" : "Sie können erneut delegieren <0>{{days}}</0>",
-      "redelegateMaxDisabledTooltip" : "Sie können nicht mehr als <0>7</0> Validatoren auf einmal neu delegieren",
-      "undelegateDisabledTooltip" : "Sie können die Delegierung nicht bei mehr als <0>7</0> Validatoren gleichzeitig aufheben",
-      "reward" : "Prämien beanspruchen",
-      "currentDelegation" : "Delegiert: <0>{{amount}}</0>",
-      "estYield" : "geschätzter Ertrag",
-      "activeTooltip" : "Delegierte Beträge generieren Prämien",
-      "inactiveTooltip" : "Nicht-delegierte Beträge generieren keine Prämien",
-      "minSafeWarning" : "Zu niedriges Guthaben",
-      "flow" : {
-        "title" : "Delegieren",
-        "steps" : {
-          "starter" : {
-            "description" : "Sie können Belohnungen verdienen, indem Sie Ihre OSMO-Werte an einen Validator delegieren.",
-            "bullet" : ["Sie behalten das Eigentum an delegierten Vermögenswerten", "Delegieren Sie mit Ihrem Ledger-Gerät", "Vermögenswerte sind 14 Tage nach Rücknahme der Delegierung verfügbar"],
-            "warning" : {
-              "description" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer übertragenen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
-            }
-          },
-          "amount" : {
-            "title" : "Betrag"
-          },
-          "validator" : {
-            "title" : "Validatoren"
-          },
-          "connectDevice" : {
-            "title" : "Gerät"
-          },
-          "confirmation" : {
-            "title" : "Bestätigung",
-            "success" : {
-              "title" : "Sie haben Ihre Vermögenswerte erfolgreich delegiert",
-              "text" : "Ihr Kontostand wird aktualisiert, wenn die Blockchain die Transaktion bestätigt.",
-              "cta" : "Details anzeigen"
-            },
-            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "Prämien beanspruchen",
-        "steps" : {
-          "claimRewards" : {
-            "title" : "Prämien",
-            "compound" : "Compound",
-            "claim" : "Einzahlen",
-            "compoundOrClaim" : "Verbinden oder einkassieren",
-            "compoundDescription" : "Prämien werden dem delegierten Betrag hinzugefügt",
-            "claimDescription" : "Die Prämien werden dem verfügbaren Guthaben hinzugefügt",
-            "compoundInfo" : "Sie haben <0>{{amount}}</0> verdient. Wenn Sie auf Weiter klicken, werden sie jetzt beansprucht und automatisch an denselben Validator delegiert.",
-            "claimInfo" : "Sie haben <0>{{amount}}</0> vom unten stehenden Validator erhalten. Wenn Sie auf Weiter klicken, werden sie jetzt beansprucht und automatisch zum verfügbaren Guthaben hinzugefügt.",
-            "selectLabel" : "Wählen Sie eine Delegation"
-          },
-          "connectDevice" : {
-            "title" : "Gerät"
-          },
-          "confirmation" : {
-            "title" : "Bestätigung",
-            "label" : "Bestätigung",
-            "success" : {
-              "title" : "Erfolgreich eingelöste Prämien",
-              "titleCompound" : "Erfolgreich zusammengerechnete Prämien",
-              "text" : "Ihre Prämien wurden zu Ihrem verfügbaren Guthaben hinzugefügt",
-              "textCompound" : "Ihre Prämien <0>{{amount}}</0> wurden automatisch an <0>{{validator}}</0> übertragen",
-              "cta" : "Details anzeigen"
-            },
-            "pending" : {
-              "title" : "Sende Transaktion..."
-            },
-            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "Vermögenswerte zurückübertragen",
-        "steps" : {
-          "starter" : {
-            "title" : "Erneute Delegierung",
-            "description" : "Verwenden Sie die erneute Delegierung, um einfach von einem Validator zu einem anderen zu wechseln. Wenn Sie es sich aber wieder anders überlegen, müssen Sie dann warten, weil die erneute Delegierung eine 14-tägige Zeitsperre auslöst.",
-            "warning" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer delegierten Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält. Sie können maximal <0>7 ausstehende, erneute Delegierungen durchführen.",
-            "howDelegationWorks" : "Wie funktioniert die Delegierung?"
-          },
-          "validators" : {
-            "title" : "Validatoren",
-            "currentDelegation" : "Aktuelle Delegierung",
-            "newDelegation" : "Neue Delegierung",
-            "chooseValidator" : "Wählen Sie einen Validator",
-            "warning" : "Sie müssen <0>14 Tage</0> warten, um vom neuen Validator neu zu delegieren, wenn Sie Ihre Meinung wieder ändern",
-            "amountLabel" : "Erneut zu delegierender Betrag"
-          },
-          "device" : {
-            "title" : "Gerät"
-          },
-          "confirmation" : {
-            "title" : "Bestätigung",
-            "success" : {
-              "title" : "Sie haben Ihr Vermögen erfolgreich erneut delegiert",
-              "text" : "Die erneute Übertragung wird aktualisiert, sobald die Blockchain die Transaktion bestätigt hat",
-              "cta" : "Details anzeigen"
-            },
-            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
-          }
-        }
-      }
-    },
-    "undelegation" : {
-      "header" : "Aufgehobene Delegierung(en)",
-      "headerTooltip" : "Verfügbar nach der 14-tägigen Zeitsperre",
-      "inactiveTooltip" : "Beträge mit aufgehobener Delegierung generieren keine Prämien.",
-      "flow" : {
-        "title" : "Vermögenswerte mit aufgehobener Delegierung",
-        "steps" : {
-          "amount" : {
-            "title" : "Betrag",
-            "subtitle" : "Der Prozess der Aufhebung der Übertragung dauert <0>14 Tage</0> bis zum Abschluss.",
-            "warning" : "Die Prämien werden sofort eingelöst. Der nicht übertragene Betrag ist nach der <0>14-tägigen Zeitsperre<0> wieder im verfügbaren Guthaben.",
-            "fields" : {
-              "validator" : "Validator",
-              "amount" : "Nicht zu delegierender Betrag"
-            }
-          },
-          "device" : {
-            "title" : "Gerät"
-          },
-          "confirmation" : {
-            "title" : "Bestätigung",
-            "success" : {
-              "title" : "Sie haben die Übertragung Ihrer Vermögenswerte erfolgreich aufgehoben.",
-              "description" : "Die Delegierung von <0>{{amount}}</0> wurde von <0>{{validator}}</0> aufgehoben",
               "cta" : "Details anzeigen"
             },
             "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
@@ -3900,10 +3732,8 @@
     "recipientWording" : {
       "send" : "Empfänger",
       "delegate" : "Validator",
-      "redelegate" : "Validator",
       "undelegate" : "Validator",
       "claimReward" : "Prämienempfänger",
-      "claimRewardCompound" : "Validator, der die Belohnungen erhält",
       "optIn" : "Empfänger",
       "nominate" : "Validator",
       "erc721" : {
@@ -4629,6 +4459,17 @@
     }
   },
   "cryptoOrg" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Crypto.org",
+        "moreInfo" : "Mehr Infos",
+        "drawerTitle" : "Crypto.org Integration",
+        "title" : "Der Crypto.org (CRO) Token ist jetzt auf Ledger Live verfügbar",
+        "description" : "Sie können jetzt damit beginnen, Ihre Crypto.org (CRO) Token zu verwalten und sie über Ledger Live zu sichern.",
+        "description2" : "Der Crypto.org-Token (CRO) ist nativ in der Crypto.org-Chain und wird für alle Transaktionen verwendet, auch für Staking und viele noch kommende Features.",
+        "website" : "Kryptowährung in jeder Wallet"
+      }
+    },
     "memo" : "Memo",
     "memoPlaceholder" : "Optional",
     "memoWarningText" : "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren."

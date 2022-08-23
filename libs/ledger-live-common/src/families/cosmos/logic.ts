@@ -215,7 +215,7 @@ export async function canClaimRewards(
       useAllAmount: false,
       networkInfo: null,
       memo: null,
-      sourceValidator: null,
+      cosmosSourceValidator: null,
       validators: [
         {
           address: delegation.validatorAddress,

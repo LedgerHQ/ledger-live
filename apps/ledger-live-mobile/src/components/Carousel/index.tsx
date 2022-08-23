@@ -28,7 +28,7 @@ const hitSlop = {
 type CarouselCardProps = {
   id: string;
   children: React.ReactNode;
-  onHide: (_: string) => void;
+  onHide: (cardId: string) => void;
   index?: number;
 };
 
@@ -122,7 +122,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
       onContentSizeChange={onScrollViewContentChange}
       showsHorizontalScrollIndicator={false}
       snapToInterval={WIDTH + 16}
-      decelerationRate={"fast"}
+      decelerationRate={'fast'}
     >
       {slides.map(({ id, Component }, index) => (
         <CarouselCardContainer

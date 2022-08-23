@@ -21,7 +21,7 @@ import OperationRowDate from "./OperationRowDate";
 import OperationRowNftName from "./OperationRowNftName";
 import perFamilyOperationDetails from "../generated/operationDetails";
 
-const ContainerTouchable = styled(Flex).attrs(_ => ({
+const ContainerTouchable = styled(Flex).attrs(p => ({
   height: "64px",
   flexDirection: "row",
   alignItems: "center",
