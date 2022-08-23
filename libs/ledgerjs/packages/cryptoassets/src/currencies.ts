@@ -260,24 +260,29 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
   avalanche: {
     type: "CryptoCurrency",
     id: "avalanche",
-    coinType: 60,
+    coinType: 9000,
     name: "Avalanche",
-    managerAppName: "Ethereum",
+    managerAppName: "Avalanche",
     ticker: "AVAX",
     scheme: "avalanche",
     color: "#E84142",
-    family: "evm",
-    units: ethereumUnits("AVAX", "AVAX"),
+    family: "avalanche",
+    units: [
+      {
+        name: "AVAX",
+        code: "AVAX",
+        magnitude: 18,
+      },
+    ],
     ethereumLikeInfo: {
       chainId: 43114,
-      rpc: "https://ava-mainnet.public.blastapi.io/ext/bc/C/rpc",
-      explorer: "https://api.snowtrace.io",
     },
     explorerViews: [
       {
-        tx: "https://snowtrace.io/tx/$hash",
-        address: "https://snowtrace.io/address/$address",
-        token: "https://snowtrace.io/token/$contractAddress?a=$address",
+        tx: "https://cchain.explorer.avax.network/tx/$hash",
+        address: "https://cchain.explorer.avax.network/address/$address",
+        token:
+          "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -1123,31 +1128,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     },
     explorerViews: [],
   },
-  evmos: {
-    type: "CryptoCurrency",
-    id: "evmos",
-    coinType: 60,
-    name: "Evmos",
-    managerAppName: "Ethereum",
-    ticker: "EVMOS",
-    scheme: "evmos",
-    color: "#FFF",
-    family: "evm",
-    units: ethereumUnits("EVMOS", "EVMOS"),
-    ethereumLikeInfo: {
-      baseChain: "mainnet",
-      chainId: 9001,
-      networkId: 9001,
-      rpc: "https://evmos-json-rpc.stakely.io",
-    },
-    explorerViews: [
-      {
-        tx: "https://evm.evmos.org/tx/$hash",
-        address: "https://evm.evmos.org/address/$address",
-        token: "https://evm.evmos.org/token/$contractAddress",
-      },
-    ],
-  },
   expanse: {
     type: "CryptoCurrency",
     id: "expanse",
@@ -1750,11 +1730,11 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     id: "moonbeam",
     coinType: 60,
     name: "Moonbeam",
-    managerAppName: "Ethereum",
+    managerAppName: "Moonbeam",
     ticker: "GLMR",
     scheme: "moonbeam",
-    color: "#5FC0C1",
-    family: "evm",
+    color: "#3D1D5A",
+    family: "ethereum",
     units: [
       {
         name: "GLMR",
@@ -1763,11 +1743,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 1284,
-      networkId: 1284,
-      rpc: "https://rpc.api.moonbeam.network",
-      explorer: "https://api-moonbeam.moonscan.io",
     },
     explorerViews: [
       {
@@ -3224,7 +3200,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "ethereum_goerli",
     coinType: 60,
-    name: "Goerli",
+    name: "Ethereum Goerli",
     managerAppName: "Ethereum",
     ticker: "ETH",
     deviceTicker: "ETH",
@@ -3233,14 +3209,13 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
     isTestnetFor: "ethereum",
     disableCountervalue: true,
-    family: "evm",
+    family: "ethereum",
     blockAvgTime: 15,
     ethereumLikeInfo: {
       baseChain: "goerli",
       chainId: 5, // goerli
       networkId: 5,
       hardfork: "petersburg",
-      rpc: "https://goerli.infura.io/v3/c40608c251d04d5b82cc1f88ed49f0d8",
     },
     explorerViews: [
       {
