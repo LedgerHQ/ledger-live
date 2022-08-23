@@ -17,6 +17,7 @@ import {
   TrophyMedium,
   PenMedium,
 } from "@ledgerhq/native-ui/assets/icons";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import Trash from "../../../icons/Trash";
 
@@ -60,9 +61,12 @@ type VoteRowProps = {
     rank: number;
     validator?: SuperRepresentative;
   };
+  // eslint-disable-next-line no-unused-vars
   onEdit: (vote: Vote, name: string) => void;
+  // eslint-disable-next-line no-unused-vars
   onRemove: (vote: Vote) => void;
   index: number;
+  // eslint-disable-next-line no-unused-vars
   onOpen: (i: number) => void;
   openIndex: number;
 };
@@ -96,11 +100,10 @@ const VoteRow = ({
     }
   }, [index, swipeRef]);
 
-  const removeVote = useCallback(() => onRemove({ address, voteCount }), [
-    address,
-    voteCount,
-    onRemove,
-  ]);
+  const removeVote = useCallback(
+    () => onRemove({ address, voteCount }),
+    [address, voteCount, onRemove],
+  );
 
   useEffect(() => {
     if (openIndex !== index && swipeRef.current && swipeRef.current.close)

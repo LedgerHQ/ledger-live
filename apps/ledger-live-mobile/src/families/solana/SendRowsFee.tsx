@@ -24,7 +24,7 @@ type Props = {
   status: TransactionStatus;
 };
 
-export default function SolanaFeeRow({ account, transaction, status }: Props) {
+export default function SolanaFeeRow({ account, status }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.solana.supportPage);

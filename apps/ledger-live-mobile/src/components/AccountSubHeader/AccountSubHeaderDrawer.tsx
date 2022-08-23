@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Box, Flex, Text } from "@ledgerhq/native-ui";
+import { BottomDrawer, Box, Text } from "@ledgerhq/native-ui";
 
 type Props = {
   isOpen: boolean;

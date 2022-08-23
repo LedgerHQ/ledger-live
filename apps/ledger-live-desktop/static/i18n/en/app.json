@@ -4241,6 +4241,10 @@
       "title": "Sorry, internet seems to be down",
       "description": "Please check your internet connection."
     },
+    "NetworkError": {
+      "title": "An error occurred during synchronization",
+      "description": "Please check your internet connection."
+    },
     "NoAddressesFound": {
       "title": "Sorry, no accounts were found",
       "description": "Something went wrong with the address calculation, try again or contact Ledger Support"

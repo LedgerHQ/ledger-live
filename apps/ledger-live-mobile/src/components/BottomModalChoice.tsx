@@ -11,12 +11,12 @@ const hitSlop = {
 };
 
 type Props = {
-  onPress: (e?: any) => any;
+  onPress: (_?: any) => any;
   iconName: string;
   title: string;
   description?: string;
   event: string;
-  eventProperties?: Object;
+  eventProperties?: any;
 };
 
 const Container = styled(Touchable)<{ opacity: number }>`

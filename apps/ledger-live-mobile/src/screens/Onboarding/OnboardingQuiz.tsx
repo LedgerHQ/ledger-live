@@ -68,8 +68,6 @@ const Header = ({ step }: { step: number }) => {
         iconName="Close"
         size="large"
         onPress={() => {
-          // TODO: FIX @react-navigation/native using Typescript
-          // @ts-ignore next-line
           navigation.navigate(ScreenName.OnboardingPairNew, {
             ...route.params,
           });
