@@ -83,9 +83,16 @@ export type TransactionCommonRaw = {
 export type FeeStrategy = {
   amount: BigNumber;
   displayedAmount?: BigNumber;
+  txParameters?: FeeStrategyTxParameters;
   label: string;
   unit?: Unit;
 };
+
+export type FeeStrategyTxParameters = {
+  maxBaseFeePerGas?: BigNumber;
+  maxPriorityFeePerGas?: BigNumber;
+};
+
 // TransactionStatus is a view of Transaction with general info to be used on the UI and status info.
 export type TransactionStatus = {
   // potential error for each (user) field of the transaction

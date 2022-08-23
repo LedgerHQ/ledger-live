@@ -5,26 +5,12 @@ import SendFeeMode from "~/renderer/components/SendFeeMode";
 import SelectFeeStrategy from "~/renderer/components/SelectFeeStrategy";
 import GasLimitField from "./GasLimitField";
 import GasPriceField from "./GasPriceField";
+import MaxBaseFeeField from "./MaxBaseFeeField";
+import PriorityFeeField from "./PriorityFeeField";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
-import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
+import { EIP1559ShouldBeUsed, getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { context } from "~/renderer/drawers/Provider";
-
-const hasAdvancedStrategy = transaction => {
-  return !["slow", "medium", "fast"].includes(transaction.feesStrategy);
-};
-
-const getAdvancedStrategy = transaction => {
-  if (hasAdvancedStrategy(transaction)) {
-    return {
-      label: transaction.feesStrategy,
-      amount: transaction.gasPrice,
-      displayedAmount: transaction.gasPrice.multipliedBy(getGasLimit(transaction)),
-    };
-  }
-
-  return null;
-};
 
 const Root = (props: *) => {
   const { transaction } = props;
@@ -33,24 +19,18 @@ const Root = (props: *) => {
   const { state: drawerState, setDrawer } = React.useContext(context);
 
   const defaultStrategies = useFeesStrategy(transaction);
-  const [advancedStrategy, setAdvancedStrategy] = useState(getAdvancedStrategy(transaction));
   const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
-  const strategies = useMemo(
-    () => (advancedStrategy ? [...defaultStrategies, advancedStrategy] : defaultStrategies),
-    [defaultStrategies, advancedStrategy],
-  );
-
-  useEffect(() => {
-    const newAdvancedStrategy = getAdvancedStrategy(transaction);
-    if (newAdvancedStrategy) {
-      setAdvancedStrategy(newAdvancedStrategy);
-    }
-  }, [transaction, setAdvancedStrategy]);
+  const strategies = defaultStrategies
 
   const onFeeStrategyClick = useCallback(
-    ({ amount, feesStrategy }) => {
+    ({ amount, feesStrategy, txParameters }) => {
       updateTransaction(transaction =>
-        bridge.updateTransaction(transaction, { gasPrice: amount, feesStrategy }),
+        bridge.updateTransaction(transaction, {
+          gasPrice: amount,
+          maxBaseFeePerGas: txParameters?.maxBaseFeePerGas,
+          maxPriorityFeePerGas: txParameters?.maxPriorityFeePerGas,
+          feesStrategy
+        }),
       );
       if (drawerState.open) setDrawer(undefined);
     },
@@ -61,14 +41,27 @@ const Root = (props: *) => {
   return (
     <>
       <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceMode} />
-      {isAdvanceMode ? (
-        <>
-          <GasPriceField {...props} />
-          <GasLimitField {...props} />
-        </>
-      ) : (
-        <SelectFeeStrategy strategies={strategies} onClick={onFeeStrategyClick} {...props} />
-      )}
+      {isAdvanceMode ?
+        EIP1559ShouldBeUsed(account.currency) ?
+          (
+            <>
+              <MaxBaseFeeField {...props} />
+              <PriorityFeeField {...props} />
+              <GasLimitField {...props} />
+            </>
+          ) :
+          (
+            <>
+              <GasPriceField {...props} />
+              <GasLimitField {...props} />
+            </>
+          ) :
+        (
+          <>
+            <SelectFeeStrategy strategies={strategies} onClick={onFeeStrategyClick} {...props} />
+            <GasLimitField {...props} />
+          </>
+        )}
     </>
   );
 };

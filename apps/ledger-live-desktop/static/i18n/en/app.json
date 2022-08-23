@@ -171,6 +171,8 @@
   "time": {
     "minute": "Minute",
     "minute_plural": "Minutes",
+    "minute_short": "min",
+    "second_short": "sec",
     "hour": "Hour",
     "hour_plural": "Hours",
     "range": {
@@ -1915,8 +1917,13 @@
         "useMax": "Send Max",
         "rippleTag": "Tag",
         "rippleTagPlaceholder": "Optional",
+        "edit": "Edit",
         "ethereumGasLimit": "Gas limit",
         "ethereumGasPrice": "Gas price",
+        "ethereumMaxBaseFee": "Max Base Fee ({{unitName}})",
+        "ethereumPriorityFee": "Priority Fee ({{unitName}})",
+        "nextBlock": "Next block: {{nextBaseFee}}",
+        "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte": "{{unit}} per byte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
@@ -1946,7 +1953,8 @@
       }
     },
     "footer": {
-      "estimatedFees": "Network fees"
+      "estimatedFees": "Network fees",
+      "totalToDebit": "Total to debit"
     }
   },
   "sign": {
@@ -4169,6 +4177,12 @@
     },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
+    },
+    "PriorityFeeTooLow": {
+      "title": "Priority is too low. Your transaction will not go through, despite the gas fee being charged."
+    },
+    "PriorityFeeOutOfSuggestedRange": {
+      "title": "To optimise your fees we suggest you to stay in the suggested range of {{lowPriorityFee}} - {{highPriorityFee}}"
     },
     "UnknownMCU": {
       "title": "Unknown MCU version",
