@@ -110,7 +110,9 @@ Array [
       "hash": "0x13b90cebe150eadbebd525200f2ff7ae8e838defbee31a9812a802356705b0f2",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x13b90cebe150eadbebd525200f2ff7ae8e838defbee31a9812a802356705b0f2-LOCK",
       "operator": undefined,
-      "recipients": Array [],
+      "recipients": Array [
+        "0x6cc083aed9e3ebe302a6336dbc7c921c9f03349e",
+      ],
       "senders": Array [
         "0xcfd48e0faf9f19377509ce68a6a6f4d9c85ff8ab",
       ],
@@ -132,7 +134,9 @@ Array [
       "hash": "0x1bedc04795ee8c4b8739e661498ad7721f5f0f8dc957a7e2009314d447be20a8",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0x1bedc04795ee8c4b8739e661498ad7721f5f0f8dc957a7e2009314d447be20a8-REGISTER",
       "operator": undefined,
-      "recipients": Array [],
+      "recipients": Array [
+        "0x7d21685c17607338b313a7174bab6620bad0aab7",
+      ],
       "senders": Array [
         "0xcfd48e0faf9f19377509ce68a6a6f4d9c85ff8ab",
       ],
@@ -252,7 +256,9 @@ Array [
       "hash": "0xd00974d8cb71e48ac9a3085579c9b589a4d67cec348aa61b9b48cc7b3bcd54bf",
       "id": "js:2:celo:0xcfD48e0FAf9f19377509cE68a6A6F4D9C85ff8AB:-0xd00974d8cb71e48ac9a3085579c9b589a4d67cec348aa61b9b48cc7b3bcd54bf-LOCK",
       "operator": undefined,
-      "recipients": Array [],
+      "recipients": Array [
+        "0x6cc083aed9e3ebe302a6336dbc7c921c9f03349e",
+      ],
       "senders": Array [
         "0xcfd48e0faf9f19377509ce68a6a6f4d9c85ff8ab",
       ],
