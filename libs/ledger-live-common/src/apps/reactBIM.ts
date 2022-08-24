@@ -34,6 +34,10 @@ const useBackgroundInstallSubject = (
 
   const enabled = bimFeature?.enabled && transportModule?.id === "ble-bim";
 
+  useEffect(() => {
+    // TODO add some tracking logic to see we are using or not BIM.
+  }, [enabled]);
+
   const onError = useCallback(
     (error) => {
       onEventDispatch({
