@@ -39,17 +39,18 @@ describe("usePostOnboardingEntryPointVisibleOnWallet", () => {
 
   it("should be false if the the entry point HAS been dismissed", () => {
     mockedDismissedSelector.mockReturnValue(true);
-    mockedUseAllCompleted.mockReturnValueOnce(false).mockReturnValueOnce(true);
     mockedUseDeviceModelId.mockReturnValue(DeviceModelId.nanoX);
 
+    mockedUseAllCompleted.mockReturnValue(false);
     const { result: res1 } = renderHook(() =>
       usePostOnboardingEntryPointVisibleOnWallet()
     );
+    expect(res1.current).toBe(false);
+
+    mockedUseAllCompleted.mockReturnValue(true);
     const { result: res2 } = renderHook(() =>
       usePostOnboardingEntryPointVisibleOnWallet()
     );
-
-    expect(res1.current).toBe(false);
     expect(res2.current).toBe(false);
   });
 
