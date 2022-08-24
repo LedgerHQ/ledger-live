@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { StyleSheet, Linking } from "react-native";
+import { Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import startCase from "lodash/startCase";
 import { BigNumber } from "bignumber.js";
@@ -10,14 +10,8 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
-import {
-  Account,
-  Operation,
-  Currency,
-  Unit,
-  OperationType,
-} from "@ledgerhq/live-common/types/index";
-
+import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -48,10 +42,7 @@ function getURLWhatIsThis(op: Operation): string | undefined {
 function formatPalletMethod(palletMethod?: string): string {
   if (!palletMethod) return "";
 
-  return palletMethod
-    .split(".")
-    .map(startCase)
-    .join(" - ");
+  return palletMethod.split(".").map(startCase).join(" - ");
 }
 
 type OperationDetailsExtraProps = {
@@ -393,38 +384,28 @@ const NominateAmountCell = ({ operation }: Props) => {
   ) : null;
 };
 
-const createOperationIcon = Icon => ({
-  confirmed,
-  failed,
-  size = 24,
-  type,
-}: {
-  confirmed?: boolean;
-  failed?: boolean;
-  size?: number;
-  type: OperationType;
-}) => (
-  <OperationStatusWrapper
-    size={size}
-    Icon={Icon}
-    confirmed={confirmed}
-    failed={failed}
-    type={type}
-  />
-);
-
-const styles = StyleSheet.create({
-  amountText: {
-    fontSize: 14,
-    flex: 1,
-  },
-  topText: {
-    fontSize: 14,
-    flex: 1,
-    marginBottom: 3,
-  },
-  nominateText: { lineHeight: 40 },
-});
+const createOperationIcon =
+  Icon =>
+  ({
+    confirmed,
+    failed,
+    size = 24,
+    type,
+  }: {
+    confirmed?: boolean;
+    failed?: boolean;
+    size?: number;
+    type: OperationType;
+  }) =>
+    (
+      <OperationStatusWrapper
+        size={size}
+        Icon={Icon}
+        confirmed={confirmed}
+        failed={failed}
+        type={type}
+      />
+    );
 
 const amountCell = {
   BOND: BondAmountCell,

@@ -40,16 +40,16 @@ const polkadot: CurrenciesData<Transaction> = {
     {
       name: "polkadot seed 1",
       apdus: `
-        => 90010000142c00008062010080000000000000000000000000
-        <= e283d1b141c1048635420b7138132acbe0ff47b71fc9f6a9089f78ab29a6b8143136377a7973345778677954514e6743744e6f597852463463784867385766516a4248414c7666615a585070776331549000
+        => 90010000142c00008062010080000000800000000000000000
+        <= c71b1e00ca34fdd14ea065917a67168675828927e3adc3b68f444bf85b4d24be3135573461755239707652335a5765616f50516f4562616d54535557347571335072515369564a4e4e7953385868314e9000
         => 90010000142c00008062010080000000800000008000000080
-        <= 43ff8cc36e9804eb1f5d45cd834ebbae1d490c22b8f8a61af20b48e566dc53dc31325941383674525168486777553353536a3536616573554b4237474b76646e5a54545458526f7034766433596744569000
+        <= 845175a888f0ced372bd352d59cb51242dff8438c3dd12a703835c25bdfa3f9231337a565838337a74575939446d69757446525738374262676b627631517031666366706f4a6964626448776b3335649000
         => 90010000142c00008062010080010000800000008000000080
-        <= 78a0189312a3f2817d89c71cec7e63bfbfbfa7145c384b3870ff1167a74c76d831336a414a666870466b525a6a3154535364466f70616946654b6e6f663271376734474e6463786367384c767836514e9000
+        <= 3a521fa830998568da9c205c987dcd157a78b2bd30ece3d1b6c32213986864ca31324b5542335272346163346469354a47707a545935474e516b44564e6b50556b636a324d4746546d7a617a4d5364739000
         => 90010000142c00008062010080020000800000008000000080
-        <= d4a3325e08977a29f19270b96a192eb73ce768e4bdf79565ba9cdbe3f0be6e9531356f6f646335643844574a6f645a6854443671737878535152595768646b57437277714e48616a44697258527241449000
+        <= 7e52138bf614dddff1116623b027ea92d6015d8fe741575b78ac7773545066bd31337264523573727657463533566b4e654a757a35576b476b4736465358515141375a423551424769673441544373399000
         => 90010000142c00008062010080030000800000008000000080
-        <= ffcc00cd09cbe8fd741a91269bd5f50445f4b0c3ad9f8b134341ba5e65bc24e131366e507037435537596d5a6a445248524437644d35434579505a6256615a3637435575356b4d77353957527a6f346a9000
+        <= dfd77108b64b8173805852f7550f1f2d6c166968d31d5c4984187c9cb1969d9331363456674b366f6f5a3466557555346946567770537558774658474c55356e5454577a4736347672447167697077689000
         `,
     },
   ],
@@ -193,22 +193,6 @@ const polkadot: CurrenciesData<Transaction> = {
             errors: {},
             warnings: {},
           },
-        },
-        {
-          name: "[send] use all amount - should warn all funds",
-          transaction: (t) => ({
-            ...t,
-            useAllAmount: true,
-            mode: "send",
-            recipient: ACCOUNT_EMPTY,
-          }),
-          expectedStatus: (account) => ({
-            errors: {},
-            warnings: {
-              amount: new PolkadotAllFundsWarning(),
-            },
-            totalSpent: account.spendableBalance,
-          }),
         },
         {
           name: "nominate without true validator",
@@ -400,6 +384,22 @@ const polkadot: CurrenciesData<Transaction> = {
         balance: "11000000000",
       },
       transactions: [
+        {
+          name: "[send] use all amount - should warn all funds",
+          transaction: (t) => ({
+            ...t,
+            useAllAmount: true,
+            mode: "send",
+            recipient: ACCOUNT_SAME_STASHCONTROLLER,
+          }),
+          expectedStatus: (account) => ({
+            errors: {},
+            warnings: {
+              amount: new PolkadotAllFundsWarning(),
+            },
+            totalSpent: account.spendableBalance,
+          }),
+        },
         {
           name: "stash can't nominate",
           transaction: fromTransactionRaw({
@@ -715,7 +715,7 @@ describe("canUnbond", () => {
         nominations: [],
         unlockings: [
           ...Array(MAX_UNLOCKINGS - 1).map(() => ({
-            amount: new BigNumber(Math.random()),
+            amount: new BigNumber(100000),
             completionDate: new Date(),
           })),
         ],
@@ -736,7 +736,7 @@ describe("canUnbond", () => {
         nominations: [],
         unlockings: [
           ...Array(MAX_UNLOCKINGS).map(() => ({
-            amount: new BigNumber(Math.random()),
+            amount: new BigNumber(100000),
             completionDate: new Date(),
           })),
         ],
@@ -757,7 +757,7 @@ describe("canUnbond", () => {
         nominations: [],
         unlockings: [
           ...Array(MAX_UNLOCKINGS).map(() => ({
-            amount: new BigNumber(Math.random()),
+            amount: new BigNumber(100000),
             completionDate: new Date(),
           })),
         ],

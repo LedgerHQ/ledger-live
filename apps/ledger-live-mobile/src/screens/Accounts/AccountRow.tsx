@@ -5,17 +5,13 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import {
-  Account,
-  Currency,
-  TokenAccount,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Currency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import { BigNumber } from "bignumber.js";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 import AccountRowLayout from "../../components/AccountRowLayout";
@@ -25,7 +21,7 @@ type Props = {
   accountId: string;
   navigation: any;
   isLast: boolean;
-  onSetAccount: (arg: TokenAccount) => void;
+  onSetAccount: (_: TokenAccount) => void;
   portfolioValue: number;
   navigationParams?: any[];
   hideDelta?: boolean;
@@ -82,26 +78,14 @@ const AccountRow = ({
     if (navigationParams) {
       navigation.navigate(...navigationParams);
     } else if (account.type === "Account") {
-      navigation.navigate(NavigatorName.Portfolio, {
-        screen: NavigatorName.PortfolioAccounts,
-        params: {
-          screen: ScreenName.Account,
-          params: {
-            accountId,
-            isForwardedFromAccounts: true,
-          },
-        },
+      navigation.navigate(ScreenName.Account, {
+        accountId,
+        isForwardedFromAccounts: true,
       });
     } else if (account.type === "TokenAccount") {
-      navigation.navigate(NavigatorName.Portfolio, {
-        screen: NavigatorName.PortfolioAccounts,
-        params: {
-          screen: ScreenName.Account,
-          params: {
-            parentId: account?.parentId,
-            accountId: account.id,
-          },
-        },
+      navigation.navigate(ScreenName.Account, {
+        parentId: account?.parentId,
+        accountId: account.id,
       });
     }
   }, [account, accountId, navigation, navigationParams]);

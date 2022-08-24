@@ -62,7 +62,7 @@ def recursive_walk(folder):
             for subfolder in subfolders:
                 recursive_walk(subfolder)
         for filename in filenames:
-            if filename.endswith(".js"):
+            if filename.endswith((".js", ".tsx", ".ts", ".jsx")):
                 files.append(os.path.join(folderName, filename))
 
 recursive_walk(folder1)

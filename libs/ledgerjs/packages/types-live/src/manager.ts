@@ -39,6 +39,7 @@ export type DeviceInfo = {
   mcuTargetId?: number;
   seTargetId?: number;
   onboarded?: boolean;
+  hasDevFirmware?: boolean;
 };
 
 /**

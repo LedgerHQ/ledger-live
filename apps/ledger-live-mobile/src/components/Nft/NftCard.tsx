@@ -3,7 +3,7 @@ import { RectButton } from "react-native-gesture-handler";
 import { View, StyleSheet, Platform } from "react-native";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { useTheme, useNavigation } from "@react-navigation/native";
-import { NFTMetadata, ProtoNFT } from "@ledgerhq/live-common/types/index";
+import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { NavigatorName, ScreenName } from "../../const";
 import Skeleton from "../Skeleton";
@@ -12,7 +12,7 @@ import LText from "../LText";
 
 type Props = {
   nft: ProtoNFT;
-  style?: Object;
+  style?: any;
 };
 
 const NftCardView = ({
@@ -22,7 +22,7 @@ const NftCardView = ({
   metadata,
 }: {
   nft: ProtoNFT;
-  style?: Object;
+  style?: any;
   status: NFTResource["status"];
   metadata: NFTMetadata;
 }) => {

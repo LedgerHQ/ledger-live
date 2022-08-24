@@ -1,16 +1,20 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useContext } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 import { track, screen, updateIdentify } from "../../../analytics";
 import { setFirstConnectionHasDevice } from "../../../actions/settings";
+// eslint-disable-next-line import/no-cycle
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
-const RenderVertical = require("../../../../apps/ledger-live-mobile/assets/images/devices/3DRenderVertical.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const RenderVertical = require("../../../../assets/images/devices/3DRenderVertical.png");
 
 function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   const { t } = useTranslation();
@@ -28,12 +32,11 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     identifyUser(true);
 
     track("button_clicked", {
+      First_connection_has_device: true,
       button: "Yes",
-      screen: "has device?",
+      screen: "Has Device?",
     });
 
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate({
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {
@@ -48,11 +51,9 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     track("button_clicked", {
       First_connection_has_device: false,
       button: "No",
-      screen: "has device?",
+      screen: "Has Device?",
     });
 
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate({
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {
@@ -61,9 +62,21 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     });
   }, [identifyUser, navigation]);
 
-  useEffect(() => {
+  const { setSource, setScreen } = useContext(AnalyticsContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Has Device?");
+
+      return () => {
+        setSource("Has Device?");
+      };
+    }, [setSource, setScreen]),
+  );
+
+  useFocusEffect(() => {
     screen("Onboarding", "Has Device?");
-  }, []);
+  });
 
   return (
     <SafeAreaView flex={1}>

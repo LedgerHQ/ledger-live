@@ -165,6 +165,19 @@ platform :ios do
         readonly: true,
         output_path: "./fastlane/certs"
       )
+      begin
+        sh(
+        <<~SHELL
+        curl -f -o /tmp/AppleWWDRCA.cer https://developer.apple.com/certificationauthority/AppleWWDRCA.cer
+        sudo security import /tmp/AppleWWDRCA.cer -k /Library/Keychains/System.keychain -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/productbuild
+
+        curl -f -o /tmp/AppleWWDRCAG3.cer https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
+        sudo security import /tmp/AppleWWDRCAG3.cer -k /Library/Keychains/System.keychain -T /usr/bin/codesign -T /usr/bin/security -T /usr/bin/productbuild
+        SHELL
+        )
+      rescue
+        # Ignore
+      end
     else
       if (!options[:local])
         match(
@@ -250,8 +263,8 @@ platform :ios do
         pilot(
           skip_submission: false,
           app_identifier: "com.ledger.live",
-          skip_waiting_for_build_processing: false,
-          wait_processing_timeout_duration: 1800, # 30mn
+          skip_waiting_for_build_processing: true,
+          # wait_processing_timeout_duration: 1800, # 30mn
           ipa: IPA_DIRECTORY,
           changelog: "Nightly Build v#{package['version']} (#{build_number})",
           beta_app_review_info: {
@@ -261,19 +274,19 @@ platform :ios do
           }
         )
 
-        pilot(
-          distribute_only: true,
-          groups: ["External Nightly"],
-          distribute_external: true,
-          app_identifier: "com.ledger.live",
-          app_platform: 'ios',
-          app_version: package["version"],
-          build_number: get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj"),
-          notify_external_testers: true,
-          reject_build_waiting_for_review: !options[:ci],
-          skip_waiting_for_build_processing: false,
-          wait_processing_timeout_duration: 1800, # 30mn
-        )
+        # pilot(
+        #   distribute_only: true,
+        #   groups: ["External Nightly"],
+        #   distribute_external: true,
+        #   app_identifier: "com.ledger.live",
+        #   app_platform: 'ios',
+        #   app_version: package["version"],
+        #   build_number: get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj"),
+        #   notify_external_testers: true,
+        #   reject_build_waiting_for_review: !options[:ci],
+        #   skip_waiting_for_build_processing: false,
+        #   wait_processing_timeout_duration: 1800, # 30mn
+        # )
       rescue => e
         raise unless e.message.include? "Another build is in review"
 
@@ -284,7 +297,8 @@ platform :ios do
         skip_submission: true,
         app_identifier: "com.ledger.live",
         skip_waiting_for_build_processing: true,
-        ipa: IPA_DIRECTORY
+        ipa: IPA_DIRECTORY,
+        changelog: "v#{package['version']} (#{build_number})",
       )
     end
   end

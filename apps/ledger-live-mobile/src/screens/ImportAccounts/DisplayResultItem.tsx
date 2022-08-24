@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import AccountCard from "../../components/AccountCard";
 import CheckBox from "../../components/CheckBox";
@@ -13,6 +13,7 @@ export default class DisplayResultItem extends Component<{
   mode: any;
   checked: boolean;
   importing: boolean;
+  // eslint-disable-next-line no-unused-vars
   onSwitch: (boolean, Account) => void;
 }> {
   onSwitch = () => {

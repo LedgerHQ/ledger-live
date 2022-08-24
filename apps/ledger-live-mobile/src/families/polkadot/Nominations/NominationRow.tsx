@@ -7,7 +7,7 @@ import {
   PolkadotNomination,
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountUnit,
@@ -24,6 +24,7 @@ type Props = {
   nomination: PolkadotNomination;
   validator?: PolkadotValidator;
   account: Account;
+  // eslint-disable-next-line no-unused-vars
   onPress: (nomination: PolkadotNomination) => void;
   isLast?: boolean;
 };

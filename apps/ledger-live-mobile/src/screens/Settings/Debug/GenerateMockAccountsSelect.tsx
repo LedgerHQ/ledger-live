@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Alert, ScrollView, Text } from "react-native";
 import { Button, Checkbox, Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import SettingsRow from "../../../components/SettingsRow";
 import accountModel from "../../../logic/accountModel";
 import { saveAccounts } from "../../../db";
@@ -60,6 +60,7 @@ export const GenerateMockAccountSelectScreen = () => {
             reboot();
           },
         },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         { text: "Cancel", onPress: () => {} },
       ],
       { cancelable: true },
@@ -108,10 +109,7 @@ export default function GenerateMockAccount() {
     <SettingsRow
       title="Generate mock accounts"
       desc="Select for which currencies you want to generate an account"
-      onPress={
-        // @ts-ignore
-        () => navigation.navigate(ScreenName.DebugMockGenerateAccounts)
-      }
+      onPress={() => navigation.navigate(ScreenName.DebugMockGenerateAccounts)}
     />
   );
 }

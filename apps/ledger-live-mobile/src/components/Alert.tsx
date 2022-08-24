@@ -171,10 +171,10 @@ export default function Alert(props: Props) {
     [onLearnMore, learnMoreUrl],
   );
 
-  const isDismissed = useMemo(() => dismissedBanners.includes(id), [
-    dismissedBanners,
-    id,
-  ]);
+  const isDismissed = useMemo(
+    () => dismissedBanners.includes(id),
+    [dismissedBanners, id],
+  );
 
   return !isDismissed ? (
     <BaseAlert
