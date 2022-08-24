@@ -2,7 +2,7 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { ScreenName } from "../../const";
 
 export type ParamList = {
-  PostOnboardingHub: {};
-  PostOnboardingDebugScreen: {};
+  PostOnboardingHub: Record<string, never>;
+  PostOnboardingDebugScreen: Record<string, never>;
   PostOnboardingMockActionScreen: { id: PostOnboardingActionId };
 };
