@@ -70,52 +70,58 @@ export const useGenuineCheck = ({
   }, []);
 
   useEffect(() => {
-    if (isHookEnabled) {
-      getGenuineCheckFromDeviceId({
-        deviceId,
-        lockedDeviceTimeoutMs,
-      }).subscribe({
-        next: ({
-          socketEvent,
-          deviceIsLocked,
-        }: GetGenuineCheckFromDeviceIdResult) => {
-          if (socketEvent) {
-            switch (socketEvent.type) {
-              case "device-permission-requested":
-                setDevicePermissionState("requested");
-                break;
-              case "device-permission-granted":
-                setDevicePermissionState("granted");
-                break;
-              case "result":
-                if (socketEvent.payload === SOCKET_EVENT_PAYLOAD_GENUINE) {
-                  setGenuineState("genuine");
-                } else {
-                  setGenuineState("non-genuine");
-                }
-                break;
-            }
-          } else {
-            // If no socketEvent, the device is locked or has been unlocked
-            if (deviceIsLocked) {
-              setDevicePermissionState("unlock-needed");
-            } else {
-              setDevicePermissionState("unlocked");
-            }
-          }
-        },
-        error: (e: any) => {
-          if (e instanceof UserRefusedAllowManager) {
-            setDevicePermissionState("refused");
-          } else if (e instanceof Error) {
-            // Probably an error of type DisconnectedDeviceDuringOperation or something else
-            setError(e);
-          } else {
-            setError(new Error(`Unknown error: ${e}`));
-          }
-        },
-      });
+    if (!isHookEnabled) {
+      return;
     }
+
+    const sub = getGenuineCheckFromDeviceId({
+      deviceId,
+      lockedDeviceTimeoutMs,
+    }).subscribe({
+      next: ({
+        socketEvent,
+        deviceIsLocked,
+      }: GetGenuineCheckFromDeviceIdResult) => {
+        if (socketEvent) {
+          switch (socketEvent.type) {
+            case "device-permission-requested":
+              setDevicePermissionState("requested");
+              break;
+            case "device-permission-granted":
+              setDevicePermissionState("granted");
+              break;
+            case "result":
+              if (socketEvent.payload === SOCKET_EVENT_PAYLOAD_GENUINE) {
+                setGenuineState("genuine");
+              } else {
+                setGenuineState("non-genuine");
+              }
+              break;
+          }
+        } else {
+          // If no socketEvent, the device is locked or has been unlocked
+          if (deviceIsLocked) {
+            setDevicePermissionState("unlock-needed");
+          } else {
+            setDevicePermissionState("unlocked");
+          }
+        }
+      },
+      error: (e: any) => {
+        if (e instanceof UserRefusedAllowManager) {
+          setDevicePermissionState("refused");
+        } else if (e instanceof Error) {
+          // Probably an error of type DisconnectedDeviceDuringOperation or something else
+          setError(e);
+        } else {
+          setError(new Error(`Unknown error: ${e}`));
+        }
+      },
+    });
+
+    return () => {
+      sub.unsubscribe();
+    };
   }, [
     isHookEnabled,
     deviceId,

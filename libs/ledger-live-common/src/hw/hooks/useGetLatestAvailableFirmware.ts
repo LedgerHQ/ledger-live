@@ -55,30 +55,35 @@ export const useGetLatestAvailableFirmware = ({
     useState<FirmwareUpdateGettingStatus>("unchecked");
 
   useEffect(() => {
-    if (isHookEnabled) {
-      setStatus("checking");
-
-      getLatestAvailableFirmwareFromDeviceId({ deviceId }).subscribe({
-        next: ({
-          firmwareUpdateContext,
-        }: GetLatestAvailableFirmwareFromDeviceIdResult) => {
-          if (!firmwareUpdateContext) {
-            setLatestFirmware(null);
-            setStatus("no-available-firmware");
-          } else {
-            setLatestFirmware(firmwareUpdateContext);
-            setStatus("available-firmware");
-          }
-        },
-        error: (e: any) => {
-          if (e instanceof Error) {
-            setError(e);
-          } else {
-            setError(new Error(`Unknown error: ${e}`));
-          }
-        },
-      });
+    if (!isHookEnabled) {
+      return;
     }
+    setStatus("checking");
+
+    const sub = getLatestAvailableFirmwareFromDeviceId({ deviceId }).subscribe({
+      next: ({
+        firmwareUpdateContext,
+      }: GetLatestAvailableFirmwareFromDeviceIdResult) => {
+        if (!firmwareUpdateContext) {
+          setLatestFirmware(null);
+          setStatus("no-available-firmware");
+        } else {
+          setLatestFirmware(firmwareUpdateContext);
+          setStatus("available-firmware");
+        }
+      },
+      error: (e: any) => {
+        if (e instanceof Error) {
+          setError(e);
+        } else {
+          setError(new Error(`Unknown error: ${e}`));
+        }
+      },
+    });
+
+    return () => {
+      sub.unsubscribe();
+    };
   }, [deviceId, getLatestAvailableFirmwareFromDeviceId, isHookEnabled]);
 
   return { latestFirmware, error, status };
