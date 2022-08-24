@@ -105,6 +105,7 @@ function AccountHeader({
                 fontWeight={"semiBold"}
                 color={"neutral.c100"}
                 fontSize="18px"
+                numberOfLines={1}
               >
                 <CurrencyUnitValue {...items[1]} />
               </Text>

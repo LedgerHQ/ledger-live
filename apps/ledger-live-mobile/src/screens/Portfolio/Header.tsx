@@ -129,7 +129,8 @@ function PortfolioHeader({
     justifyContent: "center",
     alignItems: "center",
     height: 48,
-    left: -p.width / 2,
+    left: -p.width / 2 + p.width * 0.15,
+    width: p.width * 0.7,
   }))`
     position: absolute;
   `;

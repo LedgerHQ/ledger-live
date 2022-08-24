@@ -81,7 +81,7 @@ function Header({
       }
       centerBeforeScrollElement={
         <Flex flexDirection={"row"} alignItems={"center"}>
-          <Text variant={"large"} fontWeight={"semiBold"}>
+          <Text variant={"large"} fontWeight={"semiBold"} numberOfLines={1}>
             {t("asset.title", { assetName: currency.name })}
           </Text>
         </Flex>
@@ -95,6 +95,7 @@ function Header({
                 fontWeight={"semiBold"}
                 color={"neutral.c70"}
                 fontSize="11px"
+                numberOfLines={1}
               >
                 {t("asset.title", { assetName: currency.name })}
               </Text>
@@ -103,6 +104,7 @@ function Header({
                 fontWeight={"semiBold"}
                 color={"neutral.c100"}
                 fontSize="18px"
+                numberOfLines={1}
               >
                 <CurrencyUnitValue
                   unit={unit}
