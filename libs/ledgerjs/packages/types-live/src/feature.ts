@@ -9,6 +9,7 @@ export type FeatureId =
   | "ptxSmartRouting"
   | "currencyOsmosis"
   | "ptxSmartRoutingMobile"
+  | "mockFeature"
   | string;
 
 /**  We use objects instead of direct booleans for potential future improvements

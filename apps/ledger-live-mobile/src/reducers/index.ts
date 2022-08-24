@@ -1,4 +1,6 @@
 import { combineReducers } from "redux";
+import { PostOnboardingState } from "@ledgerhq/types-live";
+import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import accounts from "./accounts";
 import settings from "./settings";
 import appstate from "./appstate";
@@ -19,6 +21,7 @@ export type State = {
   ble: BleState;
   ratings: RatingsState;
   notifications: NotificationsState;
+  postOnboarding: PostOnboardingState;
 };
 
 const appReducer = combineReducers({
@@ -28,6 +31,7 @@ const appReducer = combineReducers({
   ble,
   ratings,
   notifications,
+  postOnboarding,
 });
 
 const rootReducer = (state: State, action: any) => {

@@ -67,4 +67,7 @@ export const defaultFeatures: DefaultFeatures = {
   counterValue: {
     enabled: false,
   },
+  mockFeature: {
+    enabled: false,
+  },
 };
