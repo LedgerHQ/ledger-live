@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import BottomModal from "../../components/BottomModal";
 import Circle from "../../components/Circle";

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { ScreenName } from "../../const";
@@ -27,7 +27,7 @@ const PendingOperation = () => {
     operation,
     fromAccount,
     fromParentAccount,
-  } = route.params;
+  } = route.params as any;
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
   const onComplete = useCallback(() => {
     navigation.navigate(ScreenName.OperationDetails, {

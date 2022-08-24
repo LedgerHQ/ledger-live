@@ -7,7 +7,7 @@ import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button";
 import TextInput from "../../components/FocusedTextInput";
 import KeyboardView from "../../components/KeyboardView";

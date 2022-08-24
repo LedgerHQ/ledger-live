@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/dist/AntDesign";
 import { useTheme } from "@react-navigation/native";
