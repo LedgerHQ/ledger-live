@@ -40,7 +40,6 @@ const signOperation = ({
         const chainId = await osmosisAPI.getChainId();
         const hdPaths: HdPath = stringToPath("m/" + account.freshAddressPath);
         const ledgerSigner = new LedgerSigner(transport, {
-          // @ts-expect-error Todo: fix this
           hdPaths: [hdPaths],
           prefix: account.currency.id,
         });
