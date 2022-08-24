@@ -19,14 +19,15 @@ import { useSelector } from "react-redux";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { useRoute } from "@react-navigation/native";
 import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
 
 function ManageAssetsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
   const navigation = useNavigation();
-  navigation.setOptions({ title: t('celo.manage.title') })
+  navigation.setOptions({ title: t("celo.manage.title") });
 
   const routeParams = useRoute().params;
   const { account } = useSelector(accountScreenSelector(routeParams));
@@ -38,9 +39,9 @@ function ManageAssetsNavigator() {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName,
-      screen?: typeof ScreenName,
-      params?: { [key: string]: any },
+      route: typeof NavigatorName | typeof ScreenName;
+      screen?: typeof ScreenName;
+      params?: { [key: string]: any };
     }) => {
       navigation.navigate(route, {
         screen,
@@ -77,17 +78,15 @@ function ManageAssetsNavigator() {
       route: NavigatorName.CeloUnlockFlow,
       screen: ScreenName.CeloUnlockAmount,
     });
-
   }, [onNavigate]);
 
-  // const onActivate = useCallback(() => {
-  //   onNavigate({
-  //     route: NavigatorName.CosmosDelegationFlow,
-  //     screen: ScreenName.CosmosDelegationStarted,
-  //     params: {},
-  //   });
-
-  // }, [onNavigate]);
+  const onActivate = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.CeloActivateFlow,
+      screen: ScreenName.CeloActivateSummary,
+      params: {},
+    });
+  }, [onNavigate]);
 
   // const onWithdraw = useCallback(() => {
   //   onNavigate({
@@ -104,7 +103,6 @@ function ManageAssetsNavigator() {
       screen: ScreenName.CeloVoteStarted,
       params: {},
     });
-
   }, [onNavigate]);
 
   // const onRevoke = useCallback(() => {
@@ -116,66 +114,81 @@ function ManageAssetsNavigator() {
 
   // }, [onNavigate]);
 
-  const isRegistered = (account as CeloAccount).celoResources?.registrationStatus;
+  const isRegistered = (account as CeloAccount).celoResources
+    ?.registrationStatus;
   const unlockingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
   const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
+  const activatingEnabled = activatableVotes(account as CeloAccount).length;
+
+  console.log("Activatable: ", activatableVotes(account));
 
   return (
     <SafeAreaView
-    style={{ flex: 1, justifyContent: 'space-between', alignItems: 'center' }}
-  >
-    <View>
-      {!isRegistered ? (
+      style={{ flex: 1, justifyContent: "space-between", alignItems: "center" }}
+    >
+      <View>
+        {!isRegistered ? (
+          <Button
+            event="Celo Account Registration Click"
+            onPress={onAccountRegistration}
+            type="main"
+            title={t("celo.register.stepperHeader.title")}
+            containerStyle={styles.button}
+          />
+        ) : null}
+
+        {isRegistered ? (
+          <Button
+            event="Celo Lock Click"
+            onPress={onLock}
+            type="main"
+            title={t("celo.manage.lock.title")}
+            containerStyle={styles.button}
+          />
+        ) : null}
         <Button
-          event="Celo Account Registration Click"
-          onPress={onAccountRegistration}
+          event="Celo Unlock Click"
+          onPress={onUnlock}
           type="main"
-          title={t("celo.register.stepperHeader.title")}
+          title={t("celo.manage.unlock.title")}
           containerStyle={styles.button}
+          disabled={!unlockingEnabled}
         />
-      ) : null}
+        <Button
+          event="Celo Withdraw Click"
+          onPress={onLock}
+          type="main"
+          title={t("celo.manage.withdraw.title")}
+          containerStyle={styles.button}
+          disabled={true}
+        />
+        <Button
+          event="Celo Vote Click"
+          onPress={onVote}
+          type="main"
+          title={t("celo.manage.vote.title")}
+          containerStyle={styles.button}
+          disabled={!votingEnabled}
+        />
 
-      {isRegistered ? <Button
-        event="Celo Lock Click"
-        onPress={onLock}
-        type="main"
-        title={t("celo.manage.lock.title")}      
-        containerStyle={styles.button}
-      /> : null}
-      <Button
-        event="Celo Unlock Click"
-        onPress={onUnlock}
-        type="main"
-        title={t("celo.manage.unlock.title")}
-        containerStyle={styles.button}
-        disabled={!unlockingEnabled}
-      />
-      <Button
-        event="Celo Withdraw Click"
-        onPress={onLock}
-        type="main"
-        title={t("celo.manage.withdraw.title")}
-        containerStyle={styles.button}
-        disabled={true}
-      />
-      <Button
-        event="Celo Vote Click"
-        onPress={onVote}
-        type="main"
-        title={t("celo.manage.activate.title")}
-        containerStyle={styles.button}
-        disabled={!votingEnabled}
-      />
+        <Button
+          event="Celo Activate Click"
+          onPress={onActivate}
+          type="main"
+          title={t("celo.manage.activate.title")}
+          containerStyle={styles.button}
+          disabled={!activatingEnabled}
+        />
 
-      <Button
-        event="Celo Revoke Click"
-        onPress={onLock}
-        type="main"
-        title={t("celo.manage.revoke.title")}
-        containerStyle={styles.button}
-        disabled={true}
-      />
-    </View>
+        <Button
+          event="Celo Revoke Click"
+          onPress={onLock}
+          type="main"
+          title={t("celo.manage.revoke.title")}
+          containerStyle={styles.button}
+          disabled={true}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -190,6 +203,5 @@ const styles = StyleSheet.create({
     width: 240,
   },
 });
-
 
 export { ManageAssetsNavigator as component, options };
