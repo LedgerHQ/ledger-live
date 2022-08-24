@@ -66,7 +66,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           persist-credentials: false
-          fetch-depth: 0
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -85,6 +84,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
@@ -109,7 +109,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           persist-credentials: false
-          fetch-depth: 0
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -124,6 +123,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: latest
+          dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
@@ -134,6 +134,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
@@ -155,7 +156,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-          fetch-depth: 0
       - name: update path
         run: |
           echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -170,11 +170,17 @@ jobs:
         with:
           version: latest
           dest: ${{ runner.temp }}/setup-pnpm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
@@ -199,7 +205,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           persist-credentials: false
-          fetch-depth: 0
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -218,6 +223,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:

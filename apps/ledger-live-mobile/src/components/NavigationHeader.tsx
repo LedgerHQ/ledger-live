@@ -6,7 +6,7 @@ import { ArrowLeftMedium, CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Flex, Text, Link } from "@ledgerhq/native-ui";
 import { StackHeaderProps } from "@react-navigation/stack";
 import { getHeaderTitle } from "@react-navigation/elements";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 
 type NavigationHeaderProps = StackHeaderProps & {
   containerProps?: FlexBoxProps;
