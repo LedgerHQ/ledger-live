@@ -194,6 +194,13 @@ export const ScreenName = {
   CeloActivateValidatorSelect: "CeloActivateValidatorSelect",
   CeloActivateSelectDevice: "CeloActivateSelectDevice",
   CeloActivateConnectDevice: "CeloActivateConnectDevice",
+  CeloRevokeValidationSuccess: "CeloRevokeValidationSuccess",
+  CeloRevokeValidationError:"CeloRevokeValidationError",
+  CeloRevokeSummary: "CeloRevokeSummary",
+  CeloRevokeAmount: "CeloRevokeAmount",
+  CeloRevokeValidatorSelect: "CeloRevokeValidatorSelect",
+  CeloRevokeSelectDevice: "CeloRevokeSelectDevice",
+  CeloRevokeConnectDevice: "CeloRevokeConnectDevice",
 
   // cosmos
   CosmosEditMemo: "CosmosEditMemo",
@@ -486,6 +493,7 @@ export const NavigatorName = {
   CeloUnlockFlow: "CeloUnlockFlow",
   CeloVoteFlow: "CeloVoteFlow",
   CeloActivateFlow: "CeloActivateFlow",
+  CeloRevokeFlow: "CeloRevokeFlow",
 
   // Tab
   Main: "Main",

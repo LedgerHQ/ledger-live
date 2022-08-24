@@ -20,7 +20,7 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import { useRoute } from "@react-navigation/native";
 import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
+import { activatableVotes, hasActivatableVotes, hasRevokableVotes, revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
 
 function ManageAssetsNavigator() {
   const { t } = useTranslation();
@@ -105,22 +105,23 @@ function ManageAssetsNavigator() {
     });
   }, [onNavigate]);
 
-  // const onRevoke = useCallback(() => {
-  //   onNavigate({
-  //     route: NavigatorName.CosmosDelegationFlow,
-  //     screen: ScreenName.CosmosDelegationStarted,
-  //     params: {},
-  //   });
+  const onRevoke = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.CeloRevokeFlow,
+      screen: ScreenName.CeloRevokeSummary,
+      params: {},
+    });
 
-  // }, [onNavigate]);
+  }, [onNavigate]);
 
   const isRegistered = (account as CeloAccount).celoResources
     ?.registrationStatus;
   const unlockingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
   const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
-  const activatingEnabled = activatableVotes(account as CeloAccount).length;
+  const activatingEnabled = hasActivatableVotes(account as CeloAccount);
+  const revokingEnabled = hasRevokableVotes(account as CeloAccount);
 
-  console.log("Activatable: ", activatableVotes(account));
+  console.log("Activatable: ", activatableVotes(account as CeloAccount));
 
   return (
     <SafeAreaView
@@ -182,11 +183,11 @@ function ManageAssetsNavigator() {
 
         <Button
           event="Celo Revoke Click"
-          onPress={onLock}
+          onPress={onRevoke}
           type="main"
           title={t("celo.manage.revoke.title")}
           containerStyle={styles.button}
-          disabled={true}
+          disabled={!revokingEnabled}
         />
       </View>
     </SafeAreaView>

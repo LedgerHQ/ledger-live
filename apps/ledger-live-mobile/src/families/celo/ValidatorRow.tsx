@@ -8,27 +8,32 @@ import { StyleSheet, View } from "react-native";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Touchable from "../../components/Touchable";
 import ValidatorImage from "./ValidatorImage";
-import { CeloValidatorGroup } from "@ledgerhq/live-common/lib/families/celo/types";
+import { CeloValidatorGroup, CeloVote } from "@ledgerhq/live-common/lib/families/celo/types";
+import { useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 
 const ValidatorRow = ({
   onPress,
   validator,
   account,
+  vote,
   amount
-}: {
-  onPress: (v: CeloValidatorGroup) => void;
+  }: {
+  onPress: (validator: CeloValidatorGroup, vote?: CeloVote) => void;
   validator: CeloValidatorGroup;
   account: AccountLike;
-  amount: BigNumber
+  vote?: CeloVote;
+  amount: BigNumber;
 }) => {
+  const { colors } = useTheme();
+
   const onPressT = useCallback(() => {
-    onPress(validator);
+    onPress(validator, vote);
   }, [validator, onPress]);
 
   return (
     <Touchable
-      event="DelegationFlowChosevalidator"
+      event="ChoseValidator"
       eventProperties={{
         validatorName: validator.name || validator.address,
       }}
@@ -48,6 +53,19 @@ const ValidatorRow = ({
           >
             {validator.name || validator.address}
           </Text>
+          {vote?.type ? (
+            <Text
+              fontWeight="semiBold"
+              numberOfLines={1}
+              style={[styles.overdelegated, { color: vote.type === "active" ? colors.green : colors.grey }]}
+            >
+              {vote.type === "active" ? (
+                <Trans i18nKey="celo.revoke.flow.steps.validator.active" />
+              ) : (
+                <Trans i18nKey="celo.revoke.flow.steps.validator.pending" />
+              )}
+            </Text>
+          ) : null}
         </View>
         <Text
           fontWeight="semiBold"

@@ -3592,32 +3592,23 @@
       }
     },
     "revoke": {
-      "title": "Revoke vote",
-      "steps": {
-        "amount": {
-          "title": "Amount",
-          "amountLabel": "Amount to revoke",
-          "availableLabel": "Available",
-          "maxLabel": "Max"
+      "iRevoke": "I revoke",
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "validator": {
+            "active": "Active",
+            "pending": "Pending"
+          }
         },
-        "connectDevice": {
-          "title": "Device"
-        },
-        "confirmation": {
-          "title": "Confirmation",
-          "success": {
-            "title": "You have successfully revoked your votes",
-            "text": "You will see your operation in history soon.",
-            "cta": "View details"
-          },
-          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
-        },
-        "vote": {
-          "title": "Vote",
-          "active": "Active",
-          "pending": "Pending",
-          "awaitingActivation": "Awaiting activation",
-          "info": "Only revokable votes are shown on this modal"
+        "verification": {
+          "title": "You have successfully revoked your votes",
+          "text": "You will see your operation in history soon."
         }
       }
     },
