@@ -660,6 +660,7 @@ export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
 
 export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
+
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;
 

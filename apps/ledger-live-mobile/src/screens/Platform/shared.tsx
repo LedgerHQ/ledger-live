@@ -4,9 +4,15 @@ import {
   FilterParams,
   filterPlatformApps,
 } from "@ledgerhq/live-common/platform/filters";
+<<<<<<< HEAD
 import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/providers/types";
 import { AppManifest } from "@ledgerhq/live-common/platform/types";
+=======
+import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/providers/types";
+import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
 import { useMemo } from "react";
 
 const defaultArray: LiveAppManifest[] = [];

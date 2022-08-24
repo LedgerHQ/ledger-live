@@ -32,7 +32,10 @@ import {
   postSwapCancelled,
 } from "@ledgerhq/live-common/exchange/swap/index";
 import { getEnv } from "@ledgerhq/live-common/env";
+<<<<<<< HEAD
 import { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
+=======
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
 import DeviceAction from "../../../../components/DeviceAction";

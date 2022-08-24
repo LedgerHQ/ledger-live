@@ -1,7 +1,11 @@
 import React from "react";
 import Svg, { G, Defs, Path, Rect, ClipPath } from "react-native-svg";
 
+<<<<<<< HEAD
 export const Paraswap = React.memo(({ size }: { size: number }) => {
+=======
+export function Paraswap({ size }: { size: number }) {
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
   return (
     <Svg viewBox="0 0 32 32" height={size} width={size}>
       <G clipPath="url(#clip0)">
@@ -28,4 +32,8 @@ export const Paraswap = React.memo(({ size }: { size: number }) => {
       </Defs>
     </Svg>
   );
+<<<<<<< HEAD
 });
+=======
+}
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508

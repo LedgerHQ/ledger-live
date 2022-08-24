@@ -3,6 +3,10 @@ import { ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
+<<<<<<< HEAD
+=======
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types"
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -317,9 +321,13 @@ export function renderConfirmSwap({
                 size={20}
                 currency={getAccountCurrency(exchange.fromAccount)}
               />
+<<<<<<< HEAD
               <Text marginLeft={2}>
                 {getAccountName(exchange.fromAccount)}
               </Text>
+=======
+              <Text marginLeft={2}>{getAccountName(exchange.fromAccount)}</Text>
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
             </Flex>
           </FieldItem>
 

@@ -133,7 +133,6 @@ const shallowAccountsSelectorCreator = createSelectorCreator(
       flattenAccounts(b).map(accountHash),
     ),
 );
-
 export const shallowAccountsSelector: OutputSelector<
   State,
   Account[],

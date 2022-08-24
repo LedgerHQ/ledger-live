@@ -1,5 +1,9 @@
 import React from "react";
+<<<<<<< HEAD
 import { TouchableOpacity } from "react-native";
+=======
+import { StatusBar, TouchableOpacity } from "react-native";
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTranslation } from "react-i18next";
@@ -51,7 +55,11 @@ export function Selector({
             <Text
               variant="h3"
               marginBottom={2}
+<<<<<<< HEAD
               color={title? "neutral.c100" : "neutral.c70"}
+=======
+              color={title ? "neutral.c100" : "neutral.c70"}
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
             >
               {title || t("transfer.swap2.form.placeholder")}
             </Text>

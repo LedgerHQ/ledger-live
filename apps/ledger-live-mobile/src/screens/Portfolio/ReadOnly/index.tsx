@@ -161,6 +161,10 @@ function PortfolioScreen({ navigation }: Props) {
     counterValueCurrencySelector,
   );
   const portfolio = usePortfolio();
+<<<<<<< HEAD
+=======
+  const discreetMode = useSelector(discreetModeSelector);
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);

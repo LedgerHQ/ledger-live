@@ -4,10 +4,18 @@ import {
   SwapDataType,
   Pair,
 } from "@ledgerhq/live-common/exchange/swap/types";
+<<<<<<< HEAD
+=======
+import { AccountLike, Operation } from "@ledgerhq/types-live";
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
+<<<<<<< HEAD
+=======
+import { LodashToPairs } from "lodash/fp";
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
 
 export type SwapFormProps = MaterialTopTabScreenProps<
   SwapFormNavParamList,

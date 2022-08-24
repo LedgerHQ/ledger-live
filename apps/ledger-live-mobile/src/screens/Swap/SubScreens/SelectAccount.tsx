@@ -182,6 +182,10 @@ export function SelectAccount({
   );
 
   return (
+<<<<<<< HEAD
+=======
+    // @ts-expect-error
+>>>>>>> db4df5bda62a62a56aa13e956040a614f0554508
     <KeyboardView>
       <TrackScreen
         category="Swap Form"
