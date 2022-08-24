@@ -61,6 +61,7 @@ import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import AnalyticsConsole from "./components/AnalyticsConsole";
 import ThemeDebug from "./components/ThemeDebug";
+import TrackBIM from "./components/TrackBIM";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
@@ -559,6 +560,7 @@ export default class Root extends Component<
                             <FirebaseFeatureFlagsProvider>
                               <SafeAreaProvider>
                                 <DeepLinkingNavigator>
+                                  <TrackBIM />
                                   <StyledStatusBar />
                                   <NavBarColorHandler />
                                   <AuthPass>

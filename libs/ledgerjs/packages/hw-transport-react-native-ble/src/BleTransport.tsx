@@ -18,8 +18,11 @@ import EventEmitter from "./EventEmitter";
 
 const NativeBle = NativeModules.HwTransportReactNativeBle;
 
+let runningQueue = false;
 let instances: Array<Ble> = [];
 type RunnerEvent = any; // Can't depend on live-common for this, TODO get it from types package
+
+export const isRunningBIMQueue = (): boolean => !!runningQueue;
 
 class Ble extends Transport {
   static scanObserver: Observer<DescriptorEvent<unknown>>;
@@ -83,6 +86,7 @@ class Ble extends Transport {
     Ble.log("request to launch queue", token);
     this.queueObserver = observer;
     NativeBle.queue(token, endpoint);
+    runningQueue = true; // TODO there probably is a cleaner way of doing this.
     // Regarding ↑ there's a bug in this rn version that breaks the mapping
     // between a number on the JS side and Swift. To preserve my sanity, we
     // are using string in the meantime since it's not a big deal.
@@ -96,8 +100,10 @@ class Ble extends Transport {
         if (type === "runComplete") {
           // we've completed a queue, complete the subject
           this.queueObserver.complete();
+          runningQueue = false;
         } else if (type === "runError") {
           this.queueObserver.error(Ble.remapError(data.message));
+          runningQueue = false;
         } else {
           const progress = Math.round((data?.progress || 0) * 100) / 100;
           this.queueObserver.next({
@@ -215,6 +221,7 @@ class Ble extends Transport {
       instance.queueObserver?.complete();
     });
     instances = [];
+    runningQueue = false;
 
     await NativeBle.disconnect();
     Ble.disconnecting = false;
