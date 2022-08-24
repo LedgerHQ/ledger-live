@@ -19,9 +19,7 @@ const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const discoverLiveImg = require("../../../images/illustration/Shared/_DiscoverLive.png");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const syncCryptoLightImg = require("../../../images/illustration/Light/_SyncCrypto.png");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const syncCryptoDarkImg = require("../../../images/illustration/Dark/_SyncCrypto.png");
+const syncCryptoImg = require("../../../images/illustration/Shared/_SyncFromDesktop.png");
 
 type PostWelcomeDiscoverCardProps = {
   title: string;
@@ -100,7 +98,6 @@ function PostWelcomeSelection({
   }`;
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
-  const { theme } = useTheme();
   useFocusEffect(
     useCallback(() => {
       setScreen(screenName);
@@ -219,15 +216,14 @@ function PostWelcomeSelection({
           imageSource={discoverLiveImg}
         />
         <PostWelcomeDiscoverCard
-          title={t("onboarding.stepUseCase.desktopSync.subTitle")}
+          title={t("onboarding.postWelcomeStep.desktopSync.title")}
+          subTitle={t("onboarding.postWelcomeStep.desktopSync.subtitle")}
           event="Onboarding PostWelcome - Sync Cryptos"
           testID={`Onboarding PostWelcome - Selection|SyncCryptos`}
           selectedOption={selectedOption}
           onPress={pressSync}
           onValidate={syncCryptos}
-          imageSource={
-            theme === "dark" ? syncCryptoDarkImg : syncCryptoLightImg
-          }
+          imageSource={syncCryptoImg}
         />
         {!userHasDevice && (
           <PostWelcomeDiscoverCard

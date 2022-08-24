@@ -1006,6 +1006,10 @@
       "discoverLedger": {
         "title": "Explore Ledger Live",
         "subtitle": "Explore the app and learn about its benefits "
+      },
+      "desktopSync": {
+        "title": "Sync from desktop",
+        "subtitle": "Syncronise your crypto from your desktop app"
       }
     },
     "discoverLive": {
