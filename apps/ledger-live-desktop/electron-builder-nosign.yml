@@ -25,7 +25,7 @@ linux:
     - target: AppImage
       arch:
         - x64
-        - armv7l
+        - arm
 
 win:
   artifactName: ${name}-${version}-${os}-${arch}.${ext}
