@@ -88,6 +88,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries (Pull Request)

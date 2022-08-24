@@ -43,7 +43,7 @@ const final = async () => {
     );
   }
 
-  if (os.platform() === "darwin") {
+  if (os.platform() === "darwin" && !process.env["SKIP_BUNDLE_CHECK"]) {
     cd("ios");
     try {
       await $`bundle exec pod install --deployment --repo-update`;
