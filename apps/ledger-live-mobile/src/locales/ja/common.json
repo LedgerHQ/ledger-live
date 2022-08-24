@@ -82,6 +82,7 @@
     "moreInfo" : "詳細はこちら",
     "buyEth" : "Ethereumを購入",
     "popular" : "人気",
+    "getSupport" : "サポートを利用する",
     "comingSoon" : "近日公開"
   },
   "errors" : {
@@ -679,6 +680,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     }
+  },
+  "crash" : {
+    "title" : "問題が発生しました。"
   },
   "bluetooth" : {
     "required" : "Bluetoothが無効になっているようです。",
@@ -2153,6 +2157,10 @@
       "clearCacheButton" : "クリア",
       "exportLogs" : "ログを保存",
       "exportLogsDesc" : "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
+      "resetThirdPartyData" : "サードパーティーのデータをリセット",
+      "resetThirdPartyDataDesc" : "サードパーティーのトランザクションプロバイダーへのアクセスに使用される、ローカルのサードパーティーのデータをすべて削除します。",
+      "resetThirdPartyDataModal" : "ローカルのサードパーティーのデータを削除",
+      "resetThirdPartyDataModalDesc" : "ローカルのサードパーティーのデータを削除します。弊社のパートナーが提供するサービスにアクセスするには、KYC(本人確認手続き)の再提出やログインが必要になる場合があります。",
       "hardReset" : "Ledger Liveをリセット",
       "hardResetDesc" : "これは、あなたの資産には影響しません。アカウントデータ、トランザクション履歴、設定など、Ledger Live上のすべてのデータを消去します。Ledgerデバイスを使って、初期化されたLedger Liveに暗号資産を再び読み込んで管理できます。",
       "repairDevice" : "Ledgerデバイスを修理する",
@@ -2169,6 +2177,15 @@
       "customManifest" : {
         "title" : "カスタムプラットフォームマニフェストを読み込む"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsOverride" : "Override",
+      "featureFlagsEdit" : "Edit",
+      "featureFlagsRestore" : "Restore",
+      "featureFlagsDisplayValue" : "値を表示",
+      "featureFlagsHideValue" : "値を非表示"
     }
   },
   "notifications" : {
@@ -2269,7 +2286,7 @@
         "cancel" : {
           "title" : "このアドレスを拒否しました",
           "subtitle" : "これが誤操作によるものである場合は、下のボタンをクリックして再試行できます。",
-          "info" : "アドレスの不一致が確実な場合、お使いのスマートフォンが情報漏洩している可能性があります。<0>できるだけ早くお問い合わせいただく</0>ことをお勧めします。"
+          "info" : "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
         }
       },
       "receiveConfirmation" : {
@@ -2284,7 +2301,7 @@
         "subtitle1" : "アドレスを認証することで安全にご利用いただけます。Ledgerデバイスに表示されるアドレスが情報漏洩することはありません。",
         "subtitle2" : "アドレスを認証することで、デバイスに表示されているアドレスがLedger Liveに表示されているアドレスと同一であることを確認できます。",
         "verifyCta" : "アドレスを認証",
-        "dontVerifyCta" : "認証せずにアドレスを提示"
+        "dontVerifyCta" : "Reveal my address without verifying"
       },
       "securityDontVerify" : {
         "title" : "本当によろしいですか？",
@@ -2405,7 +2422,7 @@
       },
       "payoutModal" : {
         "title" : "ペイアウト手数料",
-        "description" : "ペイアウト手数料はデバイス上に表示されず、送金額から差し引かれます。",
+        "description" : "Payout fees are not shown on the device and subtracted from the amount.",
         "cta" : "閉じる"
       },
       "pendingOperation" : {
@@ -2528,19 +2545,80 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "送付元",
-          "to" : "送付先",
-          "send" : "送る",
-          "payoutNetworkFees" : "ペイアウト手数料",
-          "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
-          "receive" : "数量",
-          "receiveFloat" : "サービス手数料を含まない受け取り額",
-          "provider" : "プロバイダー",
-          "method" : "レート",
-          "fees" : "手数料"
+        "ratesDrawer" : {
+          "title" : "レート",
+          "quote" : "見積もり",
+          "receive" : "受け取る"
+        },
+        "placeholder" : "アカウントを選択",
+        "title" : "取引",
+        "cta" : "取引",
+        "from" : "送付元",
+        "to" : "送付先",
+        "loading" : "読み込み中...",
+        "disclaimer" : {
+          "title" : "利用規約",
+          "desc" : "「同意する」をクリックすることで、私はこのサービスが{{providerName}}の利用規約によって排他的に規定されていることを理解し、これに同意します。",
+          "tos" : "ご利用規約",
+          "accept" : "同意する"
+        },
+        "notAvailable" : {
+          "title" : "お住まいの地域では、スワップを利用できません。",
+          "content" : "この機能は近々追加予定ですので、今しばらくお待ちください。"
+        },
+        "amount" : {
+          "useMax" : "全額を選択",
+          "available" : "合計利用可能額"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "プロバイダー",
+            "rate" : "レート",
+            "fees" : "ネットワーク手数料",
+            "target" : "送付先アカウント"
+          },
+          "noAccount" : "{{name}}を受け取るアカウントを作成する",
+          "noAccountCTA" : "アカウントを追加"
+        },
+        "select" : {
+          "from" : {
+            "title" : "送付元"
+          },
+          "to" : {
+            "title" : "送付先"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC(本人確認手続き)",
+            "required" : "KYCを完了する必要があります",
+            "complete" : "KYCを完了",
+            "update" : "KYCを更新",
+            "rejected" : "KYCが却下されたため、承認申請をやり直す必要があります。",
+            "rejectedContactProviderSupport" : "KYCが拒否されました。{{providerName}}サポートにお問い合わせください。",
+            "updateRequired" : "KYCを完了または更新する",
+            "status" : {
+              "pending" : "KYC申請中",
+              "approved" : "KYC承認済み",
+              "closed" : "KYC却下",
+              "upgradeRequired" : "KYC未完了"
+            }
+          },
+          "login" : {
+            "title" : "ログイン",
+            "required" : "このプロバイダーでログインする必要があります",
+            "complete" : "ログイン"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "このプロバイダーでMFA(多要素認証)を設定する必要があります",
+            "complete" : "MFAを設定"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
+          }
         }
       }
     },
@@ -2995,7 +3073,6 @@
     "retry" : "再試行",
     "done" : "完了",
     "finalCta" : "続行",
-    "finalCtaForSwap" : "スワップに戻る",
     "synchronizing" : "同期中",
     "synchronizingDesc" : "アカウントを同期しています。しばらくお待ちください...",
     "noAccountToCreate" : "<1><0>{{currencyName}}</></>アカウントを作成できませんでした。再試行してアカウントを同期してください。",
@@ -3072,7 +3149,17 @@
     "confirmSwap" : {
       "title" : "スワップ処理をデバイス上で確認する",
       "alert" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
-      "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します"
+      "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します",
+      "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
+    },
+    "swap2" : {
+      "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
+      "amountSent" : "送付額",
+      "amountReceived" : "受取額",
+      "provider" : "プロバイダー",
+      "fees" : "ネットワーク手数料",
+      "sourceAccount" : "送付元アカウント",
+      "targetAccount" : "送付先アカウント"
     },
     "confirmSell" : {
       "title" : "売却をデバイスで確認する",
@@ -3402,8 +3489,8 @@
     "drawerUpdate" : {
       "title" : "ファームウェアのアップデート",
       "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "USBケーブルが必要です",
+      "pleaseConnectUsbDescription" : "ファームウェアのアップデートを開始するには、 {{deviceName}}をUSBケーブルでスマートフォンに接続します。"
     }
   },
   "FirmwareUpdateReleaseNotes" : {
