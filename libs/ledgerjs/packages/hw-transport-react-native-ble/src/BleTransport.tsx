@@ -37,7 +37,7 @@ class Ble extends Transport {
 
   static log(...m: string[]): void {
     const tag = "ble-verbose";
-    console.log(tag, JSON.stringify([...m]));
+    log(tag, JSON.stringify([...m]));
   }
 
   constructor(deviceId: string) {
