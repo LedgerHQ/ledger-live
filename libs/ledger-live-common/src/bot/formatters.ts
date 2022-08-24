@@ -26,19 +26,25 @@ export const formatTime = (t: number): string =>
 
 const formatDt = (from, to) => (from && to ? formatTime(to - from) : "?");
 
-export function formatAppCandidate(appCandidate: AppCandidate) {
+export function formatAppCandidate(appCandidate: AppCandidate): string {
   return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
 }
 
-export function formatError(e: any) {
-  if (!e || typeof e !== "object" || e instanceof Error) return String(e);
+export function formatError(e: any, longform = false): string {
   let out;
-  try {
-    out = "raw object: " + JSON.stringify(e);
-  } catch (_e) {
+  if (!e || typeof e !== "object" || e instanceof Error) {
     out = String(e);
+  } else {
+    try {
+      out = "raw object: " + JSON.stringify(e);
+    } catch (_e) {
+      out = String(e);
+    }
   }
-  return out.replace(/\n/g, " ").slice(0, 400);
+  if (longform) {
+    return out.slice(0, 400); // safemax
+  }
+  return out.replace(/[`]/g, "").replace(/\n/g, " ").slice(0, 160);
 }
 
 export function formatReportForConsole<T extends Transaction>({
