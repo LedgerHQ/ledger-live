@@ -90,3 +90,7 @@ You can find these files at the following locations:
 
 - Ledger Live Desktop: `apps/ledger-live-desktop/static/i18n/en/app.json`
 - Ledger Live Mobile: `apps/ledger-live-mobile/src/locales/en/common.json`
+
+### Developer Portal
+
+Ledger provides tools and resources you need to build on top our platform accessible through the [Ledger Developer Portal](https://developers.ledger.com/).
