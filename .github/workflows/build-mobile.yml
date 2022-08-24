@@ -110,6 +110,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -186,6 +187,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
