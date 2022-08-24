@@ -3582,11 +3582,13 @@
         "connectDevice": "Connect device"
       },
       "title": "Activate votes",
-      "steps": {
-        "verification": {
-          "success": {
-            "title": "Activation successful",
-            "text": "Your vote was successfully activated."
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "Activation successful",
+              "text": "Your vote was successfully activated."
+            }
           }
         }
       }
@@ -3604,11 +3606,13 @@
           "validator": {
             "active": "Active",
             "pending": "Pending"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully revoked your votes",
+              "text": "You will see your operation in history soon."
+            }
           }
-        },
-        "verification": {
-          "title": "You have successfully revoked your votes",
-          "text": "You will see your operation in history soon."
         }
       }
     },
