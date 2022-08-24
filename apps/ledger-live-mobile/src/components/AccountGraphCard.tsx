@@ -79,11 +79,11 @@ type Props = {
 };
 
 const timeRangeMapped: any = {
-  all: "all",
-  "1y": "year",
-  "30d": "month",
-  "7d": "week",
   "24h": "day",
+  "7d": "week",
+  "30d": "month",
+  "1y": "year",
+  all: "all",
 };
 
 function AccountGraphCard({

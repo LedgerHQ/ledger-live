@@ -97,7 +97,7 @@ function Header({
                 fontSize="11px"
                 numberOfLines={1}
               >
-                {t("asset.title", { assetName: currency.name })}
+                {t("asset.title", { assetName: currency.name }) + currency.type}
               </Text>
               <Text
                 variant={"small"}
@@ -122,9 +122,11 @@ function Header({
         </Flex>
       }
       rightElement={
-        <Touchable onPress={goToSettings}>
-          <SettingsMedium size={24} />
-        </Touchable>
+        currency.type !== "TokenCurrency" ? (
+          <Touchable onPress={goToSettings}>
+            <SettingsMedium size={24} />
+          </Touchable>
+        ) : null
       }
       currencyColor={getCurrencyColor(currency)}
     />
