@@ -94,6 +94,8 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
       transaction: bridge.updateTransaction(transaction, {
         userGasLimit: BigNumber(gasLimit || 0),
         gasPrice,
+        maxBaseFeePerGas: maxBaseFee,
+        maxPriorityFeePerGas: priorityFee,
         feesStrategy: "custom",
       }),
     });
@@ -115,7 +117,7 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
             parentAccount={parentAccount}
             transaction={transaction}
             feeAmount={maxBaseFee}
-            range={gasPriceRange}
+            range={maxBaseFeeRange}
             onChange={value => {
               setMaxBaseFee(value);
             }}

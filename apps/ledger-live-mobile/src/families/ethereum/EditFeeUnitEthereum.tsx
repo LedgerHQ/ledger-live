@@ -58,7 +58,7 @@ export default function EditFeeUnitEthereum({
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const { units } = account.currency;
+  const { units } = mainAccount.currency;
   const unit = units.length > 1 ? units[1] : units[0];
 
   const feeCustomUnit = transaction.feeCustomUnit;
