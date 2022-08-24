@@ -18,6 +18,7 @@ import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import RecoveryContent from "./RecoveryContent";
+import ApplicationContent from "./ApplicationContent";
 
 const shortResyncDelay = 1000;
 const longResyncDelay = 10000;
@@ -117,7 +118,11 @@ const SyncOnboardingManual = () => {
         key: StepKey.Applications,
         status: "inactive",
         title: "Nano applications",
-        renderBody: () => <Text>{`Nano uses apps to enable secure blockchain transactions`}</Text>,
+        /**
+         * ApplicationContent contain the UI for
+         * the install recommended apps step
+         */
+        renderBody: () => <ApplicationContent />,
       },
       {
         key: StepKey.Ready,

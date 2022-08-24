@@ -1,8 +1,9 @@
 import React from "react";
+import { Button, Flex, Text, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
+import styled, { useTheme } from "styled-components";
 
 import Check from "~/renderer/icons/Check";
-import { SoftwareCheckStatus } from "./SoftwareCheckStep";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 
 export const BorderFlex = styled(Flex)`
@@ -32,13 +33,22 @@ export const Column = styled(Flex).attrs({
   alignItems: "stretch",
 })``;
 
-const Bullet = ({
+export enum Status {
+  inactive = "inactive",
+  active = "active",
+  updateAvailable = "updateAvailable",
+  completed = "completed",
+}
+
+export type StatusType = "inactive" | "active" | "updateAvailable" | "completed";
+
+export const Bullet = ({
   status,
   bulletText,
   text,
   subText,
 }: {
-  status: SoftwareCheckStatus;
+  status: StatusType;
   bulletText?: string | number;
   text: string;
   subText?: string;
@@ -50,11 +60,11 @@ const Bullet = ({
     <>
       <Row mb={8}>
         <IconContainer>
-          {status === SoftwareCheckStatus.active ? (
+          {status === Status.active ? (
             <InfiniteLoader />
-          ) : status === SoftwareCheckStatus.completed ? (
+          ) : status === Status.completed ? (
             <Check size={24} color={theme.colors.palette.success.c50} />
-          ) : status === SoftwareCheckStatus.updateAvailable ? (
+          ) : status === Status.updateAvailable ? (
             <InfoCircle size={24} color={theme.colors.palette.constant.purple} />
           ) : (
             <Text fontSize="20px">{bulletText}</Text>
@@ -69,7 +79,7 @@ const Bullet = ({
           )}
         </Column>
       </Row>
-      {status === SoftwareCheckStatus.updateAvailable && (
+      {status === Status.updateAvailable && (
         <Flex mt={2} flex="1" justifyContent="space-around">
           <Button variant="main" width="45%" padding="10px 20px">
             {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.downloadUpdate")}
@@ -82,48 +92,3 @@ const Bullet = ({
     </>
   );
 };
-
-export type Props = {
-  genuineCheckStatus: SoftwareCheckStatus;
-  firmwareUpdateStatus: SoftwareCheckStatus;
-};
-
-const SoftwareCheckContent = ({ genuineCheckStatus, firmwareUpdateStatus }: Props) => {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      <Bullet
-        bulletText="1"
-        status={genuineCheckStatus}
-        text={
-          genuineCheckStatus === SoftwareCheckStatus.completed
-            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.completed")
-            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.active")
-        }
-      />
-      <Bullet
-        bulletText="2"
-        status={firmwareUpdateStatus}
-        text={
-          firmwareUpdateStatus === SoftwareCheckStatus.inactive
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.inactive")
-            : firmwareUpdateStatus === SoftwareCheckStatus.active
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.active")
-            : firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.updateAvailable", {
-                firmwareVersion: "2.0.2", // TODO: FIX HERE TO REMOVE HARDCODED VERSION
-              })
-            : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.completed")
-        }
-        subText={
-          firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.recommendation")
-            : undefined
-        }
-      />
-    </>
-  );
-};
-
-export default SoftwareCheckContent;
