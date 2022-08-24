@@ -36,9 +36,14 @@ export type UseGenuineCheckResult = {
   resetGenuineCheckState: () => void;
 };
 
+const SOCKET_EVENT_PAYLOAD_GENUINE = "0000";
+
 /**
  * Hook to check that a device is genuine
  * It replaces a DeviceAction if we're only interested in getting the genuine check
+ * @param getGenuineCheckFromDeviceId An optional function to get a genuine check for a given device id,
+ * by default set to live-common/hw/getGenuineCheckFromDeviceId.
+ * This dependency injection is needed for LLD to have the hook working on the internal thread
  * @param isHookEnabled A boolean to enable (true, default value) or disable (false) the hook
  * @param deviceId A device id, or an empty string if device is usb plugged
  * @param lockedDeviceTimeoutMs Time of no response from device after which the device is considered locked, in ms. Default 1000ms.
@@ -83,7 +88,7 @@ export const useGenuineCheck = ({
                 setDevicePermissionState("granted");
                 break;
               case "result":
-                if (socketEvent.payload === "0000") {
+                if (socketEvent.payload === SOCKET_EVENT_PAYLOAD_GENUINE) {
                   setGenuineState("genuine");
                 } else {
                   setGenuineState("non-genuine");
