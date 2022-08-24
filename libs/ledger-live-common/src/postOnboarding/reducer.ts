@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/types-live";
 import { handleActions } from "redux-actions";
 
-const initialState: PostOnboardingState = {
+export const initialState: PostOnboardingState = {
   deviceModelId: null,
   walletEntryPointDismissed: false,
   actionsToComplete: [],
@@ -29,7 +29,6 @@ const handlers: Record<
     }
   ) => {
     const { deviceModelId, actionsIds } = action;
-    if (actionsIds.length === 0) return initialState;
     return {
       deviceModelId,
       walletEntryPointDismissed: false,
