@@ -19,21 +19,17 @@ const forceInset = { bottom: "always" };
 
 export function PendingOperation({ route, navigation }: PendingOperationProps) {
   const { colors } = useTheme();
-  const {
-    swapId,
-    provider,
-    toAccountId,
-    fromAccountId,
-  } = route.params.swapOperation;
+  const { swapId, provider, toAccountId, fromAccountId } =
+    route.params.swapOperation;
   const accounts = useSelector(flattenAccountsSelector);
   const fromAccount = useMemo(
     () => accounts.find(a => a.id === fromAccountId),
     [accounts, fromAccountId],
   );
-  const toAccount = useMemo(() => accounts.find(a => a.id === toAccountId), [
-    accounts,
-    toAccountId,
-  ]);
+  const toAccount = useMemo(
+    () => accounts.find(a => a.id === toAccountId),
+    [accounts, toAccountId],
+  );
 
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
   const targetCurrency = toAccount && getAccountCurrency(toAccount);

@@ -1,4 +1,3 @@
-// @flow
 import React, { useEffect, useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";

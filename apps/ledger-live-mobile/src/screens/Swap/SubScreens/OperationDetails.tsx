@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -50,10 +50,10 @@ export function OperationDetails({ route }: OperationDetailsProps) {
     () => accounts.find(a => a.id === fromAccountId),
     [accounts, fromAccountId],
   );
-  const toAccount = useMemo(() => accounts.find(a => a.id === toAccountId), [
-    accounts,
-    toAccountId,
-  ]);
+  const toAccount = useMemo(
+    () => accounts.find(a => a.id === toAccountId),
+    [accounts, toAccountId],
+  );
 
   const { colors } = useTheme();
   const swap =

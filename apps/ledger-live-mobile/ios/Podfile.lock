@@ -578,9 +578,9 @@ PODS:
   - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
-  - RNSentry (4.2.0):
+  - RNSentry (4.1.3):
     - React-Core
-    - Sentry (= 7.21.0)
+    - Sentry (= 7.20.0)
   - RNShare (6.5.0):
     - React-Core
   - RNSVG (12.3.0):
@@ -593,9 +593,9 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - Sentry (7.21.0):
-    - Sentry/Core (= 7.21.0)
-  - Sentry/Core (7.21.0)
+  - Sentry (7.20.0):
+    - Sentry/Core (= 7.20.0)
+  - Sentry/Core (7.20.0)
   - SocketRocket (0.6.0)
   - Storyly (1.24.1)
   - storyly-react-native (1.24.1):
@@ -708,7 +708,7 @@ DEPENDENCIES:
   - "RNOS (from `../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.8.0_q4bsppkovizpw5uw6ytm5z2tba/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.13.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-screens`)"
-  - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@4.2.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@sentry/react-native`)"
+  - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@4.1.3_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@sentry/react-native`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@12.3.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-svg`)"
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons`)"
@@ -896,7 +896,7 @@ EXTERNAL SOURCES:
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@3.13.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-screens"
   RNSentry:
-    :path: "../../../node_modules/.pnpm/@sentry+react-native@4.2.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@sentry/react-native"
+    :path: "../../../node_modules/.pnpm/@sentry+react-native@4.1.3_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@sentry/react-native"
   RNShare:
     :path: "../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share"
   RNSVG:
@@ -1010,13 +1010,13 @@ SPEC CHECKSUMS:
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 64573e25e078ae6bec03b891586d50b9ec284393
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
-  RNSentry: 227b01d7373289c51b8c31b2c8d6bac49f1a4335
+  RNSentry: 49ac40f818ad2bb65f3578d400e2474767e12a5b
   RNShare: 047d42214f875d731bde73a2b67418638af85ad9
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
-  Sentry: 194d0a2d4d6ef92c9c08c98d998340b0a63efd81
+  Sentry: 9e8ec837fa37e7b397f19f75542800461b138d0e
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Storyly: 1ae05f53c33d2ce75e8fdcc57f2617c4304d433c
   storyly-react-native: fb35dd20cb36da37a851a785d12969c95fe3c888

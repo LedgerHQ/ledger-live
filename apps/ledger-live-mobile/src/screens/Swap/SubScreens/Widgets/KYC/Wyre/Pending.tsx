@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useEffect, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -22,8 +20,8 @@ export function Pending({
   onContinue,
   status = "pending",
 }: {
-  onContinue: () => void,
-  status?: string,
+  onContinue: () => void;
+  status?: string;
 }) {
   // FIXME if we ever have dynamic KYC fields, or more than one provider with KYC, backend to provide the fields
   const swapKYC = useSelector(swapKYCSelector);

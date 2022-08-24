@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { StyleSheet, TextInput } from "react-native";
 import { useTranslation, Trans } from "react-i18next";
@@ -14,12 +13,12 @@ export function Field({
   validate,
   error,
 }: {
-  field: string,
-  onChange: string => void,
-  isLoading?: boolean,
-  mask?: string,
-  validate?: boolean,
-  error?: string,
+  field: string;
+  onChange: (_: string) => void;
+  isLoading?: boolean;
+  mask?: string;
+  validate?: boolean;
+  error?: string;
 }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
