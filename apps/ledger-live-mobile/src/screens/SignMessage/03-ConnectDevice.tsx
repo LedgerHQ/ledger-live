@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/signMessage/index";
 import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
@@ -54,7 +54,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
     () => (
       <SafeAreaView style={styles.root}>
         <TrackScreen category={"SignMessage"} name="ConnectDevice" />
-        <DeviceAction // $FlowFixMe
+        <DeviceAction
           action={action}
           request={{
             account: mainAccount,

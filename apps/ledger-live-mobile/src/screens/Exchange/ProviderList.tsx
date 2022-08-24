@@ -13,7 +13,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import TrackScreen from "../../analytics/TrackScreen";
 import LText from "../../components/LText";

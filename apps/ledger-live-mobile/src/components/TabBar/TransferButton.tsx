@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, StyleProp, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 import { track } from "../../analytics";
 

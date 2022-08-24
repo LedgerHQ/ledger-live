@@ -1,11 +1,12 @@
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Platform } from "react-native";
+import { Platform, Text } from "react-native";
 
 type Props = {
   error: Error | null | undefined;
   field?: "title" | "description";
 };
-export default function TranslatedError({ error, field = "title" }: Props) {
+export default function TranslatedError({ error, field = "title" }: Props): JSX.Element {
   const { t } = useTranslation();
   if (!error) return null;
 
@@ -14,13 +15,12 @@ export default function TranslatedError({ error, field = "title" }: Props) {
     console.error(`TranslatedError invalid usage: ${String(error)}`);
 
     if (typeof error === "string") {
-      return error;
+      return <Text>{error}</Text>;
     }
 
     return null;
   }
 
-  // $FlowFixMe
   const arg: Record<string, any> = {
     message: error.message,
     returnObjects: true,
@@ -43,7 +43,7 @@ export default function TranslatedError({ error, field = "title" }: Props) {
            * this case should not happen since you can't nativelly connect a Nano S to an iOS device
            * (but you can in local/dev by using a proxy with the simulator)
            */
-          return t(`errors.generic.${field}`, arg);
+          return <Text>{t(`errors.generic.${field}`, arg)}</Text>;
         }
 
         // the string id of a detailled (os and device specific) error message
@@ -51,13 +51,13 @@ export default function TranslatedError({ error, field = "title" }: Props) {
         translation = t(detailedTranslationStringId, arg);
 
         if (translation !== detailedTranslationStringId) {
-          return translation;
+          return <Text>{translation}</Text>;
         }
       } else if (typeof translation === "string") {
-        return translation;
+        return <Text>{translation}</Text>;
       }
     }
   }
 
-  return t(`errors.generic.${field}`, arg);
+  return <Text>{t(`errors.generic.${field}`, arg)}</Text>;
 }

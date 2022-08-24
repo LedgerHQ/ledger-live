@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet, SectionList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";

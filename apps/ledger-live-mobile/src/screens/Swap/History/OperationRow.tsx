@@ -44,7 +44,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
           <LText numberOfLines={1} semiBold style={styles.name}>
             {getAccountName(fromAccount)}
           </LText>
-          <LText tertiary style={styles.amount}>
+          <LText style={styles.amount}>
             <CurrencyUnitValue
               showCode
               unit={getAccountUnit(fromAccount)}
@@ -66,7 +66,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
           <LText numberOfLines={1} semiBold style={styles.name}>
             {getAccountName(toAccount)}
           </LText>
-          <LText tertiary style={styles.amount} color="grey">
+          <LText style={styles.amount} color="grey">
             <CurrencyUnitValue
               showCode
               unit={getAccountUnit(toAccount)}

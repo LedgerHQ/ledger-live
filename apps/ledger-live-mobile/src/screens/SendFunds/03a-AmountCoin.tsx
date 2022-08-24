@@ -9,7 +9,7 @@ import {
   Keyboard,
   Linking,
 } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";

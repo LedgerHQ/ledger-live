@@ -8,7 +8,7 @@ import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { FlatList, StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";

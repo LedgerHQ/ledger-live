@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import GenericErrorView from "../../components/GenericErrorView";
 import Button from "../../components/Button";
