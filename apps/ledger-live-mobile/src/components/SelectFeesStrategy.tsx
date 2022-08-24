@@ -76,6 +76,7 @@ export default function SelectFeesStrategy({
         label:
           (item as { forceValueLabel?: string }).forceValueLabel ?? item.label,
         userGasLimit: (item as { userGasLimit?: BigNumber }).userGasLimit,
+        txParameters: item.txParameters,
       });
     },
     [onStrategySelect],
