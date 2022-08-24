@@ -8,7 +8,10 @@ import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
+import {
+  getGasLimit,
+  EIP1559ShouldBeUsed,
+} from "@ledgerhq/live-common/families/ethereum/transaction";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
@@ -29,7 +32,11 @@ const options = {
 };
 
 const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
-let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
+const fallbackMaxBaseFee = BigNumber(10e9);
+// local cache of last values to prevent extra blinks
+let lastNetworkGasPrice;
+let lastNetworkMaxBaseFee;
+let lastNetworkPriorityFee;
 
 export default function EthereumCustomFees({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -44,9 +51,41 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   if (!lastNetworkGasPrice && networkGasPrice) {
     lastNetworkGasPrice = networkGasPrice;
   }
-  const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
+  const gasPriceRange =
+    networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
   const [gasPrice, setGasPrice] = useState(
-    transaction.gasPrice || range.initial,
+    transaction.gasPrice || gasPriceRange.initial,
+  );
+
+  const networkMaxBaseFee =
+    transaction.networkInfo &&
+    transaction.networkInfo.nextBaseFeePerGas;
+  if (!lastNetworkMaxBaseFee && networkMaxBaseFee) {
+    lastNetworkMaxBaseFee = networkMaxBaseFee;
+  }
+  const maxBaseFeeRange = inferDynamicRange(
+    networkMaxBaseFee ||
+    lastNetworkMaxBaseFee ||
+    fallbackMaxBaseFee
+  );
+
+  const [maxBaseFee, setMaxBaseFee] = useState(
+    transaction.maxBaseFeePerGas ||
+      networkMaxBaseFee ||
+      lastNetworkMaxBaseFee ||
+      fallbackMaxBaseFee,
+  );
+
+  const networkPriorityFee =
+    transaction.networkInfo &&
+    transaction.networkInfo.maxPriorityFeePerGas
+  if (!lastNetworkPriorityFee && networkPriorityFee) {
+    lastNetworkPriorityFee = networkPriorityFee;
+  }
+  const maxPriorityFeeRange = networkPriorityFee || lastNetworkPriorityFee || fallbackGasPrice;
+
+  const [priorityFee, setPriorityFee] = useState(
+    transaction.maxPriorityFeePerGas || maxPriorityFeeRange.initial
   );
 
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
@@ -77,16 +116,48 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
 
   return (
     <View style={styles.root}>
-      <EditFeeUnitEthereum
-        account={account}
-        parentAccount={parentAccount}
-        transaction={transaction}
-        gasPrice={gasPrice}
-        range={range}
-        onChange={value => {
-          setGasPrice(value);
-        }}
-      />
+      {EIP1559ShouldBeUsed(account.currency) ? (
+        <>
+          <EditFeeUnitEthereum
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            feeAmount={maxBaseFee}
+            range={gasPriceRange}
+            onChange={value => {
+              setMaxBaseFee(value);
+            }}
+            title="send.summary.maxBaseFee"
+          />
+          <SectionSeparator
+            style={styles.sectionSeparator}
+            lineColor={colors.background}
+          />
+          <EditFeeUnitEthereum
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            feeAmount={priorityFee}
+            range={maxPriorityFeeRange}
+            onChange={value => {
+              setPriorityFee(value);
+            }}
+            title="send.summary.priorityFee"
+          />
+        </>
+      ) : (
+        <EditFeeUnitEthereum
+          account={account}
+          parentAccount={parentAccount}
+          transaction={transaction}
+          feeAmount={gasPrice}
+          range={gasPriceRange}
+          onChange={value => {
+            setGasPrice(value);
+          }}
+          title="send.summary.gasPrice"
+        />
+      )}
 
       <SectionSeparator
         style={styles.sectionSeparator}

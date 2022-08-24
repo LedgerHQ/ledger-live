@@ -79,6 +79,7 @@ export default function SelectFeesStrategy({
         amount: item.amount,
         label: item.forceValueLabel ?? item.label,
         userGasLimit: item.userGasLimit,
+        txParameters: item.txParameters,
       });
     },
     [onStrategySelect],

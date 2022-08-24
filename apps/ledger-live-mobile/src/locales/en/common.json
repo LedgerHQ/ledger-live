@@ -2655,6 +2655,8 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
+      "maxBaseFee" : "Max base fee",
+      "priorityFee" : "Priority fee",
       "maxFees": "Max fees",
       "validateGasLimit": "Validate gas limit",
       "fees": "Fees",
