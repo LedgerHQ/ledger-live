@@ -3465,6 +3465,13 @@
         "description": "Unlocked Celo you can withdraw to your Available Balance."
       }
     },
+    "delegation": {
+      "validatorGroup": "Validator Group",
+      "actions": {
+        "activate": "Activate",
+        "revoke": "Revoke"
+      }
+    },
     "manage": {
       "title": "Manage assets",
       "titleWhenPendingRegistration": "Account Registration Pending",
@@ -3664,6 +3671,23 @@
           }
         }
       }
+    },
+    "emptyState": {
+      "description": "You can earn CELO rewards by delegating your assets.",
+      "info": "How Delegation works",
+      "delegation": "Earn rewards"
+    },
+    "earnRewards": {
+      "description": "You may earn rewards by delegating your CELO assets to a validator.",
+      "bullet": {
+        "0": "You keep ownership of delegated assets",
+        "1": "Delegate using your Ledger device",
+        "2": "Assets will be available after undelegation"
+      }
+    },
+    "alerts": {
+      "withdrawableAssets": "You have a withdrawable balance.",
+      "activatableVotes": "You have votes that can now be activated."
     }
   },
   "cosmos": {
