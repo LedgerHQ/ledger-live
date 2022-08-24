@@ -7,6 +7,7 @@ import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useTranslation } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -67,9 +68,16 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
               language={localeIdToDeviceLanguage[currentLanguage]}
               onSuccess={() => {
                 refreshDeviceInfo();
+                track("Page LiveLanguageChange LanguageInstalled", {
+                  selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
+                });
+                refreshDeviceInfo();
                 setLanguageInstalled(true);
               }}
-              onError={refreshDeviceInfo}
+              onError={(error: Error) => {
+                refreshDeviceInfo();
+                track("Page LiveLanguageChange LanguageInstallError", { error });
+              }}
             />
             {languageInstalled && (
               <Flex flexDirection="column" rowGap={10} alignSelf="stretch">
@@ -89,7 +97,12 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
         ) : (
           <ChangeDeviceLanguagePrompt
             onSkip={onCloseDrawer}
-            onConfirm={() => setInstallingLanguage(true)}
+            onConfirm={() => {
+              track("Page LiveLanguageChange LanguageInstallTriggered", {
+                selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
+              });
+              setInstallingLanguage(true);
+            }}
             titleWording={t("deviceLocalization.changeDeviceLanguage")}
             descriptionWording={t("deviceLocalization.changeDeviceLanguageDescription", {
               language: t(

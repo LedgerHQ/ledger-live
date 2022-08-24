@@ -16,6 +16,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
+import { track } from "~/renderer/analytics/segment";
 import Track from "~/renderer/analytics/Track";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { idsToLanguage } from "@ledgerhq/types-live";
@@ -103,6 +104,9 @@ const LanguageSelect = () => {
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
         deviceLocalizationFeatureFlag.enabled
       ) {
+        track("Page LiveLanguageChange DeviceLanguagePrompt", {
+          selectedLanguage: potentialDeviceLanguage,
+        });
         setIsDeviceLanguagePromptOpen(true);
       }
 

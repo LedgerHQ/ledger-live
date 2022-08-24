@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Button, Flex, Icons, Drawer, Radio, Divider } from "@ledgerhq/react-ui";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
+import { track } from "~/renderer/analytics/segment";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
@@ -11,7 +12,7 @@ type Props = {
   onClose: () => void;
   deviceInfo: DeviceInfo;
   onSuccess: () => void;
-  onError: () => void;
+  onError: (error: Error) => void;
   selectedLanguage: Language;
   currentLanguage: Language;
   onSelectLanguage: (language: Language) => void;
@@ -46,7 +47,10 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
     [onSelectLanguage],
   );
 
-  const onInstall = useCallback(() => setInstalling(true), [setInstalling]);
+  const onInstall = useCallback(() => {
+    setInstalling(true);
+    track("Page Manager LanguageInstallTriggered", { selectedLanguage });
+  }, [setInstalling, selectedLanguage]);
 
   return (
     <Drawer

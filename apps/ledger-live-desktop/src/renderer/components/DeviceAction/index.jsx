@@ -140,7 +140,7 @@ const DeviceAction = <R, H, P>({
 
   useEffect(() => {
     if (error && onError) {
-      onError();
+      onError(error);
     }
   }, [error]);
 

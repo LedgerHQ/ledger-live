@@ -35,7 +35,7 @@ const DeviceLanguageInstalled = () => {
 type Props = {
   language: Language;
   onResult?: () => void;
-  onError?: () => void;
+  onError?: (error: Error) => void;
   onSuccess: () => void;
 };
 

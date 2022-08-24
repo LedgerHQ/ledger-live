@@ -8,6 +8,8 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { useTranslation } from "react-i18next";
+import Track from "~/renderer/analytics/Track";
+import { track } from "~/renderer/analytics/segment";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
@@ -48,7 +50,6 @@ const StepDeviceLanguage = ({
     [device],
   );
 
-
   useEffect(() => {
     if (newLanguagesLoaded && oldLanguagesLoaded) {
       const deviceLanguageId = updatedDeviceInfo?.languageId;
@@ -72,6 +73,7 @@ const StepDeviceLanguage = ({
         oldDeviceInfo?.languageId !== undefined &&
         oldDeviceInfo?.languageId !== languageIds["english"]
       ) {
+        track("Page Manager FwUpdateReinstallLanguage");
         installLanguage(idsToLanguage[oldDeviceInfo.languageId]);
       } else {
         transitionTo("finish");
@@ -94,7 +96,7 @@ const StepDeviceLanguage = ({
     <Flex justifyContent="center" flex={1}>
       {isLanguagePromptOpen && !installingLanguage && (
         <>
-          {/* TODO: <Track event="FirmwareUpdateFirstDeviceLanguagePrompt" onMount /> */}
+          <Track event="Page Manager FwUpdateDeviceLanguagePrompt" onMount />
           <ChangeDeviceLanguagePrompt
             descriptionWording={t("deviceLocalization.firmwareUpdatePrompt.description", {
               language: t(
@@ -102,7 +104,10 @@ const StepDeviceLanguage = ({
               ),
               deviceName,
             })}
-            onSkip={() => transitionTo("finish")}
+            onSkip={() => {
+              track("Page Manager FwUpdateDeviceLanguagePromptDismissed");
+              transitionTo("finish");
+            }}
             onConfirm={() => installLanguage(localeIdToDeviceLanguage[currentLocale] as Language)}
           />
         </>
@@ -111,7 +116,15 @@ const StepDeviceLanguage = ({
         <ChangeDeviceLanguageAction
           device={device}
           language={languageToInstall}
+          onError={(error: Error) =>
+            track("Page Manager FwUpdateLanguageInstallError", {
+              error,
+            })
+          }
           onSuccess={() => {
+            track("Page Manager FwUpdateLanguageInstalled", {
+              selectedLanguage: languageToInstall,
+            })
             setInstallingLanguage(false);
             transitionTo("finish");
           }}

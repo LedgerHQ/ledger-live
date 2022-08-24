@@ -14,6 +14,7 @@ import {
   languageSelector,
 } from "~/renderer/reducers/settings";
 import type { State } from "~/renderer/reducers";
+import { idsToLanguage } from "@ledgerhq/types-live";
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 
@@ -44,6 +45,8 @@ const extraProperties = store => {
     ? {
         modelId: device.modelId,
         deviceVersion: device.deviceInfo.version,
+        deviceLanguage: device.deviceInfo?.languageId &&
+          idsToLanguage[device.deviceInfo.languageId],
         appLength: device.apps?.length,
       }
     : {};
