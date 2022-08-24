@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction } from "@ledgerhq/live-common/generated/types"
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
@@ -44,7 +44,7 @@ import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
-import TermsFooter, { TermsProviders } from "../TermsFooter";
+import TermsFooter from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
 
 const Wrapper = styled(Flex).attrs({
@@ -318,9 +318,7 @@ export function renderConfirmSwap({
                 size={20}
                 currency={getAccountCurrency(exchange.fromAccount)}
               />
-              <Text marginLeft={2}>
-                {getAccountName(exchange.fromAccount)}
-              </Text>
+              <Text marginLeft={2}>{getAccountName(exchange.fromAccount)}</Text>
             </Flex>
           </FieldItem>
 

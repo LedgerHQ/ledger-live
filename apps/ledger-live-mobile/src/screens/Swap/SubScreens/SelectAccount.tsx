@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -10,7 +10,6 @@ import {
   flattenAccounts,
 } from "@ledgerhq/live-common/account/index";
 import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { TrackScreen } from "../../../analytics";
 import AccountCard from "../../../components/AccountCard";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
@@ -93,7 +92,7 @@ export function SelectAccount({
 
   const onSelect = useCallback(
     (account: AccountLike) => {
-      // @ts-expect-error
+      // @ts-expect-error navigation type is only partially declared
       navigation.navigate("SwapForm", {
         accountId: account.id,
         currency: selectedCurrency,
@@ -129,7 +128,7 @@ export function SelectAccount({
   );
 
   const onAddAccount = useCallback(() => {
-    // @ts-expect-error
+    // @ts-expect-error navigation type is only partially declared
     navigation.navigate(NavigatorName.AddAccounts, {
       screen: ScreenName.AddAccountsSelectCrypto,
       params: {
@@ -182,7 +181,6 @@ export function SelectAccount({
   );
 
   return (
-    // @ts-expect-error
     <KeyboardView>
       <TrackScreen
         category="Swap Form"

@@ -33,7 +33,7 @@ export function StatusTag({ kyc }: { kyc?: KYCStatus }) {
     return null;
   }
 
-  // @ts-expect-error
+  // @ts-expect-error something wrong with statusThemeMap
   const { color, backgroundColor, icon } = statusThemeMap[kyc.status] || {
     color: null,
     backgroundColor: null,

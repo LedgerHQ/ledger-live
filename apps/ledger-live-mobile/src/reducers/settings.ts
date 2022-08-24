@@ -84,11 +84,11 @@ export type SettingsState = {
   locale: string | null | undefined;
   swap: {
     hasAcceptedIPSharing: false;
-    acceptedProviders: string[],
-    selectableCurrencies: string[],
+    acceptedProviders: string[];
+    selectableCurrencies: string[];
     KYC: {
-      [key: string]: KYCStatus,
-    },
+      [key: string]: KYCStatus;
+    };
   };
   lastSeenDevice: DeviceModelInfo | null | undefined;
   starredMarketCoins: string[];

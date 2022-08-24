@@ -19,7 +19,7 @@ export function Terms({
   const { t } = useTranslation();
 
   const onPressLink = useCallback(() => {
-    // @ts-expect-error
+    // @ts-expect-error something wrong with providers type
     Linking.openURL(urls.swap.providers[provider].tos);
   }, [provider]);
 

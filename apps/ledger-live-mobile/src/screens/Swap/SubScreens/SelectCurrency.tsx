@@ -19,7 +19,7 @@ export function SelectCurrency({
 
   const onSelect = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
-      // @ts-expect-error
+      // @ts-expect-error navigation type is only partially declared
       navigation.navigate("SwapForm", { currency });
     },
     [navigation],
@@ -42,7 +42,6 @@ export function SelectCurrency({
   );
 
   return (
-    // @ts-expect-error
     <KeyboardView>
       <Flex>
         <TrackScreen

@@ -101,15 +101,16 @@ export function Modal({
       )}
 
       {error && (
-        // @ts-expect-error
         <GenericErrorBottomModal error={error} isOpened onClose={resetError} />
       )}
     </>
   );
 }
 
+/*  eslint-disable no-unused-vars */
 enum Target {
   Terms,
   Confirmation,
   None,
 }
+/*  eslint-enable no-unused-vars */

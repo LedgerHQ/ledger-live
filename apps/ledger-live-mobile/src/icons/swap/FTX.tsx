@@ -5,7 +5,7 @@ interface Props {
   size: number;
 }
 
-export function getFTXLogo(isUS: boolean = false) {
+export function getFTXLogo(isUS = false) {
   return React.memo(function FTX({ size }: Props) {
     return (
       <Svg

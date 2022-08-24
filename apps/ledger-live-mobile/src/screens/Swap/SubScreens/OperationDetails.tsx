@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";

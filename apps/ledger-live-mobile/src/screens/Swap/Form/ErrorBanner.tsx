@@ -16,7 +16,7 @@ export function ErrorBanner({
   const { t } = useTranslation();
 
   const onPress = useCallback(() => {
-    // @ts-expect-error
+    // @ts-expect-error something wrong with providers type
     Linking.openURL(urls.swap.providers[provider]?.support);
   }, [provider]);
 

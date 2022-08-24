@@ -18,7 +18,7 @@ export function SelectFees({ navigation, route }: SelectFeesProps) {
 
   const onSetTransaction = useCallback(
     updatedTransaction => {
-      // @ts-expect-error
+      // @ts-expect-error navigation type is only partially declared
       navigation.navigate("SwapForm", {
         ...route.params,
         transaction: updatedTransaction,

@@ -3,17 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   Exchange,
   ExchangeRate,
   SwapTransaction,
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import { getSwapOperationMap } from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
@@ -32,7 +28,6 @@ import {
   postSwapCancelled,
 } from "@ledgerhq/live-common/exchange/swap/index";
 import { getEnv } from "@ledgerhq/live-common/env";
-import { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
 import DeviceAction from "../../../../components/DeviceAction";
@@ -55,7 +50,7 @@ interface Props {
   exchangeRate?: ExchangeRate;
   provider: string;
   deviceMeta: DeviceMeta;
-  onError: (error: { error: Error; swapId: string }) => void;
+  onError: (_error: { error: Error; swapId: string }) => void;
   onCancel: () => void;
   isOpen: boolean;
 }
@@ -128,7 +123,6 @@ export function Confirmation({
 
       if (!mainAccount || !exchangeRate) return;
       dispatch(
-        // @ts-expect-error
         updateAccountWithUpdater(mainAccount.id, account =>
           addPendingOperation(
             addToSwapHistory({
@@ -146,7 +140,7 @@ export function Confirmation({
         ),
       );
 
-      // @ts-expect-error
+      // @ts-expect-error navigation type is only partially declared
       navigation.replace("PendingOperation", {
         swapOperation: {
           fromAccountId: fromAccount.id,
@@ -238,7 +232,7 @@ export function Confirmation({
                   tokenCurrency,
                   parentAccount: fromParentAccount,
                   account: fromAccount as AccountLike,
-                  // @ts-expect-error
+                  // @ts-expect-error type for swapData is unknwon for some reason
                   transaction: swapData.transaction as Transaction,
                   appName: "Exchange",
                 }}

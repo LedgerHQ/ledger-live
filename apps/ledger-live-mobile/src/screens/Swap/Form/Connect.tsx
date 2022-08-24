@@ -15,7 +15,7 @@ export function Connect({
   setResult,
   provider,
 }: {
-  setResult: (result: DeviceMeta) => void;
+  setResult: (_: DeviceMeta) => void;
   provider?: string;
 }) {
   const [device, setDevice] = useState<Device>();

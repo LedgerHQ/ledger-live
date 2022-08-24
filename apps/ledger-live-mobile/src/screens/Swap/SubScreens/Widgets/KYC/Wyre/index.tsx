@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/index";
 import type { KYCData } from "@ledgerhq/live-common/exchange/swap/types";
 import { ScreenName } from "../../../../../../const";
-import IconWyre from "../../../../../../icons/swap/Wyre";
+import { Wyre as IconWyre } from "../../../../../../icons/swap/Wyre";
 import LText from "../../../../../../components/LText";
 import Button from "../../../../../../components/Button";
 import { swapKYCSelector } from "../../../../../../reducers/settings";
@@ -114,6 +114,7 @@ export function WyreKYC() {
 
   const onSubmit = useCallback(() => {
     setHasSubmittedOnce(true);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     if (Object.entries(errors).length) return () => {};
 
     let cancelled = false;

@@ -12,7 +12,7 @@ import { SwapIcon } from "../../icons/swap/index";
 export const getStatusColor = (
   status: string,
   colors: any,
-  colorKey: boolean = false,
+  colorKey = false,
 ) => {
   let key = "grey";
 
@@ -54,9 +54,7 @@ export function SwapStatusIndicator({
           style={[
             styles.pending,
             {
-              // @ts-expect-error
               backgroundColor: colors.white,
-              // @ts-expect-error
               borderColor: colors.white,
             },
           ]}

@@ -10,7 +10,7 @@ interface Props {
   value: BigNumber | undefined;
   editable: boolean;
   unit: Unit | undefined;
-  onChange: (val: BigNumber) => void;
+  onChange: (_: BigNumber) => void;
   error: Error | undefined;
 }
 
@@ -34,7 +34,6 @@ export function AmountInput({ value, onChange, editable, unit, error }: Props) {
       )}
 
       <Text color="error.c100" textAlign="right" variant="tiny">
-        {/* @ts-expect-error */}
         <TranslatedError error={error} />
       </Text>
     </Flex>

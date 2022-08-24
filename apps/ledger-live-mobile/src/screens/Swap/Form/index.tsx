@@ -54,9 +54,11 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const accounts = useSelector(shallowAccountsSelector);
-  const { providers, error: providersError, pairs } = useProviders(
-    Config.SWAP_DISABLED_PROVIDERS,
-  );
+  const {
+    providers,
+    error: providersError,
+    pairs,
+  } = useProviders(Config.SWAP_DISABLED_PROVIDERS);
 
   const [exchangeRate, setExchangeRate] = useState<ExchangeRate | undefined>();
   const swapTx = useSwapTransaction({
@@ -362,7 +364,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   if (providers) {
     return (
-      // @ts-ignore-error
+      // @ts-expect-error KeyboardAwareScrollView doens't come with right typings
       <KeyboardAwareScrollView>
         <Flex flex={1} justifyContent="space-between" padding={6}>
           <Flex flex={1}>

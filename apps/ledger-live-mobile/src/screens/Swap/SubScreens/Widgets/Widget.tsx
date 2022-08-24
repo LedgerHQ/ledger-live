@@ -13,7 +13,7 @@ import {
   WidgetTypes,
   getFTXURL,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { Icon, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Icon, Flex } from "@ledgerhq/native-ui";
 import { Message } from "@ledgerhq/live-common/exchange/swap/types";
 import { swapKYCSelector } from "../../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../../actions/settings";
@@ -118,7 +118,7 @@ export function Widget({ provider, type }: Props) {
   }, [navigation, reload]);
 
   return (
-    // @ts-expect-error
+    // @ts-expect-error lib type has issues
     <WebView
       ref={ref}
       source={{

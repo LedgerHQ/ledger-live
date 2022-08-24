@@ -51,7 +51,7 @@ export function Selector({
             <Text
               variant="h3"
               marginBottom={2}
-              color={title? "neutral.c100" : "neutral.c70"}
+              color={title ? "neutral.c100" : "neutral.c70"}
             >
               {title || t("transfer.swap2.form.placeholder")}
             </Text>

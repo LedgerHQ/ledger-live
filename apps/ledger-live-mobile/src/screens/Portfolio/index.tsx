@@ -138,9 +138,10 @@ function PortfolioScreen({ navigation }: Props) {
   const discreetMode = useSelector(discreetModeSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
-  const openAddModal = useCallback(() => setAddModalOpened(true), [
-    setAddModalOpened,
-  ]);
+  const openAddModal = useCallback(
+    () => setAddModalOpened(true),
+    [setAddModalOpened],
+  );
 
   const closeAddModal = useCallback(
     () => setAddModalOpened(false),
