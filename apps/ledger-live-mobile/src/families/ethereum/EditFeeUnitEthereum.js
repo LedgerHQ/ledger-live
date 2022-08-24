@@ -13,9 +13,9 @@ import {
   projectRangeIndex,
 } from "@ledgerhq/live-common/range";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 
 const FeeSlider = React.memo(({ value, onChange, range }: *) => {
@@ -62,15 +62,12 @@ export default function EditFeeUnitEthereum({
   const { t } = useTranslation();
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const { units } = account.currency;
+  const { units } = mainAccount.currency;
   const unit = units.length > 1 ? units[1] : units[0];
 
   const feeCustomUnit = transaction.feeCustomUnit;
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const {
-    fiatAmount,
-    fiatUnit,
-  } = useSendAmount({
+  const { fiatAmount, fiatUnit } = useSendAmount({
     account,
     fiatCurrency,
     cryptoAmount: feeAmount,
@@ -103,10 +100,7 @@ export default function EditFeeUnitEthereum({
                 value={feeAmount}
               />
               <> ≈ </>
-              <CurrencyUnitValue
-                unit={fiatUnit}
-                value={fiatAmount}
-              />
+              <CurrencyUnitValue unit={fiatUnit} value={fiatAmount} />
             </LText>
           </View>
         </View>

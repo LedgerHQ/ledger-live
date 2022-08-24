@@ -58,15 +58,12 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   );
 
   const networkMaxBaseFee =
-    transaction.networkInfo &&
-    transaction.networkInfo.nextBaseFeePerGas;
+    transaction.networkInfo && transaction.networkInfo.nextBaseFeePerGas;
   if (!lastNetworkMaxBaseFee && networkMaxBaseFee) {
     lastNetworkMaxBaseFee = networkMaxBaseFee;
   }
   const maxBaseFeeRange = inferDynamicRange(
-    networkMaxBaseFee ||
-    lastNetworkMaxBaseFee ||
-    fallbackMaxBaseFee
+    networkMaxBaseFee || lastNetworkMaxBaseFee || fallbackMaxBaseFee,
   );
 
   const [maxBaseFee, setMaxBaseFee] = useState(
@@ -77,15 +74,15 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   );
 
   const networkPriorityFee =
-    transaction.networkInfo &&
-    transaction.networkInfo.maxPriorityFeePerGas
+    transaction.networkInfo && transaction.networkInfo.maxPriorityFeePerGas;
   if (!lastNetworkPriorityFee && networkPriorityFee) {
     lastNetworkPriorityFee = networkPriorityFee;
   }
-  const maxPriorityFeeRange = networkPriorityFee || lastNetworkPriorityFee || fallbackGasPrice;
+  const maxPriorityFeeRange =
+    networkPriorityFee || lastNetworkPriorityFee || fallbackGasPrice;
 
   const [priorityFee, setPriorityFee] = useState(
-    transaction.maxPriorityFeePerGas || maxPriorityFeeRange.initial
+    transaction.maxPriorityFeePerGas || maxPriorityFeeRange.initial,
   );
 
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
@@ -101,6 +98,8 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
       transaction: bridge.updateTransaction(transaction, {
         userGasLimit: BigNumber(gasLimit || 0),
         gasPrice,
+        maxBaseFeePerGas: maxBaseFee,
+        maxPriorityFeePerGas: priorityFee,
         feesStrategy: "custom",
       }),
     });
@@ -123,7 +122,7 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
             parentAccount={parentAccount}
             transaction={transaction}
             feeAmount={maxBaseFee}
-            range={gasPriceRange}
+            range={maxBaseFeeRange}
             onChange={value => {
               setMaxBaseFee(value);
             }}

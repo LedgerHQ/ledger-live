@@ -1,12 +1,11 @@
 /* @flow */
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import React, { useCallback } from "react";
 
 import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
-import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
 import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 import { ScreenName } from "../../const";
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
