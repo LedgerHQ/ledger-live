@@ -1,5 +1,15 @@
 # @ledgerhq/cryptoassets
 
+## 6.33.0-nightly.0
+
+### Minor Changes
+
+- [#810](https://github.com/LedgerHQ/ledger-live/pull/810) [`5dd957b3cb`](https://github.com/LedgerHQ/ledger-live/commit/5dd957b3cb893668f044497d25b6eee69b05b2f0) Thanks [@balthazar](https://github.com/balthazar)! - Update ZIL&TT explorer and color
+
+### Patch Changes
+
+- [#1023](https://github.com/LedgerHQ/ledger-live/pull/1023) [`318e804525`](https://github.com/LedgerHQ/ledger-live/commit/318e80452569a0f91c4363ae50d2664419251dbd) Thanks [@gre](https://github.com/gre)! - Fixes testnet currencies to be \$0 valued on countervalues
+
 ## 6.32.0
 
 ### Minor Changes

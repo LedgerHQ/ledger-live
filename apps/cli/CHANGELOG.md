@@ -1,5 +1,13 @@
 # @ledgerhq/live-cli
 
+## 22.2.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`318e804525`](https://github.com/LedgerHQ/ledger-live/commit/318e80452569a0f91c4363ae50d2664419251dbd), [`d6634bc0b7`](https://github.com/LedgerHQ/ledger-live/commit/d6634bc0b720d8a13f3681caf33e2f23d5c64968), [`5dd957b3cb`](https://github.com/LedgerHQ/ledger-live/commit/5dd957b3cb893668f044497d25b6eee69b05b2f0)]:
+  - @ledgerhq/cryptoassets@6.33.0-nightly.0
+  - @ledgerhq/live-common@26.0.1-nightly.0
+
 ## 22.2.0
 
 ### Minor Changes

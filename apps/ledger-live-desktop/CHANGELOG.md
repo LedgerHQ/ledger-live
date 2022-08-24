@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.47.0-nightly.0
+
+### Minor Changes
+
+- [#923](https://github.com/LedgerHQ/ledger-live/pull/923) [`b29d8c263d`](https://github.com/LedgerHQ/ledger-live/commit/b29d8c263d26e37d0979d1fb582db33ffa4a1f43) Thanks [@chabroA](https://github.com/chabroA)! - use navigation for buy sell screen
+
+### Patch Changes
+
+- [#1019](https://github.com/LedgerHQ/ledger-live/pull/1019) [`49f5c28d4b`](https://github.com/LedgerHQ/ledger-live/commit/49f5c28d4b199e4564a7f93255a9546c3b11befe) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix one incorrect filename in custom component generation mechanism
+
+- Updated dependencies [[`d6634bc0b7`](https://github.com/LedgerHQ/ledger-live/commit/d6634bc0b720d8a13f3681caf33e2f23d5c64968)]:
+  - @ledgerhq/live-common@26.0.1-nightly.0
+
 ## 2.46.0
 
 ### Minor Changes
