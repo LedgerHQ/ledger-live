@@ -84,6 +84,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
@@ -133,6 +134,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
@@ -178,6 +180,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
@@ -220,6 +223,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
