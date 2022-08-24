@@ -53,11 +53,17 @@ export const GraphTab = ({
           bg={activeBg}
           color={disabled ? "neutral.c70" : activeColor}
           fontWeight="semiBold"
+          uppercase
         >
           {label}
         </TabText>
       ) : (
-        <TabText variant="small" size={size} color={disabled ? "neutral.c70" : "neutral.c90"}>
+        <TabText
+          variant="small"
+          size={size}
+          color={disabled ? "neutral.c70" : "neutral.c90"}
+          uppercase
+        >
           {label}
         </TabText>
       )}

@@ -115,7 +115,7 @@ function CurrencyHeaderLayout({
           />
         </Box>
       </Animated.View>
-      <Box>{leftElement}</Box>
+      <Box width={24}>{leftElement}</Box>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <CenteredElement width={windowsWidth}>
           <Animated.View
@@ -136,7 +136,7 @@ function CurrencyHeaderLayout({
           </Animated.View>
         </CenteredElement>
       </Flex>
-      <Box>{rightElement}</Box>
+      <Box width={24}>{rightElement}</Box>
     </Header>
   );
 }
