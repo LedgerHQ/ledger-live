@@ -607,6 +607,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
         </OpDetailsSection>
       ) : null}
       <B />
+
       <OpDetailsExtra operation={operation} extra={extra} type={type} account={account} />
     </Box>
   );

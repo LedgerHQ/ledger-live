@@ -71,53 +71,17 @@ const Staking = (props: Props) => {
 
   const onDrawer = useCallback(setDrawer, [setDrawer]);
   const findValidator = useCallback(
-    needle => validators.find(item => item.providers.includes(needle)),
+    (contract: string) =>
+      validators.find(validator => validator.contract === contract),
     [validators],
   );
 
-  const fetchValidators = useCallback(() => {
-    const fetchData = async () => {
-      try {
-        const providers = await axios.get(constants.identities);
-
-        const randomize = providers =>
-          providers
-            .map(provider => ({ provider, sort: Math.random() }))
-            .sort((alpha, beta) => alpha.sort - beta.sort)
-            .map(item => item.provider);
-
-        setValidators(
-          randomize(providers.data.filter(validator => validator.providers)),
-        );
-      } catch (error) {
-        setValidators([]);
-      }
-    };
-
-    fetchData();
-
-    return () => setValidators([]);
-  }, []);
-
   const fetchDelegations = useCallback(() => {
-    const fetchData = async () => {
-      try {
-        const delegations = await axios.get(
-          `${constants.delegations}/accounts/${account.freshAddress}/delegations`,
-        );
+    setDelegationResources(account.elrondResources.delegations || []);
 
-        setDelegationResources(delegations.data);
-      } catch (error) {
-        setDelegationResources([]);
-      }
-    };
-
-    if (account.elrondResources && !account.elrondResources.delegations) {
-      fetchData();
-    }
-
-    return () => setDelegationResources(account.elrondResources.delegations);
-  }, [account.freshAddress, account.elrondResources]);
+    return () =>
+      setDelegationResources(account.elrondResources.delegations || []);
+  }, [JSON.stringify(account.elrondResources.delegations)]);
 
   const delegations = useMemo(() => {
     const transform = input =>
@@ -171,7 +135,6 @@ const Staking = (props: Props) => {
     [delegations],
   );
 
-  useEffect(fetchValidators, [fetchValidators]);
   useEffect(fetchDelegations, [fetchDelegations]);
 
   return (

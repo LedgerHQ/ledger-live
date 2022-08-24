@@ -403,6 +403,7 @@ export function patchAccount(
       const elrondAcc = account as ElrondAccount;
       const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
       if (
+        elrondUpdatedRaw.elrondResources &&
         !areSameResources(
           elrondAcc.elrondResources,
           elrondUpdatedRaw.elrondResources

@@ -36,13 +36,12 @@ function StepConfirmation({
   validators,
 }) {
   if (optimisticOperation) {
-    const validator = transaction && transaction.recipient;
-
-    const v = validator && validators.find(({ providers }) => providers.includes(validator));
+    const provider = transaction && transaction.recipient;
+    const v = provider && validators.find(validator => validator.contract === provider);
 
     const amount = `${denominate({
       input: String(transaction.amount),
-      showLastNonZeroDecimal: true,
+      decimals: 6,
     })} ${constants.egldLabel}`;
 
     const titleKey = transaction?.mode === "claimRewards" ? "title" : "titleCompound";

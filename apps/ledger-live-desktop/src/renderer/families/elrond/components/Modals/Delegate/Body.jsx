@@ -6,27 +6,27 @@ import { connect, useDispatch } from "react-redux";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import Track from "~/renderer/analytics/Track";
-
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-
-import type { StepProps, St } from "./types";
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 
 import Stepper from "~/renderer/components/Stepper";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
+import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
+import Track from "~/renderer/analytics/Track";
 import logger from "~/logger/logger";
+
+import { constants } from "../../../constants";
+
+import type { StepProps, St } from "./types";
+import type { Account, Operation } from "@ledgerhq/live-common/types/index";
 
 interface OwnProps {|
   stepId: StepId,
@@ -54,17 +54,25 @@ type Props = OwnProps & StateProps;
 
 const steps: Array<St> = [
   {
-    id: "castDelegations",
+    id: "validator",
     label: <Trans i18nKey="elrond.delegation.flow.steps.validator.title" />,
     component: StepDelegation,
     noScroll: true,
     footer: StepDelegationFooter,
   },
   {
+    id: "amount",
+    label: <Trans i18nKey="elrond.delegation.flow.steps.amount.title" />,
+    component: StepAmount,
+    onBack: ({ transitionTo }: StepProps) => transitionTo("validator"),
+    noScroll: true,
+    footer: StepAmountFooter,
+  },
+  {
     id: "connectDevice",
     label: <Trans i18nKey="elrond.delegation.flow.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("castDelegations"),
+    onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
   },
   {
     id: "confirmation",
@@ -98,6 +106,8 @@ const Body = ({
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
 
+  const defaultValidator = params.validators.find(validator => validator.contract === constants.figment)
+
   const {
     transaction,
     setTransaction,
@@ -116,7 +126,9 @@ const Body = ({
     return {
       account,
       parentAccount: undefined,
-      transaction: bridge.updateTransaction(transaction),
+      transaction: bridge.updateTransaction(transaction, {
+        recipient: defaultValidator ? defaultValidator.contract : ''
+      }),
     };
   });
 
@@ -128,7 +140,7 @@ const Body = ({
 
   const handleRetry = useCallback(() => {
     setTransactionError(null);
-    onChangeStepId("castDelegations");
+    onChangeStepId("validator");
   }, [onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
@@ -173,7 +185,7 @@ const Body = ({
     steps,
     errorSteps,
     disabledSteps: [],
-    hideBreadcrumb: !!error && ["castDelegations"].includes(stepId),
+    hideBreadcrumb: !!error && ["validator"].includes(stepId),
     onRetry: handleRetry,
     onStepChange: handleStepChange,
     onClose: handleCloseModal,

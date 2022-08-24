@@ -10,6 +10,7 @@ import {
 import {
   ElrondDelegation,
   ElrondProtocolTransaction,
+  ElrondProvider,
   ElrondTransferOptions,
   ESDTToken,
   NetworkInfo,
@@ -40,22 +41,13 @@ export default class ElrondApi {
     };
   }
 
-  async getProviders(): Promise<any> {
-    let data = [];
+  async getProviders(): Promise<ElrondProvider[]> {
+    const { data: providers } = await network({
+      method: "GET",
+      url: `${this.DELEGATION_API_URL}/providers`,
+    });
 
-    try {
-      const {
-        data: { providers },
-      } = await network({
-        method: "GET",
-        url: `${this.DELEGATION_API_URL}/providers`,
-      });
-      data = providers;
-    } catch (error) {
-      return data;
-    }
-
-    return data;
+    return providers;
   }
 
   async getNetworkConfig(): Promise<NetworkInfo> {

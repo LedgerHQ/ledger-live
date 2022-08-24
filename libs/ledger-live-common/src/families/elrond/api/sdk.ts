@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import ElrondApi from "./apiCalls";
 import {
   ElrondDelegation,
+  ElrondProvider,
   ElrondTransferOptions,
   ESDTToken,
   Transaction,
@@ -39,7 +40,7 @@ export const getAccount = async (addr: string) => {
   };
 };
 
-export const getProviders = async (): Promise<any> => {
+export const getProviders = async (): Promise<ElrondProvider[]> => {
   const providers = await api.getProviders();
   return providers;
 };
@@ -73,8 +74,9 @@ function getOperationType(
   transaction: Transaction,
   addr: string
 ): OperationType {
-  if (transaction.mode !== "send") {
-    switch (transaction.mode) {
+  if (transaction.action && transaction.action.category == "stake") {
+    const stakeAction = transaction.action.name;
+    switch (stakeAction) {
       case "delegate":
         return "DELEGATE";
       case "unDelegate":
@@ -137,6 +139,7 @@ function transactionToOperation(
   tokenIdentifier?: string
 ): Operation {
   const type = getOperationType(transaction, addr);
+
   return {
     id: encodeOperationId(accountId, transaction.txHash ?? "", type),
     accountId,
@@ -148,8 +151,14 @@ function transactionToOperation(
     blockHeight: transaction.round,
     date: new Date(transaction.timestamp ? transaction.timestamp * 1000 : 0),
     extra: {},
-    senders: [transaction.sender ?? ""],
-    recipients: transaction.receiver ? [transaction.receiver] : [],
+    senders:
+      (type == "OUT" || type == "IN") && transaction.sender
+        ? [transaction.sender]
+        : [],
+    recipients:
+      (type == "OUT" || type == "IN") && transaction.receiver
+        ? [transaction.receiver]
+        : [],
     transactionSequenceNumber: isSender(transaction, addr)
       ? transaction.nonce
       : undefined,
@@ -157,6 +166,9 @@ function transactionToOperation(
       !transaction.status ||
       transaction.status === "fail" ||
       transaction.status === "invalid",
+    contract: new Address(transaction.receiver).isContractAddress()
+      ? transaction.receiver
+      : undefined,
   };
 }
 

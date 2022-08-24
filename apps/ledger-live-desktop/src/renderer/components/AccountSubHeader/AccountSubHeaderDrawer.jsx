@@ -1,17 +1,20 @@
 // @flow
 
 import React from "react";
-import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
-import { SideDrawer } from "~/renderer/components/SideDrawer";
+import styled from "styled-components";
+
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { SideDrawer } from "~/renderer/components/SideDrawer";
+
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
 
 type Props = {
   isOpen: boolean,
   closeDrawer: () => void,
-  family: string,
-  team: string,
 };
 
 const Title = styled(Text)`
@@ -21,33 +24,47 @@ const Title = styled(Text)`
   line-height: 27px;
 `;
 
+const Divider = styled(Box)`
+  border: 1px solid #f5f5f5;
+`;
+
 const Description = styled(Text)`
   font-size: 13px;
 `;
 
-export function AccountSubHeaderDrawer({ isOpen, closeDrawer, family, team }: Props) {
+const AccountSubHeaderDrawer = (props: Props) => {
+  const { isOpen, closeDrawer } = props;
   const { t } = useTranslation();
+
   return (
     <SideDrawer
-      title={t("account.subHeader.drawer.title", { family })}
+      title={t("elrond.account.subHeader.drawerTitle")}
       isOpen={isOpen}
       onRequestClose={closeDrawer}
       direction="left"
     >
       <Box px={40} py={40}>
-        <Title>{t("account.subHeader.drawer.subTitle", { family, team })}</Title>
+        <Title>{t("elrond.account.subHeader.title")}</Title>
         <Box py={3}>
-          <Description>{t("account.subHeader.drawer.description")}</Description>
+          <Description>{t("elrond.account.subHeader.description")}</Description>
         </Box>
         <Box py={2}>
-          <Description>{t("account.subHeader.drawer.description2")}</Description>
+          <Description>{t("elrond.account.subHeader.description2")}</Description>
         </Box>
         <Box py={2}>
-          <Description>{t("account.subHeader.drawer.description3", { team })}</Description>
+          <Description>{t("elrond.account.subHeader.description3")}</Description>
+        </Box>
+        <Divider mt={2} />
+        <Box mt={3}>
+          <LinkWithExternalIcon
+            label={<Trans i18nKey="elrond.account.subHeader.website" />}
+            onClick={() => openURL(urls.elrond.website)}
+          />
         </Box>
       </Box>
     </SideDrawer>
   );
-}
+};
 
+export { AccountSubHeaderDrawer };
 export default AccountSubHeaderDrawer;

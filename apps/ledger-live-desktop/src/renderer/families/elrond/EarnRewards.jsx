@@ -6,14 +6,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 
-import type { Account } from "@ledgerhq/types-live";
-
-import { urls } from "~/config/urls";
-import { openURL } from "~/renderer/linking";
-import { openModal } from "~/renderer/actions/modals";
-import { denominate } from "~/renderer/families/elrond/helpers";
-import { constants } from "~/renderer/families/elrond/constants";
-
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
@@ -24,10 +16,17 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-import axios from "axios";
 
 import Unbondings from "~/renderer/families/elrond/components/Unbondings";
 import Delegations from "~/renderer/families/elrond/components/Delegations";
+
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
+import { openModal } from "~/renderer/actions/modals";
+import { denominate, randomizeProviders } from "~/renderer/families/elrond/helpers";
+import { constants } from "~/renderer/families/elrond/constants";
+
+import type { Account } from "@ledgerhq/types-live";
 
 interface Props {
   account: Account;
@@ -47,10 +46,13 @@ const withDelegation = (Component: any) => (props: any) =>
 
 const Delegation = (props: Props) => {
   const { account } = props;
-  const [validators, setValidators] = useState([]);
   const [delegationResources, setDelegationResources] = useState(
     account.elrondResources.delegations || [],
   );
+
+  const validators = useMemo(() => randomizeProviders(account.elrondResources.providers), [
+    account.elrondResources.providers,
+  ]);
 
   const dispatch = useDispatch();
   const delegationEnabled = useMemo(() => BigNumber(denominate({ input: account.balance })).gt(1), [
@@ -58,7 +60,7 @@ const Delegation = (props: Props) => {
   ]);
 
   const findValidator = useCallback(
-    (needle: string) => validators.find(item => item.providers.includes(needle)),
+    (validator: string) => validators.find(item => item.contract === validator),
     [validators],
   );
 
@@ -113,49 +115,11 @@ const Delegation = (props: Props) => {
     [delegationResources, findValidator],
   );
 
-  const fetchValidators = () => {
-    const fetchData = async (): Promise<void> => {
-      try {
-        const providers = await axios.get(constants.identities);
-
-        const randomize = providers =>
-          providers
-            .map(provider => ({ provider, sort: Math.random() }))
-            .sort((alpha, beta) => alpha.sort - beta.sort)
-            .map(item => item.provider);
-
-        setValidators(randomize(providers.data.filter(validator => validator.providers)));
-      } catch (error) {
-        setValidators([]);
-      }
-    };
-
-    fetchData();
-
-    return () => setValidators([]);
-  };
-
   const fetchDelegations = useCallback(() => {
-    const fetchData = async () => {
-      try {
-        const delegations = await axios.get(
-          `${constants.delegations}/accounts/${account.freshAddress}/delegations`,
-        );
-
-        setDelegationResources(delegations.data);
-      } catch (error) {
-        setDelegationResources([]);
-      }
-    };
-
-    if (account.elrondResources && !account.elrondResources.delegations) {
-      fetchData();
-    } else {
-      setDelegationResources(account.elrondResources.delegations || []);
-    }
+    setDelegationResources(account.elrondResources.delegations || []);
 
     return () => setDelegationResources(account.elrondResources.delegations || []);
-  }, [account.freshAddress, JSON.stringify(account.elrondResources.delegations)]);
+  }, [JSON.stringify(account.elrondResources.delegations)]);
 
   const onEarnRewards = useCallback(() => {
     dispatch(
@@ -194,7 +158,6 @@ const Delegation = (props: Props) => {
   const hasDelegations = delegations.length > 0;
   const hasUnbondings = unbondings.length > 0;
 
-  useEffect(fetchValidators, []);
   useEffect(fetchDelegations, [fetchDelegations]);
 
   return (
@@ -253,7 +216,7 @@ const Delegation = (props: Props) => {
         </TableHeader>
 
         {hasDelegations ? (
-          <Delegations delegations={delegations} validators={validators} account={account} />
+          <Delegations {...{ delegations, validators, account }} />
         ) : (
           <Wrapper horizontal={true}>
             <Box style={{ maxWidth: "65%" }}>

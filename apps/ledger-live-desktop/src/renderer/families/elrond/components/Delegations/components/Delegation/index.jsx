@@ -4,25 +4,28 @@ import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import type { Account as AccountType } from "@ledgerhq/types-live";
 
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import ChevronRight from "~/renderer/icons/ChevronRight";
+import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
+import Logo from "~/renderer/icons/Logo";
 import Text from "~/renderer/components/Text";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
-import type {
-  DelegationType,
-  ValidatorType,
-  UnbondingType,
-} from "~/renderer/families/elrond/types";
 import { Ellipsis, Column, Wrapper, Divider } from "~/renderer/families/elrond/blocks/Delegation";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
+
+import type {
+  DelegationType,
+  ValidatorType,
+  UnbondingType,
+} from "~/renderer/families/elrond/types";
+import type { Account as AccountType } from "@ledgerhq/types-live";
 
 interface RenderDropdownItemType {
   isActive: boolean;
@@ -103,12 +106,12 @@ const Delegation = ({
     [claimableRewards, account, userActiveStake, contract, delegations, validators],
   );
 
-  const name = validator?.name ?? contract;
+  const name = validator ? validator.identity.name || contract : contract;
   const amount = useMemo(
     () =>
       denominate({
         input: userActiveStake,
-        showLastNonZeroDecimal: true,
+        decimals: 6,
       }),
     [userActiveStake],
   );
@@ -117,7 +120,7 @@ const Delegation = ({
     () =>
       denominate({
         input: claimableRewards,
-        showLastNonZeroDecimal: true,
+        decimals: 6,
       }),
     [claimableRewards],
   );
@@ -130,8 +133,13 @@ const Delegation = ({
         onClick={() => openURL(`${constants.explorer}/providers/${contract}`)}
       >
         <Box mr={2}>
-          <FirstLetterIcon label={name} />
+          {contract === constants.figment ? (
+            <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
+          ) : (
+            <FirstLetterIcon label={name} />
+          )}
         </Box>
+
         <Ellipsis>{name}</Ellipsis>
       </Column>
 

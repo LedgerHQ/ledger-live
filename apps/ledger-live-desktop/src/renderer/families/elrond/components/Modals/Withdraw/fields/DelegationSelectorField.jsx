@@ -1,26 +1,29 @@
 // @flow
 
 import React, { useMemo, useCallback, useState, useEffect } from "react";
+import { BigNumber } from "bignumber.js";
+
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
+
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
-import { BigNumber } from "bignumber.js";
 
 const renderItem = item => {
+  const label = item.data.validator.identity.name || item.data.contract;
   const balance = denominate({
     input: item.data.amount,
-    showLastNonZeroDecimal: true,
+    decimals: 6,
   });
 
   return (
     <Box horizontal={true} alignItems="center" justifyContent="space-between">
       <Box horizontal={true} alignItems="center">
-        <FirstLetterIcon label={item.data.validator.name} mr={2} />
-        <Text ff="Inter|Medium">{item.data.validator.name}</Text>
+        <FirstLetterIcon label={label} mr={2} />
+        <Text ff="Inter|Medium">{label}</Text>
       </Box>
 
       <Text ff="Inter|Regular">
@@ -30,23 +33,31 @@ const renderItem = item => {
   );
 };
 
-export default function DelegationSelectorField({
-  unbondings,
-  amount,
-  contract,
-  t,
-  onChange,
-  bridge,
-  transaction,
-  onUpdateTransaction,
-}: *) {
+const DelegationSelectorField = props => {
+  const {
+    unbondings,
+    amount,
+    contract,
+    t,
+    onChange,
+    bridge,
+    transaction,
+    onUpdateTransaction,
+  } = props;
+
   const options = useMemo(
     () =>
       unbondings.reduce(
-        (total, unbonding) =>
-          unbonding.amount === amount && unbonding.contract === contract
-            ? [unbonding, ...total]
-            : [...total, unbonding],
+        (total, unbonding) => {
+          const current = Object.assign(unbonding, {
+            disabled: unbonding.seconds > 0,
+          });
+
+          return unbonding.amount === amount && unbonding.contract === contract
+            ? [current].concat(total)
+            : total.concat([current]);
+        },
+
         [],
       ),
     [unbondings, amount, contract],
@@ -64,7 +75,10 @@ export default function DelegationSelectorField({
   );
 
   const filterOptions = useCallback(
-    (option, needle) => option.data.validator.name.toLowerCase().includes(needle.toLowerCase()),
+    (option, needle) =>
+      option.data.validator.identity.name
+        ? option.data.validator.identity.name.toLowerCase().includes(needle.toLowerCase())
+        : false,
     [],
   );
 
@@ -105,7 +119,10 @@ export default function DelegationSelectorField({
         placeholder={t("common.selectAccount")}
         noOptionsMessage={noOptionsMessageCallback}
         onChange={onValueChange}
+        isOptionDisabled={option => option.disabled}
       />
     </Box>
   );
-}
+};
+
+export default DelegationSelectorField;

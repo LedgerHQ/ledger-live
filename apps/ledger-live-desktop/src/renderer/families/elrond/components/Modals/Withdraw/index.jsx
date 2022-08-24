@@ -44,6 +44,7 @@ class ClaimRewardsModal extends PureComponent<{ name: string }, State> {
               account: data.account,
               amount: data.amount,
               unbondings: data.unbondings,
+              validator: data.validator,
             }}
           />
         )}

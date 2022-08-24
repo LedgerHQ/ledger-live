@@ -1509,6 +1509,8 @@
       "undelegated": "Undelegated",
       "undelegatedFrom": "Undelegated from",
       "undelegatedAmount": "Undelegated amount",
+      "withdrawnFrom": "Withdrawn from",
+      "withdrawnAmount": "Withdrawn amount",
       "rewardFrom": "Reward from",
       "memo": "Memo",
       "assetId": "Asset ID",
@@ -2006,9 +2008,9 @@
     "summary": {
       "availableBalanceTooltip": "This amount can be transferred.",
       "availableBalance": "Available balance",
-      "delegatedAssetsTooltip": "Staked assets are used indirectly by the staking provider to operate validator nodes, process transactions and secure the network by participating in the consensus mechanism.",
-      "delegatedAssets": "Staked assets",
-      "undelegatingTooltip": "Unstaked assets are subject to a 10-day unbonding period, before being able to be withdrawn.",
+      "delegatedAssetsTooltip": "Delegated assets are used indirectly by the staking provider to operate validator nodes, process transactions and secure the network by participating in the consensus mechanism.",
+      "delegatedAssets": "Delegated assets",
+      "undelegatingTooltip": "Undelegated assets are subject to a 10-day unbonding period, before being able to be withdrawn.",
       "undelegating": "Pending Withdrawals"
     },
     "account": {
@@ -2025,29 +2027,31 @@
     },
     "delegation": {
       "emptyState": {
-        "description": "Stake your EGLD to secure the network and capture your share of the rewards.",
-        "info": "What is staking and how does it work?",
+        "description": "Delegate your EGLD to secure the network and capture your share of the rewards.",
+        "info": "What is delegation and how does it work?",
         "delegation": "Earn rewards"
       },
+      "commission": "Commission",
       "claimRewards": "Claim rewards",
-      "header": "My Stake",
+      "header": "Delegation(s)",
       "noRewards": "No rewards available",
-      "delegate": "Stake Now",
-      "undelegate": "Unstake",
-      "redelegate": "Redelegate",
+      "delegate": "Delegate",
+      "undelegate": "Undelegate",
       "redelegateDisabledTooltip": "You can redelegate again <0>{{days}}</0>",
       "redelegateMaxDisabledTooltip": "You cannot redelegate more than <0>7</0> validators at a time",
       "undelegateDisabledTooltip": "You cannot undelegate more than <0>7</0> validators at a time",
       "reward": "Claim rewards",
       "currentDelegation": "Delegated: <0>{{amount}}</0>",
       "apr": "APR",
-      "activeTooltip": "Staked amounts generate rewards",
-      "inactiveTooltip": "Unstaked amounts do not generate rewards",
-      "minSafeWarning": "Not enough funds",
+      "totalStake": "Total Stake",
+      "activeTooltip": "Delegated amounts generate rewards",
+      "inactiveTooltip": "Undelegated amounts do not generate rewards",
+      "minSafeWarning": "Not enough funds. You need at least 1 EGLD available.",
       "flow": {
-        "title": "Stake",
+        "title": "Delegate",
         "steps": {
           "amount": {
+            "title": "Delegate",
             "subtitle": "Stake your assets to one of the following Staking Providers.",
             "warning": "Choose your Staking Provider wisely: currently, the only risk is of not getting rewards due to various reasons, therefore you should select a provider based on Reliability, Communication and Economics.",
             "fields": {
@@ -2058,11 +2062,11 @@
             "amount": "Amount to stake"
           },
           "starter": {
-            "description": "You can earn rewards by staking your EGLD assets to a Staking Provider.",
+            "description": "You can earn rewards by delegating your EGLD assets to a Staking Provider.",
             "bullet": [
-              "You keep ownership of staked assets",
-              "Stake using your Ledger device",
-              "Assets will be available 10 days after Unstaking"
+              "You keep ownership of delegated assets",
+              "Delegate using your Ledger device",
+              "Assets will be available 10 days after Undelegation"
             ],
             "warning": {
               "description": "Choose your Staking Provider wisely: currently, the only risk is of not getting rewards due to various reasons, therefore you should select a provider based on Reliability, Communication and Economics."
@@ -2077,7 +2081,7 @@
           "confirmation": {
             "title": "Confirmation",
             "success": {
-              "title": "You have successfully staked your assets.",
+              "title": "You have successfully delegated your assets.",
               "text": "Your account balance will be updated when the blockchain confirms the transaction.",
               "cta": "View details"
             },
@@ -2092,14 +2096,14 @@
         "steps": {
           "claimRewards": {
             "title": "Rewards",
-            "compound": "Stake Rewards",
+            "compound": "Compound Rewards",
             "claim": "Claim Rewards",
-            "compoundOrClaim": "Stake Rewards or Claim Rewards",
-            "compoundDescription": "Rewards will be added to the staked amount.",
+            "compoundOrClaim": "Compound Rewards or Claim Rewards",
+            "compoundDescription": "Rewards will be added to the delegated amount.",
             "claimDescription": "Rewards will be added to your available balance.",
             "compoundInfo": "You have earned <0>{{amount}}</0>. By clicking Continue, they will be claimed now and automatically delegated to the same Staking Provider.",
             "claimInfo": "You have earned <0>{{amount}}</0> from the Staking Provider below. By clicking Continue, they will be claimed now and automatically added to the available balance.",
-            "selectLabel": "Select one of your Staking Providers"
+            "selectLabel": "Select a delegation"
           },
           "connectDevice": {
             "title": "Device"
@@ -2109,9 +2113,9 @@
             "label": "Confirmation",
             "success": {
               "title": "Claim rewards was successful",
-              "titleCompound": "Staked rewards was successful",
+              "titleCompound": "Rewards compounded successfully",
               "text": "The rewards have been added to your available balance",
-              "textCompound": "Your stake rewards transaction of <0>{{amount}}</0> to <0>{{validator}}</0> was successfully processed.",
+              "textCompound": "Your compound rewards transaction of <0>{{amount}}</0> EGLD to <0>{{validator}}</0> was successfully processed.",
               "cta": "View details"
             },
             "pending": {
@@ -2123,22 +2127,22 @@
       }
     },
     "undelegation": {
-      "header": "Unstaked position(s)",
+      "header": "Undelegation(s)",
       "headerTooltip": "Available after the 10-day unbonding period.",
       "inactiveTooltip": "Undelegated amounts do not generate rewards.",
       "withdraw": {
         "cta": "Finalize Withdrawal"
       },
       "flow": {
-        "title": "Unstake assets",
+        "title": "Undelegate assets",
         "steps": {
           "amount": {
             "title": "Amount",
-            "subtitle": "The unstaking process takes <0>10 days</0> to finalize.",
-            "warning": "Rewards will be claimed automatically. Unstaking is a 2 step process: unstaking request, followed by a <0>10-day unbonding period</0> after which you can finalize the withdrawal and the unstaked amount will be transferred to your available balance.",
+            "subtitle": "The undelegation process takes <0>10 days</0> to finalize.",
+            "warning": "Rewards will be claimed automatically. Undelegating is a 2 step process: undelegating request, followed by a  <0>10-day unbonding period</0> after which you can finalize the withdrawal and the undelegated amount will be transferred to your available balance.",
             "fields": {
               "validator": "Staking Provider",
-              "amount": "Amount to unstake"
+              "amount": "Amount to undelegate"
             }
           },
           "device": {
@@ -2147,8 +2151,8 @@
           "confirmation": {
             "title": "Confirmation",
             "success": {
-              "title": "You have successfully unstaked your assets.",
-              "description": "<0>{{amount}}</0> were unstaked from <0>{{validator}}</0>",
+              "title": "You have successfully undelegated your assets.",
+              "description": "<0>{{amount}}</0> were undelegated from <0>{{validator}}</0>.",
               "cta": "View details"
             },
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
@@ -2162,8 +2166,8 @@
         "steps": {
           "withdraw": {
             "title": "Finalize Withdrawal",
-            "description": "You unstaked <0>{{amount}}</0> from the Staking Provider below. By clicking Continue, they will be withdrawn now and automatically added back to the available balance.",
-            "selectLabel": "Select an unstaked position"
+            "description": "You undelegated <0>{{amount}}</0> EGLD from <0>{{validator}}</0>. By clicking Continue, they will be withdrawn now and automatically added back to your available balance.",
+            "selectLabel": "Select an undelegation"
           },
           "connectDevice": {
             "title": "Device"
@@ -2173,7 +2177,7 @@
             "label": "Confirmation",
             "success": {
               "title": "Funds withdrawn successfully",
-              "text": "The amount of {{amount}} was withdrawn back into your account balance.",
+              "text": "The amount of <0>{{amount}}</0> was withdrawn back into your account balance.",
               "cta": "View details"
             },
             "pending": {

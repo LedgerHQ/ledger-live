@@ -8,14 +8,15 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
+
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
 const Item = item => {
-  const amount = useMemo(
-    () => denominate({ input: item.data.userActiveStake, showLastNonZeroDecimal: true }),
-    [item.data.userActiveStake],
-  );
+  const label = item.data.validator.identity.name || item.data.validator.contract;
+  const amount = useMemo(() => denominate({ input: item.data.userActiveStake, decimals: 6 }), [
+    item.data.userActiveStake,
+  ]);
 
   return (
     <Box
@@ -25,8 +26,8 @@ const Item = item => {
       justifyContent="space-between"
     >
       <Box horizontal={true} alignItems="center">
-        <FirstLetterIcon label={item.data.validator.name} mr={2} />
-        <Text ff="Inter|Medium">{item.data.validator.name}</Text>
+        <FirstLetterIcon label={label} mr={2} />
+        <Text ff="Inter|Medium">{label}</Text>
       </Box>
 
       <Text ff="Inter|Regular">
@@ -40,18 +41,20 @@ const Dropdown = (props: Props) => {
   const { delegations, onChange, contract } = props;
   const { t } = useTranslation();
 
-  const options = useMemo(
+  const [defaultOption, ...options] = useMemo(
     () =>
       delegations.reduce(
         (total, delegation) =>
-          delegation.contract === contract ? [delegation, ...total] : [...total, delegation],
+          delegation.contract === contract
+            ? [delegation].concat(total)
+            : total.concat([delegation]),
         [],
       ),
     [delegations, contract],
   );
 
   const [query, setQuery] = useState("");
-  const [value, setValue] = useState(options[0]);
+  const [value, setValue] = useState(defaultOption);
 
   const noOptionsMessageCallback = useCallback(
     needle =>
@@ -62,7 +65,10 @@ const Dropdown = (props: Props) => {
   );
 
   const filterOptions = useCallback(
-    (option, needle) => option.data.validator.name.toLowerCase().includes(needle.toLowerCase()),
+    (option, needle) =>
+      option.data.validator.identity.name
+        ? option.data.validator.identity.name.toLowerCase().includes(needle.toLowerCase())
+        : false,
     [],
   );
 
@@ -82,7 +88,7 @@ const Dropdown = (props: Props) => {
       <Label>{t("elrond.undelegation.flow.steps.amount.fields.validator")}</Label>
       <Select
         value={value}
-        options={options}
+        options={[defaultOption].concat(options)}
         renderValue={Item}
         renderOption={Item}
         onInputChange={setQuery}

@@ -5,14 +5,12 @@ import { withTranslation } from "react-i18next";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { createStructuredSelector } from "reselect";
-
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import type { Operation } from "@ledgerhq/live-common/lib/types";
 
 import logger from "~/logger/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -21,6 +19,9 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
+
+import type { Operation } from "@ledgerhq/live-common/types/index";
+
 
 interface OwnProps {|
   account: Account,

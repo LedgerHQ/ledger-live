@@ -1,13 +1,8 @@
 // @flow
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import axios from "axios";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-
-import { denominate } from "~/renderer/families/elrond/helpers";
-import { constants } from "~/renderer/families/elrond/constants";
 
 import Discreet from "~/renderer/components/Discreet";
 import InfoCircle from "~/renderer/icons/InfoCircle";
@@ -21,6 +16,11 @@ import {
   TitleWrapper,
 } from "~/renderer/families/elrond/blocks/Summary";
 
+import { denominate } from "~/renderer/families/elrond/helpers";
+import { constants } from "~/renderer/families/elrond/constants";
+
+import type { Account } from "@ledgerhq/live-common/types/index";
+
 interface Props {
   account: Account;
 }
@@ -32,28 +32,16 @@ const Summary = (props: Props) => {
   );
 
   const fetchDelegations = useCallback(() => {
-    const fetchData = async () => {
-      const delegations = await axios.get(
-        `${constants.delegations}/accounts/${account.freshAddress}/delegations`,
-      );
-
-      setDelegationResources(delegations.data);
-    };
-
-    if (account.elrondResources && !account.elrondResources.delegations) {
-      fetchData();
-    } else {
-      setDelegationResources(account.elrondResources.delegations || []);
-    }
+    setDelegationResources(account.elrondResources.delegations || []);
 
     return () => setDelegationResources(account.elrondResources.delegations || []);
-  }, [account.freshAddress, JSON.stringify(account.elrondResources.delegations)]);
+  }, [JSON.stringify(account.elrondResources.delegations)]);
 
   const available = useMemo(() => account.spendableBalance, [account.spendableBalance]);
   const delegations = useMemo(
     () =>
       delegationsResources.reduce(
-        (total, delegation) => BigNumber(delegation.userActiveStake).plus(total),
+        (total, delegation) => total.plus(delegation.userActiveStake),
         BigNumber(0),
       ),
     [delegationsResources],
@@ -107,8 +95,7 @@ const Summary = (props: Props) => {
 
           <Amount>
             <Discreet>
-              {denominate({ input: balance.amount, showLastNonZeroDecimal: true })}{" "}
-              {constants.egldLabel}
+              {denominate({ input: balance.amount, decimals: 6 })} {constants.egldLabel}
             </Discreet>
           </Amount>
         </Balance>

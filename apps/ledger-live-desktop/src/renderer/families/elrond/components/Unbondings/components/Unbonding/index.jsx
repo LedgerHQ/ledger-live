@@ -9,29 +9,31 @@ import Box from "~/renderer/components/Box/Box";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
-import type { UnbondingType } from "~/renderer/families/elrond/types";
+import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
+import Logo from "~/renderer/icons/Logo";
+
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 import { openURL } from "~/renderer/linking";
 import { Ellipsis, Column, Wrapper, Withdraw } from "~/renderer/families/elrond/blocks/Delegation";
 import { openModal } from "~/renderer/actions/modals";
 
-const Unbonding = ({
-  account,
-  contract,
-  seconds,
-  validator,
-  amount,
-  unbondings,
-}: UnbondingType) => {
+import type { UnbondingType } from "~/renderer/families/elrond/types";
+
+const Unbonding = (props: UnbondingType) => {
+  const { account, contract, seconds, validator, amount, unbondings } = props;
   const [counter, setCounter] = useState(seconds);
 
-  const name = validator?.name ?? contract;
+  const name = useMemo(() => (validator ? validator.identity.name || contract : contract), [
+    contract,
+    validator,
+  ]);
+
   const balance = useMemo(
     () =>
       denominate({
         input: amount,
-        showLastNonZeroDecimal: true,
+        decimals: 6,
       }),
     [amount],
   );
@@ -75,9 +77,10 @@ const Unbonding = ({
         unbondings,
         contract,
         amount,
+        validator,
       }),
     );
-  }, [account, contract, unbondings, amount, dispatch]);
+  }, [account, contract, unbondings, amount, validator, dispatch]);
 
   useEffect(handleCounter, [seconds]);
 
@@ -89,7 +92,11 @@ const Unbonding = ({
         onClick={() => openURL(`${constants.explorer}/providers/${contract}`)}
       >
         <Box mr={2}>
-          <FirstLetterIcon label={name} />
+          {contract === constants.figment ? (
+            <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
+          ) : (
+            <FirstLetterIcon label={name} />
+          )}
         </Box>
 
         <Ellipsis>{name}</Ellipsis>
