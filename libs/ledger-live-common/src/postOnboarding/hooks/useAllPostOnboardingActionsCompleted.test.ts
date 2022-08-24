@@ -55,6 +55,7 @@ describe("useAllPostOnboardingActionsCompleted", () => {
     const { result } = renderHook(() => useAllPostOnboardingActionsCompleted());
     expect(result.current).toBe(true);
   });
+
   it("should return true if all actions are completed", () => {
     mockedUsePostOnboardingHubState.mockReturnValue(
       mockedStateAllActionsCompleted
@@ -62,6 +63,7 @@ describe("useAllPostOnboardingActionsCompleted", () => {
     const { result } = renderHook(() => useAllPostOnboardingActionsCompleted());
     expect(result.current).toBe(true);
   });
+
   it("should return false if some actions are completed", () => {
     mockedUsePostOnboardingHubState.mockReturnValue(
       mockedStateSomeActionsCompleted
@@ -69,6 +71,7 @@ describe("useAllPostOnboardingActionsCompleted", () => {
     const { result } = renderHook(() => useAllPostOnboardingActionsCompleted());
     expect(result.current).toBe(false);
   });
+
   it("should return false if no actions are completed", () => {
     mockedUsePostOnboardingHubState.mockReturnValue(
       mockedStateNoActionsCompleted
