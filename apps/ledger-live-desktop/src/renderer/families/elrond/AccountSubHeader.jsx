@@ -7,9 +7,9 @@ import styled from "styled-components";
 import Box, { Card } from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
-import AccountSubHeaderDrawer from "./AccountSubHeaderDrawer";
 import ChevronRight from "~/renderer/icons/ChevronRight";
 import InfoCircle from "~/renderer/icons/InfoCircle";
+import AccountSubHeaderDrawer from "~/renderer/components/AccountSubHeader/AccountSubHeaderDrawer";
 
 const CardContent = styled(Box)`
   display: flex;
