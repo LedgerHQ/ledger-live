@@ -18,7 +18,9 @@ const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger
 const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const discoverLiveImg = require("../../../images/illustration/Shared/_DiscoverLive.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const syncCryptoLightImg = require("../../../images/illustration/Light/_SyncCrypto.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const syncCryptoDarkImg = require("../../../images/illustration/Dark/_SyncCrypto.png");
 
 type PostWelcomeDiscoverCardProps = {
