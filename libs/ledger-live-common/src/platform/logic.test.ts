@@ -16,7 +16,6 @@ import {
   SignedOperation,
   SignedOperationRaw,
   TokenAccount,
-  TransactionCommon,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
@@ -162,6 +161,8 @@ describe("completeExchangeLogic", () => {
         exchangeType: 8,
       };
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const expectedTransaction: EthereumTransaction = {
         family: "ethereum",
         amount: new BigNumber("1000"),

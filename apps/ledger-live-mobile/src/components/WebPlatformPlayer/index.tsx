@@ -17,7 +17,12 @@ import { WebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  Operation,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
@@ -243,7 +248,11 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       receiveOnAccountLogic(
         { manifest, accounts, tracking },
         accountId,
-        (account: AccountLike, parentAccount: Account | null, accountAddress: string) =>
+        (
+          account: AccountLike,
+          parentAccount: Account | null,
+          accountAddress: string,
+        ) =>
           new Promise((resolve, reject) => {
             navigation.navigate(ScreenName.VerifyAccount, {
               account,
@@ -275,14 +284,14 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     }: // TODO: use type SignTransactionParams from LedgerLiveApiSdk
     // }: SignTransactionParams) => {
     {
-      accountId: string,
-      transaction: RawPlatformTransaction,
+      accountId: string;
+      transaction: RawPlatformTransaction;
       params?: {
         /**
          * The name of the Ledger Nano app to use for the signing process
          */
         useApp: string;
-      },
+      };
     }) =>
       signTransactionLogic(
         { manifest, accounts, tracking },
@@ -313,13 +322,21 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
                 accountId,
                 parentId: parentAccount ? parentAccount.id : undefined,
                 appName: params?.useApp,
-                onSuccess: ({ signedOperation, transactionSignError }: { signedOperation: SignedOperation, transactionSignError: Error }) => {
+                onSuccess: ({
+                  signedOperation,
+                  transactionSignError,
+                }: {
+                  signedOperation: SignedOperation;
+                  transactionSignError: Error;
+                }) => {
                   if (transactionSignError) {
                     tracking.platformSignTransactionFail(manifest);
                     reject(transactionSignError);
                   } else {
                     tracking.platformSignTransactionSuccess(manifest);
-                    resolve(serializePlatformSignedTransaction(signedOperation));
+                    resolve(
+                      serializePlatformSignedTransaction(signedOperation),
+                    );
                     const n = navigation.getParent() || navigation;
                     n.pop();
                   }
@@ -331,7 +348,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               },
             });
           });
-        }
+        },
       ),
     [manifest, accounts, navigation],
   );
@@ -341,29 +358,29 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       accountId,
       signedTransaction,
     }: {
-      accountId: string,
-      signedTransaction: RawPlatformSignedTransaction,
-    }) => 
-    broadcastTransactionLogic(
-      { manifest, accounts, tracking },
-      accountId,
-      signedTransaction,
-      async (account, parentAccount, signedOperation) =>
-        new Promise((resolve, reject) => {
-          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-            broadcastSignedTx(account, parentAccount, signedOperation).then(
-              op => {
-                tracking.platformBroadcastSuccess(manifest);
-                resolve(op.hash);
-              },
-              error => {
-                tracking.platformBroadcastFail(manifest);
-                reject(error);
-              },
-            );
-          }
-        }),
-    ),
+      accountId: string;
+      signedTransaction: RawPlatformSignedTransaction;
+    }) =>
+      broadcastTransactionLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        signedTransaction,
+        async (account, parentAccount, signedOperation) =>
+          new Promise((resolve, reject) => {
+            if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+              broadcastSignedTx(account, parentAccount, signedOperation).then(
+                op => {
+                  tracking.platformBroadcastSuccess(manifest);
+                  resolve(op.hash);
+                },
+                error => {
+                  tracking.platformBroadcastFail(manifest);
+                  reject(error);
+                },
+              );
+            }
+          }),
+      ),
     [manifest, accounts],
   );
 
@@ -406,14 +423,14 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
   const completeExchange = useCallback(
     (request: {
-      provider: string,
-      fromAccountId: string,
-      toAccountId: string,
-      transaction: RawPlatformTransaction,
-      binaryPayload: string,
-      signature: string,
-      feesStrategy: string,
-      exchangeType: number,
+      provider: string;
+      fromAccountId: string;
+      toAccountId: string;
+      transaction: RawPlatformTransaction;
+      binaryPayload: string;
+      signature: string;
+      feesStrategy: string;
+      exchangeType: number;
     }) =>
       completeExchangeLogic(
         { manifest, accounts, tracking },
@@ -441,7 +458,10 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
                   feesStrategy,
                 },
                 device,
-                onResult: (result: { operation?: Operation, error?: Error }) => {
+                onResult: (result: {
+                  operation?: Operation;
+                  error?: Error;
+                }) => {
                   if (result.error) {
                     tracking.platformStartExchangeFail(manifest);
                     reject(result.error);
@@ -462,7 +482,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   );
 
   const signMessage = useCallback(
-    ({ accountId, message }: { accountId: string, message: string }) =>
+    ({ accountId, message }: { accountId: string; message: string }) =>
       signMessageLogic(
         { manifest, accounts, tracking },
         accountId,
