@@ -100,9 +100,7 @@ export default function SwapNavigator() {
         name="Login"
         component={Login}
         options={({ route }) => ({
-          headerTitle: () => (
-            <StepHeader title={getProviderName(route.params.provider)} />
-          ),
+          headerTitle: getProviderName(route.params.provider),
           headerRight: () => null,
         })}
       />
@@ -111,9 +109,7 @@ export default function SwapNavigator() {
         name="KYC"
         component={KYC}
         options={({ route }) => ({
-          headerTitle: () => (
-            <StepHeader title={getProviderName(route.params.provider)} />
-          ),
+          headerTitle: getProviderName(route.params.provider),
           headerRight: () => null,
         })}
       />
@@ -122,9 +118,7 @@ export default function SwapNavigator() {
         name="MFA"
         component={MFA}
         options={({ route }) => ({
-          headerTitle: () => (
-            <StepHeader title={getProviderName(route.params.provider)} />
-          ),
+          headerTitle: getProviderName(route.params.provider),
           headerRight: () => null,
         })}
       />
@@ -133,17 +127,19 @@ export default function SwapNavigator() {
         name={"PendingOperation"}
         component={PendingOperation}
         options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
+          headerTitle: t("transfer.swap.title"),
           headerLeft: () => null,
         }}
       />
       <Stack.Screen
         name={"OperationDetails"}
         component={OperationDetails}
-        options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerLeft: () => null,
-        }}
+        options={({ route }) => ({
+          headerTitle: t("transfer.swap.title"),
+          headerLeft: route.params?.fromPendingOperation
+            ? () => null
+            : undefined,
+        })}
       />
     </Stack.Navigator>
   );

@@ -37,6 +37,7 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
   const onComplete = useCallback(() => {
     navigation.navigate("OperationDetails", {
       swapOperation: route.params.swapOperation,
+      fromPendingOperation: true,
     });
   }, [navigation, route.params.swapOperation]);
 

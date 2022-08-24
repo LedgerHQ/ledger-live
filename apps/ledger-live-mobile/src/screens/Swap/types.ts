@@ -88,6 +88,7 @@ export type SwapNavParamList = {
   };
   OperationDetails: {
     swapOperation: SwapOperation;
+    fromPendingOperation?: true;
   };
 };
 
