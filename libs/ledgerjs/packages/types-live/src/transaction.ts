@@ -5,54 +5,6 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 /**
  *
  */
-export type BitcoinInput = {
-  address: string | null | undefined;
-  value: BigNumber | null | undefined;
-  previousTxHash: string | null | undefined;
-  previousOutputIndex: number;
-};
-
-/**
- *
- */
-export type BitcoinInputRaw = [
-  string | null | undefined,
-  string | null | undefined,
-  string | null | undefined,
-  number
-];
-
-/**
- *
- */
-export type BitcoinOutput = {
-  hash: string;
-  outputIndex: number;
-  blockHeight: number | null | undefined;
-  address: string | null | undefined;
-  path: string | null | undefined; // DEPRECATED - used only by legacy libcore implementation
-  value: BigNumber;
-  rbf: boolean;
-  isChange: boolean;
-};
-
-/**
- *
- */
-export type BitcoinOutputRaw = [
-  string,
-  number,
-  number | null | undefined,
-  string | null | undefined,
-  string | null | undefined,
-  string,
-  number, // rbf 0/1 for compression
-  number
-];
-
-/**
- *
- */
 export type SignedOperation = {
   // prepared version of Operation before it's even broadcasted
   // .id/.hash is potentially not settled yet
@@ -150,13 +102,23 @@ export type TransactionCommonRaw = {
 export type FeeStrategy = {
   amount: BigNumber;
   displayedAmount?: BigNumber;
+  txParameters?: FeeStrategyTxParameters;
   label: string;
   unit?: Unit;
+};
+
+/**
+ * Parameters are used to inform about specific transaction parameters
+ * Currently used for supplying EIP1559 fee information
+ */
+export type FeeStrategyTxParameters = {
+  maxBaseFeePerGas?: BigNumber;
+  maxPriorityFeePerGas?: BigNumber;
 };
 /**
  * TransactionStatus is a view of Transaction with general info to be used on the UI and status info.
  */
-export type TransactionStatus = {
+export type TransactionStatusCommon = {
   // potential error for each (user) field of the transaction
   errors: Record<string, Error>;
   // potential warning for each (user) field for a transaction
@@ -169,13 +131,11 @@ export type TransactionStatus = {
   totalSpent: BigNumber;
   // should the recipient be non editable
   recipientIsReadOnly?: boolean;
-  txInputs?: BitcoinInput[];
-  txOutputs?: BitcoinOutput[];
 };
 /**
  *
  */
-export type TransactionStatusRaw = {
+export type TransactionStatusCommonRaw = {
   errors: Record<string, string>;
   warnings: Record<string, string>;
   estimatedFees: string;
@@ -183,6 +143,4 @@ export type TransactionStatusRaw = {
   totalSpent: string;
   useAllAmount?: boolean;
   recipientIsReadOnly?: boolean;
-  txInputs?: BitcoinInputRaw[];
-  txOutputs?: BitcoinOutputRaw[];
 };

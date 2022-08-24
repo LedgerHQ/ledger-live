@@ -1,9 +1,13 @@
-import type { Currency } from "../types";
 // CountervaluesSettings is user config that drives the countervalues logic.
+
+import type { Currency } from "@ledgerhq/types-cryptoassets";
+
 // we generally will just infer it from Accounts
 export type CountervaluesSettings = {
   trackingPairs: TrackingPair[];
   autofillGaps: boolean;
+  // throw exception in "loadCountervalues" if ANY error occurs (for test purpose)
+  disableAutoRecoverErrors?: boolean;
 };
 // This is the internal state of countervalues.
 export type CounterValuesState = {

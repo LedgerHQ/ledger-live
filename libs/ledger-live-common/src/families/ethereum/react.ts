@@ -1,6 +1,6 @@
 import { getGasLimit } from "./transaction";
 import type { Transaction } from "./types";
-import type { FeeStrategy } from "../../types";
+import type { FeeStrategy } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 export function useFeesStrategy(t: Transaction): FeeStrategy[] {

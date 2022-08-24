@@ -1,7 +1,7 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { BigNumber } from "bignumber.js";
-import type { DatasetTest } from "../../types";
+import type { DatasetTest } from "@ledgerhq/types-live";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughSpendableBalance,
@@ -111,11 +111,15 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
+                  baseFee: "100",
                   baseReserve: "1500000",
                 },
                 fees: "100",
                 memoType: null,
                 memoValue: null,
+                mode: "send",
+                assetCode: "",
+                assetIssuer: "",
               }),
               expectedStatus: {
                 errors: {
@@ -166,18 +170,22 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
+                  baseFee: "100",
                   baseReserve: "1500000",
                 },
                 fees: "100",
                 memoType: null,
                 memoValue: null,
+                mode: "send",
+                assetCode: "",
+                assetIssuer: "",
               }),
               expectedStatus: (account) => ({
                 errors: {},
                 warnings: {},
                 estimatedFees: new BigNumber("100"),
-                amount: account.balance.minus("1500000").minus("100"),
-                totalSpent: account.balance.minus("1500000"),
+                amount: account.spendableBalance.minus("100"),
+                totalSpent: account.spendableBalance.minus("100"),
               }),
             },
             {
@@ -330,6 +338,27 @@ const dataset: DatasetTest<Transaction> = {
             seedIdentifier: "gre",
             name: "GRE's Stellar 2",
             xpub: "f30b743cb3a8bc8c3ea8fe8455c6a52221cc6cf867f7f1f5861dd52aba1d0b8a",
+            derivationMode: "sep5",
+            index: 1,
+            freshAddress: "",
+            freshAddressPath: "44'/148'/1'",
+            freshAddresses: [],
+            balance: "0",
+            blockHeight: 0,
+            currencyId: "stellar",
+            lastSyncDate: "",
+            operations: [],
+            pendingOperations: [],
+            unitMagnitude: 7,
+          },
+        },
+        {
+          FIXME_tests: ["balance is sum of ops"],
+          raw: {
+            id: "js:1:stellar:GD7G4RE27CMFTUUUVZBJJ2GBK5GCTD5JQFE5FJCENAUD6AFAVMOBZTSK:sep5",
+            seedIdentifier: "LIVE-3170",
+            name: "Large Stellar account",
+            xpub: "GD7G4RE27CMFTUUUVZBJJ2GBK5GCTD5JQFE5FJCENAUD6AFAVMOBZTSK",
             derivationMode: "sep5",
             index: 1,
             freshAddress: "",

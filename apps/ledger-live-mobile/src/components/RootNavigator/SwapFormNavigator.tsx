@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
-
-import { Account, AccountLike } from "@ledgerhq/live-common/types/account";
-
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../const";
@@ -32,9 +30,10 @@ export default function SwapFormNavigator({
   const { colors } = useTheme();
   const { params: routeParams } = route;
 
-  const tabNavigationConfig = useMemo(() => getLineTabNavigatorConfig(colors), [
-    colors,
-  ]);
+  const tabNavigationConfig = useMemo(
+    () => getLineTabNavigatorConfig(colors),
+    [colors],
+  );
 
   return (
     <Tab.Navigator {...tabNavigationConfig}>

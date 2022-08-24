@@ -1,5 +1,3 @@
-/* eslint-disable import/no-named-as-default */
-/* eslint-disable import/no-named-as-default-member */
 import React, { useMemo, useCallback, memo } from "react";
 import { useTheme } from "styled-components/native";
 import {
@@ -9,12 +7,10 @@ import {
   Transitions,
 } from "@ledgerhq/native-ui";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import * as Animatable from "react-native-animatable";
 import { useTranslation } from "react-i18next";
 import Graph from "../../../components/Graph";
-// @ts-expect-error impot issue
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
-import { Transition } from "@ledgerhq/native-ui/components/transitions";
 
 const { width } = getWindowDimensions();
 
@@ -26,11 +22,11 @@ function MarketGraph({
   refreshChart,
   chartData,
 }: {
-  setHoverItem: (data: any) => void;
+  setHoverItem: (_: any) => void;
   chartRequestParams: any;
   loading?: boolean;
   loadingChart?: boolean;
-  refreshChart: (request: any) => void;
+  refreshChart: (_: any) => void;
   chartData: Record<string, number[]>;
 }) {
   const { t } = useTranslation();

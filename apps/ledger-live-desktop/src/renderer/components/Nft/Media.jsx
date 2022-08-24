@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import type { NFTMetadata, NFTMediaSizes } from "@ledgerhq/live-common/types/index";
+import type { NFTMetadata, NFTMediaSizes } from "@ledgerhq/types-live";
 import { getMetadataMediaType } from "~/helpers/nft";
 import Placeholder from "./Placeholder";
 import Image from "./Image";

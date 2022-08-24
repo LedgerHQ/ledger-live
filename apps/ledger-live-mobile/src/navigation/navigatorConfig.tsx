@@ -12,7 +12,11 @@ export const defaultNavigationOptions = {
   headerTitleAllowFontScaling: false,
 };
 
-export const getStackNavigatorConfig = (c: any, closable: boolean = false) => ({
+export const getStackNavigatorConfig = (
+  c: any,
+  closable = false,
+  onClose?: any,
+) => ({
   ...defaultNavigationOptions,
   cardStyle: { backgroundColor: c.background.main || c.background },
   headerStyle: {
@@ -26,5 +30,7 @@ export const getStackNavigatorConfig = (c: any, closable: boolean = false) => ({
   headerTitleStyle: {
     color: c.neutral?.c100 || c.darkBlue,
   },
-  headerRight: closable ? () => <HeaderRightClose /> : undefined,
+  headerRight: closable
+    ? () => <HeaderRightClose onClose={onClose} />
+    : undefined,
 });

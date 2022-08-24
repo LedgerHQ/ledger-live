@@ -10,7 +10,11 @@ import Eth from "@ledgerhq/hw-app-eth";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
 import type { Transaction } from "./types";
-import type { Operation, Account, SignOperationEvent } from "../../types";
+import type {
+  Operation,
+  Account,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 import {
   getGasLimit,
   buildEthereumTx,

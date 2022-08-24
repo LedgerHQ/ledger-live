@@ -7,10 +7,9 @@ import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
 import { accountsSelector } from "../../reducers/accounts";
-import { languageSelector } from "../../reducers/settings";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
-import TrackScreen from "../../analytics/TrackScreen";
+import { TrackScreen } from "../../analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
@@ -23,7 +22,6 @@ export default function Settings({ navigation }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
   const { handleSettingsRateApp } = useRatings();
-  const currAppLanguage = useSelector(languageSelector);
 
   const [debugVisible, setDebugVisible] = useState(
     Config.FORCE_DEBUG_VISIBLE || false,
@@ -75,6 +73,15 @@ export default function Settings({ navigation }: Props) {
         onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         arrowRight
       />
+      <FeatureToggle feature="pushNotifications">
+        <SettingsCard
+          title={t("settings.notifications.title")}
+          desc={t("settings.notifications.desc")}
+          Icon={Icons.NotificationsMedium}
+          onClick={() => navigation.navigate(ScreenName.NotificationsSettings)}
+          arrowRight
+        />
+      </FeatureToggle>
       <SettingsCard
         title={t("settings.help.title")}
         desc={t("settings.help.desc")}
@@ -89,16 +96,14 @@ export default function Settings({ navigation }: Props) {
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
       />
-      {currAppLanguage === "en" ? (
-        <FeatureToggle feature="ratings">
-          <SettingsCard
-            title={t("settings.about.liveReview.title")}
-            desc={t("settings.about.liveReview.desc")}
-            Icon={Icons.StarMedium}
-            onClick={handleSettingsRateApp}
-          />
-        </FeatureToggle>
-      ) : null}
+      <FeatureToggle feature="ratings">
+        <SettingsCard
+          title={t("settings.about.liveReview.title")}
+          desc={t("settings.about.liveReview.desc")}
+          Icon={Icons.StarMedium}
+          onClick={handleSettingsRateApp}
+        />
+      </FeatureToggle>
       <SettingsCard
         title={t("settings.developer.title")}
         desc={t("settings.developer.desc")}

@@ -17,7 +17,7 @@ import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { EIP1559ShouldBeUsed, getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { TokenCurrency } from "@ledgerhq/cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
 
 const testTimeout = 5 * 60 * 1000;

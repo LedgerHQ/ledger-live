@@ -1,6 +1,6 @@
 [
   {
-    "tag_name": "2.43.0",
-    "body": "\nWe’re constantly adding new integrations and working on performance improvements to make Ledger Live a world-class experience. Here is what’s new in this release.\n\n### 🚀 Features\nWe’re excited to announce that Ledger Live is launching support for Cardano, one of the biggest cryptocurrencies based on its total market value. Now you can send and receive Cardano’s native token, ADA. \n\n### 🐛 Fixes\nWe’ve done some bug fixes and made a few small but important changes behind the curtain.\n"
+    "tag_name": "2.45.0",
+    "body": "\nWe're back with another roundup of handy new features and improvements.\n\n### 🚀 Features\n\n**100 native Cardano tokens** made their way to Ledger Live, including WMT, DANA, and ADAX. You can find the full list [here](https://www.ledger.com/supported-crypto-assets).  \nSpeaking of new tokens, we’ve added support of USDC on the Stellar blockchain.  \nLooking to send **HBAR** from Ledger Live to an exchange? As of today, Ledger Live allows you to **add a memo** to help identify a transaction and credit the proper account.  \nDelegating **Solana** or **Cosmos stake** just got easier—the nifty new search bar helps you **find validators easily and quickly**.\n"
   }
 ]

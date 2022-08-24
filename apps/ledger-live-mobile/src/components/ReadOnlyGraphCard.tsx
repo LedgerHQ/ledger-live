@@ -1,8 +1,9 @@
 import React, { memo } from "react";
 import { useTheme } from "styled-components/native";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "../icons/Graph";
 import { withDiscreetMode } from "../context/DiscreetModeContext";

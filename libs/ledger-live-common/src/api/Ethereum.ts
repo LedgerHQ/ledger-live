@@ -3,11 +3,6 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
 import JSONBigNumber from "@ledgerhq/json-bignumber";
-import type {
-  CryptoCurrency,
-  NFTCollectionMetadataResponse,
-  NFTMetadataResponse,
-} from "../types";
 import type { EthereumGasLimitRequest } from "../families/ethereum/types";
 import { EIP1559ShouldBeUsed } from "../families/ethereum/transaction";
 import network from "../network";
@@ -15,6 +10,11 @@ import { blockchainBaseURL } from "./Ledger";
 import { FeeEstimationFailed } from "../errors";
 import { makeLRUCache } from "../cache";
 import { getEnv } from "../env";
+import {
+  NFTCollectionMetadataResponse,
+  NFTMetadataResponse,
+} from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type Block = {
   height: BigNumber;

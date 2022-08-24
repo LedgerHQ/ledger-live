@@ -15,7 +15,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import type { StepId, StepProps, St } from "./types";
-import type { Account, Operation } from "@ledgerhq/live-common/types/index";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
@@ -143,7 +143,7 @@ const Body = ({
     const transaction = bridge.updateTransaction(t, {
       mode: "redelegate",
       validators: [{ address: "", amount: source?.amount ?? BigNumber(0) }],
-      cosmosSourceValidator: validatorAddress,
+      sourceValidator: validatorAddress,
     });
 
     return { account, parentAccount: undefined, transaction };

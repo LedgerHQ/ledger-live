@@ -1,5 +1,4 @@
 import { log } from "@ledgerhq/logs";
-import type { Currency, Account } from "../types";
 import { flattenAccounts, getAccountCurrency } from "../account/helpers";
 import { promiseAllBatched } from "../promise";
 import type {
@@ -29,6 +28,8 @@ import {
   mapRate,
   resolveTrackingPair,
 } from "./modules";
+import type { Account } from "@ledgerhq/types-live";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 // yield raw version of the countervalues state to be saved in a db
 export function exportCountervalues({
@@ -230,6 +231,7 @@ export async function loadCountervalues(
           };
         })
         .catch((e) => {
+          if (settings.disableAutoRecoverErrors) throw e;
           // TODO work on the semantic of failure.
           // do we want to opt-in for the 404 cases and make other fails it all?
           // do we want to be resilient on individual pulling / keep error somewhere?
@@ -254,7 +256,7 @@ export async function loadCountervalues(
           return null;
         })
     ),
-    fetchLatest(latestToFetch)
+    fetchLatest(latestToFetch, settings.disableAutoRecoverErrors)
       .then((rates) => {
         const out = {};
         let hasData = false;
@@ -271,6 +273,7 @@ export async function loadCountervalues(
         return out;
       })
       .catch((e) => {
+        if (settings.disableAutoRecoverErrors) throw e;
         log(
           "countervalues-error",
           "Failed to fetch latest for " +

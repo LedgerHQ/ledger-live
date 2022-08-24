@@ -4,6 +4,9 @@ inputs:
   os:
     description: "name of the os (same as runs-on)"
     required: true
+  turbo-server-port:
+    description: "port on which the turborepo local cache server is running"
+    required: true
 
 runs:
   using: "composite"
@@ -18,8 +21,11 @@ runs:
       env:
         GOGC: 75
       run: |
-        pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        pnpm build:lld:deps --api="http://127.0.0.1:${{ inputs.turbo-server-port }}" --token="yolo" --team="foo"
         pnpm desktop build:testing
+      shell: bash
+    - name: Build Dummy SDK app for testing
+      run: pnpm --filter="dummy-live-app" i && pnpm --filter="dummy-live-app" build
       shell: bash
     - name: Update playwright snapshots [Linux => xvfb-run]
       if: inputs.os == 'ubuntu-latest'

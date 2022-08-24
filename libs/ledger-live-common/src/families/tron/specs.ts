@@ -5,13 +5,13 @@ import expect from "expect";
 import sortBy from "lodash/sortBy";
 import sampleSize from "lodash/sampleSize";
 import get from "lodash/get";
-import type { Transaction } from "./types";
+import type { Transaction, TronAccount } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { SubAccount } from "../../types";
+import { SubAccount } from "@ledgerhq/types-live";
 const currency = getCryptoCurrencyById("tron");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "1");
 const maxAccount = 10;
@@ -135,8 +135,9 @@ const tron: AppSpec<Transaction> = {
       transaction: ({ account, bridge }) => {
         const TP = new BigNumber(get(account, "tronResources.tronPower", "0"));
         invariant(TP.gt(0), "no frozen assets");
-        const { canUnfreezeBandwidth, canUnfreezeEnergy } =
-          getUnfreezeData(account);
+        const { canUnfreezeBandwidth, canUnfreezeEnergy } = getUnfreezeData(
+          account as TronAccount
+        );
         invariant(
           canUnfreezeBandwidth || canUnfreezeEnergy,
           "freeze period not expired yet"
@@ -371,7 +372,7 @@ const tron: AppSpec<Transaction> = {
       name: "claim rewards",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        const nextRewardDate = getNextRewardDate(account);
+        const nextRewardDate = getNextRewardDate(account as TronAccount);
         const today = Date.now();
         const unwithdrawnReward = new BigNumber(
           get(account, "tronResources.unwithdrawnReward", "0")
@@ -394,7 +395,7 @@ const tron: AppSpec<Transaction> = {
         const rewards = new BigNumber(
           get(account, "tronResources.unwithdrawnReward", "0")
         );
-        const nextRewardDate = getNextRewardDate(account);
+        const nextRewardDate = getNextRewardDate(account as TronAccount);
         expect(rewards.eq(0)).toBe(true);
         expect(nextRewardDate && nextRewardDate > Date.now()).toBe(true);
       },

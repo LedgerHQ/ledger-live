@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useCallback } from "react";
 
-import { App } from "@ledgerhq/live-common/types/manager";
+import { App } from "@ledgerhq/types-live";
 
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
@@ -15,16 +15,10 @@ import ByteSize from "../../../components/ByteSize";
 type Props = {
   app: App;
   state: State;
-  dispatch: (action: Action) => void;
+  dispatch: (_: Action) => void;
   isInstalledView: boolean;
-  setAppInstallWithDependencies: (params: {
-    app: App;
-    dependencies: App[];
-  }) => void;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   setStorageWarning: () => void;
   managerTabs: any;
   optimisticState: State;
@@ -71,10 +65,10 @@ const AppRow = ({
   const { name, bytes, version: appVersion, displayName } = app;
   const { installed, deviceInfo } = state;
 
-  const isInstalled = useMemo(() => installed.find(i => i.name === name), [
-    installed,
-    name,
-  ]);
+  const isInstalled = useMemo(
+    () => installed.find(i => i.name === name),
+    [installed, name],
+  );
 
   const version = (isInstalled && isInstalled.version) || appVersion;
   const availableVersion =
@@ -85,10 +79,10 @@ const AppRow = ({
     name,
   );
 
-  const onSizePress = useCallback(() => setStorageWarning(name), [
-    setStorageWarning,
-    name,
-  ]);
+  const onSizePress = useCallback(
+    () => setStorageWarning(name),
+    [setStorageWarning, name],
+  );
 
   return (
     <RowContainer>

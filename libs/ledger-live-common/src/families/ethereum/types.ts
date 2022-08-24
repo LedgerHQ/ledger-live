@@ -1,13 +1,15 @@
+import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/EIP712.types";
 import type { BigNumber } from "bignumber.js";
-import type { Unit } from "../../types";
+import type { TransactionMode, ModeModule } from "./modules";
+import type { Range, RangeRaw } from "../../range";
+import type { DerivationMode } from "../../derivation";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
-import type { TransactionMode, ModeModule } from "./modules";
-import type { Range, RangeRaw } from "../../range";
-import type { CryptoCurrency } from "../../types";
-import type { DerivationMode } from "../../derivation";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
+import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 export type EthereumGasLimitRequest = {
   from?: string;
@@ -67,36 +69,17 @@ export type TransactionRaw = TransactionCommonRaw & {
   collectionName?: string;
   quantities?: string[];
 };
-export type TypedMessage = {
-  types: {
-    EIP712Domain: [
-      {
-        type: string;
-        name: string;
-      }
-    ];
-    [key: string]: [
-      {
-        type: string;
-        name: string;
-      }
-    ];
-  };
-  primaryType: string;
-  domain: any;
-  message: any;
-  hashes: {
-    domainHash: string;
-    messageHash: string;
-  };
-};
 export type TypedMessageData = {
   currency: CryptoCurrency;
   path: string;
   verify?: boolean;
   derivationMode: DerivationMode;
-  message: TypedMessage;
+  message: EIP712Message;
   hashes: {
     stringHash: string;
   };
 };
+
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

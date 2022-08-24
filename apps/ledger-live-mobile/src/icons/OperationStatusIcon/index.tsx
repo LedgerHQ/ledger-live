@@ -1,10 +1,11 @@
 import React from "react";
-import { OperationType } from "@ledgerhq/live-common/types/index";
+import { OperationType } from "@ledgerhq/types-live";
 import { Icons, BoxedIcon } from "@ledgerhq/native-ui";
 import {
   DEFAULT_BOX_SIZE,
   DEFAULT_ICON_SIZE,
   DEFAULT_BADGE_SIZE,
+  // eslint-disable-next-line import/no-unresolved
 } from "@ledgerhq/native-ui/components/Icon/BoxedIcon";
 
 const iconsComponent = {
@@ -39,7 +40,7 @@ const iconsComponent = {
   NFT_OUT: Icons.ArrowTopMedium,
 };
 
-export const OperationStatusIcon = ({
+const OperationStatusIcon = ({
   type,
   confirmed,
   failed,

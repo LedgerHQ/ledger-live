@@ -9,8 +9,7 @@ import { FlatList, Image, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import {
   starredMarketCoinsSelector,
   readOnlyModeEnabledSelector,
@@ -31,12 +30,13 @@ import { track, screen } from "../../../analytics";
 import Button from "../../../components/wrappedUi/Button";
 import MarketGraph from "./MarketGraph";
 import { FabMarketActions } from "../../../components/FabActions";
-import { NavigatorName, ScreenName } from "../../../const";
+import { ScreenName } from "../../../const";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import { usePreviousRouteName } from "../../../helpers/routeHooks";
+import useNotifications from "../../../logic/notifications";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
   <Button
@@ -61,6 +61,7 @@ function MarketDetail({
   const dispatch = useDispatch();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const isStarred = starredMarketCoins.includes(currencyId);
+  const { triggerMarketPushNotificationModal } = useNotifications();
 
   const {
     selectedCoinData: currency,
@@ -103,14 +104,16 @@ function MarketDetail({
   const toggleStar = useCallback(() => {
     const action = isStarred ? removeStarredMarketCoins : addStarredMarketCoins;
     dispatch(action(currencyId));
-  }, [dispatch, isStarred, currencyId]);
+
+    if (!isStarred) triggerMarketPushNotificationModal();
+  }, [dispatch, isStarred, currencyId, triggerMarketPushNotificationModal]);
 
   const { range } = chartRequestParams;
 
-  const dateRangeFormatter = useMemo(() => getDateFormatter(locale, range), [
-    locale,
-    range,
-  ]);
+  const dateRangeFormatter = useMemo(
+    () => getDateFormatter(locale, range),
+    [locale, range],
+  );
 
   const renderAccountItem = useCallback(
     ({ item, index }: { item: Account; index: number }) => (
@@ -118,13 +121,10 @@ function MarketDetail({
       <AccountRow
         navigation={navigation}
         navigationParams={[
-          NavigatorName.Accounts,
+          ScreenName.Account,
           {
-            screen: ScreenName.Account,
-            params: {
-              parentId: item?.parentId,
-              accountId: item.id,
-            },
+            parentId: item?.parentId,
+            accountId: item.id,
           },
         ]}
         account={item}

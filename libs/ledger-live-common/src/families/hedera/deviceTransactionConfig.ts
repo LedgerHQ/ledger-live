@@ -1,5 +1,5 @@
-import type { AccountLike, Account, TransactionStatus } from "../../types";
-import type { Transaction } from "./types";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 
 function getDeviceTransactionConfig({
@@ -36,6 +36,14 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "fees",
       label: "Fees",
+    });
+  }
+
+  if (transaction.memo) {
+    fields.push({
+      type: "text",
+      label: "Memo",
+      value: transaction.memo,
     });
   }
 

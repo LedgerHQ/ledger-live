@@ -2,19 +2,19 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Algorand from "@ledgerhq/hw-app-algorand";
-import type {
-  Account,
-  Operation,
-  SignedOperation,
-  SignOperationEvent,
-} from "../../types";
 import { withDevice } from "../../hw/deviceAccess";
-import type { Transaction } from "./types";
+import type { AlgorandAccount, Transaction } from "./types";
 import {
   buildTransactionPayload,
   encodeToSign,
   encodeToBroadcast,
 } from "./buildTransaction";
+import type {
+  Account,
+  Operation,
+  SignedOperation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 
 export const signOperation = ({
   account,
@@ -34,7 +34,10 @@ export const signOperation = ({
           throw new FeeNotLoaded();
         }
 
-        const algoTx = await buildTransactionPayload(account, transaction);
+        const algoTx = await buildTransactionPayload(
+          account as AlgorandAccount,
+          transaction
+        );
 
         const toSign = encodeToSign(algoTx);
 
@@ -55,7 +58,10 @@ export const signOperation = ({
 
         const toBroadcast = encodeToBroadcast(algoTx, signature);
 
-        const operation = buildOptimisticOperation(account, transaction);
+        const operation = buildOptimisticOperation(
+          account as AlgorandAccount,
+          transaction
+        );
 
         o.next({
           type: "signed",
@@ -79,7 +85,7 @@ export const signOperation = ({
   );
 
 const buildOptimisticOperation = (
-  account: Account,
+  account: AlgorandAccount,
   transaction: Transaction
 ): Operation => {
   const { spendableBalance, id, freshAddress, subAccounts } = account;

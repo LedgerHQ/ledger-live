@@ -1,12 +1,12 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
-  CryptoCurrency,
   Account,
+  AccountBridge,
   AccountLike,
   CurrencyBridge,
-  AccountBridge,
-  ScanAccountEventRaw,
   ScanAccountEvent,
-} from "../types";
+  ScanAccountEventRaw,
+} from "@ledgerhq/types-live";
 import { fromAccountRaw, toAccountRaw } from "../account";
 import * as impl from "./impl";
 export type Proxy = {

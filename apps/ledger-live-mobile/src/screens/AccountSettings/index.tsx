@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { connect } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
@@ -18,6 +18,7 @@ type Props = {
   navigation: any;
   route: { params: RouteParams };
   account: Account;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   deleteAccount: Function;
 };
 
@@ -52,7 +53,7 @@ class AccountSettings extends PureComponent<Props, State> {
   deleteAccount = () => {
     const { account, deleteAccount, navigation } = this.props;
     deleteAccount(account);
-    navigation.replace(NavigatorName.PortfolioAccounts);
+    navigation.replace(NavigatorName.Base);
   };
 
   render() {

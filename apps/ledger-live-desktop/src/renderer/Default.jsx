@@ -211,11 +211,11 @@ export default function Default() {
                           exact
                         />
                         <Route
-                          path="/platform/:appId"
+                          path="/platform/:appId?"
                           render={(props: any) => <PlatformApp {...props} />}
                         />
                         <Route path="/lend" render={props => <Lend {...props} />} />
-                        <Route path="/exchange" render={props => <Exchange {...props} />} />
+                        <Route path="/exchange" render={(props: any) => <Exchange />} />
                         <Route
                           exact
                           path="/account/:id/nft-collection"

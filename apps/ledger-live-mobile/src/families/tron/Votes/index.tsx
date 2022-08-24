@@ -17,7 +17,7 @@ import {
   MIN_TRANSACTION_AMOUNT,
 } from "@ledgerhq/live-common/families/tron/react";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { Box, Button, Text } from "@ledgerhq/native-ui";
 import { urls } from "../../../config/urls";
 import Row from "./Row";
@@ -87,13 +87,15 @@ const Delegation = ({ account, parentAccount }: Props) => {
     0,
   );
 
-  const openRewardsInfoModal = useCallback(() => setRewardsInfoModal(true), [
-    setRewardsInfoModal,
-  ]);
+  const openRewardsInfoModal = useCallback(
+    () => setRewardsInfoModal(true),
+    [setRewardsInfoModal],
+  );
 
-  const closeRewardsInfoModal = useCallback(() => setRewardsInfoModal(false), [
-    setRewardsInfoModal,
-  ]);
+  const closeRewardsInfoModal = useCallback(
+    () => setRewardsInfoModal(false),
+    [setRewardsInfoModal],
+  );
 
   const bridge = getAccountBridge(account, undefined);
 

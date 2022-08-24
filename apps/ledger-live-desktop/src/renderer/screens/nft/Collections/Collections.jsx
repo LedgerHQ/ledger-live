@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";

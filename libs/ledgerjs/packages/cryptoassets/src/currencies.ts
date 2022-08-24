@@ -20,7 +20,8 @@
  * if the coin is in ethereum family, you must as well provide ethereumLikeInfo
  * if bitcoin family, supportsSegwit defines if it supports segwit.
  */
-import type { CryptoCurrency, Unit } from "./types";
+
+import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 const makeTestnetUnit = (u) => ({ ...u, code: `𝚝${u.code}` });
 
@@ -75,7 +76,7 @@ const ethereumUnits = (name, code) => [
   },
 ];
 
-const cryptocurrenciesById: Record<string, CryptoCurrency> = {
+export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
   near: {
     type: "CryptoCurrency",
     id: "near",
@@ -532,6 +533,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ticker: "tADA",
     scheme: "cardano_testnet",
     isTestnetFor: "cardano",
+    disableCountervalue: true,
     color: "#0A1D2C",
     family: "cardano",
     blockAvgTime: 20,
@@ -2554,7 +2556,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://www.mintscan.io/osmosis/txs/$hash",
-        address: "https://www.mintscan.io/osmosis/account/$address",
+        address: "https://www.mintscan.io/osmosis/validators/$address",
       },
     ],
   },
@@ -2616,7 +2618,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "Thundercore",
     ticker: "TT",
     scheme: "thundercore",
-    color: "#000",
+    color: "#0844D2",
     family: "ethereum",
     ethereumLikeInfo: {
       chainId: 108,
@@ -2628,7 +2630,12 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 18,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://viewblock.io/thundercore/tx/$hash",
+        address: "https://viewblock.io/thundercore/address/$address",
+      },
+    ],
   },
   tomo: {
     type: "CryptoCurrency",
@@ -3001,7 +3008,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "Zilliqa",
     ticker: "ZIL",
     scheme: "zilliqa",
-    color: "#000",
+    color: "#2CC0BE",
     family: "zilliqa",
     units: [
       {
@@ -3010,7 +3017,12 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 12,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://viewblock.io/zilliqa/tx/$hash",
+        address: "https://viewblock.io/zilliqa/address/$address",
+      },
+    ],
   },
   crypto_org: {
     type: "CryptoCurrency",
@@ -3175,6 +3187,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     isTestnetFor: "crypto_org",
+    disableCountervalue: true,
     explorerViews: [
       {
         tx: "https://crypto.org/explorer/croeseid/tx/$hash",
@@ -3193,6 +3206,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#000",
     family: "solana",
     isTestnetFor: "solana",
+    disableCountervalue: true,
     units: [
       {
         name: "SOL",
@@ -3227,6 +3241,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#000",
     family: "solana",
     isTestnetFor: "solana",
+    disableCountervalue: true,
     units: [
       {
         name: "SOL",
@@ -3286,11 +3301,6 @@ for (const id in cryptocurrenciesById) {
   const definition = cryptocurrenciesById[id];
   registerCryptoCurrency(id, definition);
 }
-
-/**
- *
- */
-export type CryptoCurrencyIds = keyof typeof cryptocurrenciesById;
 
 /**
  *

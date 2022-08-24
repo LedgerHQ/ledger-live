@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   listFiatCurrencies,
   getFiatCurrencyByTicker,
@@ -19,7 +20,6 @@ import {
   findCryptoCurrencyByKeyword,
   registerCryptoCurrency,
 } from "./currencies";
-import { CryptoCurrency } from "./types";
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({
@@ -191,6 +191,15 @@ test("fiats list is sorted by ticker", () => {
       .sort((a, b) => (a > b ? 1 : -1))
       .join(",")
   );
+});
+
+test("testnet currencies must also set disableCountervalue to true", () => {
+  expect(
+    listCryptoCurrencies(true)
+      .filter((c) => c.isTestnetFor)
+      .filter((c) => !c.disableCountervalue)
+      .map((c) => c.id)
+  ).toEqual([]);
 });
 
 test("can get fiat by coin type", () => {

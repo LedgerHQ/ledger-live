@@ -9,11 +9,7 @@ import {
   LongPressGestureHandler,
   State,
 } from "react-native-gesture-handler";
-import {
-  SubAccount,
-  TokenAccount,
-  Account,
-} from "@ledgerhq/live-common/types/index";
+import { SubAccount, TokenAccount, Account } from "@ledgerhq/types-live";
 import { createStructuredSelector } from "reselect";
 import { connect, useSelector } from "react-redux";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -28,7 +24,9 @@ import Delta from "./Delta";
 type Props = {
   account: SubAccount;
   parentAccount: Account;
+  // eslint-disable-next-line no-unused-vars
   onSubAccountPress: (subAccount: SubAccount) => any;
+  // eslint-disable-next-line no-unused-vars
   onSubAccountLongPress: (tokenAccount: TokenAccount, account: Account) => any;
   useCounterValue?: boolean;
 };
@@ -49,10 +47,8 @@ function SubAccountRow({
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
   const range = useSelector(selectedTimeRangeSelector);
-  const {
-    countervalueChange,
-    cryptoChange,
-  } = useBalanceHistoryWithCountervalue({ account, range });
+  const { countervalueChange, cryptoChange } =
+    useBalanceHistoryWithCountervalue({ account, range });
 
   return (
     <LongPressGestureHandler

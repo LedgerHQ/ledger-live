@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
+import { Tag } from "../../../../libs/ui/packages/native/lib";
 
 const StyledTouchableRow = styled(Touchable)<{ compact?: boolean }>`
   background-color: ${p => p.theme.colors.palette.background.main};
@@ -35,6 +36,7 @@ export default function SettingsRow({
   event,
   eventProperties,
   compact,
+  label,
 }: {
   onPress?: () => void;
   onHelpPress?: () => void;
@@ -51,8 +53,10 @@ export default function SettingsRow({
   children?: ReactNode;
   noTextDesc?: boolean;
   event?: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   eventProperties?: Object;
   compact?: boolean;
+  label?: string;
 }) {
   let title$ = (
     <Flex
@@ -60,14 +64,17 @@ export default function SettingsRow({
       alignItems={"center"}
       style={titleContainerStyle}
     >
-      <Text
-        variant={"large"}
-        fontWeight={"semiBold"}
-        color={"neutral.c100"}
-        style={[titleStyle]}
-      >
-        {title}
-      </Text>
+      <Box flexDirection={"row"} alignItems={"center"}>
+        <Text
+          variant={"large"}
+          fontWeight={"semiBold"}
+          color={"neutral.c100"}
+          style={[titleStyle]}
+        >
+          {title}
+        </Text>
+        {label ? <Tag ml={3}>{label}</Tag> : null}
+      </Box>
       {subtitle && (
         <Text
           variant={"body"}

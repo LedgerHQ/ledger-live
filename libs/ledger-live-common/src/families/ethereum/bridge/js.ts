@@ -8,7 +8,7 @@ import {
   PriorityFeeTooLow,
   PriorityFeeOutOfSuggestedRange,
 } from "@ledgerhq/errors";
-import type { CurrencyBridge, AccountBridge } from "../../../types";
+import type { CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
 import {
   makeSync,
   makeScanAccounts,

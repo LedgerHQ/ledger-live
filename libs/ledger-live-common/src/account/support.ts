@@ -3,12 +3,6 @@ import {
   CurrencyNotSupported,
   UnavailableTezosOriginatedAccountReceive,
 } from "@ledgerhq/errors";
-import type {
-  Account,
-  AccountLike,
-  CryptoCurrency,
-  DerivationMode,
-} from "../types";
 import { getEnv } from "../env";
 import { decodeAccountId } from "./accountId";
 import {
@@ -18,6 +12,9 @@ import {
 import { isCurrencySupported } from "../currencies";
 import { getMainAccount } from "../account";
 import { getAccountBridge } from "../bridge";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { DerivationMode } from "../derivation";
 
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,
@@ -94,7 +91,9 @@ export function findAccountMigration(
 export function checkAccountSupported(
   account: Account
 ): Error | null | undefined {
-  if (!getAllDerivationModes().includes(account.derivationMode)) {
+  if (
+    !getAllDerivationModes().includes(account.derivationMode as DerivationMode)
+  ) {
     return new AccountNotSupported(
       "derivation not supported " + account.derivationMode,
       {

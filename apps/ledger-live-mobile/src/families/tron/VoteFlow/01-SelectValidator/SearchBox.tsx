@@ -7,7 +7,7 @@ export default function SelectValidatorSearchBox({
   setSearchQuery,
 }: {
   searchQuery: string;
-  setSearchQuery: (query: string) => void;
+  setSearchQuery: (_: string) => void;
 }) {
   const { t } = useTranslation();
 
@@ -16,7 +16,7 @@ export default function SelectValidatorSearchBox({
       <SearchInput
         returnKeyType="search"
         maxLength={50}
-        onChangeText={setSearchQuery}
+        onChange={setSearchQuery}
         placeholder={t("common.search")}
         value={searchQuery}
         numberOfLines={1}
