@@ -248,6 +248,8 @@ export async function getPostOnboardingState(): Promise<any> {
   return store.get("postOnboarding");
 }
 
-export async function savePostOnboardingState(obj: PostOnboardingState): Promise<void> {
+export async function savePostOnboardingState(
+  obj: PostOnboardingState,
+): Promise<void> {
   await store.save("postOnboarding", obj);
 }

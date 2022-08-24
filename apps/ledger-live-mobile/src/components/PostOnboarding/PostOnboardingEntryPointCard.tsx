@@ -25,7 +25,7 @@ const PlaceholderImage = styled.Image.attrs(p => ({
   margin: 7px;
 `;
 
-const PostOnboardingEntryPointCard: React.FC<{}> = () => {
+const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
   const deviceModelId = usePostOnboardingDeviceModelId();
   const productName = deviceModelId

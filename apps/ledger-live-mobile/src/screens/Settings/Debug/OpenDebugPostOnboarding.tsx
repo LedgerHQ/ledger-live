@@ -1,4 +1,3 @@
-import { DeviceModelId } from "@ledgerhq/devices/lib/index";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import SettingsRow from "../../../components/SettingsRow";

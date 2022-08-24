@@ -37,7 +37,11 @@ const SafeContainer = styled(SafeAreaView).attrs({
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
-const PostOnboardingHub: React.FC<StackScreenProps<{}>> = ({ navigation }) => {
+type Props = Record<string, never>;
+
+const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
+  navigation,
+}) => {
   const { t } = useTranslation();
   const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
   const [popupOpened, setPopupOpened] = useState(true);
