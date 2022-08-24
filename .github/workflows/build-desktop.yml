@@ -91,11 +91,19 @@ jobs:
           os: linux
       - name: build the app
         run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: upload linux app
+      - name: list dist
+        run: |
+          ls ${{ github.workspace }}/apps/ledger-live-desktop/dist
+      - name: upload dist
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          name: linux-release-${{ steps.build-desktop.outputs.version }}
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist
+      # - name: upload linux app
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      #     path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
 
   build-desktop-app-linux-external:
     name: "Build Ledger Live Desktop (Linux)"
@@ -141,11 +149,19 @@ jobs:
           os: linux
       - name: build the app
         run: pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: upload linux app
+      - name: list dist
+        run: |
+          ls ${{ github.workspace }}/apps/ledger-live-desktop/dist
+      - name: upload dist
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          name: linux-release-${{ steps.build-desktop.outputs.version }}
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist
+      # - name: upload linux app
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      #     path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
@@ -184,11 +200,19 @@ jobs:
         run: |
           pnpm build:lld --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
-      - name: upload windows
+      - name: list dist
+        run: |
+          ls ${{ github.workspace }}/apps/ledger-live-desktop/dist
+      - name: upload dist
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
+          name: windows-release-${{ steps.build-desktop.outputs.version }}
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist
+      # - name: upload windows
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
+      #     path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
