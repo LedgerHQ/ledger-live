@@ -16,8 +16,8 @@ import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-common/env";
 
 type SignTransactionArgs = {
-  account?: AccountLike | null,
-  parentAccount?: Account | null,
+  account?: AccountLike | null;
+  parentAccount?: Account | null;
 };
 
 export const useBroadcast = ({

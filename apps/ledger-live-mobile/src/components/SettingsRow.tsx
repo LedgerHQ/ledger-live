@@ -53,6 +53,7 @@ export default function SettingsRow({
   children?: ReactNode;
   noTextDesc?: boolean;
   event?: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   eventProperties?: Object;
   compact?: boolean;
   label?: string;

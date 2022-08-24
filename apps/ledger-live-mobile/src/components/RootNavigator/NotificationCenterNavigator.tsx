@@ -72,7 +72,6 @@ export default function NotificationCenterNavigator() {
   // Fixme Typescript: Update react-native-tab-view to 3.1.1 to remove Tab.navigator ts error
   return (
     <>
-      {/* @ts-ignore */}
       <Tab.Navigator tabBar={props => <TabBar {...props} />}>
         <Tab.Screen
           name={ScreenName.NotificationCenterNews}

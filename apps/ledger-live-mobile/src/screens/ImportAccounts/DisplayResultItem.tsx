@@ -13,6 +13,7 @@ export default class DisplayResultItem extends Component<{
   mode: any;
   checked: boolean;
   importing: boolean;
+  // eslint-disable-next-line no-unused-vars
   onSwitch: (boolean, Account) => void;
 }> {
   onSwitch = () => {

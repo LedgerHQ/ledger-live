@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
@@ -8,8 +7,8 @@ import PendingContainer from "../PairDevices/PendingContainer";
 import { deviceNames } from "../../wording";
 
 class NotSyncedWarning extends PureComponent<{
-  continue: () => void,
-  accountId: string,
+  continue: () => void;
+  accountId: string;
 }> {
   render() {
     return (

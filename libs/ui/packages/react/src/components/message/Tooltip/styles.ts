@@ -22,6 +22,19 @@ export default css`
     transition-property: transform, visibility, opacity;
   }
 
+  .tippy-arrow {
+    width: 16px;
+    height: 16px;
+    color: ${(p: Props) => p.theme.colors.neutral.c100};
+  }
+
+  .tippy-arrow:before {
+    content: "";
+    position: absolute;
+    border-color: transparent;
+    border-style: solid;
+  }
+
   .tippy-box[data-placement^="top"] > .tippy-arrow {
     bottom: 0;
   }
@@ -70,19 +83,6 @@ export default css`
 
   .tippy-box[data-inertia][data-state="visible"] {
     transition-timing-function: cubic-bezier(0.54, 1.5, 0.38, 1.11);
-  }
-
-  .tippy-arrow {
-    width: 16px;
-    height: 16px;
-    color: ${(p: Props) => p.theme.colors.neutral.c100};
-  }
-
-  .tippy-arrow:before {
-    content: "";
-    position: absolute;
-    border-color: transparent;
-    border-style: solid;
   }
 
   .tippy-content {

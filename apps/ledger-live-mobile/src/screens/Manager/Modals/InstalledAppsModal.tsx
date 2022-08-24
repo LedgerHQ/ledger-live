@@ -28,11 +28,8 @@ const Header = ({ illustration }: HeaderProps) => (
 type UninstallButtonProps = {
   app: App;
   state: State;
-  dispatch: (action: Action) => void;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  dispatch: (_: Action) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
 };
 
 const UninstallButton = ({
@@ -42,10 +39,10 @@ const UninstallButton = ({
   setAppUninstallWithDependencies,
 }: UninstallButtonProps) => {
   const { uninstallQueue } = state;
-  const uninstalling = useMemo(() => uninstallQueue.includes(app.name), [
-    uninstallQueue,
-    app.name,
-  ]);
+  const uninstalling = useMemo(
+    () => uninstallQueue.includes(app.name),
+    [uninstallQueue, app.name],
+  );
   const renderAppState = () => {
     switch (true) {
       case uninstalling:
@@ -69,11 +66,8 @@ const UninstallButton = ({
 type RowProps = {
   app: App;
   state: State;
-  dispatch: (action: Action) => void;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  dispatch: (_: Action) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   deviceInfo: any;
 };
 
@@ -114,17 +108,6 @@ const Row = ({
   </Flex>
 );
 
-type RouteParams = {
-  result: ListAppsResult;
-  illustration: any;
-  deviceInfo: any;
-  deviceId: string;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
-};
-
 const modalStyleOverrides = {
   modal: {
     flex: 1,
@@ -145,12 +128,9 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   state: State;
-  dispatch: (action: Action) => void;
+  dispatch: (_: Action) => void;
   appList: ListAppsResult;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   illustration: any;
   deviceInfo: any;
 };
@@ -165,9 +145,10 @@ const InstalledAppsModal = ({
   illustration,
   deviceInfo,
 }: Props) => {
-  const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
-    dispatch,
-  ]);
+  const onUninstallAll = useCallback(
+    () => dispatch({ type: "wipe" }),
+    [dispatch],
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: App }) => (

@@ -120,17 +120,18 @@ export async function runWithAppSpec<T extends Transaction>(
 
   try {
     device = await createSpeculosDevice(deviceParams);
+    appReport.appPath = device.appPath;
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {},
     };
     let t = now();
     const preloadedData = await cache.prepareCurrency(currency);
-    const preloadTime = now() - t;
+    const preloadDuration = now() - t;
+    appReport.preloadDuration = preloadDuration;
     // Scan all existing accounts
+    const beforeScanTime = now();
     t = now();
-    let scanTime = 0;
-    const firstSyncDurations = {};
     let accounts = await bridge
       .scanAccounts({
         currency,
@@ -140,12 +141,6 @@ export async function runWithAppSpec<T extends Transaction>(
       .pipe(
         filter((e) => e.type === "discovered"),
         map((e) => e.account),
-        tap((account) => {
-          const dt = now() - t;
-          firstSyncDurations[account.id] = dt;
-          t = now();
-          scanTime += dt;
-        }),
         reduce<Account, Account[]>((all, a) => all.concat(a), []),
         timeoutWith(
           getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
@@ -155,7 +150,7 @@ export async function runWithAppSpec<T extends Transaction>(
         )
       )
       .toPromise();
-    appReport.scanTime = scanTime;
+    appReport.scanDuration = now() - beforeScanTime;
     // "Migrate" the FIRST and every {crossAccountFrequency} account to simulate an export/import (same logic as export to mobile) – default to every 10
     // this is made a subset of the accounts to help identify problem that would be specific to the "cross" or not.
     for (
@@ -171,21 +166,13 @@ export async function runWithAppSpec<T extends Transaction>(
       "unexpected empty accounts for " + currency.name
     );
     const preloadStats =
-      preloadTime > 10 ? ` (preload: ${formatTime(preloadTime)})` : "";
+      preloadDuration > 10 ? ` (preload: ${formatTime(preloadDuration)})` : "";
     reportLog(
       `Spec ${spec.name} found ${accounts.length} ${
         currency.name
       } accounts${preloadStats}. Will use ${formatAppCandidate(
         appCandidate as AppCandidate
-      )}\n${accounts
-        .map(
-          (a) =>
-            "(" +
-            formatTime(firstSyncDurations[a.id] || 0) +
-            ") " +
-            formatAccount(a, "head")
-        )
-        .join("\n")}\n`
+      )}\n${accounts.map((a) => formatAccount(a, "head")).join("\n")}\n`
     );
 
     if (accounts.every(isAccountEmpty)) {
@@ -204,6 +191,8 @@ export async function runWithAppSpec<T extends Transaction>(
     // we sequentially iterate on the initial account set to perform mutations
     const length = accounts.length;
     const totalTries = spec.multipleRuns || 1;
+    // dynamic buffer with ids of accounts that need a resync (between runs)
+    let accountIdsNeedResync: string[] = [];
 
     for (let j = 0; j < totalTries; j++) {
       for (let i = 0; i < length; i++) {
@@ -211,15 +200,24 @@ export async function runWithAppSpec<T extends Transaction>(
           "engine",
           `spec ${spec.name} sync all accounts (try ${j} run ${i})`
         );
-        // resync all accounts (necessary between mutations)
+        // resync all accounts that needs to be resynced
         t = now();
-        accounts = await promiseAllBatched(
+
+        const resynced = await promiseAllBatched(
           getEnv("SYNC_MAX_CONCURRENT"),
-          accounts,
+          accounts.filter((a) => accountIdsNeedResync.includes(a.id)),
           syncAccount
         );
+
+        accounts = accounts.map((a: Account) => {
+          const i = accountIdsNeedResync.indexOf(a.id);
+          return i !== -1 ? resynced[i] : a;
+        });
+
+        accountIdsNeedResync = [];
+
         appReport.accountsAfter = accounts;
-        const syncAllAccountsTime = now() - t;
+        const resyncAccountsDuration = now() - t;
         const account = accounts[i];
         const report = await runOnAccount({
           appCandidate,
@@ -228,9 +226,20 @@ export async function runWithAppSpec<T extends Transaction>(
           account,
           accounts,
           mutationsCount,
-          syncAllAccountsTime,
+          resyncAccountsDuration,
+          accountIdsNeedResync,
           preloadedData,
         });
+        if (report.finalAccount) {
+          // optim: no need to resync if all went well with finalAccount
+          const finalAccount: Account = report.finalAccount;
+          accountIdsNeedResync = accountIdsNeedResync.filter(
+            (id) => id !== finalAccount.id
+          );
+          accounts = accounts.map((a: Account) =>
+            a.id === finalAccount.id ? finalAccount : a
+          );
+        }
         // eslint-disable-next-line no-console
         console.log(formatReportForConsole(report));
         mutationReports.push(report);
@@ -277,8 +286,9 @@ export async function runOnAccount<T extends Transaction>({
   device,
   account,
   accounts,
+  accountIdsNeedResync,
   mutationsCount,
-  syncAllAccountsTime,
+  resyncAccountsDuration,
   preloadedData,
 }: {
   appCandidate: any;
@@ -286,8 +296,9 @@ export async function runOnAccount<T extends Transaction>({
   device: any;
   account: any;
   accounts: any;
+  accountIdsNeedResync: string[];
   mutationsCount: Record<string, number>;
-  syncAllAccountsTime: number;
+  resyncAccountsDuration: number;
   preloadedData: any;
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
@@ -295,7 +306,7 @@ export async function runOnAccount<T extends Transaction>({
   const report: MutationReport<T> = {
     spec,
     appCandidate,
-    syncAllAccountsTime,
+    resyncAccountsDuration,
   };
 
   try {
@@ -462,6 +473,13 @@ export async function runOnAccount<T extends Transaction>({
       .toPromise();
     report.signedOperation = signedOperation;
     report.signedTime = now();
+
+    // at this stage, we are about to broadcast we assume we will need to resync receiver account
+    if (report.destination) {
+      accountIdsNeedResync.push(report.destination.id);
+    }
+    accountIdsNeedResync.push(account.id);
+
     // broadcast the transaction
     const optimisticOperation = getEnv("DISABLE_TRANSACTION_BROADCAST")
       ? signedOperation.operation
@@ -475,6 +493,7 @@ export async function runOnAccount<T extends Transaction>({
       "engine",
       `spec ${spec.name}/${account.name}/${optimisticOperation.hash} broadcasted`
     );
+
     // wait the condition are good (operation confirmed)
     const testBefore = now();
 
@@ -534,7 +553,7 @@ export async function runOnAccount<T extends Transaction>({
     );
   } catch (error: any) {
     console.error(error);
-    log("mutation-error", spec.name + ": " + formatError(error));
+    log("mutation-error", spec.name + ": " + formatError(error, true));
     report.error = error;
   }
 
@@ -667,6 +686,9 @@ function awaitAccountOperation({
   log("engine", "awaitAccountOperation on " + account.name);
   let syncCounter = 0;
   let acc = account;
+  let lastSync = now();
+  const loopDebounce = 1000;
+  const targetInterval = getEnv("SYNC_PENDING_INTERVAL");
 
   async function loop() {
     const operation = step(acc);
@@ -678,8 +700,10 @@ function awaitAccountOperation({
         operation,
       };
     }
+    const spent = now() - lastSync;
+    await delay(Math.max(loopDebounce, targetInterval - spent));
 
-    await delay(5000);
+    lastSync = now();
     log("engine", "sync #" + syncCounter++ + " on " + account.name);
     acc = await syncAccount(acc);
     const r = await loop();
