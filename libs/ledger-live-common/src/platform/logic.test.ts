@@ -16,6 +16,7 @@ import {
   SignedOperation,
   SignedOperationRaw,
   TokenAccount,
+  TransactionCommon,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
@@ -26,6 +27,7 @@ import { DerivationMode } from "../derivation";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RawPlatformTransaction } from "./rawTypes";
 import { setSupportedCurrencies } from "../currencies";
+import { Transaction as EthereumTransaction } from "../families/ethereum/types";
 
 describe("receiveOnAccountLogic", () => {
   // Given
@@ -144,19 +146,52 @@ describe("completeExchangeLogic", () => {
 
     beforeEach(() => uiNavigation.mockResolvedValueOnce(expectedResult));
 
-    it("calls uiNavigation callback with an accountAddress", async () => {
+    it("calls uiNavigation callback", async () => {
       // Given
       const fromAccount = createFixtureAccount("17");
       context.accounts = [...context.accounts, fromAccount];
+      const rawPlatformTransaction = createRawEtherumTransaction();
       const completeExchangeRequest = {
         provider: "provider",
         fromAccountId: "ethereumjs:2:ethereum:0x017:",
         toAccountId: "ethereumjs:2:ethereum:0x042:",
-        transaction: createRawEtherumTransaction(),
+        transaction: rawPlatformTransaction,
         binaryPayload: "binaryPayload",
         signature: "signature",
         feesStrategy: "feeStrategy",
         exchangeType: 8,
+      };
+
+      const expectedTransaction: EthereumTransaction = {
+        family: "ethereum",
+        amount: new BigNumber("1000"),
+        recipient: "0x0123456",
+        nonce: 8,
+        data: Buffer.from("Some data..."),
+        gasPrice: new BigNumber("0,7"),
+        userGasLimit: new BigNumber("1,2"),
+        feesStrategy: "medium",
+        estimatedGasLimit: null,
+        feeCustomUnit: { name: "Gwei", code: "Gwei", magnitude: 9 },
+        mode: "send",
+        networkInfo: null,
+        useAllAmount: false,
+      };
+      const actualTransaction = {
+        amount: new BigNumber("1000"),
+        data: Buffer.from([]),
+        estimatedGasLimit: null,
+        family: "ethereum",
+        feeCustomUnit: { code: "Gwei", magnitude: 9, name: "Gwei" },
+        feesStrategy: "feeStrategy",
+        gasLimit: new BigNumber("NaN"),
+        gasPrice: new BigNumber("NaN"),
+        mode: "send",
+        networkInfo: null,
+        nonce: 8,
+        recipient: "0x0123456",
+        useAllAmount: false,
+        userGasLimit: null,
       };
 
       // When
@@ -176,22 +211,7 @@ describe("completeExchangeLogic", () => {
           toAccount: undefined,
           toParentAccount: null,
         },
-        transaction: {
-          amount: new BigNumber("1000"),
-          data: Buffer.from([]),
-          estimatedGasLimit: null,
-          family: "ethereum",
-          feeCustomUnit: { code: "Gwei", magnitude: 9, name: "Gwei" },
-          feesStrategy: "medium",
-          gasLimit: new BigNumber("NaN"),
-          gasPrice: new BigNumber("NaN"),
-          mode: "send",
-          networkInfo: null,
-          nonce: 8,
-          recipient: "0x0123456",
-          useAllAmount: false,
-          userGasLimit: null,
-        },
+        transaction: actualTransaction,
         binaryPayload: "binaryPayload",
         signature: "signature",
         feesStrategy: "feeStrategy",
@@ -199,6 +219,39 @@ describe("completeExchangeLogic", () => {
       });
       expect(result).toEqual(expectedResult);
     });
+
+    it.each(["slow", "medium", "fast", "custom"])(
+      "calls uiNavigation with a transaction that has the %s feeStrategy",
+      async (expectedFeeStrategy) => {
+        // Given
+        const fromAccount = createFixtureAccount("17");
+        context.accounts = [...context.accounts, fromAccount];
+        const rawPlatformTransaction = createRawEtherumTransaction();
+        const completeExchangeRequest = {
+          provider: "provider",
+          fromAccountId: "ethereumjs:2:ethereum:0x017:",
+          toAccountId: "ethereumjs:2:ethereum:0x042:",
+          transaction: rawPlatformTransaction,
+          binaryPayload: "binaryPayload",
+          signature: "signature",
+          feesStrategy: expectedFeeStrategy,
+          exchangeType: 8,
+        };
+
+        // When
+        await completeExchangeLogic(
+          context,
+          completeExchangeRequest,
+          uiNavigation
+        );
+
+        // Then
+        expect(uiNavigation).toBeCalledTimes(1);
+        expect(
+          uiNavigation.mock.calls[0][0]["transaction"].feesStrategy
+        ).toEqual(expectedFeeStrategy);
+      }
+    );
 
     it("calls the tracking for success", async () => {
       // Given
@@ -222,6 +275,44 @@ describe("completeExchangeLogic", () => {
 
       // Then
       expect(mockPlatformCompleteExchangeRequested).toBeCalledTimes(1);
+    });
+  });
+
+  describe("when Account is from a different family than the transaction", () => {
+    // Given
+    const expectedResult = "Function called";
+
+    beforeEach(() => uiNavigation.mockResolvedValueOnce(expectedResult));
+
+    it("returns an error", async () => {
+      // Given
+      const fromAccount = createFixtureAccount("17");
+      context.accounts = [...context.accounts, fromAccount];
+      const rawPlatformTransaction = createRawBitcoinTransaction();
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId: "ethereumjs:2:ethereum:0x017:",
+        toAccountId: "ethereumjs:2:ethereum:0x042:",
+        transaction: rawPlatformTransaction,
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "feeStrategy",
+        exchangeType: 8,
+      };
+
+      // When
+      await expect(async () => {
+        await completeExchangeLogic(
+          context,
+          completeExchangeRequest,
+          uiNavigation
+        );
+      }).rejects.toThrowError(
+        "Account and transaction must be from the same family"
+      );
+
+      // Then
+      expect(uiNavigation).toBeCalledTimes(0);
     });
   });
 });
@@ -669,5 +760,14 @@ function createRawEtherumTransaction(): RawPlatformTransaction {
     data: "Some data...",
     gasPrice: "0,7",
     gasLimit: "1,2",
+  };
+}
+
+function createRawBitcoinTransaction(): RawPlatformTransaction {
+  return {
+    family: "bitcoin" as any,
+    amount: "1000",
+    recipient: "0x0123456",
+    feePerByte: "0,9",
   };
 }

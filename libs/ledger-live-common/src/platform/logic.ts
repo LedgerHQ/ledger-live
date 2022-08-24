@@ -223,13 +223,18 @@ export function completeExchangeLogic(
   const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
 
-  // TODO-STP: fix this
-  // transaction.family = mainFromAccount.currency.family;
+  if (transaction.family !== mainFromAccount.currency.family) {
+    return Promise.reject(
+      new Error("Account and transaction must be from the same family")
+    );
+  }
 
   const platformTransaction = deserializePlatformTransaction(transaction);
 
   // TODO-STP: fix this
-  // platformTransaction.feesStrategy = feesStrategy;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  platformTransaction.feesStrategy = feesStrategy;
 
   let processedTransaction = accountBridge.createTransaction(mainFromAccount);
   processedTransaction = accountBridge.updateTransaction(
