@@ -82,6 +82,7 @@
     "moreInfo" : "Daha fazla bilgi",
     "buyEth" : "Ethereum Satın Al",
     "popular" : "popüler",
+    "getSupport" : "Destek alın",
     "comingSoon" : "Çok yakında"
   },
   "errors" : {
@@ -680,6 +681,9 @@
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     }
   },
+  "crash" : {
+    "title" : "Bir hata oluştu"
+  },
   "bluetooth" : {
     "required" : "Üzgünüz, Bluetooth devre dışı görünüyor",
     "locationRequiredTitle" : "Bluetooth LE için konum gerekli",
@@ -965,8 +969,8 @@
         "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
       },
       "mint" : {
-        "title" : "Mintleyin",
-        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mintleyin"
+        "title" : "Mint'leyin",
+        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mint'leyin"
       }
     },
     "comingSoon" : "Çok yakında",
@@ -2153,6 +2157,10 @@
       "clearCacheButton" : "Temizle",
       "exportLogs" : "Logları kaydedin",
       "exportLogsDesc" : "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
+      "resetThirdPartyData" : "Üçüncü taraf verilerini sıfırla",
+      "resetThirdPartyDataDesc" : "Üçüncü taraf işlem sağlayıcısına erişmek için kullanılan tüm yerel üçüncü taraf verilerinizi silin.",
+      "resetThirdPartyDataModal" : "Yerel üçüncü taraf verilerinizi silin",
+      "resetThirdPartyDataModalDesc" : "Yerel üçüncü taraf verilerinizi silin. İş ortaklarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "hardReset" : "Ledger Live'ı sıfırlayın",
       "hardResetDesc" : "Bunun varlıklarınız üzerinde bir etkisi yoktur. Hesap verileri, işlem geçmişleri ve ayarlar dahil olmak üzere Ledger Live'daki tüm verileri siler. Boş bir Ledger Live'da kripto varlıklarınızı yeniden yüklemek ve yönetmek için Ledger cihazınızı kullanın.",
       "repairDevice" : "Ledger cihazınızı onarın",
@@ -2169,6 +2177,15 @@
       "customManifest" : {
         "title" : "Özel Platform Manifest Dosyası Yükle"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
+      "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
+      "featureFlagsOverride" : "Geçersiz bırak",
+      "featureFlagsEdit" : "Düzenle",
+      "featureFlagsRestore" : "Geri yükle",
+      "featureFlagsDisplayValue" : "Değeri göster",
+      "featureFlagsHideValue" : "Değeri gizle"
     }
   },
   "notifications" : {
@@ -2528,19 +2545,80 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "Gönderici",
-          "to" : "Alıcı",
-          "send" : "Gönder",
-          "payoutNetworkFees" : "Ödeme ücretleri",
-          "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
-          "receive" : "Tutar",
-          "receiveFloat" : "Hizmet ücretleri hariç alınacak tutar",
-          "provider" : "Sağlayıcı",
-          "method" : "Kur",
-          "fees" : "Ücretler"
+        "ratesDrawer" : {
+          "title" : "Kur",
+          "quote" : "Teklif",
+          "receive" : "Al"
+        },
+        "placeholder" : "Hesap seç",
+        "title" : "Takas edin",
+        "cta" : "Takas edin",
+        "from" : "Gönderici",
+        "to" : "Alıcı",
+        "loading" : "Yükleniyor...",
+        "disclaimer" : {
+          "title" : "Hüküm ve Koşullar",
+          "desc" : "“Kabul Et” seçeneğine tıklayarak bu hizmetin tamamen ve sadece {{providerName}} Hüküm ve Koşullarına tabi olduğunu anlıyor ve kabul ediyorum.",
+          "tos" : "Hüküm ve Koşullar",
+          "accept" : "Kabul et"
+        },
+        "notAvailable" : {
+          "title" : "Bulunduğunuz yerde takas işlemleri henüz mevcut değil",
+          "content" : "Lütfen biraz daha sabredin; bu özelliği çok yakında başlatacağız"
+        },
+        "amount" : {
+          "useMax" : "Tümünü kullan",
+          "available" : "Toplam mevcut"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Sağlayıcı",
+            "rate" : "Kur",
+            "fees" : "Ağ ücretleri",
+            "target" : "Hedef hesap"
+          },
+          "noAccount" : "{{name}} almak için bir hesap oluşturun",
+          "noAccountCTA" : "Hesap ekle"
+        },
+        "select" : {
+          "from" : {
+            "title" : "Gönderici"
+          },
+          "to" : {
+            "title" : "Alıcı"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "KYC işlemini tamamlamalısınız",
+            "complete" : "KYC'yi tamamla",
+            "update" : "KYC'yi yenile",
+            "rejected" : "KYC reddedildi; doğrulamayı yeniden başlatın",
+            "rejectedContactProviderSupport" : "KYC reddedildi, lütfen {{providerName}} desteğiyle iletişime geçin",
+            "updateRequired" : "KYC'nizi tamamlayın veya güncelleyin",
+            "status" : {
+              "pending" : "KYC beklemede",
+              "approved" : "KYC onaylandı",
+              "closed" : "KYC reddedildi",
+              "upgradeRequired" : "KYC eksik"
+            }
+          },
+          "login" : {
+            "title" : "Oturum aç",
+            "required" : "Bu sağlayıcı ile giriş yapmanız gerekiyor",
+            "complete" : "Oturum aç"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Bu sağlayıcı ile MFA kurmanız gerekiyor",
+            "complete" : "MFA kur"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Çekim işleminiz {{providerName}} tarafından engellendi. \n\n Daha fazla bilgi almak için lütfen onların destek ekibiyle iletişime geçin."
+          }
         }
       }
     },
@@ -2995,7 +3073,6 @@
     "retry" : "Tekrar dene",
     "done" : "Tamam",
     "finalCta" : "Devam",
-    "finalCtaForSwap" : "Takas sayfasına dön",
     "synchronizing" : "Senkronize ediliyor",
     "synchronizingDesc" : "Hesaplarınız senkronize ediliyor. Bu biraz zaman alabilir...",
     "noAccountToCreate" : "<1><0>{{currencyName}}<></> hesabı oluşturulamadı. İşlemi yeniden başlatın ve hesaplarınızı senkronize edin.",
@@ -3072,7 +3149,17 @@
     "confirmSwap" : {
       "title" : "Takas işlemini cihazdan onaylayın",
       "alert" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
-      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum."
+      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
+      "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
+    },
+    "swap2" : {
+      "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+      "amountSent" : "Gönderilecek tutar",
+      "amountReceived" : "Alınacak tutar",
+      "provider" : "Sağlayıcı",
+      "fees" : "Ağ Ücretleri",
+      "sourceAccount" : "Kaynak Hesap",
+      "targetAccount" : "Hedef Hesap"
     },
     "confirmSell" : {
       "title" : "Satış işleminizi cihazdan onaylayın",
@@ -3402,8 +3489,8 @@
     "drawerUpdate" : {
       "title" : "Donanım Yazılımı Güncellemesi",
       "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "USB kablosu gerekli",
+      "pleaseConnectUsbDescription" : "Donanım yazılımı güncellemesini başlatmak için {{deviceName}} cihazınızı bir USB kablosuyla cep telefonunuza bağlayın."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -4341,7 +4428,7 @@
       "tabTitle" : "Satın Al",
       "selectCurrency" : "Bir para birimi seçin",
       "selectAccount" : "Bir hesap seçin",
-      "wantToBuy" : "Satın almak istiyorum",
+      "wantToBuy" : "Almak istediğim varlık:",
       "connectDevice" : "Cihazınızı bağlayın",
       "title" : "Ortağımız üzerinden kripto satın alın",
       "coinifyTitle" : "Ortağımız üzerinden kripto satın alın",
