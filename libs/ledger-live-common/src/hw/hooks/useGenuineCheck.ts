@@ -55,12 +55,12 @@ export const useGenuineCheck = ({
 }: UseGenuineCheckArgs &
   UseGenuineCheckDependencies): UseGenuineCheckResult => {
   const [genuineState, setGenuineState] = useState<GenuineState>("unchecked");
-  const [devicePermissionState, setDevicePermisionState] =
+  const [devicePermissionState, setDevicePermissionState] =
     useState<DevicePermissionState>("unrequested");
   const [error, setError] = useState<Error | null>(null);
 
   const resetGenuineCheckState = useCallback(() => {
-    setDevicePermisionState("unrequested");
+    setDevicePermissionState("unrequested");
     setGenuineState("unchecked");
   }, []);
 
@@ -77,10 +77,10 @@ export const useGenuineCheck = ({
           if (socketEvent) {
             switch (socketEvent.type) {
               case "device-permission-requested":
-                setDevicePermisionState("requested");
+                setDevicePermissionState("requested");
                 break;
               case "device-permission-granted":
-                setDevicePermisionState("granted");
+                setDevicePermissionState("granted");
                 break;
               case "result":
                 if (socketEvent.payload === "0000") {
@@ -93,15 +93,15 @@ export const useGenuineCheck = ({
           } else {
             // If no socketEvent, the device is locked or has been unlocked
             if (deviceIsLocked) {
-              setDevicePermisionState("unlock-needed");
+              setDevicePermissionState("unlock-needed");
             } else {
-              setDevicePermisionState("unlocked");
+              setDevicePermissionState("unlocked");
             }
           }
         },
         error: (e: any) => {
           if (e instanceof UserRefusedAllowManager) {
-            setDevicePermisionState("refused");
+            setDevicePermissionState("refused");
           } else if (e instanceof Error) {
             // Probably an error of type DisconnectedDeviceDuringOperation or something else
             setError(e);
