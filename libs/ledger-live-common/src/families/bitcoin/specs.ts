@@ -11,7 +11,7 @@ import type {
   Transaction,
 } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
@@ -61,8 +61,10 @@ const genericTest = ({
   );
 
   // balance move
-  expect(account.balance.toString()).toBe(
-    accountBeforeTransaction.balance.minus(operation.value).toString()
+  botTest("account balance decreased with operation value", () =>
+    expect(account.balance.toString()).toBe(
+      accountBeforeTransaction.balance.minus(operation.value).toString()
+    )
   );
   // inputs outputs
   const { txInputs, txOutputs } = status;
@@ -79,20 +81,22 @@ const genericTest = ({
     recipients: opShape.recipients.slice(0).sort(),
   });
 
-  expect(asSorted(operation)).toMatchObject(
-    asSorted({
-      senders: nonDeterministicPicking
-        ? operation.senders
-        : txInputs.map((t) => t.address).filter(Boolean),
-      recipients: txOutputs
-        .filter((o) => o.address && !o.isChange)
-        .map((o) =>
-          account.currency.id === "bitcoin_cash"
-            ? bchToCashaddrAddressWithoutPrefix(o.address)
-            : o.address
-        )
-        .filter(Boolean),
-    })
+  botTest("operation matches tx senders and recipients", () =>
+    expect(asSorted(operation)).toMatchObject(
+      asSorted({
+        senders: nonDeterministicPicking
+          ? operation.senders
+          : txInputs.map((t) => t.address).filter(Boolean),
+        recipients: txOutputs
+          .filter((o) => o.address && !o.isChange)
+          .map((o) =>
+            account.currency.id === "bitcoin_cash"
+              ? bchToCashaddrAddressWithoutPrefix(o.address)
+              : o.address
+          )
+          .filter(Boolean),
+      })
+    )
   );
   const utxosPicked = (status.txInputs || [])
     .map(({ previousTxHash, previousOutputIndex }) =>
@@ -103,12 +107,14 @@ const genericTest = ({
     )
     .filter(Boolean);
   // verify that no utxo that was supposed to be exploded were used
-  expect(
-    utxosPicked.filter(
-      (u: BitcoinOutput) =>
-        u.blockHeight && getUTXOStatus(u, transaction.utxoStrategy).excluded
-    )
-  ).toEqual([]);
+  botTest("picked utxo has been consumed", () =>
+    expect(
+      utxosPicked.filter(
+        (u: BitcoinOutput) =>
+          u.blockHeight && getUTXOStatus(u, transaction.utxoStrategy).excluded
+      )
+    ).toEqual([])
+  );
 };
 
 const bitcoinLikeMutations = ({
@@ -225,16 +231,20 @@ const bitcoinLikeMutations = ({
           )
       );
       invariant(utxo, "utxo available");
-      expect(operation).toMatchObject({
-        senders: [(utxo as BitcoinOutput).address],
-      });
-      expect(
-        (account as BitcoinAccount).bitcoinResources?.utxos.find(
-          (u) =>
-            u.hash === (utxo as BitcoinOutput).hash &&
-            u.outputIndex === (utxo as BitcoinOutput).outputIndex
-        )
-      ).toBe(undefined);
+      botTest("sender is only the utxo address", () =>
+        expect(operation).toMatchObject({
+          senders: [(utxo as BitcoinOutput).address],
+        })
+      );
+      botTest("utxo has been consumed", () =>
+        expect(
+          (account as BitcoinAccount).bitcoinResources?.utxos.find(
+            (u) =>
+              u.hash === (utxo as BitcoinOutput).hash &&
+              u.outputIndex === (utxo as BitcoinOutput).outputIndex
+          )
+        ).toBe(undefined)
+      );
     },
   },
   {
@@ -264,14 +274,16 @@ const bitcoinLikeMutations = ({
     },
     recoverBadTransactionStatus,
     test: ({ account }) => {
-      expect(
-        (account as BitcoinAccount).bitcoinResources?.utxos
-          .filter(
-            (u) => u.blockHeight && u.blockHeight < account.blockHeight - 10
-          ) // Exclude pending UTXOs and the Utxos just written into new block (10 blocks time)
-          .reduce((p, c) => p.plus(c.value), new BigNumber(0))
-          .toString()
-      ).toBe("0");
+      botTest("total of utxos is zero", () =>
+        expect(
+          (account as BitcoinAccount).bitcoinResources?.utxos
+            .filter(
+              (u) => u.blockHeight && u.blockHeight < account.blockHeight - 10
+            ) // Exclude pending UTXOs and the Utxos just written into new block (10 blocks time)
+            .reduce((p, c) => p.plus(c.value), new BigNumber(0))
+            .toString()
+        ).toBe("0")
+      );
     },
   },
 ];
