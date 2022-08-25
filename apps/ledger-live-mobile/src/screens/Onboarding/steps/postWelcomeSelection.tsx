@@ -157,7 +157,7 @@ function PostWelcomeSelection({
 
   const pressExplore = useCallback(
     (data: DataType) => {
-      dispatch(setHasOrderedNano(userHasDevice ? true : false));
+      dispatch(setHasOrderedNano(!!userHasDevice));
 
       onCardClick(data, "Explore LL");
     },
