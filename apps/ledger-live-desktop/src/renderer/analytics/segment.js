@@ -45,8 +45,10 @@ const extraProperties = store => {
     ? {
         modelId: device.modelId,
         deviceVersion: device.deviceInfo.version,
-        deviceLanguage: device.deviceInfo?.languageId &&
-          idsToLanguage[device.deviceInfo.languageId],
+        deviceLanguage:
+          device.deviceInfo?.languageId !== undefined
+            ? idsToLanguage[device.deviceInfo.languageId]
+            : undefined,
         appLength: device.apps?.length,
       }
     : {};
