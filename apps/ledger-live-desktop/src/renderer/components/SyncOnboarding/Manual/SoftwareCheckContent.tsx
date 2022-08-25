@@ -1,5 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Button, Flex, Text, InfiniteLoader } from "@ledgerhq/react-ui";
+import styled, { useTheme } from "styled-components";
 
 import Check from "~/renderer/icons/Check";
 import { SoftwareCheckStatus } from "./SoftwareCheckStep";
