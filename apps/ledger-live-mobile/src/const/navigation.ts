@@ -339,6 +339,15 @@ export const ScreenName = {
   OnboardingModalSyncDesktopInformation:
     "OnboardingModalSyncDesktopInformation",
   OnboardingModalRecoveryPhraseWarning: "OnboardingModalRecoveryPhraseWarning",
+
+  SyncOnboardingCompanion: "SyncOnboardingCompanion",
+  SyncOnboardingCompletion: "SyncOnboardingCompletion",
+  DeviceModelSelection: "DeviceModelSelection",
+  BleDevicesScanning: "BleDevicesScanning",
+  BleDevicePairing: "BleDevicePairing",
+
+  BleDevicePairingFlow: "BleDevicePairingFlow",
+
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
   PlatformStartExchange: "PlatformStartExchange",
