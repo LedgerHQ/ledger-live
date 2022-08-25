@@ -6,22 +6,36 @@ import {
   Transaction as EvmTransaction,
 } from "./types";
 import { Account } from "@ledgerhq/types-live";
+import { getEstimatedFees } from "./logic";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { validateRecipient } from "./getTransactionStatus";
+import { validateAmount, validateRecipient } from "./getTransactionStatus";
 
 export const prepareTransaction = async (
   account: Account,
   transaction: EvmTransaction
 ): Promise<EvmTransaction> => {
   const { currency } = account;
+  const estimatedFees = getEstimatedFees(transaction);
+  // Not final amount (cause it could change depending on tx type) used for gas estimation
+  // Some RPCs will throw at gas estimation if the account doesn't have the required amount first
+  const tempAmount = transaction.useAllAmount
+    ? account.balance.minus(estimatedFees)
+    : transaction.amount;
+  const totalSpent = tempAmount?.plus(estimatedFees);
 
-  const [validationErrors] = validateRecipient(account, transaction);
-  const { recipient: recipientErrors } = validationErrors || {};
+  const [recipientvalidationErrors] = validateRecipient(account, transaction);
+  const [amountValidationErrors] = validateAmount(
+    account,
+    transaction,
+    totalSpent
+  );
+  const { recipient: recipientErrors } = recipientvalidationErrors || {};
+  const { amount: amountErrors } = amountValidationErrors || {};
   const [gasLimit, feeData] = await Promise.all([
-    // Validating recipient first cause estimating a transaction with a wrong recipient will throw an error
-    recipientErrors
+    // Validating recipient and amount first cause estimating a transaction with a wrong recipient or wrong amount will throw an error
+    recipientErrors || amountErrors
       ? Promise.resolve(new BigNumber(21000))
-      : getGasEstimation(currency, transaction),
+      : getGasEstimation(account, transaction),
     // Fee data is not dependent on the gasEstimation so they can be triggered in parallel
     getFeesEstimation(currency),
   ]);
