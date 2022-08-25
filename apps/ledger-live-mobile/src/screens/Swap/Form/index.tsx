@@ -354,11 +354,9 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
   const [deviceMeta, setDeviceMeta] = useState<DeviceMeta>();
 
-  if (confirmed && !deviceMeta) {
-    if (provider !== "ftx" && provider !== "ftxus" && !termsAccepted) {
-      return null;
-    }
+  const isFtx = ["ftx", "ftxus"].includes(provider || "");
 
+  if (confirmed && !deviceMeta && (isFtx || termsAccepted)) {
     return <Connect provider={provider} setResult={setDeviceMeta} />;
   }
 
