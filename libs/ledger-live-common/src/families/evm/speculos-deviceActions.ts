@@ -1,6 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit, findCompoundToken } from "../../currencies";
+import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
 
 function subAccount(subAccountId, account) {

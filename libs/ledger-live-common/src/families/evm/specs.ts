@@ -56,34 +56,6 @@ const evmBasicMutations = ({ maxAccount }) => [
   },
 ];
 
-const arbitrum: AppSpec<Transaction> = {
-  name: "Arbitrum",
-  currency: getCryptoCurrencyById("arbitrum"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Ethereum",
-  },
-  testTimeout,
-  transactionCheck: transactionCheck("arbitrum"),
-  mutations: evmBasicMutations({
-    maxAccount: 3,
-  }),
-};
-
-const avalanche: AppSpec<Transaction> = {
-  name: "Avalanche",
-  currency: getCryptoCurrencyById("avalanche"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Ethereum",
-  },
-  testTimeout,
-  transactionCheck: transactionCheck("avalanche"),
-  mutations: evmBasicMutations({
-    maxAccount: 3,
-  }),
-};
-
 const cronos: AppSpec<Transaction> = {
   name: "Cronos",
   currency: getCryptoCurrencyById("cronos"),
@@ -93,20 +65,6 @@ const cronos: AppSpec<Transaction> = {
   },
   testTimeout,
   transactionCheck: transactionCheck("cronos"),
-  mutations: evmBasicMutations({
-    maxAccount: 3,
-  }),
-};
-
-const evmos: AppSpec<Transaction> = {
-  name: "Evmos",
-  currency: getCryptoCurrencyById("evmos"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Ethereum",
-  },
-  testTimeout,
-  transactionCheck: transactionCheck("evmos"),
   mutations: evmBasicMutations({
     maxAccount: 3,
   }),
@@ -140,11 +98,38 @@ const moonbeam: AppSpec<Transaction> = {
   }),
 };
 
+const songbird: AppSpec<Transaction> = {
+  name: "Songbird",
+  currency: getCryptoCurrencyById("songbird"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Ethereum",
+  },
+  testTimeout,
+  transactionCheck: transactionCheck("songbird"),
+  mutations: evmBasicMutations({
+    maxAccount: 3,
+  }),
+};
+
+const flare: AppSpec<Transaction> = {
+  name: "Moonbeam",
+  currency: getCryptoCurrencyById("flare"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Ethereum",
+  },
+  testTimeout,
+  transactionCheck: transactionCheck("flare"),
+  mutations: evmBasicMutations({
+    maxAccount: 3,
+  }),
+};
+
 export default {
-  arbitrum,
-  avalanche,
   cronos,
-  evmos,
   fantom,
   moonbeam,
+  songbird,
+  flare,
 };
