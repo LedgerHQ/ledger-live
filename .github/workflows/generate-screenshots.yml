@@ -68,6 +68,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
@@ -110,6 +111,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
