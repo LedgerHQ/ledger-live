@@ -19,7 +19,9 @@ const formatTimeMinSec = (t: number) => {
 };
 
 export const formatTime = (t: number): string =>
-  t > 3000
+  !t
+    ? "N/A"
+    : t > 3000
     ? t > 100000
       ? formatTimeMinSec(t)
       : `${Math.round(t / 100) / 10}s`

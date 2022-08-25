@@ -482,6 +482,7 @@ export async function bot({
   // Add performance details
   body += "<details>\n";
   body += `<summary>Performance ⏲ ${formatTime(totalDuration)}</summary>\n\n`;
+  body += "**Time spent for each spec:** (total across mutations)\n";
 
   function sumMutation(mutations, f) {
     return mutations?.reduce((sum, m) => sum + (f(m) || 0), 0) || 0;
@@ -532,9 +533,7 @@ export async function bot({
 
   body += "| **TOTAL** |";
   body += `${formatTime(sumResults((r) => r.preloadDuration))} |`;
-  body += `${formatTime(
-    sumResults((r) => r.scanDuration)
-  )} |`;
+  body += `${formatTime(sumResults((r) => r.scanDuration))} |`;
   body += `${formatTime(
     sumResultsMutation((m) => m.resyncAccountsDuration || 0)
   )} |`;
