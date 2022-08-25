@@ -476,9 +476,9 @@ export function genAccount(
     default: {
       try {
         const bridge = getAccountBridge(account);
-        const mockAccount = bridge.mockAccount;
-        if (mockAccount) {
-          mockAccount(account);
+        const initAccount = bridge.initAccount;
+        if (initAccount) {
+          initAccount(account);
         }
       } catch (e: any) {
         // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency

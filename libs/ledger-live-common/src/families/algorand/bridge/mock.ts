@@ -22,10 +22,10 @@ import { getMainAccount } from "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import {
   applyReconciliation,
-  toAccountRaw,
-  fromAccountRaw,
+  assignToAccountRaw,
+  assignFromAccountRaw,
 } from "../serialization";
-import { mockAccount } from "../mockAccount";
+import { initAccount } from "../initAccount";
 
 const receive = makeAccountBridgeReceive();
 
@@ -108,9 +108,9 @@ const accountBridge: AccountBridge<AlgorandTransaction> = {
   sync,
   receive,
   applyReconciliation,
-  toAccountRaw,
-  fromAccountRaw,
-  mockAccount,
+  assignToAccountRaw,
+  assignFromAccountRaw,
+  initAccount,
   signOperation,
   broadcast,
 };

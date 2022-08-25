@@ -161,14 +161,18 @@ export interface AccountBridge<T extends TransactionCommon> {
     parentAccount?: Account | null | undefined;
     transaction?: T | null | undefined;
   }): Promise<BigNumber>;
+  // reconciliation by the React definition. https://reactjs.org/docs/reconciliation.html
   applyReconciliation?: (
     account: Account,
     updatedRaw: AccountRaw,
     next: Account
   ) => boolean;
-  toAccountRaw?: (account: Account, accountRaw: AccountRaw) => void;
-  fromAccountRaw?: (accountRaw: AccountRaw, account: Account) => void;
-  mockAccount?: (account: Account) => void;
+  // convert account to accountRaw
+  assignToAccountRaw?: (account: Account, accountRaw: AccountRaw) => void;
+  // convert accountRaw to account
+  assignFromAccountRaw?: (accountRaw: AccountRaw, account: Account) => void;
+  // make a initial account
+  initAccount?: (account: Account) => void;
   // finalizing a transaction by signing it with the ledger device
   // This results of a "signed" event with a signedOperation
   // than can be locally saved and later broadcasted

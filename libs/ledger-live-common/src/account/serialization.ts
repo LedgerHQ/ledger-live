@@ -703,9 +703,9 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     }
     default: {
       const bridge = getAccountBridge(res);
-      const fromResourcesRaw = bridge.fromAccountRaw;
-      if (fromResourcesRaw) {
-        fromResourcesRaw(rawAccount, res);
+      const assignFromAccountRaw = bridge.assignFromAccountRaw;
+      if (assignFromAccountRaw) {
+        assignFromAccountRaw(rawAccount, res);
       }
     }
   }
@@ -840,9 +840,9 @@ export function toAccountRaw(account: Account): AccountRaw {
       break;
     default: {
       const bridge = getAccountBridge(account);
-      const toResourcesRaw = bridge.toAccountRaw;
-      if (toResourcesRaw) {
-        toResourcesRaw(account, res);
+      const assignToAccountRaw = bridge.assignToAccountRaw;
+      if (assignToAccountRaw) {
+        assignToAccountRaw(account, res);
       }
     }
   }
