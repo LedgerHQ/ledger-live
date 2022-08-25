@@ -40,14 +40,14 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   const b: CurrencyBridge = {
     preload: async () => {
       const value = await command("CurrencyPreload")({ currencyId: currency.id }).toPromise();
-      bridgeImpl.getCurrencyBridge(currency).hydrate(value, currency);
+      bridge.hydrate(value, currency);
       return value;
     },
 
-    hydrate: value => bridgeImpl.getCurrencyBridge(currency).hydrate(value, currency),
+    hydrate: value => bridge.hydrate(value, currency),
 
     scanAccounts,
-    nftResolvers: bridgeImpl.getCurrencyBridge(currency).nftResolvers,
+    nftResolvers: bridge.nftResolvers,
   };
 
   if (getPreloadStrategy) {
@@ -85,18 +85,16 @@ export const getAccountBridge = (
       }),
     );
   };
-
+  const bridge = bridgeImpl.getAccountBridge(account, parentAccount);
   const receive = (account, arg) =>
     command("AccountReceive")({
       account: toAccountRaw(account),
       arg,
     });
 
-  const createTransaction = a =>
-    bridgeImpl.getAccountBridge(account, parentAccount).createTransaction(a);
+  const createTransaction = a => bridge.createTransaction(a);
 
-  const updateTransaction = (a, patch) =>
-    bridgeImpl.getAccountBridge(account, parentAccount).updateTransaction(a, patch);
+  const updateTransaction = (a, patch) => bridge.updateTransaction(a, patch);
 
   const prepareTransaction = async (a, t) => {
     const transaction = toTransactionRaw(t);
@@ -152,10 +150,10 @@ export const getAccountBridge = (
     prepareTransaction,
     sync,
     receive,
-    applyReconciliation: bridgeImpl.getAccountBridge(account, parentAccount).applyReconciliation,
-    toAccountRaw: bridgeImpl.getAccountBridge(account, parentAccount).toAccountRaw,
-    fromAccountRaw: bridgeImpl.getAccountBridge(account, parentAccount).fromAccountRaw,
-    mockAccount: bridgeImpl.getAccountBridge(account, parentAccount).mockAccount,
+    applyReconciliation: bridge.applyReconciliation,
+    toAccountRaw: bridge.toAccountRaw,
+    fromAccountRaw: bridge.fromAccountRaw,
+    mockAccount: bridge.mockAccount,
     signOperation,
     broadcast,
     estimateMaxSpendable,
