@@ -54,25 +54,26 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         }
 
         DispatchQueue.main.async {
-            var emittedUUIDs: [String] = []
+
             BleTransport.shared.scan { discoveries in
-                discoveries.forEach {
-                    if !emittedUUIDs.contains($0.peripheral.uuid.uuidString) {
-                        emittedUUIDs.append($0.peripheral.uuid.uuidString)
-                        EventEmitter.sharedInstance.dispatch(
-                            Payload(
-                                event: Event.newDevice.rawValue,
-                                type: $0.peripheral.uuid.uuidString,
-                                data: ExtraData(
-                                    uuid: $0.peripheral.uuid.uuidString,
-                                    rssi: $0.rssi,
-                                    name: $0.peripheral.name,
-                                    service: $0.serviceUUID.uuidString
-                                )
-                            )
-                        )
-                    }
+                let devices = discoveries.map{
+                    ExtraData(
+                        id: $0.peripheral.uuid.uuidString,
+                        rssi: $0.rssi,
+                        name: $0.peripheral.name,
+                        serviceUUIDs: [$0.serviceUUID.uuidString]
+                    )
                 }
+
+                EventEmitter.sharedInstance.dispatch(
+                    Payload(
+                        event: Event.newDevices.rawValue,
+                        type: Event.newDevices.rawValue,
+                        data: ExtraData(
+                            devices: devices
+                        )
+                    )
+                )
             } stopped: {_ in }
         }
     }
@@ -107,7 +108,7 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         var consumed = false /// Callbacks can only be called once in rn
         
         DispatchQueue.main.async {
-            BleTransport.shared.connect(toPeripheralID: peripheral){
+            BleTransport.shared.connect(toPeripheralID: peripheral, timeout: .seconds(5)){
                 /// Disconnect callback is called regardless of the original -connect- having resolved already
                 /// we use this to notify exchanges (background or foreground) about the disconnection.
                 if consumed {

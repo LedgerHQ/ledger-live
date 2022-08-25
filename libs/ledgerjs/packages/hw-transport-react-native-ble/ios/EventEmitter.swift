@@ -12,6 +12,7 @@ enum Event: String, CaseIterable {
     case parent = "BleTransport"
     
     case newDevice = "new-device"
+    case newDevices = "new-devices"
     case status = "status"
     case apdu = "apdu" /// We are currently not exposing these when in background
     case task = "task"
@@ -45,11 +46,14 @@ struct Item: Codable {
 struct ExtraData: Codable {
     var msg: String?
 
+    /// Devices
+    var devices: [ExtraData]?
+
     /// Device extras
-    var uuid: String?
+    var id: String?
     var rssi: Int?
     var name: String?
-    var service: String?
+    var serviceUUIDs: [String]?
     
     /// Bulk action extras
     var progress: Double?

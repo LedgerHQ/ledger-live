@@ -41,18 +41,25 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     fun listen(promise: Promise) {
         Timber.d("$tag: \t start scanning")
         bleManager.startScanning {
+            val devices = Arguments.createArray()
             for (device in it) {
-                eventEmitter.dispatch(Arguments.createMap().apply {
-                    putString("event", "new-device")
-                    putString("type", device.id)
-                    putMap("data", Arguments.createMap().apply {
-                        putString("uuid", device.id)
-                        putString("name", device.name)
-                        putString("service", device.serviceId)
-                        putString("rssi", device.rssi.toString())
-                    })
+                devices.pushMap(Arguments.createMap().apply {
+                    putString("id", device.id)
+                    putString("name", device.name)
+                    putString("rssi", device.rssi.toString())
+                    putArray("serviceUUIDs", Arguments.createArray().apply{pushString(device.serviceId)})
                 })
             }
+            // We hit this callback whenever a device is seen or goes away, this means we effectively
+            // replace the list instead of emitting new events one by one. This solves the
+            val event = Arguments.createMap().apply {
+                putString("event", "new-devices")
+                putString("type", "new-devices")
+                putMap("data", Arguments.createMap().apply {
+                    putArray("devices", devices)
+                })
+            }
+            eventEmitter.dispatch(event)
         }
         promise.resolve(1)
     }

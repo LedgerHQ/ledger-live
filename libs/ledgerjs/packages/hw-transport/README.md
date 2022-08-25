@@ -193,7 +193,7 @@ Returns **any** a promise of descriptors
 #### listen
 
 Listen all device events for a given Transport. The method takes an Obverver of DescriptorEvent and returns a Subscription (according to Observable paradigm https://github.com/tc39/proposal-observable )
-a DescriptorEvent is a `{ descriptor, type }` object. type can be `"add"` or `"remove"` and descriptor is a value you can pass to `open(descriptor)`.
+a DescriptorEvent is a `{ descriptor, type }` object. type can be `"add"`, `"remove"`, `"replace"` and descriptor/s is a value you can pass to `open(descriptor)`.
 each listen() call will first emit all potential device already connected and then will emit events can come over times,
 for instance if you plug a USB device after listen() or a bluetooth device become discoverable.
 
