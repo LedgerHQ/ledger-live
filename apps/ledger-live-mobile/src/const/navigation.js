@@ -188,6 +188,12 @@ export const ScreenName = {
   CeloVoteValidatorSelect: "CeloVoteValidatorSelect",
   CeloVoteSelectDevice: "CeloVoteSelectDevice",
   CeloVoteConnectDevice: "CeloVoteConnectDevice",
+  CeloActivateValidationSuccess: "CeloActivateValidationSuccess",
+  CeloActivateValidationError: "CeloActivateValidationError",
+  CeloActivateSummary: "CeloActivateSummary",
+  CeloActivateValidatorSelect: "CeloActivateValidatorSelect",
+  CeloActivateSelectDevice: "CeloActivateSelectDevice",
+  CeloActivateConnectDevice: "CeloActivateConnectDevice",
 
   // cosmos
   CosmosEditMemo: "CosmosEditMemo",
@@ -479,6 +485,7 @@ export const NavigatorName = {
   CeloLockFlow: "CeloLockFlow",
   CeloUnlockFlow: "CeloUnlockFlow",
   CeloVoteFlow: "CeloVoteFlow",
+  CeloActivateFlow: "CeloActivateFlow",
 
   // Tab
   Main: "Main",

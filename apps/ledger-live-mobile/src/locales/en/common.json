@@ -3517,22 +3517,24 @@
       }
     },
     "withdraw": {
-      "title": "Withdraw assets",
-      "steps": {
-        "amount": {
-          "title": "Withdraw"
-        },
-        "connectDevice": {
-          "title": "Device"
-        },
-        "confirmation": {
-          "title": "Confirmation",
-          "success": {
-            "title": "",
-            "text": "Your assets were withdrawn successfully. The withdrawn amount will be credited to your available balance.",
-            "cta": "View details"
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "available": "Available",
+            "max": "Max"
           },
-          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          "verification": {
+            "success": {
+              "title": "Your assets were withdrawn successfully",
+              "text": "The withdrawn amount will be credited to your available balance."
+            }
+          }
         }
       }
     },
@@ -3572,22 +3574,20 @@
       }
     },
     "activate": {
+      "iActivate": "I activate my votes",
+      "stepperHeader": {
+        "title": "Activate vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
       "title": "Activate votes",
       "steps": {
-        "vote": {
-          "title": "Vote"
-        },
-        "connectDevice": {
-          "title": "Device"
-        },
-        "confirmation": {
-          "title": "Confirmation",
+        "verification": {
           "success": {
-            "title": "",
-            "text": "Your vote was successfully activated.",
-            "cta": "View details"
-          },
-          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            "title": "Activation successful",
+            "text": "Your vote was successfully activated."
+          }
         }
       }
     },

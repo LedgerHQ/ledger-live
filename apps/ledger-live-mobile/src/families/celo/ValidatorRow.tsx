@@ -9,15 +9,18 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Touchable from "../../components/Touchable";
 import ValidatorImage from "./ValidatorImage";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/lib/families/celo/types";
+import BigNumber from "bignumber.js";
 
 const ValidatorRow = ({
   onPress,
   validator,
   account,
+  amount
 }: {
   onPress: (v: CeloValidatorGroup) => void;
   validator: CeloValidatorGroup;
   account: AccountLike;
+  amount: BigNumber
 }) => {
   const onPressT = useCallback(() => {
     onPress(validator);
@@ -56,7 +59,7 @@ const ValidatorRow = ({
             <CurrencyUnitValue
               showCode
               unit={getAccountUnit(account)}
-              value={validator.votes}
+              value={amount}
             />
           </Text>
         </Text>
