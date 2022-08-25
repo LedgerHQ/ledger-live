@@ -35,6 +35,11 @@ export class SettingsPage {
     await this.experimentalTab.click();
   }
 
+  async changeLanguage(fromLanguage: string, toLanguage: string) {
+    await this.page.locator(`text="${fromLanguage}"`).click();
+    await this.page.locator(`text="${toLanguage}"`).click();
+  }
+
   async enableDevMode() {
     await this.experimentalDevModeToggle.click();
   }

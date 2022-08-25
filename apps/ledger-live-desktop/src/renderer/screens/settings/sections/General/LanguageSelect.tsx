@@ -124,6 +124,7 @@ const LanguageSelect = () => {
       <Track onUpdate event="LanguageSelect" currentRegion={currentLanguage.value} />
 
       <Select
+        aria-label="Select language"
         small
         minWidth={260}
         isSearchable={false}
