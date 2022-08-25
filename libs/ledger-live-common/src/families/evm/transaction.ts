@@ -1,12 +1,9 @@
-import { ethers } from "ethers";
+import { BigNumber } from "bignumber.js";
+import type { Account } from "@ledgerhq/types-live";
 import type {
-  EvmTransactionEIP1559,
-  EvmTransactionLegacy,
   Transaction as EvmTransaction,
   TransactionRaw as EvmTransactionRaw,
 } from "./types";
-import { BigNumber } from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
@@ -111,42 +108,6 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
 };
 
 /**
- * Adapter to convert a Ledger Live transaction to an Ethers transaction
- */
-export const transactionToEthersTransaction = (
-  tx: EvmTransaction
-): ethers.Transaction => {
-  const ethersTx = {
-    to: tx.recipient,
-    value: tx.amount
-      ? ethers.BigNumber.from(tx.amount.toFixed())
-      : ethers.BigNumber.from(0),
-    data: tx.data ? `0x${tx.data.toString("hex")}` : undefined,
-    gasLimit: ethers.BigNumber.from(tx.gasLimit.toFixed()),
-    nonce: tx.nonce,
-    chainId: tx.chainId,
-    type: tx.type,
-  } as Partial<ethers.Transaction>;
-
-  // is EIP-1559 transaction (type 2)
-  if (tx.type === 2) {
-    ethersTx.maxFeePerGas = ethers.BigNumber.from(
-      (tx as EvmTransactionEIP1559).maxFeePerGas.toFixed()
-    );
-    ethersTx.maxPriorityFeePerGas = ethers.BigNumber.from(
-      (tx as EvmTransactionEIP1559).maxPriorityFeePerGas.toFixed()
-    );
-  } else {
-    // is Legacy transaction (type 0)
-    ethersTx.gasPrice = ethers.BigNumber.from(
-      (tx as EvmTransactionLegacy).gasPrice.toFixed()
-    );
-  }
-
-  return ethersTx as ethers.Transaction;
-};
-
-/**
  * Create an unsigned transaction from a Ledger Live transaction.
  * Usually called "buildTransaction"
  */
@@ -168,7 +129,6 @@ export default {
   fromTransactionRaw,
   toTransactionRaw,
   toTransactionStatusRaw,
-  transactionToEthersTransaction,
   transactionToUnsignedTransaction,
   formatTransactionStatus,
   fromTransactionStatusRaw,

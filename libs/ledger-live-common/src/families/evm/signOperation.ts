@@ -3,12 +3,10 @@ import { Observable } from "rxjs";
 import Eth from "@ledgerhq/hw-app-eth";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { Account, SignOperationEvent } from "@ledgerhq/types-live";
-import { withDevice } from "../../hw/deviceAccess";
+import { transactionToUnsignedTransaction } from "./transaction";
+import { transactionToEthersTransaction } from "./adapters";
 import { Transaction as EvmTransaction } from "./types";
-import {
-  transactionToUnsignedTransaction,
-  transactionToEthersTransaction,
-} from "./transaction";
+import { withDevice } from "../../hw/deviceAccess";
 
 /**
  * Serialize a Ledger Live transaction into an hex string
@@ -22,8 +20,10 @@ const getSerializedTransaction = async (
     account,
     tx
   );
-  const unsignedEthersTransaction =
-    transactionToEthersTransaction(unsignedTransaction);
+  const unsignedEthersTransaction = transactionToEthersTransaction(
+    unsignedTransaction,
+    account
+  );
 
   return ethers.utils.serializeTransaction(
     unsignedEthersTransaction,

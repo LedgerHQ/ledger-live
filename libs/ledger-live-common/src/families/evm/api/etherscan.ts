@@ -1,9 +1,9 @@
 import { Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { etherscanOperationToOperation } from "../adapters";
 import { EtherscanOperation } from "../types";
 import { makeLRUCache } from "../../../cache";
 import network from "../../../network";
-import { etherscanOperationToOperation } from "../logic";
 
 /**
  * Get all the latest "normal" transactions (no tokens / NFTs)

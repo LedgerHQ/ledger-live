@@ -1,9 +1,5 @@
-import eip55 from "eip55";
 import BigNumber from "bignumber.js";
-import { Operation, OperationType } from "@ledgerhq/types-live";
-import { encodeOperationId } from "../../operation";
 import {
-  EtherscanOperation,
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -36,55 +32,4 @@ export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
       ?.plus((tx as EvmTransactionEIP1559)?.maxPriorityFeePerGas)
       ?.multipliedBy(tx.gasLimit) || new BigNumber(0)
   );
-};
-
-/**
- * Adapter to convert an Etherscan-like operation into a Ledger Live Operation
- */
-export const etherscanOperationToOperation = (
-  accountId: string,
-  address: string,
-  tx: EtherscanOperation
-): Operation | null => {
-  const from = eip55.encode(tx.from);
-  const to = tx.to ? eip55.encode(tx.to) : "";
-  const value = new BigNumber(tx.value);
-  const fee = new BigNumber(tx.gasUsed).times(new BigNumber(tx.gasPrice));
-
-  const type = ((): OperationType => {
-    // Do not show interaction with Smart Contract
-    if (tx.contractAddress) {
-      return "NONE";
-    }
-
-    if (to === eip55.encode(address)) {
-      return "IN";
-    }
-    if (from === eip55.encode(address)) {
-      return "OUT";
-    }
-
-    return "NONE";
-  })();
-
-  try {
-    return {
-      id: encodeOperationId(accountId, tx.hash, type),
-      hash: tx.hash,
-      type: type,
-      value: type === "OUT" ? value.plus(fee) : value,
-      fee,
-      senders: [from],
-      recipients: [to],
-      blockHeight: parseInt(tx.blockNumber, 10),
-      blockHash: tx.blockHash,
-      transactionSequenceNumber: parseInt(tx.nonce, 10),
-      accountId: accountId,
-      date: new Date(parseInt(tx.timeStamp, 10) * 1000),
-      extra: {},
-    };
-  } catch (e) {
-    // if something went wrong while parsing the etherscan operation, just return null
-    return null;
-  }
 };
