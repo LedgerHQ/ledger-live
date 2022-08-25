@@ -18,7 +18,6 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
@@ -112,7 +111,6 @@ export default function VoteAmount({ navigation, route }: Props) {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const currency = getAccountCurrency(account);
   const error =
     amount.eq(0) || bridgePending
       ? null
