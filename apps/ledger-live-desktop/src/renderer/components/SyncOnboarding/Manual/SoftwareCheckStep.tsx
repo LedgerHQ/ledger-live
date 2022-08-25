@@ -7,6 +7,7 @@ import GenuineCheckModal from "./GenuineCheckModal";
 export enum SoftwareCheckStatus {
   inactive = "inactive",
   requested = "requested",
+  updateAvailable = "updateAvailable",
   cancelled = "cancelled",
   active = "active",
   completed = "completed",
