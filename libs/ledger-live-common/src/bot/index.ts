@@ -479,43 +479,85 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   // Add performance details
   body += "<details>\n";
   body += `<summary>Performance ⏲ ${formatTime(totalDuration)}</summary>\n\n`;
-  body += `- total currency preload: ${formatTime(
-    results.reduce((sum, r) => (r.preloadDuration || 0) + sum, 0)
-  )}\n`;
-  body += `- total scan accounts: ${formatTime(
-    results.reduce((sum, r) => (r.scanDuration || 0) + sum, 0)
-  )}\n`;
-  function sumMutation(f) {
-    return results.reduce(
-      (sum, r) => sum + (r.mutations?.reduce((sum, m) => sum + f(m), 0) || 0),
-      0
-    );
+
+  function sumMutation(mutations, f) {
+    return mutations?.reduce((sum, m) => sum + (f(m) || 0), 0) || 0;
   }
+  function sumResults(f) {
+    return results.reduce((sum, r) => sum + (f(r) || 0), 0);
+  }
+  function sumResultsMutation(f) {
+    return sumResults((r) => sumMutation(r.mutations, f));
+  }
+
+  body +=
+    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n";
+  body += "|---|---|---|---|---|---|---|---|\n";
+
+  results.forEach((r) => {
+    body += `| ${r.spec.name} (${
+      (r.accountsBefore || []).filter((a) => a.used).length
+    }) |`;
+    body += `${formatTime(r.preloadDuration || 0)} |`;
+    body += `${formatTime(r.scanDuration || 0)} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) => m.resyncAccountsDuration || 0)
+    )} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) =>
+        m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
+      )
+    )} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) =>
+        m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
+      )
+    )} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) =>
+        m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
+      )
+    )} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) =>
+        m.broadcastedTime && m.confirmedTime
+          ? m.confirmedTime - m.broadcastedTime
+          : 0
+      )
+    )} |\n`;
+  });
+
+  body += "| **TOTAL** |";
+  body += `${formatTime(sumResults((r) => r.preloadDuration))} |`;
+  body += `- total scan accounts: ${formatTime(
+    sumResults((r) => r.scanDuration)
+  )} |`;
   body += `- in accounts resync: ${formatTime(
-    sumMutation((m) => m.resyncAccountsDuration || 0)
-  )}\n`;
+    sumResultsMutation((m) => m.resyncAccountsDuration || 0)
+  )} |`;
   body += `- in transaction status: ${formatTime(
-    sumMutation((m) =>
+    sumResultsMutation((m) =>
       m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
     )
-  )}\n`;
+  )} |`;
   body += `- in signOperation: ${formatTime(
-    sumMutation((m) =>
+    sumResultsMutation((m) =>
       m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
     )
-  )}\n`;
+  )} |`;
   body += `- in broadcast: ${formatTime(
-    sumMutation((m) =>
+    sumResultsMutation((m) =>
       m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
     )
-  )}\n`;
+  )} |`;
   body += `- in operation confirmation: ${formatTime(
-    sumMutation((m) =>
+    sumResultsMutation((m) =>
       m.broadcastedTime && m.confirmedTime
         ? m.confirmedTime - m.broadcastedTime
         : 0
     )
-  )}\n`;
+  )} |\n`;
+
   body += "\n</details>\n\n";
 
   const { BOT_REPORT_FOLDER } = process.env;
