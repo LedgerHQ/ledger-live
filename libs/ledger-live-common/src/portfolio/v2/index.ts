@@ -12,6 +12,7 @@ export const defaultAssetsDistribution = {
   minShowFirst: 1,
   maxShowFirst: 6,
   showFirstThreshold: 0.95,
+  showEmptyAccounts: false,
 };
 export type AssetsDistributionOpts = typeof defaultAssetsDistribution;
 import type {
@@ -325,10 +326,11 @@ export function getAssetsDistribution(
   cvCurrency: Currency,
   opts?: AssetsDistributionOpts
 ): AssetsDistribution {
-  const { minShowFirst, maxShowFirst, showFirstThreshold } = {
-    ...defaultAssetsDistribution,
-    ...opts,
-  };
+  const { minShowFirst, maxShowFirst, showFirstThreshold, showEmptyAccounts } =
+    {
+      ...defaultAssetsDistribution,
+      ...opts,
+    };
   const idBalances: Record<string, number> = {};
   const idCurrencies: Record<string, CryptoCurrency | TokenCurrency> = {};
   const currenciesAccounts: Record<string, AccountLike[]> = {};
@@ -345,7 +347,7 @@ export function getAssetsDistribution(
       currenciesAccounts[id].push(account);
     }
 
-    if (account.balance.isGreaterThan(0)) {
+    if (showEmptyAccounts || account.balance.isGreaterThan(0)) {
       idCurrencies[id] = cur;
       idBalances[id] = (idBalances[id] ?? 0) + account.balance.toNumber();
     }
@@ -377,7 +379,7 @@ export function getAssetsDistribution(
     return assetsDistributionNotAvailable;
   }
 
-  const isAvailable = sum !== 0;
+  const isAvailable = sum !== 0 || showEmptyAccounts;
   const list = idCurrenciesKeys
     .map((id) => {
       const currency = idCurrencies[id];

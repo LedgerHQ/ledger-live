@@ -48,7 +48,7 @@ const AssetRow = ({
         },
       });
     }
-  }, [currency.id, navigation, navigationParams]);
+  }, [currency, currentScreen, navigation, navigationParams]);
 
   return (
     <AssetRowLayout

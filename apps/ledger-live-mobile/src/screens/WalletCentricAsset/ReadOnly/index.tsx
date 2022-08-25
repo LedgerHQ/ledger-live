@@ -10,6 +10,11 @@ import { useTranslation } from "react-i18next";
 import { Box } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
+import {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import accountSyncRefreshControl from "../../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -31,7 +36,7 @@ import BuyDeviceBanner, {
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 
 type RouteParams = {
-  currencyId: string;
+  currency: CryptoCurrency | TokenCurrency;
 };
 
 type Props = {
@@ -45,8 +50,8 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 
 const ReadOnlyAssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
-  const { currencyId } = route?.params;
-  const currency = getCryptoCurrencyById(currencyId);
+  const currencyParam = route?.params?.currency;
+  const currency = getCryptoCurrencyById(currencyParam?.id);
   const { colors } = useTheme();
 
   const counterValueCurrency: Currency = useSelector(
@@ -150,6 +155,8 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
         currency={currency}
+        assetPortfolio={assetPortfolio}
+        counterValueCurrency={counterValueCurrency}
       />
     </TabBarSafeAreaView>
   );
