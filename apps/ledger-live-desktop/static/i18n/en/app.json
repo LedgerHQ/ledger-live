@@ -1115,6 +1115,12 @@
           "completed": "Software is up to date"
         }
       },
+      "installApplications": {
+        "title": "We recommend downloading a default set of apps. You can download more later",
+        "install": "Install",
+        "skip": "I'll do that later",
+        "info": "Apps on Nano are used to approve transactions. You can add or remove them at any time."
+      },
       "genuineCheckModal": {
         "title": "Authenticity Check",
         "paragraph1": "Let's make sure your Nano is Authentic and safe to use",
