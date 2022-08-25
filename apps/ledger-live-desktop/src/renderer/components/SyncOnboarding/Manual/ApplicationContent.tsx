@@ -6,6 +6,8 @@ import Illustration from "~/renderer/components/Illustration";
 import { Bullet, Status } from "./shared";
 import Coins from "./assets/coins.png";
 
+// TODO: this is a placeholder, implement the real logic
+
 const InstallingApplicationContent = () => {
   const { t } = useTranslation();
 
