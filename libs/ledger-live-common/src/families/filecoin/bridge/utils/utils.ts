@@ -106,7 +106,7 @@ export const getTxToBroadcast = (
   operation: Operation,
   signature: string
 ): BroadcastTransactionRequest => {
-  const { extra, senders, recipients, value } = operation;
+  const { extra, senders, recipients, value, fee } = operation;
   const {
     gasLimit,
     gasFeeCap,
@@ -128,7 +128,7 @@ export const getTxToBroadcast = (
       gaslimit: gasLimit.toNumber(),
       gaspremium: gasPremium.toString(),
       gasfeecap: gasFeeCap.toString(),
-      value: value.toFixed(),
+      value: value.minus(fee).toFixed(),
     },
     signature: {
       type: signatureType,
