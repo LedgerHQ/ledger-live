@@ -40,4 +40,4 @@ ledger-live-desktop/tests/**/*-snapshots/ @ledgerhq/live-qa
 
 # Cross-teams
 .github/**/bot-*.yml                 @gre @ledgerhq/live-blockchain-support @ledgerhq/live-qa
-ledgerjs/packages/types-live/        @ledgerhq/ledger-live
+ledgerjs/packages/types-live/        @gre @ledgerhq/live-blockchain-support @ledgerhq/live-platform-and-services @ledgerhq/live-devices
