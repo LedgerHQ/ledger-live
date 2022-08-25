@@ -3607,6 +3607,10 @@
             "active": "Active",
             "pending": "Pending"
           },
+          "amount": {
+            "available": "Available",
+            "max": "Max"
+          },
           "verification": {
             "success": {
               "title": "You have successfully revoked your votes",

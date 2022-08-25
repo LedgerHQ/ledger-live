@@ -153,7 +153,7 @@ export default function RevokeSummary({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="VoteFlow" name="Summary" />
+      <TrackScreen category="CeloRevoke" name="Summary" />
 
       <View style={styles.body}>
         <View style={styles.summary}>

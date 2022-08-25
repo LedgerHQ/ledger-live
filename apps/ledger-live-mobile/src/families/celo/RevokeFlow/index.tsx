@@ -17,7 +17,7 @@ import DelegationValidationSuccess from "./ValidationSuccess";
 
 const totalSteps = "3";
 
-function VoteFlow() {
+function RevokeFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(
@@ -47,7 +47,6 @@ function VoteFlow() {
           ),
         }}
       />
-
       <Stack.Screen
         name={ScreenName.CeloRevokeValidatorSelect}
         component={SelectValidator}
@@ -125,6 +124,6 @@ const options = {
   headerShown: false,
 };
 
-export { VoteFlow as component, options };
+export { RevokeFlow as component, options };
 
 const Stack = createStackNavigator();

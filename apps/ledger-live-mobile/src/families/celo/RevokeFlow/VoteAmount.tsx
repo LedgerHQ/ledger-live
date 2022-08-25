@@ -163,7 +163,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                 <View style={styles.available}>
                   <View style={styles.availableLeft}>
                     <LText>
-                      <Trans i18nKey="celo.vote.flow.steps.amount.available" />
+                      <Trans i18nKey="celo.revoke.flow.steps.amount.available" />
                     </LText>
                     <LText semiBold>
                       {maxSpendable ? (
@@ -180,7 +180,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                   {typeof useAllAmount === "boolean" ? (
                     <View style={styles.availableRight}>
                       <LText style={styles.maxLabel}>
-                        <Trans i18nKey="celo.vote.flow.steps.amount.max" />
+                        <Trans i18nKey="celo.revoke.flow.steps.amount.max" />
                       </LText>
                       <Switch
                         style={styles.switch}
