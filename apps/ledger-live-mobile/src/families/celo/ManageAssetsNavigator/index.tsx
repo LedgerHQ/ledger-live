@@ -121,8 +121,6 @@ function ManageAssetsNavigator() {
   const activatingEnabled = hasActivatableVotes(account as CeloAccount);
   const revokingEnabled = hasRevokableVotes(account as CeloAccount);
 
-  console.log("Activatable: ", activatableVotes(account as CeloAccount));
-
   return (
     <SafeAreaView
       style={{ flex: 1, justifyContent: "space-between", alignItems: "center" }}
