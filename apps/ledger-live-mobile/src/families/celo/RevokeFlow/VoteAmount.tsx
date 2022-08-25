@@ -119,7 +119,7 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="RevokeFlow" name="Amount" />
+      <TrackScreen category="CeloRevoke" name="Amount" />
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
       >
