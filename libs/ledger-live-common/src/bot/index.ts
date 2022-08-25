@@ -579,12 +579,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         "utf-8"
       ),
       fs.promises.writeFile(
-        path.join(BOT_REPORT_FOLDER, "before-app.json"),
-        makeAppJSON(allAccountsBefore),
-        "utf-8"
-      ),
-      fs.promises.writeFile(
-        path.join(BOT_REPORT_FOLDER, "after-app.json"),
+        path.join(BOT_REPORT_FOLDER, "app.json"),
         makeAppJSON(allAccountsAfter),
         "utf-8"
       ),
