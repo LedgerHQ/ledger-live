@@ -27,10 +27,10 @@ const extraSessionTrackingPairsChanges: BehaviorSubject<
   TrackingPair[],
 > = new BehaviorSubject([]);
 
-export function useDistribution() {
+export function useDistribution(opts) {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
-  return useDistributionCommon({ accounts, to });
+  return useDistributionCommon({ accounts, to, ...opts });
 }
 
 export function useCalculateCountervalueCallback() {

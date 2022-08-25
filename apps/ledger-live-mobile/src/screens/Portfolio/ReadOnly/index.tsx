@@ -41,6 +41,7 @@ import BackgroundGradient from "../../../components/BackgroundGradient";
 import GraphCardContainer from "../GraphCardContainer";
 import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
+import { screen } from "../../../analytics";
 import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
 import { NavigatorName, ScreenName } from "../../../const";
 import FabActions from "../../../components/FabActions";

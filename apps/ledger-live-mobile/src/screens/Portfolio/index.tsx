@@ -82,7 +82,7 @@ function PortfolioScreen({ navigation }: Props) {
     () => Object.values(carouselVisibility).some(Boolean),
     [carouselVisibility],
   );
-  const distribution = useDistribution();
+  const distribution = useDistribution({ showEmptyAccounts: true });
   const accounts = useSelector(accountsSelector);
 
   const counterValueCurrency: Currency = useSelector(
@@ -139,7 +139,6 @@ function PortfolioScreen({ navigation }: Props) {
     ],
     [distribution],
   );
-
   const data = useMemo(
     () => [
       <Box onLayout={onPortfolioCardLayout}>

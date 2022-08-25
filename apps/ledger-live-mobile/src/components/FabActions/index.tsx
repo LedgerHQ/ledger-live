@@ -151,13 +151,19 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
           onClose={() => setIsDisabledActionModalOpened(false)}
         />
       )}
-      <QuickActionList
+      {/* // Use two columns only when we have only two or four items, otherwise three columns */}
+      {quickActions.length === 2 || quickActions.length === 4 ?
+        <QuickActionList
+          data={quickActions}
+          numColumns={2}
+          key={'two_columns'}
+          keyExtractor={item => "two_columns_" + item.id}
+        /> : <QuickActionList
         data={quickActions}
-        // Use two columns only when we have only two or four items, otherwise three columns
-        numColumns={
-          quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
-        }
-      />
+        numColumns={3}
+        key={'three_columns'}
+        keyExtractor={item => "three_columns_" + item.id}
+      />}
     </>
   );
 };
@@ -245,13 +251,21 @@ const FabAssetActionsComponent: React.FC<Props> = ({
   }));
 
   return (
-    <QuickActionList
-      data={quickActions}
-      // Use two columns only when we have only two or four items, otherwise three columns
-      numColumns={
-        quickActions.length === 2 || quickActions.length === 4 ? 2 : 3
-      }
-    />
+    <>
+      {/* // Use two columns only when we have only two or four items, otherwise three columns */}
+      {quickActions.length === 2 || quickActions.length === 4 ?
+        <QuickActionList
+          data={quickActions}
+          numColumns={2}
+          key={'two_columns'}
+          keyExtractor={item => "two_columns_" + item.id}
+        /> : <QuickActionList
+        data={quickActions}
+        numColumns={3}
+        key={'three_columns'}
+        keyExtractor={item => "three_columns_" + item.id}
+      />}
+    </>
   );
 };
 
