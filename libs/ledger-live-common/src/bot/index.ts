@@ -49,7 +49,11 @@ function makeAppJSON(accounts: Account[]) {
   return JSON.stringify(jsondata);
 }
 
-export async function bot({ currency, family, mutation }: Arg = {}) {
+export async function bot({
+  currency,
+  family,
+  mutation,
+}: Arg = {}): Promise<void> {
   const SEED = getEnv("SEED");
   invariant(SEED, "SEED required");
   const specs: any[] = [];
@@ -109,7 +113,6 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   );
   const totalDuration = Date.now() - timeBefore;
   const allAppPaths = uniq(results.map((r) => r.appPath || "").sort());
-  const allAccountsBefore = flatMap(results, (r) => r.accountsBefore || []);
   const allAccountsAfter = flatMap(results, (r) => r.accountsAfter || []);
   let countervaluesError;
   const countervaluesState = await loadCountervalues(initialState, {

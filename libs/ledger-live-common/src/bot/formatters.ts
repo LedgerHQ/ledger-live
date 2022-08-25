@@ -31,7 +31,7 @@ export function formatAppCandidate(appCandidate: AppCandidate): string {
   return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
 }
 
-export function formatError(e: any, longform = false): string {
+export function formatError(e: unknown, longform = false): string {
   let out = "";
   if (!e || typeof e !== "object") {
     out = String(e);

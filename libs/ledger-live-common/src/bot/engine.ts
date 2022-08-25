@@ -2,7 +2,7 @@ import expect from "expect";
 import invariant from "invariant";
 import now from "performance-now";
 import sample from "lodash/sample";
-import { throwError, of, Observable } from "rxjs";
+import { throwError, of, Observable, OperatorFunction } from "rxjs";
 import {
   first,
   filter,
@@ -592,7 +592,7 @@ export function autoSignTransaction<T extends Transaction>({
   account: Account;
   transaction: T;
   status: TransactionStatus;
-}) {
+}): OperatorFunction<SignOperationEvent, SignOperationEvent> {
   let sub;
   let observer;
   let state;
@@ -663,7 +663,9 @@ export function autoSignTransaction<T extends Transaction>({
     return of<SignOperationEvent>(e);
   });
 }
-export function getImplicitDeviceAction(currency: CryptoCurrency) {
+export function getImplicitDeviceAction(
+  currency: CryptoCurrency
+): DeviceAction<Transaction, any> {
   const actions = deviceActions[currency.family];
   const accept = actions && actions.acceptTransaction;
   invariant(
