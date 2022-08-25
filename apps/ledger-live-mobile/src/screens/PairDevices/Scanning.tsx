@@ -67,6 +67,10 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
           const device = e.descriptor;
           setDevices(devices => [...devices, device]);
         }
+        if (e.type === "replace") {
+          clearTimeout(timeout);
+          setDevices(e.descriptors);
+        }
       },
       error: (error: Error) => {
         logger.critical(error);

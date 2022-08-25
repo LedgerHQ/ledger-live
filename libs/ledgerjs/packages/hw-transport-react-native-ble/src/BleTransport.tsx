@@ -25,7 +25,7 @@ type RunnerEvent = any; // Can't depend on live-common for this, TODO get it fro
 export const isRunningBIMQueue = (): boolean => !!runningQueue;
 
 class Ble extends Transport {
-  static scanObserver: Observer<DescriptorEvent<unknown>>;
+  static scanObserver: Observer<any>;
   static stateObserver: Observer<{ type: string }>;
   static globalBridgeEventSubscription: EventSubscription;
   static disconnecting = false;
@@ -118,15 +118,15 @@ class Ble extends Transport {
 
   static onBridgeGlobalEvent(rawEvent): void {
     const { event, type, data } = rawEvent;
-    if (event === "new-device") {
+    if (event === "new-devices") {
+      Ble.scanObserver?.next({
+        type: "replace",
+        descriptors: data?.devices,
+      });
+    } else if (event === "new-device") {
       Ble.scanObserver?.next({
         type: "add",
-        descriptor: {
-          id: data.uuid,
-          name: data.name,
-          rssi: data.rssi,
-          serviceUUIDs: [data.service],
-        },
+        descriptor: data,
       });
     } else if (event === "status") {
       if (Ble.stateObserver) {
