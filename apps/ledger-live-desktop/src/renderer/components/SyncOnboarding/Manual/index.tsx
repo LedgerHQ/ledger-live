@@ -125,7 +125,7 @@ const SyncOnboardingManual = () => {
         title: "Nano is ready",
       },
     ],
-    [handleSoftwareCheckComplete],
+    [t, handleSoftwareCheckComplete],
   );
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
@@ -160,16 +160,6 @@ const SyncOnboardingManual = () => {
   const handleDesyncTimerRunsOut = useCallback(() => {
     setTroubleshootingDrawerOpen(true);
   }, []);
-
-  useEffect(() => {
-    if (stepKey === StepKey.Ready) {
-      setTimeout(() => setStepKey(StepKey.Exit), readyRedirectDelay / 2);
-    }
-
-    if (stepKey === StepKey.Exit) {
-      setTimeout(() => history.push(`/sync-onboarding/completion`), readyRedirectDelay / 2);
-    }
-  }, [history, stepKey]);
 
   useEffect(() => {
     if (device) {
@@ -276,7 +266,7 @@ const SyncOnboardingManual = () => {
               onClick={() => setHelpDrawerOpen(true)}
             />
           </Flex>
-          <VerticalTimeline steps={steps as any} />
+          <VerticalTimeline steps={steps} />
         </Flex>
         <Flex flex={1} justifyContent="center" alignItems="center">
           <Illustration
