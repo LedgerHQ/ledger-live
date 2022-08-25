@@ -3,6 +3,7 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
   TransitionPresets,
+  StackNavigationProp,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/native-ui";
@@ -97,6 +98,9 @@ export type BaseNavigatorStackParamList = {
   // Hack: allows any other properties
   [otherScreens: string]: undefined | object;
 };
+
+export type BaseNavigatorProps =
+  StackNavigationProp<BaseNavigatorStackParamList>;
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
