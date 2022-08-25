@@ -532,28 +532,28 @@ export async function bot({
 
   body += "| **TOTAL** |";
   body += `${formatTime(sumResults((r) => r.preloadDuration))} |`;
-  body += `- total scan accounts: ${formatTime(
+  body += `${formatTime(
     sumResults((r) => r.scanDuration)
   )} |`;
-  body += `- in accounts resync: ${formatTime(
+  body += `${formatTime(
     sumResultsMutation((m) => m.resyncAccountsDuration || 0)
   )} |`;
-  body += `- in transaction status: ${formatTime(
+  body += `${formatTime(
     sumResultsMutation((m) =>
       m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
     )
   )} |`;
-  body += `- in signOperation: ${formatTime(
+  body += `${formatTime(
     sumResultsMutation((m) =>
       m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
     )
   )} |`;
-  body += `- in broadcast: ${formatTime(
+  body += `${formatTime(
     sumResultsMutation((m) =>
       m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
     )
   )} |`;
-  body += `- in operation confirmation: ${formatTime(
+  body += `${formatTime(
     sumResultsMutation((m) =>
       m.broadcastedTime && m.confirmedTime
         ? m.confirmedTime - m.broadcastedTime
