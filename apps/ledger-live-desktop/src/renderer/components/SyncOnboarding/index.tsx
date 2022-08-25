@@ -18,6 +18,7 @@ const SyncOnboarding = () => {
     <Flex width="100%" height="100%" position="relative">
       <Switch>
         <Route exact path={[`${path}/manual`]} render={() => <SyncOnboardingManual />} />
+        <Route exact path={`${path}/completion`} render={() => <CompletionScreen />} />
         <Route
           exact
           path={[`${path}/:deviceModelId`, `${path}/connection/:deviceModelId`]}
@@ -25,7 +26,6 @@ const SyncOnboarding = () => {
             <SyncOnboardingDeviceConnection {...routeProps.match.params} />
           )}
         />
-        <Route path={`${path}/completion`} render={props => <CompletionScreen {...props} />} />
       </Switch>
     </Flex>
   );
