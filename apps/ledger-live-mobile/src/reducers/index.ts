@@ -1,4 +1,3 @@
-/* eslint import/no-cycle: 0 */
 import { combineReducers } from "redux";
 import accounts from "./accounts";
 import settings from "./settings";
@@ -14,12 +13,12 @@ import type { RatingsState } from "./ratings";
 import type { NotificationsState } from "./notifications";
 
 export type State = {
-  accounts: AccountsState,
-  settings: SettingsState,
-  appstate: AppState,
-  ble: BleState,
-  ratings: RatingsState,
-  notifications: NotificationsState,
+  accounts: AccountsState;
+  settings: SettingsState;
+  appstate: AppState;
+  ble: BleState;
+  ratings: RatingsState;
+  notifications: NotificationsState;
 };
 
 const appReducer = combineReducers({
@@ -31,7 +30,7 @@ const appReducer = combineReducers({
   notifications,
 });
 
-const rootReducer = (state: State, action: *) => {
+const rootReducer = (state: State, action: any) => {
   if (__DEV__ && action.type === "DANGEROUSLY_OVERRIDE_STATE") {
     appReducer({ ...action.payload }, action);
   }

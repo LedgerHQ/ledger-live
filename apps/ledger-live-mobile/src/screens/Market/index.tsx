@@ -1,6 +1,3 @@
-/* eslint-disable import/named */
-/* eslint-disable import/no-unresolved */
-
 import React, {
   useMemo,
   useCallback,
@@ -48,6 +45,7 @@ import {
   setMarketFilterByStarredAccounts,
   setMarketRequestParams,
 } from "../../actions/settings";
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../components/RootNavigator";
 
 const noResultIllustration = {

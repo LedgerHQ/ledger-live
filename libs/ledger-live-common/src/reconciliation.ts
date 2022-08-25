@@ -323,6 +323,22 @@ export function patchAccount(
       }
       break;
     }
+    case "osmosis": {
+      const cosmosAcc = account as CosmosAccount;
+      const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
+      if (
+        !areSameResources(
+          toCosmosResourcesRaw(cosmosAcc.cosmosResources),
+          cosmosUpdatedRaw.cosmosResources
+        )
+      ) {
+        (next as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(
+          cosmosUpdatedRaw.cosmosResources
+        );
+        changed = true;
+      }
+      break;
+    }
     case "bitcoin": {
       if (shouldRefreshBitcoinResources(updatedRaw, account)) {
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(

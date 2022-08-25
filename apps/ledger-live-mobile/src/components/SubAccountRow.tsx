@@ -24,7 +24,9 @@ import Delta from "./Delta";
 type Props = {
   account: SubAccount;
   parentAccount: Account;
+  // eslint-disable-next-line no-unused-vars
   onSubAccountPress: (subAccount: SubAccount) => any;
+  // eslint-disable-next-line no-unused-vars
   onSubAccountLongPress: (tokenAccount: TokenAccount, account: Account) => any;
   useCounterValue?: boolean;
 };
@@ -45,10 +47,8 @@ function SubAccountRow({
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
   const range = useSelector(selectedTimeRangeSelector);
-  const {
-    countervalueChange,
-    cryptoChange,
-  } = useBalanceHistoryWithCountervalue({ account, range });
+  const { countervalueChange, cryptoChange } =
+    useBalanceHistoryWithCountervalue({ account, range });
 
   return (
     <LongPressGestureHandler

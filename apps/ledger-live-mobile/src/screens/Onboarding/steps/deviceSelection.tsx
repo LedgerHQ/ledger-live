@@ -19,8 +19,6 @@ function OnboardingStepDeviceSelection() {
   const { colors } = useTheme();
 
   const next = (deviceModelId: string) => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingUseCase, {
       deviceModelId,
     });

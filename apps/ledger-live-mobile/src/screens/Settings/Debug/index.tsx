@@ -17,6 +17,7 @@ import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 import AnalyticsConsoleRow from "./AnalyticsConsoleRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenDebugPlayground from "./OpenDebugPlayground";
+import OpenDebugFeatureFlags from "./OpenDebugFeatureFlags";
 import OpenLottie from "./OpenDebugLottie";
 import OpenDebugLogs from "./OpenDebugLogs";
 import SkipLock from "../../../components/behaviour/SkipLock";
@@ -47,11 +48,12 @@ export function DebugMocks() {
       <OpenDebugCrash />
       <OpenDebugStore />
       <OpenDebugEnv />
+      <OpenDebugFeatureFlags />
       <OpenDebugIcons />
       <OpenLottie />
       <OpenDebugPlayground />
       <ReadOnlyModeRow />
-      <HasOrderedNanoRow/>
+      <HasOrderedNanoRow />
       <MockModeRow />
       <AnalyticsConsoleRow />
       <AddMockAnnouncementButton title="Mock a new announcement" />

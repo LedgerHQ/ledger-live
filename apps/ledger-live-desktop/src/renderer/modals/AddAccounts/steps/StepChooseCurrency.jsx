@@ -23,11 +23,22 @@ import FullNodeStatus from "~/renderer/modals/AddAccounts/FullNodeStatus";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 import useEnv from "~/renderer/hooks/useEnv";
 import type { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
-  const currencies = useMemo(() => listSupportedCurrencies().concat(listSupportedTokens()), []);
+  const currencyOsmosis = useFeature("currencyOsmosis");
+
+  const currencies = useMemo(() => {
+    const currencies = listSupportedCurrencies().concat(listSupportedTokens())
+    
+    if (currencyOsmosis?.enabled) {
+      return currencies;
+    }
+
+    return currencies.filter(c => c.family !== "osmosis");
+  }, [currencyOsmosis]);
 
   const url =
     currency && currency.type === "TokenCurrency"

@@ -281,14 +281,6 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
     };
   }, [handleLoad, handleNewWindow]);
 
-  const handleOpenDevTools = useCallback(() => {
-    const webview = targetRef.current;
-
-    if (webview) {
-      webview.openDevTools();
-    }
-  }, []);
-
   return (
     <Container>
       <TrackPage category="Platform" name="App" appId={manifest.id} params={inputs} />
@@ -296,7 +288,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
         manifest={manifest}
         onReload={handleReload}
         onClose={onClose}
-        onOpenDevTools={handleOpenDevTools}
+        webviewRef={targetRef}
         config={config?.topBarConfig}
       />
 

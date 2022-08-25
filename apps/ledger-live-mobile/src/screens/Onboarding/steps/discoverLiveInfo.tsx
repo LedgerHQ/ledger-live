@@ -19,6 +19,7 @@ import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 import { NavigatorName } from "../../../const";
 import { screen, track } from "../../../analytics";
 
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
 
 const slidesImages = [
@@ -42,15 +43,17 @@ const Item = ({
   title: string;
   imageProps: ImageProps;
   displayNavigationButtons?: boolean;
+  currentIndex?: number;
 }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [
-    currentIndex,
-  ]);
+  const screenName = useMemo(
+    () => `Reborn Story Step ${currentIndex}`,
+    [currentIndex],
+  );
 
   const onClick = useCallback(
     (value: string) => {
@@ -64,8 +67,6 @@ const Item = ({
 
   const buyLedger = useCallback(() => {
     onClick("Buy a Ledger");
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(NavigatorName.BuyDevice);
   }, [navigation, onClick]);
 
@@ -74,11 +75,9 @@ const Item = ({
     dispatch(setReadOnlyMode(true));
     onClick("Explore without a device");
 
-    // Fixme: Navigate to read only page ?
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    navigation.navigate(NavigatorName.Base, {
-      screen: NavigatorName.Main,
+    navigation.reset({
+      index: 0,
+      routes: [{ name: NavigatorName.Base } as never],
     });
   }, [dispatch, navigation, onClick]);
 
@@ -176,12 +175,14 @@ function DiscoverLiveInfo() {
     [source],
   );
 
-  const autoChange = useCallback((index: number) => onChange(index, false), [
-    onChange,
-  ]);
-  const manualChange = useCallback((index: number) => onChange(index, true), [
-    onChange,
-  ]);
+  const autoChange = useCallback(
+    (index: number) => onChange(index, false),
+    [onChange],
+  );
+  const manualChange = useCallback(
+    (index: number) => onChange(index, true),
+    [onChange],
+  );
 
   return (
     <StyledSafeAreaView>

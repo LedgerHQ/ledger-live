@@ -15,9 +15,10 @@ import DebugBLE from "../../screens/DebugBLE";
 import DebugBLEBenchmark from "../../screens/DebugBLEBenchmark";
 import DebugCrash from "../../screens/DebugCrash";
 import DebugHttpTransport from "../../screens/DebugHttpTransport";
+import DebugFeatureFlags from "../../screens/DebugFeatureFlags";
 import DebugIcons from "../../screens/DebugIcons";
-import DebugLottie from "../../screens/DebugLottie.js";
-import DebugLogs from "../../screens/DebugLogs.js";
+import DebugLottie from "../../screens/DebugLottie";
+import DebugLogs from "../../screens/DebugLogs";
 import DebugStore from "../../screens/DebugStore";
 import DebugEnv from "../../screens/DebugEnv";
 import DebugPlayground from "../../screens/DebugPlayground";
@@ -54,9 +55,10 @@ import { useCurrentRouteName } from "../../helpers/routeHooks";
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
 
   const navigation = useNavigation();
   const currentRoute = useCurrentRouteName();
@@ -198,6 +200,13 @@ export default function SettingsNavigator() {
         component={DebugDevices}
         options={{
           title: "Debug Devices",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFeatureFlags}
+        component={DebugFeatureFlags}
+        options={{
+          title: "Debug Feature Flags",
         }}
       />
       <Stack.Screen
