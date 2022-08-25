@@ -52,6 +52,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction, TransactionStatus } from "../generated/types";
+import { botTest } from "./bot-test-context";
 
 let appCandidates;
 const localCache = {};
@@ -270,7 +271,7 @@ export async function runWithAppSpec<T extends Transaction>(
     appReport.mutations = mutationReports;
     appReport.accountsAfter = accounts;
   } catch (e: any) {
-    console.error(e);
+    if (process.env.CI) console.error(e);
     appReport.fatalError = e;
     log("engine", `spec ${spec.name} failed with ${String(e)}`);
   } finally {
@@ -359,7 +360,7 @@ export async function runOnAccount<T extends Transaction>({
           updates: r.updates,
         });
       } catch (error: any) {
-        console.error(error);
+        if (process.env.CI) console.error(error);
         unavailableMutationReasons.push({
           mutation,
           error,
@@ -552,7 +553,7 @@ export async function runOnAccount<T extends Transaction>({
       `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`
     );
   } catch (error: any) {
-    console.error(error);
+    if (process.env.CI) console.error(error);
     log("mutation-error", spec.name + ": " + formatError(error, true));
     report.error = error;
   }
@@ -723,7 +724,9 @@ function transactionTest<T>({
   // FIXME: .valueOf to do arithmetic operations on date with typescript
   const dt = Date.now().valueOf() - operation.date.valueOf();
   invariant(dt > 0, "operation.date must not be in in future");
-  expect(dt).toBeLessThan(timingThreshold);
+  botTest("operation.date less than 30mn ago", () =>
+    expect(dt).toBeLessThan(timingThreshold)
+  );
   invariant(!operation.hasFailed, "operation has failed");
   const { blockAvgTime } = account.currency;
 
