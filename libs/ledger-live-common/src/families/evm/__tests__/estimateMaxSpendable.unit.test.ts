@@ -1,10 +1,10 @@
+import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { makeAccount } from "../testUtils";
-import BigNumber from "bignumber.js";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getEstimatedFees } from "../logic";
+import { makeAccount } from "../testUtils";
 
 const account: Account = {
   ...makeAccount("0xkvn", findCryptoCurrencyById("ethereum")!),

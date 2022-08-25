@@ -1,6 +1,6 @@
 import { AssertionError } from "assert";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { DEFAULT_RETRIES_RPC_METHODS, withApi } from "../api/rpc";
+import { DEFAULT_RETRIES_RPC_METHODS, withApi } from "../api/rpc.common";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain",

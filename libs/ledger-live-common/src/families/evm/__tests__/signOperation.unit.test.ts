@@ -2,12 +2,12 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import * as API from "../api/rpc";
-import signOperation from "../signOperation";
-import * as Device from "../../../hw/deviceAccess";
 import { Transaction as EvmTransaction } from "../types";
-import { makeAccount } from "../testUtils";
+import * as Device from "../../../hw/deviceAccess";
+import signOperation from "../signOperation";
 import { getEstimatedFees } from "../logic";
+import { makeAccount } from "../testUtils";
+import * as API from "../api/rpc.common";
 
 const currency: CryptoCurrency = {
   ...findCryptoCurrencyById("ethereum")!,

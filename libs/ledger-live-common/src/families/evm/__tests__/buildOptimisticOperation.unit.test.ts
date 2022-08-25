@@ -4,9 +4,9 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import buildOptimisticOperation from "../buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../types";
-import { makeAccount } from "../testUtils";
-import { getEstimatedFees } from "../logic";
 import { encodeOperationId } from "../../../operation";
+import { getEstimatedFees } from "../logic";
+import { makeAccount } from "../testUtils";
 
 const currency: CryptoCurrency = findCryptoCurrencyById("ethereum")!;
 const account: Account = makeAccount(

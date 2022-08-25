@@ -1,14 +1,25 @@
 import BigNumber from "bignumber.js";
+import { Account, Operation } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { GetAccountShapeArg0 } from "../../../bridge/jsHelpers";
-import * as rpcAPI from "../api/rpc";
-import * as etherscanAPI from "../api/etherscan";
 import * as synchronization from "../synchronization";
 import { decodeAccountId } from "../../../account";
-import { Account, Operation } from "@ledgerhq/types-live";
+import * as etherscanAPI from "../api/etherscan";
+import * as rpcAPI from "../api/rpc.common";
 import { makeAccount } from "../testUtils";
 
-const currency = findCryptoCurrencyById("ethereum")!;
+const currency: CryptoCurrency = {
+  ...findCryptoCurrencyById("ethereum")!,
+  ethereumLikeInfo: {
+    chainId: 1,
+    rpc: "https://my-rpc.com",
+    explorer: {
+      uri: "https://api.com",
+      type: "etherscan",
+    },
+  },
+};
 const getAccountShapeParameters: GetAccountShapeArg0 = {
   address: "0xkvn",
   currency,
@@ -56,6 +67,9 @@ describe("EVM Family", () => {
         beforeAll(() => {
           jest
             .spyOn(etherscanAPI, "getLatestTransactions")
+            .mockImplementation(() => Promise.resolve([]));
+          jest
+            .spyOn(etherscanAPI?.default, "getLatestTransactions")
             .mockImplementation(() => Promise.resolve([]));
         });
 
@@ -119,6 +133,9 @@ describe("EVM Family", () => {
           jest
             .spyOn(etherscanAPI, "getLatestTransactions")
             .mockImplementation(() => Promise.resolve([fakeOperation]));
+          jest
+            .spyOn(etherscanAPI?.default, "getLatestTransactions")
+            .mockImplementation(() => Promise.resolve([fakeOperation]));
         });
 
         afterAll(() => {
@@ -141,6 +158,9 @@ describe("EVM Family", () => {
         beforeAll(() => {
           jest
             .spyOn(etherscanAPI, "getLatestTransactions")
+            .mockImplementation(() => Promise.resolve([]));
+          jest
+            .spyOn(etherscanAPI?.default, "getLatestTransactions")
             .mockImplementation(() => Promise.resolve([]));
           jest
             .spyOn(synchronization, "getOperationStatus")

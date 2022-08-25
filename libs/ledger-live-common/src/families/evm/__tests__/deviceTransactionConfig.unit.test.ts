@@ -3,9 +3,9 @@ import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import getDeviceTransactionConfig from "../deviceTransactionConfig";
+import getTransactionStatus from "../getTransactionStatus";
 import { Transaction as EvmTransaction } from "../types";
 import { makeAccount } from "../testUtils";
-import getTransactionStatus from "../getTransactionStatus";
 
 const currency: CryptoCurrency = findCryptoCurrencyById("ethereum")!;
 const account: Account = makeAccount("0xkvn", currency);

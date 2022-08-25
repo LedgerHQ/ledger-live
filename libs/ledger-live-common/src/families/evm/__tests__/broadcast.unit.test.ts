@@ -4,11 +4,11 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import buildOptimisticOperation from "../buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../types";
-import { getEstimatedFees } from "../logic";
-import * as API from "../api/rpc";
-import { makeAccount } from "../testUtils";
-import broadcast from "../broadcast";
 import { encodeOperationId } from "../../../operation";
+import { getEstimatedFees } from "../logic";
+import { makeAccount } from "../testUtils";
+import * as API from "../api/rpc.common";
+import broadcast from "../broadcast";
 
 const currency: CryptoCurrency = findCryptoCurrencyById("ethereum")!;
 const account: Account = makeAccount(
