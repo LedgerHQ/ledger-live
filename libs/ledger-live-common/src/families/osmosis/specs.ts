@@ -22,7 +22,7 @@ import { BigNumber } from "bignumber.js";
 
 const currency = getCryptoCurrencyById("osmosis");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.00001");
-const maxAccount = 3;
+const maxAccount = 16;
 // amounts of delegation are not exact so we are applying an approximation
 function approximateValue(value) {
   return "~" + value.div(100).integerValue().times(100).toString();
