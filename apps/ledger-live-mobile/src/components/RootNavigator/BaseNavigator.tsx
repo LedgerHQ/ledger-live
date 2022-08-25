@@ -89,6 +89,17 @@ import Learn from "../../screens/Learn";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 
+// TODO: types for each screens and navigators need to be set
+export type BaseNavigatorStackParamList = {
+  // An ex
+  PlatformApp: { name: string };
+
+  // Hack: allows any other properties
+  [otherScreens: string]: undefined | object;
+};
+
+const Stack = createStackNavigator<BaseNavigatorStackParamList>();
+
 export default function BaseNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -617,5 +628,3 @@ export default function BaseNavigator() {
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();
