@@ -103,7 +103,7 @@ export default function VoteAmount({ navigation, route }: Props) {
   const onContinue = () => {
     navigation.navigate(ScreenName.CeloRevokeSummary, {
       ...route.params,
-      amount: status.amount.toNumber(),
+      amount: status.amount,
     });
   };
 
