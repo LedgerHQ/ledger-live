@@ -161,7 +161,7 @@ function PostWelcomeSelection({
 
       onCardClick(data, "Explore LL");
     },
-    [onCardClick],
+    [dispatch, onCardClick, userHasDevice],
   );
 
   const pressBuy = useCallback(
