@@ -6,7 +6,7 @@ type Props = {
   lightSource: string;
   darkSource: string;
   size: number;
-  optionalHeight?: number;
+  height?: number;
 };
 
 const defineStyleFromTheme = (lightAsset: string, darkAsset: string) => (
@@ -15,7 +15,7 @@ const defineStyleFromTheme = (lightAsset: string, darkAsset: string) => (
 
 const Illustration: ThemedComponent<Props> = styled(Box).attrs((p: Props) => ({
   width: `${p.size}px`,
-  height: p.optionalHeight ? `${p.optionalHeight}px` : `${p.size}px`,
+  height: p.height ? `${p.height}px` : `${p.size}px`,
 }))<Props>`
   background: url(${(p: Props) => defineStyleFromTheme(p.lightSource, p.darkSource)(p)});
   background-size: cover;

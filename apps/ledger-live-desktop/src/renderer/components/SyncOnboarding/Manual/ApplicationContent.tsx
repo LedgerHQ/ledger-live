@@ -37,7 +37,7 @@ const ApplicationContent = () => {
 
   return (
     <Flex flexDirection="column" alignItems="center" rowGap="24px">
-      <Illustration lightSource={Coins} darkSource={Coins} size={106} optionalHeight={40} />
+      <Illustration lightSource={Coins} darkSource={Coins} size={106} height={40} />
       <Text variant="h5">{"Nano uses apps to enable secure blockchain transactions"}</Text>
       <Text color="palette.neutral.c70" variant="paragraph">
         {t("syncOnboarding.manual.installApplications.title")}
