@@ -75,13 +75,10 @@ const OperationsHistory = ({ accounts }: Props) => {
       button: "See All",
       screen: currentScreen,
     });
-    navigation.navigate(NavigatorName.Analytics, {
-      screen: ScreenName.AnalyticsOperations,
-      params: {
-        accountsIds: accounts.map(account => account.id),
-      },
+    navigation.navigate(ScreenName.AnalyticsOperations, {
+      accountsIds: accounts.map(account => account.id),
     });
-  }, [navigation, accounts]);
+  }, [currentScreen, navigation, accounts]);
 
   return (
     <Flex flex={1}>

@@ -50,9 +50,7 @@ const Allocations = () => {
       analytics: "Allocations",
       screen: currentScreen,
     });
-    navigation.navigate(NavigatorName.Analytics, {
-      screen: ScreenName.AnalyticsAllocation,
-    });
+    navigation.navigate(ScreenName.AnalyticsAllocation);
   }, [navigation, currentScreen]);
 
   const distributionListFormatted = useMemo(() => {
