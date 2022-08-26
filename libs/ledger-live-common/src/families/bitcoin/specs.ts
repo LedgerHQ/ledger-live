@@ -81,23 +81,27 @@ const genericTest = ({
     recipients: opShape.recipients.slice(0).sort(),
   });
 
-  botTest("operation matches tx senders and recipients", () =>
+  botTest("operation matches tx senders and recipients", () => {
+    let expectedSenders = nonDeterministicPicking
+      ? operation.senders
+      : txInputs.map((t) => t.address).filter(Boolean);
+    let expectedRecipients = txOutputs
+      .filter((o) => o.address && !o.isChange)
+      .map((o) => o.address)
+      .filter(Boolean);
+    if (account.currency.id === "bitcoin_cash") {
+      expectedSenders = expectedSenders.map(bchToCashaddrAddressWithoutPrefix);
+      expectedRecipients = expectedRecipients.map(
+        bchToCashaddrAddressWithoutPrefix
+      );
+    }
     expect(asSorted(operation)).toMatchObject(
       asSorted({
-        senders: nonDeterministicPicking
-          ? operation.senders
-          : txInputs.map((t) => t.address).filter(Boolean),
-        recipients: txOutputs
-          .filter((o) => o.address && !o.isChange)
-          .map((o) =>
-            account.currency.id === "bitcoin_cash"
-              ? bchToCashaddrAddressWithoutPrefix(o.address)
-              : o.address
-          )
-          .filter(Boolean),
+        senders: expectedSenders,
+        recipients: expectedRecipients,
       })
-    )
-  );
+    );
+  });
   const utxosPicked = (status.txInputs || [])
     .map(({ previousTxHash, previousOutputIndex }) =>
       bitcoinResources.utxos.find(
