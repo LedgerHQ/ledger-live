@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, SectionList, ActivityIndicator } from "react-native";
+import { View, StyleSheet, SectionList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useNavigation } from "@react-navigation/native";
 import { HeaderBackButton } from "@react-navigation/elements";
@@ -209,6 +209,7 @@ class DisplayResult extends Component<Props, State> {
             ListFooterComponent={this.ListFooterComponent}
             ListEmptyComponent={this.ListEmptyComponent}
             keyExtractor={this.keyExtractor}
+            extraData={importing}
             sections={Object.keys(itemsGroupedByMode).map(mode => ({
               mode,
               data: itemsGroupedByMode[mode],
@@ -222,27 +223,19 @@ class DisplayResult extends Component<Props, State> {
               title={<Trans i18nKey="common.retry" />}
               onPress={this.onRetry}
             />
-            {importing ? (
-              <Importing />
-            ) : (
-              <Button
-                event="ImportAccountsContinue"
-                containerStyle={styles.button}
-                type="primary"
-                title={<Trans i18nKey="common.import" />}
-                onPress={this.onImport}
-              />
-            )}
+            <Button
+              event="ImportAccountsContinue"
+              containerStyle={styles.button}
+              type="primary"
+              title={<Trans i18nKey="common.import" />}
+              onPress={this.onImport}
+              disabled={importing}
+            />
           </View>
         </Flex>
       </SafeAreaView>
     );
   }
-}
-
-function Importing() {
-  const theme = useTheme();
-  return <ActivityIndicator color={theme.colors.neutral.c50} animating />;
 }
 
 // $FlowFixMe
