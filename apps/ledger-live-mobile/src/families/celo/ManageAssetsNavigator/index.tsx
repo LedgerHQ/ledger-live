@@ -32,6 +32,7 @@ function ManageAssetsNavigator() {
   const routeParams = useRoute().params;
   const { account } = useSelector(accountScreenSelector(routeParams));
   const { celoResources } = account as CeloAccount;
+  const { votes } = celoResources;
 
   const onNavigate = useCallback(
     ({
@@ -100,7 +101,7 @@ function ManageAssetsNavigator() {
   const onVote = useCallback(() => {
     onNavigate({
       route: NavigatorName.CeloVoteFlow,
-      screen: ScreenName.CeloVoteStarted,
+      screen: votes?.length === 0 ? ScreenName.CeloVoteStarted : ScreenName.CeloVoteSummary,
       params: {},
     });
   }, [onNavigate]);

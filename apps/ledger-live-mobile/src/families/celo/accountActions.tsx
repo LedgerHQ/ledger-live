@@ -5,6 +5,7 @@ import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { NavigatorName, ScreenName } from "../../const";
 import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
+import CeloIcon from './Icon';
 import invariant from "invariant";
 
 const getActions = ({ account }: { account: CeloAccount }) => {
@@ -25,7 +26,7 @@ const getActions = ({ account }: { account: CeloAccount }) => {
         },
       ],
       label: <Trans i18nKey="celo.manage.title" />,
-      Icon: Icons.ClaimRewardsMedium,
+      Icon: () => <CeloIcon isDisabled={false} />,
     },
   ];
 };

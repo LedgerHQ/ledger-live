@@ -34,7 +34,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, [navigation, route.params]);
 
   const howDelegationWorks = useCallback(() => {
-    Linking.openURL(urls.celo);
+    Linking.openURL(urls.celoStakingRewards);
   }, []);
 
   return (
