@@ -14,13 +14,6 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import type { Account } from "@ledgerhq/types-live";
-import {
-  mapUnbondings,
-  canRedelegate,
-  getRedelegation,
-  canUndelegate,
-  canDelegate,
-} from "@ledgerhq/live-common/families/cosmos/logic";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import Alert from "../../../components/Alert";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
@@ -34,18 +27,12 @@ import { rgba } from "../../../colors";
 import { ScreenName, NavigatorName } from "../../../const";
 import Circle from "../../../components/Circle";
 import LText from "../../../components/LText";
-import Button from "../../../components/Button";
-import RedelegateIcon from "../../../icons/Redelegate";
-import ClaimRewardIcon from "../../../icons/ClaimReward";
 import NominateIcon from "../../../icons/Vote";
 import RevokeIcon from "../../../icons/VoteNay";
 import DelegationRow from "./Row";
 import DelegationLabelRight from "./LabelRight";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import CounterValue from "../../../components/CounterValue";
-import DateFromNow from "../../../components/DateFromNow";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
-import { activatableVotes, availablePendingWithdrawals, fallbackValidatorGroup, LEDGER_BY_FIGMENT_VALIDATOR_GROUP_ADDRESS, revokableVotes, voteStatus } from "@ledgerhq/live-common/families/celo/logic";
+import { activatableVotes, availablePendingWithdrawals, fallbackValidatorGroup, isAccountRegistrationPending, isDefaultValidatorGroupAddress, revokableVotes, voteStatus } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloAccount, CeloValidatorGroup, CeloVote } from "@ledgerhq/live-common/lib/families/celo/types";
 import { formatAmount } from "./utils";
 import CheckCircle from "../../../icons/CheckCircle";
@@ -67,12 +54,12 @@ function Delegations({ account }: Props) {
   const navigation = useNavigation();
   const { validatorGroups } = useCeloPreloadData();
   const { celoResources } = mainAccount as CeloAccount;
-  const { votes } = celoResources;
+  const { votes, lockedBalance } = celoResources;
 
   const withdrawEnabled = availablePendingWithdrawals(account as CeloAccount).length;
   const activatingEnabled = activatableVotes(account as CeloAccount).length;
+  const noLockedCelo = !lockedBalance.gt(0);
   const [vote, setVote] = useState();
-
   const onNavigate = useCallback(
     ({
       route,
@@ -301,7 +288,7 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <ValidatorImage
-            isLedger={vote?.validatorGroup === LEDGER_BY_FIGMENT_VALIDATOR_GROUP_ADDRESS}
+            isLedger={isDefaultValidatorGroupAddress(vote?.validatorGroup)}
             name={vote ? getValidatorName(vote) : ""}
             size={size}
           />
@@ -328,7 +315,7 @@ function Delegations({ account }: Props) {
             name={t("account.delegation.sectionLabel")}
             RightComponent={
               <DelegationLabelRight
-                disabled={false}
+                disabled={noLockedCelo}
                 onPress={onVote}
               />
             }

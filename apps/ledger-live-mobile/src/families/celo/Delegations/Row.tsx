@@ -12,7 +12,7 @@ import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
-import { LEDGER_BY_FIGMENT_VALIDATOR_GROUP_ADDRESS, revokableVotes, voteStatus } from "@ledgerhq/live-common/families/celo/logic";
+import { isDefaultValidatorGroupAddress, revokableVotes, voteStatus } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloAccount, CeloVote } from "@ledgerhq/live-common/lib/families/celo/types";
 import { formatAmount } from "./utils";
 
@@ -35,11 +35,8 @@ export default function DelegationRow({
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  // const { validator, validatorAddress, formattedAmount, amount } = delegation;
   const { validatorGroup, amount } = vote;
   const validatorName = getValidatorName(vote) ?? "";
-  
-  // const actions = voteActions(vote);
   const status = voteStatus(vote);
 
   return (
@@ -56,7 +53,7 @@ export default function DelegationRow({
       <View style={[styles.icon]}>
         <ValidatorImage
           size={42}
-          isLedger={validatorGroup === LEDGER_BY_FIGMENT_VALIDATOR_GROUP_ADDRESS}
+          isLedger={isDefaultValidatorGroupAddress(validatorGroup)}
           name={validatorName}
         />
       </View>

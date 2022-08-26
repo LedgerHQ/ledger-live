@@ -3444,13 +3444,6 @@
     }
   },
   "celo": {
-    "delegation": {
-      "totalVotes": "Total Votes",
-      "actions": {
-        "activate": "Activate",
-        "revoke": "Revoke"
-      }
-    },
     "info": {
       "available": {
         "title": "CELO available",
@@ -3471,9 +3464,13 @@
     },
     "delegation": {
       "validatorGroup": "Validator Group",
+      "totalVotes": "Total Votes",
       "actions": {
         "activate": "Activate",
         "revoke": "Revoke"
+      },
+      "delegationUnavailable": {
+        "title": "Insufficient Locked Funds"
       }
     },
     "manage": {
