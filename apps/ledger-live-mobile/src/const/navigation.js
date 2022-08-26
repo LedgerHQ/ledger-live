@@ -195,7 +195,7 @@ export const ScreenName = {
   CeloActivateSelectDevice: "CeloActivateSelectDevice",
   CeloActivateConnectDevice: "CeloActivateConnectDevice",
   CeloRevokeValidationSuccess: "CeloRevokeValidationSuccess",
-  CeloRevokeValidationError:"CeloRevokeValidationError",
+  CeloRevokeValidationError: "CeloRevokeValidationError",
   CeloRevokeSummary: "CeloRevokeSummary",
   CeloRevokeAmount: "CeloRevokeAmount",
   CeloRevokeValidatorSelect: "CeloRevokeValidatorSelect",

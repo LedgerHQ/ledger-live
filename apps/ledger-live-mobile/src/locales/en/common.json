@@ -3445,7 +3445,11 @@
   },
   "celo": {
     "delegation": {
-      "totalVotes": "Total Votes"
+      "totalVotes": "Total Votes",
+      "actions": {
+        "activate": "Activate",
+        "revoke": "Revoke"
+      }
     },
     "info": {
       "available": {
@@ -3524,6 +3528,7 @@
       }
     },
     "withdraw": {
+      "title": "Withdraw assets",
       "stepperHeader": {
         "title": "Vote",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}",
@@ -3625,6 +3630,13 @@
             }
           }
         }
+      },
+      "vote": {
+        "title": "Vote",
+        "active": "Active",
+        "pending": "Pending",
+        "awaitingActivation": "Awaiting activation",
+        "info": "Only revokable votes are shown on this modal"
       }
     },
     "register": {

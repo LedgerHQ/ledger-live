@@ -51,10 +51,6 @@ import { formatAmount } from "./utils";
 import CheckCircle from "../../../icons/CheckCircle";
 import Loader from "../../../icons/Loader";
 
-type MappedCeloVote = CeloVote & {
-  vGroup: CeloValidatorGroup;
-};
-
 type Props = {
   account: Account,
 };
@@ -100,21 +96,15 @@ function Delegations({ account }: Props) {
     onNavigate({
       route: NavigatorName.CeloActivateFlow,
       screen: ScreenName.CeloActivateSummary,
-      params: {
-        accountId: account.id,
-      },
     });
-  }, [onNavigate, vote, account]);
+  }, [onNavigate]);
 
   const onRevoke = useCallback(() => {
     onNavigate({
       route: NavigatorName.CeloRevokeFlow,
       screen: ScreenName.CeloRevokeSummary,
-      params: {
-        accountId: account.id,
-      },
     });
-  }, [onNavigate, vote, account]);
+  }, [onNavigate]);
 
   const onWithdraw = useCallback(() => {
     onNavigate({
@@ -125,6 +115,14 @@ function Delegations({ account }: Props) {
       },
     });
   }, [onNavigate, vote, account]);
+
+  const onVote = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.CeloVoteFlow,
+      screen: votes?.length === 0 ? ScreenName.CeloVoteStarted : ScreenName.CeloVoteSummary,
+      params: {},
+    });
+  }, [onNavigate]);
 
   const onCloseDrawer = useCallback(() => {
     setVote();
@@ -215,9 +213,9 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {!!(status === "active") && <> <CheckCircle color={colors.green } size={14} style={styles.icon}/> <Trans i18nKey={"celo.revoke.steps.vote.active"} /> </>}
-                {!!(status === "awaitingActivation") && <> <Loader color={colors.warning } size={14} style={styles.icon}/> <Trans i18nKey={"celo.revoke.steps.vote.awaitingActivation"} /> </>}
-                {!!(status === "pending") && <> <Loader color={rgba(colors.grey, 0.8)} size={14} style={styles.icon}/> <Trans i18nKey={"celo.revoke.steps.vote.pending"} /> </>}
+                {!!(status === "active") && <> <CheckCircle color={colors.green } size={14} style={styles.icon}/> <Trans i18nKey={"celo.revoke.vote.active"} /> </>}
+                {!!(status === "awaitingActivation") && <> <Loader color={colors.warning } size={14} style={styles.icon}/> <Trans i18nKey={"celo.revoke.vote.awaitingActivation"} /> </>}
+                {!!(status === "pending") && <> <Loader color={rgba(colors.grey, 0.8)} size={14} style={styles.icon}/> <Trans i18nKey={"celo.revoke.vote.pending"} /> </>}
               </LText>
             ),
           },
@@ -269,7 +267,7 @@ function Delegations({ account }: Props) {
               </Circle>
             ),
             disabled: !activateEnabled,
-            onPress: () => console.log('onActivate'),
+            onPress: onActivate,
             event: "CeloActionActivateVote",
           },
           {
@@ -288,12 +286,12 @@ function Delegations({ account }: Props) {
               </Circle>
             ),
             disabled: !revokeEnabled,
-            onPress: () => console.log('onRevoke'),
+            onPress: onRevoke,
             event: "CeloActionRevokeVote",
           },
         ]
       : [];
-  }, [vote, account, t, onActivate, onRevoke, onWithdraw, colors.lightFog, colors.fog, colors.grey, colors.yellow, colors.alert]);
+  }, [vote, account, t, onActivate, onRevoke, onWithdraw, onVote, colors.lightFog, colors.fog, colors.grey, colors.yellow, colors.alert]);
 
   return (
     <View style={styles.root}>
@@ -321,7 +319,7 @@ function Delegations({ account }: Props) {
           })}
           infoUrl={urls.celoStakingRewards}
           infoTitle={t("celo.emptyState.info")}
-          onPress={onActivate}
+          onPress={onVote}
           ctaTitle={t("account.delegation.info.cta")}
         />
       ) : (
@@ -331,7 +329,7 @@ function Delegations({ account }: Props) {
             RightComponent={
               <DelegationLabelRight
                 disabled={false}
-                onPress={() => console.log('pressed')}
+                onPress={onVote}
               />
             }
           />
