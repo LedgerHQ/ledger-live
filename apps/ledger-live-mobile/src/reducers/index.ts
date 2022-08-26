@@ -5,6 +5,7 @@ import appstate from "./appstate";
 import ble from "./ble";
 import ratings from "./ratings";
 import notifications from "./notifications";
+import swap, { SwapStateType } from "./swap";
 import type { AccountsState } from "./accounts";
 import type { SettingsState } from "./settings";
 import type { AppState } from "./appstate";
@@ -19,6 +20,7 @@ export type State = {
   ble: BleState;
   ratings: RatingsState;
   notifications: NotificationsState;
+  swap: SwapStateType;
 };
 
 const appReducer = combineReducers({
@@ -28,6 +30,7 @@ const appReducer = combineReducers({
   ble,
   ratings,
   notifications,
+  swap,
 });
 
 const rootReducer = (state: State, action: any) => {

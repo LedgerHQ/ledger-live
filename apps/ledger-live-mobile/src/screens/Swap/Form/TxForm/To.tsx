@@ -7,7 +7,6 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import {
   ExchangeRate,
-  Pair,
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { useNavigation } from "@react-navigation/native";
@@ -15,30 +14,31 @@ import {
   usePickDefaultCurrency,
   useSelectableCurrencies,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import { useSelector } from "react-redux";
 import { Selector } from "./Selector";
 import { CurrencyValue } from "./CurrencyValue";
+import { toSelector } from "../../../../actions/swap";
 
 interface Props {
   swapTx: SwapTransactionType;
   provider?: string;
   exchangeRate?: ExchangeRate;
-  pairs: Pair[];
 }
 
-export function To({ swapTx, provider, pairs, exchangeRate }: Props) {
+export function To({ swapTx, provider, exchangeRate }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
 
-  const fromCurrency = useMemo(
+  const fromCurrencyId = useMemo(
     () =>
-      swapTx.swap.from.account && getAccountCurrency(swapTx.swap.from.account),
+      swapTx.swap.from.account
+        ? getAccountCurrency(swapTx.swap.from.account).id
+        : null,
     [swapTx.swap.from],
   );
 
-  const rawCurrencies = useCurrencies(pairs, fromCurrency?.id);
-  const currencies = useCurrenciesByMarketcap(rawCurrencies);
+  const allCurrencies = useSelector(toSelector)(fromCurrencyId);
+  const currencies = useSelectableCurrencies({ allCurrencies });
 
   const { name, balance } = useMemo(() => {
     const to = swapTx.swap.to;
@@ -83,24 +83,4 @@ export function To({ swapTx, provider, pairs, exchangeRate }: Props) {
       </Flex>
     </Flex>
   );
-}
-
-// based toSelector on apps/ledger-live-desktop/src/renderer/actions/swap.js
-function useCurrencies(
-  pairs: Pair[],
-  fromCurrencyId?: string,
-): (CryptoCurrency | TokenCurrency)[] {
-  const filtered = useMemo(() => {
-    if (!pairs) return [];
-
-    if (fromCurrencyId)
-      return pairs.reduce<string[]>(
-        (acc, pair) => (pair.from === fromCurrencyId ? [...acc, pair.to] : acc),
-        [],
-      );
-
-    return pairs.map(p => p.to);
-  }, [pairs, fromCurrencyId]);
-
-  return useSelectableCurrencies({ allCurrencies: [...new Set(filtered)] });
 }

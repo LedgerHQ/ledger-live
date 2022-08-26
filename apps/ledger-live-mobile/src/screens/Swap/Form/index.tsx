@@ -1,19 +1,15 @@
-import React, { useMemo, useState, useEffect, useCallback } from "react";
-import Config from "react-native-config";
+import React, { useState, useEffect, useCallback } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { checkQuote } from "@ledgerhq/live-common/exchange/swap/index";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import {
-  ExchangeRate,
-  KYCStatus,
-  ValidCheckQuoteErrorCodes,
   OnNoRatesCallback,
   ActionRequired,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   usePollKYCStatus,
   useSwapTransaction,
-  useProviders,
+  useSwapProviders,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getKYCStatusFromCheckQuoteStatus,
@@ -33,7 +29,14 @@ import {
   swapKYCSelector,
 } from "../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../actions/settings";
-// eslint-disable-next-line import/named
+import {
+  providersSelector,
+  rateSelector,
+  resetSwapAction,
+  updateProvidersAction,
+  updateRateAction,
+  updateTransactionAction,
+} from "../../../actions/swap";
 import { TrackScreen, track } from "../../../analytics";
 import { Loading } from "../Loading";
 import { NotAvailable } from "./NotAvailable";
@@ -50,103 +53,72 @@ import { ErrorBanner } from "./ErrorBanner";
 
 export const ratesExpirationThreshold = 60000;
 
-export function SwapForm({ route: { params } }: SwapFormProps) {
+export const useProviders = () => {
   const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const accounts = useSelector(shallowAccountsSelector);
-  const {
+  const { providers, error: providersError } = useSwapProviders();
+  const storedProviders = useSelector(providersSelector);
+
+  useEffect(() => {
+    if (providers) dispatch(updateProvidersAction(providers));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providers]);
+
+  useEffect(() => {
+    if (providersError) dispatch(resetSwapAction());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providersError]);
+
+  return {
+    storedProviders,
     providers,
-    error: providersError,
-    pairs,
-  } = useProviders(Config.SWAP_DISABLED_PROVIDERS);
+    providersError,
+  };
+};
 
-  const [exchangeRate, setExchangeRate] = useState<ExchangeRate | undefined>();
-  const swapTx = useSwapTransaction({
-    accounts,
-    setExchangeRate,
-    onNoRates: trackNoRates,
-  });
-
-  const exchangeRatesState = swapTx.swap?.rates;
-  const swapKYC = useSelector(swapKYCSelector);
-
-  const { provider, kyc } = useMemo<{
-    provider?: string;
-    kyc?: KYCStatus;
-  }>(() => {
-    const provider = exchangeRate?.provider;
-
-    if (!provider || !swapKYC) {
-      return { exchangeRate, provider };
-    }
-
-    return {
-      provider,
-      exchangeRate,
-      kyc: swapKYC[provider],
-    };
-  }, [exchangeRate, swapKYC]);
-
+export function SwapForm({ route: { params } }: SwapFormProps) {
   const [currentFlow, setCurrentFlow] = useState<ActionRequired>(
     ActionRequired.None,
   );
   const [currentBanner, setCurrentBanner] = useState<ActionRequired>(
     ActionRequired.None,
   );
-  const [errorCode, setErrorCode] = useState<
-    ValidCheckQuoteErrorCodes | undefined
-  >();
+  const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
 
-  const [confirmed, setConfirmed] = useState(false);
+  const [error, setError] = useState();
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const accounts = useSelector(shallowAccountsSelector);
+  const { storedProviders, providers, providersError } = useProviders();
+  const exchangeRate = useSelector(rateSelector);
+  const setExchangeRate = useCallback(
+    rate => {
+      dispatch(updateRateAction(rate));
+    },
+    [dispatch],
+  );
+  const swapTransaction = useSwapTransaction({
+    accounts,
+    setExchangeRate,
+    setIsSendMaxLoading,
+    onNoRates: trackNoRates,
+  });
 
-  useEffect(() => {
-    if (params?.currency) {
-      swapTx.setToCurrency(params.currency);
-    }
-
-    if (params?.accountId) {
-      const enhancedAccounts =
-        params.target === "from"
-          ? accounts
-          : accounts.map(acc =>
-              accountWithMandatoryTokens(acc, [params?.currency]),
-            );
-
-      const account = flattenAccounts(enhancedAccounts).find(
-        a => a.id === params.accountId,
-      );
-
-      if (params.target === "from") {
-        track("Page Swap Form - New Source Account", {
-          provider,
-          swapVersion: SWAP_VERSION,
-        });
-        swapTx.setFromAccount(account);
-      } else {
-        swapTx.setToAccount(swapTx.swap.to.currency, account, account.parent);
-      }
-    }
-
-    if (params?.rate) {
-      setExchangeRate(params.rate);
-    }
-
-    if (params?.transaction) {
-      swapTx.setTransaction(params.transaction);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params]);
+  const exchangeRatesState = swapTransaction.swap?.rates;
+  const swapKYC = useSelector(swapKYCSelector);
+  const provider = exchangeRate?.provider;
+  const providerKYC = swapKYC?.[provider];
+  const kycStatus = providerKYC?.status;
 
   // On provider change, reset banner and flow
   useEffect(() => {
     setCurrentBanner(ActionRequired.None);
     setCurrentFlow(ActionRequired.None);
-    setErrorCode(undefined);
+    setError(undefined);
   }, [provider]);
 
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
-    if (errorCode) {
+    if (error) {
       // Don't show any flow banner on error to avoid double banner display
       setCurrentBanner(ActionRequired.None);
       return;
@@ -157,12 +129,8 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
       return;
     }
 
-    if (shouldShowLoginBanner({ provider, token: kyc?.id })) {
+    if (shouldShowLoginBanner({ provider, token: providerKYC?.id })) {
       setCurrentBanner(ActionRequired.Login);
-      return;
-    }
-
-    if (!kyc) {
       return;
     }
 
@@ -170,17 +138,22 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     // we don't display it if user needs to login first
     if (
       currentBanner !== ActionRequired.Login &&
-      shouldShowKYCBanner({ provider, kycStatus: kyc.status })
+      shouldShowKYCBanner({ provider, kycStatus })
     ) {
       setCurrentBanner(ActionRequired.KYC);
     }
-  }, [errorCode, provider, kyc, currentBanner]);
+  }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
+
+  useEffect(() => {
+    dispatch(updateTransactionAction(swapTransaction.transaction));
+    // eslint-disable-next-line
+  }, [swapTransaction.transaction]);
 
   useEffect(() => {
     // Whenever an account is added, reselect the currency to pick a default target account.
     // (possibly the one that got created)
-    if (swapTx.swap.to.currency && !swapTx.swap.to.account) {
-      swapTx.setToCurrency(swapTx.swap.to.currency);
+    if (swapTransaction.swap.to.currency && !swapTransaction.swap.to.account) {
+      swapTransaction.setToCurrency(swapTransaction.swap.to.currency);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts]);
@@ -189,9 +162,8 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   usePollKYCStatus(
     {
       provider,
-      kyc,
+      kyc: providerKYC,
       onChange: res => {
-        if (!provider) return;
         dispatch(
           setSwapKYCStatus({
             provider,
@@ -203,14 +175,15 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     },
     [dispatch],
   );
-  const swapError = swapTx.fromAmountError || exchangeRatesState?.error;
+  const swapError =
+    swapTransaction.fromAmountError || exchangeRatesState?.error;
 
   // Track errors
   useEffect(
     () => {
       swapError &&
         trackSwapError(swapError, {
-          sourcecurrency: swapTx.swap.from.currency?.name,
+          sourcecurrency: swapTransaction.swap.from.currency?.name,
           provider,
           swapVersion: SWAP_VERSION,
         });
@@ -221,31 +194,33 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   // close login widget once we get a bearer token (i.e: the user is logged in)
   useEffect(() => {
-    if (kyc?.id && currentFlow === ActionRequired.Login) {
+    if (providerKYC?.id && currentFlow === ActionRequired.Login) {
       setCurrentFlow(ActionRequired.None);
     }
-  }, [kyc?.id, currentFlow]);
+  }, [providerKYC?.id, currentFlow]);
 
+  /**
+   * FIXME
+   * Too complicated, seems to handle to much things (KYC status + non KYC related errors)
+   * KYC related stuff should be handled in usePollKYCStatus
+   */
   useEffect(() => {
     if (
-      !kyc?.id ||
+      !providerKYC?.id ||
       !exchangeRate?.rateId ||
-      currentFlow === ActionRequired.KYC ||
-      currentFlow === ActionRequired.MFA
+      currentFlow === "KYC" ||
+      currentFlow === "MFA"
     ) {
       return;
     }
-    handleCheckQuote();
 
-    async function handleCheckQuote() {
-      if (!provider || !exchangeRate?.rateId || !kyc) {
-        return;
-      }
+    const userId = providerKYC.id;
 
+    const handleCheckQuote = async () => {
       const status = await checkQuote({
         provider,
         quoteId: exchangeRate.rateId,
-        bearerToken: kyc.id,
+        bearerToken: userId,
       });
 
       // User needs to complete MFA on partner own UI / dedicated widget
@@ -256,14 +231,10 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
       // No need to show MFA banner for other cases
       setCurrentBanner(ActionRequired.None);
 
-      if (typeof provider === "undefined") {
-        return;
-      }
-
       if (status.codeName === "RATE_VALID") {
         // If trade can be done and KYC already approved, we are good
         // PS: this can't be checked before the `checkQuote` call since a KYC status can become expierd
-        if (kyc.status === KYC_STATUS.approved) {
+        if (kycStatus === KYC_STATUS.approved) {
           return;
         }
 
@@ -273,7 +244,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         dispatch(
           setSwapKYCStatus({
             provider,
-            id: kyc.id,
+            id: userId,
             status: KYC_STATUS.approved,
           }),
         );
@@ -283,13 +254,11 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
       // Handle all KYC related errors
       if (status.codeName.startsWith("KYC_")) {
         const updatedKycStatus = getKYCStatusFromCheckQuoteStatus(status);
-        if (!updatedKycStatus) return;
-
-        if (updatedKycStatus !== kyc.status) {
+        if (updatedKycStatus !== kycStatus) {
           dispatch(
             setSwapKYCStatus({
               provider,
-              id: kyc.id,
+              id: userId,
               status: updatedKycStatus,
             }),
           );
@@ -311,44 +280,98 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
       // If RATE_NOT_FOUND it means the quote as expired, so we need to refresh the rates
       if (status.codeName === "RATE_NOT_FOUND") {
-        swapTx?.swap?.refetchRates();
+        swapTransaction?.swap?.refetchRates();
         return;
       }
 
       // All other statuses are considered errors
-      setErrorCode(status.codeName);
-    }
+      setError(status.codeName);
+    };
+
+    handleCheckQuote();
     /**
      * Remove `swapTransaction` from dependency list because it seems to mess up
      * with the `checkQuote` call (the endpoint gets called too often)
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kyc, exchangeRate, dispatch, provider, currentFlow]);
+  }, [providerKYC, exchangeRate, dispatch, provider, kycStatus, currentFlow]);
 
   const isSwapReady =
-    !errorCode &&
-    !swapTx.bridgePending &&
+    !error &&
+    !swapTransaction.bridgePending &&
     exchangeRatesState.status !== "loading" &&
-    swapTx.transaction &&
+    swapTransaction.transaction &&
     !providersError &&
     !swapError &&
-    currentBanner === ActionRequired.None &&
+    !currentBanner &&
     exchangeRate &&
-    swapTx.swap.to.account;
+    swapTransaction.swap.to.account;
 
   const onSubmit = useCallback(() => {
-    track("Page Swap Form - Request", {
-      sourceCurrency: swapTx.swap.from.currency?.name,
-      targetCurrency: swapTx.swap.to.currency?.name,
-      provider,
-      swapVersion: SWAP_VERSION,
-    });
+    track(
+      "Page Swap Form - Request",
+      {
+        sourceCurrency: swapTransaction.swap.from.currency?.name,
+        targetCurrency: swapTransaction.swap.to.currency?.name,
+        provider,
+        swapVersion: SWAP_VERSION,
+      },
+      undefined,
+    );
     setConfirmed(true);
-  }, [swapTx, provider]);
+  }, [swapTransaction, provider]);
 
   const onCloseModal = useCallback(() => {
     setConfirmed(false);
   }, []);
+
+  // mobile specific
+  const [confirmed, setConfirmed] = useState(false);
+  useEffect(() => {
+    if (params?.currency) {
+      swapTransaction.setToCurrency(params.currency);
+    }
+
+    if (params?.accountId) {
+      const enhancedAccounts =
+        params.target === "from"
+          ? accounts
+          : accounts.map(acc =>
+              accountWithMandatoryTokens(acc, [params?.currency]),
+            );
+
+      const account = flattenAccounts(enhancedAccounts).find(
+        a => a.id === params.accountId,
+      );
+
+      if (params.target === "from") {
+        track(
+          "Page Swap Form - New Source Account",
+          {
+            provider,
+            swapVersion: SWAP_VERSION,
+          },
+          undefined,
+        );
+        swapTransaction.setFromAccount(account);
+      } else {
+        swapTransaction.setToAccount(
+          swapTransaction.swap.to.currency,
+          account,
+          account.parent,
+        );
+      }
+    }
+
+    if (params?.rate) {
+      setExchangeRate(params.rate);
+    }
+
+    if (params?.transaction) {
+      swapTransaction.setTransaction(params.transaction);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
 
   const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
@@ -360,7 +383,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     return <Connect provider={provider} setResult={setDeviceMeta} />;
   }
 
-  if (providers) {
+  if (providers?.length) {
     return (
       // @ts-expect-error KeyboardAwareScrollView doens't come with right typings
       <KeyboardAwareScrollView>
@@ -368,14 +391,13 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
           <Flex flex={1}>
             <TrackScreen category="Swap Form" providerName={provider} />
             <TxForm
-              swapTx={swapTx}
+              swapTx={swapTransaction}
               provider={provider}
               exchangeRate={exchangeRate}
-              pairs={pairs}
               swapError={swapError}
             />
 
-            {swapTx.swap.rates.status === "loading" ? (
+            {swapTransaction.swap.rates.status === "loading" ? (
               <Flex height={200}>
                 <Loading size={20} />
               </Flex>
@@ -383,22 +405,22 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
               <>
                 <Summary
                   provider={provider}
-                  swapTx={swapTx}
+                  swapTx={swapTransaction}
                   exchangeRate={exchangeRate}
-                  kyc={kyc}
+                  kyc={kycStatus}
                 />
 
                 <Requirement required={currentBanner} provider={provider} />
 
-                {errorCode && provider && (
-                  <ErrorBanner provider={provider} errorCode={errorCode} />
+                {error && provider && (
+                  <ErrorBanner provider={provider} errorCode={error} />
                 )}
               </>
             )}
           </Flex>
 
           <Flex paddingY={4}>
-            <Max swapTx={swapTx} />
+            <Max swapTx={swapTransaction} isSendMaxLoading={isSendMaxLoading} />
 
             <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
               {t("transfer.swap2.form.cta")}
@@ -407,7 +429,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         </Flex>
 
         <Modal
-          swapTx={swapTx}
+          swapTx={swapTransaction}
           provider={provider}
           confirmed={confirmed}
           termsAccepted={termsAccepted}
@@ -419,7 +441,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     );
   }
 
-  if (providersError) {
+  if (storedProviders?.length === 0 || providersError) {
     return <NotAvailable />;
   }
 
@@ -427,7 +449,11 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 }
 
 const trackNoRates: OnNoRatesCallback = ({ toState }) => {
-  track("Page Swap Form - Error No Rate", {
-    sourceCurrency: toState.currency?.name,
-  });
+  track(
+    "Page Swap Form - Error No Rate",
+    {
+      sourceCurrency: toState.currency?.name,
+    },
+    undefined,
+  );
 };

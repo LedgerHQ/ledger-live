@@ -3,36 +3,32 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import {
-  flattenAccounts,
-  getAccountCurrency,
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { usePickDefaultAccount } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import {
-  SwapTransactionType,
-  Pair,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/types-live";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
 import { shallowAccountsSelector } from "../../../../reducers/accounts";
 import { SwapFormProps } from "../../types";
+import { fromSelector } from "../../../../actions/swap";
 
 interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
-  pairs: Pair[];
   swapError?: Error;
 }
 
-export function From({ swapTx, provider, pairs, swapError }: Props) {
+export function From({ swapTx, provider, swapError }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormProps>();
 
-  const accounts = useAccounts(pairs);
+  const accounts = useSelector(fromSelector)(
+    useSelector(shallowAccountsSelector),
+  );
   const { currency, name, balance, unit } = useMemo(() => {
     const { currency, account } = swapTx.swap.from;
 
@@ -56,6 +52,8 @@ export function From({ swapTx, provider, pairs, swapError }: Props) {
     swapTx.swap.from.account,
     swapTx.setFromAccount,
   );
+
+  const pairs = useSelector(state => state.swap.pairs);
 
   const onPress = useCallback(() => {
     // @ts-expect-error navigation type is only partially declared
@@ -95,67 +93,4 @@ export function From({ swapTx, provider, pairs, swapError }: Props) {
       </Flex>
     </Flex>
   );
-}
-
-type AccountLikeWithFilter = AccountLike & { disabled: boolean };
-
-// based fromSelector on apps/ledger-live-desktop/src/renderer/actions/swap.js
-function useAccounts(pairs: Pair[]): AccountLikeWithFilter[] {
-  const accounts = useSelector(shallowAccountsSelector);
-
-  const filtered = useMemo<AccountLikeWithFilter[]>(() => {
-    if (pairs === null || pairs === undefined) return [];
-
-    return flattenAccounts(accounts).map(account => {
-      const id = getAccountCurrency(account).id;
-      const isAccountAvailable = !!pairs.find(pair => pair.from === id);
-      return { ...account, disabled: !isAccountAvailable };
-    });
-  }, [accounts, pairs]);
-
-  const sorted = useMemo(() => {
-    let activeAccounts: AccountLikeWithFilter[] = [];
-    let disabledAccounts: AccountLikeWithFilter[] = [];
-    let subAccounts = [];
-    let disabledSubAccounts = [];
-
-    // Traverse the accounts in reverse to check disabled accounts with active subAccounts
-    for (let i = filtered.length - 1; i >= 0; i--) {
-      const account = filtered[i];
-
-      // Handle Account type first
-      if (account.type === "Account") {
-        if (account.disabled && !subAccounts.length) {
-          // When a disabled account has no active subAccount, add it to the disabledAccounts
-          disabledAccounts = [
-            account,
-            ...disabledSubAccounts,
-            ...disabledAccounts,
-          ];
-        } else {
-          // When an account has at least an active subAccount, add it to the activeAccounts
-          activeAccounts = [
-            account,
-            ...subAccounts,
-            ...disabledSubAccounts,
-            ...activeAccounts,
-          ];
-        }
-
-        // Clear subAccounts
-        subAccounts = [];
-        disabledSubAccounts = [];
-      } else if (account.disabled) {
-        // Add TokenAccount and ChildAccount to the subAccounts arrays
-        disabledSubAccounts.unshift(account);
-      } else {
-        // Add TokenAccount and ChildAccount to the subAccounts arrays
-        subAccounts.unshift(account);
-      }
-    }
-
-    return [...activeAccounts, ...disabledAccounts];
-  }, [filtered]);
-
-  return sorted;
 }

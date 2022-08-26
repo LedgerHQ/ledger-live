@@ -3,6 +3,7 @@ import { FlatList, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TFunction, useTranslation } from "react-i18next";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { TrackScreen } from "../../../analytics";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
@@ -24,6 +25,7 @@ export function SelectCurrency({
     },
     [navigation],
   );
+  const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
   const renderList = useCallback(
     items => (
@@ -53,7 +55,7 @@ export function SelectCurrency({
         <FilteredSearchBar
           keys={["name", "ticker"]}
           inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-          list={currencies}
+          list={sortedCurrencies}
           renderList={renderList}
           renderEmptySearch={renderEmptyList(t)}
         />

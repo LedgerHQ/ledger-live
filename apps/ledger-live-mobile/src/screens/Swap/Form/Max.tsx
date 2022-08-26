@@ -5,8 +5,15 @@ import { Flex, Text, Switch } from "@ledgerhq/native-ui";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import { Loading } from "../Loading";
 
-export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
+export function Max({
+  swapTx,
+  isSendMaxLoading,
+}: {
+  swapTx: SwapTransactionType;
+  isSendMaxLoading: boolean;
+}) {
   const { t } = useTranslation();
 
   const [max, setMax] = useState<BigNumber>();
@@ -26,6 +33,10 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
       });
   }, [swapTx.swap.from]);
 
+  useEffect(() => {
+    setMax(undefined);
+  }, [swapTx.swap.from]);
+
   return (
     <Flex
       flexDirection="row"
@@ -35,7 +46,7 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
       <Flex>
         <Text variant="small">{t("transfer.swap2.form.amount.available")}</Text>
 
-        {max ? (
+        {max && !isSendMaxLoading ? (
           <Text variant="small">
             <CurrencyUnitValue
               showCode
@@ -44,9 +55,7 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
             />
           </Text>
         ) : (
-          <Text variant="small" color="neutral.c70">
-            -
-          </Text>
+          <Loading size={12} />
         )}
       </Flex>
 
