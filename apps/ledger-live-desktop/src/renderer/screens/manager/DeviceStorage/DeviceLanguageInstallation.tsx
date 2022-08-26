@@ -103,22 +103,23 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
             </Radio>
           </>
         )}
-        {(!installing ||
-          installed) && (
-            <Flex flexDirection="column" rowGap={10}>
-              <Divider variant="light" />
-              <Flex alignSelf="end">
-                <Button
-                  data-test-id="install-language-button"
-                  variant="main"
-                  onClick={installed ? onCloseDrawer : onInstall}
-                  disabled={!installing && (currentLanguage === selectedLanguage)}
-                >
-                  {installed ? t(`common.close`) : t(`deviceLocalization.changeLanguage`)}
-                </Button>
-              </Flex>
+        {(!installing || installed) && (
+          <Flex flexDirection="column" rowGap={10}>
+            <Divider variant="light" />
+            <Flex alignSelf="end">
+              <Button
+                data-test-id={
+                  installed ? "close-language-installation-button" : "install-language-button"
+                }
+                variant="main"
+                onClick={installed ? onCloseDrawer : onInstall}
+                disabled={!installing && currentLanguage === selectedLanguage}
+              >
+                {installed ? t(`common.close`) : t(`deviceLocalization.changeLanguage`)}
+              </Button>
             </Flex>
-          )}
+          </Flex>
+        )}
       </Flex>
     </Drawer>
   );

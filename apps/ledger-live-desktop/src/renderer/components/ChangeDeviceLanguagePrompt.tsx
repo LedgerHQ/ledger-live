@@ -41,7 +41,7 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
       </Flex>
       <Flex alignSelf="flex-end" justifySelf="flex-end" columnGap={5} mt={24}>
         <Button onClick={onSkip}>{t("common.cancel")}</Button>
-        <Button variant="main" onClick={onConfirm}>
+        <Button data-test-id="install-language-button" variant="main" onClick={onConfirm}>
           {t("deviceLocalization.changeLanguage")}
         </Button>
       </Flex>

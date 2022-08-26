@@ -3,6 +3,7 @@ import { expect } from "@playwright/test";
 import { SettingsPage } from "../../models/SettingsPage";
 import { Layout } from "../../models/Layout";
 import { DeviceAction } from "tests/models/DeviceAction";
+import { LanguageInstallation } from "tests/models/LanguageInstallation";
 import { languagePacksData } from "./data";
 
 test.use({ userdata: "skip-onboarding" });
@@ -10,6 +11,7 @@ test.use({ env: { FORCE_PROVIDER: 12 } });
 
 test("Settings", async ({ page }) => {
   const deviceAction = new DeviceAction(page);
+  const languageInstallation = new LanguageInstallation(page);
   const settingsPage = new SettingsPage(page);
   const layout = new Layout(page);
 
@@ -29,9 +31,26 @@ test("Settings", async ({ page }) => {
     await layout.goToManager();
     await deviceAction.accessManagerWithL10n();
     await layout.goToSettings();
-    await page.waitForResponse("**/language-package?**");
+    // the device language prompt only opens once the app has charded to available languages for the device
+    // I'm not entirely sure this is an entirely consistent way of waiting for that to be true
+    // if this gets flaky, don't hesitate in adding a plain wait for a few milliseconds
+    await page.waitForLoadState("networkidle");
     await settingsPage.changeLanguage("Français", "Español");
-    await page.pause();
-    //await expect(page).toHaveScreenshot("settings-français-with-device-l10n.png");
+    await expect(page).toHaveScreenshot("settings-français-with-device-l10n.png");
+  });
+
+  await test.step("accept and install language change on device", async () => {
+    await languageInstallation.installLanguageButton.click();
+    await deviceAction.initiateLanguageInstallation();
+    await languageInstallation.allowLanguageInstallation.waitFor({ state: "visible" });
+    await expect.soft(page).toHaveScreenshot("settings-allow-language-installation.png");
+
+    await deviceAction.add50ProgressToLanguageInstallation();
+    await languageInstallation.installingLanguageProgress.waitFor({ state: "visible" });
+    await expect.soft(page).toHaveScreenshot("settings-language-installation-progress.png");
+
+    await deviceAction.completeLanguageInstallation();
+    await languageInstallation.languageInstalled.waitFor({ state: "visible" });
+    await expect.soft(page).toHaveScreenshot("settings-language-installation-complete.png");
   });
 });

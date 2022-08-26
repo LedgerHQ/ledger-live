@@ -1,14 +1,17 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { ManagerPage } from "../../models/ManagerPage";
+import { LanguageInstallation } from "../../models/LanguageInstallation";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
+import { languageIds } from "@ledgerhq/types-live";
 
 test.use({ userdata: "skip-onboarding" });
 test.use({ env: { FORCE_PROVIDER: 12 } });
 
 test("Manager", async ({ page }) => {
   const managerPage = new ManagerPage(page);
+  const languageInstallation = new LanguageInstallation(page);
   const deviceAction = new DeviceAction(page);
   const layout = new Layout(page);
 
@@ -25,23 +28,17 @@ test("Manager", async ({ page }) => {
   });
 
   await test.step("can install language", async () => {
-    await managerPage.installLanguageButton.click();
+    await languageInstallation.installLanguageButton.click();
     await deviceAction.initiateLanguageInstallation();
-    await managerPage.allowLanguageInstallation.waitFor({ state: "visible" });
+    await languageInstallation.allowLanguageInstallation.waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("manager-allow-language-installation.png");
     
     await deviceAction.add50ProgressToLanguageInstallation();
-    await managerPage.installingLanguageProgress.waitFor({ state: "visible" });
+    await languageInstallation.installingLanguageProgress.waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("manager-language-installation-progress.png");
 
     await deviceAction.completeLanguageInstallation();
-    await managerPage.languageInstalled.waitFor({ state: "visible" });
+    await languageInstallation.languageInstalled.waitFor({ state: "visible" });
     await expect.soft(page).toHaveScreenshot("manager-language-installation-complete.png");
-  });
-
-  await test.step("language gets updated on manager", async () => {
-    await managerPage.closeLanguageInstallationButton.click();
-    await managerPage.changeDeviceLanguageButton.waitFor({ state: "visible" });
-    await expect(managerPage.changeDeviceLanguageButton).toContainText("French");
   });
 });

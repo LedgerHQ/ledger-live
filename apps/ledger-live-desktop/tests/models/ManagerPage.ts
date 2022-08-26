@@ -4,11 +4,6 @@ export class ManagerPage {
   readonly page: Page;
   readonly firmwareUpdateButton: Locator;
   readonly changeDeviceLanguageButton: Locator;
-  readonly installLanguageButton: Locator;
-  readonly closeLanguageInstallationButton: Locator;
-  readonly languageInstalled: Locator;  
-  readonly allowLanguageInstallation: Locator;
-  readonly installingLanguageProgress: Locator;
   readonly installedAppsTab: Locator;
   readonly catalogAppsTab: Locator;
   readonly updateAllButton: Locator;
@@ -25,11 +20,7 @@ export class ManagerPage {
     this.page = page;
     this.firmwareUpdateButton = page.locator('data-test-id=manager-update-firmware-button');
     this.changeDeviceLanguageButton = page.locator('data-test-id=manager-change-language-button');
-    this.installLanguageButton = page.locator('data-test-id=install-language-button');
-    this.closeLanguageInstallationButton = page.locator('data-test-id=close-language-installation-button');
-    this.languageInstalled = page.locator('data-test-id=language-installed'); 
-    this.allowLanguageInstallation = page.locator('data-test-id=allow-language-installation');
-    this.installingLanguageProgress = page.locator('data-test-id=installing-language-progress');
+
     this.installedAppsTab = page.locator('data-test-id=manager-installed-apps-tab');
     this.catalogAppsTab = page.locator('data-test-id=manager-app-catalog-tab');
     this.updateAllButton = page.locator('data-test-id=manager-update-all-apps-button');
