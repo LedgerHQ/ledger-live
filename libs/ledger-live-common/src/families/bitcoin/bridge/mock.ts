@@ -4,6 +4,7 @@ import {
   RecipientRequired,
   InvalidAddress,
   FeeTooHigh,
+  AmountRequired,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import { getFeeItems } from "../../../api/FeesBitcoin";
@@ -60,12 +61,17 @@ const getTransactionStatus = (account, t) => {
     ? account.balance.minus(estimatedFees)
     : new BigNumber(t.amount);
 
+  if (!errors.amount && !amount.gt(0)) {
+    errors.amount = useAllAmount
+      ? new NotEnoughBalance()
+      : new AmountRequired();
+  }
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
   // Fill up transaction errors...
-  if (totalSpent.gt(account.balance)) {
+  if (!errors.amount && totalSpent.gt(account.balance)) {
     errors.amount = new NotEnoughBalance();
   }
 

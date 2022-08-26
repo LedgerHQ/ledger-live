@@ -27,9 +27,8 @@ const GraphCardContainer = ({
   currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
 }) => {
-  const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(
-    currenciesSelector,
-  );
+  const currencies: Array<CryptoCurrency | TokenCurrency> =
+    useSelector(currenciesSelector);
 
   return (
     <>

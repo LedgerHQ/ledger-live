@@ -23,7 +23,7 @@ import perFamilyOperationDetails from "../generated/operationDetails";
 import { track } from "../analytics";
 import { useCurrentRouteName } from "../helpers/routeHooks";
 
-const ContainerTouchable = styled(Flex).attrs(p => ({
+const ContainerTouchable = styled(Flex).attrs(_ => ({
   height: "64px",
   flexDirection: "row",
   alignItems: "center",

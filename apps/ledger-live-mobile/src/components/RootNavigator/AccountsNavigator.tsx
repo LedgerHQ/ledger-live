@@ -12,8 +12,10 @@ import NftViewer from "../Nft/NftViewer";
 import NftCollectionHeaderTitle from "../../screens/Nft/NftCollection/NftCollectionHeaderTitle";
 import NftGalleryHeaderTitle from "../../screens/Nft/NftGallery/NftGalleryHeaderTitle";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+// eslint-disable-next-line import/no-cycle
 import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
 import ReadOnlyAssets from "../../screens/Portfolio/ReadOnlyAssets";
+// eslint-disable-next-line import/no-cycle
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import { accountsSelector } from "../../reducers/accounts";
 

@@ -3,60 +3,67 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import Info from "../icons/Info";
 import LText from "./LText";
-import styled from "@ledgerhq/native-ui/components/styled";
-import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 
 type Props = {
-  onPress?: () => void;
+  onPress: () => void;
   title: React.ReactNode;
   value: React.ReactNode;
-  warning?: boolean;
-  isLast?: boolean;
+  warning: boolean | null | undefined;
 };
-
-const StyledTouchableOpacity = styled.TouchableOpacity.attrs({
-  flexBasis: "auto",
-  flexDirection: "column",
-  mr: 7,
-  py: 5,
-  borderRightColor: "neutral.c40",
-})``;
-
 export default function BalanceSummaryInfoItem({
   onPress,
   title,
   value,
   warning = false,
-  isLast = false,
 }: Props) {
+  const { colors } = useTheme();
+  const warningStyle = warning && {
+    color: colors.orange,
+  };
   return (
-    <StyledTouchableOpacity
+    <TouchableOpacity
       onPress={onPress}
-      pr={isLast ? 0 : 7}
-      borderRightWidth={isLast ? 0 : 1}
+      style={[
+        warningStyle,
+        styles.wrapper,
+        {
+          backgroundColor: colors.card,
+        },
+      ]}
     >
-      <Flex flexDirection={"row"} alignItems={"center"}>
-        <Text
-          variant={"small"}
-          fontWeight={"medium"}
-          color={"neutral.c70"}
-          mr={2}
-        >
-          {title}
-        </Text>
+      <View style={[warningStyle, styles.balanceLabelContainer]}>
+        <LText style={[warningStyle, styles.balanceLabel]}>{title}</LText>
         {onPress && (
-          <>
-            {warning ? (
-              <Icons.WarningMedium size={16} color={"warning.c60"} />
-            ) : (
-              <Icons.InfoMedium size={16} color={"neutral.c70"} />
-            )}
-          </>
+          <Info size={12} color={warningStyle ? colors.orange : colors.grey} />
         )}
-      </Flex>
-      <Text variant={"large"} fontWeight={"medium"} color={"neutral.c100"}>
+      </View>
+      <LText semiBold style={[warningStyle, styles.balance]} color="grey">
         {value}
-      </Text>
-    </StyledTouchableOpacity>
+      </LText>
+    </TouchableOpacity>
   );
 }
+const styles = StyleSheet.create({
+  wrapper: {
+    flexBasis: "auto",
+    flexDirection: "column",
+    marginRight: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 4,
+  },
+  balanceLabelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingBottom: 4,
+  },
+  balanceLabel: {
+    fontSize: 13,
+    lineHeight: 16,
+    marginRight: 6,
+  },
+  balance: {
+    fontSize: 18,
+    lineHeight: 22,
+  },
+});

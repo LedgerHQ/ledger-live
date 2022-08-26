@@ -108,6 +108,7 @@ function FabAccountButtonBar({
             Icon,
             event,
             eventProperties,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             Component,
             type = "shade",
             outline = true,

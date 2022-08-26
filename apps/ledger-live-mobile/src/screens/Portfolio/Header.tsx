@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";

@@ -13,7 +13,7 @@ import type {
 } from "../../families/cosmos/types";
 import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData";
 import { getCryptoCurrencyById } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { pickSiblings, botTest } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {
@@ -64,9 +64,11 @@ const cosmos: AppSpec<Transaction> = {
     if (allOperationsMatchingId.length > 1) {
       console.warn(allOperationsMatchingId);
     }
-    expect({ allOperationsMatchingId }).toEqual({
-      allOperationsMatchingId: [operation],
-    });
+    botTest("only one operation resulted", () =>
+      expect({ allOperationsMatchingId }).toEqual({
+        allOperationsMatchingId: [operation],
+      })
+    );
     const opExpected: Record<string, any> = toOperationRaw({
       ...optimisticOperation,
     });
@@ -78,8 +80,12 @@ const cosmos: AppSpec<Transaction> = {
     const extra = opExpected.extra;
     delete opExpected.extra;
     const op = toOperationRaw(operation);
-    expect(op).toMatchObject(opExpected);
-    expect(approximateExtra(op.extra)).toMatchObject(approximateExtra(extra));
+    botTest("optimistic operation matches", () =>
+      expect(op).toMatchObject(opExpected)
+    );
+    botTest("optimistic operation extra matches", () =>
+      expect(approximateExtra(op.extra)).toMatchObject(approximateExtra(extra))
+    );
   },
   mutations: [
     {
@@ -129,7 +135,9 @@ const cosmos: AppSpec<Transaction> = {
         };
       },
       test: ({ account }) => {
-        expect(account.spendableBalance.toString()).toBe("0");
+        botTest("spendableBalance should go to ZERO", () =>
+          expect(account.spendableBalance.toString()).toBe("0")
+        );
       },
     },
     {
@@ -198,13 +206,15 @@ const cosmos: AppSpec<Transaction> = {
             (d) => d.validatorAddress === v.address
           );
           invariant(d, "delegated %s must be found in account", v.address);
-          expect({
-            address: v.address,
-            amount: approximateValue(v.amount),
-          }).toMatchObject({
-            address: (d as CosmosDelegation).validatorAddress,
-            amount: approximateValue((d as CosmosDelegation).amount),
-          });
+          botTest("delegator have planned address and amount", () =>
+            expect({
+              address: v.address,
+              amount: approximateValue(v.amount),
+            }).toMatchObject({
+              address: (d as CosmosDelegation).validatorAddress,
+              amount: approximateValue((d as CosmosDelegation).amount),
+            })
+          );
         });
       },
     },
@@ -266,13 +276,15 @@ const cosmos: AppSpec<Transaction> = {
             (d) => d.validatorAddress === v.address
           );
           invariant(d, "undelegated %s must be found in account", v.address);
-          expect({
-            address: v.address,
-            amount: approximateValue(v.amount),
-          }).toMatchObject({
-            address: (d as CosmosUnbonding).validatorAddress,
-            amount: approximateValue((d as CosmosUnbonding).amount),
-          });
+          botTest("validator have planned address and amount", () =>
+            expect({
+              address: v.address,
+              amount: approximateValue(v.amount),
+            }).toMatchObject({
+              address: (d as CosmosUnbonding).validatorAddress,
+              amount: approximateValue((d as CosmosUnbonding).amount),
+            })
+          );
         });
       },
     },
@@ -308,7 +320,7 @@ const cosmos: AppSpec<Transaction> = {
             {
               mode: "redelegate",
               memo: "LedgerLiveBot",
-              cosmosSourceValidator: (sourceDelegation as CosmosDelegation)
+              sourceValidator: (sourceDelegation as CosmosDelegation)
                 .validatorAddress,
               validators: [
                 {
@@ -341,16 +353,18 @@ const cosmos: AppSpec<Transaction> = {
               .find(
                 (d) =>
                   d.validatorDstAddress === v.address &&
-                  d.validatorSrcAddress === transaction.cosmosSourceValidator
+                  d.validatorSrcAddress === transaction.sourceValidator
               );
             invariant(d, "redelegated %s must be found in account", v.address);
-            expect({
-              address: v.address,
-              amount: approximateValue(v.amount),
-            }).toMatchObject({
-              address: (d as CosmosRedelegation).validatorDstAddress,
-              amount: approximateValue((d as CosmosRedelegation).amount),
-            });
+            botTest("validator have planned address and amount", () =>
+              expect({
+                address: v.address,
+                amount: approximateValue(v.amount),
+              }).toMatchObject({
+                address: (d as CosmosRedelegation).validatorDstAddress,
+                amount: approximateValue((d as CosmosRedelegation).amount),
+              })
+            );
           }
         });
       },

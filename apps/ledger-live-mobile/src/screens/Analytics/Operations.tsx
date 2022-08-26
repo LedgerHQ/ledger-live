@@ -5,7 +5,6 @@ import { Flex } from "@ledgerhq/native-ui";
 
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-// @ts-ignore
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { AccountLikeArray, Operation } from "@ledgerhq/types-live";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";

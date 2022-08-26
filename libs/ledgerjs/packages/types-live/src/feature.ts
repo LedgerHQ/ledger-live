@@ -7,6 +7,7 @@ export type FeatureId =
   | "counterValue"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
+  | "currencyOsmosis"
   | "ptxSmartRoutingMobile"
   | string;
 

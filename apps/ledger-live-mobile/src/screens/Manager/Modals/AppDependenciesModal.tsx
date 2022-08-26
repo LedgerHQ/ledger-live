@@ -15,7 +15,7 @@ import BottomModal from "../../../components/BottomModal";
 
 type Props = {
   appInstallWithDependencies: { app: App; dependencies: App[] };
-  dispatch: (action: Action) => void;
+  dispatch: (_: Action) => void;
   onClose: () => void;
 };
 

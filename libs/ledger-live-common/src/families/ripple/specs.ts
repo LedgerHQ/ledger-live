@@ -2,7 +2,7 @@ import expect from "expect";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 const currency = getCryptoCurrencyById("ripple");
@@ -53,14 +53,17 @@ const ripple: AppSpec<Transaction> = {
       },
       test: ({ account, transaction, accountBeforeTransaction, operation }) => {
         if (transaction.tag) {
-          expect(operation.extra).toMatchObject({
-            tag: transaction.tag,
-          });
+          botTest("operation tag matches (in extra)", () =>
+            expect(operation.extra).toMatchObject({
+              tag: transaction.tag,
+            })
+          );
         }
 
-        // can be generalized!
-        expect(account.balance.toString()).toBe(
-          accountBeforeTransaction.balance.minus(operation.value).toString()
+        botTest("account balance moved with operation.value", () =>
+          expect(account.balance.toString()).toBe(
+            accountBeforeTransaction.balance.minus(operation.value).toString()
+          )
         );
       },
     },
