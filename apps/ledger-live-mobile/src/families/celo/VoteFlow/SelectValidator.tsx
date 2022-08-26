@@ -45,8 +45,13 @@ export default function SelectValidator({ navigation, route }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: CeloValidatorGroup }) => (
-      <ValidatorRow account={account} validator={item} amount={item.votes} onPress={onItemPress} />
+    ({ item }) => (
+       <ValidatorRow
+        account={account}
+        validator={item}
+        onPress={onItemPress}
+        amount={item.votes}
+      />
     ),
     [onItemPress, account],
   );

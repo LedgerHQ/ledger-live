@@ -18,7 +18,6 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
@@ -31,6 +30,7 @@ import CurrencyInput from "../../../components/CurrencyInput";
 import TranslatedError from "../../../components/TranslatedError";
 import SendRowsFee from "../SendRowsFee";
 import { getFirstStatusError } from "../../helpers";
+import { CeloVote } from "@ledgerhq/live-common/lib/families/celo/types";
 
 type Props = {
   navigation: any,
@@ -41,6 +41,7 @@ type RouteParams = {
   accountId: string,
   transaction: Transaction,
   amount?: number,
+  vote: CeloVote
 };
 
 export default function VoteAmount({ navigation, route }: Props) {
@@ -64,7 +65,8 @@ export default function VoteAmount({ navigation, route }: Props) {
       transaction: {
         ...route.params.transaction,
         amount: new BigNumber(route.params.amount ?? 0),
-        mode: "vote",
+        mode: "revoke",
+        index: route.params.vote?.index
       },
     };
   });
@@ -98,7 +100,7 @@ export default function VoteAmount({ navigation, route }: Props) {
   };
 
   const onContinue = () => {
-    navigation.navigate(ScreenName.CeloVoteSummary, {
+    navigation.navigate(ScreenName.CeloRevokeSummary, {
       ...route.params,
       amount: status.amount,
     });
@@ -109,7 +111,6 @@ export default function VoteAmount({ navigation, route }: Props) {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const currency = getAccountCurrency(account);
   const error =
     amount.eq(0) || bridgePending
       ? null
@@ -118,7 +119,7 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="VoteFlow" name="Amount" />
+      <TrackScreen category="CeloRevoke" name="Amount" />
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
       >
@@ -162,7 +163,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                 <View style={styles.available}>
                   <View style={styles.availableLeft}>
                     <LText>
-                      <Trans i18nKey="celo.vote.flow.steps.amount.available" />
+                      <Trans i18nKey="celo.revoke.flow.steps.amount.available" />
                     </LText>
                     <LText semiBold>
                       {maxSpendable ? (
@@ -179,7 +180,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                   {typeof useAllAmount === "boolean" ? (
                     <View style={styles.availableRight}>
                       <LText style={styles.maxLabel}>
-                        <Trans i18nKey="celo.vote.flow.steps.amount.max" />
+                        <Trans i18nKey="celo.revoke.flow.steps.amount.max" />
                       </LText>
                       <Switch
                         style={styles.switch}

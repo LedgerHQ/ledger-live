@@ -5,6 +5,7 @@ import * as CeloLockFlow from "./LockFlow";
 import * as CeloUnlockFlow from "./UnlockFlow";
 import * as CeloVoteFlow from "./VoteFlow";
 import * as CeloActivateFlow from "./ActivateFlow";
+import * as CeloRevokeFlow from "./RevokeFlow";
 
 export {
   CeloManageAssetsNavigator,
@@ -12,5 +13,6 @@ export {
   CeloLockFlow,
   CeloUnlockFlow,
   CeloVoteFlow,
-  CeloActivateFlow
+  CeloActivateFlow,
+  CeloRevokeFlow
 };

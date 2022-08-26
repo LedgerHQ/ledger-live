@@ -1,6 +1,6 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
@@ -12,11 +12,12 @@ import ValidatorRow from "../ValidatorRow";
 import {
   CeloAccount,
   CeloValidatorGroup,
+  CeloVote,
 } from "@ledgerhq/live-common/lib/families/celo/types";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import {
-  activatableVotes,
   fallbackValidatorGroup,
+  revokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
 
 type Props = {
@@ -36,7 +37,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const votes = activatableVotes(account as CeloAccount);
+  const votes = revokableVotes(account as CeloAccount);
 
   const { validatorGroups } = useCeloPreloadData();
 
@@ -52,10 +53,11 @@ export default function SelectValidator({ navigation, route }: Props) {
   );
 
   const onItemPress = useCallback(
-    (validator: CeloValidatorGroup) => {
-      navigation.navigate(ScreenName.CeloActivateSummary, {
+    (validator: CeloValidatorGroup, vote?: CeloVote) => {
+      navigation.navigate(ScreenName.CeloRevokeSummary, {
         ...route.params,
         validator,
+        vote
       });
     },
     [navigation, route.params],
@@ -76,7 +78,7 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ActivateFlow" name="SelectValidator" />
+      <TrackScreen category="CeloRevoke" name="SelectValidator" />
       <View style={styles.header}>
         <ValidatorHead />
       </View>
