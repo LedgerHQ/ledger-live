@@ -12,16 +12,16 @@ import BarInteraction from "./BarInteraction";
 import type { Item, ItemArray } from "./types";
 
 type Props = {
-  width: number;
-  height: number;
-  data?: ItemArray;
-  color: string;
-  isInteractive: boolean;
-  onItemHover?: (_?: Item) => void;
-  mapValue: (_: Item) => number;
-  shape?: string;
-  verticalRangeRatio?: number;
-  fill: string;
+  width: number,
+  height: number,
+  data?: ItemArray,
+  color: string,
+  isInteractive: boolean,
+  onItemHover?: (item: Item) => void
+  mapValue: (item: Item) => number,
+  shape?: string,
+  verticalRangeRatio?: number,
+  fill: string,
 };
 const STROKE_WIDTH = 2;
 const FOCUS_RADIUS = 4;
