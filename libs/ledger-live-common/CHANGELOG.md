@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 26.0.1-nightly.1
+
+### Patch Changes
+
+- [#1025](https://github.com/LedgerHQ/ledger-live/pull/1025) [`7e812a738d`](https://github.com/LedgerHQ/ledger-live/commit/7e812a738db718200138dcb9b7bcc2f6dd0ddd6f) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: hooks for genuine check and get latest available firmware
+
 ## 26.0.1-nightly.0
 
 ### Patch Changes
