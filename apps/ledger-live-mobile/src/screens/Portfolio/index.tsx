@@ -42,6 +42,7 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import { useProviders } from "../Swap/Form/index";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -142,6 +143,7 @@ function PortfolioScreen({ navigation }: Props) {
     () => setAddModalOpened(true),
     [setAddModalOpened],
   );
+  useProviders();
 
   const closeAddModal = useCallback(
     () => setAddModalOpened(false),

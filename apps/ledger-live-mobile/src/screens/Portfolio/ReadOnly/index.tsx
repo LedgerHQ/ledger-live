@@ -34,7 +34,7 @@ import Header from "../Header";
 import { screen, track } from "../../../analytics";
 import { NavigatorName } from "../../../const";
 import ReadOnlyAssets from "./ReadOnlyAssets";
-import { useProviders } from "../../Swap/Form";
+import { useProviders } from "../../Swap/Form/index";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
