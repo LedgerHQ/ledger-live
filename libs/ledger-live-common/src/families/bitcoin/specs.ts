@@ -235,11 +235,15 @@ const bitcoinLikeMutations = ({
           )
       );
       invariant(utxo, "utxo available");
-      botTest("sender is only the utxo address", () =>
+      botTest("sender is only the utxo address", () => {
+        let expectedSender = (utxo as BitcoinOutput).address;
+        if (account.currency.id === "bitcoin_cash") {
+          expectedSender = bchToCashaddrAddressWithoutPrefix(expectedSender);
+        }
         expect(operation).toMatchObject({
-          senders: [(utxo as BitcoinOutput).address],
-        })
-      );
+          senders: [expectedSender],
+        });
+      });
       botTest("utxo has been consumed", () =>
         expect(
           (account as BitcoinAccount).bitcoinResources?.utxos.find(
