@@ -80,7 +80,10 @@ export default (app: Probot) => {
     }
 
     if (!isBodyValid) {
-      body += `- _the description is missing or you removed or overrode one or more sections of the [pull request template](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/pull_request_template.md)_\n`;
+      body +=
+        "- _the description is missing or you removed or overrode one or more sections of the [pull request template](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/pull_request_template.md)_\n";
+      body +=
+        "_💡 make sure you added comments only inside the template sections - and not above the `📝 Description` heading_\n";
     }
     comment = context.issue({
       body,

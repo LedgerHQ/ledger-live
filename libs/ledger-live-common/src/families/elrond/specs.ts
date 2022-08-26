@@ -1,7 +1,7 @@
 import type { Transaction } from "../../families/elrond/types";
 import invariant from "invariant";
 import { getCryptoCurrencyById } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec, TransactionTestInput } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -44,7 +44,9 @@ const elrondSpec: AppSpec<Transaction> = {
     delete opExpected.date;
     delete opExpected.blockHash;
     delete opExpected.blockHeight;
-    expect(toOperationRaw(operation)).toMatchObject(opExpected);
+    botTest("optimistic operation matches", () =>
+      expect(toOperationRaw(operation)).toMatchObject(opExpected)
+    );
   },
 
   mutations: [
