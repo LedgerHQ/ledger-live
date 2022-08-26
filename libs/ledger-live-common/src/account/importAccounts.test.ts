@@ -3,9 +3,9 @@ import {
   importAccountsMakeItems,
   importAccountsReduce,
   fromAccountRaw,
-} from "../../account";
-import { setSupportedCurrencies } from "../../currencies";
-import { setPlatformVersion } from "../../platform/version";
+} from ".";
+import { setSupportedCurrencies } from "../currencies";
+import { setPlatformVersion } from "../platform/version";
 
 setPlatformVersion("1.1.0");
 
@@ -181,6 +181,13 @@ describe("importAccountsMakeItems", () => {
         mode: "update",
       },
     ]);
+    const syncResult = {
+      failed: {},
+      synchronized: {},
+    };
+    result.accounts.forEach((a) => {
+      syncResult.synchronized[a.id] = a;
+    });
     const reduced = importAccountsReduce(accounts, {
       items,
       selectedAccounts: [
@@ -188,6 +195,7 @@ describe("importAccountsMakeItems", () => {
         "libcore:1:ethereum:xpub2:",
         "libcore:1:ethereum:xpub5:",
       ],
+      syncResult,
     });
     expect(reduced).toMatchObject([
       {

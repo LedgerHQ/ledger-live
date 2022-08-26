@@ -12,6 +12,8 @@ import { Result } from "@ledgerhq/live-common/cross";
 import {
   ImportItem,
   importAccountsMakeItems,
+  syncNewAccountsToImport,
+  ImportAccountsReduceInput,
 } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 
@@ -30,17 +32,17 @@ import DisplayResultItem from "./DisplayResultItem";
 import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
 import HeaderBackImage from "../../components/HeaderBackImage";
+import { blacklistedTokenIdsSelector } from "../../reducers/settings";
+import { bridgeCache } from "../../bridge/cache";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any;
   route: { params: RouteParams };
+  backlistedTokenIds: string[];
   accounts: Account[];
-  importAccounts: (_: {
-    items: ImportItem[];
-    selectedAccounts: string[];
-  }) => void;
+  importAccounts: (_: ImportAccountsReduceInput) => void;
   importDesktopSettings: (_: any) => void;
 };
 
@@ -111,11 +113,24 @@ class DisplayResult extends Component<Props, State> {
   }
 
   onImport = async () => {
-    const { importAccounts, importDesktopSettings, navigation } = this.props;
+    const {
+      importAccounts,
+      importDesktopSettings,
+      navigation,
+      backlistedTokenIds,
+    } = this.props;
     const { selectedAccounts, items, importSettings } = this.state;
     const onFinish = this.props.route.params?.onFinish;
     this.setState({ importing: true });
-    importAccounts({ items, selectedAccounts });
+    const syncResult = await syncNewAccountsToImport(
+      {
+        items,
+        selectedAccounts,
+      },
+      bridgeCache,
+      backlistedTokenIds,
+    );
+    importAccounts({ items, selectedAccounts, syncResult });
     if (importSettings) {
       importDesktopSettings(this.props.route.params?.result.settings);
     }
@@ -222,10 +237,16 @@ class DisplayResult extends Component<Props, State> {
 
 // $FlowFixMe
 export default compose(
-  connect(createStructuredSelector({ accounts: accountsSelector }), {
-    importAccounts,
-    importDesktopSettings,
-  }),
+  connect(
+    createStructuredSelector({
+      accounts: accountsSelector,
+      backlistedTokenIds: blacklistedTokenIdsSelector,
+    }),
+    {
+      importAccounts,
+      importDesktopSettings,
+    },
+  ),
 )(DisplayResult);
 
 const styles = StyleSheet.create({

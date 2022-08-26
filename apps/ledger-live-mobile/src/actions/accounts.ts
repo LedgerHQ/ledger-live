@@ -1,3 +1,4 @@
+import { ImportAccountsReduceInput } from "@ledgerhq/live-common/lib/account/index";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import type { Account } from "@ledgerhq/types-live";
 import accountModel from "../logic/accountModel";
@@ -18,16 +19,9 @@ export const reorderAccounts = (comparator: any) => (dispatch: any) =>
       comparator,
     },
   });
-export const importAccounts = ({
-  items,
-  selectedAccounts,
-}: {
-  items: any[];
-  selectedAccounts: string[];
-}) => ({
+export const importAccounts = (input: ImportAccountsReduceInput) => ({
   type: "ACCOUNTS_USER_IMPORT",
-  items,
-  selectedAccounts,
+  input,
 });
 export const replaceAccounts = (payload: {
   scannedAccounts: Account[];
