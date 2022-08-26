@@ -41,7 +41,7 @@ module.exports = async function({
       const envPrefix = `env HOME=${homeDir}/.electron-gyp npm_config_target=${target} npm_config_platform=${platform} npm_config_arch=${arch} npm_config_target_arch=${arch} npm_config_disturl=https://electronjs.org/headers npm_config_runtime=napi npm_config_build_from_source=${buildFromSources}`;
       const prebuildFlags = `--arch=${arch} --platform=${platform} ${
         buildFromSources ? "--build-from-source" : ""
-      } --verbose --force`;
+      } --verbose`;
 
       let installDone;
 

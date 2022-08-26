@@ -79,6 +79,9 @@ jobs:
           node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Install native packages
+        run: |
+          sudo apt install libusb-1.0-0 libusb-1.0-0-dev libudev-dev
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-gh-cache
@@ -102,12 +105,12 @@ jobs:
       - name: upload linux app (armv7l)
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          name: ${{ steps.build-desktop.outputs.version }}-linux-armv7l.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-armv7l.AppImage
       - name: upload linux app (arm64)
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          name: ${{ steps.build-desktop.outputs.version }}-linux-arm64.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-arm64.AppImage
 
   build-desktop-app-linux-external:
@@ -165,12 +168,12 @@ jobs:
       - name: upload linux app (armv7l)
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          name: ${{ steps.build-desktop.outputs.version }}-linux-armv7l.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-armv7l.AppImage
       - name: upload linux app (arm64)
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          name: ${{ steps.build-desktop.outputs.version }}-linux-arm64.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-arm64.AppImage
 
   build-desktop-app-windows:
