@@ -57,7 +57,6 @@ export const useProviders = () => {
   const dispatch = useDispatch();
   const { providers, error: providersError } = useSwapProviders();
   const storedProviders = useSelector(providersSelector);
-  console.log("!!!useProviders", providers);
 
   useEffect(() => {
     if (providers) dispatch(updateProvidersAction(providers));
