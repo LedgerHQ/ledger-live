@@ -303,7 +303,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     swapTransaction.transaction &&
     !providersError &&
     !swapError &&
-    !currentBanner &&
+    currentBanner === ActionRequired.None &&
     exchangeRate &&
     swapTransaction.swap.to.account;
 
