@@ -93,24 +93,6 @@ export default function DelegationRow({
   );
 }
 
-// const voteActions = (vote: CeloVote) => {
-//   const actions = [];
-
-//   if (vote.activatable)
-//     actions.push({
-//       key: "MODAL_CELO_ACTIVATE",
-//       label: <Trans i18nKey="celo.delegation.actions.activate" />,
-//     });
-
-//   if (vote.revokable)
-//     actions.push({
-//       key: "MODAL_CELO_REVOKE",
-//       label: <Trans i18nKey="celo.delegation.actions.revoke" />,
-//     });
-
-//   return actions;
-// };
-
 const styles = StyleSheet.create({
   wrapper: {
     paddingVertical: 16,

@@ -98,8 +98,8 @@ function Delegations({ account }: Props) {
 
   const onActivate = useCallback(() => {
     onNavigate({
-      route: NavigatorName.CeloLockFlow,
-      screen: ScreenName.CeloLockAmount,
+      route: NavigatorName.CeloActivateFlow,
+      screen: ScreenName.CeloActivateSummary,
       params: {
         accountId: account.id,
       },
@@ -108,8 +108,8 @@ function Delegations({ account }: Props) {
 
   const onRevoke = useCallback(() => {
     onNavigate({
-      route: NavigatorName.CeloLockFlow,
-      screen: ScreenName.CeloLockAmount,
+      route: NavigatorName.CeloRevokeFlow,
+      screen: ScreenName.CeloRevokeSummary,
       params: {
         accountId: account.id,
       },
@@ -118,8 +118,8 @@ function Delegations({ account }: Props) {
 
   const onWithdraw = useCallback(() => {
     onNavigate({
-      route: NavigatorName.CeloLockFlow,
-      screen: ScreenName.CeloLockAmount,
+      route: NavigatorName.CeloWithdrawFlow,
+      screen: ScreenName.CeloWithdrawSummary,
       params: {
         accountId: account.id,
       },
