@@ -155,9 +155,6 @@ function PortfolioScreen({ navigation }: Props) {
       </Box>,
       ...(showAssets
         ? [
-            <Box pt={6} background={colors.background.main}>
-              <FabActions areAccountsEmpty={areAccountsEmpty} />
-            </Box>,
             <Box background={colors.background.main} px={6} mt={6}>
               <Assets assets={assetsToDisplay} />
               {distribution.list.length < maxAssetsToDisplay ? (

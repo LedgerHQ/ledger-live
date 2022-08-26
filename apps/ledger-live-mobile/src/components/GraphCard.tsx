@@ -142,7 +142,7 @@ function GraphCard({
                       <CurrencyUnitValue
                         unit={unit}
                         value={hoveredItem ? hoveredItem.value : item.value}
-                        joinFragmentsSeparator=" "
+                        joinFragmentsSeparator=""
                       />
                     </Text>
                   )}
@@ -171,6 +171,7 @@ function GraphCard({
                             valueChange={countervalueChange}
                             // range={portfolio.range}
                           />
+                          <Text> </Text>
                           <Delta unit={unit} valueChange={countervalueChange} />
                         </>
                       )}
