@@ -97,7 +97,7 @@ function Header({
                 fontSize="11px"
                 numberOfLines={1}
               >
-                {t("asset.title", { assetName: currency.name }) + currency.type}
+                {t("asset.title", { assetName: currency.name })}
               </Text>
               <Text
                 variant={"small"}

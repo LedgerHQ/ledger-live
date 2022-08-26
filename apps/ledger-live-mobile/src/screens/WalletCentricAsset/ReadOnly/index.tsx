@@ -50,8 +50,7 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 
 const ReadOnlyAssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
-  const currencyParam = route?.params?.currency;
-  const currency = getCryptoCurrencyById(currencyParam?.id);
+  const currency = route?.params?.currency;
   const { colors } = useTheme();
 
   const counterValueCurrency: Currency = useSelector(
