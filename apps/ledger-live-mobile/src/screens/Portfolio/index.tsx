@@ -9,9 +9,12 @@ import Animated, {
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import {
+  isAccountEmpty,
+  getAccountName,
+} from "@ledgerhq/live-common/account/index";
 
-import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
+import { Box, Flex, Button, Icons, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import {

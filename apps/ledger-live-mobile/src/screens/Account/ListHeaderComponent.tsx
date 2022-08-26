@@ -95,26 +95,24 @@ export function getListHeaderComponents({
 
   return {
     listHeaderComponents: [
-      !empty && (
-        <Box mt={6} onLayout={onAccountCardLayout}>
-          <AccountGraphCard
-            account={account}
-            range={range}
-            history={history}
-            useCounterValue={shouldUseCounterValue}
-            valueChange={
-              shouldUseCounterValue ? countervalueChange : cryptoChange
-            }
-            countervalueAvailable={countervalueAvailable}
-            counterValueCurrency={counterValueCurrency}
-            onSwitchAccountCurrency={onSwitchAccountCurrency}
-            countervalueChange={countervalueChange}
-            counterValueUnit={counterValueCurrency.units[0]}
-            cryptoCurrencyUnit={getAccountUnit(account)}
-            parentAccount={parentAccount}
-          />
-        </Box>
-      ),
+      <Box mt={6} onLayout={onAccountCardLayout}>
+        <AccountGraphCard
+          account={account}
+          range={range}
+          history={history}
+          useCounterValue={shouldUseCounterValue}
+          valueChange={
+            shouldUseCounterValue ? countervalueChange : cryptoChange
+          }
+          countervalueAvailable={countervalueAvailable}
+          counterValueCurrency={counterValueCurrency}
+          onSwitchAccountCurrency={onSwitchAccountCurrency}
+          countervalueChange={countervalueChange}
+          counterValueUnit={counterValueCurrency.units[0]}
+          cryptoCurrencyUnit={getAccountUnit(account)}
+          parentAccount={parentAccount}
+        />
+      </Box>,
       <Header accountId={account.id} />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main}>
