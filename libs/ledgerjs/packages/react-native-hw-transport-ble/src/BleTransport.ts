@@ -339,7 +339,7 @@ export default class BluetoothTransport extends Transport {
    * Scan for bluetooth Ledger devices
    */
   static listen(
-    observer: TransportObserver<DescriptorEvent<Device | null>>
+    observer: TransportObserver<DescriptorEvent<Device>>
   ): TransportSubscription {
     log("ble-verbose", "listen...");
     let unsubscribed;
@@ -369,11 +369,14 @@ export default class BluetoothTransport extends Transport {
 
             const res = retrieveInfos(device);
             const deviceModel = res && res.deviceModel;
-            observer.next({
-              type: "add",
-              descriptor: device,
-              deviceModel,
-            });
+
+            if(device) {
+              observer.next({
+                type: "add",
+                descriptor: device,
+                deviceModel,
+              });
+            }
           }
         );
       }

@@ -12,6 +12,7 @@ import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen } from "../../analytics";
 import DeviceItem from "../../components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
+import { DescriptorEvent } from "@ledgerhq/hw-transport";
 
 type Props = {
   // eslint-disable-next-line no-unused-vars
@@ -61,7 +62,7 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
     }, BLE_SCANNING_NOTHING_TIMEOUT);
 
     const sub = Observable.create(TransportBLE.listen).subscribe({
-      next: (e: { type: string; descriptor: any }) => {
+      next: (e: DescriptorEvent<Device>) => {
         if (e.type === "add") {
           clearTimeout(timeout);
           const device = e.descriptor;
