@@ -26,6 +26,8 @@ import getTransactionId from "./getTransactionId";
 import scanDescriptors from "./scanDescriptors";
 import getAppAndVersion from "./getAppAndVersion";
 import getOnboardingStatePolling from "./getOnboardingStatePolling";
+import getGenuineCheckFromDeviceId from "./getGenuineCheckFromDeviceId";
+import getLatestAvailableFirmwareFromDeviceId from "./getLatestAvailableFirmwareFromDeviceId";
 import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
 export const commandsById = {
@@ -57,6 +59,8 @@ export const commandsById = {
   signMessage,
   getAppAndVersion,
   getOnboardingStatePolling,
+  getGenuineCheckFromDeviceId,
+  getLatestAvailableFirmwareFromDeviceId,
 };
 
 export type Commands = typeof commandsById;
