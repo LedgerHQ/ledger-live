@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, SectionList } from "react-native";
+import { View, StyleSheet, SectionList, ActivityIndicator } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useNavigation } from "@react-navigation/native";
 import { HeaderBackButton } from "@react-navigation/elements";
@@ -12,6 +12,8 @@ import { Result } from "@ledgerhq/live-common/cross";
 import {
   ImportItem,
   importAccountsMakeItems,
+  syncNewAccountsToImport,
+  ImportAccountsReduceInput,
 } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 
@@ -30,17 +32,17 @@ import DisplayResultItem from "./DisplayResultItem";
 import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
 import HeaderBackImage from "../../components/HeaderBackImage";
+import { blacklistedTokenIdsSelector } from "../../reducers/settings";
+import { bridgeCache } from "../../bridge/cache";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any;
   route: { params: RouteParams };
+  backlistedTokenIds: string[];
   accounts: Account[];
-  importAccounts: (_: {
-    items: ImportItem[];
-    selectedAccounts: string[];
-  }) => void;
+  importAccounts: (_: ImportAccountsReduceInput) => void;
   importDesktopSettings: (_: any) => void;
 };
 
@@ -111,11 +113,25 @@ class DisplayResult extends Component<Props, State> {
   }
 
   onImport = async () => {
-    const { importAccounts, importDesktopSettings, navigation } = this.props;
-    const { selectedAccounts, items, importSettings } = this.state;
+    const {
+      importAccounts,
+      importDesktopSettings,
+      navigation,
+      backlistedTokenIds,
+    } = this.props;
+    const { selectedAccounts, items, importSettings, importing } = this.state;
+    if (importing) return;
     const onFinish = this.props.route.params?.onFinish;
     this.setState({ importing: true });
-    importAccounts({ items, selectedAccounts });
+    const syncResult = await syncNewAccountsToImport(
+      {
+        items,
+        selectedAccounts,
+      },
+      bridgeCache,
+      backlistedTokenIds,
+    );
+    importAccounts({ items, selectedAccounts, syncResult });
     if (importSettings) {
       importDesktopSettings(this.props.route.params?.result.settings);
     }
@@ -177,7 +193,7 @@ class DisplayResult extends Component<Props, State> {
   keyExtractor = item => item.account.id;
 
   render() {
-    const { items } = this.state;
+    const { items, importing } = this.state;
     const itemsGroupedByMode = groupBy(items, "mode");
 
     return (
@@ -206,13 +222,17 @@ class DisplayResult extends Component<Props, State> {
               title={<Trans i18nKey="common.retry" />}
               onPress={this.onRetry}
             />
-            <Button
-              event="ImportAccountsContinue"
-              containerStyle={styles.button}
-              type="primary"
-              title={<Trans i18nKey="common.import" />}
-              onPress={this.onImport}
-            />
+            {importing ? (
+              <Importing />
+            ) : (
+              <Button
+                event="ImportAccountsContinue"
+                containerStyle={styles.button}
+                type="primary"
+                title={<Trans i18nKey="common.import" />}
+                onPress={this.onImport}
+              />
+            )}
           </View>
         </Flex>
       </SafeAreaView>
@@ -220,12 +240,23 @@ class DisplayResult extends Component<Props, State> {
   }
 }
 
+function Importing() {
+  const theme = useTheme();
+  return <ActivityIndicator color={theme.colors.neutral.c50} animating />;
+}
+
 // $FlowFixMe
 export default compose(
-  connect(createStructuredSelector({ accounts: accountsSelector }), {
-    importAccounts,
-    importDesktopSettings,
-  }),
+  connect(
+    createStructuredSelector({
+      accounts: accountsSelector,
+      backlistedTokenIds: blacklistedTokenIdsSelector,
+    }),
+    {
+      importAccounts,
+      importDesktopSettings,
+    },
+  ),
 )(DisplayResult);
 
 const styles = StyleSheet.create({
