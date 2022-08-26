@@ -49,7 +49,8 @@ import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
 import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
 import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsNavigator from "./AnalyticsNavigator";
+import AnalyticsAllocation from "../../screens/Analytics/Allocation";
+import AnalyticsOperations from "../../screens/Analytics/Operations";
 import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
@@ -490,10 +491,19 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={NavigatorName.Analytics}
-        component={AnalyticsNavigator}
+        name={ScreenName.AnalyticsAllocation}
+        component={AnalyticsAllocation}
         options={{
-          title: t("analytics.title"),
+          title: t("analytics.allocation.title"),
+          headerRight: null,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AnalyticsOperations}
+        component={AnalyticsOperations}
+        options={{
+          title: t("analytics.operations.title"),
           headerRight: null,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         }}
