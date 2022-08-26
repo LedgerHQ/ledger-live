@@ -17,8 +17,8 @@ type Props = {
   data?: ItemArray,
   color: string,
   isInteractive: boolean,
-  onItemHover?: (?Item) => void,
-  mapValue: Item => number,
+  onItemHover?: (item: Item) => void
+  mapValue: (item: Item) => number,
   shape?: string,
   verticalRangeRatio?: number,
   fill: string,
