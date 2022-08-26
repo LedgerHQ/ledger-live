@@ -1,7 +1,6 @@
 import React, { useState, useCallback, memo } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Animated, {
   Extrapolate,
@@ -43,6 +42,7 @@ type Props = {
   graphCardEndPosition: number;
   currency: Currency;
   areAccountsEmpty: boolean;
+  currencyBalance: number;
 };
 
 function AssetCentricGraphCard({
@@ -52,19 +52,18 @@ function AssetCentricGraphCard({
   graphCardEndPosition,
   currency,
   areAccountsEmpty,
+  currencyBalance,
 }: Props) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
   const currentScreen = useCurrentRouteName();
   const [itemRange, setTimeRange, timeRangeItems] = useTimeRange();
-  const [loading, setLoading] = useState(false);
   const {
     countervalueChange,
     balanceAvailable,
     balanceHistory,
   } = assetPortfolio;
 
-  const item = balanceHistory[balanceHistory.length - 1];
+  const currencyUnitValue = balanceHistory[balanceHistory.length - 1];
 
   const unit = counterValueCurrency.units[0];
 
@@ -143,21 +142,20 @@ function AssetCentricGraphCard({
                   {!balanceAvailable ? (
                     <BigPlaceholder mt="8px" />
                   ) : (
-                    <>
+                    <Flex alignItems="center">
                       <Text
                         variant={"large"}
                         fontWeight={"medium"}
                         color={"neutral.c80"}
+                        mt={3}
                       >
-                        <CurrencyUnitValue
-                          unit={unit}
-                          value={
-                            hoveredItem
-                              ? hoveredItem.countervalue
-                              : item.countervalue
-                          }
-                          joinFragmentsSeparator=" "
-                        />
+                        {!hoveredItem ? (
+                          <CurrencyUnitValue
+                            unit={currency.units[0]}
+                            value={currencyBalance}
+                            joinFragmentsSeparator=""
+                          />
+                        ) : null}
                       </Text>
                       <Text
                         fontFamily="Inter"
@@ -169,11 +167,15 @@ function AssetCentricGraphCard({
                       >
                         <CurrencyUnitValue
                           unit={unit}
-                          value={hoveredItem ? hoveredItem.value : item.value}
-                          joinFragmentsSeparator=" "
+                          value={
+                            hoveredItem
+                              ? hoveredItem.value
+                              : currencyUnitValue.value
+                          }
+                          joinFragmentsSeparator=""
                         />
                       </Text>
-                    </>
+                    </Flex>
                   )}
                   <TransactionsPendingConfirmationWarning />
                 </Flex>
@@ -196,6 +198,7 @@ function AssetCentricGraphCard({
                             valueChange={countervalueChange}
                             // range={portfolio.range}
                           />
+                          <Text> </Text>
                           <Delta unit={unit} valueChange={countervalueChange} />
                         </>
                       )}
