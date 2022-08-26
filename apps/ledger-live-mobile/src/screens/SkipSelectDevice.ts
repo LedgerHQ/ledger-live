@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { NativeModules } from "react-native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { lastConnectedDeviceSelector } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
+import { promptBluetooth } from "../logic/bluetoothHelper";
 
 type Props = {
   onResult: (device: any) => void;
@@ -32,7 +32,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     ) {
       // timeout so we have the time to detect usb connection
       usbTimeout = setTimeout(() => {
-        NativeModules.BluetoothHelperModule.prompt()
+        promptBluetooth()
           .then(() => onResult(lastConnectedDevice))
           .catch(() => {
             /* ignore */
