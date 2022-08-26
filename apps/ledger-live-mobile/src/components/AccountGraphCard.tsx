@@ -13,14 +13,12 @@ import {
   ValueChange,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
-  AccountLike,
 } from "@ledgerhq/types-live";
-import { Unit, Currency, Unit, Currency } from "@ledgerhq/types-cryptoassets";
+import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
 import {
   getAccountCurrency,
   getAccountUnit,
   getAccountName,
-  getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import {
   Box,
