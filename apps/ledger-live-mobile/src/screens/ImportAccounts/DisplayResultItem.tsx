@@ -1,12 +1,18 @@
 import React, { Component } from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { Account } from "@ledgerhq/types-live";
+import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import AccountCard from "../../components/AccountCard";
 import CheckBox from "../../components/CheckBox";
 import { track } from "../../analytics";
 
 const selectableModes = ["create", "update"];
+
+function Importing() {
+  const theme = useTheme();
+  return <ActivityIndicator color={theme.colors.neutral.c50} animating />;
+}
 
 export default class DisplayResultItem extends Component<{
   account: Account;
@@ -38,11 +44,15 @@ export default class DisplayResultItem extends Component<{
         </Flex>
         {!selectable ? null : (
           <Flex ml={8}>
-            <CheckBox
-              onChange={importing ? undefined : this.onSwitch}
-              isChecked={checked}
-              style={styles.marginLeft}
-            />
+            {importing ? (
+              <Importing />
+            ) : (
+              <CheckBox
+                onChange={this.onSwitch}
+                isChecked={checked}
+                style={styles.marginLeft}
+              />
+            )}
           </Flex>
         )}
       </TouchableOpacity>
