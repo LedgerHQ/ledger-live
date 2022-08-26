@@ -1,9 +1,18 @@
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountBridge } from "../../bridge";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
-import type { CosmosAccount } from "./types";
+import type { CosmosAccount, CosmosValidatorItem } from "./types";
 
-export async function getAccountBannerState(account: CosmosAccount) {
+interface AccountBannerState {
+  display: boolean;
+  redelegate: boolean;
+  validatorSrcAddress: string;
+  ledgerValidator: CosmosValidatorItem | undefined;
+}
+
+export async function getAccountBannerState(
+  account: CosmosAccount
+): Promise<AccountBannerState> {
   // Group current validator
   const cosmosResources = account.cosmosResources
     ? account.cosmosResources

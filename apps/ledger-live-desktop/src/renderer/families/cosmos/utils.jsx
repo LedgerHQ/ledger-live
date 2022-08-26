@@ -11,7 +11,7 @@ const getAccountBannerProps = (state, account, { t, dispatch }) => {
     ? t("account.banner.redelegation.description")
     : t("account.banner.delegation.description", {
         asset: "ATOM",
-        commission: ledgerValidator.commission * 100,
+        commission: ledgerValidator?.commission * 100 || 1,
       });
   const cta = redelegate
     ? t("account.banner.redelegation.cta")
@@ -23,7 +23,7 @@ const getAccountBannerProps = (state, account, { t, dispatch }) => {
         openModal("MODAL_COSMOS_REDELEGATE", {
           account,
           validatorAddress: validatorSrcAddress,
-          validatorDstAddress: ledgerValidator.validatorAddress,
+          validatorDstAddress: ledgerValidator?.validatorAddress || "",
         }),
       );
     } else {
