@@ -1626,19 +1626,19 @@
       "description" : "Importar ativos do Ledger Live Desktop"
     }
   },
-  "byteSize" : {
-    "bytes" : "{{size}} bytes",
-    "kbUnit" : "{{size}} Kb",
-    "mbUnit" : "{{size}} Mb"
+  "byteSize": {
+    "bytes": "{{size}} bytes",
+    "kbUnit": "{{size}} Kb",
+    "mbUnit": "{{size}} Mb"
   },
-  "numberCompactNotation" : {
-    "d" : "",
-    "K" : "k",
-    "M" : "m",
-    "B" : "bn",
-    "T" : "tn",
-    "Q" : "qa",
-    "Qn" : "qi"
+  "numberCompactNotation": {
+    "d": "",
+    "K": "k",
+    "M": "m",
+    "B": "bn",
+    "T": "tn",
+    "Q": "qa",
+    "Qn": "qi"
   },
   "time" : {
     "day" : "1D",

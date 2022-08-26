@@ -1,5 +1,3 @@
-// @flow
-
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native
 import "node-libs-react-native/globals";

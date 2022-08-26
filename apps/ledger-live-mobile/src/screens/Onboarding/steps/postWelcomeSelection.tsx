@@ -3,16 +3,22 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Text, Button, Flex } from "@ledgerhq/native-ui";
+import { useDispatch } from "react-redux";
 import { track, TrackScreen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
+import { setHasOrderedNano } from "../../../actions/settings";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const discoverLiveImg = require("../../../images/illustration/Shared/_DiscoverLive.png");
 
 type PostWelcomeDiscoverCardProps = {
@@ -21,6 +27,7 @@ type PostWelcomeDiscoverCardProps = {
   event: string;
   testID: string;
   selectedOption: any;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   onPress: Function;
   onValidate: () => void;
   imageSource: ImageSourcePropType;
@@ -86,6 +93,8 @@ function PostWelcomeSelection({
   route: RouteProp<{ params: { userHasDevice: boolean } }, "params">;
 }) {
   const { userHasDevice } = route.params;
+  const dispatch = useDispatch();
+
   const screenName = `Onboarding Choice ${
     userHasDevice ? "With Device" : "No Device"
   }`;
@@ -107,8 +116,6 @@ function PostWelcomeSelection({
   const [selectedOption, setSelectedOption] = useState<DataType | null>(null);
 
   const setupLedger = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingDeviceSelection);
   }, [navigation]);
 
@@ -119,8 +126,6 @@ function PostWelcomeSelection({
 
   const exploreLedger = useCallback(() => {
     track("Onboarding PostWelcome - Explore Live");
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive, {
       source: screenName,
     });
@@ -151,8 +156,12 @@ function PostWelcomeSelection({
   );
 
   const pressExplore = useCallback(
-    (data: DataType) => onCardClick(data, "Explore LL"),
-    [onCardClick],
+    (data: DataType) => {
+      dispatch(setHasOrderedNano(!!userHasDevice));
+
+      onCardClick(data, "Explore LL");
+    },
+    [dispatch, onCardClick, userHasDevice],
   );
 
   const pressBuy = useCallback(

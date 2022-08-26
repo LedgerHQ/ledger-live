@@ -47,7 +47,9 @@ setSupportedCurrencies([
   "celo",
   "hedera",
   "cardano",
-  "solana"
+  "solana",
+  "osmosis",
+  "filecoin",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

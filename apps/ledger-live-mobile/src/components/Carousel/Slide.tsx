@@ -4,7 +4,10 @@ import { Flex, Text, Link as TextLink, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
+
+// eslint-disable-next-line import/no-cycle
 import Touchable from "../Touchable";
+// eslint-disable-next-line import/no-cycle
 import { track } from "../../analytics";
 import { SlideProps } from "./shared";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
@@ -15,7 +18,7 @@ const StyledTouchable = styled(Touchable)`
 
 export type SlideProps = {
   url: string;
-  onPress?: (navigate: (...args: any) => void) => void;
+  onPress?: (_: (..._: any) => void) => void;
   name: string;
   title: string;
   description: any;

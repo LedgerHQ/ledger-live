@@ -7,7 +7,7 @@ import {
   parseCurrencyUnit,
   listTokensForCryptoCurrency,
 } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { SubAccount } from "@ledgerhq/types-live";
@@ -81,14 +81,18 @@ const stellar: AppSpec<Transaction> = {
       test: ({ account, accountBeforeTransaction, operation, transaction }) => {
         // We don't know what the final fee will be until after the tx is
         // submitted. Using higher max fee to make sure tx doesn't time out.
-        expect(account.balance.toNumber()).toBeLessThanOrEqual(
-          accountBeforeTransaction.balance.minus(operation.value).toNumber()
+        botTest("account balance decreased with operation", () =>
+          expect(account.balance.toNumber()).toBeLessThanOrEqual(
+            accountBeforeTransaction.balance.minus(operation.value).toNumber()
+          )
         );
 
         if (transaction.memoValue) {
-          expect(operation.extra).toMatchObject({
-            memo: transaction.memoValue,
-          });
+          botTest("operation memo", () =>
+            expect(operation.extra).toMatchObject({
+              memo: transaction.memoValue,
+            })
+          );
         }
 
         const getType = () => {
@@ -102,7 +106,9 @@ const stellar: AppSpec<Transaction> = {
           }
         };
 
-        expect(transaction.mode).toMatch(getType());
+        botTest("transaction mode", () =>
+          expect(transaction.mode).toMatch(getType())
+        );
       },
     },
     {
@@ -142,14 +148,18 @@ const stellar: AppSpec<Transaction> = {
       test: ({ account, accountBeforeTransaction, operation, transaction }) => {
         // We don't know what the final fee will be until after the tx is
         // submitted. Using higher max fee to make sure tx doesn't time out.
-        expect(account.balance.toNumber()).toBeLessThanOrEqual(
-          accountBeforeTransaction.balance.minus(operation.value).toNumber()
+        botTest("balance decreased with operation", () =>
+          expect(account.balance.toNumber()).toBeLessThanOrEqual(
+            accountBeforeTransaction.balance.minus(operation.value).toNumber()
+          )
         );
 
         if (transaction.memoValue) {
-          expect(operation.extra).toMatchObject({
-            memo: transaction.memoValue,
-          });
+          botTest("operation memo", () =>
+            expect(operation.extra).toMatchObject({
+              memo: transaction.memoValue,
+            })
+          );
         }
 
         const getType = () => {
@@ -163,7 +173,9 @@ const stellar: AppSpec<Transaction> = {
           }
         };
 
-        expect(transaction.mode).toMatch(getType());
+        botTest("transaction mode", () =>
+          expect(transaction.mode).toMatch(getType())
+        );
       },
     },
     {
@@ -205,7 +217,7 @@ const stellar: AppSpec<Transaction> = {
         const hasAsset = account.subAccounts?.find((a) =>
           a.id.endsWith(assetId)
         );
-        expect(hasAsset).toBeTruthy();
+        botTest("has asset", () => expect(hasAsset).toBeTruthy());
       },
     },
     {
@@ -276,14 +288,18 @@ const stellar: AppSpec<Transaction> = {
           accountBeforeTransaction?.subAccounts
         );
 
-        expect(asset?.balance.toString()).toBe(
-          assetBeforeTx?.balance.minus(status.amount).toString()
+        botTest("asset balance decreased with operation", () =>
+          expect(asset?.balance.toString()).toBe(
+            assetBeforeTx?.balance.minus(status.amount).toString()
+          )
         );
 
         if (transaction.memoValue) {
-          expect(operation.extra).toMatchObject({
-            memo: transaction.memoValue,
-          });
+          botTest("operation memo", () =>
+            expect(operation.extra).toMatchObject({
+              memo: transaction.memoValue,
+            })
+          );
         }
       },
     },

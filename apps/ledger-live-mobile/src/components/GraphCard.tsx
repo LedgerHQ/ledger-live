@@ -15,6 +15,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import { NavigatorName } from "../const";
 
 import { useTimeRange } from "../actions/settings";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import FormatDate from "./FormatDate";
@@ -141,7 +142,7 @@ function GraphCard({
                       <CurrencyUnitValue
                         unit={unit}
                         value={hoveredItem ? hoveredItem.value : item.value}
-                        joinFragmentsSeparator=" "
+                        joinFragmentsSeparator=""
                       />
                     </Text>
                   )}
@@ -170,6 +171,7 @@ function GraphCard({
                             valueChange={countervalueChange}
                             // range={portfolio.range}
                           />
+                          <Text> </Text>
                           <Delta unit={unit} valueChange={countervalueChange} />
                         </>
                       )}

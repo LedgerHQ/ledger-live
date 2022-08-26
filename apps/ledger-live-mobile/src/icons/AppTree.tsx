@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import Svg, { Path, G, Image } from "react-native-svg";
 import manager from "@ledgerhq/live-common/manager/index";
@@ -6,13 +5,12 @@ import { Flex } from "@ledgerhq/native-ui";
 import AppIcon from "../screens/Manager/AppsList/AppIcon";
 
 type Props = {
-  size: number;
   color: string;
   icon: string;
   app: any;
 };
 
-export default function AppTree({ size = 150, color, icon, app }: Props) {
+export default function AppTree({ color, icon, app }: Props) {
   const uri = manager.getIconUrl(icon);
 
   return (

@@ -82,6 +82,11 @@ const AssetScreen = ({ route }: Props) => {
     currentPositionY.value = event.contentOffset.y;
   });
 
+  const currencyBalance = useMemo(
+    () => cryptoAccounts.reduce((acc, val) => acc + val.balance.toNumber(), 0),
+    [cryptoAccounts],
+  );
+
   const onAssetCardLayout = useCallback((event: LayoutChangeEvent) => {
     const { y, height } = event.nativeEvent.layout;
     setGraphCardEndPosition(y + height / 10);
@@ -112,6 +117,7 @@ const AssetScreen = ({ route }: Props) => {
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
           currency={currency}
+          currencyBalance={currencyBalance}
           areAccountsEmpty={areCryptoAccountsEmpty}
         />
       </Box>,

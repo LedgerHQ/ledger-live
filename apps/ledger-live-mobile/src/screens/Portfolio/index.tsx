@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
 import { FlatList } from "react-native";
@@ -9,9 +8,12 @@ import Animated, {
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import {
+  isAccountEmpty,
+  getAccountName,
+} from "@ledgerhq/live-common/account/index";
 
-import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
+import { Box, Flex, Button, Icons, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import {
@@ -153,9 +155,6 @@ function PortfolioScreen({ navigation }: Props) {
       </Box>,
       ...(showAssets
         ? [
-            <Box pt={6} background={colors.background.main}>
-              <FabActions areAccountsEmpty={areAccountsEmpty} />
-            </Box>,
             <Box background={colors.background.main} px={6} mt={6}>
               <Assets assets={assetsToDisplay} />
               {distribution.list.length < maxAssetsToDisplay ? (

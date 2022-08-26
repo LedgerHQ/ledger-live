@@ -68,7 +68,7 @@ function Header({
         currencyId: currency.id,
       },
     });
-  }, [currency.id, navigation]);
+  }, [currency.id, currentRoute, navigation]);
 
   return (
     <CurrencyHeaderLayout
@@ -109,7 +109,7 @@ function Header({
                 <CurrencyUnitValue
                   unit={unit}
                   value={item.value}
-                  joinFragmentsSeparator=" "
+                  joinFragmentsSeparator=""
                 />
               </Text>
             </>

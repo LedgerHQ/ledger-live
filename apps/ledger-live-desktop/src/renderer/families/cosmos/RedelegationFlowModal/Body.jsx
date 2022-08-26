@@ -143,7 +143,7 @@ const Body = ({
     const transaction = bridge.updateTransaction(t, {
       mode: "redelegate",
       validators: [{ address: "", amount: source?.amount ?? BigNumber(0) }],
-      cosmosSourceValidator: validatorAddress,
+      sourceValidator: validatorAddress,
     });
 
     return { account, parentAccount: undefined, transaction };

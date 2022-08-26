@@ -29,7 +29,7 @@ const hitSlop = {
 type CarouselCardProps = {
   id: string;
   children: React.ReactNode;
-  onHide: (cardId: string) => void;
+  onHide: (_: string) => void;
   index?: number;
 };
 

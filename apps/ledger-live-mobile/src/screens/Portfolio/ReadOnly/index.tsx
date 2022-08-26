@@ -1,12 +1,4 @@
-/* eslint-disable import/named */
-import React, {
-  useCallback,
-  useMemo,
-  useState,
-  memo,
-  useEffect,
-  useContext,
-} from "react";
+import React, { useCallback, useMemo, useState, memo, useContext } from "react";
 import { useSelector } from "react-redux";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -30,7 +22,6 @@ import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
 import {
-  discreetModeSelector,
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
@@ -41,12 +32,9 @@ import BackgroundGradient from "../../../components/BackgroundGradient";
 import GraphCardContainer from "../GraphCardContainer";
 import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
-import { screen } from "../../../analytics";
-import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
-import { NavigatorName, ScreenName } from "../../../const";
-import FabActions from "../../../components/FabActions";
-import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
-import Assets from "../Assets";
+import { screen, track } from "../../../analytics";
+import { NavigatorName } from "../../../const";
+import ReadOnlyAssets from "./ReadOnlyAssets";
 import { useProviders } from "../../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
@@ -57,6 +45,8 @@ import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
+import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
 import { useCurrentRouteName } from "../../../helpers/routeHooks";
 
@@ -85,9 +75,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
   );
   const portfolio = usePortfolio();
   const discreetMode = useSelector(discreetModeSelector);
-  const { colors } = useTheme();
-  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-
   useProviders();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
