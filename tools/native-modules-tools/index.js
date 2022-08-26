@@ -49,23 +49,20 @@ function findNativeModules(root) {
       nativeModules.push(currentPath);
     }
     const dependencies = package.dependencies || [];
+    // Symlinks must be resolved otherwise node.js will fail to resolve.
+    const realPath = fs.realpathSync([currentPath]);
     Object.keys(dependencies).forEach((dependency) => {
-      // Symlinks must be resolved otherwise node.js will fail to resolve.
-      const realPath = fs.realpathSync([currentPath]);
       let resolvedPath = null;
       try {
         resolvedPath = require.resolve(dependency, { paths: [realPath] });
       } catch (_) {
         try {
-          resolvedPath = require.resolve(
-            path.resolve(dependency, "package.json"),
-            {
-              paths: [realPath],
-            }
-          );
+          resolvedPath = require.resolve(dependency + "/package.json", {
+            paths: [realPath],
+          });
         } catch (error) {
           // swallow the error
-          // console.error(error)
+          // console.error(dependency, error);
           return;
         }
       }
@@ -278,4 +275,5 @@ module.exports = {
   esBuildExternalsPlugin,
   copyFolderRecursivelySync,
   processNativeModules,
+  findPackageRoot,
 };

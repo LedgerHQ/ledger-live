@@ -94,16 +94,21 @@ jobs:
       - name: list dist
         run: |
           ls ${{ github.workspace }}/apps/ledger-live-desktop/dist
-      - name: upload dist
+      - name: upload linux app (x64)
         uses: actions/upload-artifact@v3
         with:
-          name: linux-release-${{ steps.build-desktop.outputs.version }}
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist
-      # - name: upload linux app
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
-      #     path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      - name: upload linux app (armv7l)
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-armv7l.AppImage
+      - name: upload linux app (arm64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-arm64.AppImage
 
   build-desktop-app-linux-external:
     name: "Build Ledger Live Desktop (Linux)"
@@ -152,16 +157,21 @@ jobs:
       - name: list dist
         run: |
           ls ${{ github.workspace }}/apps/ledger-live-desktop/dist
-      - name: upload dist
+      - name: upload linux app (x64)
         uses: actions/upload-artifact@v3
         with:
-          name: linux-release-${{ steps.build-desktop.outputs.version }}
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist
-      # - name: upload linux app
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
-      #     path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+      - name: upload linux app (armv7l)
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-armv7l.AppImage
+      - name: upload linux app (arm64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-arm64.AppImage
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
@@ -203,16 +213,16 @@ jobs:
       - name: list dist
         run: |
           ls ${{ github.workspace }}/apps/ledger-live-desktop/dist
-      - name: upload dist
+      - name: upload windows (x64)
         uses: actions/upload-artifact@v3
         with:
-          name: windows-release-${{ steps.build-desktop.outputs.version }}
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist
-      # - name: upload windows
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
-      #     path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
+          name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
+      - name: upload windows (arm64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.build-desktop.outputs.version }}-win-arm64.exe
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-arm64.exe
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"

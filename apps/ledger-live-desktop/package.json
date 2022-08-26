@@ -30,7 +30,7 @@
     "flow-typed": "pnpm install-flow-typed",
     "install-flow-typed": "flow-typed install -s",
     "preinstall-deps": "rimraf node_modules/paralleljs/package.json",
-    "install-deps": "electron-builder install-app-deps",
+    "install-deps": "node ./scripts/doRebuildNativeModules.js",
     "postinstall": "node ./scripts/post-install.js",
     "dist:internal": "cross-env NODE_ENV=production DEBUG=electron-builder electron-builder",
     "dist:dirty": "node ./tools/dist --dirty",

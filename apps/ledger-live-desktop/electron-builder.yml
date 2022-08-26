@@ -5,7 +5,7 @@ protocols:
   schemes:
     - ledgerlive
 
-beforePack: scripts/beforePack.js
+beforeBuild: ./scripts/beforeBuild.js
 afterSign: scripts/notarize.js
 
 mac:
