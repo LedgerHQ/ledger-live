@@ -1,6 +1,5 @@
 import React, { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { NativeModules } from "react-native";
 import styled from "styled-components/native";
 import { Box, Flex, IconBox, Icons, Link, Text } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -9,6 +8,7 @@ import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
+import { promptBluetooth } from "../logic/bluetoothHelper";
 
 type Props = {
   error: Error;
@@ -43,7 +43,7 @@ const GenericErrorView = ({
 }: Props) => {
   useEffect(() => {
     if (error instanceof BluetoothRequired) {
-      NativeModules.BluetoothHelperModule.prompt().catch(() => {
+      promptBluetooth().catch(() => {
         /* ignore */
       });
     }

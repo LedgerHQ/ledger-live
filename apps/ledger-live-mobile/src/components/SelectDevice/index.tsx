@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, Platform, NativeModules } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
@@ -32,6 +32,7 @@ import {
 
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
+import { promptBluetooth } from "../../logic/bluetoothHelper";
 
 type Props = {
   onBluetoothDeviceAction?: (_: Device) => void;
@@ -75,7 +76,7 @@ export default function SelectDevice({
         onSelect(deviceInfo);
         dispatch(setReadOnlyMode(false));
       } else {
-        NativeModules.BluetoothHelperModule.prompt()
+        promptBluetooth()
           .then(() => {
             track("Device selection", {
               modelId,
@@ -101,7 +102,7 @@ export default function SelectDevice({
       button: "Pair with bluetooth",
       screen: route.name,
     });
-    NativeModules.BluetoothHelperModule.prompt()
+    promptBluetooth()
       .then(() =>
         // @ts-expect-error navigation issue
         navigation.navigate(ScreenName.PairDevices, {
