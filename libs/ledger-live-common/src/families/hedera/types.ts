@@ -1,4 +1,6 @@
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -29,3 +31,7 @@ export const reflect = (_declare: any) => {};
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type HederaAccount = Account;
+
+export type HederaAccountRaw = AccountRaw;

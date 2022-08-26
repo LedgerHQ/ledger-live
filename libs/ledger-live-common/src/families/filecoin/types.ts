@@ -1,4 +1,6 @@
 import {
+  Account,
+  AccountRaw,
   BroadcastArg0,
   Operation,
   TransactionCommon,
@@ -44,3 +46,7 @@ export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type FilecoinAccount = Account;
+
+export type FilecoinAccountRaw = AccountRaw;

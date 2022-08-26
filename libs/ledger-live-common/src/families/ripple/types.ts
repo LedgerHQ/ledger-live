@@ -1,6 +1,8 @@
 import type { BigNumber } from "bignumber.js";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -33,3 +35,6 @@ export type TransactionRaw = TransactionCommonRaw & {
 };
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type RippleAccount = Account;
+export type RippleAccountRaw = Account;

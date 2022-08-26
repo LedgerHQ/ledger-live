@@ -1,6 +1,13 @@
 // cross helps dealing with cross-project feature like export/import & cross project conversions
 import { BigNumber } from "bignumber.js";
 import compressjs from "@ledgerhq/compressjs";
+import type {
+  Account,
+  AccountData,
+  CryptoCurrencyIds,
+} from "@ledgerhq/types-live";
+import { getCurrencyBridge } from "./bridge/index";
+
 import {
   runDerivationScheme,
   getDerivationScheme,
@@ -8,19 +15,7 @@ import {
 } from "./derivation";
 import { decodeAccountId, emptyHistoryCache } from "./account";
 import { getCryptoCurrencyById } from "./currencies";
-import type { Account, CryptoCurrencyIds } from "@ledgerhq/types-live";
-
-export type AccountData = {
-  id: string;
-  currencyId: string;
-  freshAddress?: string;
-  seedIdentifier: string;
-  derivationMode: string;
-  // we are unsafe at this stage, validation is done later
-  name: string;
-  index: number;
-  balance: string;
-};
+import { CoinAccount } from "./generated/types";
 
 export type CryptoSettings = {
   confirmationsNb?: number;
@@ -261,6 +256,7 @@ export function decode(bytes: string): Result {
     settings: asResultSettings(unsafe.settings),
   };
 }
+
 export function accountToAccountData({
   id,
   name,
@@ -284,54 +280,38 @@ export function accountToAccountData({
 
   return res;
 }
+
 // reverse the account data to an account.
 // this restore the essential data of an account and the result of the fields
 // are assumed to be restored during first sync
-export const accountDataToAccount = ({
-  id,
-  currencyId,
-  freshAddress: inputFreshAddress,
-  name,
-  index,
-  balance,
-  derivationMode: derivationModeStr,
-  seedIdentifier,
-}: AccountData): Account => {
+export const accountDataToAccount = (accountData: AccountData): CoinAccount => {
+  const {
+    id,
+    currencyId,
+    freshAddress: inputFreshAddress,
+    name,
+    index,
+    balance,
+    derivationMode: derivationModeStr,
+    seedIdentifier,
+  } = accountData;
+
   const { xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
 
   const derivationMode = asDerivationMode(derivationModeStr);
   const currency = getCryptoCurrencyById(currencyId);
-  let xpub = "";
-  let freshAddress = inputFreshAddress || "";
-  let freshAddressPath = "";
 
-  if (
-    // FIXME Dirty hack, since we have no way here to know if "xpubOrAddress" is one or the other.
-    // Proposed fix: https://ledgerhq.atlassian.net/browse/LL-7437
-    currency.family === "bitcoin" ||
-    currency.family === "cardano"
-  ) {
-    // In bitcoin implementation, xpubOrAddress field always go in the xpub
-    xpub = xpubOrAddress;
-  } else {
-    if (currency.family === "tezos") {
-      xpub = xpubOrAddress;
-    } else if (!freshAddress) {
-      // otherwise, it's the freshAddress
-      freshAddress = xpubOrAddress;
-    }
-
-    freshAddressPath = runDerivationScheme(
-      getDerivationScheme({
-        currency,
-        derivationMode,
-      }),
+  const freshAddress = inputFreshAddress || xpubOrAddress || "";
+  const freshAddressPath = runDerivationScheme(
+    getDerivationScheme({
       currency,
-      {
-        account: index,
-      }
-    );
-  }
+      derivationMode,
+    }),
+    currency,
+    {
+      account: index,
+    }
+  );
 
   const balanceBN = new BigNumber(balance);
   const account: Account = {
@@ -339,7 +319,7 @@ export const accountDataToAccount = ({
     id,
     derivationMode,
     seedIdentifier,
-    xpub,
+    xpub: xpubOrAddress,
     name,
     starred: false,
     used: false,
@@ -348,7 +328,7 @@ export const accountDataToAccount = ({
     freshAddress,
     freshAddressPath,
     swapHistory: [],
-    // these fields will be completed as we will sync
+    // these fields will be completed during first synchronization
     freshAddresses: [],
     blockHeight: 0,
     balance: balanceBN,
@@ -362,5 +342,10 @@ export const accountDataToAccount = ({
     balanceHistoryCache: emptyHistoryCache,
   };
 
-  return account;
+  const currencyBridge = getCurrencyBridge(currency);
+  const extra: Partial<CoinAccount> = currencyBridge.importAccountData
+    ? currencyBridge.importAccountData(accountData)
+    : {};
+
+  return { ...account, ...extra };
 };

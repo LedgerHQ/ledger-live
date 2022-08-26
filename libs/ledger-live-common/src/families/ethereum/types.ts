@@ -4,6 +4,8 @@ import type { TransactionMode, ModeModule } from "./modules";
 import type { Range, RangeRaw } from "../../range";
 import type { DerivationMode } from "../../derivation";
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -75,3 +77,7 @@ export type TypedMessageData = {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type EthereumAccount = Account;
+
+export type EthereumAccountRaw = AccountRaw;

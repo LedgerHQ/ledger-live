@@ -289,3 +289,18 @@ export type AccountIdParams = {
   xpubOrAddress: string;
   derivationMode: DerivationMode;
 };
+
+/**
+ * Minimal amount of account data transferred during
+ * export/import of accounts from live-desktop to live-mobile
+ */
+export type AccountData = {
+  id: string;
+  currencyId: string;
+  freshAddress?: string;
+  seedIdentifier: string;
+  derivationMode: string;
+  name: string;
+  index: number;
+  balance: string;
+};

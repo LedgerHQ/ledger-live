@@ -1,5 +1,7 @@
 import type { BigNumber } from "bignumber.js";
 import {
+  Account,
+  AccountRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
@@ -46,3 +48,7 @@ export type OsmosisRewardsState = {
   averageDailyFees: number;
   currentValueInflation: number;
 };
+
+export type OsmosisAccount = Account;
+
+export type OsmosisAccountRaw = AccountRaw;

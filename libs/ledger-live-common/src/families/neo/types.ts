@@ -1,4 +1,6 @@
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -19,3 +21,6 @@ export type TransactionRaw = TransactionCommonRaw & {
 };
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type NeoAccount = Account;
+export type NeoAccountRaw = AccountRaw;

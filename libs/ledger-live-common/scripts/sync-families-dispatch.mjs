@@ -94,19 +94,41 @@ ${exprts};
   await fs.promises.appendFile(outpath, str, "utf8");
 }
 
+function toPascalCase(s) {
+  return (
+    s[0].toUpperCase() +
+    s.substring(1).replace(/([-_][a-z])/gi, ($1) => {
+      return $1.toUpperCase().replace("-", "").replace("_", "");
+    })
+  );
+}
+
 async function genTypesFile(families) {
   const outpath = path.join("generated", "types.ts");
   let imprts = ``;
+  let exprtsA = `export type CoinAccount =`;
+  let exprtsARaw = `export type CoinAccountRaw =`;
   let exprtsT = `export type Transaction =`;
   let exprtsTRaw = `export type TransactionRaw =`;
   let exprtsStatus = `export type TransactionStatus =`;
   let exprtsStatusRaw = `export type TransactionStatusRaw =`;
   for (const family of families) {
-    imprts += `import { Transaction as ${family}Transaction } from "../families/${family}/types";
+    const familyCaps = toPascalCase(family);
+
+    imprts += `import { ${familyCaps}Account } from "../families/${family}/types";
+import { ${familyCaps}AccountRaw } from "../families/${family}/types";
+import { Transaction as ${family}Transaction } from "../families/${family}/types";
 import { TransactionRaw as ${family}TransactionRaw } from "../families/${family}/types";
 import { TransactionStatus as ${family}TransactionStatus } from "../families/${family}/types";
 import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../families/${family}/types";
 `;
+
+    exprtsA += `
+  | ${familyCaps}Account`;
+
+    exprtsARaw += `
+  | ${familyCaps}AccountRaw`;
+
     exprtsT += `
   | ${family}Transaction`;
 
@@ -120,6 +142,10 @@ import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../famili
   | ${family}TransactionStatusRaw`;
   }
 
+  exprtsA += `;
+`;
+  exprtsARaw += `;
+`;
   exprtsT += `;
 `;
   exprtsTRaw += `;
@@ -130,6 +156,8 @@ import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "../famili
 `;
 
   const str = `${imprts}
+${exprtsA}
+${exprtsARaw}
 ${exprtsT}
 ${exprtsTRaw}
 ${exprtsStatus}

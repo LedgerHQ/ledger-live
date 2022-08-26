@@ -1,6 +1,8 @@
 import { ServerApi } from "stellar-sdk";
 import type { BigNumber } from "bignumber.js";
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -97,3 +99,7 @@ export type Signer = {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type StellarAccount = Account;
+
+export type StellarAccountRaw = AccountRaw;

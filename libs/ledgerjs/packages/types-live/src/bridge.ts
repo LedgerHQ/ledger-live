@@ -6,7 +6,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike, Account, AccountRaw } from "./account";
+import type { AccountLike, Account, AccountRaw, AccountData } from "./account";
 import type {
   SignOperationEvent,
   SignedOperation,
@@ -83,6 +83,7 @@ export interface CurrencyBridge {
   // returned value is a serializable object
   // fail if data was not able to load.
   preload(currency: CryptoCurrency): Promise<Record<string, any>>;
+  getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
   // reinject the preloaded data (typically if it was cached)
   // method need to treat the data object as unsafe and validate all fields / be backward compatible.
   hydrate(data: unknown, currency: CryptoCurrency): void;
@@ -94,7 +95,9 @@ export interface CurrencyBridge {
     syncConfig: SyncConfig;
     preferredNewAccountScheme?: DerivationMode;
   }): Observable<ScanAccountEvent>;
-  getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
+  // Optional logic to apply to complete missing data,
+  // when importing accounts from live-desktop to live-mobile
+  importAccountData?: (accountData: AccountData) => Partial<Account>;
   nftResolvers?: {
     nftMetadata: (arg: {
       contract: string;
