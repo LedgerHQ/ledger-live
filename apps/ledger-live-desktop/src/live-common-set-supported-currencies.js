@@ -50,4 +50,6 @@ setSupportedCurrencies([
   "moonbeam",
   "songbird",
   "flare",
+  "helium",
+  "helium_testnet",
 ]);
