@@ -69,6 +69,8 @@ setSupportedCurrencies([
   "moonbeam",
   "songbird",
   "flare",
+  "helium",
+  "helium_testnet",
 ]);
 
 if (Config.VERBOSE) {

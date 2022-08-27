@@ -8,6 +8,7 @@ export * from "./cosmos";
 export * from "./algorand";
 export * from "./polkadot";
 export * from "./solana";
+export * from "./helium";
 export * from "./crypto_org";
 export * from "./cardano";
 export * from "./hedera";
