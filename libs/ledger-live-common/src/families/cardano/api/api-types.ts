@@ -31,3 +31,19 @@ export type APITransaction = {
 export type APINetworkInfo = {
   protocolParams: ProtocolParams;
 };
+
+export type APIDelegation = {
+  status: boolean;
+  stakeCredential: {
+    key: string;
+    type: string;
+  };
+  stake: string;
+  rewardsAvailable: string;
+  rewardsWithdrawn: string;
+  poolInfo: {
+    poolId: string;
+    name: string;
+    ticker: string;
+  };
+};

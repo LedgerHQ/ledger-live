@@ -32,6 +32,7 @@ import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
 import { listTokensForCryptoCurrency } from "../../currencies";
+import { getDelegationInfo } from "./api/getDelegationInfo";
 
 function mapTxToAccountOperation(
   tx: APITransaction,
@@ -259,6 +260,8 @@ export const getAccountShape: GetAccountShape = async (
     initialAccount as CardanoAccount,
     currency
   );
+  const delegationInfo = await getDelegationInfo(currency, stakeCredential.key);
+
   const minAdaBalanceForTokens = tokenBalance.length
     ? calculateMinUtxoAmount(
         tokenBalance,
@@ -283,6 +286,7 @@ export const getAccountShape: GetAccountShape = async (
       utxos,
       externalCredentials,
       internalCredentials,
+      delegationInfo,
       protocolParams: cardanoNetworkInfo.protocolParams,
     },
   };

@@ -120,12 +120,29 @@ export type ProtocolParamsRaw = {
   languageView: TyphonTypes.LanguageView;
 };
 
+export type CardanoDelegation = {
+  status: boolean;
+  poolId: string;
+  ticker: string;
+  name: string;
+  rewards: BigNumber;
+};
+
+export type CardanoDelegationRaw = {
+  status: boolean;
+  poolId: string;
+  ticker: string;
+  name: string;
+  rewards: string;
+};
+
 /**
  * Cardano account resources
  */
 export type CardanoResources = {
   externalCredentials: Array<PaymentCredential>;
   internalCredentials: Array<PaymentCredential>;
+  delegation?: CardanoDelegation;
   utxos: Array<CardanoOutput>;
   protocolParams: ProtocolParams;
 };
@@ -136,6 +153,7 @@ export type CardanoResources = {
 export type CardanoResourcesRaw = {
   externalCredentials: Array<PaymentCredentialRaw>;
   internalCredentials: Array<PaymentCredentialRaw>;
+  delegation?: CardanoDelegationRaw;
   utxos: Array<CardanoOutputRaw>;
   protocolParams: ProtocolParamsRaw;
 };
