@@ -3233,6 +3233,7 @@
       "estTime": "Est. time Remaining",
       "votingClosed": "Voting closed",
       "totalVotes": "Total Votes",
+      "noOpenProposals": "No open proposals",
       "votes": "Votes",
       "statusUpdateNotice": "The status of the vote will be updated when the transaction is confirmed.",
       "voteInfo": {
