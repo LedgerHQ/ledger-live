@@ -1918,6 +1918,7 @@
     "buy": "Buy",
     "walletconnect": "WalletConnect",
     "stake": "Stake",
+    "vote": "Vote",
     "sell": "Sell",
     "swap": "Swap",
     "manage": "Manage",
@@ -4680,6 +4681,44 @@
       "delegatedTo": "delegated to",
       "started": {
         "description": "You may earn rewards by delegating your SOL assets to a validator."
+      }
+    }
+  },
+  "helium": {
+    "vote": {
+      "startedTitle": "Cast votes",
+      "listHeader": "Helium Improvement Proposals",
+      "name": "Name",
+      "description": "Description",
+      "estTime": "Est. time Remaining",
+      "votingClosed": "Voting closed",
+      "totalVotes": "Total Votes",
+      "votes": "Votes",
+      "statusUpdateNotice": "The status of the vote will be updated when the transaction is confirmed.",
+      "broadcastSuccessTitle": "Operation sent",
+      "broadcastSuccessDescription": "Vote casted. The status of your vote will be updated when the transaction is confirmed.",
+      "voteInfo": {
+        "description": "Helium vote is where the Helium Community comes together to make decisions on the Network.",
+        "bullet": {
+          "0": "Each vote is driven by a Helium Improvement Proposal (HIP).",
+          "1": "Each HIP will have two voting choices. Vote For or Against by submitting a burn transaction.",
+          "2": "Your Vote Power is determined by the amount of HNT in the account at the end of the vote."
+        },
+        "warning": "Burn transactions have a small fee."
+      },
+      "flow": {
+        "title": "Cast a Vote",
+        "steps": {
+          "selectHIP": {
+            "title": "Select proposal",
+            "subtitle": "Helium imporovement proposal"
+          },
+          "confirmation": {
+            "success": {
+              "title": "You have successfully casted your vote."
+            }
+          }
+        }
       }
     }
   },

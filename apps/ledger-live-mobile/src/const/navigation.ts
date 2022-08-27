@@ -422,6 +422,16 @@ export const ScreenName = {
   SolanaEditAmount: "SolanaEditAmount",
   SolanaDelegationStarted: "SolanaDelegationStarted",
 
+  // helium
+  HeliumEditMemo: "HeliumEditMemo",
+  HeliumEditAmount: "HeliumEditAmount",
+  HeliumVoteStarted: "HeliumVoteStarted",
+  HeliumVoteConnectDevice: "HeliumVoteConnectDevice",
+  HeliumVoteSelectDevice: "HeliumVoteSelectDevice",
+  HeliumVoteSummary: "HeliumVoteSummary",
+  HeliumSelectHIP: "HeliumSelectHIP",
+  HeliumVoteValidationError: "HeliumVoteValidationError",
+  HeliumVoteValidationSuccess: "HeliumVoteValidationSuccess",
   PostBuyDeviceScreen: "PostBuyDeviceScreen",
   PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
   NoDeviceWallScreen: "NoDeviceWallScreen",
@@ -508,6 +518,8 @@ export const NavigatorName = {
   PolkadotSimpleOperationFlow: "PolkadotSimpleOperationFlow",
   // Solana
   SolanaDelegationFlow: "SolanaDelegationFlow",
+  // Helium
+  HeliumVoteFlow: "HeliumVoteFlow",
   // Stellar
   StellarAddAssetFlow: "StellarAddAssetFlow",
   NotificationCenter: "NotificationCenter",
