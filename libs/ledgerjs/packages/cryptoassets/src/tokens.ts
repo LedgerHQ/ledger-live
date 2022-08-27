@@ -12,6 +12,8 @@ import asatokens from "../data/asa";
 import esdttokens from "../data/esdt";
 import cardanoNativeTokens from "../data/cardanoNative";
 import stellarTokens from "../data/stellar";
+import heliumTokens from "../data/helium";
+
 //import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -31,6 +33,8 @@ addTokens(asatokens.map(convertAlgorandASATokens));
 addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 addTokens(stellarTokens.map(convertStellarTokens));
+addTokens(heliumTokens.map(convertHeliumTokens));
+
 //addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
   withDelisted: boolean;
@@ -423,6 +427,32 @@ function convertStellarTokens([
     id: `stellar/asset/${assetCode}:${assetIssuer}`,
     contractAddress: assetIssuer,
     parentCurrency: getCryptoCurrencyById("stellar"),
+    tokenType: assetType,
+    name,
+    ticker: assetCode,
+    disableCountervalue: !enableCountervalues,
+    units: [
+      {
+        name,
+        code: assetCode,
+        magnitude: precision,
+      },
+    ],
+  };
+}
+
+function convertHeliumTokens([
+  assetCode,
+  assetType,
+  name,
+  precision,
+  enableCountervalues,
+]): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id: `helium/asset/${assetCode}`,
+    contractAddress: "",
+    parentCurrency: getCryptoCurrencyById("helium"),
     tokenType: assetType,
     name,
     ticker: assetCode,

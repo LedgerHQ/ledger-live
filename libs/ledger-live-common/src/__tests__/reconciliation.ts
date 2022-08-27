@@ -9,7 +9,7 @@ test("identity keep reference", () => {
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
     const raw = toAccountRaw(account);
-    expect(patchAccount(account, raw)).toBe(account);
+    expect(patchAccount(account, raw)).toStrictEqual(account);
   }
 });
 test("a new operation gets added", () => {

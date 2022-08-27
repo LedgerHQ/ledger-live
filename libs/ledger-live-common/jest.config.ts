@@ -41,4 +41,7 @@ export default {
   testRegex,
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
+  transform: {
+    "multiformats.+\\.(ts|tsx|js|jsx)$": "ts-jest",
+  },
 };

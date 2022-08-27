@@ -24,7 +24,7 @@ Object {
       "seedIdentifier": "mock",
     },
     Object {
-      "balance": "288566332368580450524",
+      "balance": "2.88566332368580450524e+20",
       "currencyId": "ethereum_classic",
       "derivationMode": "",
       "freshAddress": "0x96B35855C525CA59FEEC9F1F88B6A59645C0034D",

@@ -1,0 +1,96 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`helium currency bridge scanAccounts helium seed 1 1`] = `
+Array [
+  Object {
+    "balance": "8000000",
+    "currencyId": "helium",
+    "derivationMode": "helium",
+    "freshAddress": "13SonXS6dNknZvScmdJDL2oAhL3UdTxSXKnYTDce54LnPZEjUXL",
+    "freshAddressPath": "44'/904'/0'/0'/0'",
+    "freshAddresses": Array [
+      Object {
+        "address": "13SonXS6dNknZvScmdJDL2oAhL3UdTxSXKnYTDce54LnPZEjUXL",
+        "derivationPath": "44'/904'/0'/0'/0'",
+      },
+    ],
+    "heliumResources": Object {
+      "stakes": "[]",
+    },
+    "id": "js:2:helium:13SonXS6dNknZvScmdJDL2oAhL3UdTxSXKnYTDce54LnPZEjUXL:helium",
+    "index": 0,
+    "name": "Helium 1",
+    "nfts": undefined,
+    "operationsCount": 1,
+    "pendingOperations": Array [],
+    "seedIdentifier": "41fd43c78e228b8995002cf92cb40749cdc284d9cd14eba86ac26f8688333cc2",
+    "spendableBalance": "8000000",
+    "starred": false,
+    "subAccounts": Array [],
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 8,
+    "used": true,
+  },
+  Object {
+    "balance": "0",
+    "currencyId": "helium",
+    "derivationMode": "helium",
+    "freshAddress": "14HewXGYzupa96Rm7KBvir8ur6QrKXN4h2ykFCMxtj3aUAb4wvz",
+    "freshAddressPath": "44'/904'/1'/0'/0'",
+    "freshAddresses": Array [
+      Object {
+        "address": "14HewXGYzupa96Rm7KBvir8ur6QrKXN4h2ykFCMxtj3aUAb4wvz",
+        "derivationPath": "44'/904'/1'/0'/0'",
+      },
+    ],
+    "heliumResources": Object {
+      "stakes": "[]",
+    },
+    "id": "js:2:helium:14HewXGYzupa96Rm7KBvir8ur6QrKXN4h2ykFCMxtj3aUAb4wvz:helium",
+    "index": 1,
+    "name": "Helium 2",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "41fd43c78e228b8995002cf92cb40749cdc284d9cd14eba86ac26f8688333cc2",
+    "spendableBalance": "0",
+    "starred": false,
+    "subAccounts": Array [],
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 8,
+    "used": false,
+  },
+]
+`;
+
+exports[`helium currency bridge scanAccounts helium seed 1 2`] = `
+Array [
+  Array [
+    Object {
+      "accountId": "13SonXS6dNknZvScmdJDL2oAhL3UdTxSXKnYTDce54LnPZEjUXL",
+      "blockHash": "1500661",
+      "blockHeight": 1500661,
+      "contract": undefined,
+      "extra": Object {},
+      "fee": "35000",
+      "hash": "Ru3NfikAYZX-QmA-TpBYjHrGtLjkvZFvl2c2FYKD49M",
+      "id": "Ru3NfikAYZX-QmA-TpBYjHrGtLjkvZFvl2c2FYKD49M",
+      "operator": undefined,
+      "recipients": Array [
+        "13SonXS6dNknZvScmdJDL2oAhL3UdTxSXKnYTDce54LnPZEjUXL",
+      ],
+      "senders": Array [
+        "14s1pLdZ3Z8EobTURy7Jn1hBdJDdNyjYZhNvrssNXbBRPZ2PaHn",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 38,
+      "type": "IN",
+      "value": "8000000",
+    },
+  ],
+  Array [],
+]
+`;

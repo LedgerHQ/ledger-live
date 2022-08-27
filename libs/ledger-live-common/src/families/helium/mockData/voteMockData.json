@@ -1,0 +1,176 @@
+[
+  {
+    "id": "14MnuexopPfDg3bmq8JdCm7LMDkUBoqhqanD9QzLrUURLZxFHBx",
+    "name": "HIP 39: Redenomination",
+    "description": "This proposal suggests a redenomination of the conversion rate between bones and HNT. Currently there are 100,000,000 (10^8) bones per HNT and under the proposed redenomination the conversion rate would be adjusted to 100,000 (10^5) bones per HNT. This change represents a 1000:1 token redenomination. Rough consensus to pass this HIP is achieved when the 'For Redenomination' vote receives at least 66% of the vote.",
+    "tags": { "primary": "HIP 39", "secondary": "Economic" },
+    "deadline": 1105440,
+    "outcomes": [
+      {
+        "value": "For Redenomination",
+        "address": "13qVx7MRzocyKZ4bW3oEkvnQrTK4DftKEcjHVYP1zhMtUhnqYye"
+      },
+      {
+        "value": "Against Redenomination",
+        "address": "13pPtEyg3idu2GDeFCjbuU1uVLaZax9yBqDouPPdgsAYznq7982"
+      }
+    ]
+  },
+  {
+    "id": "13NyqFtVKsifrh6HQ7DjSBKXRDi7qLHDoATHogoSgvBh56oZJv8",
+    "name": "Beacon/Witness Ratio",
+    "description": "This proposal seeks to regulate the number of witnesses a Hotspot is rewarded for based on the success of beacons. By tying the reward for witnesses of Hotspots to successful beacons, we incentivize healthy network coverage.\n\nVotes for this HIP are considered a temperature check. The implementation of this HIP is not guaranteed and is subject to follow‑up votes.",
+    "tags": {
+      "primary": "HIP 42",
+      "secondary": "Technical",
+      "tertiary": "Temp Check"
+    },
+    "deadline": 1183225,
+    "outcomes": [
+      {
+        "value": "For Beacon/Witness Ratio",
+        "address": "14WEui5BM83omUQ2VwXrd8dfx8wew18bdn66mc9Z14HC6DeL3xw"
+      },
+      {
+        "value": "Against Beacon/Witness Ratio",
+        "address": "134UcXhcGD1fxR3XrA3rgXXiQCjNFiB8MbnxsTX8z1iv3CQ52Zs"
+      }
+    ]
+  },
+  {
+    "id": "14iwaexUYUe5taFgb5hx2BZw74z3TSyonRLYyZU1RbddV4bJest",
+    "name": "Maintain Temporary Hotspot Denylist",
+    "description": "As the Helium Network has grown, so too has the prevalence of malicious activity and institutional cheating. This activity seeks to game the system with the sole intent of exploiting Proof-of-Coverage rewards without providing any real value to the network.\n\nShould Helium, Inc continue to temporarily manage the denylist that is embedded in miner images until such time that a HIP-40 implementation is approved or if HIP-40 is rejected by the community?\n\nJoin the conversation on Discord and see announcements channel for more details.",
+    "tags": { "primary": "Denylist" },
+    "deadline": 1180295,
+    "outcomes": [
+      {
+        "value": "For Temporarily Maintaining Denylist",
+        "address": "14i2TpGTLB8SRGURXRumcGv7sDD1ABQJLbLphdyDaTTBQG4ZTCb"
+      },
+      {
+        "value": "Against Temporarily Maintaining Denylist",
+        "address": "13aRcLjXSjWdYCwihwGnJYiCP87BGniMN2g74Mm7rV6ZVXecDMQ"
+      }
+    ]
+  },
+  {
+    "id": "13wCuq7XGnc4xgxPAc9n9ragKsRfmH9t9jB3c1smfKPZWSikZkd",
+    "name": "Publish Temporary Hotspot Denylist",
+    "description": "As the Helium Network has grown, so too has the prevalence of malicious activity and institutional cheating. This activity seeks to game the system with the sole intent of exploiting Proof-of-Coverage rewards without providing any real value to the network.\n\nShould Helium Inc. publish the current denylist even though it may allow existing gaming hotspots to change their setups to avoid being detected?\n\nJoin the conversation on Discord and see announcements channel for more details.",
+    "tags": { "primary": "Denylist" },
+    "deadline": 1180295,
+    "outcomes": [
+      {
+        "value": "For Publishing Hotspot Denylist",
+        "address": "13pk2QHtwZKYbZH9oAr9oajwzBERsZCNzNWF3uwud5TrisTywQN"
+      },
+      {
+        "value": "Against Publishing Hotspot Denylist",
+        "address": "14dtRgHykFreu2NSRqQvMprCXMSpA3Z9iW4i5Wf9FWfhKARH3iU"
+      }
+    ]
+  },
+  {
+    "id": "14me3X7jpEmn3eeFfnAkMvUoFU3cN6GAS3CDomqCikr7VQfHWrU",
+    "name": "H3Dex-based PoC Targeting",
+    "description": "This is a proposal for a more scalable replacement for Proof-of-Coverage (PoC) targeting using an H3-based index. We are proposing it as a HIP to communicate and acknowledge that this is a change to the current implementation but we believe it still falls within the original intent of PoC.\n\nApproving this HIP implies that the community has reviewed the implementation and the relevant Chain Variables. We will consider this proposal as approved if it passes with 2/3 of the vote power by the deadline.\n\nJoin the conversation on Discord and see the #hip54-h3dex-poc-targeting channel for more details.",
+    "tags": { "primary": "HIP 54", "secondary": "Technical" },
+    "deadline": 1237200,
+    "outcomes": [
+      {
+        "value": "For HIP 54",
+        "address": "13Cq1jr9HTVZAxgrD9kXg3ytqjWZ4D2bEGJejPs2bb3vAZJz3sM"
+      },
+      {
+        "value": "Against HIP 54",
+        "address": "1344XqCee51BkNzbjAjW1MyR17qvhc9952ygWbz5eMNn4nnPxHZ"
+      }
+    ]
+  },
+  {
+    "id": "14Rjhhz1DXLVmSRdzappqWgD6rfgu6XYxmdaSCvWLyLH8ZWbciK",
+    "name": "Validator Challenges",
+    "description": "This HIP changes how Proof-of-Coverage (PoC) Challenges are generated and submitted to the Helium blockchain. By moving challenging to Validators, the network's stability will be greatly increased.\n\nSync issues, all relayed states, port forwarding or firewall issues, and SD card failures due to excessive load will be eliminated. Hotspot bandwidth consumption will be a fraction of what it is today. This may also reduce the cost of Hotspot hardware, as processing and storage needs will be greatly decreased.\n\nIn order to make this move, the economic reward of 0.9% of total HNT rewards for creating PoC Challenges will move to Validators as well. (Hotspot earnings change from 70.1% to 69.2%)\n\nApproving this HIP implies that the community has reviewed the implementation and the relevant Chain Variables. We will consider this proposal as approved if it passes with 2/3 of the vote power by the deadline.\n\nJoin the conversation on Discord and see the #hip55‑validator‑challenges channel for more details.",
+    "tags": { "primary": "HIP 55", "secondary": "Technical" },
+    "deadline": 1237200,
+    "outcomes": [
+      {
+        "value": "For HIP 55",
+        "address": "13pshKABnfUBSAcXJrgDYxvwXxJ6UMD1LrXA2ZDXwCKGNu83hyY"
+      },
+      {
+        "value": "Against HIP 55",
+        "address": "13v6vkBUaHjoGx2daVCxXtyDkaKMP1Key4WphkkGsc3gpPpgTh4"
+      }
+    ]
+  },
+  {
+    "id": "13UrtNApGd3NbeP3NyyTejqNEPAv3NGxkGjvtwTVdaRs24NT7Wy",
+    "name": "Improved State Channel Disputes",
+    "description": "HIP 56 describes an update to the dispute mechanism for State Channels that will enable better accounting of State Channel activity and more accurate rewards for Data Transfer while improving blockchain scaling. It specifically protects against an edge case that could cause blockchain halts due to the dispute mechanism. This vote is for the new dispute mechanism to be enabled by a chain variable.\n\nApproving this HIP implies that the community has reviewed the implementation and the relevant Chain Variables. We will consider this proposal as approved if it passes with 2/3 of the vote power by the deadline.\n\nJoin the conversation on Discord and see the #hip‑56‑improved‑state‑channel‑disputes channel for more details.",
+    "tags": { "primary": "HIP 56", "secondary": "Technical" },
+    "deadline": 1256800,
+    "outcomes": [
+      {
+        "value": "For HIP 56",
+        "address": "14afviZLjBxH4neJEK3TxDuhhHJk9C7rnJe4AxcJKUNda435biL"
+      },
+      {
+        "value": "Against HIP 56",
+        "address": "14ExX6eX6tw76f6pu7z3PinTMGcZ3D5mxHYB59u25pFyp2ZK8tw"
+      }
+    ]
+  },
+  {
+    "id": "14KhDJUdvAXNVVP5m5cqEaLGNC859sXvpHtxWX9r999pZKC8xAs",
+    "name": "PoC Distance Limit",
+    "description": "HIP 58 seeks to nullify a certain gaming vector of Proof of Coverage rewards by aligning the expected range of PoC with the range of LoRaWAN devices.\n\nThe current PoC mechanics allow manipulation of witness RF data at long distances and thus, we find evidence of gaming at the edges. This improvement implements a sanity check filter on Proof of Coverage and reduces the maximum range of PoC activity to 100km. The distance is based on the notion that typical devices are able to be heard 30-50km away. The distance is doubled to 100km in order to incentivize new Hotspot placements. The impact on a few legitimate witness events that are > 100km is limited as described in the dataset in the HIP.\n\nApproving this HIP implies that the community has reviewed the implementation and relevant Chain Variable. We will consider this proposal as approved if it passed with 2/3 of the vote power by the deadline.\n\nJoin the conversation on Discord and see the #hip‑58‑poc‑distance‑limit channel for more details.",
+    "tags": { "primary": "HIP 58", "secondary": "Technical" },
+    "deadline": 1311000,
+    "outcomes": [
+      {
+        "value": "For HIP 58",
+        "address": "13rz3LEqJyfiv6sTSb5rcLKUiDVUa5XgkYi9qtfhoNsziijEwQ5"
+      },
+      {
+        "value": "Against HIP 58",
+        "address": "12zsif7QE9dhQyhzmbT1mLtTrinTFQdNyjJZkty6N4hRPYVoReB"
+      }
+    ]
+  },
+  {
+    "id": "14cXnMdXYcS7WKNh33dYUaPeo8bZmRFn5AoPA78AZtAgfFXu9jf",
+    "name": "Reduce XOR Filter Fees",
+    "description": "HIP 59 proposes a change for how fees are calculated when doing a XOR filter update with the goal of reducing these fees and enabling more updates to XOR filters. \n\nOn the Helium blockchain, fees are calculated based on the byte_size of the transaction. XOR filter fees are operational costs related to maintaining OUIs on the blockchain. With the current implementation as more devices get added to the filter, it grows. Meaning that any update is calculated based on the full size of the filter. This can increase the cost of an XOR filter update to tens of thousands of Data Credits (DC). This is not sustainable as the network grows.\n\nHIP 59 proposes to not account for the full size of the XOR filter every time but only the difference compared to the previous update. For example: if the previous XOR had a size of 100 bytes and the update is 110 bytes then fees would be calculated on the difference: (110 - 100 = 10) 10 bytes. \n\nIf approved this approach increases the commercial viability for community members to host a Console/Router instance, since only the difference of the XOR filter will be calculated vs paying for the entire amount each time.",
+    "tags": { "primary": "HIP 59", "secondary": "Technical" },
+    "deadline": 1350360,
+    "outcomes": [
+      {
+        "value": "For HIP 59",
+        "address": "14KKzNXWp9rgkNvASAq7LYRkxZuyWpe1NEfYkr1y4vjACb6skPh"
+      },
+      {
+        "value": "Against HIP 59",
+        "address": "14nP4TKN3Q7aMwNyBP1qTstV6mrrVvP5Sau3t1vaff7nyqyyigg"
+      }
+    ]
+  },
+  {
+    "id": "14rifUhocpzdwsrWaG5PDbdREDkzyesKe1hXuWzibv8h9DdqKLe",
+    "name": "Helium DAO",
+    "description": "HIP 51 seeks to allow Helium and its token HNT to become a ‘Network of Networks’, opening the door for multiple network protocols and multiple tokens to exist in the ecosystem. \n\nFor the IoT network, Hotspots would start earning a new token called $IOT, while 5G Hotspots would earn a token called $MOBILE. All new tokens are backed by HNT and can always be converted to HNT. Existing holdings of HNT remain unaffected.\n\nThis HIP provides a general structure for onboarding new network protocols, of which HIP 52: LoRaWAN DAO and HIP 53: 5G DAO exist as two current proposals. HIP 51 aims to create an economy where the underlying HNT-Data Credit burn-and-mint equilibrium continues to power the Helium Flywheel, while Proof-of-Coverage rules and earnings are dictated by each corresponding subDAO.\n\nApproving this HIP implies that the community has reviewed the implementation. We will consider this proposal as approved if it passes with 2/3 of the vote power by the deadline.\n\nJoin the conversation on Discord and see the #hip‑51‑helium-dao channel for more details.",
+    "tags": { "primary": "HIP 51", "secondary": "Economic / Technical" },
+    "deadline": 1387090,
+    "outcomes": [
+      {
+        "value": "For HIP 51",
+        "address": "14kJVKqZ3Fh5FaqxW727yL3tKcdgWWA5oMKupCNwnZDRFPgixYY"
+      },
+      {
+        "value": "Against HIP 51",
+        "address": "13BnnYVKUDbaRynWHe6JNj7tx55meLBAGmtoYLMUDK9cL3ZKd8T"
+      }
+    ]
+  }
+]

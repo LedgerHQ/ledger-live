@@ -53,7 +53,10 @@ setSupportedCurrencies([
   "moonbeam",
   "cronos",
   "songbird",
-  "flare"
+  "flare",
+  "filecoin",
+  "helium",
+  "helium_testnet"
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

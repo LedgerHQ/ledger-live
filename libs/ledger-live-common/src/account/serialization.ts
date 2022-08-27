@@ -44,6 +44,11 @@ import {
   fromCeloResourcesRaw,
 } from "../families/celo/serialization";
 import {
+  toHeliumResourcesRaw,
+  fromHeliumResourcesRaw,
+} from "../families/helium/serialization";
+
+import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -95,6 +100,7 @@ import {
   CryptoOrgAccountRaw,
 } from "../families/crypto_org/types";
 import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
+import { HeliumAccount, HeliumAccountRaw } from "../families/helium/types";
 import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
 import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
 
@@ -108,6 +114,7 @@ export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
 export { toCeloResourcesRaw, fromCeloResourcesRaw };
+export { toHeliumResourcesRaw, fromHeliumResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -854,6 +861,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromSolanaResourcesRaw(solanaResourcesRaw);
       break;
     }
+    case "helium": {
+      const heliumResourcesRaw = (rawAccount as HeliumAccountRaw)
+        .heliumResources;
+      if (heliumResourcesRaw)
+        (res as HeliumAccount).heliumResources =
+          fromHeliumResourcesRaw(heliumResourcesRaw);
+      break;
+    }
     case "crypto_org": {
       const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
         .cryptoOrgResources;
@@ -1054,6 +1069,15 @@ export function toAccountRaw(account: Account): AccountRaw {
         (res as CeloAccountRaw).celoResources = toCeloResourcesRaw(
           celoAccount.celoResources
         );
+      break;
+    }
+    case "helium": {
+      const heliumAccount = account as HeliumAccount;
+      if (heliumAccount.heliumResources) {
+        (res as HeliumAccountRaw).heliumResources = toHeliumResourcesRaw(
+          heliumAccount.heliumResources
+        );
+      }
       break;
     }
   }

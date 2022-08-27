@@ -18,7 +18,8 @@
       "dom"
     ],
     "composite": true, // required on the dependency project for references to work
-    "isolatedModules": true
+    "isolatedModules": true,
+    "allowJs": true
   },
   "files": [
     // by whitelisting the files to include, TS won't automatically

@@ -47,6 +47,6 @@ export const formatTransactionStatus = (
   ts: TransactionStatus,
   mainAccount: Account
 ): string => {
-  const TM = transactionModulePerFamily[t.family];
+  const TM: any = transactionModulePerFamily[t.family];
   return TM.formatTransactionStatus(t as any, ts as any, mainAccount as any);
 };
