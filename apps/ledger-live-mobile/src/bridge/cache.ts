@@ -41,9 +41,9 @@ export async function getCurrencyCache(
 
   return undefined;
 }
-const cache = makeBridgeCacheSystem({
+export const bridgeCache = makeBridgeCacheSystem({
   saveData: setCurrencyCache,
   getData: getCurrencyCache,
 });
-export const hydrateCurrency = cache.hydrateCurrency;
-export const prepareCurrency = cache.prepareCurrency;
+export const hydrateCurrency = bridgeCache.hydrateCurrency;
+export const prepareCurrency = bridgeCache.prepareCurrency;
