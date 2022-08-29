@@ -498,6 +498,35 @@ export async function bot({
     "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n";
   body += "|---|---|---|---|---|---|---|---|\n";
 
+  body += "| **TOTAL** |";
+  body += `**${formatTime(sumResults((r) => r.preloadDuration))}** |`;
+  body += `**${formatTime(sumResults((r) => r.scanDuration))}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) => m.resyncAccountsDuration || 0)
+  )}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) =>
+      m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
+    )
+  )}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) =>
+      m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
+    )
+  )}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) =>
+      m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
+    )
+  )}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) =>
+      m.broadcastedTime && m.confirmedTime
+        ? m.confirmedTime - m.broadcastedTime
+        : 0
+    )
+  )}** |\n`;
+
   results.forEach((r) => {
     body += `| ${r.spec.name} (${
       (r.accountsBefore || []).filter((a) => a.used).length
@@ -530,35 +559,6 @@ export async function bot({
       )
     )} |\n`;
   });
-
-  body += "| **TOTAL** |";
-  body += `${formatTime(sumResults((r) => r.preloadDuration))} |`;
-  body += `${formatTime(sumResults((r) => r.scanDuration))} |`;
-  body += `${formatTime(
-    sumResultsMutation((m) => m.resyncAccountsDuration || 0)
-  )} |`;
-  body += `${formatTime(
-    sumResultsMutation((m) =>
-      m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
-    )
-  )} |`;
-  body += `${formatTime(
-    sumResultsMutation((m) =>
-      m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
-    )
-  )} |`;
-  body += `${formatTime(
-    sumResultsMutation((m) =>
-      m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
-    )
-  )} |`;
-  body += `${formatTime(
-    sumResultsMutation((m) =>
-      m.broadcastedTime && m.confirmedTime
-        ? m.confirmedTime - m.broadcastedTime
-        : 0
-    )
-  )} |\n`;
 
   body += "\n</details>\n\n";
 
