@@ -3046,6 +3046,11 @@
       "catalogServerDesc" : "التبديل بين مصادر تطبيقات المنصة المتعددة",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
+      "featureFlagsEdit" : "تعديل",
+      "featureFlagsRestore" : "استعادة",
+      "featureFlagsOverride" : "تجاوز",
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
       "addLocalAppButton" : "تصفح",
@@ -4219,6 +4224,10 @@
     },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
+      "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
+    },
+    "NetworkError" : {
+      "title" : "حدث خطأ خلال المزامنة",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
     },
     "NoAddressesFound" : {
