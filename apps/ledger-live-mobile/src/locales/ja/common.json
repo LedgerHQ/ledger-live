@@ -1035,6 +1035,8 @@
     "stepLanguage" : {
       "title" : "言語を選択",
       "cta" : "続行",
+      "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
+      "changeDeviceLanguageDescription" : "Ledger Liveの言語は現在、{{language}}です。{{language}}をデバイスでも使用しますか？",
       "warning" : {
         "title" : "ご利用ガイド（英語版）",
         "cta" : "了解！",
@@ -2298,7 +2300,7 @@
         "cancel" : {
           "title" : "このアドレスを拒否しました",
           "subtitle" : "これが誤操作によるものである場合は、下のボタンをクリックして再試行できます。",
-          "info" : "アドレスの不一致が確実な場合、お使いのスマートフォンが情報漏洩している可能性があります。<0>できるだけ早くお問い合わせいただく</0>ことをお勧めします。"
+          "info" : "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
         }
       },
       "receiveConfirmation" : {
@@ -2313,7 +2315,7 @@
         "subtitle1" : "アドレスを認証することで安全にご利用いただけます。Ledgerデバイスに表示されるアドレスが情報漏洩することはありません。",
         "subtitle2" : "アドレスを認証することで、デバイスに表示されているアドレスがLedger Liveに表示されているアドレスと同一であることを確認できます。",
         "verifyCta" : "アドレスを認証",
-        "dontVerifyCta" : "認証せずにアドレスを提示"
+        "dontVerifyCta" : "Reveal my address without verifying"
       },
       "securityDontVerify" : {
         "title" : "本当によろしいですか？",
@@ -3466,6 +3468,10 @@
     "changeLanguage" : "言語の変更",
     "allowLanguageInstallation" : "言語のインストールを許可する",
     "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}}を{{language}}に設定しますか？",
+      "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
+    },
     "installingLanguage" : "言語をインストール",
     "languages" : {
       "english" : "英語",
