@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "Wechseln Sie zwischen mehreren Plattform-App-Quellen",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
+      "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
+      "featureFlagsEdit" : "Bearbeiten",
+      "featureFlagsRestore" : "Wiederherstellen",
+      "featureFlagsOverride" : "Überschreiben",
       "addLocalApp" : "Lokale App hinzufügen",
       "addLocalAppDesc" : "Durchsuchen Sie lokale Dateien und fügen Sie eine lokale App mit einem lokalen Manifest hinzu",
       "addLocalAppButton" : "Durchsuchen",
@@ -3220,15 +3225,15 @@
           },
           "1" : {
             "title" : "Achten Sie auf Ihren privaten Schlüssel",
-            "desc" : "Ihr privater Schlüssel ist in Ihrem Nano gespeichert. Sie müssen der einzige sein, der ihn besitzt, um die Kontrolle über Ihr Geld zu haben."
+            "desc" : "Ihr privater Schlüssel ist in Ihrem Nano gespeichert.Sie müssen der einzige sein, der ihn besitzt, um die Kontrolle über Ihr Geld zu haben."
           },
           "2" : {
             "title" : "Offline bleiben",
-            "desc" : "Ihr Nano arbeitet als „Cold Storage“-Wallet. Das bedeutet, dass er Ihren privaten Schlüssel niemals online preisgibt, selbst wenn Sie die App verwenden."
+            "desc" : "Ihr Nano arbeitet als „Cold Storage“-Wallet.Das bedeutet, dass er Ihren privaten Schlüssel niemals online preisgibt, selbst wenn Sie die App verwenden."
           },
           "3" : {
             "title" : "Transaktionen validieren",
-            "desc" : "Mit Ledger Live können Sie Krypto kaufen, verkaufen, verwalten, tauschen und verdienen und bleiben dabei geschützt. Sie werden jede Krypto-Transaktion mit Ihrem Nano validieren."
+            "desc" : "Mit Ledger Live können Sie Krypto kaufen, verkaufen, verwalten, tauschen und verdienen und bleiben dabei geschützt.Sie werden jede Krypto-Transaktion mit Ihrem Nano validieren."
           },
           "4" : {
             "title" : "Lassen Sie uns Ihren Nano einrichten",
