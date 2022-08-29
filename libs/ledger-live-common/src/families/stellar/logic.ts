@@ -89,7 +89,7 @@ export const getReservedBalance = (
     (b) => b.asset_type === "native"
   ) as BalanceAsset;
 
-  const amountInOffers = new BigNumber(nativeAsset?.buying_liabilities || 0);
+  const amountInOffers = new BigNumber(nativeAsset?.selling_liabilities || 0);
   const numOfEntries = new BigNumber(account.subentry_count);
 
   return new BigNumber(BASE_RESERVE_MIN_COUNT)
