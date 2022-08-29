@@ -1,10 +1,11 @@
 import expect from "expect";
 import invariant from "invariant";
-import type { Transaction } from "./types";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
+import { acceptTransaction } from "./speculos-deviceActions";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
-import { DeviceModelId } from "@ledgerhq/devices";
+import type { Transaction } from "./types";
 
 const testTimeout = 5 * 60 * 1000;
 
@@ -68,6 +69,7 @@ const cronos: AppSpec<Transaction> = {
   mutations: evmBasicMutations({
     maxAccount: 3,
   }),
+  genericDeviceAction: acceptTransaction,
 };
 
 const fantom: AppSpec<Transaction> = {
@@ -82,6 +84,7 @@ const fantom: AppSpec<Transaction> = {
   mutations: evmBasicMutations({
     maxAccount: 3,
   }),
+  genericDeviceAction: acceptTransaction,
 };
 
 const moonbeam: AppSpec<Transaction> = {
@@ -96,6 +99,7 @@ const moonbeam: AppSpec<Transaction> = {
   mutations: evmBasicMutations({
     maxAccount: 3,
   }),
+  genericDeviceAction: acceptTransaction,
 };
 
 const songbird: AppSpec<Transaction> = {
@@ -110,6 +114,7 @@ const songbird: AppSpec<Transaction> = {
   mutations: evmBasicMutations({
     maxAccount: 3,
   }),
+  genericDeviceAction: acceptTransaction,
 };
 
 const flare: AppSpec<Transaction> = {
@@ -124,6 +129,7 @@ const flare: AppSpec<Transaction> = {
   mutations: evmBasicMutations({
     maxAccount: 3,
   }),
+  genericDeviceAction: acceptTransaction,
 };
 
 export default {
