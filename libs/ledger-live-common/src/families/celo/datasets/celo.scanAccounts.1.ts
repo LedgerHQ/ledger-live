@@ -151,22 +151,6 @@ const dataset: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "[send] use all amount - should warn all funds",
-          transaction: (t) => ({
-            ...t,
-            useAllAmount: true,
-            mode: "send",
-            recipient: LEDGER_CELO_ACCOUNT_2,
-          }),
-          expectedStatus: (account) => ({
-            errors: {},
-            warnings: {
-              amount: new CeloAllFundsWarning(),
-            },
-            totalSpent: account.spendableBalance,
-          }),
-        },
-        {
           name: "Lock - success",
           transaction: (t) => ({
             ...t,
@@ -381,6 +365,22 @@ const dataset: CurrenciesData<Transaction> = {
             errors: {},
             warnings: {},
           },
+        },
+        {
+          name: "[send] use all amount - should warn all funds",
+          transaction: (t) => ({
+            ...t,
+            useAllAmount: true,
+            mode: "send",
+            recipient: LEDGER_CELO_ACCOUNT_1,
+          }),
+          expectedStatus: (account) => ({
+            errors: {},
+            warnings: {
+              amount: new CeloAllFundsWarning(),
+            },
+            totalSpent: account.spendableBalance,
+          }),
         },
       ],
     },
