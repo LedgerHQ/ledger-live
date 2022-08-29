@@ -19,6 +19,7 @@ import sample from "lodash/sample";
 import expect from "expect";
 import { toOperationRaw } from "../../account";
 import { BigNumber } from "bignumber.js";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("osmosis");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.00001");
@@ -48,6 +49,7 @@ const osmosis: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Cosmos",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "balance is too low");

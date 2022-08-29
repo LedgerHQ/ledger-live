@@ -66,7 +66,7 @@ export type MutationSpec<T extends Transaction> = {
     account: Account;
     bridge: AccountBridge<T>;
   }) => T | null | undefined;
-  // Express the device actions to do (buttons,..) and validate the device screen
+  // Express the device actions to do (buttons,..) and validate the device screen. overrides genericDeviceAction
   deviceAction?: DeviceAction<T, any>;
   // how much time to wait in maximum to reach the final state
   testTimeout?: number;
@@ -102,6 +102,8 @@ export type AppSpec<T extends Transaction> = {
   transactionCheck?: (arg: TransactionArg<T>) => void;
   // Implement a test that also runs on each mutation after the operation is applied to the account
   test?: (arg0: TransactionTestInput<T>) => void;
+  // Express the device actions to do (buttons,..) and validate the device screen
+  genericDeviceAction: DeviceAction<T, any>;
 };
 export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;

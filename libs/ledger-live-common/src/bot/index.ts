@@ -27,6 +27,7 @@ import {
 } from "../countervalues/logic";
 import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
+import { getContext } from "./bot-test-context";
 type Arg = Partial<{
   currency: string;
   family: string;
@@ -49,7 +50,11 @@ function makeAppJSON(accounts: Account[]) {
   return JSON.stringify(jsondata);
 }
 
-export async function bot({ currency, family, mutation }: Arg = {}) {
+export async function bot({
+  currency,
+  family,
+  mutation,
+}: Arg = {}): Promise<void> {
   const SEED = getEnv("SEED");
   invariant(SEED, "SEED required");
   const specs: any[] = [];
@@ -109,7 +114,6 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   );
   const totalDuration = Date.now() - timeBefore;
   const allAppPaths = uniq(results.map((r) => r.appPath || "").sort());
-  const allAccountsBefore = flatMap(results, (r) => r.accountsBefore || []);
   const allAccountsAfter = flatMap(results, (r) => r.accountsAfter || []);
   let countervaluesError;
   const countervaluesState = await loadCountervalues(initialState, {
@@ -338,6 +342,24 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     body += "</details>\n\n";
   }
 
+  // summarize the error causes
+  const dedupedErrorCauses: string[] = [];
+  errorCases.forEach((m) => {
+    if (!m.error) return;
+    const ctx = getContext(m.error);
+    if (!ctx) return;
+    const cause = m.spec.name + " > " + ctx;
+    if (!dedupedErrorCauses.includes(cause)) {
+      dedupedErrorCauses.push(cause);
+    }
+  });
+  if (dedupedErrorCauses.length > 0) {
+    slackBody += "*Hints:*\n";
+    dedupedErrorCauses.forEach((cause) => {
+      slackBody += `- ${cause}\n`;
+    });
+  }
+
   if (errorCases.length) {
     body += "<details>\n";
     body += `<summary>${errorCases.length} mutation errors</summary>\n\n`;
@@ -479,43 +501,84 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   // Add performance details
   body += "<details>\n";
   body += `<summary>Performance ⏲ ${formatTime(totalDuration)}</summary>\n\n`;
-  body += `- total currency preload: ${formatTime(
-    results.reduce((sum, r) => (r.preloadDuration || 0) + sum, 0)
-  )}\n`;
-  body += `- total scan accounts: ${formatTime(
-    results.reduce((sum, r) => (r.scanDuration || 0) + sum, 0)
-  )}\n`;
-  function sumMutation(f) {
-    return results.reduce(
-      (sum, r) => sum + (r.mutations?.reduce((sum, m) => sum + f(m), 0) || 0),
-      0
-    );
+  body += "**Time spent for each spec:** (total across mutations)\n";
+
+  function sumMutation(mutations, f) {
+    return mutations?.reduce((sum, m) => sum + (f(m) || 0), 0) || 0;
   }
-  body += `- in accounts resync: ${formatTime(
-    sumMutation((m) => m.resyncAccountsDuration || 0)
-  )}\n`;
-  body += `- in transaction status: ${formatTime(
-    sumMutation((m) =>
+  function sumResults(f) {
+    return results.reduce((sum, r) => sum + (f(r) || 0), 0);
+  }
+  function sumResultsMutation(f) {
+    return sumResults((r) => sumMutation(r.mutations, f));
+  }
+
+  body +=
+    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n";
+  body += "|---|---|---|---|---|---|---|---|\n";
+
+  body += "| **TOTAL** |";
+  body += `**${formatTime(sumResults((r) => r.preloadDuration))}** |`;
+  body += `**${formatTime(sumResults((r) => r.scanDuration))}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) => m.resyncAccountsDuration || 0)
+  )}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) =>
       m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
     )
-  )}\n`;
-  body += `- in signOperation: ${formatTime(
-    sumMutation((m) =>
+  )}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) =>
       m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
     )
-  )}\n`;
-  body += `- in broadcast: ${formatTime(
-    sumMutation((m) =>
+  )}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) =>
       m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
     )
-  )}\n`;
-  body += `- in operation confirmation: ${formatTime(
-    sumMutation((m) =>
+  )}** |`;
+  body += `**${formatTime(
+    sumResultsMutation((m) =>
       m.broadcastedTime && m.confirmedTime
         ? m.confirmedTime - m.broadcastedTime
         : 0
     )
-  )}\n`;
+  )}** |\n`;
+
+  results.forEach((r) => {
+    body += `| ${r.spec.name} (${
+      (r.accountsBefore || []).filter((a) => a.used).length
+    }) |`;
+    body += `${formatTime(r.preloadDuration || 0)} |`;
+    body += `${formatTime(r.scanDuration || 0)} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) => m.resyncAccountsDuration || 0)
+    )} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) =>
+        m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
+      )
+    )} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) =>
+        m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
+      )
+    )} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) =>
+        m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
+      )
+    )} |`;
+    body += `${formatTime(
+      sumMutation(r.mutations, (m) =>
+        m.broadcastedTime && m.confirmedTime
+          ? m.confirmedTime - m.broadcastedTime
+          : 0
+      )
+    )} |\n`;
+  });
+
   body += "\n</details>\n\n";
 
   const { BOT_REPORT_FOLDER } = process.env;
@@ -537,12 +600,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         "utf-8"
       ),
       fs.promises.writeFile(
-        path.join(BOT_REPORT_FOLDER, "before-app.json"),
-        makeAppJSON(allAccountsBefore),
-        "utf-8"
-      ),
-      fs.promises.writeFile(
-        path.join(BOT_REPORT_FOLDER, "after-app.json"),
+        path.join(BOT_REPORT_FOLDER, "app.json"),
         makeAppJSON(allAccountsAfter),
         "utf-8"
       ),

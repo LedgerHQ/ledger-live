@@ -2,7 +2,7 @@ import expect from "expect";
 import invariant from "invariant";
 import now from "performance-now";
 import sample from "lodash/sample";
-import { throwError, of, Observable } from "rxjs";
+import { throwError, of, Observable, OperatorFunction } from "rxjs";
 import {
   first,
   filter,
@@ -25,7 +25,6 @@ import {
   releaseSpeculosDevice,
   findAppCandidate,
 } from "../load/speculos";
-import deviceActions from "../generated/speculos-deviceActions";
 import type { AppCandidate } from "../load/speculos";
 import {
   formatReportForConsole,
@@ -50,7 +49,6 @@ import type {
   Operation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "./bot-test-context";
 
@@ -437,7 +435,11 @@ export async function runOnAccount<T extends Transaction>({
 
     // without recovering mechanism, we simply assume an error is a failure
     if (errors.length) {
-      throw errors[0];
+      botTest("mutation must not have tx status errors", () => {
+        // all mutation must express transaction that are POSSIBLE
+        // recoveredFromTransactionStatus can also be used to solve this for tricky cases
+        throw errors[0];
+      });
     }
 
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
@@ -456,8 +458,7 @@ export async function runOnAccount<T extends Transaction>({
         }),
         autoSignTransaction({
           transport: device.transport,
-          deviceAction:
-            mutation.deviceAction || getImplicitDeviceAction(account.currency),
+          deviceAction: mutation.deviceAction || spec.genericDeviceAction,
           appCandidate,
           account,
           transaction,
@@ -484,10 +485,17 @@ export async function runOnAccount<T extends Transaction>({
     // broadcast the transaction
     const optimisticOperation = getEnv("DISABLE_TRANSACTION_BROADCAST")
       ? signedOperation.operation
-      : await accountBridge.broadcast({
-          account,
-          signedOperation,
-        });
+      : await accountBridge
+          .broadcast({
+            account,
+            signedOperation,
+          })
+          .catch((e) => {
+            // wrap the error into some bot test context
+            botTest("during broadcast", () => {
+              throw e;
+            });
+          });
     report.optimisticOperation = optimisticOperation;
     report.broadcastedTime = now();
     log(
@@ -507,9 +515,11 @@ export async function runOnAccount<T extends Transaction>({
       );
 
       if (timedOut && !operation) {
-        throw new Error(
-          "could not find optimisticOperation " + optimisticOperation.id
-        );
+        botTest("waiting operation id to appear after broadcast", () => {
+          throw new Error(
+            "could not find optimisticOperation " + optimisticOperation.id
+          );
+        });
       }
 
       if (operation) {
@@ -592,7 +602,7 @@ export function autoSignTransaction<T extends Transaction>({
   account: Account;
   transaction: T;
   status: TransactionStatus;
-}) {
+}): OperatorFunction<SignOperationEvent, SignOperationEvent> {
   let sub;
   let observer;
   let state;
@@ -662,16 +672,6 @@ export function autoSignTransaction<T extends Transaction>({
 
     return of<SignOperationEvent>(e);
   });
-}
-export function getImplicitDeviceAction(currency: CryptoCurrency) {
-  const actions = deviceActions[currency.family];
-  const accept = actions && actions.acceptTransaction;
-  invariant(
-    accept,
-    "a acceptTransaction is missing for family %s",
-    currency.family
-  );
-  return accept;
 }
 
 function awaitAccountOperation({
