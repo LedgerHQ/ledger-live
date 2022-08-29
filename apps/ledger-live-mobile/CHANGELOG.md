@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.7.0-next.4
+
+### Patch Changes
+
+- [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503) Thanks [@github-actions](https://github.com/apps/github-actions)! - LLM: fixes import from desktop to fully sync accounts before save
+
+- Updated dependencies [[`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503)]:
+  - @ledgerhq/live-common@27.0.0-next.3
+
 ## 3.7.0-next.3
 
 ### Minor Changes
