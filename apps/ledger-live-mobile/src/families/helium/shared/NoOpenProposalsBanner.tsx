@@ -1,7 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { urls } from "../config/urls";
-import TranslatedError from "./TranslatedError";
+import { StyleSheet, View } from "react-native";
 import Alert from "../../../components/Alert";
 
 type Props = {

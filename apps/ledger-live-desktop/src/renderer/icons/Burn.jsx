@@ -1,13 +1,13 @@
 // @flow
-
 import React from "react";
 
-type Props = {
+const Burn = ({
+  size = 16,
+  color = "currentColor",
+}: {
   size?: number | string;
   color?: string;
-};
-
-function Burn({ size = 16, color = "currentColor" }: Props): JSX.Element {
+}) => {
   return (
     <svg width={size} height={size} viewBox="0 0 24 29" fill={color}>
       <path
@@ -17,6 +17,6 @@ function Burn({ size = 16, color = "currentColor" }: Props): JSX.Element {
       />
     </svg>
   );
-}
+};
 
 export default Burn;

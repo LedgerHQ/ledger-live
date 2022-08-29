@@ -1,9 +1,6 @@
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useVotes } from "@ledgerhq/live-common/families/helium/react";
 import { Transaction } from "@ledgerhq/live-common/families/helium/types";
-import { assertUnreachable } from "@ledgerhq/live-common/families/helium/utils";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";

@@ -10,11 +10,8 @@ type Props = {
 const HeliumBodyHeader = ({ account }: Props) => {
   if (!account.heliumResources) return null;
 
-  return (
-    <>
-      <Votes account={account} />
-    </>
-  );
+  // TODO: Enable once ledger team reviews voting feature
+  return <>{/* <Votes account={account} /> */}</>;
 };
 
 export default HeliumBodyHeader;

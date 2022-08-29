@@ -3,14 +3,12 @@ import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { Linking, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { TrackScreen } from "../../../analytics";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import Button from "../../../components/Button";
-import ExternalLink from "../../../components/ExternalLink";
 import NavigationScrollView from "../../../components/NavigationScrollView";
-import { urls } from "../../../config/urls";
 import { ScreenName } from "../../../const";
 import Votes from "./Votes";
 import NoOpenProposalsBanner from "../shared/NoOpenProposalsBanner";
@@ -32,10 +30,6 @@ export default function VoteStarted({ navigation, route }: Props) {
       ...route.params,
     });
   }, [navigation, route.params]);
-
-  const howVotingWorks = useCallback(() => {
-    Linking.openURL(urls.helium.votingPage);
-  }, []);
 
   return (
     <SafeAreaView
