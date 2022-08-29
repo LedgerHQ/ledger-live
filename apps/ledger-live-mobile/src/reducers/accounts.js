@@ -1,4 +1,3 @@
-// @flow
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
@@ -12,7 +11,6 @@ import {
   makeCompoundSummaryForAccount,
   getAccountCapabilities,
 } from "@ledgerhq/live-common/compound/logic";
-
 import {
   addAccounts,
   canBeMigrated,
@@ -24,32 +22,37 @@ import {
   clearAccount,
   nestedSortAccounts,
   makeEmptyTokenAccount,
+  ImportAccountsReduceInput,
 } from "@ledgerhq/live-common/account/index";
-import type { State } from "./index.js";
+import type { State } from "./index";
 import accountModel from "../logic/accountModel";
 
 export type AccountsState = {
   active: Account[],
 };
-
 const initialState: AccountsState = {
   active: [],
 };
-
-const handlers: Object = {
+const handlers: Record<string, any> = {
   ACCOUNTS_IMPORT: (s, { state }) => state,
-
-  ACCOUNTS_USER_IMPORT: (s, { items, selectedAccounts }) => ({
-    active: importAccountsReduce(s.active, { items, selectedAccounts }),
+  ACCOUNTS_USER_IMPORT: (
+    s: AccountsState,
+    { input }: { input: ImportAccountsReduceInput },
+  ) => ({
+    active: importAccountsReduce(s.active, input),
   }),
-
   REORDER_ACCOUNTS: (
     state: AccountsState,
-    { payload: { comparator } }: { payload: { comparator: * } },
+    {
+      payload: { comparator },
+    }: {
+      payload: {
+        comparator: any,
+      },
+    },
   ): AccountsState => ({
     active: nestedSortAccounts(state.active, comparator),
   }),
-
   ACCOUNTS_ADD: (s, { scannedAccounts, selectedIds, renamings }) => ({
     active: addAccounts({
       existingAccounts: s.active,
@@ -58,97 +61,93 @@ const handlers: Object = {
       renamings,
     }),
   }),
-
   SET_ACCOUNTS: (
     state: AccountsState,
-    { payload }: { payload: Account[] },
+    {
+      payload,
+    }: {
+      payload: Account[],
+    },
   ) => ({
     active: payload,
   }),
-
   UPDATE_ACCOUNT: (
     state: AccountsState,
-    { accountId, updater }: { accountId: string, updater: Account => Account },
+    {
+      accountId,
+      updater,
+    }: {
+      accountId: string,
+      updater: (_: Account) => Account,
+    },
   ): AccountsState => {
     function update(existingAccount) {
       if (accountId !== existingAccount.id) return existingAccount;
-      return {
-        ...existingAccount,
-        ...updater(existingAccount),
-      };
+      return { ...existingAccount, ...updater(existingAccount) };
     }
+
     return {
       active: state.active.map(update),
     };
   },
-
   DELETE_ACCOUNT: (
     state: AccountsState,
-    { payload: account }: { payload: Account },
+    {
+      payload: account,
+    }: {
+      payload: Account,
+    },
   ): AccountsState => ({
     active: state.active.filter(acc => acc.id !== account.id),
   }),
-
   CLEAN_CACHE: (state: AccountsState): AccountsState => ({
     active: state.active.map(clearAccount),
   }),
-
   BLACKLIST_TOKEN: (
     state: AccountsState,
-    { payload: tokenId }: { payload: string },
+    {
+      payload: tokenId,
+    }: {
+      payload: string,
+    },
   ) => ({
     active: state.active.map(a => withoutToken(a, tokenId)),
   }),
-
   DANGEROUSLY_OVERRIDE_STATE: (state: AccountsState): AccountsState => ({
     ...state,
   }),
 };
-
 // Selectors
-
-export const exportSelector = (s: *) => ({
+export const exportSelector = (s: any) => ({
   active: s.accounts.active.map(accountModel.encode),
 });
-
-export const accountsSelector = (s: *): Account[] => s.accounts.active;
-
-export const migratableAccountsSelector = (s: *): Account[] =>
+export const accountsSelector = (s: any): Account[] => s.accounts.active;
+export const migratableAccountsSelector = (s: any): Account[] =>
   s.accounts.active.filter(canBeMigrated);
-
-// $FlowFixMe
 export const flattenAccountsSelector = createSelector(
   accountsSelector,
   flattenAccounts,
 );
-
-// $FlowFixMe
 export const flattenAccountsEnforceHideEmptyTokenSelector = createSelector(
   accountsSelector,
   accounts =>
-    flattenAccounts(accounts, { enforceHideEmptyTokenAccounts: true }),
+    flattenAccounts(accounts, {
+      enforceHideEmptyTokenAccounts: true,
+    }),
 );
-
-// $FlowFixMe
 export const accountsCountSelector = createSelector(
   accountsSelector,
   acc => acc.length,
 );
-
-// $FlowFixMe
 export const someAccountsNeedMigrationSelector = createSelector(
   accountsSelector,
   accounts => accounts.some(canBeMigrated),
 );
-
-// $FlowFixMe
 export const currenciesSelector = createSelector(accountsSelector, accounts =>
   uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>
     a.name.localeCompare(b.name),
   ),
 );
-
-// $FlowFixMe
 export const cryptoCurrenciesSelector = createSelector(
   accountsSelector,
   accounts =>
@@ -156,8 +155,6 @@ export const cryptoCurrenciesSelector = createSelector(
       a.name.localeCompare(b.name),
     ),
 );
-
-// $FlowFixMe
 export const accountsTuplesByCurrencySelector = createSelector(
   accountsSelector,
   (_, { currency }) => currency,
@@ -177,13 +174,15 @@ export const accountsTuplesByCurrencySelector = createSelector(
             makeEmptyTokenAccount(account, currency),
         }));
     }
+
     return accounts
       .filter(account => account.currency.id === currency.id)
-      .map(account => ({ account, subAccount: null }));
+      .map(account => ({
+        account,
+        subAccount: null,
+      }));
   },
 );
-
-// $FlowFixMe
 export const flattenAccountsByCryptoCurrencySelector = createSelector(
   flattenAccountsSelector,
   (_, { currencies }) => currencies,
@@ -196,16 +195,15 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
         )
       : accounts,
 );
-
 const emptyArray = [];
-
 export const accountsByCryptoCurrencyScreenSelector = (
   currency: CryptoCurrency,
 ) => (state: any) => {
   if (!currency) return emptyArray;
-  return accountsTuplesByCurrencySelector(state, { currency });
+  return accountsTuplesByCurrencySelector(state, {
+    currency,
+  });
 };
-
 export const flattenAccountsByCryptoCurrencyScreenSelector = (
   currency?: CryptoCurrency,
 ) => (state: any) => {
@@ -214,8 +212,6 @@ export const flattenAccountsByCryptoCurrencyScreenSelector = (
     currencies: [currency.id],
   });
 };
-
-// $FlowFixMe
 export const accountCryptoCurrenciesSelector = createSelector(
   cryptoCurrenciesSelector,
   (_, { currencies }) => currencies,
@@ -224,53 +220,66 @@ export const accountCryptoCurrenciesSelector = createSelector(
       ? cryptoCurrencies.filter(c => currencies.includes(c.id))
       : cryptoCurrencies,
 );
-
-// $FlowFixMe
 export const accountSelector = createSelector(
   accountsSelector,
   (_, { accountId }) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
-
-// $FlowFixMe
 export const parentAccountSelector = createSelector(
   accountsSelector,
   (_, { account }) => (account ? account.parentId : null),
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
-
 export const accountScreenSelector = (route: any) => (state: any) => {
   const { accountId, parentId } = route.params;
-  const parentAccount: ?Account =
-    parentId && accountSelector(state, { accountId: parentId });
-  let account: ?AccountLike = route.params.account;
+  const parentAccount: Account | null | undefined =
+    parentId &&
+    accountSelector(state, {
+      accountId: parentId,
+    });
+  let account: AccountLike | null | undefined = route.params.account;
 
   if (!account) {
     if (parentAccount) {
       const { subAccounts } = parentAccount;
+
       if (subAccounts) {
         account = subAccounts.find(t => t.id === accountId);
       }
     } else {
-      account = accountSelector(state, { accountId });
+      account = accountSelector(state, {
+        accountId,
+      });
     }
   }
 
-  return { parentAccount, account };
+  return {
+    parentAccount,
+    account,
+  };
 };
-
-// $FlowFixMe
 export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
   accounts.every(isUpToDateAccount),
 );
-
 export const subAccountByCurrencyOrderedSelector: OutputSelector<
   State,
-  { currency: CryptoCurrency | TokenCurrency },
-  Array<{ parentAccount: ?Account, account: AccountLike }>,
+  {
+    currency: CryptoCurrency | TokenCurrency,
+  },
+  Array<{
+    parentAccount: Account | null | undefined,
+    account: AccountLike,
+  }>,
 > = createSelector(
   accountsSelector,
-  (_, { currency }: { currency: CryptoCurrency | TokenCurrency }) => currency,
+  (
+    _,
+    {
+      currency,
+    }: {
+      currency: CryptoCurrency | TokenCurrency,
+    },
+  ) => currency,
   (accounts, currency) => {
     const flatAccounts = flattenAccounts(accounts);
     return flatAccounts
@@ -298,15 +307,15 @@ export const subAccountByCurrencyOrderedSelector: OutputSelector<
       );
   },
 );
-
 export const subAccountByCurrencyOrderedScreenSelector = (route: any) => (
   state: any,
 ) => {
   const currency = route?.params?.currency || {};
   if (!currency) return [];
-  return subAccountByCurrencyOrderedSelector(state, { currency });
+  return subAccountByCurrencyOrderedSelector(state, {
+    currency,
+  });
 };
-
 export const hasLendEnabledAccountsSelector: OutputSelector<
   State,
   void,
@@ -314,18 +323,14 @@ export const hasLendEnabledAccountsSelector: OutputSelector<
 > = createSelector(flattenAccountsSelector, accounts =>
   accounts.some(account => {
     if (!account || account.type !== "TokenAccount") return false;
-
     // check if account already has lending enabled
     const summary =
       account.type === "TokenAccount" &&
       makeCompoundSummaryForAccount(account, undefined);
-
     const capabilities = summary
       ? account.type === "TokenAccount" && getAccountCapabilities(account)
       : null;
-
     return !!capabilities;
   }),
 );
-
 export default handleActions(handlers, initialState);
