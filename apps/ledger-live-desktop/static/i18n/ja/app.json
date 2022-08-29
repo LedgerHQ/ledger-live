@@ -1294,7 +1294,7 @@
       "noSearchResults" : "申し訳ありませんが、検索結果が見つかりませんでした。",
       "retrySearchKeyword" : "別のキーワードで再度検索してください。",
       "retrySearchParams" : "別のパラメータで再度検索してください。",
-      "trackFavAssets" : "お気に入りを追跡する",
+      "trackFavAssets" : "Track your favorite",
       "clickOnStarIcon" : "資産の横にある星アイコンをクリックすると、お気に入りに追加されます。",
       "browseAssets" : "資産をチェック"
     }
@@ -1984,6 +1984,25 @@
     },
     "switchButton" : "{{language}}に切り替える",
     "no" : "不要"
+  },
+  "deviceLocalization" : {
+    "language" : "言語",
+    "deviceLanguage" : "デバイスの言語",
+    "changeLanguage" : "言語の変更",
+    "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
+    "changeDeviceLanguageDescription" : "Ledger Liveの言語は現在、{{language}}です。{{language}}をデバイスでも使用しますか？",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}}を{{language}}に設定しますか？",
+      "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
+    },
+    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "languageInstalled" : "言語が変更されました",
+    "installingLanguage" : "言語をインストール",
+    "languages" : {
+      "english" : "英語",
+      "french" : "フランス語",
+      "spanish" : "スペイン語"
+    }
   },
   "distribution" : {
     "asset" : "資産",
@@ -3046,6 +3065,11 @@
       "catalogServerDesc" : "複数のプラットフォームアプリのソースを切り替える",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
       "enablePlatformDevToolsDesc" : "プラットフォームアプリの開発ツールウィンドウ表示を有効化",
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsEdit" : "Edit",
+      "featureFlagsRestore" : "Restore",
+      "featureFlagsOverride" : "Override",
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
       "addLocalAppButton" : "画面をチェックする",
@@ -4155,6 +4179,14 @@
       "title" : "リセットできませんでした。",
       "description" : "問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにお問い合わせください。"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "言語のインストールがデバイス上で拒否されました",
+      "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+    },
+    "LanguageNotFound" : {
+      "title" : "言語が見つかりません",
+      "description" : "インストールしようとしている言語が見つかりませんでした。他の言語のインストールをお試しください。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "アップデートの必要はありません。",
       "description" : "デバイスを使用できない場合は、Ledgerサポートに連絡してください。"
@@ -4219,6 +4251,10 @@
     },
     "NetworkDown" : {
       "title" : "インターネットがダウンしているようです。",
+      "description" : "インターネット接続を確認してください。"
+    },
+    "NetworkError" : {
+      "title" : "同期中にエラーが発生しました",
       "description" : "インターネット接続を確認してください。"
     },
     "NoAddressesFound" : {
