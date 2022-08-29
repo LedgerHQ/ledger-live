@@ -2169,6 +2169,15 @@
       "customManifest" : {
         "title" : "تحميل بيان المنصة المخصص"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
+      "featureFlagsOverride" : "تجاوز",
+      "featureFlagsEdit" : "تعديل",
+      "featureFlagsRestore" : "استعادة",
+      "featureFlagsDisplayValue" : "عرض القيمة",
+      "featureFlagsHideValue" : "إخفاء القيمة"
     }
   },
   "notifications" : {
@@ -3402,8 +3411,8 @@
     "drawerUpdate" : {
       "title" : "تحديث البرنامج الثابت",
       "description" : "قم بتحديث برنامج Ledger Nano الثابت عن طريق توصيله إلى تطبيق Ledger Live على سطح المكتب",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "كبل USB مطلوب",
+      "pleaseConnectUsbDescription" : "لبدء تحديث البرنامج الثابت، قم بتوصيل {{deviceName}} خاصتك بهاتفك الجوال باستخدام كبل USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
