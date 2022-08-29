@@ -157,42 +157,24 @@ describe("completeExchangeLogic", () => {
         transaction: rawPlatformTransaction,
         binaryPayload: "binaryPayload",
         signature: "signature",
-        feesStrategy: "feeStrategy",
+        feesStrategy: "medium",
         exchangeType: 8,
       };
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       const expectedTransaction: EthereumTransaction = {
         family: "ethereum",
-        amount: new BigNumber("1000"),
+        amount: new BigNumber("1000000000"),
         recipient: "0x0123456",
         nonce: 8,
-        data: Buffer.from("Some data..."),
-        gasPrice: new BigNumber("0,7"),
-        userGasLimit: new BigNumber("1,2"),
+        data: Buffer.from("Some data...", "hex"),
+        gasPrice: new BigNumber("700000"),
+        userGasLimit: new BigNumber("1200000"),
         feesStrategy: "medium",
         estimatedGasLimit: null,
         feeCustomUnit: { name: "Gwei", code: "Gwei", magnitude: 9 },
         mode: "send",
         networkInfo: null,
         useAllAmount: false,
-      };
-      const actualTransaction = {
-        amount: new BigNumber("1000"),
-        data: Buffer.from([]),
-        estimatedGasLimit: null,
-        family: "ethereum",
-        feeCustomUnit: { code: "Gwei", magnitude: 9, name: "Gwei" },
-        feesStrategy: "feeStrategy",
-        gasLimit: new BigNumber("NaN"),
-        gasPrice: new BigNumber("NaN"),
-        mode: "send",
-        networkInfo: null,
-        nonce: 8,
-        recipient: "0x0123456",
-        useAllAmount: false,
-        userGasLimit: null,
       };
 
       // When
@@ -212,10 +194,10 @@ describe("completeExchangeLogic", () => {
           toAccount: undefined,
           toParentAccount: null,
         },
-        transaction: actualTransaction,
+        transaction: expectedTransaction,
         binaryPayload: "binaryPayload",
         signature: "signature",
-        feesStrategy: "feeStrategy",
+        feesStrategy: "medium",
         exchangeType: 8,
       });
       expect(result).toEqual(expectedResult);
@@ -755,20 +737,20 @@ function createTokenCurrency(): TokenCurrency {
 function createRawEtherumTransaction(): RawPlatformTransaction {
   return {
     family: "ethereum" as any,
-    amount: "1000",
+    amount: "1000000000",
     recipient: "0x0123456",
     nonce: 8,
     data: "Some data...",
-    gasPrice: "0,7",
-    gasLimit: "1,2",
+    gasPrice: "700000",
+    gasLimit: "1200000",
   };
 }
 
 function createRawBitcoinTransaction(): RawPlatformTransaction {
   return {
     family: "bitcoin" as any,
-    amount: "1000",
+    amount: "1000000000",
     recipient: "0x0123456",
-    feePerByte: "0,9",
+    feePerByte: "900000",
   };
 }

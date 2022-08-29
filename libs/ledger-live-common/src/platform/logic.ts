@@ -230,16 +230,19 @@ export function completeExchangeLogic(
   }
 
   const platformTransaction = deserializePlatformTransaction(transaction);
-
-  // TODO-STP: fix this
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  platformTransaction.feesStrategy = feesStrategy;
+  const { liveTx: liveTransaction } =
+    getPlatformTransactionSignFlowInfos(platformTransaction);
 
   let processedTransaction = accountBridge.createTransaction(mainFromAccount);
   processedTransaction = accountBridge.updateTransaction(
-    processedTransaction,
-    platformTransaction
+    {
+      ...processedTransaction,
+      recipient: liveTransaction.recipient,
+    },
+    {
+      ...liveTransaction,
+      feesStrategy,
+    }
   );
 
   return uiNavigation({
