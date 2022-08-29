@@ -32,6 +32,7 @@ const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
         title: "Fee",
         button: "Rr",
         expectedValue: ({ account, status }) =>
+          "ALGO " +
           formatCurrencyUnit(account.unit, status.estimatedFees, {
             disableRounding: true,
           }),
