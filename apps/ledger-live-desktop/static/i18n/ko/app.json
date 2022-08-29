@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "다중 플랫폼 앱 소스 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
+      "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 재설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
+      "featureFlagsEdit" : "편집",
+      "featureFlagsRestore" : "복구",
+      "featureFlagsOverride" : "재정의",
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
@@ -3220,15 +3225,15 @@
           },
           "1" : {
             "title" : "나만의 개인 키를 보유하세요",
-            "desc" : "귀하의 개인 키는 Nano에 저장됩니다. 자산을 통제하려면 귀하가 개인 키의 유일한 소유권자여야 합니다"
+            "desc" : "귀하의 개인 키는 Nano에 저장됩니다.\n자산을 통제하려면 귀하가 개인 키의 유일한 소유권자여야 합니다."
           },
           "2" : {
             "title" : "오프라인 상태를 유지하세요",
-            "desc" : "Nano는 '콜드 스토리지' 지갑 역할을 합니다. 즉, 앱을 사용할 때도 온라인에 개인 키를 노출하지 않습니다"
+            "desc" : "Nano는 '콜드 스토리지' 지갑 역할을 합니다.\n즉, 앱을 사용할 때도 온라인에 개인 키를 노출하지 않습니다"
           },
           "3" : {
             "title" : "트랜잭션 검증",
-            "desc" : "Ledger Live로 암호화폐를 안전하게 구매, 판매, 교환, 취득할 수 있습니다. Nano로 모든 암호화폐 트랜잭션을 검증하세요"
+            "desc" : "Ledger Live로 암호화폐를 안전하게 구매, 판매, 교환, 취득할 수 있습니다.\nNano로 모든 암호화폐 트랜잭션을 검증하세요"
           },
           "4" : {
             "title" : "Nano 설정을 시작합니다",
