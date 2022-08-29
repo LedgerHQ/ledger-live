@@ -2178,8 +2178,8 @@
             "compoundOrClaim" : "Birleştir veya hesaba al",
             "compoundDescription" : "Ödülleriniz, yetki devrinde kullanılan tutara eklenecek",
             "claimDescription" : "Ödüller mevcut bakiyeye eklenecek",
-            "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
-            "claimInfo" : "Aşağıdaki doğrulayıcıdan <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
+            "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
+            "claimInfo" : "Aşağıdaki doğrulayıcıdan <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
             "selectLabel" : "Bir yetkili seçin"
           },
           "connectDevice" : {
@@ -2878,6 +2878,11 @@
       "catalogServerDesc" : "Birden çok platform uygulama kaynağı arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
+      "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
+      "featureFlagsEdit" : "Düzenle",
+      "featureFlagsRestore" : "Geri yükle",
+      "featureFlagsOverride" : "Geçersiz bırak",
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
       "addLocalAppButton" : "Göz Atın",
@@ -3220,15 +3225,15 @@
           },
           "1" : {
             "title" : "Özel anahtarınıza sahip çıkın",
-            "desc" : "Özel anahtarınız Nano'nuzda saklanır. Fonlarınızın sadece sizin kontrolünüzde olması için ona başka hiç kimse erişmemelidir."
+            "desc" : "Özel anahtarınız Nano'nuzda saklanır.\nParanızın kontrolünün sizde olması için ona sahip olan tek kişi siz olmalısınız."
           },
           "2" : {
             "title" : "Çevrim dışı kalın",
-            "desc" : "Nano cihazınız \"soğuk depolama\" cüzdanı olarak çalışır. Yani özel anahtarınız, bu uygulamayı kullanırken bile asla çevrim içi olarak ifşa edilmez."
+            "desc" : "Nano cihazınız \"soğuk depolama\" cüzdanı olarak çalışır.\nBu, uygulamayı kullanırken bile özel anahtarınızı asla çevrim içi ortamda göstermediği anlamına gelir."
           },
           "3" : {
             "title" : "İşlemleri onaylayın",
-            "desc" : "Ledger Live sayesinde güvenliğinizden feragat etmeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz.<br/>Her kripto işleminizi Nano cihazınızla onaylıyor olacaksınız."
+            "desc" : "Ledger Live sayesinde güvenliğinizden feragat etmeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz.\nHer kripto işlemini Nano cihazınızla onaylıyor olacaksınız"
           },
           "4" : {
             "title" : "Nano cihazınızı kuralım",
