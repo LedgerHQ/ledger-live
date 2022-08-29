@@ -435,7 +435,11 @@ export async function runOnAccount<T extends Transaction>({
 
     // without recovering mechanism, we simply assume an error is a failure
     if (errors.length) {
-      throw errors[0];
+      botTest("mutation must not have tx status errors", () => {
+        // all mutation must express transaction that are POSSIBLE
+        // recoveredFromTransactionStatus can also be used to solve this for tricky cases
+        throw errors[0];
+      });
     }
 
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
@@ -481,10 +485,17 @@ export async function runOnAccount<T extends Transaction>({
     // broadcast the transaction
     const optimisticOperation = getEnv("DISABLE_TRANSACTION_BROADCAST")
       ? signedOperation.operation
-      : await accountBridge.broadcast({
-          account,
-          signedOperation,
-        });
+      : await accountBridge
+          .broadcast({
+            account,
+            signedOperation,
+          })
+          .catch((e) => {
+            // wrap the error into some bot test context
+            botTest("during broadcast", () => {
+              throw e;
+            });
+          });
     report.optimisticOperation = optimisticOperation;
     report.broadcastedTime = now();
     log(
