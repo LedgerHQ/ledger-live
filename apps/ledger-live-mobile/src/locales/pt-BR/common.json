@@ -81,8 +81,7 @@
     "seeMore" : "Ver mais",
     "moreInfo" : "Mais Informações",
     "buyEth" : "Comprar Ethereum",
-    "popular" : "populares",
-    "comingSoon" : "Em Breve"
+    "popular" : "populares"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -322,6 +321,14 @@
     },
     "InvalidRecipient" : {
       "title" : "Destinatário inválido"
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Instalação de idioma recusada no dispositivo",
+      "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Idioma não encontrado",
+      "description" : "O idioma que você está tentando instalar não foi encontrado. Tente instalar outro idioma."
     },
     "LatestMCUInstalledError" : {
       "title" : "Desculpe, nada para atualizar",
@@ -1235,7 +1242,7 @@
           },
           "1" : {
             "title" : "Repita para todas as palavras!",
-            "label" : "Escreva a palavra nº 1 exibida em seu Nano na posição 1 de sua folha de recuperação. Então, pressione o botão direito na sua Nano para exibir a palavra nº 2 e a escreva na posição 2.",
+            "label" : "Escreva a palavra nº 1 exibida em sua Nano na posição 1 da sua folha de recuperação. Então, pressione o botão direito na sua Nano para exibir a palavra nº 2 e a escreva na posição 2.",
             "label_1" : "Repita o processo para todas as palavras, respeitando cuidadosamente a ordem e a ortografia. Pressione o botão esquerdo na sua Nano para verificar se há algum erro."
           },
           "2" : {
@@ -1626,19 +1633,19 @@
       "description" : "Importar ativos do Ledger Live Desktop"
     }
   },
-  "byteSize": {
-    "bytes": "{{size}} bytes",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+  "byteSize" : {
+    "bytes" : "{{size}} bytes",
+    "kbUnit" : "{{size}} Kb",
+    "mbUnit" : "{{size}} Mb"
   },
-  "numberCompactNotation": {
-    "d": "",
-    "K": "k",
-    "M": "m",
-    "B": "bn",
-    "T": "tn",
-    "Q": "qa",
-    "Qn": "qi"
+  "numberCompactNotation" : {
+    "d" : "",
+    "K" : "k",
+    "M" : "m",
+    "B" : "bn",
+    "T" : "tn",
+    "Q" : "qa",
+    "Qn" : "qi"
   },
   "time" : {
     "day" : "1D",
@@ -2039,7 +2046,7 @@
         "bullet0" : "Cliques",
         "bullet1" : "Visitas à página do aplicativo",
         "bullet2" : "Redirecionar para página web",
-        "bullet3" : "Ações: enviar, receber, bloquear, etc.",
+        "bullet3" : "Ações: enviar, receber, bloquear etc.",
         "bullet4" : "Fim da página",
         "bullet5" : "(Des)instalação e versão do aplicativo",
         "bullet6" : "Número de contas, moedas e operações",
@@ -2089,7 +2096,7 @@
       "cryptoAssets" : {
         "header" : "Criptoativos",
         "title" : "Criptoativos",
-        "desc" : "Selecione um criptoativo para editar suas configurações."
+        "desc" : "Selecione criptoativos cujas configurações você quer editar."
       }
     },
     "about" : {
@@ -2106,36 +2113,6 @@
         "desc" : "Dê-nos seu feedback sobre o aplicativo",
         "ios" : "Avalie na App Store",
         "android" : "Avalie na Google Play Store."
-      }
-    },
-    "notifications" : {
-      "title" : "Notificações",
-      "desc" : "Gerencie suas notificações",
-      "disabledNotifications" : {
-        "title" : "Suas notificações estão desativadas",
-        "desc" : "{{platform}} está bloqueando as notificações do Ledger Live. Para receber notificações no seu celular, acesse as configurações do seu dispositivo para ativar as notificações do Ledger Live.",
-        "turnOnNotif" : "Ligar Notificações",
-        "goToSettings" : "Ir para Configurações do sistema"
-      },
-      "allowed" : {
-        "title" : "Permitir Notificações",
-        "desc" : "Receba notificações sobre suas criptos, tendências de mercado e mais."
-      },
-      "transactions" : {
-        "title" : "Transações",
-        "desc" : "Seja notificado quando receber ou enviar criptos"
-      },
-      "market" : {
-        "title" : "Mercado",
-        "desc" : "Receber atualizações sobre mudanças significativas do mercado"
-      },
-      "announcement" : {
-        "title" : "Anúncios",
-        "desc" : "Receba atualizações importantes do Ledger Live"
-      },
-      "price" : {
-        "title" : "Alertas de preço",
-        "desc" : "Configure alertas de preços para suas moedas favoritas para que você não perca nenhuma movimentação de mercado"
       }
     },
     "help" : {
@@ -2169,14 +2146,6 @@
       "customManifest" : {
         "title" : "Carregar o Manifesto da Plataforma Personalizada"
       }
-    }
-  },
-  "notifications" : {
-    "prompt" : {
-      "title" : "Ligar Notificações",
-      "desc" : "Receba atualizações importantes sobre o Ledger Live, os produtos Ledger e segurança. Cancele a qualquer momento.",
-      "allow" : "Permitir Notificações",
-      "later" : "Talvez mais tarde"
     }
   },
   "migrateAccounts" : {
@@ -2242,67 +2211,10 @@
       "verifyAgain" : "Verifique novamente",
       "noAccount" : "Nenhuma conta encontrada",
       "address" : "Endereço para conta",
-      "copyAddress" : "Copiar",
+      "copyAddress" : "Copiar endereço",
       "shareAddress" : "Endereço de compartilhamento",
-      "addressCopied" : "Copiado",
+      "addressCopied" : "Endereço copiado!",
       "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot",
-      "selectCrypto" : {
-        "title" : "Selecione uma cripto"
-      },
-      "stepperHeader" : {
-        "range" : "Etapa {{currentStep}} de {{totalSteps}}",
-        "connectDevice" : "Conectar Dispositivo"
-      },
-      "selectAccount" : {
-        "title" : "Selecione uma conta",
-        "subtitle" : "Seu {{currencyTicker}} será depositado nesta conta."
-      },
-      "addAccount" : {
-        "title" : "Buscando na blockchain",
-        "subtitle" : "Verificando se você já possui contas {{currencyTicker}}.",
-        "foundAccounts" : "{{count}} contas encontradas",
-        "stopSynchronization" : "Parar Sincronização"
-      },
-      "verifyAddress" : {
-        "title" : "Verificar Endereço",
-        "subtitle" : "Verifique se o endereço exibido em seu dispositivo corresponde a este abaixo. Quanto tiver certeza, pode clicar em aprovar no seu dispositivo.",
-        "cancel" : {
-          "title" : "Você acabou de negar este endereço",
-          "subtitle" : "Se isto foi feito por engano, você pode tentar novamente clicando no botão abaixo.",
-          "info" : "Se você tiver certeza de que os endereços não coincidem, seu celular pode estar comprometido. Recomendamos que você <0>entre em contato conosco o mais rápido possível.</0>"
-        }
-      },
-      "receiveConfirmation" : {
-        "title" : "Receber {{currencyTicker}}",
-        "addressVerified" : "Endereço Verificado",
-        "verifyAddress" : "Clique aqui para verificar seu endereço",
-        "adviceVerify" : "Recomendamos que você sempre verifique seu endereço com seu dispositivo Ledger",
-        "sendWarning" : "Enviar somente {{currencyName}} ({{currencyTicker}}) para este endereço. O envio de quaisquer outras moedas pode resultar em perda permanente."
-      },
-      "securityVerify" : {
-        "title" : "Por segurança, recomendamos verificar este endereço com seu dispositivo Ledger.",
-        "subtitle1" : "A verificação de seu endereço lhe proporciona segurança. O endereço exibido em seu dispositivo ledger não pode ser comprometido.",
-        "subtitle2" : "Ao verificar o endereço, você poderá confirmar que o endereço mostrado em seu dispositivo é o mesmo que o endereço mostrado no Ledger Live.",
-        "verifyCta" : "Verificar meu endereço",
-        "dontVerifyCta" : "Revelar meu endereço sem verificar"
-      },
-      "securityDontVerify" : {
-        "title" : "Tem certeza?",
-        "subtitle" : "O endereço exibido no Ledger Live não será verificado.",
-        "doNotRemindAgain" : "Não me lembre novamente.",
-        "no" : "Não",
-        "yes" : "Sim"
-      },
-      "toastMessages" : {
-        "accountImported" : "Nós importamos uma conta {{currencyTicker}} para você. ",
-        "why" : "Diga por quê.",
-        "addressVerified" : "Seu endereço está verificado"
-      },
-      "additionalInfoModal" : {
-        "title" : "Por que importamos uma conta?",
-        "subtitle" : "Detectamos que você tinha uma conta anterior {{currencyTicker}} em sua frase semente. Nós importamos esta conta para você.",
-        "closeCta" : "Ok, entendi."
-      },
       "notSynced" : {
         "text" : "Sincronizando",
         "desc" : "Isto pode levar um momento se você tiver muitas transações ou se você tiver uma conexão lenta com a Internet."
@@ -2450,8 +2362,8 @@
         },
         "noApp" : {
           "title" : "Aplicativo {{appName}} não instalado",
-          "desc" : "Por favor, vá para o Manager para instalar o aplicativo {{appName}}.",
-          "cta" : "Ir para o Manager",
+          "desc" : "Vá ao Manager para instalar o aplicativo {{appName}}.",
+          "cta" : "Vá ao Manager",
           "close" : "Fechar"
         },
         "noAccounts" : {
@@ -2463,7 +2375,7 @@
         "outdatedApp" : {
           "title" : "Atualização do aplicativo disponível",
           "desc" : "Você precisa atualizar o aplicativo {{appName}}.",
-          "cta" : "Ir para o Manager",
+          "cta" : "Vá ao Manager",
           "close" : "Fechar"
         },
         "summary" : {
@@ -2505,12 +2417,12 @@
       "missingApp" : {
         "title" : "Instale o aplicativo Exchange em seu dispositivo",
         "description" : "Vá ao Manager e instale o aplicativo Exchange para trocar ativos",
-        "button" : "Vá para o Manager"
+        "button" : "Vá ao Manager"
       },
       "outdatedApp" : {
         "title" : "Atualize o aplicativo Exchange em seu dispositivo",
         "description" : "Vá ao Manager e atualize o aplicativo Exchange para trocar ativos",
-        "button" : "Vá para o Manager"
+        "button" : "Vá ao Manager"
       },
       "emptyState" : {
         "title" : "Não há conta de {{currency}}",
@@ -2523,7 +2435,7 @@
         "exportButton" : "Exportar Operações",
         "exportFilename" : "Operações de troca",
         "empty" : {
-          "title" : "Suas trocas anteriores aparecerão aqui",
+          "title" : "O seu histórico de trocas aparecerá aqui",
           "desc" : "Você ainda não fez nenhuma troca ou o Ledger Live foi redefinido nesse meio tempo."
         }
       }
@@ -3402,8 +3314,8 @@
     "drawerUpdate" : {
       "title" : "Atualização de firmware",
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "Necessário cabo USB",
+      "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3431,6 +3343,19 @@
       "de" : "Alemão"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Idioma",
+    "deviceLanguage" : "Idioma do dispositivo",
+    "changeLanguage" : "Mudar Idioma",
+    "allowLanguageInstallation" : "Permitir instalação do idioma",
+    "languageInstalled" : "O idioma do dispositivo mudou para {{language}}.",
+    "installingLanguage" : "Instalando Idioma",
+    "languages" : {
+      "english" : "Inglês",
+      "french" : "Francês",
+      "spanish" : "Espanhol"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Identificador",
     "description" : "Pressione os dois botões juntos em sua {{fullDeviceName}} se ele exibir o mesmo identificador:"
@@ -3442,7 +3367,7 @@
   },
   "FirmwareUpdateConfirmation" : {
     "title" : "Firmware Atualizado",
-    "description" : "Vá para o Manager para reinstalar aplicativos no seu dispositivo."
+    "description" : "Vá ao Manager para reinstalar aplicativos no seu dispositivo."
   },
   "RepairDevice" : {
     "title" : "Reparar",
