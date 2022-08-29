@@ -7,9 +7,16 @@ import { displayTokenValue } from "./deviceTransactionConfig";
 
 // Will be useful when unit is gonna be algo
 const expectedAmount = ({ account, status }) =>
-  formatCurrencyUnit(account.unit, status.amount, {
-    disableRounding: true,
-  });
+  formatCurrencyUnit(
+    {
+      ...account.unit,
+      code: account.currency.deviceTicker || account.unit.code,
+    },
+    status.amount,
+    {
+      disableRounding: true,
+    }
+  );
 
 export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
   deviceActionFlow({
@@ -32,10 +39,16 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
         title: "Fee",
         button: "Rr",
         expectedValue: ({ account, status }) =>
-          "ALGO " +
-          formatCurrencyUnit(account.unit, status.estimatedFees, {
-            disableRounding: true,
-          }),
+          formatCurrencyUnit(
+            {
+              ...account.unit,
+              code: account.currency.deviceTicker || account.unit.code,
+            },
+            status.estimatedFees,
+            {
+              disableRounding: true,
+            }
+          ),
       },
       {
         title: "Asset ID",
