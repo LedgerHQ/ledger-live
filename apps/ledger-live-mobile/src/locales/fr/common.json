@@ -832,7 +832,7 @@
       "lido" : {
         "title" : "Staking d’ETH avec Lido",
         "description" : "Gagnez des récompenses en mettant vos ETH en staking sur Lido.",
-        "cta" : "Staker dès aujourd’hui"
+        "cta" : "Staker maintenant"
       },
       "market" : {
         "title" : "Marché des cryptos",
@@ -862,7 +862,7 @@
       }
     },
     "enjoy" : {
-      "title" : "Notez l’app",
+      "title" : "On est ravis",
       "description" : "Nous vous invitons à partager votre avis. Votre soutien nous est précieux et nous encourage à développer de nouvelles fonctionnalités.",
       "cta" : {
         "rate" : "Noter 5 étoiles",
@@ -966,7 +966,7 @@
       },
       "mint" : {
         "title" : "Minter",
-        "desc" : "Mintez et acquérez les NFT de collaborations exclusives sur [ L ] Market"
+        "desc" : "Mintez et acquérez les NFT de collaborations exclusives sur le [ L ] Market."
       }
     },
     "comingSoon" : "Prochainement",
@@ -1084,7 +1084,7 @@
       "2" : {
         "label" : "Les bases",
         "title" : "Restez hors ligne",
-        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction en cryptos avec votre Nano."
+        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de cryptos avec votre Nano."
       },
       "3" : {
         "label" : "Les bases",
@@ -2094,7 +2094,7 @@
     },
     "about" : {
       "title" : "À propos",
-      "desc" : "Informations, Conditions d’utilisation et Politique de confidentialité de l’app",
+      "desc" : "Informations, Conditions d’utilisation et Politique de confidentialité de l’app.",
       "appDescription" : "Protégez, achetez, vendez, échangez, faites fructifier et gérez vos cryptos avec Ledger Live. La plateforme tout-en-un.",
       "appVersion" : "Version",
       "termsConditions" : "Conditions d’utilisation",
@@ -2169,6 +2169,15 @@
       "customManifest" : {
         "title" : "Charger un manifest personnalisé pour Platform"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
+      "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
+      "featureFlagsOverride" : "Remplacer",
+      "featureFlagsEdit" : "Modifier",
+      "featureFlagsRestore" : "Restaurer",
+      "featureFlagsDisplayValue" : "Afficher le code",
+      "featureFlagsHideValue" : "Masquer le code"
     }
   },
   "notifications" : {
@@ -3552,7 +3561,7 @@
       },
       "undelegating" : {
         "title" : "Délégation interrompue",
-        "description" : "Les actifs dont la délégation est interrompue sont immobilisés pendant 21 jours avant d’être disponibles."
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 21 jours."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -3595,7 +3604,7 @@
               "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
             },
             "warning" : {
-              "description" : "Choisissez votre validateur judicieusement : une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement."
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
             },
             "cta" : "Continuer"
           },
