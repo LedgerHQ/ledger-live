@@ -965,8 +965,8 @@
         "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
       },
       "mint" : {
-        "title" : "Mintleyin",
-        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mintleyin"
+        "title" : "Mint'leyin",
+        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mint'leyin"
       }
     },
     "comingSoon" : "Çok yakında",
@@ -2169,6 +2169,15 @@
       "customManifest" : {
         "title" : "Özel Platform Manifest Dosyası Yükle"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
+      "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
+      "featureFlagsOverride" : "Geçersiz bırak",
+      "featureFlagsEdit" : "Düzenle",
+      "featureFlagsRestore" : "Geri yükle",
+      "featureFlagsDisplayValue" : "Değeri göster",
+      "featureFlagsHideValue" : "Değeri gizle"
     }
   },
   "notifications" : {
@@ -3402,8 +3411,8 @@
     "drawerUpdate" : {
       "title" : "Donanım Yazılımı Güncellemesi",
       "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "USB kablosu gerekli",
+      "pleaseConnectUsbDescription" : "Donanım yazılımı güncellemesini başlatmak için {{deviceName}} cihazınızı bir USB kablosuyla cep telefonunuza bağlayın."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -4341,7 +4350,7 @@
       "tabTitle" : "Satın Al",
       "selectCurrency" : "Bir para birimi seçin",
       "selectAccount" : "Bir hesap seçin",
-      "wantToBuy" : "Satın almak istiyorum",
+      "wantToBuy" : "Almak istediğim varlık:",
       "connectDevice" : "Cihazınızı bağlayın",
       "title" : "Ortağımız üzerinden kripto satın alın",
       "coinifyTitle" : "Ortağımız üzerinden kripto satın alın",
