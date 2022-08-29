@@ -226,9 +226,14 @@ function esBuildExternalsPlugin(nativeModules) {
   };
 }
 
-function processNativeModules({ root, destination, silent = false }) {
+function processNativeModules({
+  root,
+  destination,
+  nativeModules = null,
+  silent = false,
+}) {
   // First, we crawl the production dependencies and find every node.js native modules.
-  const nativeModulesPaths = findNativeModules(root);
+  const nativeModulesPaths = nativeModules || findNativeModules(root);
   if (!silent) {
     console.log("Found the following native modules:", nativeModulesPaths);
   }

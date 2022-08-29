@@ -18,8 +18,10 @@ module.exports = async function({
   arch = process.arch,
   home = homeDir,
   buildFromSources = false,
+  nativeModules = null,
+  throwOnError = false,
 } = {}) {
-  const nativeModules = findNativeModules(rootDir);
+  nativeModules = nativeModules || findNativeModules(rootDir);
   for (const modulePath of nativeModules) {
     const moduleName = modulePath.split("/").slice(-1);
     console.log(bold(`[Native Rebuild] ${moduleName} (${target}/${arch}) @ ${modulePath}`));
@@ -74,6 +76,9 @@ module.exports = async function({
         }
       }
     } catch (error) {
+      if (throwOnError) {
+        throw error;
+      }
       console.error(error);
     }
   }
