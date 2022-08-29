@@ -22,6 +22,7 @@
     "build:libs:force": "pnpm -r --filter=\"!./apps/**\" --filter=\"!ledger-live\" build",
     "build:actions": "pnpm turbo run build --filter=@actions/* --no-deps",
     "build:cli": "pnpm turbo run build --filter=live-cli",
+    "build:llc": "pnpm turbo run build --filter=\"!./apps/**\" --scope=@ledgerhq/live-common --include-dependencies --no-deps",
     "build:lld": "pnpm turbo run build --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo run build --filter=\"ledger-live-desktop^...\"",
     "build:llm:android": "pnpm turbo run android:apk --filter=live-mobile",
@@ -52,7 +53,7 @@
     "common": "pnpm --filter live-common",
     "common-tools": "pnpm --filter live-common-tools",
     "bot:github": "pnpm --filter live-github-bot",
-    "ljs:cryoptoassets": "pnpm --filter cryptoassets",
+    "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter cryptoassets",
     "ljs:errors": "pnpm --filter cryptoassets",
     "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
@@ -87,6 +88,7 @@
     "ui:react": "pnpm --filter react-ui",
     "ui:native": "pnpm --filter native-ui",
     "ui:icons": "pnpm --filter icons-ui",
+    "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
     "ui:shared": "pnpm --filter shared-ui",
     "actions": "pnpm --filter @actions/*"
   },
@@ -96,7 +98,9 @@
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "turbo": "1.4.3"
+    "rimraf": "^3.0.2",
+    "turbo": "1.4.3",
+    "zx": "^7.0.7"
   },
   "pnpm": {
     "overrides": {
@@ -110,6 +114,10 @@
       "metro-transform-worker": "^0.67.0",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*"
+    },
+    "patchedDependencies": {
+      "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
+      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch"
     }
   }
 }

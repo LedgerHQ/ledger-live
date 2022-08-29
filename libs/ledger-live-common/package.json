@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "25.1.0",
+  "version": "26.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -65,8 +65,8 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "bash ./scripts/build-ts.sh",
-    "watch": "bash ./scripts/watch-ts.sh",
+    "build": "zx ./scripts/build-ts.mjs",
+    "watch": "zx ./scripts/watch-ts.mjs",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s' 'cli/src/**/*.?s'",
     "lint": "eslint src",
@@ -76,8 +76,7 @@
     "ci-lint": "pnpm lint",
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
-    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot",
-    "ci-test-bot": "env-cmd -f .ci.bot.env pnpm jest --ci"
+    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot"
   },
   "files": [
     "lib",
@@ -116,12 +115,15 @@
     "@celo/wallet-ledger": "^1.5.2",
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.26.5",
+    "@cosmjs/launchpad": "^0.26.5",
+    "@cosmjs/ledger-amino": "^0.26.5",
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-com/chain-jslib": "0.0.19",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
     "@hashgraph/sdk": "^2.10.1",
+    "@keplr-wallet/cosmos": "^0.9.16",
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
@@ -150,7 +152,7 @@
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "1.41.3",
     "@stricahq/bip32ed25519": "^1.0.3",
-    "@stricahq/typhonjs": "^1.2.5",
+    "@stricahq/typhonjs": "^1.2.6",
     "@taquito/ledger-signer": "^13.0.1",
     "@taquito/taquito": "^13.0.1",
     "@taquito/utils": "^13.0.1",
@@ -228,6 +230,7 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
+    "@keplr-wallet/proto-types": "^0.10.4",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
@@ -263,6 +266,7 @@
     "jest": "^28.1.1",
     "jest-environment-jsdom": "28",
     "jest-file-snapshot": "^0.5.0",
+    "long": "^4.0.0",
     "prettier": "2.3.2",
     "react": "^17.0.2",
     "react-dom": "17.0.2",

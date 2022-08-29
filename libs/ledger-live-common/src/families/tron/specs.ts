@@ -7,7 +7,7 @@ import sampleSize from "lodash/sampleSize";
 import get from "lodash/get";
 import type { Transaction, TronAccount } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -49,10 +49,12 @@ const tron: AppSpec<Transaction> = {
         };
       },
       test: ({ accountBeforeTransaction, operation, account }) => {
-        expect(account.spendableBalance.toString()).toBe(
-          accountBeforeTransaction.spendableBalance
-            .minus(operation.value)
-            .toString()
+        botTest("account spendable balance decreased with operation", () =>
+          expect(account.spendableBalance.toString()).toBe(
+            accountBeforeTransaction.spendableBalance
+              .minus(operation.value)
+              .toString()
+          )
         );
       },
     },
@@ -76,7 +78,9 @@ const tron: AppSpec<Transaction> = {
         };
       },
       test: ({ account }) => {
-        expect(account.spendableBalance.toString()).toBe("0");
+        botTest("account spendable balance is zero", () =>
+          expect(account.spendableBalance.toString()).toBe("0")
+        );
       },
     },
     {
@@ -124,8 +128,10 @@ const tron: AppSpec<Transaction> = {
           `tronResources.frozen.${resourceType}.amount`,
           new BigNumber(0)
         );
-        expect(expectedAmount.toString()).toBe(
-          currentRessourceAmount.toString()
+        botTest("frozen amount is accumulated in resources", () =>
+          expect(expectedAmount.toString()).toBe(
+            currentRessourceAmount.toString()
+          )
         );
       },
     },
@@ -164,7 +170,9 @@ const tron: AppSpec<Transaction> = {
           `tronResources.frozen.${TxResource}`,
           undefined
         );
-        expect(currentFrozen).toBeUndefined();
+        botTest("no current frozen", () =>
+          expect(currentFrozen).toBeUndefined()
+        );
         const TPBeforeTx = new BigNumber(
           get(accountBeforeTransaction, "tronResources.tronPower", 0)
         );
@@ -172,7 +180,9 @@ const tron: AppSpec<Transaction> = {
           get(account, "tronResources.tronPower", 0)
         );
         const expectedTronPower = TPBeforeTx.minus(transaction.amount);
-        expect(currentTP.toString()).toBe(expectedTronPower.toString());
+        botTest("tron power", () =>
+          expect(currentTP.toString()).toBe(expectedTronPower.toString())
+        );
       },
     },
     {
@@ -225,7 +235,7 @@ const tron: AppSpec<Transaction> = {
         const currentVotes = sortBy(get(account, "tronResources.votes", []), [
           "address",
         ]);
-        expect(currentVotes).toEqual(votes);
+        botTest("current votes", () => expect(currentVotes).toEqual(votes));
       },
     },
     {
@@ -277,10 +287,14 @@ const tron: AppSpec<Transaction> = {
         if (!trc10account) throw new Error("no trc10 account");
 
         if (transaction.useAllAmount) {
-          expect(trc10account.balance.toString()).toBe("0");
+          botTest("trc10 balance became zero", () =>
+            expect(trc10account.balance.toString()).toBe("0")
+          );
         } else {
-          expect(trc10account.balance.toString()).toBe(
-            trc10accountBefore.balance.minus(transaction.amount).toString()
+          botTest("trc10 balance decreased with operation", () =>
+            expect(trc10account.balance.toString()).toBe(
+              trc10accountBefore.balance.minus(transaction.amount).toString()
+            )
           );
         }
       },
@@ -337,10 +351,14 @@ const tron: AppSpec<Transaction> = {
         if (!trc20account) throw new Error("no trc20 account");
 
         if (transaction.useAllAmount) {
-          expect(trc20account.balance.toString()).toBe("0");
+          botTest("trc10 balance became zero", () =>
+            expect(trc20account.balance.toString()).toBe("0")
+          );
         } else {
-          expect(trc20account.balance.toString()).toBe(
-            trc20accountBefore.balance.minus(transaction.amount).toString()
+          botTest("trc10 balance decreased with operation", () =>
+            expect(trc20account.balance.toString()).toBe(
+              trc20accountBefore.balance.minus(transaction.amount).toString()
+            )
           );
         }
 
@@ -349,21 +367,27 @@ const tron: AppSpec<Transaction> = {
             0
           )
         ) {
-          expect(account.balance.lt(accountBeforeTransaction.balance)).toBe(
-            true
+          botTest("account balance decreased", () =>
+            expect(account.balance.lt(accountBeforeTransaction.balance)).toBe(
+              true
+            )
           );
         } else {
-          expect(
-            get(account, "tronResources.energy", new BigNumber(0)).lt(
-              get(
-                accountBeforeTransaction,
-                "tronResources.energy",
-                new BigNumber(0)
+          botTest("energy decreased", () =>
+            expect(
+              get(account, "tronResources.energy", new BigNumber(0)).lt(
+                get(
+                  accountBeforeTransaction,
+                  "tronResources.energy",
+                  new BigNumber(0)
+                )
               )
+            ).toBe(true)
+          );
+          botTest("balance didn't change", () =>
+            expect(account.balance.eq(accountBeforeTransaction.balance)).toBe(
+              true
             )
-          ).toBe(true);
-          expect(account.balance.eq(accountBeforeTransaction.balance)).toBe(
-            true
           );
         }
       },
@@ -396,8 +420,10 @@ const tron: AppSpec<Transaction> = {
           get(account, "tronResources.unwithdrawnReward", "0")
         );
         const nextRewardDate = getNextRewardDate(account as TronAccount);
-        expect(rewards.eq(0)).toBe(true);
-        expect(nextRewardDate && nextRewardDate > Date.now()).toBe(true);
+        botTest("rewards is zero", () => expect(rewards.eq(0)).toBe(true));
+        botTest("next reward date settled", () =>
+          expect(nextRewardDate && nextRewardDate > Date.now()).toBe(true)
+        );
       },
     },
   ],
