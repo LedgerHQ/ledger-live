@@ -12,6 +12,7 @@ import type { AppSpec } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { SubAccount } from "@ledgerhq/types-live";
+import { acceptTransaction } from "./speculos-deviceActions";
 const currency = getCryptoCurrencyById("tron");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "1");
 const maxAccount = 10;
@@ -26,6 +27,7 @@ const tron: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Tron",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   mutations: [
     {

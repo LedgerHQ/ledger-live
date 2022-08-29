@@ -11,7 +11,7 @@ const expectedAmount = ({ account, status }) =>
     disableRounding: true,
   });
 
-const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
+export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
   deviceActionFlow({
     steps: [
       {
@@ -99,6 +99,3 @@ const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
       }, // Only on testnet
     ],
   });
-export default {
-  acceptTransaction,
-};

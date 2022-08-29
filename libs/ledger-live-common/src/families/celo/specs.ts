@@ -4,6 +4,7 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("celo");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
@@ -17,6 +18,7 @@ const celo: AppSpec<Transaction> = {
     appName: "Celo",
   },
   testTimeout: 2 * 60 * 1000,
+  genericDeviceAction: acceptTransaction,
   mutations: [
     {
       name: "move 50% to another account",

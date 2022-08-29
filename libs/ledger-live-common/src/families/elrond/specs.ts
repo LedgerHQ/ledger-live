@@ -7,6 +7,7 @@ import { toOperationRaw } from "../../account";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import expect from "expect";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const ELROND_MIN_SAFE = new BigNumber(10000);
 const elrondSpec: AppSpec<Transaction> = {
@@ -16,6 +17,7 @@ const elrondSpec: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Elrond",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(ELROND_MIN_SAFE), "balance is too low");

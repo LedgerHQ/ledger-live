@@ -10,6 +10,7 @@ import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
 import { parseCurrencyUnit } from "../../currencies";
 import { SubAccount } from "@ledgerhq/types-live";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("cardano");
 const minBalanceRequired = parseCurrencyUnit(currency.units[0], "2.2");
@@ -26,6 +27,7 @@ const cardano: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "CardanoADA",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   mutations: [
     {

@@ -20,6 +20,7 @@ import {
   hasMinimumBondBalance,
 } from "../../families/polkadot/logic";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const maxAccounts = 32;
 const currency = getCryptoCurrencyById("polkadot");
@@ -28,6 +29,7 @@ const POLKADOT_MIN_SAFE = parseCurrencyUnit(currency.units[0], "0.1");
 // FIXME Should be replaced with EXISTENTIAL_DEPOSIT in logic.ts
 const EXISTENTIAL_DEPOSIT = parseCurrencyUnit(currency.units[0], "1.0");
 const MIN_LOCKED_BALANCE_REQ = parseCurrencyUnit(currency.units[0], "1.0");
+
 const polkadot: AppSpec<Transaction> = {
   name: "Polkadot",
   currency: getCryptoCurrencyById("polkadot"),
@@ -36,6 +38,7 @@ const polkadot: AppSpec<Transaction> = {
     appName: "Polkadot",
   },
   testTimeout: 2 * 60 * 1000,
+  genericDeviceAction: acceptTransaction,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(POLKADOT_MIN_SAFE), "balance is too low");
   },

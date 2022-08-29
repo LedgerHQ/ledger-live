@@ -17,6 +17,8 @@ import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
 import { getMinRelayFee, getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
+
 type Arg = Partial<{
   minimalAmount: BigNumber;
   targetAccountSize: number;
@@ -295,6 +297,7 @@ const bitcoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
@@ -307,6 +310,7 @@ const bitcoinTestnet: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin Test",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 8,
@@ -324,6 +328,7 @@ const bitcoinGold: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "BitcoinGold",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
@@ -339,6 +344,7 @@ const bitcoinCash: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "BitcoinCash",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
@@ -362,6 +368,7 @@ const peercoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Peercoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
@@ -373,6 +380,7 @@ const pivx: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "PivX",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
@@ -384,6 +392,7 @@ const qtum: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Qtum",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
@@ -395,6 +404,7 @@ const stakenet: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "XSN",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
@@ -406,6 +416,7 @@ const vertcoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Vertcoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
@@ -417,6 +428,7 @@ const viacoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Viacoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
@@ -428,6 +440,7 @@ const dash: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Dash",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
@@ -445,6 +458,7 @@ const dogecoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Dogecoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
@@ -462,6 +476,7 @@ const zcash: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Zcash",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
@@ -478,6 +493,7 @@ const zencash: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Horizen",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
@@ -494,6 +510,7 @@ const digibyte: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Digibyte",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
@@ -511,6 +528,7 @@ const komodo: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Komodo",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
@@ -526,6 +544,7 @@ const decred: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Decred",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
@@ -542,6 +561,7 @@ const litecoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Litecoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,

@@ -25,7 +25,6 @@ import {
   releaseSpeculosDevice,
   findAppCandidate,
 } from "../load/speculos";
-import deviceActions from "../generated/speculos-deviceActions";
 import type { AppCandidate } from "../load/speculos";
 import {
   formatReportForConsole,
@@ -50,7 +49,6 @@ import type {
   Operation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "./bot-test-context";
 
@@ -456,8 +454,7 @@ export async function runOnAccount<T extends Transaction>({
         }),
         autoSignTransaction({
           transport: device.transport,
-          deviceAction:
-            mutation.deviceAction || getImplicitDeviceAction(account.currency),
+          deviceAction: mutation.deviceAction || spec.genericDeviceAction,
           appCandidate,
           account,
           transaction,
@@ -662,18 +659,6 @@ export function autoSignTransaction<T extends Transaction>({
 
     return of<SignOperationEvent>(e);
   });
-}
-export function getImplicitDeviceAction(
-  currency: CryptoCurrency
-): DeviceAction<Transaction, any> {
-  const actions = deviceActions[currency.family];
-  const accept = actions && actions.acceptTransaction;
-  invariant(
-    accept,
-    "a acceptTransaction is missing for family %s",
-    currency.family
-  );
-  return accept;
 }
 
 function awaitAccountOperation({

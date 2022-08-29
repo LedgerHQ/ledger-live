@@ -24,6 +24,7 @@ import {
   getMaxDelegationAvailable,
 } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const minAmount = new BigNumber(20000);
 const maxAccounts = 32;
@@ -53,6 +54,7 @@ const cosmos: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Cosmos",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minAmount), "balance is too low");
