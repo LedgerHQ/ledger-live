@@ -18,6 +18,7 @@ import {
   canNominate,
   isFirstBond,
   hasMinimumBondBalance,
+  getMinimumBalance,
 } from "../../families/polkadot/logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
@@ -74,6 +75,18 @@ const polkadot: AppSpec<Transaction> = {
             "send is too low to activate account"
           );
           amount = EXISTENTIAL_DEPOSIT.plus(POLKADOT_MIN_SAFE);
+        }
+
+        const minimumBalanceExistential = getMinimumBalance(account);
+        const leftover = account.spendableBalance.minus(
+          amount.plus(POLKADOT_MIN_SAFE)
+        );
+        if (
+          minimumBalanceExistential.gt(0) &&
+          leftover.lt(minimumBalanceExistential) &&
+          leftover.gt(0)
+        ) {
+          throw new Error("risk of PolkadotDoMaxSendInstead");
         }
 
         return {
