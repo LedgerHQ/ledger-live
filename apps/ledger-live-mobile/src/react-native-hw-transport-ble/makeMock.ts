@@ -1,14 +1,14 @@
 import Transport from "@ledgerhq/hw-transport";
 import { from } from "rxjs";
 import { take, first, filter } from "rxjs/operators";
-import type { ApduMock } from "../logic/createAPDUMock";
-import { hookRejections } from "../logic/debugReject";
-import { e2eBridgeSubject } from "../../e2e/bridge/client";
 import type { Device } from "@ledgerhq/react-native-hw-transport-ble/lib/types";
 import type {
   Observer as TransportObserver,
   DescriptorEvent,
 } from "@ledgerhq/hw-transport";
+import type { ApduMock } from "../logic/createAPDUMock";
+import { hookRejections } from "../logic/debugReject";
+import { e2eBridgeSubject } from "../../e2e/bridge/client";
 
 export type DeviceMock = {
   id: string;

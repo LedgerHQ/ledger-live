@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Observable } from "rxjs";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
 import { getInfosForServiceUuid, DeviceModelId } from "@ledgerhq/devices";
+import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import logger from "../../logger";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
 import { knownDevicesSelector } from "../../reducers/ble";
@@ -12,7 +13,6 @@ import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen } from "../../analytics";
 import DeviceItem from "../../components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
-import { DescriptorEvent } from "@ledgerhq/hw-transport";
 
 type Props = {
   // eslint-disable-next-line no-unused-vars
