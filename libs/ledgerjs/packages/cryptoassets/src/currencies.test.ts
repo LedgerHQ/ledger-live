@@ -193,6 +193,15 @@ test("fiats list is sorted by ticker", () => {
   );
 });
 
+test("testnet currencies must also set disableCountervalue to true", () => {
+  expect(
+    listCryptoCurrencies(true)
+      .filter((c) => c.isTestnetFor)
+      .filter((c) => !c.disableCountervalue)
+      .map((c) => c.id)
+  ).toEqual([]);
+});
+
 test("can get fiat by coin type", () => {
   expect(getFiatCurrencyByTicker("USD").units[0]).toMatchObject({
     magnitude: 2,

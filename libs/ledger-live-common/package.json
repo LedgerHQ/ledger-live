@@ -76,8 +76,7 @@
     "ci-lint": "pnpm lint",
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
-    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot",
-    "ci-test-bot": "env-cmd -f .ci.bot.env pnpm jest --ci"
+    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot"
   },
   "files": [
     "lib",
@@ -153,7 +152,7 @@
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "1.41.3",
     "@stricahq/bip32ed25519": "^1.0.3",
-    "@stricahq/typhonjs": "^1.2.5",
+    "@stricahq/typhonjs": "^1.2.6",
     "@taquito/ledger-signer": "^13.0.1",
     "@taquito/taquito": "^13.0.1",
     "@taquito/utils": "^13.0.1",

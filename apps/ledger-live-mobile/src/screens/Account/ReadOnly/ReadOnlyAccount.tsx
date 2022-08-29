@@ -26,7 +26,8 @@ import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
-} from "../reducers/settings";
+} from "../../../reducers/settings";
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
 
 type RouteParams = {

@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
 import { FlatList } from "react-native";
@@ -140,14 +139,16 @@ function PortfolioScreen({ navigation }: Props) {
   const discreetMode = useSelector(discreetModeSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
-  const openAddModal = useCallback(() => setAddModalOpened(true), [
-    setAddModalOpened,
-  ]);
+  const openAddModal = useCallback(
+    () => setAddModalOpened(true),
+    [setAddModalOpened],
+  );
   useProviders();
 
-  const closeAddModal = useCallback(() => setAddModalOpened(false), [
-    setAddModalOpened,
-  ]);
+  const closeAddModal = useCallback(
+    () => setAddModalOpened(false),
+    [setAddModalOpened],
+  );
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
@@ -162,9 +163,10 @@ function PortfolioScreen({ navigation }: Props) {
     setGraphCardEndPosition(y + height / 2);
   }, []);
 
-  const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
-    accounts,
-  ]);
+  const areAccountsEmpty = useMemo(
+    () => accounts.every(isAccountEmpty),
+    [accounts],
+  );
   const [showAssets, assetsToDisplay] = useMemo(
     () => [accounts.length > 0, accounts.slice(0, maxAssetsToDisplay)],
     [accounts],
