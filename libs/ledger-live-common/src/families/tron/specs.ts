@@ -182,9 +182,11 @@ const tron: AppSpec<Transaction> = {
           get(account, "tronResources.tronPower", 0)
         );
         const expectedTronPower = TPBeforeTx.minus(transaction.amount);
-        botTest("tron power", () =>
-          expect(currentTP.toString()).toBe(expectedTronPower.toString())
-        );
+        if (currentTP.minus(expectedTronPower).abs().gt(10)) {
+          botTest("tron power", () =>
+            expect(currentTP.toString()).toBe(expectedTronPower.toString())
+          );
+        }
       },
     },
     {

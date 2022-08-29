@@ -11,6 +11,7 @@ const expectedAmount = ({ account, status }) =>
     {
       ...account.unit,
       code: account.currency.deviceTicker || account.unit.code,
+      prefixCode: true,
     },
     status.amount,
     {
@@ -45,6 +46,7 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
             {
               ...account.unit,
               code: account.currency.deviceTicker || account.unit.code,
+              prefixCode: true,
             },
             status.estimatedFees,
             {
