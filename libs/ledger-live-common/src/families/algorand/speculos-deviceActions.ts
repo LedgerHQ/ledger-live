@@ -82,6 +82,10 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
               }),
       },
       {
+        title: "APPROVE",
+        button: "LRlr",
+      },
+      {
         title: "Sign",
         button: "LRlr",
       },
