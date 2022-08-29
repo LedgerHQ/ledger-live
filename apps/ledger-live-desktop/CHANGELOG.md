@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.46.1-hotfix.1
+
+### Patch Changes
+
+- [#1082](https://github.com/LedgerHQ/ledger-live/pull/1082) [`7b3026ba25`](https://github.com/LedgerHQ/ledger-live/commit/7b3026ba25a30d0733defe5459a37f9c6b6b1772) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fixes analytics support
+
 ## 2.46.1-hotfix.0
 
 ### Patch Changes
