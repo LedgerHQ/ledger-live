@@ -1985,6 +1985,25 @@
     "switchButton" : "Cambiar a {{language}}",
     "no" : "Prefiero no hacerlo"
   },
+  "deviceLocalization" : {
+    "language" : "Idioma",
+    "deviceLanguage" : "Idioma del dispositivo",
+    "changeLanguage" : "Cambiar idioma",
+    "changeDeviceLanguage" : "¿Deseas cambiar el idioma de tu dispositivo?",
+    "changeDeviceLanguageDescription" : "Ledger Live está ahora disponible en {{language}}. ¿Quieres usar tu dispositivo en {{language}} también?",
+    "firmwareUpdatePrompt" : {
+      "title" : "¿Cambiar tu {{deviceName}} a {{language}}?",
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde My Ledger."
+    },
+    "allowLanguageInstallation" : "Permitir instalación de idioma",
+    "languageInstalled" : "Idioma cambiado correctamente",
+    "installingLanguage" : "Instalando idioma",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "distribution" : {
     "asset" : "Activo",
     "price" : "Precio",
@@ -3046,6 +3065,11 @@
       "catalogServerDesc" : "Cambiar entre distintas fuentes de aplicaciones de plataforma",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
+      "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsOverride" : "Anular",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
       "addLocalAppButton" : "Navegar",
@@ -4155,6 +4179,14 @@
       "title" : "No fue posible restablecer",
       "description" : "Inténtalo de nuevo o contacta a Soporte de Ledger si persiste el problema."
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Se ha rechazado la instalación del idioma en el dispositivo",
+      "description" : "Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "No se ha encontrado el idioma",
+      "description" : "No se ha encontrado el idioma que estás intentando instalar. Prueba a instalar otro idioma."
+    },
     "LatestMCUInstalledError" : {
       "title" : "No hay nada que actualizar",
       "description" : "Contacta al Soporte de Ledger si no puedes utilizar tu dispositivo."
@@ -4219,6 +4251,10 @@
     },
     "NetworkDown" : {
       "title" : "Parece que no hay conexión a Internet",
+      "description" : "Comprueba tu conexión a Internet."
+    },
+    "NetworkError" : {
+      "title" : "Se ha producido un error durante la sincronización",
       "description" : "Comprueba tu conexión a Internet."
     },
     "NoAddressesFound" : {
