@@ -212,7 +212,9 @@ export const importAccountsReduce = (
       }
 
       case "update": {
-        const item = accounts.find((a) => a.id === initialAccountId);
+        const item = accounts.find(
+          (a) => a.id === initialAccountId || a.id === id
+        );
         const i = accounts.indexOf(item as Account);
         if (i !== -1) {
           accounts[i] = account;
