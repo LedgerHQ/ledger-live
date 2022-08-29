@@ -105,7 +105,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Desculpe, Bluetooth desativado",
-      "description" : "Ative o Bluetooth nas configurações do seu telefone. (Estado {{state}})"
+      "description" : "Ative o Bluetooth nas configurações do seu telefone."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "As atualizações de firmware só são suportadas para conexões com fio"
@@ -1235,7 +1235,7 @@
           },
           "1" : {
             "title" : "Repita para todas as palavras!",
-            "label" : "Escreva a palavra nº 1 exibida em seu Nano na posição 1 de sua folha de recuperação. Então, pressione o botão direito na sua Nano para exibir a palavra nº 2 e a escreva na posição 2.",
+            "label" : "Escreva a palavra nº 1 exibida em sua Nano na posição 1 da sua folha de recuperação. Então, pressione o botão direito na sua Nano para exibir a palavra nº 2 e a escreva na posição 2.",
             "label_1" : "Repita o processo para todas as palavras, respeitando cuidadosamente a ordem e a ortografia. Pressione o botão esquerdo na sua Nano para verificar se há algum erro."
           },
           "2" : {
@@ -1626,19 +1626,19 @@
       "description" : "Importar ativos do Ledger Live Desktop"
     }
   },
-  "byteSize": {
-    "bytes": "{{size}} bytes",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+  "byteSize" : {
+    "bytes" : "{{size}} bytes",
+    "kbUnit" : "{{size}} Kb",
+    "mbUnit" : "{{size}} Mb"
   },
-  "numberCompactNotation": {
-    "d": "",
-    "K": "k",
-    "M": "m",
-    "B": "bn",
-    "T": "tn",
-    "Q": "qa",
-    "Qn": "qi"
+  "numberCompactNotation" : {
+    "d" : "",
+    "K" : "k",
+    "M" : "m",
+    "B" : "bn",
+    "T" : "tn",
+    "Q" : "qa",
+    "Qn" : "qi"
   },
   "time" : {
     "day" : "1D",
@@ -2039,7 +2039,7 @@
         "bullet0" : "Cliques",
         "bullet1" : "Visitas à página do aplicativo",
         "bullet2" : "Redirecionar para página web",
-        "bullet3" : "Ações: enviar, receber, bloquear, etc.",
+        "bullet3" : "Ações: enviar, receber, bloquear etc.",
         "bullet4" : "Fim da página",
         "bullet5" : "(Des)instalação e versão do aplicativo",
         "bullet6" : "Número de contas, moedas e operações",
@@ -2089,7 +2089,7 @@
       "cryptoAssets" : {
         "header" : "Criptoativos",
         "title" : "Criptoativos",
-        "desc" : "Selecione um criptoativo para editar suas configurações."
+        "desc" : "Selecione criptoativos cujas configurações você quer editar."
       }
     },
     "about" : {
@@ -2169,6 +2169,15 @@
       "customManifest" : {
         "title" : "Carregar o Manifesto da Plataforma Personalizada"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
+      "featureFlagsOverride" : "Sobrepor",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsDisplayValue" : "Exibir Valor",
+      "featureFlagsHideValue" : "Ocultar Valor"
     }
   },
   "notifications" : {
@@ -2450,8 +2459,8 @@
         },
         "noApp" : {
           "title" : "Aplicativo {{appName}} não instalado",
-          "desc" : "Por favor, vá para o Manager para instalar o aplicativo {{appName}}.",
-          "cta" : "Ir para o Manager",
+          "desc" : "Vá ao Manager para instalar o aplicativo {{appName}}.",
+          "cta" : "Vá ao Manager",
           "close" : "Fechar"
         },
         "noAccounts" : {
@@ -2463,7 +2472,7 @@
         "outdatedApp" : {
           "title" : "Atualização do aplicativo disponível",
           "desc" : "Você precisa atualizar o aplicativo {{appName}}.",
-          "cta" : "Ir para o Manager",
+          "cta" : "Vá ao Manager",
           "close" : "Fechar"
         },
         "summary" : {
@@ -2505,12 +2514,12 @@
       "missingApp" : {
         "title" : "Instale o aplicativo Exchange em seu dispositivo",
         "description" : "Vá ao Manager e instale o aplicativo Exchange para trocar ativos",
-        "button" : "Vá para o Manager"
+        "button" : "Vá ao Manager"
       },
       "outdatedApp" : {
         "title" : "Atualize o aplicativo Exchange em seu dispositivo",
         "description" : "Vá ao Manager e atualize o aplicativo Exchange para trocar ativos",
-        "button" : "Vá para o Manager"
+        "button" : "Vá ao Manager"
       },
       "emptyState" : {
         "title" : "Não há conta de {{currency}}",
@@ -2523,7 +2532,7 @@
         "exportButton" : "Exportar Operações",
         "exportFilename" : "Operações de troca",
         "empty" : {
-          "title" : "Suas trocas anteriores aparecerão aqui",
+          "title" : "O seu histórico de trocas aparecerá aqui",
           "desc" : "Você ainda não fez nenhuma troca ou o Ledger Live foi redefinido nesse meio tempo."
         }
       }
@@ -3402,8 +3411,8 @@
     "drawerUpdate" : {
       "title" : "Atualização de firmware",
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "Necessário cabo USB",
+      "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3442,7 +3451,7 @@
   },
   "FirmwareUpdateConfirmation" : {
     "title" : "Firmware Atualizado",
-    "description" : "Vá para o Manager para reinstalar aplicativos no seu dispositivo."
+    "description" : "Vá ao Manager para reinstalar aplicativos no seu dispositivo."
   },
   "RepairDevice" : {
     "title" : "Reparar",
