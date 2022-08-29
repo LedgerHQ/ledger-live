@@ -14,7 +14,9 @@ const expectedAmount = ({ account, status }) =>
     },
     status.amount,
     {
+      showCode: true,
       disableRounding: true,
+      joinFragmentsSeparator: " ",
     }
   );
 
@@ -46,7 +48,9 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
             },
             status.estimatedFees,
             {
+              showCode: true,
               disableRounding: true,
+              joinFragmentsSeparator: " ",
             }
           ),
       },
