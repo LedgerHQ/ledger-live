@@ -1294,7 +1294,7 @@
       "noSearchResults" : "Üzgünüz, herhangi bir arama sonucu bulamadık.",
       "retrySearchKeyword" : "Lütfen aramayı başka bir anahtar kelime ile yeniden deneyin.",
       "retrySearchParams" : "Lütfen aramayı farklı bir değişkenle yeniden deneyin.",
-      "trackFavAssets" : "Favorilerinizi takip edin",
+      "trackFavAssets" : "En sevdiklerinizi takip edin",
       "clickOnStarIcon" : "Bir varlığın yanındaki yıldız simgesine tıklamak onu otomatik bir şekilde favori varlıklarınız arasına ekler.",
       "browseAssets" : "Varlıklara göz atın"
     }
@@ -2176,8 +2176,8 @@
             "compoundOrClaim" : "Birleştir veya hesaba al",
             "compoundDescription" : "Ödülleriniz, yetki devrinde kullanılan tutara eklenecek",
             "claimDescription" : "Ödüller mevcut bakiyeye eklenecek",
-            "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
-            "claimInfo" : "Aşağıdaki doğrulayıcıdan <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
+            "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
+            "claimInfo" : "Aşağıdaki doğrulayıcıdan <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
             "selectLabel" : "Bir yetkili seçin"
           },
           "connectDevice" : {
@@ -3046,6 +3046,11 @@
       "catalogServerDesc" : "Birden çok platform uygulama kaynağı arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
+      "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
+      "featureFlagsEdit" : "Düzenle",
+      "featureFlagsRestore" : "Geri yükle",
+      "featureFlagsOverride" : "Geçersiz bırak",
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
       "addLocalAppButton" : "Göz Atın",
@@ -4219,6 +4224,10 @@
     },
     "NetworkDown" : {
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
+      "description" : "Lütfen internet bağlantınızı kontrol edin."
+    },
+    "NetworkError" : {
+      "title" : "Senkronizasyon sırasında bir hata oluştu",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
     },
     "NoAddressesFound" : {
