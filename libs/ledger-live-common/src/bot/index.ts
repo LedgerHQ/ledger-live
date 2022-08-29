@@ -27,6 +27,7 @@ import {
 } from "../countervalues/logic";
 import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
+import { getContext } from "./bot-test-context";
 type Arg = Partial<{
   currency: string;
   family: string;
@@ -339,6 +340,24 @@ export async function bot({
       slackBody += `❌ *Spec ${spec.name}*: \`${formatError(fatalError)}\`\n`;
     });
     body += "</details>\n\n";
+  }
+
+  // summarize the error causes
+  const dedupedErrorCauses: string[] = [];
+  errorCases.forEach((m) => {
+    if (!m.error) return;
+    const ctx = getContext(m.error);
+    if (!ctx) return;
+    const cause = m.spec.name + " > " + ctx;
+    if (!dedupedErrorCauses.includes(cause)) {
+      dedupedErrorCauses.push(cause);
+    }
+  });
+  if (dedupedErrorCauses.length > 0) {
+    slackBody += "*Hints:*\n";
+    dedupedErrorCauses.forEach((cause) => {
+      slackBody += `- ${cause}\n`;
+    });
   }
 
   if (errorCases.length) {

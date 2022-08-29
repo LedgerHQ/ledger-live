@@ -504,9 +504,11 @@ export async function runOnAccount<T extends Transaction>({
       );
 
       if (timedOut && !operation) {
-        throw new Error(
-          "could not find optimisticOperation " + optimisticOperation.id
-        );
+        botTest("waiting operation id to appear after broadcast", () => {
+          throw new Error(
+            "could not find optimisticOperation " + optimisticOperation.id
+          );
+        });
       }
 
       if (operation) {
