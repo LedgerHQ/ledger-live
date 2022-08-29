@@ -34,7 +34,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         expectedValue: ({ account: { unit }, transaction: { amount } }) =>
           formatCurrencyUnit(unit, amount, {
             disableRounding: true,
-            subMagnitude: 10,
+            showAllDigits: true,
           }) + " hbar",
       },
       {
@@ -43,7 +43,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         expectedValue: ({ account: { unit }, status: { estimatedFees } }) =>
           formatCurrencyUnit(unit, estimatedFees, {
             disableRounding: true,
-            subMagnitude: 10,
+            showAllDigits: true,
           }) + " hbar",
       },
       {
