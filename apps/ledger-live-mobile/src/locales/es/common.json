@@ -2169,6 +2169,15 @@
       "customManifest" : {
         "title" : "Cargar manifiesto de plataforma personalizada"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
+      "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
+      "featureFlagsOverride" : "Anular",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsDisplayValue" : "Mostrar valor",
+      "featureFlagsHideValue" : "Ocultar valor"
     }
   },
   "notifications" : {
@@ -2269,7 +2278,7 @@
         "cancel" : {
           "title" : "Acabas de rechazar esta dirección",
           "subtitle" : "Si lo has hecho por error, puedes hacer clic en el siguiente botón para volver a intentarlo.",
-          "info" : "Si tienes la certeza de que las direcciones no son las mismas, es posible que tu teléfono haya sido atacado. Te recomendamos que <0>te pongas en contacto con nosotros lo antes posible.</0>"
+          "info" : "Si tienes la certeza de que las direcciones no son las mismas, es posible que tu teléfono se haya visto afectado. Te recomendamos que <0>te pongas en contacto con nosotros lo antes posible.</0>"
         }
       },
       "receiveConfirmation" : {
