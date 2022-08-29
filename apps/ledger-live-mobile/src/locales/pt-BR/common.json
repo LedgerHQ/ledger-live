@@ -1235,7 +1235,7 @@
           },
           "1" : {
             "title" : "Repita para todas as palavras!",
-            "label" : "Escreva a palavra nº 1 exibida em seu Nano na posição 1 de sua folha de recuperação. Então, pressione o botão direito na sua Nano para exibir a palavra nº 2 e a escreva na posição 2.",
+            "label" : "Escreva a palavra nº 1 exibida em sua Nano na posição 1 da sua folha de recuperação. Então, pressione o botão direito na sua Nano para exibir a palavra nº 2 e a escreva na posição 2.",
             "label_1" : "Repita o processo para todas as palavras, respeitando cuidadosamente a ordem e a ortografia. Pressione o botão esquerdo na sua Nano para verificar se há algum erro."
           },
           "2" : {
@@ -2039,7 +2039,7 @@
         "bullet0" : "Cliques",
         "bullet1" : "Visitas à página do aplicativo",
         "bullet2" : "Redirecionar para página web",
-        "bullet3" : "Ações: enviar, receber, bloquear, etc.",
+        "bullet3" : "Ações: enviar, receber, bloquear etc.",
         "bullet4" : "Fim da página",
         "bullet5" : "(Des)instalação e versão do aplicativo",
         "bullet6" : "Número de contas, moedas e operações",
@@ -2089,7 +2089,7 @@
       "cryptoAssets" : {
         "header" : "Criptoativos",
         "title" : "Criptoativos",
-        "desc" : "Selecione um criptoativo para editar suas configurações."
+        "desc" : "Selecione criptoativos cujas configurações você quer editar."
       }
     },
     "about" : {
@@ -2169,6 +2169,15 @@
       "customManifest" : {
         "title" : "Carregar o Manifesto da Plataforma Personalizada"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsDesc" : "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsOverride" : "Override",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsDisplayValue" : "Exibir Valor",
+      "featureFlagsHideValue" : "Ocultar Valor"
     }
   },
   "notifications" : {
@@ -2269,7 +2278,7 @@
         "cancel" : {
           "title" : "Você acabou de negar este endereço",
           "subtitle" : "Se isto foi feito por engano, você pode tentar novamente clicando no botão abaixo.",
-          "info" : "Se você tiver certeza de que os endereços não coincidem, seu celular pode estar comprometido. Recomendamos que você <0>entre em contato conosco o mais rápido possível.</0>"
+          "info" : "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
         }
       },
       "receiveConfirmation" : {
@@ -2284,7 +2293,7 @@
         "subtitle1" : "A verificação de seu endereço lhe proporciona segurança. O endereço exibido em seu dispositivo ledger não pode ser comprometido.",
         "subtitle2" : "Ao verificar o endereço, você poderá confirmar que o endereço mostrado em seu dispositivo é o mesmo que o endereço mostrado no Ledger Live.",
         "verifyCta" : "Verificar meu endereço",
-        "dontVerifyCta" : "Revelar meu endereço sem verificar"
+        "dontVerifyCta" : "Reveal my address without verifying"
       },
       "securityDontVerify" : {
         "title" : "Tem certeza?",
@@ -2405,7 +2414,7 @@
       },
       "payoutModal" : {
         "title" : "Taxas de pagamento",
-        "description" : "As taxas de pagamento não são mostradas no dispositivo e subtraídas da quantia.",
+        "description" : "Payout fees are not shown on the device and subtracted from the amount.",
         "cta" : "Fechar"
       },
       "pendingOperation" : {
@@ -2450,8 +2459,8 @@
         },
         "noApp" : {
           "title" : "Aplicativo {{appName}} não instalado",
-          "desc" : "Por favor, vá para o Manager para instalar o aplicativo {{appName}}.",
-          "cta" : "Ir para o Manager",
+          "desc" : "Vá ao Manager para instalar o aplicativo {{appName}}.",
+          "cta" : "Vá ao Manager",
           "close" : "Fechar"
         },
         "noAccounts" : {
@@ -2463,7 +2472,7 @@
         "outdatedApp" : {
           "title" : "Atualização do aplicativo disponível",
           "desc" : "Você precisa atualizar o aplicativo {{appName}}.",
-          "cta" : "Ir para o Manager",
+          "cta" : "Vá ao Manager",
           "close" : "Fechar"
         },
         "summary" : {
@@ -2505,12 +2514,12 @@
       "missingApp" : {
         "title" : "Instale o aplicativo Exchange em seu dispositivo",
         "description" : "Vá ao Manager e instale o aplicativo Exchange para trocar ativos",
-        "button" : "Vá para o Manager"
+        "button" : "Vá ao Manager"
       },
       "outdatedApp" : {
         "title" : "Atualize o aplicativo Exchange em seu dispositivo",
         "description" : "Vá ao Manager e atualize o aplicativo Exchange para trocar ativos",
-        "button" : "Vá para o Manager"
+        "button" : "Vá ao Manager"
       },
       "emptyState" : {
         "title" : "Não há conta de {{currency}}",
@@ -2523,7 +2532,7 @@
         "exportButton" : "Exportar Operações",
         "exportFilename" : "Operações de troca",
         "empty" : {
-          "title" : "Suas trocas anteriores aparecerão aqui",
+          "title" : "O seu histórico de trocas aparecerá aqui",
           "desc" : "Você ainda não fez nenhuma troca ou o Ledger Live foi redefinido nesse meio tempo."
         }
       }
@@ -3402,8 +3411,8 @@
     "drawerUpdate" : {
       "title" : "Atualização de firmware",
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "Necessário cabo USB",
+      "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3442,7 +3451,7 @@
   },
   "FirmwareUpdateConfirmation" : {
     "title" : "Firmware Atualizado",
-    "description" : "Vá para o Manager para reinstalar aplicativos no seu dispositivo."
+    "description" : "Vá ao Manager para reinstalar aplicativos no seu dispositivo."
   },
   "RepairDevice" : {
     "title" : "Reparar",
