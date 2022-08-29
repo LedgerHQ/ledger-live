@@ -370,7 +370,7 @@ export default class BluetoothTransport extends Transport {
             const res = retrieveInfos(device);
             const deviceModel = res && res.deviceModel;
 
-            if(device) {
+            if (device) {
               observer.next({
                 type: "add",
                 descriptor: device,
