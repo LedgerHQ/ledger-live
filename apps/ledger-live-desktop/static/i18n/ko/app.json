@@ -1294,7 +1294,7 @@
       "noSearchResults" : "죄송합니다. 검색 결과를 찾지 못했습니다.",
       "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
       "retrySearchParams" : "다른 매개변수로 검색을 다시 시도해 주세요.",
-      "trackFavAssets" : "즐겨찾기를 찾아보세요",
+      "trackFavAssets" : "선호 항목 트래킹",
       "clickOnStarIcon" : "자산 옆에 있는 별 아이콘을 클릭하면 자산이 자동으로 즐겨찾기에 추가됩니다.",
       "browseAssets" : "자산 찾기"
     }
@@ -1984,6 +1984,25 @@
     },
     "switchButton" : "{{language}}로 전환",
     "no" : "다음을 선호하지 않습니다:"
+  },
+  "deviceLocalization" : {
+    "language" : "언어",
+    "deviceLanguage" : "장치 언어",
+    "changeLanguage" : "언어 변경",
+    "changeDeviceLanguage" : "장치 언어를 변경하시겠습니까?",
+    "changeDeviceLanguageDescription" : "이제 Ledger Lives가 {{language}}로 지원됩니다. 장치에서도 {{language}} 사용을 원하시나요?",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}} 장치 언어를 {{language}}로 설정하시겠습니까?",
+      "description" : "이제 {{deviceName}}에서 {{language}}가 지원됩니다. 지금 장치 언어를 설정하거나 My Ledger에서 언제든지 변경하세요."
+    },
+    "allowLanguageInstallation" : "언어 설치 허용",
+    "languageInstalled" : "언어가 성공적으로 변경되었습니다",
+    "installingLanguage" : "언어 설치 중",
+    "languages" : {
+      "english" : "영어",
+      "french" : "프랑스어",
+      "spanish" : "스페인어"
+    }
   },
   "distribution" : {
     "asset" : "자산",
@@ -3046,6 +3065,11 @@
       "catalogServerDesc" : "다중 플랫폼 앱 소스 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
+      "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
+      "featureFlagsEdit" : "편집",
+      "featureFlagsRestore" : "복구",
+      "featureFlagsOverride" : "재정의",
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
@@ -4155,6 +4179,14 @@
       "title" : "죄송하지만 리셋할 수 없습니다",
       "description" : "문제가 지속되면 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "장치에서 언어 설치가 거부되었습니다",
+      "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
+    },
+    "LanguageNotFound" : {
+      "title" : "언어를 찾을 수 없습니다",
+      "description" : "설치하려는 언어를 찾을 수 없습니다. 다른 언어를 설치해 보세요."
+    },
     "LatestMCUInstalledError" : {
       "title" : "죄송하지만 업데이트가 필요한 항목이 없습니다",
       "description" : "장치를 사용할 수 없다면 Ledger 지원 부서에 문의하세요."
@@ -4219,6 +4251,10 @@
     },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
+      "description" : "인터넷 연결을 확인하세요."
+    },
+    "NetworkError" : {
+      "title" : "동기화 중 오류가 발생했습니다",
       "description" : "인터넷 연결을 확인하세요."
     },
     "NoAddressesFound" : {
