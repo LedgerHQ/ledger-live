@@ -1,5 +1,42 @@
 # live-mobile
 
+## 3.7.0
+
+### Minor Changes
+
+- [#921](https://github.com/LedgerHQ/ledger-live/pull/921) [`cce2e7a4e7`](https://github.com/LedgerHQ/ledger-live/commit/cce2e7a4e76445921066593a07964ed7d0875f54) Thanks [@github-actions](https://github.com/apps/github-actions)! - Type libraries usage in LLC, LLD, LLM, CLI
+
+* [#921](https://github.com/LedgerHQ/ledger-live/pull/921) [`cce2e7a4e7`](https://github.com/LedgerHQ/ledger-live/commit/cce2e7a4e76445921066593a07964ed7d0875f54) Thanks [@github-actions](https://github.com/apps/github-actions)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
+
+- [#921](https://github.com/LedgerHQ/ledger-live/pull/921) [`cce2e7a4e7`](https://github.com/LedgerHQ/ledger-live/commit/cce2e7a4e76445921066593a07964ed7d0875f54) Thanks [@github-actions](https://github.com/apps/github-actions)! - Add banner to external integrations
+
+### Patch Changes
+
+- [#798](https://github.com/LedgerHQ/ledger-live/pull/798) [`222335854d`](https://github.com/LedgerHQ/ledger-live/commit/222335854d412cd748c0add73b5f0bb93e02ba42) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - bug fix issue on storyly package version
+
+* [#882](https://github.com/LedgerHQ/ledger-live/pull/882) [`807f3feb94`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8) Thanks [@Justkant](https://github.com/Justkant)! - fix: bump platform API version [LIVE-3181]
+
+- [#921](https://github.com/LedgerHQ/ledger-live/pull/921) [`cce2e7a4e7`](https://github.com/LedgerHQ/ledger-live/commit/cce2e7a4e76445921066593a07964ed7d0875f54) Thanks [@github-actions](https://github.com/apps/github-actions)! - Add Analytics 'reason' field in context of sync events
+
+* [#815](https://github.com/LedgerHQ/ledger-live/pull/815) [`152339dcee`](https://github.com/LedgerHQ/ledger-live/commit/152339dceeaca4b4b7656aad1c690589189900a8) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add generics lotties animations
+
 ## 3.7.0-hotfix.0
 
 ### Minor Changes
