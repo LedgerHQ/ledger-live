@@ -58,7 +58,9 @@ export const updateAccount: UpdateAccount = payload =>
     ...account,
     ...payload,
   }));
-export type DeleteAccount = (_: Account) => {
+export type DeleteAccount = (
+  _: Account,
+) => {
   type: string,
   payload: Account,
 };
