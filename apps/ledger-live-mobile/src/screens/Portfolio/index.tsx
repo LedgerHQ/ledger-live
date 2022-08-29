@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
-import { Box, Button, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
@@ -45,7 +45,6 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
-import { promptBluetooth } from "../../logic/bluetoothHelper";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -160,10 +159,6 @@ function PortfolioScreen({ navigation }: Props) {
   const handleScroll = useAnimatedScrollHandler(event => {
     currentPositionY.value = event.contentOffset.y;
   });
-
-  const handlePromptPressed = useCallback(() => {
-    promptBluetooth().catch(() => {});
-  }, []);
 
   const onPortfolioCardLayout = useCallback((event: LayoutChangeEvent) => {
     const { y, height } = event.nativeEvent.layout;
@@ -297,9 +292,6 @@ function PortfolioScreen({ navigation }: Props) {
         <Flex px={6} py={4}>
           <FirmwareUpdateBanner />
         </Flex>
-        <Button onPress={handlePromptPressed} type="main">
-          bluetooth helper prompt
-        </Button>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
         <TrackScreen
