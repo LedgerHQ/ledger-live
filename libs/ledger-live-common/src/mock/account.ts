@@ -198,7 +198,10 @@ const tickerApproxMarketPrice = {
 };
 // mock only use subset of cryptocurrencies to not affect tests when adding coins
 const currencies = listCryptoCurrencies().filter(
-  (c) => tickerApproxMarketPrice[c.ticker]
+  (c) =>
+    tickerApproxMarketPrice[c.ticker] &&
+    // take only "official" currencies, otherwise you might end up with ticker collisions
+    c.name === c.managerAppName
 );
 // TODO fix the mock to never generate negative balance...
 
