@@ -74,5 +74,13 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "brown-nails-yell",
+    "great-waves-kiss",
+    "plenty-geckos-report-separated",
+    "soft-rabbits-retire-separated",
+    "sour-horses-lay",
+    "strong-penguins-call-separated",
+    "weak-kiwis-sip-separated"
+  ]
 }
