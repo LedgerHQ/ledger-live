@@ -23,7 +23,7 @@ type InfoName = "available" | "delegated" | "undelegating";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
-  const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
+  const [infoName, setInfoName] = useState<InfoName | typeof undefined>(undefined);
   const info = useInfo();
 
   const { spendableBalance, cosmosResources } = account;
