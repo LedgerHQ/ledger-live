@@ -198,7 +198,7 @@
     "menu" : "Menú",
     "stars" : "Cuentas destacadas",
     "accounts" : "Cuentas",
-    "manager" : "Manager",
+    "manager" : "Mi Ledger",
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
     "lend" : "Prestar",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "Instala la aplicación {{appName}} en tu dispositivo",
-      "subtitle" : "Ingresa a Manager e instala la aplicación {{appName}} para permutar activos.",
-      "cta" : "Ingresa a Manager"
+      "subtitle" : "Ve a Mi Ledger e instala la aplicación {{appName}} para permutar activos.",
+      "cta" : "Ir a Mi Ledger"
     },
     "outdatedApp" : {
       "title" : "Actualiza la aplicación {{appName}} en tu dispositivo",
-      "subtitle" : "Ingresa a Manager y actualiza la aplicación {{appName}} para intercambiar activos.",
-      "cta" : "Ingresa a Manager"
+      "subtitle" : "Ve a Mi Ledger y actualiza la aplicación {{appName}} para permutar activos.",
+      "cta" : "Ir a Mi Ledger"
     },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
@@ -1202,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Instala aplicaciones en tu dispositivo",
-      "desc" : "Ingresa a Manager para instalar aplicaciones en tu dispositivo. Podrás agregar cuentas una vez que cuentes con aplicaciones en tu dispositivo.",
+      "desc" : "Ve a Mi Ledger para instalar aplicaciones en tu dispositivo. Podrás agregar cuentas una vez que cuentes con aplicaciones en tu dispositivo.",
       "buttons" : {
-        "installApp" : "Ir a Manager",
+        "installApp" : "Ir a Mi Ledger",
         "help" : "Ayuda"
       }
     },
@@ -1213,7 +1213,7 @@
       "desc" : "Agrega una cuenta para empezar a administrar tus activos cripto. Debes tener la aplicación de tu activo cripto instalada en tu dispositivo.",
       "buttons" : {
         "addAccount" : "Agregar cuenta",
-        "installApp" : "Ingresa a Manager para instalar aplicaciones",
+        "installApp" : "Ve a Mi Ledger para instalar aplicaciones",
         "help" : "Ayuda"
       }
     }
@@ -1536,12 +1536,12 @@
     "quitApp" : "Cierra la aplicación en tu dispositivo",
     "appNotInstalledTitle" : "Falta una aplicación necesaria",
     "appNotInstalledTitle_plural" : "Faltan aplicaciones necesarias",
-    "appNotInstalled" : "La aplicacion {{appName}} es necesaria para completar esta acción. Ingresa a Manager e instálala en tu dispositivo",
-    "appNotInstalled_plural" : "Las aplicaciones {{appName}} son necesarias para completar esta acción. Ingresa a Manager e instálalas en tu dispositivo",
-    "openManager" : "Abrir Manager",
+    "appNotInstalled" : "Para completar esta acción es necesaria la aplicación {{appName}}. Ve a Mi Ledger e instálala en tu dispositivo",
+    "appNotInstalled_plural" : "Para completar esta acción son necesarias las aplicaciones {{appName}}. Ve a Mi Ledger e instálalas en tu dispositivo",
+    "openManager" : "Abrir Mi Ledger",
     "openOnboarding" : "Configurar dispositivo",
     "outdated" : "Versión de aplicación obsoleta",
-    "outdatedDesc" : "Hay una actualización importante disponible para la aplicación {{appName}} en tu dispositivo. Ingresa a Manager para actualizarla.",
+    "outdatedDesc" : "Hay una actualización importante disponible para la aplicación {{appName}} en tu dispositivo. Ve a Mi Ledger para actualizarla.",
     "installApp" : "Instalación de aplicación {{appName}}",
     "installAppDescription" : "Espera hasta que finalice la instalación",
     "listApps" : "Comprobando dependencias de la aplicación",
@@ -1584,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "Parece que una aplicación está abierta en tu dispositivo",
-      "subtitle" : "Volver a abrir el Manager cerrará la aplicación en tu dispositivo",
-      "ctaReopen" : "Volver a abrir el Manager",
+      "subtitle" : "Al volver a abrir Mi Ledger, se cerrará la aplicación en tu dispositivo",
+      "ctaReopen" : "Volver a abrir Mi Ledger",
       "ctaPortfolio" : "Volver al Portfolio"
     },
     "deviceStorage" : {
@@ -1628,7 +1628,7 @@
         "title_plural" : "Actualizaciones disponibles",
         "progressTitle" : "Actualización de {{number}} aplicación",
         "progressTitle_plural" : "{{number}} actualizaciones de aplicación",
-        "progressWarning" : "No cierres Manager durante la actualización.",
+        "progressWarning" : "No cierres Mi Ledger durante la actualización.",
         "progress" : "Actualizando todo..."
       },
       "item" : {
@@ -1692,7 +1692,7 @@
       "updateBtn" : "Actualizar firmware",
       "banner" : {
         "warning" : "Actualización disponible del Firmware para la versión {{latestFirmware}}",
-        "cta" : "Ingresa a Manager",
+        "cta" : "Ir a Mi Ledger",
         "old" : {
           "warning" : "La versión de firmware del dispositivo es demasiado antigua para poder actualizarla. Contacta al Soporte de Ledger para obtener un reemplazo.",
           "cta" : "Ponte en contacto con Soporte"
@@ -1748,7 +1748,7 @@
         "boot" : "Mantén presionado el botón lateral hasta que se muestre {{option}}",
         "recoveryMode" : "Toca el modo {{mode}}. Espera a que aparezca el Dashboard.",
         "third" : "3. Desinstala todas las aplicaciones",
-        "openLive" : "Ingresa a Manager en Ledger Live.",
+        "openLive" : "Abre Mi Ledger en Ledger Live.",
         "uninstall" : "Haz clic en el ícono de papelera gris para todas las aplicaciones instaladas actualmente en el {{deviceName}}. Esto liberará espacio para el instalador de firmware.",
         "disclaimer" : "Nota: Tus fondos no se ven afectados por esta operación, las claves privadas para acceder a tus activos cripto en la cadena de bloques permanecen seguras en tu Hoja de recuperación."
       }
@@ -3046,6 +3046,11 @@
       "catalogServerDesc" : "Cambiar entre distintas fuentes de aplicaciones de plataforma",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
+      "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsOverride" : "Anular",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
       "addLocalAppButton" : "Navegar",
@@ -3110,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "Modo de desarrollador",
-          "description" : "Mostrar aplicaciones de desarrollador y testnet en el Manager."
+          "description" : "Mostrar aplicaciones de desarrollador y testnet en Mi Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "Búsqueda de cuenta extendida",
@@ -3125,8 +3130,8 @@
           "description" : "Límite de desviación personalizado para todas las cuentas. Aumentar este valor por encima de su valor por defecto (20) busca monedas en más direcciones públicas sin utilizar. Sólo para usuarios avanzados, esto puede provocar que falle la compatibilidad al restaurar tus cuentas."
         },
         "forceProvider" : {
-          "title" : "Proveedor de Manager",
-          "description" : "Cambiar el proveedor de aplicaciones en el Manager puede imposibilitar la instalación o desinstalación de aplicaciones en tu dispositivo Ledger."
+          "title" : "Proveedor de Mi Ledger",
+          "description" : "Cambiar el proveedor de aplicaciones en Mi Ledger puede imposibilitar la instalación o desinstalación de aplicaciones en tu dispositivo Ledger."
         },
         "testAnimations" : {
           "title" : "Probar animaciones Lottie",
@@ -3978,7 +3983,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "No es posible encontrar la aplicación {{appName}} para tu configuración específica.",
-      "description" : "Intenta reinstalar la aplicación desde el Manager"
+      "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
     },
     "countervaluesUnavailable" : {
       "title" : "No es posible ofrecerte una contraparte para este activo en este momento"
@@ -4141,7 +4146,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "Es necesario actualizar el firmware o la aplicación",
-      "description" : "Utiliza Manager para desinstalar todas las aplicaciones y comprobar si hay alguna actualización de firmware disponible antes de instalarlas de nuevo"
+      "description" : "Utiliza Mi Ledger para desinstalar todas las aplicaciones y comprobar si hay alguna actualización de firmware disponible antes de instalarlas de nuevo."
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Actualizar el firmware del Nano",
@@ -4198,20 +4203,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "¿Finalizar instalación de aplicaciones en curso?",
-        "description" : "Al salir de Manager, se interrumpirá la instalación de la aplicación. Finaliza la instalación para instalar las aplicaciones en espera.",
+        "description" : "Al salir de Mi Ledger, se interrumpirá la instalación de aplicaciones. Finaliza la instalación para instalar las aplicaciones en cola.",
         "stay" : "Finalizar instalación"
       },
       "uninstall" : {
         "title" : "¿Finalizar la desinstalación de la aplicación en curso?",
-        "description" : "Al salir de Manager, se interrumpirán las desinstalaciones de aplicación en curso.",
+        "description" : "Al salir de Mi Ledger, se interrumpirán las desinstalaciones de aplicaciones en curso.",
         "stay" : "Finalizar la desinstalación"
       },
       "update" : {
         "title" : "¿Finalizar la actualización de aplicación en curso?",
-        "description" : "Al salir de Manager, se interrumpirán las actualizaciones de aplicación en curso.",
+        "description" : "Al salir de Mi Ledger, se interrumpirán las actualizaciones de aplicaciones en curso.",
         "stay" : "Finalizar actualizaciones"
       },
-      "quit" : "Salir de Manager"
+      "quit" : "Salir de Mi Ledger"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "Esta aplicación es necesaria.",
@@ -4219,6 +4224,10 @@
     },
     "NetworkDown" : {
       "title" : "Parece que no hay conexión a Internet",
+      "description" : "Comprueba tu conexión a Internet."
+    },
+    "NetworkError" : {
+      "title" : "Se ha producido un error durante la sincronización",
       "description" : "Comprueba tu conexión a Internet."
     },
     "NoAddressesFound" : {
@@ -4307,7 +4316,7 @@
       "description" : "Reinicia el dispositivo sin tocar los botones cuando aparezca el logotipo. Contacta al Soporte de Ledger si persiste el problema."
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager denegado en el dispositivo"
+      "title" : "Mi Ledger denegado en el dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Actualización cancelada en el dispositivo",
@@ -4327,7 +4336,7 @@
     },
     "UpdateYourApp" : {
       "title" : "Es necesario actualizar la aplicación.",
-      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Manager"
+      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Mi Ledger"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Volver al Dashboard",
@@ -4347,7 +4356,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Es necesario actualizar la aplicación.",
-      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Manager"
+      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Mi Ledger"
     },
     "InvalidAddress" : {
       "title" : "Esta no es una dirección de {{currencyName}} válida"
@@ -4392,7 +4401,7 @@
       "list" : {
         "1" : "Desconecta y vuelve a conectar el cable USB sin presionar ningún botón.",
         "2" : "Presiona los dos botones al mismo tiempo tres veces para mostrar el Dashboard.",
-        "3" : "Abre el Manager y haz clic en Actualizar firmware."
+        "3" : "Abre Mi Ledger y haz clic en Actualizar firmware."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
