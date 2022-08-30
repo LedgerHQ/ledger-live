@@ -66,7 +66,3 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
     ],
   });
-
-export default {
-  acceptTransaction,
-};
