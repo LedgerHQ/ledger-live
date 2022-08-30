@@ -696,28 +696,28 @@
       }
     }
   },
-  "account" : {
-    "subHeader" : {
-      "moreInfo" : "Daha fazla bilgi",
-      "cardTitle" : "{{team}} desteğiyle",
-      "drawer" : {
-        "title" : "{{family}} entegrasyonu",
-        "subTitle" : "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
-        "description" : "Ledger Live, açık kaynaklı bir platformdur.",
-        "description2" : "Dünyanın her yerinden developer'lar Ledger Live ile entegre olabilir",
-        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir."
+  "account": {
+    "subHeader": {
+      "moreInfo": "Daha fazla bilgi",
+      "cardTitle": "{{team}} desteğiyle",
+      "drawer": {
+        "title": "{{family}} entegrasyonu",
+        "subTitle": "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
+        "description": "Ledger Live, açık kaynaklı bir platformdur.",
+        "description2": "Dünyanın her yerinden developer'lar Ledger Live ile entegre olabilir",
+        "description3": "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir."
       }
     },
-    "lastOperations" : "Son işlemler",
-    "contractAddress" : "Sözleşme:",
-    "openInExplorer" : "Tarayıcıda aç",
-    "emptyState" : {
-      "title" : "Henüz kripto varlığınız yok mu?",
-      "desc" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza varlık almaya başlayabilirsiniz",
-      "descToken" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza <3><0>{{ticker}}</0></3> ve <5><0>{{tokenList}}</0>token'larını</5> almaya başlayabilirsiniz",
-      "buttons" : {
-        "receiveFunds" : "Al",
-        "buy" : "Satın Alın"
+    "lastOperations": "Son işlemler",
+    "contractAddress": "Sözleşme:",
+    "openInExplorer": "Tarayıcıda aç",
+    "emptyState": {
+      "title": "Henüz kripto varlığınız yok mu?",
+      "desc": "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza varlık almaya başlayabilirsiniz",
+      "descToken": "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza <3><0>{{ticker}}</0></3> ve <5><0>{{tokenList}}</0>token'larını</5> almaya başlayabilirsiniz",
+      "buttons": {
+        "receiveFunds": "Al",
+        "buy": "Satın Alın"
       }
     },
     "settings" : {
@@ -733,19 +733,19 @@
         "desc" : "Kullanılacak birimi seçin"
       }
     },
-    "availableBalance" : "Mevcut bakiye",
-    "frozenAssets" : "Donmuş varlıklar",
-    "bandwidth" : "Bant Genişliği",
-    "energy" : "Enerji",
-    "stake" : "Stake edin",
-    "delegatedAssets" : "Yetkisi devredilen varlıklar",
-    "undelegating" : "Yetki iptali",
-    "availableBalanceTooltip" : "Bu tutar, kullanabileceğiniz fondur.",
-    "frozenAssetsTooltip" : "Donmuş varlıklar Tron oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
-    "bandwidthTooltip" : "Bant genişliği elde etmek için varlık dondurun",
-    "energyTooltip" : "Enerji kazanmak için varlık dondurun",
-    "delegatedTooltip" : "Yetkisi devredilen varlıklar oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
-    "undelegatingTooltip" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce {{timelockInDays}} gün boyunca zaman kilidinde tutulurlar."
+    "availableBalance": "Mevcut bakiye",
+    "frozenAssets": "Donmuş varlıklar",
+    "bandwidth": "Bant Genişliği",
+    "energy": "Enerji",
+    "stake": "Stake edin",
+    "delegatedAssets": "Yetkisi devredilen varlıklar",
+    "undelegating": "Yetki iptali",
+    "availableBalanceTooltip": "Bu tutar, kullanabileceğiniz fondur.",
+    "frozenAssetsTooltip": "Donmuş varlıklar Tron oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
+    "bandwidthTooltip": "Bant genişliği elde etmek için varlık dondurun",
+    "energyTooltip": "Enerji kazanmak için varlık dondurun",
+    "delegatedTooltip": "Yetkisi devredilen varlıklar oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
+    "undelegatingTooltip": "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce {{timelockInDays}} gün boyunca zaman kilidinde tutulurlar."
   },
   "exchange" : {
     "chooseProvider" : "{{providerCount}} sağlayıcı arasından birini seçin",
@@ -1462,64 +1462,64 @@
       }
     }
   },
-  "operationDetails" : {
-    "whatIsThis" : "Bu işlem nedir?",
-    "title" : "İşlem detayları",
-    "type" : "İşlem türü",
-    "amount" : "Tutar",
-    "account" : "Hesap",
-    "date" : "Tarih",
-    "currentValue" : "Geçerli değer",
-    "status" : "Durum",
-    "confirmed" : "Onaylandı",
-    "failed" : "Başarısız",
-    "notConfirmed" : "Onaylanmadı",
-    "fees" : "Ücret",
-    "noFees" : "Ücret yok",
-    "from" : "Gönderici",
-    "to" : "Alıcı",
-    "identifier" : "İşlem Kimliği (TxID)",
-    "viewOperation" : "Tarayıcıda görüntüle",
-    "showMore" : "{{recipients}} daha göster",
-    "showLess" : "Daha az göster",
-    "tokenOperations" : "Token işlemleri",
-    "subAccountOperations" : "Alt Hesap işlemleri",
-    "tokenTooltip" : "Bu işlem, aşağıdaki token işlemleriyle ilgilidir",
-    "subAccountTooltip" : "Bu işlem aşağıdaki alt hesap işlemleriyle ilgilidir",
-    "internalOperations" : "İç işlemler",
-    "internalOpTooltip" : "Bu işlem, iç işlemlere sahiptir",
-    "details" : "{{ currency }} ayrıntıları",
-    "multipleAddresses" : "Neden birden fazla adres var?",
-    "nft" : {
-      "name" : "Token Adı",
-      "contract" : "Token Sözleşmesi",
-      "id" : "Token (NFT) Kimliği",
-      "quantity" : "Miktar"
+  "operationDetails": {
+    "whatIsThis": "Bu işlem nedir?",
+    "title": "İşlem detayları",
+    "type": "İşlem türü",
+    "amount": "Tutar",
+    "account": "Hesap",
+    "date": "Tarih",
+    "currentValue": "Geçerli değer",
+    "status": "Durum",
+    "confirmed": "Onaylandı",
+    "failed": "Başarısız",
+    "notConfirmed": "Onaylanmadı",
+    "fees": "Ücret",
+    "noFees": "Ücret yok",
+    "from": "Gönderici",
+    "to": "Alıcı",
+    "identifier": "İşlem Kimliği (TxID)",
+    "viewOperation": "Tarayıcıda görüntüle",
+    "showMore": "{{recipients}} daha göster",
+    "showLess": "Daha az göster",
+    "tokenOperations": "Token işlemleri",
+    "subAccountOperations": "Alt Hesap işlemleri",
+    "tokenTooltip": "Bu işlem, aşağıdaki token işlemleriyle ilgilidir",
+    "subAccountTooltip": "Bu işlem aşağıdaki alt hesap işlemleriyle ilgilidir",
+    "internalOperations": "İç işlemler",
+    "internalOpTooltip": "Bu işlem, iç işlemlere sahiptir",
+    "details": "{{ currency }} ayrıntıları",
+    "multipleAddresses": "Neden birden fazla adres var?",
+    "nft": {
+      "name": "Token Adı",
+      "contract": "Token Sözleşmesi",
+      "id": "Token (NFT) Kimliği",
+      "quantity": "Miktar"
     },
-    "extra" : {
-      "frozenAmount" : "Dondurulan tutar",
-      "unfreezeAmount" : "Çözülen tutar",
-      "votes" : "Oylar ({{number}})",
-      "votesAddress" : "<2>{{name}}</2> için <0>{{votes}}</0>",
-      "validators" : "Doğrulayıcılar",
-      "redelegated" : "Yetki yeniden devredildi",
-      "redelegatedFrom" : "Yetkiyi bırakan taraf",
-      "redelegatedTo" : "Yetkiyi devralan taraf",
-      "redelegatedAmount" : "Yetkisi devredilen tutar",
-      "undelegated" : "Yetki iptal edildi",
-      "undelegatedFrom" : "Yetkisi iptal edilen taraf",
-      "undelegatedAmount" : "Yetkisi iptal edilen tutar",
-      "rewardFrom" : "Ödül kaynağı",
-      "memo" : "Memo",
-      "assetId" : "Varlık Kimliği",
-      "rewards" : "Kazanılan ödüller",
-      "autoClaimedRewards" : "Otomatik Alınan Ödüller",
-      "bondedAmount" : "Bağlanmış Tutar",
-      "unbondedAmount" : "Çözülmüş Tutar",
-      "withdrawUnbondedAmount" : "Çekilen Tutar",
-      "palletMethod" : "Yöntem",
-      "transferAmount" : "Transfer Tutarı",
-      "validatorsCount" : "Doğrulayıcılar ({{number}})"
+    "extra": {
+      "frozenAmount": "Dondurulan tutar",
+      "unfreezeAmount": "Çözülen tutar",
+      "votes": "Oylar ({{number}})",
+      "votesAddress": "<2>{{name}}</2> için <0>{{votes}}</0>",
+      "validators": "Doğrulayıcılar",
+      "redelegated": "Yetki yeniden devredildi",
+      "redelegatedFrom": "Yetkiyi bırakan taraf",
+      "redelegatedTo": "Yetkiyi devralan taraf",
+      "redelegatedAmount": "Yetkisi devredilen tutar",
+      "undelegated": "Yetki iptal edildi",
+      "undelegatedFrom": "Yetkisi iptal edilen taraf",
+      "undelegatedAmount": "Yetkisi iptal edilen tutar",
+      "rewardFrom": "Ödül kaynağı",
+      "memo": "Memo",
+      "assetId": "Varlık Kimliği",
+      "rewards": "Kazanılan ödüller",
+      "autoClaimedRewards": "Otomatik Alınan Ödüller",
+      "bondedAmount": "Bağlanmış Tutar",
+      "unbondedAmount": "Çözülmüş Tutar",
+      "withdrawUnbondedAmount": "Çekilen Tutar",
+      "palletMethod": "Yöntem",
+      "transferAmount": "Transfer Tutarı",
+      "validatorsCount": "Doğrulayıcılar ({{number}})"
     }
   },
   "operationList" : {
@@ -1995,241 +1995,46 @@
     "showLess" : "Daha az göster",
     "header" : "Varlık dağılımı ({{count}})"
   },
-  "accountDistribution" : {
-    "account" : "Hesap",
-    "distribution" : "Dağılım",
-    "amount" : "Tutar",
-    "value" : "Değer",
-    "header" : "Hesap dağılımı ({{count}})"
-  },
-  "cardano" : {
-    "account" : {
-      "stakingRewardsBanner" : {
-        "cardTitle" : "Staking ödülleri toplam bakiyeye dahil edilmez"
+  "cardano": {
+    "account": {
+      "stakingRewardsBanner": {
+        "cardTitle": "Staking ödülleri toplam bakiyeye dahil edilmez"
       }
     }
   },
-  "tron" : {
-    "voting" : {
-      "emptyState" : {
-        "description" : "Artık varlık dondurarak ve oylama yaparak ödüller kazanabilirsiniz.",
-        "info" : "Oylama nasıl çalışır?",
-        "votesDesc" : "Staking ödülleri kazanmaya başlamak için bir veya daha fazla temsilciye oy verin.",
-        "vote" : "Oylama yap",
-        "voteExisting" : "Oyları yönet"
+  "tron": {
+    "voting": {
+      "emptyState": {
+        "description": "Artık varlık dondurarak ve oylama yaparak ödüller kazanabilirsiniz.",
+        "info": "Oylama nasıl çalışır?",
+        "votesDesc": "Staking ödülleri kazanmaya başlamak için bir veya daha fazla temsilciye oy verin.",
+        "vote": "Oylama yap",
+        "voteExisting": "Oyları yönet"
       },
-      "manageTP" : "Varlıkları yönet",
-      "warnEarnRewards" : "Ödül kazanmaya başlamak için en az {{amount}} gerekiyor",
-      "claimRewards" : "Ödülleri al",
-      "nextRewardsDate" : "Ödüller {{date}} tarihinde alınabilir",
-      "claimAvailableRewards" : "{{amount}} topla",
-      "header" : "Oylar",
-      "percentageTP" : "% oy kullanıldı",
-      "noRewards" : "Ödül yok",
-      "remainingVotes" : {
-        "title" : "Hâlâ {{amount}} oy hakkınız var",
-        "description" : "Daha çok ödül kazanmak için kalan oylarınızı kullanabilirsiniz",
-        "button" : "Şimdi oy ver"
+      "manageTP": "Varlıkları yönet",
+      "warnEarnRewards": "Ödül kazanmaya başlamak için en az {{amount}} gerekiyor",
+      "claimRewards": "Ödülleri al",
+      "nextRewardsDate": "Ödüller {{date}} tarihinde alınabilir",
+      "claimAvailableRewards": "{{amount}} topla",
+      "header": "Oylar",
+      "percentageTP": "% oy kullanıldı",
+      "noRewards": "Ödül yok",
+      "remainingVotes": {
+        "title": "Hâlâ {{amount}} oy hakkınız var",
+        "description": "Daha çok ödül kazanmak için kalan oylarınızı kullanabilirsiniz",
+        "button": "Şimdi oy ver"
       },
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "TRX dondurarak hem ödül kazanın hem de varlıklarınızın güvenliğini ve kontrolünü sağlamaya devam edin.",
-            "bullet" : {
-              "delegate" : "Yetkilendirmede kullanılan varlıklar size ait olmaya devam eder.",
-              "access" : "Varlıklarınızı 3 gün sonra çözebilirsiniz.",
-              "ledger" : "Ledger cihazınız ile güvenle dondurun ve oylayın."
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "TRX dondurarak hem ödül kazanın hem de varlıklarınızın güvenliğini ve kontrolünü sağlamaya devam edin.",
+            "bullet": {
+              "delegate": "Yetkilendirmede kullanılan varlıklar size ait olmaya devam eder.",
+              "access": "Varlıklarınızı 3 gün sonra çözebilirsiniz.",
+              "ledger": "Ledger cihazınız ile güvenle dondurun ve oylayın."
             },
-            "help" : "Oylama nasıl çalışır?",
-            "termsAndPrivacy" : "Oylama hakkınızı devretmeniz, süper temsilcinizden ödül kazanmanızı garantilemez."
-          }
-        }
-      }
-    },
-    "manage" : {
-      "title" : "Varlıkları yönet",
-      "freeze" : {
-        "title" : "Dondur",
-        "description" : "Bant Genişliği veya Enerji kazanmak için TRX dondurun. Süper Temsilciler için de oy kullanabileceksiniz."
-      },
-      "unfreeze" : {
-        "title" : "Çöz",
-        "description" : "TRX çözerek yeniden bakiyenize ekleyebilirsiniz. Ancak başka ödül kazanamazsınız."
-      },
-      "vote" : {
-        "title" : "Oyla",
-        "description" : "Ödül kazanmak için Süper Temsilcilere oy verin.",
-        "steps" : {
-          "vote" : {
-            "title" : "Oylama yap",
-            "description" : "Ödül kazanmaya başlamak için bir veya daha fazla Süper Temsilciye oy verin.",
-            "footer" : {
-              "doNotShowAgain" : "Bir daha gösterme",
-              "next" : "Oylama Yap"
-            },
-            "info" : {
-              "message" : "ST mi Adaylar mı?",
-              "superRepresentative" : {
-                "title" : "Süper Temsilciler (ST)",
-                "description" : "Süper Temsilciler, blok oluşturma ve kayıt tutma gibi temel işlevleri sağlayarak TRON topluluğunun yönetiminde önemli bir rol oynar."
-              },
-              "candidates" : {
-                "title" : "Adaylar",
-                "description" : "Token sahibi topluluğun tamamı tarafından yapılan oylama sonucunda 127 kişi seçilir. Oylar her 6 saatte bir güncellenir."
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "bitcoin" : {
-    "inputSelected" : "SEÇİLDİ",
-    "toSpend" : "Harcanacak coin'ler",
-    "toReturn" : "Dönecek para üstü",
-    "modalTitle" : "Coin yönetimi",
-    "coincontrol" : "Coin yönetimi",
-    "advanced" : "Gelişmiş seçenekler",
-    "ctaDisabled" : "Bu hesapta UTXO yok",
-    "whatIs" : "Coin seçimi nedir?",
-    "rbf" : "İşlemin değiştirilmesine izin verin (Replace-By-Fee).",
-    "strategy" : "Coin seçim stratejisi",
-    "selected" : "Strateji için seçilen coin'ler",
-    "amount" : "Gönderilecek tutar:",
-    "replaceable" : "değiştirilebilir",
-    "cannotSelect" : {
-      "unconfirmed" : "Onaylanmamış, değiştirilebilir işlemlerdeki coin'lerden seçemezsiniz.",
-      "pending" : "Bekleyen işlemlerdeki coin'lerden seçemezsiniz. (harcanmamış UTXO hariç)",
-      "last" : "En az birinin seçili olması gerekiyor"
-    },
-    "pending" : "beklemede",
-    "pickingStrategy" : "UTXO toplama stratejisi",
-    "pickingStrategyLabels" : {
-      "DEEP_OUTPUTS_FIRST" : "Önce en eski coin'ler (FIFO)",
-      "OPTIMIZE_SIZE" : "Ücretleri en aza indirin (boyutu optimize edin)",
-      "MERGE_OUTPUTS" : "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)"
-    }
-  },
-  "cosmos" : {
-    "delegation" : {
-      "emptyState" : {
-        "description" : "Varlıklarınızın yetkisini devrederek ATOM ödülleri kazanabilirsiniz.",
-        "info" : "Yetki Devri nasıl çalışır?",
-        "delegation" : "Ödüller kazanın"
-      },
-      "commission" : "Komisyon",
-      "totalStake" : "Toplam Stake",
-      "claimRewards" : "Ödüllerinizi alın",
-      "header" : "Yetki Devirleri",
-      "noRewards" : "Ödül yok",
-      "delegate" : "Ekle",
-      "undelegate" : "Yetki İptali",
-      "redelegate" : "Yetki Devri",
-      "redelegateDisabledTooltip" : "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
-      "redelegateMaxDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcıya yetki devredebilirsiniz.",
-      "undelegateDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
-      "reward" : "Ödüllerinizi alın",
-      "currentDelegation" : "Yetkisi devredilen tutar: <0>{{amount}}</0>",
-      "estYield" : "tahmini getiri",
-      "activeTooltip" : "Yetkisi devredilen tutarlar üzerinden ödül kazanırsınız",
-      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız",
-      "minSafeWarning" : "Yetersiz fon miktarı",
-      "flow" : {
-        "title" : "Yetki Devredin",
-        "steps" : {
-          "starter" : {
-            "description" : "ATOM varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetkisi iptal edilen varlıklar 21 gün sonra yeniden kullanılabilir"],
-            "warning" : {
-              "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
-            }
-          },
-          "amount" : {
-            "title" : "Tutar"
-          },
-          "validator" : {
-            "title" : "Doğrulayıcılar"
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
-              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    },
-    "claimRewards" : {
-      "flow" : {
-        "title" : "Ödüllerinizi alın",
-        "steps" : {
-          "claimRewards" : {
-            "title" : "Ödüller",
-            "compound" : "Birleştir",
-            "claim" : "Hesaba al",
-            "compoundOrClaim" : "Birleştir veya hesaba al",
-            "compoundDescription" : "Ödülleriniz, yetki devrinde kullanılan tutara eklenecek",
-            "claimDescription" : "Ödüller mevcut bakiyeye eklenecek",
-            "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
-            "claimInfo" : "Aşağıdaki doğrulayıcıdan <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
-            "selectLabel" : "Bir yetkili seçin"
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "label" : "Onaylayın",
-            "success" : {
-              "title" : "Ödüller başarıyla hesaba alındı",
-              "titleCompound" : "Ödüller başarıyla birleştirildi",
-              "text" : "Ödülleriniz mevcut bakiyenize eklendi.",
-              "textCompound" : "<0>{{amount}}</0> tutarındaki ödülünüz otomatik olarak <0>{{validator}}</0> hesabına devredildi",
-              "cta" : "Ayrıntıları göster"
-            },
-            "pending" : {
-              "title" : "İşlem yayınlanıyor..."
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    },
-    "redelegation" : {
-      "flow" : {
-        "title" : "Varlıkların Yetkisini Yeniden Devredin",
-        "steps" : {
-          "starter" : {
-            "title" : "Yetkinin Yeniden Devri",
-            "description" : "Yetkinin Yeniden Devrini kullanarak yetkiyi kolayca bir doğrulayıcıdan diğerine devredebilirsiniz. Fikrinizi değiştirdiğiniz takdirde beklemeniz gerekir çünkü yetkiyi yeniden devretmek 21 günlük bir zaman kilidini etkinleştirir.",
-            "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz. Aynı anda en fazla <0>7 tane yetki devri beklemede</0> olabilir.",
-            "howDelegationWorks" : "Yetki devri nasıl çalışır?"
-          },
-          "validators" : {
-            "title" : "Doğrulayıcılar",
-            "currentDelegation" : "Mevcut yetkili",
-            "newDelegation" : "Yeni yetkili",
-            "chooseValidator" : "Doğrulayıcı seçin",
-            "warning" : "Fikrinizin tekrar değiştiği takdirde, yeni doğrulayıcının yetkisini başkasına devretmek için <0>21 gün</0> beklemeniz gerekir",
-            "amountLabel" : "Yetkisi devredilecek tutar"
-          },
-          "device" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
-              "text" : "İşlem blok zinciri tarafından onaylandığında yetkinizin yeniden devri gerçekleşecek",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+            "help": "Oylama nasıl çalışır?",
+            "termsAndPrivacy": "Oylama hakkınızı devretmeniz, süper temsilcinizden ödül kazanmanızı garantilemez."
           }
         }
       }
@@ -2248,159 +2053,257 @@
             "fields" : {
               "validator" : "Doğrulayıcı",
               "amount" : "Yetkisi iptal edilecek tutar"
-            }
-          },
-          "device" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
-              "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    }
-  },
-  "algorand" : {
-    "operationHasRewards" : "Kazanılan ödüller",
-    "operationEarnedRewards" : "<0>{{amount}}</0> ödül kazandınız.",
-    "operationDetailsAmountBreakDown" : "{{initialAmount}} (<0>+{{reward}}</0> kazanılan ödül)",
-    "optIn" : {
-      "flow" : {
-        "title" : "ASA Ekle (Varlık)",
-        "steps" : {
-          "assets" : {
-            "title" : "ASA (Varlık)",
-            "info" : "Bir varlık eklemek için minimum ücretle bir işlem gönderilmesi gerekir. Bu, işlem geçmişinizde görünür",
-            "selectLabel" : "Bir ASA (Varlık) seçin",
-            "disabledTooltip" : "Algorand hesabınızda bu ASA (Varlık) zaten var"
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "{{token}} varlığı başarıyla eklendi",
-              "text" : "Artık Algorand hesabınıza <0>{{token}}</0> varlıklarını alıp gönderebilirsiniz.",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
       }
     },
-    "claimRewards" : {
-      "header" : "Ödüller",
-      "tooltip" : "Algorand ödülleri düzenli olarak dağıtılır ve bir işlem yaptığınızda otomatik olarak alınır.",
-      "cta" : "Ödüllerinizi alın",
-      "rewardsDisabledTooltip" : "Hiç ödülünüz yok. Algorand ödülleri, bir işlem yaptığınızda otomatik olarak alınır. Ödül kazanmaya başlamak için ALGO alın.",
-      "flow" : {
-        "title" : "Ödüllerinizi alın",
-        "steps" : {
-          "starter" : {
-            "description" : "Algorand ödüllerini almak için sadece varlıklarınızda Algorand bulundurmanız yeterlidir.",
-            "bullet" : {
-              "delegate" : "Ödül almak için minimum 1 ALGO bakiyesi gereklidir.",
-              "access" : "Ödülleri artırmak için hesabın bakiyesini artırın.",
-              "ledger" : "Ödülleri almak için hesapta bir gelen veya giden işlem yapın."
-            },
-            "learnMore" : "Algorand ödülleri nasıl çalışır?",
-            "button" : {
-              "cta" : "Algo Al"
-            }
-          },
-          "info" : {
-            "title" : "Ödüller",
-            "description" : "Tebrikler! {{amount}} kazandınız. Ödüllerinizi almak için Devam'a tıklayın",
-            "info" : "Hesabınızda boş bir işlem oluşturmanız istenecektir. Bu işlem, mevcut ödüllerinizi, en düşük işlem ücreti maliyetleriyle bakiyenize ekleyecektir."
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Ödüller başarıyla alındı!",
-              "text" : "Ödülleriniz mevcut bakiyenize eklendi.",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
-          }
-        }
-      }
-    }
-  },
-  "osmosis" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Figment desteğiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "Figment desteğiyle",
-        "title" : "OSMO token artık Ledger Live'da",
-        "description" : "Artık OSMO token'larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
-        "description2" : "OSMO token, Osmosis zincirinin native token'ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
-        "website" : "Figment desteğiyle"
-      }
-    },
-    "memo" : "Memo",
-    "memoPlaceholder" : "Opsiyonel",
-    "memoWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin",
-    "delegation" : {
-      "emptyState" : {
-        "description" : "Varlıklarınızın yetkisini devrederek OSMO ödülleri kazanabilirsiniz.",
-        "info" : "Yetki Devri nasıl çalışır?",
-        "delegation" : "Ödüller kazanın"
+    "manage": {
+      "title": "Varlıkları yönet",
+      "freeze": {
+        "title": "Dondur",
+        "description": "Bant Genişliği veya Enerji kazanmak için TRX dondurun. Süper Temsilciler için de oy kullanabileceksiniz."
       },
-      "commission" : "Komisyon",
-      "totalStake" : "Toplam Stake",
-      "claimRewards" : "Ödüllerinizi alın",
-      "header" : "Yetki Devirleri",
-      "noRewards" : "Ödül yok",
-      "delegate" : "Ekle",
-      "undelegate" : "Yetki İptali",
-      "redelegate" : "Yetki devret",
-      "redelegateDisabledTooltip" : "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
-      "redelegateMaxDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcıya yeniden yetki devredebilirsiniz.",
-      "undelegateDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
-      "reward" : "Ödüllerinizi alın",
-      "currentDelegation" : "Yetkisi devredilen tutar: <0>{{amount}}</0>",
-      "estYield" : "tahmini getiri",
-      "activeTooltip" : "Yetkisi devredilen tutarlar üzerinden ödül kazanırsınız",
-      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız",
-      "minSafeWarning" : "Yetersiz fon miktarı",
-      "flow" : {
-        "title" : "Yetki Devredin",
-        "steps" : {
-          "starter" : {
-            "description" : "OSMO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetkisi iptal edilen varlıklar 14 gün sonra yeniden kullanılabilir"],
-            "warning" : {
-              "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
+      "unfreeze": {
+        "title": "Çöz",
+        "description": "TRX çözerek yeniden bakiyenize ekleyebilirsiniz. Ancak başka ödül kazanamazsınız."
+      },
+      "vote": {
+        "title": "Oyla",
+        "description": "Ödül kazanmak için Süper Temsilcilere oy verin.",
+        "steps": {
+          "vote": {
+            "title": "Oylama yap",
+            "description": "Ödül kazanmaya başlamak için bir veya daha fazla Süper Temsilciye oy verin.",
+            "footer": {
+              "doNotShowAgain": "Bir daha gösterme",
+              "next": "Oylama Yap"
+            },
+            "info": {
+              "message": "ST mi Adaylar mı?",
+              "superRepresentative": {
+                "title": "Süper Temsilciler (ST)",
+                "description": "Süper Temsilciler, blok oluşturma ve kayıt tutma gibi temel işlevleri sağlayarak TRON topluluğunun yönetiminde önemli bir rol oynar."
+              },
+              "candidates": {
+                "title": "Adaylar",
+                "description": "Token sahibi topluluğun tamamı tarafından yapılan oylama sonucunda 127 kişi seçilir. Oylar her 6 saatte bir güncellenir."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "bitcoin": {
+    "inputSelected": "SEÇİLDİ",
+    "toSpend": "Harcanacak coin'ler",
+    "toReturn": "Dönecek para üstü",
+    "modalTitle": "Coin yönetimi",
+    "coincontrol": "Coin yönetimi",
+    "advanced": "Gelişmiş seçenekler",
+    "ctaDisabled": "Bu hesapta UTXO yok",
+    "whatIs": "Coin seçimi nedir?",
+    "rbf": "İşlemin değiştirilmesine izin verin (Replace-By-Fee).",
+    "strategy": "Coin seçim stratejisi",
+    "selected": "Strateji için seçilen coin'ler",
+    "amount": "Gönderilecek tutar:",
+    "replaceable": "değiştirilebilir",
+    "cannotSelect": {
+      "unconfirmed": "Onaylanmamış, değiştirilebilir işlemlerdeki coin'lerden seçemezsiniz.",
+      "pending": "Bekleyen işlemlerdeki coin'lerden seçemezsiniz. (harcanmamış UTXO hariç)",
+      "last": "En az birinin seçili olması gerekiyor"
+    },
+    "pending": "beklemede",
+    "pickingStrategy": "UTXO toplama stratejisi",
+    "pickingStrategyLabels": {
+      "DEEP_OUTPUTS_FIRST": "Önce en eski coin'ler (FIFO)",
+      "OPTIMIZE_SIZE": "Ücretleri en aza indirin (boyutu optimize edin)",
+      "MERGE_OUTPUTS": "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)"
+    }
+  },
+  "cosmos": {
+    "delegation": {
+      "emptyState": {
+        "description": "Varlıklarınızın yetkisini devrederek ATOM ödülleri kazanabilirsiniz.",
+        "info": "Yetki Devri nasıl çalışır?",
+        "delegation": "Ödüller kazanın"
+      },
+      "commission": "Komisyon",
+      "totalStake": "Toplam Stake",
+      "claimRewards": "Ödüllerinizi alın",
+      "header": "Yetki Devirleri",
+      "noRewards": "Ödül yok",
+      "delegate": "Ekle",
+      "undelegate": "Yetki İptali",
+      "redelegate": "Yetki Devri",
+      "redelegateDisabledTooltip": "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
+      "redelegateMaxDisabledTooltip": "Bir seferde en fazla <0>7</0> doğrulayıcıya yetki devredebilirsiniz.",
+      "undelegateDisabledTooltip": "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
+      "reward": "Ödüllerinizi alın",
+      "currentDelegation": "Yetkisi devredilen tutar: <0>{{amount}}</0>",
+      "estYield": "tahmini getiri",
+      "activeTooltip": "Yetkisi devredilen tutarlar üzerinden ödül kazanırsınız",
+      "inactiveTooltip": "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız",
+      "minSafeWarning": "Yetersiz fon miktarı",
+      "flow": {
+        "title": "Yetki Devredin",
+        "steps": {
+          "starter": {
+            "description": "ATOM varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "bullet": [
+              "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+              "Ledger cihazınızı kullanarak yetki devredin.",
+              "Yetkisi iptal edilen varlıklar 21 gün sonra yeniden kullanılabilir"
+            ],
+            "warning": {
+              "description": "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
             }
           },
-          "amount" : {
-            "title" : "Tutar"
+          "amount": {
+            "title": "Tutar"
           },
-          "validator" : {
-            "title" : "Doğrulayıcılar"
+          "validator": {
+            "title": "Doğrulayıcılar"
           },
-          "connectDevice" : {
-            "title" : "Cihaz"
+          "connectDevice": {
+            "title": "Cihaz"
           },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
-              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
-              "cta" : "Ayrıntıları göster"
+          "confirmation": {
+            "title": "Onaylayın",
+            "success": {
+              "title": "Varlıklarınızla başarıyla yetki devrettiniz.",
+              "text": "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta": "Ayrıntıları göster"
             },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+            "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "flow": {
+        "title": "Ödüllerinizi alın",
+        "steps": {
+          "claimRewards": {
+            "title": "Ödüller",
+            "compound": "Birleştir",
+            "claim": "Hesaba al",
+            "compoundOrClaim": "Birleştir veya hesaba al",
+            "compoundDescription": "Ödülleriniz, yetki devrinde kullanılan tutara eklenecek",
+            "claimDescription": "Ödüller mevcut bakiyeye eklenecek",
+            "compoundInfo": "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
+            "claimInfo": "Aşağıdaki doğrulayıcıdan <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
+            "selectLabel": "Bir yetkili seçin"
+          },
+          "connectDevice": {
+            "title": "Cihaz"
+          },
+          "confirmation": {
+            "title": "Onaylayın",
+            "label": "Onaylayın",
+            "success": {
+              "title": "Ödüller başarıyla hesaba alındı",
+              "titleCompound": "Ödüller başarıyla birleştirildi",
+              "text": "Ödülleriniz mevcut bakiyenize eklendi.",
+              "textCompound": "<0>{{amount}}</0> tutarındaki ödülünüz otomatik olarak <0>{{validator}}</0> hesabına devredildi",
+              "cta": "Ayrıntıları göster"
+            },
+            "pending": {
+              "title": "İşlem yayınlanıyor..."
+            },
+            "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "redelegation": {
+      "flow": {
+        "title": "Varlıkların Yetkisini Yeniden Devredin",
+        "steps": {
+          "starter": {
+            "title": "Yetkinin Yeniden Devri",
+            "description": "Yetkinin Yeniden Devrini kullanarak yetkiyi kolayca bir doğrulayıcıdan diğerine devredebilirsiniz. Fikrinizi değiştirdiğiniz takdirde beklemeniz gerekir çünkü yetkiyi yeniden devretmek 21 günlük bir zaman kilidini etkinleştirir.",
+            "warning": "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz. Aynı anda en fazla <0>7 tane yetki devri beklemede</0> olabilir.",
+            "howDelegationWorks": "Yetki devri nasıl çalışır?"
+          },
+          "validators": {
+            "title": "Doğrulayıcılar",
+            "currentDelegation": "Mevcut yetkili",
+            "newDelegation": "Yeni yetkili",
+            "chooseValidator": "Doğrulayıcı seçin",
+            "warning": "Fikrinizin tekrar değiştiği takdirde, yeni doğrulayıcının yetkisini başkasına devretmek için <0>21 gün</0> beklemeniz gerekir",
+            "amountLabel": "Yetkisi devredilecek tutar"
+          },
+          "device": {
+            "title": "Cihaz"
+          },
+          "confirmation": {
+            "title": "Onaylayın",
+            "success": {
+              "title": "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
+              "text": "İşlem blok zinciri tarafından onaylandığında yetkinizin yeniden devri gerçekleşecek",
+              "cta": "Ayrıntıları göster"
+            },
+            "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "header": "Yetki İptalleri",
+      "headerTooltip": "21 günlük zaman kilidinden sonra kullanılabilir",
+      "inactiveTooltip": "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
+      "flow": {
+        "title": "Varlıkların Yetkisini İptal Edin",
+        "steps": {
+          "amount": {
+            "title": "Tutar",
+            "subtitle": "Yetki iptal etme işleminin sonuçlanması <0>21 gün</0> sürer.",
+            "warning": "Ödüller hemen hesaba alınır. Yetkisi iptal edilen tutar <0>21 günlük zaman kilidinden</0> sonra kullanılabilir bakiyeye geri döner.",
+            "fields": {
+              "validator": "Doğrulayıcı",
+              "amount": "Yetkisi iptal edilecek tutar"
+            }
+          },
+          "device": {
+            "title": "Cihaz"
+          },
+          "confirmation": {
+            "title": "Onaylayın",
+            "success": {
+              "title": "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
+              "description": "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi",
+              "cta": "Ayrıntıları göster"
+            },
+            "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
+  "algorand": {
+    "operationHasRewards": "Kazanılan ödüller",
+    "operationEarnedRewards": "<0>{{amount}}</0> ödül kazandınız.",
+    "operationDetailsAmountBreakDown": "{{initialAmount}} (<0>+{{reward}}</0> kazanılan ödül)",
+    "optIn": {
+      "flow": {
+        "title": "ASA Ekle (Varlık)",
+        "steps": {
+          "assets": {
+            "title": "ASA (Varlık)",
+            "info": "Bir varlık eklemek için minimum ücretle bir işlem gönderilmesi gerekir. Bu, işlem geçmişinizde görünür",
+            "selectLabel": "Bir ASA (Varlık) seçin",
+            "disabledTooltip": "Algorand hesabınızda bu ASA (Varlık) zaten var"
+          },
+          "connectDevice": {
+            "title": "Cihaz"
+          },
+          "confirmation": {
+            "title": "Onaylayın",
+            "success": {
+              "title": "{{token}} varlığı başarıyla eklendi",
+              "text": "Artık Algorand hesabınıza <0>{{token}}</0> varlıklarını alıp gönderebilirsiniz.",
+              "cta": "Ayrıntıları göster"
+            },
+            "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
         }
       }
@@ -2490,6 +2393,180 @@
               "amount" : "Yetkisi iptal edilecek tutar"
             }
           },
+  "osmosis": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Figment desteğiyle",
+        "moreInfo": "Daha fazla bilgi",
+        "drawerTitle": "Figment desteğiyle",
+        "title": "OSMO token artık Ledger Live'da",
+        "description": "Artık OSMO token'larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
+        "description2": "OSMO token, Osmosis zincirinin native token'ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
+        "website": "Figment desteğiyle"
+      }
+    },
+    "memo": "Memo",
+    "memoPlaceholder": "Opsiyonel",
+    "memoWarningText": "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin",
+    "delegation": {
+      "emptyState": {
+        "description": "Varlıklarınızın yetkisini devrederek OSMO ödülleri kazanabilirsiniz.",
+        "info": "Yetki Devri nasıl çalışır?",
+        "delegation": "Ödüller kazanın"
+      },
+      "commission": "Komisyon",
+      "totalStake": "Toplam Stake",
+      "claimRewards": "Ödüllerinizi alın",
+      "header": "Yetki Devirleri",
+      "noRewards": "Ödül yok",
+      "delegate": "Ekle",
+      "undelegate": "Yetki İptali",
+      "redelegate": "Yetki devret",
+      "redelegateDisabledTooltip": "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
+      "redelegateMaxDisabledTooltip": "Bir seferde en fazla <0>7</0> doğrulayıcıya yeniden yetki devredebilirsiniz.",
+      "undelegateDisabledTooltip": "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
+      "reward": "Ödüllerinizi alın",
+      "currentDelegation": "Yetkisi devredilen tutar: <0>{{amount}}</0>",
+      "estYield": "tahmini getiri",
+      "activeTooltip": "Yetkisi devredilen tutarlar üzerinden ödül kazanırsınız",
+      "inactiveTooltip": "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız",
+      "minSafeWarning": "Yetersiz fon miktarı",
+      "flow": {
+        "title": "Yetki Devredin",
+        "steps": {
+          "starter": {
+            "description": "OSMO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
+            "bullet": [
+              "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+              "Ledger cihazınızı kullanarak yetki devredin.",
+              "Yetkisi iptal edilen varlıklar 14 gün sonra yeniden kullanılabilir"
+            ],
+            "warning": {
+              "description": "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
+            }
+          },
+          "amount": {
+            "title": "Tutar"
+          },
+          "validator": {
+            "title": "Doğrulayıcılar"
+          },
+          "connectDevice": {
+            "title": "Cihaz"
+          },
+          "confirmation": {
+            "title": "Onaylayın",
+            "success": {
+              "title": "Varlıklarınızla başarıyla yetki devrettiniz.",
+              "text": "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta": "Ayrıntıları göster"
+            },
+            "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "flow": {
+        "title": "Ödüllerinizi alın",
+        "steps": {
+          "claimRewards": {
+            "title": "Ödüller",
+            "compound": "Birleştir",
+            "claim": "Hesaba al",
+            "compoundOrClaim": "Birleştir veya hesaba al",
+            "compoundDescription": "Ödülleriniz, yetki devrinde kullanılan tutara eklenecek",
+            "claimDescription": "Ödüller mevcut bakiyeye eklenecek",
+            "compoundInfo": "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
+            "claimInfo": "Aşağıdaki doğrulayıcıdan <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
+            "selectLabel": "Bir yetkili seçin"
+          },
+          "connectDevice": {
+            "title": "Cihaz"
+          },
+          "confirmation": {
+            "title": "Onaylayın",
+            "label": "Onaylayın",
+            "success": {
+              "title": "Ödüller başarıyla hesaba alındı",
+              "titleCompound": "Ödüller başarıyla birleştirildi",
+              "text": "Ödülleriniz mevcut bakiyenize eklendi.",
+              "textCompound": "<0>{{amount}}</0> tutarındaki ödülünüz otomatik olarak <0>{{validator}}</0> hesabına devredildi",
+              "cta": "Ayrıntıları göster"
+            },
+            "pending": {
+              "title": "İşlem yayınlanıyor..."
+            },
+            "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "redelegation": {
+      "flow": {
+        "title": "Varlıkların Yetkisini Yeniden Devredin",
+        "steps": {
+          "starter": {
+            "title": "Yetkinin Yeniden Devri",
+            "description": "Yetkinin Yeniden Devrini kullanarak yetkiyi kolayca bir doğrulayıcıdan diğerine devredebilirsiniz. Fikrinizi değiştirdiğiniz takdirde beklemeniz gerekir çünkü yetkiyi yeniden devretmek 14 günlük bir zaman kilidini etkinleştirir.",
+            "warning": "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz. Aynı anda en fazla <0>7 tane yetki devri beklemede</0> olabilir.",
+            "howDelegationWorks": "Yetki devri nasıl çalışır?"
+          },
+          "validators": {
+            "title": "Doğrulayıcılar",
+            "currentDelegation": "Mevcut yetkili",
+            "newDelegation": "Yeni yetkili",
+            "chooseValidator": "Doğrulayıcı seçin",
+            "warning": "Fikrinizin tekrar değiştiği takdirde, yeni doğrulayıcının yetkisini başkasına devretmek için <0>14 gün</0> beklemeniz gerekir",
+            "amountLabel": "Yetkisi devredilecek tutar"
+          },
+          "device": {
+            "title": "Cihaz"
+          },
+          "confirmation": {
+            "title": "Onaylayın",
+            "success": {
+              "title": "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
+              "text": "İşlem blok zinciri tarafından onaylandığında yetkinizin yeniden devri gerçekleşecek",
+              "cta": "Ayrıntıları göster"
+            },
+            "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "header": "Yetki İptalleri",
+      "headerTooltip": "14 günlük zaman kilidinden sonra kullanılabilir",
+      "inactiveTooltip": "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
+      "flow": {
+        "title": "Varlıkların Yetkisini İptal Edin",
+        "steps": {
+          "amount": {
+            "title": "Tutar",
+            "subtitle": "Yetki iptal etme işleminin sonuçlanması <0>14 gün</0> sürer.",
+            "warning": "Ödüller hemen hesaba alınır. Yetkisi iptal edilen tutar <0>14 günlük zaman kilidinden sonra kullanılabilir bakiyeye geri döner.",
+            "fields": {
+              "validator": "Doğrulayıcı",
+              "amount": "Yetkisi iptal edilecek tutar"
+            }
+          },
+          "device": {
+            "title": "Cihaz"
+          },
+          "confirmation": {
+            "title": "Onaylayın",
+            "success": {
+              "title": "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
+              "description": "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi",
+              "cta": "Ayrıntıları göster"
+            },
+            "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
           "device" : {
             "title" : "Cihaz"
           },
@@ -3872,45 +3949,44 @@
     "messageHash" : "Mesaj Hash'i",
     "message" : "Mesaj"
   },
-  "TransactionConfirm" : {
-    "title" : "Sonlandırmak için lütfen cihazınızdaki işlemi onaylayın",
-    "warning" : "Cihazınızda görüntülenen adresin, {{recipientWording}} tarafından size verilen adresle tam olarak eşleştiğini her zaman doğrulayın",
-    "secureContract" : "Göndermeden önce cihazınızdaki fon bilgilerini doğrulayın. Sözleşme adresi güvenli bir şekilde sağlanır, böylece onu doğrulamak zorunda kalmazsınız.",
-    "verifyData" : "Cihazınızdaki işlem ayrıntılarını her zaman doğrulayın.",
-    "warningWording" : {
+  "TransactionConfirm": {
+    "title": "Sonlandırmak için lütfen cihazınızdaki işlemi onaylayın",
+    "warning": "Cihazınızda görüntülenen adresin, {{recipientWording}} tarafından size verilen adresle tam olarak eşleştiğini her zaman doğrulayın",
+    "secureContract": "Göndermeden önce cihazınızdaki fon bilgilerini doğrulayın. Sözleşme adresi güvenli bir şekilde sağlanır, böylece onu doğrulamak zorunda kalmazsınız.",
+    "verifyData": "Cihazınızdaki işlem ayrıntılarını her zaman doğrulayın.",
+    "warningWording": {},
+    "titleWording": {
+      "send": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "claimReward": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "freeze": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "unfreeze": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "vote": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "delegate": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "undelegate": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "redelegate": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "claimRewardCompound": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "nominate": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "chill": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "bond": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "unbond": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "rebond": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "withdrawUnbonded": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
+      "setController": "İşlemi sonlandırmak için lütfen cihazınızda onaylayın"
     },
-    "titleWording" : {
-      "send" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "claimReward" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "freeze" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "unfreeze" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "vote" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "delegate" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "undelegate" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "redelegate" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "claimRewardCompound" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "nominate" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "chill" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "bond" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "unbond" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "rebond" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "withdrawUnbonded" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
-      "setController" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın"
-    },
-    "recipientWording" : {
-      "send" : "alıcı",
-      "delegate" : "doğrulayıcı",
-      "redelegate" : "doğrulayıcı",
-      "undelegate" : "doğrulayıcı",
-      "claimReward" : "ödüllerin alıcısı",
-      "claimRewardCompound" : "ödülleri alacak olan doğrulayıcı",
-      "optIn" : "alıcı",
-      "nominate" : "doğrulayıcı",
-      "erc721" : {
-        "transfer" : "alıcı"
+    "recipientWording": {
+      "send": "alıcı",
+      "delegate": "doğrulayıcı",
+      "redelegate": "doğrulayıcı",
+      "undelegate": "doğrulayıcı",
+      "claimReward": "ödüllerin alıcısı",
+      "claimRewardCompound": "ödülleri alacak olan doğrulayıcı",
+      "optIn": "alıcı",
+      "nominate": "doğrulayıcı",
+      "erc721": {
+        "transfer": "alıcı"
       },
-      "erc1155" : {
-        "transfer" : "alıcı"
+      "erc1155": {
+        "transfer": "alıcı"
       }
     },
     "votes" : "Oylar ({{count}})"
@@ -4628,10 +4704,10 @@
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     }
   },
-  "cryptoOrg" : {
-    "memo" : "Memo",
-    "memoPlaceholder" : "Opsiyonel",
-    "memoWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
+  "cryptoOrg": {
+    "memo": "Memo",
+    "memoPlaceholder": "Opsiyonel",
+    "memoWarningText": "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
   },
   "hedera" : {
     "name" : "hedera",

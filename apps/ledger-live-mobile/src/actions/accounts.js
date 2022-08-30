@@ -1,10 +1,9 @@
-// @flow
-
+import { ImportAccountsReduceInput } from "@ledgerhq/live-common/lib/account/index";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import type { Account } from "@ledgerhq/types-live";
 import accountModel from "../logic/accountModel";
 
-export const importStore = (state: *) => ({
+export const importStore = (state: any) => ({
   type: "ACCOUNTS_IMPORT",
   state: {
     active:
@@ -13,44 +12,37 @@ export const importStore = (state: *) => ({
         : [],
   },
 });
-export const reorderAccounts = (comparator: *) => (dispatch: *) =>
+export const reorderAccounts = (comparator: any) => (dispatch: any) =>
   dispatch({
     type: "REORDER_ACCOUNTS",
-    payload: { comparator },
+    payload: {
+      comparator,
+    },
   });
-
-export const importAccounts = ({
-  items,
-  selectedAccounts,
-}: {
-  items: any[],
-  selectedAccounts: string[],
-}) => ({
+export const importAccounts = (input: ImportAccountsReduceInput) => ({
   type: "ACCOUNTS_USER_IMPORT",
-  items,
-  selectedAccounts,
+  input,
 });
-
-export const replaceAccounts = (payload: {|
+export const replaceAccounts = (payload: {
   scannedAccounts: Account[],
   selectedIds: string[],
-  renamings: { [id: string]: string },
-|}) => ({
+  renamings: Record<string, string>,
+}) => ({
   type: "ACCOUNTS_ADD",
   ...payload,
 });
-
 export const setAccounts = (accounts: Account[]) => ({
   type: "ACCOUNTS_IMPORT",
   state: {
     active: accounts,
   },
 });
-
 export type UpdateAccountWithUpdater = (
+  // eslint-disable-next-line no-unused-vars
   accountId: string,
-  (Account) => Account,
-) => *;
+  // eslint-disable-next-line no-unused-vars
+  arg1: (arg0: Account) => Account,
+) => never;
 
 export const updateAccountWithUpdater: UpdateAccountWithUpdater = (
   accountId,
@@ -60,15 +52,18 @@ export const updateAccountWithUpdater: UpdateAccountWithUpdater = (
   accountId,
   updater,
 });
-
-export type UpdateAccount = ($Shape<Account>) => *;
+export type UpdateAccount = (_: $Shape<Account>) => any;
 export const updateAccount: UpdateAccount = payload =>
   updateAccountWithUpdater(payload.id, (account: Account) => ({
     ...account,
     ...payload,
   }));
-
-export type DeleteAccount = Account => { type: string, payload: Account };
+export type DeleteAccount = (
+  _: Account,
+) => {
+  type: string,
+  payload: Account,
+};
 export const deleteAccount: DeleteAccount = payload => ({
   type: "DELETE_ACCOUNT",
   payload,

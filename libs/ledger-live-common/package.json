@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "26.0.0",
+  "version": "27.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -65,8 +65,8 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "bash ./scripts/build-ts.sh",
-    "watch": "bash ./scripts/watch-ts.sh",
+    "build": "zx ./scripts/build-ts.mjs",
+    "watch": "zx ./scripts/watch-ts.mjs",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s' 'cli/src/**/*.?s'",
     "lint": "eslint src",

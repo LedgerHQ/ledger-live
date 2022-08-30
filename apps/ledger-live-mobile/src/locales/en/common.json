@@ -323,6 +323,14 @@
     "InvalidRecipient": {
       "title": "Invalid recipient"
     },
+    "LanguageInstallRefusedOnDevice": {
+      "title": "Language installation refused on device",
+      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "LanguageNotFound": {
+      "title": "Language not found",
+      "description": "The language you are trying to install was not found. Please try installing another language."
+    },
     "LatestMCUInstalledError": {
       "title": "Sorry, there's nothing to update",
       "description": "Please contact Ledger Support if you cannot use your device."
@@ -1750,7 +1758,8 @@
       "validatorsCount": "Validators ({{number}})",
       "storageLimit": "Storage Limit",
       "gasLimit": "Gas Limit",
-      "id": "Id"
+      "id": "Id",
+      "autoClaimedRewards": "Auto Claimed Rewards"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",
@@ -2180,6 +2189,15 @@
       "customManifest": {
         "title": "Load Custom Platform Manifest"
       }
+    },
+    "debug": {
+      "featureFlagsTitle": "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsOverride": "Override",
+      "featureFlagsEdit": "Edit",
+      "featureFlagsRestore": "Restore",
+      "featureFlagsDisplayValue": "Display value",
+      "featureFlagsHideValue": "Hide value"
     }
   },
   "notifications": {
@@ -2280,7 +2298,7 @@
         "cancel": {
           "title": "You just denied this address",
           "subtitle": "If this was done by mistake, you can retry by clicking the button below.",
-          "info": "If you are sure the addresses don’t match, your phone may be comprimised. We recommend you <0>contact us as soon as possible.</0>"
+          "info": "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
         }
       },
       "receiveConfirmation": {
@@ -2295,7 +2313,7 @@
         "subtitle1": "Verifying your address provides you security. The address displayed on your ledger device cannot be compromised.",
         "subtitle2": "By verifying the address, you will be able to confirm that the address shown on your device is the same as the address shown in Ledger Live.",
         "verifyCta": "Verify my address",
-        "dontVerifyCta": "Reveal my address whitout verifying"
+        "dontVerifyCta": "Reveal my address without verifying"
       },
       "securityDontVerify": {
         "title": "Are you sure?",
@@ -2416,7 +2434,7 @@
       },
       "payoutModal": {
         "title": "Payout fees",
-        "description": "Payout fees are not shown on the device and substracted from the amount.",
+        "description": "Payout fees are not shown on the device and subtracted from the amount.",
         "cta": "Close"
       },
       "pendingOperation": {
@@ -3440,6 +3458,19 @@
       "de": "German"
     }
   },
+  "deviceLocalization": {
+    "language": "Language",
+    "deviceLanguage": "Device Language",
+    "changeLanguage": "Change language",
+    "allowLanguageInstallation": "Allow language installation",
+    "languageInstalled": "Device language changed to {{language}}",
+    "installingLanguage": "Installing language",
+    "languages": {
+      "english": "English",
+      "french": "French",
+      "spanish": "Spanish"
+    }
+  },
   "FirmwareUpdateCheckId": {
     "title": "Identifier",
     "description": "Please press both buttons together on your {{fullDeviceName}} if it displays the same identifier:"
@@ -3546,6 +3577,31 @@
       "available": {
         "title": "CELO available",
         "description": "This amount is disposable."
+      }
+    }
+  },
+  "osmosis": {
+    "info": {
+      "available": {
+        "title": "OSMO available"
+      },
+      "delegated": {
+        "description": "Delegated assets are used for Osmosis voting. This is your total number of votes."
+      },
+      "undelegating": {
+        "description": "Undelegated assets are in a timelock of 14 days, before being available."
+      }
+    },
+    "delegation": {
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Delegate your OSMO to earn rewards securely, keeping control of your assets.",
+            "steps": {
+              "1": "You will have to wait 14 days for the undelegation to complete."
+            }
+          }
+        }
       }
     }
   },
@@ -4289,6 +4345,11 @@
         "redelegate": "You will have to wait 21 days for undelegated assets to return to the available balance.",
         "undelegate": "You will have to wait 21 days for undelegated assets to return to the available balance."
       },
+      "osmosis": {
+        "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
+        "redelegate": "You will have to wait 14 days for undelegated assets to return to the available balance.",
+        "undelegate": "You will have to wait 14 days for undelegated assets to return to the available balance."
+      },
       "lending": "Verify the operation details on your device before sending it."
     },
     "amount": "Amount",
@@ -4298,6 +4359,7 @@
     "redelegationAmount": "Redelegated amount",
     "gas": "Gas",
     "validatorAddress": "Validator address",
+    "validatorName": "Validator name",
     "rewardAmount": "Reward amount",
     "undelegatedAmount": "Undelegated amount",
     "memo": "Memo"
