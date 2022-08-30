@@ -4658,5 +4658,19 @@
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
     }
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Voilà.\nTout est configuré.",
+      "allDoneTitle" : "Parfait.\nVous êtes fin prêt(e) !",
+      "subtitle" : "Vous pouvez maintenant :",
+      "skip" : "Accéder à l’app",
+      "goToWallet" : "Accéder à votre wallet Ledger Live",
+      "done" : "Vous venez de sécuriser votre avenir."
+    },
+    "walletCard" : {
+      "title" : "Premiers pas",
+      "description" : "Cliquez ici pour terminer la configuration de votre {{productName}} avec Ledger Live."
+    }
   }
 }
