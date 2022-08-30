@@ -282,7 +282,7 @@ function PortfolioScreen({ navigation }: Props) {
       closeAddModal,
       showCarousel,
       carouselVisibility,
-      // postOnboardingVisible,
+      postOnboardingVisible,
     ],
   );
 
