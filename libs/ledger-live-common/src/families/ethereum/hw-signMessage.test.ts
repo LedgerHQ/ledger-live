@@ -4,7 +4,7 @@ import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712";
 import testEIP712Message from "@ledgerhq/hw-app-eth/tests/sample-messages/0.json";
 import ethSignMessage, { prepareMessageToSign } from "./hw-signMessage";
 import { setEnv } from "../../env";
-import createFixtureCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
+import { createFixtureCryptoCurrency } from "../../mock/fixtures/cryptoCurrencies";
 
 const hwSignMessage = ethSignMessage.signMessage;
 

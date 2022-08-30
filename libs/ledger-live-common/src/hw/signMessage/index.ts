@@ -106,7 +106,9 @@ const initialState: BaseState = {
 };
 
 export const createAction = (
-  connectAppExec: (connectAppInput: ConnectAppInput) => Observable<ConnectAppEvent>,
+  connectAppExec: (
+    connectAppInput: ConnectAppInput
+  ) => Observable<ConnectAppEvent>,
   signMessage: (input: Input) => Observable<Result> = signMessageExec
 ) => {
   const useHook = (

@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import createFixtureCryptoCurrency from "../../mock/fixtures/cryptoCurrencies";
+import { createFixtureCryptoCurrency } from "../../mock/fixtures/cryptoCurrencies";
 import { TypedMessageData } from "../../families/ethereum/types";
 import { prepareMessageToSign } from "./index";
 import { MessageData } from "./types";
@@ -17,6 +17,9 @@ jest.mock("../../generated/hw-signMessage", () => {
       prepareMessageToSign: function () {
         return signFunction();
       },
+    },
+    bitcoin: {
+      otherMethod: function () {},
     },
   };
 });
@@ -45,46 +48,23 @@ describe("prepareMessageToSign", () => {
 
   it("returns a default implementation if account is linked to a crypto able to sign but with no prepareMessageToSign function", () => {
     // Given
-    // const currency = createFixtureCryptoCurrency("bitcoin");
-    // const path = "44'/60'/0'/0/0";
-    // const derivationMode = "";
-    // const message = "4d6573736167652064652074657374";
-    // const expectedRawMessage = "0x4d6573736167652064652074657374";
+    const currency = createFixtureCryptoCurrency("bitcoin");
+    const account = createAccount(currency);
+    const message = "4d6573736167652064652074657374";
+    const expectedPath = "44'/60'/0'/0/0";
+    const expectedRawMessage = "0x4d6573736167652064652074657374";
 
     // // When
-    // const result = prepareMessageToSign(
-    //   currency,
-    //   path,
-    //   derivationMode,
-    //   message
-    // );
+    const result = prepareMessageToSign(account, message);
 
     // // Then
-    // expect(result).toEqual({
-    //   currency,
-    //   path: "44'/60'/0'/0/0",
-    //   derivationMode: "",
-    //   message: "Message de test",
-    //   rawMessage: expectedRawMessage,
-    // });
-
-    // Given
-    const crypto = createFixtureCryptoCurrency("mycoin");
-    const account = createAccount(crypto);
-    const message = "whatever";
-
-    // When
-    let result: MessageData | TypedMessageData | undefined;
-    let error: Error | null = null;
-    try {
-      result = prepareMessageToSign(account, message);
-    } catch (err) {
-      error = err as Error;
-    }
-
-    // Then
-    expect(result).toBeUndefined();
-    expect(error).toEqual(Error("Crypto does not support signMessage"));
+    expect(result).toEqual({
+      currency,
+      path: expectedPath,
+      derivationMode: account.derivationMode,
+      message: "Message de test",
+      rawMessage: expectedRawMessage,
+    });
   });
 
   it("returns an error if account is not linked to a crypto able to sign a message", () => {

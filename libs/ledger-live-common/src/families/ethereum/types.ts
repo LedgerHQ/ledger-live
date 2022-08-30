@@ -1,9 +1,8 @@
 import type { BigNumber } from "bignumber.js";
 import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/EIP712.types";
-import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { TransactionMode, ModeModule } from "./modules";
 import type { Range, RangeRaw } from "../../range";
-import type { DerivationMode } from "../../derivation";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
