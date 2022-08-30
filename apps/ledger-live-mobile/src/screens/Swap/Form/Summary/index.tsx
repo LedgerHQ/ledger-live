@@ -16,6 +16,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
+import { useCalculate } from "@ledgerhq/live-common/lib/countervalues/react";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap/index";
 import { StatusTag } from "./StatusTag";
@@ -25,6 +26,7 @@ import { NavigatorName, ScreenName } from "../../../../const";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
 import { rateExpirationSelector, rateSelector } from "../../../../actions/swap";
 import { CountdownTimer } from "./CountdownTimer";
+import { counterValueCurrencySelector } from "../../../../reducers/settings";
 
 interface Props {
   provider?: string;
@@ -42,6 +44,7 @@ export function Summary({
 
   const exchangeRate = useSelector(rateSelector);
   const ratesExpiration = useSelector(rateExpirationSelector);
+  const rawCounterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const name = useMemo(() => provider && getProviderName(provider), [provider]);
 
@@ -51,13 +54,6 @@ export function Summary({
   );
 
   const { from, to } = swap;
-
-  const fromUnit = useMemo(
-    () =>
-      from?.account &&
-      getAccountUnit(getMainAccount(from.account, from.parentAccount)),
-    [from],
-  );
 
   const targetAccountName = useMemo(
     () => to.account && getAccountName(to.account),
@@ -107,9 +103,39 @@ export function Summary({
     }
   }, [navigation, to]);
 
+  const counterValueCurrency = to.currency || rawCounterValueCurrency;
+  const effectiveUnit = from.currency.units[0];
+  const valueNum = 10 ** effectiveUnit.magnitude;
+  const rawCounterValue = useCalculate({
+    from: from.currency,
+    to: counterValueCurrency,
+    value: valueNum,
+    disableRounding: true,
+  });
+
+  const counterValue = useMemo(() => {
+    const rate = exchangeRate.magnitudeAwareRate;
+    const valueNum = 10 ** effectiveUnit.magnitude;
+    return rate
+      ? rate.times(valueNum) // NB Allow to override the rate for swap
+      : typeof rawCounterValue === "number"
+      ? new BigNumber(rawCounterValue)
+      : rawCounterValue;
+  }, [
+    effectiveUnit.magnitude,
+    exchangeRate.magnitudeAwareRate,
+    rawCounterValue,
+  ]);
+
+  const fromUnit = from.currency?.units[0];
+  const mainFromAccount =
+    from.account && getMainAccount(from.account, from.parentAccount);
+  const mainAccountUnit = mainFromAccount && getAccountUnit(mainFromAccount);
+
   if (
     !provider ||
     !fromUnit ||
+    !mainAccountUnit ||
     !to.currency ||
     !estimatedFees ||
     !ProviderIcon ||
@@ -158,9 +184,7 @@ export function Summary({
           {" = "}
           <CurrencyUnitValue
             unit={to.currency.units[0]}
-            value={new BigNumber(10)
-              .pow(fromUnit.magnitude)
-              .times(exchangeRate.magnitudeAwareRate)}
+            value={counterValue}
             showCode
           />
         </Text>
@@ -171,7 +195,7 @@ export function Summary({
         onEdit={() => navigation.navigate("SelectFees", { transaction, swap })}
       >
         <Text>
-          <CurrencyUnitValue unit={fromUnit} value={estimatedFees} />
+          <CurrencyUnitValue unit={mainAccountUnit} value={estimatedFees} />
         </Text>
       </Item>
 

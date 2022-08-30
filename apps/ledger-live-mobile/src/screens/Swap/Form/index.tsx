@@ -400,11 +400,15 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
               </Flex>
             ) : (
               <>
-                <Summary
-                  provider={provider}
-                  swapTx={swapTransaction}
-                  kyc={kycStatus}
-                />
+                {exchangeRate &&
+                  swapTransaction.swap.to.currency &&
+                  swapTransaction.swap.from.currency && (
+                    <Summary
+                      provider={provider}
+                      swapTx={swapTransaction}
+                      kyc={kycStatus}
+                    />
+                  )}
 
                 <Requirement required={currentBanner} provider={provider} />
 
