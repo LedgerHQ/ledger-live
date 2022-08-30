@@ -1,6 +1,4 @@
 export * from "./useAllPostOnboardingActionsCompleted";
-export * from "./useClearLastActionCompletedCallback";
-export * from "./useHideWalletEntryPointCallback";
 export * from "./usePostOnboardingContext";
 export * from "./usePostOnboardingDeviceModelId";
 export * from "./usePostOnboardingEntryPointVisibleOnWallet";

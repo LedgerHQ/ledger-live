@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices/lib/index";
 import styled from "styled-components/native";
+import { useDispatch } from "react-redux";
 import {
-  useHideWalletEntryPointCallback,
   usePostOnboardingDeviceModelId,
   usePostOnboardingEntryPointVisibleOnWallet,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import Touchable from "../Touchable";
 import darkPlaceholderImage from "../../images/illustration/Dark/_000_PLACEHOLDER.png";
@@ -31,8 +32,11 @@ const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
   const productName = deviceModelId
     ? getDeviceModel(deviceModelId)?.productName
     : null;
+  const dispatch = useDispatch();
   const openHub = useNavigateToPostOnboardingHubCallback();
-  const dismissCard = useHideWalletEntryPointCallback();
+  const dismissCard = useCallback(() => {
+    dispatch(hidePostOnboardingWalletEntryPoint());
+  }, [dispatch]);
   const visible = usePostOnboardingEntryPointVisibleOnWallet();
   if (!visible) return null;
   return (

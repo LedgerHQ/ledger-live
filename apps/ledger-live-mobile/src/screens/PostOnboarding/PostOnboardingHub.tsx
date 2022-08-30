@@ -23,9 +23,10 @@ import Animated, {
 import { StackScreenProps } from "@react-navigation/stack";
 import {
   useAllPostOnboardingActionsCompleted,
-  useClearLastActionCompletedCallback,
   usePostOnboardingHubState,
 } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import { useDispatch } from "react-redux";
 import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
 import { NavigatorName } from "../../const";
 
@@ -42,13 +43,16 @@ type Props = Record<string, never>;
 const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
   navigation,
 }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const { lastActionCompleted, actionsState } = usePostOnboardingHubState();
   const [popupOpened, setPopupOpened] = useState(true);
   const { actionCompletedHubTitle, actionCompletedPopupLabel } =
     lastActionCompleted ?? {};
 
-  const clearLastActionCompleted = useClearLastActionCompletedCallback();
+  const clearLastActionCompleted = useCallback(() => {
+    dispatch(clearPostOnboardingLastActionCompleted());
+  }, [dispatch]);
 
   useEffect(
     /**
