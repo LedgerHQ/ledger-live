@@ -11,15 +11,7 @@ import {
   types as TyphonTypes,
   address as TyphonAddress,
 } from "@stricahq/typhonjs";
-import {
-  AddressType,
-  AssetGroup,
-  TxInput,
-  TxOutput,
-  TxOutputDestination,
-  TxOutputDestinationType,
-} from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
+
 import {
   BipPath,
   PaymentChain,
@@ -232,117 +224,6 @@ export function getTokenDiff(
   return mergeTokens(
     a.concat(b.map((t) => ({ ...t, amount: t.amount.negated() })))
   ).filter((t) => !t.amount.eq(0));
-}
-
-/**
- * returns the formatted transactionOutput for ledger cardano app
- *
- * @param output
- * @param accountIndex
- * @returns {TxOutput}
- */
-export function prepareLedgerOutput(
-  output: TyphonTypes.Output,
-  accountIndex: number
-): TxOutput {
-  const isByronAddress = output.address instanceof TyphonAddress.ByronAddress;
-  let isDeviceOwnedAddress = false;
-  let destination: TxOutputDestination;
-
-  if (!isByronAddress) {
-    const address = output.address as TyphonTypes.ShelleyAddress;
-    isDeviceOwnedAddress =
-      address.paymentCredential &&
-      address.paymentCredential.type === TyphonTypes.HashType.ADDRESS &&
-      address.paymentCredential.bipPath !== undefined;
-  }
-
-  if (isDeviceOwnedAddress) {
-    const address = output.address as TyphonAddress.BaseAddress;
-
-    const paymentKeyPath = (
-      address.paymentCredential as TyphonTypes.HashCredential
-    ).bipPath as TyphonTypes.BipPath;
-    const stakingKeyPath = (
-      address.stakeCredential as TyphonTypes.HashCredential
-    ).bipPath as TyphonTypes.BipPath;
-
-    const paymentKeyPathString = getBipPathString({
-      account: accountIndex,
-      chain: paymentKeyPath.chain,
-      index: paymentKeyPath.index,
-    });
-    const stakingKeyPathString = getBipPathString({
-      account: accountIndex,
-      chain: stakingKeyPath.chain,
-      index: stakingKeyPath.index,
-    });
-
-    destination = {
-      type: TxOutputDestinationType.DEVICE_OWNED,
-      params: {
-        type: AddressType.BASE_PAYMENT_KEY_STAKE_KEY,
-        params: {
-          spendingPath: str_to_path(paymentKeyPathString),
-          stakingPath: str_to_path(stakingKeyPathString),
-        },
-      },
-    };
-  } else {
-    const address = output.address;
-    destination = {
-      type: TxOutputDestinationType.THIRD_PARTY,
-      params: {
-        addressHex: address.getHex(),
-      },
-    };
-  }
-
-  const tokenBundle: Array<AssetGroup> = Object.values(
-    groupBy(output.tokens, ({ policyId }) => policyId)
-  ).map((tokens) => ({
-    policyIdHex: tokens[0].policyId,
-    tokens: tokens.map((token) => ({
-      assetNameHex: token.assetName,
-      amount: token.amount.toString(),
-    })),
-  }));
-
-  return {
-    amount: output.amount.toString(),
-    destination,
-    tokenBundle,
-  };
-}
-
-/**
- * returns the formatted transactionInput for ledger cardano app
- *
- * @param {TyphonTypes.Input} input
- * @param {number} accountIndex
- * @returns {TxInput}
- */
-export function prepareLedgerInput(
-  input: TyphonTypes.Input,
-  accountIndex: number
-): TxInput {
-  const paymentKeyPath =
-    input.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS
-      ? input.address.paymentCredential.bipPath
-      : undefined;
-  return {
-    txHashHex: input.txId,
-    outputIndex: input.index,
-    path: paymentKeyPath
-      ? str_to_path(
-          getBipPathString({
-            account: accountIndex,
-            chain: paymentKeyPath.chain,
-            index: paymentKeyPath.index,
-          })
-        )
-      : null,
-  };
 }
 
 export function getAccountStakeCredential(

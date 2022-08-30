@@ -9,12 +9,17 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send",
+    desc: "mode of transaction: send, delegate",
   },
   {
     name: "token",
     type: String,
     desc: "uses subAccount(TokenAccount) of the account",
+  },
+  {
+    name: "poolId",
+    type: String,
+    desc: "Cardano stake pool id to delegate",
   },
 ];
 
@@ -70,6 +75,7 @@ function inferTransactions(
       ...transaction,
       mode: opts.mode || "send",
       subAccountId: account.type === "TokenAccount" ? account.id : undefined,
+      poolId: opts.poolId || "",
     };
   });
 }

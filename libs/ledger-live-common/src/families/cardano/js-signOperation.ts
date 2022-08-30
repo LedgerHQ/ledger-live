@@ -10,6 +10,7 @@ import { encodeOperationId } from "../../operation";
 import { buildTransaction } from "./js-buildTransaction";
 
 import Ada, {
+  CertificateType,
   Networks,
   SignTransactionRequest,
   TransactionSigningMode,
@@ -21,12 +22,7 @@ import {
   Transaction as TyphonTransaction,
 } from "@stricahq/typhonjs";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import {
-  getExtendedPublicKeyFromHex,
-  getOperationType,
-  prepareLedgerInput,
-  prepareLedgerOutput,
-} from "./logic";
+import { getExtendedPublicKeyFromHex, getOperationType } from "./logic";
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import { getNetworkParameters } from "./networks";
 import { MEMO_LABEL } from "./constants";
@@ -36,6 +32,12 @@ import {
   SignedOperation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
+import {
+  prepareStakeDelegationCertificate,
+  prepareLedgerInput,
+  prepareLedgerOutput,
+  prepareStakeRegistrationCertificate,
+} from "./tx-helpers";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,
@@ -202,6 +204,25 @@ const signOperation = ({
             prepareLedgerOutput(o, account.index)
           );
 
+          const rawCertificates = unsignedTransaction.getCertificates();
+          const ledgerCertificates = rawCertificates.map((rcert) => {
+            if (
+              rcert.certType === (CertificateType.STAKE_REGISTRATION as number)
+            ) {
+              return prepareStakeRegistrationCertificate(
+                rcert as TyphonTypes.StakeRegistrationCertificate
+              );
+            } else if (
+              rcert.certType === (CertificateType.STAKE_DELEGATION as number)
+            ) {
+              return prepareStakeDelegationCertificate(
+                rcert as TyphonTypes.StakeDelegationCertificate
+              );
+            } else {
+              throw new Error("Invalid Certificate type");
+            }
+          });
+
           const auxiliaryDataHashHex =
             unsignedTransaction.getAuxiliaryDataHashHex();
 
@@ -217,7 +238,7 @@ const signOperation = ({
               network,
               inputs: ledgerAppInputs,
               outputs: ledgerAppOutputs,
-              certificates: [],
+              certificates: ledgerCertificates,
               withdrawals: [],
               fee: unsignedTransaction.getFee().toString(),
               ttl: unsignedTransaction.getTTL()?.toString(),

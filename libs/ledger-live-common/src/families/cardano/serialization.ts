@@ -2,6 +2,8 @@ import { BigNumber } from "bignumber.js";
 import type {
   BipPath,
   BipPathRaw,
+  CardanoDelegation,
+  CardanoDelegationRaw,
   CardanoOutput,
   CardanoOutputRaw,
   CardanoResources,
@@ -158,10 +160,43 @@ function fromProtocolParamsRaw({
   };
 }
 
+function toDelegationRaw({
+  status,
+  poolId,
+  ticker,
+  name,
+  rewards,
+}: CardanoDelegation): CardanoDelegationRaw {
+  return {
+    status,
+    poolId,
+    ticker,
+    name,
+    rewards: rewards.toString(),
+  };
+}
+
+function fromDelegationRaw({
+  status,
+  poolId,
+  ticker,
+  name,
+  rewards,
+}: CardanoDelegationRaw): CardanoDelegation {
+  return {
+    status,
+    poolId,
+    ticker,
+    name,
+    rewards: new BigNumber(rewards),
+  };
+}
+
 export function toCardanoResourceRaw(r: CardanoResources): CardanoResourcesRaw {
   return {
     internalCredentials: r.internalCredentials.map(toPaymentCredentialRaw),
     externalCredentials: r.externalCredentials.map(toPaymentCredentialRaw),
+    delegation: r.delegation ? toDelegationRaw(r.delegation) : undefined,
     utxos: r.utxos.map(toCardanoOutputRaw),
     protocolParams: toProtocolParamsRaw(r.protocolParams),
   };
@@ -173,6 +208,7 @@ export function fromCardanoResourceRaw(
   return {
     internalCredentials: r.internalCredentials.map(fromPaymentCredentialRaw),
     externalCredentials: r.externalCredentials.map(fromPaymentCredentialRaw),
+    delegation: r.delegation ? fromDelegationRaw(r.delegation) : undefined,
     utxos: r.utxos.map(fromCardanoOutputRaw),
     protocolParams: fromProtocolParamsRaw(r.protocolParams),
   };

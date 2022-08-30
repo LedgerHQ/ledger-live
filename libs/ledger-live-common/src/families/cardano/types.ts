@@ -142,7 +142,7 @@ export type CardanoDelegationRaw = {
 export type CardanoResources = {
   externalCredentials: Array<PaymentCredential>;
   internalCredentials: Array<PaymentCredential>;
-  delegation?: CardanoDelegation;
+  delegation: CardanoDelegation | undefined;
   utxos: Array<CardanoOutput>;
   protocolParams: ProtocolParams;
 };
@@ -153,19 +153,22 @@ export type CardanoResources = {
 export type CardanoResourcesRaw = {
   externalCredentials: Array<PaymentCredentialRaw>;
   internalCredentials: Array<PaymentCredentialRaw>;
-  delegation?: CardanoDelegationRaw;
+  delegation: CardanoDelegationRaw | undefined;
   utxos: Array<CardanoOutputRaw>;
   protocolParams: ProtocolParamsRaw;
 };
+
+export type CardanoOperationMode = "send" | "delegate";
 
 /**
  * Cardano transaction
  */
 export type Transaction = TransactionCommon & {
-  mode: string;
+  mode: CardanoOperationMode;
   family: "cardano";
   fees?: BigNumber;
   memo?: string;
+  poolId?: string;
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
@@ -174,9 +177,10 @@ export type Transaction = TransactionCommon & {
  */
 export type TransactionRaw = TransactionCommonRaw & {
   family: "cardano";
-  mode: string;
+  mode: CardanoOperationMode;
   fees?: string;
   memo?: string;
+  poolId?: string;
   // also the transaction fields as raw JSON data
 };
 

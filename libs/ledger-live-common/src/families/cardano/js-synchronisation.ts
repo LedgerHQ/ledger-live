@@ -286,7 +286,7 @@ export const getAccountShape: GetAccountShape = async (
       utxos,
       externalCredentials,
       internalCredentials,
-      delegationInfo,
+      delegation: delegationInfo,
       protocolParams: cardanoNetworkInfo.protocolParams,
     },
   };
