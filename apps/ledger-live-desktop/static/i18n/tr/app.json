@@ -2078,54 +2078,9 @@
                 "description" : "Token sahibi topluluğun tamamı tarafından yapılan oylama sonucunda 127 kişi seçilir. Oylar her 6 saatte bir güncellenir."
               }
             }
-  },
-  "algorand" : {
-    "operationHasRewards" : "Kazanılan ödüller",
-    "operationEarnedRewards" : "<0>{{amount}}</0> ödül kazandınız.",
-    "operationDetailsAmountBreakDown" : "{{initialAmount}} (<0>+{{reward}}</0> kazanılan ödül)",
-    "optIn" : {
-      "flow" : {
-        "title" : "ASA Ekle (Varlık)",
-        "steps" : {
-          "assets" : {
-            "title" : "ASA (Varlık)",
-            "info" : "Bir varlık eklemek için minimum ücretle bir işlem gönderilmesi gerekir. Bu, işlem geçmişinizde görünür",
-            "selectLabel" : "Bir ASA (Varlık) seçin",
-            "disabledTooltip" : "Algorand hesabınızda bu ASA (Varlık) zaten var"
-          },
-          "connectDevice" : {
-            "title" : "Cihaz"
-          },
-          "confirmation" : {
-            "title" : "Onaylayın",
-            "success" : {
-              "title" : "{{token}} varlığı başarıyla eklendi",
-              "text" : "Artık Algorand hesabınıza <0>{{token}}</0> varlıklarını alıp gönderebilirsiniz.",
-              "cta" : "Ayrıntıları göster"
-            },
-            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
         }
       }
-    },
-    "claimRewards" : {
-      "header" : "Ödüller",
-      "tooltip" : "Algorand ödülleri düzenli olarak dağıtılır ve bir işlem yaptığınızda otomatik olarak alınır.",
-      "cta" : "Ödüllerinizi alın",
-      "rewardsDisabledTooltip" : "Hiç ödülünüz yok. Algorand ödülleri, bir işlem yaptığınızda otomatik olarak alınır. Ödül kazanmaya başlamak için ALGO alın.",
-      "flow" : {
-        "title" : "Ödüllerinizi alın",
-        "steps" : {
-          "starter" : {
-            "description" : "Algorand ödüllerini almak için sadece varlıklarınızda Algorand bulundurmanız yeterlidir.",
-            "bullet" : {
-              "delegate" : "Ödül almak için minimum 1 ALGO bakiyesi gereklidir.",
-              "access" : "Ödülleri artırmak için hesabın bakiyesini artırın.",
-              "ledger" : "Ödülleri almak için hesapta bir gelen veya giden işlem yapın."
-            },
-            "learnMore" : "Algorand ödülleri nasıl çalışır?",
-            "button" : {
-              "cta" : "Algo Al"
     }
   },
   "bitcoin" : {
@@ -2484,6 +2439,7 @@
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
         }
+      }
     },
     "redelegation" : {
       "flow" : {
@@ -2516,6 +2472,7 @@
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
         }
+      }
     },
     "undelegation" : {
       "header" : "Yetki İptalleri",
@@ -2546,6 +2503,8 @@
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
         }
+      }
+    }
   },
   "polkadot" : {
     "lockedBalance" : "Bağlı",

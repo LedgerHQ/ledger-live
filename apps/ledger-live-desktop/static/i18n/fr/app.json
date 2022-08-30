@@ -2007,32 +2007,6 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "Le solde total ne comprend pas les récompenses de staking"
       }
-  },
-  "bitcoin" : {
-    "inputSelected" : "SÉLECTIONNÉ",
-    "toSpend" : "Coins à dépenser",
-    "toReturn" : "Coin à rendre",
-    "modalTitle" : "Contrôle des coins",
-    "coincontrol" : "Contrôle des coins",
-    "advanced" : "Options avancées",
-    "ctaDisabled" : "Compte ne contenant pas d’UTXO",
-    "whatIs" : "En savoir plus sur ce paramètre",
-    "rbf" : "Permettre à la transaction d’être remplaçable (Replace-By-Fee).",
-    "strategy" : "Stratégie de sélection des coins",
-    "selected" : "Coins sélectionnés par stratégie",
-    "amount" : "Montant à envoyer :",
-    "replaceable" : "Remplaçable",
-    "cannotSelect" : {
-      "unconfirmed" : "Vous ne pouvez pas sélectionner des coins parmi des transactions non confirmées et remplaçables.",
-      "pending" : "Vous ne pouvez pas sélectionner des coins parmi des transactions en attente (hormis vos UTXO non dépensés)",
-      "last" : "Vous devez au moins en sélectionner un."
-    },
-    "pending" : "En attente",
-    "pickingStrategy" : "Stratégie de sélection des UTXO",
-    "pickingStrategyLabels" : {
-      "DEEP_OUTPUTS_FIRST" : "Coins plus vieux en premier (FIFO)",
-      "OPTIMIZE_SIZE" : "Réduire les frais (optimiser la taille)",
-      "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)"
     }
   },
   "tron" : {
@@ -2104,54 +2078,9 @@
                 "description" : "127 personnes élues par le vote de la communauté des détenteurs de tokens. Les votes sont mis à jour toutes les 6 heures."
               }
             }
-  },
-  "algorand" : {
-    "operationHasRewards" : "Récompenses gagnées",
-    "operationEarnedRewards" : "Vous avez gagné <0>{{amount}}</0> récompenses.",
-    "operationDetailsAmountBreakDown" : "{{initialAmount}} (<0>+{{reward}}</0> récompenses gagnées)",
-    "optIn" : {
-      "flow" : {
-        "title" : "Ajouter des ASA (Actif)",
-        "steps" : {
-          "assets" : {
-            "title" : "ASA (Actifs)",
-            "info" : "Pour ajouter un actif, vous devez émettre une transaction. Elle apparaîtra dans votre historique des transactions.",
-            "selectLabel" : "Choisir un ASA (Actif)",
-            "disabledTooltip" : "Cet ASA (Actif) est déjà dans votre compte Algorand."
-          },
-          "connectDevice" : {
-            "title" : "Appareil"
-          },
-          "confirmation" : {
-            "title" : "Confirmation",
-            "success" : {
-              "title" : "Actif {{token}} bien ajouté",
-              "text" : "Vous pouvez maintenant recevoir et envoyer des actifs <0>{{token}}</0> sur votre compte Algorand.",
-              "cta" : "Voir les détails"
-            },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
           }
         }
       }
-    },
-    "claimRewards" : {
-      "header" : "Récompenses",
-      "tooltip" : "Les récompenses Algorand sont distribuées régulièrement et sont demandées automatiquement lorsque vous effectuez une transaction.",
-      "cta" : "Demander les récompenses",
-      "rewardsDisabledTooltip" : "Vous n’avez aucune récompense. Les récompenses Algorand sont demandées automatiquement lorsque vous effectuez une transaction. Recevez des ALGO pour commencer à gagner des récompenses.",
-      "flow" : {
-        "title" : "Demander les récompenses",
-        "steps" : {
-          "starter" : {
-            "description" : "Recevez des récompenses Algorand en détenant simplement des ALGO dans votre portefeuille.",
-            "bullet" : {
-              "delegate" : "Un solde minimum de 1 ALGO est requis pour recevoir des récompenses.",
-              "access" : "Augmentez le solde de votre compte pour recevoir plus de récompenses.",
-              "ledger" : "Effectuez une transaction vers ou depuis le compte pour demander vos récompenses."
-            },
-            "learnMore" : "Fonctionnement des récompenses Algorand",
-            "button" : {
-              "cta" : "Recevoir des ALGO"
     }
   },
   "bitcoin" : {
@@ -2510,6 +2439,7 @@
             "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
           }
         }
+      }
     },
     "redelegation" : {
       "flow" : {
@@ -2542,6 +2472,7 @@
             "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
           }
         }
+      }
     },
     "undelegation" : {
       "header" : "Délégation(s) interrompue(s)",
@@ -2572,6 +2503,8 @@
             "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
           }
         }
+      }
+    }
   },
   "polkadot" : {
     "lockedBalance" : "Lié",

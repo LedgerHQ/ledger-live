@@ -2079,32 +2079,6 @@
               }
             }
           }
-  },
-  "algorand" : {
-    "operationHasRewards" : "획득한 보상",
-    "operationEarnedRewards" : "<0>{{amount}}</0>의 보상을 획득했습니다.",
-    "operationDetailsAmountBreakDown" : "{{initialAmount}} (<0>+{{reward}}</0> 획득한 보상)",
-    "optIn" : {
-      "flow" : {
-        "title" : "ASA(자산) 추가",
-        "steps" : {
-          "assets" : {
-            "title" : "ASA(자산)",
-            "info" : "자산을 추가하려면 최소 수수료로 트랜잭션을 전송해야 합니다. 이 트랜잭션은 사용자의 트랜잭션 내역에 표시됩니다.",
-            "selectLabel" : "ASA(자산) 선택",
-            "disabledTooltip" : "이미 귀하의 알고랜드 계정에 이 ASA(자산)가 있습니다"
-          },
-          "connectDevice" : {
-            "title" : "장치"
-          },
-          "confirmation" : {
-            "title" : "확인",
-            "success" : {
-              "title" : "{{token}} 자산이 추가되었습니다",
-              "text" : "이제 알고랜드 계정에서 <0>{{token}}</0> 자산을 보내고 받을 수 있습니다.",
-              "cta" : "세부사항 보기"
-            },
-            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
         }
       }
     }
@@ -2465,6 +2439,7 @@
             "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
           }
         }
+      }
     },
     "redelegation" : {
       "flow" : {
@@ -2497,6 +2472,7 @@
             "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
           }
         }
+      }
     },
     "undelegation" : {
       "header" : "위임 해제",
@@ -2527,6 +2503,8 @@
             "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
           }
         }
+      }
+    }
   },
   "polkadot" : {
     "lockedBalance" : "본딩됨",

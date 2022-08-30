@@ -2078,54 +2078,9 @@
                 "description" : "127 indivíduos eleitos por votação por toda a comunidade de detentores de tokens. Os votos são atualizados a cada 6 horas."
               }
             }
-  },
-  "algorand" : {
-    "operationHasRewards" : "Recompensas Recebidas",
-    "operationEarnedRewards" : "Você ganhou <0>{{amount}}</0> recompensas.",
-    "operationDetailsAmountBreakDown" : "{{initialAmount}} (<0>+{{reward}}</0> recompensas recebidas)",
-    "optIn" : {
-      "flow" : {
-        "title" : "Adicionar ASA (Ativo)",
-        "steps" : {
-          "assets" : {
-            "title" : "ASA (Ativo)",
-            "info" : "Para adicionar um ativo, é necessário enviar uma transação com taxas mínimas. Isto aparecerá no seu histórico de transações",
-            "selectLabel" : "Escolha um ASA (Ativo)",
-            "disabledTooltip" : "Você já possui este ASA (Ativo) na sua conta Algorand"
-          },
-          "connectDevice" : {
-            "title" : "Dispositivo"
-          },
-          "confirmation" : {
-            "title" : "Confirmação",
-            "success" : {
-              "title" : "Ativo {{token}} adicionado com sucesso",
-              "text" : "Você pode agora receber e enviar ativos <0>{{token}}</0> em sua conta Algorand.",
-              "cta" : "Ver Detalhes"
-            },
-            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
           }
         }
       }
-    },
-    "claimRewards" : {
-      "header" : "Recompensas",
-      "tooltip" : "As recompensas Algorand são distribuídas regularmente e são resgatadas automaticamente quando você faz uma transação.",
-      "cta" : "Resgatar Recompensas",
-      "rewardsDisabledTooltip" : "Você não tem nenhuma recompensa. As recompensas de Algorand são resgatadas automaticamente quando você faz uma transação. Receba ALGO para começar a receber recompensas.",
-      "flow" : {
-        "title" : "Resgatar Recompensas",
-        "steps" : {
-          "starter" : {
-            "description" : "Receba recompensas de Algorand simplesmente por manter o controle da Algorand sobre seus ativos.",
-            "bullet" : {
-              "delegate" : "É necessário um saldo mínimo de 1 ALGO para receber recompensas.",
-              "access" : "Aumente o saldo da conta para aumentar as recompensas.",
-              "ledger" : "Realize uma transação de ou para a conta para resgatar recompensas."
-            },
-            "learnMore" : "Como funcionam as recompensas de Algorand?",
-            "button" : {
-              "cta" : "Receber Algo"
     }
   },
   "bitcoin" : {
@@ -2484,6 +2439,7 @@
             "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
           }
         }
+      }
     },
     "redelegation" : {
       "flow" : {
@@ -2516,6 +2472,7 @@
             "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
           }
         }
+      }
     },
     "undelegation" : {
       "header" : "Desdelegações",
@@ -2546,6 +2503,8 @@
             "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
           }
         }
+      }
+    }
   },
   "polkadot" : {
     "lockedBalance" : "Vinculado",
