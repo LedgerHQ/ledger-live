@@ -4658,5 +4658,19 @@
     "currentAddress" : {
       "messageIfVirtual" : "Seu endereço {{name}} não pode ser confirmado no seu dispositivo Ledger. Use por sua própria conta e risco."
     }
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Muito bom.\nTudo pronto.",
+      "allDoneTitle" : "Bom trabalho.\nTudo está em pleno funcionamento.",
+      "subtitle" : "Aqui está o que você pode fazer a seguir.",
+      "skip" : "Pular para o aplicativo.",
+      "goToWallet" : "Ir para a carteira Ledger Live",
+      "done" : "Você tornou seu futuro mais seguro."
+    },
+    "walletCard" : {
+      "title" : "Como Começar",
+      "description" : "Clique aqui para finalizar a configuração da sua {{productName}} com a Ledger Live"
+    }
   }
 }
