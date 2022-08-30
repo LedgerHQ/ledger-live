@@ -4,8 +4,7 @@ import { CloseMedium, HelpMedium } from "@ledgerhq/react-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
-import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
+
 import { command } from "~/renderer/commands";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { useHistory, useRouteMatch } from "react-router-dom";
@@ -60,10 +59,6 @@ type Step = {
   renderBody?: () => ReactNode;
 };
 
-// The commands needs to be defined outside of the function component, to avoid creating it at
-// each render, and re-triggering a run for their associated hooks
-const getGenuineCheckFromDeviceIdCommand = command("getGenuineCheckFromDeviceId");
-const getLatestAvailableFirmwareFromDeviceIdCommand = command("getLatestAvailableFirmwareFromDeviceId");
 const getOnboardingStatePollingCommand = command("getOnboardingStatePolling");
 
 function nextStepKey(step: StepKey): StepKey {
@@ -76,11 +71,15 @@ function nextStepKey(step: StepKey): StepKey {
 const SyncOnboardingManual = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
+  const [stepKey, setStepKey] = useState<StepKey>(StepKey.SoftwareCheck);
 
   const handleSoftwareCheckComplete = useCallback(() => {
     // TODO: put this line instead
     // setStepKey(nextStepKey(StepKey.SoftwareCheck));
+    setStepKey(StepKey.Applications);
+  }, []);
+
+  const handleInstallRecommendedApplicationComplete = useCallback(() => {
     setStepKey(StepKey.Ready);
   }, []);
 
@@ -130,7 +129,9 @@ const SyncOnboardingManual = () => {
          * ApplicationContent contain the UI for
          * the install recommended apps step
          */
-        renderBody: () => <ApplicationContent />,
+        renderBody: () => (
+          <ApplicationContent onComplete={handleInstallRecommendedApplicationComplete} />
+        ),
       },
       {
         key: StepKey.Ready,
@@ -161,26 +162,6 @@ const SyncOnboardingManual = () => {
     pollingPeriodMs,
     stopPolling,
   });
-
-  const deviceId = device?.deviceId ?? "";
-
-  const { genuineState, devicePermissionState, error, resetGenuineCheckState } = useGenuineCheck({
-    getGenuineCheckFromDeviceId: getGenuineCheckFromDeviceIdCommand,
-    isHookEnabled: true,
-    deviceId,
-  });
-
-  console.log(
-    `🏴‍☠️🧙‍♂️: genuineState = ${genuineState}, devicePermissionState = ${devicePermissionState}, error = ${error}`,
-  );
-
-  // const { latestFirmware, error, status } = useGetLatestAvailableFirmware({
-  //   getLatestAvailableFirmwareFromDeviceId: getLatestAvailableFirmwareFromDeviceIdCommand,
-  //   isHookEnabled: true,
-  //   deviceId,
-  // });
-
-  // console.log(`🏝: latestFirmware = ${latestFirmware}, status = ${status}, error = ${error}`);
 
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
