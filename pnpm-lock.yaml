@@ -541,6 +541,7 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble': workspace:^
       '@ledgerhq/react-native-passcode-auth': ^2.1.0
       '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-devices': workspace:^
       '@ledgerhq/types-live': workspace:^
       '@polkadot/reactnative-identicon': 2.2.1
       '@polkadot/x-randomvalues': 9.1.1
@@ -715,6 +716,7 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble': link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
       '@ledgerhq/react-native-passcode-auth': 2.1.0
       '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-devices': link:../../libs/ledgerjs/packages/types-devices
       '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@polkadot/reactnative-identicon': 2.2.1_zqxy7fpkavjkgz5xll7ed4r6rq
       '@polkadot/x-randomvalues': 9.1.1
