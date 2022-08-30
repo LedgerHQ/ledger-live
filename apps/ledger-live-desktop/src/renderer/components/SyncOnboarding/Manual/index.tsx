@@ -1,18 +1,16 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
-import { CloseMedium, HelpMedium } from "@ledgerhq/react-ui/assets/icons";
+import { HelpMedium } from "@ledgerhq/react-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 
 import { command } from "~/renderer/commands";
-import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
-import nanoX from "~/renderer/images/nanoX.v3.svg";
-import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
+import OnboardingNavHeader from "../../Onboarding/OnboardingNavHeader";
 import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
@@ -20,6 +18,8 @@ import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import RecoveryContent from "./RecoveryContent";
 import ApplicationContent from "./ApplicationContent";
+import nanoX from "~/renderer/images/nanoX.v3.svg";
+import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 
 const shortResyncDelay = 1000;
 const longResyncDelay = 10000;
@@ -257,6 +257,7 @@ const SyncOnboardingManual = () => {
 
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
+      <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
       <DesyncOverlay isOpen={!!desyncTimer} delay={shortResyncDelay} />
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
@@ -264,10 +265,6 @@ const SyncOnboardingManual = () => {
         isOpen={isTroubleshootingDrawerOpen}
         onClose={() => setTroubleshootingDrawerOpen(false)}
       />
-      <Flex width="100%" justifyContent="flex-end" mt={4} px={4}>
-        <LangSwitcher />
-        <Button ml={4} Icon={CloseMedium} />
-      </Flex>
       <Flex flex={1} px={8} py={4} alignItems="center">
         <Flex flex={1} flexDirection="column">
           <Flex alignItems="center" mb={8}>
