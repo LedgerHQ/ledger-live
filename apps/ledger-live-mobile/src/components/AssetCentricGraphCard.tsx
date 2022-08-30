@@ -152,7 +152,6 @@ function AssetCentricGraphCard({
     [currentScreen, itemRange],
   );
 
-  console.log(hoveredItem);
   return (
     <Flex flexDirection="column">
       <Flex
