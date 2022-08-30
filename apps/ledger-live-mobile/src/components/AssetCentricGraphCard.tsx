@@ -59,7 +59,6 @@ function AssetCentricGraphCard({
   const [itemRange, setTimeRange, timeRangeItems] = useTimeRange();
   const {
     countervalueChange,
-    balanceAvailable,
     balanceHistory,
   } = assetPortfolio;
 
@@ -133,13 +132,36 @@ function AssetCentricGraphCard({
           <Flex alignItems="center">
             <ParentCurrencyIcon size={32} currency={currency} />
             {areAccountsEmpty ? (
-              <Text variant={"h3"} color={"neutral.c100"}>
-                <CurrencyUnitValue unit={unit} value={0} />
-              </Text>
+              <Flex alignItems="center">
+                <Text
+                  variant={"large"}
+                  fontWeight={"medium"}
+                  color={"neutral.c80"}
+                  mt={3}
+                >
+                  {!hoveredItem ? (
+                    <CurrencyUnitValue
+                      unit={currency.units[0]}
+                      value={currencyBalance}
+                      joinFragmentsSeparator=""
+                    />
+                  ) : null}
+                </Text>
+                <Text
+                  fontFamily="Inter"
+                  fontWeight="semiBold"
+                  fontSize="32px"
+                  color={"neutral.c100"}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                >
+                  <CurrencyUnitValue unit={unit} value={0} />
+                </Text>
+              </Flex>
             ) : (
               <>
                 <Flex>
-                  {!balanceAvailable ? (
+                  {!balanceHistory ? (
                     <BigPlaceholder mt="8px" />
                   ) : (
                     <Flex alignItems="center">
@@ -180,7 +202,7 @@ function AssetCentricGraphCard({
                   <TransactionsPendingConfirmationWarning />
                 </Flex>
                 <Flex flexDirection={"row"}>
-                  {!balanceAvailable ? (
+                  {!balanceHistory ? (
                     <>
                       <SmallPlaceholder mt={4} />
                     </>

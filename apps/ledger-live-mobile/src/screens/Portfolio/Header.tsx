@@ -181,7 +181,7 @@ function PortfolioHeader({
             style={[PortfolioValueAnimation]}
           >
             <Flex flexDirection={"column"} alignItems={"center"}>
-              {isAvailable ? (
+              {balanceHistory ? (
                 <>
                   <Text
                     variant={"small"}

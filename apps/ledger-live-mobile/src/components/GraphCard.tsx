@@ -122,13 +122,20 @@ function GraphCard({
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
             {areAccountsEmpty ? (
-              <Text variant={"h3"} color={"neutral.c100"}>
+              <Text
+                fontFamily="Inter"
+                fontWeight="semiBold"
+                fontSize="42px"
+                color={"neutral.c100"}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
                 <CurrencyUnitValue unit={unit} value={0} />
               </Text>
             ) : (
               <>
                 <Flex>
-                  {!balanceAvailable ? (
+                  {!balanceHistory ? (
                     <BigPlaceholder mt="8px" />
                   ) : (
                     <Text
@@ -149,7 +156,7 @@ function GraphCard({
                   <TransactionsPendingConfirmationWarning />
                 </Flex>
                 <Flex flexDirection={"row"}>
-                  {!balanceAvailable ? (
+                  {!balanceHistory ? (
                     <>
                       <SmallPlaceholder mt="12px" />
                     </>

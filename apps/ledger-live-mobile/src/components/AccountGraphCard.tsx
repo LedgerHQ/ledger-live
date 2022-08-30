@@ -169,6 +169,7 @@ function AccountGraphCard({
         item={hoveredItem || history[history.length - 1]}
         valueChange={valueChange}
         parentAccount={parentAccount}
+        currency={currency}
       />
 
       <Flex height={120} alignItems="center" justifyContent="center">
@@ -214,6 +215,7 @@ type HeaderTitleProps = {
   counterValueUnit: Unit;
   item: Item;
   parentAccount?: Account;
+  currency: Currency;
 };
 
 const GraphCardHeader = ({
@@ -226,6 +228,7 @@ const GraphCardHeader = ({
   counterValueUnit,
   item,
   parentAccount,
+  currency,
 }: HeaderTitleProps) => {
   const items = [
     {
@@ -247,12 +250,12 @@ const GraphCardHeader = ({
 
   const navigation = useNavigation();
 
-  const openRecieve = () => {
+  const openReceive = () => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId: account.id,
-        parentId: parentAccount?.id,
+        currency,
       },
     });
   };
@@ -313,7 +316,7 @@ const GraphCardHeader = ({
             </Flex>
           </Flex>
         </Touchable>
-        <Touchable onPress={openRecieve}>
+        <Touchable onPress={openReceive}>
           <Tag
             Icon={QrCodeMedium}
             numberOfLines={1}
