@@ -204,7 +204,7 @@
     "menu": "Menu",
     "stars": "Starred accounts",
     "accounts": "Accounts",
-    "manager": "Manager",
+    "manager": "My Ledger",
     "exchange": "Buy / Sell",
     "swap": "Swap",
     "lend": "Lend",
@@ -390,13 +390,13 @@
     },
     "missingApp": {
       "title": "Please install the {{appName}} app on your device",
-      "subtitle": "Go to manager and install {{appName}} app to swap assets.",
-      "cta": "Go to manager"
+      "subtitle": "Go to My Ledger and install {{appName}} app to swap assets.",
+      "cta": "Go to My Ledger"
     },
     "outdatedApp": {
       "title": "Please update the {{appName}} app on your device",
-      "subtitle": "Go to manager and update {{appName}} app to swap assets.",
-      "cta": "Go to manager"
+      "subtitle": "Go to My Ledger and update {{appName}} app to swap assets.",
+      "cta": "Go to My Ledger"
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -1208,9 +1208,9 @@
   "emptyState": {
     "dashboard": {
       "title": "Install apps on your device",
-      "desc": "Go to the Manager to install apps on your device. You can add accounts once you have apps on your device.",
+      "desc": "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
       "buttons": {
-        "installApp": "Go to Manager",
+        "installApp": "Go to My Ledger",
         "help": "Help"
       }
     },
@@ -1219,7 +1219,7 @@
       "desc": "Add an account to start managing your crypto assets. You must have the app for your crypto asset installed on your device.",
       "buttons": {
         "addAccount": "Add account",
-        "installApp": "Go to Manager to install apps",
+        "installApp": "Go to My Ledger to install apps",
         "help": "Help"
       }
     }
@@ -1542,12 +1542,12 @@
     "quitApp": "Quit the application on your device",
     "appNotInstalledTitle": "Missing required app",
     "appNotInstalledTitle_plural": "Missing required apps",
-    "appNotInstalled": "The {{appName}} app is required to complete this action. Please go to the manager and install it on your device",
-    "appNotInstalled_plural": "The {{appName}} apps are required to complete this action. Please go to the manager and install them on your device",
-    "openManager": "Open Manager",
+    "appNotInstalled": "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
+    "appNotInstalled_plural": "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "openManager": "Open My Ledger",
     "openOnboarding": "Setup device",
     "outdated": "App version outdated",
-    "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
+    "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
     "installApp": "{{appName}} App installation",
     "installAppDescription": "Please wait until the installation is finished",
     "listApps": "Checking App dependencies",
@@ -1590,8 +1590,8 @@
     },
     "disconnected": {
       "title": "Looks like an app is open on your device",
-      "subtitle": "Reopening the Manager will quit the app on your device",
-      "ctaReopen": "Reopen Manager",
+      "subtitle": "Reopening My Ledger will quit the app on your device",
+      "ctaReopen": "Reopen My Ledger",
       "ctaPortfolio": "Back to Portfolio"
     },
     "deviceStorage": {
@@ -1634,7 +1634,7 @@
         "title_plural": "Updates available",
         "progressTitle": "{{number}} App update",
         "progressTitle_plural": "{{number}} App updates",
-        "progressWarning": "Do not quit Manager during update.",
+        "progressWarning": "Do not quit My Ledger during update.",
         "progress": "Updating all..."
       },
       "item": {
@@ -1698,7 +1698,7 @@
       "updateBtn": "Update firmware",
       "banner": {
         "warning": "Update Firmware to {{latestFirmware}} is available",
-        "cta": "Go to manager",
+        "cta": "Go to My Ledger",
         "old": {
           "warning": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
           "cta": "Contact support"
@@ -1754,7 +1754,7 @@
         "boot": "Press and hold the side button until {{option}} is displayed",
         "recoveryMode": "Tap {{mode}} Mode. Wait until the dashboard appears.",
         "third": "3. Uninstall all apps",
-        "openLive": "Open the Manager in Ledger Live.",
+        "openLive": "Open My Ledger in Ledger Live.",
         "uninstall": "Click on the grey trash icon for all apps currently installed on the {{deviceName}}. This makes room for the firmware installer.",
         "disclaimer": "Note: Your funds are not affected by this operation, the private keys to access your crypto assets in the blockchain remain secure on your Recovery sheet."
       }
@@ -3399,7 +3399,7 @@
         },
         "managerDevMode": {
           "title": "Developer mode",
-          "description": "Show developer and testnet apps in the Manager."
+          "description": "Show developer and testnet apps in My Ledger."
         },
         "scanForInvalidPaths": {
           "title": "Extended account search",
@@ -3414,8 +3414,8 @@
           "description": "Custom gap limit for all accounts. Increasing this value above its default value (20) scans more unused public addresses for coins. Advanced users only, this may break compatibility when restoring your accounts."
         },
         "forceProvider": {
-          "title": "Manager provider",
-          "description": "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device."
+          "title": "My Ledger provider",
+          "description": "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
         },
         "testAnimations": {
           "title": "Test Lottie animations",
@@ -4270,7 +4270,7 @@
   "errors": {
     "NoSuchAppOnProvider": {
       "title": "The {{appName}} app cannot be found for your specific configuration.",
-      "description": "Try reinstalling the app from the Manager"
+      "description": "Try reinstalling the app from My Ledger"
     },
     "countervaluesUnavailable": {
       "title": "We're not able to provide a countervalue for this asset at the moment"
@@ -4436,7 +4436,7 @@
     },
     "FirmwareOrAppUpdateRequired": {
       "title": "Firmware or app update required",
-      "description": "Please use the Manager to uninstall all apps then check if a firmware update is available before reinstalling them"
+      "description": "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
     },
     "LatestFirmwareVersionRequired": {
       "title": "Update Nano Firmware",
@@ -4493,20 +4493,20 @@
     "ManagerQuitPage": {
       "install": {
         "title": "Finish app installation in progress?",
-        "description": "Quitting the Manager will terminate the app installation. Please finish the installation to install the apps in the queue.",
+        "description": "Quitting My Ledger will terminate the app installation. Please finish the installation to install the apps in the queue.",
         "stay": "Finish install"
       },
       "uninstall": {
         "title": "Finish app uninstallation in progress?",
-        "description": "Quitting the Manager will terminate the app uninstallations in progress.",
+        "description": "Quitting My Ledger will terminate the app uninstallations in progress.",
         "stay": "Finish uninstalling"
       },
       "update": {
         "title": "Finish app updates in progress?",
-        "description": "Quitting the Manager will terminate the app updates in progress.",
+        "description": "Quitting My Ledger will terminate the app updates in progress.",
         "stay": "Finish updates"
       },
-      "quit": "Quit Manager"
+      "quit": "Quit My Ledger"
     },
     "ManagerUninstallBTCDep": {
       "title": "Sorry, this app is required",
@@ -4606,7 +4606,7 @@
       "description": "Please restart your device without touching the buttons when the logo appears. Contact Ledger Support if the problem persists."
     },
     "UserRefusedAllowManager": {
-      "title": "Manager denied on device"
+      "title": "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate": {
       "title": "Update cancelled on device",
@@ -4626,7 +4626,7 @@
     },
     "UpdateYourApp": {
       "title": "App update required",
-      "description": "Uninstall and reinstall the {{managerAppName}} app in the Manager"
+      "description": "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "DeviceOnDashboardExpected": {
       "title": "Return to the Dashboard",
@@ -4646,7 +4646,7 @@
     },
     "DeviceAppVerifyNotSupported": {
       "title": "App update required",
-      "description": "Uninstall and reinstall the {{managerAppName}} app in the Manager"
+      "description": "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
@@ -4691,7 +4691,7 @@
       "list": {
         "1": "Disconnect and reconnect the USB cable without pressing any buttons.",
         "2": "Press both buttons together three times to display the Dashboard.",
-        "3": "Open the Manager and click Update firmware."
+        "3": "Open My Ledger and click Update firmware."
       }
     },
     "UnavailableTezosOriginatedAccountReceive": {

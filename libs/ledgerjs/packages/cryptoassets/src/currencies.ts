@@ -533,6 +533,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ticker: "tADA",
     scheme: "cardano_testnet",
     isTestnetFor: "cardano",
+    disableCountervalue: true,
     color: "#0A1D2C",
     family: "cardano",
     blockAvgTime: 20,
@@ -2613,7 +2614,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "Thundercore",
     ticker: "TT",
     scheme: "thundercore",
-    color: "#000",
+    color: "#0844D2",
     family: "ethereum",
     ethereumLikeInfo: {
       chainId: 108,
@@ -2625,7 +2626,12 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 18,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://viewblock.io/thundercore/tx/$hash",
+        address: "https://viewblock.io/thundercore/address/$address",
+      },
+    ],
   },
   tomo: {
     type: "CryptoCurrency",
@@ -2998,7 +3004,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "Zilliqa",
     ticker: "ZIL",
     scheme: "zilliqa",
-    color: "#000",
+    color: "#2CC0BE",
     family: "zilliqa",
     units: [
       {
@@ -3007,7 +3013,12 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 12,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://viewblock.io/zilliqa/tx/$hash",
+        address: "https://viewblock.io/zilliqa/address/$address",
+      },
+    ],
   },
   crypto_org: {
     type: "CryptoCurrency",
@@ -3172,6 +3183,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     isTestnetFor: "crypto_org",
+    disableCountervalue: true,
     explorerViews: [
       {
         tx: "https://crypto.org/explorer/croeseid/tx/$hash",
@@ -3190,6 +3202,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#000",
     family: "solana",
     isTestnetFor: "solana",
+    disableCountervalue: true,
     units: [
       {
         name: "SOL",
@@ -3224,6 +3237,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#000",
     family: "solana",
     isTestnetFor: "solana",
+    disableCountervalue: true,
     units: [
       {
         name: "SOL",
