@@ -723,32 +723,41 @@ function transactionTest<T>({
   const timingThreshold = 30 * 60 * 1000;
   // FIXME: .valueOf to do arithmetic operations on date with typescript
   const dt = Date.now().valueOf() - operation.date.valueOf();
-  invariant(dt > 0, "operation.date must not be in in future");
+  botTest("operation.date must not be in future", () =>
+    expect(dt).toBeGreaterThanOrEqual(0)
+  );
   botTest("operation.date less than 30mn ago", () =>
     expect(dt).toBeLessThan(timingThreshold)
   );
-  invariant(!operation.hasFailed, "operation has failed");
+  botTest("operation must not failed", () => {
+    expect(!operation.hasFailed).toBe(true);
+  });
+
   const { blockAvgTime } = account.currency;
 
   if (blockAvgTime && account.blockHeight) {
     const expected = getOperationConfirmationNumber(operation, account);
     const expectedMax = Math.ceil(timingThreshold / blockAvgTime);
-    invariant(
-      expected <= expectedMax,
-      "There are way too much operation confirmation for a small amount of time. %s < %s",
-      expected,
-      expectedMax
+    botTest("low amount of confirmations", () =>
+      invariant(
+        expected <= expectedMax,
+        "There are way too much operation confirmation for a small amount of time. %s < %s",
+        expected,
+        expectedMax
+      )
     );
   }
 
-  invariant(
-    !optimisticOperation.value.isNaN(),
-    "optimisticOperation.value must not be NaN"
+  botTest("optimisticOperation.value must not be NaN", () =>
+    expect(!optimisticOperation.value.isNaN()).toBe(true)
   );
-  invariant(
-    !optimisticOperation.fee.isNaN(),
-    "optimisticOperation.fee must not be NaN"
+  botTest("optimisticOperation.fee must not be NaN", () =>
+    expect(!optimisticOperation.fee.isNaN()).toBe(true)
   );
-  invariant(!operation.value.isNaN(), "operation.value must not be NaN");
-  invariant(!operation.fee.isNaN(), "operation.fee must not be NaN");
+  botTest("operation.value must not be NaN", () =>
+    expect(!operation.value.isNaN()).toBe(true)
+  );
+  botTest("operation.fee must not be NaN", () =>
+    expect(!operation.fee.isNaN()).toBe(true)
+  );
 }
