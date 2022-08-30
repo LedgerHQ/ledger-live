@@ -51,6 +51,7 @@ import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/Ge
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import { track } from "../../analytics";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
+import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -335,6 +336,10 @@ export default function SettingsNavigator() {
           headerShown: true,
           headerTitle: t("onboarding.stepLanguage.title"),
         }}
+      />
+      <Stack.Screen
+        name={ScreenName.PostOnboardingDebugScreen}
+        component={PostOnboardingDebugScreen}
       />
     </Stack.Navigator>
   );

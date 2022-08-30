@@ -12,7 +12,7 @@ const NotificationSample = () => (
       Icon={Icons.InfoMedium}
       variant={select(
         "variant",
-        ["primary", "secondary", "success", "error", "warning", "neutral"],
+        ["primary", "secondary", "success", "error", "warning", "neutral", "plain"],
         "primary",
       )}
       title={text("title", "Title about Security information which could be on 2 lines maximum")}
@@ -28,7 +28,7 @@ const NotificationNews = () => (
       Icon={boolean("showIcon", true) ? Icons.InfoMedium : undefined}
       variant={select(
         "variant",
-        ["primary", "secondary", "success", "error", "warning", "neutral"],
+        ["primary", "secondary", "success", "error", "warning", "neutral", "plain"],
         "primary",
       )}
       title={text("title", "Status")}

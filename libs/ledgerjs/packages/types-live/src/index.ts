@@ -8,3 +8,4 @@ export * from "./operation";
 export * from "./pagination";
 export * from "./portfolio";
 export * from "./transaction";
+export * from "./postOnboarding";

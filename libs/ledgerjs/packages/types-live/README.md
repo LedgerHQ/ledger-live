@@ -134,26 +134,51 @@ Ledger Live main types.
 *   [PortfolioRange](#portfoliorange)
 *   [AssetsDistribution](#assetsdistribution)
     *   [Properties](#properties-43)
-*   [SwapOperation](#swapoperation)
+*   [PostOnboardingActionId](#postonboardingactionid)
+*   [PostOnboardingAction](#postonboardingaction)
     *   [Properties](#properties-44)
-*   [SwapOperationRaw](#swapoperationraw)
+    *   [featureFlagId](#featureflagid)
+    *   [navigationParams](#navigationparams)
+    *   [Icon](#icon)
+    *   [title](#title)
+    *   [description](#description)
+    *   [tagLabel](#taglabel)
+    *   [actionCompletedPopupLabel](#actioncompletedpopuplabel)
+    *   [actionCompletedHubTitle](#actioncompletedhubtitle)
+    *   [onStartEvent](#onstartevent)
+    *   [onStartEventProperties](#onstarteventproperties)
+*   [PostOnboardingActionState](#postonboardingactionstate)
     *   [Properties](#properties-45)
-*   [SignedOperation](#signedoperation)
+    *   [completed](#completed)
+*   [PostOnboardingState](#postonboardingstate)
     *   [Properties](#properties-46)
-*   [SignedOperationRaw](#signedoperationraw)
+    *   [deviceModelId](#devicemodelid)
+    *   [walletEntryPointDismissed](#walletentrypointdismissed)
+    *   [actionsToComplete](#actionstocomplete)
+    *   [actionsCompleted](#actionscompleted)
+    *   [lastActionCompleted](#lastactioncompleted)
+*   [PostOnboardingHubState](#postonboardinghubstate)
     *   [Properties](#properties-47)
+*   [SwapOperation](#swapoperation)
+    *   [Properties](#properties-48)
+*   [SwapOperationRaw](#swapoperationraw)
+    *   [Properties](#properties-49)
+*   [SignedOperation](#signedoperation)
+    *   [Properties](#properties-50)
+*   [SignedOperationRaw](#signedoperationraw)
+    *   [Properties](#properties-51)
 *   [SignOperationEvent](#signoperationevent)
 *   [SignOperationEventRaw](#signoperationeventraw)
 *   [TransactionCommon](#transactioncommon)
-    *   [Properties](#properties-48)
-*   [TransactionCommonRaw](#transactioncommonraw)
-    *   [Properties](#properties-49)
-*   [FeeStrategy](#feestrategy)
-    *   [Properties](#properties-50)
-*   [TransactionStatusCommon](#transactionstatuscommon)
-    *   [Properties](#properties-51)
-*   [TransactionStatusCommonRaw](#transactionstatuscommonraw)
     *   [Properties](#properties-52)
+*   [TransactionCommonRaw](#transactioncommonraw)
+    *   [Properties](#properties-53)
+*   [FeeStrategy](#feestrategy)
+    *   [Properties](#properties-54)
+*   [TransactionStatusCommon](#transactionstatuscommon)
+    *   [Properties](#properties-55)
+*   [TransactionStatusCommonRaw](#transactionstatuscommonraw)
+    *   [Properties](#properties-56)
 
 ### TokenAccount
 
@@ -457,7 +482,7 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Add others with union (e.g. "learn" | "market" | "foo")
 
-Type: (`"learn"` | `"pushNotifications"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyOsmosis"` | `"ptxSmartRoutingMobile"` | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))
+Type: (`"learn"` | `"pushNotifications"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyOsmosis"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))
 
 ### Feature
 
@@ -1037,6 +1062,180 @@ Type: {isAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/
 *   `list` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>** 
 *   `showFirst` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 *   `sum` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+
+### PostOnboardingActionId
+
+Unique identifier of a post onboarding action.
+
+### PostOnboardingAction
+
+All necessary information for complete integration of a post onboarding
+action.
+
+Type: {id: [PostOnboardingActionId](#postonboardingactionid), featureFlagId: [FeatureId](#featureid)?, navigationParams: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>?, Icon: function (props: {size: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): any, title: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), description: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), tagLabel: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, actionCompletedPopupLabel: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), actionCompletedHubTitle: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), onStartEvent: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, onStartEventProperties: any?}
+
+#### Properties
+
+*   `id` **[PostOnboardingActionId](#postonboardingactionid)** 
+*   `featureFlagId` **[FeatureId](#featureid)?** 
+*   `navigationParams` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>?** 
+*   `Icon` **function (props: {size: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): any** 
+*   `title` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `description` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `tagLabel` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `actionCompletedPopupLabel` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `actionCompletedHubTitle` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `onStartEvent` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `onStartEventProperties` **any?** 
+
+#### featureFlagId
+
+If this action is linked to a feature that is enabled by a feature flag,
+use this property to identify the feature flag.
+
+Type: [FeatureId](#featureid)
+
+#### navigationParams
+
+Navigation params when the user presses the button for this action
+
+*   In LLM, this will be used like this:
+    `navigation.navigate(...navigationParams)`
+*   In LLD, this will be used like this:
+    `history.push(...navigationParams)`
+
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>
+
+#### Icon
+
+Icon displayed for this action in the post onboarding hub.
+
+Type: function (props: {size: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): any
+
+#### title
+
+Title displayed for this action in the post onboarding hub.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### description
+
+Description displayed for this action in the post onboarding hub.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### tagLabel
+
+Tag displayed for this action in the post onboarding hub.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### actionCompletedPopupLabel
+
+Will appear in an success alert at the bottom of the post-onboarding hub
+after completing this action.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### actionCompletedHubTitle
+
+Will be used as a title success alert at the bottom of the post-onboarding
+hub after completing this action.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### onStartEvent
+
+Event that will be dispatched when starting this action.
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### onStartEventProperties
+
+Event properties that will be dispatched when starting this action.
+
+Type: any
+
+### PostOnboardingActionState
+
+State of a post onboarding action.
+
+Type: {completed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
+
+#### Properties
+
+*   `completed` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
+#### completed
+
+Whether the user has completed this action. This will be reflected in the
+UI of the post onboarding hub.
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+### PostOnboardingState
+
+To be used for a redux reducer.
+Keeps all necessary information about the state of the post onboarding hub
+and can be persisted in storage.
+
+Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null)}
+
+#### Properties
+
+*   `deviceModelId` **(DeviceModelId | null)** 
+*   `walletEntryPointDismissed` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+*   `actionsToComplete` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>** 
+*   `actionsCompleted` **any** 
+*   `lastActionCompleted` **([PostOnboardingActionId](#postonboardingactionid) | null)** 
+
+#### deviceModelId
+
+Model Id of the device for which the post onboarding was started.
+
+Type: (DeviceModelId | null)
+
+#### walletEntryPointDismissed
+
+Did the user dismiss the post onboarding entry point on the wallet page.
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+#### actionsToComplete
+
+List of all actions that have to be completed in this post onboarding
+(whether they are completed or).
+This is used to populate the list of actions in the post onboarding hub UI.
+
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>
+
+#### actionsCompleted
+
+"completed" state for each action.
+
+Type: any
+
+#### lastActionCompleted
+
+Last action that the user has completed.
+
+This is used to display potentially different content in the post
+onboarding hub UI depending on the last action that was completed.
+
+Type: ([PostOnboardingActionId](#postonboardingactionid) | null)
+
+### PostOnboardingHubState
+
+Digest of the store & list of actions into something directly consumable
+by UI. (All UI data will be in there).
+
+Type: {deviceModelId: (DeviceModelId | null), lastActionCompleted: ([PostOnboardingAction](#postonboardingaction) | null), actionsState: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>}
+
+#### Properties
+
+*   `deviceModelId` **(DeviceModelId | null)** 
+*   `lastActionCompleted` **([PostOnboardingAction](#postonboardingaction) | null)** 
+*   `actionsState` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>** 
 
 ### SwapOperation
 

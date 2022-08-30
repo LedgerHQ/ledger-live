@@ -2,7 +2,14 @@ import React, { Component } from "react";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, compose } from "redux";
-import { getAccounts, getCountervalues, getSettings, getBle } from "../db";
+import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import {
+  getAccounts,
+  getCountervalues,
+  getSettings,
+  getBle,
+  getPostOnboardingState,
+} from "../db";
 import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
@@ -62,6 +69,14 @@ export default class LedgerStoreProvider extends Component<
     store.dispatch(importSettings(settingsData));
     const accountsData = await getAccounts();
     store.dispatch(importAccounts(accountsData));
+
+    const postOnboardingState = await getPostOnboardingState();
+    if (postOnboardingState) {
+      store.dispatch(
+        importPostOnboardingState({ newState: postOnboardingState }),
+      );
+    }
+
     const initialCountervalues = await getCountervalues();
     this.setState(
       {
