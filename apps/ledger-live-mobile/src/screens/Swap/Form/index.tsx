@@ -51,8 +51,6 @@ import { Connect } from "./Connect";
 import { DeviceMeta } from "./Modal/Confirmation";
 import { ErrorBanner } from "./ErrorBanner";
 
-export const ratesExpirationThreshold = 60000;
-
 export const useProviders = () => {
   const dispatch = useDispatch();
   const { providers, error: providersError } = useSwapProviders();

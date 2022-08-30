@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
-import { Flex, Text, Switch } from "@ledgerhq/native-ui";
+import { Flex, Text, Switch, InfiniteLoader } from "@ledgerhq/native-ui";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import { Loading } from "../Loading";
 
 export function Max({
   swapTx,
@@ -19,6 +18,7 @@ export function Max({
   const [max, setMax] = useState<BigNumber>();
 
   useEffect(() => {
+    setMax(undefined);
     if (!swapTx.swap.from.account) {
       return;
     }
@@ -33,10 +33,6 @@ export function Max({
       });
   }, [swapTx.swap.from]);
 
-  useEffect(() => {
-    setMax(undefined);
-  }, [swapTx.swap.from]);
-
   return (
     <Flex
       flexDirection="row"
@@ -46,16 +42,18 @@ export function Max({
       <Flex>
         <Text variant="small">{t("transfer.swap2.form.amount.available")}</Text>
 
-        {max && !isSendMaxLoading ? (
-          <Text variant="small">
+        {swapTx.swap.from.currency && max && !isSendMaxLoading ? (
+          <Text variant="small" paddingY={2}>
             <CurrencyUnitValue
               showCode
-              unit={swapTx.swap.from!.currency!.units[0]}
+              unit={swapTx.swap.from.currency.units[0]}
               value={max}
             />
           </Text>
         ) : (
-          <Loading size={12} />
+          <Flex paddingY={2} justifyContent="flex-start">
+            <InfiniteLoader size={12} />
+          </Flex>
         )}
       </Flex>
 
