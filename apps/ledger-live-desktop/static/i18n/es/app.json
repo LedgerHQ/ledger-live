@@ -3115,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "Modo de desarrollador",
-          "description" : "Mostrar aplicaciones de desarrollador y testnet en Mi Ledger."
+          "description" : "Mostrar aplicaciones de desarrollador y testnet en el Manager."
         },
         "scanForInvalidPaths" : {
           "title" : "Búsqueda de cuenta extendida",
@@ -3336,6 +3336,7 @@
         "link" : "Más información acerca del funcionamiento de la Frase de recuperación",
         "title2" : "¿Qué pasa si pierdo el acceso a mi Nano?",
         "paragraph3" : "No te preocupes, sigue estos pasos:",
+        "paragraph4" : "Para restaurar el acceso a tus cripto, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
         "points" : {
           "1" : "Utiliza una billetera de hardware distinta.",
           "2" : "Selecciona “Restore recovery phrase on a new device” en la aplicación Ledger.",
@@ -3376,50 +3377,65 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "Bienvenidos a Ledger",
-        "description" : "Administra de manera segura tus cripto desde tu PC.",
-        "cta" : "Comenzar",
-        "noDevice" : "¿No tienes un dispositivo? <0>Compra un Ledger Nano X</0>",
-        "languageWarning" : {
-          "title" : "Comenzar en {{language}}",
-          "desc" : "Estamos añadiendo idiomas adicionales para ayudarte a utilizar Ledger. Ten en cuenta que actualmente el resto de la experiencia Ledger solo está disponible en inglés.",
-          "cta" : "Entendido"
+        "title" : "La billetera más segura para criptodivisas y NFTs",
+        "description" : "Gestiona, compra y haz crecer de forma segura tus criptomonedas y NFTs en Ledger Live.",
+        "nextButton" : "Comenzar",
+        "noDevice" : "¿No tienes un dispositivo?",
+        "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
+        "byTapping" : "Al tocar “Empezar” otorgas tu consentimiento y aceptas nuestros",
+        "termsAndConditions" : "Términos y condiciones",
+        "and" : "y",
+        "privacyPolicy" : "Política de Privacidad",
+        "steps" : {
+          "0" : {
+            "title" : "Accede a tus cripto",
+            "desc" : "Tus activos cripto se almacenan en la cadena de bloques. Usa tu clave privada para acceder a ellos y gestionarlos."
+          },
+          "1" : {
+            "title" : "No compartas tu clave privada",
+            "desc" : "Tu clave privada se almacena dentro de tu Nano.\nPara tener el control de tu dinero, solo tú debes tenerlo en propiedad."
+          },
+          "2" : {
+            "title" : "Mantente sin conexión",
+            "desc" : "Tu Nano funciona como una billetera de “almacenamiento frío”.\nEsto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación mientras está conectada a Internet."
+          },
+          "3" : {
+            "title" : "Validar transacciones",
+            "desc" : "Ledger Live te permite comprar, vender, gestionar, cambiar y ganar cripto con seguridad.\nDeberás validar cada transacción cripto con tu Nano."
+          },
+          "4" : {
+            "title" : "Vamos a configurar tu Nano.",
+            "desc" : "Empezaremos por configurar tu Nano."
+          }
         }
       },
       "selectDevice" : {
-        "title" : "¿Cuál es tu dispositivo?"
+        "title" : "Selecciona tu dispositivo",
+        "selectLabel" : "Seleccionar"
       },
       "selectUseCase" : {
-        "greetings" : "¡Hola!",
         "hasNoRecovery" : "¿Es la primera vez que utilizas tu {{deviceName}}?",
         "hasRecovery" : "¿Ya tienes una Frase de recuperación?",
-        "separator" : "O",
-        "switchDevice" : "Cambiar dispositivo",
         "options" : {
           "1" : {
-            "heading" : "Primera vez",
             "title" : "Configurar un nuevo {{deviceName}}",
-            "description" : "¡Comencemos y configuremos tu dispositivo!"
+            "description" : "Comencemos y configuremos tu dispositivo."
           },
           "2" : {
-            "heading" : "Conectar dispositivo",
             "title" : "Conecta tu {{deviceName}}",
             "description" : "¿Tu dispositivo ya está configurado? ¡Conéctalo a tu aplicación!"
           },
           "3" : {
-            "heading" : "Restaurar dispositivo",
             "title" : "Restaura tu Frase de recuperación a un nuevo dispositivo",
-            "description" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un {{deviceName}} nuevo!"
+            "description" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
           }
         }
       },
-      "tutorial" : {
-        "steps" : {
-          "getStarted" : "Comenzar",
-          "pinCode" : "Código PIN",
-          "recoveryPhrase" : "Frase de recuperación",
-          "hideRecoveryPhrase" : "Oculta tu Frase de recuperación",
-          "pairNano" : "Conectar Nano"
+      "alerts": {
+        "beCareful": {
+          "title": "Por favor, ten cuidado",
+          "descr": "Asegúrate de seguir las instrucciones de esta aplicación para cada etapa del proceso.",
+          "gotIt": "Entendido"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -3442,6 +3458,10 @@
             "buttons" : {
               "next" : "De acuerdo, ¡todo listo!",
               "prev" : "Paso anterior"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "deviceHowTo" : {
@@ -3457,17 +3477,23 @@
               "title" : "Selecciona “Set up as new device”",
               "descr" : "Presiona ambos botones simultáneamente para validar la selección."
             },
-            "follow" : {
-              "title" : "Sigue las instrucciones",
-              "descr" : "Vuelve aquí para seguir las instrucciones con respecto a tu código PIN."
+            "2": {
+              "heading": "Conectar dispositivo",
+              "title": "Conecta tu {{deviceName}}",
+              "description": "¿Tu dispositivo ya está configurado? ¡Conéctalo a tu aplicación!"
             },
             "buttons" : {
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "deviceHowTo2" : {
+            "title" : "Esta es la mejor manera de hacerlo:",
             "turnOn" : {
               "title" : "Encendido del Nano",
               "descr" : "Conecta tu dispositivo a tu PC mediante el cable USB."
@@ -3476,9 +3502,145 @@
               "title" : "Navegar",
               "descr" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
             },
+            "howToGetStarted": {
+              "title": "Esta es la mejor manera de hacerlo:",
+              "rules": {
+                "1": "Dedícale unos 30 minutos, tómate tu tiempo.",
+                "2": "Busca lápiz y papel.",
+                "3": "Elige un entorno seguro y tranquilo en el que puedas estar a solas."
+              },
+              "buttons": {
+                "next": "De acuerdo, ¡todo listo!",
+                "prev": "Paso anterior"
+              }
+            },
+            "buttons" : {
+              "next" : "De acuerdo, ¡todo listo!",
+              "prev" : "Paso anterior"
+            }
+          },
+          "deviceHowTo" : {
+            "turnOn" : {
+              "title" : "Encendido del Nano",
+              "descr" : "Conecta tu dispositivo a tu PC mediante el cable USB."
+            },
+            "buttons" : {
+              "next" : "Siguiente paso",
+              "prev" : "Paso anterior",
+              "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "pinCode" : {
+            "title" : "Código PIN",
+            "paragraph" : "Tu código PIN es la primera capa de seguridad y protege físicamente el acceso a tu Nano y a tus claves privadas. Tu código PIN debe tener entre 4 y 8 dígitos.",
+            "disclaimer" : "Comprendo que debo elegir mi código PIN por mi cuenta y mantenerlo en secreto.",
+            "buttons" : {
+              "next" : "Establecer un código PIN",
+              "prev" : "Paso anterior",
+              "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "quizSuccess" : {
+            "title" : "¡Ya tienes nivel de profesional!",
+            "paragraph" : "Ya puedes administrar de forma segura tus cripto. ¡Solo te queda un breve paso!",
+            "buttons" : {
+              "next" : "Siguiente paso",
+              "prev" : "Paso anterior",
+              "help" : "Necesitas ayuda"
+            }
+          },
+          "quizFailure" : {
+            "title" : "Pronto tendrás nivel de profesional...",
+            "paragraph" : "No te preocupes, Ledger está aquí para guiarte en este proceso. Pronto te sentirás con completa seguridad con respecto a la protección de tus criptomonedas.\n\nSolo te queda un breve paso.",
+            "buttons" : {
+              "next" : "Siguiente paso",
+              "prev" : "Paso anterior"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "pinCodeHowTo" : {
+            "setUp" : {
+              "title" : "Elige un código PIN",
+              "descr" : "Presiona el botón izquierdo o derecho para cambiar números. Presiona ambos botones para confirmar un número. Selecciona <0></0> para confirmar tu código PIN. Selecciona <1></1> para borrar un número."
+            },
             "select" : {
-              "title" : "Selecciona “Enter your recovery phrase”",
+              "title" : "Selecciona “Set up as new device”",
               "descr" : "Presiona ambos botones simultáneamente para validar la selección."
+            },
+            "buttons" : {
+              "next" : "Siguiente paso",
+              "prev" : "Paso anterior",
+              "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "existingRecoveryPhrase" : {
+            "title" : "Ingresa tu Frase de recuperación",
+            "paragraph1" : "Tu Frase de recuperación es la lista secreta de Palabras de la que se guardó una copia de seguridad cuando configuraste tu billetera por primera vez.",
+            "paragraph2" : "Ledger no conserva copias de tu Frase de recuperación.",
+            "disclaimer" : "Comprendo que, si pierdo mi Frase de recuperación, no podré acceder a mis cripto en caso de que pierda acceso a mi Nano.",
+            "buttons" : {
+              "next" : "Ingresar Frase de recuperación",
+              "prev" : "Paso anterior",
+              "help" : "Necesitas ayuda"
+            },
+            "warning" : {
+              "title" : "No utilices una Frase de recuperación que no hayas generado tú mismo.",
+              "desc" : "Tú y solo tú debes crear el código PIN y generar la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla o un código PIN ya existentes,no utilices el producto y ponte en contacto con el Soporte.",
+              "supportLink" : "Ponte en contacto con Soporte"
+            }
+          },
+          "useRecoverySheet" : {
+            "takeYourRecoverySheet" : {
+              "title" : "Busca tu Hoja de recuperación (Recovery sheet)",
+              "descr" : "Elige una Hoja de recuperación en blanco, de las incluidas con tu Nano. Si las Hojas de Recuperación incluidas no están en blanco, ponte en contacto con el Soporte de Ledger."
+            },
+            "browse" : {
+              "title" : "Navegar",
+              "descr" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
+            },
+            "buttons" : {
+              "next" : "Siguiente paso",
+              "prev" : "Paso anterior",
+              "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "newRecoveryPhrase" : {
+            "title" : "Frase de recuperación",
+            "paragraph1" : "Tu Frase de recuperación es una lista secreta de 24 Palabras que genera una copia de respaldo de tus claves privadas.",
+            "paragraph2" : "Tu Nano genera una Frase de recuperación única. Ledger no conserva copias de la misma.",
+            "disclaimer" : "Comprendo que si pierdo la Frase de recuperación no podré acceder a mis cripto en caso de no tener acceso a mi Nano.",
+            "buttons" : {
+              "next" : "Frase de recuperación",
+              "prev" : "Paso anterior",
+              "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "recoveryHowTo" : {
+            "grabRecovery" : {
+              "title" : "Toma tu Frase de recuperación"
             },
             "follow" : {
               "title" : "Sigue las instrucciones",
@@ -3542,16 +3704,20 @@
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
             },
-            "warning" : {
-              "title" : "No utilices una Frase de recuperación que no hayas generado tú mismo.",
-              "desc" : "Tú y solo tú debes inicializar el código PIN y la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla existente o un código PIN ya inicializado, no utilices el producto y ponte en contacto con el Soporte.",
-              "supportLink" : "Ponte en contacto con Soporte"
+            "buttons" : {
+              "next" : "Siguiente paso",
+              "prev" : "Paso anterior",
+              "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
-          "useRecoverySheet" : {
-            "takeYourRecoverySheet" : {
-              "title" : "Busca tu Hoja de recuperación (Recovery sheet)",
-              "descr" : "Elige una Hoja de recuperación en blanco, de las incluidas con tu Nano. Si las Hojas de Recuperación incluidas no están en blanco, ponte en contacto con el Soporte de Ledger."
+          "recoveryHowTo3" : {
+            "reEnterWord" : {
+              "title" : "Confirma tu Frase de recuperación",
+              "descr" : "Desplázate por las Palabras con el botón derecho hasta que encuentres la “Word #1”. Valida presionando ambos botones."
             },
             "writeDownWords" : {
               "title" : "Escribe las 24 Palabras",
@@ -3561,6 +3727,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "newRecoveryPhrase" : {
@@ -3599,31 +3769,6 @@
               "help" : "Necesitas ayuda"
             }
           },
-          "recoveryHowTo3" : {
-            "reEnterWord" : {
-              "title" : "Confirma tu Frase de recuperación",
-              "descr" : "Desplázate por las Palabras con el botón derecho hasta que encuentres la “Word #1”. Valida presionando ambos botones."
-            },
-            "repeat" : {
-              "title" : "¡Repite lo mismo con todas las Palabras!"
-            },
-            "buttons" : {
-              "next" : "Siguiente paso",
-              "prev" : "Paso anterior",
-              "help" : "Necesitas ayuda"
-            }
-          },
-          "genuineCheck" : {
-            "success" : {
-              "title" : "¡Todo bien!",
-              "desc" : "Tu Ledger {{deviceName}} es auténtico y ya está listo para utilizar con la aplicación Ledger Live"
-            },
-            "buttons" : {
-              "next" : "Continuar",
-              "prev" : "Paso anterior",
-              "help" : "Necesitas ayuda"
-            }
-          },
           "hideRecoveryPhrase" : {
             "title" : "Oculta tu Frase de recuperación",
             "paragraph" : "Tu Frase de recuperación es la única manera de recuperar tus cripto, en caso de no ser posible utilizar tu Nano. Debes conservarla en un lugar seguro.",
@@ -3634,6 +3779,10 @@
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda",
               "learn" : "Aprende cómo ocultarla"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "pairMyNano" : {
@@ -3643,6 +3792,10 @@
               "next" : "Verificar mi Nano",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           }
         }
@@ -3658,6 +3811,47 @@
         "ownYourPrivateKey" : {
           "title" : "No compartas tu clave privada",
           "description" : "Tu clave privada se almacena dentro de tu Nano. Debes ser su único propietario para poder mantener el control sobre tu dinero."
+        },
+        "stayOffline" : {
+          "title" : "Mantente sin conexión",
+          "description" : "Tu Nano funciona como una billetera de “almacenamiento en frío”. Esto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación mientras estás conectado a Internet."
+        },
+        "validateTransactions" : {
+          "title" : "Validar transacciones",
+          "description" : "Ledger Live te permite comprar, vender, administrar, intercambiar y ganar cripto con seguridad. Deberás validar cada transacción cripto con tu Nano."
+        },
+        "setUpNanoWallet" : {
+          "title" : "Vamos a configurar tu Nano.",
+          "description" : "Empezaremos por configurar la seguridad de tu Nano.",
+          "CTA" : "Vamos."
+        }
+      }
+    },
+    "quizz" : {
+      "heading" : "Cuestionario",
+      "title" : "¡Hora de jugar!",
+      "descr" : "Responde a 3 sencillas preguntas para evitar algunos errores comunes acerca de tu billetera de hardware.",
+      "buttons" : {
+        "start" : "Resuelve el cuestionario",
+        "next" : "Siguiente pregunta",
+        "finish" : "Terminar cuestionario"
+      },
+      "questions" : {
+        "1" : {
+          "text" : "Como usuario de Ledger, mis criptomonedas se almacenan:",
+          "answers" : {
+            "1" : "En mi Nano",
+            "2" : "En la cadena de bloques"
+          },
+          "linux": {
+            "title": "Actualiza las reglas udev en Linux",
+            "desc": "Haz clic en el botón a continuación para agregar las reglas udev. Conecta y desbloquea tu dispositivo para ver si se detecta.",
+            "cta": "Establecer reglas",
+            "bullets": {
+              "0": "Ingresa el siguiente comando en una terminal para agregar automáticamente las reglas y volver a cargar udev.",
+              "1": "Conecta y desbloquea tu dispositivo para ver si se detecta."
+            }
+          }
         },
         "stayOffline" : {
           "title" : "Mantente sin conexión",
@@ -3884,23 +4078,392 @@
     "verifyData" : "Siempre verifica los detalles de la operación en tu dispositivo.",
     "warningWording" : {
     },
-    "titleWording" : {
-      "send" : "Confirma en tu dispositivo para finalizar la operación",
-      "claimReward" : "Confirma en tu dispositivo para finalizar la operación",
-      "freeze" : "Confirma en tu dispositivo para finalizar la operación",
-      "unfreeze" : "Confirma en tu dispositivo para finalizar la operación",
-      "vote" : "Confirma en tu dispositivo para finalizar la operación",
-      "delegate" : "Confirma en tu dispositivo para finalizar la operación",
-      "undelegate" : "Confirma en tu dispositivo para finalizar la operación",
-      "redelegate" : "Confirma en tu dispositivo para finalizar la operación",
-      "claimRewardCompound" : "Confirma en tu dispositivo para finalizar la operación",
-      "nominate" : "Confirma en tu dispositivo para finalizar la operación",
-      "chill" : "Confirma en tu dispositivo para finalizar la operación",
-      "bond" : "Confirma en tu dispositivo para finalizar la operación",
-      "unbond" : "Confirma en tu dispositivo para finalizar la operación",
-      "rebond" : "Confirma en tu dispositivo para finalizar la operación",
-      "withdrawUnbonded" : "Confirma en tu dispositivo para finalizar la operación",
-      "setController" : "Confirma en tu dispositivo para finalizar la operación"
+    "votes" : "Votos ({{count}})"
+  },
+  "RecipientField" : {
+    "placeholder" : "Ingresa la dirección de {{currencyName}}"
+  },
+  "Terms" : {
+    "title" : "Términos de uso",
+    "description" : "Por favor, dedica algo de tiempo a revisar nuestros términos de servicio y política de privacidad",
+    "termsLabel" : "Términos del servicio",
+    "privacyLabel" : "Política de privacidad",
+    "switchLabel" : "He leído y acepto los Términos del Servicio y la Política de Privacidad",
+    "cta" : "Ingresa a la aplicación Ledger",
+    "termsCheckboxLabel" : "He leído y acepto los Términos de uso.",
+    "privacyCheckboxLabel" : "He leído y acepto la Política de privacidad."
+  },
+  "updatedTerms" : {
+    "title" : "Actualización de los términos de uso",
+    "body" : {
+      "intro" : "¡Hola! Hemos actualizado nuestros términos de uso de Ledger Live para hacerlos más claros y reflejar los servicios y las características que se han añadido recientemente a Ledger Live. La actualización se centra en los siguientes aspectos:",
+      "bulletPoints" : ["Aclarar los servicios disponibles y cómo funcionan", "Explicar el funcionamiento de las tarifas de servicio", "Mejorar nuestro proceso de notificación para asegurarnos de que se te informa adecuadamente de cualquier nuevo cambio en nuestros términos de uso"],
+      "agreement" : "Al hacer clic en \"Continuar\" confirmas que has leído y aceptas los términos de uso que figuran a continuación."
+    },
+    "link" : "Términos de uso",
+    "cta" : "Continuar"
+  },
+  "families" : {
+    "cardano" : {
+      "memoPlaceholder" : "Opcional",
+      "memo" : "Memo"
+    },
+    "stellar" : {
+      "memo" : "Memo",
+      "memoType" : {
+        "MEMO_TEXT" : "Texto de memo",
+        "NO_MEMO" : "Sin Memo",
+        "MEMO_ID" : "Memo ID",
+        "MEMO_HASH" : "Memo Hash",
+        "MEMO_RETURN" : "Devolución de memo"
+      },
+      "memoWarningText" : "Al utilizar un Memo, confirma cuidadosamente con el receptor el tipo a utilizar",
+      "fee" : "Tarifas",
+      "feeInfoText" : "Las transacciones en la red de Stellar requieren una tarifa mínima de transacción de 0,00001 XLM.",
+      "suggested" : "Sugerida",
+      "recommendedFee" : "Tarifa recomendada",
+      "recommenndedFeeInfo" : "Puedes enviar esta transacción con una tarifa inferior a la recomendada, pero es posible que no se complete.",
+      "networkCongestion" : "congestión de la red",
+      "networkCongestionLevel" : {
+        "LOW" : "Baja",
+        "MEDIUM" : "Media",
+        "HIGH" : "Alta"
+      },
+      "assetCode" : "Código del activo",
+      "assetIssuer" : "Emisor del activo"
+    },
+    "cosmos" : {
+      "memo" : "Memo",
+      "memoPlaceholder" : "Opcional",
+      "memoWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
+    },
+    "solana" : {
+      "memo" : "Memo",
+      "memoPlaceholder" : "Opcional"
+    }
+  },
+  "errors" : {
+    "NoSuchAppOnProvider" : {
+      "title" : "No es posible encontrar la aplicación {{appName}} para tu configuración específica.",
+      "description" : "Intenta reinstalar la aplicación desde el Manager"
+    },
+    "countervaluesUnavailable" : {
+      "title" : "No es posible ofrecerte una contraparte para este activo en este momento"
+    },
+    "generic" : {
+      "title" : "{{message}}",
+      "description" : "Algo ha fallado. Inténtalo de nuevo o contacta al Soporte de Ledger."
+    },
+    "AccountAwaitingSendPendingOperations" : {
+      "title" : "Hay una operación pendiente para esta cuenta.",
+      "description" : "Espera a que finalice la operación."
+    },
+    "AccountNameRequired" : {
+      "title" : "Es necesario un nombre de cuenta.",
+      "description" : "Ingresa un nombre de cuenta"
+    },
+    "AccountNeedResync" : {
+      "title" : "Inténtalo de nuevo.",
+      "description" : "La cuenta está desactualizada. Es necesaria una sincronización."
+    },
+    "AccountNotSupported" : {
+      "title" : "La cuenta no es compatible.",
+      "description" : "Vuelve a intentarlo o contacta al Soporte ({{reason}})"
+    },
+    "AlgorandASANotOptInInRecipient" : {
+      "title" : "La cuenta de recepción no ha adherido al ASA seleccionado."
+    },
+    "AmountRequired" : {
+      "title" : "Importe requerido"
+    },
+    "NoAccessToCamera" : {
+      "title" : "Asegúrate de que tu sistema cuente con una cámara, de que la misma no esté siendo utilizada por otra aplicación y de que Ledger Live tenga permiso para usarla.",
+      "description" : ""
+    },
+    "ClaimRewardsFeesWarning" : {
+      "title" : "Las recompensas son inferiores a las tarifas estimadas para reclamarlas",
+      "description" : ""
+    },
+    "CompoundLowerAllowanceOfActiveAccountError" : {
+      "title" : "No es posible reducir el importe aprobado mientras tengas un depósito activo."
+    },
+    "CosmosBroadcastCodeInternal" : {
+      "title" : "Se ha producido un error (Error 1)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosBroadcastCodeTxDecode" : {
+      "title" : "Se ha producido un error (Error 2)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosBroadcastCodeInvalidSequence" : {
+      "title" : "Secuencia inválida",
+      "description" : "Intenta la operación de nuevo"
+    },
+    "CosmosBroadcastCodeUnauthorized" : {
+      "title" : "Firma no autorizada",
+      "description" : "Esta cuenta no está autorizada a firmar esta transacción"
+    },
+    "CosmosBroadcastCodeInsufficientFunds" : {
+      "title" : "Fondos insuficientes",
+      "description" : "Asegúrate de que la cuenta utilizada tiene fondos suficientes e inténtalo de nuevo"
+    },
+    "CosmosBroadcastCodeUnknownRequest" : {
+      "title" : "Se ha producido un error (Error 6)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosBroadcastCodeInvalidAddress" : {
+      "title" : "Dirección inválida",
+      "description" : "Comprueba la dirección e inténtalo de nuevo"
+    },
+    "CosmosBroadcastCodeInvalidPubKey" : {
+      "title" : "Se ha producido un error (Error 8)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosBroadcastCodeUnknownAddress" : {
+      "title" : "Dirección desconocida",
+      "description" : "Comprueba la dirección e inténtalo de nuevo"
+    },
+    "CosmosBroadcastCodeInsufficientCoins" : {
+      "title" : "Monedas insuficientes",
+      "description" : "Asegúrate de que la cuenta utilizada tiene fondos suficientes e inténtalo de nuevo"
+    },
+    "CosmosBroadcastCodeInvalidCoins" : {
+      "title" : "Se ha producido un error (Error 11)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosBroadcastCodeOutOfGas" : {
+      "title" : "Se ha producido un error (Error 12)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosBroadcastCodeMemoTooLarge" : {
+      "title" : "El campo Memo es demasiado largo",
+      "description" : "Reduce el tamaño del Memo Text e inténtalo de nuevo"
+    },
+    "CosmosBroadcastCodeInsufficientFee" : {
+      "title" : "Se ha producido un error (Error 14)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosBroadcastCodeTooManySignatures" : {
+      "title" : "Se ha producido un error (Error 15)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosBroadcastCodeGasOverflow" : {
+      "title" : "Se ha producido un error (Error 16)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosBroadcastCodeNoSignatures" : {
+      "title" : "Se ha producido un error (Error 17)",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "CosmosDelegateAllFundsWarning" : {
+      "title" : "Asegúrate de que tu saldo restante es suficiente para cubrir las tarifas de transacciones futuras"
+    },
+    "CurrencyNotSupported" : {
+      "title" : "{{currencyName}} no es compatible",
+      "description" : "Todavía no se admite este activo cripto. contacta al Soporte de Ledger."
+    },
+    "DeviceNotGenuine" : {
+      "title" : "Posiblemente no auténtico",
+      "description" : "Solicita asistencia del Soporte de Ledger"
+    },
+    "DeviceGenuineSocketEarlyClose" : {
+      "title" : "Inténtalo de nuevo (genuine-close)",
+      "description" : null
+    },
+    "DeviceInOSUExpected" : {
+      "title" : "La actualización falló",
+      "description" : "Inténtalo de nuevo o ponte en contacto con Soporte de Ledger"
+    },
+    "DeviceHalted" : {
+      "title" : "Reinicia tu dispositivo Ledger e inténtalo de nuevo",
+      "description" : "Se produjo un error inesperado. Inténtalo de nuevo"
+    },
+    "DeviceNotOnboarded" : {
+      "title" : "Tu dispositivo aún no está listo para usar",
+      "description" : "Configura tu dispositivo antes de usarlo con Ledger Live."
+    },
+    "DeviceSocketFail" : {
+      "title" : "Reinicia tu dispositivo Ledger e inténtalo de nuevo",
+      "description" : "Se ha producido un error inesperado. Inténtalo de nuevo. ({{message}})"
+    },
+    "DeviceSocketNoBulkStatus" : {
+      "title" : "La conexión falló",
+      "description" : "Inténtalo de nuevo."
+    },
+    "DisconnectedDevice" : {
+      "title" : "Parece que tu dispositivo se ha desconectado",
+      "description" : "Conéctalo e inténtalo de nuevo."
+    },
+    "DisconnectedDeviceDuringOperation" : {
+      "title" : "Parece que tu dispositivo se ha desconectado",
+      "description" : "Conéctalo e inténtalo de nuevo."
+    },
+    "EnpointConfig" : {
+      "title" : "Endpoint inválido.",
+      "description" : "Ingresa un endpoint válido."
+    },
+    "FeeEstimationFailed" : {
+      "title" : "El cálculo de tarifas ha fallado",
+      "description" : "Intenta ingresar una tarifa personalizada (estado: {{status}})"
+    },
+    "FirmwareOrAppUpdateRequired" : {
+      "title" : "Es necesario actualizar el firmware o la aplicación",
+      "description" : "Utiliza Manager para desinstalar todas las aplicaciones y comprobar si hay alguna actualización de firmware disponible antes de instalarlas de nuevo"
+    },
+    "LatestFirmwareVersionRequired" : {
+      "title" : "Actualizar el firmware del Nano",
+      "description" : "Actualiza el firmware de tus dispositivos con la última versión para acceder a esta característica"
+    },
+    "FirmwareNotRecognized" : {
+      "title" : "No se reconoce el firmware del dispositivo",
+      "description" : "Ponte en contacto con el Soporte de Ledger"
+    },
+    "HardResetFail" : {
+      "title" : "No fue posible restablecer",
+      "description" : "Inténtalo de nuevo o contacta a Soporte de Ledger si persiste el problema."
+    },
+    "LatestMCUInstalledError" : {
+      "title" : "No hay nada que actualizar",
+      "description" : "Contacta al Soporte de Ledger si no puedes utilizar tu dispositivo."
+    },
+    "LedgerAPI4xx" : {
+      "title" : "{{message}}",
+      "description" : "Comprueba tu conexión e inténtalo de nuevo o ponte en contacto con el Soporte de Ledger."
+    },
+    "LedgerAPI5xx" : {
+      "title" : "Inténtalo de nuevo.",
+      "description" : "El servidor no ha podido gestionar tu solicitud. Inténtalo de nuevo o contacta al Soporte de Ledger. {{message}}"
+    },
+    "LedgerAPINotAvailable" : {
+      "title" : "Los servicios de {{currencyName}} no están disponibles",
+      "description" : "Inténtalo de nuevo o ponte en contacto con Soporte de Ledger"
+    },
+    "ManagerAppAlreadyInstalled" : {
+      "title" : "Ya está instalada",
+      "description" : "Comprueba qué aplicaciones están ya instaladas en tu dispositivo."
+    },
+    "ManagerAppDepInstallRequired" : {
+      "title" : "Es necesaria la aplicación {{dependency}}",
+      "description" : "Si la aplicación {{dependency}} ya está instalada, vuelve a instalarla y utiliza la versión más reciente"
+    },
+    "ManagerAppDepUninstallRequired" : {
+      "title" : "Esta aplicación es necesaria.",
+      "description" : "Primero debes desinstalar todas las aplicaciones que necesiten la aplicación {{appName}}"
+    },
+    "ManagerDeviceLocked" : {
+      "title" : "Tu dispositivo está bloqueado",
+      "description" : "Desbloquéalo"
+    },
+    "ManagerFirmwareNotEnoughSpace" : {
+      "title" : "Desinstala todas las aplicaciones de tu dispositivo",
+      "description" : "Las claves privadas para acceder a tus activos cripto permanecerán seguras en tu dispositivo y debes hacer una copia de respaldo de las mismas en tu Hoja de recuperación."
+    },
+    "ManagerNotEnoughSpace" : {
+      "title" : "No queda espacio suficiente.",
+      "description" : "Desinstala algunas aplicaciones para liberar espacio. Las claves privadas para acceder a tus activos cripto permanecerán seguras en tu dispositivo."
+    },
+    "ManagerQuitPage" : {
+      "install" : {
+        "title" : "¿Finalizar instalación de aplicaciones en curso?",
+        "description" : "Al salir de Manager, se interrumpirá la instalación de la aplicación. Finaliza la instalación para instalar las aplicaciones en espera.",
+        "stay" : "Finalizar instalación"
+      },
+      "uninstall" : {
+        "title" : "¿Finalizar la desinstalación de la aplicación en curso?",
+        "description" : "Al salir de Manager, se interrumpirán las desinstalaciones de aplicación en curso.",
+        "stay" : "Finalizar la desinstalación"
+      },
+      "update" : {
+        "title" : "¿Finalizar la actualización de aplicación en curso?",
+        "description" : "Al salir de Manager, se interrumpirán las actualizaciones de aplicación en curso.",
+        "stay" : "Finalizar actualizaciones"
+      },
+      "quit" : "Salir de Manager"
+    },
+    "ManagerUninstallBTCDep" : {
+      "title" : "Esta aplicación es necesaria.",
+      "description" : "Desinstala la aplicación de Bitcoin o de Ethereum en último lugar"
+    },
+    "NetworkDown" : {
+      "title" : "Parece que no hay conexión a Internet",
+      "description" : "Comprueba tu conexión a Internet."
+    },
+    "NoAddressesFound" : {
+      "title" : "No se encontró ninguna cuenta",
+      "description" : "Algo ha salido mal con el cálculo de la dirección, inténtalo de nuevo o contacta al Soporte de Ledger"
+    },
+    "NotEnoughBalance" : {
+      "title" : "Fondos insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
+    "NotEnoughBalanceBecauseDestinationNotCreated" : {
+      "title" : "La dirección del destinatario está inactiva. Envía al menos {{minimalAmount}} para activarla."
+    },
+    "NotEnoughGas" : {
+      "title" : "El saldo de la cuenta principal es insuficiente para las comisiones de red"
+    },
+    "PasswordsDontMatch" : {
+      "title" : "Las contraseñas no coinciden",
+      "description" : "Inténtalo de nuevo."
+    },
+    "PasswordIncorrect" : {
+      "title" : "La contraseña ingresada es incorrecta",
+      "description" : "Inténtalo de nuevo."
+    },
+    "QuantityNeedsToBePositive" : {
+      "title" : "La cantidad debe ser mayor a 0"
+    },
+    "RPCHostRequired" : {
+      "title" : "Es necesario un anfitrión."
+    },
+    "RPCHostInvalid" : {
+      "title" : "Ingresa un anfitrión válido."
+    },
+    "RPCUserRequired" : {
+      "title" : "Es necesario ingresar un nombre de usuario RPC"
+    },
+    "RPCPassRequired" : {
+      "title" : "Es necesario ingresar la contraseña RPC"
+    },
+    "SatStackAccessDown" : {
+      "title" : "No fue posible hacer contacto con el nodo completo",
+      "description" : "Verifica que SatStack y tu nodo estén funcionando. Comprueba la configuración del nodo completo en Ajustes si persiste el problema."
+    },
+    "SatStackStillSyncing" : {
+      "title" : "Sincronización de nodo en curso...",
+      "description" : "Espera mientras se sincroniza el nodo. No es posible realizar el envío, ya que los saldos de tu cuenta de Bitcoin pueden ser incorrectos."
+    },
+    "SatStackVersionTooOld" : {
+      "title" : "Actualiza SatStack",
+      "description" : "La versión de SatStack que estás utilizando es demasiado antigua y puede contener errores o incompatibilidades."
+    },
+    "SatStackDescriptorNotImported" : {
+      "title" : "Cuenta no escaneada por el nodo completo",
+      "description" : "Configura el nodo completo para buscar las cuentas asociadas a este dispositivo. El nodo completo debe buscar esta cuenta primero en la cadena de bloques, antes de agregarla a tu Portfolio."
+    },
+    "SwapGenericAPIError" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La transacción de intercambio no se realizó. Intenta de nuevo o ponte en contacto con soporte."
+    },
+    "TimeoutError" : {
+      "title" : "El servidor ha tardado demasiado en responder",
+      "description" : "Inténtalo de nuevo."
+    },
+    "TimeoutTagged" : {
+      "title" : "El servidor ha tardado demasiado en responder ({{tag}})",
+      "description" : "Se ha agotado el tiempo."
+    },
+    "TransportError" : {
+      "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo",
+      "description" : "{{message}}"
+    },
+    "TransportRaceCondition" : {
+      "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo",
+      "description" : "{{message}}"
+    },
+    "TransportStatusError" : {
+      "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo",
+      "description" : "{{message}}"
     },
     "recipientWording" : {
       "send" : "receptor",
