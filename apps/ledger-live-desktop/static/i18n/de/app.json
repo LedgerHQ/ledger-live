@@ -198,7 +198,7 @@
     "menu" : "Menü",
     "stars" : "Favoritenliste",
     "accounts" : "Konten",
-    "manager" : "Manager",
+    "manager" : "My Ledger",
     "exchange" : "Kaufen / Verkaufen",
     "swap" : "Umtauschen",
     "lend" : "Leihen",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "Bitte installieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Gehen Sie zum Manager und installieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
-      "cta" : "Zum Manager gehen"
+      "subtitle" : "Go to My Ledger and install {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "outdatedApp" : {
       "title" : "Bitte aktualisieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Gehen Sie zum Manager und aktualisieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
-      "cta" : "Zum Manager gehen"
+      "subtitle" : "Go to My Ledger and update {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "providers" : {
       "title" : "Wählen Sie einen Anbieter für den Tausch von Kryptowährungen",
@@ -1202,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Apps auf Ihrem Gerät installieren",
-      "desc" : "Gehen Sie zum Manager, um Apps auf Ihrem Gerät zu installieren. Sie können Konten hinzufügen, sobald Sie Apps auf Ihrem Gerät haben.",
+      "desc" : "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
       "buttons" : {
-        "installApp" : "Zum Manager gehen",
+        "installApp" : "Go to My Ledger",
         "help" : "Hilfe"
       }
     },
@@ -1213,7 +1213,7 @@
       "desc" : "Fügen Sie ein Konto hinzu, um mit der Verwaltung Ihrer Krypto-Vermögenswerte zu beginnen. Sie müssen die App für Ihr Krypto-Vermögen auf Ihrem Gerät installiert haben.",
       "buttons" : {
         "addAccount" : "Konto hinzufügen",
-        "installApp" : "Gehen Sie zum Manager, um Apps zu installieren",
+        "installApp" : "Go to My Ledger to install apps",
         "help" : "Hilfe"
       }
     }
@@ -1536,12 +1536,12 @@
     "quitApp" : "Beenden Sie die Anwendung auf Ihrem Gerät",
     "appNotInstalledTitle" : "Fehlende, erforderliche App",
     "appNotInstalledTitle_plural" : "Fehlende, erforderliche Apps",
-    "appNotInstalled" : "Die App {{appName}} ist erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
-    "appNotInstalled_plural" : "Die Apps {{appName}} sind erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
-    "openManager" : "Manager öffnen",
+    "appNotInstalled" : "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
+    "appNotInstalled_plural" : "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "openManager" : "Open My Ledger",
     "openOnboarding" : "Gerät einrichten",
     "outdated" : "App-Version veraltet",
-    "outdatedDesc" : "Ein wichtiges Update ist für die Anwendung {{appName}} auf Ihrem Gerät verfügbar. Bitte gehen Sie zum Manager, um das Update durchzuführen.",
+    "outdatedDesc" : "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
     "installApp" : "{{appName}} App-Installation",
     "installAppDescription" : "Bitte warten Sie, bis die Installation beendet ist",
     "listApps" : "Prüfen von App-Abhängigkeiten",
@@ -1584,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "Es sieht so aus, als ob eine App auf Ihrem Gerät geöffnet ist",
-      "subtitle" : "Beim erneuten Öffnen des Managers wird die App auf Ihrem Gerät beendet",
-      "ctaReopen" : "Manager erneut öffnen",
+      "subtitle" : "Reopening My Ledger will quit the app on your device",
+      "ctaReopen" : "Reopen My Ledger",
       "ctaPortfolio" : "Zurück zum Portfolio"
     },
     "deviceStorage" : {
@@ -1628,7 +1628,7 @@
         "title_plural" : "Updates verfügbar",
         "progressTitle" : "{{number}} App-Update",
         "progressTitle_plural" : "{{number}} App-Updates",
-        "progressWarning" : "Beenden Sie den Manager nicht während der Aktualisierung.",
+        "progressWarning" : "Do not quit My Ledger during update.",
         "progress" : "Alle aktualisieren ..."
       },
       "item" : {
@@ -1692,7 +1692,7 @@
       "updateBtn" : "Firmware aktualisieren",
       "banner" : {
         "warning" : "Update-Firmware zu {{latestFirmware}} ist verfügbar",
-        "cta" : "Zum Manager gehen",
+        "cta" : "Go to My Ledger",
         "old" : {
           "warning" : "Geräte-Firmware-Version zu alt, um aktualisiert zu werden. Kontaktieren Sie den Ledger-Support für einen Ersatz.",
           "cta" : "Support kontaktieren"
@@ -1748,7 +1748,7 @@
         "boot" : "Drücken und halten Sie die Seitentaste, bis {{option}} angezeigt wird",
         "recoveryMode" : "Tippen Sie auf {{mode}} Modus. Warten Sie, bis das Dashboard erscheint.",
         "third" : "3. Alle Apps deinstallieren",
-        "openLive" : "Öffnen Sie den Manager in Ledger Live.",
+        "openLive" : "Open My Ledger in Ledger Live.",
         "uninstall" : "Klicken Sie auf das graue Papierkorbsymbol für alle derzeit auf dem {{deviceName}} installierten Apps. Dies schafft Platz für das Firmware-Installationsprogramm.",
         "disclaimer" : "Hinweis: Ihr Guthaben ist von diesem Vorgang nicht betroffen, die privaten Schlüssel zum Zugriff auf Ihr Krypto-Vermögen in der Blockchain bleiben sicher auf Ihrem Recovery Sheet."
       }
@@ -3046,6 +3046,11 @@
       "catalogServerDesc" : "Wechseln Sie zwischen mehreren Plattform-App-Quellen",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
+      "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
+      "featureFlagsEdit" : "Bearbeiten",
+      "featureFlagsRestore" : "Wiederherstellen",
+      "featureFlagsOverride" : "Überschreiben",
       "addLocalApp" : "Lokale App hinzufügen",
       "addLocalAppDesc" : "Durchsuchen Sie lokale Dateien und fügen Sie eine lokale App mit einem lokalen Manifest hinzu",
       "addLocalAppButton" : "Durchsuchen",
@@ -3110,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "Entwicklermodus",
-          "description" : "Zeige Entwickler- und Testnet-Apps im Manager."
+          "description" : "Show developer and testnet apps in My Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "Erweiterte Kontosuche",
@@ -3125,8 +3130,8 @@
           "description" : "Benutzerdefiniertes Lückenlimit für alle Konten. Wenn Sie diesen Wert über den Standardwert (20) erhöhen, werden mehr ungenutzte öffentliche Adressen nach Coins durchsucht. Nur für fortgeschrittene Benutzer, dies kann die Kompatibilität beim Wiederherstellen Ihrer Konten beeinträchtigen."
         },
         "forceProvider" : {
-          "title" : "Manager-Anbieter",
-          "description" : "Das Ändern des App-Anbieters im Manager kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+          "title" : "My Ledger provider",
+          "description" : "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
         },
         "testAnimations" : {
           "title" : "Lottie-Animationen testen",
@@ -3978,7 +3983,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "Die {{appName}} -App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
-      "description" : "Versuchen Sie, die App aus dem Manager heraus neu zu installieren"
+      "description" : "Try reinstalling the app from My Ledger"
     },
     "countervaluesUnavailable" : {
       "title" : "Wir können derzeit keinen Gegenwert für diesen Vermögenswert angeben"
@@ -4141,7 +4146,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "Firmware- oder App-Update erforderlich",
-      "description" : "Bitte verwenden Sie den Manager, um alle Apps zu deinstallieren und dann zu prüfen, ob ein Firmware-Update verfügbar ist, bevor Sie diese neu installieren"
+      "description" : "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Nano-Firmware aktualisieren",
@@ -4198,20 +4203,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "Abschluss App-Installation in Arbeit?",
-        "description" : "Wenn Sie den Manager beenden, wird die App-Installation abgebrochen. Bitte beenden Sie die Installation, um die Apps in der Warteschlange zu installieren.",
+        "description" : "Quitting My Ledger will terminate the app installation. Please finish the installation to install the apps in the queue.",
         "stay" : "Installation beenden"
       },
       "uninstall" : {
         "title" : "Abschluss App-Installation in Arbeit?",
-        "description" : "Durch das Beenden des Managers werden die laufenden App-Deinstallationen beendet.",
+        "description" : "Quitting My Ledger will terminate the app uninstallations in progress.",
         "stay" : "Deinstallation beenden"
       },
       "update" : {
         "title" : "Abschluss App-Installation in Arbeit?",
-        "description" : "Durch das Beenden des Managers werden die laufenden App-Updates beendet.",
+        "description" : "Quitting My Ledger will terminate the app updates in progress.",
         "stay" : "Updates beenden"
       },
-      "quit" : "Manager schließen"
+      "quit" : "Quit My Ledger"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "Entschuldigung, diese App ist erforderlich",
@@ -4219,6 +4224,10 @@
     },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
+      "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
+    },
+    "NetworkError" : {
+      "title" : "Während der Synchronisierung ist ein Fehler aufgetreten",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
     },
     "NoAddressesFound" : {
@@ -4307,7 +4316,7 @@
       "description" : "Bitte starten Sie Ihr Gerät neu, ohne die Schaltflächen zu berühren, wenn das Logo erscheint. Kontaktieren Sie den Ledger Support, falls das Problem weiterhin besteht."
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager auf Gerät abgelehnt"
+      "title" : "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Update auf Gerät abgebrochen",
@@ -4327,7 +4336,7 @@
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Zurück zum Dashboard",
@@ -4347,7 +4356,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
@@ -4392,7 +4401,7 @@
       "list" : {
         "1" : "Trennen Sie das USB-Kabel ab und schließen Sie es wieder an, ohne eine Taste zu drücken.",
         "2" : "Drücken Sie beide Tasten zusammen dreimal, um das Dashboard anzuzeigen.",
-        "3" : "Öffnen Sie den Manager und klicken Sie auf Firmware aktualisieren."
+        "3" : "Open My Ledger and click Update firmware."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
