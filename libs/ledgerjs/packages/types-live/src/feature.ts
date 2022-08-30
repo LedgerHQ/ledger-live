@@ -8,6 +8,7 @@ export type FeatureId =
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
   | "currencyOsmosis"
+  | "currencyOsmosisMobile"
   | "ptxSmartRoutingMobile"
   | string;
 
