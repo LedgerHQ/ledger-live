@@ -25,6 +25,7 @@ const solana: AppSpec<Transaction> = {
     appVersion: "1.2.0",
     appName: "solana",
   },
+  genericDeviceAction: acceptTransferTransaction,
   testTimeout: 2 * 60 * 1000,
   currency: getCryptoCurrencyById("solana"),
   mutations: [

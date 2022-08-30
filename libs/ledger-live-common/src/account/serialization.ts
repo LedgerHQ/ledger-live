@@ -794,20 +794,19 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromCosmosResourcesRaw(cosmosResourcesRaw);
       break;
     }
-    case "tezos":
-      {
-        const tezosResourcesRaw = (rawAccount as TezosAccountRaw)
-          .tezosResources;
-        if (tezosResourcesRaw)
-          (res as TezosAccount).tezosResources =
-            fromTezosResourcesRaw(tezosResourcesRaw);
-      }
+    case "tezos": {
+      const tezosResourcesRaw = (rawAccount as TezosAccountRaw).tezosResources;
+      if (tezosResourcesRaw)
+        (res as TezosAccount).tezosResources =
+          fromTezosResourcesRaw(tezosResourcesRaw);
       break;
+    }
     case "bitcoin": {
       const bitcoinResourcesRaw = (rawAccount as BitcoinAccountRaw)
         .bitcoinResources;
-      (res as BitcoinAccount).bitcoinResources =
-        fromBitcoinResourcesRaw(bitcoinResourcesRaw);
+      if (bitcoinResourcesRaw)
+        (res as BitcoinAccount).bitcoinResources =
+          fromBitcoinResourcesRaw(bitcoinResourcesRaw);
       break;
     }
     case "algorand": {
@@ -818,20 +817,17 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromAlgorandResourcesRaw(algoResourcesRaw);
       break;
     }
-    case "polkadot":
-      {
-        const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
-          .polkadotResources;
-
-        if (polkadotResourcesRaw)
-          (res as PolkadotAccount).polkadotResources =
-            fromPolkadotResourcesRaw(polkadotResourcesRaw);
-      }
+    case "polkadot": {
+      const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
+        .polkadotResources;
+      if (polkadotResourcesRaw)
+        (res as PolkadotAccount).polkadotResources =
+          fromPolkadotResourcesRaw(polkadotResourcesRaw);
       break;
+    }
     case "elrond": {
       const elrondResourcesRaw = (rawAccount as ElrondAccountRaw)
         .elrondResources;
-
       if (elrondResourcesRaw)
         (res as ElrondAccount).elrondResources =
           fromElrondResourcesRaw(elrondResourcesRaw);

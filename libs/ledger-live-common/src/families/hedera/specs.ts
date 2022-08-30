@@ -11,6 +11,7 @@ import type {
 import type { Transaction } from "./types";
 import { botTest, pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("hedera");
 const memoTestMessage = "This is a test memo.";
@@ -39,6 +40,7 @@ const hedera: AppSpec<Transaction> = {
     firmware: "2.1.0",
     appVersion: "1.0.8",
   },
+  genericDeviceAction: acceptTransaction,
   currency,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(0), "Balance is too low");

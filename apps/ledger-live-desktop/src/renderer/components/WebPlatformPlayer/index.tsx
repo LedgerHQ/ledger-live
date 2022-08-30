@@ -269,6 +269,9 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
     const webview = targetRef.current;
 
     if (webview) {
+      // For mysterious reasons, the webpreferences attribute does not
+      // pass through the styled component when added in the JSX.
+      webview.webpreferences = "nativeWindowOpen=no";
       webview.addEventListener("new-window", handleNewWindow);
       webview.addEventListener("did-finish-load", handleLoad);
     }

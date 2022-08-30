@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Account } from "@ledgerhq/types-live";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import AccountCard from "../../components/AccountCard";
 import CheckBox from "../../components/CheckBox";
 import { track } from "../../analytics";
@@ -38,11 +38,15 @@ export default class DisplayResultItem extends Component<{
         </Flex>
         {!selectable ? null : (
           <Flex ml={8}>
-            <CheckBox
-              onChange={importing ? undefined : this.onSwitch}
-              isChecked={checked}
-              style={styles.marginLeft}
-            />
+            {importing ? (
+              <InfiniteLoader />
+            ) : (
+              <CheckBox
+                onChange={this.onSwitch}
+                isChecked={checked}
+                style={styles.marginLeft}
+              />
+            )}
           </Flex>
         )}
       </TouchableOpacity>
