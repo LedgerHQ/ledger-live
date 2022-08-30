@@ -71,6 +71,11 @@ export function useDeepLinkHandler() {
        *  "abc": ['xyz', '123'],
        *  "theme": "test"
        * }
+       *
+       * We could probably use https://github.com/ljharb/qs instead of URL and
+       * Object.fromEntries(searchParams) because we would have to use
+       * searchParams.getAll("abc") to get the array from the searchParams with
+       * what we have now
        */
       const query = Object.fromEntries(searchParams);
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");

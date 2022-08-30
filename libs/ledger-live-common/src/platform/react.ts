@@ -23,6 +23,8 @@ import { listCurrencies } from "../currencies";
 /**
  * TODO: we might want to use "searchParams.append" instead of "searchParams.set"
  * to handle duplicated query params (example: "?foo=bar&foo=baz")
+ *
+ * We can also use the stringify method of qs (https://github.com/ljharb/qs#stringifying)
  */
 export function usePlatformUrl(
   manifest: AppManifest,
