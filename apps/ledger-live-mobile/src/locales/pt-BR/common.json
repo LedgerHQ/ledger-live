@@ -323,6 +323,14 @@
     "InvalidRecipient" : {
       "title" : "Destinatário inválido"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Instalação de idioma recusada no dispositivo",
+      "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Idioma não encontrado",
+      "description" : "O idioma que você está tentando instalar não foi encontrado. Tente instalar outro idioma."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Desculpe, nada para atualizar",
       "description" : "Entre em contato com o Suporte Ledger se você não conseguir usar seu dispositivo."
@@ -1235,7 +1243,7 @@
           },
           "1" : {
             "title" : "Repita para todas as palavras!",
-            "label" : "Escreva a palavra nº 1 exibida em seu Nano na posição 1 de sua folha de recuperação. Então, pressione o botão direito na sua Nano para exibir a palavra nº 2 e a escreva na posição 2.",
+            "label" : "Escreva a palavra nº 1 exibida em sua Nano na posição 1 da sua folha de recuperação. Então, pressione o botão direito na sua Nano para exibir a palavra nº 2 e a escreva na posição 2.",
             "label_1" : "Repita o processo para todas as palavras, respeitando cuidadosamente a ordem e a ortografia. Pressione o botão esquerdo na sua Nano para verificar se há algum erro."
           },
           "2" : {
@@ -1626,19 +1634,19 @@
       "description" : "Importar ativos do Ledger Live Desktop"
     }
   },
-  "byteSize": {
-    "bytes": "{{size}} bytes",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+  "byteSize" : {
+    "bytes" : "{{size}} bytes",
+    "kbUnit" : "{{size}} Kb",
+    "mbUnit" : "{{size}} Mb"
   },
-  "numberCompactNotation": {
-    "d": "",
-    "K": "k",
-    "M": "m",
-    "B": "bn",
-    "T": "tn",
-    "Q": "qa",
-    "Qn": "qi"
+  "numberCompactNotation" : {
+    "d" : "",
+    "K" : "k",
+    "M" : "m",
+    "B" : "bn",
+    "T" : "tn",
+    "Q" : "qa",
+    "Qn" : "qi"
   },
   "time" : {
     "day" : "1D",
@@ -1750,7 +1758,8 @@
       "validatorsCount" : "Validadores ({{number}})",
       "storageLimit" : "Limite de armazenamento",
       "gasLimit" : "Limite de gas",
-      "id" : "Id"
+      "id" : "Id",
+      "autoClaimedRewards" : "Recompensas automaticamente resgatadas"
     },
     "multipleAddresses" : "Por que endereços múltiplos?",
     "tokenName" : "Nome do token",
@@ -1771,6 +1780,17 @@
     "subaccountCount_plural" : "{{count}} subcontas"
   },
   "account" : {
+    "subHeader" : {
+      "moreInfo" : "Mais Informações",
+      "cardTitle" : "Powered by {{team}}",
+      "drawer" : {
+        "title" : "Integração {{family}}",
+        "subTitle" : "A integração {{family}} foi feita pelo time {{team}}",
+        "description" : "Ledger Live é uma plataforma de código aberto",
+        "description2" : "Desenvolvedores de qualquer lugar do mundo podem se integrar com a nossa Ledger Live",
+        "description3" : "Esta integração foi realizada por {{team}} em colaboração com a Ledger"
+      }
+    },
     "tokens" : {
       "contractAddress" : "Endereço do contrato",
       "viewInExplorer" : "Ver no explorer",
@@ -2039,7 +2059,7 @@
         "bullet0" : "Cliques",
         "bullet1" : "Visitas à página do aplicativo",
         "bullet2" : "Redirecionar para página web",
-        "bullet3" : "Ações: enviar, receber, bloquear, etc.",
+        "bullet3" : "Ações: enviar, receber, bloquear etc.",
         "bullet4" : "Fim da página",
         "bullet5" : "(Des)instalação e versão do aplicativo",
         "bullet6" : "Número de contas, moedas e operações",
@@ -2089,7 +2109,7 @@
       "cryptoAssets" : {
         "header" : "Criptoativos",
         "title" : "Criptoativos",
-        "desc" : "Selecione um criptoativo para editar suas configurações."
+        "desc" : "Selecione criptoativos cujas configurações você quer editar."
       }
     },
     "about" : {
@@ -2169,6 +2189,15 @@
       "customManifest" : {
         "title" : "Carregar o Manifesto da Plataforma Personalizada"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
+      "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
+      "featureFlagsOverride" : "Sobrepor",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsDisplayValue" : "Exibir Valor",
+      "featureFlagsHideValue" : "Ocultar Valor"
     }
   },
   "notifications" : {
@@ -2450,8 +2479,8 @@
         },
         "noApp" : {
           "title" : "Aplicativo {{appName}} não instalado",
-          "desc" : "Por favor, vá para o Manager para instalar o aplicativo {{appName}}.",
-          "cta" : "Ir para o Manager",
+          "desc" : "Vá ao Manager para instalar o aplicativo {{appName}}.",
+          "cta" : "Vá ao Manager",
           "close" : "Fechar"
         },
         "noAccounts" : {
@@ -2463,7 +2492,7 @@
         "outdatedApp" : {
           "title" : "Atualização do aplicativo disponível",
           "desc" : "Você precisa atualizar o aplicativo {{appName}}.",
-          "cta" : "Ir para o Manager",
+          "cta" : "Vá ao Manager",
           "close" : "Fechar"
         },
         "summary" : {
@@ -2505,12 +2534,12 @@
       "missingApp" : {
         "title" : "Instale o aplicativo Exchange em seu dispositivo",
         "description" : "Vá ao Manager e instale o aplicativo Exchange para trocar ativos",
-        "button" : "Vá para o Manager"
+        "button" : "Vá ao Manager"
       },
       "outdatedApp" : {
         "title" : "Atualize o aplicativo Exchange em seu dispositivo",
         "description" : "Vá ao Manager e atualize o aplicativo Exchange para trocar ativos",
-        "button" : "Vá para o Manager"
+        "button" : "Vá ao Manager"
       },
       "emptyState" : {
         "title" : "Não há conta de {{currency}}",
@@ -2523,7 +2552,7 @@
         "exportButton" : "Exportar Operações",
         "exportFilename" : "Operações de troca",
         "empty" : {
-          "title" : "Suas trocas anteriores aparecerão aqui",
+          "title" : "O seu histórico de trocas aparecerá aqui",
           "desc" : "Você ainda não fez nenhuma troca ou o Ledger Live foi redefinido nesse meio tempo."
         }
       }
@@ -3402,8 +3431,8 @@
     "drawerUpdate" : {
       "title" : "Atualização de firmware",
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
-      "pleaseConnectUsbTitle" : "USB cable needed",
-      "pleaseConnectUsbDescription" : "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+      "pleaseConnectUsbTitle" : "Necessário cabo USB",
+      "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3431,6 +3460,19 @@
       "de" : "Alemão"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Idioma",
+    "deviceLanguage" : "Idioma do dispositivo",
+    "changeLanguage" : "Mudar Idioma",
+    "allowLanguageInstallation" : "Permitir instalação do idioma",
+    "languageInstalled" : "O idioma do dispositivo mudou para {{language}}.",
+    "installingLanguage" : "Instalando Idioma",
+    "languages" : {
+      "english" : "Inglês",
+      "french" : "Francês",
+      "spanish" : "Espanhol"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Identificador",
     "description" : "Pressione os dois botões juntos em sua {{fullDeviceName}} se ele exibir o mesmo identificador:"
@@ -3442,7 +3484,7 @@
   },
   "FirmwareUpdateConfirmation" : {
     "title" : "Firmware Atualizado",
-    "description" : "Vá para o Manager para reinstalar aplicativos no seu dispositivo."
+    "description" : "Vá ao Manager para reinstalar aplicativos no seu dispositivo."
   },
   "RepairDevice" : {
     "title" : "Reparar",
@@ -3537,6 +3579,31 @@
       "available" : {
         "title" : "CELO disponível",
         "description" : "Esta quantia é descartável."
+      }
+    }
+  },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO Disponível"
+      },
+      "delegated" : {
+        "description" : "Os ativos delegados são utilizados para votação na Osmosis. Este é o seu número total de votos."
+      },
+      "undelegating" : {
+        "description" : "Ativos removidos de delegação ficam bloqueados por um período de 14 dias antes de ficarem disponíveis."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Delegue seu OSMO para ganhar prêmios de forma segura, mantendo o controle dos seus ativos.",
+            "steps" : {
+              "1" : "Você terá que esperar 14 dias para que a desdelegação seja concluída."
+            }
+          }
+        }
       }
     }
   },
@@ -3740,33 +3807,6 @@
             "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
           }
         }
-      }
-    }
-  },
-  "cryptoOrg" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Crypto.org",
-        "moreInfo" : "Mais Informações",
-        "drawerTitle" : "Integração Crypto.org",
-        "title" : "O token Crypto.org (CRO) agora está disponível no Ledger Live",
-        "description" : "Agora você pode gerenciar e proteger seus tokens Crypto.org (CRO) através do Ledger Live.",
-        "description2" : "O token Crypto.org (CRO) é nativo da Crypto.org Chain e é usado para tudo entre transações, staking e vários recursos futuros.",
-        "website" : "Criptomoedas em todas as carteira"
-      }
-    }
-  },
-  "elrond" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Elrond",
-        "drawerTitle" : "Integração com Elrond",
-        "moreInfo" : "Mais Informações",
-        "title" : "O token Elrond eGold (EGLD) agora está disponível no Ledger Live",
-        "description" : "Agora você pode proteger seus tokens eGold (EGLD) e gerenciá-los com segurança através do Ledger Live.",
-        "description2" : "O Token Elrond eGold (EGLD) é nativo da Rede Elrond e será usado para tudo desde transações, staking, contratos inteligentes, governança e recompensas a validadores.",
-        "description3" : "Estamos trabalhando ativamente com a equipe Elrond para adicionar mais funcionalidade, como o staking, suporte nativo ao ESDT (Elrond Standard Digital Token), e mais.",
-        "website" : "A Blockchain de Escala de Internet"
       }
     }
   },
@@ -4303,6 +4343,11 @@
         "redelegate" : "Você terá que esperar 21 dias para que os ativos desdelegados retornem ao saldo disponível.",
         "undelegate" : "Você terá que esperar 21 dias para que os ativos desdelegados retornem ao saldo disponível."
       },
+      "osmosis" : {
+        "claimReward" : "Se o validador selecionado tiver recompensas pendentes, elas serão automaticamente resgatadas.",
+        "redelegate" : "Você terá que esperar 14 dias para que os ativos desdelegados retornem ao saldo disponível.",
+        "undelegate" : "Você terá que esperar 14 dias para que os ativos desdelegados retornem ao saldo disponível."
+      },
       "lending" : "Verifique os detalhes da operação em seu dispositivo antes de enviá-lo."
     },
     "amount" : "Quantia",
@@ -4312,6 +4357,7 @@
     "redelegationAmount" : "Quantia Redelegada",
     "gas" : "Gás",
     "validatorAddress" : "Endereço do validador",
+    "validatorName" : "Nome do validador",
     "rewardAmount" : "Quantia da recompensa",
     "undelegatedAmount" : "Quantia Desdelegada",
     "memo" : "Memo"

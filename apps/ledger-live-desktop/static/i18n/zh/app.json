@@ -2080,6 +2080,33 @@
             }
           }
         }
+  },
+  "algorand" : {
+    "operationHasRewards" : "赚取的奖励",
+    "operationEarnedRewards" : "您赚取了<0>{{amount}}</0>奖励。",
+    "operationDetailsAmountBreakDown" : "{{initialAmount}} (<0>+{{reward}}</0>已赚取奖励)",
+    "optIn" : {
+      "flow" : {
+        "title" : "添加 ASA (资产)",
+        "steps" : {
+          "assets" : {
+            "title" : "ASA (资产)",
+            "info" : "添加一个资产需要发送一个含最低费用的交易。这将出现在您的交易历史记录中",
+            "selectLabel" : "选择一个 ASA (资产)",
+            "disabledTooltip" : "您的 Algorand 账户已经有这种 ASA (资产)"
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "已成功添加 {{token}} 资产",
+              "text" : "您现在可以通过您的 Algorand 账户接收和发送 <0>{{token}}</0> 资产。",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
       }
     }
   },
@@ -2439,7 +2466,6 @@
             "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
           }
         }
-      }
     },
     "redelegation" : {
       "flow" : {
@@ -2472,7 +2498,6 @@
             "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
           }
         }
-      }
     },
     "undelegation" : {
       "header" : "解除委托",
@@ -2503,8 +2528,6 @@
             "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
           }
         }
-      }
-    }
   },
   "polkadot" : {
     "lockedBalance" : "已绑定",

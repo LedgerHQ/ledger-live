@@ -16,7 +16,9 @@ export const reorderAccounts = (comparator: any) => (dispatch: any) =>
   dispatch({
     type: "REORDER_ACCOUNTS",
     payload: {
+     
       comparator,
+   ,
     },
   });
 export const importAccounts = (input: ImportAccountsReduceInput) => ({
@@ -38,6 +40,7 @@ export const setAccounts = (accounts: Account[]) => ({
   },
 });
 export type UpdateAccountWithUpdater = (
+  // eslint-disable-next-line no-unused-vars
   // eslint-disable-next-line no-unused-vars
   accountId: string,
   // eslint-disable-next-line no-unused-vars

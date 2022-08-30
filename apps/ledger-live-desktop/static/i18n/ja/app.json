@@ -2078,9 +2078,54 @@
                 "description" : "トークン所有者コミュニティ全体の投票によって127人が選出されました。投票は6時間ごとにアップデートされます。"
               }
             }
+  },
+  "algorand" : {
+    "operationHasRewards" : "獲得した報酬",
+    "operationEarnedRewards" : "<0>{{amount}}の</0>報酬を獲得しました。",
+    "operationDetailsAmountBreakDown" : "{{initialAmount}} (<0>+{{reward}}</0>獲得した報酬)",
+    "optIn" : {
+      "flow" : {
+        "title" : "ASA（資産）の追加",
+        "steps" : {
+          "assets" : {
+            "title" : "ASA（資産）",
+            "info" : "資産を追加するには、最少額の手数料でトランザクションを送信する必要があります。これは取引履歴に表示されます",
+            "selectLabel" : "ASA(資産)を追加",
+            "disabledTooltip" : "すでに、AlgorandアカウントにASA(資産)を所有しています。"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "{{token}}資産が正常に追加されました",
+              "text" : "Algorandアカウントで<0>{{token}}</0>資産の受け取りや、送付が可能になりました。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
           }
         }
       }
+    },
+    "claimRewards" : {
+      "header" : "報酬",
+      "tooltip" : "Algorandの報酬は定期的に配布され、取引を行うと自動的に請求されます。",
+      "cta" : "報酬獲得を申請",
+      "rewardsDisabledTooltip" : "報酬はまだありません。Algorandの報酬は、取引を行うと自動的に請求されます。ALGOを受け取って報酬を獲得しましょう。",
+      "flow" : {
+        "title" : "報酬獲得を申請",
+        "steps" : {
+          "starter" : {
+            "description" : "Algorandを所有するだけで、Algorandの報酬を受け取ることができます。",
+            "bullet" : {
+              "delegate" : "報酬を受け取るには、1ALGO以上の残高が必要です。",
+              "access" : "アカウントの残高を増やすと、受け取れる報酬も増えます。",
+              "ledger" : "報酬を獲得するには、アカウントとの間でトランザクションを実行してください。"
+            },
+            "learnMore" : "Algorandの報酬の仕組みとは？",
+            "button" : {
+              "cta" : "ALGOを受け取る"
     }
   },
   "bitcoin" : {
@@ -2439,7 +2484,6 @@
             "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
           }
         }
-      }
     },
     "redelegation" : {
       "flow" : {
@@ -2472,7 +2516,6 @@
             "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
           }
         }
-      }
     },
     "undelegation" : {
       "header" : "デリゲート解除",
@@ -2503,8 +2546,6 @@
             "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
           }
         }
-      }
-    }
   },
   "polkadot" : {
     "lockedBalance" : "ボンド中",
