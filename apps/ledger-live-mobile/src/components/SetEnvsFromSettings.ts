@@ -30,6 +30,7 @@ class SetEnvsFromSettings extends PureComponent<{
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-const m: React.ComponentType<{}> =
-  connect(mapStateToProps)(SetEnvsFromSettings);
+const m: React.ComponentType<{}> = connect(mapStateToProps)(
+  SetEnvsFromSettings,
+);
 export default m;

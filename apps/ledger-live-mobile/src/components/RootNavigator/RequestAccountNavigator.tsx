@@ -13,10 +13,9 @@ const totalSteps = "2";
 export default function RequestAccountNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
+    colors,
+  ]);
   return (
     <Stack.Navigator screenOptions={{ ...stackNavConfig }}>
       <Stack.Screen

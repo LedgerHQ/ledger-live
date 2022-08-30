@@ -34,10 +34,9 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
   const accounts = useSelector(accountsSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-  const areAccountsEmpty = useMemo(
-    () => accounts.every(isAccountEmpty),
-    [accounts],
-  );
+  const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
+    accounts,
+  ]);
 
   const onNavigate = useCallback(
     (name: string, options?: { [key: string]: any }) => {

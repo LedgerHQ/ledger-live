@@ -16,10 +16,9 @@ function ReadOnlyFabActions() {
   const { navigate } = useNavigation();
   const currency = useCurrency().name;
 
-  const buyDevice = useCallback(
-    () => navigate(ScreenName.NoDeviceWallScreen),
-    [navigate],
-  );
+  const buyDevice = useCallback(() => navigate(ScreenName.NoDeviceWallScreen), [
+    navigate,
+  ]);
 
   const handleOnPress = useCallback(
     (buttonTitle: string) => {
@@ -34,10 +33,9 @@ function ReadOnlyFabActions() {
   );
 
   const pressBuy = useCallback(() => handleOnPress("+ Buy"), [handleOnPress]);
-  const pressReceive = useCallback(
-    () => handleOnPress("Receive"),
-    [handleOnPress],
-  );
+  const pressReceive = useCallback(() => handleOnPress("Receive"), [
+    handleOnPress,
+  ]);
 
   return (
     <Flex mx={16} flexDirection={"row"}>

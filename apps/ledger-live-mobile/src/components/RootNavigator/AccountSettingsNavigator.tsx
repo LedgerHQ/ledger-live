@@ -16,10 +16,9 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 export default function AccountSettingsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
+    colors,
+  ]);
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen

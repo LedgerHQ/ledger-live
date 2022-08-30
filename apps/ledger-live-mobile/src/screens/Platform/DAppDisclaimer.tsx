@@ -46,8 +46,9 @@ const DAppDisclaimer = ({
   name,
 }: Props) => {
   const { t } = useTranslation();
-  const [disableDisclaimerChecked, setDisableDisclaimerChecked] =
-    useState(false);
+  const [disableDisclaimerChecked, setDisableDisclaimerChecked] = useState(
+    false,
+  );
 
   const onClose = useCallback(() => {
     closeDisclaimer();

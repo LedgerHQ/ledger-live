@@ -22,8 +22,9 @@ const GraphCardContainer = ({
   areAccountsEmpty: boolean;
   counterValueCurrency: Currency;
 }) => {
-  const currencies: Array<CryptoCurrency | TokenCurrency> =
-    useSelector(currenciesSelector);
+  const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(
+    currenciesSelector,
+  );
 
   return (
     <>

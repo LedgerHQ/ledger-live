@@ -20,8 +20,7 @@ export const withPreventDoubleClick = (
     }
   }
 
-  PreventDoubleClick.displayName = `withPreventDoubleClick(${
-    WrappedComponent.displayName || WrappedComponent.name
-  })`;
+  PreventDoubleClick.displayName = `withPreventDoubleClick(${WrappedComponent.displayName ||
+    WrappedComponent.name})`;
   return PreventDoubleClick;
 };

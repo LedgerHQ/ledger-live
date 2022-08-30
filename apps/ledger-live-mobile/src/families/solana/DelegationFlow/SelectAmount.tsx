@@ -58,21 +58,26 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account);
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => ({
-      account,
-      transaction: {
-        ...bridge.createTransaction(account),
-        amount: new BigNumber(route.params.amount ?? 0),
-        family: "solana",
-        model: {
-          kind: "stake.createAccount",
-          uiState: {
-            delegate: { voteAccAddress: "" },
-          },
+  const {
+    transaction,
+    setTransaction,
+    status,
+    bridgePending,
+    bridgeError,
+  } = useBridgeTransaction(() => ({
+    account,
+    transaction: {
+      ...bridge.createTransaction(account),
+      amount: new BigNumber(route.params.amount ?? 0),
+      family: "solana",
+      model: {
+        kind: "stake.createAccount",
+        uiState: {
+          delegate: { voteAccAddress: "" },
         },
       },
-    }));
+    },
+  }));
 
   invariant(transaction, "transaction must be defined");
 
@@ -88,8 +93,12 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
     };
   }, [transaction, setMaxSpendable]);
 
-  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } =
-    useModalInfo();
+  const {
+    modalInfos,
+    modalInfoName,
+    openInfoModal,
+    closeInfoModal,
+  } = useModalInfo();
 
   const onChange = (amount: BigNumber) => {
     setTransaction(bridge.updateTransaction(transaction, { amount }));

@@ -65,10 +65,10 @@ const AppRow = ({
   const { name, bytes, version: appVersion, displayName } = app;
   const { installed, deviceInfo } = state;
 
-  const isInstalled = useMemo(
-    () => installed.find(i => i.name === name),
-    [installed, name],
-  );
+  const isInstalled = useMemo(() => installed.find(i => i.name === name), [
+    installed,
+    name,
+  ]);
 
   const version = (isInstalled && isInstalled.version) || appVersion;
   const availableVersion =
@@ -79,10 +79,10 @@ const AppRow = ({
     name,
   );
 
-  const onSizePress = useCallback(
-    () => setStorageWarning(name),
-    [setStorageWarning, name],
-  );
+  const onSizePress = useCallback(() => setStorageWarning(name), [
+    setStorageWarning,
+    name,
+  ]);
 
   return (
     <RowContainer>

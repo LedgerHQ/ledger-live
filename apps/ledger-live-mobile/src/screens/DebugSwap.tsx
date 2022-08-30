@@ -30,10 +30,9 @@ export default function DebugSwap() {
       }),
     );
   }, [dispatch]);
-  const currentDisabledProviders = useMemo(
-    () => configWrapper.split(","),
-    [configWrapper],
-  );
+  const currentDisabledProviders = useMemo(() => configWrapper.split(","), [
+    configWrapper,
+  ]);
   const onToggleProvider = useCallback(
     provider => {
       if (currentDisabledProviders.includes(provider)) {

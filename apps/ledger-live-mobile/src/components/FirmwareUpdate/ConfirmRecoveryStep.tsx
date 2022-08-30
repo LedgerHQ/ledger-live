@@ -31,8 +31,10 @@ const ConfirmRecoveryStep = ({
   device,
 }: Props) => {
   const { t } = useTranslation();
-  const [confirmRecoveryPhraseBackup, setConfirmRecoveryPhraseBackup] =
-    useState(false);
+  const [
+    confirmRecoveryPhraseBackup,
+    setConfirmRecoveryPhraseBackup,
+  ] = useState(false);
 
   const toggleConfirmRecoveryPhraseBackup = useCallback(() => {
     track("FirmwareUpdateSeedDisclaimerChecked");

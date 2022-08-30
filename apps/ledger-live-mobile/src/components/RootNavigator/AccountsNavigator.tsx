@@ -29,10 +29,9 @@ import { track } from "../../analytics";
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
+    colors,
+  ]);
 
   const accounts = useSelector(accountsSelector);
   const readOnlyModeEnabled =

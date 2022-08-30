@@ -14,10 +14,9 @@ const Tab = createMaterialTopTabNavigator();
 export default function AnalyticsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const tabNavigationConfig = useMemo(
-    () => getLineTabNavigatorConfig(colors),
-    [colors],
-  );
+  const tabNavigationConfig = useMemo(() => getLineTabNavigatorConfig(colors), [
+    colors,
+  ]);
 
   // Fixme Typescript: Update react-native-tab-view to 3.1.1 to remove Tab.navigator ts error
   return (

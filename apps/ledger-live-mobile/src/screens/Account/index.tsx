@@ -90,8 +90,12 @@ const AccountScreenInner = ({
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
-  const { countervalueAvailable, countervalueChange, cryptoChange, history } =
-    useBalanceHistoryWithCountervalue({ account, range });
+  const {
+    countervalueAvailable,
+    countervalueChange,
+    cryptoChange,
+    history,
+  } = useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 

@@ -23,39 +23,37 @@ import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 import { FabAccountActions } from "../../components/FabActions";
 
-const renderAccountSummary =
-  (
-    account: AccountLike,
-    parentAccount: Account,
-    compoundSummary: CompoundAccountSummary,
-  ) =>
-  () => {
-    const mainAccount = getMainAccount(account, parentAccount);
-    const AccountBalanceSummaryFooter =
-      perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
+const renderAccountSummary = (
+  account: AccountLike,
+  parentAccount: Account,
+  compoundSummary: CompoundAccountSummary,
+) => () => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const AccountBalanceSummaryFooter =
+    perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
 
-    const footers = [];
+  const footers = [];
 
-    if (compoundSummary && account.type === "TokenAccount") {
-      footers.push(
-        <CompoundSummary
-          key="compoundSummary"
-          account={account}
-          compoundSummary={compoundSummary}
-        />,
-      );
-    }
+  if (compoundSummary && account.type === "TokenAccount") {
+    footers.push(
+      <CompoundSummary
+        key="compoundSummary"
+        account={account}
+        compoundSummary={compoundSummary}
+      />,
+    );
+  }
 
-    if (AccountBalanceSummaryFooter)
-      footers.push(
-        <AccountBalanceSummaryFooter
-          account={account}
-          key="accountbalancesummary"
-        />,
-      );
-    if (!footers.length) return null;
-    return footers;
-  };
+  if (AccountBalanceSummaryFooter)
+    footers.push(
+      <AccountBalanceSummaryFooter
+        account={account}
+        key="accountbalancesummary"
+      />,
+    );
+  if (!footers.length) return null;
+  return footers;
+};
 
 type Props = {
   account?: AccountLike;

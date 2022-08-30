@@ -13,6 +13,7 @@ import { Text, Flex } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 // eslint-disable-next-line import/no-cycle
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { ManagerTab } from "./Manager";
 
 import AppFilter from "./AppsList/AppFilter";
@@ -29,7 +30,6 @@ import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "../../components/Search";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 
 type Props = {

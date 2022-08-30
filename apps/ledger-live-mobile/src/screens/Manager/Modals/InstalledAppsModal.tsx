@@ -39,10 +39,10 @@ const UninstallButton = ({
   setAppUninstallWithDependencies,
 }: UninstallButtonProps) => {
   const { uninstallQueue } = state;
-  const uninstalling = useMemo(
-    () => uninstallQueue.includes(app.name),
-    [uninstallQueue, app.name],
-  );
+  const uninstalling = useMemo(() => uninstallQueue.includes(app.name), [
+    uninstallQueue,
+    app.name,
+  ]);
   const renderAppState = () => {
     switch (true) {
       case uninstalling:
@@ -145,10 +145,9 @@ const InstalledAppsModal = ({
   illustration,
   deviceInfo,
 }: Props) => {
-  const onUninstallAll = useCallback(
-    () => dispatch({ type: "wipe" }),
-    [dispatch],
-  );
+  const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [
+    dispatch,
+  ]);
 
   const renderItem = useCallback(
     ({ item }: { item: App }) => (

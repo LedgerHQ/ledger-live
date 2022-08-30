@@ -58,8 +58,10 @@ class EditAccountName extends PureComponent<Props, State> {
   onNameEndEditing = () => {
     const { updateAccount, account, navigation } = this.props;
     const { accountName } = this.state;
-    const { onAccountNameChange, account: accountFromAdd } =
-      this.props.route.params;
+    const {
+      onAccountNameChange,
+      account: accountFromAdd,
+    } = this.props.route.params;
 
     const isImportingAccounts = !!accountFromAdd;
     const cleanAccountName = accountName.trim();

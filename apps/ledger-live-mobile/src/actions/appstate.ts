@@ -1,22 +1,25 @@
 import { isConnectedSelector } from "../reducers/appstate";
 
-export const syncIsConnected =
-  (isConnected: boolean | null) => (dispatch: any, getState: any) => {
-    const currently = isConnectedSelector(getState());
+export const syncIsConnected = (isConnected: boolean | null) => (
+  dispatch: any,
+  getState: any,
+) => {
+  const currently = isConnectedSelector(getState());
 
-    if (currently !== isConnected) {
-      dispatch({
-        type: "SYNC_IS_CONNECTED",
-        isConnected,
-      });
-    }
-  };
-export const setHasConnectedDevice =
-  (hasConnectedDevice: boolean) => (dispatch: any) =>
+  if (currently !== isConnected) {
     dispatch({
-      type: "HAS_CONNECTED_DEVICE",
-      hasConnectedDevice,
+      type: "SYNC_IS_CONNECTED",
+      isConnected,
     });
+  }
+};
+export const setHasConnectedDevice = (hasConnectedDevice: boolean) => (
+  dispatch: any,
+) =>
+  dispatch({
+    type: "HAS_CONNECTED_DEVICE",
+    hasConnectedDevice,
+  });
 export const setModalLock = (modalLock: boolean) => (dispatch: any) =>
   dispatch({
     type: "SET_MODAL_LOCK",

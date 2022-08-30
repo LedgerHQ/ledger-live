@@ -62,8 +62,9 @@ const scenes = [
 function OnboardingStepNewDevice() {
   const navigation = useNavigation();
   const { theme } = useTheme();
-  const route =
-    useRoute<RouteProp<{ params: { deviceModelId: DeviceNames } }, "params">>();
+  const route = useRoute<
+    RouteProp<{ params: { deviceModelId: DeviceNames } }, "params">
+  >();
 
   const { deviceModelId } = route.params;
 

@@ -48,8 +48,9 @@ function OnboardingStepPairNew() {
   >();
 
   const dispatch = useDispatch();
-  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } =
-    useNotifications();
+  const {
+    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+  } = useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
   const { deviceModelId, showSeedWarning } = route.params;

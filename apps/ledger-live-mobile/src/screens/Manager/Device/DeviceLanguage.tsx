@@ -1,15 +1,14 @@
 import { Flex, Icons, Text, Button, BoxedIcon } from "@ledgerhq/native-ui";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Language } from "@ledgerhq/types-live";
-import BottomModal from "../../../components/BottomModal";
-import DeviceLanguageSelection from "./DeviceLanguageSelection";
-import DeviceActionModal from "../../../components/DeviceActionModal";
+import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
 import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { DeviceInfo } from "@ledgerhq/types-live";
+import DeviceActionModal from "../../../components/DeviceActionModal";
+import DeviceLanguageSelection from "./DeviceLanguageSelection";
+import BottomModal from "../../../components/BottomModal";
 
 type Props = {
   pendingInstalls: boolean;

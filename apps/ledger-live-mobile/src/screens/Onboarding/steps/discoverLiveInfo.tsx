@@ -50,10 +50,9 @@ const Item = ({
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const screenName = useMemo(
-    () => `Reborn Story Step ${currentIndex}`,
-    [currentIndex],
-  );
+  const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [
+    currentIndex,
+  ]);
 
   const onClick = useCallback(
     (value: string) => {
@@ -175,14 +174,12 @@ function DiscoverLiveInfo() {
     [source],
   );
 
-  const autoChange = useCallback(
-    (index: number) => onChange(index, false),
-    [onChange],
-  );
-  const manualChange = useCallback(
-    (index: number) => onChange(index, true),
-    [onChange],
-  );
+  const autoChange = useCallback((index: number) => onChange(index, false), [
+    onChange,
+  ]);
+  const manualChange = useCallback((index: number) => onChange(index, true), [
+    onChange,
+  ]);
 
   return (
     <StyledSafeAreaView>

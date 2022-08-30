@@ -27,8 +27,10 @@ function NftCollectionRow({
     nft?.tokenId,
     nft?.currencyId,
   );
-  const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(nft?.contract, nft?.currencyId);
+  const {
+    status: collectionStatus,
+    metadata: collectionMetadata,
+  } = useNftCollectionMetadata(nft?.contract, nft?.currencyId);
 
   const loading = nftStatus === "loading" || collectionStatus === "loading";
 
