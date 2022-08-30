@@ -38,7 +38,6 @@ type Props = {
   blockNavigation: boolean;
   deviceInfo: any;
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  // eslint-disable-next-line no-unused-vars
   dispatch: (action: any) => void;
   appList: App[];
 };
