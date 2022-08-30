@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.47.0-next.4
+
+### Patch Changes
+
+- [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`fdf009e526`](https://github.com/LedgerHQ/ledger-live/commit/fdf009e526beb5d6413ebc95666a9df58749336a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix handle new-window event in WebPlatformPlayer
+
 ## 2.47.0-next.3
 
 ### Patch Changes
