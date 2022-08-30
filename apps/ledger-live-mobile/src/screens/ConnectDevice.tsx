@@ -35,9 +35,7 @@ type RouteParams = {
   status: TransactionStatus;
   appName?: string;
   selectDeviceLink?: boolean;
-  // eslint-disable-next-line no-unused-vars
   onSuccess?: (payload: any) => void;
-  // eslint-disable-next-line no-unused-vars
   onError?: (error: any) => void;
   analyticsPropertyFlow?: string;
 };

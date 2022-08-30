@@ -8,9 +8,7 @@ type Props = {
   children?: React.ReactNode;
   uncollapsedItems: Array<any>;
   collapsedItems: Array<any>;
-  // eslint-disable-next-line no-unused-vars
   renderItem: (item: any, index: number, isLast: boolean) => React.ReactNode;
-  // eslint-disable-next-line no-unused-vars
   renderShowMore: (collapsed: boolean) => React.ReactNode;
 };
 

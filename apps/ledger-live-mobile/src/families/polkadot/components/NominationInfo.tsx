@@ -6,7 +6,6 @@ import LText from "../../../components/LText";
 type Props = {
   address: string;
   identity: string | null | undefined;
-  // eslint-disable-next-line no-unused-vars
   onPress: (address: string) => void;
 };
 export default function NominationInfo({ address, identity, onPress }: Props) {
