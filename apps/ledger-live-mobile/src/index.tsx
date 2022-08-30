@@ -41,8 +41,17 @@ import {
   useRemoteLiveAppContext,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+
+import { isEqual } from "lodash";
+import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import logger from "./logger";
-import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
+import {
+  saveAccounts,
+  saveBle,
+  saveSettings,
+  saveCountervalues,
+  savePostOnboardingState,
+} from "./db";
 import {
   exportSelector as settingsExportSelector,
   hasCompletedOnboardingSelector,
@@ -97,6 +106,7 @@ import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
+import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 
 const themes = {
   light: lightTheme,
@@ -149,11 +159,16 @@ function App({ importDataString }: AppProps) {
             .map(a => a.id),
         };
       }
-
       return null;
     },
     [],
   );
+
+  const getPostOnboardingStateChanged = useCallback(
+    (a, b) => !isEqual(a.postOnboarding, b.postOnboarding),
+    [],
+  );
+
   const rawState = useCountervaluesExport();
   const trackingPairs = useTrackingPairs();
   const pairIds = useMemo(
@@ -187,6 +202,13 @@ function App({ importDataString }: AppProps) {
     getChangesStats: (a, b) => a.ble !== b.ble,
     lense: bleSelector,
   });
+  useDBSaveEffect({
+    save: savePostOnboardingState,
+    throttle: 500,
+    getChangesStats: getPostOnboardingStateChanged,
+    lense: postOnboardingSelector,
+  });
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
@@ -570,20 +592,22 @@ export default class Root extends Component<
                                               value={true}
                                             >
                                               <OnboardingContextProvider>
-                                                <ToastProvider>
-                                                  <NotificationsProvider>
-                                                    <SnackbarContainer />
-                                                    <NftMetadataProvider>
-                                                      <MarketDataProvider>
-                                                        <App
-                                                          importDataString={
-                                                            importDataString
-                                                          }
-                                                        />
-                                                      </MarketDataProvider>
-                                                    </NftMetadataProvider>
-                                                  </NotificationsProvider>
-                                                </ToastProvider>
+                                                <PostOnboardingProviderWrapped>
+                                                  <ToastProvider>
+                                                    <NotificationsProvider>
+                                                      <SnackbarContainer />
+                                                      <NftMetadataProvider>
+                                                        <MarketDataProvider>
+                                                          <App
+                                                            importDataString={
+                                                              importDataString
+                                                            }
+                                                          />
+                                                        </MarketDataProvider>
+                                                      </NftMetadataProvider>
+                                                    </NotificationsProvider>
+                                                  </ToastProvider>
+                                                </PostOnboardingProviderWrapped>
                                               </OnboardingContextProvider>
                                             </ButtonUseTouchable.Provider>
                                           </CounterValuesProvider>
