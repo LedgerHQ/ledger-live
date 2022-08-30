@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback } from "react";
 import { Image } from "react-native";
 import { Flex, Text, Icons, Link } from "@ledgerhq/native-ui";
