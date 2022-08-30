@@ -14,22 +14,30 @@ import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { MessageData, SignMessage, Result } from "./types";
-import type { TypedMessageData } from "../../families/ethereum/types";
+import { DerivationMode } from "../../derivation";
 
 export const prepareMessageToSign = (
-  { currency, freshAddressPath, derivationMode }: Account,
+  account: Account,
   message: string
-): MessageData | TypedMessageData => {
+): MessageData => {
+  const { currency, freshAddressPath, derivationMode } = account;
+
   if (!perFamily[currency.family]) {
     throw new Error("Crypto does not support signMessage");
   }
 
-  return perFamily[currency.family].prepareMessageToSign(
-    currency,
-    freshAddressPath,
-    derivationMode,
-    message
-  );
+  if ("prepareMessageToSign" in perFamily[currency.family]) {
+    return perFamily[currency.family].prepareMessageToSign(account, message);
+  }
+
+  // Default implementation
+  return {
+    currency: currency,
+    path: freshAddressPath,
+    derivationMode: derivationMode as DerivationMode,
+    message: Buffer.from(message, "hex").toString(),
+    rawMessage: "0x" + message,
+  };
 };
 
 const signMessage: SignMessage = (transport, opts) => {
@@ -98,8 +106,8 @@ const initialState: BaseState = {
 };
 
 export const createAction = (
-  connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
-  signMessage: (arg0: Input) => Observable<Result> = signMessageExec
+  connectAppExec: (connectAppInput: ConnectAppInput) => Observable<ConnectAppEvent>,
+  signMessage: (input: Input) => Observable<Result> = signMessageExec
 ) => {
   const useHook = (
     reduxDevice: Device | null | undefined,

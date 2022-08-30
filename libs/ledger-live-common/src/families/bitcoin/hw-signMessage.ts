@@ -1,22 +1,5 @@
 import Btc from "@ledgerhq/hw-app-btc";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { MessageData, SignMessage } from "../../hw/signMessage/types";
-import type { DerivationMode } from "../../derivation";
-
-export const prepareMessageToSign = (
-  currency: CryptoCurrency,
-  path: string,
-  derivationMode: DerivationMode,
-  message: string
-): MessageData => {
-  return {
-    currency,
-    path,
-    derivationMode: derivationMode as DerivationMode,
-    message: Buffer.from(message, "hex").toString(),
-    rawMessage: "0x" + message,
-  };
-};
+import type { SignMessage } from "../../hw/signMessage/types";
 
 const signMessage: SignMessage = async (transport, { path, message }) => {
   const btc = new Btc(transport);
@@ -33,4 +16,4 @@ const signMessage: SignMessage = async (transport, { path, message }) => {
   };
 };
 
-export default { prepareMessageToSign, signMessage };
+export default { signMessage };

@@ -92,7 +92,9 @@ describe("prepareMessageToSign", () => {
       path,
       derivationMode,
       message: testEIP712Message,
+      rawMessage: "0x" + message,
       hashes: {
+        stringHash: "",
         domainHash:
           "0x6137beb405d9ff777172aa879e33edb34a1460e701802746c5ef96e741710e59",
         messageHash:

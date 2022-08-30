@@ -11,8 +11,10 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 type EthSignMessage = (
   transport: Transport,
-  message: Pick<MessageData | TypedMessageData, "path" | "message"> &
-    Partial<Pick<MessageData, "rawMessage">>
+  message: Pick<
+    MessageData | TypedMessageData,
+    "path" | "message" | "rawMessage"
+  >
 ) => Promise<Result>;
 
 export const domainHash = (message: EIP712Message): Buffer => {
@@ -67,7 +69,9 @@ export const prepareMessageToSign = (
       path,
       derivationMode,
       message: parsedMessage,
+      rawMessage: "0x" + message,
       hashes: {
+        stringHash: "",
         domainHash: bufferToHex(domainHash(parsedMessage)),
         messageHash: bufferToHex(messageHash(parsedMessage)),
       },

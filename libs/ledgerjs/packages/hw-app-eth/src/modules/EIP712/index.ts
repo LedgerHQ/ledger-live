@@ -406,4 +406,5 @@ export const signEIP712HashedMessage = (
   });
 };
 
-export { EIP712Message, isEIP712Message } from "./EIP712.types";
+export { EIP712Message } from "./EIP712.types";
+export { isEIP712Message } from "./EIP712.utils";
