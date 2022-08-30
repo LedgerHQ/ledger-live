@@ -101,7 +101,15 @@ module.exports = {
 
     // Enables no-unused-vars only from TypeScript
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        argsIgnorePattern: "^_",
+        vars: "all",
+        args: "after-used",
+        ignoreRestSiblings: true,
+      },
+    ],
   },
   globals: {
     __DEV__: false,
