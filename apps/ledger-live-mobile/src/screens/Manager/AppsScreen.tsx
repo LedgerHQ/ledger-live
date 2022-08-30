@@ -14,7 +14,7 @@ import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 // eslint-disable-next-line import/no-cycle
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { ManagerTab } from "./Manager";
+import { ManagerTab } from "../../const/manager";
 
 import AppFilter from "./AppsList/AppFilter";
 

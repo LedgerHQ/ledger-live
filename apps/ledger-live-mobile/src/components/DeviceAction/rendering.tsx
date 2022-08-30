@@ -25,7 +25,7 @@ import Animation from "../Animation";
 import getDeviceAnimation from "./getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
-import { MANAGER_TABS } from "../../screens/Manager/Manager";
+import { MANAGER_TABS } from "../../const/manager";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
