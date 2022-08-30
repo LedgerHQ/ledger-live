@@ -139,7 +139,7 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
     onPressWhenDisabled: action.modalOnDisabledClick
       ? () => onPressWhenDisabled(action)
       : undefined,
-  }));
+  })).sort(a => a.disabled ? 0 : -1);
 
   return (
     <>
@@ -248,7 +248,7 @@ const FabAssetActionsComponent: React.FC<Props> = ({
     children: action.label,
     onPress: () => onPress(action),
     disabled: action.disabled,
-  }));
+  })).sort(a => a.disabled ? 0 : -1);
 
   return (
     <>

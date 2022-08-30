@@ -88,7 +88,7 @@ function Header({
       }
       centerAfterScrollElement={
         <Flex flexDirection={"column"} alignItems={"center"}>
-          {balanceAvailable ? (
+          {balanceHistory ? (
             <>
               <Text
                 variant={"small"}

@@ -105,6 +105,7 @@ export default function useAssetActions({
                   },
                 },
               ],
+              disabled: defaultAccount?.balance.lte(0),
             },
           ]
         : []),

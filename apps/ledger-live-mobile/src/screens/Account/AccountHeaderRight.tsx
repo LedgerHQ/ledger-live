@@ -5,15 +5,17 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { SettingsMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { accountScreenSelector, accountsSelector } from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 
 export default function AccountHeaderRight() {
   const navigation = useNavigation();
   const currentScreen = useCurrentRouteName();
   const route = useRoute();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const accounts = useSelector(accountsSelector);
 
   const [isOpened, setOpened] = useState(false);
 
@@ -21,6 +23,9 @@ export default function AccountHeaderRight() {
   const closeModal = () => {
     setOpened(false);
   };
+
+  const currency = getAccountCurrency(account);
+  const cryptoAccounts = accounts.filter(account => account.currency.id === currency.id)
 
   useEffect(() => {
     if (!account) {
@@ -64,6 +69,7 @@ export default function AccountHeaderRight() {
             screen: ScreenName.AccountSettingsMain,
             params: {
               accountId: account.id,
+              hasOtherAccountsForThisCrypto: cryptoAccounts && cryptoAccounts.length > 1,
             },
           });
         }}

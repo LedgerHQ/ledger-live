@@ -34,7 +34,7 @@ function Assets() {
   const globalSyncState = useGlobalSyncState();
 
   const { t } = useTranslation();
-  const distribution = useDistribution();
+  const distribution = useDistribution({ showEmptyAccounts: true });
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);

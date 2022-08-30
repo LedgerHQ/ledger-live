@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { ensureContrast } from "../../colors";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import { useDistribution } from "../../actions/general";
 import RingChart from "../Analytics/RingChart";
 import { track } from "../../analytics";
@@ -42,7 +42,7 @@ const Allocations = () => {
   const { t } = useTranslation();
   const currentScreen = useCurrentRouteName();
   const navigation = useNavigation();
-  const distribution = useDistribution();
+  const distribution = useDistribution({ showEmptyAccounts: true });
   const { colors } = useTheme();
 
   const goToAnalyticsAllocations = useCallback(() => {
@@ -80,7 +80,7 @@ const Allocations = () => {
     data.push(othersAllocations);
 
     return data;
-  }, [distribution.list]);
+  }, [distribution.list, colors.neutral.c70, t]);
 
   return (
     <Flex flex={1} mt={6}>
