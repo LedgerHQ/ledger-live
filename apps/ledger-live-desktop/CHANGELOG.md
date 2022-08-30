@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.46.2-nightly.0
+
+### Patch Changes
+
+- [#1056](https://github.com/LedgerHQ/ledger-live/pull/1056) [`4fe5968a8d`](https://github.com/LedgerHQ/ledger-live/commit/4fe5968a8d91a03f9d0519c972349aea50174ae0) Thanks [@gre](https://github.com/gre)! - Fixes analytics support
+
+- Updated dependencies [[`5da717c523`](https://github.com/LedgerHQ/ledger-live/commit/5da717c523db7678edeb0f86bdfa88256dfe96c4)]:
+  - @ledgerhq/live-common@26.0.1-nightly.2
+
 ## 2.46.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 26.0.1-nightly.2
+
+### Patch Changes
+
+- [#1083](https://github.com/LedgerHQ/ledger-live/pull/1083) [`5da717c523`](https://github.com/LedgerHQ/ledger-live/commit/5da717c523db7678edeb0f86bdfa88256dfe96c4) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add missing safety check on bitcoinResources
+
 ## 26.0.1-nightly.1
 
 ### Patch Changes

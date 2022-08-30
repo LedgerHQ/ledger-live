@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.7.1-nightly.0
+
+### Patch Changes
+
+- [#1070](https://github.com/LedgerHQ/ledger-live/pull/1070) [`533e658dcd`](https://github.com/LedgerHQ/ledger-live/commit/533e658dcd7862d4e6c9cb1b55c400652c68ae26) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix crash when scanning for bluetooth devices
+
+- Updated dependencies [[`5da717c523`](https://github.com/LedgerHQ/ledger-live/commit/5da717c523db7678edeb0f86bdfa88256dfe96c4), [`533e658dcd`](https://github.com/LedgerHQ/ledger-live/commit/533e658dcd7862d4e6c9cb1b55c400652c68ae26)]:
+  - @ledgerhq/live-common@26.0.1-nightly.2
+  - @ledgerhq/react-native-hw-transport-ble@6.27.4-nightly.0
+
 ## 3.7.0
 
 ### Minor Changes
