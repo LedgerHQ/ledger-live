@@ -482,7 +482,7 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Add others with union (e.g. "learn" | "market" | "foo")
 
-Type: (`"learn"` | `"pushNotifications"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyOsmosis"` | `"ptxSmartRoutingMobile"` | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))
+Type: (`"learn"` | `"pushNotifications"` | `"llmUsbFirmwareUpdate"` | `"ratings"` | `"counterValue"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyOsmosis"` | `"currencyOsmosisMobile"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))
 
 ### Feature
 
