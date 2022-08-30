@@ -55,10 +55,7 @@ export function Selector({
             >
               {title || t("transfer.swap2.form.placeholder")}
             </Text>
-            <Text
-              variant="subtitle"
-              color={title ? "neutral.c100" : "neutral.c70"}
-            >
+            <Text variant="subtitle" color={"neutral.c70"}>
               {subTitle}
             </Text>
           </Flex>
