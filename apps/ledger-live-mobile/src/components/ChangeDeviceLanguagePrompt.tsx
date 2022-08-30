@@ -1,7 +1,9 @@
 import { Flex, Text, Button, Link, Icons } from "@ledgerhq/native-ui";
 import React from "react";
+import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import NanoXFolded from "../images/devices/NanoXFolded";
+import { urls } from "../config/urls";
 
 type Props = {
   onConfirm: () => void;
@@ -42,7 +44,7 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
       )}
       <Flex mt={6}>
         <Link
-          onPress={() => console.log("TODO: open link")}
+          onPress={() => Linking.openURL(urls.deviceLocalization.learnMore)}
           Icon={Icons.ExternalLinkMedium}
           iconPosition="right"
           type="color"

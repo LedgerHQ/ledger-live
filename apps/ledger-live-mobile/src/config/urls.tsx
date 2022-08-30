@@ -151,6 +151,9 @@ export const urls = {
     github: "https://github.com/LedgerHQ",
     status: "https://status.ledger.com",
   },
+  deviceLocalization: {
+    learnMore: "https://support.ledger.com/hc/en-us/articles/6522080681501"
+  },
   discover: {
     ledgerApps:
       "https://support.ledger.com/hc/en-us/articles/4404599625233-Discover-Live-Apps?docs=true&utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
