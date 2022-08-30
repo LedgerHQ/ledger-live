@@ -215,16 +215,18 @@ function PostWelcomeSelection({
           onValidate={exploreLedger}
           imageSource={discoverLiveImg}
         />
-        <PostWelcomeDiscoverCard
-          title={t("onboarding.postWelcomeStep.desktopSync.title")}
-          subTitle={t("onboarding.postWelcomeStep.desktopSync.subtitle")}
-          event="Onboarding PostWelcome - Sync Cryptos"
-          testID={`Onboarding PostWelcome - Selection|SyncCryptos`}
-          selectedOption={selectedOption}
-          onPress={pressSync}
-          onValidate={syncCryptos}
-          imageSource={syncCryptoImg}
-        />
+        {userHasDevice && (
+          <PostWelcomeDiscoverCard
+            title={t("onboarding.postWelcomeStep.desktopSync.title")}
+            subTitle={t("onboarding.postWelcomeStep.desktopSync.subtitle")}
+            event="Onboarding PostWelcome - Sync Cryptos"
+            testID={`Onboarding PostWelcome - Selection|SyncCryptos`}
+            selectedOption={selectedOption}
+            onPress={pressSync}
+            onValidate={syncCryptos}
+            imageSource={syncCryptoImg}
+          />
+        )}
         {!userHasDevice && (
           <PostWelcomeDiscoverCard
             title={t("onboarding.postWelcomeStep.buyNano.title")}
