@@ -23,7 +23,7 @@ export default function AccountBanner({ description, cta, onPress }: Props) {
               {...textProps}
               variant="body"
               fontWeight="medium"
-              color="neutral.c90"
+              color="primary.c90"
             >
               {description}
             </Text>

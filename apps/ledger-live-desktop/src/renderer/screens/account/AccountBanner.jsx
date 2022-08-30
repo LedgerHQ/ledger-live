@@ -38,10 +38,10 @@ const AccountBanner = ({ title, description, cta, onClick }: BannerProps) => {
       renderContent={({ color, textProps }) => (
         <Flex style={{ alignItems: "center", width: "100%" }}>
           <Flex style={{ flex: 1, flexDirection: "column" }}>
-            <Text color="inherit" variant="body" fontWeight="bold">
+            <Text color="inherit" variant="body" fontWeight="bold" fontSize="14px">
               {title}
             </Text>
-            <Text color="inherit" variant="body" style={{ marginTop: "10px" }}>
+            <Text color="inherit" variant="body" fontSize="14px" style={{ marginTop: "10px" }}>
               {description}
             </Text>
           </Flex>
