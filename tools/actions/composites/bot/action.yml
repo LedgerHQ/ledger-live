@@ -13,6 +13,9 @@ inputs:
   SLACK_API_TOKEN:
     description: "slack api token"
     required: false
+  SLACK_ICON_EMOJI:
+    description: "slack icon emoji"
+    required: false
   SHOW_LEGACY_NEW_ACCOUNT:
     description: "SHOW_LEGACY_NEW_ACCOUNT value"
     required: false
@@ -67,6 +70,7 @@ runs:
         githubToken: ${{github.token}}
         slackApiToken: ${{ inputs.SLACK_API_TOKEN }}
         slackChannel: ${{ inputs.SLACK_CHANNEL }}
+        slackIconEmoji: ${{ inputs.SLACK_ICON_EMOJI }}
     - name: process perf log files
       run: |
         cd libs/ledger-live-common

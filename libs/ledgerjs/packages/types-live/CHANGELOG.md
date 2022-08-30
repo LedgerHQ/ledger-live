@@ -1,5 +1,25 @@
 # @ledgerhq/types-live
 
+## 6.24.0
+
+### Minor Changes
+
+- [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`c7aaafa769`](https://github.com/LedgerHQ/ledger-live/commit/c7aaafa76924252f3c7e30371012bd0e69d8100a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Added development/QA tool for feature flags [Desktop]
+
+### Patch Changes
+
+- [#958](https://github.com/LedgerHQ/ledger-live/pull/958) [`68c50cd94b`](https://github.com/LedgerHQ/ledger-live/commit/68c50cd94bbe50a1bf284a2e9e5aed3781788754) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add properties to Feature type: "overridesRemote", "enabledOverriddenForCurrentLanguage"
+
+## 6.24.0-next.0
+
+### Minor Changes
+
+- [#814](https://github.com/LedgerHQ/ledger-live/pull/814) [`23c9bf994`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development/QA tool for feature flags [Desktop]
+
+### Patch Changes
+
+- [#958](https://github.com/LedgerHQ/ledger-live/pull/958) [`68c50cd94`](https://github.com/LedgerHQ/ledger-live/commit/68c50cd94bbe50a1bf284a2e9e5aed3781788754) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add properties to Feature type: "overridesRemote", "enabledOverriddenForCurrentLanguage"
+
 ## 6.23.0
 
 ### Minor Changes

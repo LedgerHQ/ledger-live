@@ -47,8 +47,8 @@ const handlers: Record<string, any> = {
       payload: { comparator },
     }: {
       payload: {
-        comparator: any;
-      };
+        comparator: any,
+      },
     },
   ): AccountsState => ({
     active: nestedSortAccounts(state.active, comparator),
@@ -66,7 +66,7 @@ const handlers: Record<string, any> = {
     {
       payload,
     }: {
-      payload: Account[];
+      payload: Account[],
     },
   ) => ({
     active: payload,
@@ -77,8 +77,8 @@ const handlers: Record<string, any> = {
       accountId,
       updater,
     }: {
-      accountId: string;
-      updater: (_: Account) => Account;
+      accountId: string,
+      updater: (_: Account) => Account,
     },
   ): AccountsState => {
     function update(existingAccount) {
@@ -95,7 +95,7 @@ const handlers: Record<string, any> = {
     {
       payload: account,
     }: {
-      payload: Account;
+      payload: Account,
     },
   ): AccountsState => ({
     active: state.active.filter(acc => acc.id !== account.id),
@@ -108,7 +108,7 @@ const handlers: Record<string, any> = {
     {
       payload: tokenId,
     }: {
-      payload: string;
+      payload: string,
     },
   ) => ({
     active: state.active.map(a => withoutToken(a, tokenId)),
@@ -196,20 +196,22 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
       : accounts,
 );
 const emptyArray = [];
-export const accountsByCryptoCurrencyScreenSelector =
-  (currency: CryptoCurrency) => (state: any) => {
-    if (!currency) return emptyArray;
-    return accountsTuplesByCurrencySelector(state, {
-      currency,
-    });
-  };
-export const flattenAccountsByCryptoCurrencyScreenSelector =
-  (currency?: CryptoCurrency) => (state: any) => {
-    if (!currency) return emptyArray;
-    return flattenAccountsByCryptoCurrencySelector(state, {
-      currencies: [currency.id],
-    });
-  };
+export const accountsByCryptoCurrencyScreenSelector = (
+  currency: CryptoCurrency,
+) => (state: any) => {
+  if (!currency) return emptyArray;
+  return accountsTuplesByCurrencySelector(state, {
+    currency,
+  });
+};
+export const flattenAccountsByCryptoCurrencyScreenSelector = (
+  currency?: CryptoCurrency,
+) => (state: any) => {
+  if (!currency) return emptyArray;
+  return flattenAccountsByCryptoCurrencySelector(state, {
+    currencies: [currency.id],
+  });
+};
 export const accountCryptoCurrenciesSelector = createSelector(
   cryptoCurrenciesSelector,
   (_, { currencies }) => currencies,
@@ -262,12 +264,12 @@ export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
 export const subAccountByCurrencyOrderedSelector: OutputSelector<
   State,
   {
-    currency: CryptoCurrency | TokenCurrency;
+    currency: CryptoCurrency | TokenCurrency,
   },
   Array<{
-    parentAccount: Account | null | undefined;
-    account: AccountLike;
-  }>
+    parentAccount: Account | null | undefined,
+    account: AccountLike,
+  }>,
 > = createSelector(
   accountsSelector,
   (
@@ -275,7 +277,7 @@ export const subAccountByCurrencyOrderedSelector: OutputSelector<
     {
       currency,
     }: {
-      currency: CryptoCurrency | TokenCurrency;
+      currency: CryptoCurrency | TokenCurrency,
     },
   ) => currency,
   (accounts, currency) => {
@@ -305,14 +307,15 @@ export const subAccountByCurrencyOrderedSelector: OutputSelector<
       );
   },
 );
-export const subAccountByCurrencyOrderedScreenSelector =
-  (route: any) => (state: any) => {
-    const currency = route?.params?.currency || {};
-    if (!currency) return [];
-    return subAccountByCurrencyOrderedSelector(state, {
-      currency,
-    });
-  };
+export const subAccountByCurrencyOrderedScreenSelector = (route: any) => (
+  state: any,
+) => {
+  const currency = route?.params?.currency || {};
+  if (!currency) return [];
+  return subAccountByCurrencyOrderedSelector(state, {
+    currency,
+  });
+};
 export const hasLendEnabledAccountsSelector: OutputSelector<
   State,
   void,
