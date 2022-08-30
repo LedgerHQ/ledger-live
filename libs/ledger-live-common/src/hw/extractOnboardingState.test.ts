@@ -44,23 +44,40 @@ describe("@hw/extractOnboardingState", () => {
       });
 
       describe("and the user is on the welcome screen", () => {
-        beforeEach(() => {
-          flagsBytes[3] = 0;
-        });
-
         it("should return an onboarding step that is set at the welcome screen", () => {
-          const onboardingState = extractOnboardingState(flagsBytes);
-
+          flagsBytes[3] = 0;
+          let onboardingState = extractOnboardingState(flagsBytes);
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.WelcomeScreen
+            OnboardingStep.WelcomeScreen1
+          );
+
+          flagsBytes[3] = 1;
+          onboardingState = extractOnboardingState(flagsBytes);
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.WelcomeScreen2
+          );
+
+          flagsBytes[3] = 2;
+          onboardingState = extractOnboardingState(flagsBytes);
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.WelcomeScreen3
+          );
+
+          flagsBytes[3] = 3;
+          onboardingState = extractOnboardingState(flagsBytes);
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.WelcomeScreen4
           );
         });
       });
 
       describe("and the user is choosing what kind of setup they want", () => {
         beforeEach(() => {
-          flagsBytes[3] = 1;
+          flagsBytes[3] = 5;
         });
 
         it("should return an onboarding step that is set at the setup choice", () => {
@@ -75,7 +92,7 @@ describe("@hw/extractOnboardingState", () => {
 
       describe("and the user is setting their pin", () => {
         beforeEach(() => {
-          flagsBytes[3] = 2;
+          flagsBytes[3] = 6;
         });
 
         it("should return an onboarding step that is set at setting the pin", () => {
@@ -104,7 +121,7 @@ describe("@hw/extractOnboardingState", () => {
 
           describe("and the user is writing the seed word i", () => {
             beforeEach(() => {
-              flagsBytes[3] = 3;
+              flagsBytes[3] = 7;
             });
 
             it("should return an onboarding step that is set at writting the seed phrase", () => {
@@ -131,7 +148,7 @@ describe("@hw/extractOnboardingState", () => {
 
           describe("and the user is confirming the seed word i", () => {
             beforeEach(() => {
-              flagsBytes[3] = 4;
+              flagsBytes[3] = 8;
             });
 
             it("should return an onboarding step that is set at confirming the seed phrase", () => {
@@ -190,7 +207,7 @@ describe("@hw/extractOnboardingState", () => {
               // 24-words seed
               flagsBytes[2] |= 0 << 5;
 
-              flagsBytes[3] = 5;
+              flagsBytes[3] = 9;
             });
 
             it("should return an onboarding step that is set at confirming the restored seed phrase", () => {
@@ -219,7 +236,7 @@ describe("@hw/extractOnboardingState", () => {
 
       describe("and the user is on the safety warning screen", () => {
         beforeEach(() => {
-          flagsBytes[3] = 6;
+          flagsBytes[3] = 10;
         });
 
         it("should return an onboarding step that is set at the safety warning screen", () => {
@@ -234,7 +251,7 @@ describe("@hw/extractOnboardingState", () => {
 
       describe("and the user finished the onboarding process", () => {
         beforeEach(() => {
-          flagsBytes[3] = 7;
+          flagsBytes[3] = 11;
         });
 
         it("should return an onboarding step that is set at ready", () => {
