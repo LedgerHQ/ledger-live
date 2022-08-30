@@ -12,20 +12,22 @@ import { CloseButton } from "../../screens/OperationDetails";
 import Close from "../../icons/Close";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
-const goBackOptions = colors => ({ route: { params }, navigation }) => ({
-  headerRight: () => (
-    <TouchableOpacity // $FlowFixMe
-      onPress={() => {
-        params?.endCallback && params.endCallback();
-        const n = navigation.getParent() || navigation;
-        n.canGoBack() && n.goBack();
-      }}
-      style={styles.buttons}
-    >
-      <Close size={18} color={colors.grey} />
-    </TouchableOpacity>
-  ),
-});
+const goBackOptions =
+  colors =>
+  ({ route: { params }, navigation }) => ({
+    headerRight: () => (
+      <TouchableOpacity // $FlowFixMe
+        onPress={() => {
+          params?.endCallback && params.endCallback();
+          const n = navigation.getParent() || navigation;
+          n.canGoBack() && n.goBack();
+        }}
+        style={styles.buttons}
+      >
+        <Close size={18} color={colors.grey} />
+      </TouchableOpacity>
+    ),
+  });
 
 export default function LendingInfoNavigator() {
   const { t } = useTranslation();

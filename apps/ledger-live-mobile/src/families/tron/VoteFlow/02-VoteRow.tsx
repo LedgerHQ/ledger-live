@@ -97,11 +97,10 @@ const VoteRow = ({
     }
   }, [index, swipeRef]);
 
-  const removeVote = useCallback(() => onRemove({ address, voteCount }), [
-    address,
-    voteCount,
-    onRemove,
-  ]);
+  const removeVote = useCallback(
+    () => onRemove({ address, voteCount }),
+    [address, voteCount, onRemove],
+  );
 
   useEffect(() => {
     if (openIndex !== index && swipeRef.current && swipeRef.current.close)

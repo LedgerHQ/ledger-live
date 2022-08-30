@@ -54,21 +54,16 @@ const DeviceLanguage: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    currentLanguage,
-  );
-  const [deviceLanguage, setDeviceLanguage] = useState<Language>(
-    currentLanguage,
-  );
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<Language>(currentLanguage);
+  const [deviceLanguage, setDeviceLanguage] =
+    useState<Language>(currentLanguage);
   const availableLanguages = useAvailableLanguagesForDevice(deviceInfo);
 
-  const [shouldInstallLanguage, setShouldInstallLanguage] = useState<boolean>(
-    false,
-  );
-  const [
-    deviceForActionModal,
-    setDeviceForActionModal,
-  ] = useState<Device | null>(null);
+  const [shouldInstallLanguage, setShouldInstallLanguage] =
+    useState<boolean>(false);
+  const [deviceForActionModal, setDeviceForActionModal] =
+    useState<Device | null>(null);
 
   const action = useMemo(
     () =>

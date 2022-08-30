@@ -123,14 +123,8 @@ class BulletList extends PureComponent<{
   };
 
   render() {
-    const {
-      list,
-      animated,
-      Bullet,
-      itemContainerStyle,
-      itemStyle,
-      style,
-    } = this.props;
+    const { list, animated, Bullet, itemContainerStyle, itemStyle, style } =
+      this.props;
     return (
       <View style={style}>
         {list.map((value, index) => (

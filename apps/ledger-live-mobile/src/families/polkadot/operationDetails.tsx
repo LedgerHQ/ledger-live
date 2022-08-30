@@ -42,10 +42,7 @@ function getURLWhatIsThis(op: Operation): string | undefined {
 function formatPalletMethod(palletMethod?: string): string {
   if (!palletMethod) return "";
 
-  return palletMethod
-    .split(".")
-    .map(startCase)
-    .join(" - ");
+  return palletMethod.split(".").map(startCase).join(" - ");
 }
 
 type OperationDetailsExtraProps = {
@@ -387,25 +384,28 @@ const NominateAmountCell = ({ operation }: Props) => {
   ) : null;
 };
 
-const createOperationIcon = Icon => ({
-  confirmed,
-  failed,
-  size = 24,
-  type,
-}: {
-  confirmed?: boolean;
-  failed?: boolean;
-  size?: number;
-  type: OperationType;
-}) => (
-  <OperationStatusWrapper
-    size={size}
-    Icon={Icon}
-    confirmed={confirmed}
-    failed={failed}
-    type={type}
-  />
-);
+const createOperationIcon =
+  Icon =>
+  ({
+    confirmed,
+    failed,
+    size = 24,
+    type,
+  }: {
+    confirmed?: boolean;
+    failed?: boolean;
+    size?: number;
+    type: OperationType;
+  }) =>
+    (
+      <OperationStatusWrapper
+        size={size}
+        Icon={Icon}
+        confirmed={confirmed}
+        failed={failed}
+        type={type}
+      />
+    );
 
 const amountCell = {
   BOND: BondAmountCell,

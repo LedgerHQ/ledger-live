@@ -53,9 +53,10 @@ const ManagerIconWithUpate = ({
 export default function ManagerNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
 
   return (
     <Stack.Navigator

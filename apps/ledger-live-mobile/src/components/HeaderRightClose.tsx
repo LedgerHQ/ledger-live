@@ -29,9 +29,8 @@ export default function HeaderRightClose({
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(
-    false,
-  );
+  const [isConfirmationModalOpened, setIsConfirmationModalOpened] =
+    useState(false);
   const [onModalHide, setOnModalHide] = useState();
   const close = useCallback(() => {
     if (skipNavigation) {

@@ -77,10 +77,10 @@ const VoteModal = ({
 
   const remove = useCallback(() => onRemove(vote), [onRemove, vote]);
 
-  const votesRemaining = useMemo(() => Math.max(0, votesAvailable - value), [
-    value,
-    votesAvailable,
-  ]);
+  const votesRemaining = useMemo(
+    () => Math.max(0, votesAvailable - value),
+    [value, votesAvailable],
+  );
 
   const error = value <= 0 || value > votesAvailable;
 

@@ -33,14 +33,8 @@ class PasswordForm extends PureComponent<Props, State> {
   };
 
   render() {
-    const {
-      onChange,
-      onSubmit,
-      error,
-      placeholder,
-      value,
-      colors,
-    } = this.props;
+    const { onChange, onSubmit, error, placeholder, value, colors } =
+      this.props;
     const { secureTextEntry } = this.state;
     return (
       <SafeAreaView
