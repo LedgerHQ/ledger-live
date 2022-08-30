@@ -4,7 +4,6 @@ import { StyleSheet } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import CurrencyInput from "../../../../components/CurrencyInput";
-import TranslatedError from "../../../../components/TranslatedError";
 
 interface Props {
   value: BigNumber | undefined;
@@ -32,10 +31,6 @@ export function AmountInput({ value, onChange, editable, unit, error }: Props) {
           -
         </Text>
       )}
-
-      <Text color="error.c100" textAlign="right" variant="tiny">
-        <TranslatedError error={error} />
-      </Text>
     </Flex>
   );
 }

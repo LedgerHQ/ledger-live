@@ -15,6 +15,7 @@ import { AmountInput } from "./AmountInput";
 import { shallowAccountsSelector } from "../../../../reducers/accounts";
 import { SwapFormProps } from "../../types";
 import { fromSelector } from "../../../../actions/swap";
+import TranslatedError from "../../../../components/TranslatedError";
 
 interface Props {
   provider?: string;
@@ -72,23 +73,29 @@ export function From({ swapTx, provider, swapError }: Props) {
       marginBottom={4}
     >
       <Text>{t("transfer.swap2.form.from")}</Text>
-      <Flex flexDirection="row" justifyContent="space-between">
-        <Selector
-          currency={swapTx.swap.from.currency}
-          title={name}
-          subTitle={balance}
-          onPress={onPress}
-        />
-
-        <Flex flex={1} justifyContent="center">
-          <AmountInput
-            value={swapTx.swap.from.amount}
-            editable={!swapTx.swap.isMaxEnabled}
-            unit={unit}
-            onChange={swapTx.setFromAmount}
-            error={swapError}
+      <Flex>
+        <Flex flexDirection="row" justifyContent="space-between">
+          <Selector
+            currency={swapTx.swap.from.currency}
+            title={name}
+            subTitle={balance}
+            onPress={onPress}
           />
+
+          <Flex flex={1} justifyContent="center" maxWidth={120}>
+            <AmountInput
+              value={swapTx.swap.from.amount}
+              editable={!swapTx.swap.isMaxEnabled}
+              unit={unit}
+              onChange={swapTx.setFromAmount}
+              error={swapError}
+            />
+          </Flex>
         </Flex>
+
+        <Text color="error.c100" textAlign="right" variant="tiny">
+          {swapError ? <TranslatedError error={swapError} /> : ""}
+        </Text>
       </Flex>
     </Flex>
   );
