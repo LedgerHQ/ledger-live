@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 // The code here is only enabled in development and allows to investigate performance
 // https://github.com/jondot/rn-snoopy
 // core Snoopy

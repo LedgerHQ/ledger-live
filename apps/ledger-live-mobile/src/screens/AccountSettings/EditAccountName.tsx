@@ -31,7 +31,6 @@ type RouteParams = {
   account: any;
   accountId?: string;
   accountName?: string;
-  // eslint-disable-next-line no-unused-vars
   onAccountNameChange: (name: string, changedAccount: Account) => void;
 };
 
