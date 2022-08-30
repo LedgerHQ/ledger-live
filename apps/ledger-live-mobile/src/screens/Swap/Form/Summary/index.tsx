@@ -5,7 +5,6 @@ import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   SwapTransactionType,
-  ExchangeRate,
   KYCStatus,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
@@ -16,6 +15,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useSelector } from "react-redux";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap/index";
 import { StatusTag } from "./StatusTag";
@@ -23,22 +23,25 @@ import { Item } from "./Item";
 import { Banner } from "../Banner";
 import { NavigatorName, ScreenName } from "../../../../const";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
+import { rateExpirationSelector, rateSelector } from "../../../../actions/swap";
+import { CountdownTimer } from "./CountdownTimer";
 
 interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
-  exchangeRate?: ExchangeRate;
   kyc?: KYCStatus;
 }
 
 export function Summary({
   provider,
   swapTx: { swap, status, transaction },
-  exchangeRate,
   kyc,
 }: Props) {
   const navigation = useNavigation<any>();
   const { t } = useTranslation();
+
+  const exchangeRate = useSelector(rateSelector);
+  const ratesExpiration = useSelector(rateExpirationSelector);
 
   const name = useMemo(() => provider && getProviderName(provider), [provider]);
 
@@ -61,10 +64,8 @@ export function Summary({
     [to.account],
   );
 
-  const targetAccountCurrency: CryptoCurrency | TokenCurrency = useMemo(
-    () => to.account && getAccountCurrency(to.account),
-    [to.account],
-  );
+  const targetAccountCurrency: CryptoCurrency | TokenCurrency | undefined =
+    useMemo(() => to.account && getAccountCurrency(to.account), [to.account]);
 
   const estimatedFees = useMemo(() => status?.estimatedFees ?? "", [status]);
 
@@ -77,6 +78,8 @@ export function Summary({
   }, [navigation, swap, provider, exchangeRate]);
 
   const onAddAccount = useCallback(() => {
+    if (!to.currency) return;
+
     const params = {
       returnToSwap: true,
       onSuccess: () => {
@@ -85,12 +88,12 @@ export function Summary({
       analyticsPropertyFlow: "swap",
     };
 
-    if (swap.to.currency.type === "TokenCurrency") {
+    if (to.currency.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
         screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
         params: {
           ...params,
-          token: swap.to.currency,
+          token: to.currency,
         },
       });
     } else {
@@ -98,11 +101,11 @@ export function Summary({
         screen: ScreenName.AddAccountsSelectDevice,
         params: {
           ...params,
-          currency: swap.to.currency,
+          currency: to.currency,
         },
       });
     }
-  }, [navigation, swap]);
+  }, [navigation, to]);
 
   if (
     !provider ||
@@ -132,6 +135,16 @@ export function Summary({
       </Item>
 
       <Item title={t("transfer.swap2.form.details.label.rate")}>
+        {ratesExpiration &&
+          exchangeRate.tradeMethod === "fixed" &&
+          ratesExpiration > Date.now() && (
+            <Flex paddingX={2}>
+              <CountdownTimer
+                end={ratesExpiration}
+                callback={swap.refetchRates}
+              />
+            </Flex>
+          )}
         <Icon
           name={exchangeRate.tradeMethod === "fixed" ? "Lock" : "Unlock"}
           color="neutral.c70"
@@ -162,7 +175,7 @@ export function Summary({
         </Text>
       </Item>
 
-      {swap.to.account ? (
+      {to.currency ? (
         <Item
           title={t("transfer.swap2.form.details.label.target")}
           onEdit={() => {

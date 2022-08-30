@@ -144,8 +144,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
-    // eslint-disable-next-line
-  }, [swapTransaction.transaction]);
+  }, [swapTransaction.transaction, dispatch]);
 
   useEffect(() => {
     // Whenever an account is added, reselect the currency to pick a default target account.
@@ -404,7 +403,6 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
                 <Summary
                   provider={provider}
                   swapTx={swapTransaction}
-                  exchangeRate={exchangeRate}
                   kyc={kycStatus}
                 />
 

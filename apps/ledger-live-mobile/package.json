@@ -120,6 +120,7 @@
     "lodash": "4.17.21",
     "lottie-ios": "3.2.3",
     "lottie-react-native": "^5.1.3",
+    "moment": "^2.29.1",
     "node-libs-react-native": "^1.2.1",
     "prando": "^6.0.1",
     "prop-types": "^15.8.1",
