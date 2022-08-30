@@ -58,16 +58,15 @@ export async function getAccountBannerState(
       worstValidator?.validatorAddress === ledgerValidator?.validatorAddress
     ) {
       // Not found worst validator than ledger
-      const maxSpendable = await getAccountBridge(account, undefined)
-        .estimateMaxSpendable({
-          account,
-          parentAccount: undefined,
-          transaction: undefined,
-        })
-        .then((estimate) => {
-          return +estimate;
-        });
-      if (maxSpendable > 0) {
+      const maxSpendable = await getAccountBridge(
+        account,
+        undefined
+      ).estimateMaxSpendable({
+        account,
+        parentAccount: undefined,
+        transaction: undefined,
+      });
+      if (maxSpendable.gt(0)) {
         // Delegate remaining ATOM (not staked)
         display = true;
       }
