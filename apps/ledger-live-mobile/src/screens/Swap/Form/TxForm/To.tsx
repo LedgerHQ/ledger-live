@@ -40,17 +40,6 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({ allCurrencies });
 
-  const { name, balance } = useMemo(() => {
-    const to = swapTx.swap.to;
-    if (!to) {
-      return { name: "", balance: "" };
-    }
-    return {
-      name: (to.account && getAccountName(to.account)) || to.currency?.name,
-      balance: to.currency?.units[0].code || "",
-    };
-  }, [swapTx.swap.to]);
-
   usePickDefaultCurrency(
     currencies,
     swapTx.swap.to.currency,
@@ -67,8 +56,8 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
       <Flex flexDirection="row" justifyContent="space-between">
         <Selector
           currency={swapTx.swap.to.currency}
-          title={name}
-          subTitle={balance || "-"}
+          title={swapTx.swap.to.currency?.name}
+          subTitle={swapTx.swap.to.currency?.units[0].code || "-"}
           onPress={onPress}
           disabled={!swapTx.swap.to.currency}
         />

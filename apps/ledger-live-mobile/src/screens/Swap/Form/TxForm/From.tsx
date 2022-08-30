@@ -29,12 +29,11 @@ export function From({ swapTx, provider, swapError }: Props) {
   const accounts = useSelector(fromSelector)(
     useSelector(shallowAccountsSelector),
   );
-  const { currency, name, balance, unit } = useMemo(() => {
+  const { name, balance, unit } = useMemo(() => {
     const { currency, account } = swapTx.swap.from;
 
     return {
       account,
-      currency,
       name: account && getAccountName(account),
       balance:
         (account &&
@@ -75,7 +74,7 @@ export function From({ swapTx, provider, swapError }: Props) {
       <Text>{t("transfer.swap2.form.from")}</Text>
       <Flex flexDirection="row" justifyContent="space-between">
         <Selector
-          currency={currency}
+          currency={swapTx.swap.from.currency}
           title={name}
           subTitle={balance}
           onPress={onPress}
