@@ -1,6 +1,5 @@
 // @flow
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import styled from "styled-components";
@@ -8,8 +7,6 @@ import { withTranslation, Trans } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
-import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import Label from "~/renderer/components/Label";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -82,15 +79,8 @@ const FeesField = ({
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
 
-  const fiatCurrency = useSelector(counterValueCurrencySelector);
   const validTransactionError = status.errors.maxPriorityFee;
   const validTransactionWarning = status.warnings.maxPriorityFee;
-
-  const { cryptoUnit, fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
-    account,
-    fiatCurrency,
-    cryptoAmount: maxPriorityFee
-  });
 
   return (
     <Box mb={1}>
@@ -110,9 +100,6 @@ const FeesField = ({
           defaultUnit={unit}
           value={maxPriorityFee}
           onChange={onPriorityFeeChange}
-          renderRight={<InputRight>
-            = {formatCurrencyUnit(fiatUnit, fiatAmount, { showCode: true})}
-          </InputRight>}
         />
       </Box>
       <ErrorContainer hasError={validTransactionError || validTransactionWarning}>

@@ -17,9 +17,10 @@ type Props = {
   account: Account,
   status: TransactionStatus,
   updateTransaction: (updater: any) => void,
+  readonly: boolean,
 };
 
-const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Props) => {
+const AdvancedOptions = ({ account, transaction, status, updateTransaction, readonly = true }: Props) => {
   invariant(transaction.family === "ethereum", "AdvancedOptions: ethereum family expected");
   const [editable, setEditable] = useState(false);
 
@@ -50,7 +51,7 @@ const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Pr
           </span>
         </Label>
       </Box>
-      {editable ?
+      {(editable && !readonly) ?
         <Box flex="1">
           <Input
             ff="Inter"
@@ -66,11 +67,11 @@ const AdvancedOptions = ({ account, transaction, status, updateTransaction }: Pr
           <Label color="p.theme.colors.palette.text.shade100">
             {gasLimit.toString()}
           </Label>
-          <Button onClick={() => setEditable(true)} ml={1} px={2}>
+          {!readonly && <Button onClick={() => setEditable(true)} ml={1} px={2}>
             <Box horizontal alignItems="center">
               <Trans i18nKey="send.steps.details.edit" />
             </Box>
-          </Button>
+          </Button>}
         </Box>
       }
     </Box>
