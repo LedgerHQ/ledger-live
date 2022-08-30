@@ -68,15 +68,15 @@ const infoModalData = [
 ];
 
 type RouteParams = {
-  accountId: string,
-  transaction?: Transaction,
-  validator: CosmosValidatorItem,
-  value: BigNumber,
+  accountId: string;
+  transaction?: Transaction;
+  validator: CosmosValidatorItem;
+  value: BigNumber;
 };
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 function ClaimRewardsAmount({ navigation, route }: Props) {

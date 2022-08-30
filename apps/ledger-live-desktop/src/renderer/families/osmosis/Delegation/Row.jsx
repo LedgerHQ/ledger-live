@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import moment from "moment";
 
 import type { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import {
   canRedelegate,
   canUndelegate,

@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo , ElementProps } from "react";
+import React, { useCallback, useState, useMemo, ElementProps } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -20,16 +20,14 @@ import type {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import {
   mapUnbondings,
   canRedelegate,
   getRedelegation,
   canUndelegate,
 } from "@ledgerhq/live-common/families/cosmos/logic";
-import {
-  canDelegate,
-} from "@ledgerhq/live-common/families/osmosis/logic";
+import { canDelegate } from "@ledgerhq/live-common/families/osmosis/logic";
 import { Text } from "@ledgerhq/native-ui";
 import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
@@ -55,7 +53,7 @@ import DateFromNow from "../../../components/DateFromNow";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 
 type Props = {
-  account: Account,
+  account: Account;
 };
 
 type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
@@ -65,15 +63,14 @@ function Delegations({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account);
-  const delegations: CosmosMappedDelegation[] = useCosmosFamilyMappedDelegations(
-    mainAccount,
-  );
+  const delegations: CosmosMappedDelegation[] =
+    useCosmosFamilyMappedDelegations(mainAccount);
 
   const currency = getAccountCurrency(mainAccount);
   const unit = getAccountUnit(mainAccount);
   const navigation = useNavigation();
 
-  const { validators } = useCosmosFamilyPreloadData('osmosis');
+  const { validators } = useCosmosFamilyPreloadData("osmosis");
 
   const { cosmosResources } = mainAccount;
 
@@ -96,9 +93,9 @@ function Delegations({ account }: Props) {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName,
-      screen?: typeof ScreenName,
-      params?: { [key: string]: any },
+      route: typeof NavigatorName | typeof ScreenName;
+      screen?: typeof ScreenName;
+      params?: { [key: string]: any };
     }) => {
       setDelegation();
       navigation.navigate(route, {
@@ -112,7 +109,10 @@ function Delegations({ account }: Props) {
   const onDelegate = useCallback(() => {
     onNavigate({
       route: NavigatorName.OsmosisDelegationFlow,
-      screen: delegations.length > 0 ? ScreenName.OsmosisDelegationValidator : ScreenName.OsmosisDelegationStarted,
+      screen:
+        delegations.length > 0
+          ? ScreenName.OsmosisDelegationValidator
+          : ScreenName.OsmosisDelegationStarted,
     });
   }, [onNavigate, delegations]);
 
@@ -376,7 +376,19 @@ function Delegations({ account }: Props) {
           },
         ]
       : [];
-  }, [delegation, account, t, onRedelegate, onCollectRewards, onUndelegate, colors.lightFog, colors.fog, colors.grey, colors.yellow, colors.alert]);
+  }, [
+    delegation,
+    account,
+    t,
+    onRedelegate,
+    onCollectRewards,
+    onUndelegate,
+    colors.lightFog,
+    colors.fog,
+    colors.grey,
+    colors.yellow,
+    colors.alert,
+  ]);
 
   const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
 
@@ -388,7 +400,10 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <ValidatorImage
-            isLedger={(delegation || undelegation)?.validatorAddress === LEDGER_OSMOSIS_VALIDATOR_ADDRESS}
+            isLedger={
+              (delegation || undelegation)?.validatorAddress ===
+              LEDGER_OSMOSIS_VALIDATOR_ADDRESS
+            }
             name={
               (delegation || undelegation)?.validator?.name ??
               (delegation || undelegation)?.validatorAddress ??
@@ -404,11 +419,9 @@ function Delegations({ account }: Props) {
       {totalRewardsAvailable.gt(0) && (
         <>
           <AccountSectionLabel name={t("account.claimReward.sectionLabel")} />
-          <View
-            style={[styles.rewardsWrapper]}
-          >
+          <View style={[styles.rewardsWrapper]}>
             <View style={styles.column}>
-              <Text fontWeight={'semiBold'} variant={'h4'}>
+              <Text fontWeight={"semiBold"} variant={"h4"}>
                 <CurrencyUnitValue value={totalRewardsAvailable} unit={unit} />
               </Text>
               <LText semiBold style={styles.subLabel} color="grey">
@@ -453,12 +466,7 @@ function Delegations({ account }: Props) {
             }
           />
           {delegations.map((d, i) => (
-            <View
-              key={d.validatorAddress}
-              style={[
-                styles.delegationsWrapper,
-              ]}
-            >
+            <View key={d.validatorAddress} style={[styles.delegationsWrapper]}>
               <DelegationRow
                 delegation={d}
                 currency={currency}

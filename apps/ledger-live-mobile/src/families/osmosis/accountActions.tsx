@@ -1,5 +1,5 @@
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { canDelegate } from "@ledgerhq/live-common/families/osmosis/logic";
 
 import { Icons } from "@ledgerhq/native-ui";
@@ -15,7 +15,11 @@ const getActions = ({ account }: { account: Account }) => {
       navigationParams: [
         NavigatorName.OsmosisDelegationFlow,
         {
-          screen: (account.cosmosResources && account.cosmosResources?.delegations.length > 0) ? ScreenName.OsmosisDelegationValidator : ScreenName.OsmosisDelegationStarted,
+          screen:
+            account.cosmosResources &&
+            account.cosmosResources?.delegations.length > 0
+              ? ScreenName.OsmosisDelegationValidator
+              : ScreenName.OsmosisDelegationStarted,
         },
       ],
       label: <Trans i18nKey="account.stake" />,

@@ -7,8 +7,8 @@ import { ScreenName } from "../../const";
 import CosmosFamilySendRowsCustomComponent from "../cosmos/shared/CosmosFamilySendRowsCustomComponent";
 
 type Props = {
-  account: Account,
-  transaction: Transaction,
+  account: Account;
+  transaction: Transaction;
 };
 
 export default function OsmosisSendRowsCustom({ account, transaction }: Props) {

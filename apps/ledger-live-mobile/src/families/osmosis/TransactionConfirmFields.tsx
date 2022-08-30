@@ -25,10 +25,10 @@ import {
 import Info from "../../icons/Info";
 
 type FieldProps = {
-  account: Account,
-  transaction: Transaction,
-  field: DeviceTransactionField,
-  status: TransactionStatus,
+  account: Account;
+  transaction: Transaction;
+  field: DeviceTransactionField;
+  status: TransactionStatus;
 };
 
 function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {

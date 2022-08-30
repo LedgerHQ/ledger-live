@@ -7,16 +7,14 @@ import {
   SelectableList,
   Text,
 } from "@ledgerhq/native-ui";
-import {
-  Language,
-} from "@ledgerhq/types-live";
+import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 
 type Props = {
   deviceLanguage: Language;
   selectedLanguage: Language;
   availableLanguages: Language[];
-  onSelectLanguage: (language: Language) => void;
+  onSelectLanguage: (_language: Language) => void;
   onConfirmInstall: () => void;
 };
 

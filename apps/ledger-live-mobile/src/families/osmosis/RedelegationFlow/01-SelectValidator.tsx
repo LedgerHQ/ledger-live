@@ -11,6 +11,7 @@ import type { Transaction } from "@ledgerhq/live-common/families/osmosis/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { CosmosAccount } from "@ledgerhq/live-common/lib/families/cosmos/types";
 
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
@@ -23,14 +24,14 @@ import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
 
 type RouteParams = {
-  accountId: string,
-  validatorSrcAddress: string,
-  transaction: Transaction,
+  accountId: string;
+  validatorSrcAddress: string;
+  transaction: Transaction;
 };
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 function RedelegationSelectValidator({ navigation, route }: Props) {
@@ -39,7 +40,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
 
   invariant(account, "account required");
 
-  const mainAccount = getMainAccount(account, undefined);
+  const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
   const bridge = getAccountBridge(account, undefined);
 
   const { cosmosResources } = mainAccount;

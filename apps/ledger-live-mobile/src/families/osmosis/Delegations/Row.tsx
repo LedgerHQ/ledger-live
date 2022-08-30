@@ -5,7 +5,7 @@ import {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
@@ -17,7 +17,9 @@ import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 type Props = {
   delegation: CosmosMappedDelegation | CosmosMappedUnbonding;
   currency: Currency;
-  onPress: (delegation: CosmosMappedDelegation | CosmosMappedUnbonding) => void;
+  onPress: (
+    _delegation: CosmosMappedDelegation | CosmosMappedUnbonding,
+  ) => void;
   isLast?: boolean;
 };
 

@@ -16,9 +16,7 @@ export const reorderAccounts = (comparator: any) => (dispatch: any) =>
   dispatch({
     type: "REORDER_ACCOUNTS",
     payload: {
-     
       comparator,
-   ,
     },
   });
 export const importAccounts = (input: ImportAccountsReduceInput) => ({

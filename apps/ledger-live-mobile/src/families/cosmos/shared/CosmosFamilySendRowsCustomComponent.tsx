@@ -9,8 +9,8 @@ import LText from "../../../components/LText";
 import SummaryRow from "../../../screens/SendFunds/SummaryRow";
 
 type Props = {
-  transaction: CosmosTransaction | OsmosisTransaction,
-  editMemo: () => void,
+  transaction: CosmosTransaction | OsmosisTransaction;
+  editMemo: () => void;
 };
 
 export default function CosmosFamilySendRowsCustomComponent({

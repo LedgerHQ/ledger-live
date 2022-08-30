@@ -12,15 +12,15 @@ import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  accountId: string,
-  deviceId: string,
-  transaction: any,
-  result: Operation,
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  result: Operation;
 };
 
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -45,16 +45,16 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="OsmosisUndelegation" name="ValidationSuccess" />
+      <TrackScreen category="OsmosisRedelegation" name="ValidationSuccess" />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
         title={
-          <Trans i18nKey="cosmos.undelegation.flow.steps.verification.success.title" />
+          <Trans i18nKey="cosmos.redelegation.flow.steps.verification.success.title" />
         }
         description={
-          <Trans i18nKey="cosmos.undelegation.flow.steps.verification.success.text" />
+          <Trans i18nKey="cosmos.redelegation.flow.steps.verification.success.text" />
         }
       />
     </View>

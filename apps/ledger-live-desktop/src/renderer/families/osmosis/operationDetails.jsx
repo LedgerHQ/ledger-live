@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import type { Operation, Account } from "@ledgerhq/live-common/types/index";
+import type { Operation, Account } from "@ledgerhq/types-live";
 
 import { urls } from "~/config/urls";
 import {

@@ -16,13 +16,13 @@ import SelectAmount from "../../cosmos/shared/02-SelectAmount";
 import { ScreenName } from "../../../const";
 
 type RouteParams = {
-  accountId: string,
-  delegation: CosmosMappedDelegation,
+  accountId: string;
+  delegation: CosmosMappedDelegation;
 };
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 function UndelegationAmount({ navigation, route }: Props) {

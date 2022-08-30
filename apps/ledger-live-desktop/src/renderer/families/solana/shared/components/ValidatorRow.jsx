@@ -21,7 +21,7 @@ type Props = {
   currency: CryptoCurrency,
   validator: ValidatorAppValidator,
   active?: boolean,
-  onClick?: (v: ValidatorAppValidator) => void,
+  onClick?: (_v: ValidatorAppValidator) => void,
   disableHover?: boolean,
   unit: Unit,
 };

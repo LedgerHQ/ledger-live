@@ -1,7 +1,7 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -15,7 +15,7 @@ const ValidatorRow = ({
   validator,
   account,
 }: {
-  onPress: (v: CosmosValidatorItem) => void;
+  onPress: (_v: CosmosValidatorItem) => void;
   validator: CosmosValidatorItem;
   account: AccountLike;
 }) => {

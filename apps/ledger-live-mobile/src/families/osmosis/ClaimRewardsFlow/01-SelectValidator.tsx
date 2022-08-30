@@ -21,13 +21,13 @@ import { ScreenName } from "../../../const";
 import Item from "../../cosmos/shared/Item";
 
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 function ClaimRewardsSelectValidator({ navigation, route }: Props) {

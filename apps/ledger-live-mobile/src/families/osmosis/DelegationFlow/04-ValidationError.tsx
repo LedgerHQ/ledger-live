@@ -10,15 +10,15 @@ import { urls } from "../../../config/urls";
 const forceInset = { bottom: "always" };
 
 type RouteParams = {
-  accountId: string,
-  deviceId: string,
-  transaction: any,
-  error: Error,
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  error: Error;
 };
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 export default function ValidationError({ navigation, route }: Props) {
@@ -42,7 +42,7 @@ export default function ValidationError({ navigation, route }: Props) {
       style={[styles.root, { backgroundColor: colors.background }]}
       forceInset={forceInset}
     >
-      <TrackScreen category="OsmosisClaimRewards" name="ValidationError" />
+      <TrackScreen category="OsmosisDelegation" name="ValidationError" />
       <ValidateError
         error={error}
         onRetry={retry}
