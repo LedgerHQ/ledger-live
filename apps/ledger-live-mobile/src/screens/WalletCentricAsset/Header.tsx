@@ -28,23 +28,33 @@ function Header({
   currency,
   assetPortfolio,
   counterValueCurrency,
+  useCounterValue,
+  currencyBalance,
 }: {
   currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
   currency: Currency;
   assetPortfolio: Portfolio;
   counterValueCurrency: Currency;
+  useCounterValue?: boolean;
+  currencyBalance: number;
 }) {
   const navigation = useNavigation();
   const currentRoute = useCurrentRouteName();
   const { t } = useTranslation();
 
-  const { balanceAvailable, balanceHistory } = assetPortfolio;
-
+  const { balanceHistory } = assetPortfolio;
   const item = balanceHistory[balanceHistory.length - 1];
 
   const unit = counterValueCurrency.units[0];
 
+  const currencyUnitValueProps = useCounterValue ? {
+    unit,
+    value: item?.value,
+  } : {
+    unit: currency.units[0],
+    value: currencyBalance,
+  };
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onBackButtonPress = useCallback(() => {
@@ -106,11 +116,7 @@ function Header({
                 fontSize="18px"
                 numberOfLines={1}
               >
-                <CurrencyUnitValue
-                  unit={unit}
-                  value={item.value}
-                  joinFragmentsSeparator=""
-                />
+                <CurrencyUnitValue {...currencyUnitValueProps} />
               </Text>
             </>
           ) : (

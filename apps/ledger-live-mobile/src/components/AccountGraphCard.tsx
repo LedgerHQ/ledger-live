@@ -238,7 +238,7 @@ const GraphCardHeader = ({
     {
       unit: counterValueUnit,
       value: item.countervalue,
-      joinFragmentsSeparator: " ",
+      joinFragmentsSeparator: "",
     },
   ];
 

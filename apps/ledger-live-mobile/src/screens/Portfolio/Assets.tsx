@@ -21,7 +21,7 @@ const AssetsList = ({ assets }: ListProps) => {
     <FlatList
       data={assets}
       renderItem={renderItem}
-      keyExtractor={item => item.id}
+      keyExtractor={item => item?.currency?.id}
       contentContainerStyle={{ flex: 1 }}
     />
   );

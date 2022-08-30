@@ -5,7 +5,6 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/src/currencies";
 import { useTranslation } from "react-i18next";
 import { Box } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -29,7 +28,7 @@ import AssetCentricGraphCard from "../../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../../components/CurrencyBackgroundGradient";
 import Header from "../Header";
 import { usePortfolio } from "../../../actions/portfolio";
-import { counterValueCurrencySelector, hasOrderedNanoSelector } from "../../../reducers/settings";
+import { counterValueCurrencySelector, countervalueFirstSelector, hasOrderedNanoSelector } from "../../../reducers/settings";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
@@ -52,6 +51,7 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
   const currency = route?.params?.currency;
   const { colors } = useTheme();
+  const useCounterValue = useSelector(countervalueFirstSelector);
 
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
@@ -81,7 +81,7 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
           graphCardEndPosition={graphCardEndPosition}
           currency={currency}
           currencyBalance={0}
-          areAccountsEmpty={false}
+          areAccountsEmpty={true}
         />
       </Box>,
       <SectionContainer px={6}>
@@ -132,6 +132,7 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
       graphCardEndPosition,
       currency,
       t,
+      hasOrderedNano,
     ],
   );
 
@@ -155,7 +156,9 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
         currency={currency}
+        useCounterValue={useCounterValue}
         assetPortfolio={assetPortfolio}
+        currencyBalance={0}
         counterValueCurrency={counterValueCurrency}
       />
     </TabBarSafeAreaView>
