@@ -76,5 +76,25 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "breezy-bananas-pull",
+    "cyan-cats-begin",
+    "dull-donkeys-agree",
+    "dull-jeans-act",
+    "dull-moles-invite",
+    "fluffy-hairs-promise",
+    "great-donkeys-fix",
+    "modern-ligers-cry",
+    "new-trains-float",
+    "pink-games-dance",
+    "red-spies-shake",
+    "rotten-seals-mix",
+    "rude-cows-glow",
+    "strong-penguins-beam",
+    "sweet-clocks-shave",
+    "swift-beds-laugh",
+    "tender-dingos-jump",
+    "tiny-kangaroos-type",
+    "weak-kiwis-sip"
+  ]
 }
