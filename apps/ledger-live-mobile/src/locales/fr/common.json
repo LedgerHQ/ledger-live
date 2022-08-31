@@ -82,7 +82,8 @@
     "moreInfo" : "Plus d’informations",
     "buyEth" : "Acheter de l’Ethereum",
     "popular" : "Populaire",
-    "comingSoon" : "Bientôt disponibles"
+    "comingSoon" : "Bientôt disponibles",
+    "getSupport" : "Obtenir de l’aide"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -687,6 +688,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
     }
+  },
+  "crash" : {
+    "title" : "Une erreur est survenue."
   },
   "bluetooth" : {
     "required" : "Le Bluetooth semble être désactivé.",
@@ -2173,6 +2177,10 @@
       "clearCacheButton" : "Effacer",
       "exportLogs" : "Enregistrer les logs",
       "exportLogsDesc" : "Sauvegardez les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
+      "resetThirdPartyData" : "Réinitialiser les données fournies à des tiers",
+      "resetThirdPartyDataDesc" : "Supprimez toutes vos données stockées localement et partagées avec des tiers, qui sont utilisées pour accéder aux prestataires de transactions tiers.",
+      "resetThirdPartyDataModal" : "Supprimer vos données locales partagées avec des tiers",
+      "resetThirdPartyDataModalDesc" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos partenaires.",
       "hardReset" : "Réinitialiser Ledger Live",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
       "repairDevice" : "Réparer son appareil Ledger",
@@ -2480,7 +2488,7 @@
         "noApp" : {
           "title" : "App {{appName}} non installée",
           "desc" : "Allez dans le Gestionnaire pour installer l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "noAccounts" : {
@@ -2492,7 +2500,7 @@
         "outdatedApp" : {
           "title" : "Mise à jour de l’app disponible",
           "desc" : "Vous devez mettre à jour l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "summary" : {
@@ -2534,12 +2542,12 @@
       "missingApp" : {
         "title" : "Installez l’app Exchange sur votre appareil.",
         "description" : "Installez l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "outdatedApp" : {
         "title" : "Merci de mettre à jour l’app Exchange sur votre appareil.",
         "description" : "Mettez à jour l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "emptyState" : {
         "title" : "Aucun compte {{currency}}",
@@ -2557,19 +2565,80 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "De",
-          "to" : "À",
-          "send" : "Envoyer",
-          "payoutNetworkFees" : "Frais de réception",
-          "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
-          "receive" : "Montant",
-          "receiveFloat" : "Montant à recevoir sans les frais de service",
-          "provider" : "Prestataire",
-          "method" : "Taux",
-          "fees" : "Frais"
+        "ratesDrawer" : {
+          "title" : "Taux",
+          "quote" : "Prix",
+          "receive" : "Recevoir"
+        },
+        "placeholder" : "Sélectionnez un compte",
+        "title" : "Échanger",
+        "cta" : "Échanger",
+        "from" : "De",
+        "to" : "À",
+        "loading" : "Chargement...",
+        "disclaimer" : {
+          "title" : "Conditions d’utilisation",
+          "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de {{providerName}}.",
+          "tos" : "Conditions d’utilisation",
+          "accept" : "Accepter"
+        },
+        "notAvailable" : {
+          "title" : "Le swap n’est pas encore disponible pour votre territoire.",
+          "content" : "Merci pour votre patience. Nous lancerons cette fonctionnalité très rapidement."
+        },
+        "amount" : {
+          "useMax" : "Choisir le maximum",
+          "available" : "Total disponible"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Prestataire",
+            "rate" : "Taux",
+            "fees" : "Frais de réseau",
+            "target" : "Compte bénéficiaire"
+          },
+          "noAccount" : "Créez un compte pour recevoir des {{name}}.",
+          "noAccountCTA" : "Ajouter un compte"
+        },
+        "select" : {
+          "from" : {
+            "title" : "De"
+          },
+          "to" : {
+            "title" : "À"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "Vérification",
+            "required" : "Vous devez passer la vérification d’identité.",
+            "complete" : "Vérifier",
+            "update" : "Actualiser",
+            "rejected" : "Vérification d’identité rejetée, merci de recommencer.",
+            "rejectedContactProviderSupport" : "Vérification rejetée, contactez l’assistance de {{providerName}}",
+            "updateRequired" : "Complétez ou mettez à jour votre vérification d’identité",
+            "status" : {
+              "pending" : "En attente",
+              "approved" : "Approuvé",
+              "closed" : "Rejeté",
+              "upgradeRequired" : "Incomplet"
+            }
+          },
+          "login" : {
+            "title" : "Connexion",
+            "required" : "Connectez-vous pour utiliser ce prestataire.",
+            "complete" : "Me connecter"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Configurez une authentification multifactorielle pour utiliser ce prestataire.",
+            "complete" : "Configurer une MFA"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour en savoir plus, contactez leur service d’assistance."
+          }
         }
       }
     },
@@ -3024,7 +3093,6 @@
     "retry" : "Réessayer",
     "done" : "Terminé",
     "finalCta" : "Continuer",
-    "finalCtaForSwap" : "Retour au Swap",
     "synchronizing" : "Synchronisation",
     "synchronizingDesc" : "Synchronisation de vos comptes en cours. Cela peut prendre quelques minutes...",
     "noAccountToCreate" : "Impossible de créer le compte <1><0>{{currencyName}}</0></1>. Recommencez et synchronisez vos comptes.",
@@ -3101,7 +3169,17 @@
     "confirmSwap" : {
       "title" : "Confirmer l’opération de swap sur l’appareil",
       "alert" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>."
+      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>.",
+      "notice" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
+    },
+    "swap2" : {
+      "notice" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
+      "amountSent" : "Montant à envoyer",
+      "amountReceived" : "Montant à recevoir",
+      "provider" : "Prestataire",
+      "fees" : "Frais de réseau",
+      "sourceAccount" : "Compte émetteur",
+      "targetAccount" : "Compte bénéficiaire"
     },
     "confirmSell" : {
       "title" : "Confirmer l’opération de vente sur l’appareil",
