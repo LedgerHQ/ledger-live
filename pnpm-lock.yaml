@@ -1043,6 +1043,7 @@ importers:
       lodash: ^4.17.21
       long: ^4.0.0
       lru-cache: 5.1.1
+      minimatch: ^5.1.0
       near-api-js: ^0.44.2
       numeral: ^2.0.6
       object-hash: ^2.2.0
@@ -1183,6 +1184,7 @@ importers:
       leb128: 0.0.5
       lodash: 4.17.21
       lru-cache: 5.1.1
+      minimatch: 5.1.0
       near-api-js: 0.44.2
       numeral: 2.0.6
       object-hash: 2.2.0
