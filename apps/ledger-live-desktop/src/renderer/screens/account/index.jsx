@@ -2,8 +2,8 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { compose } from "redux";
-import { connect, useSelector } from "react-redux";
-import { withTranslation } from "react-i18next";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { useTranslation, withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { Redirect } from "react-router";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
@@ -40,9 +40,6 @@ import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 import { getBannerProps, AccountBanner } from "./AccountBanner";
-
-import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
 
 const mapStateToProps = (
   state,
