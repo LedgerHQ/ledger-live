@@ -605,10 +605,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "http://hubble.figment.io/celo/chains/celo/transactions/$hash",
-        address: "https://hubble.figment.io/celo/chains/celo/accounts/$address",
-      },
-      {
         tx: "https://explorer.celo.org/tx/$hash",
         address: "https://explorer.celo.org/address/$address",
       },

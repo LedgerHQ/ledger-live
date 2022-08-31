@@ -1,5 +1,37 @@
 # @ledgerhq/live-common
 
+## 27.1.0-next.1
+
+### Minor Changes
+
+- [#669](https://github.com/LedgerHQ/ledger-live/pull/669) [`b615140ba2`](https://github.com/LedgerHQ/ledger-live/commit/b615140ba2e326e1466d15f123d412ea90db3754) Thanks [@andyhass](https://github.com/andyhass)! - Add Celo Staking
+
+* [#954](https://github.com/LedgerHQ/ledger-live/pull/954) [`336eb879a8`](https://github.com/LedgerHQ/ledger-live/commit/336eb879a80573fd81027232c4c6c9b383bd2a97) Thanks [@andyhass](https://github.com/andyhass)! - The Ledger QA team discovered that an error could occur when calculating the max spendable and max non-voting locked balance when pending operations existed. These balances are set when the account syncs, and these balances will not take into account pending operations - leaving it to be higher than it truly is. This results in a runtime error related to trying to create a transaction that is larger than the respective balance.
+
+- [#856](https://github.com/LedgerHQ/ledger-live/pull/856) [`3615a06f19`](https://github.com/LedgerHQ/ledger-live/commit/3615a06f19ef659480d50a1a1a28f6df952b117a) Thanks [@andyhass](https://github.com/andyhass)! - Gracefully handle when user reaches the maximum number of Celo validator groups they can vote for.
+
+### Patch Changes
+
+- Updated dependencies [[`b615140ba2`](https://github.com/LedgerHQ/ledger-live/commit/b615140ba2e326e1466d15f123d412ea90db3754)]:
+  - @ledgerhq/cryptoassets@6.34.0-next.1
+  - @ledgerhq/hw-app-eth@6.29.6-next.1
+
+## 27.0.1-next.0
+
+### Patch Changes
+
+- [#1025](https://github.com/LedgerHQ/ledger-live/pull/1025) [`7e812a738d`](https://github.com/LedgerHQ/ledger-live/commit/7e812a738db718200138dcb9b7bcc2f6dd0ddd6f) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: hooks for genuine check and get latest available firmware
+
+* [#1092](https://github.com/LedgerHQ/ledger-live/pull/1092) [`058a1af7ff`](https://github.com/LedgerHQ/ledger-live/commit/058a1af7ff463d21afe85d03563b61e1d543c95b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Safe serialization & reconciliation when no account resources
+
+- [#956](https://github.com/LedgerHQ/ledger-live/pull/956) [`d6634bc0b7`](https://github.com/LedgerHQ/ledger-live/commit/d6634bc0b720d8a13f3681caf33e2f23d5c64968) Thanks [@pavanvora](https://github.com/pavanvora)! - fix estimateMaxSpendable for Cardano
+
+* [#1083](https://github.com/LedgerHQ/ledger-live/pull/1083) [`5da717c523`](https://github.com/LedgerHQ/ledger-live/commit/5da717c523db7678edeb0f86bdfa88256dfe96c4) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add missing safety check on bitcoinResources
+
+* Updated dependencies [[`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710), [`318e804525`](https://github.com/LedgerHQ/ledger-live/commit/318e80452569a0f91c4363ae50d2664419251dbd), [`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710), [`5dd957b3cb`](https://github.com/LedgerHQ/ledger-live/commit/5dd957b3cb893668f044497d25b6eee69b05b2f0)]:
+  - @ledgerhq/cryptoassets@6.34.0-next.0
+  - @ledgerhq/hw-app-eth@6.29.6-next.0
+
 ## 27.0.0
 
 ### Major Changes

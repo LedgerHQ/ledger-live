@@ -1698,7 +1698,13 @@
       "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "Nomination",
       "CHILL": "Clear nominations",
-      "SET_CONTROLLER": "Set controller"
+      "SET_CONTROLLER": "Set controller",
+      "ACTIVATE": "Activated",
+      "LOCK": "Locked",
+      "UNLOCK": "Unlocked",
+      "REVOKE": "Revoked",
+      "REGISTER": "Registered",
+      "WITHDRAW": "Withdrawn"
     }
   },
   "operationDetails": {
@@ -1936,6 +1942,16 @@
       "noTransaction": {
         "title": "You don't have any transactions",
         "subtitle": "You'll need a device in order to buy or receive {{assetName}}"
+      }
+    },
+    "banner": {
+      "redelegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta": "Redelegate"
+      },
+      "delegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes your {{asset}} at a low commission.",
+        "cta": "Stake now"
       }
     }
   },
@@ -4266,6 +4282,7 @@
     "delegation": "Delegation",
     "viewDetails": "View details",
     "validator": "Validator",
+    "validatorGroup": "Validator Group",
     "validatorAddress": "Validator address",
     "delegatedAccount": "Delegated account",
     "duration": "Duration",

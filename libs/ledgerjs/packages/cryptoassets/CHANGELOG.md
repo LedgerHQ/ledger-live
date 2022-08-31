@@ -1,5 +1,25 @@
 # @ledgerhq/cryptoassets
 
+## 6.34.0-next.1
+
+### Minor Changes
+
+- [#669](https://github.com/LedgerHQ/ledger-live/pull/669) [`b615140ba2`](https://github.com/LedgerHQ/ledger-live/commit/b615140ba2e326e1466d15f123d412ea90db3754) Thanks [@andyhass](https://github.com/andyhass)! - Add Celo Staking
+
+## 6.34.0-next.0
+
+### Minor Changes
+
+- [#995](https://github.com/LedgerHQ/ledger-live/pull/995) [`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update 20220830
+
+* [#995](https://github.com/LedgerHQ/ledger-live/pull/995) [`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update 20220819
+
+- [#810](https://github.com/LedgerHQ/ledger-live/pull/810) [`5dd957b3cb`](https://github.com/LedgerHQ/ledger-live/commit/5dd957b3cb893668f044497d25b6eee69b05b2f0) Thanks [@balthazar](https://github.com/balthazar)! - Update ZIL&TT explorer and color
+
+### Patch Changes
+
+- [#1023](https://github.com/LedgerHQ/ledger-live/pull/1023) [`318e804525`](https://github.com/LedgerHQ/ledger-live/commit/318e80452569a0f91c4363ae50d2664419251dbd) Thanks [@gre](https://github.com/gre)! - Fixes testnet currencies to be \$0 valued on countervalues
+
 ## 6.33.0
 
 ### Minor Changes
