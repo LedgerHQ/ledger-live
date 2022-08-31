@@ -34,7 +34,7 @@ import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
 import { usePortfolio } from "../../actions/portfolio";
-import { counterValueCurrencySelector } from "../../reducers/settings";
+import { counterValueCurrencySelector, countervalueFirstSelector } from "../../reducers/settings";
 import { track, TrackScreen } from "../../analytics";
 import {
   useCurrentRouteName,
@@ -60,6 +60,7 @@ const AssetScreen = ({ route }: Props) => {
   const navigation = useNavigation();
   const currentScreen = useCurrentRouteName();
   const previousScreen = usePreviousRouteName();
+  const useCounterValue = useSelector(countervalueFirstSelector);
   const { currency } = route?.params;
   const cryptoAccounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
@@ -173,6 +174,7 @@ const AssetScreen = ({ route }: Props) => {
       t,
       cryptoAccounts,
       onAddAccount,
+      currencyBalance,
     ],
   );
 
@@ -201,7 +203,9 @@ const AssetScreen = ({ route }: Props) => {
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}
         currency={currency}
+        useCounterValue={useCounterValue}
         assetPortfolio={assetPortfolio}
+        currencyBalance={currencyBalance}
         counterValueCurrency={counterValueCurrency}
       />
     </TabBarSafeAreaView>
