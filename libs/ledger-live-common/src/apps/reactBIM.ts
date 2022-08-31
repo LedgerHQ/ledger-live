@@ -34,6 +34,12 @@ const useBackgroundInstallSubject = (
 
   const enabled = bimFeature?.enabled && transportModule?.id === "ble-bim";
 
+  const cleanUp = useCallback(() => {
+    setToken(undefined);
+    setPendingTransport(false);
+    setTransport(undefined);
+  }, []);
+
   useEffect(() => {
     if (lastSeenQueueSize.current !== queueSize && queueSize === 0) {
       // NB we've completed a queue. If we change the queue size before a cleanup,
@@ -77,12 +83,6 @@ const useBackgroundInstallSubject = (
       completed = true;
     };
   }, [enabled, onError, onEventDispatch, queueSize, setToken, state]);
-
-  const cleanUp = useCallback(() => {
-    setToken(undefined);
-    setPendingTransport(false);
-    setTransport(undefined);
-  }, []);
 
   const startNewJob = useCallback(() => {
     let sub;
