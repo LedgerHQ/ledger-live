@@ -13,69 +13,68 @@ function expectedValue(unit: Unit, value: BigNumber) {
   });
 }
 
-const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
-  steps: [
-    {
-      title: "Start new",
-    },
-    {
-      title: "ordinary transaction?",
-      button: "Rr",
-    },
-    {
-      title: "Auxiliary data hash",
-      button: "LRlr",
-    },
-    {
-      title: "Send to address",
-      button: "LRlr",
-      ignoreAssertionFailure: true,
-      expectedValue: ({ transaction }) => transaction.recipient,
-    },
-    {
-      title: "Send",
-      button: "LRlr",
-      ignoreAssertionFailure: true,
-      expectedValue: ({ account, status }) =>
-        expectedValue(account.unit, status.amount),
-    },
-    {
-      title: "Asset fingerprint",
-      button: "LRlr",
-    },
-    {
-      title: "Token amount",
-      button: "LRlr",
-    },
-    {
-      title: "Confirm",
-    },
-    {
-      title: "output?",
-      button: "Rr",
-    },
-    {
-      title: "Transaction fee",
-      button: "LRlr",
-      ignoreAssertionFailure: true,
-      expectedValue: ({ account, status }) =>
-        expectedValue(account.unit, status.estimatedFees),
-    },
-    {
-      title: "Transaction TTL",
-      button: "LRlr",
-    },
-    {
-      title: "...",
-    },
-    {
-      title: "Confirm",
-    },
-    {
-      title: "transaction?",
-      button: "Rr",
-    },
-  ],
-});
-
-export default { acceptTransaction };
+export const acceptTransaction: DeviceAction<Transaction, any> =
+  deviceActionFlow({
+    steps: [
+      {
+        title: "Start new",
+      },
+      {
+        title: "ordinary transaction?",
+        button: "Rr",
+      },
+      {
+        title: "Auxiliary data hash",
+        button: "LRlr",
+      },
+      {
+        title: "Send to address",
+        button: "LRlr",
+        ignoreAssertionFailure: true,
+        expectedValue: ({ transaction }) => transaction.recipient,
+      },
+      {
+        title: "Send",
+        button: "LRlr",
+        ignoreAssertionFailure: true,
+        expectedValue: ({ account, status }) =>
+          expectedValue(account.unit, status.amount),
+      },
+      {
+        title: "Asset fingerprint",
+        button: "LRlr",
+      },
+      {
+        title: "Token amount",
+        button: "LRlr",
+      },
+      {
+        title: "Confirm",
+      },
+      {
+        title: "output?",
+        button: "Rr",
+      },
+      {
+        title: "Transaction fee",
+        button: "LRlr",
+        ignoreAssertionFailure: true,
+        expectedValue: ({ account, status }) =>
+          expectedValue(account.unit, status.estimatedFees),
+      },
+      {
+        title: "Transaction TTL",
+        button: "LRlr",
+      },
+      {
+        title: "...",
+      },
+      {
+        title: "Confirm",
+      },
+      {
+        title: "transaction?",
+        button: "Rr",
+      },
+    ],
+  });

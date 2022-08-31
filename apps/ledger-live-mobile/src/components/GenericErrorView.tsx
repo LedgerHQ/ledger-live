@@ -5,11 +5,10 @@ import styled from "styled-components/native";
 import { Box, Flex, IconBox, Icons, Link, Text } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BluetoothRequired } from "@ledgerhq/errors";
+import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
-import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
-
 
 type Props = {
   error: Error;
@@ -40,7 +39,7 @@ const GenericErrorView = ({
   hasExportLogButton = true,
   children,
   Icon = CloseMedium,
-  iconColor = "error.c100"
+  iconColor = "error.c100",
 }: Props) => {
   useEffect(() => {
     if (error instanceof BluetoothRequired) {
@@ -61,12 +60,7 @@ const GenericErrorView = ({
     <Flex flexDirection={"column"} alignItems={"center"} alignSelf="stretch">
       {withIcon ? (
         <Box mb={7}>
-          <IconBox
-            Icon={Icon}
-            iconSize={24}
-            boxSize={64}
-            color={iconColor}
-          />
+          <IconBox Icon={Icon} iconSize={24} boxSize={64} color={iconColor} />
         </Box>
       ) : null}
       <Text variant={"h2"} textAlign={"center"} numberOfLines={3} mb={3}>

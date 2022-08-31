@@ -20,6 +20,12 @@ import {
 import { getParentAccount } from "../account";
 import { listCurrencies } from "../currencies";
 
+/**
+ * TODO: we might want to use "searchParams.append" instead of "searchParams.set"
+ * to handle duplicated query params (example: "?foo=bar&foo=baz")
+ *
+ * We can also use the stringify method of qs (https://github.com/ljharb/qs#stringifying)
+ */
 export function usePlatformUrl(
   manifest: AppManifest,
   params: { background: string; text: string; loadDate?: Date },
@@ -30,14 +36,18 @@ export function usePlatformUrl(
 
     if (inputs) {
       for (const key in inputs) {
-        if (Object.prototype.hasOwnProperty.call(inputs, key)) {
+        if (
+          Object.prototype.hasOwnProperty.call(inputs, key) &&
+          inputs[key] !== undefined
+        ) {
           url.searchParams.set(key, inputs[key]);
         }
       }
     }
 
-    url.searchParams.set("backgroundColor", params.background);
-    url.searchParams.set("textColor", params.text);
+    if (params.background)
+      url.searchParams.set("backgroundColor", params.background);
+    if (params.text) url.searchParams.set("textColor", params.text);
     if (params.loadDate) {
       url.searchParams.set("loadDate", params.loadDate.valueOf().toString());
     }

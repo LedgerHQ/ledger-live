@@ -5,6 +5,7 @@ import {
   DEFAULT_BOX_SIZE,
   DEFAULT_ICON_SIZE,
   DEFAULT_BADGE_SIZE,
+  // eslint-disable-next-line import/no-unresolved
 } from "@ledgerhq/native-ui/components/Icon/BoxedIcon";
 
 const iconsComponent = {
@@ -44,7 +45,7 @@ const iconsComponent = {
   REGISTER: Icons.PlusMedium,
 };
 
-export const OperationStatusIcon = ({
+const OperationStatusIcon = ({
   type,
   confirmed,
   failed,

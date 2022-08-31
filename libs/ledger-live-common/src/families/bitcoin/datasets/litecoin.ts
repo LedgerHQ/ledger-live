@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "@ledgerhq/types-live";
-import type { NetworkInfoRaw, Transaction } from "../types";
+import type { NetworkInfoRaw, Transaction, BitcoinAccountRaw } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./litecoin.scanAccounts.1";
 const networkInfo: NetworkInfoRaw = {
@@ -125,7 +125,10 @@ const dataset: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         balance: "2183515",
         xpub: "Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF",
-      },
+        bitcoinResources: {
+          utxos: [],
+        },
+      } as BitcoinAccountRaw,
     },
     {
       raw: {
@@ -151,7 +154,10 @@ const dataset: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         balance: "0",
         xpub: "Ltub2Yz97oUCaVDo1Ak6FJ1Fvg2EscNzrWvLYxnXeY7rrArUPpdfgUAEWM49MrjVBNrdjwgFnMbqKGh8XkUdQFx3h8y1SDcak4vGSbqKM5PR8Rr",
-      },
+        bitcoinResources: {
+          utxos: [],
+        },
+      } as BitcoinAccountRaw,
     },
   ],
 };

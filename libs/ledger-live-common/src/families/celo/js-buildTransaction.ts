@@ -2,7 +2,7 @@ import type { CeloAccount, Transaction } from "./types";
 import { CeloTx } from "@celo/connect";
 import { celoKit } from "./api/sdk";
 import { BigNumber } from "bignumber.js";
-import { getVote } from "./logic";
+import { getPendingStakingOperationAmounts, getVote } from "./logic";
 
 const buildTransaction = async (
   account: CeloAccount,
@@ -160,7 +160,17 @@ const transactionValue = (
       (transaction.mode === "unlock" || transaction.mode === "vote") &&
       account.celoResources
     ) {
-      value = account.celoResources.nonvotingLockedBalance;
+      // Deduct the amount of pending vote transactions from
+      // the total non-voting locked balance to get the true non-voting locked balance.
+      const pendingOperationAmounts =
+        getPendingStakingOperationAmounts(account);
+      const pendingOperationAmount =
+        transaction.mode === "vote"
+          ? pendingOperationAmounts.vote
+          : new BigNumber(0);
+      value = account.celoResources.nonvotingLockedBalance.minus(
+        pendingOperationAmount
+      );
     } else if (transaction.mode === "revoke" && account.celoResources) {
       const revoke = getVote(account, transaction.recipient, transaction.index);
       if (revoke?.amount) value = revoke.amount;

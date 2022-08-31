@@ -39,6 +39,7 @@ export type CeloResources = {
   votes: CeloVote[] | null | undefined;
   electionAddress: string | null | undefined;
   lockedGoldAddress: string | null | undefined;
+  maxNumGroupsVotedFor: BigNumber;
 };
 export type CeloResourcesRaw = {
   registrationStatus: boolean;
@@ -48,6 +49,7 @@ export type CeloResourcesRaw = {
   votes: CeloVoteRaw[] | null | undefined;
   electionAddress: string | null | undefined;
   lockedGoldAddress: string | null | undefined;
+  maxNumGroupsVotedFor: string;
 };
 export type Transaction = TransactionCommon & {
   family: "celo";
@@ -124,3 +126,8 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 export type CeloAccount = Account & { celoResources: CeloResources };
 
 export type CeloAccountRaw = AccountRaw & { celoResources: CeloResourcesRaw };
+
+export type PendingStakingOperationAmounts = {
+  vote: BigNumber;
+  lock: BigNumber;
+};

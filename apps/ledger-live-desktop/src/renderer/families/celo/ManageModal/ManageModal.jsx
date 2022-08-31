@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
@@ -27,6 +27,7 @@ type Props = {
 };
 
 const ManageModal = ({ name, account, ...rest }: Props) => {
+  const { t } = useTranslation();
   const { celoResources } = account;
 
   invariant(celoResources, "celo account expected");
@@ -45,9 +46,10 @@ const ManageModal = ({ name, account, ...rest }: Props) => {
     },
     [dispatch, account],
   );
-
+  const groupsVotedFor = [...new Set(celoResources.votes.map(v => v.validatorGroup))];
+  const canVoteForNewGroup = celoResources.maxNumGroupsVotedFor.gt(groupsVotedFor.length);
   const unlockingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
-  const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
+  const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0) && canVoteForNewGroup;
   const withdrawEnabled = availablePendingWithdrawals(account).length;
   const activatingEnabled = activatableVotes(account).length;
   const revokingEnabled = revokableVotes(account).length;
@@ -100,7 +102,15 @@ const ManageModal = ({ name, account, ...rest }: Props) => {
                       <Trans i18nKey="celo.manage.vote.title" />
                     </S.Title>
                     <S.Description>
-                      <Trans i18nKey="celo.manage.vote.description" />
+                      {canVoteForNewGroup ? (
+                        <Trans i18nKey="celo.manage.vote.description" />
+                      ) : (
+                        <>
+                          {t("celo.manage.vote.descriptionMaxVotes", {
+                            maxVotes: celoResources.maxNumGroupsVotedFor.toString(),
+                          })}
+                        </>
+                      )}
                     </S.Description>
                   </S.InfoWrapper>
                 </S.ManageButton>
