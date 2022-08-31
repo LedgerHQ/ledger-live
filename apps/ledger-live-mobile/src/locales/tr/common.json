@@ -4658,5 +4658,19 @@
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
     }
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Bravo.\nArtık tamamen hazırsınız.",
+      "allDoneTitle" : "İyi iş çıkardınız.\nHer şey tamam.",
+      "subtitle" : "Şimdi şunları yapabilirsiniz:",
+      "skip" : "Uygulamaya geç",
+      "goToWallet" : "Ledger Live cüzdanına git",
+      "done" : "Az önce geleceğinizi güvenceye almış oldunuz"
+    },
+    "walletCard" : {
+      "title" : "Başlarken",
+      "description" : "Ledger Live ile {{productName}} kurulumunu tamamlamak için buraya tıklayın"
+    }
   }
 }
