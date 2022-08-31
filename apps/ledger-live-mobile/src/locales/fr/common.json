@@ -1035,6 +1035,8 @@
     "stepLanguage" : {
       "title" : "Choisir la langue",
       "cta" : "Continuer",
+      "changeDeviceLanguage" : "Voulez-vous changer la langue de votre Ledger ?",
+      "changeDeviceLanguageDescription" : "Ledger Live est maintenant en {{language}}. Souhaitez-vous également utiliser votre Ledger en {{language}} ?",
       "warning" : {
         "title" : "À noter",
         "cta" : "Compris",
@@ -2480,7 +2482,7 @@
         "noApp" : {
           "title" : "App {{appName}} non installée",
           "desc" : "Allez dans le Gestionnaire pour installer l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "noAccounts" : {
@@ -2492,7 +2494,7 @@
         "outdatedApp" : {
           "title" : "Mise à jour de l’app disponible",
           "desc" : "Vous devez mettre à jour l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "summary" : {
@@ -2534,12 +2536,12 @@
       "missingApp" : {
         "title" : "Installez l’app Exchange sur votre appareil.",
         "description" : "Installez l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "outdatedApp" : {
         "title" : "Merci de mettre à jour l’app Exchange sur votre appareil.",
         "description" : "Mettez à jour l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "emptyState" : {
         "title" : "Aucun compte {{currency}}",
@@ -3466,6 +3468,10 @@
     "changeLanguage" : "Changer la langue",
     "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
     "languageInstalled" : "Votre appareil est maintenant en {{language}}.",
+    "firmwareUpdatePrompt" : {
+      "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
+      "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
+    },
     "installingLanguage" : "Installation de la langue",
     "languages" : {
       "english" : "English",
