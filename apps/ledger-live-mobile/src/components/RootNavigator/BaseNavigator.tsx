@@ -88,6 +88,7 @@ import Learn from "../../screens/Learn";
 // eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
+import PostOnboardingNavigator from "./PostOnboardingNavigator";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -614,6 +615,11 @@ export default function BaseNavigator() {
           />
         );
       })}
+      <Stack.Screen
+        name={NavigatorName.PostOnboarding}
+        options={{ headerShown: false }}
+        component={PostOnboardingNavigator}
+      />
     </Stack.Navigator>
   );
 }

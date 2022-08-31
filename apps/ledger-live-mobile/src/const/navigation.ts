@@ -373,6 +373,10 @@ export const ScreenName = {
   CardanoEditMemo: "CardanoEditMemo",
   // hedera
   HederaEditMemo: "HederaEditMemo",
+
+  PostOnboardingHub: "PostOnboardingHub",
+  PostOnboardingDebugScreen: "PostOnboardingDebugScreen",
+  PostOnboardingMockActionScreen: "PostOnboardingMockActionScreen",
 };
 export const NavigatorName = {
   // Stack
@@ -450,4 +454,6 @@ export const NavigatorName = {
   // Root
   RootNavigator: "RootNavigator",
   Discover: "Discover",
+
+  PostOnboarding: "PostOnboarding",
 };

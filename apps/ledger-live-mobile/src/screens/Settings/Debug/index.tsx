@@ -28,6 +28,7 @@ import MockModeRow from "../General/MockModeRow";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import OpenDebugEnv from "./OpenDebugEnv";
 import HasOrderedNanoRow from "./HasOrderedNanoRow";
+import OpenDebugPostOnboarding from "./OpenDebugPostOnboarding";
 
 export function DebugMocks() {
   return (
@@ -51,6 +52,7 @@ export function DebugMocks() {
       <OpenDebugFeatureFlags />
       <OpenDebugIcons />
       <OpenLottie />
+      <OpenDebugPostOnboarding />
       <OpenDebugPlayground />
       <ReadOnlyModeRow />
       <HasOrderedNanoRow />
