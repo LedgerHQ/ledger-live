@@ -35,7 +35,8 @@ export default () => {
 
   // Example using the route to get the current screen name and any params
   // But no current way to get the navigator name (even from the navigation state)
-  const { name, params } = useRoute<DebugMockScreenProps["route"]>();
+  const { name: screenName, params } =
+    useRoute<DebugMockScreenProps["route"]>();
   const { pairedDevice } = params ?? { pairedDevice: null };
 
   const goToBlePairingFlow = useCallback(() => {
@@ -60,10 +61,16 @@ export default () => {
             areKnownDevicesDisplayed,
             onSuccessAddToKnownDevices,
             onSuccessNavigateToConfig: {
-              screenName: name,
-              navigatorName: NavigatorName.Settings,
-              otherParams: newParams,
-              pairedDeviceParamName: "pairedDevice", // optional, it has the same value than default here
+              navigateInput: {
+                name: NavigatorName.Settings,
+                params: {
+                  screen: screenName,
+                  params: {
+                    ...newParams,
+                  },
+                },
+              },
+              pathToDeviceParam: "params.params.pairedDevice",
             },
           },
         ),
@@ -77,7 +84,7 @@ export default () => {
     chosenDeviceModelFilter,
     areKnownDevicesDisplayed,
     onSuccessAddToKnownDevices,
-    name,
+    screenName,
   ]);
 
   const onPress = useCallback(() => {
