@@ -1236,7 +1236,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       networkId: 14,
       rpc: "https://flare-api.flare.network/ext/bc/C/rpc",
       explorer: {
-        uri: "https://flare-explorer.flare.network/",
+        uri: "https://flare-explorer.flare.network",
         type: "blockscout",
       },
     },
