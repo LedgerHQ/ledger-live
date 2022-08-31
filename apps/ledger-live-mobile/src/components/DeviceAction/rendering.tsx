@@ -294,9 +294,7 @@ export function renderAllowLanguageInstallation({
           source={getDeviceAnimation({ device, key: "validate", theme })}
         />
       </AnimationContainer>
-      <Log>
-        {t("deviceLocalization.allowLanguageInstallation")}
-      </Log>
+      <Log>{t("deviceLocalization.allowLanguageInstallation")}</Log>
     </Wrapper>
   );
 }

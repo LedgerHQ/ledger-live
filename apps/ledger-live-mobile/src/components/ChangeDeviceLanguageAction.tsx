@@ -1,15 +1,12 @@
 import React, { useEffect, useMemo } from "react";
 
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import DeviceAction from "./DeviceAction";
 import { Language } from "@ledgerhq/types-live";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
 import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
 import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  Alert,
-} from "@ledgerhq/native-ui";
+import { Flex, Alert } from "@ledgerhq/native-ui";
+import DeviceAction from "./DeviceAction";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";
 
 type Props = {
@@ -20,7 +17,6 @@ type Props = {
   onResult?: () => void;
   onError?: () => void;
 };
-
 
 const ChangeDeviceLanguageAction: React.FC<Props> = ({
   device,
@@ -48,7 +44,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
     if (onStart && device) {
       onStart();
     }
-  }, [device])
+  }, [device]);
 
   return (
     <>

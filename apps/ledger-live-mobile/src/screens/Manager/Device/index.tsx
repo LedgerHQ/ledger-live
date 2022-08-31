@@ -5,13 +5,16 @@ import { Trans } from "react-i18next";
 import { State, AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 
-import { Flex, Text, Button, Divider } from "@ledgerhq/native-ui";
+import { Flex, Text, Button, Divider, Divider } from "@ledgerhq/native-ui";
 import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Device, Device } from "@ledgerhq/live-common/hw/actions/types";
+import {
+  useFeature,
+  useFeature,
+} from "@ledgerhq/live-common/featureFlags/index";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
@@ -19,10 +22,8 @@ import NanoX from "../../../images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
-import { Divider } from "@ledgerhq/native-ui";
+
 import DeviceLanguage from "./DeviceLanguage";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const illustrations = {
   nanoS: NanoS,
@@ -77,7 +78,7 @@ const DeviceCard = ({
   setAppUninstallWithDependencies,
   dispatch,
   appList,
-  onLanguageChange
+  onLanguageChange,
 }: Props) => {
   const { colors } = useTheme();
   const { deviceModel } = state;
@@ -147,19 +148,21 @@ const DeviceCard = ({
           </VersionContainer>
         </Flex>
       </Flex>
-      {deviceLocalizationFeatureFlag?.enabled && isLocalizationSupported && deviceInfo.languageId !== undefined && (
-        <Flex px={6}>
-          <Divider />
-          <DeviceLanguage
-            pendingInstalls={pendingInstalls}
-            currentDeviceLanguage={idsToLanguage[deviceInfo.languageId]}
-            deviceInfo={deviceInfo}
-            device={device}
-            onLanguageChange={onLanguageChange}
-          />
-          <Divider />
-        </Flex>
-      )}
+      {deviceLocalizationFeatureFlag?.enabled &&
+        isLocalizationSupported &&
+        deviceInfo.languageId !== undefined && (
+          <Flex px={6}>
+            <Divider />
+            <DeviceLanguage
+              pendingInstalls={pendingInstalls}
+              currentDeviceLanguage={idsToLanguage[deviceInfo.languageId]}
+              deviceInfo={deviceInfo}
+              device={device}
+              onLanguageChange={onLanguageChange}
+            />
+            <Divider />
+          </Flex>
+        )}
       <DeviceAppStorage
         distribution={distribution}
         deviceModel={deviceModel}

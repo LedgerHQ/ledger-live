@@ -15,6 +15,7 @@ import {
 } from "@react-navigation/native";
 import { snakeCase } from "lodash";
 import { useCallback } from "react";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import {
   getAndroidArchitecture,
   getAndroidVersionCode,
@@ -33,7 +34,6 @@ import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
 import type { State } from "../reducers";
 import { NavigatorName } from "../const";
-import { idsToLanguage } from "@ledgerhq/types-live";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${

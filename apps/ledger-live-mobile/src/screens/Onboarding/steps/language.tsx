@@ -11,6 +11,12 @@ import {
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { from } from "rxjs";
+import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { useLocale } from "../../../context/Locale";
 import {
   languages,
@@ -20,20 +26,13 @@ import {
 } from "../../../languages";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
-import { setLanguage } from "../../../actions/settings";
+import { setLanguage, setLastSeenDevice } from "../../../actions/settings";
 import {
   lastConnectedDeviceSelector,
   lastSeenDeviceSelector,
 } from "../../../reducers/settings";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { from } from "rxjs";
 import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
-import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { setLastSeenDevice } from "../../../actions/settings";
 import { track } from "../../../analytics";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -47,12 +46,10 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
     navigation.goBack();
   }, [navigation]);
 
-  const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<
-    boolean
-  >(false);
-  const [preventPromptBackdropClick, setPreventPromptBackdropClick] = useState<
-    boolean
-  >(false);
+  const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] =
+    useState<boolean>(false);
+  const [preventPromptBackdropClick, setPreventPromptBackdropClick] =
+    useState<boolean>(false);
 
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
     lastSeenDeviceSelector,
@@ -75,10 +72,8 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
     }
   }, [lastConnectedDevice, lastSeenDevice, dispatch]);
 
-  const [
-    deviceForChangeLanguageAction,
-    setDeviceForChangeLanguageAction,
-  ] = useState<Device | null>(null);
+  const [deviceForChangeLanguageAction, setDeviceForChangeLanguageAction] =
+    useState<Device | null>(null);
 
   const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
   // TODO: reactivate this feature flag once QA is done
@@ -150,7 +145,9 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
             <ChangeDeviceLanguageAction
               onError={(error: any) => {
                 onActionFinished();
-                track("Page LiveLanguageChange LanguageInstallError", { error });
+                track("Page LiveLanguageChange LanguageInstallError", {
+                  error,
+                });
               }}
               device={deviceForChangeLanguageAction}
               onStart={() => setPreventPromptBackdropClick(true)}

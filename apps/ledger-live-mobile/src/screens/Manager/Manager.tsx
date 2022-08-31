@@ -8,6 +8,8 @@ import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { useApps } from "./shared";
 // eslint-disable-next-line import/no-cycle
 import AppsScreen from "./AppsScreen";
@@ -23,8 +25,6 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { ManagerTab, MANAGER_TABS } from "../../const/manager";
 
 type Props = {
@@ -118,9 +118,10 @@ const Manager = ({ navigation, route }: Props) => {
     reduxDispatch(setLastSeenDeviceInfo(dmi));
   }, [device, state.installed, deviceInfo, reduxDispatch]);
 
-  const installedApps = useMemo(() => state.installed.map(({ name }) => name), [
-    state.installed,
-  ]);
+  const installedApps = useMemo(
+    () => state.installed.map(({ name }) => name),
+    [state.installed],
+  );
 
   /**
    * Resets the navigation params in order to unlock navigation

@@ -68,7 +68,7 @@ const AppsScreen = ({
   searchQuery,
   optimisticState,
   result,
-  onLanguageChange
+  onLanguageChange,
 }: Props) => {
   const distribution = distribute(state);
 
@@ -86,7 +86,11 @@ const AppsScreen = ({
 
   const [query, setQuery] = useState(searchQuery || "");
 
-  const { update, device: deviceApps, catalog } = useAppsSections(state, {
+  const {
+    update,
+    device: deviceApps,
+    catalog,
+  } = useAppsSections(state, {
     query: "",
     appFilter,
     sort: sortOptions,

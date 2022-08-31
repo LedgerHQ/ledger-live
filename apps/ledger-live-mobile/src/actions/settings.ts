@@ -169,9 +169,9 @@ export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) => ({
 });
 
 export const setLastSeenDevice = ({
-  deviceInfo
+  deviceInfo,
 }: {
-  deviceInfo: DeviceInfo,
+  deviceInfo: DeviceInfo;
 }) => ({
   type: "LAST_SEEN_DEVICE",
   payload: { deviceInfo },

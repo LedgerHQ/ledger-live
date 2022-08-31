@@ -154,7 +154,7 @@ export const urls = {
     status: "https://status.ledger.com",
   },
   deviceLocalization: {
-    learnMore: "https://support.ledger.com/hc/en-us/articles/6522080681501"
+    learnMore: "https://support.ledger.com/hc/en-us/articles/6522080681501",
   },
   discover: {
     ledgerApps:

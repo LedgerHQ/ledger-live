@@ -37,22 +37,20 @@ const DeviceLanguageStep = ({
 }: Props) => {
   const { locale: currentLocale } = useLocale();
 
-  let {
+  const {
     availableLanguages: newAvailableLanguages,
     loaded: newLanguagesLoaded,
   } = useAvailableLanguagesForDevice(updatedDeviceInfo);
-  let {
+  const {
     availableLanguages: oldAvailableLanguages,
     loaded: oldLanguagesLoaded,
   } = useAvailableLanguagesForDevice(oldDeviceInfo);
 
-  const [isLanguagePromptOpen, setIsLanguagePromptOpen] = useState<boolean>(
-    false,
-  );
+  const [isLanguagePromptOpen, setIsLanguagePromptOpen] =
+    useState<boolean>(false);
 
-  const [languageToInstall, setLanguageToInstall] = useState<Language>(
-    "english",
-  );
+  const [languageToInstall, setLanguageToInstall] =
+    useState<Language>("english");
   const [deviceForAction, setDeviceForAction] = useState<Device | null>(null);
 
   const { t } = useTranslation();
@@ -88,7 +86,7 @@ const DeviceLanguageStep = ({
         setIsLanguagePromptOpen(true);
       } else if (
         oldDeviceInfo?.languageId !== undefined &&
-        oldDeviceInfo?.languageId !== languageIds["english"]
+        oldDeviceInfo?.languageId !== languageIds.english
       ) {
         track("Page Manager FwUpdateReinstallLanguage");
         installLanguage(idsToLanguage[oldDeviceInfo.languageId]);

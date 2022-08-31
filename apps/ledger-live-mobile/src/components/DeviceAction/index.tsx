@@ -108,7 +108,7 @@ export default function DeviceAction<R, H, P>({
   }, [dispatch, device, deviceInfo]);
 
   useEffect(() => {
-    if(error && onError) {
+    if (error && onError) {
       onError(error);
     }
   }, [error]);

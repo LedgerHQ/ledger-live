@@ -45,9 +45,9 @@ type Props = {
 };
 export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru";
 type LocaleState = {
-  i18n: any,
-  t: TFunction,
-  locale: SupportedLanguages,
+  i18n: any;
+  t: TFunction;
+  locale: SupportedLanguages;
 };
 
 function getLocaleState(i18n): LocaleState {

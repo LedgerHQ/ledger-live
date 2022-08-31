@@ -371,7 +371,7 @@ const handlers: Record<string, any> = {
     { payload }: { payload: { deviceInfo: DeviceInfo } },
   ) => ({
     ...state,
-    lastSeenDevice: { ...state.lastSeenDevice, deviceInfo: payload.deviceInfo }
+    lastSeenDevice: { ...state.lastSeenDevice, deviceInfo: payload.deviceInfo },
   }),
   ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
     ...state,

@@ -2,11 +2,11 @@ import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
+import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import BottomModal from "../../../components/BottomModal";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { track } from "../../../analytics";
 
 type Props = {
@@ -33,13 +33,10 @@ const DeviceLanguage: React.FC<Props> = ({
 
   const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
 
-  const [shouldInstallLanguage, setShouldInstallLanguage] = useState<boolean>(
-    false,
-  );
-  const [
-    deviceForActionModal,
-    setDeviceForActionModal,
-  ] = useState<Device | null>(null);
+  const [shouldInstallLanguage, setShouldInstallLanguage] =
+    useState<boolean>(false);
+  const [deviceForActionModal, setDeviceForActionModal] =
+    useState<Device | null>(null);
 
   const closeChangeLanguageModal = useCallback(
     () => setIsChangeLanguageOpen(false),

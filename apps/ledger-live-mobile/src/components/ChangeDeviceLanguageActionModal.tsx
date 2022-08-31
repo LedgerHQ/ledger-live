@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import DeviceActionModal from "./DeviceActionModal";
 import { Language } from "@ledgerhq/types-live";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
 import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
+import DeviceActionModal from "./DeviceActionModal";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";
 
 type Props = {

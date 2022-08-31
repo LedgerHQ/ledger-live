@@ -8,33 +8,40 @@ export type AsyncState = {
   isConnected: boolean | null;
 };
 
-export type FwUpdateBackgroundEvent = {
-  type: "confirmPin"
-} | {
-  type: "downloadingUpdate",
-  progress?: number
-} | {
-  type: "confirmUpdate"
-} | {
-  type: "flashingMcu",
-  progress?: number,
-  installing?: string | null,
-} | {
-  type: "firmwareUpdated"
-  updatedDeviceInfo?: DeviceInfo
-} | {
-  type: "error",
-  error: any
-} | {
-  type: "log",
-  message: string
-};
+export type FwUpdateBackgroundEvent =
+  | {
+      type: "confirmPin";
+    }
+  | {
+      type: "downloadingUpdate";
+      progress?: number;
+    }
+  | {
+      type: "confirmUpdate";
+    }
+  | {
+      type: "flashingMcu";
+      progress?: number;
+      installing?: string | null;
+    }
+  | {
+      type: "firmwareUpdated";
+      updatedDeviceInfo?: DeviceInfo;
+    }
+  | {
+      type: "error";
+      error: any;
+    }
+  | {
+      type: "log";
+      message: string;
+    };
 
 export type AppState = {
-  isConnected: boolean | null,
-  hasConnectedDevice: boolean,
-  modalLock: boolean,
-  backgroundEvents: Array<FwUpdateBackgroundEvent>,
+  isConnected: boolean | null;
+  hasConnectedDevice: boolean;
+  modalLock: boolean;
+  backgroundEvents: Array<FwUpdateBackgroundEvent>;
 };
 
 const initialState: AppState = {

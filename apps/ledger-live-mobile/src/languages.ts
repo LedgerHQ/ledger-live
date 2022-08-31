@@ -1,7 +1,7 @@
 import RNLocalize from "react-native-localize";
 import Config from "react-native-config";
-import allLocales from "./locales";
 import { Language } from "@ledgerhq/live-common/lib/types/languages";
+import allLocales from "./locales";
 
 export const languages = {
   de: "Deutsch",
@@ -35,7 +35,6 @@ export const supportedLocales: Locale[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
   : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
 
-
 export type Locale = keyof typeof languages;
 
 /**
@@ -43,11 +42,11 @@ export type Locale = keyof typeof languages;
  * It is to be used for suggesting the user to change their device language according to their Live
  * language.
  */
-export const localeIdToDeviceLanguage: { [key in Locale]?: Language} = {
+export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
   en: "english",
   fr: "french",
   es: "spanish",
-}
+};
 
 /**
  * This is the list of languages that are supported in terms of in-app translations
@@ -61,10 +60,13 @@ export const fullySupportedLocales: Locale[] = ["en", "fr", "ru", "es", "zh"];
 
 type LocaleIndexed<T> = { [key in Locale]?: T };
 
-export const locales = supportedLocales.reduce((obj: LocaleIndexed<any>, key) => {
-  obj[key] = (allLocales as LocaleIndexed<any>)[key]; // eslint-disable-line no-param-reassign
-  return obj;
-}, {});
+export const locales = supportedLocales.reduce(
+  (obj: LocaleIndexed<any>, key) => {
+    obj[key] = (allLocales as LocaleIndexed<any>)[key]; // eslint-disable-line no-param-reassign
+    return obj;
+  },
+  {},
+);
 
 /** For the "language" setting which is used for translations. */
 export const DEFAULT_LANGUAGE_LOCALE = "en";
