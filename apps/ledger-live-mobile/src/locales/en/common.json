@@ -1943,6 +1943,16 @@
         "title": "You don't have any transactions",
         "subtitle": "You'll need a device in order to buy or receive {{assetName}}"
       }
+    },
+    "banner": {
+      "redelegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta": "Redelegate"
+      },
+      "delegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes your {{asset}} at a low commission.",
+        "cta": "Stake now"
+      }
     }
   },
   "accounts": {
