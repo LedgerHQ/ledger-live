@@ -105,7 +105,7 @@ export const BleDevicePairingFlow = ({
       if (hasDeviceParam) {
         setFromPath(navigateInput, pathToDeviceParam, device);
       } else {
-        console.warning(
+        console.error(
           `BLE pairing flow: device path param ${pathToDeviceParam} not existing on navigation input`,
         );
       }
