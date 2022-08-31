@@ -313,10 +313,10 @@ export const getDerivationScheme = ({
   const coinType = splitFrom
     ? getCryptoCurrencyById(splitFrom).coinType
     : typeof overridesCoinType === "number"
-      ? overridesCoinType
-      : currencyForceCoinType
-        ? currency.coinType
-        : "<coin_type>";
+    ? overridesCoinType
+    : currencyForceCoinType
+    ? currency.coinType
+    : "<coin_type>";
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
@@ -536,11 +536,11 @@ export function walletDerivation<R>({
 
           const path = shouldDerivesOnAccount
             ? runAccountDerivationScheme(derivationScheme, currency, {
-              account: index,
-            })
+                account: index,
+              })
             : runDerivationScheme(derivationScheme, currency, {
-              account: index,
-            });
+                account: index,
+              });
           return derivateAddress({
             currency,
             path,
