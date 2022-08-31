@@ -1046,6 +1046,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "장치 선택"
     },
@@ -1560,6 +1561,33 @@
         "warning" : "장치 설정 시에 화면에 표시된 복구 문구만 사용하세요",
         "continueCTA" : "계속",
         "contactSupportCTA" : "지원 부서 연락"
+      }
+    }
+  },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Looking for devices",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Already paired"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Try again"
       }
     }
   },
