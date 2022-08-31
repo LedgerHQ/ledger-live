@@ -40,6 +40,26 @@ jobs:
       - name: check if diff
         run: git diff --exit-code || exit 1
 
+  test-cli:
+    name: "Test CLI"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+      - name: build cli
+        run: pnpm build:cli
+      - name: check if diff
+        run: git diff --exit-code || exit 1
+
   test-libraries:
     name: "Test Libraries"
     env:
@@ -88,6 +108,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries (Pull Request)

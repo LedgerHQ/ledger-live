@@ -52,6 +52,31 @@ export function useDeepLinkHandler() {
   const handler = useCallback(
     (event: any, deeplink: string) => {
       const { pathname, searchParams } = new URL(deeplink);
+      /**
+       * TODO: handle duplicated query params
+       * Today, it only keeps one (the last) key / value pair encountered in search params
+       * There is a loss of information
+       * Example: http://localhost:5000/?weiAmount=0&foo=bar&abc=xyz&abc=123&theme=test
+       * will result in a "query" object with the following structure:
+       * {
+       *  "weiAmount": "0",
+       *  "foo": "bar",
+       *  "abc": "123",
+       *  "theme": "test"
+       * }
+       * instead of the following structure:
+       * {
+       *  "weiAmount": "0",
+       *  "foo": "bar",
+       *  "abc": ['xyz', '123'],
+       *  "theme": "test"
+       * }
+       *
+       * We could probably use https://github.com/ljharb/qs instead of URL and
+       * Object.fromEntries(searchParams) because we would have to use
+       * searchParams.getAll("abc") to get the array from the searchParams with
+       * what we have now
+       */
       const query = Object.fromEntries(searchParams);
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");

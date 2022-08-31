@@ -223,6 +223,8 @@ export const FirmwareOrAppUpdateRequired = createCustomErrorClass(
   "FirmwareOrAppUpdateRequired"
 );
 
+export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
+
 // db stuff, no need to translate
 export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
 export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");

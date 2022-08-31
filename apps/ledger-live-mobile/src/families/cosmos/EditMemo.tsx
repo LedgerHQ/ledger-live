@@ -4,7 +4,8 @@ import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type { Transaction as OsmosisTransaction } from "@ledgerhq/live-common/families/osmosis/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
@@ -22,15 +23,17 @@ type Props = {
   };
 };
 type RouteParams = {
-  account: Account;
-  transaction: Transaction;
+  account: Account,
+  transaction: CosmosTransaction | OsmosisTransaction,
 };
 
-function CosmosEditMemo({ navigation, route }: Props) {
+function CosmosFamilyEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [memo, setMemo] = useState(route.params.transaction.memo);
   const account = route.params.account;
+  const currencyName = account.currency.name;
+
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
@@ -73,7 +76,7 @@ function CosmosEditMemo({ navigation, route }: Props) {
 
           <View style={styles.flex}>
             <Button
-              event="CosmosEditMemoContinue"
+              event={`${currencyName}EditMemoContinue`}
               type="primary"
               title={t("send.summary.validateMemo")}
               onPress={onValidateText}
@@ -90,7 +93,9 @@ const options = {
   title: i18next.t("send.summary.memo.title"),
   headerLeft: null,
 };
-export { CosmosEditMemo as component, options };
+
+export { CosmosFamilyEditMemo as component, options };
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,

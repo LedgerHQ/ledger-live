@@ -6,8 +6,21 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import {
+  receiveOnAccountLogic,
+  signTransactionLogic,
+  completeExchangeLogic,
+  CompleteExchangeRequest,
+  CompleteExchangeUiRequest,
+  signMessageLogic,
+} from "@ledgerhq/live-common/platform/logic";
+import { serializePlatformSignedTransaction } from "@ledgerhq/live-common/platform/serializers";
 import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
@@ -19,27 +32,22 @@ import {
   useListPlatformCurrencies,
   usePlatformUrl,
 } from "@ledgerhq/live-common/platform/react";
+import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 
+import { openModal } from "../../actions/modals";
 import TrackPage from "../../analytics/TrackPage";
 import useTheme from "../../hooks/useTheme";
 import { accountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import Box from "../Box";
 
-import TopBar from "./TopBar";
 import { track } from "~/renderer/analytics/segment";
-import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
+import TopBar from "./TopBar";
 import { TopBarConfig } from "./type";
 import {
-  receiveOnAccountLogic,
   requestAccountLogic,
-  signTransactionLogic,
   broadcastTransactionLogic,
-  startExchangeLogic,
-  CompleteExchangeRequest,
-  completeExchangeLogic,
   RequestAccountParams,
-  signMessageLogic,
 } from "./LiveAppSDKLogic";
 
 const tracking = trackingWrapper(track);
@@ -118,9 +126,31 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
   );
 
   const receiveOnAccount = useCallback(
-    ({ accountId }: { accountId: string }) => {
-      return receiveOnAccountLogic({ manifest, dispatch, accounts }, accountId);
-    },
+    ({ accountId }: { accountId: string }) =>
+      receiveOnAccountLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        (account: AccountLike, parentAccount: Account | null, accountAddress: string) => {
+          // FIXME: handle address rejection (if user reject address, we don't end up in onResult nor in onCancel 🤔)
+          return new Promise((resolve, reject) =>
+            dispatch(
+              openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
+                account,
+                parentAccount,
+                onResult: (_account: Account, _parentAccount: Account) => {
+                  tracking.platformReceiveSuccess(manifest);
+                  resolve(accountAddress);
+                },
+                onCancel: (error: Error) => {
+                  tracking.platformReceiveFail(manifest);
+                  reject(error);
+                },
+                verifyAddress: true,
+              }),
+            ),
+          );
+        },
+      ),
     [manifest, accounts, dispatch],
   );
 
@@ -139,7 +169,45 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
         useApp: string;
       };
     }) => {
-      return signTransactionLogic({ manifest, dispatch, accounts }, accountId, transaction, params);
+      return signTransactionLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        transaction,
+        (
+          account: AccountLike,
+          parentAccount: Account | null,
+          {
+            canEditFees,
+            hasFeesProvided,
+            liveTx,
+          }: {
+            canEditFees: boolean;
+            hasFeesProvided: boolean;
+            liveTx: Partial<Transaction>;
+          },
+        ) => {
+          return new Promise((resolve, reject) =>
+            dispatch(
+              openModal("MODAL_SIGN_TRANSACTION", {
+                canEditFees,
+                stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
+                transactionData: liveTx,
+                useApp: params?.useApp,
+                account,
+                parentAccount,
+                onResult: (signedOperation: SignedOperation) => {
+                  tracking.platformSignTransactionSuccess(manifest);
+                  resolve(serializePlatformSignedTransaction(signedOperation));
+                },
+                onCancel: (error: Error) => {
+                  tracking.platformSignTransactionFail(manifest);
+                  reject(error);
+                },
+              }),
+            ),
+          );
+        },
+      );
     },
     [manifest, dispatch, accounts],
   );
@@ -165,21 +233,95 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
 
   const startExchange = useCallback(
     ({ exchangeType }: { exchangeType: number }) => {
-      return startExchangeLogic({ manifest, dispatch }, exchangeType);
+      tracking.platformStartExchangeRequested(manifest);
+
+      return new Promise((resolve, reject) =>
+        dispatch(
+          openModal("MODAL_PLATFORM_EXCHANGE_START", {
+            exchangeType,
+            onResult: (nonce: string) => {
+              tracking.platformStartExchangeSuccess(manifest);
+              resolve(nonce);
+            },
+            onCancel: (error: Error) => {
+              tracking.platformStartExchangeFail(manifest);
+              reject(error);
+            },
+          }),
+        ),
+      );
     },
     [manifest, dispatch],
   );
 
   const completeExchange = useCallback(
     (completeRequest: CompleteExchangeRequest) => {
-      return completeExchangeLogic({ manifest, dispatch, accounts }, completeRequest);
+      return completeExchangeLogic(
+        { manifest, accounts, tracking },
+        completeRequest,
+        ({
+          provider,
+          exchange,
+          transaction,
+          binaryPayload,
+          signature,
+          feesStrategy,
+          exchangeType,
+        }: CompleteExchangeUiRequest): Promise<Operation> =>
+          new Promise((resolve, reject) => {
+            dispatch(
+              openModal("MODAL_PLATFORM_EXCHANGE_COMPLETE", {
+                provider,
+                exchange,
+                transaction,
+                binaryPayload,
+                signature,
+                feesStrategy,
+                exchangeType,
+                onResult: (operation: Operation) => {
+                  tracking.platformCompleteExchangeSuccess(manifest);
+                  resolve(operation);
+                },
+                onCancel: (error: Error) => {
+                  tracking.platformCompleteExchangeFail(manifest);
+                  reject(error);
+                },
+              }),
+            );
+          }),
+      );
     },
     [accounts, dispatch, manifest],
   );
 
   const signMessage = useCallback(
     ({ accountId, message }: { accountId: string; message: string }) => {
-      return signMessageLogic({ manifest, dispatch, accounts }, accountId, message);
+      return signMessageLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        message,
+        (account: AccountLike, message: MessageData | null) =>
+          new Promise((resolve, reject) => {
+            dispatch(
+              openModal("MODAL_SIGN_MESSAGE", {
+                message,
+                account,
+                onConfirmationHandler: (signature: string) => {
+                  tracking.platformSignMessageSuccess(manifest);
+                  resolve(signature);
+                },
+                onFailHandler: (err: Error) => {
+                  tracking.platformSignMessageFail(manifest);
+                  reject(err);
+                },
+                onClose: () => {
+                  tracking.platformSignMessageUserRefused(manifest);
+                  reject(UserRefusedOnDevice());
+                },
+              }),
+            );
+          }),
+      );
     },
     [accounts, dispatch, manifest],
   );
@@ -269,6 +411,9 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
     const webview = targetRef.current;
 
     if (webview) {
+      // For mysterious reasons, the webpreferences attribute does not
+      // pass through the styled component when added in the JSX.
+      webview.webpreferences = "nativeWindowOpen=no";
       webview.addEventListener("new-window", handleNewWindow);
       webview.addEventListener("did-finish-load", handleLoad);
     }

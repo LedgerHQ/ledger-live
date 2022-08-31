@@ -22,14 +22,15 @@ await $`node ./scripts/buildReactFlags.js`;
 
 const prefix = $.prefix;
 
-within(async () => {
-  $.prefix = prefix;
-  process.env.NODE_ENV = "production";
-  await $`pnpm tsc --project src/tsconfig.json`;
-});
-
-within(async () => {
-  $.prefix = prefix;
-  process.env.NODE_ENV = "production";
-  await $`pnpm tsc --project src/tsconfig.json -m ES6 --outDir lib-es`;
-});
+await Promise.all([
+  within(async () => {
+    $.prefix = prefix;
+    process.env.NODE_ENV = "production";
+    await $`pnpm tsc --project src/tsconfig.json`;
+  }),
+  within(async () => {
+    $.prefix = prefix;
+    process.env.NODE_ENV = "production";
+    await $`pnpm tsc --project src/tsconfig.json -m ES6 --outDir lib-es`;
+  }),
+]);

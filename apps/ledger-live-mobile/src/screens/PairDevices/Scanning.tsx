@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Observable } from "rxjs";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
 import { getInfosForServiceUuid, DeviceModelId } from "@ledgerhq/devices";
+import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import logger from "../../logger";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
 import { knownDevicesSelector } from "../../reducers/ble";
@@ -61,7 +62,7 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
     }, BLE_SCANNING_NOTHING_TIMEOUT);
 
     const sub = Observable.create(TransportBLE.listen).subscribe({
-      next: (e: { type: string; descriptor: any }) => {
+      next: (e: DescriptorEvent<Device>) => {
         if (e.type === "add") {
           clearTimeout(timeout);
           const device = e.descriptor;
