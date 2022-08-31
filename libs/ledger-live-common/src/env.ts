@@ -331,10 +331,7 @@ const envDefinitions = {
     desc: "enable an experimental swap interface",
   },
   EXPLORER: {
-    // FIXME: STAGING EXPLORER NEEDS TO BE USED FOR TESTING
-    // IT NEEDS TO BE CHANGED TO THE PROD EXPLORER AFTERWARDS
-    def: "https://explorers.api-01.live.ledger-stg.com",
-    // def: "https://explorers.api.live.ledger.com",
+    def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
