@@ -164,7 +164,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
 const getMainMessage = (messages: Message[]): Message => {
   const messagePriorities: string[] = [
     "withdraw_rewards",
-    "unbound",
+    "unbond",
     "redelegate",
     "delegate",
     "transfer",
