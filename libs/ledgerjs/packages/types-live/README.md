@@ -1366,12 +1366,13 @@ User can have 3 differents choice for their fee
 Most of the time mid is low \* 1.25 and high is low \* 1.5
 They are some exception as eth that got his own meter
 
-Type: {amount: BigNumber, displayedAmount: BigNumber?, label: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unit: Unit?}
+Type: {amount: BigNumber, displayedAmount: BigNumber?, txParameters: FeeStrategyTxParameters?, label: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unit: Unit?}
 
 #### Properties
 
 *   `amount` **BigNumber** 
 *   `displayedAmount` **BigNumber?** 
+*   `txParameters` **FeeStrategyTxParameters?** 
 *   `label` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `unit` **Unit?** 
 
