@@ -82,6 +82,14 @@ export type AvailableProviderV3 = {
   provider: string;
   pairs: Array<{ from: string; to: string; tradeMethod: string }>;
 };
+export type TradeMethodGroup = {
+  methods: TradeMethod[];
+  pairs: Map<string, number[]>;
+};
+export type ProvidersResponseV4 = {
+  currencies: Map<string, string>;
+  providers: Map<string, TradeMethodGroup[]>;
+};
 
 type CheckQuoteOkStatus = {
   codeName: "RATE_VALID";

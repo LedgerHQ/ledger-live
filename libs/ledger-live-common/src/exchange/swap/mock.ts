@@ -7,7 +7,7 @@ import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
-import { getSwapAPIBaseURL } from "./";
+import { getSwapAPIVersion } from "./";
 import type {
   CheckQuote,
   Exchange,
@@ -129,7 +129,7 @@ export const mockInitSwap = (
 export const mockGetProviders: GetProviders = async () => {
   //Fake delay to show loading UI
   await new Promise((r) => setTimeout(r, 800));
-  const usesV3 = getSwapAPIBaseURL().endsWith("v3");
+  const usesV3 = getSwapAPIVersion() >= 3;
 
   return usesV3
     ? [
