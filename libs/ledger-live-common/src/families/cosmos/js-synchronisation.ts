@@ -12,6 +12,29 @@ import { encodeOperationId } from "../../operation";
 import { CosmosDelegationInfo } from "./types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 
+const getBlankOperation = (tx, fees, id) => ({
+  id: "",
+  hash: tx.txhash,
+  type: "" as OperationType,
+  value: new BigNumber(0),
+  fee: fees,
+  blockHash: null,
+  blockHeight: tx.height,
+  senders: [] as string[],
+  recipients: [] as string[],
+  accountId: id,
+  date: new Date(tx.timestamp),
+  extra: {
+    validators: [] as CosmosDelegationInfo[],
+  },
+  transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
+});
+
+type Message = {
+  type: string;
+  attributes: { [key: string]: any };
+};
+
 const txToOps = (info: any, id: string, txs: any): Operation[] => {
   const { address, currency } = info;
   const ops: Operation[] = [];
@@ -23,126 +46,109 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
       if (elem.denom === currency.units[1].code) fees = fees.plus(elem.amount);
     });
 
-    const op: Operation = {
-      id: "",
-      hash: tx.txhash,
-      type: "" as OperationType,
-      value: new BigNumber(0),
-      fee: fees,
-      blockHash: null,
-      blockHeight: tx.height,
-      senders: [] as string[],
-      recipients: [] as string[],
-      accountId: id,
-      date: new Date(tx.timestamp),
-      extra: {
-        validators: [] as CosmosDelegationInfo[],
-      },
-      transactionSequenceNumber: parseInt(
-        tx.tx.auth_info.signer_infos[0].sequence
-      ),
-    };
+    const op: Operation = getBlankOperation(tx, fees, id);
 
-    tx.logs.forEach((log) => {
-      log.events.forEach((message) => {
-        // parse attributes as key:value
-        const attributes: { [id: string]: any } = {};
-        message.attributes.forEach(
-          (item) => (attributes[item.key] = item.value)
-        );
+    const messages = tx.logs.map((log) => log.events).flat(1);
 
-        // https://docs.cosmos.network/v0.42/modules/staking/07_events.html
-        switch (message.type) {
-          case "transfer":
-            if (
-              attributes.sender &&
-              attributes.recipient &&
-              attributes.amount
-            ) {
-              op.senders.push(attributes.sender);
-              op.recipients.push(attributes.recipient);
+    const message: Message = getMainMessage(messages);
 
-              if (attributes.amount.indexOf(currency.units[1].code) != -1) {
-                op.value = op.value.plus(
-                  attributes.amount.replace(currency.units[1].code, "")
-                );
-              }
+    if (message == null) {
+      continue;
+    }
 
-              if (!op.type && attributes.sender === address) {
-                op.type = "OUT";
-                op.value = op.value.plus(fees);
-              } else if (!op.type && attributes.recipient === address) {
-                op.type = "IN";
-              }
-            }
-            break;
+    // parse attributes as key:value
+    const attributes: { [id: string]: any } = {};
+    message.attributes.forEach((item) => (attributes[item.key] = item.value));
 
-          case "withdraw_rewards":
-            if (
-              (attributes.amount &&
-                attributes.amount.indexOf(currency.units[1].code) != -1) ||
-              // handle specifc case with empty amount value like
-              // tx DF458FE6A82C310837D7A33735FA5298BCF71B0BFF7A4134641AAE30F6F1050
-              attributes.amount === ""
-            ) {
-              op.type = "REWARD";
-              op.value = new BigNumber(fees);
-              op.extra.validators.push({
-                address: attributes.validator,
-                amount:
-                  attributes.amount.replace(currency.units[1].code, "") || 0,
-              });
-            }
-            break;
+    // https://docs.cosmos.network/v0.42/modules/staking/07_events.html
+    switch (message.type) {
+      case "transfer":
+        if (attributes.sender && attributes.recipient && attributes.amount) {
+          op.senders.push(attributes.sender);
+          op.recipients.push(attributes.recipient);
 
-          case "delegate":
-            if (
-              attributes.amount &&
-              attributes.amount.indexOf(currency.units[1].code) != -1
-            ) {
-              op.type = "DELEGATE";
-              op.value = new BigNumber(fees);
-              op.extra.validators.push({
-                address: attributes.validator,
-                amount: attributes.amount.replace(currency.units[1].code, ""),
-              });
-            }
-            break;
+          if (attributes.amount.indexOf(currency.units[1].code) != -1) {
+            op.value = op.value.plus(
+              attributes.amount.replace(currency.units[1].code, "")
+            );
+          }
 
-          case "redelegate":
-            if (
-              attributes.amount &&
-              attributes.amount.indexOf(currency.units[1].code) != -1 &&
-              attributes.destination_validator &&
-              attributes.source_validator
-            ) {
-              op.type = "REDELEGATE";
-              op.value = new BigNumber(fees);
-              op.extra.validators.push({
-                address: attributes.destination_validator,
-                amount: attributes.amount.replace(currency.units[1].code, ""),
-              });
-              op.extra.sourceValidator = attributes.source_validator;
-            }
-            break;
-
-          case "unbond":
-            if (
-              attributes.amount &&
-              attributes.amount.indexOf(currency.units[1].code) != -1 &&
-              attributes.validator
-            ) {
-              op.type = "UNDELEGATE";
-              op.value = new BigNumber(fees);
-              op.extra.validators.push({
-                address: attributes.validator,
-                amount: attributes.amount.replace(currency.units[1].code, ""),
-              });
-            }
-            break;
+          if (!op.type && attributes.sender === address) {
+            op.type = "OUT";
+            op.value = op.value.plus(fees);
+          } else if (!op.type && attributes.recipient === address) {
+            op.type = "IN";
+          }
         }
-      });
-    });
+        break;
+
+      case "withdraw_rewards":
+        if (
+          (attributes.amount &&
+            attributes.amount.indexOf(currency.units[1].code) != -1) ||
+          // handle specifc case with empty amount value like
+          // tx DF458FE6A82C310837D7A33735FA5298BCF71B0BFF7A4134641AAE30F6F1050
+          attributes.amount === ""
+        ) {
+          op.type = "REWARD";
+          op.value = new BigNumber(
+            message.attributes
+              .find((attr) => attr.key === "amount")
+              .value.replace("uatom", "")
+          );
+          op.extra.validators.push({
+            address: attributes.validator,
+            amount: attributes.amount.replace(currency.units[1].code, "") || 0,
+          });
+        }
+        break;
+
+      case "delegate":
+        if (
+          attributes.amount &&
+          attributes.amount.indexOf(currency.units[1].code) != -1
+        ) {
+          op.type = "DELEGATE";
+          op.value = new BigNumber(fees);
+          op.extra.validators.push({
+            address: attributes.validator,
+            amount: attributes.amount.replace(currency.units[1].code, ""),
+          });
+        }
+        break;
+
+      case "redelegate":
+        if (
+          attributes.amount &&
+          attributes.amount.indexOf(currency.units[1].code) != -1 &&
+          attributes.destination_validator &&
+          attributes.source_validator
+        ) {
+          op.type = "REDELEGATE";
+          op.value = new BigNumber(fees);
+          op.extra.validators.push({
+            address: attributes.destination_validator,
+            amount: attributes.amount.replace(currency.units[1].code, ""),
+          });
+          op.extra.cosmosSourceValidator = attributes.source_validator;
+        }
+        break;
+
+      case "unbond":
+        if (
+          attributes.amount &&
+          attributes.amount.indexOf(currency.units[1].code) != -1 &&
+          attributes.validator
+        ) {
+          op.type = "UNDELEGATE";
+          op.value = new BigNumber(fees);
+          op.extra.validators.push({
+            address: attributes.validator,
+            amount: attributes.amount.replace(currency.units[1].code, ""),
+          });
+        }
+        break;
+    }
 
     if (!["IN", "OUT"].includes(op.type)) {
       op.senders = [];
@@ -157,6 +163,23 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
   }
 
   return ops;
+};
+
+const getMainMessage = (messages: Message[]): Message => {
+  const messagePriorities: string[] = [
+    "withdraw_rewards",
+    "unbond",
+    "redelegate",
+    "delegate",
+    "transfer",
+  ];
+  const sortedTypes = messages
+    .filter((m) => messagePriorities.includes(m.type))
+    .sort(
+      (a, b) =>
+        messagePriorities.indexOf(a.type) - messagePriorities.indexOf(b.type)
+    );
+  return sortedTypes[0];
 };
 
 export const getAccountShape: GetAccountShape = async (info) => {
