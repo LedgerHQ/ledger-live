@@ -17,7 +17,7 @@ import LocationRequired from "../LocationRequired";
 import BleDeviceItem from "./BleDeviceItem";
 import type { BleDevicePairingFlowProps } from "./index";
 
-const BluetoothThingy = () => (
+const BluetoothLogo = () => (
   <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
     <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={4}>
       <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
@@ -138,7 +138,7 @@ export const BleDevicesScanning = ({
     <Flex bg="background.main" height="100%">
       <Flex px={4}>
         <Flex mb={8} alignItems="center">
-          <BluetoothThingy />
+          <BluetoothLogo />
         </Flex>
         <Text mb={3} textAlign="center" variant="h4" fontWeight="semiBold">
           {productName
@@ -163,7 +163,7 @@ export const BleDevicesScanning = ({
         <FlatList
           data={scannedDevices}
           renderItem={renderItem}
-          keyExtractor={item => `${item.deviceId}-${Math.random()}`}
+          keyExtractor={item => `${item.deviceId}`}
           ListEmptyComponent={<InfiniteLoader size={58} />}
         />
       </Flex>
