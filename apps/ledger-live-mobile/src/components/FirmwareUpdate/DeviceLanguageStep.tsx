@@ -13,8 +13,9 @@ import {
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 
+import { FwUpdateForegroundEvent } from "./types";
+
 import Track from "../../analytics/Track";
-import { FwUpdateForegroundEvent } from ".";
 import { useLocale } from "../../context/Locale";
 import { localeIdToDeviceLanguage } from "../../languages";
 
@@ -104,6 +105,7 @@ const DeviceLanguageStep = ({
     oldDeviceInfo,
     updatedDeviceInfo,
     installLanguage,
+    deviceLocalizationFeatureFlag.enabled,
   ]);
 
   const deviceName = getDeviceModel(device.modelId).productName;
@@ -146,7 +148,7 @@ const DeviceLanguageStep = ({
         <ChangeDeviceLanguageAction
           device={deviceForAction}
           language={languageToInstall}
-          onError={(error: any) => {
+          onError={(error: Error) => {
             track("Page Manager FwUpdateLanguageInstallError", {
               error,
             });

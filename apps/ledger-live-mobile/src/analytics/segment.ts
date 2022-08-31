@@ -153,8 +153,8 @@ export const trackSubject: any = new ReplaySubject<{
 }>(10);
 export const track = (
   event: string,
-  properties: Record<string, any> | null | undefined,
-  mandatory: boolean | null | undefined,
+  properties?: Record<string, any> | null,
+  mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,

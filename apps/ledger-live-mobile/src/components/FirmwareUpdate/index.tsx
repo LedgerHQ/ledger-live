@@ -30,6 +30,7 @@ import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
 import DeviceLanguageStep from "./DeviceLanguageStep";
 import { track } from "../../analytics";
+import { FwUpdateForegroundEvent } from "./types";
 
 type Props = {
   device: Device;
@@ -56,10 +57,6 @@ type FwUpdateState = {
   installing?: string | null;
   updatedDeviceInfo?: DeviceInfo;
 };
-
-export type FwUpdateForegroundEvent =
-  | { type: "reset"; wired: boolean }
-  | { type: "languagePromptDismissed" };
 
 export default function FirmwareUpdate({
   device,

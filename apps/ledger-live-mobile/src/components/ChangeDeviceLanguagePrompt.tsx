@@ -43,6 +43,8 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
         </Button>
       )}
       <Flex mt={6}>
+        {/* lint is interpreting this Link component as something it's not */}
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <Link
           onPress={() => Linking.openURL(urls.deviceLocalization.learnMore)}
           Icon={Icons.ExternalLinkMedium}

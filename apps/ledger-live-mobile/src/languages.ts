@@ -1,6 +1,6 @@
 import RNLocalize from "react-native-localize";
 import Config from "react-native-config";
-import { Language } from "@ledgerhq/live-common/lib/types/languages";
+import { Language } from "@ledgerhq/types-live";
 import allLocales from "./locales";
 
 export const languages = {

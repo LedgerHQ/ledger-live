@@ -15,7 +15,7 @@ type Props = {
   onContinue: () => void;
   onStart?: () => void;
   onResult?: () => void;
-  onError?: () => void;
+  onError?: (err: Error) => void;
 };
 
 const ChangeDeviceLanguageAction: React.FC<Props> = ({

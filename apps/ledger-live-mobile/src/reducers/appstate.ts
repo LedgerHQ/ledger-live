@@ -1,7 +1,7 @@
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import { NetworkDown } from "@ledgerhq/errors";
-import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import type { State } from ".";
 
 export type AsyncState = {
