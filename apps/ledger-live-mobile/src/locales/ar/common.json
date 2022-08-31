@@ -4658,5 +4658,19 @@
     "currentAddress" : {
       "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
     }
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "رائع جداً.\nأنت جاهز تماماً.",
+      "allDoneTitle" : "عمل رائع.\nأنت الآن جاهز للعمل.",
+      "subtitle" : "إليك ما يجب عليك فعله في الخطوة التالية:",
+      "skip" : "التخطي إلى تطبيق",
+      "goToWallet" : "انتقل إلى محفظة Ledger Live",
+      "done" : "لقد قمت للتو بتأمين مستقبلك"
+    },
+    "walletCard" : {
+      "title" : "بدء التشغيل",
+      "description" : "انقر هنا لإنهاء إعداد {{productName}} الخاصة بك مع Ledger Live"
+    }
   }
 }
