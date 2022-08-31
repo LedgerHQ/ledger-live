@@ -939,6 +939,7 @@ importers:
       '@typescript-eslint/parser': ^4.33.0
       '@walletconnect/client': 1.7.3
       '@xstate/react': ^1.6.3
+      '@zondax/cbor': v8.1.0-zondax-no-bigint
       '@zondax/ledger-filecoin': ^0.11.2
       algo-msgpack-with-bigint: ^2.1.1
       algosdk: 1.13.0
@@ -962,7 +963,6 @@ importers:
       buffer: ^6.0.3
       camelcase: ^6.2.1
       cashaddrjs: ^0.4.4
-      cbor: ^8.1.0
       coininfo: ^5.1.0
       cosmjs-types: 0.2.1
       create-hmac: ^1.1.7
@@ -1095,6 +1095,7 @@ importers:
       '@types/qs': 6.9.7
       '@walletconnect/client': 1.7.3
       '@xstate/react': 1.6.3_trxcr4ukgza3iqpu7qkdqadng4
+      '@zondax/cbor': 8.1.0-zondax-no-bigint
       '@zondax/ledger-filecoin': 0.11.2
       algo-msgpack-with-bigint: 2.1.1
       algosdk: 1.13.0
@@ -1116,7 +1117,6 @@ importers:
       bs58check: 2.1.2
       buffer: 6.0.3
       cashaddrjs: 0.4.4
-      cbor: 8.1.0
       coininfo: 5.2.1
       cosmjs-types: 0.2.1
       create-hmac: 1.1.7
@@ -20293,6 +20293,14 @@ packages:
     resolution: {integrity: sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==}
     dev: false
 
+  /@zondax/cbor/8.1.0-zondax-no-bigint:
+    resolution: {integrity: sha512-dFjJxSIZH2aaiG35iIUqKr3OXnZwy1XVYP5yx78UJP7ftOBxmN3OWX8k+pt4I2l/gjYONW/XMkG+RtTkxvFzlw==}
+    engines: {node: '>=12.19'}
+    dependencies:
+      big-integer: 1.6.51
+      nofilter: 3.1.0
+    dev: false
+
   /@zondax/ledger-filecoin/0.11.2:
     resolution: {integrity: sha512-S7dTCxSiB9cBQQc2zhLKQolU3EPVQD2tozXKnd5XTfIqBMkFP8Hi/6f7u3a196V3knMR62Sf4gsEM/cVV5QhAg==}
     dependencies:
@@ -23516,6 +23524,7 @@ packages:
     engines: {node: '>=12.19'}
     dependencies:
       nofilter: 3.1.0
+    dev: true
 
   /ccount/1.1.0:
     resolution: {integrity: sha512-vlNK021QdI7PNeiUh/lKkC/mNHHfV0m/Ad5JoI0TYtlBnJAslM/JIkm/tGC88bkLIwO6OQ5uV6ztS6kVAtCDlg==}

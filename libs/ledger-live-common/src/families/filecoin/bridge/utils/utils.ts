@@ -40,7 +40,7 @@ export const processTxs = (
   for (const txId in txsById) {
     const { Fee: feeTx, Send: sendTx } = txsById[txId];
 
-    if (feeTx) sendTx.fee = feeTx.amount.toString();
+    if (feeTx) sendTx.fee = feeTx.amount;
 
     processedTxs.push(sendTx);
   }
@@ -55,10 +55,10 @@ export const mapTxToOps =
     const ops: Operation[] = [];
     const date = new Date(timestamp * 1000);
     const value = parseCurrencyUnit(getUnit(), amount.toString());
+    const feeToUse = parseCurrencyUnit(getUnit(), (fee || 0).toString());
 
     const isSending = address === from;
     const isReceiving = address === to;
-    const feeToUse = new BigNumber(fee || 0);
 
     if (isSending) {
       ops.push({
@@ -106,7 +106,7 @@ export const getTxToBroadcast = (
   operation: Operation,
   signature: string
 ): BroadcastTransactionRequest => {
-  const { extra, senders, recipients, value } = operation;
+  const { extra, senders, recipients, value, fee } = operation;
   const {
     gasLimit,
     gasFeeCap,
@@ -128,7 +128,7 @@ export const getTxToBroadcast = (
       gaslimit: gasLimit.toNumber(),
       gaspremium: gasPremium.toString(),
       gasfeecap: gasFeeCap.toString(),
-      value: value.toFixed(),
+      value: value.minus(fee).toFixed(),
     },
     signature: {
       type: signatureType,

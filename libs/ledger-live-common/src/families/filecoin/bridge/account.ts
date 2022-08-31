@@ -281,7 +281,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               senders: [address],
               recipients: [recipient],
               accountId,
-              value: amount,
+              value: amount.plus(fee),
               fee,
               blockHash: null,
               blockHeight: null,
