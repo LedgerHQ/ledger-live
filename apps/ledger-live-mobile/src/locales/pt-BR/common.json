@@ -786,12 +786,12 @@
       "tour" : {
         "title" : "Faça um tour",
         "description" : "Explore o aplicativo Ledger Live e aprenda como comprar, crescer e proteger seus ativos",
-        "cta" : "Navegar"
+        "cta" : "Navegue"
       },
       "academy" : {
         "title" : "Ledger Academy",
         "description" : "Tudo o que você precisa saber sobre Blockchain",
-        "cta" : "Navegar"
+        "cta" : "Navegue"
       },
       "stakeCosmos" : {
         "title" : "Aplicar COSMOS",
@@ -845,7 +845,7 @@
       "market" : {
         "title" : "Mercados Cripto",
         "description" : "Verifique o preço de criptomoedas e os movimentos de mercado diretamente no aplicativo",
-        "cta" : "Navegar"
+        "cta" : "Navegue"
       },
       "manageCard" : {
         "title" : "Apresentando o CL Card",
@@ -983,11 +983,11 @@
   "onboarding" : {
     "stepWelcome" : {
       "title" : "Boas-vindas à Ledger",
-      "subtitle" : "Tornamos propriedade digital algo simples e seguro.",
+      "subtitle" : "Propriedade digital simples e segura.",
       "start" : "Começar",
       "noDevice" : "Sem dispositivo?",
       "buy" : "Comprar uma {{fullDeviceName}}",
-      "terms" : "Ao clicar em \"Começar\", você consente e concorda com nossos",
+      "terms" : "Clicando acima, você concorda e consente com nossos",
       "termsLink" : "Termos de serviço",
       "privacyLink" : "Política de privacidade",
       "and" : "e"
@@ -1009,7 +1009,7 @@
       },
       "buyNano" : {
         "title" : "Comprar uma Ledger Nano X",
-        "subtitle" : "Uma carteira hardware é a única maneira de garantir que seus ativos estejam seguros "
+        "subtitle" : "Apenas uma carteira hardware garante a segurança dos seus ativos "
       },
       "discoverLedger" : {
         "title" : "Explorar o Ledger Live",
@@ -1046,6 +1046,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Escolha seu dispositivo"
     },
@@ -1091,8 +1092,8 @@
       },
       "2" : {
         "label" : "Noções básicas",
-        "title" : "Ficar offline",
-        "desc" : "O Ledger Live permite que você compre, venda, gerencie, negocie e ganhe criptoativos enquanto permanece protegido. Você validará cada transação de cripto com sua Nano."
+        "title" : "Fique Offline",
+        "desc" : "O Ledger Live permite a você comprar, vender, gerenciar, negociar e ganhar criptoativos com proteção. Você validará cada transação cripto com sua Nano."
       },
       "3" : {
         "label" : "Noções básicas",
@@ -1146,11 +1147,11 @@
             }
           },
           "1" : {
-            "title" : "Navegar",
+            "title" : "Navegue",
             "label" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
           },
           "2" : {
-            "title" : "Selecione “Configurar como novo dispositivo\"",
+            "title" : "Selecione “Set up as new device\"",
             "label" : "Pressione ambos os botões simultaneamente para validar a seleção."
           },
           "3" : {
@@ -1215,7 +1216,7 @@
         "desc" : "Sua frase de recuperação é uma lista secreta de 24 palavras que respaldam suas chaves privadas.",
         "desc_1" : "Sua Nano gera uma frase de recuperação única. A Ledger não guarda uma cópia dela.",
         "cta" : "Próximo passo",
-        "checkboxDesc" : "Eu entendo que, se eu perder esta frase de recuperação, não poderei acessar minhas criptomoedas caso eu perca o acesso à minha Nano."
+        "checkboxDesc" : "Eu entendo que, se perder esta frase de recuperação, não poderei acessar minhas criptos caso perca o acesso à minha Nano."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1239,10 +1240,10 @@
         "bullets" : {
           "0" : {
             "title" : "Pegue sua folha de recuperação",
-            "label" : "Pegue uma folha de recuperação em branco, que veio junto com a sua Nano. Se a folha de recuperação não tiver chegado em branco, contate o Suporte Ledger."
+            "label" : "Pegue uma folha de recuperação em branco que veio junto com sua Nano. Se a folha de recuperação não tiver chegado em branco, contate o Suporte Ledger."
           },
           "1" : {
-            "title" : "Repita para todas as palavras!",
+            "title" : "Repita isso para todas as palavras!",
             "label" : "Escreva a palavra nº 1 exibida em sua Nano na posição 1 da sua folha de recuperação. Então, pressione o botão direito na sua Nano para exibir a palavra nº 2 e a escreva na posição 2.",
             "label_1" : "Repita o processo para todas as palavras, respeitando cuidadosamente a ordem e a ortografia. Pressione o botão esquerdo na sua Nano para verificar se há algum erro."
           },
@@ -1251,7 +1252,7 @@
             "label" : "Pressione o botão direito para percorrer as palavras até encontrar a palavra nº 1. Valide pressionando ambos os botões."
           },
           "3" : {
-            "title" : "Repita para todas as palavras!"
+            "title" : "Repita isso para todas as palavras!"
           }
         },
         "cta" : "Confirme sua frase de recuperação",
@@ -1303,7 +1304,7 @@
         "title" : "Restaurar a partir da frase de recuperação",
         "desc" : "Restaure sua Nano com sua frase de recuperação para restaurar, substituir ou fazer backup da sua carteira hardware Ledger.",
         "desc_1" : "Sua Nano irá restaurar suas chaves privadas e você poderá acessar e gerenciar suas criptos.",
-        "cta" : "OK, eu estou pronto!",
+        "cta" : "OK, vamos nessa!",
         "warning" : {
           "title" : "Recomendamos usar apenas frases de recuperação da Ledger",
           "desc" : "A Ledger não pode garantir a segurança de frases de recuperação externas. Recomendamos configurar sua Nano como um novo dispositivo se sua frase de recuperação não tiver sido gerada por uma Ledger.",
@@ -1327,7 +1328,7 @@
             }
           },
           "1" : {
-            "title" : "Navegar",
+            "title" : "Navegue",
             "label" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
           },
           "2" : {
@@ -1362,7 +1363,7 @@
             "label" : "Escolha a palavra nº 1 entre as sugestões. Pressione ambos os botões para validar."
           },
           "4" : {
-            "title" : "Repita para todas as palavras!"
+            "title" : "Repita isso para todas as palavras!"
           }
         },
         "nextStep" : "Próximo passo"
@@ -1397,13 +1398,13 @@
         "desc_1" : "Use um <1>cabo OTG</1> para conectar sua Ledger Nano X ao seu smartphone Android (incompatível com iOS). Gerencie suas criptomoedas com o Ledger Live mobile ou qualquer outro aplicativo (web) compatível.",
         "bullets" : {
           "0" : {
-            "label" : "Certifique-se de que o Bluetooth esteja habilitado em seu smartphone e na sua Ledger Nano X. Sua Ledger Nano X deve estar no painel principal, na sua tela de início."
+            "label" : "Certifique-se de que o Bluetooth esteja habilitado em seu smartphone e na sua Ledger Nano X. Sua Ledger Nano X deve estar no Painel Principal, a tela inicial."
           },
           "1" : {
-            "label" : "<1>{{Os}}</1>: Verifique se os serviços de localização estão habilitados nas configurações do seu telefone para o Ledger Live. O Ledger Live nunca usa suas informações de localização, isto é um requisito do Bluetooth no {{Os}}."
+            "label" : "<1>{{Os}}</1>: Verifique se os serviços de localização estão habilitados para o Ledger Live nas configurações do seu telefone. O Ledger Live nunca usa suas informações de localização, isto é um requisito do Bluetooth no {{Os}}."
           },
           "2" : {
-            "label" : "Se você tiver um problema com o emparelhamento Bluetooth, consulte o seguinte artigo",
+            "label" : "Se você tiver um problema com o emparelhamento Bluetooth, consulte o artigo abaixo",
             "link" : "Resolver problemas de conexão."
           }
         }
@@ -1437,15 +1438,15 @@
       }
     },
     "stepImportAccounts" : {
-      "title" : "Sincronização de criptos a partir do desktop",
+      "title" : "Sincronizar criptos do desktop",
       "desc" : "Se você já tem suas criptos configuradas no aplicativo Ledger de desktop, você pode sincronizá-las para gerenciá-las do seu telefone.",
-      "cta" : "Estou pronto para escanear",
+      "cta" : "Tudo pronto para escanear",
       "bullets" : {
         "0" : {
           "label" : "No aplicativo de desktop, selecione <1>Configurações > Contas > Exportação de conta</1>."
         },
         "1" : {
-          "label" : "Escaneie o código LiveQR com seu telefone."
+          "label" : "Escaneie o LiveQR Code com seu telefone."
         },
         "2" : {
           "label" : "Selecione as contas de criptoativos para importar."
@@ -1528,19 +1529,19 @@
         }
       },
       "privateKey" : {
-        "title" : "Quando eu conecto minha Nano ao aplicativo da Ledger, minha chave privada...",
+        "title" : "Ao conectar minha Nano ao aplicativo Ledger, minha chave privada...",
         "answers" : {
-          "correct" : "Permanece desconectada",
-          "wrong" : "Se conecta brevemente à internet"
+          "correct" : "permanece desconectada",
+          "wrong" : "se conecta brevemente à internet"
         },
         "modal" : {
-          "text" : "Sua chave privada permanece sempre desconectada da internet na sua carteira hardware. Mesmo quando conectado à sua Nano, o aplicativo da Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo.",
+          "text" : "Sua chave privada sempre está offline na sua carteira hardware. Mesmo conectado à sua Nano, o aplicativo da Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo.",
           "cta" : "Terminar quiz"
         }
       },
       "final" : {
         "successTitle" : "Já é profissional!",
-        "successText" : "Você já pode gerenciar suas criptos com segurança. Só mais um passo!",
+        "successText" : "Você já pode gerenciar suas criptos com segurança. Só falta mais um passo!",
         "failTitle" : "Você logo será profissional...",
         "failText" : "Não se preocupe, a Ledger está aqui para te guiar ao longo da sua jornada. Em breve você se sentirá extra confortável com a segurança das suas criptos. Só mais um passo!",
         "cta" : "Próximo passo"
@@ -1560,6 +1561,33 @@
         "warning" : "Use apenas a frase de recuperação que seu dispositivo exibiu quando foi configurado",
         "continueCTA" : "Continuar",
         "contactSupportCTA" : "Contatar suporte"
+      }
+    }
+  },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Looking for devices",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Already paired"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Try again"
       }
     }
   },
@@ -3126,7 +3154,7 @@
       "title" : "Conecte-se via Bluetooth...",
       "label" : "Detecte automaticamente sua Nano"
     },
-    "deviceNotFoundPairNewDevice" : "Emparelhar com Bluetooth",
+    "deviceNotFoundPairNewDevice" : "Emparelhar via Bluetooth",
     "headerDescription" : "Certifique-se de que sua {{productName}} está desbloqueada e com Bluetooth habilitado",
     "usb" : "... ou conecte o cabo USB",
     "usbLabel" : "Conecte seu cabo e digite seu código PIN em seu dispositivo",
