@@ -35,8 +35,12 @@ const useBackgroundInstallSubject = (
   const enabled = bimFeature?.enabled && transportModule?.id === "ble-bim";
 
   useEffect(() => {
-    // TODO add some tracking logic to see we are using or not BIM.
-  }, [enabled]);
+    if (lastSeenQueueSize.current !== queueSize && queueSize === 0) {
+      // NB we've completed a queue. If we change the queue size before a cleanup,
+      // do a quick cleanup now instead of waiting for the transport specific one.
+      cleanUp();
+    }
+  }, [cleanUp, queueSize]);
 
   const onError = useCallback(
     (error) => {
@@ -92,14 +96,16 @@ const useBackgroundInstallSubject = (
       }).subscribe({
         next: onEventDispatch,
         error: onError,
-        complete: cleanUp,
+        complete: () => {
+          // Nb If this version is working better, remove the completion :thinkingface:
+        },
       });
     }
 
     return () => {
       sub?.unsubscribe();
     };
-  }, [cleanUp, deviceId, onError, onEventDispatch]);
+  }, [deviceId, onError, onEventDispatch]);
 
   useEffect(() => {
     if (!enabled) return;
