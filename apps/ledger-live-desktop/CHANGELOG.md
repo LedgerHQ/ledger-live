@@ -1,5 +1,12 @@
 # ledger-live-desktop
 
+## 2.47.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`0ebdec50bf`](https://github.com/LedgerHQ/ledger-live/commit/0ebdec50bfca81b2d814726f8f9a82237ad42ffc)]:
+  - @ledgerhq/live-common@27.1.0-next.4
+
 ## 2.47.0-next.3
 
 ### Patch Changes
@@ -71,8 +78,9 @@
 - [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`fdf009e526`](https://github.com/LedgerHQ/ledger-live/commit/fdf009e526beb5d6413ebc95666a9df58749336a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix handle new-window event in WebPlatformPlayer
 
 - Updated dependencies [[`7e812a738d`](https://github.com/LedgerHQ/ledger-live/commit/7e812a738db718200138dcb9b7bcc2f6dd0ddd6f), [`058a1af7ff`](https://github.com/LedgerHQ/ledger-live/commit/058a1af7ff463d21afe85d03563b61e1d543c95b), [`d6634bc0b7`](https://github.com/LedgerHQ/ledger-live/commit/d6634bc0b720d8a13f3681caf33e2f23d5c64968), [`5da717c523`](https://github.com/LedgerHQ/ledger-live/commit/5da717c523db7678edeb0f86bdfa88256dfe96c4)]:
+
   - @ledgerhq/live-common@27.0.1-next.0
-  
+
 ## 2.46.1
 
 ### Patch Changes

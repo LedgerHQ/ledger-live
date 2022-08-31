@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.1.0-next.4
+
+### Minor Changes
+
+- [#744](https://github.com/LedgerHQ/ledger-live/pull/744) [`0ebdec50bf`](https://github.com/LedgerHQ/ledger-live/commit/0ebdec50bfca81b2d814726f8f9a82237ad42ffc) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add an EVM based family in LLC
+
 ## 27.1.0-next.3
 
 ### Minor Changes

@@ -77,6 +77,7 @@
     "pnpm-utils": "1.0.0"
   },
   "changesets": [
+    "angry-zebras-unite",
     "big-panthers-promise",
     "breezy-bananas-pull",
     "cyan-cats-begin",
