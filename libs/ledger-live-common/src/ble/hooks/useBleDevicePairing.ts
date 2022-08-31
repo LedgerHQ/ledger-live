@@ -35,7 +35,7 @@ export const useBleDevicePairing = ({
       from(getVersion(t))
     ).pipe(first());
 
-    requestObservable.subscribe({
+    const sub = requestObservable.subscribe({
       next: (_value: FirmwareInfo) => {
         setIsPaired(true);
         setPairingError(null);
@@ -45,6 +45,10 @@ export const useBleDevicePairing = ({
         setPairingError(error);
       },
     });
+
+    return () => {
+      sub.unsubscribe();
+    };
   }, [deviceId]);
 
   return { isPaired, pairingError };

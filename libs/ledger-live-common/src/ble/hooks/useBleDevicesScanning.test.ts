@@ -110,14 +110,14 @@ describe("useBleDevicesScanning", () => {
       });
     });
 
-    describe("and when filterModelIds is not null", () => {
+    describe("and when filterByDeviceModelIds is not null", () => {
       it("should filter the scanning result by the given model ids", async () => {
         const { result } = renderHook(() =>
           useBleDevicesScanning({
             bleTransportListen: setupMockBleTransportListen(
               mockEmitValuesByObserver
             ),
-            filterByModelIds: [DeviceModelId.nanoX],
+            filterByDeviceModelIds: [DeviceModelId.nanoX],
           })
         );
 
@@ -146,6 +146,37 @@ describe("useBleDevicesScanning", () => {
         expect(result.current.scannedDevices[1].deviceModel.id).toBe(
           DeviceModelId.nanoX
         );
+      });
+    });
+
+    describe("and when filterOutDevicesByDeviceIds is not null nor empty", () => {
+      it("should not add the scanned device if its ids is in the array", async () => {
+        const { result } = renderHook(() =>
+          useBleDevicesScanning({
+            bleTransportListen: setupMockBleTransportListen(
+              mockEmitValuesByObserver
+            ),
+            filterOutDevicesByDeviceIds: [deviceIdA, deviceIdC],
+          })
+        );
+
+        // The first scanned device (deviceIdA) should be filtered out
+        expect(result.current.scannedDevices).toHaveLength(0);
+
+        await act(async () => {
+          jest.advanceTimersByTime(1000);
+        });
+
+        // The second scanned device is deviceIdB and should be kept
+        expect(result.current.scannedDevices).toHaveLength(1);
+        expect(result.current.scannedDevices[0].deviceId).toBe(deviceIdB);
+
+        await act(async () => {
+          jest.advanceTimersByTime(1000);
+        });
+
+        // The third scanned device (deviceIdC) should be filtered out
+        expect(result.current.scannedDevices).toHaveLength(1);
       });
     });
 
