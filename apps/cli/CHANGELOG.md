@@ -1,26 +1,103 @@
 # @ledgerhq/live-cli
 
-## 22.2.1-nightly.2
+## 22.3.0
+
+### Minor Changes
+
+- [#492](https://github.com/LedgerHQ/ledger-live/pull/492) [`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2) Thanks [@grsoares21](https://github.com/grsoares21)! - Adds device action logic for installing and uninstalling language packs
+
+* [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
 
 ### Patch Changes
 
-- Updated dependencies [[`5da717c523`](https://github.com/LedgerHQ/ledger-live/commit/5da717c523db7678edeb0f86bdfa88256dfe96c4)]:
-  - @ledgerhq/live-common@26.0.1-nightly.2
+- Updated dependencies [[`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2), [`c7aaafa769`](https://github.com/LedgerHQ/ledger-live/commit/c7aaafa76924252f3c7e30371012bd0e69d8100a), [`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503), [`a36d1de865`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100), [`6e057f7163`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4), [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1), [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/live-common@27.0.0
+  - @ledgerhq/cryptoassets@6.33.0
+  - @ledgerhq/hw-transport@6.27.3
+  - @ledgerhq/hw-app-btc@8.0.1
+  - @ledgerhq/hw-transport-http@6.27.3
+  - @ledgerhq/hw-transport-mocker@6.27.3
+  - @ledgerhq/hw-transport-node-ble@6.27.3
+  - @ledgerhq/hw-transport-node-hid@6.27.3
+  - @ledgerhq/hw-transport-node-speculos@6.27.3
 
-## 22.2.1-nightly.1
+## 22.3.0-next.3
 
 ### Patch Changes
 
-- Updated dependencies [[`7e812a738d`](https://github.com/LedgerHQ/ledger-live/commit/7e812a738db718200138dcb9b7bcc2f6dd0ddd6f)]:
-  - @ledgerhq/live-common@26.0.1-nightly.1
+- Updated dependencies [[`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503)]:
+  - @ledgerhq/live-common@27.0.0-next.3
 
-## 22.2.1-nightly.0
+## 22.3.0-next.2
+
+### Minor Changes
+
+- [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
 
 ### Patch Changes
 
-- Updated dependencies [[`318e804525`](https://github.com/LedgerHQ/ledger-live/commit/318e80452569a0f91c4363ae50d2664419251dbd), [`d6634bc0b7`](https://github.com/LedgerHQ/ledger-live/commit/d6634bc0b720d8a13f3681caf33e2f23d5c64968), [`5dd957b3cb`](https://github.com/LedgerHQ/ledger-live/commit/5dd957b3cb893668f044497d25b6eee69b05b2f0)]:
-  - @ledgerhq/cryptoassets@6.33.0-nightly.0
-  - @ledgerhq/live-common@26.0.1-nightly.0
+- Updated dependencies [[`a36d1de865`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100), [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1)]:
+  - @ledgerhq/live-common@27.0.0-next.2
+  - @ledgerhq/cryptoassets@6.33.0-next.0
+
+## 22.3.0-next.1
+
+### Minor Changes
+
+- [#492](https://github.com/LedgerHQ/ledger-live/pull/492) [`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2) Thanks [@grsoares21](https://github.com/grsoares21)! - Adds device action logic for installing and uninstalling language packs
+
+### Patch Changes
+
+- Updated dependencies [[`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2)]:
+  - @ledgerhq/live-common@26.1.0-next.1
+
+## 22.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`23c9bf994`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2), [`6e057f716`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4), [`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/live-common@26.1.0-next.0
+  - @ledgerhq/hw-transport@6.27.3-next.0
+  - @ledgerhq/hw-app-btc@8.0.1-next.0
+  - @ledgerhq/hw-transport-http@6.27.3-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.3-next.0
+  - @ledgerhq/hw-transport-node-ble@6.27.3-next.0
+  - @ledgerhq/hw-transport-node-hid@6.27.3-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.3-next.0
 
 ## 22.2.0
 
@@ -55,6 +132,7 @@
   - @ledgerhq/live-common@26.0.0
   - @ledgerhq/cryptoassets@6.32.0
 
+>>>>>>>>> Temporary merge branch 2
 ## 22.2.0-next.2
 
 ### Patch Changes
