@@ -63,7 +63,6 @@ setSupportedCurrencies([
   "hedera",
   "cardano",
   "osmosis",
-  "filecoin",
 ]);
 
 if (Config.VERBOSE) {

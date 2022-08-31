@@ -5,6 +5,9 @@ inputs:
   server-token:
     description: "An access token of the local turbo-server"
     required: true
+  cleanup-cache-folder:
+    description: "If 'true' will delete the .cache/turbo folder as a post-action step"
+    required: false
 outputs:
   port:
     description: "The port the local server runs on"

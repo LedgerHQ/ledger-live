@@ -3,6 +3,7 @@ export * from "./bridge";
 export * from "./derivation";
 export * from "./feature";
 export * from "./manager";
+export * from "./languages";
 export * from "./nft";
 export * from "./operation";
 export * from "./pagination";

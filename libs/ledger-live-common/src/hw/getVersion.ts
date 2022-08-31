@@ -1,9 +1,42 @@
+import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
+import { satisfies as versionSatisfies } from "semver";
+import { isDeviceLocalizationSupported } from "../manager/localization";
 
-/**
- * Retrieve targetId and firmware version from device
- */
+const deviceVersionRangesForBootloaderVersion: {
+  [key in DeviceModelId]?: string;
+} = {
+  nanoS: ">=2.0.0",
+  nanoX: ">=2.0.0 || =2.1.0-lo2 || =2.1.0-lo4 || =2.1.0-lo5", // TODO: remove pre-release version
+  nanoSP: ">=1.0.0",
+};
+export const isBootloaderVersionSupported = (
+  seVersion: string,
+  modelId?: DeviceModelId
+) =>
+  modelId &&
+  deviceVersionRangesForBootloaderVersion[modelId] &&
+  versionSatisfies(
+    seVersion,
+    deviceVersionRangesForBootloaderVersion[modelId] as string
+  );
+
+const deviceVersionRangesForHardwareVersion: {
+  [key in DeviceModelId]?: string;
+} = {
+  nanoX: ">=2.0.0 || =2.1.0-lo2 || =2.1.0-lo4 || =2.1.0-lo5", // TODO: remove pre-release version
+};
+export const isHardwareVersionSupported = (
+  seVersion: string,
+  modelId?: DeviceModelId
+) =>
+  modelId &&
+  deviceVersionRangesForHardwareVersion[modelId] &&
+  versionSatisfies(
+    seVersion,
+    deviceVersionRangesForHardwareVersion[modelId] as string
+  );
 
 export default async function getVersion(
   transport: Transport
@@ -35,8 +68,11 @@ export default async function getVersion(
   let mcuVersion = "";
   let mcuBlVersion: string | undefined;
   let seVersion: string | undefined;
+  let bootloaderVersion: string | undefined;
+  let hardwareVersion: number | undefined;
   let mcuTargetId: number | undefined;
   let seTargetId: number | undefined;
+  let languageId: number | undefined;
 
   const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
 
@@ -77,6 +113,41 @@ export default async function getVersion(
       mcuVersionBuf = mcuVersionBuf.slice(0, mcuVersionBuf.length - 1);
     }
     mcuVersion = mcuVersionBuf.toString();
+
+    const isOSU = rawVersion.includes("-osu");
+
+    if (!isOSU) {
+      const deviceModel = identifyTargetId(targetId);
+
+      if (isBootloaderVersionSupported(seVersion, deviceModel?.id)) {
+        const bootloaderVersionLength = data[i++];
+        let bootloaderVersionBuf: Buffer = Buffer.from(
+          data.slice(i, i + bootloaderVersionLength)
+        );
+        i += bootloaderVersionLength;
+
+        if (bootloaderVersionBuf[bootloaderVersionBuf.length - 1] === 0) {
+          bootloaderVersionBuf = bootloaderVersionBuf.slice(
+            0,
+            bootloaderVersionBuf.length - 1
+          );
+        }
+        bootloaderVersion = bootloaderVersionBuf.toString();
+      }
+
+      if (isHardwareVersionSupported(seVersion, deviceModel?.id)) {
+        const hardwareVersionLength = data[i++];
+        hardwareVersion = data
+          .slice(i, i + hardwareVersionLength)
+          .readUIntBE(0, 1); // ?? string? number?
+        i += hardwareVersionLength;
+      }
+
+      if (isDeviceLocalizationSupported(seVersion, deviceModel?.id)) {
+        const languageIdLength = data[i++];
+        languageId = data.slice(i, i + languageIdLength).readUIntBE(0, 1);
+      }
+    }
   }
 
   return {
@@ -89,5 +160,8 @@ export default async function getVersion(
     mcuTargetId,
     seTargetId,
     flags,
+    bootloaderVersion,
+    hardwareVersion,
+    languageId,
   };
 }

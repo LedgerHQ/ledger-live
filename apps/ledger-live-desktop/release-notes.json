@@ -1,6 +1,6 @@
 [
   {
-    "tag_name": "2.45.0",
-    "body": "\nWe're back with another roundup of handy new features and improvements.\n\n### 🚀 Features\n\n**100 native Cardano tokens** made their way to Ledger Live, including WMT, DANA, and ADAX. You can find the full list [here](https://www.ledger.com/supported-crypto-assets).  \nSpeaking of new tokens, we’ve added support of USDC on the Stellar blockchain.  \nLooking to send **HBAR** from Ledger Live to an exchange? As of today, Ledger Live allows you to **add a memo** to help identify a transaction and credit the proper account.  \nDelegating **Solana** or **Cosmos stake** just got easier—the nifty new search bar helps you **find validators easily and quickly**.\n"
+    "tag_name": "2.46.0",
+    "body": "\nWe're releasing a slew of new features and improvements. Here is what’s new in Ledger Live 👇\n\n### 🚀 Features\n\n- We've added **Filecoin support** to the Ledger Live roaster. Beginning today, you can send and receive its native currency FIL.\n- **Empowering our external partners**. With more coins and tokens added to the Ledger platform, the account pages now display banners stating if integration has been done externally and by who.\n\n### 🐛 Fixes\n\nWe've tidied up some minor bugs.\n\nDon’t forget to update your Ledger Live app so that you can access these new features.\n"
   }
 ]

@@ -527,9 +527,7 @@ const pinCodeScenes = (deviceModelId, theme: "dark" | "light") => [
 ];
 
 const getSetupDeviceScenes: (
-  // eslint-disable-next-line no-unused-vars
   deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue" | "nanoFTS",
-  // eslint-disable-next-line no-unused-vars
   theme: "dark" | "light",
 ) => OnboardingScene[] = (deviceModelId, theme) => [
   {
