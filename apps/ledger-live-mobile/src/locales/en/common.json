@@ -121,6 +121,9 @@
     "CantScanQRCode": {
       "title": "Could not scan this QR code: auto-verification not supported by this address."
     },
+    "PriorityFeeOutOfSuggestedRange": {
+      "title": "To optimise your fees we suggest you to stay in the suggested range."
+    },
     "ConnectAppTimeout": {
       "title": "Sorry, no device found",
       "description": {
@@ -2819,9 +2822,12 @@
       "gasPrice": "Gas price",
       "maxBaseFee" : "Max base fee",
       "priorityFee" : "Priority fee",
+      "nextBlock": "Next block: {{nextBaseFee}}",
+      "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
       "validateGasLimit": "Validate gas limit",
       "fees": "Fees",
+      "maxEstimatedFee": "Max estimated fee",
       "validateFees": "Validate Fees",
       "customizeFees": "Customize Fees",
       "memo": {

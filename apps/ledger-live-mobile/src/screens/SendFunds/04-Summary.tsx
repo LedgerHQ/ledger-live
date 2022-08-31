@@ -34,6 +34,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import Info from "../../icons/Info";
 import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
 import { isCurrencySupported } from "../Exchange/coinifyConfig";
+import GasLimitSection from "./GasLimitSection";
 
 const forceInset = {
   bottom: "always",
@@ -250,6 +251,12 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
               <TranslatedError error={error} />
             </LText>
           </View>
+        ) : null}
+        {transaction.family === "ethereum" ? (
+          <>
+            <SectionSeparator lineColor={colors.lightFog} />
+            <GasLimitSection transaction={transaction} />
+          </>
         ) : null}
         {!amount.eq(totalSpent) && !hideTotal ? (
           <>

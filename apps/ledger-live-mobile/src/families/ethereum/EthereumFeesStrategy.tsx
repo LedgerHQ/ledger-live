@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import React, { useCallback } from "react";
 
 import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

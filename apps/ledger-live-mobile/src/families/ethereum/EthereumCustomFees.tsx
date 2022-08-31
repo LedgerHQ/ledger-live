@@ -5,19 +5,21 @@ import invariant from "invariant";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { inferDynamicRange } from "@ledgerhq/live-common/range";
+import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getGasLimit,
   EIP1559ShouldBeUsed,
 } from "@ledgerhq/live-common/families/ethereum/transaction";
 
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { accountScreenSelector } from "../../reducers/accounts";
 import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
 import SectionSeparator from "../../components/SectionSeparator";
 import Button from "../../components/Button";
 import EthereumGasLimit from "./SendRowGasLimit";
 import type { RouteParams } from "../../screens/SendFunds/04-Summary";
+import LText from "../../components/LText";
 
 type Props = {
   navigation: any;
@@ -29,12 +31,12 @@ const options = {
   title: <Trans i18nKey="send.summary.fees" />,
   headerLeft: null,
 };
-const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
-const fallbackMaxBaseFee = BigNumber(10e9);
+const fallbackGasPrice = inferDynamicRange(new BigNumber(10e9));
+const fallbackMaxBaseFee = new BigNumber(10e9);
 // local cache of last values to prevent extra blinks
-let lastNetworkGasPrice;
-let lastNetworkMaxBaseFee;
-let lastNetworkPriorityFee;
+let lastNetworkGasPrice: Range;
+let lastNetworkMaxBaseFee: BigNumber;
+let lastNetworkPriorityFee: Range;
 
 export default function EthereumCustomFees({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -44,6 +46,9 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   invariant(account, "no account found");
   const networkGasPrice =
     transaction.networkInfo && transaction.networkInfo.gasPrice;
+
+  const { units } = (parentAccount || account).currency;
+  const feeUnit = units.length > 1 ? units[1] : units[0];
 
   if (!lastNetworkGasPrice && networkGasPrice) {
     lastNetworkGasPrice = networkGasPrice;
@@ -75,11 +80,23 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   if (!lastNetworkPriorityFee && networkPriorityFee) {
     lastNetworkPriorityFee = networkPriorityFee;
   }
+  const maxPriorityFeeMinRangeMult = new BigNumber(0.9);
+  const maxPriorityFeeMaxRangeMult = new BigNumber(1.1);
   const maxPriorityFeeRange =
     networkPriorityFee || lastNetworkPriorityFee || fallbackGasPrice;
+  const maxPriorityFeeExtendedRange = inferDynamicRange(
+    maxPriorityFeeRange.initial,
+    {
+      minValue: maxPriorityFeeRange.min.times(maxPriorityFeeMinRangeMult),
+      maxValue: maxPriorityFeeRange.max.times(maxPriorityFeeMaxRangeMult),
+    },
+  );
   const [priorityFee, setPriorityFee] = useState(
     transaction.maxPriorityFeePerGas || maxPriorityFeeRange.initial,
   );
+  const priorityFeeOutOfSuggestedRange =
+    priorityFee.isLessThan(maxPriorityFeeRange.min) ||
+    priorityFee.isGreaterThan(maxPriorityFeeRange.max);
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
   const onValidate = useCallback(() => {
     const bridge = getAccountBridge(account, parentAccount);
@@ -89,7 +106,7 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction: bridge.updateTransaction(transaction, {
-        userGasLimit: BigNumber(gasLimit || 0),
+        userGasLimit: new BigNumber(gasLimit || 0),
         gasPrice,
         maxBaseFeePerGas: maxBaseFee,
         maxPriorityFeePerGas: priorityFee,
@@ -107,7 +124,7 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   ]);
   return (
     <View style={styles.root}>
-      {EIP1559ShouldBeUsed(account.currency) ? (
+      {EIP1559ShouldBeUsed((parentAccount || account).currency) ? (
         <>
           <EditFeeUnitEthereum
             account={account}
@@ -118,23 +135,61 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
             onChange={value => {
               setMaxBaseFee(value);
             }}
-            title="send.summary.maxBaseFee"
+            title={"send.summary.maxBaseFee"}
           />
-          <SectionSeparator
-            style={styles.sectionSeparator}
-            lineColor={colors.background}
-          />
+          <View style={styles.infoLabel}>
+            <LText color="grey">
+              <Trans
+                i18nKey="send.summary.nextBlock"
+                values={{
+                  nextBaseFee: formatCurrencyUnit(
+                    feeUnit,
+                    lastNetworkMaxBaseFee,
+                    {
+                      showCode: true,
+                      disableRounding: true,
+                    },
+                  ),
+                }}
+              />
+            </LText>
+          </View>
           <EditFeeUnitEthereum
             account={account}
             parentAccount={parentAccount}
             transaction={transaction}
             feeAmount={priorityFee}
-            range={maxPriorityFeeRange}
+            range={maxPriorityFeeExtendedRange}
             onChange={value => {
               setPriorityFee(value);
             }}
-            title="send.summary.priorityFee"
+            title={"send.summary.priorityFee"}
           />
+          {priorityFeeOutOfSuggestedRange ? (
+            <LText style={styles.warning} color="orange">
+              <Trans i18nKey="errors.PriorityFeeOutOfSuggestedRange.title" />
+            </LText>
+          ) : null}
+          <View style={styles.sectionSeparator}>
+            <LText color="grey">
+              <Trans
+                i18nKey="send.summary.suggestedPriorityFee"
+                values={{
+                  lowPriorityFee: formatCurrencyUnit(
+                    feeUnit,
+                    maxPriorityFeeRange.min,
+                  ),
+                  highPriorityFee: formatCurrencyUnit(
+                    feeUnit,
+                    maxPriorityFeeRange.max,
+                    {
+                      showCode: true,
+                    },
+                  ),
+                }}
+              />
+            </LText>
+          </View>
         </>
       ) : (
         <EditFeeUnitEthereum
@@ -146,7 +201,7 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
           onChange={value => {
             setGasPrice(value);
           }}
-          title="send.summary.gasPrice"
+          title={"send.summary.gasPrice"}
         />
       )}
 
@@ -191,6 +246,9 @@ const styles = StyleSheet.create({
   sectionSeparator: {
     marginTop: 16,
   },
+  infoLabel: {
+    marginVertical: 16,
+  },
   accountContainer: {
     flex: 1,
     flexDirection: "row",
@@ -202,6 +260,10 @@ const styles = StyleSheet.create({
     textDecorationStyle: "solid",
     textDecorationLine: "underline",
     marginLeft: 8,
+  },
+  warning: {
+    fontSize: 14,
+    marginTop: 16,
   },
   flex: {
     flex: 1,
