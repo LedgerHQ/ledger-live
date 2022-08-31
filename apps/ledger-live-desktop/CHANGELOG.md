@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.47.0-next.5
+
+### Patch Changes
+
+- [#1097](https://github.com/LedgerHQ/ledger-live/pull/1097) [`936b6dc545`](https://github.com/LedgerHQ/ledger-live/commit/936b6dc5450fcd69a31e03fa2040346d512c0912) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Regenerate desktop screenshots for playwright
+
+- Updated dependencies [[`936b6dc545`](https://github.com/LedgerHQ/ledger-live/commit/936b6dc5450fcd69a31e03fa2040346d512c0912)]:
+  - @ledgerhq/live-common@27.1.0-next.5
+
 ## 2.47.0-next.4
 
 ### Patch Changes
