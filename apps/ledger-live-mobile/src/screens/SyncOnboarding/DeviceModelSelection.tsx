@@ -10,6 +10,7 @@ import DiscoverCard from "../Discover/DiscoverCard";
 import Illustration from "../../images/illustration/Illustration";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.png");
 
 type Props = CompositeScreenProps<
@@ -47,6 +48,7 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
     });
   }, [navigation]);
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const setupNanoX = () => {};
 
   return (
