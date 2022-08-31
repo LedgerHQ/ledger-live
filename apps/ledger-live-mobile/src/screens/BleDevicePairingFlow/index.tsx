@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
+import { has as hasFromPath, set as setFromPath } from "lodash";
+import type { PropertyPath } from "lodash";
 import { ScannedDevice } from "@ledgerhq/live-common/ble/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -12,17 +14,20 @@ import { BleDevicesScanning } from "./BleDeviceScanning";
 import { BleDevicePairing } from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
 
-const DEFAULT_NAVIGATE_TO_DEVICE_ID_PARAM_NAME = "pairedDevice";
+export type NavigateInput = {
+  name: string;
+  params: object;
+};
+
+export type PathToDeviceParam = PropertyPath;
 
 export type BleDevicePairingFlowParams = {
   filterByDeviceModelId?: DeviceModelId;
   areKnownDevicesDisplayed?: boolean;
   onSuccessAddToKnownDevices?: boolean;
   onSuccessNavigateToConfig: {
-    screenName: string;
-    navigatorName: string;
-    pairedDeviceParamName?: string;
-    otherParams: object | undefined; // Record<string, unknown>;
+    navigateInput: NavigateInput;
+    pathToDeviceParam: string;
   };
 };
 
@@ -39,11 +44,22 @@ export type BleDevicePairingFlowProps = StackScreenProps<
  * - areKnownDevicesDisplayed: boolean, display the already known device if true,
  *   filter out them if false (default to true)
  * - onSuccessNavigateToConfig: object containing navigation config parameters when successful pairing:
- *   - screenName: screen name of the screen to navigate to after pairing
- *   - navigatorName: necessary navigator name of the screen to navigate to
- *   - pairedDeviceParamName: param field name in which the newly paired device will be set.
- *     Default to "pairedDevice".
- *   - otherParams: other necessay params of the screen to nagitate to
+ *   - navigateInput: navigation object given as input to navigation.navigate. 2 mandatory props:
+ *     - name: navigator name or screen name if no need to specify a navigator
+ *     - params: navigation params
+ *     Ex for a nested navigation:
+ *      {
+ * .      name: NavigatorName.A_NAVIGATOR,
+ *        params: {
+ *          screen: ScreenName.A_SCREEN,
+ *          params: {
+ *            ...SOME_PARAMS,
+ *            pairedDevice: null,
+ *          },
+ *        },
+ *      }
+ *   - pathToDeviceParam: path to device property that is nested into navigateInput
+ *     From the ex of navigateInput, it would be: "params.params.pairedDevice"
  * - onSuccessAddToKnownDevices: boolean, if true the successfully paired device is added to the redux
  *   list of known devices. Not added if false (default to false).
  * @returns a JSX component
@@ -58,13 +74,7 @@ export const BleDevicePairingFlow = ({
     filterByDeviceModelId,
     areKnownDevicesDisplayed = true,
     onSuccessAddToKnownDevices = false,
-    onSuccessNavigateToConfig: {
-      screenName: navigateToScreenName,
-      navigatorName: navigateToNavigatorName,
-      pairedDeviceParamName:
-        navigateToPairedDeviceParamName = DEFAULT_NAVIGATE_TO_DEVICE_ID_PARAM_NAME,
-      otherParams: navigateToOtherParams,
-    },
+    onSuccessNavigateToConfig: { navigateInput, pathToDeviceParam },
   } = route.params;
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
 
@@ -91,22 +101,23 @@ export const BleDevicePairingFlow = ({
         );
       }
 
-      navigation.navigate(navigateToNavigatorName, {
-        screen: navigateToScreenName,
-        params: {
-          ...navigateToOtherParams,
-          [navigateToPairedDeviceParamName]: device,
-        },
-      });
+      const hasDeviceParam = hasFromPath(navigateInput, pathToDeviceParam);
+      if (hasDeviceParam) {
+        setFromPath(navigateInput, pathToDeviceParam, device);
+      } else {
+        console.warning(
+          `BLE pairing flow: device path param ${pathToDeviceParam} not existing on navigation input`,
+        );
+      }
+
+      navigation.navigate(navigateInput);
     },
     [
       dispatchRedux,
-      navigateToNavigatorName,
-      navigateToOtherParams,
-      navigateToPairedDeviceParamName,
-      navigateToScreenName,
+      navigateInput,
       navigation,
       onSuccessAddToKnownDevices,
+      pathToDeviceParam,
     ],
   );
 
