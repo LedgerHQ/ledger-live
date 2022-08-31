@@ -82,7 +82,8 @@
     "moreInfo" : "Mehr Infos",
     "buyEth" : "Ethereum kaufen",
     "popular" : "beliebt",
-    "comingSoon" : "In Kürze verfügbar"
+    "comingSoon" : "In Kürze verfügbar",
+    "getSupport" : "Hilfe"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -687,6 +688,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
     }
+  },
+  "crash" : {
+    "title" : "Etwas ist schief gelaufen"
   },
   "bluetooth" : {
     "required" : "Entschuldigung, es sieht so aus, als ob Bluetooth deaktiviert ist",
@@ -2173,6 +2177,10 @@
       "clearCacheButton" : "Löschen",
       "exportLogs" : "Protokolle speichern",
       "exportLogsDesc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
+      "resetThirdPartyData" : "Drittanbieterdaten zurücksetzen",
+      "resetThirdPartyDataDesc" : "Löschen Sie alle lokalen Drittanbieterdaten, die für den Zugriff auf Transaktionsservices von Drittanbietern verwendet wurden.",
+      "resetThirdPartyDataModal" : "Ihre lokalen Drittanbieterdaten löschen",
+      "resetThirdPartyDataModalDesc" : "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
       "hardReset" : "Ledger Live zurücksetzen",
       "hardResetDesc" : "Dies hat keine Auswirkung auf Ihre Vermögenswerte. Löscht alle Daten in Ledger Live, einschließlich Kontodaten, Transaktionsverläufe und Einstellungen. Verwenden Sie Ihr Ledger-Gerät, um Ihre Krypto-Vermögenswerte auf einem leeren Ledger Live neu zu laden und zu verwalten.",
       "repairDevice" : "Reparieren Sie Ihr Ledger-Gerät",
@@ -2557,19 +2565,80 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "Von",
-          "to" : "An",
-          "send" : "Senden",
-          "payoutNetworkFees" : "Auszahlungsgebühren",
-          "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
-          "receive" : "Betrag",
-          "receiveFloat" : "Zu erhaltender Betrag vor Servicegebühren",
-          "provider" : "Anbieter",
-          "method" : "Kurs",
-          "fees" : "Gebühren"
+        "ratesDrawer" : {
+          "title" : "Kurs",
+          "quote" : "Preis",
+          "receive" : "Empfangen"
+        },
+        "placeholder" : "Konto auswählen",
+        "title" : "Umtauschen",
+        "cta" : "Umtauschen",
+        "from" : "Von",
+        "to" : "An",
+        "loading" : "Lade Daten...",
+        "disclaimer" : {
+          "title" : "Allgemeine Geschäftsbedingungen",
+          "desc" : "Indem ich auf „Akzeptieren“ klicke, erkenne ich an und akzeptiere, dass für diesen Dienst ausschließlich die Allgemeinen Geschäftsbedingungen von {{providerName}} gelten.",
+          "tos" : "Allgemeine Geschäftsbedingungen",
+          "accept" : "Akzeptieren"
+        },
+        "notAvailable" : {
+          "title" : "Swap ist in Ihrem Land noch nicht verfügbar",
+          "content" : "Haben Sie noch etwas Geduld,<br/>wir werden diese Funktion sehr bald einführen"
+        },
+        "amount" : {
+          "useMax" : "Max. verwenden",
+          "available" : "Insgesamt verfügbar"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Anbieter",
+            "rate" : "Kurs",
+            "fees" : "Netzgebühren",
+            "target" : "Zielkonto"
+          },
+          "noAccount" : "Erstellen Sie ein Konto um {{name}} zu erhalten",
+          "noAccountCTA" : "Konto hinzufügen"
+        },
+        "select" : {
+          "from" : {
+            "title" : "Von"
+          },
+          "to" : {
+            "title" : "An"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "Sie müssen Ihr KYC vervollständigen",
+            "complete" : "Vervollständigen Sie Ihr KYC",
+            "update" : "KYC aktualisieren",
+            "rejected" : "KYC abgelehnt, erneute Überprüfung starten",
+            "rejectedContactProviderSupport" : "KYC-Prüfung abgelehnt, bitte wenden Sie sich an den {{providerName}} Support",
+            "updateRequired" : "Vervollständigen oder aktualisieren Sie Ihr KYC",
+            "status" : {
+              "pending" : "KYC ausstehend",
+              "approved" : "KYC genehmigt",
+              "closed" : "KYC abgelehnt",
+              "upgradeRequired" : "KYC unzureichend"
+            }
+          },
+          "login" : {
+            "title" : "Anmeldename",
+            "required" : "Sie müssen sich bei diesem Anbieter anmelden",
+            "complete" : "Anmeldename"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Sie müssen bei diesem Anbieter eine Multi-Faktor-Authentifizierung (MFA) einrichten",
+            "complete" : "MFA einrichten"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
+          }
         }
       }
     },
@@ -3024,7 +3093,6 @@
     "retry" : "Wiederholen",
     "done" : "Fertig",
     "finalCta" : "Weiter",
-    "finalCtaForSwap" : "Zurück zu Swap",
     "synchronizing" : "Synchronisieren",
     "synchronizingDesc" : "Ihre Konten werden synchronisiert. Dies kann eine Weile dauern ...",
     "noAccountToCreate" : "<1><0>{{currencyName}}</></> Konto konnte nicht erstellt werden. Starten Sie den Prozess neu und synchronisieren Sie Ihre Konten.",
@@ -3101,7 +3169,17 @@
     "confirmSwap" : {
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
       "alert" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden.",
-      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>"
+      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
+      "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
+    },
+    "swap2" : {
+      "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
+      "amountSent" : "Zu sendender Betrag",
+      "amountReceived" : "Zu erhaltender Betrag",
+      "provider" : "Anbieter",
+      "fees" : "Netzgebühren",
+      "sourceAccount" : "Abbuchungskonto",
+      "targetAccount" : "Zielkonto"
     },
     "confirmSell" : {
       "title" : "Verkaufsvorgang auf Gerät bestätigen",
