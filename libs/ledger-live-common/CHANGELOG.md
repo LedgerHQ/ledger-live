@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 27.1.0-next.2
+
+### Minor Changes
+
+- [#1017](https://github.com/LedgerHQ/ledger-live/pull/1017) [`21ed0bd521`](https://github.com/LedgerHQ/ledger-live/commit/21ed0bd5219a3629abc0bbb547fc4d75f5e71300) Thanks [@sarneijim](https://github.com/sarneijim)! - Add cosmos account banner util
+
+### Patch Changes
+
+- [#1109](https://github.com/LedgerHQ/ledger-live/pull/1109) [`8fe44e12d7`](https://github.com/LedgerHQ/ledger-live/commit/8fe44e12d73fe96636282666dd8f3b02ef96d0e6) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Switch Ethereum Goerli explorer env from staging to prod
+
 ## 27.1.0-next.1
 
 ### Minor Changes
