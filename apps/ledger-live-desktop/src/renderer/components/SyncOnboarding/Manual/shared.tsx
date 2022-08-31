@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex, Text, InfiniteLoader } from "@ledgerhq/react-ui";
+import { Flex, Text, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 
@@ -35,12 +35,22 @@ export const Column = styled(Flex).attrs({
 
 export enum Status {
   inactive = "inactive",
-  active = "active",
+  requested = "requested",
   updateAvailable = "updateAvailable",
+  cancelled = "cancelled",
+  active = "active",
   completed = "completed",
+  failed = "failed",
 }
 
-export type StatusType = "inactive" | "active" | "updateAvailable" | "completed";
+export type StatusType =
+  | "inactive"
+  | "requested"
+  | "updateAvailable"
+  | "cancelled"
+  | "active"
+  | "completed"
+  | "failed";
 
 export const Bullet = ({
   status,
@@ -54,41 +64,28 @@ export const Bullet = ({
   subText?: string;
 }) => {
   const theme = useTheme();
-  const { t } = useTranslation();
 
   return (
-    <>
-      <Row mb={8}>
-        <IconContainer>
-          {status === Status.active ? (
-            <InfiniteLoader />
-          ) : status === Status.completed ? (
-            <Check size={24} color={theme.colors.palette.success.c50} />
-          ) : status === Status.updateAvailable ? (
-            <InfoCircle size={24} color={theme.colors.palette.constant.purple} />
-          ) : (
-            <Text fontSize="20px">{bulletText}</Text>
-          )}
-        </IconContainer>
-        <Column flex="1" ml={4}>
-          <Text variant="body">{text}</Text>
-          {subText && (
-            <Text mt={2} variant="small" color="palette.neutral.c80">
-              {subText}
-            </Text>
-          )}
-        </Column>
-      </Row>
-      {status === Status.updateAvailable && (
-        <Flex mt={2} flex="1" justifyContent="space-around">
-          <Button variant="main" width="45%" padding="10px 20px">
-            {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.downloadUpdate")}
-          </Button>
-          <Button variant="main" outline width="45%" padding="10px 20px">
-            {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.skipUpdate")}
-          </Button>
-        </Flex>
-      )}
-    </>
+    <Row mb={8}>
+      <IconContainer>
+        {status === Status.active ? (
+          <InfiniteLoader />
+        ) : status === Status.completed ? (
+          <Check size={24} color={theme.colors.palette.success.c50} />
+        ) : status === Status.updateAvailable ? (
+          <InfoCircle size={24} color={theme.colors.palette.constant.purple} />
+        ) : (
+          <Text fontSize="20px">{bulletText}</Text>
+        )}
+      </IconContainer>
+      <Column flex="1" ml={4}>
+        <Text variant="body">{text}</Text>
+        {subText && (
+          <Text mt={2} variant="small" color="palette.neutral.c80">
+            {subText}
+          </Text>
+        )}
+      </Column>
+    </Row>
   );
 };

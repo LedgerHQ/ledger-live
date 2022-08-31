@@ -6,8 +6,9 @@ import Illustration from "~/renderer/components/Illustration";
 import { Bullet, Status } from "./shared";
 import Coins from "./assets/coins.png";
 
-// TODO: this is a placeholder, implement the real logic
-
+export type Props = {
+  onComplete: () => void;
+};
 const InstallingApplicationContent = () => {
   const { t } = useTranslation();
 
@@ -26,7 +27,7 @@ const InstallingApplicationContent = () => {
   );
 };
 
-const ApplicationContent = () => {
+const ApplicationContent = ({ onComplete }: Props) => {
   const { t } = useTranslation();
 
   const [isInstallingApplications, setIsInstallingApplications] = useState<boolean>(false);
@@ -51,7 +52,7 @@ const ApplicationContent = () => {
         >
           {t("syncOnboarding.manual.installApplications.install")}
         </Button>
-        <Button variant="main" outline width="45%" padding="10px 20px">
+        <Button variant="main" outline width="45%" padding="10px 20px" onClick={onComplete}>
           {t("syncOnboarding.manual.installApplications.skip")}
         </Button>
       </Flex>
