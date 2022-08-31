@@ -82,7 +82,8 @@
     "moreInfo" : "更多信息",
     "buyEth" : "购买以太坊",
     "popular" : "热门",
-    "comingSoon" : "敬请期待"
+    "comingSoon" : "敬请期待",
+    "getSupport" : "获取支持"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -687,6 +688,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     }
+  },
+  "crash" : {
+    "title" : "出错了"
   },
   "bluetooth" : {
     "required" : "抱歉，蓝牙似乎被禁用了",
@@ -2173,6 +2177,10 @@
       "clearCacheButton" : "清除",
       "exportLogs" : "保存日志",
       "exportLogsDesc" : "出于排除故障目的所需，可能需要保存 Ledger Live 日志。",
+      "resetThirdPartyData" : "重置第三方数据",
+      "resetThirdPartyDataDesc" : "擦除您用于访问第三方交易服务提供方的所有本地第三方数据。",
+      "resetThirdPartyDataModal" : "删除您的本地第三方数据",
+      "resetThirdPartyDataModalDesc" : "删除您的本地第三方数据。您可能需要重新提交了解您的客户 (KYC) 信息并/或重新登录，从而访问我们的合作伙伴提供的服务。",
       "hardReset" : "重置 Ledger Live",
       "hardResetDesc" : "重置不会影响您的资产。清除 Ledger Live 中的所有数据，包括账户数据、交易历史记录和设置信息。使用您的 Ledger 设备，在清空的 Ledger Live 上重新加载并管理您的加密资产。",
       "repairDevice" : "修复您的 Ledger 设备",
@@ -2557,19 +2565,80 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "从",
-          "to" : "到",
-          "send" : "发送",
-          "payoutNetworkFees" : "支出费用",
-          "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
-          "receive" : "数额",
-          "receiveFloat" : "服务费之前收到的数额",
-          "provider" : "提供方",
-          "method" : "汇率",
-          "fees" : "费用"
+        "ratesDrawer" : {
+          "title" : "汇率",
+          "quote" : "报价",
+          "receive" : "接收"
+        },
+        "placeholder" : "选择账户",
+        "title" : "兑换",
+        "cta" : "兑换",
+        "from" : "从",
+        "to" : "到",
+        "loading" : "正在加载……",
+        "disclaimer" : {
+          "title" : "条款与条件",
+          "desc" : "点击“Accept”（接受），即表示我确认并接受此服务仅受 {{providerName}} 的条款和条件约束。",
+          "tos" : "条款和条件",
+          "accept" : "接受"
+        },
+        "notAvailable" : {
+          "title" : "互换在您所在的地区尚不可用",
+          "content" : "请耐心等待，我们很快将推出此功能"
+        },
+        "amount" : {
+          "useMax" : "使用最大值",
+          "available" : "可用总额"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "提供方",
+            "rate" : "汇率",
+            "fees" : "网络费用",
+            "target" : "目标账户"
+          },
+          "noAccount" : "创建一个账户以接收 {{name}}",
+          "noAccountCTA" : "添加账户"
+        },
+        "select" : {
+          "from" : {
+            "title" : "从"
+          },
+          "to" : {
+            "title" : "到"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC（了解您的客户）",
+            "required" : "您需要完成您的 KYC（了解您的客户）",
+            "complete" : "完成 KYC",
+            "update" : "刷新 KYC",
+            "rejected" : "KYC 被拒绝，重新开始验证",
+            "rejectedContactProviderSupport" : "KYC 被拒绝，请联系 {{providerName}} 客服",
+            "updateRequired" : "完成或更新您的 KYC（了解您的客户）",
+            "status" : {
+              "pending" : "KYC 待处理",
+              "approved" : "KYC 已批准",
+              "closed" : "KYC 被拒绝",
+              "upgradeRequired" : "KYC（了解您的客户）不足"
+            }
+          },
+          "login" : {
+            "title" : "登录",
+            "required" : "您需要登录此供应方",
+            "complete" : "登录"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "您需要在此供应方处设置 MFA 多重身份验证",
+            "complete" : "设置 MFA 多重身份验证"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "您的提取请求已被 {{providerName}} 阻止。\n\n请联系对方客服了解更多信息。"
+          }
         }
       }
     },
@@ -3024,7 +3093,6 @@
     "retry" : "重试",
     "done" : "完成",
     "finalCta" : "继续",
-    "finalCtaForSwap" : "返回到互换",
     "synchronizing" : "正在同步",
     "synchronizingDesc" : "您的账户正在同步。请耐心等候……",
     "noAccountToCreate" : "无法创建 <1><0>{{currencyName}}</></> 账户。重新开始该流程并同步您的账户。",
@@ -3101,7 +3169,17 @@
     "confirmSwap" : {
       "title" : "在设备上确认互换操作",
       "alert" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
-      "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>"
+      "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>",
+      "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
+    },
+    "swap2" : {
+      "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
+      "amountSent" : "发送数额",
+      "amountReceived" : "待收数额",
+      "provider" : "提供方",
+      "fees" : "网络费用",
+      "sourceAccount" : "源账户",
+      "targetAccount" : "目标账户"
     },
     "confirmSell" : {
       "title" : "在设备上确认卖出操作",
