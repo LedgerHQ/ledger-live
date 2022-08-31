@@ -179,6 +179,10 @@ const modes = Object.freeze({
     purpose: 1852,
     overridesDerivation: "1852'/1815'/<account>'/<node>/<address>",
   },
+  nearbip44h: {
+    overridesDerivation: "44'/397'/0'/0'/<account>'",
+    mandatoryEmptyAccountSkip: 1,
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
@@ -197,6 +201,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   filecoin: ["gliflegacy", "glif"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
+  near: ["nearbip44h"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
@@ -308,10 +313,10 @@ export const getDerivationScheme = ({
   const coinType = splitFrom
     ? getCryptoCurrencyById(splitFrom).coinType
     : typeof overridesCoinType === "number"
-    ? overridesCoinType
-    : currencyForceCoinType
-    ? currency.coinType
-    : "<coin_type>";
+      ? overridesCoinType
+      : currencyForceCoinType
+        ? currency.coinType
+        : "<coin_type>";
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
@@ -359,6 +364,7 @@ const disableBIP44 = {
   hedera: true,
   cardano: true,
   cardano_testnet: true,
+  near: true,
 };
 const seedIdentifierPath = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
@@ -367,6 +373,7 @@ const seedIdentifierPath = {
   hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (
@@ -529,11 +536,11 @@ export function walletDerivation<R>({
 
           const path = shouldDerivesOnAccount
             ? runAccountDerivationScheme(derivationScheme, currency, {
-                account: index,
-              })
+              account: index,
+            })
             : runDerivationScheme(derivationScheme, currency, {
-                account: index,
-              });
+              account: index,
+            });
           return derivateAddress({
             currency,
             path,

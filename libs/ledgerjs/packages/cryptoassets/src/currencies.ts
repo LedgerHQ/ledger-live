@@ -93,8 +93,18 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         code: "NEAR",
         magnitude: 24,
       },
+      {
+        name: "yoctoNEAR",
+        code: "yoctoNEAR",
+        magnitude: 0,
+      },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        address: "https://explorer.near.org/accounts/$address",
+        tx: "https://explorer.near.org/transactions/$hash",
+      },
+    ],
     keywords: ["near"],
   },
   aeternity: {

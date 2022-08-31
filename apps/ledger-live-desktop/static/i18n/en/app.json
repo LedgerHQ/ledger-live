@@ -167,7 +167,9 @@
       "WITHDRAW": "Withdrawn",
       "REVOKE": "Revoked",
       "ACTIVATE": "Activated",
-      "REGISTER": "Registered"
+      "REGISTER": "Registered",
+      "STAKE": "Staked",
+      "UNSTAKE": "Unstaked"
     }
   },
   "byteSize": {
@@ -3241,6 +3243,144 @@
       }
     }
   },
+  "near": {
+    "account": {
+      "stakedBalance": "Staked balance",
+      "stakedBalanceTooltip": "This amount is currently staked with validators.",
+      "availableBalance": "Withdawable balance",
+      "availableBalanceTooltip": "This amount has been unstaked and is currently able to be withdrawn.",
+      "pendingBalance": "Pending balance",
+      "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
+      "storageUsageBalance": "Minimum balance",
+      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active.",
+      "subHeader": {
+        "cardTitle": "Powered by Figment",
+        "moreInfo": "More info",
+        "drawerTitle": "Powered by Figment",
+        "title": "The NEAR token is now available on Ledger Live",
+        "description": "You can now start to manage your NEAR tokens and secure them through Ledger Live.",
+        "description2": "The NEAR token is native to the NEAR chain and is used for everything from transactions, staking and many upcoming features.",
+        "website": "Powered by Figment"
+      }
+    },
+    "operationDetails": {
+      "extra": {
+        "stakedAmount": "Staked amount"
+      }
+    },
+    "stake": {
+      "emptyState": {
+        "description": "You can earn NEAR rewards by staking your assets.",
+        "info": "How Staking Works",
+        "earnRewards": "Earn rewards"
+      },
+      "table": {
+        "header": "Staking Position(s)",
+        "stake": "Add",
+        "staked": "Staked",
+        "pending": "Pending Release",
+        "available": "Withdrawable"
+      },
+      "unstake": "Unstake",
+      "withdraw": "Withdraw",
+      "activeTooltip": "Staked amounts generate rewards",
+      "inactiveTooltip": "Unstaked amounts do not generate rewards",
+      "commission": "Commission",
+      "totalStake": "Total Stake",
+      "minSafeWarning": "Not enough funds",
+      "flow": {
+        "title": "Stake",
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by staking your NEAR assets to a validator.",
+            "bullet": [
+              "You keep ownership of staked assets",
+              "Stake using your Ledger device",
+              "Assets will be available 52 - 65 hours after unstaking"
+            ],
+            "warning": {
+              "description": "Choose your validator wisely: Part of your staked assets may be irrevocably lost if the validator does not behave appropriately."
+            }
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators",
+            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "unstake": {
+      "disabledTooltip": "There aren't enough staked assets to unstake",
+      "flow": {
+        "title": "Unstake",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "subtitle": "The unstaking process takes <0>52 to 65 hours</0> to finalize.",
+            "warning": "Rewards will be immediately cashed in. The unstaked amount will be available for withdrawal after the <0>52 to 65 hour timelock</0>.",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to unstake"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully unstaked your assets.",
+              "description": "<0>{{amount}}</0> were unstaked from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "disabledTooltip": "There aren't enough available assets to withdraw",
+      "flow": {
+        "title": "Withdraw",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "fields": {
+              "validator": "Validator",
+              "amount": "Amount to withdraw"
+            }
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully withdrawn your assets.",
+              "description": "<0>{{amount}}</0> were withdrawn from <0>{{validator}}</0>",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "delegation": {
     "title": "Earn rewards",
     "header": "Delegation",
@@ -4333,6 +4473,9 @@
       "claimRewardCompound": "validator that will receive the rewards",
       "optIn": "recipient",
       "nominate": "validator",
+      "stake": "validator",
+      "unstake": "validator",
+      "withdraw": "validator",
       "erc721": {
         "transfer": "recipient"
       },
@@ -5076,6 +5219,30 @@
     },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."
+    },
+    "NearNewAccountWarning": {
+      "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
+    },
+    "NearNewNamedAccountError": {
+      "title": "The recipient account is not created yet. It needs to be created in the NEAR wallet."
+    },
+    "NearActivationFeeNotCovered": {
+      "title": "This amount doesn't cover the {{formattedNewAccountStorageCost}} storage cost."
+    },
+    "NearUseAllAmountStakeWarning": {
+      "title": "Ensure you have enough balance left for future transaction fees"
+    },
+    "NearNotEnoughStaked": {
+      "title": "Insuffient staked balance"
+    },
+    "NearNotEnoughAvailable": {
+      "title": "Insufficient withdrawable balance"
+    },
+    "NearRecommendUnstake": {
+      "title": "Please unstake and withdraw funds before emptying the account"
+    },
+    "NearStakingThresholdNotMet": {
+      "title": "Amount needs to be at least {{threshold}}"
     }
   },
   "cryptoOrg": {

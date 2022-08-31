@@ -208,6 +208,8 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "APPROVE":
     case "ACTIVATE":
     case "UNLOCK":
+    case "STAKE":
+    case "UNSTAKE":
       return op.fee.negated();
 
     default:

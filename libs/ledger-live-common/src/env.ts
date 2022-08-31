@@ -80,6 +80,21 @@ const envDefinitions = {
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
   },
+  API_NEAR_ARCHIVE_NODE: {
+    def: "https://near.coin.ledger.com/node/",
+    parser: stringParser,
+    desc: "Archive node endpoint for NEAR",
+  },
+  API_NEAR_INDEXER: {
+    def: "https://near.coin.ledger.com/indexer/",
+    parser: stringParser,
+    desc: "Datahub Indexer API for NEAR",
+  },
+  API_NEAR_WALLET_INDEXER: {
+    def: "https://api.kitwallet.app/",
+    parser: stringParser,
+    desc: "NEAR Wallet API",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
