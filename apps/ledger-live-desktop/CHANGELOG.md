@@ -1,7 +1,5 @@
 # ledger-live-desktop
 
-<<<<<<<<< Temporary merge branch 1
-=========
 ## 2.46.0
 
 ### Minor Changes

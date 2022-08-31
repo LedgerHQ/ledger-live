@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 // TODO should drop this file!,
 // FIXME then drop it, i'm not here for that.
 export type T = (
