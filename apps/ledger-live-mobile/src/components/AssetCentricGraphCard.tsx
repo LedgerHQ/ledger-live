@@ -57,10 +57,7 @@ function AssetCentricGraphCard({
   const { colors } = useTheme();
   const currentScreen = useCurrentRouteName();
   const [itemRange, setTimeRange, timeRangeItems] = useTimeRange();
-  const {
-    countervalueChange,
-    balanceHistory,
-  } = assetPortfolio;
+  const { countervalueChange, balanceHistory } = assetPortfolio;
 
   const currencyUnitValue = balanceHistory[balanceHistory.length - 1];
 
@@ -209,7 +206,7 @@ function AssetCentricGraphCard({
                   ) : (
                     <Flex flexDirection="row" alignItems="center">
                       {hoveredItem && hoveredItem.date ? (
-                        <Text variant={"large"} fontWeight={"semibold"}>
+                        <Text variant={"large"} fontWeight={"semiBold"}>
                           <FormatDate date={hoveredItem.date} />
                         </Text>
                       ) : (
