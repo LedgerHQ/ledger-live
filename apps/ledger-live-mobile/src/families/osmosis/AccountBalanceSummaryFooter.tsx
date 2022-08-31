@@ -16,16 +16,14 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
 
 type Props = {
-  account: Account,
+  account: Account;
 };
 
 type InfoName = "available" | "delegated" | "undelegating";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
-  const [infoName, setInfoName] = useState<InfoName | typeof undefined>(
-    undefined,
-  );
+  const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo();
 
   const { spendableBalance, cosmosResources } = account;
