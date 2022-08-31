@@ -29,7 +29,6 @@ import type {
   RawPlatformAccount,
 } from "@ledgerhq/live-common/platform/rawTypes";
 import { getEnv } from "@ledgerhq/live-common/env";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   isTokenAccount,
   flattenAccounts,
@@ -39,8 +38,9 @@ import {
   findCryptoCurrencyById,
   listAndFilterCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import {
   broadcastTransactionLogic,
   receiveOnAccountLogic,
@@ -49,14 +49,12 @@ import {
   CompleteExchangeUiRequest,
   signMessageLogic,
 } from "@ledgerhq/live-common/platform/logic";
-
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
 import {
   serializePlatformAccount,
   serializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/platform/serializers";
-import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
 import {
   useListPlatformAccounts,
   useListPlatformCurrencies,
@@ -299,20 +297,16 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         { manifest, accounts, tracking },
         accountId,
         transaction,
-        (account: AccountLike, parentAccount: Account | null, { liveTx }) => {
-          const { recipient, ...txData } = liveTx;
-
-          const bridge = getAccountBridge(account, parentAccount);
-          const t = bridge.createTransaction(account);
-          const t2 = bridge.updateTransaction(t, {
-            recipient,
-            subAccountId: isTokenAccount(account) ? account.id : undefined,
-          });
-
-          const tx = bridge.updateTransaction(t2, {
-            userGasLimit: txData.gasLimit,
-            ...txData,
-          });
+        (
+          account: AccountLike,
+          parentAccount: Account | null,
+          {
+            liveTx,
+          }: {
+            liveTx: Partial<Transaction>;
+          },
+        ) => {
+          const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
           return new Promise((resolve, reject) => {
             navigation.navigate(NavigatorName.SignTransaction, {
