@@ -27,7 +27,12 @@ export const prepareMessageToSign = (
   }
 
   if ("prepareMessageToSign" in perFamily[currency.family]) {
-    return perFamily[currency.family].prepareMessageToSign(account, message);
+    return perFamily[currency.family].prepareMessageToSign(
+      currency,
+      freshAddressPath,
+      derivationMode,
+      message
+    );
   }
 
   // Default implementation
