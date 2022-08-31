@@ -1,19 +1,16 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
-import { CloseMedium, HelpMedium } from "@ledgerhq/react-ui/assets/icons";
+import { HelpMedium } from "@ledgerhq/react-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
-import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
+
 import { command } from "~/renderer/commands";
-import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
-import nanoX from "~/renderer/images/nanoX.v3.svg";
-import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
+import OnboardingNavHeader from "../../Onboarding/OnboardingNavHeader";
 import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
@@ -21,6 +18,8 @@ import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import RecoveryContent from "./RecoveryContent";
 import ApplicationContent from "./ApplicationContent";
+import nanoX from "~/renderer/images/nanoX.v3.svg";
+import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 
 const shortResyncDelay = 1000;
 const longResyncDelay = 10000;
@@ -60,10 +59,6 @@ type Step = {
   renderBody?: () => ReactNode;
 };
 
-// The commands needs to be defined outside of the function component, to avoid creating it at
-// each render, and re-triggering a run for their associated hooks
-const getGenuineCheckFromDeviceIdCommand = command("getGenuineCheckFromDeviceId");
-const getLatestAvailableFirmwareFromDeviceIdCommand = command("getLatestAvailableFirmwareFromDeviceId");
 const getOnboardingStatePollingCommand = command("getOnboardingStatePolling");
 
 function nextStepKey(step: StepKey): StepKey {
@@ -79,9 +74,11 @@ const SyncOnboardingManual = () => {
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
 
   const handleSoftwareCheckComplete = useCallback(() => {
-    // TODO: put this line instead
-    // setStepKey(nextStepKey(StepKey.SoftwareCheck));
-    setStepKey(StepKey.Ready);
+    setStepKey(nextStepKey(StepKey.SoftwareCheck));
+  }, []);
+
+  const handleInstallRecommendedApplicationComplete = useCallback(() => {
+    setStepKey(nextStepKey(StepKey.Applications));
   }, []);
 
   const defaultSteps: Step[] = useMemo(
@@ -130,7 +127,9 @@ const SyncOnboardingManual = () => {
          * ApplicationContent contain the UI for
          * the install recommended apps step
          */
-        renderBody: () => <ApplicationContent />,
+        renderBody: () => (
+          <ApplicationContent onComplete={handleInstallRecommendedApplicationComplete} />
+        ),
       },
       {
         key: StepKey.Ready,
@@ -161,26 +160,6 @@ const SyncOnboardingManual = () => {
     pollingPeriodMs,
     stopPolling,
   });
-
-  const deviceId = device?.deviceId ?? "";
-
-  const { genuineState, devicePermissionState, error, resetGenuineCheckState } = useGenuineCheck({
-    getGenuineCheckFromDeviceId: getGenuineCheckFromDeviceIdCommand,
-    isHookEnabled: true,
-    deviceId,
-  });
-
-  console.log(
-    `🏴‍☠️🧙‍♂️: genuineState = ${genuineState}, devicePermissionState = ${devicePermissionState}, error = ${error}`,
-  );
-
-  // const { latestFirmware, error, status } = useGetLatestAvailableFirmware({
-  //   getLatestAvailableFirmwareFromDeviceId: getLatestAvailableFirmwareFromDeviceIdCommand,
-  //   isHookEnabled: true,
-  //   deviceId,
-  // });
-
-  // console.log(`🏝: latestFirmware = ${latestFirmware}, status = ${status}, error = ${error}`);
 
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
@@ -276,6 +255,7 @@ const SyncOnboardingManual = () => {
 
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
+      <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
       <DesyncOverlay isOpen={!!desyncTimer} delay={shortResyncDelay} />
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
@@ -283,10 +263,6 @@ const SyncOnboardingManual = () => {
         isOpen={isTroubleshootingDrawerOpen}
         onClose={() => setTroubleshootingDrawerOpen(false)}
       />
-      <Flex width="100%" justifyContent="flex-end" mt={4} px={4}>
-        <LangSwitcher />
-        <Button ml={4} Icon={CloseMedium} />
-      </Flex>
       <Flex flex={1} px={8} py={4} alignItems="center">
         <Flex flex={1} flexDirection="column">
           <Flex alignItems="center" mb={8}>
