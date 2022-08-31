@@ -28,8 +28,7 @@ export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
     );
   }
   return (
-    (tx as EvmTransactionEIP1559)?.maxFeePerGas
-      ?.plus((tx as EvmTransactionEIP1559)?.maxPriorityFeePerGas)
-      ?.multipliedBy(tx.gasLimit) || new BigNumber(0)
+    (tx as EvmTransactionEIP1559)?.maxFeePerGas?.multipliedBy(tx.gasLimit) ||
+    new BigNumber(0)
   );
 };

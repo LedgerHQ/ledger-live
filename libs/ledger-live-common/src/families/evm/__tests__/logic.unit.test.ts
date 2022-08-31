@@ -90,9 +90,9 @@ describe("EVM Family", () => {
       it("should return the right fee estimation for a 1559 tx", () => {
         const tx = {
           type: 2,
-          gasLimit: new BigNumber(3),
+          gasLimit: new BigNumber(42),
           gasPrice: new BigNumber(23),
-          maxFeePerGas: new BigNumber(100),
+          maxFeePerGas: new BigNumber(10),
           maxPriorityFeePerGas: new BigNumber(40),
         };
 

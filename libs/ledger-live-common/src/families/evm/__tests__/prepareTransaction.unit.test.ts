@@ -87,7 +87,7 @@ describe("EVM Family", () => {
           accountWithBalance,
           transactionWithUseAllAmount
         );
-        const estimatedFees = new BigNumber(42000); // 21000 gasLimit * (1 maxFeePerGas + 1 maxPriorityFeePerGas)
+        const estimatedFees = new BigNumber(21000); // 21000 gasLimit * 1 maxFeePerGas
 
         expect(tx).toEqual({
           ...transactionWithUseAllAmount,

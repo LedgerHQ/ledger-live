@@ -167,11 +167,11 @@ describe("EVM Family", () => {
 
       it("should detect gas being too high in a 1559 tx for the account balance and have an error", async () => {
         const notEnoughBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(4199999) },
+          { ...account, balance: new BigNumber(2099999) },
           eip1559Tx
         );
         const enoughhBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(4200000) },
+          { ...account, balance: new BigNumber(2100000) },
           eip1559Tx
         );
 
@@ -211,11 +211,11 @@ describe("EVM Family", () => {
 
       it("should not detect gas being too high in a 1559 tx when there is no recipient and have an error", async () => {
         const notEnoughBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(4199999) },
+          { ...account, balance: new BigNumber(2099999) },
           { ...eip1559Tx, recipient: "" }
         );
         const enoughhBalanceResponse = await getTransactionStatus(
-          { ...account, balance: new BigNumber(4200000) },
+          { ...account, balance: new BigNumber(2100000) },
           { ...eip1559Tx, recipient: "" }
         );
 
@@ -269,7 +269,7 @@ describe("EVM Family", () => {
         );
       });
 
-      it("should return an 1559 transaction that will use 100% of an account balance", async () => {
+      it("should return a 1559 transaction that will use 100% of an account balance", async () => {
         const res = await getTransactionStatus(
           { ...account, balance: new BigNumber(10000000) },
           {
@@ -278,12 +278,13 @@ describe("EVM Family", () => {
           }
         );
 
+        const estimatedFees = new BigNumber(2100000);
         expect(res).toEqual(
           expect.objectContaining({
             errors: expect.any(Object),
             warnings: expect.any(Object),
-            estimatedFees: new BigNumber(4200000),
-            amount: new BigNumber(10000000).minus(4200000),
+            estimatedFees,
+            amount: new BigNumber(10000000).minus(estimatedFees),
             totalSpent: new BigNumber(10000000),
           })
         );
