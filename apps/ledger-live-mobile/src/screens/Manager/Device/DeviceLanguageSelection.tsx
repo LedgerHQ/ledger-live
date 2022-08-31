@@ -7,9 +7,7 @@ import {
   SelectableList,
   Text,
 } from "@ledgerhq/native-ui";
-import {
-  Language,
-} from "@ledgerhq/types-live";
+import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 
 type Props = {

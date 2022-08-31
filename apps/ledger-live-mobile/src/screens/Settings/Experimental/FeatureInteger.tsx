@@ -11,7 +11,6 @@ import getFontStyle from "../../../components/LText/getFontStyle";
 type Props = {
   name: any;
   readOnly: boolean;
-  // eslint-disable-next-line no-unused-vars
   onChange: (name: string, val: any) => boolean;
   value: number;
   minValue: number;
