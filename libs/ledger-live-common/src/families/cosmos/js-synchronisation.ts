@@ -52,6 +52,10 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
 
     const message: Message = getMainMessage(messages);
 
+    if (message == null) {
+      continue;
+    }
+
     // parse attributes as key:value
     const attributes: { [id: string]: any } = {};
     message.attributes.forEach((item) => (attributes[item.key] = item.value));
@@ -126,7 +130,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
             address: attributes.destination_validator,
             amount: attributes.amount.replace(currency.units[1].code, ""),
           });
-          op.extra.sourceValidator = attributes.source_validator;
+          op.extra.cosmosSourceValidator = attributes.source_validator;
         }
         break;
 
