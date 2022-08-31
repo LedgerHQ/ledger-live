@@ -31,6 +31,7 @@ function OnboardingStepDeviceSelection() {
       });
     } else {
       // TODO: FIX @react-navigation/native using Typescript
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore next-line
       navigation.navigate(ScreenName.OnboardingUseCase, {
         deviceModelId,
