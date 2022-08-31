@@ -29,11 +29,8 @@ type Props = {
     params: SwapRouteParams;
   };
   swap: SwapDataType;
-  // eslint-disable-next-line no-unused-vars
   setFromAccount: (account?: Account | TokenAccount) => void;
-  // eslint-disable-next-line no-unused-vars
   setFromAmount: (amount: BigNumber) => void;
-  // eslint-disable-next-line no-unused-vars
   setToCurrency: (currency?: TokenCurrency | CryptoCurrency) => void;
   useAllAmount: boolean;
   transaction: SwapTransaction;

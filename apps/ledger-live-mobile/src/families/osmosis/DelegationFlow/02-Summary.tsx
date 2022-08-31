@@ -14,7 +14,7 @@ import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-com
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { Transaction } from "@ledgerhq/live-common/families/osmosis/types";
 import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -457,13 +457,7 @@ const Words = ({
   </Text>
 );
 
-const Selectable = ({
-  name,
-  readOnly,
-}: {
-  name: string;
-  readOnly?: boolean;
-}) => {
+const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
   const { colors } = useTheme();
   return (
     <View

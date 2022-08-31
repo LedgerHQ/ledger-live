@@ -45,11 +45,8 @@ const assetMap = {
 type ProviderItemProps = {
   provider: RampLiveAppCatalogEntry;
   onClick: (
-    // eslint-disable-next-line no-unused-vars
     provider: RampLiveAppCatalogEntry,
-    // eslint-disable-next-line no-unused-vars
     icon: string,
-    // eslint-disable-next-line no-unused-vars
     name: string,
   ) => void;
 };

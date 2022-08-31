@@ -40,7 +40,6 @@ type RouteParams = {
   currencies: string[];
   currency: CryptoCurrency | TokenCurrency;
   allowAddAccount?: boolean;
-  // eslint-disable-next-line no-unused-vars
   onSuccess: (account: AccountLike, parentAccount: Account) => void;
   onError: (_: Error) => void;
 };
@@ -52,7 +51,6 @@ const Item = ({
   onSelect,
 }: {
   item: SearchResult;
-  // eslint-disable-next-line no-unused-vars
   onSelect: (account: AccountLike, parentAccount: Account) => void;
 }) => {
   const { account, parentAccount, match } = result;

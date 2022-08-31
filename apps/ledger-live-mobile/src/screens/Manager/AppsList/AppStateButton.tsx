@@ -18,7 +18,6 @@ type Props = {
   isInstalled: boolean;
   setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  // eslint-disable-next-line no-unused-vars
   storageWarning: (appName: string) => void;
 };
 
