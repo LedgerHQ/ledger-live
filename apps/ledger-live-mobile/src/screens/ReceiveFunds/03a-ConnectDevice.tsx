@@ -147,6 +147,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
         request={{ account: mainAccount, tokenCurrency }}
         appName={route.params.appName}
         onSelectDeviceLink={() => setDevice()}
+        onModalHide={() => setDevice()}
         analyticsPropertyFlow="receive"
       />
     </>
