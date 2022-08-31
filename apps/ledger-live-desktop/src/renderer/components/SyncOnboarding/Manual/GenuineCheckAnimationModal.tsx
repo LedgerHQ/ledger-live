@@ -13,7 +13,7 @@ export type Props = {
 
 const GenuineCheckModal = ({ isOpen, deviceId, animationName }: Props) => {
   const theme = useTheme();
-  console.log(theme);
+
   return (
     <Popin position="relative" isOpen={isOpen}>
       <Flex alignItems="center" height="100%" padding="40px">

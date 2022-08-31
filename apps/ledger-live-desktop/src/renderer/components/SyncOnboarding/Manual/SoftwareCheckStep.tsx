@@ -36,7 +36,6 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
   const [availableFirmwareVersion, setAvailableFirmwareVersion] = useState<string>("");
 
   const device = useSelector(getCurrentDevice);
-  console.log(device);
   const deviceId = device?.deviceId ?? "";
 
   const { genuineState, devicePermissionState, error, resetGenuineCheckState } = useGenuineCheck({
@@ -92,7 +91,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
     }
 
     if (status === "available-firmware") {
-      setAvailableFirmwareVersion(latestFirmware?.final.name ?? "");
+      setAvailableFirmwareVersion(latestFirmware?.final.name || "");
       setFirmwareUpdateStatus(SoftwareCheckStatus.updateAvailable);
     }
 
@@ -104,7 +103,6 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
       firmwareUpdateStatus === SoftwareCheckStatus.failed ||
       firmwareUpdateStatus === SoftwareCheckStatus.completed
     ) {
-      console.log("DONE", genuineCheckStatus, firmwareUpdateStatus);
       setTimeout(onComplete, UIDelay);
     }
   }, [isDisplayed, firmwareUpdateStatus, onComplete, status, genuineCheckStatus, latestFirmware]);

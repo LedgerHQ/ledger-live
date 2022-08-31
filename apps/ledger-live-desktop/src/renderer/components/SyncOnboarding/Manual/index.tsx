@@ -71,16 +71,14 @@ function nextStepKey(step: StepKey): StepKey {
 const SyncOnboardingManual = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const [stepKey, setStepKey] = useState<StepKey>(StepKey.SoftwareCheck);
+  const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
 
   const handleSoftwareCheckComplete = useCallback(() => {
-    // TODO: put this line instead
-    // setStepKey(nextStepKey(StepKey.SoftwareCheck));
-    setStepKey(StepKey.Applications);
+    setStepKey(nextStepKey(StepKey.SoftwareCheck));
   }, []);
 
   const handleInstallRecommendedApplicationComplete = useCallback(() => {
-    setStepKey(StepKey.Ready);
+    setStepKey(nextStepKey(StepKey.Applications));
   }, []);
 
   const defaultSteps: Step[] = useMemo(
