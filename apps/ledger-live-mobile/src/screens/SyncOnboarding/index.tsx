@@ -14,11 +14,18 @@ const pollingPeriodMs = 1000;
 
 export const SyncOnboarding = ({ navigation, route }: Props) => {
   const { colors } = useTheme();
-  const { device } = route.params; 
+  const { device } = route.params;
 
-  const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({ device, pollingPeriodMs });
+  const { onboardingState, allowedError, fatalError } =
+    useOnboardingStatePolling({ device, pollingPeriodMs });
 
-  console.log(`📝 OS = ${JSON.stringify(onboardingState)} - allowedError = ${JSON.stringify(allowedError)} - fatalError = ${JSON.stringify(fatalError)}`);
+  console.log(
+    `📝 OS = ${JSON.stringify(
+      onboardingState,
+    )} - allowedError = ${JSON.stringify(
+      allowedError,
+    )} - fatalError = ${JSON.stringify(fatalError)}`,
+  );
 
   return (
     <Flex
