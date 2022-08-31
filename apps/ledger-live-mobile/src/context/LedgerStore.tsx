@@ -22,7 +22,6 @@ export const store = createStore(
 export default class LedgerStoreProvider extends Component<
   {
     onInitFinished: () => void;
-    // eslint-disable-next-line no-unused-vars
     children: (ready: boolean, store: any, initialCountervalues: any) => any;
   },
   {

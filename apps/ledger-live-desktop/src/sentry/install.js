@@ -10,7 +10,7 @@ import "../env";
 // initially we will send errors (anonymized as we don't initially know "userId" neither)
 let shouldSendCallback = () => true;
 
-let productionBuildSampleRate = 0.5;
+let productionBuildSampleRate = 1;
 let tracesSampleRate = 0.005;
 
 if (process.env.SENTRY_SAMPLE_RATE) {
@@ -23,27 +23,35 @@ const ignoreErrors = [
   // networking conditions
   "API HTTP",
   "DisconnectedError",
+  "EACCES",
+  "ECONNABORTED",
   "ECONNREFUSED",
   "ECONNRESET",
   "EHOSTUNREACH",
   "ENETUNREACH",
   "ENOTFOUND",
-  "ETIMEDOUT",
   "ERR_CONNECTION_RESET",
+  "ERR_INTERNET_DISCONNECTED",
+  "ETIMEDOUT",
   "getaddrinfo",
   "HttpError",
   "Network Error",
   "NetworkDown",
-  "NetworkDown",
+  "NetworkError",
   "NotConnectedError",
   "socket disconnected",
   "socket hang up",
   "status code 404",
+  // API issues
+  "LedgerAPI4xx",
+  "LedgerAPI5xx",
   // timeouts
   "ERR_CONNECTION_TIMED_OUT",
   "request timed out",
   "SolanaTxConfirmationTimeout",
+  "timeout",
   "TimeoutError",
+  "Time-out", // e.g.  504 Gateway Time-out
   "TronTransactionExpired", // user waits too long on device, possibly network slowness too
   "WebsocketConnectionError",
   // bad usage of device
@@ -70,6 +78,7 @@ const ignoreErrors = [
   "Received an invalid JSON-RPC message",
   "SwapNoAvailableProviders",
   "TransactionRefusedOnDevice",
+  "Please reimport your Tezos accounts",
 ];
 
 export function init(Sentry: any, opts: any) {

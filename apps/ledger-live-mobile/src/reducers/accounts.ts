@@ -27,6 +27,7 @@ import {
   clearAccount,
   nestedSortAccounts,
   makeEmptyTokenAccount,
+  ImportAccountsReduceInput,
 } from "@ledgerhq/live-common/account/index";
 import type { State } from "./index";
 import accountModel from "../logic/accountModel";
@@ -39,11 +40,11 @@ const initialState: AccountsState = {
 };
 const handlers: Record<string, any> = {
   ACCOUNTS_IMPORT: (s, { state }) => state,
-  ACCOUNTS_USER_IMPORT: (s, { items, selectedAccounts }) => ({
-    active: importAccountsReduce(s.active, {
-      items,
-      selectedAccounts,
-    }),
+  ACCOUNTS_USER_IMPORT: (
+    s: AccountsState,
+    { input }: { input: ImportAccountsReduceInput },
+  ) => ({
+    active: importAccountsReduce(s.active, input),
   }),
   REORDER_ACCOUNTS: (
     state: AccountsState,
