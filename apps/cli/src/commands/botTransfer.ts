@@ -19,10 +19,8 @@ import {
 import { getEnv, setEnv } from "@ledgerhq/live-common/env";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
-import {
-  autoSignTransaction,
-  getImplicitDeviceAction,
-} from "@ledgerhq/live-common/bot/engine";
+import { autoSignTransaction } from "@ledgerhq/live-common/bot/engine";
+import allSpecs from "@ledgerhq/live-common/generated/specs";
 import {
   createImplicitSpeculos,
   releaseSpeculosDevice,
@@ -35,8 +33,20 @@ import {
   loadCountervalues,
 } from "@ledgerhq/live-common/countervalues/logic";
 import type { Account } from "@ledgerhq/types-live";
+import { AppSpec } from "@ledgerhq/live-common/lib/bot/types";
 
 const CONCURRENT = 3;
+
+// TODO improve botTransfer by only using "allSpecs" and introduce a "transferMutation" in the specs for all spec to define how to transfer funds out (as well as UNDELEGATING funds)
+
+function getImplicitDeviceAction(currency) {
+  for (const k in allSpecs) {
+    const spec: AppSpec<any> = allSpecs[k];
+    if (spec.currency === currency) {
+      return spec.genericDeviceAction;
+    }
+  }
+}
 
 export default {
   description:
@@ -257,6 +267,13 @@ export default {
             }
             device = r.device;
 
+            const deviceAction = getImplicitDeviceAction(account.currency);
+            if (!deviceAction) {
+              throw new Error(
+                "no spec found for currency " + account.currency.id
+              );
+            }
+
             const signedOperation = await accountBridge
               .signOperation({
                 account,
@@ -266,7 +283,7 @@ export default {
               .pipe(
                 autoSignTransaction({
                   transport: device.transport,
-                  deviceAction: getImplicitDeviceAction(account.currency),
+                  deviceAction,
                   appCandidate: r.appCandidate,
                   account,
                   transaction,

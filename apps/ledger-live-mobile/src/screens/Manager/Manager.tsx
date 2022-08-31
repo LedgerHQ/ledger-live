@@ -25,13 +25,7 @@ import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-
-export const MANAGER_TABS = {
-  CATALOG: "CATALOG",
-  INSTALLED_APPS: "INSTALLED_APPS",
-};
-
-export type ManagerTab = keyof typeof MANAGER_TABS;
+import { ManagerTab, MANAGER_TABS } from "../../const/manager";
 
 type Props = {
   navigation: StackNavigationProp<any>;

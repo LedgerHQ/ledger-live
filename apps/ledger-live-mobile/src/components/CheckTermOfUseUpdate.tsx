@@ -2,7 +2,14 @@
 import React, { ReactNode, useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
+import {
+  BottomDrawer,
+  Flex,
+  Icons,
+  Link,
+  Text,
+  Divider,
+} from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 
 import { useLocalizedTermsUrl, useTermsAccept } from "../logic/terms";
