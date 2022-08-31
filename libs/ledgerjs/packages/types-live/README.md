@@ -150,10 +150,12 @@ Ledger Live main types.
     *   [Properties](#properties-49)
 *   [FeeStrategy](#feestrategy)
     *   [Properties](#properties-50)
-*   [TransactionStatusCommon](#transactionstatuscommon)
+*   [FeeStrategyTxParameters](#feestrategytxparameters)
     *   [Properties](#properties-51)
-*   [TransactionStatusCommonRaw](#transactionstatuscommonraw)
+*   [TransactionStatusCommon](#transactionstatuscommon)
     *   [Properties](#properties-52)
+*   [TransactionStatusCommonRaw](#transactionstatuscommonraw)
+    *   [Properties](#properties-53)
 
 ### TokenAccount
 
@@ -1137,14 +1139,27 @@ User can have 3 differents choice for their fee
 Most of the time mid is low \* 1.25 and high is low \* 1.5
 They are some exception as eth that got his own meter
 
-Type: {amount: BigNumber, displayedAmount: BigNumber?, label: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unit: Unit?}
+Type: {amount: BigNumber, displayedAmount: BigNumber?, txParameters: [FeeStrategyTxParameters](#feestrategytxparameters)?, label: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), unit: Unit?}
 
 #### Properties
 
 *   `amount` **BigNumber** 
 *   `displayedAmount` **BigNumber?** 
+*   `txParameters` **[FeeStrategyTxParameters](#feestrategytxparameters)?** 
 *   `label` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `unit` **Unit?** 
+
+### FeeStrategyTxParameters
+
+Parameters are used to inform about specific transaction parameters
+Currently used for supplying EIP1559 fee information
+
+Type: {maxBaseFeePerGas: BigNumber?, maxPriorityFeePerGas: BigNumber?}
+
+#### Properties
+
+*   `maxBaseFeePerGas` **BigNumber?** 
+*   `maxPriorityFeePerGas` **BigNumber?** 
 
 ### TransactionStatusCommon
 
