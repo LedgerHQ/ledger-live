@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 27.0.1-nightly.0
+
+### Patch Changes
+
+- [#1092](https://github.com/LedgerHQ/ledger-live/pull/1092) [`058a1af7ff`](https://github.com/LedgerHQ/ledger-live/commit/058a1af7ff463d21afe85d03563b61e1d543c95b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Safe serialization & reconciliation when no account resources
+
+- Updated dependencies [[`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710), [`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710)]:
+  - @ledgerhq/cryptoassets@6.34.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.29.6-nightly.0
+
 ## 27.0.0
 
 ### Major Changes

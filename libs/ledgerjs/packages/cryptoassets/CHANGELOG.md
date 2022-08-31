@@ -1,5 +1,13 @@
 # @ledgerhq/cryptoassets
 
+## 6.34.0-nightly.0
+
+### Minor Changes
+
+- [#995](https://github.com/LedgerHQ/ledger-live/pull/995) [`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update 20220830
+
+* [#995](https://github.com/LedgerHQ/ledger-live/pull/995) [`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update 20220819
+
 ## 6.33.0
 
 ### Minor Changes

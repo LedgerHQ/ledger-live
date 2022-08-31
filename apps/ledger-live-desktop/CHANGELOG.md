@@ -1,7 +1,39 @@
 # ledger-live-desktop
 
-<<<<<<<<< Temporary merge branch 1
-=========
+## 2.47.0-nightly.1
+
+### Minor Changes
+
+- [`3a54cee868`](https://github.com/LedgerHQ/ledger-live/commit/3a54cee868a5a8a7d5919434f373a515b5af4bc7) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
+
+* [#855](https://github.com/LedgerHQ/ledger-live/pull/855) [`2258f1ae8e`](https://github.com/LedgerHQ/ledger-live/commit/2258f1ae8e052761003d2c92efd2e5d00198439e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add banner to external integrations
+
+### Patch Changes
+
+- [`fdf009e526`](https://github.com/LedgerHQ/ledger-live/commit/fdf009e526beb5d6413ebc95666a9df58749336a) Thanks [@chabroA](https://github.com/chabroA)! - Fix handle new-window event in WebPlatformPlayer
+
+- Updated dependencies [[`058a1af7ff`](https://github.com/LedgerHQ/ledger-live/commit/058a1af7ff463d21afe85d03563b61e1d543c95b)]:
+  - @ledgerhq/live-common@27.0.1-nightly.0
+
+# <<<<<<<<< Temporary merge branch 1
+
 ## 2.46.0
 
 ### Minor Changes

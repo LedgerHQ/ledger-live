@@ -1,5 +1,13 @@
 # @ledgerhq/live-cli
 
+## 22.3.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710), [`058a1af7ff`](https://github.com/LedgerHQ/ledger-live/commit/058a1af7ff463d21afe85d03563b61e1d543c95b), [`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710)]:
+  - @ledgerhq/cryptoassets@6.34.0-nightly.0
+  - @ledgerhq/live-common@27.0.1-nightly.0
+
 ## 22.3.0
 
 ### Minor Changes
@@ -132,7 +140,8 @@
   - @ledgerhq/live-common@26.0.0
   - @ledgerhq/cryptoassets@6.32.0
 
->>>>>>>>> Temporary merge branch 2
+> > > > > > > > > Temporary merge branch 2
+
 ## 22.2.0-next.2
 
 ### Patch Changes
