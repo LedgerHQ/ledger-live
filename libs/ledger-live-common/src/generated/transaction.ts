@@ -6,6 +6,7 @@ import cosmos from "../families/cosmos/transaction";
 import crypto_org from "../families/crypto_org/transaction";
 import elrond from "../families/elrond/transaction";
 import ethereum from "../families/ethereum/transaction";
+import evm from "../families/evm/transaction";
 import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
 import neo from "../families/neo/transaction";
@@ -26,6 +27,7 @@ export default {
   crypto_org,
   elrond,
   ethereum,
+  evm,
   filecoin,
   hedera,
   neo,

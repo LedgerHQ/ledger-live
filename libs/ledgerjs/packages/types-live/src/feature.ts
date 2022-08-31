@@ -9,6 +9,16 @@ export type FeatureId =
   | "ptxSmartRouting"
   | "currencyOsmosis"
   | "currencyOsmosisMobile"
+  | "currencyFantom"
+  | "currencyMoonbeam"
+  | "currencyCronos"
+  | "currencySongbird"
+  | "currencyFlare"
+  | "currencyFantomMobile"
+  | "currencyMoonbeamMobile"
+  | "currencyCronosMobile"
+  | "currencySongbirdMobile"
+  | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | string;
 
