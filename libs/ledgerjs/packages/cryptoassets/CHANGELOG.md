@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 6.34.0-next.1
+
+### Minor Changes
+
+- [#669](https://github.com/LedgerHQ/ledger-live/pull/669) [`b615140ba2`](https://github.com/LedgerHQ/ledger-live/commit/b615140ba2e326e1466d15f123d412ea90db3754) Thanks [@andyhass](https://github.com/andyhass)! - Add Celo Staking
+
 ## 6.34.0-next.0
 
 ### Minor Changes

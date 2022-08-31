@@ -77,6 +77,7 @@
     "pnpm-utils": "1.0.0"
   },
   "changesets": [
+    "big-panthers-promise",
     "breezy-bananas-pull",
     "cyan-cats-begin",
     "dull-donkeys-agree",
@@ -84,10 +85,12 @@
     "dull-moles-invite",
     "fluffy-hairs-promise",
     "great-donkeys-fix",
+    "happy-elephants-turn",
     "modern-ligers-cry",
     "new-trains-float",
     "pink-games-dance",
     "red-spies-shake",
+    "rich-ghosts-live",
     "rotten-seals-mix",
     "rude-cows-glow",
     "strong-penguins-beam",
