@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.47.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`685348dd35`](https://github.com/LedgerHQ/ledger-live/commit/685348dd351181a9ed7f23cedb3e3d289b16fe9e), [`dd538c3723`](https://github.com/LedgerHQ/ledger-live/commit/dd538c3723853334ce19a89353f20766432d12fd), [`0601b6541f`](https://github.com/LedgerHQ/ledger-live/commit/0601b6541f10635aea72f916626432a334aa49fa)]:
+  - @ledgerhq/live-common@27.1.0-next.3
+
+## 2.47.0-next.2
+
+### Minor Changes
+
+- [#1017](https://github.com/LedgerHQ/ledger-live/pull/1017) [`21ed0bd521`](https://github.com/LedgerHQ/ledger-live/commit/21ed0bd5219a3629abc0bbb547fc4d75f5e71300) Thanks [@sarneijim](https://github.com/sarneijim)! - Add cosmos account banner in LLD
+
+### Patch Changes
+
+- Updated dependencies [[`8fe44e12d7`](https://github.com/LedgerHQ/ledger-live/commit/8fe44e12d73fe96636282666dd8f3b02ef96d0e6), [`21ed0bd521`](https://github.com/LedgerHQ/ledger-live/commit/21ed0bd5219a3629abc0bbb547fc4d75f5e71300)]:
+  - @ledgerhq/live-common@27.1.0-next.2
+
 ## 2.47.0-next.1
 
 ### Minor Changes
@@ -54,6 +72,14 @@
 
 - Updated dependencies [[`7e812a738d`](https://github.com/LedgerHQ/ledger-live/commit/7e812a738db718200138dcb9b7bcc2f6dd0ddd6f), [`058a1af7ff`](https://github.com/LedgerHQ/ledger-live/commit/058a1af7ff463d21afe85d03563b61e1d543c95b), [`d6634bc0b7`](https://github.com/LedgerHQ/ledger-live/commit/d6634bc0b720d8a13f3681caf33e2f23d5c64968), [`5da717c523`](https://github.com/LedgerHQ/ledger-live/commit/5da717c523db7678edeb0f86bdfa88256dfe96c4)]:
   - @ledgerhq/live-common@27.0.1-next.0
+  
+## 2.46.1
+
+### Patch Changes
+
+- [#1082](https://github.com/LedgerHQ/ledger-live/pull/1082) [`7b3026ba25`](https://github.com/LedgerHQ/ledger-live/commit/7b3026ba25a30d0733defe5459a37f9c6b6b1772) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fixes analytics support
+
+* [#1078](https://github.com/LedgerHQ/ledger-live/pull/1078) [`3aafec3d8b`](https://github.com/LedgerHQ/ledger-live/commit/3aafec3d8becd74a96421540388e2460dd0e4627) Thanks [@chabroA](https://github.com/chabroA)! - Fix handle new-window event in WebPlatformPlayer
 
 ## 2.46.0
 
