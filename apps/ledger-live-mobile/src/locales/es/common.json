@@ -82,7 +82,8 @@
     "moreInfo" : "Más información",
     "buyEth" : "Comprar Ethereum",
     "popular" : "popular",
-    "comingSoon" : "Próximamente"
+    "comingSoon" : "Próximamente",
+    "getSupport" : "Obtener ayuda"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -687,6 +688,9 @@
     "StellarSourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para realizar transacciones de Stellar."
     }
+  },
+  "crash" : {
+    "title" : "Algo ha salido mal"
   },
   "bluetooth" : {
     "required" : "Parece que tu Bluetooth está deshabilitado",
@@ -2173,6 +2177,10 @@
       "clearCacheButton" : "Borrar",
       "exportLogs" : "Guardar registros",
       "exportLogsDesc" : "Puede ser necesario guardar los registros de Ledger Live para solucionar problemas.",
+      "resetThirdPartyData" : "Restablecer datos de terceros",
+      "resetThirdPartyDataDesc" : "Borra todos los datos locales de terceros que se usan para acceder al proveedor de transacciones de terceros.",
+      "resetThirdPartyDataModal" : "Eliminar los datos locales de terceros",
+      "resetThirdPartyDataModalDesc" : "Elimina los datos locales de terceros. Es posible que tengas que volver a realizar el KYC o iniciar sesión de nuevo para acceder a los servicios proporcionados por nuestros socios.",
       "hardReset" : "Restablecer Ledger Live",
       "hardResetDesc" : "Esto no tiene ningún impacto sobre tus activos. Borra todos los datos de Ledger Live, incluidos los datos de cuentas, historial de transacciones y ajustes. Utiliza tu dispositivo Ledger para volver a cargar y administrar tus activos cripto a un Ledger Live vacío.",
       "repairDevice" : "Repara tu dispositivo Ledger",
@@ -2557,19 +2565,80 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "De",
-          "to" : "A",
-          "send" : "Enviar",
-          "payoutNetworkFees" : "Tarifas de pago",
-          "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
-          "receive" : "Importe",
-          "receiveFloat" : "Importe a recibir antes de aplicar las tarifas de servicios",
-          "provider" : "Proveedor",
-          "method" : "Tasa",
-          "fees" : "Tarifas"
+        "ratesDrawer" : {
+          "title" : "Tasa",
+          "quote" : "Cotización",
+          "receive" : "Recibir"
+        },
+        "placeholder" : "Seleccionar cuenta",
+        "title" : "Cambia",
+        "cta" : "Cambia",
+        "from" : "De",
+        "to" : "A",
+        "loading" : "Cargando...",
+        "disclaimer" : {
+          "title" : "Términos y condiciones",
+          "desc" : "Al hacer clic en \"Aceptar\", reconozco y acepto que este servicio está regulado exclusivamente por los Términos y Condiciones de {{providerName}}.",
+          "tos" : "Términos y Condiciones",
+          "accept" : "Aceptar"
+        },
+        "notAvailable" : {
+          "title" : "La permuta aún no está disponible en tu área",
+          "content" : "Ten un poco más de paciencia,<br/>implementaremos esta función muy pronto"
+        },
+        "amount" : {
+          "useMax" : "Utilizar máx",
+          "available" : "Total disponible"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Proveedor",
+            "rate" : "Tasa",
+            "fees" : "Tarifas de red",
+            "target" : "Cuenta de destino"
+          },
+          "noAccount" : "Crear una cuenta para recibir {{name}}",
+          "noAccountCTA" : "Agregar cuenta"
+        },
+        "select" : {
+          "from" : {
+            "title" : "De"
+          },
+          "to" : {
+            "title" : "A"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "Debes completar tu KYC",
+            "complete" : "Completa tu KYC",
+            "update" : "Actualiza tu KYC",
+            "rejected" : "KYC rechazado, vuelve a iniciar la verificación",
+            "rejectedContactProviderSupport" : "KYC rechazado, ponte en contacto con el soporte de {{providerName}}",
+            "updateRequired" : "Completa o actualiza tu KYC",
+            "status" : {
+              "pending" : "KYC pendiente",
+              "approved" : "KYC aprobado",
+              "closed" : "KYC rechazado",
+              "upgradeRequired" : "KYC insuficiente"
+            }
+          },
+          "login" : {
+            "title" : "Inicia sesión",
+            "required" : "Necesitas iniciar sesión con este proveedor",
+            "complete" : "Inicia sesión"
+          },
+          "mfa" : {
+            "title" : "Autenticación multifactor",
+            "required" : "Necesitas configurar la MFA con este proveedor",
+            "complete" : "Configurar la MFA"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "{{providerName}} ha bloqueado tu retiro.\n\n Para obtener más información, ponte en contacto con su equipo de soporte."
+          }
         }
       }
     },
@@ -3024,7 +3093,6 @@
     "retry" : "Reintentar",
     "done" : "Listo",
     "finalCta" : "Continuar",
-    "finalCtaForSwap" : "Volver a Permuta",
     "synchronizing" : "Sincronizando",
     "synchronizingDesc" : "Las cuentas se están sincronizando. Puede llevar unos momentos...",
     "noAccountToCreate" : "No fue posible crear la cuenta <1><0>{{currencyName}}</></>. Reinicia el proceso y sincroniza tus cuentas.",
@@ -3101,7 +3169,17 @@
     "confirmSwap" : {
       "title" : "Confirma la operación de permuta en tu dispositivo",
       "alert" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
-      "acceptTerms" : "Al validar esta transacción, acepto los <0>términos de uso de\n<0> {{provider}}</0>"
+      "acceptTerms" : "Al validar esta transacción, acepto los <0>términos de uso de\n<0> {{provider}}</0>",
+      "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
+    },
+    "swap2" : {
+      "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
+      "amountSent" : "Importe a enviar",
+      "amountReceived" : "Importe a recibir",
+      "provider" : "Proveedor",
+      "fees" : "Tarifas de red",
+      "sourceAccount" : "Cuenta de origen",
+      "targetAccount" : "Cuenta de destino"
     },
     "confirmSell" : {
       "title" : "Confirma la operación de venta en el dispositivo",
