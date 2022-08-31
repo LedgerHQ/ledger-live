@@ -75,6 +75,16 @@ import MODAL_SOLANA_DELEGATION_DEACTIVATE from "../families/solana/DelegationDea
 import MODAL_SOLANA_DELEGATION_REACTIVATE from "../families/solana/DelegationReactivateFlowModal";
 import MODAL_SOLANA_DELEGATION_WITHDRAW from "../families/solana/DelegationWithdrawFlowModal";
 
+import MODAL_CELO_REWARDS_INFO from "../families/celo/EarnRewardsInfoModal/EarnRewardsInfoModal";
+import MODAL_CELO_MANAGE from "../families/celo/ManageModal/ManageModal";
+import MODAL_CELO_LOCK from "../families/celo/LockFlowModal";
+import MODAL_CELO_UNLOCK from "../families/celo/UnlockFlowModal";
+import MODAL_CELO_VOTE from "../families/celo/VoteFlowModal";
+import MODAL_CELO_SIMPLE_OPERATION from "../families/celo/SimpleOperationFlowModal/SimpleOperationFlowModal";
+import MODAL_CELO_WITHDRAW from "../families/celo/WithdrawFlowModal";
+import MODAL_CELO_ACTIVATE from "../families/celo/ActivateFlowModal";
+import MODAL_CELO_REVOKE from "../families/celo/RevokeFlowModal";
+
 // Lending
 import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
 import MODAL_LEND_ENABLE_INFO from "../screens/lend/modals/EnableInfoModal";
@@ -144,6 +154,15 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SOLANA_DELEGATION_DEACTIVATE,
   MODAL_SOLANA_DELEGATION_REACTIVATE,
   MODAL_SOLANA_DELEGATION_WITHDRAW,
+  MODAL_CELO_REWARDS_INFO,
+  MODAL_CELO_MANAGE,
+  MODAL_CELO_LOCK,
+  MODAL_CELO_UNLOCK,
+  MODAL_CELO_VOTE,
+  MODAL_CELO_SIMPLE_OPERATION,
+  MODAL_CELO_WITHDRAW,
+  MODAL_CELO_ACTIVATE,
+  MODAL_CELO_REVOKE,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_RECOVERY_SEED_WARNING,
