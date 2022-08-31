@@ -16,7 +16,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
 
 type Props = {
-  account: Account,
+  account: Account;
 };
 
 type InfoName = "available" | "delegated" | "undelegating";

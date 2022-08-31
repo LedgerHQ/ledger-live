@@ -33,7 +33,6 @@ type RouteParams = {
   transaction: Transaction;
   status: TransactionStatus;
   appName?: string;
-  // eslint-disable-next-line no-unused-vars
   onSuccess: (payload: any) => void;
   onError: (_: Error) => void;
 };

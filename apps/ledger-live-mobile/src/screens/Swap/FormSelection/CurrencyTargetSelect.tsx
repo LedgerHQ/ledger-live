@@ -20,7 +20,6 @@ type Props = {
     params: SwapRouteParams;
   };
   swap: SwapDataType;
-  // eslint-disable-next-line no-unused-vars
   setToCurrency: (currency?: TokenCurrency | CryptoCurrency) => void;
   providers: any;
   provider: any;
