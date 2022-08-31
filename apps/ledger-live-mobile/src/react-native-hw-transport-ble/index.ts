@@ -1,5 +1,3 @@
-// @flow
-
 import Config from "react-native-config";
 import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
 import makeMock from "./makeMock";

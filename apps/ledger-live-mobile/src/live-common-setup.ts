@@ -1,4 +1,3 @@
-// @flow
 import Config from "react-native-config";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
@@ -22,11 +21,8 @@ import "./experimental";
 import logger from "./logger";
 
 setGlobalOnBridgeError(e => logger.critical(e));
-
 setDeviceMode("polling");
-
 setPlatformVersion("1.1.0");
-
 setSupportedCurrencies([
   "bitcoin",
   "ethereum",
@@ -80,22 +76,21 @@ if (Config.VERBOSE) {
 }
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
-
 if (Config.FORCE_PROVIDER) setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
-
 // Add support of HID (experimental until we stabilize it)
-
 registerTransportModule({
   id: "hid",
-
   // prettier-ignore
-  open: id => { // eslint-disable-line consistent-return
+  // eslint-disable-next-line consistent-return
+  open: id => {
+    // eslint-disable-line consistent-return
     if (id.startsWith("usb|")) {
       const devicePath = JSON.parse(id.slice(4));
-      return retry(() => HIDTransport.open(devicePath), { maxRetry: 2 });
+      return retry(() => HIDTransport.open(devicePath), {
+        maxRetry: 2
+      });
     }
   },
-
   disconnect: id =>
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
@@ -112,9 +107,7 @@ registerTransportModule({
     }),
   ),
 });
-
 // Add dev mode support of an http proxy
-
 let DebugHttpProxy;
 const httpdebug: TransportModule = {
   id: "httpdebug",
@@ -125,6 +118,7 @@ const httpdebug: TransportModule = {
       ? Promise.resolve() // nothing to do
       : null,
 };
+
 if (__DEV__ && Config.DEVICE_PROXY_URL) {
   DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
   httpdebug.discovery = Observable.create(o => DebugHttpProxy.listen(o)).pipe(
@@ -137,10 +131,9 @@ if (__DEV__ && Config.DEVICE_PROXY_URL) {
 } else {
   DebugHttpProxy = withStaticURLs([]);
 }
+
 registerTransportModule(httpdebug);
-
 // BLE is always the fallback choice because we always keep raw id in it
-
 registerTransportModule({
   id: "ble",
   open: id => BluetoothTransport.open(id),
@@ -154,4 +147,5 @@ if (process.env.NODE_ENV === "production") {
       : `Live-Android/${VersionNumber.appVersion}`;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
