@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import Slider from "react-native-slider";
 import { useTheme } from "@react-navigation/native";
@@ -13,10 +12,8 @@ import {
   projectRangeIndex,
 } from "@ledgerhq/live-common/range";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import { counterValueCurrencySelector } from "../../reducers/settings";
 
 const FeeSlider = React.memo(({ value, onChange, range }: *) => {
   const { colors } = useTheme();
@@ -62,12 +59,6 @@ export default function EditFeeUnitEthereum({
   const unit = units.length > 1 ? units[1] : units[0];
 
   const feeCustomUnit = transaction.feeCustomUnit;
-  const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const { fiatAmount, fiatUnit } = useSendAmount({
-    account,
-    fiatCurrency,
-    cryptoAmount: feeAmount,
-  });
 
   const onChangeF = useCallback(
     value => {
@@ -99,8 +90,6 @@ export default function EditFeeUnitEthereum({
                 unit={unit || feeCustomUnit}
                 value={feeAmount}
               />
-              <> ≈ </>
-              <CurrencyUnitValue unit={fiatUnit} value={fiatAmount} />
             </LText>
           </View>
         </View>

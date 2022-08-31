@@ -46,6 +46,7 @@ import { LendingEnableFlowParamsList } from "../../components/RootNavigator/type
 import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
 import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import GasLimitSection from "./GasLimitSection";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<
@@ -273,6 +274,12 @@ function SendSummary({ navigation, route }: Props) {
               <TranslatedError error={error} />
             </LText>
           </View>
+        ) : null}
+        {transaction.family === "ethereum" ? (
+          <>
+            <SectionSeparator lineColor={colors.lightFog} />
+            <GasLimitSection transaction={transaction} />
+          </>
         ) : null}
         {!amount.eq(totalSpent) && !hideTotal ? (
           <>

@@ -20,12 +20,14 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import BigNumber from "bignumber.js";
 import LText from "./LText";
 import SummaryRow from "../screens/SendFunds/SummaryRow";
-import CheckBox from "./CheckBox";
 import CounterValue from "./CounterValue";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import SectionSeparator from "./SectionSeparator";
 import BottomModal from "./BottomModal";
 import Info from "../icons/Info";
+import TachometerSlow from "../icons/TachometerSlow";
+import TachometerMedium from "../icons/TachometerMedium";
+import TachometerFast from "../icons/TachometerFast";
 import NetworkFeeInfo from "./NetworkFeeInfo";
 
 type Props = {
@@ -107,10 +109,13 @@ export default function SelectFeesStrategy({
         ]}
       >
         <View style={styles.leftBox}>
-          <CheckBox
-            onChange={() => onPressStrategySelect(item)}
-            isChecked={feesStrategy === item.label}
-          />
+          {item.label === "slow" ? (
+            <TachometerSlow size={16} color={colors.grey} />
+          ) : item.label === "medium" ? (
+            <TachometerMedium size={16} color={colors.grey} />
+          ) : (
+            <TachometerFast size={16} color={colors.grey} />
+          )}
           <LText semiBold style={styles.feeLabel}>
             {t(`fees.speed.${item.label}`)}
           </LText>
@@ -154,7 +159,7 @@ export default function SelectFeesStrategy({
         <SectionSeparator lineColor={colors.lightFog} />
         <SummaryRow
           onPress={toggleNetworkFeeHelpModal}
-          title={t("send.summary.fees")}
+          title={t("send.summary.maxEstimatedFee")}
           additionalInfo={
             <View>
               <Info size={12} color={colors.grey} />
