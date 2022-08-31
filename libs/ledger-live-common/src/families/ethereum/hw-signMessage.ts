@@ -35,16 +35,15 @@ export const messageHash = (message: EIP712Message): Buffer => {
 };
 
 function tryConvertToJSON(message: string): string | EIP712Message {
-  const mess = Buffer.from(message, "hex").toString();
   try {
-    const parsedMessage = JSON.parse(mess);
+    const parsedMessage = JSON.parse(message);
     if (isEIP712Message(parsedMessage)) {
       return parsedMessage as EIP712Message;
     }
   } catch {
     // Not a JSON message
   }
-  return mess;
+  return message;
 }
 
 export const prepareMessageToSign = (
@@ -53,23 +52,24 @@ export const prepareMessageToSign = (
   derivationMode: DerivationMode,
   message: string
 ): MessageData | TypedMessageData => {
-  const parsedMessage = tryConvertToJSON(message);
+  const hexToStringMessage = Buffer.from(message, "hex").toString();
+  const parsedMessage = tryConvertToJSON(hexToStringMessage);
 
+  const messageData = {
+    currency,
+    path,
+    derivationMode,
+    rawMessage: "0x" + message,
+  };
   if (typeof parsedMessage === "string") {
     return {
-      currency,
-      path,
-      derivationMode,
+      ...messageData,
       message: parsedMessage,
-      rawMessage: "0x" + message,
     };
   } else {
     return {
-      currency,
-      path,
-      derivationMode,
+      ...messageData,
       message: parsedMessage,
-      rawMessage: "0x" + message,
       hashes: {
         stringHash: "",
         domainHash: bufferToHex(domainHash(parsedMessage)),
@@ -84,13 +84,10 @@ const signMessage: EthSignMessage = async (
   { path, message, rawMessage }
 ) => {
   const eth = new Eth(transport);
-  const parsedMessage = (() => {
-    try {
-      return JSON.parse(message as string);
-    } catch (e) {
-      return message;
-    }
-  })();
+  let parsedMessage = message;
+  if (typeof message === "string") {
+    parsedMessage = tryConvertToJSON(message);
+  }
 
   let result: Awaited<ReturnType<typeof eth.signPersonalMessage>>;
   if (typeof parsedMessage === "string") {
