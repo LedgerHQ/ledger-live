@@ -57,7 +57,6 @@ type RouteParams = {
   device?: Device;
   currency?: Currency;
   createTokenAccount?: boolean;
-  // eslint-disable-next-line no-unused-vars
   onSuccess?: (address?: string) => void;
   onError?: () => void;
 };
