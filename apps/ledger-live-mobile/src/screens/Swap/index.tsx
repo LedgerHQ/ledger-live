@@ -62,9 +62,7 @@ export type SwapRouteParams = {
   rate?: ExchangeRate;
   rates?: ExchangeRate[];
   tradeMethod?: string;
-  // eslint-disable-next-line no-unused-vars
   setAccount?: (account?: Account | TokenAccount) => void;
-  // eslint-disable-next-line no-unused-vars
   setCurrency?: (currency?: TokenCurrency | CryptoCurrency) => void;
 };
 export const ratesExpirationThreshold = 60000;

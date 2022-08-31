@@ -2183,6 +2183,7 @@ var logFileName = "__turbo_server.log";
 
 // src/cleanup.ts
 var pid = Number.parseInt((0, import_core.getState)("pidToKill"));
+var cleanupCacheFolder = (0, import_core.getState)("cleanupCacheFolder") === "true";
 (0, import_core.info)("Server pid: " + pid);
 try {
   if (!isNaN(pid)) {
@@ -2201,6 +2202,9 @@ try {
         flag: "r"
       })
     );
+  }
+  if (cleanupCacheFolder) {
+    fs.rmdirSync(absoluteCacheDirectory);
   }
 } catch (err) {
   console.error(err);

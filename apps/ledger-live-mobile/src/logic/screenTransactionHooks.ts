@@ -51,9 +51,7 @@ export const useSignWithDevice = ({
   account: AccountLike;
   parentAccount: Account | null | undefined;
   updateAccountWithUpdater: (
-    // eslint-disable-next-line no-unused-vars
     arg0: string,
-    // eslint-disable-next-line no-unused-vars
     arg1: (arg0: Account) => Account,
   ) => void;
 }) => {
@@ -278,7 +276,6 @@ export function useSignedTxHandler({
 export function useSignedTxHandlerWithoutBroadcast({
   onSuccess,
 }: {
-  // eslint-disable-next-line no-unused-vars
   onSuccess: (signedOp: any) => void;
 }) {
   const navigation = useNavigation();

@@ -959,7 +959,7 @@
       "terms": {
         "title": "Lend Crypto",
         "subtitle": "Lend assets on the Compound protocol",
-        "description": "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger acccount.",
+        "description": "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
         "switchLabel": "<1>I have read and agree with the </1><0>Terms of Use</0><1>.</1>"
       },
       "steps": {
@@ -2873,7 +2873,7 @@
           "steps": {
             "confirmation": {
               "success": {
-                "title": "You have successfully activated you delegation."
+                "title": "You have successfully activated your delegation."
               }
             }
           }
@@ -2885,7 +2885,7 @@
           "steps": {
             "confirmation": {
               "success": {
-                "title": "You have successfully reactivated you delegation."
+                "title": "You have successfully reactivated your delegation."
               }
             }
           }

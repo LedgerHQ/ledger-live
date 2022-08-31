@@ -46,7 +46,8 @@ const listSupportedTokens = () =>
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { filterCurrencyIds = [] } = route.params || {};
-  const currencyOsmosis = useFeature("currencyOsmosis");
+  const currencyOsmosis = useFeature("currencyOsmosisMobile");
+
   const cryptoCurrencies = useMemo(() => {
     const currencies = listSupportedCurrencies()
       .concat(listSupportedTokens())
