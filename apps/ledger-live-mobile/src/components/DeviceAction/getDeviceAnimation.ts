@@ -164,7 +164,7 @@ const animations: { [modelId in DeviceModelId]: any } = {
   },
 };
 
-export type GetDeviceAnimationProps = {
+export type GetDeviceAnimationArgs = {
   theme?: "light" | "dark";
   key: string;
   device: Device;
@@ -175,7 +175,7 @@ export default function getDeviceAnimation({
   theme = "light",
   key,
   device,
-}: GetDeviceAnimationProps) {
+}: GetDeviceAnimationArgs) {
   const modelId = (Config.OVERRIDE_MODEL_ID as DeviceModelId) || device.modelId;
   const wired = Config.OVERRIDE_WIRED || device.wired;
 
