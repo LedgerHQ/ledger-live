@@ -30,6 +30,11 @@ const getBlankOperation = (tx, fees, id) => ({
   transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
 });
 
+type Message = {
+  type: string;
+  attributes: { [key: string]: any };
+};
+
 const txToOps = (info: any, id: string, txs: any): Operation[] => {
   const { address, currency } = info;
   const ops: Operation[] = [];
@@ -45,9 +50,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
 
     const messages = tx.logs.map((log) => log.events).flat(1);
 
-    const mainOperationMessageType = getMainMessageType(messages);
-
-    const message = messages.find((m) => m.type === mainOperationMessageType);
+    const message: Message = getMainMessage(messages);
 
     // parse attributes as key:value
     const attributes: { [id: string]: any } = {};
@@ -158,7 +161,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
   return ops;
 };
 
-const getMainMessageType = (messages: { type: string }[]): string => {
+const getMainMessage = (messages: Message[]): Message => {
   const messagePriorities: string[] = [
     "withdraw_rewards",
     "unbound",
@@ -167,10 +170,10 @@ const getMainMessageType = (messages: { type: string }[]): string => {
     "transfer",
   ];
   const sortedTypes = messages
-    .map((message) => message.type)
-    .filter((type) => messagePriorities.includes(type))
+    .filter((m) => messagePriorities.includes(m.type))
     .sort(
-      (a, b) => messagePriorities.indexOf(a) - messagePriorities.indexOf(b)
+      (a, b) =>
+        messagePriorities.indexOf(a.type) - messagePriorities.indexOf(b.type)
     );
   return sortedTypes[0];
 };
