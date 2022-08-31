@@ -232,7 +232,8 @@ const SyncOnboardingManual = () => {
 
   useEffect(() => {
     if (!fatalError) {
-      return;
+      // TODO: commented because of damned linter
+      // return;
     }
     // TODO: handle fatal errors
     // setTroubleshootingDrawerOpen(true);
