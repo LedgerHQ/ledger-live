@@ -1,16 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import { useTranslation } from "react-i18next";
 
 import { completeOnboarding } from "../../actions/settings";
 import { NavigatorName } from "../../const";
-import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
+import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Illustration from "../../images/illustration/Illustration";
-import DeviceDark from "../../../images/illustration/Dark/_000_PLACEHOLDER.png";
-import DeviceLight from "../../../images/illustration/Light/_000_PLACEHOLDER.png";
+import DeviceDark from "../../images/illustration/Dark/_000_PLACEHOLDER.png";
+import DeviceLight from "../../images/illustration/Light/_000_PLACEHOLDER.png";
 
 const redirectDelay = 5000;
 
@@ -20,7 +19,6 @@ type Props = StackScreenProps<
 >;
 
 const CompletionScreen = ({ navigation }: Props) => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [delay, setDelay] = useState<NodeJS.Timeout | null>(null);
 

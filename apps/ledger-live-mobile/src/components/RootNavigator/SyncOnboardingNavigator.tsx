@@ -18,29 +18,30 @@ const Stack = createStackNavigator<SyncOnboardingStackParamList>();
 
 export const SyncOnboardingNavigator = () => {
   const { colors } = useTheme();
-  const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavigatorConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
 
   return (
-  <Stack.Navigator
-    screenOptions={{
-      ...stackNavigatorConfig,
-      headerShown: false,
-    }}
-  >
-    <Stack.Screen
-      name={ScreenName.DeviceModelSelection as "DeviceModelSelection"}
-      component={DeviceModelSelection}
-    />
-    <Stack.Screen
-      name={ScreenName.SyncOnboardingCompanion as "SyncOnboardingCompanion"}
-      component={SyncOnboarding}
-    />
-    <Stack.Screen
-      name={ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion"}
-      component={CompletionScreen}
-    />
-  </Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        ...stackNavigatorConfig,
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen
+        name={ScreenName.DeviceModelSelection as "DeviceModelSelection"}
+        component={DeviceModelSelection}
+      />
+      <Stack.Screen
+        name={ScreenName.SyncOnboardingCompanion as "SyncOnboardingCompanion"}
+        component={SyncOnboarding}
+      />
+      <Stack.Screen
+        name={ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion"}
+        component={CompletionScreen}
+      />
+    </Stack.Navigator>
   );
 };

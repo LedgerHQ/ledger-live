@@ -6,7 +6,7 @@ import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
+import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "../Discover/DiscoverCard";
 import Illustration from "../../images/illustration/Illustration";
@@ -23,32 +23,35 @@ type Props = CompositeScreenProps<
 export const DeviceModelSelection = ({ navigation }: Props) => {
   const { t } = useTranslation();
 
-  const setupDevice = useCallback((deviceModelId: DeviceModelId) => {
-    // On pairing success, navigate to the Sync Onboarding Companion
-    navigation.navigate(NavigatorName.Base as "Base", {
-      screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
-      params: {
-        filterByDeviceModelId: deviceModelId,
-        areKnownDevicesDisplayed: false,
-        onSuccessAddToKnownDevices: false,
-        onSuccessNavigateToConfig: {
-          navigateInput: {
-            name: NavigatorName.BaseOnboarding,
-            params: {
-              screen: NavigatorName.SyncOnboarding,
+  const setupDevice = useCallback(
+    (deviceModelId: DeviceModelId) => {
+      // On pairing success, navigate to the Sync Onboarding Companion
+      navigation.navigate(NavigatorName.Base as "Base", {
+        screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
+        params: {
+          filterByDeviceModelId: deviceModelId,
+          areKnownDevicesDisplayed: false,
+          onSuccessAddToKnownDevices: false,
+          onSuccessNavigateToConfig: {
+            navigateInput: {
+              name: NavigatorName.BaseOnboarding,
               params: {
-                screen: ScreenName.SyncOnboardingCompanion,
+                screen: NavigatorName.SyncOnboarding,
                 params: {
-                  device: null,
+                  screen: ScreenName.SyncOnboardingCompanion,
+                  params: {
+                    device: null,
+                  },
                 },
               },
             },
+            pathToDeviceParam: "params.params.params.device",
           },
-          pathToDeviceParam: "params.params.params.device",
         },
-      },
-    });
-  }, [navigation]);
+      });
+    },
+    [navigation],
+  );
 
   const handleNavigateBack = useCallback(() => {
     navigation.goBack();
