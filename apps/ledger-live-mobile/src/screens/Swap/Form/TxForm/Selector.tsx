@@ -44,6 +44,7 @@ export function Selector({
 
           <Flex flex={1} marginRight={2}>
             <Text
+              variant="large"
               marginBottom={2}
               ellipsizeMode="middle"
               numberOfLines={1}

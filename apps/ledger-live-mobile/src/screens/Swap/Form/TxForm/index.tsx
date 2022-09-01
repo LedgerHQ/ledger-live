@@ -16,7 +16,7 @@ interface Props {
 
 export function TxForm({ swapTx, provider, exchangeRate, swapError }: Props) {
   return (
-    <Flex>
+    <Flex marginBottom={4}>
       <From swapTx={swapTx} provider={provider} swapError={swapError} />
       <To swapTx={swapTx} exchangeRate={exchangeRate} provider={provider} />
     </Flex>
