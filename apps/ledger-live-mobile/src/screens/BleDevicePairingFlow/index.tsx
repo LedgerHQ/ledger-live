@@ -27,7 +27,7 @@ export type BleDevicePairingFlowParams = {
   onSuccessAddToKnownDevices?: boolean;
   onSuccessNavigateToConfig: {
     navigateInput: NavigateInput;
-    pathToDeviceParam: string;
+    pathToDeviceParam: PathToDeviceParam;
   };
 };
 
@@ -106,7 +106,9 @@ export const BleDevicePairingFlow = ({
         setFromPath(navigateInput, pathToDeviceParam, device);
       } else {
         console.error(
-          `BLE pairing flow: device path param ${pathToDeviceParam} not existing on navigation input`,
+          `BLE pairing flow: device path param ${String(
+            pathToDeviceParam,
+          )} not existing on navigation input`,
         );
       }
 
