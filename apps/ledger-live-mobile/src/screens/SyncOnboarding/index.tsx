@@ -22,8 +22,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-
+import { useDispatch } from "react-redux";
 import { CompositeScreenProps } from "@react-navigation/native";
+import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
@@ -79,6 +80,7 @@ export const SyncOnboarding = ({
   route,
 }: SyncOnboardingCompanionProps) => {
   const { t } = useTranslation();
+  const dispatchRedux = useDispatch();
   const { device } = route.params;
 
   const productName =
@@ -230,10 +232,19 @@ export const SyncOnboarding = ({
   }, [goBackToPairingFlow]);
 
   const handleDeviceReady = useCallback(() => {
+    // Adds the device to the list of known devices
+    dispatchRedux(
+      addKnownDevice({
+        id: device.deviceId,
+        name: device.deviceName ?? device.modelId,
+        modelId: device.modelId,
+      }),
+    );
+
     navigation.navigate(
       ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion",
     );
-  }, [navigation]);
+  }, [device, dispatchRedux, navigation]);
 
   useEffect(() => {
     if (!fatalError) {
