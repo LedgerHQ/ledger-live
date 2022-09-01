@@ -9,6 +9,7 @@ import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 
 import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 
@@ -23,7 +24,7 @@ import {
   counterValueCurrencySelector,
   carouselVisibilitySelector,
 } from "../../reducers/settings";
-import { usePortfolio } from "../../actions/portfolio";
+import { usePortfolio } from "../../hooks/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 
 import GraphCardContainer from "./GraphCardContainer";

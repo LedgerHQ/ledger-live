@@ -16,6 +16,7 @@ import { Platform } from "react-native";
 import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import type { DescriptorEvent } from "@ledgerhq/types-devices";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger from "./logger";
@@ -89,7 +90,6 @@ registerTransportModule({
   // prettier-ignore
   // eslint-disable-next-line consistent-return
   open: id => {
-    // eslint-disable-line consistent-return
     if (id.startsWith("usb|")) {
       const devicePath = JSON.parse(id.slice(4));
       return retry(() => HIDTransport.open(devicePath), {
@@ -101,9 +101,12 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: Observable.create(o => HIDTransport.listen(o)).pipe(
+  discovery: new Observable<DescriptorEvent<string>>(o =>
+    HIDTransport.listen(o),
+  ).pipe(
     map(({ type, descriptor, deviceModel }) => {
-      const name = deviceModel.productName;
+      // FIXME: TALK TO JUAN ABOUT THIS
+      const name = deviceModel?.productName || "";
       return {
         type,
         deviceModel,
@@ -114,7 +117,7 @@ registerTransportModule({
   ),
 });
 // Add dev mode support of an http proxy
-let DebugHttpProxy;
+let DebugHttpProxy: ReturnType<typeof withStaticURLs>;
 const httpdebug: TransportModule = {
   id: "httpdebug",
   open: id =>
@@ -127,7 +130,9 @@ const httpdebug: TransportModule = {
 
 if (__DEV__ && Config.DEVICE_PROXY_URL) {
   DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
-  httpdebug.discovery = Observable.create(o => DebugHttpProxy.listen(o)).pipe(
+  httpdebug.discovery = new Observable<DescriptorEvent<string>>(o =>
+    DebugHttpProxy.listen(o),
+  ).pipe(
     map(({ type, descriptor }) => ({
       type,
       id: `httpdebug|${descriptor}`,

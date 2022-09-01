@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import type { Operation } from "@ledgerhq/types-live";
 import {
@@ -19,9 +19,6 @@ import Close from "../../icons/Close";
 import ArrowLeft from "../../icons/ArrowLeft";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
-const forceInset = {
-  bottom: "always",
-};
 type RouteParams = {
   accountId: string;
   operation: Operation;
@@ -49,7 +46,7 @@ export const BackButton = ({ navigation }: { navigation: any }) => {
 export const CloseButton = ({ navigation }: { navigation: any }) => {
   const { colors } = useTheme();
   return (
-    <TouchableOpacity // $FlowFixMe
+    <TouchableOpacity
       onPress={() => navigation.popToTop()}
       style={styles.buttons}
     >
@@ -81,7 +78,6 @@ function OperationDetails({ route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="OperationDetails" />
       <NavigationScrollView>

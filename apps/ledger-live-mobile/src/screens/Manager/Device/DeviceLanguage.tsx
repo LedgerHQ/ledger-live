@@ -2,10 +2,10 @@ import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import BottomModal from "../../../components/BottomModal";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
+import BottomModal from "../../../components/BottomModal";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { track } from "../../../analytics";
 

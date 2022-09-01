@@ -2,7 +2,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, SectionList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
@@ -18,9 +18,6 @@ import { migratableAccountsSelector } from "../../reducers/accounts";
 type Props = {
   navigation: any;
   route: any;
-};
-const forceInset = {
-  bottom: "always",
 };
 export default function Overview({ route, navigation }: Props) {
   const { colors } = useTheme();
@@ -81,7 +78,6 @@ export default function Overview({ route, navigation }: Props) {
 
   return (
     <SafeAreaView
-      forceInset={forceInset}
       style={[
         styles.root,
         {

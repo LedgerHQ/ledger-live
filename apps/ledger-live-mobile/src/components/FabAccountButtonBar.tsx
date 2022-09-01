@@ -12,14 +12,15 @@ import { AccountLike, Account } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 
 import { ScrollContainer } from "@ledgerhq/native-ui";
+import type { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
 import ChoiceButton from "./ChoiceButton";
 import InfoModal from "./InfoModal";
-import Button from "./wrappedUi/Button";
+import Button, { WrappedButtonProps } from "./wrappedUi/Button";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import { track } from "../analytics";
 
-type ActionButtonEventProps = {
-  navigationParams?: any[];
+export type ActionButtonEventProps = {
+  navigationParams?: [string, unknown];
   linkUrl?: string;
   confirmModalProps?: {
     withCancel?: boolean;
@@ -29,7 +30,7 @@ type ActionButtonEventProps = {
     Icon?: ComponentType;
     children?: ReactNode;
     confirmLabel?: string | ReactElement;
-    confirmProps?: any;
+    confirmProps?: WrappedButtonProps;
   };
   Component?: ComponentType;
   enableActions?: string;
@@ -39,9 +40,9 @@ export type ActionButton = ActionButtonEventProps & {
   label: ReactNode;
   Icon?: ComponentType<{ size: number; color: string }>;
   event: string;
-  eventProperties?: { [key: string]: any };
+  eventProperties?: { [key: string]: unknown };
   Component?: ComponentType;
-  type?: string;
+  type?: keyof ButtonProps["type"];
   outline?: boolean;
   disabled?: boolean;
 };
@@ -65,14 +66,16 @@ function FabAccountButtonBar({
   const [infoModalProps, setInfoModalProps] = useState<
     ActionButtonEventProps | undefined
   >();
-  const [isModalInfoOpened, setIsModalInfoOpened] = useState();
+  const [isModalInfoOpened, setIsModalInfoOpened] = useState<boolean>();
 
   const onNavigate = useCallback(
-    (name: string, options?: any) => {
-      const accountId = account ? account.id : options?.params?.accountId;
+    (name: string, options?: unknown) => {
+      const accountId = account
+        ? account.id
+        : (options as { params: { accountId: string } })?.params?.accountId;
       const parentId = parentAccount
         ? parentAccount.id
-        : options?.params?.parentId;
+        : (options as { params: { parentId: string } })?.params?.parentId;
 
       navigation.navigate(name, {
         ...options,
@@ -97,7 +100,7 @@ function FabAccountButtonBar({
       }
 
       if (!confirmModalProps) {
-        setInfoModalProps();
+        setInfoModalProps(undefined);
         if (linkUrl) {
           Linking.openURL(linkUrl);
         } else if (navigationParams) {
@@ -117,16 +120,25 @@ function FabAccountButtonBar({
   }, [infoModalProps, onPress]);
 
   const onClose = useCallback(() => {
-    setIsModalInfoOpened();
+    setIsModalInfoOpened(undefined);
   }, []);
 
-  const onChoiceSelect = useCallback(({ navigationParams, linkUrl }) => {
-    if (linkUrl) {
-      Linking.openURL(linkUrl);
-    } else if (navigationParams) {
-      onNavigate(...navigationParams);
-    }
-  }, []);
+  const onChoiceSelect = useCallback(
+    ({
+      navigationParams,
+      linkUrl,
+    }: {
+      navigationParams: ActionButtonEventProps["navigationParams"];
+      linkUrl: ActionButtonEventProps["linkUrl"];
+    }) => {
+      if (linkUrl) {
+        Linking.openURL(linkUrl);
+      } else if (navigationParams) {
+        onNavigate(...navigationParams);
+      }
+    },
+    [],
+  );
 
   return (
     <ScrollContainer
@@ -142,9 +154,8 @@ function FabAccountButtonBar({
             Icon,
             event,
             eventProperties,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             Component,
-            type = "color",
+            type = "color" as const,
             outline = false,
             disabled,
             ...rest

@@ -48,7 +48,7 @@ export default function SwapNavigator() {
         component={SwapKYC}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerRight: null,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen
@@ -58,7 +58,7 @@ export default function SwapNavigator() {
           headerTitle: () => (
             <StepHeader title={t("transfer.swap.kyc.states")} />
           ),
-          headerRight: null,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen
@@ -66,7 +66,7 @@ export default function SwapNavigator() {
         component={SwapError}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -74,7 +74,7 @@ export default function SwapNavigator() {
         component={SwapPendingOperation}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
     </Stack.Navigator>

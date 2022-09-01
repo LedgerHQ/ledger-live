@@ -26,7 +26,7 @@ import {
   hasOrderedNanoSelector,
   carouselVisibilitySelector,
 } from "../../../reducers/settings";
-import { usePortfolio } from "../../../actions/portfolio";
+import { usePortfolio } from "../../../hooks/portfolio";
 import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
 
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
@@ -45,8 +45,7 @@ import BuyDeviceBanner, {
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../../components/RootNavigator";
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
@@ -237,7 +236,7 @@ function PortfolioScreen({ navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen("Wallet");
+      setScreen && setScreen("Wallet");
 
       return () => {
         setSource("Wallet");

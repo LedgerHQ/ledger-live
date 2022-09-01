@@ -12,7 +12,7 @@ type Props = {
   badgeLabel: string;
   description: string;
   children?: React.ReactNode;
-  ctaLabel: string;
+  ctaLabel: string | JSX.Element;
   // eslint-disable-next-line @typescript-eslint/ban-types
   onNext: () => {};
   disabled?: boolean;

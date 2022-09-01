@@ -1,21 +1,11 @@
 import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
-import { AppState, Linking } from "react-native";
-import type { T } from "../../types/common";
+import { AppState, AppStateStatus, Linking } from "react-native";
 import FallbackCameraBody from "../FallbackCameraBody";
+import type { Props } from "./FallbackCameraSend";
 
-type Props = {
-  navigation: any;
-  t: T;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  screenName: string;
-};
 type State = {
-  appSTate: string;
+  appState: string;
   openSettingsPressed: boolean;
 };
 
@@ -33,7 +23,7 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
     AppState.removeEventListener("change", this.handleAppStateChange);
   }
 
-  handleAppStateChange = nextAppState => {
+  handleAppStateChange = (nextAppState: AppStateStatus) => {
     const { appState, openSettingsPressed } = this.state;
     const { navigation, route } = this.props;
 

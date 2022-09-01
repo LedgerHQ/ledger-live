@@ -15,6 +15,7 @@ import {
   Log,
 } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
@@ -38,16 +39,22 @@ const Wrapper = styled(Flex).attrs({
   minHeight: "160px",
 })``;
 
-const AnimationContainer = styled(Flex).attrs(p => ({
-  alignSelf: "stretch",
-  alignItems: "center",
-  justifyContent: "center",
-  height: p.withConnectDeviceHeight
-    ? "100px"
-    : p.withVerifyAddressHeight
-    ? "72px"
-    : undefined,
-}))``;
+type AnimationContainerExtraProps = {
+  withConnectDeviceHeight?: boolean;
+  withVerifyAddressHeight?: boolean;
+};
+const AnimationContainer = styled(Flex).attrs(
+  (p: AnimationContainerExtraProps) => ({
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "center",
+    height: p.withConnectDeviceHeight
+      ? "100px"
+      : p.withVerifyAddressHeight
+      ? "72px"
+      : undefined,
+  }),
+)<AnimationContainerExtraProps>``;
 
 const ActionContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -578,7 +585,7 @@ export function LoadingAppInstall({
     const trackingArgs = [
       "In-line app install",
       { appName, flow: analyticsPropertyFlow },
-    ];
+    ] as const;
     track(...trackingArgs);
   }, [appName, analyticsPropertyFlow]);
   return renderLoading(props);

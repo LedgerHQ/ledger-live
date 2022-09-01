@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { NavigatorName } from "../const";
@@ -16,9 +16,6 @@ import { connectingStep } from "../components/DeviceJob/steps";
 import { TrackScreen } from "../analytics";
 import { withTheme } from "../colors";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   colors: any;
@@ -121,7 +118,6 @@ class RepairDevice extends Component<Props, State> {
 
     return (
       <SafeAreaView
-        forceInset={forceInset}
         style={[
           styles.root,
           {

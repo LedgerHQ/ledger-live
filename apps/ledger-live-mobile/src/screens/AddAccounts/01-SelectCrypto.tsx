@@ -30,7 +30,7 @@ type Props = {
   };
 };
 
-const keyExtractor = currency => currency.id;
+const keyExtractor = (currency: CryptoCurrency) => currency.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -104,10 +104,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }
   };
 
-  const renderList = items => (
+  const renderList = (items: (CryptoCurrency | TokenCurrency)[]) => (
     <FlatList
       contentContainerStyle={styles.list}
-      data={items}
+      data={items as CryptoCurrency[]}
       renderItem={({ item }) => (
         <CurrencyRow currency={item} onPress={onPressItem} />
       )}

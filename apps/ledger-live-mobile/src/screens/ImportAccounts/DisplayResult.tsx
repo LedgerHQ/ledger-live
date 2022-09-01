@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { View, StyleSheet, SectionList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import { useNavigation } from "@react-navigation/native";
+import { View, StyleSheet, SectionList, SectionListData } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { HeaderBackButton } from "@react-navigation/elements";
 import groupBy from "lodash/groupBy";
-import concat from "lodash/concat";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { Account } from "@ledgerhq/types-live";
@@ -19,7 +18,6 @@ import { Trans } from "react-i18next";
 
 import { compose } from "redux";
 import { Flex } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
 import { importDesktopSettings } from "../../actions/settings";
 import { importAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
@@ -33,9 +31,8 @@ import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
 import HeaderBackImage from "../../components/HeaderBackImage";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
+import type { State as StoreState } from "../../reducers/types";
 import { bridgeCache } from "../../bridge/cache";
-
-const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any;
@@ -58,6 +55,8 @@ type State = {
   importSettings: boolean;
 };
 
+type SectionData = SectionListData<ImportItem, { mode: ImportItem["mode"] }>;
+
 export function BackButton() {
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -67,16 +66,15 @@ export function BackButton() {
       onPress={() => {
         if (navigation.replace) navigation.replace(ScreenName.ScanAccounts);
       }}
-    >
-      <HeaderBackImage />
-    </HeaderBackButton>
+      backImage={HeaderBackImage}
+    />
   );
 }
 
 class DisplayResult extends Component<Props, State> {
   state = {
     selectedAccounts: [],
-    items: [],
+    items: [] as ImportItem[],
     importSettings: true,
     importing: false,
   };
@@ -101,13 +99,14 @@ class DisplayResult extends Component<Props, State> {
     let selectedAccounts = prevState.selectedAccounts;
     if (prevState.items.length === 0) {
       // select all by default
-      selectedAccounts = items.reduce(
-        (acc, cur) =>
-          cur.mode !== "id" && cur.mode !== "unsupported"
-            ? concat(acc, cur.account.id)
-            : acc,
-        [],
-      );
+      selectedAccounts = items.reduce<string[]>((acc, cur) => {
+        if (cur.mode !== "id" && cur.mode !== "unsupported") {
+          const combined = acc.concat(cur.account.id);
+          return combined;
+        }
+
+        return acc;
+      }, []);
     }
     return { items, selectedAccounts };
   }
@@ -152,7 +151,7 @@ class DisplayResult extends Component<Props, State> {
     }
   };
 
-  renderItem = ({ item: { account, mode } }) => (
+  renderItem = ({ item: { account, mode } }: { item: ImportItem }) => (
     <DisplayResultItem
       key={account.id}
       account={account}
@@ -163,11 +162,12 @@ class DisplayResult extends Component<Props, State> {
     />
   );
 
-  renderSectionHeader = ({ section: { mode } }) => (
+  renderSectionHeader = ({ section: { mode } }: { section: SectionData }) => (
     <ResultSection mode={mode} />
   );
 
-  onSwitchSettings = importSettings => this.setState({ importSettings });
+  onSwitchSettings = (importSettings: boolean) =>
+    this.setState({ importSettings });
 
   ListFooterComponent = () => (
     <DisplayResultSettingsSection
@@ -190,14 +190,19 @@ class DisplayResult extends Component<Props, State> {
     </View>
   );
 
-  keyExtractor = item => item.account.id;
+  keyExtractor = (item: ImportItem): string => item.account.id;
 
   render() {
     const { items, importing } = this.state;
-    const itemsGroupedByMode = groupBy(items, "mode");
+    const itemsGroupedByMode = groupBy<ImportItem>(items, "mode");
+
+    const sections = Object.keys(itemsGroupedByMode).map(mode => ({
+      mode,
+      data: itemsGroupedByMode[mode],
+    })) as SectionData[];
 
     return (
-      <SafeAreaView forceInset={forceInset} style={[styles.root]}>
+      <SafeAreaView style={[styles.root]}>
         <Flex bg="background.main" flex={1}>
           <TrackScreen category="ImportAccounts" name="DisplayResult" />
           <StyledStatusBar />
@@ -210,10 +215,7 @@ class DisplayResult extends Component<Props, State> {
             ListEmptyComponent={this.ListEmptyComponent}
             keyExtractor={this.keyExtractor}
             extraData={importing}
-            sections={Object.keys(itemsGroupedByMode).map(mode => ({
-              mode,
-              data: itemsGroupedByMode[mode],
-            }))}
+            sections={sections}
           />
           <View style={styles.footer}>
             <Button
@@ -238,10 +240,15 @@ class DisplayResult extends Component<Props, State> {
   }
 }
 
-// $FlowFixMe
 export default compose(
   connect(
-    createStructuredSelector({
+    createStructuredSelector<
+      StoreState,
+      {
+        accounts: Account[];
+        backlistedTokenIds: string[];
+      }
+    >({
       accounts: accountsSelector,
       backlistedTokenIds: blacklistedTokenIdsSelector,
     }),

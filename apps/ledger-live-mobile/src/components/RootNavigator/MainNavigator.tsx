@@ -8,23 +8,22 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "../../const";
 import { PortfolioTabIcon } from "../../screens/Portfolio";
-// eslint-disable-next-line import/no-cycle
 import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
-// eslint-disable-next-line import/no-cycle
 import MarketNavigator from "./MarketNavigator";
-// eslint-disable-next-line import/no-cycle
 import PortfolioNavigator from "./PortfolioNavigator";
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
-// eslint-disable-next-line import/no-cycle
 import DiscoverNavigator from "./DiscoverNavigator";
-import customTabBar from "../TabBar/CustomTabBar";
+import customTabBar, {
+  Props as CustomTabBarProps,
+} from "../TabBar/CustomTabBar";
+import { MainNavigatorParamList } from "./types";
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
 // NB The default behaviour is not reset route params, leading to always having the same
 // search query or preselected tab after the first time (ie from Swap/Sell), that's why we
@@ -49,7 +48,7 @@ export default function MainNavigator({
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
     () =>
-      ({ ...props }) =>
+      ({ ...props }: CustomTabBarProps) =>
         customTabBar({ ...props, colors, insets }),
     [insets, colors],
   );

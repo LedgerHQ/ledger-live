@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, FlatList } from "react-native";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
+  CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import {
@@ -23,14 +24,13 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { usePreviousRouteName } from "../../helpers/routeHooks";
+import { ReceiveFundsStackScreenProps } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 
 const SEARCH_KEYS = ["name", "ticker"];
 
 type Props = {
-  devMode: boolean;
-  navigation: any;
-  route: { params: { filterCurrencyIds?: string[] } };
-};
+  devMode?: boolean;
+} & ReceiveFundsStackScreenProps<ScreenName.ReceiveSelectCrypto>;
 
 const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
 
@@ -46,13 +46,14 @@ const listSupportedTokens = () =>
   listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
 const findAccountByCurrency = (
-  accounts: (TokenAccount | Account)[],
+  accounts: AccountLike[],
   currency: CryptoCurrency | TokenCurrency,
 ) =>
   accounts.filter(
-    (acc: TokenAccount | Account) =>
-      (acc.type === "Account" ? acc.currency?.id : acc.token.id) ===
-      currency.id,
+    (acc: AccountLike) =>
+      (acc.type === "Account"
+        ? acc.currency?.id
+        : (acc as TokenAccount).token?.id) === currency.id,
   );
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
@@ -65,7 +66,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const lastRoute = usePreviousRouteName();
   const cryptoCurrencies = useMemo(
     () =>
-      listSupportedCurrencies()
+      (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[])
         .concat(listSupportedTokens())
         .filter(
           ({ id }) =>
@@ -95,7 +96,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         // if we found only one account of the given currency we go straight to QR code
         navigation.navigate(ScreenName.ReceiveConfirmation, {
           accountId: accs[0].id,
-          parentId: accs[0]?.parentId,
+          parentId: (accs[0] as TokenAccount)?.parentId,
         });
       } else if (currency.type === "TokenCurrency") {
         // cases for token currencies
@@ -136,7 +137,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
 
   const renderList = useCallback(
-    (items: any) => (
+    (items: CryptoOrTokenCurrency) => (
       <FlatList
         contentContainerStyle={styles.list}
         data={items}
@@ -154,7 +155,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   return (
     <>
       <TrackScreen category="Receive" name="Select Crypto" source={lastRoute} />
-      <LText fontSize={32} fontFamily="InterMedium" semiBold px={6} my={3}>
+      <LText fontSize={"32"} fontFamily="InterMedium" semiBold px={6} my={3}>
         {t("transfer.receive.selectCrypto.title")}
       </LText>
       <FilteredSearchBar

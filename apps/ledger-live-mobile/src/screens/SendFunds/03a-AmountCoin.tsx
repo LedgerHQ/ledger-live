@@ -9,13 +9,12 @@ import {
   Keyboard,
   Linking,
 } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -36,25 +35,15 @@ import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import InfoIcon from "../../icons/Info";
 import AmountInput from "./AmountInput";
+import type { SendFundsNavigatorProp } from "../../components/RootNavigator/types/SendFundsNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
 type ModalInfoName = "maxSpendable";
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-};
+type Props = SendFundsNavigatorProp<ScreenName.SendAmountCoin>;
+
 export default function SendAmountCoin({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const [maxSpendable, setMaxSpendable] = useState(null);
+  const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } =
     useModalInfo();
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
@@ -148,7 +137,6 @@ export default function SendAmountCoin({ navigation, route }: Props) {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <KeyboardView style={styles.container} behavior="padding">
           <TouchableWithoutFeedback onPress={blur}>
@@ -257,9 +245,10 @@ function useModalInfo(): {
   openInfoModal: (_: ModalInfoName) => void;
   closeInfoModal: () => void;
 } {
-  const { colors } = useTheme();
   const { t } = useTranslation();
-  const [modalInfoName, setModalInfoName] = useState(null);
+  const [modalInfoName, setModalInfoName] = useState<ModalInfoName | null>(
+    null,
+  );
   const onMaxSpendableLearnMore = useCallback(
     () => Linking.openURL(urls.maxSpendable),
     [],
@@ -278,15 +267,6 @@ function useModalInfo(): {
               text={t("common.learnMore")}
               onPress={onMaxSpendableLearnMore}
               event="maxSpendableLearnMore"
-              ltextProps={{
-                style: [
-                  styles.learnMore,
-                  {
-                    color: colors.live,
-                  },
-                ],
-              }}
-              color={colors.live}
             />
           ),
         },

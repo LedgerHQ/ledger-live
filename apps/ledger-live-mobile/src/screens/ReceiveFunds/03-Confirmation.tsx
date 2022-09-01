@@ -4,6 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation, Trans } from "react-i18next";
 import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  CryptoOrTokenCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import {
   makeEmptyTokenAccount,
   getMainAccount,
@@ -13,7 +18,6 @@ import {
 import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
@@ -27,38 +31,28 @@ import { track, TrackScreen } from "../../analytics";
 import { usePreviousRouteName } from "../../helpers/routeHooks";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import byFamily from "../../generated/Confirmation";
+import { ReceiveFundsStackScreenProps } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
+
+type ScreenProps = ReceiveFundsStackScreenProps<
+  ScreenName.ReceiveConfirmation | ScreenName.ReceiveVerificationConfirmation
+>;
 
 type Props = {
   account?: TokenAccount | Account;
   parentAccount?: Account;
-  navigation: any;
-  route: { params: RouteParams };
-  readOnlyModeEnabled: boolean;
-};
-
-type RouteParams = {
-  account?: AccountLike;
-  accountId: string;
-  parentId?: string;
-  modelId: DeviceModelId;
-  wired: boolean;
-  device?: Device;
-  currency?: Currency;
-  createTokenAccount?: boolean;
-  onSuccess?: (_?: string) => void;
-  onError?: () => void;
-};
+  readOnlyModeEnabled?: boolean;
+} & ScreenProps;
 
 export default function ReceiveConfirmation({ navigation }: Props) {
-  const route = useRoute();
+  const route = useRoute<ScreenProps["route"]>();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
   return account ? (
     <ReceiveConfirmationInner
       navigation={navigation}
       route={route}
-      account={account}
-      parentAccount={parentAccount}
+      account={account as Account | TokenAccount}
+      parentAccount={parentAccount ?? undefined}
     />
   ) : null;
 }
@@ -71,9 +65,9 @@ function ReceiveConfirmationInner({
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const verified = route.params?.verified;
+  const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
-  const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState();
+  const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
   const [isToastDisplayed, setIsToastDisplayed] = useState(false);
   const [isVerifiedToastDisplayed, setIsVerifiedToastDisplayed] =
     useState(verified);
@@ -124,12 +118,14 @@ function ReceiveConfirmationInner({
       if (
         !newMainAccount.subAccounts ||
         !newMainAccount.subAccounts.find(
-          (acc: TokenAccount) => acc?.token?.id === currency.id,
+          acc =>
+            (acc as TokenAccount)?.token?.id ===
+            (currency as CryptoOrTokenCurrency).id,
         )
       ) {
         const emptyTokenAccount = makeEmptyTokenAccount(
-          newMainAccount,
-          currency,
+          newMainAccount as Account,
+          currency as TokenCurrency,
         );
         newMainAccount.subAccounts = [
           ...(newMainAccount.subAccounts || []),
@@ -139,8 +135,8 @@ function ReceiveConfirmationInner({
         // @TODO create a new action for adding a single account at a time instead of replacing
         dispatch(
           replaceAccounts({
-            scannedAccounts: [newMainAccount],
-            selectedIds: [newMainAccount.id],
+            scannedAccounts: [newMainAccount as Account],
+            selectedIds: [(newMainAccount as Account).id],
             renamings: {},
           }),
         );
@@ -158,16 +154,16 @@ function ReceiveConfirmationInner({
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: getAccountName(account),
+      headerTitle: getAccountName(account as AccountLike),
     });
   }, [colors, navigation, account]);
 
   useEffect(() => {
     setIsVerifiedToastDisplayed(verified);
-    if (verified) {
+    if (verified && currency) {
       track("Verification Success", { currency: currency.name });
     }
-  }, [verified, currency.name]);
+  }, [verified, currency]);
 
   const onShare = useCallback(() => {
     track("button_clicked", {
@@ -189,9 +185,19 @@ function ReceiveConfirmationInner({
   if (!account || !currency || !mainAccount) return null;
 
   // check for coin specific UI
-  const CustomConfirmation = byFamily[currency.family];
-  if (CustomConfirmation)
-    return <CustomConfirmation {...{ navigation, route }} />;
+  if (Object.keys(byFamily).includes((currency as CryptoCurrency).family)) {
+    const CustomConfirmation =
+      byFamily[(currency as CryptoCurrency).family as keyof typeof byFamily];
+    if (CustomConfirmation) {
+      return (
+        <CustomConfirmation
+          account={mainAccount || account}
+          parentAccount={mainAccount}
+          {...{ navigation, route }}
+        />
+      );
+    }
+  }
 
   return (
     <Flex flex={1} mb={9}>
@@ -283,8 +289,8 @@ function ReceiveConfirmationInner({
                 currency={currency}
                 color={colors.constant.white}
                 bg={
-                  currency?.color ||
-                  currency.parentCurrency?.color ||
+                  (currency as CryptoCurrency)?.color ||
+                  (currency as TokenCurrency).parentCurrency?.color ||
                   colors.constant.black
                 }
                 size={48}

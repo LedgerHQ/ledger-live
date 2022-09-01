@@ -1,7 +1,7 @@
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import styles from "../../navigation/styles";
 import LendingDashboard from "../../screens/Lending/Dashboard";

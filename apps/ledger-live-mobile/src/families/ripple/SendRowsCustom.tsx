@@ -1,6 +1,7 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import SendRowTag from "./SendRowTag";
 
 type Props = {
@@ -9,5 +10,8 @@ type Props = {
   navigation: any;
 };
 export default function RippleSendRowsCustom(props: Props) {
-  return <SendRowTag {...props} />;
+  const { transaction, ...rest } = props;
+  return (
+    <SendRowTag {...rest} transaction={transaction as RippleTransaction} />
+  );
 }

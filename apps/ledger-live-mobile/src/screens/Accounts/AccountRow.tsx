@@ -5,23 +5,25 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Currency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
+import {
+  DerivationMode,
+  getTagDerivationMode,
+} from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import { BigNumber } from "bignumber.js";
 import { ScreenName } from "../../const";
-import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 import AccountRowLayout from "../../components/AccountRowLayout";
 
 type Props = {
-  account: Account | TokenAccount;
+  account: AccountLike;
   accountId: string;
   navigation: any;
   isLast: boolean;
-  onSetAccount: (_: TokenAccount) => void;
   portfolioValue: number;
   navigationParams?: any[];
   hideDelta?: boolean;
@@ -46,9 +48,12 @@ const AccountRow = ({
   const unit = getAccountUnit(account);
 
   const tag =
-    account.derivationMode !== undefined &&
-    account.derivationMode !== null &&
-    getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
+    (account as Account)?.derivationMode !== undefined &&
+    (account as Account)?.derivationMode !== null &&
+    getTagDerivationMode(
+      currency as CryptoCurrency,
+      (account as Account).derivationMode as DerivationMode,
+    );
 
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,

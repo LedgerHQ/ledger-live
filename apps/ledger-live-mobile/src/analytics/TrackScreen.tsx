@@ -3,9 +3,9 @@ import { useIsFocused } from "@react-navigation/native";
 // eslint-disable-next-line import/no-cycle
 import { screen } from "./segment";
 
-type Props = Partial<{
-  [key: string]: any;
-}> & {
+type Props = {
+  [key: string]: unknown;
+} & {
   category: string;
   name?: string;
 };

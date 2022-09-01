@@ -6,6 +6,9 @@ import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
@@ -30,11 +33,12 @@ import {
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
+import { TermsProviders } from "../TermsFooter";
 
 type Props<R, H, P> = {
-  onResult?: (_: any) => Promise<void> | void;
-  onError?: (_: any) => Promise<void> | void;
-  renderOnResult?: (_: P) => React.ReactNode;
+  onResult?: (_: NonNullable<P>) => Promise<void> | void;
+  onError?: (_: Error) => Promise<void> | void;
+  renderOnResult?: (_: P) => JSX.Element | null;
   action: Action<R, H, P>;
   request?: R;
   device: Device;
@@ -43,21 +47,21 @@ type Props<R, H, P> = {
 };
 export default function DeviceAction<R, H, P>({
   action,
-  request = null,
+  request,
   device: selectedDevice,
   onResult,
   onError,
   renderOnResult,
   onSelectDeviceLink,
   analyticsPropertyFlow = "unknown",
-}: Props<R, H, P>) {
+}: Props<R, H, P>): JSX.Element | null {
   const { colors, dark } = useTheme();
   const dispatch = useDispatch();
-  const theme = dark ? "dark" : "light";
+  const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
   const navigation = useNavigation();
   // TODO: fix flow type
-  const status: any = action.useHook(selectedDevice, request);
+  const status: any = action.useHook(selectedDevice, request!);
   const {
     appAndVersion,
     device,
@@ -102,6 +106,7 @@ export default function DeviceAction<R, H, P>({
         setLastSeenDeviceInfo({
           modelId: device.modelId,
           deviceInfo,
+          apps: [],
         }),
       );
     }
@@ -169,7 +174,7 @@ export default function DeviceAction<R, H, P>({
       theme,
       appName,
       analyticsPropertyFlow,
-      request,
+      request: request as AppRequest,
     };
     return <LoadingAppInstall {...props} />;
   }
@@ -220,8 +225,7 @@ export default function DeviceAction<R, H, P>({
     !completeExchangeError
   ) {
     return renderExchange({
-      // $FlowFixMe
-      exchangeType: request?.exchangeType,
+      exchangeType: (request as { exchangeType: number })?.exchangeType,
       t,
       device,
       theme,
@@ -235,7 +239,9 @@ export default function DeviceAction<R, H, P>({
       colors,
       theme,
       provider:
-        (request && request.exchangeRate && request.exchangeRate.provider) ||
+        (request &&
+          (request as { exchangeRate?: { provider?: TermsProviders } })
+            .exchangeRate?.provider) ||
         undefined,
     });
   }
@@ -255,8 +261,9 @@ export default function DeviceAction<R, H, P>({
       navigation,
       device: selectedDevice,
       wording,
-      // $FlowFixMe
-      tokenContext: request?.tokenCurrency,
+
+      tokenContext: (request as { tokenCurrency?: TokenCurrency })
+        ?.tokenCurrency,
       isDeviceBlocker: !requestOpenApp,
       colors,
       theme,
@@ -267,7 +274,6 @@ export default function DeviceAction<R, H, P>({
     return renderInWrongAppForAccount({
       t,
       onRetry,
-      accountName: inWrongDeviceForAccount.accountName,
       colors,
       theme,
     });
@@ -288,7 +294,6 @@ export default function DeviceAction<R, H, P>({
         t,
         navigation,
         error: new DeviceNotOnboarded(),
-        withOnboardingCTA: true,
         colors,
         theme,
       });
@@ -333,13 +338,13 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (request && device && deviceSignatureRequested) {
-    // $FlowFixMe
-    const { account, parentAccount, status, transaction } = request;
+    const { account, parentAccount, status, transaction } =
+      request as unknown as React.ComponentProps<typeof ValidateOnDevice>;
 
     if (account && status && transaction) {
       navigation.setOptions({
-        headerLeft: null,
-        headerRight: null,
+        headerLeft: undefined,
+        headerRight: undefined,
         gestureEnabled: false,
       });
       return (
@@ -359,8 +364,7 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (request && device && signMessageRequested) {
-    // $FlowFixMe
-    const { account } = request;
+    const { account } = request as unknown as { account: AccountLike };
     return (
       <>
         <PreventNativeBack />

@@ -12,6 +12,7 @@ import {
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import { getCurrentPolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/preload";
 import { Icons } from "@ledgerhq/native-ui";
+import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import BondIcon from "../../icons/LinkIcon";
 import UnbondIcon from "../../icons/Undelegate";
 import WithdrawUnbondedIcon from "../../icons/Coins";
@@ -19,7 +20,8 @@ import NominateIcon from "../../icons/Vote";
 import ChillIcon from "../../icons/VoteNay";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({ account }: { account: Account }) => {
+const getActions = (args: { account: Account }) => {
+  const account = args.account as PolkadotAccount;
   if (!account.polkadotResources) return null;
   const { staking } = getCurrentPolkadotPreloadData();
   const accountId = account.id;

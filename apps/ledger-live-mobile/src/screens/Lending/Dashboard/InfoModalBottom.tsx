@@ -46,7 +46,6 @@ class ConfirmationModal extends PureComponent<Props> {
     return (
       <BottomModal
         {...rest}
-        id="ConfirmationModal"
         isOpened={isOpened}
         onClose={onClose}
         style={styles.confirmationModal}

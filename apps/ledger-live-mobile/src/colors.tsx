@@ -139,3 +139,10 @@ export const darkTheme = {
     skeletonBg: "#2a2d33",
   },
 };
+
+export type Theme = typeof lightTheme;
+
+declare module "@react-navigation/native" {
+  export type T = typeof lightTheme;
+  export function useTheme(): T;
+}

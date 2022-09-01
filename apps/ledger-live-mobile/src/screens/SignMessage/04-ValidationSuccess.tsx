@@ -9,9 +9,7 @@ import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 
 import {
-  // eslint-disable-next-line import/named
   context as _wcContext,
-  // eslint-disable-next-line import/named
   setCurrentCallRequestResult,
 } from "../WalletConnect/Provider";
 
@@ -25,7 +23,7 @@ type RouteParams = {
   accountId: string;
   message: TypedMessageData | MessageData;
   signature: string;
-  onConfirmationHandler?: (_: MessageData | TypedMessageData) => void;
+  onConfirmationHandler?: (_: string) => void;
 };
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();

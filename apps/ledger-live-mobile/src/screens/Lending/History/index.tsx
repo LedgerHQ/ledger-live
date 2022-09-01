@@ -29,7 +29,7 @@ const useCompoundHistory = (accounts: AccountLikeArray): AccountLikeArray => {
       }),
     [accounts],
   );
-  // $FlowFixMe
+
   return history;
 };
 
@@ -80,8 +80,8 @@ export default function History() {
           }) => {
             const account = accounts.find(a => a.id === item.accountId);
             const parentAccount: Account | null | undefined =
-              account && account.type !== "Account" // $FlowFixMe
-                ? accounts.find(a => a.id === account.parentId)
+              account && account.type !== "Account"
+                ? (accounts.find(a => a.id === account.parentId) as Account)
                 : null;
             if (!account) return null;
             return (

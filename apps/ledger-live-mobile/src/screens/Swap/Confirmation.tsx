@@ -8,8 +8,9 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/live-common/generated/types";
 import type {
-  Exchange,
   ExchangeRate,
+  InitSwapResult,
+  SwapTransaction,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
@@ -22,8 +23,9 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import type { DeviceInfo } from "@ledgerhq/types-live";
+import { DeviceInfo, SignedOperation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/useSwapTransaction";
 import { renderLoading } from "../../components/DeviceAction/rendering";
 import { ScreenName } from "../../const";
 import { updateAccountWithUpdater } from "../../actions/accounts";
@@ -32,6 +34,7 @@ import BottomModal from "../../components/BottomModal";
 import ModalBottomAction from "../../components/ModalBottomAction";
 import { useBroadcast } from "../../components/useBroadcast";
 import { swapKYCSelector } from "../../reducers/settings";
+import { UnionToIntersection } from "../../types/helpers";
 
 const silentSigningAction = createAction(connectApp);
 const swapAction = initSwapCreateAction(connectApp, initSwap);
@@ -43,7 +46,7 @@ export type DeviceMeta = {
   deviceInfo: DeviceInfo;
 };
 type Props = {
-  swap: Exchange;
+  swap: SwapDataType;
   rate: ExchangeRate;
   provider: string;
   transaction: Transaction;
@@ -78,8 +81,9 @@ const Confirmation = ({
   );
   const swapKYC = useSelector(swapKYCSelector);
   const providerKYC = swapKYC[provider];
-  const [swapData, setSwapData] = useState(null);
-  const [signedOperation, setSignedOperation] = useState(null);
+  const [swapData, setSwapData] = useState<InitSwapResult | null>(null);
+  const [signedOperation, setSignedOperation] =
+    useState<SignedOperation | null>(null);
   const dispatch = useDispatch();
   const broadcast = useBroadcast({
     account: fromAccount,
@@ -89,12 +93,13 @@ const Confirmation = ({
     fromAccount && fromAccount.type === "TokenAccount"
       ? fromAccount.token
       : null;
-  const targetCurrency = getAccountCurrency(toAccount);
+  const targetCurrency = toAccount && getAccountCurrency(toAccount);
   const navigation = useNavigation();
   const onComplete = useCallback(
     result => {
       const { operation, swapId } = result;
-      const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+      const mainAccount =
+        fromAccount && getMainAccount(fromAccount, fromParentAccount);
       if (!mainAccount) return;
       dispatch(
         updateAccountWithUpdater(mainAccount.id, account =>
@@ -104,7 +109,11 @@ const Confirmation = ({
               operation,
               transaction,
               swap: {
-                exchange,
+                exchange: {
+                  ...exchange,
+                  fromAccount: exchange.fromAccount!,
+                  toAccount: exchange.toAccount!,
+                },
                 exchangeRate: rate,
               },
               swapId,
@@ -113,14 +122,15 @@ const Confirmation = ({
           ),
         ),
       );
-      navigation.replace(ScreenName.SwapPendingOperation, {
-        swapId,
-        provider: rate.provider,
-        targetCurrency: targetCurrency.name,
-        operation,
-        fromAccount,
-        fromParentAccount,
-      });
+      targetCurrency?.name &&
+        navigation.replace(ScreenName.SwapPendingOperation, {
+          swapId,
+          provider: rate.provider,
+          targetCurrency: targetCurrency.name,
+          operation,
+          fromAccount,
+          fromParentAccount,
+        });
     },
     [
       fromAccount,
@@ -128,7 +138,7 @@ const Confirmation = ({
       dispatch,
       navigation,
       rate,
-      targetCurrency.name,
+      targetCurrency?.name,
       transaction,
       exchange,
     ],
@@ -151,12 +161,7 @@ const Confirmation = ({
   }, [broadcast, onComplete, onError, signedOperation, swapData]);
   const { t } = useTranslation();
   return (
-    <BottomModal
-      id="SwapConfirmationFeedback"
-      isOpened={true}
-      preventBackdropClick
-      onClose={onCancel}
-    >
+    <BottomModal isOpened={true} preventBackdropClick onClose={onCancel}>
       <SyncSkipUnderPriority priority={100} />
       <ModalBottomAction
         footer={
@@ -168,18 +173,23 @@ const Confirmation = ({
               })
             ) : !swapData ? (
               <DeviceAction
-                onClose={() => undefined}
                 key={"initSwap"}
                 action={swapAction}
                 device={deviceMeta.device}
                 onError={onError}
                 request={{
-                  exchange,
+                  exchange: {
+                    ...exchange,
+                    fromAccount: exchange.fromAccount!,
+                    toAccount: exchange.toAccount!,
+                  },
                   exchangeRate: rate,
-                  transaction,
+                  transaction: transaction as SwapTransaction,
                   userId: providerKYC?.id,
                 }}
-                onResult={({ initSwapResult, initSwapError }) => {
+                onResult={result => {
+                  const { initSwapResult, initSwapError } =
+                    result as UnionToIntersection<typeof result>;
                   if (initSwapError) {
                     onError(initSwapError);
                   } else {
@@ -196,11 +206,13 @@ const Confirmation = ({
                   status,
                   tokenCurrency,
                   parentAccount: fromParentAccount,
-                  account: fromAccount,
+                  account: fromAccount!,
                   transaction: swapData.transaction,
                   appName: "Exchange",
                 }}
-                onResult={({ transactionSignError, signedOperation }) => {
+                onResult={result => {
+                  const { transactionSignError, signedOperation } =
+                    result as UnionToIntersection<typeof result>;
                   if (transactionSignError) {
                     onError(transactionSignError);
                   } else {

@@ -15,8 +15,7 @@ const Header = () => {
   ) : null;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export default memo<{}>(Header);
+export default memo<object>(Header);
 const styles = StyleSheet.create({
   root: {
     paddingTop: 16,

@@ -74,7 +74,7 @@ export default function ManagerNavigator() {
         component={Manager}
         options={{
           title: t("manager.title"),
-          headerRight: null,
+          headerRight: undefined,
           gestureEnabled: false,
         }}
       />

@@ -1,8 +1,7 @@
 import React, { useCallback } from "react";
-import { StyleSheet, Linking, SafeAreaView } from "react-native";
+import { StyleSheet, SafeAreaView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
-import { urls } from "../../../config/urls";
 import ValidateError from "../../../components/ValidateError";
 
 type Props = {
@@ -22,9 +21,6 @@ export default function ValidationError({ navigation, route }: Props) {
   const onClose = useCallback(() => {
     navigation.getParent().pop();
   }, [navigation]);
-  const contactUs = useCallback(() => {
-    Linking.openURL(urls.contact);
-  }, []);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -42,7 +38,6 @@ export default function ValidationError({ navigation, route }: Props) {
         error={route.params.error}
         onRetry={retry}
         onClose={onClose}
-        onContactUs={contactUs}
       />
     </SafeAreaView>
   );

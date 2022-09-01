@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import {
   getMainAccount,
   getReceiveFlowError,
 } from "@ledgerhq/live-common/account/index";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -22,9 +22,6 @@ import VerifyAddress from "./VerifyAddress";
 import BottomModal from "../../components/BottomModal";
 
 const action = createAction(connectApp);
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -35,8 +32,8 @@ type RouteParams = {
   accountId: string;
   parentId: string;
   title: string;
-  account: Account;
-  onSuccess: (_: Account) => void;
+  account: AccountLike;
+  onSuccess: (_: AccountLike) => void;
   onError: (_: Error) => void;
   onClose: () => void;
 };
@@ -85,7 +82,7 @@ export default function VerifyAccount({ navigation, route }: Props) {
 
   if (error) {
     return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView style={styles.root}>
         <View style={styles.bodyError}>
           <GenericErrorView error={error} />
         </View>
@@ -103,18 +100,13 @@ export default function VerifyAccount({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="VerifyAccount" name="ConnectDevice" />
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <SelectDevice
-          onSelect={setDevice}
-          onWithoutDevice={onSkipDevice}
-          withoutDevice
-        />
+        <SelectDevice onSelect={setDevice} onWithoutDevice={onSkipDevice} />
       </NavigationScrollView>
 
       {device ? (
@@ -135,7 +127,7 @@ export default function VerifyAccount({ navigation, route }: Props) {
           )}
         />
       ) : !device && skipDevice ? (
-        <BottomModal id="DeviceActionModal" isOpened={true}>
+        <BottomModal isOpened={true}>
           <View style={styles.modalContainer}>
             <SkipDeviceVerification
               onCancel={handleClose}

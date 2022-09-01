@@ -22,7 +22,7 @@ export default function DeveloperSettings({
 
       {developerFeatures.map(
         feat =>
-          (!feat.shadow || (feat.shadow && !isEnvDefault(feat.name))) && ( // $FlowFixMe
+          (!feat.shadow || (feat.shadow && !isEnvDefault(feat.name))) && (
             <FeatureRow key={feat.name} feature={feat} />
           ),
       )}

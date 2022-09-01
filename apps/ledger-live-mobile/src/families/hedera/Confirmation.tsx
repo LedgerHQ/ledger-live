@@ -1,20 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
 import ReactNativeModal from "react-native-modal";
-import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
-import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useTheme } from "@react-navigation/native";
-// eslint-disable-next-line import/no-unresolved
+} from "@ledgerhq/live-common/account/index";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -34,35 +31,28 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import SkipLock from "../../components/behaviour/SkipLock";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
+import { ReceiveFundsStackScreenProps } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
+import { ScreenName } from "../../const";
+import { BaseNavigatorProps } from "../../components/RootNavigator/BaseNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
+type ScreenProps = ReceiveFundsStackScreenProps<
+  ScreenName.ReceiveConfirmation | ScreenName.ReceiveVerificationConfirmation
+>;
+
 type Props = {
-  account: (TokenAccount | Account) | null | undefined;
-  parentAccount: Account | null | undefined;
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-  readOnlyModeEnabled: boolean;
-};
-type RouteParams = {
-  account?: AccountLike;
-  accountId: string;
-  modelId: DeviceModelId;
-  wired: boolean;
-  device?: Device;
-  onSuccess?: (address?: string) => void;
-  onError?: () => void;
-};
+  account?: TokenAccount | Account;
+  parentAccount?: Account;
+  readOnlyModeEnabled?: boolean;
+} & ScreenProps;
+
 export default function ReceiveConfirmation({ navigation, route }: Props) {
   const { colors, dark } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const [verified] = useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const onModalHide = useRef(() => {});
+  const onModalHide = useRef(() => {
+    /* ignore */
+  });
   const [error] = useState(null);
   const [zoom, setZoom] = useState(false);
   const [allowNavigation] = useState(true);
@@ -86,17 +76,13 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   }
 
   function onDone(): void {
-    const n = navigation.getParent();
-
-    if (n) {
-      n.pop();
-    }
+    navigation.getParent<BaseNavigatorProps["navigation"]>()?.pop();
   }
 
   useEffect(() => {
     if (!allowNavigation) {
       navigation.setOptions({
-        headerLeft: null,
+        headerLeft: undefined,
         headerRight: () => null,
         gestureEnabled: false,
       });
@@ -105,7 +91,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
     const { headerRight } = getStackNavigatorConfig(colors, true);
     navigation.setOptions({
-      headerLeft: null,
+      headerLeft: undefined,
       headerRight,
       gestureEnabled: Platform.OS === "ios",
     });
@@ -115,9 +101,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const unsafe = !route.params.device?.deviceId;
   const QRSize = Math.round(width / 1.8 - 16);
   const mainAccount = getMainAccount(account, parentAccount);
-  const address =
-    mainAccount.hederaResources?.accountId?.toString() ??
-    mainAccount.freshAddress;
+  const address = mainAccount.freshAddress;
   const currency = getAccountCurrency(account);
   const name = mainAccount.name;
   return (
@@ -128,7 +112,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen
         category="ReceiveFunds"
@@ -213,7 +196,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         <View style={styles.bottomContainer}>
           {/* warning message for unverified address */}
           {
-            <Alert type="security" mt={4}>
+            <Alert type="security">
               <Trans
                 i18nKey="hedera.currentAddress.messageIfVirtual"
                 values={{
@@ -243,7 +226,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         </View>
       </ReactNativeModal>
       <BottomModal
-        id="ReceiveConfirmationModal"
         isOpened={isModalOpened}
         onClose={onModalClose}
         onModalHide={onModalHide.current}
@@ -296,6 +278,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOffset: {
       height: 4,
+      width: 0,
     },
   },
   qrWrapperSmall: {

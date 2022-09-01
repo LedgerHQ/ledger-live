@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useContext } from "react";
-import { FlatList } from "react-native";
+import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -27,18 +27,11 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../../components/RootNavigator";
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
+import type { AccountsNavigatorScreenProps } from "../../../components/RootNavigator/types/AccountsNavigator";
+import { ScreenName } from "../../../const";
 
-type RouteParams = {
-  currencyId: string;
-  currencyType: "CryptoCurrency" | "TokenCurrency";
-};
-
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
+type Props = AccountsNavigatorScreenProps<ScreenName.AccountReadOnly>;
 
 function ReadOnlyAccount({ route }: Props) {
   const { currencyId, currencyType } = route.params;
@@ -131,14 +124,20 @@ function ReadOnlyAccount({ route }: Props) {
     </Box>,
   ];
 
-  const renderItem = useCallback(({ item }: any) => item, []);
-  const keyExtractor = useCallback((_: any, index: any) => String(index), []);
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<JSX.Element>) => item,
+    [],
+  );
+  const keyExtractor = useCallback(
+    (_: JSX.Element, index: number) => String(index),
+    [],
+  );
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
   useFocusEffect(
     useCallback(() => {
-      setScreen("Account");
+      setScreen && setScreen("Account");
 
       return () => {
         setSource("Account");

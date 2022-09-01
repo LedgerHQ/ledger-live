@@ -1,7 +1,6 @@
 import React, { Component, memo } from "react";
 import { View } from "react-native";
-import Slider from "react-native-slider";
-import { from } from "rxjs";
+import { from, Observable } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import * as shape from "d3-shape";
 import * as scale from "d3-scale";
@@ -9,6 +8,7 @@ import maxBy from "lodash/maxBy";
 import Svg, { Path } from "react-native-svg";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { useTheme } from "@react-navigation/native";
+import { Slider } from "@ledgerhq/native-ui";
 import LText from "../components/LText";
 import TranslatedError from "../components/TranslatedError";
 
@@ -18,9 +18,14 @@ type GraphProps = {
   data: number[];
 };
 
+type Point = {
+  value: number;
+  index: number;
+};
+
 function GraphComponent({ width, height, data }: GraphProps) {
   const { colors } = useTheme();
-  const points = data.map((value, index) => ({
+  const points: Point[] = data.map((value, index) => ({
     value,
     index,
   }));
@@ -32,22 +37,33 @@ function GraphComponent({ width, height, data }: GraphProps) {
   const y = scale
     .scaleLinear()
     .range([height - 10, 10])
-    .domain([0, maxY]);
+    .domain([0, maxY as number]);
   const line = shape
-    .line()
+    .line<Point>()
     .x(d => x(d.index))
     .y(d => y(d.value))
     .curve(shape.curveLinear)(points);
   return (
     <Svg height={height} width={width}>
-      <Path d={line} stroke={colors.live} strokeWidth={4} fill="none" />
+      <Path
+        d={line as string}
+        stroke={colors.live}
+        strokeWidth={4}
+        fill="none"
+      />
     </Svg>
   );
 }
 
 const Graph = memo<GraphProps>(GraphComponent);
 
-const benchmark = ({ inputAPDUSize, outputAPDUSize }) => {
+const benchmark = ({
+  inputAPDUSize,
+  outputAPDUSize,
+}: {
+  inputAPDUSize: number;
+  outputAPDUSize: number;
+}) => {
   const inSize = inputAPDUSize - 5;
   const head = Buffer.from([0xe0, 0xff, 0x00, 0x00, inSize]);
   head.writeInt16BE(outputAPDUSize, 2);
@@ -74,7 +90,7 @@ type RouteParams = {
 class DebugBLEBenchmark extends Component<
   Props,
   {
-    exchangeStats: [number, number][];
+    exchangeStats: number[][];
     speedStats: number[];
     inputAPDUSize: number;
     outputAPDUSize: number;
@@ -112,7 +128,11 @@ class DebugBLEBenchmark extends Component<
 
     const deviceId = this.props.route.params?.deviceId;
     this.sub = withDevice(deviceId)(t => {
-      const loop = () => {
+      // FIXME: PROBABLY WRONG HERE BUT WE NEED TO REWORK withDevice FIRST
+      const loop = (): Observable<{
+        exchangeStats: number[][];
+        speedStats: number[];
+      }> => {
         const input = benchmark(this.state);
         return from(t.exchange(input)).pipe(
           concatMap(output => {
@@ -205,13 +225,10 @@ class DebugBLEBenchmark extends Component<
           >
             <LText>input apdu size</LText>
             <Slider
-              style={{
-                width: 150,
-              }}
-              minimumValue={5}
-              maximumValue={260}
+              min={5}
+              max={260}
               step={1}
-              onValueChange={inputAPDUSize => {
+              onChange={(inputAPDUSize: number) => {
                 this.setState({
                   inputAPDUSize,
                 });
@@ -227,13 +244,10 @@ class DebugBLEBenchmark extends Component<
           >
             <LText>output apdu size</LText>
             <Slider
-              style={{
-                width: 150,
-              }}
-              minimumValue={5}
-              maximumValue={255}
+              min={5}
+              max={255}
               step={1}
-              onValueChange={outputAPDUSize => {
+              onChange={(outputAPDUSize: number) => {
                 this.setState({
                   outputAPDUSize,
                 });

@@ -7,7 +7,7 @@ import {
   counterValueCurrencySelector,
   supportedCountervalues,
 } from "../../../reducers/settings";
-import { State } from "../../../reducers";
+import { State } from "../../../reducers/types";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 
 const items = supportedCountervalues
@@ -38,5 +38,4 @@ const Screen = makeGenericSelectScreen({
   ),
 });
 
-// $FlowFixMe
 export default connect(mapStateToProps, mapDispatchToProps)(Screen);

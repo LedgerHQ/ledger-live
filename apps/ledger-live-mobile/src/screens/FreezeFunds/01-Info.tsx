@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, View, Linking } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
@@ -12,9 +12,6 @@ import BulletList, { BulletGreenCheck } from "../../components/BulletList";
 import IlluRewards from "../../icons/images/Rewards";
 import { urls } from "../../config/urls";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -42,7 +39,6 @@ export default function FreezeInfo({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <ScrollView
         style={styles.scroll}

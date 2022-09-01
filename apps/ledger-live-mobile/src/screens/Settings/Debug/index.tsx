@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import config from "react-native-config";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TrackScreen } from "../../../analytics";
 import SettingsRow from "../../../components/SettingsRow";
@@ -50,7 +50,6 @@ export function DebugMocks() {
   return (
     <SettingsNavigationScrollView>
       {config.BRIDGESTREAM_DATA ? (
-        // $FlowFixMe
         <ImportBridgeStreamData
           title="Import .env BRIDGESTREAM_DATA"
           dataStr={config.BRIDGESTREAM_DATA}

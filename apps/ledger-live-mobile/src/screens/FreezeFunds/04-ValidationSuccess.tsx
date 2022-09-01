@@ -10,6 +10,10 @@ import {
 import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";
 import type { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
+import {
+  TronAccount,
+  Transaction,
+} from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
@@ -27,12 +31,13 @@ type Props = {
 type RouteParams = {
   accountId: string;
   deviceId: string;
-  transaction: any;
+  transaction: Transaction;
   result: Operation;
 };
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const account = useSelector(accountScreenSelector(route))
+    .account as TronAccount;
   invariant(account && account.type === "Account", "account is required");
   const time = useTimer(60);
   const isLoading = useTronPowerLoading(account);
@@ -105,7 +110,6 @@ export default function ValidationSuccess({ navigation, route }: Props) {
                   <Trans i18nKey="freeze.validation.button.vote" />
                 )
               }
-              isLoading={isLoading && time === 0}
               disabled={isLoading}
               type="primary"
               containerStyle={styles.button}

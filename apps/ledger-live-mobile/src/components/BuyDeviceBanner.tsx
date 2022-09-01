@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback } from "react";
-import { Image } from "react-native";
+import { Image, ImageStyle, StyleProp, ViewStyle } from "react-native";
 import { Flex, Text, Icons, Link } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import Button from "./wrappedUi/Button";
+import Button, { WrappedButtonProps } from "./wrappedUi/Button";
 import { NavigatorName, ScreenName } from "../const";
 import ForceTheme from "./theme/ForceTheme";
 
@@ -16,12 +16,11 @@ import { track } from "../analytics";
 type Props = {
   topLeft?: JSX.Element | null;
   buttonLabel?: string;
-  buttonSize?: ButtonProps["size"];
+  buttonSize?: WrappedButtonProps["size"];
   event?: string;
-  eventProperties?: Record<string, any>;
+  eventProperties?: Record<string, unknown>;
   style?: StyleProp<ViewStyle>;
   imageScale?: number;
-  imageContainerStyle?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
   variant?: "buy" | "setup";
   screen: string;
@@ -70,7 +69,6 @@ export default function BuyDeviceBanner({
   event,
   eventProperties,
   style,
-  imageContainerStyle,
   imageStyle,
   variant,
   screen,
@@ -158,7 +156,6 @@ export default function BuyDeviceBanner({
           bottom={0}
           borderRadius={2}
           overflow="hidden"
-          imageContainerStyle={imageContainerStyle}
           pointerEvents="none"
         >
           <Image

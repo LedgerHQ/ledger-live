@@ -20,7 +20,6 @@ export default function DebugSwap() {
     Config.SWAP_OVERRIDE_KYC_USER_ID || "",
   );
   const onToggleWyreId = useCallback(() => {
-    // $FlowFixMe debugs dont need typing
     setConfigIDWrapper(configIDWrapper ? "" : "wadus");
   }, [configIDWrapper]);
   const onFlushWyreKYC = useCallback(() => {

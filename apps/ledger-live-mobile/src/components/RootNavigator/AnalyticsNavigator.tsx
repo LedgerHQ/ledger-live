@@ -8,8 +8,9 @@ import AnalyticsAllocation from "../../screens/Analytics/Allocation";
 import AnalyticsOperations from "../../screens/Analytics/Operations";
 import { ScreenName } from "../../const";
 import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
+import { AnalyticsNavigatorParamList } from "./types/AnalyticsNavigator";
 
-const Tab = createMaterialTopTabNavigator();
+const Tab = createMaterialTopTabNavigator<AnalyticsNavigatorParamList>();
 
 export default function AnalyticsNavigator() {
   const { t } = useTranslation();
@@ -19,7 +20,6 @@ export default function AnalyticsNavigator() {
     [colors],
   );
 
-  // Fixme Typescript: Update react-native-tab-view to 3.1.1 to remove Tab.navigator ts error
   return (
     <Tab.Navigator {...tabNavigationConfig}>
       <Tab.Screen

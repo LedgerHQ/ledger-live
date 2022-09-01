@@ -17,7 +17,7 @@ import Track from "../../../analytics/Track";
 import { track, TrackScreen } from "../../../analytics";
 import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
-import { State } from "../../../reducers";
+import type { State } from "../../../reducers/types";
 import useNotifications from "../../../logic/notifications";
 import {
   usePreviousRouteName,
@@ -91,7 +91,8 @@ function NotificationsSettings() {
   const notifications = useSelector(notificationsSelector);
   const { getIsNotifEnabled, handlePushNotificationsPermission } =
     useNotifications();
-  const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState();
+  const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] =
+    useState<boolean>(false);
 
   const refreshNotifPermission = useCallback(() => {
     getIsNotifEnabled().then(isNotifPermissionEnabled => {

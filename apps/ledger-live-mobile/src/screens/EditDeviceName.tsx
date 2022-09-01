@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useState } from "react";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { DeviceNameInvalid } from "@ledgerhq/errors";

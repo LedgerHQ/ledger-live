@@ -15,6 +15,7 @@ import {
   addExtraSessionTrackingPair,
 } from "../actions/general";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import type { Props as CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
 import Circle from "./Circle";
 import IconHelp from "../icons/Info";
@@ -35,7 +36,7 @@ type Props = {
   subMagnitude?: number;
   joinFragmentsSeparator?: string;
   alwaysShowValue?: boolean;
-};
+} & Partial<CurrencyUnitValueProps>;
 export const NoCountervaluePlaceholder = () => {
   const { colors } = useTheme();
   const [modalOpened, setModalOpened] = useState(false);
@@ -64,7 +65,6 @@ export default function CounterValue({
   value: valueProp,
   date,
   withPlaceholder,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   placeholderProps,
   Wrapper,
   currency,
@@ -83,7 +83,7 @@ export default function CounterValue({
     [counterValueCurrency, currency, trackingPairs],
   );
   useEffect(() => {
-    let t;
+    let t: NodeJS.Timeout | undefined;
 
     if (!hasTrackingPair) {
       addExtraSessionTrackingPair({
@@ -119,7 +119,6 @@ export default function CounterValue({
   const inner = (
     <CurrencyUnitValue
       {...props}
-      currency={currency}
       unit={counterValueCurrency.units[0]}
       value={countervalue}
     />

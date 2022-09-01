@@ -1,15 +1,15 @@
 import React, { Component } from "react";
-import { Observable, Subject, from } from "rxjs";
+import { Observable, Subject, from, Observer } from "rxjs";
 import debounce from "lodash/debounce";
 import { mergeMap, last, tap, filter } from "rxjs/operators";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import StepRunnerModal from "./StepRunnerModal";
 import type { Step } from "./types";
-import type { DeviceNames } from "../../screens/Onboarding/types";
 
 const runStep = (
   step: Step,
-  meta: Record<string, any>,
+  meta: Device & Record<string, any>,
   onDoneO: Observable<any>,
 ): Observable<Record<string, any>> => step.run(meta, onDoneO);
 
@@ -17,11 +17,11 @@ type StepEvent =
   | {
       type: "step";
       step: number;
-      meta: Record<string, any>;
+      meta: Device & Record<string, any>;
     }
   | {
       type: "meta";
-      meta: Record<string, any>;
+      meta: Device & Record<string, any>;
     };
 
 const chainSteps = (
@@ -29,7 +29,7 @@ const chainSteps = (
   meta: Device,
   onDoneO: Observable<number>,
 ): Observable<StepEvent> =>
-  Observable.create(o => {
+  Observable.create((o: Observer<unknown>) => {
     const obs: Observable<any> = steps.reduce(
       (meta: Observable<any>, step: Step, i: number) =>
         meta.pipe(
@@ -79,7 +79,7 @@ class DeviceJob extends Component<
     onDone: (arg0: Record<string, any>) => void;
     onCancel: () => void;
     editMode?: boolean;
-    deviceModelId: DeviceNames;
+    deviceModelId: DeviceModelId;
     onStepEntered?: (arg0: number, arg1: Record<string, any>) => void;
   },
   {

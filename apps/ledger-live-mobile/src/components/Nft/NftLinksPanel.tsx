@@ -16,7 +16,7 @@ import { rgba } from "../../colors";
 import LText from "../LText";
 
 type Props = {
-  links: NFTMetadata["links"] | null;
+  links?: NFTMetadata["links"] | null;
   isOpen: boolean;
   onClose: () => void;
   nftMetadata?: NFTMetadata;
@@ -199,7 +199,6 @@ const NftLinksPanel = ({ links, isOpen, onClose, nftMetadata }: Props) => {
           backgroundColor: colors.card,
         },
       ]}
-      id="NftLinksModal"
       isOpened={isOpen}
       onClose={onClose}
     >

@@ -5,7 +5,7 @@ import {
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import IconAD from "react-native-vector-icons/dist/AntDesign";
+import IconAD from "react-native-vector-icons/AntDesign";
 import { rgba } from "../../colors";
 import IconSwap from "../../icons/Swap";
 

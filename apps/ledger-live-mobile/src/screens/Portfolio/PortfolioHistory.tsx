@@ -93,12 +93,10 @@ export const PortfolioHistoryList = withDiscreetMode(
 
     return (
       <SectionList
-        // $FlowFixMe
         sections={sections}
         style={{ flex: 1, paddingHorizontal: 16 }}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        // $FlowFixMe
         renderSectionHeader={renderSectionHeader}
         stickySectionHeadersEnabled={false}
         onEndReached={onEndReached}

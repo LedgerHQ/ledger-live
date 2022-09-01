@@ -7,7 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
@@ -17,6 +17,7 @@ import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SubAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
+import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -76,7 +77,7 @@ const Row = ({
   );
 };
 
-const keyExtractor = token => token.id;
+const keyExtractor = (token: TokenCurrency) => token.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -98,9 +99,8 @@ type Props = {
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  const { t } = useTranslation();
   invariant(account, "Account required");
-  const mainAccount = getMainAccount(account);
+  const mainAccount = getMainAccount(account) as AlgorandAccount;
   const bridge = getAccountBridge(mainAccount);
   invariant(
     mainAccount && mainAccount.algorandResources,
@@ -127,7 +127,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
     },
     [navigation, route.params, bridge, transaction],
   );
-  const subAccounts = mainAccount.subAccounts || [];
+  const subAccounts = mainAccount.subAccounts;
   const options = listTokensForCryptoCurrency(mainAccount.currency);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const openModal = useCallback(
@@ -139,13 +139,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
     [setInfoModalOpen],
   );
   const renderList = useCallback(
-    list => (
+    (list: TokenCurrency[]) => (
       <FlatList
         data={list}
         renderItem={({ item }: { item: TokenCurrency }) => (
           <Row
             item={item}
-            disabled={subAccounts.some(
+            disabled={(subAccounts || []).some(
               (sub: SubAccount) =>
                 sub.type === "TokenAccount" &&
                 sub.token &&
@@ -178,7 +178,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
             renderEmptySearch={renderEmptyList}
             keys={["name", "ticker"]}
             list={options}
-            t={t}
           />
         </View>
       </KeyboardView>

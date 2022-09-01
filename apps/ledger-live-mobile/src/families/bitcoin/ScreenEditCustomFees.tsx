@@ -16,7 +16,7 @@ import TextInput from "../../components/FocusedTextInput";
 
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,
-  headerLeft: null,
+  headerLeft: undefined,
 };
 type RouteParams = {
   accountId: string;

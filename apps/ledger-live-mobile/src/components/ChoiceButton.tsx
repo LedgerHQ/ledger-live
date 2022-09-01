@@ -1,18 +1,23 @@
 import React, { ReactNode } from "react";
+import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
 import Button from "./wrappedUi/Button";
+import type { ActionButtonEventProps } from "./FabAccountButtonBar";
 
-type ChoiceButtonProps = {
+type ChoiceButtonProps = Partial<ActionButtonEventProps> & {
   disabled?: boolean;
-  onSelect: any;
+  onSelect: ({
+    navigationParams,
+    enableActions,
+    linkUrl,
+  }: {
+    navigationParams: ActionButtonEventProps["navigationParams"];
+    enableActions: ActionButtonEventProps["enableActions"];
+    linkUrl: ActionButtonEventProps["linkUrl"];
+  }) => void;
   label: ReactNode;
-  description?: ReactNode;
-  Icon: any;
-  extra?: ReactNode;
+  Icon?: ButtonProps["Icon"];
   event: string;
-  eventProperties: any;
-  navigationParams?: any[];
-  linkUrl?: string;
-  enableActions?: string;
+  eventProperties?: unknown;
 };
 
 const ChoiceButton = ({

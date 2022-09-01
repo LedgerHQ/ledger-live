@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { concat, of, from } from "rxjs";
+import { concat, of, from, Subscription } from "rxjs";
 import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Platform } from "react-native";
@@ -59,7 +59,7 @@ export const useSignWithDevice = ({
   const navigation = useNavigation();
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
-  const subscription = useRef(null);
+  const subscription = useRef<null | Subscription>(null);
   const signWithDevice = useCallback(() => {
     const { deviceId, transaction } = route.params || {};
     const bridge = getAccountBridge(account, parentAccount);
@@ -231,7 +231,7 @@ export function useSignedTxHandler({
   const mainAccount = getMainAccount(account, parentAccount);
   return useCallback(
     // TODO: fix type error
-    // $FlowFixMe
+
     async ({ signedOperation, transactionSignError }) => {
       try {
         if (transactionSignError) {
@@ -261,7 +261,7 @@ export function useSignedTxHandler({
             error instanceof TransactionRefusedOnDevice
           )
         ) {
-          logger.critical(error);
+          logger.critical(error as Error);
         }
 
         navigation.replace(
@@ -282,7 +282,7 @@ export function useSignedTxHandlerWithoutBroadcast({
   const route = useRoute();
   return useCallback(
     // TODO: fix type error
-    // $FlowFixMe
+
     async ({ signedOperation, transactionSignError }) => {
       try {
         if (transactionSignError) {
@@ -299,7 +299,7 @@ export function useSignedTxHandlerWithoutBroadcast({
             error instanceof TransactionRefusedOnDevice
           )
         ) {
-          logger.critical(error);
+          logger.critical(error as Error);
         }
 
         navigation.replace(

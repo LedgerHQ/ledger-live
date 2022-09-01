@@ -5,7 +5,7 @@ import invariant from "invariant";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { inferDynamicRange } from "@ledgerhq/live-common/range";
+import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -23,10 +23,10 @@ type Props = {
 };
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,
-  headerLeft: null,
+  headerLeft: undefined,
 };
 const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
-let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
+let lastNetworkGasPrice: Range; // local cache of last value to prevent extra blinks
 
 export default function EthereumCustomFees({ navigation, route }: Props) {
   const { colors } = useTheme();

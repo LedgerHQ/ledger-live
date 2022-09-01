@@ -8,7 +8,7 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
@@ -33,8 +33,6 @@ import InfoModal from "../../modals/Info";
 import BandwidthIcon from "../../icons/Bandwidth";
 import EnergyIcon from "../../icons/Energy";
 import Button from "../../components/wrappedUi/Button";
-
-const forceInset = { bottom: "always" };
 
 const infoModalData = [
   {
@@ -219,7 +217,6 @@ export default function FreezeAmount({ navigation, route }: Props) {
       <TrackScreen category="FreezeFunds" name="Amount" />
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
-        forceInset={forceInset}
       >
         <KeyboardView style={styles.container}>
           <View style={styles.topContainer}>

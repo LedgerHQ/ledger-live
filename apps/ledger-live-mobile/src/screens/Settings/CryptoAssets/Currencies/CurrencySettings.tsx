@@ -95,7 +95,7 @@ function EachCurrencySettings({
   );
 }
 
-export default compose(
+export default compose<typeof EachCurrencySettings>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
   withTheme,

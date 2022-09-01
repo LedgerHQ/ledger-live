@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -19,9 +19,6 @@ import { NavigatorName, ScreenName } from "../../const";
 import { useRampCatalogCurrencies } from "./hooks";
 
 const SEARCH_KEYS = ["name", "ticker"];
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   devMode: boolean;
   navigation: any;
@@ -121,7 +118,6 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="Exchange" name="SelectCrypto" />
       <KeyboardView style={styles.keybaordContainer}>

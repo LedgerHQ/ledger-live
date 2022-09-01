@@ -1,17 +1,16 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { DeviceInfo } from "@ledgerhq/types-live";
 import { from } from "rxjs";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import type { App, DeviceInfo } from "@ledgerhq/types-live";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { CommonActions } from "@react-navigation/native";
+import { CommonActions, ParamListBase } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { useApps } from "./shared";
-// eslint-disable-next-line import/no-cycle
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { TrackScreen } from "../../analytics";
@@ -25,10 +24,10 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
-import { ManagerTab, MANAGER_TABS } from "../../const/manager";
+import { ManagerTab } from "../../const/manager";
 
 type Props = {
-  navigation: StackNavigationProp<any>;
+  navigation: StackNavigationProp<ParamListBase>;
   route: {
     params: {
       device: Device;
@@ -67,7 +66,7 @@ const Manager = ({ navigation, route }: Props) => {
       });
   }, [deviceId, navigation]);
 
-  const { apps, currentError, installQueue, uninstallQueue } = state;
+  const { currentError, installQueue, uninstallQueue } = state;
   const pendingInstalls = installQueue.length + uninstallQueue.length > 0;
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
@@ -87,13 +86,15 @@ const Manager = ({ navigation, route }: Props) => {
   /** general error state */
   const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
-  const [storageWarning, setStorageWarning] = useState(null);
+  const [storageWarning, setStorageWarning] = useState<string | null>(null);
   /** install app with dependencies modal state */
-  const [appInstallWithDependencies, setAppInstallWithDependencies] =
-    useState(null);
+  const [appInstallWithDependencies, setAppInstallWithDependencies] = useState<{
+    app: App;
+    dependencies: App[];
+  } | null>(null);
   /** uninstall app with dependencies modal state */
   const [appUninstallWithDependencies, setAppUninstallWithDependencies] =
-    useState(null);
+    useState<{ dependents: App[]; app: App } | null>(null);
 
   /** open error modal each time a new error appears in state.currentError */
   useEffect(() => {
@@ -196,7 +197,6 @@ const Manager = ({ navigation, route }: Props) => {
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         setStorageWarning={setStorageWarning}
-        managerTabs={MANAGER_TABS}
         deviceId={deviceId}
         initialDeviceName={deviceName}
         pendingInstalls={pendingInstalls}
@@ -221,13 +221,12 @@ const Manager = ({ navigation, route }: Props) => {
         onClose={resetStorageWarning}
       />
       <AppDependenciesModal
-        appInstallWithDependencies={appInstallWithDependencies}
+        appInstallWithDependencies={appInstallWithDependencies!}
         onClose={resetAppInstallWithDependencies}
-        appList={apps}
         dispatch={dispatch}
       />
       <UninstallDependenciesModal
-        appUninstallWithDependencies={appUninstallWithDependencies}
+        appUninstallWithDependencies={appUninstallWithDependencies!}
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
       />

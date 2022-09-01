@@ -106,9 +106,15 @@ const AccountRowLayout = ({
             </Flex>
           </Flex>
           <Flex flexDirection="row" justifyContent="space-between">
-            <Text variant="body" fontWeight="medium" color="neutral.c70">
-              <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
-            </Text>
+            {currencyUnit && (
+              <Text variant="body" fontWeight="medium" color="neutral.c70">
+                <CurrencyUnitValue
+                  showCode
+                  unit={currencyUnit}
+                  value={balance}
+                />
+              </Text>
+            )}
             {!hideDelta && countervalueChange && (
               <Delta
                 percent

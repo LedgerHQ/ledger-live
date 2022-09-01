@@ -7,9 +7,9 @@ import { track, TrackScreen } from "../../../analytics";
 import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 type Props = {
-  closeModal: any;
-  setStep: any;
-  setShouldNotRemindUserAgain: any;
+  closeModal: () => void;
+  setStep: (arg: string) => void;
+  setShouldNotRemindUserAgain: () => void;
 };
 
 const ConfirmUnverified = ({

@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/live-common/families/solana/logic";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import {
+  SolanaAccount,
   SolanaStakeWithMeta,
   StakeAction,
 } from "@ledgerhq/live-common/families/solana/types";
@@ -22,7 +23,7 @@ import {
   sweetch,
   tupleOfUnion,
 } from "@ledgerhq/live-common/families/solana/utils";
-import { Account } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -50,7 +51,7 @@ import DelegationLabelRight from "./LabelRight";
 import DelegationRow from "./Row";
 
 type Props = {
-  account: Account;
+  account: SolanaAccount;
 };
 
 type DelegationDrawerProps = Parameters<typeof DelegationDrawer>[0];
@@ -59,7 +60,7 @@ type DelegationDrawerActions = DelegationDrawerProps["actions"];
 function Delegations({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const mainAccount = getMainAccount(account, undefined);
+  const mainAccount = getMainAccount(account, undefined) as SolanaAccount;
   const currency = getAccountCurrency(mainAccount);
 
   invariant(currency.type === "CryptoCurrency", "expected crypto currency");
@@ -352,9 +353,13 @@ function DrawerStakeActionIcon({
   }
 }
 
-export default function SolanaDelegations({ account }: Props) {
-  if (!account.solanaResources) return null;
-  return <Delegations account={account} />;
+export default function SolanaDelegations({
+  account,
+}: {
+  account: AccountLike;
+}) {
+  if (!(account as SolanaAccount).solanaResources) return null;
+  return <Delegations account={account as SolanaAccount} />;
 }
 
 const styles = StyleSheet.create({

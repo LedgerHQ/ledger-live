@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Button from "../components/Button";
+import { SettingsActionTypes } from "../actions/types";
 
 class CollapsibleThingy extends PureComponent<
   {
@@ -115,7 +116,7 @@ export default function DebugStore() {
 
     if (__DEV__ && override) {
       dispatch({
-        action: "DANGEROUSLY_OVERRIDE_STATE",
+        action: SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
         payload: appState,
       });
     }

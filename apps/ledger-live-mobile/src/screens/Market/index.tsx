@@ -45,8 +45,7 @@ import {
   setMarketFilterByStarredAccounts,
   setMarketRequestParams,
 } from "../../actions/settings";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../components/RootNavigator";
+import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),

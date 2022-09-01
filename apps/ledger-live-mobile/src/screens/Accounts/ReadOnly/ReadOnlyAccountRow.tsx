@@ -19,7 +19,7 @@ const ReadOnlyAccountRow = ({ navigation, currency, screen }: Props) => {
     navigation.navigate(NavigatorName.Portfolio, {
       screen: NavigatorName.PortfolioAccounts,
       params: {
-        screen: ScreenName.Account,
+        screen: ScreenName.AccountReadOnly,
         params: {
           currencyId: id,
           currencyType: type,

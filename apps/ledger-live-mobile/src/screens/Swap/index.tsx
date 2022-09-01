@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
-import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks";
+import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useSwapTransaction } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   CurrenciesStatus,
@@ -27,6 +27,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { Keyboard, ScrollView, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import BigNumber from "bignumber.js";
 import { swapAcceptProvider } from "../../actions/settings";
 import { Track, TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -86,7 +87,7 @@ function SwapForm({
 }: Props) {
   const { colors } = useTheme();
   const accounts = useSelector(accountsSelector);
-  const [rate, setRate] = useState(null);
+  const [rate, setRate] = useState<SwapRouteParams["rate"] | null>(null);
   const selectableCurrencies = getSupportedCurrencies({
     providers,
     provider,
@@ -97,9 +98,10 @@ function SwapForm({
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(
     maybeFilteredCurrencies,
   );
-  const defaultCurrency = route?.params?.swap?.from.account
+  const routeParamsfromAccount = route?.params?.swap?.from?.account;
+  const defaultCurrency = routeParamsfromAccount
     ? sortedCryptoCurrencies.find(
-        c => c !== getAccountCurrency(route?.params?.swap?.from.account),
+        c => c !== getAccountCurrency(routeParamsfromAccount),
       )
     : sortedCryptoCurrencies.find(
         c =>
@@ -144,17 +146,17 @@ function SwapForm({
   }, [defaultCurrency, swap.to, swap.from, setToCurrency]);
   useEffect(() => {
     if (!!defaultAccount && !swap.from?.account) {
-      setFromAccount(defaultAccount);
+      setFromAccount(defaultAccount as Account);
     }
   }, [defaultAccount, swap.from, setFromAccount]);
-  const [error, setError] = useState(null);
-  const [maxSpendable, setMaxSpendable] = useState();
+  const [error, setError] = useState<Error>();
+  const [maxSpendable, setMaxSpendable] = useState<BigNumber>();
   const {
     from: { account: fromAccount, parentAccount: fromParentAccount },
     refetchRates,
   } = swap;
   const resetError = useCallback(() => {
-    setError();
+    setError(undefined);
   }, []);
   const fromUnit = useMemo(
     () => fromAccount && getAccountUnit(fromAccount),
@@ -168,8 +170,8 @@ function SwapForm({
     setConfirmed(false);
   }, []);
   useEffect(() => {
-    let expirationInterval;
-    let rateExpiration;
+    let expirationInterval: NodeJS.Timeout | undefined;
+    let rateExpiration: Date | undefined;
 
     if (rate && rate.tradeMethod === "fixed") {
       rateExpiration = new Date(
@@ -179,7 +181,7 @@ function SwapForm({
       expirationInterval = setInterval(() => {
         if (rate && rateExpiration && rateExpiration <= new Date()) {
           refetchRates();
-          rateExpiration = null;
+          rateExpiration = undefined;
           clearInterval(expirationInterval);
         }
       }, 1000);
@@ -235,7 +237,7 @@ function SwapForm({
           navigation={navigation}
           route={route}
           swap={swap}
-          transaction={transaction}
+          transaction={transaction as SwapTransaction}
           setFromAccount={setFromAccount}
           setFromAmount={setFromAmount}
           setToCurrency={setToCurrency}
@@ -252,9 +254,9 @@ function SwapForm({
           navigation={navigation}
           route={route}
           swap={swap}
-          transaction={transaction}
+          transaction={transaction as SwapTransaction}
           status={status}
-          rate={rate}
+          rate={rate!}
           setToAccount={setToAccount}
           accounts={accounts}
           providers={providers}
@@ -275,7 +277,7 @@ function SwapForm({
               <Trans i18nKey="transfer.swap.form.amount.available" />
             </LText>
             <LText semiBold>
-              {maxSpendable ? (
+              {maxSpendable && fromUnit ? (
                 <CurrencyUnitValue
                   showCode
                   unit={fromUnit}
@@ -292,11 +294,10 @@ function SwapForm({
                 <Trans i18nKey="transfer.swap.form.amount.useMax" />
               </LText>
               <Switch
-                style={styles.switch}
                 value={swap.isMaxEnabled}
-                onValueChange={value => {
+                onValueChange={() => {
                   Keyboard.dismiss();
-                  toggleMax(value);
+                  toggleMax();
                 }}
               />
             </View>
@@ -327,9 +328,9 @@ function SwapForm({
               />
               <Confirmation
                 swap={swap}
-                rate={rate}
+                rate={rate!}
                 status={status}
-                transaction={transaction}
+                transaction={transaction!}
                 deviceMeta={deviceMeta}
                 provider={provider}
                 onError={e => {
@@ -448,8 +449,5 @@ const styles = StyleSheet.create({
   },
   maxLabel: {
     marginRight: 4,
-  },
-  switch: {
-    opacity: 0.99,
   },
 });

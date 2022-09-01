@@ -2,7 +2,7 @@ import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type {
@@ -29,9 +29,6 @@ import VoteRow from "./02-VoteRow";
 import VoteModal from "./02-VoteModal";
 import Check from "../../../icons/Check";
 
-const forceInset = {
-  bottom: "always",
-};
 type RouteParams = {
   accountId: string;
   transaction: Transaction;
@@ -164,7 +161,6 @@ export default function VoteCast({ route, navigation }: Props) {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <ScrollView style={[styles.root]}>
           {formattedVotes.map((vote, i) => (

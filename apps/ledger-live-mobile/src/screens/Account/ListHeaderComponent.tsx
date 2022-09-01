@@ -2,7 +2,6 @@ import React, { ReactNode } from "react";
 import {
   isAccountEmpty,
   getMainAccount,
-  getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { AccountLike, Account, ValueChange } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
@@ -26,13 +25,16 @@ import { FabAccountActions } from "../../components/FabActions";
 const renderAccountSummary =
   (
     account: AccountLike,
-    parentAccount: Account,
-    compoundSummary: CompoundAccountSummary,
+    parentAccount?: Account,
+    compoundSummary?: CompoundAccountSummary,
   ) =>
   () => {
     const mainAccount = getMainAccount(account, parentAccount);
     const AccountBalanceSummaryFooter =
-      perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
+      perFamilyAccountBalanceSummaryFooter[
+        mainAccount.currency
+          .family as keyof typeof perFamilyAccountBalanceSummaryFooter
+      ];
 
     const footers = [];
 
@@ -49,7 +51,7 @@ const renderAccountSummary =
     if (AccountBalanceSummaryFooter)
       footers.push(
         <AccountBalanceSummaryFooter
-          account={account}
+          account={account as Account}
           key="accountbalancesummary"
         />,
       );
@@ -97,18 +99,25 @@ export function getListHeaderComponents({
   const empty = isAccountEmpty(account);
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
-  const AccountHeader = perFamilyAccountHeader[mainAccount.currency.family];
+  const AccountHeader =
+    perFamilyAccountHeader[
+      mainAccount.currency.family as keyof typeof perFamilyAccountHeader
+    ];
   const AccountBodyHeader =
-    perFamilyAccountBodyHeader[mainAccount.currency.family];
+    perFamilyAccountBodyHeader[
+      mainAccount.currency.family as keyof typeof perFamilyAccountBodyHeader
+    ];
 
   const AccountSubHeader =
-    perFamilyAccountSubHeader[mainAccount.currency.family];
+    perFamilyAccountSubHeader[
+      mainAccount.currency.family as keyof typeof perFamilyAccountSubHeader
+    ];
 
   const stickyHeaderIndices = empty ? [] : [4];
 
   return {
     listHeaderComponents: [
-      <Header accountId={account.id} />,
+      <Header />,
       !!AccountSubHeader && <AccountSubHeader />,
       !empty && !!AccountHeader && (
         <AccountHeader account={account} parentAccount={parentAccount} />
@@ -131,9 +140,6 @@ export function getListHeaderComponents({
               compoundSummary,
             )}
             onSwitchAccountCurrency={onSwitchAccountCurrency}
-            countervalueChange={countervalueChange}
-            counterValueUnit={counterValueCurrency.units[0]}
-            cryptoCurrencyUnit={getAccountUnit(account)}
           />
         </Box>
       ),

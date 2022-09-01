@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import { StyleSheet, SectionList, FlatList } from "react-native";
-import { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import type { SectionBase } from "react-native";
 import Animated, { Value, event } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -22,8 +22,9 @@ import {
 } from "@ledgerhq/live-common/compound/logic";
 import { Trans } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { switchCountervalueFirst } from "../../actions/settings";
-import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,
@@ -46,16 +47,12 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import type {
+  AccountsNavigatorParamList,
+  AccountsNavigatorScreenProps,
+} from "../../components/RootNavigator/types/AccountsNavigator";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  parentId?: string;
-};
+type Props = AccountsNavigatorScreenProps<ScreenName.Account>;
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = accountSyncRefreshControl(AnimatedSectionList);
@@ -77,7 +74,12 @@ const stickySectionHeight = 56;
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
-  return <AccountScreenInner account={account} parentAccount={parentAccount} />;
+  return (
+    <AccountScreenInner
+      account={account}
+      parentAccount={parentAccount || undefined}
+    />
+  );
 }
 
 const AccountScreenInner = ({
@@ -85,9 +87,10 @@ const AccountScreenInner = ({
   parentAccount,
 }: {
   account: AccountLike;
-  parentAccount: Account | undefined;
+  parentAccount?: Account | undefined;
 }) => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =
@@ -109,7 +112,8 @@ const AccountScreenInner = ({
     dispatch(switchCountervalueFirst());
   }, [dispatch]);
 
-  const onAccountPress = debounce((tokenAccount: TokenAccount) => {
+  const onAccountPress = debounce((tokenAccount?: TokenAccount) => {
+    if (!tokenAccount) return;
     navigation.push(ScreenName.Account, {
       parentId: account.id,
       accountId: tokenAccount.id,
@@ -118,13 +122,14 @@ const AccountScreenInner = ({
 
   const ListEmptyComponent = useCallback(
     () =>
-      isAccountEmpty(account) && (
+      (isAccountEmpty(account) && (
         <EmptyStateAccount
           account={account}
           parentAccount={parentAccount}
           navigation={navigation}
         />
-      ),
+      )) ||
+      null,
     [account, parentAccount, navigation],
   );
 
@@ -145,7 +150,6 @@ const AccountScreenInner = ({
           operation={item}
           account={account}
           parentAccount={parentAccount}
-          isFirst={index === 0}
           isLast={section.data.length - 1 === index}
         />
       );
@@ -167,17 +171,17 @@ const AccountScreenInner = ({
     count: opCount,
   });
 
-  const compoundCapabilities: any =
-    account.type === "TokenAccount" &&
-    !!account.compoundBalance &&
-    getAccountCapabilities(account);
+  const compoundCapabilities =
+    (account.type === "TokenAccount" &&
+      !!account.compoundBalance &&
+      getAccountCapabilities(account)) ||
+    undefined;
 
   const compoundSummary =
-    compoundCapabilities?.status && account.type === "TokenAccount"
-      ? makeCompoundSummaryForAccount(account, parentAccount)
-      : undefined;
-
-  const [isCollapsed, setIsCollapsed] = useState(true);
+    (compoundCapabilities?.status &&
+      account.type === "TokenAccount" &&
+      makeCompoundSummaryForAccount(account, parentAccount)) ||
+    undefined;
 
   const { listHeaderComponents } = useMemo(
     () =>
@@ -194,8 +198,6 @@ const AccountScreenInner = ({
         onAccountPress,
         onSwitchAccountCurrency,
         compoundSummary,
-        isCollapsed,
-        setIsCollapsed,
       }),
     [
       account,
@@ -205,7 +207,6 @@ const AccountScreenInner = ({
       countervalueChange,
       cryptoChange,
       history,
-      isCollapsed,
       onAccountPress,
       onSwitchAccountCurrency,
       parentAccount,
@@ -268,6 +269,7 @@ const AccountScreenInner = ({
         renderItem={({ item }: any) => item}
         keyExtractor={(_: any, index: any) => String(index)}
         showsVerticalScrollIndicator={false}
+        accountId={account.id}
       />
     </TabBarSafeAreaView>
   );

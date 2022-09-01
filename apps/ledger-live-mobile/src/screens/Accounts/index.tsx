@@ -1,8 +1,8 @@
 import React, { useCallback, useState, useEffect, memo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, FlatListProps, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -22,7 +22,7 @@ import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { usePortfolio } from "../../actions/portfolio";
+import { usePortfolio } from "../../hooks/portfolio";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import Spinning from "../../components/Spinning";
@@ -33,7 +33,9 @@ import AccountsNavigationHeader from "./AccountsNavigationHeader";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
-const List = globalSyncRefreshControl(FlatList);
+const List = globalSyncRefreshControl(
+  FlatList as React.ComponentType<FlatListProps<AccountLike>>,
+);
 
 type Props = {
   navigation: any;
@@ -87,12 +89,11 @@ function Accounts({ navigation, route }: Props) {
   }, [params, accounts, navigation]);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Account | TokenAccount; index: number }) => (
+    ({ item, index }: ListRenderItemInfo<AccountLike>) => (
       <AccountRow
         navigation={navigation}
         account={item}
         accountId={item.id}
-        onSetAccount={setAccount}
         isLast={index === accounts.length - 1}
         portfolioValue={
           portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value
@@ -101,15 +102,15 @@ function Accounts({ navigation, route }: Props) {
         bottomLink={flattenedAccounts[index + 1]?.type === "TokenAccount"}
       />
     ),
-    [navigation, accounts.length, portfolio.balanceHistory],
+    [navigation, accounts.length, portfolio.balanceHistory, flattenedAccounts],
   );
 
   const renderList = useCallback(
-    items => (
+    (items: AccountLike[]) => (
       <List
         data={items}
         renderItem={renderItem}
-        keyExtractor={(i: any) => i.id}
+        keyExtractor={i => i.id}
         ListEmptyComponent={<NoAccounts />}
         contentContainerStyle={{
           paddingHorizontal: 16,
@@ -146,7 +147,7 @@ function Accounts({ navigation, route }: Props) {
         </Flex>
       </Flex>
     ),
-    [t],
+    [],
   );
 
   return (

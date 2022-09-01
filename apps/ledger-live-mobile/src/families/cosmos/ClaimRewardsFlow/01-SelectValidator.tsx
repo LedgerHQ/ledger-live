@@ -2,7 +2,10 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
-import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type {
+  CosmosAccount,
+  Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getMainAccount,
@@ -30,11 +33,11 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account required");
-  const mainAccount = getMainAccount(account, undefined);
+  const mainAccount = getMainAccount(account, undefined) as CosmosAccount;
   const bridge = getAccountBridge(account, undefined);
   const { cosmosResources } = mainAccount;
   invariant(cosmosResources, "cosmosResources required");
-  const { transaction } = useBridgeTransaction(() => {
+  const transaction = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,
@@ -46,7 +49,7 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
         recipient: mainAccount.freshAddress,
       }),
     };
-  });
+  }).transaction as Transaction;
   invariant(
     transaction && transaction.validators,
     "transaction and validators required",

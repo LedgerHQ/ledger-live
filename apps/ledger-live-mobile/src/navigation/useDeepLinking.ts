@@ -2,10 +2,10 @@ import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
-import { getPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
+import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { NavigatorName, ScreenName } from "../const";
 
-function getSettingsScreen(pathname) {
+function getSettingsScreen(pathname: string) {
   const secondPath = pathname.replace(/(^\/+|\/+$)/g, "");
   let screen;
 
@@ -126,7 +126,6 @@ export function useDeepLinkHandler() {
               ? {
                   platform: dapp.id,
                   name: dapp.name,
-                  // $FlowFixMe Nope I want query to be spread last. Sry Flow.
                   ...query,
                 }
               : query,

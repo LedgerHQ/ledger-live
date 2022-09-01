@@ -1,17 +1,20 @@
 import React, { useCallback, useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+} from "@react-navigation/native";
 import { Text, Button, Flex } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { track, TrackScreen } from "../../../analytics";
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
 import { NavigatorName, ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../../components/RootNavigator";
 import { setHasOrderedNano } from "../../../actions/settings";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

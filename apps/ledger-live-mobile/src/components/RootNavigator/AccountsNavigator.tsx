@@ -17,14 +17,13 @@ import NftGalleryHeaderTitle from "../../screens/Nft/NftGallery/NftGalleryHeader
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
-// eslint-disable-next-line import/no-cycle
 import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
 
 import ReadOnlyAccountHeaderRight from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderRight";
 import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderTitle";
-// eslint-disable-next-line import/no-cycle
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import { accountsSelector } from "../../reducers/accounts";
+import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
 import { track } from "../../analytics";
 
 export default function AccountsNavigator() {
@@ -60,28 +59,33 @@ export default function AccountsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
+        component={Account}
         options={{
           headerLeft: () => (
-            // There are spacing differences between ReadOnly and normal modes
-            <Box ml={6} mt={readOnlyModeEnabled ? 0 : 6}>
+            <Box ml={6} mt={6}>
               <TouchableOpacity onPress={goBackFromAccount}>
                 <Icons.ArrowLeftMedium size={24} />
               </TouchableOpacity>
             </Box>
           ),
-          headerTitle: () =>
-            readOnlyModeEnabled ? (
-              <ReadOnlyAccountHeaderTitle />
-            ) : (
-              <AccountHeaderTitle />
-            ),
-          headerRight: () =>
-            readOnlyModeEnabled ? (
-              <ReadOnlyAccountHeaderRight />
-            ) : (
-              <AccountHeaderRight />
-            ),
+          headerTitle: () => <AccountHeaderTitle />,
+          headerRight: () => <AccountHeaderRight />,
+        }}
+      />
+      {/* FIXME: WE SPLIT THIS COMPONENT IN TWO BECAUSE WTF */}
+      <Stack.Screen
+        name={ScreenName.AccountReadOnly}
+        component={ReadOnlyAccount}
+        options={{
+          headerLeft: () => (
+            <Box ml={6} mt={0}>
+              <TouchableOpacity onPress={goBackFromAccount}>
+                <Icons.ArrowLeftMedium size={24} />
+              </TouchableOpacity>
+            </Box>
+          ),
+          headerTitle: () => <ReadOnlyAccountHeaderTitle />,
+          headerRight: () => <ReadOnlyAccountHeaderRight />,
         }}
       />
       <Stack.Screen
@@ -109,4 +113,4 @@ export default function AccountsNavigator() {
   );
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AccountsNavigatorParamList>();

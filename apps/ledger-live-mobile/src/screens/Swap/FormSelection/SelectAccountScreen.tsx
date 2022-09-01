@@ -14,6 +14,7 @@ import {
   flattenAccounts,
 } from "@ledgerhq/live-common/account/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { Account } from "@ledgerhq/types-live";
 import type { SearchResult } from "../../../helpers/formatAccountSearchResults";
 import { accountsSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
@@ -73,7 +74,7 @@ export default function SelectAccount({ navigation, route }: Props) {
       )
     : flattenAccounts(enhancedAccounts);
 
-  const keyExtractor = item => item.account.id;
+  const keyExtractor = (item: SearchResult) => item.account.id;
 
   const isFrom = target === "from";
   const renderItem = useCallback(
@@ -89,10 +90,11 @@ export default function SelectAccount({ navigation, route }: Props) {
         >
           <AccountCard
             disabled={!result.match}
-            account={account}
+            account={account as Account}
             style={styles.card}
             onPress={() => {
-              setAccount && setAccount(account);
+              setAccount &&
+                setAccount(account as Parameters<typeof setAccount>[0]);
               navigation.navigate(ScreenName.SwapForm, {
                 ...route.params,
                 transaction: undefined,
@@ -131,8 +133,13 @@ export default function SelectAccount({ navigation, route }: Props) {
   }, [navigation, route.params, selectableCurrencies]);
   const renderList = useCallback(
     items => {
-      // $FlowFixMe
-      const formatedList = formatSearchResults(items, enhancedAccounts);
+      // FIXME: formatSearchResults returns a weird array comprised of SearchResults and hybrid token accounts.
+      // Here it is cast as SearchResult[] because clearly the components expects this type.
+      // We need to clarify this.
+      const formatedList = formatSearchResults(
+        items,
+        enhancedAccounts,
+      ) as SearchResult[];
       return (
         <FlatList
           data={formatedList}

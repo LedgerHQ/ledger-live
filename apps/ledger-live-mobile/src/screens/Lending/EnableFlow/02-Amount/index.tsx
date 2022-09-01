@@ -58,7 +58,7 @@ export default function SendAmount({ navigation, route }: Props) {
     useBridgeTransaction(() => {
       const bridge = getAccountBridge(account, parentAccount);
       const ctoken = findCompoundToken(account.token);
-      // $FlowFixMe
+
       const t = bridge.createTransaction(account);
       const transaction =
         tx ||

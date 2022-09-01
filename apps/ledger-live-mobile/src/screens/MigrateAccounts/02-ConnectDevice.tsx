@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -12,9 +12,6 @@ import SelectDevice from "../../components/SelectDevice";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 
-const forceInset = {
-  bottom: "always",
-};
 const action = createAction(connectApp);
 type Props = {
   navigation: any;
@@ -50,7 +47,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="MigrateAccount" name="ConnectDevice" />
       <NavigationScrollView

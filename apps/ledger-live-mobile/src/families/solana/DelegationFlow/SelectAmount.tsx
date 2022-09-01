@@ -16,7 +16,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "../../../analytics";
@@ -140,7 +140,6 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
       />
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
-        forceInset={{ bottom: "always" }}
       >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>

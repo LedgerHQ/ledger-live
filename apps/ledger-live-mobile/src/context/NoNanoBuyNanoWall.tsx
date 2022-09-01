@@ -1,5 +1,8 @@
 import { useSelector } from "react-redux";
-import { CardStyleInterpolators } from "@react-navigation/stack";
+import {
+  CardStyleInterpolators,
+  StackNavigationOptions,
+} from "@react-navigation/stack";
 // eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "../components/RootNavigator/BuyDeviceNavigator";
 import {
@@ -12,7 +15,12 @@ import PostBuyDeviceSetupNanoWallScreen from "../screens/PostBuyDeviceSetupNanoW
  * Get options to spread in a Stack.Screen you want to have a wall preventing
  * to access it when you are in a read only mode or "ordered a nano" mode.
  */
-export const useNoNanoBuyNanoWallScreenOptions = () => {
+export const useNoNanoBuyNanoWallScreenOptions = ():
+  | {
+      component: () => JSX.Element;
+      options: StackNavigationOptions;
+    }
+  | object => {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
@@ -22,15 +30,13 @@ export const useNoNanoBuyNanoWallScreenOptions = () => {
       options: {
         headerShown: false,
         presentation: "transparentModal",
-        headerMode: "none",
-        mode: "modal",
-        transparentCard: true,
+        headerMode: undefined,
         cardStyle: { opacity: 1 },
         gestureEnabled: true,
-        headerTitle: null,
-        headerRight: null,
+        headerTitle: "",
+        headerRight: () => null,
         headerBackTitleVisible: false,
-        title: null,
+        title: "",
         cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
       },
     };

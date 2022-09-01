@@ -5,7 +5,6 @@ import { Trans } from "react-i18next";
 import Scanner from "../../components/Scanner";
 import { NavigatorName, ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
-// eslint-disable-next-line import/named
 import { connect, context, STATUS } from "./Provider";
 
 type Props = {
@@ -21,7 +20,7 @@ type RouteParams = {
 const ScanWalletConnect = ({ navigation, route }: Props) => {
   const wcContext = useContext(context);
   useEffect(() => {
-    let mockTO;
+    let mockTO: ReturnType<typeof setTimeout>;
 
     if (Config.MOCK_SCAN_WALLETCONNECT) {
       mockTO = setTimeout(async () => {
@@ -51,7 +50,6 @@ const ScanWalletConnect = ({ navigation, route }: Props) => {
     <>
       <TrackScreen category="WalletConnect" screen="Scan" />
       <Scanner
-        navigation={navigation}
         onResult={onResult}
         instruction={<Trans i18nKey="walletconnect.scan" />}
       />

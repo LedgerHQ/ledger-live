@@ -19,7 +19,7 @@ type Props = {
   isInteractive: boolean;
   onItemHover?: (_: Item | null | undefined) => void;
   mapValue: (_: Item) => number;
-  shape?: string;
+  shape?: keyof typeof d3shape;
   verticalRangeRatio?: number;
 };
 const STROKE_WIDTH = 2;
@@ -38,32 +38,34 @@ function Graph({
 }: Props) {
   const { colors } = useTheme();
   const color = initialColor || colors.primary.c80;
-  const maxY = mapValue(maxBy(data, mapValue));
-  const minY = mapValue(minBy(data, mapValue));
+  const maxY = mapValue(maxBy(data, mapValue)!);
+  const minY = mapValue(minBy(data, mapValue)!);
   const paddedMinY = minY - (maxY - minY) / verticalRangeRatio;
-  const curve = d3shape[shape];
+  const curve = d3shape[shape] as d3shape.CurveFactory;
   const x = d3scale
     .scaleTime()
     .range([0, width])
-    .domain([data[0].date, data[data.length - 1].date]);
+    .domain([data[0].date!, data[data.length - 1].date!]);
   const y = d3scale
     .scaleLinear()
     .domain([paddedMinY, maxY])
     .range([height - STROKE_WIDTH, STROKE_WIDTH + FOCUS_RADIUS]);
 
-  const yExtractor = d => y(mapValue(d));
+  const yExtractor = (d: Item) => y(mapValue(d));
 
   const area = d3shape
-    .area()
-    .x(d => x(d.date))
-    .y0(d => yExtractor(d))
+    .area<Item>()
+    .x(d => x(d.date!))
+    .y0(d => yExtractor(d as unknown as Item))
     .y1(
-      d => yExtractor(d) + Math.min((maxY - minY) / verticalRangeRatio, height),
+      d =>
+        yExtractor(d as unknown as Item) +
+        Math.min((maxY - minY) / verticalRangeRatio, height),
     )
     .curve(curve)(data);
   const line = d3shape
-    .line()
-    .x(d => x(d.date))
+    .line<Item>()
+    .x(d => x(d.date!))
     .y(yExtractor)
     .curve(curve)(data);
   const content = (
@@ -76,8 +78,13 @@ function Graph({
       <Defs>
         <DefGraph height={height} color={color} />
       </Defs>
-      <Path d={area} fill="url(#grad)" />
-      <Path d={line} stroke={color} strokeWidth={STROKE_WIDTH} fill="none" />
+      <Path d={area || undefined} fill="url(#grad)" />
+      <Path
+        d={line || undefined}
+        stroke={color}
+        strokeWidth={STROKE_WIDTH}
+        fill="none"
+      />
     </Svg>
   );
   return isInteractive ? (

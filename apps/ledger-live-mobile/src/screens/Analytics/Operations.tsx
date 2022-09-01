@@ -1,10 +1,8 @@
 import React, { memo, useState, useCallback } from "react";
-import { SectionList } from "react-native";
+import { SectionList, SectionBase } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-
 import { useSelector } from "react-redux";
-import { useFocusEffect } from "@react-navigation/native";
-import { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import { CompositeScreenProps, useFocusEffect } from "@react-navigation/native";
 import { AccountLikeArray, Operation } from "@ledgerhq/types-live";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
@@ -28,11 +26,13 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { AnalyticsNavigatorScreenProps } from "../../components/RootNavigator/types/AnalyticsNavigator";
+import { BaseNavigatorStackScreenProps } from "../../components/RootNavigator/types/BaseNavigator";
 
-type Props = {
-  navigation: any;
-};
-
+type Props = CompositeScreenProps<
+  AnalyticsNavigatorScreenProps<ScreenName.AnalyticsOperations>,
+  BaseNavigatorStackScreenProps
+>;
 export function Operations({ navigation }: Props) {
   const [opCount, setOpCount] = useState(50);
 

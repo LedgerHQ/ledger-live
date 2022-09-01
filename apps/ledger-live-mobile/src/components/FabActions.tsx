@@ -10,7 +10,7 @@ import {
   filterRampCatalogEntries,
   getAllSupportedCryptoCurrencyIds,
 } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { AccountLike, Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Icons } from "@ledgerhq/native-ui";
 import {
@@ -145,7 +145,7 @@ type Props = {
   parentAccount?: Account;
   currency?: CryptoCurrency;
   accounts?: AccountLike[];
-};
+} & Partial<React.ComponentProps<typeof FabAccountButtonBar>>;
 
 const FabMarketActionsComponent: React.FC<Props> = ({
   currency,
@@ -187,134 +187,120 @@ const FabMarketActionsComponent: React.FC<Props> = ({
     return [onRampProviders.length > 0, offRampProviders.length > 0];
   }, [rampCatalog.value, currency]);
 
-  const actions = useMemo<ActionButton[]>(
-    () => [
-      ...(canBeBought
-        ? [
-            {
-              event: "TransferExchange",
-              label: t("exchange.buy.tabTitle"),
-              Icon: iconBuy,
-              navigationParams: [
-                NavigatorName.Exchange,
-                {
-                  screen: ScreenName.ExchangeBuy,
-                  params: {
-                    defaultTicker:
-                      currency &&
-                      currency.ticker &&
-                      currency.ticker.toUpperCase(),
-                    defaultCurrencyId: currency && currency.id,
-                  },
-                },
-              ],
-            },
-          ]
-        : []),
-      ...(canBeSold
-        ? [
-            {
-              event: "TransferExchange",
-              label: t("exchange.sell.tabTitle"),
-              Icon: iconSell,
-              navigationParams: [
-                NavigatorName.Exchange,
-                {
-                  screen: ScreenName.ExchangeSell,
-                  params: {
-                    defaultTicker:
-                      currency &&
-                      currency.ticker &&
-                      currency.ticker.toUpperCase(),
-                    defaultCurrencyId: currency && currency.id,
-                  },
-                },
-              ],
-            },
-          ]
-        : []),
+  const actions = useMemo<ActionButton[]>(() => {
+    const exchangeBuy: ActionButton = {
+      event: "TransferExchange",
+      label: t("exchange.buy.tabTitle"),
+      Icon: iconBuy,
+      navigationParams: [
+        NavigatorName.Exchange,
+        {
+          screen: ScreenName.ExchangeBuy,
+          params: {
+            defaultTicker:
+              currency && currency.ticker && currency.ticker.toUpperCase(),
+            defaultCurrencyId: currency && currency.id,
+          },
+        },
+      ],
+    };
+
+    const exchangeSell: ActionButton = {
+      event: "TransferExchange",
+      label: t("exchange.sell.tabTitle"),
+      Icon: iconSell,
+      navigationParams: [
+        NavigatorName.Exchange,
+        {
+          screen: ScreenName.ExchangeSell,
+          params: {
+            defaultTicker:
+              currency && currency.ticker && currency.ticker.toUpperCase(),
+            defaultCurrencyId: currency && currency.id,
+          },
+        },
+      ],
+    };
+
+    const swap: ActionButton = {
+      event: "TransferSwap",
+      label: t("transfer.swap.title"),
+      Icon: iconSwap,
+      navigationParams: [
+        NavigatorName.Swap,
+        {
+          screen: ScreenName.Swap,
+          params: { currencyId: currency?.id, defaultAccount },
+        },
+      ],
+      disabled: defaultAccount?.balance.lte(0),
+    };
+
+    const receiveFunds: ActionButton = {
+      event: "TransferReceive",
+      label: t("transfer.receive.title"),
+      Icon: iconReceive,
+      navigationParams: [
+        NavigatorName.ReceiveFunds,
+        {
+          screen: ScreenName.ReceiveConfirmation,
+          params: {
+            parentId: (defaultAccount as TokenAccount)?.parentId,
+            accountId: defaultAccount?.id,
+          },
+        },
+      ],
+    };
+
+    const sendFunds: ActionButton = {
+      event: "TransferSend",
+      label: t("transfer.send.title"),
+      Icon: iconSend,
+      navigationParams: [
+        NavigatorName.SendFunds,
+        {
+          screen: ScreenName.SendCoin,
+          params: { selectedCurrency: currency },
+        },
+      ],
+      disabled: defaultAccount?.balance.lte(0),
+    };
+
+    const addAccount: ActionButton = {
+      event: "TransferAddAccount",
+      label: t("addAccountsModal.ctaAdd"),
+      Icon: iconAddAccount,
+      navigationParams: [
+        NavigatorName.AddAccounts,
+        {
+          screen: ScreenName.AddAccountsSelectCrypto,
+          params: {
+            filterCurrencyIds: currency ? [currency.id] : undefined,
+          },
+        },
+      ],
+    };
+
+    const results = [
+      ...(canBeBought ? [exchangeBuy] : []),
+      ...(canBeSold ? [exchangeSell] : []),
       ...(hasAccounts && !readOnlyModeEnabled
-        ? [
-            ...(availableOnSwap
-              ? [
-                  {
-                    event: "TransferSwap",
-                    label: t("transfer.swap.title"),
-                    Icon: iconSwap,
-                    navigationParams: [
-                      NavigatorName.Swap,
-                      {
-                        screen: ScreenName.Swap,
-                        params: { currencyId: currency?.id, defaultAccount },
-                      },
-                    ],
-                    disabled: defaultAccount?.balance.lte(0),
-                  },
-                ]
-              : []),
-            {
-              event: "TransferReceive",
-              label: t("transfer.receive.title"),
-              Icon: iconReceive,
-              navigationParams: [
-                NavigatorName.ReceiveFunds,
-                {
-                  screen: ScreenName.ReceiveConfirmation,
-                  params: {
-                    parentId: defaultAccount?.parentId,
-                    accountId: defaultAccount.id,
-                  },
-                },
-              ],
-            },
-            {
-              event: "TransferSend",
-              label: t("transfer.send.title"),
-              Icon: iconSend,
-              navigationParams: [
-                NavigatorName.SendFunds,
-                {
-                  screen: ScreenName.SendCoin,
-                  params: { selectedCurrency: currency },
-                },
-              ],
-              disabled: defaultAccount?.balance.lte(0),
-            },
-          ]
-        : [
-            ...(!readOnlyModeEnabled
-              ? [
-                  {
-                    event: "TransferAddAccount",
-                    label: t("addAccountsModal.ctaAdd"),
-                    Icon: iconAddAccount,
-                    navigationParams: [
-                      NavigatorName.AddAccounts,
-                      {
-                        screen: ScreenName.AddAccountsSelectCrypto,
-                        params: {
-                          filterCurrencyIds: currency
-                            ? [currency.id]
-                            : undefined,
-                        },
-                      },
-                    ],
-                  },
-                ]
-              : []),
-          ]),
-    ],
-    [
-      availableOnSwap,
-      canBeBought,
-      canBeSold,
-      currency,
-      defaultAccount,
-      hasAccounts,
-      readOnlyModeEnabled,
-      t,
-    ],
-  );
+        ? [...(availableOnSwap ? [swap] : []), receiveFunds, sendFunds]
+        : []),
+      ...(!readOnlyModeEnabled ? [addAccount] : []),
+    ];
+
+    return results;
+  }, [
+    availableOnSwap,
+    canBeBought,
+    canBeSold,
+    currency,
+    defaultAccount,
+    hasAccounts,
+    readOnlyModeEnabled,
+    t,
+  ]);
 
   return <FabAccountButtonBar {...props} buttons={actions} />;
 };

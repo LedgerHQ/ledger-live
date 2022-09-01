@@ -5,10 +5,10 @@ import Info from "../icons/Info";
 import LText from "./LText";
 
 type Props = {
-  onPress: () => void;
+  onPress?: () => void;
   title: React.ReactNode;
   value: React.ReactNode;
-  warning: boolean | null | undefined;
+  warning?: boolean;
 };
 export default function BalanceSummaryInfoItem({
   onPress,
@@ -17,21 +17,23 @@ export default function BalanceSummaryInfoItem({
   warning = false,
 }: Props) {
   const { colors } = useTheme();
-  const warningStyle = warning && {
-    color: colors.orange,
-  };
+  const warningStyle = warning
+    ? {
+        color: colors.orange,
+      }
+    : undefined;
+
   return (
     <TouchableOpacity
       onPress={onPress}
       style={[
-        warningStyle,
         styles.wrapper,
         {
           backgroundColor: colors.card,
         },
       ]}
     >
-      <View style={[warningStyle, styles.balanceLabelContainer]}>
+      <View style={[styles.balanceLabelContainer]}>
         <LText style={[warningStyle, styles.balanceLabel]}>{title}</LText>
         {onPress && (
           <Info size={12} color={warningStyle ? colors.orange : colors.grey} />

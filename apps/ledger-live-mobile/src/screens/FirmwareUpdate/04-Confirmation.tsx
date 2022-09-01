@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
@@ -8,9 +8,6 @@ import { ScreenName } from "../../const";
 import GenericSuccessView from "../../components/GenericSuccessView";
 import Button from "../../components/Button";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -33,7 +30,6 @@ export default function FirmwareUpdateConfirmation({ navigation }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="FirmwareUpdate" name="Confirmation" />
       <View style={styles.body}>

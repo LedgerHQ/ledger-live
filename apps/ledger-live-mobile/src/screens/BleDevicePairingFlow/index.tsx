@@ -8,7 +8,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { StackScreenProps } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex } from "@ledgerhq/native-ui";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types";
 import RequiresBLE from "../../components/RequiresBLE";
 import { BleDevicesScanning } from "./BleDevicesScanning";
 import { BleDevicePairing } from "./BleDevicePairing";

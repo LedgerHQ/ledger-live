@@ -1,224 +1,449 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { createAction } from "redux-actions";
 import { useDispatch, useSelector } from "react-redux";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelInfo, DeviceInfo } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PortfolioRange } from "@ledgerhq/types-live";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { selectedTimeRangeSelector } from "../reducers/settings";
+import type {
+  CurrencySettings,
+  Pair,
+  Privacy,
+  SettingsState,
+  State,
+  Theme,
+} from "../reducers/types";
+import {
+  SettingsAcceptSwapProviderPayload,
+  SettingsAddStarredMarketcoinsPayload,
+  SettingsBlacklistTokenPayload,
+  SettingsDangerouslyOverrideStatePayload,
+  SettingsDismissBannerPayload,
+  SettingsHideEmptyTokenAccountsPayload,
+  SettingsHideNftCollectionPayload,
+  SettingsImportDesktopPayload,
+  SettingsImportPayload,
+  SettingsInstallAppFirstTimePayload,
+  SettingsLastSeenDeviceInfoPayload,
+  SettingsLastSeenDevicePayload,
+  SettingsRemoveStarredMarketcoinsPayload,
+  SettingsSetAnalyticsPayload,
+  SettingsSetAvailableUpdatePayload,
+  SettingsSetCarouselVisibilityPayload,
+  SettingsSetCountervaluePayload,
+  SettingsSetDiscreetModePayload,
+  SettingsSetExperimentalUsbSupportPayload,
+  SettingsSetFirstConnectionHasDevicePayload,
+  SettingsSetHasOrderedNanoPayload,
+  SettingsSetLanguagePayload,
+  SettingsSetLastConnectedDevicePayload,
+  SettingsSetLocalePayload,
+  SettingsSetMarketCounterCurrencyPayload,
+  SettingsSetMarketFilterByStarredAccountsPayload,
+  SettingsSetMarketRequestParamsPayload,
+  SettingsSetNotificationsPayload,
+  SettingsSetOrderAccountsPayload,
+  SettingsSetOsThemePayload,
+  SettingsSetPairsPayload,
+  SettingsSetPrivacyBiometricsPayload,
+  SettingsSetPrivacyPayload,
+  SettingsSetReadOnlyModePayload,
+  SettingsSetReportErrorsPayload,
+  SettingsSetSelectedTimeRangePayload,
+  SettingsSetSensitiveAnalyticsPayload,
+  SettingsSetSwapKycPayload,
+  SettingsSetSwapSelectableCurrenciesPayload,
+  SettingsSetThemePayload,
+  SettingsShowTokenPayload,
+  SettingsUnhideNftCollectionPayload,
+  SettingsUpdateCurrencyPayload,
+  SettingsActionTypes,
+} from "./types";
 
-export type CurrencySettings = {
-  confirmationsNb: number;
-  exchange: any | null | undefined;
-};
-type Privacy = {
-  biometricsType: string | null | undefined;
-  biometricsEnabled: boolean;
-};
-type SetExchangePairs = (
-  _: Array<{
-    from: Currency;
-    to: Currency;
-    exchange: string | null | undefined;
-  }>,
-) => any;
-export type Theme = "system" | "light" | "dark";
-export const setExchangePairsAction: SetExchangePairs = pairs => ({
-  type: "SETTINGS_SET_PAIRS",
-  pairs,
-});
-export const setPrivacy = (privacy: Privacy) => ({
-  type: "SETTINGS_SET_PRIVACY",
-  privacy,
-});
-export const disablePrivacy = () => ({
-  type: "SETTINGS_DISABLE_PRIVACY",
-});
-export const setPrivacyBiometrics = (enabled: boolean) => ({
-  type: "SETTINGS_SET_PRIVACY_BIOMETRICS",
-  enabled,
-});
-export const setCountervalue = (counterValue: string) => ({
-  type: "SETTINGS_SET_COUNTERVALUE",
-  counterValue,
-});
-export const importSettings = (settings: any) => ({
-  type: "SETTINGS_IMPORT",
-  settings,
-});
-export const importDesktopSettings = (settings: any) => ({
-  type: "SETTINGS_IMPORT_DESKTOP",
-  settings,
-});
-export const setReportErrors = (reportErrorsEnabled: boolean) => ({
-  type: "SETTINGS_SET_REPORT_ERRORS",
-  reportErrorsEnabled,
-});
-export const setAnalytics = (analyticsEnabled: boolean) => ({
-  type: "SETTINGS_SET_ANALYTICS",
-  analyticsEnabled,
-});
-export const setReadOnlyMode = (enabled: boolean) => ({
-  type: "SETTINGS_SET_READONLY_MODE",
-  enabled,
-});
-export const setExperimentalUSBSupport = (enabled: boolean) => ({
-  type: "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
-  enabled,
-});
-export const setOrderAccounts = (orderAccounts: string) => ({
-  type: "SETTINGS_SET_ORDER_ACCOUNTS",
-  orderAccounts,
-});
-export const setSelectedTimeRange = (selectedTimeRange: string) => ({
-  type: "SETTINGS_SET_SELECTED_TIME_RANGE",
-  payload: selectedTimeRange,
-});
+// FIXME: NEVER USED BY ANYONE, DROP ?
+const setExchangePairsAction = createAction<SettingsSetPairsPayload>(
+  SettingsActionTypes.SETTINGS_SET_PAIRS,
+);
+export const setExchangePairs = (pairs: Array<Pair>) =>
+  setExchangePairsAction({
+    pairs,
+  });
+
+const setPrivacyAction = createAction<SettingsSetPrivacyPayload>(
+  SettingsActionTypes.SETTINGS_SET_PRIVACY,
+);
+export const setPrivacy = (privacy: Privacy) =>
+  setPrivacyAction({
+    privacy,
+  });
+
+const disablePrivacyAction = createAction(
+  SettingsActionTypes.SETTINGS_DISABLE_PRIVACY,
+);
+export const disablePrivacy = () => disablePrivacyAction();
+
+const setPrivacyBiometricsAction =
+  createAction<SettingsSetPrivacyBiometricsPayload>(
+    SettingsActionTypes.SETTINGS_SET_PRIVACY_BIOMETRICS,
+  );
+export const setPrivacyBiometrics = (biometricsEnabled: boolean) =>
+  setPrivacyBiometricsAction({
+    biometricsEnabled,
+  });
+
+const setCountervalueAction = createAction<SettingsSetCountervaluePayload>(
+  SettingsActionTypes.SETTINGS_SET_COUNTERVALUE,
+);
+export const setCountervalue = (counterValue: string) =>
+  setCountervalueAction({
+    counterValue,
+  });
+
+const importSettingsAction = createAction<SettingsImportPayload>(
+  SettingsActionTypes.SETTINGS_IMPORT,
+);
+export const importSettings = (settings: Partial<SettingsState>) =>
+  importSettingsAction(settings);
+
+const importDesktopSettingsAction = createAction<SettingsImportDesktopPayload>(
+  SettingsActionTypes.SETTINGS_IMPORT_DESKTOP,
+);
+export const importDesktopSettings = (settings: SettingsImportDesktopPayload) =>
+  importDesktopSettingsAction(settings);
+
+const setReportErrorsAction = createAction<SettingsSetReportErrorsPayload>(
+  SettingsActionTypes.SETTINGS_SET_REPORT_ERRORS,
+);
+export const setReportErrors = (reportErrorsEnabled: boolean) =>
+  setReportErrorsAction({
+    reportErrorsEnabled,
+  });
+
+const setAnalyticsAction = createAction<SettingsSetAnalyticsPayload>(
+  SettingsActionTypes.SETTINGS_SET_ANALYTICS,
+);
+export const setAnalytics = (analyticsEnabled: boolean) =>
+  setAnalyticsAction({
+    analyticsEnabled,
+  });
+
+const setReadOnlyAction = createAction<SettingsSetReadOnlyModePayload>(
+  SettingsActionTypes.SETTINGS_SET_READONLY_MODE,
+);
+export const setReadOnlyMode = (readOnlyModeEnabled: boolean) =>
+  setReadOnlyAction({
+    readOnlyModeEnabled,
+  });
+
+const setExperimentalUSBSupportAction =
+  createAction<SettingsSetExperimentalUsbSupportPayload>(
+    SettingsActionTypes.SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT,
+  );
+export const setExperimentalUSBSupport = (experimentalUSBEnabled: boolean) =>
+  setExperimentalUSBSupportAction({
+    experimentalUSBEnabled,
+  });
+
+const setOrderAccountsAction = createAction<SettingsSetOrderAccountsPayload>(
+  SettingsActionTypes.SETTINGS_SET_ORDER_ACCOUNTS,
+);
+export const setOrderAccounts = (orderAccounts: string) =>
+  setOrderAccountsAction({
+    orderAccounts,
+  });
+
+const setSelectedTimeRangeAction =
+  createAction<SettingsSetSelectedTimeRangePayload>(
+    SettingsActionTypes.SETTINGS_SET_SELECTED_TIME_RANGE,
+  );
+export const setSelectedTimeRange = (selectedTimeRange: PortfolioRange) =>
+  setSelectedTimeRangeAction({
+    selectedTimeRange,
+  });
+
+const updateCurrencySettingsAction =
+  createAction<SettingsUpdateCurrencyPayload>(
+    SettingsActionTypes.UPDATE_CURRENCY_SETTINGS,
+  );
 export const updateCurrencySettings = (
   ticker: string,
-  patch: $Shape<CurrencySettings>,
-) => ({
-  type: "UPDATE_CURRENCY_SETTINGS",
-  ticker,
-  patch,
-});
-export const completeOnboarding = () => ({
-  type: "SETTINGS_COMPLETE_ONBOARDING",
-});
-export const installAppFirstTime = (bool: boolean) => ({
-  type: "SETTINGS_INSTALL_APP_FIRST_TIME",
-  hasInstalledAnyApp: bool,
-});
-export const switchCountervalueFirst = () => ({
-  type: "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
-});
-export const setHideEmptyTokenAccounts = (hideEmptyTokenAccounts: boolean) => ({
-  type: "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
-  hideEmptyTokenAccounts,
-});
-export const blacklistToken = (tokenId: string) => ({
-  type: "BLACKLIST_TOKEN",
-  payload: tokenId,
-});
-export const showToken = (tokenId: string) => ({
-  type: "SHOW_TOKEN",
-  payload: tokenId,
-});
-export const hideNftCollection = (collectionId: string) => ({
-  type: "HIDE_NFT_COLLECTION",
-  payload: collectionId,
-});
-export const unhideNftCollection = (collectionId: string) => ({
-  type: "UNHIDE_NFT_COLLECTION",
-  payload: collectionId,
-});
-export const dismissBanner = (bannerId: string) => ({
-  type: "SETTINGS_DISMISS_BANNER",
-  payload: bannerId,
-});
-export const setCarouselVisibility = (cardsVisibility: any) => ({
-  type: "SETTINGS_SET_CAROUSEL_VISIBILITY",
-  payload: cardsVisibility,
-});
-export const setAvailableUpdate = (enabled: boolean) => ({
-  type: "SETTINGS_SET_AVAILABLE_UPDATE",
-  enabled,
-});
-export const setTheme = (payload: Theme) => ({
-  type: "SETTINGS_SET_THEME",
-  payload,
-});
-export const setOsTheme = (payload: string) => ({
-  type: "SETTINGS_SET_OS_THEME",
-  payload,
-});
-export const setDiscreetMode = (payload: boolean) => ({
-  type: "SETTINGS_SET_DISCREET_MODE",
-  payload,
-});
-export const setLanguage = (payload: string) => ({
-  type: "SETTINGS_SET_LANGUAGE",
-  payload,
-});
-export const setLocale = (payload: string) => ({
-  type: "SETTINGS_SET_LOCALE",
-  payload,
-});
-export const setSwapSelectableCurrencies = (
-  selectableCurrencies: string[],
-) => ({
-  type: "SET_SWAP_SELECTABLE_CURRENCIES",
-  payload: selectableCurrencies,
-});
+  patch: Partial<CurrencySettings>,
+) =>
+  updateCurrencySettingsAction({
+    ticker,
+    patch,
+  });
+
+const completeOnboardingAction = createAction(
+  SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
+);
+export const completeOnboarding = () => completeOnboardingAction();
+
+const installAppFirstTimeAction =
+  createAction<SettingsInstallAppFirstTimePayload>(
+    SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME,
+  );
+export const installAppFirstTime = (hasInstalledAnyApp: boolean) =>
+  installAppFirstTimeAction({
+    hasInstalledAnyApp,
+  });
+
+const switchCountervalueFirstAction = createAction(
+  SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST,
+);
+export const switchCountervalueFirst = () => switchCountervalueFirstAction();
+
+const setHideEmptyTokenAccountsAction =
+  createAction<SettingsHideEmptyTokenAccountsPayload>(
+    SettingsActionTypes.SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS,
+  );
+export const setHideEmptyTokenAccounts = (hideEmptyTokenAccounts: boolean) =>
+  setHideEmptyTokenAccountsAction({
+    hideEmptyTokenAccounts,
+  });
+
+const blacklistTokenAction = createAction<SettingsBlacklistTokenPayload>(
+  SettingsActionTypes.BLACKLIST_TOKEN,
+);
+export const blacklistToken = (tokenId: string) =>
+  blacklistTokenAction({
+    tokenId,
+  });
+
+const showTokenAction = createAction<SettingsShowTokenPayload>(
+  SettingsActionTypes.SHOW_TOKEN,
+);
+export const showToken = (tokenId: string) =>
+  showTokenAction({
+    tokenId,
+  });
+
+const hideNftCollectionAction = createAction<SettingsHideNftCollectionPayload>(
+  SettingsActionTypes.HIDE_NFT_COLLECTION,
+);
+export const hideNftCollection = (collectionId: string) =>
+  hideNftCollectionAction({
+    collectionId,
+  });
+
+const unhideNftCollectionAction =
+  createAction<SettingsUnhideNftCollectionPayload>(
+    SettingsActionTypes.UNHIDE_NFT_COLLECTION,
+  );
+export const unhideNftCollection = (collectionId: string) =>
+  unhideNftCollectionAction({
+    collectionId,
+  });
+
+const dismissBannerAction = createAction<SettingsDismissBannerPayload>(
+  SettingsActionTypes.SETTINGS_DISMISS_BANNER,
+);
+export const dismissBanner = (bannerId: string) =>
+  dismissBannerAction({
+    bannerId,
+  });
+
+const setCarouselVisibilityAction =
+  createAction<SettingsSetCarouselVisibilityPayload>(
+    SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY,
+  );
+export const setCarouselVisibility = (carouselVisibility: {
+  [key: string]: boolean;
+}) => setCarouselVisibilityAction({ carouselVisibility });
+
+const setAvailableUpdateAction =
+  createAction<SettingsSetAvailableUpdatePayload>(
+    SettingsActionTypes.SETTINGS_SET_AVAILABLE_UPDATE,
+  );
+export const setAvailableUpdate = (hasAvailableUpdate: boolean) =>
+  setAvailableUpdateAction({
+    hasAvailableUpdate,
+  });
+
+const setThemeAction = createAction<SettingsSetThemePayload>(
+  SettingsActionTypes.SETTINGS_SET_THEME,
+);
+export const setTheme = (theme: Theme) =>
+  setThemeAction({
+    theme,
+  });
+
+const setOsThemeAction = createAction<SettingsSetOsThemePayload>(
+  SettingsActionTypes.SETTINGS_SET_OS_THEME,
+);
+export const setOsTheme = (osTheme: string) =>
+  setOsThemeAction({
+    osTheme,
+  });
+
+const setDiscreetModeAction = createAction<SettingsSetDiscreetModePayload>(
+  SettingsActionTypes.SETTINGS_SET_DISCREET_MODE,
+);
+export const setDiscreetMode = (discreetMode: boolean) =>
+  setDiscreetModeAction({
+    discreetMode,
+  });
+
+const setLanguageAction = createAction<SettingsSetLanguagePayload>(
+  SettingsActionTypes.SETTINGS_SET_LANGUAGE,
+);
+export const setLanguage = (language: string) =>
+  setLanguageAction({
+    language,
+  });
+
+const setLocaleAction = createAction<SettingsSetLocalePayload>(
+  SettingsActionTypes.SETTINGS_SET_LOCALE,
+);
+export const setLocale = (locale: string) =>
+  setLocaleAction({
+    locale,
+  });
+
+const setSwapSelectableCurrenciesAction =
+  createAction<SettingsSetSwapSelectableCurrenciesPayload>(
+    SettingsActionTypes.SET_SWAP_SELECTABLE_CURRENCIES,
+  );
+export const setSwapSelectableCurrencies = (selectableCurrencies: string[]) =>
+  setSwapSelectableCurrenciesAction({
+    selectableCurrencies,
+  });
+
+const setSwapKYCStatusAction = createAction<SettingsSetSwapKycPayload>(
+  SettingsActionTypes.SET_SWAP_KYC,
+);
 export const setSwapKYCStatus = (payload: {
   provider: string;
   id?: string;
   status?: string;
-}) => ({
-  type: "SET_SWAP_KYC",
-  payload,
-});
-export const swapAcceptProvider = (providerId: string) => ({
-  type: "ACCEPT_SWAP_PROVIDER",
-  payload: providerId,
-});
-export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) => ({
-  type: "LAST_SEEN_DEVICE_INFO",
-  payload: dmi,
-});
+}) => setSwapKYCStatusAction(payload);
 
-export const setLastSeenDevice = ({
-  deviceInfo,
-}: {
-  deviceInfo: DeviceInfo;
-}) => ({
-  type: "LAST_SEEN_DEVICE",
-  payload: { deviceInfo },
-});
+const swapAcceptProviderAction =
+  createAction<SettingsAcceptSwapProviderPayload>(
+    SettingsActionTypes.ACCEPT_SWAP_PROVIDER,
+  );
+export const swapAcceptProvider = (acceptedProvider: string) =>
+  swapAcceptProviderAction({
+    acceptedProvider,
+  });
 
-export const addStarredMarketCoins = (payload: string) => ({
-  type: "ADD_STARRED_MARKET_COINS",
-  payload,
-});
-export const removeStarredMarketCoins = (payload: string) => ({
-  type: "REMOVE_STARRED_MARKET_COINS",
-  payload,
-});
-export const setLastConnectedDevice = (device: Device) => ({
-  type: "SET_LAST_CONNECTED_DEVICE",
-  payload: device,
-});
-export const setHasOrderedNano = (enabled: boolean) => ({
-  type: "SET_HAS_ORDERED_NANO",
-  enabled,
-});
+const setLastSeenDeviceAction = createAction<SettingsLastSeenDevicePayload>(
+  SettingsActionTypes.LAST_SEEN_DEVICE,
+);
+export const setLastSeenDevice = ({ deviceInfo }: { deviceInfo: DeviceInfo }) =>
+  setLastSeenDeviceAction({ deviceInfo });
+
+const setLastSeenDeviceInfoAction =
+  createAction<SettingsLastSeenDeviceInfoPayload>(
+    SettingsActionTypes.LAST_SEEN_DEVICE_INFO,
+  );
+export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) =>
+  setLastSeenDeviceInfoAction({ dmi });
+
+const addStarredMarketCoinsAction =
+  createAction<SettingsAddStarredMarketcoinsPayload>(
+    SettingsActionTypes.ADD_STARRED_MARKET_COINS,
+  );
+export const addStarredMarketCoins = (starredMarketCoin: string) =>
+  addStarredMarketCoinsAction({
+    starredMarketCoin,
+  });
+
+const removeStarredMarketCoinsAction =
+  createAction<SettingsRemoveStarredMarketcoinsPayload>(
+    SettingsActionTypes.REMOVE_STARRED_MARKET_COINS,
+  );
+export const removeStarredMarketCoins = (starredMarketCoin: string) =>
+  removeStarredMarketCoinsAction({
+    starredMarketCoin,
+  });
+
+const setLastConnectedDeviceAction =
+  createAction<SettingsSetLastConnectedDevicePayload>(
+    SettingsActionTypes.SET_LAST_CONNECTED_DEVICE,
+  );
+export const setLastConnectedDevice = (lastConnectedDevice: Device) =>
+  setLastConnectedDeviceAction({
+    lastConnectedDevice,
+  });
+
+const setHasOrderedNanoAction = createAction<SettingsSetHasOrderedNanoPayload>(
+  SettingsActionTypes.SET_HAS_ORDERED_NANO,
+);
+export const setHasOrderedNano = (hasOrderedNano: boolean) =>
+  setHasOrderedNanoAction({
+    hasOrderedNano,
+  });
+
+const setMarketRequestParamsAction =
+  createAction<SettingsSetMarketRequestParamsPayload>(
+    SettingsActionTypes.SET_MARKET_REQUEST_PARAMS,
+  );
 export const setMarketRequestParams = (
   marketRequestParams: MarketListRequestParams,
-) => ({
-  type: "SET_MARKET_REQUEST_PARAMS",
-  payload: marketRequestParams,
-});
-export const setMarketCounterCurrency = (currency: string) => ({
-  type: "SET_MARKET_COUNTER_CURRENCY",
-  payload: currency,
-});
-export const setMarketFilterByStarredAccounts = (payload: boolean) => ({
-  type: "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
-  payload,
-});
-export const setSensitiveAnalytics = (enabled: boolean) => ({
-  type: "SET_SENSITIVE_ANALYTICS",
-  enabled,
-});
-export const setFirstConnectionHasDevice = (payload?: boolean) => ({
-  type: "SET_FIRST_CONNECTION_HAS_DEVICE",
-  payload,
-});
-export const setNotifications = (payload: any) => ({
-  type: "SET_NOTIFICATIONS",
-  payload,
-});
+) =>
+  setMarketRequestParamsAction({
+    marketRequestParams,
+  });
+
+const setMarketCounterCurrencyAction =
+  createAction<SettingsSetMarketCounterCurrencyPayload>(
+    SettingsActionTypes.SET_MARKET_COUNTER_CURRENCY,
+  );
+export const setMarketCounterCurrency = (marketCounterCurrency: string) =>
+  setMarketCounterCurrencyAction({
+    marketCounterCurrency,
+  });
+
+const setMarketFilterByStarredAccountsAction =
+  createAction<SettingsSetMarketFilterByStarredAccountsPayload>(
+    SettingsActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS,
+  );
+export const setMarketFilterByStarredAccounts = (
+  marketFilterByStarredAccounts: boolean,
+) =>
+  setMarketFilterByStarredAccountsAction({
+    marketFilterByStarredAccounts,
+  });
+
+const setSensitiveAnalyticsAction =
+  createAction<SettingsSetSensitiveAnalyticsPayload>(
+    SettingsActionTypes.SET_SENSITIVE_ANALYTICS,
+  );
+export const setSensitiveAnalytics = (sensitiveAnalytics: boolean) =>
+  setSensitiveAnalyticsAction({
+    sensitiveAnalytics,
+  });
+
+const setFirstConnectionHasDeviceAction =
+  createAction<SettingsSetFirstConnectionHasDevicePayload>(
+    SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE,
+  );
+export const setFirstConnectionHasDevice = (
+  firstConnectionHasDevice: boolean,
+) =>
+  setFirstConnectionHasDeviceAction({
+    firstConnectionHasDevice,
+  });
+const setNotificationsAction = createAction<SettingsSetNotificationsPayload>(
+  SettingsActionTypes.SET_NOTIFICATIONS,
+);
+export const setNotifications = (
+  notifications: Partial<SettingsState["notifications"]>,
+) =>
+  setNotificationsAction({
+    notifications,
+  });
+
+const dangerouslyOverrideStateAction =
+  createAction<SettingsDangerouslyOverrideStatePayload>(
+    SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
+  );
+export const dangerouslyOverrideState = (s: State) =>
+  dangerouslyOverrideStateAction(s);
+
 type PortfolioRangeOption = {
   key: PortfolioRange;
   value: string;
@@ -241,5 +466,5 @@ export function useTimeRange() {
     value: t(`common:time.${key}`),
     label: t(`common:time.${key}`),
   }));
-  return [val, setter, options];
+  return [val, setter, options] as const;
 }

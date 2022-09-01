@@ -14,10 +14,10 @@ import DiscreetModeButton from "./DiscreetModeButton";
 import { NavigatorName } from "../const";
 
 import { useTimeRange } from "../actions/settings";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import FormatDate from "./FormatDate";
+import { Item } from "./Graph/types";
 
 type Props = {
   areAccountsEmpty: boolean;
@@ -58,7 +58,7 @@ function GraphCard({
 
   const unit = counterValueCurrency.units[0];
 
-  const [hoveredItem, setHoverItem] = useState();
+  const [hoveredItem, setHoverItem] = useState<Item | null>();
   const [, setTimeRange, timeRangeItems] = useTimeRange();
   const { colors } = useTheme();
 
@@ -172,7 +172,6 @@ function GraphCard({
 
       <Graph
         isInteractive={isAvailable}
-        isLoading={!isAvailable}
         height={100}
         width={getWindowDimensions().width - 32}
         color={colors.primary.c80}

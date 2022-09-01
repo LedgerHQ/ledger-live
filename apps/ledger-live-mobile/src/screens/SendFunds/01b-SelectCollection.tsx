@@ -4,7 +4,6 @@ import {
   View,
   StyleSheet,
   FlatList,
-  SafeAreaView,
   TouchableOpacity,
   Platform,
 } from "react-native";
@@ -13,9 +12,16 @@ import {
   useNftCollectionMetadata,
   useNftMetadata,
 } from "@ledgerhq/live-common/nft/index";
+import type { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import type {
+  Account,
+  NFTCollectionMetadataResponse,
+  NFTMetadataResponse,
+  ProtoNFT,
+} from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import LoadingFooter from "../../components/LoadingFooter";
 import NftMedia from "../../components/Nft/NftMedia";
@@ -23,6 +29,7 @@ import Skeleton from "../../components/Skeleton";
 import ChevronIcon from "../../icons/Chevron";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
+import { SendFundsNavigatorProp } from "../../components/RootNavigator/types/SendFundsNavigator";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 8;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 8;
@@ -36,11 +43,19 @@ const CollectionRow = memo(
       nft?.contract,
       nft?.tokenId,
       nft?.currencyId,
-    );
+    ) as {
+      status: NFTResource["status"];
+      metadata?: NFTMetadataResponse["result"] &
+        NFTCollectionMetadataResponse["result"];
+    };
     const { metadata: collectionMetadata } = useNftCollectionMetadata(
       nft?.contract,
       nft?.currencyId,
-    );
+    ) as {
+      status: NFTResource["status"];
+      metadata?: NFTMetadataResponse["result"] &
+        NFTCollectionMetadataResponse["result"];
+    };
 
     const goToNftSelection = () => {
       navigation.navigate(ScreenName.SendNft, {
@@ -77,13 +92,7 @@ const CollectionRow = memo(
 
 const keyExtractor = (collection: ProtoNFT[]) => collection?.[0]?.contract;
 
-type Props = {
-  route: {
-    params: {
-      account: Account;
-    };
-  };
-};
+type Props = SendFundsNavigatorProp<ScreenName.SendCollection>;
 
 const SendFundsSelectCollection = ({ route }: Props) => {
   const { params } = route;
@@ -127,10 +136,7 @@ const SendFundsSelectCollection = ({ route }: Props) => {
   );
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={{ bottom: "always" }}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <FlatList
         contentContainerStyle={styles.collections}
         data={collectionsSlice}
@@ -169,6 +175,8 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         shadowOffset: {
           height: 2,
+          // FIXME: width WAS MISSING, ADDING 0 BUT THE VALUE MAY NEED TO BE REWORKED
+          width: 0,
         },
       },
     }),

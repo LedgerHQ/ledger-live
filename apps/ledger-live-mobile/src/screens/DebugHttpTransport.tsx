@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { connect } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { compose } from "redux";
 import { ScreenName } from "../const";
 import { addKnownDevice } from "../actions/ble";
@@ -16,9 +16,6 @@ import KeyboardView from "../components/KeyboardView";
 import Button from "../components/Button";
 import { withTheme } from "../colors";
 
-const forceInset = {
-  bottom: "always",
-};
 // eslint-disable-next-line @typescript-eslint/ban-types
 type OwnProps = {};
 type Props = OwnProps & {
@@ -67,7 +64,6 @@ class DebugHttpTransport extends Component<
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

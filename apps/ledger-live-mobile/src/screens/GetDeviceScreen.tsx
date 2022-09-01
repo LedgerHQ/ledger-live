@@ -27,8 +27,8 @@ import {
   readOnlyModeEnabledSelector,
 } from "../reducers/settings";
 import { track, TrackScreen } from "../analytics";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../components/RootNavigator";
+import { AnalyticsContext } from "../analytics/AnalyticsContext";
+import type { Context } from "../analytics/AnalyticsContext";
 
 const hitSlop = {
   bottom: 10,
@@ -123,11 +123,12 @@ export default function GetDeviceScreen() {
     } else {
       Linking.openURL(urls.buyNanoX);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buyDeviceFromLive?.enabled]);
 
   const videoMounted = !useIsAppInBackground();
 
-  const { source } = useContext(AnalyticsContext);
+  const { source } = useContext<Context>(AnalyticsContext);
 
   return (
     <StyledSafeAreaView>
@@ -173,21 +174,19 @@ export default function GetDeviceScreen() {
             <Video
               disableFocus
               source={theme === "light" ? sourceLight : sourceDark}
-              // @ts-expect-error issue in typings
               style={{
                 backgroundColor: colors.background.main,
                 transform: [{ scale: 1.4 }],
-                ...videoStyle,
+                ...(videoStyle as object),
               }}
               muted
               resizeMode={"cover"}
             />
           )}
           <Flex
-            // @ts-expect-error issue in typings
             style={{
               opacity: 0.1,
-              ...videoStyle,
+              ...(videoStyle as object),
             }}
             bg="background.main"
           />

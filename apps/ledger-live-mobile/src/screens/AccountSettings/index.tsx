@@ -1,10 +1,13 @@
 import React, { PureComponent } from "react";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { connect } from "react-redux";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
 import { TrackScreen } from "../../analytics";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";
@@ -13,25 +16,29 @@ import DeleteAccountRow from "./DeleteAccountRow";
 import DeleteAccountModal from "./DeleteAccountModal";
 import AccountAdvancedLogsRow from "./AccountAdvancedLogsRow";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
+import {
+  AccountSettingsNavigatorProps,
+  RootStackParamList,
+} from "../../components/RootNavigator/types";
+import { State as StoreState } from "../../reducers/types";
 
 type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-  account: Account;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  deleteAccount: Function;
-};
+  account?: AccountLike | null;
+  parentAccount?: Account | null;
+  deleteAccount: (account: Account) => void;
+} & NavigationProps;
 
-type RouteParams = {
-  accountId: string;
-};
+type NavigationProps = CompositeScreenProps<
+  AccountSettingsNavigatorProps<ScreenName.AccountSettingsMain>,
+  StackScreenProps<RootStackParamList>
+>;
 
 type State = {
   isModalOpened: boolean;
 };
 
-const mapStateToProps = (state, { route }) =>
-  accountScreenSelector(route)(state);
+const mapStateToProps = (state: StoreState, props: NavigationProps) =>
+  accountScreenSelector(props.route)(state);
 
 const mapDispatchToProps = {
   deleteAccount,
@@ -51,32 +58,37 @@ class AccountSettings extends PureComponent<Props, State> {
   };
 
   deleteAccount = () => {
-    const { account, deleteAccount, navigation } = this.props;
-    deleteAccount(account);
-    navigation.replace(NavigatorName.Base);
+    const { account, parentAccount, deleteAccount, navigation } = this.props;
+    if (!account) return;
+    const mainAccount = getMainAccount(account, parentAccount);
+    mainAccount && deleteAccount(mainAccount);
+    navigation.replace<keyof RootStackParamList>(NavigatorName.Base);
   };
 
   render() {
-    const { navigation, account } = this.props;
+    const { navigation, account, parentAccount } = this.props;
     const { isModalOpened } = this.state;
 
     if (!account) return null;
+
+    const mainAccount = getMainAccount(account, parentAccount);
+
     return (
       <SettingsNavigationScrollView>
         <TrackScreen category="AccountSettings" />
-        <AccountNameRow account={account} navigation={navigation} />
-        <AccountUnitsRow account={account} navigation={navigation} />
+        <AccountNameRow account={mainAccount} navigation={navigation} />
+        <AccountUnitsRow account={mainAccount} navigation={navigation} />
         <AccountCurrencyRow
-          currency={account.currency}
+          currency={mainAccount.currency}
           navigation={navigation}
         />
-        <AccountAdvancedLogsRow account={account} navigation={navigation} />
+        <AccountAdvancedLogsRow account={mainAccount} navigation={navigation} />
         <DeleteAccountRow onPress={this.onPress} />
         <DeleteAccountModal
           isOpen={isModalOpened}
           onRequestClose={this.onRequestClose}
           deleteAccount={this.deleteAccount}
-          account={account}
+          account={mainAccount}
         />
       </SettingsNavigationScrollView>
     );

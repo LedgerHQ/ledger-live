@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -16,9 +16,6 @@ import { urls } from "../../../../config/urls";
 import { TrackScreen } from "../../../../analytics";
 import Illustration from "../../../../images/illustration/Illustration";
 
-const forceInset = {
-  bottom: "always",
-};
 type RouteParams = {
   accountId: string;
 };
@@ -48,7 +45,6 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <NavigationScrollView
         style={styles.scroll}
