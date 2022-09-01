@@ -15,6 +15,7 @@ import {
   Log,
 } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
@@ -453,7 +454,11 @@ export function renderConnectYourDevice({
 }) {
   return (
     <Wrapper>
-      <AnimationContainer withConnectDeviceHeight={device.modelId !== "blue"}>
+      <AnimationContainer
+        withConnectDeviceHeight={
+          ![DeviceModelId.blue, DeviceModelId.nanoFTS].includes(device.modelId)
+        }
+      >
         <Animation
           source={getDeviceAnimation({
             device,

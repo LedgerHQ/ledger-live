@@ -1,0 +1,72 @@
+import React, { useEffect, useState } from "react";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
+import { useTranslation } from "react-i18next";
+
+type Props = {
+  isOpen: boolean;
+  productName: string;
+  delay?: number;
+};
+
+const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
+  const { t } = useTranslation();
+  const [showContent, setShowContent] = useState<boolean>(false);
+  const { colors, radii } = useTheme();
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        setShowContent(true);
+      }, delay);
+    }
+  }, [isOpen, delay]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowContent(false);
+    }
+  }, [isOpen]);
+
+  if (!isOpen || !showContent) {
+    return null;
+  }
+
+  return (
+    <Flex
+      zIndex={100}
+      position="absolute"
+      background={colors.constant.overlay}
+      top={0}
+      left={0}
+      height="100%"
+      width="100%"
+    >
+      <Flex position="absolute" width="100%" bottom={0} padding={4}>
+        <Flex
+          width="100%"
+          background={colors.warning.c100}
+          borderRadius={radii[2]}
+          p={6}
+          flexDirection="row"
+          flexWrap="wrap"
+          justifyContent="space-between"
+        >
+          <Text variant="body" textBreakStrategy="balanced" flexBasis="90%">
+            {t("syncOnboarding.resyncOverlay.content", { productName })}
+          </Text>
+          <Flex
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="center"
+            flexBasis="10%"
+          >
+            <InfiniteLoader color="black" size={24} />
+          </Flex>
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+};
+
+export default ResyncOverlay;
