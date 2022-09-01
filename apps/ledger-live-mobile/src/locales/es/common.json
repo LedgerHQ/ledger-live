@@ -1563,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Buscando dispositivos",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Ya emparejado"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Inténtalo de nuevo"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "Billetera",
     "accounts" : "Cuentas",
@@ -1698,7 +1725,13 @@
       "WITHDRAW_UNBONDED" : "Retiro",
       "NOMINATE" : "Nominación",
       "CHILL" : "Borrar nominaciones",
-      "SET_CONTROLLER" : "Definir controlador"
+      "SET_CONTROLLER" : "Definir controlador",
+      "ACTIVATE" : "Activado",
+      "LOCK" : "Bloqueado",
+      "UNLOCK" : "Desbloqueado",
+      "REVOKE" : "Revocado",
+      "REGISTER" : "Registrado",
+      "WITHDRAW" : "Retirado"
     }
   },
   "operationDetails" : {
@@ -1936,6 +1969,16 @@
       "noTransaction" : {
         "title" : "No tienes ninguna transacción",
         "subtitle" : "Necesitas un dispositivo para poder comprar o recibir {{assetName}}"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Por si no lo sabías, el validador de Ledger pone en participación con una comisión inferior a la del validador que estás utilizando.",
+        "cta" : "Redelegar"
+      },
+      "delegation" : {
+        "description" : "Por si no lo sabías, el validador de Ledger pone en participación tus {{asset}} con una comisión baja.",
+        "cta" : "Comienza a poner en participación ahora"
       }
     }
   },
@@ -4264,6 +4307,7 @@
     "delegation" : "Delegación",
     "viewDetails" : "Ver detalles",
     "validator" : "Validador",
+    "validatorGroup" : "Grupo de validadores",
     "validatorAddress" : "Dirección del validador",
     "delegatedAccount" : "Cuenta delegada",
     "duration" : "Duración",
