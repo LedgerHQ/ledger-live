@@ -31,7 +31,7 @@ import React, {
 } from "react";
 import { Trans } from "react-i18next";
 import { Animated, StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
@@ -162,7 +162,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const rotate = rotateAnim.interpolate({
     inputRange: [0, 1],
-    // $FlowFixMe
+
     outputRange: ["0deg", "30deg"],
   });
 
@@ -190,10 +190,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={{ bottom: "always" }}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>

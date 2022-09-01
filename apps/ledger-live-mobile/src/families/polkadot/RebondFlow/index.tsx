@@ -35,7 +35,7 @@ function RebondFlow() {
               })}
             />
           ),
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -74,8 +74,8 @@ function RebondFlow() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen

@@ -1,10 +1,9 @@
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
-import { Linking, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
-import { urls } from "../../../config/urls";
 
 type Props = {
   navigation: any;
@@ -25,10 +24,6 @@ export default function ValidationError({ navigation, route }: Props) {
     navigation.getParent().pop();
   }, [navigation]);
 
-  const contactUs = useCallback(() => {
-    Linking.openURL(urls.contact);
-  }, []);
-
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -36,17 +31,9 @@ export default function ValidationError({ navigation, route }: Props) {
   const error = route.params?.error;
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={{ bottom: "always" }}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="CeloRegistrationFlow" name="ValidationError" />
-      <ValidateError
-        error={error}
-        onRetry={retry}
-        onClose={onClose}
-        onContactUs={contactUs}
-      />
+      <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }

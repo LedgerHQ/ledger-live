@@ -1,29 +1,40 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { getSupportedCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { SwapRouteParams } from "..";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
 import CurrencyRow from "../../../components/CurrencyRow";
 import LText from "../../../components/LText";
+import {
+  RootComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 const SEARCH_KEYS = ["name", "ticker"];
-type Props = {
-  devMode: boolean;
-  navigation: any;
-  route: {
-    params: SwapRouteParams;
-  };
-};
 
-const keyExtractor = currency => currency.id;
+type NavigationProps = RootComposite<
+  StackNavigatorProps<
+    BaseNavigatorStackParamList,
+    ScreenName.SwapV2FormSelectCurrency
+  >
+>;
+
+type Props = {
+  devMode?: boolean;
+} & NavigationProps;
+
+const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -45,25 +56,25 @@ export default function SwapFormSelectCurrencyScreen({
   });
   const maybeFilteredCurrencies = swap.from.account
     ? selectableCurrencies.filter(
-        c => c !== getAccountCurrency(swap.from.account),
+        c => c !== getAccountCurrency(swap.from.account!),
       )
     : selectableCurrencies;
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(
     maybeFilteredCurrencies,
   );
   const onPressCurrency = useCallback(
-    (currency: CryptoCurrency) => {
+    (currency: CryptoCurrency | TokenCurrency) => {
       setCurrency && setCurrency(currency);
       navigation.navigate(ScreenName.SwapForm, { ...route.params });
     },
     [navigation, route.params, setCurrency],
   );
 
-  const renderList = items => (
+  const renderList = (items: (CryptoCurrency | TokenCurrency)[]) => (
     <FlatList
       contentContainerStyle={styles.list}
       data={items}
-      renderItem={({ item }) => (
+      renderItem={({ item }: { item: CryptoCurrency | TokenCurrency }) => (
         <CurrencyRow currency={item} onPress={onPressCurrency} />
       )}
       keyExtractor={keyExtractor}

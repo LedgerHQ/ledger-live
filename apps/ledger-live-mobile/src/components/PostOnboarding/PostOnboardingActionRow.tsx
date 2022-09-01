@@ -33,7 +33,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   }, [navigationParams, navigation, startEvent, startEventProperties]);
 
   return (
-    <Touchable onPress={completed ? null : handlePress}>
+    <Touchable onPress={completed ? undefined : handlePress}>
       <Flex
         flexDirection="row"
         alignItems="center"

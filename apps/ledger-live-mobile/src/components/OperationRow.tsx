@@ -21,6 +21,11 @@ import OperationRowDate from "./OperationRowDate";
 import OperationRowNftName from "./OperationRowNftName";
 import perFamilyOperationDetails from "../generated/operationDetails";
 import { track } from "../analytics";
+import { UnionToIntersection } from "../types/helpers";
+
+type FamilyOperationDetailsIntersection = UnionToIntersection<
+  typeof perFamilyOperationDetails[keyof typeof perFamilyOperationDetails]
+>;
 
 const ContainerTouchable = styled(Flex).attrs(_ => ({
   height: "64px",
@@ -30,7 +35,7 @@ const ContainerTouchable = styled(Flex).attrs(_ => ({
   py: 6,
 }))<{ isLast?: boolean }>``;
 
-const Wrapper = styled(Flex).attrs(p => ({
+const Wrapper = styled(Flex).attrs<{ isOptimistic?: boolean }>(p => ({
   flex: 1,
   flexDirection: "row",
   alignItems: "center",
@@ -53,13 +58,13 @@ const BodyLeftContainer = styled(Flex).attrs({
   flex: 1,
 })``;
 
-const BodyRightContainer = styled(Flex).attrs(p => ({
+const BodyRightContainer = styled(Flex).attrs<{ flexShrink?: number }>(p => ({
   flexDirection: "column",
   justifyContent: "flex-start",
   alignItems: "flex-end",
   flexShrink: p.flexShrink ?? 0,
   pl: 4,
-}))``;
+}))<{ flexShrink?: number }>``;
 
 type Props = {
   operation: Operation;
@@ -115,12 +120,16 @@ export default function OperationRow({
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
     const specific = mainAccount?.currency?.family
-      ? perFamilyOperationDetails[mainAccount?.currency?.family]
+      ? (perFamilyOperationDetails[
+          mainAccount.currency.family as keyof typeof perFamilyOperationDetails
+        ] as FamilyOperationDetailsIntersection)
       : null;
 
     const SpecificAmountCell =
       specific && specific.amountCell
-        ? specific.amountCell[operation.type]
+        ? specific.amountCell[
+            operation.type as keyof typeof specific.amountCell
+          ]
         : null;
 
     return SpecificAmountCell ? (

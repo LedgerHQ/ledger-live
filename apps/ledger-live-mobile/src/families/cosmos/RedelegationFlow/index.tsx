@@ -108,7 +108,7 @@ function RedelegationFlow() {
         name={ScreenName.CosmosRedelegationConnectDevice}
         component={ConnectDevice}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -133,8 +133,8 @@ function RedelegationFlow() {
         name={ScreenName.CosmosRedelegationValidationSuccess}
         component={RedelegationValidationSuccess}
         options={{
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
           headerTitle: "",
           gestureEnabled: false,
         }}

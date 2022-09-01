@@ -3,36 +3,32 @@ import React, { useCallback, useMemo, memo } from "react";
 import {
   View,
   StyleSheet,
-  SafeAreaView,
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
+import type { Account } from "@ledgerhq/types-live";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TranslatedError from "../../components/TranslatedError";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
+import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-const forceInset = { bottom: "always" };
-
-type Props = {
-  navigation: any;
-  route: {
-    params: {
-      accountId: string;
-      transaction: Transaction;
-    };
-  };
-};
+type Props = StackNavigatorProps<
+  SendFundsNavigatorStackParamList,
+  ScreenName.SendAmountNft
+>;
 
 const SendAmountNFT = ({ route }: Props) => {
   const navigation = useNavigation();
@@ -42,7 +38,7 @@ const SendAmountNFT = ({ route }: Props) => {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
   const bridge = useMemo(
-    () => getAccountBridge(account, parentAccount),
+    () => (account ? getAccountBridge(account, parentAccount) : null),
     [account, parentAccount],
   );
   const { transaction, setTransaction, status, bridgePending } =
@@ -55,6 +51,7 @@ const SendAmountNFT = ({ route }: Props) => {
   const onQuantityChange = useCallback(
     text => {
       const newQuantity = text ? new BigNumber(text.replace(/\D/g, "")) : null;
+      if (!bridge) return;
 
       setTransaction(
         bridge.updateTransaction(transaction, {
@@ -65,18 +62,22 @@ const SendAmountNFT = ({ route }: Props) => {
     [bridge, setTransaction, transaction],
   );
   const quantity = useMemo(
-    () => transaction.quantities?.[0]?.toNumber(),
-    [transaction.quantities],
+    () => (transaction as EthereumTransaction)?.quantities?.[0]?.toNumber(),
+    [transaction],
   );
 
   const nft = useMemo(
     () =>
-      account?.nfts?.find(
-        nft =>
-          nft?.contract === transaction?.collection &&
-          nft?.tokenId === transaction?.tokenIds[0],
-      ),
-    [account?.nfts, transaction?.collection, transaction?.tokenIds],
+      (account as Account)?.nfts?.find(nft => {
+        const tokensIds = (transaction as EthereumTransaction)?.tokenIds;
+        return (
+          nft?.contract === (transaction as EthereumTransaction)?.collection &&
+          tokensIds &&
+          tokensIds.length > 0 &&
+          nft?.tokenId === tokensIds[0]
+        );
+      }),
+    [account, transaction],
   );
 
   const onContinue = useCallback(() => {
@@ -106,13 +107,12 @@ const SendAmountNFT = ({ route }: Props) => {
     }
 
     return <LText style={styles.error} numberOfLines={2} />;
-  }, [status?.errors?.amount, status?.warnings?.amount]);
+  }, [status, quantity]);
 
   return (
     <>
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
-        forceInset={forceInset}
       >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>

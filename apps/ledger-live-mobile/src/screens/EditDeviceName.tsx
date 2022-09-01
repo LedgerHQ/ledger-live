@@ -1,9 +1,11 @@
 import React, { memo, useCallback, useState } from "react";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
 import { Text, Icons, Flex } from "@ledgerhq/native-ui";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { TrackScreen } from "../analytics";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
@@ -12,6 +14,12 @@ import { editDeviceName, connectingStep } from "../components/DeviceJob/steps";
 import DeviceJob from "../components/DeviceJob";
 import KeyboardView from "../components/KeyboardView";
 import { saveBleDeviceName } from "../actions/ble";
+import {
+  RootComposite,
+  StackNavigatorProps,
+} from "../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "../const";
 
 const MAX_DEVICE_NAME = 20;
 
@@ -27,21 +35,17 @@ const mapDispatchToProps = {
   saveBleDeviceName,
 };
 
+type NavigationProps = RootComposite<
+  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.EditDeviceName>
+>;
 type Props = {
-  navigation: any;
-  route: { params: RouteParams };
   saveBleDeviceName: (d: string, v: string) => void;
-};
-
-type RouteParams = {
-  deviceId: string;
-  deviceName: string;
-};
+} & NavigationProps;
 
 function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const [name, setName] = useState<string>(route.params?.deviceName);
-  const [error, setError] = useState(null);
-  const [connecting, setConnecting] = useState(null);
+  const [error, setError] = useState<Error | undefined | null>(null);
+  const [connecting, setConnecting] = useState<Device | null>(null);
 
   const validate = useCallback(
     n => {
@@ -63,10 +67,6 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     [validate],
   );
 
-  const onInputCleared = useCallback(() => {
-    setName("");
-  }, []);
-
   const onSubmit = useCallback(async () => {
     if (route.params?.deviceName !== name) {
       setTimeout(() => {
@@ -74,7 +74,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
         setConnecting({
           deviceId: route.params?.deviceId,
           deviceName: name.trim(),
-          modelId: "nanoX",
+          modelId: "nanoX" as DeviceModelId,
           wired: false,
         });
       }, 800);
@@ -102,7 +102,6 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
           <TextInput
             value={name}
             onChangeText={onChangeText}
-            onInputCleared={onInputCleared}
             maxLength={MAX_DEVICE_NAME}
             autoFocus
             selectTextOnFocus
@@ -129,7 +128,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
         </Flex>
 
         <DeviceJob
-          deviceModelId="nanoX" // NB: EditDeviceName feature is only available on NanoX over BLE.
+          deviceModelId={"nanoX" as DeviceModelId} // NB: EditDeviceName feature is only available on NanoX over BLE.
           meta={connecting}
           onCancel={onCancel}
           onDone={onDone}
@@ -142,4 +141,4 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
 const m = connect(null, mapDispatchToProps)(EditDeviceName);
 
-export default memo<Props>(m);
+export default memo<NavigationProps>(m);

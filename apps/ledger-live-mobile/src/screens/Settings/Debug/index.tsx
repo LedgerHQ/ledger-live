@@ -2,13 +2,11 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import config from "react-native-config";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { StackScreenProps } from "@react-navigation/stack";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { TrackScreen } from "../../../analytics";
 import SettingsRow from "../../../components/SettingsRow";
 import SelectDevice from "../../../components/SelectDevice";
 import { ScreenName } from "../../../const";
-import type { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/SettingsNavigator";
 
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
@@ -34,23 +32,16 @@ import HasOrderedNanoRow from "./HasOrderedNanoRow";
 import OpenDebugBlePairingFlow from "./OpenDebugBlePairingFlow";
 import OpenDebugCustomImage from "./OpenDebugCustomImage";
 import OpenDebugPostOnboarding from "./OpenDebugPostOnboarding";
-
-// Type of DebugMocks screen route params
-export type DebugMocksParams = {
-  pairedDevice?: Device;
-};
-
-// Type of DebugMocks screen props
-export type DebugMockScreenProps = StackScreenProps<
-  SettingsNavigatorStackParamList,
-  "DebugMocks"
->;
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
 
 export function DebugMocks() {
   return (
     <SettingsNavigationScrollView>
       {config.BRIDGESTREAM_DATA ? (
-        // $FlowFixMe
         <ImportBridgeStreamData
           title="Import .env BRIDGESTREAM_DATA"
           dataStr={config.BRIDGESTREAM_DATA}
@@ -84,9 +75,15 @@ export function DebugMocks() {
 }
 
 export function DebugDevices() {
-  const { navigate } = useNavigation();
+  const { navigate } =
+    useNavigation<
+      StackNavigatorNavigation<
+        SettingsNavigatorStackParamList,
+        ScreenName.DebugDevices
+      >
+    >();
 
-  function onSelect(meta: any): void {
+  function onSelect(meta: Device): void {
     navigate(ScreenName.DebugBLE, meta);
   }
 
@@ -101,7 +98,12 @@ export function DebugDevices() {
   );
 }
 
-export default function DebugSettings({ navigation: { navigate } }: any) {
+export default function DebugSettings({
+  navigation: { navigate },
+}: StackNavigatorProps<
+  SettingsNavigatorStackParamList,
+  ScreenName.DebugSettings
+>) {
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Debug" />

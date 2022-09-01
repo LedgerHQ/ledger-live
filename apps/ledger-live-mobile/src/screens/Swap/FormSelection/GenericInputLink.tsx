@@ -19,7 +19,7 @@ export default function GenericInputLink({
   onEdit,
 }: Props) {
   const { colors } = useTheme();
-  const [tooltipOpen, setTooltipOpen] = useState();
+  const [tooltipOpen, setTooltipOpen] = useState<boolean>();
   const openTooltip = useCallback(() => setTooltipOpen(true), []);
   const closeTooltip = useCallback(() => setTooltipOpen(false), []);
   return (

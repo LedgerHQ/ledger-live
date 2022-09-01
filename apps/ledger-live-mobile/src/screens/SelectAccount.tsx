@@ -4,32 +4,24 @@ import {
   accountWithMandatoryTokens,
   flattenAccounts,
 } from "@ledgerhq/live-common/account/helpers";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex } from "@ledgerhq/native-ui";
 import {
   isAccountEmpty,
   getAccountSpendableBalance,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { ScreenName } from "../const";
 import { accountsSelector } from "../reducers/accounts";
 import { TrackScreen } from "../analytics";
 import AccountSelector from "../components/AccountSelector";
 import GenericErrorBottomModal from "../components/GenericErrorBottomModal";
+import { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
+import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 
-type Props = {
-  navigation: any;
-  route: {
-    params?: {
-      currency?: string;
-      selectedCurrency?: CryptoCurrency | TokenCurrency;
-      next: string;
-      category: string;
-      notEmptyAccounts?: boolean;
-      minBalance?: number;
-    };
-  };
-};
+type Props = StackNavigatorProps<
+  SendFundsNavigatorStackParamList,
+  ScreenName.SendCoin
+>;
 
 export default function ReceiveFunds({ navigation, route }: Props) {
   const {

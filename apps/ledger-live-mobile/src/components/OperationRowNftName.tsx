@@ -1,6 +1,11 @@
 import React, { memo } from "react";
 
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  NFTMetadata,
+  Operation,
+} from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -8,6 +13,7 @@ import {
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import Skeleton from "./Skeleton";
 
 type Props = {
@@ -29,7 +35,7 @@ const OperationRowNftName = ({
     operation.contract,
     operation.tokenId,
     currency.id,
-  );
+  ) as NFTResource & { metadata: NFTMetadata };
 
   return (
     <View style={style}>

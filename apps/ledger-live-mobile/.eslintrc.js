@@ -91,11 +91,13 @@ module.exports = {
     "react/state-in-constructor": 0,
     "react/static-property-placement": 0,
     "react/default-props-match-prop-types": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "react-native/no-inline-styles": 0,
+    "react/prop-types": 0, // causes issues with typescript, reports false positives
 
     // These ones are good practice we could switch to, so warn only
     "eslint-comments/no-unlimited-disable": "warn",
     "eslint-comments/no-unused-disable": "warn",
-    "react-native/no-inline-styles": "warn",
     "react/jsx-fragments": "warn",
     "react/no-deprecated": "warn",
 
@@ -105,6 +107,7 @@ module.exports = {
       "error",
       {
         argsIgnorePattern: "^_",
+        destructuredArrayIgnorePattern: "^_",
         vars: "all",
         args: "after-used",
         ignoreRestSiblings: true,

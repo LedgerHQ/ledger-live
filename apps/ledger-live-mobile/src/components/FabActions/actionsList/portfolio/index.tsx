@@ -69,7 +69,7 @@ export const FabPortfolioActions: React.FC<FabActionsProps> = ({
       event: "TransferReceive",
       label: t("transfer.receive.title"),
       Icon: iconReceive,
-      navigationParams: [
+      ExchangeSell: [
         NavigatorName.ReceiveFunds,
         {
           screen: ScreenName.ReceiveSelectCrypto,

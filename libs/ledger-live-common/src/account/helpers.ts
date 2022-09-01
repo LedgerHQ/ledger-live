@@ -16,7 +16,11 @@ import type {
   TokenAccount,
   ChildAccount,
 } from "@ledgerhq/types-live";
-import { TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/types-cryptoassets";
 import { TronAccount } from "../families/tron/types";
 import { CosmosAccount } from "../families/cosmos/types";
 
@@ -25,14 +29,16 @@ import { CosmosAccount } from "../families/cosmos/types";
 // in case of a TokenAccount it's the parentAccount
 export const getMainAccount = (
   account: AccountLike,
-  parentAccount: Account | null | undefined
+  parentAccount?: Account | null | undefined
 ): Account => {
   const mainAccount = account.type === "Account" ? account : parentAccount;
   invariant(mainAccount, "an account is expected");
   return mainAccount as Account;
 };
 
-export const getAccountCurrency = (account: AccountLike) => {
+export const getAccountCurrency = (
+  account: AccountLike
+): TokenCurrency | CryptoCurrency => {
   switch (account.type) {
     case "Account":
     case "ChildAccount":
@@ -261,7 +267,7 @@ export const getVotesCount = (
 export const makeEmptyTokenAccount = (
   account: Account,
   token: TokenCurrency
-): SubAccount => ({
+): TokenAccount => ({
   type: "TokenAccount",
   id: account.id + "+" + token.contractAddress,
   parentId: account.id,

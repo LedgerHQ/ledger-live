@@ -1,4 +1,5 @@
-import { Transaction } from "@ledgerhq/live-common/families/solana/types";
+import { Transaction as SolanaTransaction } from "@ledgerhq/live-common/families/solana/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -22,7 +23,7 @@ export default function SolanaSendRowsCustom({
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { model } = transaction;
+  const { model } = transaction as SolanaTransaction;
   invariant(model.kind === "transfer", "must be a transfer tx");
 
   const editMemo = useCallback(() => {

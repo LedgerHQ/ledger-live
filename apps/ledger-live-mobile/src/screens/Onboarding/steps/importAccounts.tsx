@@ -2,9 +2,10 @@ import React, { useCallback } from "react";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 
 import { useDispatch } from "react-redux";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { StackNavigationProp } from "@react-navigation/stack";
 import Illustration from "../../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../../const";
-import { DeviceNames } from "../types";
 import BaseStepperView, { SyncDesktop, Metadata } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 
@@ -14,6 +15,10 @@ import {
   setReadOnlyMode,
 } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
+import {
+  OnboardingNavigatorParamList,
+  RootStackParamList,
+} from "../../../components/RootNavigator/types";
 
 const images = {
   light: {
@@ -27,12 +32,15 @@ const images = {
 const scenes = [SyncDesktop, SyncDesktop];
 
 function OnboardingStepPairNew() {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<
+      StackNavigationProp<RootStackParamList & OnboardingNavigatorParamList>
+    >();
   const route = useRoute<
     RouteProp<
       {
         params: {
-          deviceModelId: DeviceNames;
+          deviceModelId: DeviceModelId;
         };
       },
       "params"
@@ -65,7 +73,8 @@ function OnboardingStepPairNew() {
     dispatch(setHasOrderedNano(false));
     resetCurrentStep();
 
-    const parentNav = navigation.getParent();
+    const parentNav =
+      navigation.getParent<StackNavigationProp<RootStackParamList>>();
     if (parentNav) {
       parentNav.popToTop();
     }
@@ -75,14 +84,16 @@ function OnboardingStepPairNew() {
     });
   }, [dispatch, navigation, resetCurrentStep]);
 
-  const onNext = useCallback(() => {
-    navigation.navigate(NavigatorName.ImportAccounts, {
-      screen: ScreenName.ScanAccounts,
-      params: {
-        onFinish,
-      },
-    });
-  }, [navigation, onFinish]);
+  const onNext = useCallback(
+    () =>
+      navigation.navigate(NavigatorName.ImportAccounts, {
+        screen: ScreenName.ScanAccounts,
+        params: {
+          onFinish,
+        },
+      }),
+    [navigation, onFinish],
+  );
 
   const nextPage = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingModalWarning, {

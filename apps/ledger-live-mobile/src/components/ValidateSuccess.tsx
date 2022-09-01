@@ -13,8 +13,8 @@ type Props = {
   secondaryButton?: React.ReactNode;
   icon?: React.ReactNode;
   iconColor?: string;
-  iconBoxSize: number;
-  iconSize: number;
+  iconBoxSize?: number;
+  iconSize?: number;
   info?: React.ReactNode;
   onLearnMore?: () => void;
 };

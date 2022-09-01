@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { WebView } from "react-native-webview";
+import { WebView as WebViewComponent } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -62,6 +62,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { useTheme } from "styled-components/native";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
@@ -73,9 +74,16 @@ import prepareSignTransaction from "./liveSDKLogic";
 
 const tracking = trackingWrapper(track);
 
+// Typings are missing the style prop…
+const WebView = WebViewComponent as {
+  new (): WebViewComponent<{
+    style: Record<string, string | number>;
+  }>;
+};
+
 type Props = {
   manifest: AppManifest;
-  inputs?: Record<string, any>;
+  inputs?: Record<string, string>;
 };
 
 const ReloadButton = ({
@@ -123,11 +131,13 @@ const InfoPanelButton = ({
 
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: {
-    current: null | WebView;
+    current: null | WebViewComponent<{
+      style: Record<string, string | number>;
+    }>;
   } = useRef(null);
   const accounts = flattenAccounts(useSelector(accountsSelector));
   const navigation = useNavigation();
-  const [loadDate, setLoadDate] = useState(Date.now());
+  const [loadDate, setLoadDate] = useState(new Date());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
   const [device, setDevice] = useState();
@@ -136,7 +146,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     {
       loadDate,
     },
-    inputs,
+    inputs!,
   );
   const listAccounts = useListPlatformAccounts(accounts);
   const listPlatformCurrencies = useListPlatformCurrencies();
@@ -164,7 +174,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         const cryptoCurrencyIds =
           currencyIds && currencyIds.length > 0
             ? currencyIds
-            : allCurrencies.map(({ id }) => id);
+            : allCurrencies.map(currency => (currency as CryptoCurrency).id);
 
         const foundAccounts = cryptoCurrencyIds?.length
           ? accounts.filter(a =>
@@ -490,7 +500,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               params: {
                 message,
                 accountId,
-                onConfirmationHandler: (message: any) => {
+                onConfirmationHandler: (message: string) => {
                   tracking.platformSignMessageSuccess(manifest);
                   resolve(message);
                 },
@@ -533,19 +543,11 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       signMessage,
     ],
   );
-  const handleSend = useCallback(
-    (request: JSONRPCRequest): Promise<void> => {
-      targetRef?.current?.postMessage(
-        JSON.stringify(request),
-        typeof manifest.url === "string"
-          ? manifest.url
-          : manifest.url?.origin ?? "",
-      );
+  const handleSend = useCallback((request: JSONRPCRequest): Promise<void> => {
+    targetRef?.current?.postMessage(JSON.stringify(request));
 
-      return Promise.resolve();
-    },
-    [manifest],
-  );
+    return Promise.resolve();
+  }, []);
   const [receive] = useJSONRPCServer(handlers, handleSend);
   const handleMessage = useCallback(
     e => {
@@ -567,7 +569,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
   const handleReload = useCallback(() => {
     tracking.platformReload(manifest);
-    setLoadDate(Date.now());
+    setLoadDate(new Date());
     setWidgetLoaded(false);
   }, [manifest]);
 
@@ -581,9 +583,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         <View style={styles.headerRight}>
           <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
           <InfoPanelButton
-            onReload={handleReload}
             loading={!widgetLoaded}
-            isInfoPanelOpened={isInfoPanelOpened}
             setIsInfoPanelOpened={setIsInfoPanelOpened}
           />
         </View>
@@ -625,7 +625,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         overScrollMode="content"
         bounces={false}
         mediaPlaybackRequiresUserAction={false}
-        scalesPageToFitmediaPlaybackRequiresUserAction
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}

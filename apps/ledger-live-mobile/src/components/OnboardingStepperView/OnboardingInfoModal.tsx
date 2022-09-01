@@ -11,11 +11,11 @@ import {
 import { useTheme } from "@react-navigation/native";
 import { rgba } from "../../colors";
 import Styles from "../../navigation/styles";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import LText from "../LText";
 import Close from "../../icons/Close";
 import { infoModalScenes } from "../../screens/Onboarding/shared/infoPagesData";
+import { UnionToIntersection } from "../../types/helpers";
 
 export type SceneInfoProp = {
   title?: React.ReactNode;
@@ -35,6 +35,10 @@ export type SceneInfoProp = {
     };
   }[];
 };
+type InfoModalSceneKey = keyof typeof infoModalScenes;
+type InfoModalSceneValues = UnionToIntersection<
+  typeof infoModalScenes[InfoModalSceneKey]
+>;
 type Props = {
   navigation: any;
   route: {
@@ -53,7 +57,9 @@ const { height } = getWindowDimensions();
 export default function OnboardingInfoModal({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { sceneInfoKey } = route.params;
-  const sceneInfoProps = infoModalScenes[sceneInfoKey];
+  const sceneInfoProps = infoModalScenes[
+    sceneInfoKey as keyof typeof infoModalScenes
+  ] as InfoModalSceneValues;
   const close = useCallback(() => navigation.goBack(), [navigation]);
   const [primaryColor, textColor, bulletColor] = [
     colors.card,
@@ -81,14 +87,20 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
         </View>
       </View>
       <ScrollView style={styles.root}>
-        {sceneInfoProps.map(
-          ({ Icon, iconColor, title, desc, link, bullets }, i) => (
+        {sceneInfoProps.map((sceneInfoProp, i) => {
+          const { Icon, iconColor, title, desc, link } = sceneInfoProp;
+          const { bullets } = sceneInfoProp as SceneInfoProp;
+          return (
             <View key={`infoModalSection-${i}`}>
               {Icon && (
                 <View style={styles.iconContainer}>
                   <Icon
                     size={56}
-                    color={iconColor ? colors[iconColor] : colors.live}
+                    color={
+                      iconColor
+                        ? colors[iconColor as keyof typeof colors]
+                        : colors.live
+                    }
                   />
                 </View>
               )}
@@ -121,7 +133,9 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                 <TouchableOpacity
                   style={styles.desc}
                   onPress={() => {
-                    Linking.canOpenURL(link.url) && Linking.openURL(link.url);
+                    Linking.canOpenURL(link.url).then(
+                      ok => ok && Linking.openURL(link.url),
+                    );
                   }}
                 >
                   <LText
@@ -147,7 +161,10 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                             styles.bulletIcon,
                             {
                               backgroundColor: color
-                                ? rgba(colors[color], 0.1)
+                                ? rgba(
+                                    colors[color as keyof typeof colors],
+                                    0.1,
+                                  )
                                 : bulletColor,
                             },
                           ]}
@@ -155,7 +172,11 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                           {Icon ? (
                             <Icon
                               size={10}
-                              color={color ? colors[color] : colors.live}
+                              color={
+                                color
+                                  ? colors[color as keyof typeof colors]
+                                  : colors.live
+                              }
                             />
                           ) : (
                             <LText
@@ -194,8 +215,9 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                           {bulletLink && (
                             <TouchableOpacity
                               onPress={() => {
-                                Linking.canOpenURL(bulletLink.url) &&
-                                  Linking.openURL(bulletLink.url);
+                                Linking.canOpenURL(bulletLink.url).then(
+                                  ok => ok && Linking.openURL(bulletLink.url),
+                                );
                               }}
                             >
                               <LText
@@ -218,8 +240,8 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                 </View>
               )}
             </View>
-          ),
-        )}
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   ) : null;

@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { ScreenName } from "../../const";
 import CosmosFamilySendRowsCustomComponent from "./shared/CosmosFamilySendRowsCustomComponent";
 
@@ -19,7 +20,7 @@ export default function CosmosSendRowsCustom({ account, transaction }: Props) {
   }, [navigation, account, transaction]);
   return (
     <CosmosFamilySendRowsCustomComponent
-      transaction={transaction}
+      transaction={transaction as CosmosTransaction}
       editMemo={editMemo}
     />
   );

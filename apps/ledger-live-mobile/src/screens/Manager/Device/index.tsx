@@ -27,7 +27,7 @@ const illustrations = {
   nanoSP: NanoS,
   nanoX: NanoX,
   blue: NanoS,
-  nanoFTS: p => (
+  nanoFTS: (p: React.ComponentProps<typeof NanoS>) => (
     <View style={{ borderWidth: 1, borderColor: "red" }}>
       <NanoS {...p} />
     </View>
@@ -39,7 +39,7 @@ type Props = {
   state: State;
   result: ListAppsResult;
   deviceId: string;
-  initialDeviceName: string;
+  initialDeviceName?: string;
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;

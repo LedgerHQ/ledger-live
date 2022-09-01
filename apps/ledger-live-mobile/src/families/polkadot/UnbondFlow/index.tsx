@@ -35,7 +35,7 @@ function UnbondFlow() {
               })}
             />
           ),
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -74,8 +74,8 @@ function UnbondFlow() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen

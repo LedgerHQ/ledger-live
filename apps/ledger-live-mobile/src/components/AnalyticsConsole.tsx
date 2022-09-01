@@ -7,7 +7,7 @@ import { trackSubject } from "../analytics/segment";
 let id = 0;
 
 const AnalyticsConsole = () => {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<{ id: string }[]>([]);
   const filter = useCallback((curr, prev) => {
     if (!prev || !curr.properties) return curr;
     // We repeat a bunch of data over and over again, filter that out unless it changes.

@@ -14,6 +14,7 @@ import styles from "../../navigation/styles";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import ManagerMain from "../../screens/Manager/Manager";
+import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -50,6 +51,8 @@ const ManagerIconWithUpate = ({
   </Box>
 );
 
+const Stack = createStackNavigator<ManagerNavigatorStackParamList>();
+
 export default function ManagerNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -74,7 +77,7 @@ export default function ManagerNavigator() {
         component={Manager}
         options={{
           title: t("manager.title"),
-          headerRight: null,
+          headerRight: undefined,
           gestureEnabled: false,
         }}
       />
@@ -86,8 +89,6 @@ export default function ManagerNavigator() {
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();
 
 export function ManagerTabIcon(props: any) {
   const isNavLocked = useIsNavLocked();

@@ -9,6 +9,7 @@ import MigrateAccountsConnectDevice from "../../screens/MigrateAccounts/02-Conne
 import MigrateAccountsProgress from "../../screens/MigrateAccounts/03-Progress";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
+import type { MigrateAccountsNavigatorParamList } from "./types/MigrateAccountsFlowNavigator";
 
 const totalSteps = "3";
 export default function MigrateAccountsFlowNavigator() {
@@ -89,4 +90,4 @@ export default function MigrateAccountsFlowNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<MigrateAccountsNavigatorParamList>();

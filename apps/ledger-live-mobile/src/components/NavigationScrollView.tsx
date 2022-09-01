@@ -5,9 +5,11 @@ import { useScrollToTop } from "../navigation/utils";
 
 export default function NavigationScrollView({
   children,
+  // Ignored to prevent type conflict
+  horizontal,
   ...scrollViewProps
 }: ScrollViewProps) {
-  const ref = useRef();
+  const ref = useRef(null);
   useScrollToTop(ref);
 
   return (

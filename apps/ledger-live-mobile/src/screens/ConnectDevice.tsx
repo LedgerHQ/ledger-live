@@ -2,48 +2,73 @@ import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "styled-components/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { accountScreenSelector } from "../reducers/accounts";
 import DeviceAction from "../components/DeviceAction";
 import { renderLoading } from "../components/DeviceAction/rendering";
 import { useSignedTxHandler } from "../logic/screenTransactionHooks";
 import { TrackScreen } from "../analytics";
+import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "../const";
+import type { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
+import type { LendingEnableFlowParamsList } from "../components/RootNavigator/types/LendingEnableFlowNavigator";
+import type { LendingSupplyFlowNavigatorParamList } from "../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import type { LendingWithdrawFlowNavigatorParamList } from "../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import type { ClaimRewardsNavigatorParamList } from "../components/RootNavigator/types/ClaimRewardsNavigator";
+import type { FreezeNavigatorParamList } from "../components/RootNavigator/types/FreezeNavigator";
+import type { UnfreezeNavigatorParamList } from "../components/RootNavigator/types/UnfreezeNavigator";
 
 const action = createAction(connectApp);
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-    name: string;
-  };
-};
-type RouteParams = {
-  device: Device;
-  accountId: string;
-  transaction: Transaction;
-  status: TransactionStatus;
-  appName?: string;
-  selectDeviceLink?: boolean;
-  onSuccess?: (payload: any) => void;
-  onError?: (error: any) => void;
-  analyticsPropertyFlow?: string;
-};
-export const navigateToSelectDevice = (navigation: any, route: any) =>
-  navigation.navigate(route.name.replace("ConnectDevice", "SelectDevice"), {
-    ...route.params,
-    forceSelectDevice: true,
-  });
+type Props =
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.SendConnectDevice
+    >
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.LendingEnableConnectDevice
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.LendingSupplyConnectDevice
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.LendingWithdrawConnectDevice
+    >
+  | StackNavigatorProps<
+      ClaimRewardsNavigatorParamList,
+      ScreenName.ClaimRewardsConnectDevice
+    >
+  | StackNavigatorProps<
+      FreezeNavigatorParamList,
+      ScreenName.FreezeConnectDevice
+    >
+  | StackNavigatorProps<
+      UnfreezeNavigatorParamList,
+      ScreenName.UnfreezeConnectDevice
+    >;
+
+export const navigateToSelectDevice = (
+  navigation: Props["navigation"],
+  route: Props["route"],
+) =>
+  // Assumes that it will always navigate to a "SelectDevice"
+  // type of component accepting mostly the same params as this one.
+  (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+    route.name.replace("ConnectDevice", "SelectDevice"),
+    {
+      ...route.params,
+      forceSelectDevice: true,
+    },
+  );
 export default function ConnectDevice({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();

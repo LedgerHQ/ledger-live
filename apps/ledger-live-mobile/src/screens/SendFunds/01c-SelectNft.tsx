@@ -6,16 +6,22 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import {
+  Account,
+  NFTCollectionMetadataResponse,
+  NFTMetadataResponse,
+  ProtoNFT,
+} from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import {
   View,
   StyleSheet,
   FlatList,
-  SafeAreaView,
   TouchableOpacity,
   Platform,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import LoadingFooter from "../../components/LoadingFooter";
 import NftMedia from "../../components/Nft/NftMedia";
 import Skeleton from "../../components/Skeleton";
@@ -32,7 +38,11 @@ const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
     nft?.contract,
     nft?.tokenId,
     nft?.currencyId,
-  );
+  ) as {
+    status: NFTResource["status"];
+    metadata?: NFTMetadataResponse["result"] &
+      NFTCollectionMetadataResponse["result"];
+  };
 
   const nftCapabilities = useMemo(() => getNftCapabilities(nft), [nft]);
 
@@ -125,17 +135,12 @@ const SendFundsSelectNft = ({ route }: Props) => {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: ProtoNFT }) => (
-      <NftRow account={account} collection={collection} nft={item} />
-    ),
-    [account, collection],
+    ({ item }: { item: ProtoNFT }) => <NftRow account={account} nft={item} />,
+    [account],
   );
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={{ bottom: "always" }}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <FlatList
         contentContainerStyle={styles.nfts}
         data={nftsSlice}

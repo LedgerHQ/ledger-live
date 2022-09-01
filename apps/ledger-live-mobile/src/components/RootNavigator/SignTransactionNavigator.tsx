@@ -9,6 +9,10 @@ import SignTransactionConnectDevice from "../../screens/SignTransaction/02-Conne
 import SignTransactionValidationError from "../../screens/SignTransaction/03-ValidationError";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
+import { SignTransactionNavigatorParamList } from "./types/SignTransactionNavigator";
+import { StackNavigatorProps } from "./types/helpers";
+
+const Stack = createStackNavigator<SignTransactionNavigatorParamList>();
 
 const totalSteps = "3";
 export default function SignTransactionNavigator() {
@@ -20,8 +24,16 @@ export default function SignTransactionNavigator() {
   );
 
   // @TODO replace with correct error
-  const listeners = ({ route }) => ({
+  const listeners = ({
+    route,
+  }: StackNavigatorProps<
+    SignTransactionNavigatorParamList,
+    | ScreenName.SignTransactionSummary
+    | ScreenName.SignTransactionSelectDevice
+    | ScreenName.SignTransactionValidationError
+  >) => ({
     beforeRemove: () =>
+      route.params?.onError &&
       route.params?.onError(
         route.params.error || new Error("Signature interrupted by user"),
       ),
@@ -87,4 +99,3 @@ export default function SignTransactionNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();

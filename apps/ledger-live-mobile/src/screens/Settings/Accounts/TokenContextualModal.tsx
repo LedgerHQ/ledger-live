@@ -71,18 +71,17 @@ const TokenContextualModal = ({
     : null;
   return (
     <BottomDrawer
-      id="ContractAddress"
       isOpen={isOpened}
       preventBackdropClick={false}
       Icon={
-        showingContextMenu && (
+        showingContextMenu ? (
           <ParentCurrencyIcon
             size={48}
             currency={getAccountCurrency(account)}
           />
-        )
+        ) : undefined
       }
-      title={showingContextMenu && account.token.name}
+      title={showingContextMenu ? account.token.name : undefined}
       onClose={onCloseModal}
     >
       {!showingContextMenu && showConfirmation ? (

@@ -5,9 +5,9 @@ import { screen } from "./segment";
 
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 
-type Props = Partial<{
-  [key: string]: any;
-}> & {
+type Props = {
+  [key: string]: unknown;
+} & {
   category: string;
   name?: string;
 };

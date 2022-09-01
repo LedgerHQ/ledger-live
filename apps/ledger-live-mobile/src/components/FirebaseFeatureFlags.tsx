@@ -9,11 +9,9 @@ import {
 import { FeatureId, Feature } from "@ledgerhq/types-live";
 
 import { formatFeatureId } from "./FirebaseRemoteConfig";
-
 import { languageSelector } from "../reducers/settings";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-type Props = PropsWithChildren<{}>;
+type Props = PropsWithChildren<unknown>;
 
 const getFeature = (
   key: FeatureId,
@@ -55,12 +53,12 @@ const getFeature = (
  */
 export const getAllDivergedFlags = (
   appLanguage: string,
-): { [key in FeatureId]: boolean } => {
-  const res: { [key in FeatureId]: boolean } = {};
+): Partial<{ [key in FeatureId]: boolean }> => {
+  const res: Partial<{ [key in FeatureId]: boolean }> = {};
   Object.keys(defaultFeatures).forEach(key => {
-    const value = getFeature(key, appLanguage);
-    if (value && value.enabled !== defaultFeatures[key].enabled) {
-      res[key] = value.enabled;
+    const value = getFeature(key as FeatureId, appLanguage);
+    if (value && value.enabled !== defaultFeatures[key as FeatureId]?.enabled) {
+      res[key as FeatureId] = value.enabled;
     }
   });
   return res;

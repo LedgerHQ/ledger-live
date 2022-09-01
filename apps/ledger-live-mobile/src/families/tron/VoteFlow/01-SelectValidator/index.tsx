@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
 import { StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -25,9 +25,6 @@ import Info from "../../../../icons/Info";
 import SelectValidatorSearchBox from "./SearchBox";
 import Item from "./Item";
 
-const forceInset = {
-  bottom: "always",
-};
 type RouteParams = {
   accountId: string;
   transaction: Transaction;
@@ -147,7 +144,6 @@ export default function SelectValidator({ navigation, route }: Props) {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <SelectValidatorSearchBox
           searchQuery={searchQuery}

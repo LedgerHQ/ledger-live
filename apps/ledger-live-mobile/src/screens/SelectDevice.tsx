@@ -1,40 +1,27 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { useDispatch as useReduxDispatch } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
 import { useTheme } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { TrackScreen } from "../analytics";
 import SelectDeviceComp from "../components/SelectDevice";
 import NavigationScrollView from "../components/NavigationScrollView";
 import { setLastConnectedDevice, setReadOnlyMode } from "../actions/settings";
 import SkipSelectDevice from "./SkipSelectDevice";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-    name: string;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  status: TransactionStatus;
-  appName?: string;
-};
-export default function SelectDevice({ navigation, route }: Props) {
+// Called from a bunch of different navigators with different params…
+export default function SelectDevice({
+  navigation,
+  route,
+}: StackScreenProps<{ [key: string]: object }>) {
   const { colors } = useTheme();
   const dispatchRedux = useReduxDispatch();
   const onNavigate = useCallback(
     device => {
+      // Assumes that it will always navigate to a "ConnectDevice"
+      // type of component accepting mostly the same params as this one.
       navigation.navigate(route.name.replace("SelectDevice", "ConnectDevice"), {
         ...route.params,
         device,
@@ -58,7 +45,6 @@ export default function SelectDevice({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <NavigationScrollView
         style={styles.scroll}

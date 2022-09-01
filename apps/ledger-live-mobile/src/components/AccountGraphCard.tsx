@@ -37,8 +37,6 @@ import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import { Item } from "./Graph/types";
-import { useBalanceHistoryWithCountervalue } from "../actions/portfolio";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import Touchable from "./Touchable";
@@ -107,10 +105,6 @@ function AccountGraphCard({
 
   const [timeRange, setTimeRange] = useTimeRange();
   const [loading, setLoading] = useState(false);
-  const { countervalueChange } = useBalanceHistoryWithCountervalue({
-    account,
-    range: timeRange,
-  });
 
   const ranges = useMemo(
     () =>
@@ -124,8 +118,6 @@ function AccountGraphCard({
   const rangesLabels = ranges.map(({ label }) => label);
 
   const activeRangeIndex = ranges.findIndex(r => r.value === timeRange);
-
-  const isAvailable = !useCounterValue || countervalueAvailable;
 
   const updateRange = useCallback(
     index => {
@@ -144,7 +136,7 @@ function AccountGraphCard({
       graph: "Account Graph",
       timeframe: timeRange,
     });
-  });
+  }, []);
 
   useEffect(() => {
     if (history && history.length > 0) {
@@ -152,7 +144,7 @@ function AccountGraphCard({
     }
   }, [history]);
 
-  const [hoveredItem, setHoverItem] = useState<Item>();
+  const [hoveredItem, setHoverItem] = useState<Item | null>();
 
   const mapCryptoValue = useCallback(d => d.value || 0, []);
   const mapCounterValue = useCallback(
@@ -171,7 +163,6 @@ function AccountGraphCard({
         account={account}
         countervalueAvailable={countervalueAvailable}
         onSwitchAccountCurrency={onSwitchAccountCurrency}
-        countervalueChange={countervalueChange}
         counterValueUnit={counterValueCurrency.units[0]}
         useCounterValue={useCounterValue}
         cryptoCurrencyUnit={getAccountUnit(account)}
@@ -189,10 +180,8 @@ function AccountGraphCard({
       >
         {!loading ? (
           <Transitions.Fade duration={400} status="entering">
-            {/** @ts-expect-error import js issue */}
             <Graph
               isInteractive
-              isLoading={!isAvailable}
               height={120}
               width={width}
               color={graphColor}
@@ -251,7 +240,7 @@ const GraphCardHeader = ({
     },
     {
       unit: counterValueUnit,
-      value: item.countervalue,
+      value: (item as { countervalue: number }).countervalue,
       joinFragmentsSeparator: "",
     },
   ];

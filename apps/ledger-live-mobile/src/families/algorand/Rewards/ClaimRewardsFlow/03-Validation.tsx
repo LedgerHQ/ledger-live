@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import invariant from "invariant";
 import type {
   Transaction,
@@ -17,9 +17,6 @@ import PreventNativeBack from "../../../../components/PreventNativeBack";
 import ValidateOnDevice from "../../../../components/ValidateOnDevice";
 import SkipLock from "../../../../components/behaviour/SkipLock";
 
-const forceInset = {
-  bottom: "always",
-};
 type RouteParams = {
   accountId: string;
   deviceId: string;
@@ -64,7 +61,6 @@ export default function Validation({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen
         category="AlgorandClaimRewards"

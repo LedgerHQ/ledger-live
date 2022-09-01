@@ -5,6 +5,12 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
+import { TFunction } from "i18next";
+import { Account } from "@ledgerhq/types-live";
+import {
+  PolkadotNomination,
+  PolkadotValidator,
+} from "@ledgerhq/live-common/families/polkadot/types";
 import Touchable from "../../../components/Touchable";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
@@ -12,17 +18,25 @@ import CounterValue from "../../../components/CounterValue";
 import ExternalLink from "../../../icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
 
-type NominationDrawerData = $PropertyType<
-  ElementProps<typeof NominationDrawer>,
-  "data"
->;
+type NominationDrawerData = React.ComponentProps<
+  typeof NominationDrawer
+>["data"];
+
+type Props = {
+  t: TFunction;
+  account: Account;
+  validator: PolkadotValidator;
+  nomination: PolkadotNomination;
+  onOpenExplorer: (address: string) => void;
+};
+
 export function getDrawerInfo({
   t,
   account,
   nomination,
   validator,
   onOpenExplorer,
-}): NominationDrawerData {
+}: Props): NominationDrawerData {
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const amount = nomination.value;

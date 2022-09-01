@@ -6,6 +6,7 @@ import { ScreenName } from "../../const";
 import PasswordAdd from "../../screens/Settings/General/PasswordAdd";
 import ConfirmPassword from "../../screens/Settings/General/ConfirmPassword";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { PasswordAddFlowParamList } from "./types/PasswordAddFlowNavigator";
 
 export default function PasswordAddFlowNavigator() {
   const { t } = useTranslation();
@@ -33,4 +34,4 @@ export default function PasswordAddFlowNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<PasswordAddFlowParamList>();

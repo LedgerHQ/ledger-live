@@ -41,12 +41,10 @@ function BackgroundGradient({
 
   return (
     <Animated.View
-      height={"100%"}
-      justifyContent={"center"}
       style={[
         BackgroundOverlayOpacity,
         {
-          background: colors.background.main,
+          backgroundColor: colors.background.main,
           position: "absolute",
           width: 541,
           height: 450,
@@ -59,7 +57,6 @@ function BackgroundGradient({
         height={454}
         viewBox="0 0 541 454"
         fill="none"
-        xmlns="http://www.w3.org/2000/svg"
       >
         <Path fill="url(#paint0_linear_9_2)" d="M0 0H541V454H0z" />
         <Path fill="url(#paint1_radial_9_2)" d="M0 0H541V454H0z" />

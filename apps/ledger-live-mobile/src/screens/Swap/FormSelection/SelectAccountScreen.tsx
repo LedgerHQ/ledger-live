@@ -14,6 +14,7 @@ import {
   flattenAccounts,
 } from "@ledgerhq/live-common/account/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { Account } from "@ledgerhq/types-live";
 import type { SearchResult } from "../../../helpers/formatAccountSearchResults";
 import { accountsSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
@@ -23,18 +24,24 @@ import AccountCard from "../../../components/AccountCard";
 import KeyboardView from "../../../components/KeyboardView";
 import { formatSearchResults } from "../../../helpers/formatAccountSearchResults";
 import { NavigatorName, ScreenName } from "../../../const";
-import type { SwapRouteParams } from "..";
 import AddIcon from "../../../icons/Plus";
 import { swapSelectableCurrenciesSelector } from "../../../reducers/settings";
+import {
+  RootComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-type Props = {
-  navigation: any;
-  route: {
-    params: SwapRouteParams;
-  };
-};
-export default function SelectAccount({ navigation, route }: Props) {
+
+type NavigationProps = RootComposite<
+  StackNavigatorProps<
+    BaseNavigatorStackParamList,
+    ScreenName.SwapV2FormSelectAccount
+  >
+>;
+
+export default function SelectAccount({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { swap, target, selectedCurrency, setAccount, provider } = route.params;
   const unfilteredAccounts = useSelector(accountsSelector);
@@ -73,7 +80,7 @@ export default function SelectAccount({ navigation, route }: Props) {
       )
     : flattenAccounts(enhancedAccounts);
 
-  const keyExtractor = item => item.account.id;
+  const keyExtractor = (item: SearchResult) => item.account.id;
 
   const isFrom = target === "from";
   const renderItem = useCallback(
@@ -89,10 +96,11 @@ export default function SelectAccount({ navigation, route }: Props) {
         >
           <AccountCard
             disabled={!result.match}
-            account={account}
+            account={account as Account}
             style={styles.card}
             onPress={() => {
-              setAccount && setAccount(account);
+              setAccount &&
+                setAccount(account as Parameters<typeof setAccount>[0]);
               navigation.navigate(ScreenName.SwapForm, {
                 ...route.params,
                 transaction: undefined,
@@ -131,8 +139,13 @@ export default function SelectAccount({ navigation, route }: Props) {
   }, [navigation, route.params, selectableCurrencies]);
   const renderList = useCallback(
     items => {
-      // $FlowFixMe
-      const formatedList = formatSearchResults(items, enhancedAccounts);
+      // FIXME: formatSearchResults returns a weird array comprised of SearchResults and hybrid token accounts.
+      // Here it is cast as SearchResult[] because clearly the components expects this type.
+      // We need to clarify this.
+      const formatedList = formatSearchResults(
+        items,
+        enhancedAccounts,
+      ) as SearchResult[];
       return (
         <FlatList
           data={formatedList}

@@ -8,7 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export const MIN_MODAL_HEIGHT = 30;
 
-const ScreenContainer = styled(Flex).attrs(p => ({
+const ScreenContainer = styled(Flex).attrs<{ p?: string }>(p => ({
   edges: ["bottom"],
   flex: 2,
   p: p.p ?? 6,

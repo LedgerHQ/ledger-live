@@ -5,6 +5,7 @@ import {
   useNftCollectionMetadata,
 } from "@ledgerhq/live-common/nft/index";
 import { useRoute, RouteProp } from "@react-navigation/native";
+import type { NFTResourceLoading } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { scrollToTop } from "../../../navigation/utils";
@@ -16,11 +17,13 @@ const NftCollectionHeaderTitle = () => {
   const { params } = useRoute<RouteParams>();
   const { collection } = params;
   const nft = collection?.[0];
-  const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
+  const nftMedata = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
     nft?.currencyId,
   );
+  const { status: nftStatus, metadata: nftMetadata } =
+    nftMedata as NFTResourceLoading;
   const { metadata: collectionMetadata } = useNftCollectionMetadata(
     nft?.contract,
     nft?.currencyId,

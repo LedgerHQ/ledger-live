@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
-import analytics from "@segment/analytics-react-native";
+import analytics, { JsonMap } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
@@ -31,10 +31,12 @@ import {
   firstConnectionHasDeviceSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
+import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
-import type { State } from "../reducers";
+import type { AppStore } from "../reducers";
 import { NavigatorName } from "../const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
+import { Maybe } from "../types/helpers";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${
@@ -42,7 +44,7 @@ const appVersion = `${VersionNumber.appVersion || ""} (${
 })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
-const extraProperties = store => {
+const extraProperties = (store: AppStore) => {
   const state: State = store.getState();
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics
@@ -61,7 +63,7 @@ const extraProperties = store => {
           lastDevice.deviceInfo?.languageId !== undefined
             ? idsToLanguage[lastDevice.deviceInfo.languageId]
             : undefined,
-        appLength: lastDevice?.appsInstalled,
+        appLength: (lastDevice as DeviceLike)?.appsInstalled,
         modelId: lastDevice.modelId,
       }
     : {};
@@ -80,7 +82,6 @@ const extraProperties = store => {
     sessionId,
     devicesCount: devices.length,
     firstConnectionHasDevice,
-    // $FlowFixMe
     ...(satisfaction
       ? {
           satisfaction,
@@ -93,10 +94,13 @@ const extraProperties = store => {
 const context = {
   ip: "0.0.0.0",
 };
-let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
+
+type MaybeAppStore = Maybe<AppStore>;
+
+let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
 
 const token = __DEV__ ? null : ANALYTICS_TOKEN;
-export const start = async (store: any) => {
+export const start = async (store: AppStore) => {
   if (token) {
     await analytics.setup(token, {
       android: {
@@ -117,7 +121,7 @@ export const start = async (store: any) => {
 
     if (token) {
       await analytics.reset();
-      await analytics.identify(user.id, extraProperties(store), {
+      await analytics.identify(user.id, extraProperties(store) as JsonMap, {
         context,
       });
     }
@@ -141,7 +145,7 @@ export const updateIdentify = async () => {
     });
   if (!token) return;
   const { user } = await getOrCreateUser();
-  analytics.identify(user.id, extraProperties(storeInstance), {
+  analytics.identify(user.id, extraProperties(storeInstance) as JsonMap, {
     context,
   });
 };
@@ -149,19 +153,19 @@ export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
   storeInstance = null;
 };
-export const trackSubject: any = new ReplaySubject<{
+export const trackSubject = new ReplaySubject<{
   event: string;
-  properties: Record<string, any> | null | undefined;
+  properties?: Error | Record<string, unknown> | null;
 }>(10);
 export const track = (
   event: string,
-  properties?: Record<string, any> | null,
+  properties?: Error | Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
     category: "track",
-    data: properties,
+    data: properties || undefined,
     level: "debug",
   });
 
@@ -185,20 +189,20 @@ export const track = (
     properties: allProperties,
   });
   if (!token) return;
-  analytics.track(event, allProperties, {
+  analytics.track(event, allProperties as JsonMap, {
     context,
   });
 };
-export const getPageNameFromRoute = (route: RouteProp) => {
+export const getPageNameFromRoute = (route: RouteProp<any, any>) => {
   const routeName =
     getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
   return snakeCase(routeName);
 };
 export const trackWithRoute = (
   event: string,
-  properties: Record<string, any> | null | undefined,
-  mandatory: boolean | null | undefined,
-  route: RouteProp,
+  route: RouteProp<any, any>,
+  properties?: Record<string, any> | null,
+  mandatory?: boolean | null,
 ) => {
   const newProperties = {
     page: getPageNameFromRoute(route),
@@ -212,9 +216,9 @@ export const useTrack = () => {
   const track = useCallback(
     (
       event: string,
-      properties: Record<string, any> | null | undefined,
-      mandatory: boolean | null | undefined,
-    ) => trackWithRoute(event, properties, mandatory, route),
+      properties?: Record<string, any> | null,
+      mandatory?: boolean | null,
+    ) => trackWithRoute(event, route, properties, mandatory),
     [route],
   );
   return track;
@@ -234,13 +238,13 @@ export const useAnalytics = () => {
 export const screen = (
   category: string,
   name: string | null | undefined,
-  properties: Record<string, any> | null | undefined,
+  properties?: Record<string, any> | null | undefined,
 ) => {
   const title = `Page ${category + (name ? ` ${name}` : "")}`;
   Sentry.addBreadcrumb({
     message: title,
     category: "screen",
-    data: properties,
+    data: properties || {},
     level: "info",
   });
 
@@ -262,7 +266,7 @@ export const screen = (
     properties: allProperties,
   });
   if (!token) return;
-  analytics.track(title, allProperties, {
+  analytics.track(title, allProperties as JsonMap, {
     context,
   });
 };

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
@@ -26,13 +26,10 @@ type RouteParams = {
   accountId: string;
   transaction: Transaction;
 };
-const forceInset = {
-  bottom: "always",
-};
 const uint32maxPlus1 = BigNumber(2).pow(32);
 const options = {
   title: i18n.t("send.summary.tag"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 
 function RippleEditTag({ route, navigation }: Props) {
@@ -77,7 +74,6 @@ function RippleEditTag({ route, navigation }: Props) {
       style={{
         flex: 1,
       }}
-      forceInset={forceInset}
     >
       <KeyboardView
         style={[

@@ -48,7 +48,7 @@ const ConfirmRecoveryStep = ({
     // Opening the link with some app, if the URL scheme is "http" the web link should be opened
     // by some browser in the mobile
     await Linking.openURL(urls.recoveryPhraseInfo);
-  }, [urls.recoveryPhraseInfo]);
+  }, []);
 
   return (
     <Flex height="100%">

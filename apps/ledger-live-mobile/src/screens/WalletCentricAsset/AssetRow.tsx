@@ -1,15 +1,35 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BigNumber } from "bignumber.js";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "../../const";
-import { usePortfolio } from "../../actions/portfolio";
+import { usePortfolio } from "../../hooks/portfolio";
 import AssetRowLayout from "../../components/AssetRowLayout";
 import { track } from "../../analytics";
+import {
+  BaseNavigationComposite,
+  StackNavigatorNavigation,
+} from "../../components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+
+type Asset = {
+  currency: CryptoOrTokenCurrency;
+  accounts: AccountLike[];
+  distribution: number;
+  amount: number;
+  countervalue: number;
+};
+
+type NavigationProp = StackNavigatorNavigation<
+  AccountsNavigatorParamList,
+  ScreenName.Assets
+>;
 
 type Props = {
-  asset: any;
-  navigation: any;
-  navigationParams?: any[];
+  asset: Asset;
+  navigation: NavigationProp;
+  navigationParams?: Parameters<NavigationProp["navigate"]>;
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
@@ -38,12 +58,15 @@ const AssetRow = ({
     if (navigationParams) {
       navigation.navigate(...navigationParams);
     } else {
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: {
-          currency,
+      (navigation as BaseNavigationComposite<NavigationProp>).navigate(
+        NavigatorName.Accounts,
+        {
+          screen: ScreenName.Asset,
+          params: {
+            currency,
+          },
         },
-      });
+      );
     }
   }, [currency, navigation, navigationParams]);
 
@@ -62,4 +85,4 @@ const AssetRow = ({
   );
 };
 
-export default React.memo<Props>(AssetRow);
+export default React.memo(AssetRow);

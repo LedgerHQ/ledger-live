@@ -96,8 +96,8 @@ function AddAssetFlow() {
               })}
             />
           ),
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
           gestureEnabled: false,
         }}
       />

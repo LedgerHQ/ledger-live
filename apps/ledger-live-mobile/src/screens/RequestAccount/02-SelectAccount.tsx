@@ -1,14 +1,10 @@
 import React, { useCallback, useMemo } from "react";
-import type { Node } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
-import { useTheme } from "@react-navigation/native";
+import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -19,6 +15,12 @@ import { formatSearchResultsTuples } from "../../helpers/formatAccountSearchResu
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 import { NavigatorName, ScreenName } from "../../const";
 import Button from "../../components/Button";
+import type {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { RequestAccountNavigatorParamList } from "../../components/RootNavigator/types/RequestAccountNavigator";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 const SEARCH_KEYS = [
   "account.name",
@@ -30,28 +32,25 @@ const SEARCH_KEYS = [
   "subAccount.token.name",
   "subAccount.token.ticker",
 ];
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  currencies: string[];
-  currency: CryptoCurrency | TokenCurrency;
-  allowAddAccount?: boolean;
-  onSuccess: (account: AccountLike, parentAccount: Account) => void;
-  onError: (_: Error) => void;
-};
 
-const keyExtractor = item => item.account.id;
+type Navigation = CompositeScreenProps<
+  StackNavigatorProps<
+    RequestAccountNavigatorParamList,
+    ScreenName.RequestAccountsSelectAccount
+  >,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
+type Props = Navigation;
+
+const keyExtractor = (item: SearchResult) => item.account.id;
 
 const Item = ({
   item: result,
   onSelect,
 }: {
   item: SearchResult;
-  onSelect: (account: AccountLike, parentAccount: Account) => void;
+  onSelect: (account: AccountLike, parentAccount?: AccountLike) => void;
 }) => {
   const { account, parentAccount, match } = result;
   const onPress = useCallback(
@@ -97,13 +96,18 @@ const List = ({
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { currency, allowAddAccount, onSuccess, onError } = route.params;
-  const accounts: AccountLike[] = useSelector(
-    accountsByCryptoCurrencyScreenSelector(currency),
+  const accounts:
+    | AccountLike[]
+    | { account: AccountLike; subAccount: SubAccount | null }[] = useSelector(
+    accountsByCryptoCurrencyScreenSelector(currency as CryptoCurrency),
   );
   const onSelect = useCallback(
-    (account: AccountLike, parentAccount: Account) => {
-      onSuccess(account, parentAccount);
-      const n = navigation.getParent() || navigation;
+    (account: AccountLike, parentAccount?: AccountLike) => {
+      onSuccess && onSuccess(account, parentAccount);
+      const n =
+        navigation.getParent<
+          StackNavigatorNavigation<BaseNavigatorStackParamList>
+        >() || navigation;
       n.pop();
     },
     [navigation, onSuccess],

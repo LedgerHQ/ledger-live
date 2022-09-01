@@ -77,7 +77,7 @@ function DelegationFlow() {
         }: {
           route: { params: { validator: CosmosValidatorItem } };
         }) => ({
-          headerRight: null,
+          headerRight: undefined,
           headerTitle: () => (
             <StepHeader
               title={

@@ -2,8 +2,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import type { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import AddAccountsSelectCrypto from "../../screens/AddAccounts/01-SelectCrypto";
 import AddAccountsSelectDevice from "../../screens/AddAccounts/02-SelectDevice";
 import AddAccountsTokenCurrencyDisclaimer from "../../screens/AddAccounts/02-TokenCurrencyDisclaimer";
@@ -13,20 +12,17 @@ import AddAccountsHeaderRightClose from "../../screens/AddAccounts/AddAccountsHe
 import EditAccountName from "../../screens/AccountSettings/EditAccountName";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
+import type { AddAccountsNavigatorParamList } from "./types/AddAccountsNavigator";
+import type { BaseNavigatorStackParamList } from "./types/BaseNavigator";
+import type { StackNavigatorProps } from "./types/helpers";
 
-type Route = {
-  params:
-    | {
-        currency: Currency;
-        token?: TokenCurrency;
-        returnToSwap?: boolean;
-        analyticsPropertyFlow?: string;
-      }
-    | null
-    | undefined;
-};
 const totalSteps = "3";
-export default function AddAccountsNavigator({ route }: { route: Route }) {
+export default function AddAccountsNavigator({
+  route,
+}: StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  NavigatorName.AddAccounts
+>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const stackNavConfig = useMemo(
@@ -119,7 +115,7 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
         component={EditAccountName}
         options={{
           title: t("account.settings.accountName.title"),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -139,4 +135,4 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AddAccountsNavigatorParamList>();

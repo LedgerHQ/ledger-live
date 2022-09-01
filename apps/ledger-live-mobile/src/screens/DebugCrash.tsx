@@ -3,11 +3,12 @@ import { StyleSheet, View } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Button from "../components/Button";
 import GenericErrorView from "../components/GenericErrorView";
+import { ScreenName } from "../const";
+import { SettingsNavigatorStackParamList } from "../components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 
 class DebugBLE extends Component<
-  {
-    navigation: any;
-  },
+  StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugCrash>,
   {
     renderCrash: boolean;
     renderErrorModal: boolean;
@@ -35,7 +36,7 @@ class DebugBLE extends Component<
       renderErrorModal: true,
     });
 
-  render(): any {
+  render() {
     const { renderCrash, renderErrorModal } = this.state;
     return (
       <View style={styles.root}>
