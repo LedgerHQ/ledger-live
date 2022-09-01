@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { RouteProp, useNavigation } from "@react-navigation/native";
 import { Text, ScrollListContainer } from "@ledgerhq/native-ui";
+import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { ImageSourcePropType } from "react-native";
 
@@ -12,6 +12,12 @@ import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
 import { setHasOrderedNano } from "../../../actions/settings";
 import DeviceSetupView from "../../../components/DeviceSetupView";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 const images = {
   light: {
@@ -32,7 +38,7 @@ type PostWelcomeDiscoverCardProps = {
   title: string;
   subTitle: string;
   event: string;
-  eventProperties?: Record<string, any>;
+  eventProperties?: Record<string, unknown>;
   testID: string;
 
   selectedOption: any;
@@ -61,9 +67,9 @@ const PostWelcomeDiscoverCard = ({
       subTitle={subTitle}
       subTitleProps={{ variant: "paragraph" }}
       event={event}
-      eventProperties={eventProperties}
       testID={testID}
       onPress={onPress}
+      eventProperties={eventProperties}
       cardProps={{
         mx: 0,
         mb: 6,
@@ -89,15 +95,16 @@ const PostWelcomeDiscoverCard = ({
   );
 };
 
-function PostWelcomeSelection({
-  route,
-}: {
-  route: RouteProp<{ params: { userHasDevice: boolean } }, "params">;
-}) {
+type NavigationProps = StackNavigatorProps<
+  OnboardingNavigatorParamList,
+  ScreenName.OnboardingPostWelcomeSelection
+>;
+
+function PostWelcomeSelection({ route }: NavigationProps) {
   const { userHasDevice } = route.params;
   const dispatch = useDispatch();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const { t } = useTranslation();
 
   const setupLedger = useCallback(() => {
@@ -105,7 +112,9 @@ function PostWelcomeSelection({
   }, [navigation]);
 
   const buyLedger = useCallback(() => {
-    navigation.navigate(NavigatorName.BuyDevice);
+    (
+      navigation as unknown as StackNavigatorNavigation<BaseNavigatorStackParamList>
+    ).navigate(NavigatorName.BuyDevice);
   }, [navigation]);
 
   const exploreLedger = useCallback(() => {

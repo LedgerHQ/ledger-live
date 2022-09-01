@@ -10,12 +10,13 @@ import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
 import Button from "../../../components/wrappedUi/Button";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { TezosDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: any };
-};
-
+type Props = StackNavigatorProps<
+  TezosDelegationFlowParamList,
+  ScreenName.DelegationStarted
+>;
 const Check = <Icons.CheckAloneMedium size={20} color={"success.c100"} />;
 
 export default function DelegationStarted({ navigation, route }: Props) {

@@ -6,7 +6,7 @@ import i18next from "i18next";
 import { StellarMemoType } from "@ledgerhq/live-common/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import LText from "../../components/LText";
-import type { State } from "../../reducers";
+import type { State } from "../../reducers/types";
 import { ScreenName } from "../../const";
 import makeGenericSelectScreen from "../../screens/makeGenericSelectScreen";
 
@@ -15,13 +15,13 @@ const items = StellarMemoType.map(type => ({
   value: type,
 }));
 
-const mapStateToProps = (state: State, props: any) => ({
+const mapStateToProps = (_state: State, props: any) => ({
   selectedKey: props.route.params.transaction.memoType
     ? props.route.params.transaction.memoType
     : "NO_MEMO",
   items,
   cancelNavigateBack: true,
-  onValueChange: ({ value }) => {
+  onValueChange: ({ value }: { value: string; label: string }) => {
     const { navigation, route } = props;
     const { transaction, account } = route.params;
 
@@ -63,7 +63,7 @@ const Screen = connect(mapStateToProps)(
 );
 const options = {
   title: i18next.t("send.summary.memo.type"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 const styles = StyleSheet.create({
   memo: {

@@ -41,7 +41,6 @@ const InfoPanel = ({
   return (
     <BottomModal
       style={{ ...styles.root, backgroundColor: colors.card }}
-      id="InfoPanelModal"
       isOpened={isOpened}
       onClose={onClose}
     >
@@ -51,7 +50,7 @@ const InfoPanel = ({
             <AppIcon size={40} name={name} icon={icon} />
           </View>
         ) : null}
-        <LText semidbold style={{ ...styles.title, color: colors.text }}>
+        <LText semiBold style={{ ...styles.title, color: colors.text }}>
           {name}
         </LText>
       </View>
@@ -67,7 +66,7 @@ const InfoPanel = ({
       {url ? (
         <>
           <View style={styles.hr} />
-          <LText semibold style={styles.subSectionTitle}>
+          <LText semiBold style={styles.subSectionTitle}>
             <Trans i18nKey="platform.webPlatformPlayer.infoPanel.website" />
           </LText>
           <TouchableOpacity
@@ -75,7 +74,7 @@ const InfoPanel = ({
             onPress={() => onLinkPress(url)}
           >
             <LText
-              semibold
+              semiBold
               style={{ ...styles.basicFontStyle, color: colors.live }}
             >
               {url}
@@ -89,7 +88,7 @@ const InfoPanel = ({
       {__DEV__ && uri ? (
         <>
           <View style={styles.hr} />
-          <LText semibold style={styles.subSectionTitle}>
+          <LText semiBold style={styles.subSectionTitle}>
             URI:
           </LText>
           <TouchableOpacity
@@ -97,7 +96,7 @@ const InfoPanel = ({
             onPress={() => onLinkPress(uri)}
           >
             <LText
-              semibold
+              semiBold
               style={{ ...styles.basicFontStyle, color: colors.live }}
             >
               {uri}

@@ -15,7 +15,6 @@ export default function EmptystateAccount() {
           <Path
             fillOpacity=".16"
             stroke={colors.lightFog}
-            strokeLinejoin="square"
             d="M15.5 67.5V74c0 1.9329966 1.5670034 3.5 3.5 3.5h350c1.932997 0 3.5-1.5670034 3.5-3.5v-6.5h-357z"
           />
         </G>
@@ -27,7 +26,6 @@ export default function EmptystateAccount() {
           <Path
             fillOpacity=".16"
             stroke={colors.lightFog}
-            strokeLinejoin="square"
             d="M7.5 57.5V64c0 1.9329966 1.56700338 3.5 3.5 3.5h365c1.932997 0 3.5-1.5670034 3.5-3.5v-6.5H7.5z"
           />
         </G>
@@ -39,7 +37,6 @@ export default function EmptystateAccount() {
             y=".5"
             fillOpacity=".16"
             stroke={colors.lightGrey}
-            strokeLinejoin="square"
             rx="4"
           />
         </G>

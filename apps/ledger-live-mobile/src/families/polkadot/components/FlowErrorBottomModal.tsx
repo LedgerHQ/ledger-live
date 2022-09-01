@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
 import RetryButton from "../../../components/RetryButton";
 import CancelButton from "../../../components/CancelButton";
@@ -11,7 +12,7 @@ type Props = {
   account: any;
   parentAccount: any;
   setTransaction: (_: Transaction) => void;
-  bridgeError?: Error;
+  bridgeError?: Error | null;
 };
 
 const FlowErrorBottomModal = ({

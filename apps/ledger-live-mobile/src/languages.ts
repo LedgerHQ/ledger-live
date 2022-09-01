@@ -1,7 +1,8 @@
 import RNLocalize from "react-native-localize";
 import Config from "react-native-config";
 import { Language } from "@ledgerhq/types-live";
-import allLocales from "./locales";
+import type { ResourceLanguage } from "i18next";
+import * as allLocales from "./locales";
 
 export const languages = {
   de: "Deutsch",
@@ -26,13 +27,14 @@ export const languages = {
   ar: "العربية",
 };
 
-export const localeIds: Locale[] = Object.keys(allLocales) as Locale[];
+type localeKeys = keyof typeof allLocales;
+export const localeIds = Object.keys(allLocales) as localeKeys[];
 
 /**
  * This is the list of languages that are supported in terms of in-app translations
  * and it is meant to appear in the settings.
  */
-export const supportedLocales: Locale[] = Config.LEDGER_DEBUG_ALL_LANGS
+export const supportedLocales: localeKeys[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
   : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt", "ar"];
 
@@ -71,15 +73,10 @@ export const fullySupportedLocales: Locale[] = [
   "pt",
   "ar",
 ];
-type LocaleIndexed<T> = { [key in Locale]?: T };
-
-export const locales = supportedLocales.reduce(
-  (obj: LocaleIndexed<any>, key) => {
-    obj[key] = (allLocales as LocaleIndexed<any>)[key]; // eslint-disable-line no-param-reassign
-    return obj;
-  },
-  {},
-);
+export const locales = supportedLocales.reduce((obj, key) => {
+  obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
+  return obj;
+}, {} as { [k in localeKeys]: ResourceLanguage });
 
 /** For the "language" setting which is used for translations. */
 export const DEFAULT_LANGUAGE_LOCALE = "en";
@@ -91,7 +88,9 @@ export const getDefaultLanguageLocale = (
 ) =>
   RNLocalize.findBestAvailableLanguage(fullySupportedLocales)?.languageTag ||
   fallbackLocale;
-const languageLocaleToDefaultLocaleMap = {
+const languageLocaleToDefaultLocaleMap: {
+  [k: string]: string;
+} = {
   de: "de-DE",
   el: "el-GR",
   en: "en-US",

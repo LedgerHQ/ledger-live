@@ -32,8 +32,11 @@ function PolkadotValidatorsField({ account, transaction, field }: FieldProps) {
   const mappedValidators = useMemo(
     () =>
       (validators || [])
-        .map(address => polkadotValidators.find(v => v.address === address))
-        .filter(Boolean),
+        .map<typeof polkadotValidators[0] | null>(address => {
+          const found = polkadotValidators.find(v => v.address === address);
+          return found || null;
+        })
+        .filter(Boolean) as typeof polkadotValidators[0][],
     [validators, polkadotValidators],
   );
   const redirectAddressCreator = useCallback(

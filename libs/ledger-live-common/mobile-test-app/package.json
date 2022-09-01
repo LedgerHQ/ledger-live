@@ -19,7 +19,7 @@
     "assert": "^2.0.0",
     "axios": "^0.21.2",
     "babel-polyfill": "^6.26.0",
-    "bignumber.js": "^9.0.1",
+    "bignumber.js": "^9.1.0",
     "buffer": "^5.6.0",
     "dns.js": "^1.0.1",
     "domain-browser": "^1.2.0",

@@ -6,10 +6,14 @@ import { Text } from "@ledgerhq/native-ui";
 import { counterValueCurrencySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import { ScreenName } from "../../../const";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+
+type Navigation = StackNavigatorProps<SettingsNavigatorStackParamList>;
 
 export default function CountervalueSettingsRow() {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const { navigate } = useNavigation();
+  const { navigate } = useNavigation<Navigation["navigation"]>();
 
   const { t } = useTranslation();
 

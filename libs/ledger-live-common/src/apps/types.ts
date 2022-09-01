@@ -28,6 +28,9 @@ export type ListAppsEvent =
   | {
       type: "result";
       result: ListAppsResult;
+    }
+  | {
+      type: "allow-manager-requested";
     };
 export type ListAppsResult = {
   appByName: Record<string, App>;

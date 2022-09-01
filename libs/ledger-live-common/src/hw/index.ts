@@ -1,8 +1,8 @@
 import { EMPTY, merge } from "rxjs";
 import type { Observable } from "rxjs";
 import { catchError } from "rxjs/operators";
+import type { DeviceModel } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
-import { DeviceModel } from "@ledgerhq/types-devices";
 
 export type DeviceEvent = {
   type: "add" | "remove";
@@ -41,7 +41,7 @@ export type TransportModule = {
   discovery?: Discovery;
 };
 const modules: TransportModule[] = [];
-export const registerTransportModule = (module: TransportModule) => {
+export const registerTransportModule = (module: TransportModule): void => {
   modules.push(module);
 };
 export const discoverDevices = (

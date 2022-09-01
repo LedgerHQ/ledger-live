@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text, Tag } from "@ledgerhq/native-ui";
-import { ValueChange } from "@ledgerhq/live-common/portfolio/v2/index";
+import { ValueChange } from "@ledgerhq/types-live";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import Delta from "./Delta";
@@ -93,7 +93,13 @@ const AssetRowLayout = ({
           </Flex>
           <Flex flexDirection="row" justifyContent="space-between">
             <Text variant="body" fontWeight="medium" color="neutral.c70">
-              <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
+              {currencyUnit ? (
+                <CurrencyUnitValue
+                  showCode
+                  unit={currencyUnit}
+                  value={balance}
+                />
+              ) : null}
             </Text>
             {!hideDelta && countervalueChange && (
               <Delta

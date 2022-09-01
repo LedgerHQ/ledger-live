@@ -16,7 +16,11 @@ import type {
   TokenAccount,
   ChildAccount,
 } from "@ledgerhq/types-live";
-import { TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/types-cryptoassets";
 import { TronAccount } from "../families/tron/types";
 import { CosmosAccount } from "../families/cosmos/types";
 
@@ -25,15 +29,17 @@ import { CosmosAccount } from "../families/cosmos/types";
 // in case of a TokenAccount it's the parentAccount
 export const getMainAccount = (
   account: AccountLike,
-  parentAccount: Account | null | undefined
+  parentAccount?: Account | null | undefined
 ): Account => {
   const mainAccount = account.type === "Account" ? account : parentAccount;
   invariant(mainAccount, "an account is expected");
   return mainAccount as Account;
 };
 
-export const getAccountCurrency = (account: AccountLike) => {
-  switch (account.type) {
+export const getAccountCurrency = (
+  account?: AccountLike
+): TokenCurrency | CryptoCurrency => {
+  switch (account?.type) {
     case "Account":
     case "ChildAccount":
       return account.currency;
@@ -42,7 +48,9 @@ export const getAccountCurrency = (account: AccountLike) => {
       return account.token;
 
     default:
-      throw new Error("invalid account.type=" + (account as AccountLike).type);
+      throw new Error(
+        "invalid account.type=" + (account as unknown as { type: string })?.type
+      );
   }
 };
 
@@ -261,7 +269,7 @@ export const getVotesCount = (
 export const makeEmptyTokenAccount = (
   account: Account,
   token: TokenCurrency
-): SubAccount => ({
+): TokenAccount => ({
   type: "TokenAccount",
   id: account.id + "+" + token.contractAddress,
   parentId: account.id,
@@ -374,19 +382,19 @@ export const findTokenAccountByCurrency = (
   return null; // else return nothing
 };
 
-export function isAccount(account: AccountLike): account is Account {
-  return account.type === "Account";
+export function isAccount(account?: AccountLike): account is Account {
+  return account?.type === "Account";
 }
 
-export function isTokenAccount(account: AccountLike): account is TokenAccount {
-  return account.type === "TokenAccount";
+export function isTokenAccount(account?: AccountLike): account is TokenAccount {
+  return account?.type === "TokenAccount";
 }
 
-export function isChildAccount(account: AccountLike): account is ChildAccount {
-  return account.type === "ChildAccount";
+export function isChildAccount(account?: AccountLike): account is ChildAccount {
+  return account?.type === "ChildAccount";
 }
 
-export function isSubAccount(account: AccountLike): account is SubAccount {
+export function isSubAccount(account?: AccountLike): account is SubAccount {
   return isTokenAccount(account) || isChildAccount(account);
 }
 

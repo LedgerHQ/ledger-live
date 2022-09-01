@@ -7,6 +7,7 @@ import { ScreenName } from "../../const";
 import Sell from "../../screens/Exchange/Sell";
 import Buy from "../../screens/Exchange/Buy";
 import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
+import type { ExchangeNavigatorParamList } from "./types/ExchangeNavigator";
 
 type TabLabelProps = {
   focused: boolean;
@@ -51,4 +52,4 @@ export default function ExchangeNavigator() {
   );
 }
 
-const Tab = createMaterialTopTabNavigator();
+const Tab = createMaterialTopTabNavigator<ExchangeNavigatorParamList>();

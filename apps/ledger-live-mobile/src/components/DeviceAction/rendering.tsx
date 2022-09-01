@@ -25,22 +25,24 @@ import {
   Exchange,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
-  getAccountCurrency,
   getAccountUnit,
   getMainAccount,
   getAccountName,
+  getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { ParamListBase } from "@react-navigation/native";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
-import { lighten } from "../../colors";
+import { lighten, Theme } from "../../colors";
 import Button from "../Button";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "../../const";
@@ -53,8 +55,8 @@ import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
+import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
-import TermsFooter from "../TermsFooter";
 import Illustration from "../../images/illustration/Illustration";
 import { FramedImageWithContext } from "../CustomImage/FramedImage";
 
@@ -68,16 +70,22 @@ const Wrapper = styled(Flex).attrs({
   minHeight: "160px",
 })``;
 
-const AnimationContainer = styled(Flex).attrs(p => ({
-  alignSelf: "stretch",
-  alignItems: "center",
-  justifyContent: "center",
-  height: p.withConnectDeviceHeight
-    ? "100px"
-    : p.withVerifyAddressHeight
-    ? "72px"
-    : undefined,
-}))``;
+type AnimationContainerExtraProps = {
+  withConnectDeviceHeight?: boolean;
+  withVerifyAddressHeight?: boolean;
+};
+const AnimationContainer = styled(Flex).attrs(
+  (p: AnimationContainerExtraProps) => ({
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "center",
+    height: p.withConnectDeviceHeight
+      ? "100px"
+      : p.withVerifyAddressHeight
+      ? "72px"
+      : undefined,
+  }),
+)<AnimationContainerExtraProps>``;
 
 const ActionContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -140,7 +148,7 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
 
 type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
-  colors?: any;
+  colors?: Theme["colors"];
   theme?: "light" | "dark";
 };
 
@@ -168,7 +176,7 @@ export function renderRequiresAppInstallation({
   navigation,
   appNames,
 }: RawProps & {
-  navigation: any;
+  navigation: StackNavigationProp<ParamListBase>;
   appNames: string[];
 }) {
   const appNamesCSV = appNames.join(", ");
@@ -251,8 +259,8 @@ export function renderConfirmSwap({
   transaction: Transaction;
   exchangeRate: ExchangeRate;
   exchange: Exchange;
-  amountExpectedTo?: string;
-  estimatedFees?: string;
+  amountExpectedTo?: string | null;
+  estimatedFees?: string | null;
 }) {
   const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
 
@@ -346,7 +354,7 @@ export function renderConfirmSwap({
           </FieldItem>
         </Flex>
 
-        <TermsFooter provider={exchangeRate.provider} />
+        <TermsFooter provider={exchangeRate.provider as TermsProviders} />
       </Wrapper>
     </ScrollView>
   );
@@ -448,7 +456,7 @@ const AllowOpeningApp = ({
   device,
   theme,
 }: RawProps & {
-  navigation: any;
+  navigation: StackNavigationProp<ParamListBase>;
   wording: string;
   tokenContext?: TokenCurrency | null | undefined;
   isDeviceBlocker?: boolean;
@@ -491,7 +499,7 @@ export function renderAllowOpeningApp({
   device,
   theme,
 }: RawProps & {
-  navigation: any;
+  navigation: StackNavigationProp<ParamListBase>;
   wording: string;
   tokenContext?: TokenCurrency | undefined | null;
   isDeviceBlocker?: boolean;
@@ -516,7 +524,7 @@ export function renderInWrongAppForAccount({
   colors,
   theme,
 }: RawProps & {
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
 }) {
   return renderError({
     t,
@@ -536,9 +544,9 @@ export function renderError({
   Icon,
   iconColor,
 }: RawProps & {
-  navigation?: any;
+  navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
   managerAppName?: string;
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
@@ -682,8 +690,7 @@ export function renderDeviceNotOnboarded({
 }: {
   t: TFunction;
   device: Device;
-  // TODO: correctly type the navigation prop here AND in the DeviceAction component
-  navigation: any;
+  navigation: StackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
     if (device.modelId === DeviceModelId.nanoFTS) {
@@ -747,7 +754,7 @@ export function renderConnectYourDevice({
   theme,
   onSelectDeviceLink,
 }: RawProps & {
-  unresponsive: boolean;
+  unresponsive?: boolean | null;
   device: Device;
   onSelectDeviceLink?: () => void;
 }) {
@@ -882,15 +889,15 @@ export function LoadingAppInstall({
     const trackingArgs = [
       "In-line app install",
       { appName, flow: analyticsPropertyFlow },
-    ];
+    ] as const;
     track(...trackingArgs);
   }, [appName, analyticsPropertyFlow]);
   return renderLoading(props);
 }
 
 type WarningOutdatedProps = RawProps & {
-  colors: any;
-  navigation: any;
+  colors: Theme["colors"];
+  navigation: StackNavigationProp<ParamListBase>;
   appName: string;
   passWarning: () => void;
 };
@@ -967,7 +974,7 @@ export const AutoRepair = ({
 }: RawProps & {
   onDone: () => void;
   device: Device;
-  navigation: StackNavigationProp<any>;
+  navigation: StackNavigationProp<ParamListBase>;
 }) => {
   const [error, setError] = useState<Error | null>(null);
   const [progress, setProgress] = useState<number>(0);

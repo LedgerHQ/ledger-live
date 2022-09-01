@@ -11,6 +11,7 @@ import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 
@@ -19,6 +20,7 @@ import quizImage2 from "../../images/illustration/Light/_021.png";
 import quizImage3 from "../../images/illustration/Light/_060.png";
 
 import OnboardingQuizItem from "./OnboardingQuizItem";
+import { OnboardingNavigatorParamList } from "../../components/RootNavigator/types/OnboardingNavigator";
 
 const transitionStyles = [StyleSheet.absoluteFill, { flex: 1 }];
 
@@ -39,10 +41,12 @@ const renderTransitionSlide = ({
   </Transitions.Slide>
 );
 
+type NavigationProp = StackScreenProps<OnboardingNavigatorParamList>;
+
 const Header = ({ step }: { step: number }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<NavigationProp["navigation"]>();
+  const route = useRoute<NavigationProp["route"]>();
 
   const onBack = useCallback(() => {
     navigation.goBack();
@@ -68,6 +72,7 @@ const Header = ({ step }: { step: number }) => {
         iconName="Close"
         size="large"
         onPress={() => {
+          // @ts-expect-error Complicated to type this properly
           navigation.navigate(ScreenName.OnboardingPairNew, {
             ...route.params,
           });

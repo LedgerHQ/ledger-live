@@ -1,18 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { I18nManager, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
-import {
-  Flex,
-  SelectableList,
-  IconBox,
-  Icons,
-  Text,
-  BottomDrawer,
-} from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
+import { Flex, SelectableList, BottomDrawer } from "@ledgerhq/native-ui";
 import i18next from "i18next";
 // Lib is there but linter doesn't seem to want to find it
-import RNRestart from "react-native-restart"; // eslint-disable-line
+// eslint-disable-next-line import/no-unresolved
+import RNRestart from "react-native-restart";
 import { useDispatch, useSelector } from "react-redux";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -22,6 +15,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CompositeScreenProps } from "@react-navigation/native";
 import { useLocale } from "../../../context/Locale";
 import {
   languages,
@@ -29,7 +23,6 @@ import {
   localeIdToDeviceLanguage,
   Locale,
 } from "../../../languages";
-import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage, setLastSeenDevice } from "../../../actions/settings";
 import {
@@ -39,9 +32,23 @@ import {
 import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
 import { track } from "../../../analytics";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
+import Button from "../../../components/Button";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
+type NavigationProps = CompositeScreenProps<
+  StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingLanguage
+  >,
+  BaseComposite<StackNavigatorProps<BaseOnboardingNavigatorParamList>>
+>;
+
+function OnboardingStepLanguage({ navigation }: NavigationProps) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
 
@@ -248,37 +255,6 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
           />
         </Flex>
       </BottomDrawer>
-    </>
-  );
-}
-
-export function OnboardingStepLanguageGetStarted({
-  navigation,
-}: // eslint-disable-next-line @typescript-eslint/ban-types
-StackScreenProps<{}>) {
-  const next = () => {
-    navigation.getParent()?.replace(ScreenName.OnboardingTermsOfUse);
-  };
-
-  return (
-    <>
-      <Flex flex={1} px={4} justifyContent="center" alignItems="center">
-        <Flex mb={8}>
-          <IconBox Icon={Icons.WarningMedium} />
-        </Flex>
-        <Text variant="large" mb={5} fontWeight="semiBold">
-          <Trans i18nKey="onboarding.stepLanguage.warning.title" />
-        </Text>
-        <Text variant="body" color="palette.neutral.c80" textAlign="center">
-          <Trans i18nKey="onboarding.stepLanguage.warning.desc" />
-        </Text>
-      </Flex>
-      <Button
-        type="primary"
-        onPress={next}
-        outline={false}
-        title={<Trans i18nKey="onboarding.stepLanguage.cta" />}
-      />
     </>
   );
 }

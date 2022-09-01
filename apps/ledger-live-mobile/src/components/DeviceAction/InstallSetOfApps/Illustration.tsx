@@ -2,13 +2,7 @@ import React from "react";
 import Svg, { Path, Mask, Rect, G } from "react-native-svg";
 
 const Illustration = () => (
-  <Svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="107"
-    height="40"
-    fill="none"
-    viewBox="0 0 107 40"
-  >
+  <Svg width="107" height="40" fill="none" viewBox="0 0 107 40">
     <Mask
       id="mask0_6211_193898"
       style={{ maskType: "alpha" }}
@@ -16,7 +10,8 @@ const Illustration = () => (
       height="52"
       x="2"
       y="-4"
-      maskUnits="userSpaceOnUse"
+      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
+      maskUnits={"userSpaceOnUse" as const}
     >
       <Path
         fill="#C4C4C4"
@@ -39,7 +34,8 @@ const Illustration = () => (
       height="52"
       x="34"
       y="-4"
-      maskUnits="userSpaceOnUse"
+      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
+      maskUnits={"userSpaceOnUse" as const}
     >
       <Path
         fill="#C4C4C4"

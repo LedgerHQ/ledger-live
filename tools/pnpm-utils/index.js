@@ -34,7 +34,7 @@ function addDependencies(
 
       Object.entries(dependencies).forEach(([dep, depVersion]) => {
         const devVersion = pkg?.devDependencies?.[dep];
-        const version = (matchDevVersion && devVersion) ?? depVersion ?? "*";
+        const version = (matchDevVersion && devVersion) || depVersion || "*";
         const depKey = `${dep}@${version}`;
 
         if (visitedDeps.has(depKey)) return;

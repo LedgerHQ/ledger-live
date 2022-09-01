@@ -207,7 +207,10 @@ const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
 const VoteAmountCell = ({ operation }: Props) => {
   const amount =
     operation.extra && operation.extra.votes
-      ? operation.extra.votes.reduce((sum, { voteCount }) => sum + voteCount, 0)
+      ? (operation.extra.votes as Vote[]).reduce(
+          (sum, { voteCount }) => sum + voteCount,
+          0,
+        )
       : 0;
   return amount > 0 ? (
     <LText numberOfLines={1} semiBold style={[styles.topText, styles.voteText]}>

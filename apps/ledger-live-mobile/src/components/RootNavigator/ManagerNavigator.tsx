@@ -11,11 +11,12 @@ import {
   lastSeenDeviceSelector,
 } from "../../reducers/settings";
 import Manager from "../../screens/Manager";
+import ManagerMain from "../../screens/Manager/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
-import ManagerMain from "../../screens/Manager/Manager";
+import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -74,9 +75,15 @@ export default function ManagerNavigator() {
   );
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<ManagerNavigatorStackParamList>();
 
-const DeviceIcon = ({ color, size }: { color: string; size: number }) => {
+const DeviceIcon = ({
+  color,
+  size = 16,
+}: {
+  color?: string;
+  size?: number;
+}) => {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
@@ -105,7 +112,9 @@ const DeviceIcon = ({ color, size }: { color: string; size: number }) => {
   );
 };
 
-export function ManagerTabIcon(props: any) {
+export function ManagerTabIcon(
+  props: Omit<React.ComponentProps<typeof TabIcon>, "Icon" | "i18nKey">,
+) {
   const isNavLocked = useIsNavLocked();
 
   const content = (
