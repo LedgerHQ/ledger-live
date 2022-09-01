@@ -1,4 +1,6 @@
-import React, { useState, useCallback, memo } from "react";
+import React, { useState, useCallback, memo, useMemo } from "react";
+import { TouchableOpacity } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -7,7 +9,7 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import { useTimeRange } from "../actions/settings";
+import { switchCountervalueFirst, useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import getWindowDimensions from "../logic/getWindowDimensions";
@@ -18,6 +20,7 @@ import FormatDate from "./FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "../analytics";
 import { useCurrentRouteName } from "../helpers/routeHooks";
+import { countervalueFirstSelector } from "../reducers/settings";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
@@ -56,18 +59,41 @@ function AssetCentricGraphCard({
 }: Props) {
   const { colors } = useTheme();
   const currentScreen = useCurrentRouteName();
+  const dispatch = useDispatch();
   const [itemRange, setTimeRange, timeRangeItems] = useTimeRange();
-  const {
-    countervalueChange,
-    balanceAvailable,
-    balanceHistory,
-  } = assetPortfolio;
+  const { countervalueChange, balanceHistory } = assetPortfolio;
 
   const currencyUnitValue = balanceHistory[balanceHistory.length - 1];
 
   const unit = counterValueCurrency.units[0];
 
   const [hoveredItem, setHoverItem] = useState();
+
+  const item = useMemo(() => {
+    if (hoveredItem) {
+      return { value: undefined, countervalue: hoveredItem.value };
+    }
+    if (areAccountsEmpty) {
+      return { value: 0, countervalue: 0 };
+    }
+    return { value: currencyBalance, countervalue: currencyUnitValue.value };
+  }, [hoveredItem, areAccountsEmpty, currencyBalance, currencyUnitValue.value]);
+
+  const items = [
+    {
+      unit: currency.units[0],
+      value: item.value,
+    },
+    {
+      unit,
+      value: item.countervalue,
+      joinFragmentsSeparator: "",
+    },
+  ];
+  const useCounterValue = useSelector(countervalueFirstSelector);
+  if (useCounterValue || hoveredItem) {
+    items.reverse();
+  }
 
   const updateTimeRange = useCallback(
     index => {
@@ -79,6 +105,10 @@ function AssetCentricGraphCard({
     },
     [setTimeRange, timeRangeItems, currentScreen],
   );
+
+  const onSwitchAccountCurrency = useCallback(() => {
+    dispatch(switchCountervalueFirst());
+  }, [dispatch]);
 
   const mapGraphValue = useCallback(d => d.value || 0, []);
 
@@ -132,81 +162,68 @@ function AssetCentricGraphCard({
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
             <ParentCurrencyIcon size={32} currency={currency} />
-            {areAccountsEmpty ? (
-              <Text variant={"h3"} color={"neutral.c100"}>
-                <CurrencyUnitValue unit={unit} value={0} />
-              </Text>
-            ) : (
-              <>
-                <Flex>
-                  {!balanceAvailable ? (
-                    <BigPlaceholder mt="8px" />
-                  ) : (
-                    <Flex alignItems="center">
-                      <Text
-                        variant={"large"}
-                        fontWeight={"medium"}
-                        color={"neutral.c80"}
-                        mt={3}
-                      >
-                        {!hoveredItem ? (
-                          <CurrencyUnitValue
-                            unit={currency.units[0]}
-                            value={currencyBalance}
-                            joinFragmentsSeparator=""
-                          />
-                        ) : null}
+            <TouchableOpacity
+              event="SwitchAssetCurrency"
+              eventProperties={{ useCounterValue }}
+              onPress={onSwitchAccountCurrency}
+              style={{ alignItems: "center" }}
+            >
+              <Flex>
+                {!balanceHistory ? (
+                  <BigPlaceholder mt="8px" />
+                ) : (
+                  <Flex alignItems="center">
+                    <Text
+                      variant={"large"}
+                      fontWeight={"medium"}
+                      color={"neutral.c80"}
+                      mt={3}
+                    >
+                      {items[1].value !== undefined ? (
+                        <CurrencyUnitValue {...items[1]} />
+                      ) : null}
+                    </Text>
+                    <Text
+                      fontFamily="Inter"
+                      fontWeight="semiBold"
+                      fontSize="32px"
+                      color={"neutral.c100"}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                    >
+                      {items[0].value !== undefined ? (
+                        <CurrencyUnitValue {...items[0]} />
+                      ) : null}
+                    </Text>
+                  </Flex>
+                )}
+                <TransactionsPendingConfirmationWarning />
+              </Flex>
+              <Flex flexDirection={"row"}>
+                {!balanceHistory ? (
+                  <SmallPlaceholder mt={4} />
+                ) : (
+                  <Flex flexDirection="row" alignItems="center">
+                    {hoveredItem && hoveredItem.date ? (
+                      <Text variant={"large"} fontWeight={"semiBold"}>
+                        <FormatDate date={hoveredItem.date} />
                       </Text>
-                      <Text
-                        fontFamily="Inter"
-                        fontWeight="semiBold"
-                        fontSize="32px"
-                        color={"neutral.c100"}
-                        numberOfLines={1}
-                        adjustsFontSizeToFit
-                      >
-                        <CurrencyUnitValue
-                          unit={unit}
-                          value={
-                            hoveredItem
-                              ? hoveredItem.value
-                              : currencyUnitValue.value
-                          }
-                          joinFragmentsSeparator=""
+                    ) : (
+                      <>
+                        <Delta
+                          percent
+                          show0Delta
+                          valueChange={countervalueChange}
+                          // range={portfolio.range}
                         />
-                      </Text>
-                    </Flex>
-                  )}
-                  <TransactionsPendingConfirmationWarning />
-                </Flex>
-                <Flex flexDirection={"row"}>
-                  {!balanceAvailable ? (
-                    <>
-                      <SmallPlaceholder mt={4} />
-                    </>
-                  ) : (
-                    <Flex flexDirection="row" alignItems="center">
-                      {hoveredItem && hoveredItem.date ? (
-                        <Text variant={"large"} fontWeight={"semibold"}>
-                          <FormatDate date={hoveredItem.date} />
-                        </Text>
-                      ) : (
-                        <>
-                          <Delta
-                            percent
-                            show0Delta
-                            valueChange={countervalueChange}
-                            // range={portfolio.range}
-                          />
-                          <Text> </Text>
-                          <Delta unit={unit} valueChange={countervalueChange} />
-                        </>
-                      )}
-                    </Flex>
-                  )}
-                </Flex>
-              </>
-            )}
+                        <Text> </Text>
+                        <Delta unit={unit} valueChange={countervalueChange} />
+                      </>
+                    )}
+                  </Flex>
+                )}
+              </Flex>
+            </TouchableOpacity>
           </Flex>
         </Animated.View>
       </Flex>

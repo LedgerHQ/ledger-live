@@ -390,7 +390,11 @@ export function getAssetsDistribution(
         currency,
         countervalue,
         amount,
-        distribution: isAvailable ? countervalue / sum : 0,
+        distribution: isAvailable
+          ? sum !== 0
+            ? countervalue / sum
+            : 1 / idCurrenciesKeys.length
+          : 0,
         accounts: currencyAccounts,
       };
     })

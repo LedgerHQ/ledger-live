@@ -54,7 +54,8 @@ import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
 import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
 import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsNavigator from "./AnalyticsNavigator";
+import AnalyticsAllocation from "../../screens/Analytics/Allocation";
+import AnalyticsOperations from "../../screens/Analytics/Operations";
 import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
@@ -62,8 +63,6 @@ import TransparentHeaderNavigationOptions from "../../navigation/TransparentHead
 import styles from "../../navigation/styles";
 import HeaderRightClose from "../HeaderRightClose";
 import StepHeader from "../StepHeader";
-import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
-import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
@@ -88,6 +87,7 @@ import Learn from "../../screens/Learn";
 // eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
+import MarketDetail from "../../screens/Market/MarketDetail";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -497,10 +497,19 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={NavigatorName.Analytics}
-        component={AnalyticsNavigator}
+        name={ScreenName.AnalyticsAllocation}
+        component={AnalyticsAllocation}
         options={{
-          title: t("analytics.title"),
+          title: t("analytics.allocation.title"),
+          headerRight: null,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AnalyticsOperations}
+        component={AnalyticsOperations}
+        options={{
+          title: t("analytics.operations.title"),
           headerRight: null,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         }}
@@ -525,13 +534,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.Account}
         component={Account}
-        options={({ route, navigation }) => ({
-          headerLeft: () => (
-            <BackButton navigation={navigation} route={route} />
-          ),
-          headerTitle: () => <AccountHeaderTitle />,
-          headerRight: () => <AccountHeaderRight />,
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.ScanRecipient}
@@ -602,6 +605,13 @@ export default function BaseNavigator() {
         name={NavigatorName.Accounts}
         component={AccountsNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.MarketDetail}
+        component={MarketDetail}
+        options={{
+          headerShown: false,
+        }}
       />
       {Object.keys(families).map(name => {
         const { component, options } = families[name];

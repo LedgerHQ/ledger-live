@@ -11,8 +11,6 @@ import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Box } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 
-import styled from "@ledgerhq/native-ui/components/styled";
-import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -117,11 +115,6 @@ export function getListHeaderComponents({
       !!AccountSubHeader && (
         <Box bg={colors.background.main}>
           <AccountSubHeader />
-        </Box>
-      ),
-      !empty && !!AccountHeader && (
-        <Box bg={colors.background.main}>
-          <AccountHeader account={account} parentAccount={parentAccount} />
         </Box>
       ),
       <SectionContainer px={6} bg={colors.background.main}>

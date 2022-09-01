@@ -18,11 +18,11 @@ import {
   listSupportedCurrencies,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/lib/currencies";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
 import {
   counterValueCurrencySelector,
+  discreetModeSelector,
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
 import { usePortfolio } from "../../../actions/portfolio";
@@ -32,9 +32,10 @@ import BackgroundGradient from "../../../components/BackgroundGradient";
 import GraphCardContainer from "../GraphCardContainer";
 import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
-import { screen, track } from "../../../analytics";
-import { NavigatorName } from "../../../const";
+import { screen } from "../../../analytics";
+import { NavigatorName, ScreenName } from "../../../const";
 import ReadOnlyAssets from "./ReadOnlyAssets";
+import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
 import { useProviders } from "../../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
@@ -49,6 +50,9 @@ import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 // eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
 import { useCurrentRouteName } from "../../../helpers/routeHooks";
+import FabActions from "../../../components/FabActions";
+import Assets from "../Assets";
+import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
 
 export { default as PortfolioTabIcon } from "../TabIcon";
 
@@ -74,7 +78,9 @@ function ReadOnlyPortfolio({ navigation }: Props) {
     counterValueCurrencySelector,
   );
   const portfolio = usePortfolio();
+  const { colors } = useTheme();
   const discreetMode = useSelector(discreetModeSelector);
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   useProviders();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
@@ -123,13 +129,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
 
   const data = useMemo(
     () => [
-      ...(hasOrderedNano
-        ? [
-            <Box mx={6} mb={5} mt={6}>
-              <SetupDeviceBanner screen="Wallet" />
-            </Box>,
-          ]
-        : []),
       <Box onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
@@ -140,9 +139,12 @@ function ReadOnlyPortfolio({ navigation }: Props) {
           graphCardEndPosition={graphCardEndPosition}
         />
       </Box>,
-      <Box pt={6} background={colors.background.main}>
-        <FabActions areAccountsEmpty={true} />
-      </Box>,
+      ...(hasOrderedNano ? [
+        <Box mx={6} mt={7}>
+          <SetupDeviceBanner screen="Wallet" />
+        </Box>,
+        ]
+      : []),
       <Box background={colors.background.main} px={6} mt={6}>
         <Assets assets={assetsToDisplay} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>

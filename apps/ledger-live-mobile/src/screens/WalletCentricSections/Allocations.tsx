@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { ensureContrast } from "../../colors";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import { useDistribution } from "../../actions/general";
 import RingChart from "../Analytics/RingChart";
 import { track } from "../../analytics";
@@ -42,7 +42,7 @@ const Allocations = () => {
   const { t } = useTranslation();
   const currentScreen = useCurrentRouteName();
   const navigation = useNavigation();
-  const distribution = useDistribution();
+  const distribution = useDistribution({ showEmptyAccounts: true });
   const { colors } = useTheme();
 
   const goToAnalyticsAllocations = useCallback(() => {
@@ -50,9 +50,7 @@ const Allocations = () => {
       analytics: "Allocations",
       screen: currentScreen,
     });
-    navigation.navigate(NavigatorName.Analytics, {
-      screen: ScreenName.AnalyticsAllocation,
-    });
+    navigation.navigate(ScreenName.AnalyticsAllocation);
   }, [navigation, currentScreen]);
 
   const distributionListFormatted = useMemo(() => {
@@ -82,12 +80,12 @@ const Allocations = () => {
     data.push(othersAllocations);
 
     return data;
-  }, [distribution.list]);
+  }, [distribution.list, colors.neutral.c70, t]);
 
   return (
     <Flex flex={1} mt={6}>
       <TouchableOpacity onPress={goToAnalyticsAllocations}>
-        <Flex flex={1} flexDirection="row" alignItems="center">
+        <Flex flexDirection="row" alignItems="center">
           <Flex>
             <RingChart
               size={76}
@@ -96,15 +94,15 @@ const Allocations = () => {
               colors={colors}
             />
           </Flex>
-          <Flex flex={1} ml={9} flexDirection="row" pt={3}>
+          <Flex flex={1} ml={9} flexDirection="row" mt={3}>
             <Flex>
-              {distributionListFormatted.length >= 0 ? (
+              {distributionListFormatted.length > 0 ? (
                 <AllocationCaption
                   assetAllocation={distributionListFormatted[0]}
                   colors={colors}
                 />
               ) : null}
-              {distributionListFormatted.length >= 1 ? (
+              {distributionListFormatted.length > 1 ? (
                 <AllocationCaption
                   assetAllocation={distributionListFormatted[1]}
                   colors={colors}
@@ -112,13 +110,13 @@ const Allocations = () => {
               ) : null}
             </Flex>
             <Flex ml={8}>
-              {distributionListFormatted.length >= 2 ? (
+              {distributionListFormatted.length > 2 ? (
                 <AllocationCaption
                   assetAllocation={distributionListFormatted[2]}
                   colors={colors}
                 />
               ) : null}
-              {distributionListFormatted.length >= 3 ? (
+              {distributionListFormatted.length > 3 ? (
                 <AllocationCaption
                   assetAllocation={distributionListFormatted[3]}
                   colors={colors}

@@ -4,11 +4,11 @@ import { connect } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
 import { TrackScreen } from "../../analytics";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";
-import AccountCurrencyRow from "./AccountCurrencyRow";
 import DeleteAccountRow from "./DeleteAccountRow";
 import DeleteAccountModal from "./DeleteAccountModal";
 import AccountAdvancedLogsRow from "./AccountAdvancedLogsRow";
@@ -24,6 +24,7 @@ type Props = {
 
 type RouteParams = {
   accountId: string;
+  hasOtherAccountsForThisCrypto?: boolean;
 };
 
 type State = {
@@ -51,9 +52,19 @@ class AccountSettings extends PureComponent<Props, State> {
   };
 
   deleteAccount = () => {
-    const { account, deleteAccount, navigation } = this.props;
+    const { account, deleteAccount, navigation, route } = this.props;
     deleteAccount(account);
-    navigation.replace(NavigatorName.Base);
+    if (route?.params?.hasOtherAccountsForThisCrypto) {
+      const currency = getAccountCurrency(account);
+      navigation.navigate(NavigatorName.PortfolioAccounts, {
+        screen: ScreenName.Asset,
+        params: {
+          currency,
+        },
+      });
+    } else {
+      navigation.replace(NavigatorName.Base);
+    }
   };
 
   render() {

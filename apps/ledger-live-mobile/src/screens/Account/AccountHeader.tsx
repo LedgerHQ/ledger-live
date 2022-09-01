@@ -52,7 +52,7 @@ function AccountHeader({
     {
       unit: counterValueCurrency.units[0],
       value: item.countervalue,
-      joinFragmentsSeparator: " ",
+      joinFragmentsSeparator: "",
     },
   ];
 
@@ -90,7 +90,7 @@ function AccountHeader({
       centerAfterScrollElement={
         <Flex flexDirection={"column"} alignItems={"center"}>
           {typeof items[1]?.value === "number" ? (
-            <Flex width="80%" flexDirection={"column"} alignItems={"center"}>
+            <Flex flexDirection={"column"} alignItems={"center"}>
               <Text
                 fontWeight={"semiBold"}
                 color={"neutral.c70"}
@@ -107,7 +107,7 @@ function AccountHeader({
                 fontSize="18px"
                 numberOfLines={1}
               >
-                <CurrencyUnitValue {...items[1]} />
+                <CurrencyUnitValue {...items[0]} />
               </Text>
             </Flex>
           ) : (

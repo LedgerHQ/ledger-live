@@ -38,11 +38,8 @@ const MarketPrice = ({ currency }: Props) => {
       currency: currency.name,
       screen: currentScreen,
     });
-    navigation.navigate(NavigatorName.Market, {
-      screen: ScreenName.MarketDetail,
-      params: {
-        currencyId: currency.id,
-      },
+    navigation.navigate(ScreenName.MarketDetail, {
+      currencyId: currency.id,
     });
   }, [navigation, currency]);
 

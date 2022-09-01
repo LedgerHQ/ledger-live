@@ -53,7 +53,7 @@ const SectionTitle = ({
       <Text
         variant="small"
         fontWeight="semiBold"
-        color="neutral.c60"
+        color="neutral.c70"
         uppercase
         flexShrink={1}
       >

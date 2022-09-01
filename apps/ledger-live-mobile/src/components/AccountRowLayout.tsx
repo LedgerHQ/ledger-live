@@ -21,6 +21,7 @@ type Props = {
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
+  isLast?: boolean;
 };
 
 const AccountRowLayout = ({
@@ -33,6 +34,7 @@ const AccountRowLayout = ({
   topLink,
   bottomLink,
   tag,
+  isLast,
 }: Props) => {
   const { colors, space } = useTheme();
 
@@ -47,7 +49,11 @@ const AccountRowLayout = ({
           mb={2}
         />
       )}
-      <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6}>
+      <Flex
+        flexDirection="row"
+        pt={topLink ? 0 : 6}
+        pb={bottomLink || isLast ? 0 : 6}
+      >
         <Flex
           flex={1}
           flexDirection="row"
@@ -102,6 +108,7 @@ const AccountRowLayout = ({
             alignItems={"flex-end"}
             flexShrink={0}
             flexGrow={0}
+            mr={3}
           >
             <Text variant="large" fontWeight="semiBold" color="neutral.c100">
               <CounterValue

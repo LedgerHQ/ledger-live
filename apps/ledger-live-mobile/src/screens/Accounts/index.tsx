@@ -23,7 +23,6 @@ import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { usePortfolio } from "../../actions/portfolio";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import Spinning from "../../components/Spinning";
@@ -50,7 +49,6 @@ type Props = {
 
 function Accounts({ navigation, route }: Props) {
   const accounts = useSelector(accountsSelector);
-  const portfolio = usePortfolio();
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
 
@@ -65,7 +63,7 @@ function Accounts({ navigation, route }: Props) {
 
   const search = params?.search;
 
-  const [account, setAccount] = useState(undefined);
+  const [account, setAccount] = useState<Account | undefined>(undefined);
   const flattenedAccounts = useMemo(
     () =>
       route?.params?.currencyId
@@ -112,14 +110,14 @@ function Accounts({ navigation, route }: Props) {
         accountId={item.id}
         onSetAccount={setAccount}
         isLast={index === flattenedAccounts.length - 1}
-        portfolioValue={
-          portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value
+        topLink={!route.params?.currencyId && item.type === "TokenAccount"}
+        bottomLink={
+          !route.params?.currencyId &&
+          flattenedAccounts[index + 1]?.type === "TokenAccount"
         }
-        topLink={item.type === "TokenAccount"}
-        bottomLink={flattenedAccounts[index + 1]?.type === "TokenAccount"}
       />
     ),
-    [navigation, portfolio.balanceHistory, flattenedAccounts],
+    [navigation, flattenedAccounts],
   );
 
   const renderList = useCallback(
@@ -173,6 +171,7 @@ function Accounts({ navigation, route }: Props) {
       <Flex flex={1} bg={"background.main"}>
         <AccountsNavigationHeader
           currencyTicker={route?.params?.currencyTicker}
+          currencyId={route.params?.currencyId}
         />
         {syncPending && (
           <Flex flexDirection={"row"} alignItems={"center"} px={6} my={3}>

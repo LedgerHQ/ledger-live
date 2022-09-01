@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BottomDrawer } from "@ledgerhq/native-ui";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import Illustration from "../../images/illustration/Illustration";
@@ -26,12 +27,14 @@ type Props = {
   navigation: any;
   isOpened: boolean;
   onClose: () => void;
+  currency?: CryptoCurrency | TokenCurrency | null;
 };
 
 export default function AddAccountsModal({
   navigation,
   onClose,
   isOpened,
+  currency,
 }: Props) {
   const { t } = useTranslation();
   const currentScreen = useCurrentRouteName();
@@ -44,8 +47,17 @@ export default function AddAccountsModal({
       screen: currentScreen,
     });
     navigation.navigate(NavigatorName.AddAccounts);
+    if (currency?.type === "TokenCurrency") {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        token: currency,
+      });
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        currency,
+      });
+    }
     onClose();
-  }, [navigation, onClose, currentScreen]);
+  }, [currentScreen, navigation, currency, onClose]);
 
   const onClickImport = useCallback(() => {
     track("button_clicked", {
