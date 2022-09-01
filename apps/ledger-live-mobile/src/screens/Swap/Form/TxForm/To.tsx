@@ -49,7 +49,7 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
 
   return (
     <Flex>
-      <Text>{t("transfer.swap2.form.to")}</Text>
+      <Text variant="small" marginBottom={2}>{t("transfer.swap2.form.to")}</Text>
       <Flex flexDirection="row" justifyContent="space-between" width="100%">
         <Flex flex={1} justifyContent="center">
           <Selector

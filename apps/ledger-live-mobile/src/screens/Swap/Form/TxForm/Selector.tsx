@@ -23,11 +23,11 @@ export function Selector({
   const { t } = useTranslation();
 
   const Icon = currency ? (
-    <CurrencyIcon size={32} currency={currency} />
+    <CurrencyIcon size={28} currency={currency} />
   ) : (
     <Flex
-      width={32}
-      height={32}
+      width={28}
+      height={28}
       justifyContent="center"
       backgroundColor="neutral.c30"
       borderRadius={16}
@@ -36,15 +36,14 @@ export function Selector({
 
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
-      <Flex flexDirection="row" alignItems="center" justifyContent="space-between" paddingY={4}>
-        <Flex flexDirection="row" alignItems="center">
+      <Flex flexDirection="row" alignItems="center" justifyContent="space-between" width="100%">
+        <Flex flexDirection="row" alignItems="center" flex={1}>
           <Flex alignItems="center" justifyContent="center" marginRight={2}>
             {Icon}
           </Flex>
 
           <Flex flex={1} marginRight={2}>
             <Text
-              variant="h3"
               marginBottom={2}
               ellipsizeMode="middle"
               numberOfLines={1}

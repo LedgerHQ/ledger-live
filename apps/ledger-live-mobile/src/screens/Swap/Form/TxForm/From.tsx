@@ -69,10 +69,10 @@ export function From({ swapTx, provider, swapError }: Props) {
     <Flex
       borderBottomWidth={1}
       borderColor="neutral.c70"
-      paddingBottom={4}
+      paddingBottom={2}
       marginBottom={4}
     >
-      <Text>{t("transfer.swap2.form.from")}</Text>
+      <Text variant="small" marginBottom={2}>{t("transfer.swap2.form.from")}</Text>
       <Flex>
         <Flex flexDirection="row" justifyContent="space-between" width="100%">
           <Flex flex={1} justifyContent="center">
