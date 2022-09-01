@@ -15,13 +15,14 @@ import BleTransport
 /// while at the same time breaking the dependency with the JS thread, this is the highlight, yes.
 class Queue: NSObject  {
     let BIMWebsocketEndpoint: URL
-    let BIMUnpackQueue: URL
+    let BIMPackQueue: URL
     let BIMHealth: URL
 
     var runner : Runner?                        /// Handler of the current task
     var pendingRequest: URLSessionDataTask?     /// Backend request to unpack a token
 
     var token: String = ""                      /// Tokenized representation of our queue
+    var rawQueue: String = ""                   /// Unresolved queue to fetch a token from
     var index: Int = 0                          /// Current index on the queue
     var item: Item?                             /// Current item we are processing
     var tasks: Tasks = Tasks(tasks: [])         /// Resolved items from the queue token
@@ -29,17 +30,17 @@ class Queue: NSObject  {
     var stopped: Bool = false
 
     public init (
-        token: String,
+        rawQueue: String,
         endpoint: String
     ) {
-        self.token = token
+        self.rawQueue = rawQueue
         /// This allows us to override the endpoint in case we need to test a new version or staging/prod
         let host = URL(string: endpoint)!.host ?? ""
         self.BIMWebsocketEndpoint = URL(string: "wss://\(host)/ws/channel")!
-        self.BIMUnpackQueue = URL(string: "https://\(host)/unpacked-queue")!
+        self.BIMPackQueue = URL(string: "https://\(host)/queue")!
         self.BIMHealth = URL(string: "https://\(host)/_health")!
         super.init()
-        self.resolveQueueFromToken(true)
+        self.resolveTokenFromQueue(true)
     }
     
     /// Exiting the manager or closing an inline installation flow would expect us to cancel any pending installs
@@ -60,16 +61,27 @@ class Queue: NSObject  {
         }
     }
     
-    /// Given a token string, ask backend for the actual queue we are processing. We could technically send the
-    /// queue directly but this was deemed like a good compromise. In any case, it means we resolve the data to
-    /// be able to notify the UI of our progress as it unfolds.
-    private func resolveQueueFromToken(_ autoStart: Bool) {
-        var request = URLRequest(url: BIMUnpackQueue)
-        request.httpMethod = "GET"
-        request.addValue(self.token, forHTTPHeaderField: "X-Bim-Token")
+    /// This used to be the other way around, JavaScript would give us a resolved token and we would unpack the queue from it
+    /// but since the API calls were taking longer than the user took to put the app in the background we were force to move this packing
+    /// to the native side. Meaning first we decode the tasks from the raw queue and then we fetch the token from it, a bit backwards
+    /// but if it works, it's better that the alternative.
+    private func resolveTokenFromQueue(_ autoStart: Bool) {
+        let tasks: Tasks?
+        do {
+            tasks = try JSONDecoder().decode(Tasks.self, from: self.rawQueue.data(using: .utf8)!)
+        } catch {
+            onEventWrapper(
+                RunnerAction.runError,
+                withData: ExtraData(message: String(describing:error))
+            )
+            return
+        }
         
+        var request = URLRequest(url: BIMPackQueue)
+        request.httpMethod = "PUT"
+        request.httpBody = self.rawQueue.data(using: .utf8)!
+
         let session = URLSession.shared
-        
         if let task = self.pendingRequest {
             task.cancel()
         }
@@ -86,18 +98,12 @@ class Queue: NSObject  {
                     withData: ExtraData(message: String(describing:error))
                 )
             }
-            else if let jsonData = data {
-                do {
-                    let tasks: Tasks = try JSONDecoder().decode(Tasks.self, from: jsonData)
-                    self.tasks = tasks
-                    if autoStart {
-                        self.startRunner()
-                    }
-                } catch {
-                    onEventWrapper(
-                        RunnerAction.runError,
-                        withData: ExtraData(message: String(describing:error))
-                    )
+            else if let token = data {
+                self.token = String(decoding: token, as: UTF8.self)
+                self.tasks = tasks
+
+                if autoStart {
+                    self.startRunner()
                 }
             }
         }
@@ -105,16 +111,11 @@ class Queue: NSObject  {
         self.pendingRequest!.resume()
     }
     
-    ///
-    /// setToken
-    /// After initialization of a Queue we can update the token an essentially start a new Queue if there's nothing
-    /// ongoing, or replace the Queue with a new set of actions. This works well because the new queue also
-    /// includes the ongoing task (if any) and the current item information used for events is cached in self.item
-    /// - Parameter token: Tokenized representation of our queue
-    public func setToken(token: String) {
-        self.token = token
+
+    public func setRawQueue(rawQueue: String) {
+        self.rawQueue = rawQueue
         self.index = 0
-        self.resolveQueueFromToken(self.runner == nil)
+        self.resolveTokenFromQueue(self.runner == nil)
     }
     
     ///

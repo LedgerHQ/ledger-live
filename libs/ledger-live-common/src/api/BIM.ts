@@ -27,6 +27,7 @@ function buildQueueFromState(state: State): Array<Item> {
     id: state.appByName[name].id,
     operation: type,
     targetId,
+    appName: name,
     liveCommonVersion,
   }));
 

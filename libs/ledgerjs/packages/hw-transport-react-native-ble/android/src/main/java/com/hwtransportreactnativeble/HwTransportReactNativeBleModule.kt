@@ -146,15 +146,15 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun queue(token: String, endpoint: String){
+    fun queue(rawQueue: String, endpoint: String){
         if (queue != null && !queue!!.isStopped) {
-            Timber.d("$tag: \t replacing queue token $token")
-            queue!!.setNewToken(token)
+            Timber.d("$tag: \t replacing rawQueue $rawQueue")
+            queue!!.setRawQueue(rawQueue)
             return
         }
-        Timber.d("$tag: \t starting new queue $token")
+        Timber.d("$tag: \t starting new queue $rawQueue")
 
-        queue = Queue(token, endpoint, eventEmitter, bleManager)
+        queue = Queue(rawQueue, endpoint, eventEmitter, bleManager)
     }
 }
 

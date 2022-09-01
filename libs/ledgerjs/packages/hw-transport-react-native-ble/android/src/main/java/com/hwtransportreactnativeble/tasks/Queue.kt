@@ -5,6 +5,8 @@ import com.facebook.react.bridge.WritableMap
 import com.hwtransportreactnativeble.EventEmitter
 import com.ledger.live.ble.BleManager
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import org.json.JSONTokener
 import timber.log.Timber
@@ -12,6 +14,8 @@ import java.io.IOException
 import java.net.URI
 import java.net.URL
 
+
+val JSON = "application/json; charset=utf-8".toMediaTypeOrNull()
 /**
  * A Queue is a convenience wrapper to be able to consume multiple script runners through the BIM
  * interface. This interface allows a consumer to go over multiple app operations (installs/uninstalls) without
@@ -21,13 +25,14 @@ import java.net.URL
 data class Item(val operation: String, val id: Int, val appName: String)
 
 class Queue(
-    private var token: String,
+    private var rawQueue: String,
     endpoint: String,
     private val eventEmitter: EventEmitter,
     private val bleManager: BleManager,
 ) {
     private var tag: String = "BleTransport Queue"
     private var index: Int = 0
+    private var token: String? = null
 
     private val client = OkHttpClient()
     private var runner: Runner? = null
@@ -35,30 +40,56 @@ class Queue(
     private var item: Item? = null
 
     private val websocketURL: URL
-    private val unpackQueueURL: URL
+    private val packQueueURL: URL
 
     var isStopped: Boolean = false
 
     init {
         val uri = URI(endpoint)
         websocketURL = URL("https://${uri.host}/ws/channel")
-        unpackQueueURL = URL("https://${uri.host}/unpacked-queue")
+        packQueueURL = URL("https://${uri.host}/queue")
 
-        resolveQueueFromToken(true)
+        resolveTokenFromQueue(true)
     }
 
-    fun setNewToken(newToken: String) {
-        token = newToken
+    fun setRawQueue(newRawQueue: String) {
+        rawQueue = newRawQueue
         index = 0
-        resolveQueueFromToken(runner == null)
+        resolveTokenFromQueue(runner == null)
     }
 
-    private fun resolveQueueFromToken(autoStart: Boolean = false) {
+    /// This used to be the other way around, JavaScript would give us a resolved token and we would unpack the queue from it
+    /// but since the API calls were taking longer than the user took to put the app in the background we were force to move this packing
+    /// to the native side. Meaning first we decode the tasks from the raw queue and then we fetch the token from it, a bit backwards
+    /// but if it works, it's better that the alternative.
+    private fun resolveTokenFromQueue(autoStart: Boolean = false) {
+        val newTasks: ArrayList<Item> = ArrayList()
+        try {
+            val jsonResponse = JSONTokener(rawQueue).nextValue() as JSONObject
+            val rawTasks = jsonResponse.getJSONArray("tasks")
+            if (rawTasks.length() > 0) {
+                for (i in 0 until rawTasks.length()) {
+                    val rawItem = rawTasks.getJSONObject(i)
+                    newTasks.add(
+                        Item(
+                            id = rawItem.getInt("id"),
+                            operation = rawItem.getString("operation"),
+                            appName = rawItem.getString("appName")
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            onErrorWrapper(e)
+        }
+
+
         for (call in client.dispatcher.queuedCalls()) call.cancel()
+        val body: RequestBody = rawQueue.toRequestBody(JSON)
 
         val request = Request.Builder()
-            .url(unpackQueueURL)
-            .header("X-Bim-Token", token)
+            .url(packQueueURL)
+            .method("PUT", body)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
@@ -71,29 +102,12 @@ class Queue(
                     if (!response.isSuccessful) {
                         onErrorWrapper(IOException("Unexpected code $response"))
                     } else {
-                        val body = response.body?.string()
-                        try {
-                            val jsonResponse = JSONTokener(body).nextValue() as JSONObject
-                            val rawTasks = jsonResponse.getJSONArray("tasks")
-                            if (rawTasks.length() > 0) {
-                                tasks.clear()
-                                for (i in 0 until rawTasks.length()) {
-                                    val rawItem = rawTasks.getJSONObject(i)
-                                    tasks.add(
-                                        Item(
-                                            id = rawItem.getInt("id"),
-                                            operation = rawItem.getString("operation"),
-                                            appName = rawItem.getString("appName")
-                                        )
-                                    )
-                                }
+                        token = response.body?.string()
+                        tasks.clear()
+                        tasks.addAll(newTasks)
 
-                                if (autoStart) {
-                                    startRunner()
-                                }
-                            }
-                        } catch (e: Exception) {
-                            onErrorWrapper(e)
+                        if (autoStart) {
+                            startRunner()
                         }
                     }
 
