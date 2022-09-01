@@ -21,7 +21,7 @@ export function SelectCurrency({
   const onSelect = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate("SwapForm", { currency });
+      navigation.navigate(ScreenName.SwapForm, { currency });
     },
     [navigation],
   );

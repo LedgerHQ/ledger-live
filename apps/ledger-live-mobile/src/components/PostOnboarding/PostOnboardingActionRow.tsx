@@ -8,6 +8,11 @@ import {
 } from "@ledgerhq/types-live";
 import Touchable from "../Touchable";
 import { track } from "../../analytics";
+import {
+  BaseNavigationComposite,
+  StackNavigatorNavigation,
+} from "../RootNavigator/types/helpers";
+import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnboardingNavigator";
 
 export type Props = PostOnboardingAction & PostOnboardingActionState;
 
@@ -23,17 +28,23 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     completed,
   } = props;
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<
+      BaseNavigationComposite<
+        StackNavigatorNavigation<PostOnboardingNavigatorParamList>
+      >
+    >();
 
   const handlePress = useCallback(() => {
     if (navigationParams) {
+      // @ts-expect-error FIXME: stop using "any" in LLC and learn how to type stuff
       navigation.navigate(...navigationParams);
       startEvent && track(startEvent, startEventProperties);
     }
   }, [navigationParams, navigation, startEvent, startEventProperties]);
 
   return (
-    <Touchable onPress={completed ? null : handlePress}>
+    <Touchable onPress={completed ? undefined : handlePress}>
       <Flex
         flexDirection="row"
         alignItems="center"

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { RouteProp, useNavigation } from "@react-navigation/native";
+import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { ImageSourcePropType } from "react-native";
@@ -13,6 +13,9 @@ import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
 import { setHasOrderedNano } from "../../../actions/settings";
 import Button from "../../../components/wrappedUi/Button";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
@@ -23,13 +26,20 @@ const discoverLiveImg = require("../../../images/illustration/Shared/_DiscoverLi
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const syncCryptoImg = require("../../../images/illustration/Shared/_SyncFromDesktop.png");
 
+type DataType = {
+  title: string;
+  event: string;
+  banner?: string;
+  onValidate: () => void;
+};
+
 type PostWelcomeDiscoverCardProps = {
   title: string;
   subTitle: string;
   event: string;
-  eventProperties?: Record<string, any>;
+  eventProperties?: Record<string, unknown>;
   testID: string;
-  selectedOption: any;
+  selectedOption: DataType | null;
   // eslint-disable-next-line @typescript-eslint/ban-types
   onPress: Function;
   onValidate: () => void;
@@ -64,7 +74,6 @@ const PostWelcomeDiscoverCard = ({
       subTitle={subTitle}
       subTitleProps={{ variant: "paragraph" }}
       event={event}
-      eventProperties={eventProperties}
       testID={testID}
       onPress={setSelectedOption}
       cardProps={{
@@ -87,22 +96,19 @@ const PostWelcomeDiscoverCard = ({
   );
 };
 
-type DataType = {
-  title: string;
-  event: string;
-  banne?: string;
-  onValidate: () => void;
-};
+type NavigationProps = CompositeScreenProps<
+  StackNavigatorProps<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingPostWelcomeSelection
+  >,
+  StackNavigatorProps<BaseOnboardingNavigatorParamList>
+>;
 
-function PostWelcomeSelection({
-  route,
-}: {
-  route: RouteProp<{ params: { userHasDevice: boolean } }, "params">;
-}) {
+function PostWelcomeSelection({ route }: NavigationProps) {
   const { userHasDevice } = route.params;
   const dispatch = useDispatch();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState<DataType | null>(null);
 

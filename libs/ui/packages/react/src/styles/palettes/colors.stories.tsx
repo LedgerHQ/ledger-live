@@ -48,7 +48,7 @@ const { type: _, ...palette } = palettes.light;
 
 export const Colors = (): JSX.Element => (
   <Flex flexDirection="column" rowGap="2rem">
-    {Object.entries(palette).map(([type, shades]: [string, Array<string>]) => (
+    {Object.entries(palette).map(([type, shades]) => (
       <Flex flexDirection="column" rowGap="1rem">
         <Text variant="h2" textTransform="uppercase">
           {type}

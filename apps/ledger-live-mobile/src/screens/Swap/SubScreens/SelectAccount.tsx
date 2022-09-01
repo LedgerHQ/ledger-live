@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
@@ -75,7 +74,7 @@ export function SelectAccount({
             disabled:
               (selectedCurrency.type === "TokenCurrency" &&
                 c.type === "CryptoCurrency") ||
-              !c.id === selectedCurrency.id,
+              c.id !== selectedCurrency.id,
           };
         });
     }
@@ -94,7 +93,7 @@ export function SelectAccount({
   const onSelect = useCallback(
     (account: AccountLike) => {
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate("SwapForm", {
+      navigation.navigate(ScreenName.SwapForm, {
         accountId: account.id,
         currency: selectedCurrency,
         target,
@@ -117,7 +116,9 @@ export function SelectAccount({
       return (
         <Flex {...styleProps}>
           <AccountCard
-            disabled={item.account.disabled}
+            disabled={
+              (item.account as unknown as { disabled: boolean }).disabled
+            }
             account={item.account}
             style={styles.card}
             onPress={() => onSelect(item.account)}
@@ -136,7 +137,7 @@ export function SelectAccount({
         returnToSwap: true,
         filterCurrencyIds: selectableCurrencyIds,
         onSuccess: () => {
-          navigation.navigate("SelectAccount", params);
+          navigation.navigate(ScreenName.SwapSelectAccount, params);
         },
         analyticsPropertyFlow: "swap",
       },

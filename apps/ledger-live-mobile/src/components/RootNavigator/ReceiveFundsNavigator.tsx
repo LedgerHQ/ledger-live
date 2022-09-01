@@ -19,6 +19,7 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import HeaderRightClose from "../HeaderRightClose";
 import { track } from "../../analytics";
+import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
@@ -169,4 +170,4 @@ export default function ReceiveFundsNavigator() {
   );
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<ReceiveFundsStackParamList>();

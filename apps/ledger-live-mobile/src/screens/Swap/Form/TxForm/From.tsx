@@ -58,7 +58,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
 
   const onPress = useCallback(() => {
     // @ts-expect-error navigation type is only partially declared
-    navigation.navigate("SelectAccount", {
+    navigation.navigate(ScreenName.SwapSelectAccount, {
       target: "from",
       provider,
       selectableCurrencyIds: [...new Set(pairs.map(p => p.from))],
@@ -100,7 +100,6 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
         </Flex>
 
         <Text color="error.c100" textAlign="right" variant="tiny">
-          {/* @ts-expect-error TranslatedError may return null */}
           {swapError ? <TranslatedError error={swapError} /> : ""}
         </Text>
       </Flex>

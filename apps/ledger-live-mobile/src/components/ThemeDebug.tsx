@@ -3,12 +3,13 @@ import { StyleSheet, View, Text } from "react-native";
 import Config from "react-native-config";
 import { useDispatch } from "react-redux";
 import { setTheme } from "../actions/settings";
+import { Theme } from "../reducers/types";
 
 const ThemeDebug = () => {
   const render = Config.DEBUG_THEME;
   const dispatch = useDispatch();
 
-  const selectTheme = t => () => {
+  const selectTheme = (t: Theme) => () => {
     dispatch(setTheme(t));
   };
 

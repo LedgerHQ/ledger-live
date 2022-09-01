@@ -3,7 +3,8 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/cardano/types";
+import type { Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
@@ -12,7 +13,9 @@ type Props = {
   account: Account;
   transaction: Transaction;
 };
-export default function CardanoSendRowsCustom({ account, transaction }: Props) {
+export default function CardanoSendRowsCustom(props: Props) {
+  const { account } = props;
+  const transaction = props.transaction as CardanoTransaction;
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();

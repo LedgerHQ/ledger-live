@@ -2,18 +2,21 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getMainAccount,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import type {
+  TronAccount,
+  Transaction as TronTransaction,
+} from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -30,6 +33,8 @@ import Bandwidth from "../../icons/Bandwidth";
 import Bolt from "../../icons/Bolt";
 import ClockIcon from "../../icons/Clock";
 import DateFromNow from "../../components/DateFromNow";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { UnfreezeNavigatorParamList } from "../../components/RootNavigator/types/UnfreezeNavigator";
 
 /** @TODO move this to common */
 const getUnfreezeData = (
@@ -39,10 +44,10 @@ const getUnfreezeData = (
   unfreezeEnergy: BigNumber;
   canUnfreezeBandwidth: boolean;
   canUnfreezeEnergy: boolean;
-  bandwidthExpiredAt: Date;
-  energyExpiredAt: Date;
+  bandwidthExpiredAt?: Date;
+  energyExpiredAt?: Date;
 } => {
-  const { tronResources } = account;
+  const { tronResources } = account as TronAccount;
   const {
     frozen: { bandwidth, energy },
   } = tronResources || {};
@@ -52,12 +57,16 @@ const getUnfreezeData = (
     bandwidth || {};
 
   // eslint-disable-next-line no-underscore-dangle
-  const _bandwidthExpiredAt = +new Date(bandwidthExpiredAt);
+  const _bandwidthExpiredAt = bandwidthExpiredAt
+    ? +new Date(bandwidthExpiredAt)
+    : +new Date();
 
   const { amount: energyAmount, expiredAt: energyExpiredAt } = energy || {};
 
   // eslint-disable-next-line no-underscore-dangle
-  const _energyExpiredAt = +new Date(energyExpiredAt);
+  const _energyExpiredAt = energyExpiredAt
+    ? +new Date(energyExpiredAt)
+    : +new Date();
 
   const unfreezeBandwidth = BigNumber(bandwidthAmount || 0);
 
@@ -79,19 +88,11 @@ const getUnfreezeData = (
   };
 };
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-};
+type Props = StackNavigatorProps<
+  UnfreezeNavigatorParamList,
+  ScreenName.UnfreezeAmount
+>;
+
 export default function UnfreezeAmount({ route }: Props) {
   const { account: accountLike, parentAccount } = useSelector(
     accountScreenSelector(route),
@@ -113,7 +114,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
   const navigation = useNavigation();
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
-  const { tronResources } = account;
+  const { tronResources } = account as TronAccount;
   invariant(tronResources, "tron resources expected");
   const {
     unfreezeBandwidth,
@@ -136,7 +137,9 @@ function UnfreezeAmountInner({ account }: InnerProps) {
       };
     });
   const resource =
-    transaction && transaction.resource ? transaction.resource : "";
+    transaction && (transaction as TronTransaction).resource
+      ? (transaction as TronTransaction).resource
+      : "";
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.UnfreezeSelectDevice, {
       accountId: account.id,
@@ -181,7 +184,6 @@ function UnfreezeAmountInner({ account }: InnerProps) {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <View style={styles.container}>
           <View style={styles.wrapper}>

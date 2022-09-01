@@ -1,20 +1,17 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/hedera/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import TextInput from "../../components/FocusedTextInput";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -42,7 +39,7 @@ function HederaEditMemo({ navigation, route }: Props) {
     });
   }, [navigation, route.params, account, memo]);
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView style={styles.root}>
       <KeyboardView
         style={[
           styles.body,
@@ -88,7 +85,7 @@ function HederaEditMemo({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 export { HederaEditMemo as component, options };
 const styles = StyleSheet.create({

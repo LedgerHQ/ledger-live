@@ -7,7 +7,7 @@ import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../components/Button";
 import TextInput from "../../components/FocusedTextInput";
 import KeyboardView from "../../components/KeyboardView";
@@ -52,7 +52,7 @@ function SolanaEditMemo({ navigation, route }: Props) {
   }, [navigation, route.params, account, memo]);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={{ bottom: "always" }}>
+    <SafeAreaView style={styles.root}>
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >
@@ -89,7 +89,7 @@ function SolanaEditMemo({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.title"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 
 export { SolanaEditMemo as component, options };

@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useTheme } from "@react-navigation/native";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -14,23 +14,20 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import SkipSelectDevice from "../SkipSelectDevice";
 import { setLastConnectedDevice } from "../../actions/settings";
-
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  currency: CryptoCurrency;
-  inline?: boolean;
-  analyticsPropertyFlow?: string;
-};
+import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const action = createAction(connectApp);
 
-export default function AddAccountsSelectDevice({ navigation, route }: Props) {
+export default function AddAccountsSelectDevice({
+  navigation,
+  route,
+}: StackNavigatorProps<
+  ReceiveFundsStackParamList,
+  ScreenName.ReceiveAddAccountSelectDevice
+>) {
   const { colors } = useTheme();
-  const [device, setDevice] = useState<Device | undefined>();
+  const [device, setDevice] = useState<Device | null>(null);
   const dispatch = useDispatch();
 
   const onSetDevice = useCallback(
@@ -42,12 +39,12 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   );
 
   const onClose = useCallback(() => {
-    setDevice();
+    setDevice(null);
   }, []);
 
   const onResult = useCallback(
     meta => {
-      setDevice();
+      setDevice(null);
       const { inline } = route.params;
       const arg = { ...route.params, ...meta };
       if (inline) {
@@ -61,7 +58,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
 
   useEffect(() => {
     // load ahead of time
-    prepareCurrency(route.params.currency);
+    prepareCurrency(route.params.currency as CryptoCurrency);
   }, [route.params.currency]);
 
   const currency = route.params.currency;
@@ -93,12 +90,13 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         onResult={onResult}
         onClose={onClose}
         request={{
-          currency:
-            currency.type === "TokenCurrency"
-              ? currency.parentCurrency
-              : currency,
+          currency,
+          // FIXME: IT SEEMS TokenCurrency WILL NEVER HAPPEN
+          // currency.type === "TokenCurrency"
+          //   ? currency.parentCurrency
+          //   : currency,
         }}
-        onSelectDeviceLink={() => setDevice()}
+        onSelectDeviceLink={() => setDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
       />
     </SafeAreaView>

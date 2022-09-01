@@ -4,7 +4,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { useTheme } from "@react-navigation/native";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { themeSelector } from "../../../reducers/settings";
 
 type Props = {

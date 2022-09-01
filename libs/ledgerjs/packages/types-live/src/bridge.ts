@@ -138,7 +138,7 @@ export interface AccountBridge<T extends TransactionCommon> {
   // a Transaction object is created on UI side as a black box to put all temporary information to build the transaction at the end.
   // There are a bunch of edit and get functions to edit and extract information out ot this black box.
   // it needs to be a serializable JS object
-  createTransaction(account: Account): T;
+  createTransaction(account: AccountLike): T;
   updateTransaction(t: T, patch: Partial<T>): T;
   // prepare the remaining missing part of a transaction typically from network (e.g. fees)
   // and fulfill it in a new transaction object that is returned (async)

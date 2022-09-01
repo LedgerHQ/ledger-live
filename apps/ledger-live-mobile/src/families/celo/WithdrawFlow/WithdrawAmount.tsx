@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -15,7 +14,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { rgba, Text } from "@ledgerhq/native-ui";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/Feather";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -29,17 +28,13 @@ import InfoIcon from "../../../components/InfoIcon";
 import Line from "../components/Line";
 import Words from "../components/Words";
 import ErrorAndWarning from "../components/ErrorAndWarning";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { CeloWithdrawFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  transaction: Transaction;
-  amount?: number;
-};
+type Props = StackNavigatorProps<
+  CeloWithdrawFlowParamList,
+  ScreenName.CeloWithdrawAmount
+>;
 
 export default function WithdrawAmount({ navigation, route }: Props) {
   const [infoModalOpen, setInfoModalOpen] = useState(false);

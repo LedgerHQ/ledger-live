@@ -31,7 +31,7 @@ export function SelectProvider({
   const onSelect = useCallback(
     (rate: ExchangeRate) => {
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate("SwapForm", { rate });
+      navigation.navigate(ScreenName.SwapForm, { rate });
     },
     [navigation],
   );

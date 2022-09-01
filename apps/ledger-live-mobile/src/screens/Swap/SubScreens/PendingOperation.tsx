@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -14,8 +14,7 @@ import { rgba } from "../../../colors";
 import { TrackScreen } from "../../../analytics";
 import { PendingOperationProps } from "../types";
 import { flattenAccountsSelector } from "../../../reducers/accounts";
-
-const forceInset = { bottom: "always" };
+import { ScreenName } from "../../../const";
 
 export function PendingOperation({ route, navigation }: PendingOperationProps) {
   const { colors } = useTheme();
@@ -35,17 +34,14 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
   const targetCurrency = toAccount && getAccountCurrency(toAccount);
 
   const onComplete = useCallback(() => {
-    navigation.navigate("OperationDetails", {
+    navigation.navigate(ScreenName.SwapOperationDetails, {
       swapOperation: route.params.swapOperation,
       fromPendingOperation: true,
     });
   }, [navigation, route.params.swapOperation]);
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="Swap Form"
         name="Confirmation Success"
@@ -84,10 +80,12 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
             </LText>
           </View>
           <LText style={styles.description} color="grey">
-            <Trans
-              i18nKey={"transfer.swap.pendingOperation.description"}
-              values={{ targetCurrency: targetCurrency.name }}
-            />
+            {targetCurrency ? (
+              <Trans
+                i18nKey={"transfer.swap.pendingOperation.description"}
+                values={{ targetCurrency: targetCurrency.name }}
+              />
+            ) : null}
           </LText>
         </View>
       </View>

@@ -5,24 +5,37 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
+import type { TFunction } from "i18next";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 import Touchable from "../../../components/Touchable";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import ExternalLink from "../../../icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
+import { Unpacked } from "../../../types/helpers";
 
-type NominationDrawerData = $PropertyType<
-  ElementProps<typeof NominationDrawer>,
-  "data"
->;
+type NominationDrawerData = React.ComponentProps<
+  typeof NominationDrawer
+>["data"];
+type NominationDrawerDatum = Unpacked<NominationDrawerData>;
+
+type Props = {
+  t: TFunction;
+  account: AccountLike;
+  validator: PolkadotValidator;
+  maxNominatorRewardedPerValidator: number;
+  onOpenExplorer: (address: string) => void;
+};
+
 export function getDrawerInfo({
   t,
   account,
   validator,
   maxNominatorRewardedPerValidator,
   onOpenExplorer,
-}): NominationDrawerData {
+}: Props): NominationDrawerData {
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const totalStake = validator.totalBonded;
@@ -30,24 +43,8 @@ export function getDrawerInfo({
     ? `${validator.commission.multipliedBy(100).toFixed(2)} %`
     : "-";
   const validatorStatus = validator.isElected ? "elected" : "waiting";
-  return [
-    ...(validator.identity
-      ? [
-          {
-            label: t("delegation.validator"),
-            Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={styles.valueText}
-              >
-                {validator.identity}
-              </LText>
-            ),
-          },
-        ]
-      : []),
+
+  const drawerData: NominationDrawerData = [
     {
       label: t("delegation.validatorAddress"),
       Component: () => {
@@ -88,83 +85,105 @@ export function getDrawerInfo({
         </LText>
       ),
     },
-    ...(validator.status
-      ? [
-          {
-            label: t("polkadot.nomination.commission"),
-            Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={styles.valueText}
-              >
-                {formattedCommission}
-              </LText>
-            ),
-          },
-        ]
+  ];
+
+  const delegationValidator: NominationDrawerDatum = {
+    label: t("delegation.validator"),
+    Component: (
+      <LText
+        numberOfLines={1}
+        semiBold
+        ellipsizeMode="middle"
+        style={styles.valueText}
+      >
+        {validator.identity}
+      </LText>
+    ),
+  };
+
+  const nominationComission: NominationDrawerDatum = {
+    label: t("polkadot.nomination.commission"),
+    Component: (
+      <LText
+        numberOfLines={1}
+        semiBold
+        ellipsizeMode="middle"
+        style={styles.valueText}
+      >
+        {formattedCommission}
+      </LText>
+    ),
+  };
+
+  const nominationNominators: NominationDrawerDatum = {
+    label: t("polkadot.nomination.nominators"),
+    info: validator.isOversubscribed
+      ? t("polkadot.nomination.oversubscribedInfo", {
+          maxNominatorRewardedPerValidator,
+        })
+      : t("polkadot.nomination.nominatorsInfo", {
+          count: validator.nominatorsCount,
+        }),
+    infoType: validator.isOversubscribed ? "warning" : "info",
+    Component: (
+      <LText
+        numberOfLines={1}
+        semiBold
+        ellipsizeMode="middle"
+        style={[styles.valueText]}
+        color={validator.isOversubscribed ? "orange" : "darkBlue"}
+      >
+        {validator.isOversubscribed
+          ? t("polkadot.nomination.oversubscribed", {
+              nominatorsCount: validator.nominatorsCount,
+            })
+          : t("polkadot.nomination.nominatorsCount", {
+              nominatorsCount: validator.nominatorsCount,
+            })}
+      </LText>
+    ),
+  };
+
+  const nominationTotalStake: NominationDrawerDatum = {
+    label: t("polkadot.nomination.totalStake"),
+    Component: (
+      <LText
+        numberOfLines={1}
+        semiBold
+        ellipsizeMode="middle"
+        style={styles.valueText}
+      >
+        <View style={styles.column}>
+          <LText semiBold>
+            <CurrencyUnitValue value={totalStake} unit={unit} />
+          </LText>
+          {totalStake ? (
+            <LText style={styles.valueCounterValue} color="grey">
+              <CounterValue
+                currency={currency}
+                value={totalStake}
+                withPlaceholder
+              />
+            </LText>
+          ) : null}
+        </View>
+      </LText>
+    ),
+  };
+
+  return [
+    ...drawerData,
+    ...(validator.identity ? [delegationValidator] : []),
+    // FIXME: what the heck is this status field?
+    ...((validator as unknown as { status: boolean }).status
+      ? [nominationComission]
       : []),
     ...(validator.isElected
-      ? [
-          {
-            label: t("polkadot.nomination.nominators"),
-            info: validator.isOversubscribed
-              ? t("polkadot.nomination.oversubscribedInfo", {
-                  maxNominatorRewardedPerValidator,
-                })
-              : t("polkadot.nomination.nominatorsInfo", {
-                  count: validator.nominatorsCount,
-                }),
-            infoType: validator.isOversubscribed ? "warning" : "info",
-            Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={[styles.valueText]}
-                color={validator.isOversubscribed ? "orange" : "darkBlue"}
-              >
-                {validator.isOversubscribed
-                  ? t("polkadot.nomination.oversubscribed", {
-                      nominatorsCount: validator.nominatorsCount,
-                    })
-                  : t("polkadot.nomination.nominatorsCount", {
-                      nominatorsCount: validator.nominatorsCount,
-                    })}
-              </LText>
-            ),
-          },
-          {
-            label: t("polkadot.nomination.totalStake"),
-            Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={styles.valueText}
-              >
-                <View style={styles.column}>
-                  <LText semiBold>
-                    <CurrencyUnitValue value={totalStake} unit={unit} />
-                  </LText>
-                  {totalStake ? (
-                    <LText style={styles.valueCounterValue} color="grey">
-                      <CounterValue
-                        currency={currency}
-                        value={totalStake}
-                        withPlaceholder
-                      />
-                    </LText>
-                  ) : null}
-                </View>
-              </LText>
-            ),
-          },
-        ]
+      ? [nominationNominators, nominationTotalStake]
       : []),
   ];
 }
+
 const styles = StyleSheet.create({
   column: {
     flexDirection: "column",

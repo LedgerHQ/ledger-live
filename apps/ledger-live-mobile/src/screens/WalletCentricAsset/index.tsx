@@ -8,15 +8,11 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
-import {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useNavigation } from "@react-navigation/native";
-import { useSingleCoinMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -28,27 +24,23 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import AccountsSection from "./AccountsSection";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
 import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
-import { usePortfolio } from "../../actions/portfolio";
+import { usePortfolio } from "../../hooks/portfolio";
 import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
 } from "../../reducers/settings";
 import { track, TrackScreen } from "../../analytics";
 import { FabAssetActions } from "../../components/FabActions/actionsList/asset";
-
-type RouteParams = {
-  currency: CryptoCurrency | TokenCurrency;
-};
-
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
+import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
 
 // @FIXME workarround for main tokens
 const tokenIDToMarketID = {
@@ -60,10 +52,14 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
 );
 
-const AssetScreen = ({ route }: Props) => {
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset>
+>;
+
+const AssetScreen = ({ route }: NavigationProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const useCounterValue = useSelector(countervalueFirstSelector);
   const { currency } = route?.params;
   const isCryptoCurrency = currency?.type === "CryptoCurrency";
@@ -90,7 +86,8 @@ const AssetScreen = ({ route }: Props) => {
 
   useEffect(() => {
     selectCurrency(
-      tokenIDToMarketID[currency.id] || currency.id,
+      tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] ||
+        currency.id,
       currency,
       "24h",
     );
@@ -123,11 +120,17 @@ const AssetScreen = ({ route }: Props) => {
       button: "Add new",
     });
     if (currency && currency.type === "TokenCurrency") {
+      // @ts-expect-error initialRouteName is set in the navigator, but bindings won't let us skip the argument.
       navigation.navigate(NavigatorName.AddAccounts, {
-        token: currency,
+        screen: undefined,
+        params: {
+          token: currency,
+        },
       });
     } else {
+      // @ts-expect-error initialRouteName is set in the navigator, but bindings won't let us skip the argument.
       navigation.navigate(NavigatorName.AddAccounts, {
+        screen: undefined,
         currency,
       });
     }

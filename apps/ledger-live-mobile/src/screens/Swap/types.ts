@@ -1,108 +1,72 @@
-import {
-  ExchangeRate,
-  MappedSwapOperation,
-  SwapDataType,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
+import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import { ScreenName } from "../../const";
 
 export type SwapFormProps = MaterialTopTabScreenProps<
   SwapFormNavParamList,
-  "SwapForm"
+  ScreenName.SwapForm
 >;
 
 export type SelectAccountProps = StackScreenProps<
-  SwapNavParamList,
-  "SelectAccount"
+  SwapNavigatorParamList,
+  ScreenName.SwapSelectAccount
 >;
 
 export type SelectCurrencyProps = StackScreenProps<
-  SwapNavParamList,
-  "SelectCurrency"
+  SwapNavigatorParamList,
+  ScreenName.SwapSelectCurrency
 >;
 
 export type SelectProviderProps = StackScreenProps<
-  SwapNavParamList,
-  "SelectProvider"
+  SwapNavigatorParamList,
+  ScreenName.SwapSelectProvider
 >;
 
-export type SelectFeesProps = StackScreenProps<SwapNavParamList, "SelectFees">;
+export type SelectFeesProps = StackScreenProps<
+  SwapNavigatorParamList,
+  ScreenName.SwapSelectFees
+>;
 
-export type LoginProps = StackScreenProps<SwapNavParamList, "Login">;
+export type LoginProps = StackScreenProps<
+  SwapNavigatorParamList,
+  ScreenName.SwapLogin
+>;
 
-export type KYCProps = StackScreenProps<SwapNavParamList, "KYC">;
+export type KYCProps = StackScreenProps<
+  SwapNavigatorParamList,
+  ScreenName.SwapKYC
+>;
 
-export type MFAProps = StackScreenProps<SwapNavParamList, "MFA">;
+export type MFAProps = StackScreenProps<
+  SwapNavigatorParamList,
+  ScreenName.SwapMFA
+>;
 
 export type PendingOperationProps = StackScreenProps<
-  SwapNavParamList,
-  "PendingOperation"
+  SwapNavigatorParamList,
+  ScreenName.SwapPendingOperation
 >;
 
 export type OperationDetailsProps = StackScreenProps<
-  SwapNavParamList,
-  "OperationDetails"
+  SwapNavigatorParamList,
+  ScreenName.SwapOperationDetails
 >;
 
-type Target = "from" | "to";
-
-export type SwapNavParamList = {
-  SwapTab: undefined;
-  SelectAccount: {
-    target: Target;
-    provider: string;
-    swap: SwapDataType;
-    selectableCurrencyIds: string[];
-    selectedCurrency: CryptoCurrency | TokenCurrency;
-  };
-  SelectCurrency: {
-    currencies: string[];
-    provider: string;
-  };
-  SelectProvider: {
-    provider: string;
-    swap: SwapDataType;
-    selectedId: string;
-  };
-  SelectFees: {
-    swap: SwapDataType;
-    rate: ExchangeRate;
-    provider: string;
-    transaction: Transaction;
-  };
-  Login: {
-    provider: string;
-  };
-  KYC: {
-    provider: string;
-  };
-  SwapKYCStates: undefined;
-  MFA: {
-    provider: string;
-  };
-  PendingOperation: {
-    swapOperation: SwapOperation;
-  };
-  OperationDetails: {
-    swapOperation: SwapOperation;
-    fromPendingOperation?: true;
-  };
-};
-
-type SwapOperation = Omit<MappedSwapOperation, "fromAccount" | "toAccount"> & {
-  fromAccountId: string;
-  toAccountId: string;
-};
+export type Target = "from" | "to";
 
 export type SwapFormNavParamList = {
-  SwapForm: {
-    accountId?: string;
-    currency?: CryptoCurrency | TokenCurrency;
-    rate?: ExchangeRate;
-    transaction?: Transaction;
-    target?: Target;
-  };
+  SwapForm:
+    | {
+        accountId?: string;
+        currency?: CryptoCurrency | TokenCurrency;
+        rate?: ExchangeRate;
+        transaction?: Transaction;
+        target?: Target;
+      }
+    | undefined;
   SwapHistory: undefined;
 };

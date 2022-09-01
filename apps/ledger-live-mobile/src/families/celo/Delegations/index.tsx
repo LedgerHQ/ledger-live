@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo, ElementProps } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "react-i18next";
@@ -24,6 +24,7 @@ import {
   CeloAccount,
   CeloVote,
 } from "@ledgerhq/live-common/families/celo/types";
+import { StackNavigationProp } from "@react-navigation/stack";
 import Alert from "../../../components/Alert";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
@@ -50,7 +51,7 @@ type Props = {
   account: Account;
 };
 
-type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
+type DelegationDrawerProps = React.ComponentProps<typeof DelegationDrawer>;
 type DelegationDrawerActions = DelegationDrawerProps["actions"];
 
 function Delegations({ account }: Props) {
@@ -68,22 +69,26 @@ function Delegations({ account }: Props) {
   ).length;
   const activatingEnabled = activatableVotes(account as CeloAccount).length;
   const noLockedCelo = !lockedBalance.gt(0);
-  const [vote, setVote] = useState();
+  const [vote, setVote] = useState<CeloVote>();
   const onNavigate = useCallback(
     ({
       route,
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName;
-      screen?: typeof ScreenName;
-      params?: { [key: string]: any };
+      route: string;
+      screen?: string;
+      params?: { [key: string]: unknown };
     }) => {
-      setVote();
-      navigation.navigate(route, {
-        screen,
-        params: { ...params, accountId: account.id },
-      });
+      setVote(undefined);
+      // This is complicated (even impossible?) to type properly…
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+        route,
+        {
+          screen,
+          params: { ...params, accountId: account.id },
+        },
+      );
     },
     [navigation, account.id],
   );
@@ -121,7 +126,7 @@ function Delegations({ account }: Props) {
   }, [onNavigate]);
 
   const onCloseDrawer = useCallback(() => {
-    setVote();
+    setVote(undefined);
   }, []);
 
   const getValidatorName = useCallback(
@@ -354,7 +359,9 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <ValidatorImage
-            isLedger={isDefaultValidatorGroupAddress(vote?.validatorGroup)}
+            isLedger={
+              vote && isDefaultValidatorGroupAddress(vote.validatorGroup)
+            }
             name={vote ? getValidatorName(vote) : ""}
             size={size}
           />
@@ -363,7 +370,7 @@ function Delegations({ account }: Props) {
         data={data}
         actions={actions}
       />
-      {votes.length === 0 ? (
+      {!votes || votes.length === 0 ? (
         <AccountDelegationInfo
           title={t("account.delegation.info.title")}
           image={<IlluRewards style={styles.illustration} />}

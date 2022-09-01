@@ -12,6 +12,7 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { ScreenName } from "../../const";
 import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
+import { State } from "../../reducers/types";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -50,7 +51,7 @@ const OperationsHistory = ({ accounts }: Props) => {
     }) => {
       const account = accounts.find(a => a.id === item.accountId);
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const parentAccount = useSelector(state =>
+      const parentAccount = useSelector((state: State) =>
         parentAccountSelector(state, { account }),
       );
 

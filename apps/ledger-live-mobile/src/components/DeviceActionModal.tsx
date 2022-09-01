@@ -20,8 +20,8 @@ type Props = {
   onClose?: () => void;
   onError?: (error: Error) => void;
   onModalHide?: () => void;
-  onResult?: (payload: any) => Promise<void> | void;
-  renderOnResult?: (_: any) => React.ReactNode;
+  onResult?: (payload: any) => Promise<void> | void | null;
+  renderOnResult?: (_: any) => JSX.Element | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
 };
@@ -52,7 +52,6 @@ export default function DeviceActionModal({
 
   return (
     <BottomModal
-      id="DeviceActionModal"
       isOpened={result ? false : !!device}
       onClose={result ? undefined : onClose}
       onModalHide={handleModalHide}

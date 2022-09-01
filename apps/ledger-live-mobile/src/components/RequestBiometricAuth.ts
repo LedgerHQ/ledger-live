@@ -24,7 +24,7 @@ export function useBiometricAuth({ disabled, onSuccess, onError }: Props) {
       });
       onSuccess();
     } catch (error) {
-      onError(error);
+      onError(error as Error);
     } finally {
       FingerprintScanner.release();
       pending.current = false;

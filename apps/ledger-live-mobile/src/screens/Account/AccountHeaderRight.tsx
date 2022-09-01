@@ -1,9 +1,14 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { SettingsMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
 import {
@@ -11,10 +16,20 @@ import {
   accountsSelector,
 } from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 
 export default function AccountHeaderRight() {
-  const navigation = useNavigation();
-  const route = useRoute();
+  // FIXME: It does not make sense.
+  // This component belongs to 2 navigators, with =! screens and can be called with != params.
+  // This is why we make a "feinte" and use AccountNavigator for the navigation prop,
+  // and BaseNavigation for the route prop…
+  const navigation =
+    useNavigation<
+      NavigationProp<AccountsNavigatorParamList, ScreenName.Account>
+    >();
+  const route =
+    useRoute<RouteProp<BaseNavigatorStackParamList, ScreenName.Account>>();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const accounts = useSelector(accountsSelector);
 
@@ -32,6 +47,7 @@ export default function AccountHeaderRight() {
 
   useEffect(() => {
     if (!account) {
+      // FIXME: will crash if called from BaseNavigator
       navigation.navigate(ScreenName.Accounts);
     }
   }, [account, navigation]);

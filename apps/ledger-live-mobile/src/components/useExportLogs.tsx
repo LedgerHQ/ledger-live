@@ -25,8 +25,11 @@ export default function useExportLogs() {
       try {
         await Share.open(options);
       } catch (err) {
-        if (err.error.code !== "ECANCELLED500") {
-          logger.critical(err);
+        if (
+          (err as { error?: { code?: string } })?.error?.code !==
+          "ECANCELLED500"
+        ) {
+          logger.critical(err as Error);
         }
       }
     };

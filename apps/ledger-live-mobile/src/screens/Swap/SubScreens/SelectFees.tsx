@@ -5,6 +5,7 @@ import { SelectFeesProps } from "../types";
 import SendRowsFee from "../../../components/SendRowsFee";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import { TrackScreen } from "../../../analytics";
+import { ScreenName } from "../../../const";
 
 export function SelectFees({ navigation, route }: SelectFeesProps) {
   const { params } = route;
@@ -19,7 +20,7 @@ export function SelectFees({ navigation, route }: SelectFeesProps) {
   const onSetTransaction = useCallback(
     updatedTransaction => {
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate("SwapForm", {
+      navigation.navigate(ScreenName.SwapForm, {
         ...route.params,
         transaction: updatedTransaction,
       });
@@ -35,7 +36,7 @@ export function SelectFees({ navigation, route }: SelectFeesProps) {
         provider={params.provider}
       />
       <NavigationScrollView contentContainerStyle={styles.scrollView}>
-        {account && (
+        {account && transaction ? (
           <SendRowsFee
             setTransaction={onSetTransaction}
             account={account}
@@ -48,12 +49,12 @@ export function SelectFees({ navigation, route }: SelectFeesProps) {
                 ...params,
                 accountId: account.id,
                 parentAccountId: parentAccount?.id,
-                currentNavigation: "SwapForm",
+                currentNavigation: ScreenName.SwapForm,
               },
             }}
             disabledStrategies={isFixed ? ["slow"] : []}
           />
-        )}
+        ) : null}
       </NavigationScrollView>
     </SafeAreaView>
   );

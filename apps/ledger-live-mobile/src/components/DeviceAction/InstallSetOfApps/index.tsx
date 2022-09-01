@@ -108,7 +108,6 @@ const InstallSetOfApps = ({
         />
       </Text>
       <BottomModal
-        id="DeviceActionModal"
         isOpened={allowManagerRequestedWording || error}
         onClose={onWrappedError}
         onModalHide={onWrappedError}

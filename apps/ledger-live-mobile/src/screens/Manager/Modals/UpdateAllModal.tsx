@@ -74,7 +74,7 @@ const FlatListContainer = styled(FlatList).attrs({
   width: "100%",
   maxHeight: 250,
   marginBottom: 20,
-})``;
+})`` as unknown as typeof FlatList;
 
 const UpdateAllModal = ({
   isOpened,

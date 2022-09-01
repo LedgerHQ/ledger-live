@@ -11,7 +11,6 @@ import { useClock, timing } from "react-native-redash/lib/module/v1";
 import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { Notification } from "@ledgerhq/native-ui";
 import { InfoMedium, WarningMedium } from "@ledgerhq/native-ui/assets/icons";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
@@ -30,6 +29,8 @@ const icons = {
   info: InfoMedium,
   warning: WarningMedium,
 };
+
+type IconsKeys = keyof typeof icons;
 
 export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
   const [anim] = useState(new Animated.Value(0));
@@ -62,7 +63,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
 
   const { title, text, type, icon } = toast;
 
-  const Icon = icon && icons[icon];
+  const Icon = icon ? icons[icon as IconsKeys] : undefined;
 
   const maxHeight = interpolateNode(anim, {
     inputRange: [0, 0.4, 1],

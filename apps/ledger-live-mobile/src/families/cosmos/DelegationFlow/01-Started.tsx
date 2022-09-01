@@ -14,15 +14,13 @@ import { TrackScreen } from "../../../analytics";
 import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { CosmosDelegationFlowParamList } from "./types";
 
-type RouteParams = {
-  accountId: string;
-};
-
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
+type Props = StackNavigatorProps<
+  CosmosDelegationFlowParamList,
+  ScreenName.CosmosDelegationStarted
+>;
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
