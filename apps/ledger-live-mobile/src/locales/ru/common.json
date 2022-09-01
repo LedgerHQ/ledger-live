@@ -1563,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Looking for devices",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Already paired"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Try again"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "Кошелёк",
     "accounts" : "Счета",
@@ -1698,7 +1725,13 @@
       "WITHDRAW_UNBONDED" : "Вывод",
       "NOMINATE" : "Назначение",
       "CHILL" : "Отзыв голосов",
-      "SET_CONTROLLER" : "Назначить контроллер"
+      "SET_CONTROLLER" : "Назначить контроллер",
+      "ACTIVATE" : "Активировано",
+      "LOCK" : "Заблокировано",
+      "UNLOCK" : "Разблокировано",
+      "REVOKE" : "Отозвано",
+      "REGISTER" : "Зарегистрировано",
+      "WITHDRAW" : "Вывод"
     }
   },
   "operationDetails" : {
@@ -1936,6 +1969,16 @@
       "noTransaction" : {
         "title" : "У вас нет никаких транзакций",
         "subtitle" : "Для покупки или получения {{assetName}} вам понадобится устройство"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Если вы не знали, комиссия за стейкинг у валидатора Ledger ниже, чем у используемого вами валидатора.",
+        "cta" : "Переделегировать"
+      },
+      "delegation" : {
+        "description" : "Если вы не знали, валидатор Ledger может стейкать ваши {{asset}} с низкой комиссией.",
+        "cta" : "Застейкать"
       }
     }
   },
@@ -4264,6 +4307,7 @@
     "delegation" : "Делегирование",
     "viewDetails" : "Подробнее...",
     "validator" : "Валидатор",
+    "validatorGroup" : "Группа валидаторов",
     "validatorAddress" : "Адрес валидатора",
     "delegatedAccount" : "Делегированный счёт",
     "duration" : "Продолжительность",
