@@ -9,7 +9,7 @@ export interface Props extends InputProps {
 
 function TextInput(
   { withSuggestions, ...props }: Props,
-  ref: React.ForwardedRef<NativeTextInput>,
+  ref?: React.ForwardedRef<NativeTextInput>,
 ) {
   const flags: Partial<InputProps> = {};
 

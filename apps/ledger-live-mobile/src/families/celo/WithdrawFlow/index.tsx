@@ -11,6 +11,7 @@ import SelectDevice from "../../../screens/SelectDevice";
 import WithdrawAmount from "./WithdrawAmount";
 import ValidationError from "./ValidationError";
 import ValidationSuccess from "./ValidationSuccess";
+import { CeloWithdrawFlowParamList } from "./types";
 
 const totalSteps = "3"; // Withdraw, Device, Confirmation
 
@@ -101,4 +102,4 @@ const options = {
 
 export { WithdrawFlow as component, options };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<CeloWithdrawFlowParamList>();

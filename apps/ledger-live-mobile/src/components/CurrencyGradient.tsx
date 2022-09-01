@@ -6,6 +6,7 @@ import Svg, {
   Stop,
   Mask,
   G,
+  EMaskUnits,
 } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 import { ensureContrast } from "../colors";
@@ -14,19 +15,14 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
   const { colors } = useTheme();
   const contrastedColor = ensureContrast(gradientColor, colors.background.main);
   return (
-    <Svg
-      width={541}
-      height={454}
-      viewBox="0 0 541 454"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <Svg width={541} height={454} viewBox="0 0 541 454" fill="none">
       <Mask
         id="a"
+        // @ts-expect-error Is this valid??
         style={{
           maskType: "alpha",
         }}
-        maskUnits="userSpaceOnUse"
+        maskUnits={EMaskUnits.USER_SPACE_ON_USE}
         x={0}
         y={0}
         width={541}

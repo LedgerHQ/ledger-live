@@ -1,7 +1,7 @@
-import { handleActions } from "redux-actions";
+import { handleActions, ReducerMap } from "redux-actions";
+import type { Action } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
-import type { OutputSelector } from "reselect";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
@@ -22,66 +22,66 @@ import {
   clearAccount,
   nestedSortAccounts,
   makeEmptyTokenAccount,
-  ImportAccountsReduceInput,
 } from "@ledgerhq/live-common/account/index";
-import type { State } from "./index";
+import type { AccountsState, State } from "./types";
+import type {
+  AccountsDeleteAccountPayload,
+  AccountsImportAccountsPayload,
+  AccountsImportStorePayload,
+  AccountsPayload,
+  AccountsReorderPayload,
+  AccountsReplaceAccountsPayload,
+  AccountsSetAccountsPayload,
+  AccountsUpdateAccountWithUpdaterPayload,
+  SettingsBlacklistTokenPayload,
+} from "../actions/types";
+import { AccountsActionTypes, SettingsActionTypes } from "../actions/types";
 import accountModel from "../logic/accountModel";
 
-export type AccountsState = {
-  active: Account[];
-};
-const initialState: AccountsState = {
+export const INITIAL_STATE: AccountsState = {
   active: [],
 };
-const handlers: Record<string, any> = {
-  ACCOUNTS_IMPORT: (s, { state }) => state,
-  ACCOUNTS_USER_IMPORT: (
-    s: AccountsState,
-    { input }: { input: ImportAccountsReduceInput },
-  ) => ({
-    active: importAccountsReduce(s.active, input),
+const handlers: ReducerMap<AccountsState, Payload> = {
+  [AccountsActionTypes.ACCOUNTS_IMPORT]: (_, action) => ({
+    active: (action as Action<AccountsImportStorePayload>).payload.active,
   }),
-  REORDER_ACCOUNTS: (
-    state: AccountsState,
-    {
-      payload: { comparator },
-    }: {
-      payload: {
-        comparator: any;
-      };
-    },
-  ): AccountsState => ({
-    active: nestedSortAccounts(state.active, comparator),
+
+  [AccountsActionTypes.ACCOUNTS_USER_IMPORT]: (s, action) => ({
+    active: importAccountsReduce(
+      s.active,
+      (action as Action<AccountsImportAccountsPayload>).payload.input,
+    ),
   }),
-  ACCOUNTS_ADD: (s, { scannedAccounts, selectedIds, renamings }) => ({
-    active: addAccounts({
-      existingAccounts: s.active,
-      scannedAccounts,
-      selectedIds,
-      renamings,
-    }),
+
+  [AccountsActionTypes.REORDER_ACCOUNTS]: (state, action) => ({
+    active: nestedSortAccounts(
+      state.active,
+      (action as Action<AccountsReorderPayload>).payload.comparator,
+    ),
   }),
-  SET_ACCOUNTS: (
-    state: AccountsState,
-    {
-      payload,
-    }: {
-      payload: Account[];
-    },
-  ) => ({
-    active: payload,
-  }),
-  UPDATE_ACCOUNT: (
-    state: AccountsState,
-    {
-      accountId,
-      updater,
-    }: {
-      accountId: string;
-      updater: (_: Account) => Account;
-    },
-  ): AccountsState => {
-    function update(existingAccount) {
+
+  [AccountsActionTypes.ACCOUNTS_ADD]: (s, action) => {
+    const {
+      payload: { scannedAccounts, selectedIds, renamings },
+    } = action as Action<AccountsReplaceAccountsPayload>;
+    return {
+      active: addAccounts({
+        existingAccounts: s.active,
+        scannedAccounts,
+        selectedIds,
+        renamings,
+      }),
+    };
+  },
+
+  [AccountsActionTypes.SET_ACCOUNTS]: (_, action) =>
+    (action as Action<AccountsSetAccountsPayload>).payload,
+
+  [AccountsActionTypes.UPDATE_ACCOUNT]: (state, action) => {
+    const {
+      payload: { accountId, updater },
+    } = action as Action<AccountsUpdateAccountWithUpdaterPayload>;
+    function update(existingAccount: Account) {
       if (accountId !== existingAccount.id) return existingAccount;
       return { ...existingAccount, ...updater(existingAccount) };
     }
@@ -90,39 +90,39 @@ const handlers: Record<string, any> = {
       active: state.active.map(update),
     };
   },
-  DELETE_ACCOUNT: (
-    state: AccountsState,
-    {
-      payload: account,
-    }: {
-      payload: Account;
-    },
-  ): AccountsState => ({
-    active: state.active.filter(acc => acc.id !== account.id),
+
+  [AccountsActionTypes.DELETE_ACCOUNT]: (state, action) => ({
+    active: state.active.filter(
+      acc =>
+        acc.id !==
+        (action as Action<AccountsDeleteAccountPayload>).payload.account.id,
+    ),
   }),
-  CLEAN_CACHE: (state: AccountsState): AccountsState => ({
+
+  [AccountsActionTypes.CLEAN_CACHE]: (state: AccountsState) => ({
     active: state.active.map(clearAccount),
   }),
-  BLACKLIST_TOKEN: (
-    state: AccountsState,
-    {
-      payload: tokenId,
-    }: {
-      payload: string;
-    },
-  ) => ({
-    active: state.active.map(a => withoutToken(a, tokenId)),
+
+  [SettingsActionTypes.BLACKLIST_TOKEN]: (state, action) => ({
+    active: state.active.map(a =>
+      withoutToken(
+        a,
+        (action as Action<SettingsBlacklistTokenPayload>).payload.tokenId,
+      ),
+    ),
   }),
-  DANGEROUSLY_OVERRIDE_STATE: (state: AccountsState): AccountsState => ({
+
+  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state: AccountsState) => ({
     ...state,
   }),
 };
+
 // Selectors
-export const exportSelector = (s: any) => ({
+export const exportSelector = (s: State) => ({
   active: s.accounts.active.map(accountModel.encode),
 });
-export const accountsSelector = (s: any): Account[] => s.accounts.active;
-export const migratableAccountsSelector = (s: any): Account[] =>
+export const accountsSelector = (s: State) => s.accounts.active;
+export const migratableAccountsSelector = (s: State) =>
   s.accounts.active.filter(canBeMigrated);
 export const flattenAccountsSelector = createSelector(
   accountsSelector,
@@ -132,7 +132,7 @@ export const flattenAccountsEnforceHideEmptyTokenSelector = createSelector(
   accountsSelector,
   accounts =>
     flattenAccounts(accounts, {
-      enforceHideEmptyTokenAccounts: true,
+      enforceHideEmptySubAccounts: true,
     }),
 );
 export const accountsCountSelector = createSelector(
@@ -157,8 +157,12 @@ export const cryptoCurrenciesSelector = createSelector(
 );
 export const accountsTuplesByCurrencySelector = createSelector(
   accountsSelector,
-  (_, { currency }) => currency,
-  (accounts, currency): AccountLike[] => {
+  (_: State, { currency }: { currency: CryptoCurrency | TokenCurrency }) =>
+    currency,
+  (
+    accounts,
+    currency,
+  ): { account: AccountLike; subAccount: SubAccount | null }[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
         .filter(account => account.currency.id === currency.parentCurrency.id)
@@ -185,7 +189,7 @@ export const accountsTuplesByCurrencySelector = createSelector(
 );
 export const flattenAccountsByCryptoCurrencySelector = createSelector(
   flattenAccountsSelector,
-  (_, { currencies }) => currencies,
+  (_: State, { currencies }: { currencies: Array<string> }) => currencies,
   (accounts, currencies): AccountLike[] =>
     currencies && currencies.length
       ? accounts.filter(a =>
@@ -195,85 +199,92 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
         )
       : accounts,
 );
-const emptyArray = [];
-
+const emptyArray: AccountLike[] = [];
 export const accountsByCryptoCurrencyScreenSelector =
-  (currency: CryptoCurrency) => (state: any) => {
+  (currency: CryptoCurrency) => (state: State) => {
     if (!currency) return emptyArray;
     return accountsTuplesByCurrencySelector(state, { currency });
   };
 
 export const flattenAccountsByCryptoCurrencyScreenSelector =
-  (currency?: CryptoCurrency | TokenCurrency) => (state: any) => {
+  (currency?: CryptoCurrency | TokenCurrency) => (state: State) => {
     if (!currency) return emptyArray;
     return flattenAccountsByCryptoCurrencySelector(state, {
       currencies: [currency.id],
     });
   };
 
-// $FlowFixMe
+// FIXME: NEVER USED ANYWHERE ELSE - DROP ?
 export const accountCryptoCurrenciesSelector = createSelector(
   cryptoCurrenciesSelector,
-  (_, { currencies }) => currencies,
+  (_: State, { currencies }: { currencies: Array<string> }) => currencies,
   (cryptoCurrencies, currencies) =>
     currencies && currencies.length
       ? cryptoCurrencies.filter(c => currencies.includes(c.id))
       : cryptoCurrencies,
 );
+
 export const accountSelector = createSelector(
   accountsSelector,
-  (_, { accountId }) => accountId,
-  (accounts, accountId) => accounts.find(a => a.id === accountId),
+  (
+    _: State,
+    {
+      accountId,
+      parentAccount,
+    }: { accountId?: string | null; parentAccount?: Account },
+  ) => [accountId, parentAccount] as const,
+  (accounts, [accountId, parentAccount]) =>
+    accounts.find(a => a.id === accountId) || parentAccount,
 );
 export const parentAccountSelector = createSelector(
   accountsSelector,
-  (_, { account }) => (account ? account.parentId : null),
+  (_: State, { account }: { account: SubAccount }) =>
+    account ? account.parentId : null,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
-export const accountScreenSelector = (route: any) => (state: any) => {
-  const { accountId, parentId } = route.params;
-  const parentAccount: Account | null | undefined =
-    parentId &&
-    accountSelector(state, {
-      accountId: parentId,
-    });
-  let account: AccountLike | null | undefined = route.params.account;
+export const accountScreenSelector =
+  (route?: {
+    params?: {
+      account?: AccountLike;
+      accountId?: string | null;
+      parentId?: string | null;
+    };
+  }) =>
+  (state: State) => {
+    const { accountId, parentId } = route?.params || {};
+    const parentAccount: Account | null | undefined = parentId
+      ? accountSelector(state, {
+          accountId: parentId,
+        })
+      : null;
+    let account = route?.params?.account;
 
-  if (!account) {
-    if (parentAccount) {
-      const { subAccounts } = parentAccount;
+    if (!account) {
+      if (parentAccount) {
+        const { subAccounts } = parentAccount;
 
-      if (subAccounts) {
-        account = subAccounts.find(t => t.id === accountId);
+        if (subAccounts) {
+          account = subAccounts.find(t => t.id === accountId);
+        }
+      } else {
+        account = accountSelector(state, {
+          accountId,
+        });
       }
-    } else {
-      account = accountSelector(state, {
-        accountId,
-      });
     }
-  }
 
-  return {
-    parentAccount,
-    account,
+    return {
+      parentAccount,
+      account,
+    };
   };
-};
 export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
   accounts.every(isUpToDateAccount),
 );
-export const subAccountByCurrencyOrderedSelector: OutputSelector<
-  State,
-  {
-    currency: CryptoCurrency | TokenCurrency;
-  },
-  Array<{
-    parentAccount: Account | null | undefined;
-    account: AccountLike;
-  }>
-> = createSelector(
+export const subAccountByCurrencyOrderedSelector = createSelector(
   accountsSelector,
   (
-    _,
+    _: State,
     {
       currency,
     }: {
@@ -308,28 +319,29 @@ export const subAccountByCurrencyOrderedSelector: OutputSelector<
   },
 );
 export const subAccountByCurrencyOrderedScreenSelector =
-  (route: any) => (state: any) => {
+  (route: any) => (state: State) => {
     const currency = route?.params?.currency || {};
     if (!currency) return [];
     return subAccountByCurrencyOrderedSelector(state, {
       currency,
     });
   };
-export const hasLendEnabledAccountsSelector: OutputSelector<
-  State,
-  void,
-  boolean
-> = createSelector(flattenAccountsSelector, accounts =>
-  accounts.some(account => {
-    if (!account || account.type !== "TokenAccount") return false;
-    // check if account already has lending enabled
-    const summary =
-      account.type === "TokenAccount" &&
-      makeCompoundSummaryForAccount(account, undefined);
-    const capabilities = summary
-      ? account.type === "TokenAccount" && getAccountCapabilities(account)
-      : null;
-    return !!capabilities;
-  }),
+export const hasLendEnabledAccountsSelector = createSelector(
+  flattenAccountsSelector,
+  accounts =>
+    accounts.some(account => {
+      if (!account || account.type !== "TokenAccount") return false;
+      // check if account already has lending enabled
+      const summary =
+        account.type === "TokenAccount" &&
+        makeCompoundSummaryForAccount(account, undefined);
+      const capabilities = summary
+        ? account.type === "TokenAccount" && getAccountCapabilities(account)
+        : null;
+      return !!capabilities;
+    }),
 );
-export default handleActions(handlers, initialState);
+
+type Payload = AccountsPayload | SettingsBlacklistTokenPayload;
+
+export default handleActions<AccountsState, Payload>(handlers, INITIAL_STATE);

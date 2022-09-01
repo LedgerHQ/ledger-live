@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import Text from "../../Text";
 import proxyStyled from "../../../components/styled";
 
-type SwitchProps = {
+export type SwitchProps = {
   checked: boolean;
   onChange?: (value: boolean) => void;
   disabled?: boolean;

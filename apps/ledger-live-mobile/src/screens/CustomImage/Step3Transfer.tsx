@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Dimensions, Pressable, ScrollView } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ProcessorPreviewResult } from "../../components/CustomImage/ImageProcessor";
 import ResultDataTester from "../../components/CustomImage/ResultDataTester";
@@ -9,7 +8,11 @@ import { fitImageContain } from "../../components/CustomImage/imageUtils";
 import { PreviewImage } from "./Step2Preview";
 import Alert from "../../components/Alert";
 import { ScreenName } from "../../const";
-import { ParamList } from "./types";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 
 const boxToFitDimensions = {
   height: (Dimensions.get("screen").height * 2) / 3,
@@ -35,6 +38,13 @@ displayed on the preview screen.
 
 This should NOT happen, it means that some data has been lost.`;
 
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    CustomImageNavigatorParamList,
+    ScreenName.CustomImageStep3Transfer
+  >
+>;
+
 /**
  * UI component that reconstructs an image from the raw hex data received as a
  * route param, and compares it to the preview base64 URI data received as a
@@ -48,9 +58,7 @@ This should NOT happen, it means that some data has been lost.`;
  * we try to match the binary value of the "previewed" image and the "reconstructed"
  * image.
  */
-const Step3Transfer: React.FC<
-  StackScreenProps<ParamList, "CustomImageStep3Transfer">
-> = ({ route, navigation }) => {
+const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const [reconstructedPreviewResult, setReconstructedPreviewResult] =
     useState<ProcessorPreviewResult | null>(null);
 
@@ -63,10 +71,7 @@ const Step3Transfer: React.FC<
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(
-        ScreenName.CustomImageErrorScreen as "CustomImageErrorScreen",
-        { error },
-      );
+      navigation.navigate(ScreenName.CustomImageErrorScreen, { error });
     },
     [navigation],
   );

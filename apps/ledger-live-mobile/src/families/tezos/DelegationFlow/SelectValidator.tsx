@@ -9,9 +9,9 @@ import {
   Linking,
 } from "react-native";
 import { useSelector } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation, Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/Feather";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type {
   Transaction,
@@ -36,10 +36,6 @@ import TranslatedError from "../../../components/TranslatedError";
 import ExternalLink from "../../../components/ExternalLink";
 import Info from "../../../icons/Info";
 import BakerImage from "../BakerImage";
-
-const forceInset = {
-  bottom: "always",
-};
 
 const keyExtractor = baker => baker.address;
 
@@ -224,7 +220,6 @@ export default function SelectValidator({ navigation, route }: Props) {
     },
     [account, parentAccount, setTransaction, transaction],
   );
-  const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const continueCustom = useCallback(() => {
     setEditingCustom(false);
     navigation.navigate(ScreenName.DelegationSummary, {
@@ -269,7 +264,6 @@ export default function SelectValidator({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
       <View style={styles.header}>
@@ -320,7 +314,6 @@ export default function SelectValidator({ navigation, route }: Props) {
                 },
           ]}
           onChangeText={onChangeText}
-          onInputCleared={clear}
           value={transaction.recipient}
           blurOnSubmit
           autoCapitalize="none"

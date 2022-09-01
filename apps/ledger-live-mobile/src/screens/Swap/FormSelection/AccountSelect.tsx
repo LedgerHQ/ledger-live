@@ -55,14 +55,14 @@ export default function AccountSelect({
         {value ? (
           <>
             <View style={styles.iconContainer}>
-              <CurrencyIcon size={20} currency={currency} />
+              {currency && <CurrencyIcon size={20} currency={currency} />}
             </View>
             <View style={styles.accountColumn}>
               <View style={styles.labelContainer}>
                 <LText semiBold style={styles.label} numberOfLines={1}>
                   {name}
                 </LText>
-                {currency.type === "TokenCurrency" &&
+                {currency?.type === "TokenCurrency" &&
                 currency.parentCurrency ? (
                   <LText
                     semiBold
@@ -79,13 +79,15 @@ export default function AccountSelect({
                 ) : null}
               </View>
 
-              <LText color="grey" style={styles.accountTicker}>
-                <CurrencyUnitValue
-                  showCode
-                  unit={currency.units[0]}
-                  value={value.balance}
-                />
-              </LText>
+              {currency?.units[0] && (
+                <LText color="grey" style={styles.accountTicker}>
+                  <CurrencyUnitValue
+                    showCode
+                    unit={currency.units[0]}
+                    value={value.balance}
+                  />
+                </LText>
+              )}
             </View>
           </>
         ) : (

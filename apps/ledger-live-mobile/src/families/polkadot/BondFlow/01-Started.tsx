@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { Button, Flex } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
@@ -19,15 +19,15 @@ import { urls } from "../../../config/urls";
 import Illustration from "../../../images/illustration/Illustration";
 import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
+import Button from "../../../components/wrappedUi/Button";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { PolkadotBondFlowParamList } from "./type";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-// eslint-disable-next-line @typescript-eslint/ban-types
-type RouteParams = {};
+type Props = StackNavigatorProps<
+  PolkadotBondFlowParamList,
+  ScreenName.PolkadotBondStarted
+>;
+
 export default function PolkadotBondStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onNext = useCallback(() => {
@@ -79,9 +79,6 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
             event="PolkadotBondStartedHelp"
             onPress={onHelp}
             text={<Trans i18nKey="polkadot.bond.steps.starter.help" />}
-            ltextProps={{
-              secondary: true,
-            }}
           />
         </View>
       </ScrollView>

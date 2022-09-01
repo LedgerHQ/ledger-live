@@ -9,7 +9,6 @@ import { TouchableOpacity } from "react-native";
 import { ScreenName, NavigatorName } from "../../const";
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
-// eslint-disable-next-line import/no-cycle
 import OnboardingNavigator from "./OnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
@@ -17,8 +16,10 @@ import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 import Question from "../../icons/Question";
-// eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
+import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigator";
+import { RootComposite, StackNavigatorProps } from "./types/helpers";
+import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -26,14 +27,29 @@ const hitSlop = {
   right: 24,
   top: 10,
 };
-export const ErrorHeaderInfo = ({ route, navigation }: any) => {
+
+type ErrorHeaderInfoNavigatorProps = RootComposite<
+  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PairDevices>
+  | StackNavigatorProps<
+      BaseOnboardingNavigatorParamList,
+      ScreenName.PairDevices
+    >
+>;
+
+export const ErrorHeaderInfo = ({
+  route,
+  navigation,
+}: ErrorHeaderInfoNavigatorProps) => {
   const { colors } = useTheme();
   const openInfoModal = useCallback(() => {
+    // FIXME: OnboardingInfoModal belongs to the "OnboardingNavigator", not the "BaseOnboardingNavigator"
+    // So I'm not sure if the redirection works at all.
+    // @ts-expect-error Typescript seems be right here…
     navigation.navigate(ScreenName.OnboardingInfoModal, {
       sceneInfoKey: "pairNewErrorInfoModalProps",
     });
   }, [navigation]);
-  return route.params.hasError ? (
+  return route.params?.hasError ? (
     <TouchableOpacity
       style={{
         marginRight: 24,
@@ -41,7 +57,7 @@ export const ErrorHeaderInfo = ({ route, navigation }: any) => {
       hitSlop={hitSlop}
       onPress={openInfoModal}
     >
-      <Question size={20} color={colors.grey} />
+      <Question size={20} color={colors.neutral.c70} />
     </TouchableOpacity>
   ) : null;
 };
@@ -79,7 +95,7 @@ export default function BaseOnboardingNavigator() {
         name={ScreenName.PairDevices}
         component={PairDevices}
         options={({ navigation, route }) => ({
-          title: null,
+          title: undefined,
           headerRight: () => (
             <ErrorHeaderInfo route={route} navigation={navigation} />
           ),
@@ -92,7 +108,7 @@ export default function BaseOnboardingNavigator() {
         component={EditDeviceName}
         options={{
           title: t("EditDeviceName.title"),
-          headerLeft: null,
+          headerLeft: () => null,
           headerShown: true,
         }}
       />
@@ -107,4 +123,4 @@ export default function BaseOnboardingNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<BaseOnboardingNavigatorParamList>();

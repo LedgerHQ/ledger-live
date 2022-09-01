@@ -1,14 +1,15 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import type { Operation } from "@ledgerhq/types-live";
 import {
   getDefaultExplorerView,
   getTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useTheme } from "@react-navigation/native";
+import { ParamListBase, useTheme } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { Operation } from "@ledgerhq/types-live";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -18,22 +19,22 @@ import Content from "./Content";
 import Close from "../../icons/Close";
 import ArrowLeft from "../../icons/ArrowLeft";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import {
+  RootComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "../../const";
 
-const forceInset = {
-  bottom: "always",
-};
-type RouteParams = {
-  accountId: string;
-  operation: Operation;
-  disableAllLinks?: boolean;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-export const BackButton = ({ navigation }: { navigation: any }) => {
+type NavigatorProps = RootComposite<
+  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.OperationDetails>
+>;
+
+export const BackButton = ({
+  navigation,
+}: {
+  navigation: StackNavigationProp<ParamListBase>;
+}) => {
   const { colors } = useTheme();
   return (
     <TouchableOpacity
@@ -46,10 +47,14 @@ export const BackButton = ({ navigation }: { navigation: any }) => {
 };
 // TODO: this button is generic and is used in places unrelated to operation details
 // move it to a generic place
-export const CloseButton = ({ navigation }: { navigation: any }) => {
+export const CloseButton = ({
+  navigation,
+}: {
+  navigation: StackNavigationProp<ParamListBase>;
+}) => {
   const { colors } = useTheme();
   return (
-    <TouchableOpacity // $FlowFixMe
+    <TouchableOpacity
       onPress={() => navigation.popToTop()}
       style={styles.buttons}
     >
@@ -58,7 +63,7 @@ export const CloseButton = ({ navigation }: { navigation: any }) => {
   );
 };
 
-function OperationDetails({ route }: Props) {
+function OperationDetails({ route }: NavigatorProps) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
@@ -68,11 +73,22 @@ function OperationDetails({ route }: Props) {
     getDefaultExplorerView(mainAccount.currency),
     operation.hash,
   );
-  const specific = byFamiliesOperationDetails[mainAccount.currency.family];
+  const specific =
+    byFamiliesOperationDetails[
+      mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
+    ];
   const urlWhatIsThis =
     specific &&
-    specific.getURLWhatIsThis &&
-    specific.getURLWhatIsThis(operation);
+    (
+      specific as typeof specific & {
+        getURLWhatIsThis: (_: Operation) => string;
+      }
+    ).getURLWhatIsThis &&
+    (
+      specific as typeof specific & {
+        getURLWhatIsThis: (_: Operation) => string;
+      }
+    ).getURLWhatIsThis(operation);
   return (
     <SafeAreaView
       style={[
@@ -81,7 +97,6 @@ function OperationDetails({ route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="OperationDetails" />
       <NavigationScrollView>

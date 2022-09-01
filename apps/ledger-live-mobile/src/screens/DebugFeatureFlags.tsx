@@ -58,7 +58,7 @@ type EditSectionProps = {
   onChange: (_: string) => void;
 };
 
-const tryParse = (jsonString: string, fallback: any) => {
+const tryParse = (jsonString: string, fallback?: unknown) => {
   try {
     return JSON.parse(jsonString);
   } catch (e) {
@@ -157,7 +157,7 @@ export default function DebugFeatureFlags() {
       ...currentValues,
       [focusedName]: undefined,
     }));
-    featureFlagsProvider.resetFeature(focusedName);
+    featureFlagsProvider.resetFeature(focusedName as FeatureId);
   }, [featureFlagsProvider, focusedName]);
 
   const handleOverrideFeature = useCallback(() => {
@@ -165,7 +165,7 @@ export default function DebugFeatureFlags() {
     if (!focusedName) return;
     try {
       // Nb if value is invalid or missing, JSON parse will fail
-      const newValue = JSON.parse(inputValues[focusedName]);
+      const newValue = JSON.parse(inputValues[focusedName] || "");
       featureFlagsProvider.overrideFeature(focusedName as FeatureId, newValue);
     } catch (e) {
       setError(e);

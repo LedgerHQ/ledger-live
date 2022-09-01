@@ -10,7 +10,7 @@ const NftGalleryHeaderTitle = () => {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
       <Text variant={"body"} fontWeight={"semiBold"} numberOfLines={1}>
-        {params.title}
+        {params?.title}
       </Text>
     </TouchableWithoutFeedback>
   );

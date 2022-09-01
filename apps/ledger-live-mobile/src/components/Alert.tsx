@@ -172,7 +172,7 @@ export default function Alert(props: Props) {
   );
 
   const isDismissed = useMemo(
-    () => dismissedBanners.includes(id),
+    () => (id ? dismissedBanners.includes(id) : false),
     [dismissedBanners, id],
   );
 

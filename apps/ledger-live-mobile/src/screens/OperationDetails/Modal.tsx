@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import BottomModal from "../../components/BottomModal";
 import Circle from "../../components/Circle";
@@ -11,9 +11,6 @@ import Button from "../../components/Button";
 import { rgba } from "../../colors";
 import { urls } from "../../config/urls";
 
-const forceInset = {
-  bottom: "always",
-};
 export type Props = {
   isOpened: boolean;
   onClose: () => void;
@@ -25,8 +22,8 @@ function Modal({ isOpened, onClose, currency }: Props) {
   const tokenType =
     currency.type === "TokenCurrency" ? currency.tokenType : "erc20";
   return (
-    <BottomModal id="TokenOperationsInfo" isOpened={isOpened} onClose={onClose}>
-      <SafeAreaView forceInset={forceInset} style={styles.modal}>
+    <BottomModal isOpened={isOpened} onClose={onClose}>
+      <SafeAreaView style={styles.modal}>
         <Circle bg={rgba(colors.live, 0.1)} size={56}>
           <IconInfo size={24} color={colors.live} />
         </Circle>

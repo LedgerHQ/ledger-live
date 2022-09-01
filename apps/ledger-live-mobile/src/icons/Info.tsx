@@ -3,7 +3,7 @@ import Svg, { Path } from "react-native-svg";
 
 type Props = {
   size: number;
-  color: string;
+  color?: string;
 };
 export default function Info({ size = 24, color }: Props) {
   return (

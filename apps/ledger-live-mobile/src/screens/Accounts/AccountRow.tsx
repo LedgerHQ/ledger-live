@@ -5,18 +5,21 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
+import {
+  DerivationMode,
+  getTagDerivationMode,
+} from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
 import { NavigatorName, ScreenName } from "../../const";
-import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
 import AccountRowLayout from "../../components/AccountRowLayout";
 import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
 
 type Props = {
-  account: Account | TokenAccount;
+  account: AccountLike;
   accountId: string;
   navigation: any;
   isLast?: boolean;
@@ -48,9 +51,12 @@ const AccountRow = ({
   const unit = getAccountUnit(account);
 
   const tag =
-    account.derivationMode !== undefined &&
-    account.derivationMode !== null &&
-    getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
+    (account as Account)?.derivationMode !== undefined &&
+    (account as Account)?.derivationMode !== null &&
+    getTagDerivationMode(
+      currency as CryptoCurrency,
+      (account as Account).derivationMode as DerivationMode,
+    );
 
   const { countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
@@ -83,6 +89,7 @@ const AccountRow = ({
     account.type,
     accountId,
     currency.id,
+    currency.name,
     navigation,
     navigationParams,
   ]);

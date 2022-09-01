@@ -1,11 +1,8 @@
 import React, { memo } from "react";
 import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-
 import { Flex, Text, ProgressBar } from "@ledgerhq/native-ui";
 import { rgba } from "../../colors";
-
-// eslint-disable-next-line import/no-unresolved
 import { softMenuBarHeight } from "../../logic/getWindowDimensions";
 
 type Props = {

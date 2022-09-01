@@ -3,7 +3,7 @@ import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "../../../analytics";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import Button from "../../../components/Button";
@@ -31,10 +31,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, []);
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={{ bottom: "always" }}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}

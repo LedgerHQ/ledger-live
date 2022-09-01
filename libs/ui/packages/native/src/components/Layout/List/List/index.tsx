@@ -5,8 +5,8 @@ import { BaseStyledProps } from "../../../styled";
 import { FlatList } from "react-native";
 
 export type BaseListItemProps = {
-  title?: string;
-  description?: string;
+  title?: React.ReactNode;
+  description?: React.ReactNode;
   bullet?: React.ReactNode;
 };
 

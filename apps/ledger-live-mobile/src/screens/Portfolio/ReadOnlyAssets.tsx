@@ -9,6 +9,7 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackScreen from "../../analytics/TrackScreen";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
@@ -18,21 +19,27 @@ import TabBarSafeAreaView, {
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AssetRow from "../WalletCentricAsset/AssetRow";
 import AssetsNavigationHeader from "../Assets/AssetsNavigationHeader";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import { ScreenName } from "../../const";
 
-type Props = {
-  navigation: any;
-  route: { params?: { currency?: string; search?: string } };
-};
+type NavigationProps = StackNavigatorProps<
+  AccountsNavigatorParamList,
+  ScreenName.Assets
+>;
 
 const maxReadOnlyCryptoCurrencies = 10;
 
-function ReadOnlyAssets({ navigation }: Props) {
+function ReadOnlyAssets({ navigation }: NavigationProps) {
   const listSupportedTokens = useCallback(
     () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
     [],
   );
   const cryptoCurrencies = useMemo(
-    () => listSupportedCurrencies().concat(listSupportedTokens()),
+    () =>
+      (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[]).concat(
+        listSupportedTokens(),
+      ),
     [listSupportedTokens],
   );
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);

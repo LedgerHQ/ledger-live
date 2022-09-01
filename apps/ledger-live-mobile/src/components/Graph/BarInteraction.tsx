@@ -7,6 +7,7 @@ import {
   State,
   LongPressGestureHandler,
 } from "react-native-gesture-handler";
+import { ScaleContinuousNumeric, ScaleTime } from "d3-scale";
 import type { Item, ItemArray } from "./types";
 import Bar from "./Bar";
 
@@ -17,11 +18,13 @@ type Props = {
   color: string;
   mapValue: (_: Item) => number;
   onItemHover?: (_: Item | null | undefined) => void;
-  children: any;
-  x: any;
-  y: any;
+  children: React.ReactNode;
+  x: ScaleContinuousNumeric<number, number> | ScaleTime<number, number>;
+  y: ScaleContinuousNumeric<number, number> | ScaleTime<number, number>;
 };
-const bisectDate = array.bisector(d => d.date).left;
+const bisectDate = array.bisector(
+  (d: { date?: Date | null | number }) => d.date,
+).left;
 export default class BarInteraction extends Component<
   Props,
   {
@@ -42,13 +45,13 @@ export default class BarInteraction extends Component<
     const i = bisectDate(data, hoveredDate, 1);
     const d0 = data[i - 1];
     const d1 = data[i] || d0;
-    const xLeft = x(d0.date);
-    const xRight = x(d1.date);
+    const xLeft = x(d0.date!);
+    const xRight = x(d1.date!);
     const d = Math.abs(x0 - xLeft) < Math.abs(x0 - xRight) ? d0 : d1;
     if (onItemHover) onItemHover(d);
     const value = mapValue(d);
     return {
-      barOffsetX: x(d.date),
+      barOffsetX: x(d.date!),
       barOffsetY: y(value),
     };
   };

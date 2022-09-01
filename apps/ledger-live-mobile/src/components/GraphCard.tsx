@@ -14,13 +14,13 @@ import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirm
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 import { useTimeRange } from "../actions/settings";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import FormatDate from "./FormatDate";
 import { track } from "../analytics";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import EmptyGraph from "../icons/EmptyGraph";
+import { Item } from "./Graph/types";
 
 const { width } = getWindowDimensions();
 
@@ -63,7 +63,7 @@ function GraphCard({
 
   const unit = counterValueCurrency.units[0];
 
-  const [hoveredItem, setItemHover] = useState();
+  const [hoveredItem, setItemHover] = useState<Item | null>();
   const [, setTimeRange, timeRangeItems] = useTimeRange();
   const { colors } = useTheme();
 
@@ -186,7 +186,6 @@ function GraphCard({
         <>
           <Graph
             isInteractive={isAvailable}
-            isLoading={!isAvailable}
             height={110}
             width={width + 1}
             color={colors.primary.c80}

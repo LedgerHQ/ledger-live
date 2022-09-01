@@ -16,7 +16,7 @@ import TextInput from "../../components/FocusedTextInput";
 
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,
-  headerLeft: null,
+  headerLeft: undefined,
 };
 type RouteParams = {
   accountId: string;
@@ -45,9 +45,9 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
     satPerByte ? satPerByte.toString() : "",
   );
 
-  const onChange = text => {
+  const onChange = useCallback((text: string) => {
     setOwnSatPerByte(text.replace(/\D/g, ""));
-  };
+  }, []);
 
   const onValidateText = useCallback(() => {
     if (BigNumber(ownSatPerByte || 0).isZero()) return;

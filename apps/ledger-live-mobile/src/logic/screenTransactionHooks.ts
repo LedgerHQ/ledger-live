@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { concat, of, from } from "rxjs";
+import { concat, of, from, Subscription } from "rxjs";
 import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Platform } from "react-native";
@@ -27,20 +27,89 @@ import { useDispatch } from "react-redux";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
+import { ScreenName } from "../const";
+import type {
+  StackNavigatorNavigation,
+  StackNavigatorRoute,
+} from "../components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
+import type { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
+import type { LendingEnableFlowParamsList } from "../components/RootNavigator/types/LendingEnableFlowNavigator";
+import type { LendingSupplyFlowNavigatorParamList } from "../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import type { LendingWithdrawFlowNavigatorParamList } from "../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import { AlgorandClaimRewardsFlowParamList } from "../families/algorand/Rewards/ClaimRewardsFlow/type";
+
+// FIXME: NEED TO ADD ROUTE FROM FAMILIES AS WELL
+type Navigation =
+  | StackNavigatorNavigation<
+      SendFundsNavigatorStackParamList,
+      ScreenName.SendSummary
+    >
+  | StackNavigatorNavigation<
+      SignTransactionNavigatorParamList,
+      ScreenName.SignTransactionSummary
+    >
+  | StackNavigatorNavigation<
+      LendingEnableFlowParamsList,
+      ScreenName.LendingEnableSummary
+    >
+  | StackNavigatorNavigation<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.LendingSupplySummary
+    >
+  | StackNavigatorNavigation<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.LendingWithdrawSummary
+    >
+  | StackNavigatorNavigation<
+      AlgorandClaimRewardsFlowParamList,
+      ScreenName.AlgorandClaimRewardsSummary
+    >;
+
+type Route =
+  | StackNavigatorRoute<
+      SendFundsNavigatorStackParamList,
+      ScreenName.SendSummary
+    >
+  | StackNavigatorRoute<
+      SignTransactionNavigatorParamList,
+      ScreenName.SignTransactionSummary
+    >
+  | StackNavigatorRoute<
+      LendingEnableFlowParamsList,
+      ScreenName.LendingEnableSummary
+    >
+  | StackNavigatorRoute<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.LendingSupplySummary
+    >
+  | StackNavigatorRoute<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.LendingWithdrawSummary
+    >
+  | StackNavigatorRoute<
+      AlgorandClaimRewardsFlowParamList,
+      ScreenName.AlgorandClaimRewardsSummary
+    >;
 
 export const useTransactionChangeFromNavigation = (
   setTransaction: (_: Transaction) => void,
 ) => {
-  const route = useRoute();
+  const route = useRoute<Route>();
   const navigationTransaction = route.params?.transaction;
   const navigationTxRef = useRef(navigationTransaction);
   useEffect(() => {
-    if (navigationTxRef.current !== navigationTransaction) {
+    if (
+      navigationTransaction &&
+      navigationTxRef.current !== navigationTransaction
+    ) {
       navigationTxRef.current = navigationTransaction;
       setTransaction(navigationTransaction);
     }
   }, [setTransaction, navigationTransaction]);
 };
+
+// FIXME: FAMILY SPECIFIC, NEED TO TYPE THE ROUTES FIRST
 export const useSignWithDevice = ({
   account,
   parentAccount,
@@ -55,11 +124,11 @@ export const useSignWithDevice = ({
     arg1: (arg0: Account) => Account,
   ) => void;
 }) => {
-  const route = useRoute();
-  const navigation = useNavigation();
+  const route = useRoute<Route>();
+  const navigation = useNavigation<Navigation>();
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
-  const subscription = useRef(null);
+  const subscription = useRef<null | Subscription>(null);
   const signWithDevice = useCallback(() => {
     const { deviceId, transaction } = route.params || {};
     const bridge = getAccountBridge(account, parentAccount);
@@ -231,7 +300,7 @@ export function useSignedTxHandler({
   const mainAccount = getMainAccount(account, parentAccount);
   return useCallback(
     // TODO: fix type error
-    // $FlowFixMe
+
     async ({ signedOperation, transactionSignError }) => {
       try {
         if (transactionSignError) {
@@ -261,7 +330,7 @@ export function useSignedTxHandler({
             error instanceof TransactionRefusedOnDevice
           )
         ) {
-          logger.critical(error);
+          logger.critical(error as Error);
         }
 
         navigation.replace(
@@ -282,7 +351,7 @@ export function useSignedTxHandlerWithoutBroadcast({
   const route = useRoute();
   return useCallback(
     // TODO: fix type error
-    // $FlowFixMe
+
     async ({ signedOperation, transactionSignError }) => {
       try {
         if (transactionSignError) {
@@ -299,7 +368,7 @@ export function useSignedTxHandlerWithoutBroadcast({
             error instanceof TransactionRefusedOnDevice
           )
         ) {
-          logger.critical(error);
+          logger.critical(error as Error);
         }
 
         navigation.replace(

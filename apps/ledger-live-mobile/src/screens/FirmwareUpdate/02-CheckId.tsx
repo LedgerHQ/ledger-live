@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
-import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import manager from "@ledgerhq/live-common/manager/index";
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
@@ -14,22 +13,19 @@ import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
 import DeviceActionProgress from "../../components/DeviceActionProgress";
 import getWindowDimensions from "../../logic/getWindowDimensions";
-import { withTheme } from "../../colors";
+import { withTheme, Theme } from "../../colors";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { FirmwareUpdateNavigatorParamList } from "../../components/RootNavigator/types/FirmwareUpdateNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
+type Navigation = StackNavigatorProps<
+  FirmwareUpdateNavigatorParamList,
+  ScreenName.FirmwareUpdateCheckId
+>;
+
 type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-  colors: any;
-};
-type RouteParams = {
-  deviceId: string;
-  firmware: FirmwareUpdateContext;
-};
+  colors: Theme["colors"];
+} & Navigation;
+
 type State = {
   progress: number;
   displayedOnDevice: boolean;
@@ -92,7 +88,6 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
         <View style={styles.body}>
@@ -138,7 +133,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
                 </Spinning>
               </View>
             ) : (
-              <DeviceActionProgress progress={progress} size={60} />
+              <DeviceActionProgress progress={progress} />
             )}
           </View>
         </View>

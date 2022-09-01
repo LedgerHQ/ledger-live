@@ -2,8 +2,8 @@ import React, { memo } from "react";
 import Svg, { Path } from "react-native-svg";
 
 type Props = {
-  height: number;
-  width: number;
+  height?: number;
+  width?: number;
 };
 
 const Maestro: React.FC<Props> = ({ height = 12, width = 21 }) => (

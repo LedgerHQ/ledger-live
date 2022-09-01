@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, Animated } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/Feather";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getAccountCurrency,
@@ -37,8 +37,6 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import Touchable from "../../../components/Touchable";
 import DelegatingContainer from "../DelegatingContainer";
 import BakerImage from "../BakerImage";
-
-const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any;
@@ -216,7 +214,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const rotate = rotateAnim.interpolate({
     inputRange: [0, 1],
-    // $FlowFixMe
+
     outputRange: ["0deg", "30deg"],
   });
 
@@ -252,10 +250,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [status, account, parentAccount, navigation, transaction]);
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>

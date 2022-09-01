@@ -1,41 +1,21 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { has as hasFromPath, set as setFromPath } from "lodash";
-import type { PropertyPath } from "lodash";
 import { ScannedDevice } from "@ledgerhq/live-common/ble/types";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { StackScreenProps } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex } from "@ledgerhq/native-ui";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 import RequiresBLE from "../../components/RequiresBLE";
 import { BleDevicesScanning } from "./BleDevicesScanning";
 import { BleDevicePairing } from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
+import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "../../const";
 
-export type NavigateInput = {
-  name: string;
-  params: object;
-};
-
-export type PathToDeviceParam = PropertyPath;
-export type NavigationType = "navigate" | "replace";
-
-export type BleDevicePairingFlowParams = {
-  filterByDeviceModelId?: DeviceModelId;
-  areKnownDevicesDisplayed?: boolean;
-  onSuccessAddToKnownDevices?: boolean;
-  navigationType?: NavigationType;
-  onSuccessNavigateToConfig: {
-    navigateInput: NavigateInput;
-    pathToDeviceParam: PathToDeviceParam;
-  };
-};
-
-export type BleDevicePairingFlowProps = StackScreenProps<
+export type Props = StackNavigatorProps<
   BaseNavigatorStackParamList,
-  "BleDevicePairingFlow"
+  ScreenName.BleDevicePairingFlow
 >;
 
 /**
@@ -68,10 +48,7 @@ export type BleDevicePairingFlowProps = StackScreenProps<
  *   list of known devices. Not added if false (default to false).
  * @returns a JSX component
  */
-export const BleDevicePairingFlow = ({
-  navigation,
-  route,
-}: BleDevicePairingFlowProps) => {
+export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
   const dispatchRedux = useDispatch();
 
   const {
@@ -123,7 +100,7 @@ export const BleDevicePairingFlow = ({
       if (navigationType === "replace") {
         navigation.replace(navigateInput.name, { ...navigateInput.params });
       } else {
-        navigation.navigate(navigateInput);
+        navigation.navigate(navigateInput.name, { ...navigateInput.params });
       }
     },
     [

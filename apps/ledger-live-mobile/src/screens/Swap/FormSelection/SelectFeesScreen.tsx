@@ -1,20 +1,28 @@
 import React, { useCallback } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import type { Account, AccountLikeArray } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
-import type { SwapRouteParams } from "..";
 import SendRowsFee from "../../../components/SendRowsFee";
 import NavigationScrollView from "../../../components/NavigationScrollView";
+import {
+  RootComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
+type NavigationProps = RootComposite<
+  StackNavigatorProps<
+    BaseNavigatorStackParamList,
+    ScreenName.SwapV2FormSelectFees
+  >
+>;
 type Props = {
-  accounts: Account[];
-  allAccounts: AccountLikeArray;
-  navigation: any;
-  route: {
-    params: SwapRouteParams;
-  };
-};
+  accounts?: Account[];
+  allAccounts?: AccountLikeArray;
+} & NavigationProps;
+
 export default function SelectFees({ navigation, route }: Props) {
   const { transaction } = route.params;
   const { swap, provider, rate } = route.params;
@@ -33,7 +41,7 @@ export default function SelectFees({ navigation, route }: Props) {
     <SafeAreaView style={[styles.root]}>
       <TrackScreen category="Swap Form" name="Edit Fees" provider={provider} />
       <NavigationScrollView contentContainerStyle={styles.scrollView}>
-        {account && (
+        {account && transaction ? (
           <SendRowsFee
             setTransaction={onSetTransaction}
             account={account}
@@ -44,6 +52,7 @@ export default function SelectFees({ navigation, route }: Props) {
               ...route,
               params: {
                 ...route.params,
+                transaction: transaction as Transaction,
                 accountId: account.id,
                 parentAccountId: parentAccount?.id,
                 currentNavigation: ScreenName.SwapForm,
@@ -51,7 +60,7 @@ export default function SelectFees({ navigation, route }: Props) {
             }}
             disabledStrategies={isFixed ? ["slow"] : []}
           />
-        )}
+        ) : null}
       </NavigationScrollView>
     </SafeAreaView>
   );

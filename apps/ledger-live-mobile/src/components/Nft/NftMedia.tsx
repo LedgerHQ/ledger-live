@@ -4,18 +4,19 @@ import { FastImageProps } from "react-native-fast-image";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Theme } from "@react-navigation/native";
+import { StyleProp, ViewStyle } from "react-native";
 import { getMetadataMediaType } from "../../logic/nft";
 import { withTheme } from "../../colors";
 import NftImage from "./NftImage";
 import NftVideo from "./NftVideo";
 
 type Props = {
-  style?: any;
+  style?: StyleProp<ViewStyle>;
   status: NFTResource["status"];
-  metadata: NFTMetadata;
+  metadata?: NFTMetadata | null;
   mediaFormat: NFTMediaSize;
-  resizeMode?: FastImageProps["resizeMode"] | VideoProperties["resizeMode"];
-  colors: Theme;
+  resizeMode?: FastImageProps["resizeMode"] & VideoProperties["resizeMode"];
+  colors: Theme["colors"];
   transaprency?: boolean;
 };
 
@@ -25,9 +26,9 @@ type State = {
 
 class NftMedia extends React.PureComponent<Props, State> {
   render() {
-    const { metadata, mediaFormat, colors, status } = this.props;
+    const { metadata, mediaFormat, status } = this.props;
 
-    let { uri, mediaType } = metadata?.medias?.[mediaFormat] || {};
+    let { uri } = metadata?.medias?.[mediaFormat] || {};
     let contentType = getMetadataMediaType(metadata, mediaFormat);
 
     const noData = status === "nodata";
@@ -36,7 +37,6 @@ class NftMedia extends React.PureComponent<Props, State> {
 
     if (noData || metadataError || noSource) {
       uri = metadata?.medias?.preview?.uri;
-      mediaType = metadata?.medias?.preview?.mediaType;
       contentType = getMetadataMediaType(metadata, "preview");
     }
 
@@ -45,10 +45,8 @@ class NftMedia extends React.PureComponent<Props, State> {
     return (
       <Component
         {...this.props}
-        colors={colors}
-        src={uri}
-        srcFallback={metadata?.medias?.preview?.uri}
-        mediaType={mediaType}
+        src={uri as string}
+        srcFallback={metadata?.medias?.preview?.uri as string}
       />
     );
   }

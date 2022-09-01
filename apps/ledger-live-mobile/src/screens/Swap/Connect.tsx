@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useTheme } from "@react-navigation/native";
+import { Device } from "@ledgerhq/types-devices";
 import SelectDevice from "../../components/SelectDevice";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import { TrackScreen } from "../../analytics";
@@ -17,7 +18,7 @@ const Connect = ({
   setResult: (_: any) => void;
   provider?: string;
 }) => {
-  const [device, setDevice] = useState(null);
+  const [device, setDevice] = useState<Device | null>(null);
   const [result] = useState();
   const onModalHide = useCallback(() => {
     if (result) {
@@ -44,13 +45,13 @@ const Connect = ({
       <SkipSelectDevice onResult={setDevice} />
       <SelectDevice onSelect={setDevice} autoSelectOnAdd />
       <DeviceActionModal
-        onClose={setDevice}
+        onClose={() => setDevice(null)}
         onModalHide={onModalHide}
         device={result ? null : device}
         onResult={setResult}
         action={action}
         request={null}
-        onSelectDeviceLink={() => setDevice()}
+        onSelectDeviceLink={() => setDevice(null)}
         analyticsPropertyFlow="swap"
       />
     </View>

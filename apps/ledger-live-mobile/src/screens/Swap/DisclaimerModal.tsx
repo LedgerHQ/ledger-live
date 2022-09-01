@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/dist/AntDesign";
+import Icon from "react-native-vector-icons/AntDesign";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import Circle from "../../components/Circle";
@@ -22,12 +22,7 @@ const DisclaimerModal = ({
 }) => {
   const { colors } = useTheme();
   return (
-    <BottomModal
-      id="SwapDisclaimerModal"
-      isOpened={true}
-      onClose={undefined}
-      style={styles.root}
-    >
+    <BottomModal isOpened={true} onClose={undefined} style={styles.root}>
       <Flex alignItems="center">
         <Circle bg={colors.pillActiveBackground} size={40}>
           <Icon name="exclamationcircleo" color={colors.live} size={22} />
@@ -49,7 +44,12 @@ const DisclaimerModal = ({
       </LText>
       <ExternalLink
         text={<Trans i18nKey="transfer.swap.form.summary.disclaimer.tos" />}
-        onPress={() => Linking.openURL(urls.swap.providers[provider].tos)}
+        onPress={() =>
+          Linking.openURL(
+            urls.swap.providers[provider as keyof typeof urls.swap.providers]
+              .tos,
+          )
+        }
         event="OpenTerms"
       />
       <Button

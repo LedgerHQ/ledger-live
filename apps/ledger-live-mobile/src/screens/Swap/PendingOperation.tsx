@@ -1,7 +1,12 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import SafeAreaView from "react-native-safe-area-view";
+import {
+  CompositeNavigationProp,
+  useNavigation,
+  useRoute,
+  useTheme,
+} from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { ScreenName } from "../../const";
@@ -11,32 +16,41 @@ import IconCheck from "../../icons/Check";
 import IconClock from "../../icons/Clock";
 import { rgba } from "../../colors";
 import { TrackScreen } from "../../analytics";
-
-const forceInset = {
-  bottom: "always",
-};
+import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorRoute,
+} from "../../components/RootNavigator/types/helpers";
 
 const PendingOperation = () => {
   const { colors } = useTheme();
-  const navigation = useNavigation();
-  const route = useRoute();
-  const {
-    swapId,
-    provider,
-    targetCurrency,
-    operation,
-    fromAccount,
-    fromParentAccount,
-  } = route.params;
+  const navigation =
+    useNavigation<
+      CompositeNavigationProp<
+        StackNavigatorNavigation<
+          SwapNavigatorParamList,
+          ScreenName.SwapPendingOperation
+        >,
+        StackNavigatorNavigation<BaseNavigatorStackParamList>
+      >
+    >();
+  const route =
+    useRoute<
+      StackNavigatorRoute<
+        SwapNavigatorParamList,
+        ScreenName.SwapPendingOperation
+      >
+    >();
+  const { swapId, provider, targetCurrency, operation, fromAccount } =
+    route.params;
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
   const onComplete = useCallback(() => {
     navigation.navigate(ScreenName.OperationDetails, {
       accountId: fromAccount.id,
-      parentId: fromParentAccount && fromParentAccount.id,
       operation,
-      key: operation.id,
     });
-  }, [fromAccount.id, fromParentAccount, navigation, operation]);
+  }, [fromAccount.id, navigation, operation]);
   return (
     <SafeAreaView
       style={[
@@ -45,7 +59,6 @@ const PendingOperation = () => {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen
         category="Swap Form"

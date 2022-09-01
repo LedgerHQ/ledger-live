@@ -28,7 +28,7 @@ import React, {
 } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { rgba } from "../../../colors";
@@ -163,7 +163,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const rotate = rotateAnim.interpolate({
     inputRange: [0, 1],
-    // $FlowFixMe
+
     outputRange: ["0deg", "30deg"],
   });
 

@@ -8,13 +8,12 @@ import { TrackScreen } from "../../../analytics";
 
 type Props = {
   illustration: React.ReactNode;
-  title: string;
-  badgeLabel: string;
-  description: string;
+  title: React.ReactNode;
+  badgeLabel: React.ReactNode;
+  description: React.ReactNode;
   children?: React.ReactNode;
-  ctaLabel: string;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  onNext: () => {};
+  ctaLabel?: string | JSX.Element;
+  onNext: () => void;
   disabled?: boolean;
   header?: React.ReactNode;
   event?: string;

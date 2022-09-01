@@ -2,17 +2,32 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import Scanner from "../components/Scanner";
 import LText from "../components/LText";
-import { rgba, withTheme } from "../colors";
-// eslint-disable-next-line import/no-unresolved
+import { rgba, Theme, withTheme } from "../colors";
 import getWindowDimensions from "../logic/getWindowDimensions";
+import { ScreenName } from "../const";
+import { SettingsNavigatorStackParamList } from "../components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 
-class BenchmarkQRStream extends PureComponent<
-  {
-    navigation: any;
-    colors: any;
-  },
-  any
-> {
+type Props = {
+  colors: Theme["colors"];
+} & StackNavigatorProps<
+  SettingsNavigatorStackParamList,
+  ScreenName.BenchmarkQRStream
+>;
+
+type Benchmark = {
+  count: number;
+  dataSize: number;
+};
+
+type State = {
+  width: number;
+  height: number;
+  benchmarks: Benchmark[];
+  end: boolean;
+};
+
+class BenchmarkQRStream extends PureComponent<Props, State> {
   state = { ...getWindowDimensions(), benchmarks: [], end: false };
   count = 0;
   dataSize = 0;
@@ -50,13 +65,17 @@ class BenchmarkQRStream extends PureComponent<
   render() {
     const { colors } = this.props;
     const { benchmarks, end } = this.state;
-    const summary = benchmarks.map(b => `${b.dataSize}:${b.count}`).join(" ");
+    const summary = benchmarks
+      .map((b: Benchmark) => `${b.dataSize}:${b.count}`)
+      .join(" ");
 
     if (end) {
       return (
         <View style={styles.resultRoot}>
-          <LText selectable style={styles.result}>
-            {benchmarks.map(b => `${b.dataSize} ${b.count}`).join("\n")}
+          <LText selectable>
+            {benchmarks
+              .map((b: Benchmark) => `${b.dataSize} ${b.count}`)
+              .join("\n")}
           </LText>
         </View>
       );

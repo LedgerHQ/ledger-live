@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import Button from "../components/Button";
@@ -12,10 +12,6 @@ import Touchable from "../components/Touchable";
 import Alert from "../components/Alert";
 import Check from "../icons/Check";
 import { lottieAnimations } from "./Onboarding/shared/infoPagesData";
-
-const forceInset = {
-  bottom: "always",
-};
 
 const DebugLottie = () => {
   const { colors } = useTheme();
@@ -86,7 +82,6 @@ const DebugLottie = () => {
   const allKeys = [...keys, ...onBoardingKeys];
   return (
     <SafeAreaView
-      forceInset={forceInset}
       style={[
         styles.root,
         {

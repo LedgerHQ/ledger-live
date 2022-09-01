@@ -2,15 +2,17 @@ import React, { useCallback, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useTranslation } from "react-i18next";
 import { Flex, Carousel, Text, Button, Icons } from "@ledgerhq/native-ui";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../../const";
 import Illustration from "../../../images/illustration/Illustration";
 
 import { normalize } from "../../../helpers/normalizeSize";
 
-import { DeviceNames } from "../types";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -28,7 +30,12 @@ const images = {
   ],
 };
 
-type CardType = { index: number; deviceModelId: DeviceNames };
+type NavigationProps = StackNavigatorProps<
+  OnboardingNavigatorParamList,
+  ScreenName.OnboardingModalSetupNewDevice
+>;
+
+type CardType = { index: number; deviceModelId: DeviceModelId };
 const Card = ({ index /* , deviceModelId */ }: CardType) => {
   const { t } = useTranslation();
   return (
@@ -57,8 +64,8 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
 };
 
 const FooterNextButton = ({ label }: { label: string }) => {
-  const navigation = useNavigation();
-  const route = useRoute();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const route = useRoute<NavigationProps["route"]>();
 
   const next = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingSetNewDevice, { ...route.params });
@@ -91,15 +98,10 @@ const Footer = ({ index }: { index: number }) => {
   );
 };
 
-type CurrentRouteType = RouteProp<
-  { params: { deviceModelId: DeviceNames } },
-  "params"
->;
-
 function OnboardingStepNewDevice() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const route = useRoute<CurrentRouteType>();
-  const navigation = useNavigation();
+  const route = useRoute<NavigationProps["route"]>();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
   const { deviceModelId } = route.params;
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);

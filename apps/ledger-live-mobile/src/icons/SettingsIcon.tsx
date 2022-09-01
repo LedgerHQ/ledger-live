@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/Feather";
 
 export default class SettingsIcon extends PureComponent<{
   size: number;

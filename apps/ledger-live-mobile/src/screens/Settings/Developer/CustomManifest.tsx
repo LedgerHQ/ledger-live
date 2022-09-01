@@ -1,16 +1,23 @@
 import React, { useState, useMemo, useCallback, useLayoutEffect } from "react";
-import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
-import { useTheme, NavigationProp } from "@react-navigation/native";
+import {
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from "react-native";
+import { useTheme, CompositeScreenProps } from "@react-navigation/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import KeyboardView from "../../../components/KeyboardView";
 import ImportIcon from "../../../icons/Import";
+import type { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
 const DebuggerButton: React.ComponentType<{
-  onPress: (..._: Array<any>) => any;
-  // eslint-disable-next-line react/prop-types
+  onPress: TouchableOpacityProps["onPress"];
 }> = ({ onPress }) => {
   const { colors } = useTheme();
   return (
@@ -20,11 +27,15 @@ const DebuggerButton: React.ComponentType<{
   );
 };
 
-export default function CustomManifest({
-  navigation,
-}: {
-  navigation: NavigationProp;
-}) {
+type Props = CompositeScreenProps<
+  StackNavigatorProps<
+    SettingsNavigatorStackParamList,
+    ScreenName.DeveloperCustomManifest
+  >,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
+export default function CustomManifest({ navigation }: Props) {
   const { colors } = useTheme();
   const { manifest, disabled, addLocalManifest, onChange } =
     useCustomManifest();

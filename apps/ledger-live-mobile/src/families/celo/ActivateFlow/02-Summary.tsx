@@ -4,7 +4,6 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import {
   CeloValidatorGroup,
-  Transaction,
   CeloAccount,
 } from "@ledgerhq/live-common/families/celo/types";
 import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
@@ -23,17 +22,15 @@ import Selectable from "../components/Selectable";
 import Line from "../components/Line";
 import Words from "../components/Words";
 import ErrorAndWarning from "../components/ErrorAndWarning";
+import type {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import type { CeloActivateFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  validator: CeloValidatorGroup;
-  transaction?: Transaction;
-  fromSelectAmount: boolean;
-};
+type Props = BaseComposite<
+  StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateSummary>
+>;
 
 export default function ActivateSummary({ navigation, route }: Props) {
   const { validator } = route.params;
@@ -92,23 +89,24 @@ export default function ActivateSummary({ navigation, route }: Props) {
         recipient: chosenValidator?.address ?? "",
       }),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateTransaction, bridge, setTransaction, chosenValidator]);
 
   const onChangeDelegator = useCallback(() => {
     navigation.navigate(ScreenName.CeloActivateValidatorSelect, {
       ...route.params,
+      accountId: mainAccount.id,
       transaction,
     });
-  }, [navigation, transaction, route.params]);
+  }, [navigation, route.params, mainAccount.id, transaction]);
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.CeloActivateSelectDevice, {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      accountId: mainAccount.id,
       transaction,
       status,
     });
-  }, [status, account, parentAccount, navigation, transaction]);
+  }, [navigation, mainAccount.id, transaction, status]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
   const error =

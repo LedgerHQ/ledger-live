@@ -1,3 +1,5 @@
+import { DeviceModelId } from "@ledgerhq/types-devices";
+
 export type Step = {
   id: string;
   isGhost?: boolean;
@@ -8,7 +10,7 @@ export type OnboardingContextType = {
   currentStep: string;
   // list of the currently active steps
   mode: OnboardingMode;
-  deviceModelId: DeviceNames;
+  deviceModelId: DeviceModelId;
   showWelcome: boolean;
   setShowWelcome: (_: boolean) => Promise<void>;
   firstTimeOnboarding?: boolean;
@@ -31,11 +33,10 @@ export type OnboardingStepProps = OnboardingContextType & {
   prev: Noop;
 };
 export type SetOnboardingModeType = (_: OnboardingMode) => Promise<void>;
-export type SetOnboardingDeviceModelType = (_: DeviceNames) => Promise<void>;
+export type SetOnboardingDeviceModelType = (_: DeviceModelId) => Promise<void>;
 export type OnboardingContextProviderProps = {
   children: any;
 };
 type OnboardingMode = "full" | "alreadyInitialized" | "restore" | "qr";
-export type DeviceNames = "nanoS" | "nanoX" | "blue";
 type StepNavigateType = (arg0: any, arg1: any) => void;
 type Noop = (_: any) => any;

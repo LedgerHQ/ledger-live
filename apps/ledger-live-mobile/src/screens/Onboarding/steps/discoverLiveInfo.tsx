@@ -8,7 +8,11 @@ import {
   StoriesIndicator,
   Box,
 } from "@ledgerhq/native-ui";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import {
+  useNavigation,
+  useFocusEffect,
+  CompositeNavigationProp,
+} from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
@@ -16,11 +20,16 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
-import { NavigatorName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 import { screen, track } from "../../../analytics";
 
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../../components/RootNavigator";
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
+import {
+  RootNavigationComposite,
+  StackNavigatorNavigation,
+} from "../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),
@@ -34,6 +43,16 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${p => p.theme.colors.background.main};
 `;
 
+type NavigationProp = CompositeNavigationProp<
+  StackNavigatorNavigation<
+    OnboardingNavigatorParamList,
+    ScreenName.OnboardingLanguage
+  >,
+  RootNavigationComposite<
+    StackNavigatorNavigation<BaseOnboardingNavigatorParamList>
+  >
+>;
+
 const Item = ({
   title,
   imageProps,
@@ -46,7 +65,7 @@ const Item = ({
   currentIndex?: number;
 }) => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -67,7 +86,9 @@ const Item = ({
 
   const buyLedger = useCallback(() => {
     onClick("Buy a Ledger");
-    navigation.navigate(NavigatorName.BuyDevice);
+    navigation.navigate(NavigatorName.BuyDevice, {
+      screen: undefined,
+    } as never);
   }, [navigation, onClick]);
 
   const exploreLedger = useCallback(() => {
@@ -155,7 +176,7 @@ function DiscoverLiveInfo() {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen(`Reborn Story Step ${currentIndex}`);
+      setScreen && setScreen(`Reborn Story Step ${currentIndex}`);
 
       return () => {
         setSource(`Reborn Story Step ${currentIndex}`);

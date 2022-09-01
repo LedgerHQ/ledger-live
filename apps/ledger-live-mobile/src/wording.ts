@@ -8,4 +8,4 @@ export const deviceNames = {
   blue: {
     fullDeviceName: "Ledger Blue",
   },
-};
+} as const;

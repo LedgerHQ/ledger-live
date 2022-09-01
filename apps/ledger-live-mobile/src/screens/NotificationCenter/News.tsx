@@ -15,7 +15,7 @@ const viewabilityConfig = {
 };
 
 const SectionHeader = styled.View`
-  background-color: ${p => p.theme.colors.palette.neutral.c30};
+  background-color: ${p => p.theme.colors.neutral.c30};
   padding: 12px;
   border-radius: 4px;
 `;
