@@ -66,9 +66,42 @@ class Queue: NSObject  {
     /// to the native side. Meaning first we decode the tasks from the raw queue and then we fetch the token from it, a bit backwards
     /// but if it works, it's better that the alternative.
     private func resolveTokenFromQueue(_ autoStart: Bool) {
-        let tasks: Tasks?
+        
         do {
-            tasks = try JSONDecoder().decode(Tasks.self, from: self.rawQueue.data(using: .utf8)!)
+            let tasks: Tasks = try JSONDecoder().decode(Tasks.self, from: self.rawQueue.data(using: .utf8)!)
+        
+            var request = URLRequest(url: BIMPackQueue)
+            request.httpMethod = "PUT"
+            request.httpBody = self.rawQueue.data(using: .utf8)!
+
+            let session = URLSession.shared
+            if let task = self.pendingRequest {
+                task.cancel()
+            }
+
+            /// Pending error handling if backend is toast.
+            self.pendingRequest = session.dataTask(with: request) { [self] (data, response, error) in
+                if let error = error, let request = self.pendingRequest {
+                    if request.progress.isCancelled { return }
+                    if (error as NSError).code == NSURLErrorCancelled { // We cancelled because a new request was received.
+                        return
+                    }
+                    onEventWrapper(
+                        RunnerAction.runError,
+                        withData: ExtraData(message: String(describing:error))
+                    )
+                }
+                else if let token = data {
+                    self.token = String(decoding: token, as: UTF8.self)
+                    self.tasks = tasks
+
+                    if autoStart {
+                        self.startRunner()
+                    }
+                }
+            }
+
+            self.pendingRequest!.resume()
         } catch {
             onEventWrapper(
                 RunnerAction.runError,
@@ -76,39 +109,6 @@ class Queue: NSObject  {
             )
             return
         }
-        
-        var request = URLRequest(url: BIMPackQueue)
-        request.httpMethod = "PUT"
-        request.httpBody = self.rawQueue.data(using: .utf8)!
-
-        let session = URLSession.shared
-        if let task = self.pendingRequest {
-            task.cancel()
-        }
-
-        /// Pending error handling if backend is toast.
-        self.pendingRequest = session.dataTask(with: request) { [self] (data, response, error) in
-            if let error = error, let request = self.pendingRequest {
-                if request.progress.isCancelled { return }
-                if (error as NSError).code == NSURLErrorCancelled { // We cancelled because a new request was received.
-                    return
-                }
-                onEventWrapper(
-                    RunnerAction.runError,
-                    withData: ExtraData(message: String(describing:error))
-                )
-            }
-            else if let token = data {
-                self.token = String(decoding: token, as: UTF8.self)
-                self.tasks = tasks
-
-                if autoStart {
-                    self.startRunner()
-                }
-            }
-        }
-
-        self.pendingRequest!.resume()
     }
     
 
