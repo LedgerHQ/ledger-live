@@ -7,13 +7,16 @@ import {
   SelectableList,
   Text,
 } from "@ledgerhq/native-ui";
+import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 type Props = {
   deviceLanguage: Language;
   selectedLanguage: Language;
   availableLanguages: Language[];
+  device: Device;
   onSelectLanguage: (language: Language) => void;
   onConfirmInstall: () => void;
 };
@@ -22,16 +25,22 @@ const DeviceLanguageSelection: React.FC<Props> = ({
   deviceLanguage,
   selectedLanguage,
   availableLanguages,
+  device,
   onSelectLanguage,
   onConfirmInstall,
 }) => {
   const { t } = useTranslation();
 
+  const deviceName = getDeviceModel(device.modelId).productName;
+
   return (
     <Flex height="100%" justifyContent="space-between">
       <Flex flexShrink={1}>
         <Text variant="h1" textAlign="center">
-          {t("deviceLocalization.deviceLanguage")}
+          {t("deviceLocalization.language")}
+        </Text>
+        <Text variant="paragraph" mb={2} mt={5} color="neutral.c70">
+          {t("deviceLocalization.chooseLanguage", { deviceName })}
         </Text>
         <ScrollContainer mt={5}>
           <SelectableList

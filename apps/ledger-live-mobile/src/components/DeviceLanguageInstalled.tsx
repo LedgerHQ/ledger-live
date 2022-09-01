@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { BoxedIcon, Flex, Text, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, Button, Icons } from "@ledgerhq/native-ui";
 
 const DeviceLanguageInstalled: React.FC<{
   onContinue?: () => void;
@@ -18,12 +18,9 @@ const DeviceLanguageInstalled: React.FC<{
 
   return (
     <Flex alignItems="center">
-      <BoxedIcon
-        Icon={Icons.CheckAloneMedium}
-        iconColor="success.c100"
-        size={48}
-        iconSize={24}
-      />
+      <Flex backgroundColor="neutral.c30" p={4} borderRadius="9999px">
+        <Icons.CircledCheckSolidMedium color="success.c100" size={32} />
+      </Flex>
       <Text variant="h4" textAlign="center" my={7} fontWeight="semiBold">
         {t("deviceLocalization.languageInstalled", {
           language: t(`deviceLocalization.languages.${installedLanguage}`),

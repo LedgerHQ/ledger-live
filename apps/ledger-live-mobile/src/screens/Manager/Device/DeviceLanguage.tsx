@@ -104,6 +104,7 @@ const DeviceLanguage: React.FC<Props> = ({
         onModalHide={openDeviceActionModal}
       >
         <DeviceLanguageSelection
+          device={device}
           deviceLanguage={currentDeviceLanguage}
           onSelectLanguage={setSelectedLanguage}
           selectedLanguage={selectedLanguage}

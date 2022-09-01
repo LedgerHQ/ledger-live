@@ -5,7 +5,7 @@ import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Flex, Log } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
@@ -151,7 +151,7 @@ export default function DeviceAction<R, H, P>({
       <Flex>
         <DeviceActionProgress progress={progress} />
         <Flex mt={5}>
-          <Log>{t("deviceLocalization.installingLanguage")}</Log>
+          <Text variant="h4">{t("deviceLocalization.installingLanguage")}</Text>
         </Flex>
       </Flex>
     );

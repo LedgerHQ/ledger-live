@@ -3463,9 +3463,10 @@
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Device Language",
+    "chooseLanguage": "Choose a language for your {{deviceName}}.",
     "changeLanguage": "Change language",
-    "allowLanguageInstallation": "Allow language installation",
-    "languageInstalled": "Device language changed to {{language}}",
+    "allowLanguageInstallation": "Approve language installation on {{deviceName}}",
+    "languageInstalled": "Language changed to {{language}}",
     "firmwareUpdatePrompt": {
       "title": "Set your {{deviceName}} in {{language}}?",
       "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."

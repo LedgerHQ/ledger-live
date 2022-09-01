@@ -9,7 +9,6 @@ import {
   Link,
   Text,
   Divider,
-  Divider,
 } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 
