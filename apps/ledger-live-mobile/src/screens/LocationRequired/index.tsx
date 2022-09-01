@@ -10,33 +10,34 @@ type Props = {
   onRetry: (..._: Array<any>) => any;
   errorType: "disabled" | "unauthorized";
 };
-export default function LocationRequired({ errorType, onRetry }: Props) {
-  return (
-    <View style={styles.container}>
-      <NoLocationImage />
-      <View>
-        <LText bold secondary style={styles.title}>
-          <Trans i18nKey="location.required" />
-        </LText>
-      </View>
-      <View>
-        <LText style={styles.desc} color="grey">
-          <Trans i18nKey="location.disabled" />
-        </LText>
-        <LText semiBold style={[styles.desc, styles.descPadding]}>
-          <Trans i18nKey="location.noInfos" />
-        </LText>
-      </View>
-      <View style={styles.buttonWrapper}>
-        {errorType === "disabled" ? (
-          <LocationServicesButton onRetry={onRetry} />
-        ) : (
-          <AppPermissionsButton onRetry={onRetry} />
-        )}
-      </View>
+const LocationRequired: React.FC<Props> = ({ errorType, onRetry }) => (
+  <View style={styles.container}>
+    <NoLocationImage />
+    <View>
+      <LText bold secondary style={styles.title}>
+        <Trans i18nKey="location.required" />
+      </LText>
     </View>
-  );
-}
+    <View>
+      <LText style={styles.desc} color="grey">
+        <Trans i18nKey="location.disabled" />
+      </LText>
+      <LText semiBold style={[styles.desc, styles.descPadding]}>
+        <Trans i18nKey="location.noInfos" />
+      </LText>
+    </View>
+    <View style={styles.buttonWrapper}>
+      {errorType === "disabled" ? (
+        <LocationServicesButton onRetry={onRetry} />
+      ) : (
+        <AppPermissionsButton onRetry={onRetry} />
+      )}
+    </View>
+  </View>
+);
+
+export default LocationRequired;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
