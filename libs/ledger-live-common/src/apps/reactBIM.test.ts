@@ -70,7 +70,7 @@ describe("BIM feature, gatekeeping", () => {
       // Mock the feature flag
       mockedUseFeature.mockReturnValue({ enabled: flagEnabled });
 
-      // Mock the transport resolution, we only run on that specific transport
+      // @ts-expect-error Mock the transport resolution, we only run on llm-ble
       mockedTransportResolver.mockReturnValue({ id: transportId });
 
       const { result } = renderHook(() => useBIM("", mockedState, () => {}));

@@ -5,6 +5,7 @@ import type { State } from "./types";
 import { withDevice } from "../hw/deviceAccess";
 import { useFeature } from "../featureFlags";
 import { resolveTransportModuleForDeviceId } from "../hw";
+import type { RunnerEvent } from "./types";
 import BIM from "../api/BIM";
 
 const getBaseApiUrl = () => getEnv("API_BIM");
@@ -16,26 +17,27 @@ const useBIM = (
 ): any => {
   // Whenever the queue changes, we need get a new token, but ONLY if this queue
   // change is because we are adding a new item and not because an item was consumed.
-  const observable: any = useRef();
+  const observable = useRef<Subject<RunnerEvent>>();
   const bimFeature = useFeature("bim");
   const transportModule = resolveTransportModuleForDeviceId(deviceId || "");
-  const [transport, setTransport] = useState<any>();
+  const [transport, setTransport] = useState<any>(); // Nb maybe move the queue type into Transport
   const [pendingTransport, setPendingTransport] = useState<boolean>(false);
-  const [token, setToken] = useState<string | void>();
+  const [token, setToken] = useState<string | void>("");
   const lastSeenQueueSize = useRef(0);
   const { installQueue, uninstallQueue, updateAllQueue } = state;
-  const queueSize =
+  const queueSize: number =
     installQueue.length + uninstallQueue.length + updateAllQueue.length;
 
-  const shouldStartNewJob = useMemo(
-    () => deviceId && !transport && !pendingTransport && token && queueSize,
+  const shouldStartNewJob: boolean = useMemo(
+    () => !!(deviceId && !transport && !pendingTransport && token && queueSize),
     [deviceId, pendingTransport, queueSize, token, transport]
   );
 
-  const enabled = bimFeature?.enabled && transportModule?.id === "ble-bim";
+  const enabled: boolean =
+    !!bimFeature?.enabled && transportModule?.id === "ble-bim";
 
   const cleanUp = useCallback(() => {
-    setToken(undefined);
+    setToken("");
     setPendingTransport(false);
     setTransport(undefined);
   }, []);
@@ -67,10 +69,8 @@ const useBIM = (
       const token = await BIM.getTokenFromQueue(queue).catch(onError);
       setToken(token);
     }
-    if (!enabled) return;
-    if (completed) {
-      return;
-    }
+
+    if (!enabled || completed) return;
 
     if (queueSize > lastSeenQueueSize.current) {
       // If the queue is larger, our token is no longer valid and we need a new one.
@@ -86,6 +86,7 @@ const useBIM = (
 
   const startNewJob = useCallback(() => {
     let sub;
+
     if (deviceId) {
       setPendingTransport(true);
       sub = withDevice(deviceId)((transport) => {
@@ -113,8 +114,7 @@ const useBIM = (
   }, [deviceId, shouldStartNewJob, onEventDispatch, startNewJob, enabled]);
 
   useEffect(() => {
-    if (!enabled) return;
-    if (!token || !transport) return;
+    if (!enabled || !token || !transport) return;
     transport.queue(observable.current, token, getBaseApiUrl());
   }, [enabled, token, transport]);
 
