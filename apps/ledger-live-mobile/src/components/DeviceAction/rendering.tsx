@@ -25,7 +25,7 @@ import Animation from "../Animation";
 import getDeviceAnimation from "./getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
-import { MANAGER_TABS } from "../../screens/Manager/Manager";
+import { MANAGER_TABS } from "../../const/manager";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
@@ -108,7 +108,6 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
 })``;
 
 type RawProps = {
-  // eslint-disable-next-line no-unused-vars
   t: (key: string, options?: { [key: string]: string | number }) => string;
   colors?: any;
   theme?: "light" | "dark";
@@ -295,9 +294,7 @@ export function renderAllowLanguageInstallation({
           source={getDeviceAnimation({ device, key: "validate", theme })}
         />
       </AnimationContainer>
-      <Log>
-        {t("deviceLocalization.allowLanguageInstallation")}
-      </Log>
+      <Log>{t("deviceLocalization.allowLanguageInstallation")}</Log>
     </Wrapper>
   );
 }

@@ -22,13 +22,7 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
-
-export const MANAGER_TABS = {
-  CATALOG: "CATALOG",
-  INSTALLED_APPS: "INSTALLED_APPS",
-};
-
-export type ManagerTab = keyof typeof MANAGER_TABS;
+import { ManagerTab, MANAGER_TABS } from "../../const/manager";
 
 type Props = {
   navigation: StackNavigationProp<any>;

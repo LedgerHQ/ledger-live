@@ -140,8 +140,6 @@
   - @ledgerhq/live-common@26.0.0
   - @ledgerhq/cryptoassets@6.32.0
 
-> > > > > > > > > Temporary merge branch 2
-
 ## 22.2.0-next.2
 
 ### Patch Changes

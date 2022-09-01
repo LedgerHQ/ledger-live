@@ -80,7 +80,6 @@ const BakerRow = ({
   onPress,
   baker,
 }: {
-  // eslint-disable-next-line no-unused-vars
   onPress: (arg0: Baker) => void;
   baker: Baker;
 }) => {

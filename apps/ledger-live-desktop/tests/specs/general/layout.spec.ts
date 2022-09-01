@@ -20,6 +20,10 @@ test("Layout", async ({ page }) => {
   await test.step("can open send modal", async () => {
     await layout.openSendModal();
     await sendModal.container.waitFor({ state: "visible" });
+    const sendButtonLoader = sendModal.container
+      .locator("id=send-recipient-continue-button")
+      .locator("data-test-id=loading-spinner");
+    await sendButtonLoader.waitFor({ state: "detached" });
     await expect.soft(sendModal.container).toHaveScreenshot("send-modal.png");
     await sendModal.close();
   });
@@ -39,7 +43,7 @@ test("Layout", async ({ page }) => {
   await test.step("go to discover", async () => {
     await layout.goToDiscover();
     await expect(page).toHaveURL(/.*\/platform.*/);
-    await page.waitForLoadState('domcontentloaded');
+    await page.waitForLoadState("domcontentloaded");
     await expect(page).toHaveScreenshot("discover.png");
   });
 
