@@ -11,7 +11,7 @@ import {
 } from "./logic";
 import { runAppOp } from "./runner";
 import { App } from "@ledgerhq/types-live";
-import useBackgroundInstallSubject from "./reactBIM";
+import useBIM from "./reactBIM";
 
 type UseAppsRunnerResult = [State, (arg0: Action) => void];
 // use for React apps. support dynamic change of the state.
@@ -33,11 +33,7 @@ export const useAppsRunner = (
     });
   }, []);
 
-  const bimActive = useBackgroundInstallSubject(
-    deviceId,
-    state,
-    onDispatchEvent
-  );
+  const bimActive = useBIM(deviceId, state, onDispatchEvent);
 
   useEffect(() => {
     if (appOp && !bimActive) {
