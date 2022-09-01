@@ -11,9 +11,14 @@ import { track } from "../../analytics";
 type Props = {
   readOnly?: boolean;
   currencyTicker?: string;
+  currencyId?: string;
 };
 
-function AccountsNavigationHeader({ readOnly, currencyTicker }: Props) {
+function AccountsNavigationHeader({
+  readOnly,
+  currencyTicker,
+  currencyId,
+}: Props) {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
@@ -75,7 +80,7 @@ function AccountsNavigationHeader({ readOnly, currencyTicker }: Props) {
             </Flex>
           </Touchable>
         ) : (
-          <AddAccount />
+          <AddAccount currencyId={currencyId} />
         )}
       </Flex>
     </Flex>
