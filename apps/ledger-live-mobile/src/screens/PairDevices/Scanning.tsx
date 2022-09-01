@@ -66,10 +66,9 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
           clearTimeout(timeout);
           const device = e.descriptor;
           setDevices(devices => [...devices, device]);
-        }
-        if (e.type === "replace") {
+        } else if (e.type === "flush") {
           clearTimeout(timeout);
-          setDevices(e.descriptors);
+          setDevices([]);
         }
       },
       error: (error: Error) => {

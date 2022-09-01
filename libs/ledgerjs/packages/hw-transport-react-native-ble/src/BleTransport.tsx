@@ -12,6 +12,7 @@ import {
   CantOpenDevice,
   NetworkDown,
 } from "@ledgerhq/errors";
+import type { RawRunnerEvent, RunnerEvent, GlobalBridgeEvent } from "./types";
 import { log } from "@ledgerhq/logs";
 import { type EventSubscription } from "react-native/Libraries/vendor/emitter/EventEmitter";
 import EventEmitter from "./EventEmitter";
@@ -20,12 +21,11 @@ const NativeBle = NativeModules.HwTransportReactNativeBle;
 
 let runningQueue = false;
 let instances: Array<Ble> = [];
-type RunnerEvent = any; // Can't depend on live-common for this, TODO get it from types package
 
 export const isRunningBIMQueue = (): boolean => !!runningQueue;
 
 class Ble extends Transport {
-  static scanObserver: Observer<any>;
+  static scanObserver: Observer<DescriptorEvent<any>>;
   static stateObserver: Observer<{ type: string }>;
   static globalBridgeEventSubscription: EventSubscription;
   static disconnecting = false;
@@ -80,50 +80,58 @@ class Ble extends Transport {
     }
   };
 
-  queue = (observer: Observer<any>, token: string, endpoint: string): void => {
+  queue = (
+    observer: Observer<RunnerEvent>,
+    token: string,
+    endpoint: string
+  ): void => {
     if (!endpoint) throw new Error("No endpoint provided for BIM");
 
     Ble.log("request to launch queue", token);
     this.queueObserver = observer;
     NativeBle.queue(token, endpoint);
     runningQueue = true; // TODO there probably is a cleaner way of doing this.
-    // Regarding ↑ there's a bug in this rn version that breaks the mapping
-    // between a number on the JS side and Swift. To preserve my sanity, we
-    // are using string in the meantime since it's not a big deal.
   };
 
-  private onBridgeEvent = (rawEvent) => {
+  private onBridgeEvent = (rawEvent: RawRunnerEvent) => {
     const { event, type, data } = rawEvent;
-    Ble.log("raw bridge", rawEvent);
-    if (event === "task") {
-      if (this.queueObserver) {
-        if (type === "runComplete") {
-          // we've completed a queue, complete the subject
-          this.queueObserver.complete();
-          runningQueue = false;
-        } else if (type === "runError") {
-          this.queueObserver.error(Ble.remapError(data.message));
-          runningQueue = false;
-        } else {
-          const progress = Math.round((data?.progress || 0) * 100) / 100;
-          this.queueObserver.next({
-            type,
-            appOp: { name: data.name, type: data.type },
-            progress: type === "runProgress" ? progress || 0 : undefined,
-          });
-        }
-      }
+    Ble.log("raw bridge", JSON.stringify(rawEvent));
+    if (!this.queueObserver || event !== "task") return;
+
+    if (type === "runComplete") {
+      // we've completed a queue, complete the subject
+      this.queueObserver.complete();
+      runningQueue = false;
+    } else if (type === "runError") {
+      this.queueObserver.error(Ble.remapError(data.message));
+      runningQueue = false;
+    } else {
+      const progress = Math.round((data?.progress || 0) * 100) / 100;
+      this.queueObserver.next({
+        type,
+        appOp: { name: data.name, type: data.type },
+        progress: type === "runProgress" ? progress || 0 : undefined,
+      });
     }
   };
 
-  static onBridgeGlobalEvent(rawEvent): void {
+  static onBridgeGlobalEvent(rawEvent: GlobalBridgeEvent): void {
     const { event, type, data } = rawEvent;
-    if (event === "new-devices") {
-      Ble.scanObserver?.next({
-        type: "replace",
-        descriptors: data?.devices,
+    // For Device events we need to polyfill the model since it's expected
+    // throughout our codebase. We do this based on the serviceUUID from
+    // the descriptor.
+    if (event === "replace") {
+      // A replace is here mapped to multiple events:
+      //  - flushing the existing devices
+      //  - emit the new ones as `add` events.
+      Ble.scanObserver?.next({ type: "flush" });
+      data.devices.forEach((descriptor) => {
+        Ble.scanObserver?.next({
+          type: "add",
+          descriptor,
+        });
       });
-    } else if (event === "new-device") {
+    } else if (event === "add") {
       Ble.scanObserver?.next({
         type: "add",
         descriptor: data,
@@ -160,7 +168,7 @@ class Ble extends Transport {
     observer: Observer<{ type: string }>
   ): Subscription => {
     Ble.stateObserver = observer;
-    NativeBle.observeBluetooth();
+    NativeBle.observeBluetooth(); // Nb currently we are still relying on the RequiresBluetooth cmp
 
     AppState.addEventListener("change", (state) => {
       NativeBle.onAppStateChange(state === "active");

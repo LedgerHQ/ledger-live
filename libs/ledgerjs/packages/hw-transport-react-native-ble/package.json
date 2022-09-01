@@ -41,7 +41,8 @@
     "watch": "tsc --watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit -p ./tsconfig.json"
   },
   "devDependencies": {
     "react": "*",
