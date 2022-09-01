@@ -110,9 +110,10 @@ export default function NftCollectionsList({ account }: Props) {
         title={"NFT"}
         seeMoreText={t("account.nft.receiveNft")}
         onSeeAllPress={data.length ? navigateToReceive : undefined}
-      ></SectionTitle>
+        containerProps={{ mb: 6 }}
+      />
     ),
-    [data.length, navigateToReceive],
+    [data.length, navigateToReceive, t],
   );
 
   const renderFooter = useCallback(
