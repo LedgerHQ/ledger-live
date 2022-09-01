@@ -110,8 +110,11 @@ function Accounts({ navigation, route }: Props) {
         accountId={item.id}
         onSetAccount={setAccount}
         isLast={index === flattenedAccounts.length - 1}
-        topLink={item.type === "TokenAccount"}
-        bottomLink={flattenedAccounts[index + 1]?.type === "TokenAccount"}
+        topLink={!route.params?.currencyId && item.type === "TokenAccount"}
+        bottomLink={
+          !route.params?.currencyId &&
+          flattenedAccounts[index + 1]?.type === "TokenAccount"
+        }
       />
     ),
     [navigation, flattenedAccounts],

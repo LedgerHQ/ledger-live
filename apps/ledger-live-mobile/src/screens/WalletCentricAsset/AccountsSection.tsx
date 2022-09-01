@@ -9,7 +9,7 @@ import { NavigatorName, ScreenName } from "../../const";
 import { track } from "../../analytics";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
 
-const NB_MAX_ACCOUNTS_TO_DISPLAY: number = 3;
+const NB_MAX_ACCOUNTS_TO_DISPLAY = 3;
 
 type ListProps = {
   accounts: any;
