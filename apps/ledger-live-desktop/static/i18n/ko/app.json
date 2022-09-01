@@ -198,7 +198,7 @@
     "menu" : "메뉴",
     "stars" : "즐겨찾는 계정",
     "accounts" : "계정",
-    "manager" : "관리자",
+    "manager" : "My Ledger",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "lend" : "대출",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "장치에 {{appName}} 앱을 설치하세요",
-      "subtitle" : "관리자로 이동하고 {{appName}} 앱을 설치하여 자산을 스왑하세요.",
-      "cta" : "관리자로 이동"
+      "subtitle" : "Go to My Ledger and install {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "outdatedApp" : {
       "title" : "장치에 {{appName}} 앱을 업데이트 하세요",
-      "subtitle" : "관리자로 이동하고 {{appName}} 앱을 업데이트 하여 자산을 스왑하세요.",
-      "cta" : "관리자로 이동"
+      "subtitle" : "Go to My Ledger and update {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -959,7 +959,7 @@
       "terms" : {
         "title" : "암호화폐 대출",
         "subtitle" : "컴파운드 프로토콜에서 자산 대출",
-        "description" : "컴파운드 프로토콜로 이더리움 네트워크에서 자산을 대출해 주거나 받을 수 있습니다. Ledger 계정에서 바로 자산을 대출해 주고 이자를 받을 수 있습니다.",
+        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
         "switchLabel" : "<1></1><0>이용 약관</0><1>을 읽고 동의합니다.</1>"
       },
       "steps" : {
@@ -1202,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "장치에 앱을 설치하세요",
-      "desc" : "관리자로 이동해 보유한 장치에 앱을 설치하세요. 장치에 앱이 설치되면 계정을 추가할 수 있습니다.",
+      "desc" : "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
       "buttons" : {
-        "installApp" : "관리자로 이동",
+        "installApp" : "Go to My Ledger",
         "help" : "도움말"
       }
     },
@@ -1213,7 +1213,7 @@
       "desc" : "계정을 추가해서 암호화폐를 관리하세요. 장치에 암호화 자산 앱이 설치되어 있어야 합니다",
       "buttons" : {
         "addAccount" : "계정 추가",
-        "installApp" : "관리자로 이동하여 앱 설치",
+        "installApp" : "Go to My Ledger to install apps",
         "help" : "도움말"
       }
     }
@@ -1294,7 +1294,7 @@
       "noSearchResults" : "죄송합니다. 검색 결과를 찾지 못했습니다.",
       "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
       "retrySearchParams" : "다른 매개변수로 검색을 다시 시도해 주세요.",
-      "trackFavAssets" : "즐겨찾기를 찾아보세요",
+      "trackFavAssets" : "선호 항목 트래킹",
       "clickOnStarIcon" : "자산 옆에 있는 별 아이콘을 클릭하면 자산이 자동으로 즐겨찾기에 추가됩니다.",
       "browseAssets" : "자산 찾기"
     }
@@ -1536,12 +1536,12 @@
     "quitApp" : "장치에서 앱을 중단하세요",
     "appNotInstalledTitle" : "필수 앱 없음",
     "appNotInstalledTitle_plural" : "필수 앱 없음",
-    "appNotInstalled" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 관리자로 이동하여 장치에 앱을 설치하세요",
-    "appNotInstalled_plural" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 관리자로 이동해 장치에 앱을 설치하세요",
-    "openManager" : "관리자 열기",
+    "appNotInstalled" : "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
+    "appNotInstalled_plural" : "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "openManager" : "Open My Ledger",
     "openOnboarding" : "장치 설정",
     "outdated" : "앱 버전이 오래됨",
-    "outdatedDesc" : "장치의 {{appName}} 앱에 중요한 업데이트가 있습니다. 관리자로 이동하여 업데이트하세요.",
+    "outdatedDesc" : "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
     "installApp" : "{{appName}} 앱 설치",
     "installAppDescription" : "설치가 완료될 때까지 기다려 주세요",
     "listApps" : "앱 의존성 확인",
@@ -1584,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "귀하의 장치에서 앱이 실행되고 있는 것 같습니다",
-      "subtitle" : "관리자를 다시 열면 장치에서 앱이 종료됩니다",
-      "ctaReopen" : "관리자 다시 열기",
+      "subtitle" : "Reopening My Ledger will quit the app on your device",
+      "ctaReopen" : "Reopen My Ledger",
       "ctaPortfolio" : "포트폴리오로 돌아가기"
     },
     "deviceStorage" : {
@@ -1628,7 +1628,7 @@
         "title_plural" : "업데이트 이용 가능",
         "progressTitle" : "{{number}} 앱 업데이트",
         "progressTitle_plural" : "{{number}} 앱 업데이트",
-        "progressWarning" : "업데이트 중에 관리자를 중단하지 마세요.",
+        "progressWarning" : "Do not quit My Ledger during update.",
         "progress" : "모두 업데이트 중..."
       },
       "item" : {
@@ -1692,7 +1692,7 @@
       "updateBtn" : "펌웨어를 업데이트하세요",
       "banner" : {
         "warning" : "펌웨어 {{latestFirmware}}으로 업데이트하실 수 있습니다",
-        "cta" : "관리자로 이동",
+        "cta" : "Go to My Ledger",
         "old" : {
           "warning" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
           "cta" : "지원 부서 연락"
@@ -1748,7 +1748,7 @@
         "boot" : "{{option}}(이)가 표시될 때까지 길게 누르세요",
         "recoveryMode" : "{{mode}} 모드를 탭하세요. 대시보드가 나타날 때까지 기다려 주세요.",
         "third" : "3. 모든 앱 제거",
-        "openLive" : "Leddger Live에서 관리자 열기",
+        "openLive" : "Open My Ledger in Ledger Live.",
         "uninstall" : "회색 휴지통 아이콘을 설치하여 현재 {{deviceName}}에 설치된 모든 앱을 표시하세요. 그러면 펌웨어 설치자를 위한 공간이 생깁니다.",
         "disclaimer" : "참고: 사용자의 자금은 이 거래의 영향을 받지 않으며, 블록체인의 사용자 암호화폐에 대한 접근 권한을 주는 개인 키는 복구 시트에 안전하게 있습니다."
       }
@@ -1984,6 +1984,19 @@
     },
     "switchButton" : "{{language}}로 전환",
     "no" : "다음을 선호하지 않습니다:"
+  },
+  "deviceLocalization" : {
+    "language" : "언어",
+    "deviceLanguage" : "장치 언어",
+    "changeLanguage" : "언어 변경",
+    "allowLanguageInstallation" : "언어 설치 허용",
+    "languageInstalled" : "언어가 성공적으로 변경되었습니다",
+    "installingLanguage" : "언어 설치 중",
+    "languages" : {
+      "english" : "영어",
+      "french" : "프랑스어",
+      "spanish" : "스페인어"
+    }
   },
   "distribution" : {
     "asset" : "자산",
@@ -2861,7 +2874,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "위임을 성공적으로 활성화했습니다."
+                "title" : "You have successfully activated your delegation."
               }
             }
           }
@@ -2873,7 +2886,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "위임을 성공적으로 재활성화했습니다."
+                "title" : "You have successfully reactivated your delegation."
               }
             }
           }
@@ -3046,6 +3059,11 @@
       "catalogServerDesc" : "다중 플랫폼 앱 소스 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
+      "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
+      "featureFlagsEdit" : "편집",
+      "featureFlagsRestore" : "복구",
+      "featureFlagsOverride" : "재정의",
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
@@ -3110,7 +3128,7 @@
         },
         "managerDevMode" : {
           "title" : "개발자 모드",
-          "description" : "관리자에 개발자 및 테스트넷 앱을 보여줍니다."
+          "description" : "Show developer and testnet apps in My Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "확장 계정 검색",
@@ -3125,8 +3143,8 @@
           "description" : "모든 계정에 대한 맞춤형 갭 한도입니다. 기본값(20) 이상으로 이 값을 올리면 더 많은 미사용 공용 주소에서 코인을 스캔합니다. 숙련된 사용자만 이용하세요. 계정 복원 시 호환성 문제가 발생할 수 있습니다."
         },
         "forceProvider" : {
-          "title" : "관리자 공급자",
-          "description" : "관리자에서 앱 공급자를 변경하면 Ledger 기기에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
+          "title" : "My Ledger provider",
+          "description" : "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
         },
         "testAnimations" : {
           "title" : "테스트 로티 애니메이션",
@@ -3978,7 +3996,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
-      "description" : "관리자에서 앱을 다시 설치해 보세요"
+      "description" : "Try reinstalling the app from My Ledger"
     },
     "countervaluesUnavailable" : {
       "title" : "현재 이 자산에 대한 등가를 제공할 수 없습니다"
@@ -4141,7 +4159,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "펌웨어나 앱 업데이트가 필요합니다",
-      "description" : "관리자를 사용하여 모든 앱을 삭제하고 펌웨어 업데이트가 가능한지 확인한 뒤 재설치하세요"
+      "description" : "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Nano 펌웨어 업데이트",
@@ -4154,6 +4172,14 @@
     "HardResetFail" : {
       "title" : "죄송하지만 리셋할 수 없습니다",
       "description" : "문제가 지속되면 다시 시도하거나 Ledger 지원 부서에 연락하세요."
+    },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "장치에서 언어 설치가 거부되었습니다",
+      "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
+    },
+    "LanguageNotFound" : {
+      "title" : "언어를 찾을 수 없습니다",
+      "description" : "설치하려는 언어를 찾을 수 없습니다. 다른 언어를 설치해 보세요."
     },
     "LatestMCUInstalledError" : {
       "title" : "죄송하지만 업데이트가 필요한 항목이 없습니다",
@@ -4198,20 +4224,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "진행 중인 앱 설치를 완료할까요?",
-        "description" : "관리자를 중단하면 앱 설치가 종료됩니다. 설치를 완료하여 대기 중인 앱을 설치하세요.",
+        "description" : "Quitting My Ledger will terminate the app installation. Please finish the installation to install the apps in the queue.",
         "stay" : "설치 완료"
       },
       "uninstall" : {
         "title" : "진행 중인 앱 삭제를 완료할까요?",
-        "description" : "관리자를 중단하면 진행 중인 앱 삭제가 종료됩니다.",
+        "description" : "Quitting My Ledger will terminate the app uninstallations in progress.",
         "stay" : "삭제 완료"
       },
       "update" : {
         "title" : "진행 중인 앱 업데이트를 완료할까요?",
-        "description" : "관리자를 중단하면 진행 중인 앱 업데이트가 종료됩니다.",
+        "description" : "Quitting My Ledger will terminate the app updates in progress.",
         "stay" : "업데이트 완료"
       },
-      "quit" : "관리자 종료"
+      "quit" : "Quit My Ledger"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "죄송하지만 반드시 필요한 앱입니다",
@@ -4219,6 +4245,10 @@
     },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
+      "description" : "인터넷 연결을 확인하세요."
+    },
+    "NetworkError" : {
+      "title" : "동기화 중 오류가 발생했습니다",
       "description" : "인터넷 연결을 확인하세요."
     },
     "NoAddressesFound" : {
@@ -4307,7 +4337,7 @@
       "description" : "로고가 나타나면 버튼을 누르지 말고 장치를 재시작하세요. 문제가 지속되면 Ledger 고객 지원에 문의해주세요."
     },
     "UserRefusedAllowManager" : {
-      "title" : "장치에서 관리자가 거부됨"
+      "title" : "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "장치의 업데이트가 취소되었습니다",
@@ -4327,7 +4357,7 @@
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트가 필요합니다",
-      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "대시보드로 돌아가기",
@@ -4347,7 +4377,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "앱 업데이트가 필요합니다",
-      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "InvalidAddress" : {
       "title" : "유효한 {{currencyName}} 주소가 아닙니다"
@@ -4392,7 +4422,7 @@
       "list" : {
         "1" : "아무 버튼도 누르지 않은 채로 USB 케이블을 해제한 뒤 다시 연결하세요.",
         "2" : "양쪽 버튼을 동시에 3회 눌러 대시보드를 표시하세요.",
-        "3" : "관리자를 열고 '펌웨어 업데이트'를 클릭하세요."
+        "3" : "Open My Ledger and click Update firmware."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
