@@ -201,8 +201,9 @@ export const setSensitiveAnalytics = (enabled: boolean) => ({
   type: "SET_SENSITIVE_ANALYTICS",
   enabled,
 });
-export const setFirstConnectionHasDevice = () => ({
+export const setFirstConnectionHasDevice = (payload?: boolean) => ({
   type: "SET_FIRST_CONNECTION_HAS_DEVICE",
+  payload,
 });
 export const setNotifications = (payload: any) => ({
   type: "SET_NOTIFICATIONS",

@@ -31,7 +31,7 @@ import globalSyncRefreshControl from "../../../components/globalSyncRefreshContr
 
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
 import Header from "../Header";
-import { screen, track } from "../../../analytics";
+import { track, TrackScreen } from "../../../analytics";
 import { NavigatorName } from "../../../const";
 import ReadOnlyAssets from "./ReadOnlyAssets";
 import { useProviders } from "../../Swap/SwapEntry";
@@ -235,10 +235,6 @@ function PortfolioScreen({ navigation }: Props) {
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
-  useFocusEffect(() => {
-    screen("ReadOnly", "Wallet", { source });
-  });
-
   useFocusEffect(
     useCallback(() => {
       setScreen("Wallet");
@@ -254,6 +250,7 @@ function PortfolioScreen({ navigation }: Props) {
       <TabBarSafeAreaView>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
+        <TrackScreen category="Wallet" source={source} />
         <Box bg={"background.main"}>
           <Header
             counterValueCurrency={counterValueCurrency}

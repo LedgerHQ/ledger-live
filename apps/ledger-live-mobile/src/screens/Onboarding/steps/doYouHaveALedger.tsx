@@ -8,7 +8,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
-import { track, screen, updateIdentify } from "../../../analytics";
+import { TrackScreen, updateIdentify } from "../../../analytics";
 import { setFirstConnectionHasDevice } from "../../../actions/settings";
 // eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
@@ -30,13 +30,6 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
 
   const nextHaveALedger = useCallback(() => {
     identifyUser(true);
-
-    track("button_clicked", {
-      First_connection_has_device: true,
-      button: "Yes",
-      screen: "Has Device?",
-    });
-
     navigation.navigate({
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {
@@ -47,13 +40,6 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
 
   const nextDontHaveALedger = useCallback(() => {
     identifyUser(false);
-
-    track("button_clicked", {
-      First_connection_has_device: false,
-      button: "No",
-      screen: "Has Device?",
-    });
-
     navigation.navigate({
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {
@@ -74,12 +60,9 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     }, [setSource, setScreen]),
   );
 
-  useFocusEffect(() => {
-    screen("Onboarding", "Has Device?");
-  });
-
   return (
     <SafeAreaView flex={1}>
+      <TrackScreen category="Onboarding" name="Has Device?" />
       <Flex flex={1} bg="background.main">
         <StyledStatusBar barStyle="light-content" />
         <Box flex={1} justifyContent="center" alignItems="center" mt={8} mx={7}>
@@ -99,7 +82,11 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
           <Button
             type="main"
             size="large"
-            event="Onboarding - Start"
+            event="button_clicked"
+            eventProperties={{
+              button: "Yes",
+              screen: ScreenName.OnboardingDoYouHaveALedgerDevice,
+            }}
             onPress={nextHaveALedger}
             mb={6}
           >
@@ -108,7 +95,11 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
           <Button
             type="main"
             size="large"
-            event="Onboarding - Start"
+            event="button_clicked"
+            eventProperties={{
+              button: "No",
+              screen: ScreenName.OnboardingDoYouHaveALedgerDevice,
+            }}
             onPress={nextDontHaveALedger}
             mb={6}
           >
