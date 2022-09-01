@@ -10,6 +10,8 @@ interface AccountBannerState {
   ledgerValidator: CosmosValidatorItem | undefined;
 }
 
+const minAmount = 50000;
+
 export async function getAccountBannerState(
   account: CosmosAccount
 ): Promise<AccountBannerState> {
@@ -66,7 +68,8 @@ export async function getAccountBannerState(
         parentAccount: undefined,
         transaction: undefined,
       });
-      if (maxSpendable.gt(0)) {
+
+      if (maxSpendable.toNumber() >= minAmount) {
         // Delegate remaining ATOM (not staked)
         display = true;
       }

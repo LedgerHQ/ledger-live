@@ -108,7 +108,6 @@ describe("cosmos/banner", () => {
         estimateMaxSpendable: () => Promise.resolve(new BigNumber(0)),
       } as any);
       const result = await getAccountBannerState(account);
-      expect(1 + 1).toBe(2);
       expect(result).toStrictEqual({
         display: false,
         redelegate: false,
