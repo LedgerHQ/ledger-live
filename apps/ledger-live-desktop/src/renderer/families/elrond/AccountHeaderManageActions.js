@@ -22,9 +22,10 @@ const AccountHeaderActions = (props: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const earnRewardEnabled = useMemo(() => BigNumber(denominate({ input: account.balance })).gt(1), [
-    account.balance,
-  ]);
+  const earnRewardEnabled = useMemo(
+    () => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
+    [account.spendableBalance],
+  );
 
   const validators = useMemo(() => randomizeProviders(account.elrondResources.providers), [
     account.elrondResources.providers,

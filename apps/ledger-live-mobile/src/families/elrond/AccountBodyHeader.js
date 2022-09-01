@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import axios from "axios";
 import { Account } from "@ledgerhq/live-common/types/index";
 
 import Delegations from "./components/Delegations";
@@ -10,7 +9,6 @@ import Unbondings from "./components/Unbondings";
 import Rewards from "./components/Rewards";
 import Drawer from "./components/Drawer";
 
-import { constants } from "./constants";
 import { denominate } from "./helpers";
 
 const styles = StyleSheet.create({

@@ -144,11 +144,9 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
 
       ret = (
         <Fragment>
-          <B />
-
           <OpDetailsSection>
             <OpDetailsTitle>
-              <Trans i18nKey={"operationDetails.extra.undelegatedFrom"} />
+              <Trans i18nKey="operationDetails.extra.undelegatedFrom" />
             </OpDetailsTitle>
 
             <OpDetailsData>
@@ -164,7 +162,7 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
 
           <OpDetailsSection>
             <OpDetailsTitle>
-              <Trans i18nKey={"operationDetails.extra.undelegatedAmount"} />
+              <Trans i18nKey="operationDetails.extra.undelegatedAmount" />
             </OpDetailsTitle>
 
             <OpDetailsData>{formattedAmount}</OpDetailsData>
@@ -183,11 +181,9 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
 
       ret = (
         <Fragment>
-          <B />
-
           <OpDetailsSection>
             <OpDetailsTitle>
-              <Trans i18nKey={"operationDetails.extra.withdrawnFrom"} />
+              <Trans i18nKey="operationDetails.extra.withdrawnFrom" />
             </OpDetailsTitle>
 
             <OpDetailsData>
@@ -203,7 +199,7 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
 
           <OpDetailsSection>
             <OpDetailsTitle>
-              <Trans i18nKey={"operationDetails.extra.withdrawnAmount"} />
+              <Trans i18nKey="operationDetails.extra.withdrawnAmount" />
             </OpDetailsTitle>
 
             <OpDetailsData>{formattedAmount}</OpDetailsData>
@@ -221,11 +217,9 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
 
       ret = (
         <Fragment>
-          <B />
-
           <OpDetailsSection>
             <OpDetailsTitle>
-              <Trans i18nKey={"operationDetails.extra.rewardFrom"} />
+              <Trans i18nKey="operationDetails.extra.rewardFrom" />
             </OpDetailsTitle>
 
             <OpDetailsData>
@@ -251,7 +245,7 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
       {extra.memo && (
         <OpDetailsSection>
           <OpDetailsTitle>
-            <Trans i18nKey={"operationDetails.extra.memo"} />
+            <Trans i18nKey="operationDetails.extra.memo" />
           </OpDetailsTitle>
 
           <OpDetailsData>
@@ -281,9 +275,9 @@ const UndelegateAmountCell = ({ operation, currency, unit }: Props) => {
         <FormattedVal
           val={amount}
           unit={unit}
-          showCode
+          showCode={true}
           fontSize={4}
-          color={"palette.text.shade80"}
+          color="palette.text.shade80"
         />
 
         <CounterValue

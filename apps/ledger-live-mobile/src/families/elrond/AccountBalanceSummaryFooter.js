@@ -7,14 +7,11 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 import { BigNumber } from "bignumber.js";
-import axios from "axios";
 
 import { Account } from "@ledgerhq/live-common/types/index";
 import InfoModal from "../../modals/Info";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
-
-import { constants } from "./constants";
 
 interface Props {
   account: Account;

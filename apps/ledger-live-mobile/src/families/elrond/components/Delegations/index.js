@@ -39,12 +39,13 @@ const Delegations = (props: any) => {
   const { t } = useTranslation();
 
   const navigation = useNavigation();
-  const currency = useMemo(() => getAccountCurrency(getMainAccount(account)), [
-    account,
-  ]);
+  const currency = useMemo(
+    () => getAccountCurrency(getMainAccount(account)),
+    [account],
+  );
   const delegationEnabled = useMemo(
-    () => BigNumber(denominate({ input: account.balance })).gt(1),
-    [account.balance],
+    () => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
+    [account.spendableBalance],
   );
 
   const onDelegate = useCallback(

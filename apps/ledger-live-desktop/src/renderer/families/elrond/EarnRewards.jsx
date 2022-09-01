@@ -55,9 +55,10 @@ const Delegation = (props: Props) => {
   ]);
 
   const dispatch = useDispatch();
-  const delegationEnabled = useMemo(() => BigNumber(denominate({ input: account.balance })).gt(1), [
-    account.balance,
-  ]);
+  const delegationEnabled = useMemo(
+    () => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
+    [account.spendableBalance],
+  );
 
   const findValidator = useCallback(
     (validator: string) => validators.find(item => item.contract === validator),
