@@ -24,15 +24,11 @@ interface Props {
 
 export function To({ swapTx, provider, exchangeRate }: Props) {
   const { t } = useTranslation();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
 
-  const fromCurrencyId = useMemo(
-    () =>
-      swapTx.swap.from.account
-        ? getAccountCurrency(swapTx.swap.from.account).id
-        : null,
-    [swapTx.swap.from],
-  );
+  const fromCurrencyId = swapTx.swap.from.account
+    ? getAccountCurrency(swapTx.swap.from.account).id
+    : undefined;
 
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({ allCurrencies });
@@ -44,12 +40,15 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
   );
 
   const onPress = useCallback(() => {
+    // @ts-expect-error navigation type is only partially declared
     navigation.navigate("SelectCurrency", { currencies, provider });
   }, [navigation, currencies, provider]);
 
   return (
     <Flex>
-      <Text variant="small" marginBottom={2}>{t("transfer.swap2.form.to")}</Text>
+      <Text variant="small" marginBottom={2}>
+        {t("transfer.swap2.form.to")}
+      </Text>
       <Flex flexDirection="row" justifyContent="space-between" width="100%">
         <Flex flex={1} justifyContent="center">
           <Selector

@@ -53,8 +53,8 @@ import { ErrorBanner } from "./ErrorBanner";
 
 export const useProviders = () => {
   const dispatch = useDispatch();
-  const { providers, error: providersError } = useSwapProviders();
   const storedProviders = useSelector(providersSelector);
+  const { providers, error: providersError } = useSwapProviders();
 
   useEffect(() => {
     if (providers) dispatch(updateProvidersAction(providers));
@@ -67,8 +67,7 @@ export const useProviders = () => {
   }, [providersError]);
 
   return {
-    storedProviders,
-    providers,
+    providers: storedProviders,
     providersError,
   };
 };
@@ -86,7 +85,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const accounts = useSelector(shallowAccountsSelector);
-  const { storedProviders, providers, providersError } = useProviders();
+  const { providers, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
   const setExchangeRate = useCallback(
     rate => {
@@ -441,7 +440,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     );
   }
 
-  if (storedProviders?.length === 0 || providersError) {
+  if (providers?.length === 0 || providersError) {
     return <NotAvailable />;
   }
 

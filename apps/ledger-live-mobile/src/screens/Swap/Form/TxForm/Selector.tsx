@@ -36,7 +36,12 @@ export function Selector({
 
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
-      <Flex flexDirection="row" alignItems="center" justifyContent="space-between" width="100%">
+      <Flex
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
+        width="100%"
+      >
         <Flex flexDirection="row" alignItems="center" flex={1}>
           <Flex alignItems="center" justifyContent="center" marginRight={2}>
             {Icon}

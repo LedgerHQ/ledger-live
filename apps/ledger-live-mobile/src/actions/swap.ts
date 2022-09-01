@@ -1,15 +1,13 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { flattenAccounts } from "@ledgerhq/live-common/account/helpers";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import memoize from "lodash/memoize";
 import { createAction } from "redux-actions";
-import type { OutputSelector } from "reselect";
 import { createSelector } from "reselect";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Pair } from "@ledgerhq/live-common/exchange/swap/types";
 import { UPDATE_PROVIDERS_TYPE } from "../reducers/swap";
 import type { State } from "../reducers";
-import type { SwapStateType } from "../reducers/swap";
 
 /* ACTIONS */
 export const updateProvidersAction = createAction<
@@ -26,28 +24,39 @@ export const updateRateAction = createAction<ExchangeRate | null | undefined>(
 export const resetSwapAction = createAction("SWAP/RESET_STATE");
 
 /* SELECTORS */
-export const providersSelector: OutputSelector<
-  State,
-  void,
-  SwapStateType["providers"]
-> = createSelector(
-  state => state.swap,
-  swap => swap.providers,
+export const providersSelector = (state: State) => state.swap.providers;
+const pairsSelector = (state: State) => state.swap.pairs;
+export const transactionSelector = (state: State) => state.swap.transaction;
+export const rateSelector = (state: State) => state.swap.exchangeRate;
+export const rateExpirationSelector = (state: State) =>
+  state.swap.exchangeRateExpiration;
+
+export const toSelector = createSelector(
+  pairsSelector,
+  pairs => (fromId?: string) => {
+    if (!fromId || !pairs) return [];
+    const filteredAssets = filterAvailableToAssets(pairs, fromId);
+    const uniqueAssetList = [...new Set(filteredAssets)];
+    return uniqueAssetList;
+  },
 );
 
-const filterAvailableToAssets = (pairs: Pair[], fromId?: string) => {
+function filterAvailableToAssets(
+  pairs: Pair[],
+  fromId?: string,
+): string[] | null {
   if (pairs === null || pairs === undefined) return null;
 
   if (fromId)
-    return pairs.reduce(
+    return pairs.reduce<string[]>(
       (acc, pair) => (pair.from === fromId ? [...acc, pair.to] : acc),
       [],
     );
 
-  return pairs.reduce((acc: any, pair: any) => [...acc, pair.to], []);
-};
+  return pairs.reduce<string[]>((acc, pair) => [...acc, pair.to], []);
+}
 
-const filterAvailableFromAssets = (pairs: any, allAccounts: any) => {
+function filterAvailableFromAssets(pairs: Pair[], allAccounts: AccountLike[]) {
   if (pairs === null || pairs === undefined) return [];
 
   return flattenAccounts(allAccounts).map(account => {
@@ -55,22 +64,14 @@ const filterAvailableFromAssets = (pairs: any, allAccounts: any) => {
     const isAccountAvailable = !!pairs.find(pair => pair.from === id);
     return { ...account, disabled: !isAccountAvailable };
   });
-};
-
-export const toSelector: OutputSelector<State, void, any> = createSelector(
-  state => state.swap.pairs,
-  pairs =>
-    memoize((fromId?: "string") => {
-      const filteredAssets = filterAvailableToAssets(pairs, fromId);
-      const uniqueAssetList = [...new Set(filteredAssets)];
-      return uniqueAssetList;
-    }),
-);
+}
 
 // Put disabled accounts and subaccounts at the bottom of the list while preserving the parent/children position.
-export function sortAccountsByStatus(accounts: Account[]) {
-  let activeAccounts = [];
-  let disabledAccounts = [];
+export function sortAccountsByStatus(
+  accounts: (Account & { disabled: boolean })[],
+) {
+  let activeAccounts: (Account & { disabled: boolean })[] = [];
+  let disabledAccounts: (Account & { disabled: boolean })[] = [];
   let subAccounts = [];
   let disabledSubAccounts = [];
 
@@ -111,38 +112,8 @@ export function sortAccountsByStatus(accounts: Account[]) {
   return [...activeAccounts, ...disabledAccounts];
 }
 
-export const fromSelector: OutputSelector<State, void, any> = createSelector(
-  state => state.swap.pairs,
-  pairs =>
-    memoize(
-      (allAccounts: Array<Account>): Array<Account | TokenAccount> =>
-        sortAccountsByStatus(filterAvailableFromAssets(pairs, allAccounts)),
-    ),
-);
-
-export const transactionSelector: OutputSelector<
-  State,
-  void,
-  SwapStateType["transaction"]
-> = createSelector(
-  state => state.swap,
-  swap => swap.transaction,
-);
-
-export const rateSelector: OutputSelector<
-  State,
-  void,
-  SwapStateType["exchangeRate"]
-> = createSelector(
-  state => state.swap,
-  swap => swap.exchangeRate,
-);
-
-export const rateExpirationSelector: OutputSelector<
-  State,
-  void,
-  SwapStateType["exchangeRateExpiration"]
-> = createSelector(
-  state => state.swap,
-  swap => swap.exchangeRateExpiration,
+export const fromSelector = createSelector(pairsSelector, pairs =>
+  memoize((allAccounts: Account[]) =>
+    sortAccountsByStatus(filterAvailableFromAssets(pairs, allAccounts)),
+  ),
 );
