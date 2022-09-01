@@ -5,11 +5,13 @@ import accountModel from "../logic/accountModel";
 
 export const importStore = (state: any) => ({
   type: "ACCOUNTS_IMPORT",
-  state: {
-    active:
-      state && Array.isArray(state.active)
-        ? implicitMigration(state.active.map(accountModel.decode))
-        : [],
+  payload: {
+    state: {
+      active:
+        state && Array.isArray(state.active)
+          ? implicitMigration(state.active.map(accountModel.decode))
+          : [],
+    },
   },
 });
 export const reorderAccounts = (comparator: any) => (dispatch: any) =>
@@ -29,12 +31,14 @@ export const replaceAccounts = (payload: {
   renamings: Record<string, string>;
 }) => ({
   type: "ACCOUNTS_ADD",
-  ...payload,
+  payload,
 });
 export const setAccounts = (accounts: Account[]) => ({
   type: "ACCOUNTS_IMPORT",
-  state: {
-    active: accounts,
+  payload: {
+    state: {
+      active: accounts,
+    },
   },
 });
 export type UpdateAccountWithUpdater = (
