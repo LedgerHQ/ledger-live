@@ -49,8 +49,9 @@ const LanguageSelect = ({ productName }: Props) => {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
 
-  const [currentDisplayedDrawer, setCurrentDisplayedDrawer] =
-    useState<UiDrawerStatus>("none");
+  const [currentDisplayedDrawer, setCurrentDisplayedDrawer] = useState<
+    UiDrawerStatus
+  >("none");
 
   // Will be computed depending on the states. Updating nextDrawerToDisplay
   // triggers the current displayed drawer to close
@@ -58,8 +59,9 @@ const LanguageSelect = ({ productName }: Props) => {
 
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
 
-  const [languageSelectStatus, setLanguageSelectStatus] =
-    useState<LanguageSelectStatus>("unrequested");
+  const [languageSelectStatus, setLanguageSelectStatus] = useState<
+    LanguageSelectStatus
+  >("unrequested");
 
   // Handles a newly selected language to redux-dispatch
   useEffect(() => {

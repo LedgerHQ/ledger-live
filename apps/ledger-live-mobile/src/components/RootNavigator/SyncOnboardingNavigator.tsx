@@ -1,15 +1,16 @@
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
-
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { ScreenName } from "../../const";
 import { SyncOnboarding } from "../../screens/SyncOnboarding";
+import { DeviceModelSelection } from "../../screens/SyncOnboarding/DeviceModelSelection";
 import CompletionScreen from "../../screens/SyncOnboarding/CompletionScreen";
 import { SyncOnboardingCompanionParams } from "../../screens/SyncOnboarding/types";
 
 export type SyncOnboardingStackParamList = {
   SyncOnboardingCompanion: SyncOnboardingCompanionParams;
+  DeviceModelSelection: undefined;
   SyncOnboardingCompletion: undefined;
 };
 
@@ -29,6 +30,10 @@ export const SyncOnboardingNavigator = () => {
         headerShown: false,
       }}
     >
+      <Stack.Screen
+        name={ScreenName.DeviceModelSelection as "DeviceModelSelection"}
+        component={DeviceModelSelection}
+      />
       <Stack.Screen
         name={ScreenName.SyncOnboardingCompanion as "SyncOnboardingCompanion"}
         component={SyncOnboarding}

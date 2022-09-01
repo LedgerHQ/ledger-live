@@ -105,14 +105,17 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     | GenuineCheckUiDrawerStatus
     | FirmwareUpdateUiDrawerStatus = "none";
 
-  const [currentSoftwareChecksStep, setCurrentSoftwareChecksStep] =
-    useState<CurrentSoftwareChecksStep>("none");
+  const [currentSoftwareChecksStep, setCurrentSoftwareChecksStep] = useState<
+    CurrentSoftwareChecksStep
+  >("none");
 
-  const [genuineCheckStatus, setGenuineCheckStatus] =
-    useState<GenuineCheckStatus>("unchecked");
+  const [genuineCheckStatus, setGenuineCheckStatus] = useState<
+    GenuineCheckStatus
+  >("unchecked");
 
-  const [firmwareUpdateStatus, setFirmwareUpdateStatus] =
-    useState<FirmwareUpdateStatus>("unchecked");
+  const [firmwareUpdateStatus, setFirmwareUpdateStatus] = useState<
+    FirmwareUpdateStatus
+  >("unchecked");
 
   // Not a DeviceAction as we're only interested in the permission requested, granted and result.
   // No need the full DeviceAction with its retry strategy etc.
