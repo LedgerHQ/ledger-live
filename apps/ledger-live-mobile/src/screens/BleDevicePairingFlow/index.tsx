@@ -117,6 +117,9 @@ export const BleDevicePairingFlow = ({
         );
       }
 
+      // Before navigating, to never come back a the successful pairing but to the scanning part
+      setDeviceToPair(null);
+
       if (navigationType === "replace") {
         navigation.replace(navigateInput.name, { ...navigateInput.params });
       } else {
