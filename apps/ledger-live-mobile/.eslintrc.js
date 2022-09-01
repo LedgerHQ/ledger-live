@@ -66,7 +66,6 @@ module.exports = {
     "react/no-multi-comp": 0,
     "react/no-unused-state": 0,
     "react/no-array-index-key": 0,
-    "react/prop-types": 0,
     "no-await-in-loop": 0,
     "class-methods-use-this": 0,
     "react/no-unused-prop-types": 0,
@@ -76,7 +75,6 @@ module.exports = {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "react/jsx-no-bind": 0,
-    "jsx-a11y/anchor-is-valid": 0,
     // for importing detox
     "import/no-extraneous-dependencies": [
       "error",
