@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { withTranslation, Trans } from "react-i18next";
 import LText from "../../../components/LText";
 import KeyboardView from "../../../components/KeyboardView";

@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useState, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Keyboard, StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import Button from "../../components/Button";

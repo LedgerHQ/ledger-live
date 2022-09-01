@@ -84,7 +84,7 @@ import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
 import PushNotificationsModal from "./screens/PushNotificationsModal";
 import RatingsModal from "./screens/RatingsModal";
-import { lightTheme, darkTheme } from "./colors";
+import { lightTheme, darkTheme, Theme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 // eslint-disable-next-line import/no-unresolved
@@ -98,7 +98,9 @@ import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
 
-const themes = {
+const themes: {
+  [key: string]: Theme;
+} = {
   light: lightTheme,
   dark: darkTheme,
 };

@@ -3,6 +3,9 @@ import identity from "lodash/identity";
 import throttleFn from "lodash/throttle";
 import { useSelector } from "react-redux";
 import type { State } from "../reducers";
+import { Maybe } from "../types/helpers";
+
+type MaybeState = Maybe<State>;
 
 type Props<Data, Stats> = {
   throttle: number;
@@ -16,7 +19,7 @@ export default function useDBSaveEffect<D, S>({
   save,
   getChangesStats,
 }: Props<D, S>) {
-  const state: State = useSelector(identity);
+  const state: MaybeState = useSelector(identity);
   const lastSavedState = useRef(state);
   // we keep an updated version of current props in "latestProps" ref
   const latestProps = useRef({
@@ -31,13 +34,13 @@ export default function useDBSaveEffect<D, S>({
       // nb it does not prevent race condition here. save must be idempotent and atomic
       throttleFn(async () => {
         const { lense, save, state, getChangesStats } = latestProps.current;
-        const changedStats = getChangesStats(lastSavedState.current, state); // we compare last saved with latest state
+        if (lastSavedState?.current) {
+          const changedStats = getChangesStats(lastSavedState.current, state); // we compare last saved with latest state
+          if (!changedStats) return; // if it's falsy, it means there is no changes
 
-        if (!changedStats) return; // if it's falsy, it means there is no changes
-
-        await save(lense(state), changedStats); // we save it for real
-
-        lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
+          await save(lense(state), changedStats); // we save it for real
+          lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
+        }
       }, throttle),
     [throttle],
   );
@@ -53,7 +56,7 @@ export default function useDBSaveEffect<D, S>({
     checkForSave();
   }, [lense, save, state, checkForSave, getChangesStats]);
 }
-const flushes = [];
+const flushes: Array<() => void> = [];
 export const flushAll = () => Promise.all(flushes.map(flush => flush()));
 
 function useFlushMechanism({
