@@ -9,7 +9,7 @@ import BIM from "../api/BIM";
 
 const getBaseApiUrl = () => getEnv("API_BIM");
 
-const useBackgroundInstallSubject = (
+const useBIM = (
   deviceId: string | undefined,
   state: State,
   onEventDispatch: (event) => void
@@ -121,4 +121,4 @@ const useBackgroundInstallSubject = (
   return enabled;
 };
 
-export default useBackgroundInstallSubject;
+export default useBIM;
