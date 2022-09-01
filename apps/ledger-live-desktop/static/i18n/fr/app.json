@@ -385,12 +385,12 @@
     "missingApp" : {
       "title" : "Merci d’installer l’application {{appName}} sur votre appareil.",
       "subtitle" : "Accédez au Gestionnaire et installez l’application {{appName}} pour échanger vos actifs.",
-      "cta" : "Aller dans le Gestionnaire"
+      "cta" : "Accéder au Gestionnaire"
     },
     "outdatedApp" : {
       "title" : "Merci de mettre à jour l’application {{appName}} sur votre appareil",
-      "subtitle" : "Accédez au Gestionnaire et installez l’application {{appName}} pour échanger vos actifs.",
-      "cta" : "Aller dans le Gestionnaire"
+      "subtitle" : "Accédez au Gestionnaire et mettez à jour l’application {{appName}} pour échanger vos actifs.",
+      "cta" : "Accéder au Gestionnaire"
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le swap",
@@ -745,7 +745,19 @@
     "bandwidthTooltip" : "Geler des actifs pour gagner de la Bande passante",
     "energyTooltip" : "Geler des actifs pour gagner de l’Énergie",
     "delegatedTooltip" : "Les actifs délégués sont utilisés pour voter. Cela représente votre nombre total de votes.",
-    "undelegatingTooltip" : "Les actifs dont la délégation est interrompue sont disponibles après {{timelockInDays}} jours."
+    "undelegatingTooltip" : "Les actifs dont la délégation est interrompue sont disponibles après {{timelockInDays}} jours.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "Bon à savoir",
+        "description" : "Le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
+        "cta" : "Redéléguer avec Ledger"
+      },
+      "delegation" : {
+        "title" : "Bon à savoir",
+        "description" : "En stakant vos {{asset}} via le validateur Ledger, vous bénéficiez de faibles frais ({{commission}} %).",
+        "cta" : "Staker avec Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "Choisissez parmi {{providerCount}} prestataire",
@@ -1202,9 +1214,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Installer des applications sur votre appareil",
-      "desc" : "Allez dans le Gestionnaire pour installer des applications sur votre appareil. Vous pouvez ajouter des comptes une fois que vous avez des applications sur votre appareil.",
+      "desc" : "Accédez au Gestionnaire pour installer des applications sur votre Ledger. Vous pouvez ajouter des comptes une fois que vous avez des applications sur votre appareil.",
       "buttons" : {
-        "installApp" : "Aller dans le Gestionnaire",
+        "installApp" : "Accéder au Gestionnaire",
         "help" : "Aide"
       }
     },
@@ -1213,7 +1225,7 @@
       "desc" : "Ajoutez un compte pour commencer à gérer vos crypto-actifs. Vous devez avoir installé l’application correspondant à ce crypto-actif sur votre appareil.",
       "buttons" : {
         "addAccount" : "Ajouter un compte",
-        "installApp" : "Allez dans le Gestionnaire pour installer des applications",
+        "installApp" : "Accédez au Gestionnaire pour installer des applications",
         "help" : "Aide"
       }
     }
@@ -1556,7 +1568,7 @@
       "provider" : "Prestataire",
       "payoutNetworkFees" : "Frais de réception",
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>."
     },
     "swap2" : {
       "amountSent" : "Montant à envoyer",
@@ -3046,6 +3058,11 @@
       "catalogServerDesc" : "Choisissez entre plusieurs sources pour les Platform Apps.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
       "enablePlatformDevToolsDesc" : "Autorisez la fenêtre Outils de développement Platform.",
+      "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
+      "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
+      "featureFlagsEdit" : "Modifier",
+      "featureFlagsRestore" : "Restaurer",
+      "featureFlagsOverride" : "Remplacer",
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
       "addLocalAppButton" : "Naviguer",
@@ -3397,7 +3414,7 @@
             "description" : "Commencez par configurer votre nouvel appareil."
           },
           "2" : {
-            "heading" : "Connexion d’un appareil",
+            "heading" : "Connecter votre appareil",
             "title" : "Connecter un {{deviceName}}",
             "description" : "Si votre appareil est déjà configuré, connectez-le à l’application."
           },
@@ -4219,6 +4236,10 @@
     },
     "NetworkDown" : {
       "title" : "Pas de connexion Internet",
+      "description" : "Veuillez vérifier votre connexion Internet."
+    },
+    "NetworkError" : {
+      "title" : "Erreur survenue lors de la synchronisation",
       "description" : "Veuillez vérifier votre connexion Internet."
     },
     "NoAddressesFound" : {
