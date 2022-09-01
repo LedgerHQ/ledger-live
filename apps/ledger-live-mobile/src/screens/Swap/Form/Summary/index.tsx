@@ -60,9 +60,6 @@ export function Summary({
     [to.account],
   );
 
-  const targetAccountCurrency: CryptoCurrency | TokenCurrency | undefined =
-    useMemo(() => to.account && getAccountCurrency(to.account), [to.account]);
-
   const estimatedFees = useMemo(() => status?.estimatedFees ?? "", [status]);
 
   const onEditProvider = useCallback(() => {
@@ -104,7 +101,7 @@ export function Summary({
   }, [navigation, to]);
 
   const counterValueCurrency = to.currency || rawCounterValueCurrency;
-  const effectiveUnit = from.currency.units[0];
+  const effectiveUnit = from.currency?.units[0];
   const valueNum = 10 ** effectiveUnit.magnitude;
   const rawCounterValue = useCalculate({
     from: from.currency,
@@ -204,7 +201,7 @@ export function Summary({
           title={t("transfer.swap2.form.details.label.target")}
           onEdit={() => {
             const selectableCurrencyIds =
-              to.currency.type === "TokenCurrency"
+              to.currency?.type === "TokenCurrency"
                 ? [to.currency.id, to.currency.parentCurrency.id]
                 : [to.currency.id];
             navigation.navigate("SelectAccount", {
@@ -216,8 +213,8 @@ export function Summary({
           }}
         >
           <Flex flexDirection="row" alignItems="center">
-            <CurrencyIcon size={20} currency={targetAccountCurrency} />
-            <Text marginLeft={2}>{targetAccountName}</Text>
+            {<CurrencyIcon size={20} currency={to.currency} />}
+            <Text marginLeft={2}>{to.currency.name}</Text>
           </Flex>
         </Item>
       ) : (
