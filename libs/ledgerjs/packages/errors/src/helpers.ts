@@ -15,14 +15,18 @@ export const addCustomErrorDeserializer = (
 
 export type CustomErrorFunc = (
   message?: string,
-  fields?: { [key: string]: any },
-  options?: any
+  fields?: { [key: string]: unknown },
+  options?: unknown
 ) => void;
 
 export const createCustomErrorClass = (name: string): CustomErrorFunc => {
   class CustomErrorClass extends Error {
     cause?: Error;
-    constructor(message, fields, options) {
+    constructor(
+      message?: string,
+      fields?: Record<string, unknown>,
+      options?: { cause: Error }
+    ) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       super(message || name, options);
@@ -32,7 +36,12 @@ export const createCustomErrorClass = (name: string): CustomErrorFunc => {
       for (const k in fields) {
         this[k] = fields[k];
       }
-      if (isObject(options) && "cause" in options && !("cause" in this)) {
+      if (
+        options &&
+        isObject(options) &&
+        "cause" in options &&
+        !("cause" in this)
+      ) {
         // .cause was specified but the superconstructor
         // did not create an instance property.
         const cause = options.cause;
@@ -52,14 +61,13 @@ export const createCustomErrorClass = (name: string): CustomErrorFunc => {
 };
 
 function isObject(value) {
-  return value !== null && typeof value === "object";
+  return typeof value === "object";
 }
 
 // inspired from https://github.com/programble/errio/blob/master/index.js
 export const deserializeError = (object: any): Error => {
   if (typeof object === "object" && object) {
     try {
-      // $FlowFixMe FIXME HACK
       const msg = JSON.parse(object.message);
       if (msg.message && msg.name) {
         object = msg;

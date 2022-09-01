@@ -3,7 +3,7 @@ import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   submitKYC,
   countries,
@@ -20,7 +20,7 @@ import { setSwapKYCStatus } from "../../../actions/settings";
 
 const KYC = () => {
   const { t } = useTranslation();
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<any>({});
   const [isLoading, setLoading] = useState(false);
   const [hasSubmittedOnce, setHasSubmittedOnce] = useState(false);
   const { navigate } = useNavigation();
@@ -89,7 +89,7 @@ const KYC = () => {
     [dateOfBirth],
   );
   const onValidateFields = useCallback(() => {
-    const errors = {};
+    const errors: any = {};
 
     for (const field in requiredFields) {
       if (

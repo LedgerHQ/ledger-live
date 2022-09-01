@@ -1,28 +1,28 @@
-exports.de = {
+export const de = {
   common: require("./de/common.json"),
 };
-exports.en = {
+export const en = {
   common: require("./en/common.json"),
 };
-exports.es = {
+export const es = {
   common: require("./es/common.json"),
 };
-exports.fr = {
+export const fr = {
   common: require("./fr/common.json"),
 };
-exports.ja = {
+export const ja = {
   common: require("./ja/common.json"),
 };
-exports.ko = {
+export const ko = {
   common: require("./ko/common.json"),
 };
-exports.ru = {
+export const ru = {
   common: require("./ru/common.json"),
 };
-exports.tr = {
+export const tr = {
   common: require("./tr/common.json"),
 };
-exports.zh = {
+export const zh = {
   common: require("./zh/common.json"),
 };
 exports.pt = {

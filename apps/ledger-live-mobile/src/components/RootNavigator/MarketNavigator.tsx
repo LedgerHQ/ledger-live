@@ -6,6 +6,7 @@ import { ScreenName } from "../../const";
 import MarketList from "../../screens/Market";
 import MarketDetail from "../../screens/Market/MarketDetail";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { MarketNavigatorStackParamList } from "./types";
 
 export default function MarketNavigator() {
   const { colors } = useTheme();
@@ -36,4 +37,4 @@ export default function MarketNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<MarketNavigatorStackParamList>();

@@ -1,7 +1,7 @@
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Linking, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
 import { urls } from "../../../config/urls";

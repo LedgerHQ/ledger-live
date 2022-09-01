@@ -1,22 +1,10 @@
 import { handleActions } from "redux-actions";
-import type { DeviceInfo } from "@ledgerhq/types-live";
-import type { DeviceModelId } from "@ledgerhq/devices";
-import type { State } from ".";
+import type { BleState, DeviceLike, State } from "../types/state";
 
-export type DeviceLike = {
-  id: string;
-  name: string;
-  deviceInfo?: DeviceInfo;
-  appsInstalled?: number;
-  modelId?: DeviceModelId;
-};
-export type BleState = {
-  knownDevices: DeviceLike[];
-};
 const initialState: BleState = {
   knownDevices: [],
 };
-const handlers: Record<string, any> = {
+const handlers = {
   BLE_ADD_DEVICE: (
     state: BleState,
     {

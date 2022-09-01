@@ -13,7 +13,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { Platform, StyleSheet, View } from "react-native";
 import Clipboard from "@react-native-community/clipboard";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";

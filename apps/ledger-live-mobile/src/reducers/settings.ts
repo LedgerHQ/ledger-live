@@ -8,17 +8,17 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { createSelector } from "reselect";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import type { DeviceModelInfo, AccountLike } from "@ledgerhq/types-live";
 import type {
-  DeviceModelInfo,
-  AccountLike,
-  PortfolioRange,
-} from "@ledgerhq/types-live";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+  CurrencySettings,
+  Privacy,
+  SettingsState,
+  State,
+} from "../types/state";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
-import type { State } from ".";
 // eslint-disable-next-line import/no-cycle
 import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
@@ -34,9 +34,6 @@ export const intermediaryCurrency = (from: Currency, _to: Currency) => {
   if (from === ethereum || from.type === "TokenCurrency") return ethereum;
   return bitcoin;
 };
-export type CurrencySettings = {
-  confirmationsNb: number;
-};
 export const timeRangeDaysByKey = {
   day: 1,
   week: 7,
@@ -44,66 +41,7 @@ export const timeRangeDaysByKey = {
   year: 365,
   all: -1,
 };
-export type Privacy = {
-  // when we set the privacy, we also retrieve the biometricsType info
-  biometricsType: string | null | undefined;
-  // this tells if the biometrics was enabled by user yet
-  biometricsEnabled: boolean;
-};
-export type Theme = "system" | "light" | "dark";
-export type SettingsState = {
-  counterValue: string;
-  counterValueExchange: string | null | undefined;
-  reportErrorsEnabled: boolean;
-  analyticsEnabled: boolean;
-  privacy: Privacy | null | undefined;
-  currenciesSettings: Record<string, CurrencySettings>;
-  pairExchanges: Record<string, string | null | undefined>;
-  selectedTimeRange: PortfolioRange;
-  orderAccounts: string;
-  hasCompletedOnboarding: boolean;
-  hasInstalledAnyApp: boolean;
-  readOnlyModeEnabled: boolean;
-  hasOrderedNano: boolean;
-  experimentalUSBEnabled: boolean;
-  countervalueFirst: boolean;
-  graphCountervalueFirst: boolean;
-  hideEmptyTokenAccounts: boolean;
-  blacklistedTokenIds: string[];
-  hiddenNftCollections: string[];
-  dismissedBanners: string[];
-  hasAvailableUpdate: boolean;
-  theme: Theme;
-  osTheme: string | null | undefined;
-  carouselVisibility: number | Record<string, boolean>;
-  // number is the legacy type from LLM V2
-  discreetMode: boolean;
-  language: string;
-  languageIsSetByUser: boolean;
-  locale: string | null | undefined;
-  swap: {
-    hasAcceptedIPSharing: false;
-    acceptedProviders: [];
-    selectableCurrencies: [];
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    KYC: {};
-  };
-  lastSeenDevice: DeviceModelInfo | null | undefined;
-  starredMarketCoins: string[];
-  lastConnectedDevice: Device | null | undefined;
-  marketRequestParams: MarketListRequestParams;
-  marketCounterCurrency: string | null | undefined;
-  marketFilterByStarredAccounts: boolean;
-  sensitiveAnalytics: boolean;
-  firstConnectionHasDevice: boolean | null;
-  notifications: {
-    allowed: boolean;
-    transactions: boolean;
-    market: boolean;
-    announcement: boolean;
-    price: boolean;
-  };
-};
+
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
@@ -167,14 +105,28 @@ export const INITIAL_STATE: SettingsState = {
   },
 };
 
-const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
+const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
+  `${from.ticker}_${to.ticker}`;
 
-const handlers: Record<string, any> = {
-  SETTINGS_IMPORT: (state: SettingsState, { settings }) => ({
+const handlers = {
+  SETTINGS_IMPORT: (
+    state: SettingsState,
+    { settings }: { settings: Partial<SettingsState> },
+  ) => ({
     ...state,
     ...settings,
   }),
-  SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => {
+  SETTINGS_IMPORT_DESKTOP: (
+    state: SettingsState,
+    {
+      settings,
+    }: {
+      settings: {
+        developerModeEnabled: boolean;
+        currenciesSettings: Record<string, CurrencySettings>;
+      };
+    },
+  ) => {
     const { developerModeEnabled, ...rest } = settings;
     if (developerModeEnabled !== undefined)
       setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
@@ -189,7 +141,13 @@ const handlers: Record<string, any> = {
   },
   UPDATE_CURRENCY_SETTINGS: (
     { currenciesSettings, ...state }: SettingsState,
-    { ticker, patch },
+    {
+      ticker,
+      patch,
+    }: {
+      ticker: string;
+      patch: Partial<CurrencySettings>;
+    },
   ) => ({
     ...state,
     currenciesSettings: {
@@ -197,11 +155,17 @@ const handlers: Record<string, any> = {
       [ticker]: { ...currenciesSettings[ticker], ...patch },
     },
   }),
-  SETTINGS_SET_PRIVACY: (state: SettingsState, { privacy }) => ({
+  SETTINGS_SET_PRIVACY: (
+    state: SettingsState,
+    { privacy }: { privacy: Privacy },
+  ) => ({
     ...state,
     privacy,
   }),
-  SETTINGS_SET_PRIVACY_BIOMETRICS: (state: SettingsState, { enabled }) => ({
+  SETTINGS_SET_PRIVACY_BIOMETRICS: (
+    state: SettingsState,
+    { enabled }: { enabled: boolean },
+  ) => ({
     ...state,
     privacy: { ...state.privacy, biometricsEnabled: enabled },
   }),
@@ -211,13 +175,19 @@ const handlers: Record<string, any> = {
   }),
   SETTINGS_SET_REPORT_ERRORS: (
     state: SettingsState,
-    { reportErrorsEnabled },
+    { reportErrorsEnabled }: { reportErrorsEnabled: boolean },
   ) => ({ ...state, reportErrorsEnabled }),
-  SETTINGS_SET_ANALYTICS: (state: SettingsState, { analyticsEnabled }) => ({
+  SETTINGS_SET_ANALYTICS: (
+    state: SettingsState,
+    { analyticsEnabled }: { analyticsEnabled: boolean },
+  ) => ({
     ...state,
     analyticsEnabled,
   }),
-  SETTINGS_SET_COUNTERVALUE: (state: SettingsState, { counterValue }) => ({
+  SETTINGS_SET_COUNTERVALUE: (
+    state: SettingsState,
+    { counterValue }: { counterValue: string },
+  ) => ({
     ...state,
     counterValue,
     counterValueExchange: null, // also reset the exchange
@@ -248,34 +218,40 @@ const handlers: Record<string, any> = {
     return copy;
   },
   SETTINGS_SET_SELECTED_TIME_RANGE: (
-    state,
+    state: SettingsState,
     { payload: selectedTimeRange },
   ) => ({ ...state, selectedTimeRange }),
-  SETTINGS_COMPLETE_ONBOARDING: state => ({
+  SETTINGS_COMPLETE_ONBOARDING: (state: SettingsState) => ({
     ...state,
     hasCompletedOnboarding: true,
   }),
-  SETTINGS_INSTALL_APP_FIRST_TIME: (state, action) => ({
+  SETTINGS_INSTALL_APP_FIRST_TIME: (state: SettingsState, action) => ({
     ...state,
     hasInstalledAnyApp: action.hasInstalledAnyApp,
   }),
-  SETTINGS_SET_READONLY_MODE: (state, action) => ({
+  SETTINGS_SET_READONLY_MODE: (state: SettingsState, action) => ({
     ...state,
     readOnlyModeEnabled: action.enabled,
   }),
-  SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state, action) => ({
+  SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state: SettingsState, action) => ({
     ...state,
     experimentalUSBEnabled: action.enabled,
   }),
-  SETTINGS_SWITCH_COUNTERVALUE_FIRST: state => ({
+  SETTINGS_SWITCH_COUNTERVALUE_FIRST: (state: SettingsState) => ({
     ...state,
     graphCountervalueFirst: !state.graphCountervalueFirst,
   }),
-  SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (state, { hideEmptyTokenAccounts }) => ({
+  SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (
+    state: SettingsState,
+    { hideEmptyTokenAccounts }: { hideEmptyTokenAccounts: boolean },
+  ) => ({
     ...state,
     hideEmptyTokenAccounts,
   }),
-  SHOW_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+  SHOW_TOKEN: (
+    state: SettingsState,
+    { payload: tokenId }: { payload: string },
+  ) => {
     const ids = state.blacklistedTokenIds;
     return { ...state, blacklistedTokenIds: ids.filter(id => id !== tokenId) };
   },
@@ -294,19 +270,22 @@ const handlers: Record<string, any> = {
       hiddenNftCollections: ids.filter(id => id !== collectionId),
     };
   },
-  SETTINGS_DISMISS_BANNER: (state, { payload }) => ({
+  SETTINGS_DISMISS_BANNER: (state: SettingsState, { payload }) => ({
     ...state,
     dismissedBanners: [...state.dismissedBanners, payload],
   }),
-  SETTINGS_SET_AVAILABLE_UPDATE: (state, action) => ({
+  SETTINGS_SET_AVAILABLE_UPDATE: (state: SettingsState, action) => ({
     ...state,
     hasAvailableUpdate: action.enabled,
   }),
   DANGEROUSLY_OVERRIDE_STATE: (state: SettingsState): SettingsState => ({
     ...state,
   }),
-  SETTINGS_SET_THEME: (state, { payload: theme }) => ({ ...state, theme }),
-  SETTINGS_SET_OS_THEME: (state, { payload: osTheme }) => ({
+  SETTINGS_SET_THEME: (state: SettingsState, { payload: theme }) => ({
+    ...state,
+    theme,
+  }),
+  SETTINGS_SET_OS_THEME: (state: SettingsState, { payload: osTheme }) => ({
     ...state,
     osTheme,
   }),
@@ -566,7 +545,7 @@ export const discreetModeSelector = (state: State): boolean =>
 export default handleActions(handlers, INITIAL_STATE);
 export const themeSelector = (state: State) => {
   const val = state.settings.theme;
-  return val === "dusk" ? "dark" : val;
+  return val;
 };
 export const osThemeSelector = (state: State) => state.settings.osTheme;
 export const languageSelector = (state: State) =>

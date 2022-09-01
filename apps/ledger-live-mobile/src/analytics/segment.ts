@@ -29,18 +29,18 @@ import {
   sensitiveAnalyticsSelector,
   firstConnectionHasDeviceSelector,
 } from "../reducers/settings";
-import { knownDevicesSelector } from "../reducers/ble";
+import { knownDevicesSelector, DeviceLike } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
-import type { State } from "../reducers";
+import type { AppStore, State } from "../reducers";
 import { NavigatorName } from "../const";
+import { Maybe } from "../types/helpers";
 
 const sessionId = uuid();
-const appVersion = `${VersionNumber.appVersion || ""} (${
-  VersionNumber.buildVersion || ""
-})`;
+const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""
+  })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
-const extraProperties = store => {
+const extraProperties = (store: AppStore) => {
   const state: State = store.getState();
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics
@@ -54,10 +54,10 @@ const extraProperties = store => {
     lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
     ? {
-        deviceVersion: lastDevice.deviceInfo?.version,
-        appLength: lastDevice?.appsInstalled,
-        modelId: lastDevice.modelId,
-      }
+      deviceVersion: lastDevice.deviceInfo?.version,
+      appLength: (lastDevice as DeviceLike)?.appsInstalled,
+      modelId: lastDevice.modelId,
+    }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
   return {
@@ -73,11 +73,10 @@ const extraProperties = store => {
     sessionId,
     devicesCount: devices.length,
     firstConnectionHasDevice,
-    // $FlowFixMe
     ...(satisfaction
       ? {
-          satisfaction,
-        }
+        satisfaction,
+      }
       : {}),
     ...deviceInfo,
   };
@@ -86,10 +85,13 @@ const extraProperties = store => {
 const context = {
   ip: "0.0.0.0",
 };
-let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
+
+type MaybeAppStore = Maybe<AppStore>;
+
+let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
 
 const token = __DEV__ ? null : ANALYTICS_TOKEN;
-export const start = async (store: any) => {
+export const start = async (store: AppStore) => {
   if (token) {
     await analytics.setup(token, {
       android: {
@@ -176,16 +178,16 @@ export const track = (
     context,
   });
 };
-export const getPageNameFromRoute = (route: RouteProp) => {
+export const getPageNameFromRoute = (route: RouteProp<any, any>) => {
   const routeName =
     getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
   return snakeCase(routeName);
 };
 export const trackWithRoute = (
   event: string,
-  properties: Record<string, any> | null | undefined,
-  mandatory: boolean | null | undefined,
-  route: RouteProp,
+  properties?: Record<string, any> | null,
+  mandatory?: boolean | null,
+  route: RouteProp<any, any>,
 ) => {
   const newProperties = {
     page: getPageNameFromRoute(route),
@@ -199,8 +201,8 @@ export const useTrack = () => {
   const track = useCallback(
     (
       event: string,
-      properties: Record<string, any> | null | undefined,
-      mandatory: boolean | null | undefined,
+      properties?: Record<string, any> | null,
+      mandatory?: boolean | null,
     ) => trackWithRoute(event, properties, mandatory, route),
     [route],
   );
@@ -221,13 +223,13 @@ export const useAnalytics = () => {
 export const screen = (
   category: string,
   name: string | null | undefined,
-  properties: Record<string, any> | null | undefined,
+  properties?: Record<string, any> | null | undefined,
 ) => {
   const title = `Page ${category + (name ? ` ${name}` : "")}`;
   Sentry.addBreadcrumb({
     message: title,
     category: "screen",
-    data: properties,
+    data: properties || {},
     level: "info",
   });
 

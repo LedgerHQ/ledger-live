@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Config from "react-native-config";
 import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, useRoute, useNavigation } from "@react-navigation/native";
 import { getProviders } from "@ledgerhq/live-common/exchange/swap/index";
 import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";

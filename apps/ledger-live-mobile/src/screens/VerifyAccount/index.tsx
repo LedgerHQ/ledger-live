@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import {
@@ -110,11 +110,7 @@ export default function VerifyAccount({ navigation, route }: Props) {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <SelectDevice
-          onSelect={setDevice}
-          onWithoutDevice={onSkipDevice}
-          withoutDevice
-        />
+        <SelectDevice onSelect={setDevice} onWithoutDevice={onSkipDevice} />
       </NavigationScrollView>
 
       {device ? (

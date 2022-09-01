@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";

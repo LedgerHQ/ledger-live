@@ -23,7 +23,7 @@ export const setNotificationsCurrentRouteName = (
   currentRouteName,
 });
 export const setNotificationsEventTriggered = (
-  eventTriggered?: EventTrigger,
+  eventTriggered?: Partial<EventTrigger>,
 ) => ({
   type: "NOTIFICATIONS_SET_EVENT_TRIGGERED",
   eventTriggered,

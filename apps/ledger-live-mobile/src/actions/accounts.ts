@@ -1,27 +1,45 @@
-import { ImportAccountsReduceInput } from "@ledgerhq/live-common/lib/account/index";
+import {
+  AccountComparator,
+  ImportAccountsReduceInput,
+} from "@ledgerhq/live-common/lib/account/index";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import type { Dispatch } from "redux";
+import type { Action } from "redux-actions";
 import accountModel from "../logic/accountModel";
 
-export const importStore = (state: any) => ({
+const version = 0; // FIXME this needs to come from user data
+
+export const importStore = (rawAccounts: {
+  active: AccountRaw[];
+}): Action<{ state: { active: Account[] } }> => ({
   type: "ACCOUNTS_IMPORT",
-  state: {
-    active:
-      state && Array.isArray(state.active)
-        ? implicitMigration(state.active.map(accountModel.decode))
-        : [],
+  payload: {
+    state: {
+      active:
+        rawAccounts && Array.isArray(rawAccounts.active)
+          ? implicitMigration(
+              rawAccounts.active.map(acc =>
+                accountModel.decode({ data: acc, version }),
+              ),
+            )
+          : [],
+    },
   },
 });
-export const reorderAccounts = (comparator: any) => (dispatch: any) =>
-  dispatch({
-    type: "REORDER_ACCOUNTS",
-    payload: {
-      comparator,
-    },
-  });
-export const importAccounts = (input: ImportAccountsReduceInput) => ({
+export const reorderAccounts =
+  (comparator: AccountComparator) => (dispatch: Dispatch) =>
+    dispatch({
+      type: "REORDER_ACCOUNTS",
+      payload: {
+        comparator,
+      },
+    });
+export const importAccounts = (
+  input: ImportAccountsReduceInput,
+): Action<{ input: ImportAccountsReduceInput }> => ({
   type: "ACCOUNTS_USER_IMPORT",
-  input,
+  payload: { input },
 });
 export const replaceAccounts = (payload: {
   scannedAccounts: Account[];
@@ -29,28 +47,38 @@ export const replaceAccounts = (payload: {
   renamings: Record<string, string>;
 }) => ({
   type: "ACCOUNTS_ADD",
-  ...payload,
+  payload,
 });
 export const setAccounts = (accounts: Account[]) => ({
   type: "ACCOUNTS_IMPORT",
-  state: {
-    active: accounts,
+  payload: {
+    state: {
+      active: accounts,
+    },
   },
 });
 export type UpdateAccountWithUpdater = (
   accountId: string,
   arg1: (arg0: Account) => Account,
-) => never;
+) => {
+  type: "UPDATE_ACCOUNT";
+  payload: {
+    accountId: string;
+    updater: (arg0: Account) => Account;
+  };
+};
 
 export const updateAccountWithUpdater: UpdateAccountWithUpdater = (
   accountId,
   updater,
 ) => ({
   type: "UPDATE_ACCOUNT",
-  accountId,
-  updater,
+  payload: {
+    accountId,
+    updater,
+  },
 });
-export type UpdateAccount = (_: $Shape<Account>) => any;
+export type UpdateAccount = (_: Pick<Account, "id"> & Partial<Account>) => any;
 export const updateAccount: UpdateAccount = payload =>
   updateAccountWithUpdater(payload.id, (account: Account) => ({
     ...account,
@@ -60,7 +88,7 @@ export type DeleteAccount = (_: Account) => {
   type: string;
   payload: Account;
 };
-export const deleteAccount: DeleteAccount = payload => ({
+export const deleteAccount: DeleteAccount = (payload: Account) => ({
   type: "DELETE_ACCOUNT",
   payload,
 });

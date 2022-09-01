@@ -27,8 +27,7 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../../components/RootNavigator";
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
 
 type RouteParams = {
   currencyId: string;
@@ -138,7 +137,7 @@ function ReadOnlyAccount({ route }: Props) {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen("Account");
+      setScreen && setScreen("Account");
 
       return () => {
         setSource("Account");

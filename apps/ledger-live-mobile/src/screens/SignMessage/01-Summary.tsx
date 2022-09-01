@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";

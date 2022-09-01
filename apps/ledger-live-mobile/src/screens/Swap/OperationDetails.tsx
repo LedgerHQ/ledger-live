@@ -83,7 +83,7 @@ const OperationDetails = ({ route }: Props) => {
         contentContainerStyle={styles.scrollViewContent}
       >
         <SwapStatusIndicator status={status} />
-        <LText tertiary style={styles.fromAmount} color="grey">
+        <LText style={styles.fromAmount} color="grey">
           <CurrencyUnitValue
             alwaysShowSign
             showCode
@@ -94,7 +94,7 @@ const OperationDetails = ({ route }: Props) => {
         <View style={styles.arrow}>
           <Icon name={"ios-arrow-round-forward"} size={30} color={colors.fog} />
         </View>
-        <LText tertiary style={styles.toAmount} color={statusColorKey}>
+        <LText style={styles.toAmount} color={statusColorKey}>
           <CurrencyUnitValue
             alwaysShowSign
             showCode

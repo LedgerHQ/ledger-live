@@ -139,3 +139,5 @@ export const darkTheme = {
     skeletonBg: "#2a2d33",
   },
 };
+
+export type Theme = typeof lightTheme;

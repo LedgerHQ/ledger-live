@@ -91,18 +91,8 @@ import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWa
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 import CustomImageNavigator from "./CustomImageNavigator";
 
-import {
-  BleDevicePairingFlow,
-  BleDevicePairingFlowParams,
-} from "../../screens/BleDevicePairingFlow/index";
-
-// TODO: types for each screens and navigators need to be set
-export type BaseNavigatorStackParamList = {
-  BleDevicePairingFlow: BleDevicePairingFlowParams;
-
-  // Hack: allows any other properties
-  [otherScreens: string]: undefined | object;
-};
+import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
+import { BaseNavigatorStackParamList } from "./types";
 
 export type BaseNavigatorProps =
   StackNavigationProp<BaseNavigatorStackParamList>;
@@ -125,7 +115,7 @@ export default function BaseNavigator() {
     <Stack.Navigator
       screenOptions={{
         ...stackNavigationConfig,
-        ...TransitionPresets.ModalPresentation,
+        ...TransitionPresets.ModalPresentationIOS,
       }}
     >
       <Stack.Screen
@@ -152,15 +142,13 @@ export default function BaseNavigator() {
         options={{
           headerShown: false,
           presentation: "transparentModal",
-          headerMode: "none",
-          mode: "modal",
-          transparentCard: true,
+          headerMode: undefined,
           cardStyle: { opacity: 1 },
           gestureEnabled: true,
-          headerTitle: null,
-          headerRight: null,
+          headerTitle: "",
+          headerRight: () => null,
           headerBackTitleVisible: false,
-          title: null,
+          title: "",
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         }}
       />
@@ -169,8 +157,8 @@ export default function BaseNavigator() {
         component={PostBuyDeviceScreen}
         options={{
           title: t("postBuyDevice.headerTitle"),
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: () => null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -229,7 +217,7 @@ export default function BaseNavigator() {
         component={SwapNavigator}
         options={{
           ...stackNavigationConfig,
-          headerLeft: null,
+          headerLeft: () => null,
           title: t("transfer.swap.form.tab"),
         }}
       />
@@ -246,7 +234,7 @@ export default function BaseNavigator() {
               }
             />
           ),
-          headerRight: null,
+          headerRight: () => null,
         })}
       />
       <Stack.Screen
@@ -254,7 +242,7 @@ export default function BaseNavigator() {
         component={SwapOperationDetails}
         options={{
           title: t("transfer.swap.form.tab"),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -262,7 +250,7 @@ export default function BaseNavigator() {
         component={SwapFormSelectCurrency}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.form.to")} />,
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -272,7 +260,7 @@ export default function BaseNavigator() {
           headerTitle: () => (
             <StepHeader title={t("transfer.swap.form.summary.method")} />
           ),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -282,7 +270,7 @@ export default function BaseNavigator() {
           headerTitle: () => (
             <StepHeader title={t("transfer.swap.form.summary.fees")} />
           ),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -291,7 +279,7 @@ export default function BaseNavigator() {
         options={{
           ...stackNavigationConfig,
           headerStyle: styles.headerNoShadow,
-          headerLeft: null,
+          headerLeft: () => null,
           title: t("transfer.lending.title"),
         }}
       />
@@ -363,7 +351,7 @@ export default function BaseNavigator() {
         name={ScreenName.VerifyAccount}
         component={VerifyAccount}
         options={{
-          headerLeft: null,
+          headerLeft: () => null,
           title: t("transfer.receive.headerTitle"),
         }}
         listeners={({ route }) => ({
@@ -391,7 +379,7 @@ export default function BaseNavigator() {
         options={
           ptxSmartRoutingMobile?.enabled
             ? { headerShown: false }
-            : { headerStyle: styles.headerNoShadow, headerLeft: null }
+            : { headerStyle: styles.headerNoShadow, headerLeft: () => null }
         }
         {...noNanoBuyNanoWallScreenOptions}
       />
@@ -462,7 +450,7 @@ export default function BaseNavigator() {
               />
             ),
             headerLeft: () => <BackButton navigation={navigation} />,
-            headerRight: null,
+            headerRight: () => null,
           };
         }}
       />
@@ -480,7 +468,7 @@ export default function BaseNavigator() {
         name={ScreenName.PairDevices}
         component={PairDevices}
         options={({ navigation, route }) => ({
-          title: null,
+          title: "",
           headerRight: () => (
             <ErrorHeaderInfo
               route={route}
@@ -497,7 +485,7 @@ export default function BaseNavigator() {
         component={EditDeviceName}
         options={{
           title: t("EditDeviceName.title"),
-          headerLeft: null,
+          headerLeft: () => null,
           ...TransitionPresets.ModalPresentationIOS,
         }}
       />
@@ -521,7 +509,7 @@ export default function BaseNavigator() {
         component={AnalyticsNavigator}
         options={{
           title: t("analytics.title"),
-          headerRight: null,
+          headerRight: () => null,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         }}
       />
@@ -530,7 +518,7 @@ export default function BaseNavigator() {
         component={MarketCurrencySelect}
         options={{
           title: t("market.filters.currency"),
-          headerLeft: null,
+          headerLeft: () => null,
           unmountOnBlur: true,
         }}
       />
@@ -539,7 +527,7 @@ export default function BaseNavigator() {
         component={PortfolioHistory}
         options={{
           headerTitle: t("analytics.operations.title"),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -562,7 +550,7 @@ export default function BaseNavigator() {
           headerRight: () => (
             <HeaderRightClose color={colors.white} preferDismiss={false} />
           ),
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen
@@ -574,7 +562,7 @@ export default function BaseNavigator() {
           headerRight: () => (
             <HeaderRightClose color={colors.white} preferDismiss={false} />
           ),
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen
@@ -583,7 +571,7 @@ export default function BaseNavigator() {
         options={{
           title: t("walletconnect.deeplinkingTitle"),
           headerRight: () => <HeaderRightClose preferDismiss={false} />,
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen
@@ -591,7 +579,7 @@ export default function BaseNavigator() {
         component={WalletConnectConnect}
         options={{
           title: "Wallet Connect",
-          headerLeft: null,
+          headerLeft: () => null,
           gestureEnabled: false,
         }}
       />
@@ -600,7 +588,7 @@ export default function BaseNavigator() {
         component={FallbackCameraSend}
         options={{
           title: t("send.scan.fallback.header"),
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen
@@ -608,7 +596,7 @@ export default function BaseNavigator() {
         component={NotificationCenterNavigator}
         options={({ navigation }) => ({
           title: t("notificationCenter.title"),
-          headerLeft: null,
+          headerLeft: () => null,
           headerRight: () => <CloseButton navigation={navigation} />,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         })}

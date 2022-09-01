@@ -13,7 +13,7 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { DeviceNames } from "../../../types";
+import { DeviceModelId } from "@ledgerhq/devices";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
 const transitionDuration = 500;
@@ -111,8 +111,8 @@ export function BaseStepperView({
   onNext: () => void;
   steps: any[];
   metadata: Metadata[];
-  deviceModelId: DeviceNames;
-  params: any;
+  deviceModelId: DeviceModelId;
+  params?: any;
 }) {
   const [index, setIndex] = React.useState(0);
   const navigation = useNavigation();

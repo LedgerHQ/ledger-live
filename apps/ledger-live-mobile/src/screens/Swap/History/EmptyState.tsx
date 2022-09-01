@@ -18,7 +18,7 @@ const EmptyState = () => {
       <LText secondary style={styles.title}>
         <Trans i18nKey="transfer.swap.history.empty.title" />
       </LText>
-      <LText primary style={styles.desc} color="grey">
+      <LText style={styles.desc} color="grey">
         <Trans i18nKey="transfer.swap.history.empty.desc" />
       </LText>
     </View>

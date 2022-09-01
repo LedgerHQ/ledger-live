@@ -1,6 +1,6 @@
 import React, { useReducer, useCallback, useEffect, useRef } from "react";
 import { StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { timeout, tap } from "rxjs/operators";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
