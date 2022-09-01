@@ -1,50 +1,44 @@
-// renders children if Location is available
-// otherwise render an error
-import React, { Component } from "react";
-import { PermissionsAndroid } from "react-native";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import { PermissionsAndroid, Platform } from "react-native";
 import LocationRequired from "../../screens/LocationRequired";
 
 const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
 
-class RequiresBLE extends Component<
-  {
-    children: any;
-  },
-  {
-    state: {
-      granted: boolean | null | undefined;
-    };
-  }
-> {
-  state = {
-    granted: null,
-  };
+/**
+ * Location permission is not required to perform a bluetooth scan on devices
+ * with Android 12 and above (API 31)
+ * https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#assert-never-for-location
+ * */
+const requiresLocation = Platform.OS === "android" && Platform.Version < 31;
 
-  componentDidMount() {
-    this.request();
-  }
+/**
+ * Renders an error if location is required & not available,
+ * otherwise renders children
+ */
+const RequiresLocationOnAndroid: React.FC<{
+  children?: ReactNode | undefined;
+}> = ({ children }) => {
+  const [granted, setGranted] = useState<boolean | null | undefined>(null);
 
-  request = async () => {
+  const request = useCallback(async () => {
     const result = await PermissionsAndroid.request(permission);
-    this.setState({
-      granted: result === PermissionsAndroid.RESULTS.GRANTED,
-    });
-  };
-  retry = async () => {
+    setGranted(result === PermissionsAndroid.RESULTS.GRANTED);
+  }, [setGranted]);
+
+  const recheck = useCallback(async () => {
     const granted = await PermissionsAndroid.check(permission);
-    this.setState({
-      granted,
-    });
-  };
+    setGranted(granted);
+  }, [setGranted]);
 
-  render() {
-    const { children } = this.props;
-    const { granted } = this.state;
-    if (granted === null) return null; // suspense PLZ
+  useEffect(() => {
+    if (!requiresLocation) return;
+    request();
+  }, [request]);
 
-    if (granted === true) return children;
-    return <LocationRequired errorType="unauthorized" onRetry={this.retry} />;
-  }
-}
+  if (!requiresLocation) return <>{children}</>;
+  if (granted === null) return null; // suspense PLZ
+  if (granted === true) return <>{children}</>;
+  return <LocationRequired errorType="unauthorized" onRetry={recheck} />;
+};
 
-export default RequiresBLE;
+export default RequiresLocationOnAndroid;
