@@ -3,6 +3,8 @@ import { atomicQueue } from "@ledgerhq/live-common/promise";
 import type { AccountRaw } from "@ledgerhq/types-live";
 import type { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
 import store from "./logic/storeWrapper";
+import type { User } from "./types/store";
+import type { SettingsState } from "./reducers/settings";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -12,23 +14,21 @@ export async function clearDb() {
   const list = await store.keys();
   await store.delete(list.filter(k => k !== "user"));
 }
-export async function getUser(): Promise<{
-  id: string;
-}> {
+export async function getUser(): Promise<User> {
   const user = await store.get("user");
   return user;
 }
-export async function setUser(user: { id: string }): Promise<void> {
+export async function setUser(user: User): Promise<void> {
   await store.update("user", user);
 }
-export async function updateUser(user: { id: string }): Promise<void> {
+export async function updateUser(user: User): Promise<void> {
   await store.update("user", user);
 }
 export async function getSettings(): Promise<any> {
   const settings = await store.get("settings");
   return settings;
 }
-export async function saveSettings(obj: any): Promise<void> {
+export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
   await store.save("settings", obj);
 }
 export async function getWCSession(): Promise<any> {

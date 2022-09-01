@@ -6,7 +6,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { NavigatorName, ScreenName } from "../../const";
 import { navigate, isReadyRef } from "../../rootnavigation";
 
-const useAccount = accountId => {
+const useAccount = (accountId: string) => {
   const { account } = useSelector(
     accountScreenSelector({
       params: {

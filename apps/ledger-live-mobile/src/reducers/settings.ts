@@ -167,14 +167,21 @@ export const INITIAL_STATE: SettingsState = {
   },
 };
 
-const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
+const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
+  `${from.ticker}_${to.ticker}`;
 
-const handlers: Record<string, any> = {
-  SETTINGS_IMPORT: (state: SettingsState, { settings }) => ({
+const handlers = {
+  SETTINGS_IMPORT: (
+    state: SettingsState,
+    { settings }: { settings: Partial<SettingsState> },
+  ) => ({
     ...state,
     ...settings,
   }),
-  SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => {
+  SETTINGS_IMPORT_DESKTOP: (
+    state: SettingsState,
+    { settings }: { settings: SettingsState },
+  ) => {
     const { developerModeEnabled, ...rest } = settings;
     if (developerModeEnabled !== undefined)
       setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
@@ -563,7 +570,7 @@ export const discreetModeSelector = (state: State): boolean =>
 export default handleActions(handlers, INITIAL_STATE);
 export const themeSelector = (state: State) => {
   const val = state.settings.theme;
-  return val === "dusk" ? "dark" : val;
+  return val;
 };
 export const osThemeSelector = (state: State) => state.settings.osTheme;
 export const languageSelector = (state: State) =>

@@ -23,6 +23,8 @@ import {
   nestedSortAccounts,
   makeEmptyTokenAccount,
   ImportAccountsReduceInput,
+  AddAccountsProps,
+  AccountComparator,
 } from "@ledgerhq/live-common/account/index";
 import type { State } from "./index";
 import accountModel from "../logic/accountModel";
@@ -33,8 +35,9 @@ export type AccountsState = {
 const initialState: AccountsState = {
   active: [],
 };
-const handlers: Record<string, any> = {
-  ACCOUNTS_IMPORT: (s, { state }) => state,
+const handlers = {
+  ACCOUNTS_IMPORT: (s: AccountsState, { state }: { state: AccountsState }) =>
+    state,
   ACCOUNTS_USER_IMPORT: (
     s: AccountsState,
     { input }: { input: ImportAccountsReduceInput },
@@ -47,13 +50,16 @@ const handlers: Record<string, any> = {
       payload: { comparator },
     }: {
       payload: {
-        comparator: any;
+        comparator: AccountComparator;
       };
     },
   ): AccountsState => ({
     active: nestedSortAccounts(state.active, comparator),
   }),
-  ACCOUNTS_ADD: (s, { scannedAccounts, selectedIds, renamings }) => ({
+  ACCOUNTS_ADD: (
+    s: AccountsState,
+    { scannedAccounts, selectedIds, renamings }: AddAccountsProps,
+  ) => ({
     active: addAccounts({
       existingAccounts: s.active,
       scannedAccounts,
@@ -81,7 +87,7 @@ const handlers: Record<string, any> = {
       updater: (_: Account) => Account;
     },
   ): AccountsState => {
-    function update(existingAccount) {
+    function update(existingAccount: Account) {
       if (accountId !== existingAccount.id) return existingAccount;
       return { ...existingAccount, ...updater(existingAccount) };
     }
@@ -118,11 +124,11 @@ const handlers: Record<string, any> = {
   }),
 };
 // Selectors
-export const exportSelector = (s: any) => ({
+export const exportSelector = (s: State) => ({
   active: s.accounts.active.map(accountModel.encode),
 });
-export const accountsSelector = (s: any): Account[] => s.accounts.active;
-export const migratableAccountsSelector = (s: any): Account[] =>
+export const accountsSelector = (s: State): Account[] => s.accounts.active;
+export const migratableAccountsSelector = (s: State): Account[] =>
   s.accounts.active.filter(canBeMigrated);
 export const flattenAccountsSelector = createSelector(
   accountsSelector,
@@ -132,7 +138,7 @@ export const flattenAccountsEnforceHideEmptyTokenSelector = createSelector(
   accountsSelector,
   accounts =>
     flattenAccounts(accounts, {
-      enforceHideEmptyTokenAccounts: true,
+      enforceHideEmptySubAccounts: true,
     }),
 );
 export const accountsCountSelector = createSelector(
@@ -157,7 +163,7 @@ export const cryptoCurrenciesSelector = createSelector(
 );
 export const accountsTuplesByCurrencySelector = createSelector(
   accountsSelector,
-  (_, { currency }) => currency,
+  (_: State, { currency }) => currency,
   (accounts, currency): AccountLike[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
