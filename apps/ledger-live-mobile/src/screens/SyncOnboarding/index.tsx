@@ -53,7 +53,7 @@ const normalPollingPeriodMs = 1000;
 const shortPollingPeriodMs = 400;
 const normalDesyncTimeoutMs = 60000;
 const longDesyncTimeoutMs = 300000;
-const normalResyncOverlayDisplayDelayMs = 1000;
+const normalResyncOverlayDisplayDelayMs = 8000;
 const longResyncOverlayDisplayDelayMs = 180000;
 const readyRedirectDelayMs = 2500;
 
