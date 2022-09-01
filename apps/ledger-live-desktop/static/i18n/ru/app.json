@@ -745,7 +745,19 @@
     "bandwidthTooltip" : "Замораживайте активы для наращивания очков Пропускной способности",
     "energyTooltip" : "Замораживайте активы для наращивания очков Энергии",
     "delegatedTooltip" : "Делегированные активы используются в процессе голосования. От них зависит количество ваших голосов.",
-    "undelegatingTooltip" : "Отозванные средства блокируются на {{timelockInDays}}, прежде чем вы сможете их получить."
+    "undelegatingTooltip" : "Отозванные средства блокируются на {{timelockInDays}}, прежде чем вы сможете их получить.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "Если вы не знали...",
+        "description" : "Комиссия за стейкинг у валидатора Ledger ниже, чем у используемого вами валидатора.",
+        "cta" : "Переделегируйте с Ledger"
+      },
+      "delegation" : {
+        "title" : "Если вы не знали...",
+        "description" : "Валидатор Ledger может разместить ваши {{asset}} с низкой комиссией в {{commission}}%.",
+        "cta" : "Стейкайте с Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "Выберите из {{providerCount}} оператора",
@@ -1254,7 +1266,7 @@
     "detailsPage" : {
       "priceStatistics" : "Статистика цен",
       "tradingVolume" : "Торговый объём",
-      "24hLowHight" : "Мин/Макс (24 часа)",
+      "24hLowHight" : "Макс/Мин (24 часа)",
       "7dLowHigh" : "Мин/Макс (Неделя)",
       "allTimeHigh" : "Исторический макс.",
       "allTimeLow" : "Исторический мин.",
@@ -1294,7 +1306,7 @@
       "noSearchResults" : "К сожалению, не удалось ничего найти.",
       "retrySearchKeyword" : "Повторите поиск по другому запросу.",
       "retrySearchParams" : "Повторите поиск с другими параметрами.",
-      "trackFavAssets" : "Следите за избранными активами",
+      "trackFavAssets" : "Следите за любимыми активами",
       "clickOnStarIcon" : "Нажмите на звёздочку рядом с активом, чтобы добавить его в избранные.",
       "browseAssets" : "Просмотр активов"
     }
@@ -1556,7 +1568,7 @@
       "provider" : "Оператор",
       "payoutNetworkFees" : "Комиссия за выплату",
       "payoutNetworkFeesTooltip" : "Эта сумма не будет отражена на устройстве",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms" : "Подтверждая эту транзакцию, я принимаю\n<0>Условия использования {{provider}}</0>"
     },
     "swap2" : {
       "amountSent" : "Сумма к отправке",
@@ -3046,6 +3058,11 @@
       "catalogServerDesc" : "Переключение между несколькими источниками приложений",
       "enablePlatformDevTools" : "Включить инструменты разработчика на платформе",
       "enablePlatformDevToolsDesc" : "Разрешить открывать окно инструментов разработчика на платформе",
+      "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
+      "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
+      "featureFlagsEdit" : "Редактировать",
+      "featureFlagsRestore" : "Восстановить",
+      "featureFlagsOverride" : "Переопределить",
       "addLocalApp" : "Добавить локальное приложение",
       "addLocalAppDesc" : "Просматривать локальные файлы и добавлять локальные приложения посредством локального манифеста",
       "addLocalAppButton" : "Осмотритесь",
@@ -4219,6 +4236,10 @@
     },
     "NetworkDown" : {
       "title" : "Похоже, не работает Интернет",
+      "description" : "Проверьте подключение к Интернету."
+    },
+    "NetworkError" : {
+      "title" : "Во время синхронизации произошла ошибка",
       "description" : "Проверьте подключение к Интернету."
     },
     "NoAddressesFound" : {
