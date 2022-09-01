@@ -136,7 +136,7 @@ const AccountScreenInner = ({
       getListHeaderComponents({
         account,
         parentAccount,
-        countervalueAvailable,
+        countervalueAvailable: countervalueAvailable || account.balance.eq(0),
         useCounterValue,
         range,
         history,

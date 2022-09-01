@@ -250,7 +250,7 @@ const GraphCardHeader = ({
 
   const navigation = useNavigation();
 
-  const openReceive = () => {
+  const openReceive = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveConfirmation,
       params: {
@@ -258,7 +258,7 @@ const GraphCardHeader = ({
         currency,
       },
     });
-  };
+  }, [account.id, currency, navigation]);
 
   return (
     <Flex px={6} justifyContent={"space-between"}>
