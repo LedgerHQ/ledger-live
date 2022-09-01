@@ -53,8 +53,8 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
             // We hit this callback whenever a device is seen or goes away, this means we effectively
             // replace the list instead of emitting new events one by one. This solves the
             val event = Arguments.createMap().apply {
-                putString("event", "new-devices")
-                putString("type", "new-devices")
+                putString("event", "replace")
+                putString("type", "replace")
                 putMap("data", Arguments.createMap().apply {
                     putArray("devices", devices)
                 })

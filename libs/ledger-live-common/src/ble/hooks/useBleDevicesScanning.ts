@@ -71,12 +71,13 @@ export const useBleDevicesScanning = ({
       .subscribe({
         next: (event: {
           type: DescriptorEventType;
-          descriptor: TransportBleDevice | null;
+          descriptor?: TransportBleDevice | null;
         }) => {
           setScanningBleError(null);
           const { type, descriptor } = event;
-
-          if (type === "add" && descriptor) {
+          if (type === "flush") {
+            setScannedDevices([]);
+          } else if (type === "add" && descriptor) {
             const transportDevice = descriptor;
 
             const isScannedDeviceDuplicate = scannedDevicesRef.current.some(

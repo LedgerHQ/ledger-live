@@ -37,8 +37,8 @@ class HwTransportReactNativeBle: RCTEventEmitter {
             EventEmitter.sharedInstance.dispatch(
                 Payload(
                     event: Event.status.rawValue,
-                    type: available ? "PoweredOn" : "PoweredOff",
-                    data: nil
+                    type: nil,
+                    data: available ? "PoweredOn" : "PoweredOff",
                 )
             )
         }
