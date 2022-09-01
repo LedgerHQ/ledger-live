@@ -8,13 +8,10 @@ import {
   KYCStatus,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
-  getAccountName,
   getAccountUnit,
-  getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-common/lib/countervalues/react";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
@@ -54,11 +51,6 @@ export function Summary({
   );
 
   const { from, to } = swap;
-
-  const targetAccountName = useMemo(
-    () => to.account && getAccountName(to.account),
-    [to.account],
-  );
 
   const estimatedFees = useMemo(() => status?.estimatedFees ?? "", [status]);
 
