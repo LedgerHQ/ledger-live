@@ -180,7 +180,14 @@ const handlers = {
   }),
   SETTINGS_IMPORT_DESKTOP: (
     state: SettingsState,
-    { settings }: { settings: SettingsState },
+    {
+      settings,
+    }: {
+      settings: {
+        developerModeEnabled: boolean;
+        currenciesSettings: Record<string, CurrencySettings>;
+      };
+    },
   ) => {
     const { developerModeEnabled, ...rest } = settings;
     if (developerModeEnabled !== undefined)
@@ -196,7 +203,13 @@ const handlers = {
   },
   UPDATE_CURRENCY_SETTINGS: (
     { currenciesSettings, ...state }: SettingsState,
-    { ticker, patch },
+    {
+      ticker,
+      patch,
+    }: {
+      ticker: string;
+      patch: Partial<CurrencySettings>;
+    },
   ) => ({
     ...state,
     currenciesSettings: {
@@ -204,11 +217,17 @@ const handlers = {
       [ticker]: { ...currenciesSettings[ticker], ...patch },
     },
   }),
-  SETTINGS_SET_PRIVACY: (state: SettingsState, { privacy }) => ({
+  SETTINGS_SET_PRIVACY: (
+    state: SettingsState,
+    { privacy }: { privacy: Privacy },
+  ) => ({
     ...state,
     privacy,
   }),
-  SETTINGS_SET_PRIVACY_BIOMETRICS: (state: SettingsState, { enabled }) => ({
+  SETTINGS_SET_PRIVACY_BIOMETRICS: (
+    state: SettingsState,
+    { enabled }: { enabled: boolean },
+  ) => ({
     ...state,
     privacy: { ...state.privacy, biometricsEnabled: enabled },
   }),
@@ -218,13 +237,19 @@ const handlers = {
   }),
   SETTINGS_SET_REPORT_ERRORS: (
     state: SettingsState,
-    { reportErrorsEnabled },
+    { reportErrorsEnabled }: { reportErrorsEnabled: boolean },
   ) => ({ ...state, reportErrorsEnabled }),
-  SETTINGS_SET_ANALYTICS: (state: SettingsState, { analyticsEnabled }) => ({
+  SETTINGS_SET_ANALYTICS: (
+    state: SettingsState,
+    { analyticsEnabled }: { analyticsEnabled: boolean },
+  ) => ({
     ...state,
     analyticsEnabled,
   }),
-  SETTINGS_SET_COUNTERVALUE: (state: SettingsState, { counterValue }) => ({
+  SETTINGS_SET_COUNTERVALUE: (
+    state: SettingsState,
+    { counterValue }: { counterValue: string },
+  ) => ({
     ...state,
     counterValue,
     counterValueExchange: null, // also reset the exchange
@@ -255,34 +280,40 @@ const handlers = {
     return copy;
   },
   SETTINGS_SET_SELECTED_TIME_RANGE: (
-    state,
+    state: SettingsState,
     { payload: selectedTimeRange },
   ) => ({ ...state, selectedTimeRange }),
-  SETTINGS_COMPLETE_ONBOARDING: state => ({
+  SETTINGS_COMPLETE_ONBOARDING: (state: SettingsState) => ({
     ...state,
     hasCompletedOnboarding: true,
   }),
-  SETTINGS_INSTALL_APP_FIRST_TIME: (state, action) => ({
+  SETTINGS_INSTALL_APP_FIRST_TIME: (state: SettingsState, action) => ({
     ...state,
     hasInstalledAnyApp: action.hasInstalledAnyApp,
   }),
-  SETTINGS_SET_READONLY_MODE: (state, action) => ({
+  SETTINGS_SET_READONLY_MODE: (state: SettingsState, action) => ({
     ...state,
     readOnlyModeEnabled: action.enabled,
   }),
-  SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state, action) => ({
+  SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state: SettingsState, action) => ({
     ...state,
     experimentalUSBEnabled: action.enabled,
   }),
-  SETTINGS_SWITCH_COUNTERVALUE_FIRST: state => ({
+  SETTINGS_SWITCH_COUNTERVALUE_FIRST: (state: SettingsState) => ({
     ...state,
     graphCountervalueFirst: !state.graphCountervalueFirst,
   }),
-  SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (state, { hideEmptyTokenAccounts }) => ({
+  SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (
+    state: SettingsState,
+    { hideEmptyTokenAccounts }: { hideEmptyTokenAccounts: boolean },
+  ) => ({
     ...state,
     hideEmptyTokenAccounts,
   }),
-  SHOW_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+  SHOW_TOKEN: (
+    state: SettingsState,
+    { payload: tokenId }: { payload: string },
+  ) => {
     const ids = state.blacklistedTokenIds;
     return { ...state, blacklistedTokenIds: ids.filter(id => id !== tokenId) };
   },
@@ -301,19 +332,22 @@ const handlers = {
       hiddenNftCollections: ids.filter(id => id !== collectionId),
     };
   },
-  SETTINGS_DISMISS_BANNER: (state, { payload }) => ({
+  SETTINGS_DISMISS_BANNER: (state: SettingsState, { payload }) => ({
     ...state,
     dismissedBanners: [...state.dismissedBanners, payload],
   }),
-  SETTINGS_SET_AVAILABLE_UPDATE: (state, action) => ({
+  SETTINGS_SET_AVAILABLE_UPDATE: (state: SettingsState, action) => ({
     ...state,
     hasAvailableUpdate: action.enabled,
   }),
   DANGEROUSLY_OVERRIDE_STATE: (state: SettingsState): SettingsState => ({
     ...state,
   }),
-  SETTINGS_SET_THEME: (state, { payload: theme }) => ({ ...state, theme }),
-  SETTINGS_SET_OS_THEME: (state, { payload: osTheme }) => ({
+  SETTINGS_SET_THEME: (state: SettingsState, { payload: theme }) => ({
+    ...state,
+    theme,
+  }),
+  SETTINGS_SET_OS_THEME: (state: SettingsState, { payload: osTheme }) => ({
     ...state,
     osTheme,
   }),

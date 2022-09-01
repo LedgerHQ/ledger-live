@@ -201,16 +201,16 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
         )
       : accounts,
 );
-const emptyArray = [];
+const emptyArray: AccountLike[] = [];
 export const accountsByCryptoCurrencyScreenSelector =
-  (currency: CryptoCurrency) => (state: any) => {
+  (currency: CryptoCurrency) => (state: State) => {
     if (!currency) return emptyArray;
     return accountsTuplesByCurrencySelector(state, {
       currency,
     });
   };
 export const flattenAccountsByCryptoCurrencyScreenSelector =
-  (currency?: CryptoCurrency) => (state: any) => {
+  (currency?: CryptoCurrency) => (state: State) => {
     if (!currency) return emptyArray;
     return flattenAccountsByCryptoCurrencySelector(state, {
       currencies: [currency.id],
@@ -312,7 +312,7 @@ export const subAccountByCurrencyOrderedSelector: OutputSelector<
   },
 );
 export const subAccountByCurrencyOrderedScreenSelector =
-  (route: any) => (state: any) => {
+  (route: any) => (state: State) => {
     const currency = route?.params?.currency || {};
     if (!currency) return [];
     return subAccountByCurrencyOrderedSelector(state, {

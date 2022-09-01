@@ -45,7 +45,7 @@ const initialState: AppState = {
   backgroundEvents: [],
 };
 
-const handlers: any = {
+const handlers = {
   SYNC_IS_CONNECTED: (
     state: AppState,
     { isConnected }: { isConnected: boolean | null },
