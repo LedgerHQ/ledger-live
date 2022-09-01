@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  ReactNode,
+} from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import {
   Button,
@@ -7,12 +13,17 @@ import {
   VerticalTimeline,
   Text,
 } from "@ledgerhq/native-ui";
-import { useDispatch } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
-import { OnboardingStep as DeviceOnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
+import {
+  OnboardingStep as DeviceOnboardingStep,
+  fromSeedPhraseTypeToNbOfSeedWords,
+} from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
+import { getDeviceModel } from "@ledgerhq/devices";
+
+import { CompositeScreenProps } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
@@ -20,8 +31,8 @@ import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
-import { completeOnboarding } from "../../actions/settings";
 import SoftwareChecksStep from "./SoftwareChecksStep";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -29,20 +40,23 @@ type Step = {
   key: CompanionStepKey;
   status: StepStatus;
   title: string;
+  estimatedTime?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
 
-type Props = StackScreenProps<
-  SyncOnboardingStackParamList,
-  "SyncOnboardingCompanion"
+export type SyncOnboardingCompanionProps = CompositeScreenProps<
+  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompanion">,
+  StackScreenProps<BaseNavigatorStackParamList>
 >;
 
-const pollingPeriodMs = 1000;
-const pollingTimeoutMs = 60000;
-const readyRedirectDelay = 1000;
-const resyncDelay = 2000;
+const normalPollingPeriodMs = 1000;
+const shortPollingPeriodMs = 400;
+const normalDesyncTimeoutMs = 60000;
+const longDesyncTimeoutMs = 300000;
+const normalResyncOverlayDisplayDelayMs = 1000;
+const longResyncOverlayDisplayDelayMs = 180000;
+const readyRedirectDelayMs = 2500;
 
-/* eslint-disable no-unused-vars */
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
 enum CompanionStepKey {
   Paired = 0,
@@ -52,74 +66,105 @@ enum CompanionStepKey {
   Ready,
   Exit,
 }
-/* eslint-enable no-unused-vars */
 
 function nextStepKey(step: CompanionStepKey): CompanionStepKey {
-  if (step === CompanionStepKey.Ready) {
-    return CompanionStepKey.Ready;
+  if (step === CompanionStepKey.Exit) {
+    return CompanionStepKey.Exit;
   }
   return step + 1;
 }
 
-export const SyncOnboarding = ({ navigation, route }: Props) => {
+export const SyncOnboarding = ({
+  navigation,
+  route,
+}: SyncOnboardingCompanionProps) => {
+  const { t } = useTranslation();
+  const { device } = route.params;
+
+  const productName =
+    getDeviceModel(device.modelId).productName || device.modelId;
+  const deviceName = device.deviceName || productName;
+
+  const handleSoftwareCheckComplete = useCallback(() => {
+    setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck));
+  }, []);
+
+  const formatEstimatedTime = (estimatedTime: number) =>
+    t("syncOnboarding.estimatedTimeFormat", {
+      estimatedTime: estimatedTime / 60,
+    });
+
   const defaultCompanionSteps: Step[] = useMemo(
     () => [
       {
         key: CompanionStepKey.Paired,
-        title: "Nano paired",
+        title: t("syncOnboarding.pairingStep.title", { productName }),
         status: "inactive",
+        renderBody: () => (
+          <Text variant="bodyLineHeight">
+            {t("syncOnboarding.pairingStep.description", { productName })}
+          </Text>
+        ),
       },
       {
         key: CompanionStepKey.Pin,
-        title: "Set your PIN",
+        title: t("syncOnboarding.pinStep.title"),
         status: "inactive",
+        estimatedTime: 120,
         renderBody: () => (
           <Flex>
-            <Text
-              variant="bodyLineHeight"
-              mb={6}
-            >{`Your PIN can be 4 to 8 digits long.`}</Text>
+            <Text variant="bodyLineHeight" mb={6}>
+              {t("syncOnboarding.pinStep.description", { productName })}
+            </Text>
             <Text variant="bodyLineHeight">
-              {`Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
+              {t("syncOnboarding.pinStep.warning", { productName })}
             </Text>
           </Flex>
         ),
       },
       {
         key: CompanionStepKey.Seed,
-        title: "Recovery phrase",
+        title: t("syncOnboarding.seedStep.title"),
         status: "inactive",
+        estimatedTime: 300,
         renderBody: () => (
           <Text variant="bodyLineHeight">
-            {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
+            {t("syncOnboarding.seedStep.description", { productName })}
           </Text>
         ),
       },
       {
         key: CompanionStepKey.SoftwareCheck,
-        title: "Software check",
+        title: t("syncOnboarding.softwareChecksSteps.title"),
         status: "inactive",
         renderBody: (isDisplayed?: boolean) => (
           <SoftwareChecksStep
-            active={!!isDisplayed}
-            onComplete={() =>
-              setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck))
-            }
+            device={device}
+            isDisplayed={isDisplayed}
+            onComplete={handleSoftwareCheckComplete}
           />
         ),
       },
       {
         key: CompanionStepKey.Ready,
-        title: "Nano is ready",
+        title: t("syncOnboarding.readyStep.title", { productName }),
         status: "inactive",
       },
     ],
-    [],
+    [t, productName, device, handleSoftwareCheckComplete],
   );
 
-  const dispatch = useDispatch();
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [desyncTimer, setDesyncTimer] = useState<NodeJS.Timeout | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
+  const [pollingPeriodMs, setPollingPeriodMs] = useState<number>(
+    normalPollingPeriodMs,
+  );
+  const [resyncOverlayDisplayDelayMs, setResyncOverlayDisplayDelayMs] =
+    useState<number>(normalResyncOverlayDisplayDelayMs);
+
+  const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(
+    normalDesyncTimeoutMs,
+  );
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [companionSteps, setCompanionSteps] = useState<Step[]>(
@@ -129,12 +174,38 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     CompanionStepKey.Paired,
   );
 
-  const { device } = route.params;
+  const goBackToPairingFlow = useCallback(() => {
+    // On pairing success, navigate to the Sync Onboarding Companion
+    // Replace to avoid going back to this screen on return from the pairing flow
+    navigation.replace(NavigatorName.Base as "Base", {
+      screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
+      params: {
+        filterByDeviceModelId: device.modelId,
+        areKnownDevicesDisplayed: false,
+        onSuccessAddToKnownDevices: false,
+        onSuccessNavigateToConfig: {
+          navigateInput: {
+            name: NavigatorName.BaseOnboarding,
+            params: {
+              screen: NavigatorName.SyncOnboarding,
+              params: {
+                screen: ScreenName.SyncOnboardingCompanion,
+                params: {
+                  device: null,
+                },
+              },
+            },
+          },
+          pathToDeviceParam: "params.params.params.device",
+        },
+      },
+    });
+  }, [navigation, device]);
 
   const {
     onboardingState: deviceOnboardingState,
     allowedError,
-    // fatalErrorItem,
+    fatalError,
   } = useOnboardingStatePolling({
     device,
     pollingPeriodMs,
@@ -142,46 +213,46 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   });
 
   const handleClose = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
+    goBackToPairingFlow();
+  }, [goBackToPairingFlow]);
 
-  const handleTimerRunsOut = useCallback(() => {
+  const handleDesyncTimedOut = useCallback(() => {
     setDesyncDrawerOpen(true);
   }, [setDesyncDrawerOpen]);
 
+  const handleDesyncRetry = useCallback(() => {
+    goBackToPairingFlow();
+  }, [goBackToPairingFlow]);
+
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);
-    // Replace to avoid going back to this screen without re-rendering
-    navigation.replace(ScreenName.BleDevicesScanning as "BleDevicesScanning");
-  }, [navigation]);
+    goBackToPairingFlow();
+  }, [goBackToPairingFlow]);
 
   const handleDeviceReady = useCallback(() => {
-    dispatch(completeOnboarding());
-
-    const parentNav = navigation.getParent();
-    if (parentNav) {
-      parentNav.popToTop();
-    }
-
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-    });
-  }, [dispatch, navigation]);
-
-  // useEffect(() => {
-  //   TODO: handle fatal errors
-  //   console.log("Fatal error");
-  //   setDesyncDrawerOpen(true);
-  // }, [fatalError]);
+    navigation.navigate(
+      ScreenName.SyncOnboardingCompletion as "SyncOnboardingCompletion",
+    );
+  }, [navigation]);
 
   useEffect(() => {
-    if (allowedError && !timer) {
-      setTimer(setTimeout(handleTimerRunsOut, pollingTimeoutMs));
-    } else if (!allowedError && timer) {
-      clearTimeout(timer);
-      setTimer(null);
+    if (!fatalError) {
+      return;
     }
-  }, [allowedError, handleTimerRunsOut, timer]);
+    setDesyncDrawerOpen(true);
+  }, [fatalError]);
+
+  useEffect(() => {
+    if (allowedError && !desyncTimer) {
+      setDesyncTimer(setTimeout(handleDesyncTimedOut, desyncTimeoutMs));
+      // Accelerates the polling to resync as fast as possible with the device
+      setPollingPeriodMs(shortPollingPeriodMs);
+    } else if (!allowedError && desyncTimer) {
+      clearTimeout(desyncTimer);
+      setDesyncTimer(null);
+      setPollingPeriodMs(normalPollingPeriodMs);
+    }
+  }, [allowedError, handleDesyncTimedOut, desyncTimer, desyncTimeoutMs]);
 
   useEffect(() => {
     if (isDesyncDrawerOpen) {
@@ -204,11 +275,38 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         break;
       case DeviceOnboardingStep.WelcomeScreen:
       case DeviceOnboardingStep.SetupChoice:
+        setCompanionStepKey(CompanionStepKey.Paired);
+        break;
       case DeviceOnboardingStep.Pin:
         setCompanionStepKey(CompanionStepKey.Pin);
         break;
       default:
         break;
+    }
+  }, [deviceOnboardingState]);
+
+  // When the user gets close to the seed generation step, sets the lost synchronization delay
+  // and timers to a higher value. It avoids having a warning message while the connection is lost
+  // because the device is generating the seed.
+  useEffect(() => {
+    if (
+      deviceOnboardingState?.seedPhraseType &&
+      [
+        DeviceOnboardingStep.NewDeviceConfirming,
+        DeviceOnboardingStep.RestoreSeed,
+      ].includes(deviceOnboardingState?.currentOnboardingStep)
+    ) {
+      const nbOfSeedWords = fromSeedPhraseTypeToNbOfSeedWords.get(
+        deviceOnboardingState.seedPhraseType,
+      );
+
+      if (
+        nbOfSeedWords &&
+        deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2
+      ) {
+        setResyncOverlayDisplayDelayMs(longResyncOverlayDisplayDelayMs);
+        setDesyncTimeoutMs(longDesyncTimeoutMs);
+      }
     }
   }, [deviceOnboardingState]);
 
@@ -220,12 +318,12 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     if (companionStepKey === CompanionStepKey.Ready) {
       setTimeout(
         () => setCompanionStepKey(CompanionStepKey.Exit),
-        readyRedirectDelay / 2,
+        readyRedirectDelayMs / 2,
       );
     }
 
     if (companionStepKey === CompanionStepKey.Exit) {
-      setTimeout(handleDeviceReady, readyRedirectDelay / 2);
+      setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
     }
 
     setCompanionSteps(
@@ -255,7 +353,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         <DesyncDrawer
           isOpen={isDesyncDrawerOpen}
           onClose={handleDesyncClose}
-          navigation={navigation}
+          onRetry={handleDesyncRetry}
+          device={device}
         />
         <Flex
           flexDirection="row"
@@ -264,16 +363,20 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           px={7}
           pb={4}
         >
-          <LanguageSelect />
+          <LanguageSelect productName={productName} />
           <Button type="default" Icon={CloseMedium} onPress={handleClose} />
         </Flex>
         <Flex flex={1}>
-          <ResyncOverlay isOpen={!!timer && !stopPolling} delay={resyncDelay} />
+          <ResyncOverlay
+            isOpen={!!desyncTimer && !stopPolling}
+            delay={resyncOverlayDisplayDelayMs}
+            productName={productName}
+          />
           <ScrollContainer>
             <Flex px={7} pt={2}>
               <Flex mb={7} flexDirection="row" alignItems="center">
                 <Text variant="h4" fontWeight="semiBold">
-                  Setup your Nano
+                  {t("syncOnboarding.title", { deviceName })}
                 </Text>
                 <Button
                   ml={2}
@@ -281,7 +384,10 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
                   onPress={() => setHelpDrawerOpen(true)}
                 />
               </Flex>
-              <VerticalTimeline steps={companionSteps} />
+              <VerticalTimeline
+                steps={companionSteps}
+                formatEstimatedTime={formatEstimatedTime}
+              />
             </Flex>
           </ScrollContainer>
         </Flex>

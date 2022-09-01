@@ -1,9 +1,47 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BoxedIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  CircledAlertMedium,
+  CircledCheckSolidMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
+import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { useTheme } from "styled-components/native";
 
-type CheckStatus = "inactive" | "active" | "completed";
+import GenuineCheckDrawer from "./GenuineCheckDrawer";
+import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
+import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
+import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
+import AllowManagerDrawer from "./AllowManagerDrawer";
+
+const softwareStepDelay = 2500;
+const lockedDeviceTimeoutMs = 1000;
+
+type CheckStatus = "inactive" | "active" | "completed" | "failed";
+
+type CurrentSoftwareChecksStep = "none" | "genuine-check" | "firmware-update";
+
+type GenuineCheckUiStepStatus = CheckStatus;
+type GenuineCheckStatus =
+  | "unchecked"
+  | "requested"
+  | "ongoing"
+  | "completed"
+  | "failed";
+type GenuineCheckUiDrawerStatus =
+  | "none"
+  | "requested"
+  | "allow-manager"
+  | "unlock-needed"
+  | "cancelled";
+
+type FirmwareUpdateUiStepStatus = CheckStatus;
+type FirmwareUpdateStatus = "unchecked" | "ongoing" | "completed" | "failed";
+type FirmwareUpdateUiDrawerStatus = "none" | "new-firmware-available";
 
 type CheckCardProps = FlexBoxProps & {
   title: string;
@@ -12,15 +50,23 @@ type CheckCardProps = FlexBoxProps & {
 };
 
 const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
-  const getCheckIcon = useCallback((status: CheckStatus, index: number) => {
-    if (status === "active") {
-      return <InfiniteLoader size={24} />;
-    }
-    if (status === "completed") {
-      return <CheckAloneMedium color="success.c100" size={16} />;
-    }
-    return <Text variant="body">{index}</Text>;
-  }, []);
+  const { colors } = useTheme();
+
+  const getCheckIcon = useCallback(
+    (status: CheckStatus, index: number) => {
+      if (status === "active") {
+        return <InfiniteLoader color={colors.primary.c80} size={24} />;
+      }
+      if (status === "completed") {
+        return <CircledCheckSolidMedium color="success.c100" size={24} />;
+      }
+      if (status === "failed") {
+        return <CircledAlertMedium color="warning.c100" size={24} />;
+      }
+      return <Text variant="body">{index}</Text>;
+    },
+    [colors.primary.c80],
+  );
 
   return (
     <Flex flexDirection="row" alignItems="center" {...props}>
@@ -38,67 +84,318 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
 };
 
 export type Props = {
-  active: boolean;
+  device: Device;
+  isDisplayed?: boolean;
   onComplete?: () => void;
 };
 
-const SoftwareChecksStep = ({ active, onComplete }: Props) => {
-  const [genuineCheckStatus, setGenuineCheckStatus] = useState<CheckStatus>(
-    "inactive",
-  );
-  const [firmwareUpdateStatus, setFirmwareUpdateStatus] = useState<CheckStatus>(
-    "inactive",
-  );
+const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
+  const { t } = useTranslation();
 
-  const handleGenuineCheck = useCallback(() => {
-    // TODO implement genuine check logic
-    setTimeout(() => {
-      setGenuineCheckStatus("completed");
-    }, 3000);
-  }, []);
+  const productName =
+    getDeviceModel(device.modelId).productName || device.modelId;
 
-  const handleFirmwareUpdate = useCallback(() => {
-    // TODO implement firmware update logic
-    setTimeout(() => {
-      setFirmwareUpdateStatus("completed");
-    }, 3000);
-  }, []);
+  const [currentDisplayedDrawer, setCurrentDisplayedDrawer] = useState<
+    GenuineCheckUiDrawerStatus | FirmwareUpdateUiDrawerStatus
+  >("none");
 
+  // Will be computed depending on the states. Updating nextDrawerToDisplay
+  // triggers the current displayed drawer to close
+  let nextDrawerToDisplay:
+    | GenuineCheckUiDrawerStatus
+    | FirmwareUpdateUiDrawerStatus = "none";
+
+  const [currentSoftwareChecksStep, setCurrentSoftwareChecksStep] = useState<
+    CurrentSoftwareChecksStep
+  >("none");
+
+  const [genuineCheckStatus, setGenuineCheckStatus] = useState<
+    GenuineCheckStatus
+  >("unchecked");
+
+  const [firmwareUpdateStatus, setFirmwareUpdateStatus] = useState<
+    FirmwareUpdateStatus
+  >("unchecked");
+
+  // Not a DeviceAction as we're only interested in the permission requested, granted and result.
+  // No need the full DeviceAction with its retry strategy etc.
+  const {
+    genuineState,
+    devicePermissionState,
+    error: genuineCheckError,
+    resetGenuineCheckState,
+  } = useGenuineCheck({
+    isHookEnabled: genuineCheckStatus === "ongoing",
+    deviceId: device.deviceId,
+    lockedDeviceTimeoutMs,
+  });
+
+  const {
+    latestFirmware,
+    error: latestFirmwareGettingError,
+    status: latestFirmwareGettingStatus,
+  } = useGetLatestAvailableFirmware({
+    isHookEnabled: firmwareUpdateStatus === "ongoing",
+    deviceId: device.deviceId,
+  });
+
+  // Software check steps entry points
   useEffect(() => {
-    if (active && genuineCheckStatus === "inactive") {
-      setGenuineCheckStatus("active");
-      handleGenuineCheck();
-    }
-  }, [active, genuineCheckStatus, handleGenuineCheck]);
+    if (isDisplayed) {
+      // First time doing the genuine check
+      if (currentSoftwareChecksStep === "none") {
+        setCurrentSoftwareChecksStep("genuine-check");
+        setGenuineCheckStatus("requested");
+      }
+      // Genuine check retry entry point
+      else if (
+        currentSoftwareChecksStep === "genuine-check" &&
+        genuineCheckStatus === "unchecked"
+      ) {
+        setGenuineCheckStatus("ongoing");
+      }
+      // First time doing the firmware check
+      else if (
+        ["completed", "failed"].includes(genuineCheckStatus) &&
+        currentSoftwareChecksStep === "genuine-check"
+      ) {
+        setCurrentSoftwareChecksStep("firmware-update");
 
+        setTimeout(() => {
+          setFirmwareUpdateStatus("ongoing");
+        }, softwareStepDelay);
+      }
+    }
+  }, [isDisplayed, currentSoftwareChecksStep, genuineCheckStatus]);
+
+  // Handles the completion of the entire software check step
   useEffect(() => {
     if (
-      active &&
-      genuineCheckStatus === "completed" &&
-      firmwareUpdateStatus === "inactive"
+      isDisplayed &&
+      onComplete &&
+      ["completed", "failed"].includes(firmwareUpdateStatus)
     ) {
-      setFirmwareUpdateStatus("active");
-      handleFirmwareUpdate();
+      // FIXME: timeout for now to display the status of the available fw update
+      setTimeout(() => onComplete(), 2000);
     }
-  }, [active, genuineCheckStatus, firmwareUpdateStatus, handleFirmwareUpdate]);
+  }, [firmwareUpdateStatus, isDisplayed, onComplete]);
 
-  useEffect(() => {
-    if (active && onComplete && firmwareUpdateStatus === "completed") {
-      onComplete();
+  let genuineCheckUiStepStatus: GenuineCheckUiStepStatus = "inactive";
+  let firmwareUpdateUiStepStatus: FirmwareUpdateUiStepStatus = "inactive";
+
+  if (isDisplayed) {
+    // Handle genuine check UI logic
+    if (currentSoftwareChecksStep === "genuine-check") {
+      if (genuineCheckStatus === "requested") {
+        genuineCheckUiStepStatus = "active";
+        nextDrawerToDisplay = "requested";
+      } else if (genuineCheckStatus === "ongoing") {
+        genuineCheckUiStepStatus = "active";
+        nextDrawerToDisplay = "none";
+
+        // Updates the genuineCheckStatus
+        if (genuineCheckError) {
+          console.error(
+            "Failed to perform genuine check with error:",
+            genuineCheckError.message,
+          );
+          setGenuineCheckStatus("failed");
+        } else if (genuineState === "genuine") {
+          setGenuineCheckStatus("completed");
+        } else if (genuineState === "non-genuine") {
+          // FIXME: if the device is non-genuine, we should display something else
+          setGenuineCheckStatus("failed");
+        }
+
+        // Updates the UI
+        if (devicePermissionState === "unlock-needed") {
+          nextDrawerToDisplay = "unlock-needed";
+        } else if (devicePermissionState === "requested") {
+          nextDrawerToDisplay = "allow-manager";
+        } else if (devicePermissionState === "refused") {
+          nextDrawerToDisplay = "cancelled";
+        }
+      }
     }
-  }, [active, firmwareUpdateStatus, onComplete]);
+    // currentSoftwareChecksStep can be any value for those UI updates
+    if (genuineCheckStatus === "completed") {
+      genuineCheckUiStepStatus = "completed";
+    } else if (genuineCheckStatus === "failed") {
+      genuineCheckUiStepStatus = "failed";
+    }
+
+    // Handle firmware update UI logic
+    if (currentSoftwareChecksStep === "firmware-update") {
+      if (firmwareUpdateStatus === "ongoing") {
+        firmwareUpdateUiStepStatus = "active";
+        nextDrawerToDisplay = "none";
+
+        // Updates the firmwareUpdateStatus
+        if (latestFirmwareGettingError) {
+          console.error(
+            "Failed to retrieve latest firmware version with error:",
+            latestFirmwareGettingError.message,
+          );
+          setFirmwareUpdateStatus("failed");
+        } else if (latestFirmwareGettingStatus === "no-available-firmware") {
+          setFirmwareUpdateStatus("completed");
+        }
+
+        // Updates the UI
+        if (
+          latestFirmwareGettingStatus === "available-firmware" &&
+          latestFirmware
+        ) {
+          nextDrawerToDisplay = "new-firmware-available";
+        }
+      }
+      // currentSoftwareChecksStep can be any value for those UI updates
+      if (firmwareUpdateStatus === "completed") {
+        firmwareUpdateUiStepStatus = "completed";
+      } else if (firmwareUpdateStatus === "failed") {
+        firmwareUpdateUiStepStatus = "failed";
+      }
+    }
+  }
+
+  // Handles the genuine check UI step title
+  let genuineCheckStepTitle;
+  switch (genuineCheckUiStepStatus) {
+    case "active":
+      genuineCheckStepTitle = t(
+        "syncOnboarding.softwareChecksSteps.genuineCheckStep.active.title",
+        {
+          productName,
+        },
+      );
+      break;
+    case "completed":
+      genuineCheckStepTitle = t(
+        "syncOnboarding.softwareChecksSteps.genuineCheckStep.completed.title",
+        {
+          productName,
+        },
+      );
+      break;
+    case "failed":
+      genuineCheckStepTitle = t(
+        "syncOnboarding.softwareChecksSteps.genuineCheckStep.failed.title",
+      );
+      break;
+    default:
+      genuineCheckStepTitle = t(
+        "syncOnboarding.softwareChecksSteps.genuineCheckStep.inactive.title",
+      );
+      break;
+  }
+
+  // Handles the firmware update UI step title
+  let firmwareUpdateStepTitle;
+  switch (firmwareUpdateUiStepStatus) {
+    case "active":
+      firmwareUpdateStepTitle = t(
+        "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.active.title",
+      );
+      break;
+    case "completed":
+      if (
+        latestFirmwareGettingStatus === "available-firmware" &&
+        latestFirmware
+      ) {
+        firmwareUpdateStepTitle = t(
+          "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.completed.updateAvailable.title",
+          {
+            firmwareVersion: JSON.stringify(latestFirmware.final.name),
+          },
+        );
+      } else {
+        firmwareUpdateStepTitle = t(
+          "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.completed.noUpdateAvailable.title",
+        );
+      }
+      break;
+    case "failed":
+      firmwareUpdateStepTitle = t(
+        "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.failed.title",
+      );
+      break;
+    default:
+      firmwareUpdateStepTitle = t(
+        "syncOnboarding.softwareChecksSteps.firmwareUpdateStep.inactive.title",
+      );
+      break;
+  }
+
+  // If there is already a displayed drawer, the currentDisplayedDrawer would be
+  // synchronized with nextDrawerToDisplay during the displayed drawer onClose event.
+  // Otherwise, currentDisplayDrawer needs to be set to nextDrawerToDisplay manually
+  if (currentDisplayedDrawer === "none" && nextDrawerToDisplay !== "none") {
+    setCurrentDisplayedDrawer(nextDrawerToDisplay);
+  }
 
   return (
     <Flex>
+      {isDisplayed && (
+        <Flex>
+          <GenuineCheckDrawer
+            productName={productName}
+            isOpen={
+              currentDisplayedDrawer === "requested" &&
+              nextDrawerToDisplay === "requested"
+            }
+            onPress={() => setGenuineCheckStatus("ongoing")}
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+          />
+          <UnlockDeviceDrawer
+            isOpen={
+              currentDisplayedDrawer === "unlock-needed" &&
+              nextDrawerToDisplay === "unlock-needed"
+            }
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+            device={device}
+          />
+          <AllowManagerDrawer
+            isOpen={
+              currentDisplayedDrawer === "allow-manager" &&
+              nextDrawerToDisplay === "allow-manager"
+            }
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+            device={device}
+          />
+          <GenuineCheckCancelledDrawer
+            productName={productName}
+            isOpen={
+              currentDisplayedDrawer === "cancelled" &&
+              nextDrawerToDisplay === "cancelled"
+            }
+            onRetry={() => {
+              resetGenuineCheckState();
+              setGenuineCheckStatus("unchecked");
+            }}
+            onSkip={() => setGenuineCheckStatus("failed")}
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+          />
+          <FirmwareUpdateDrawer
+            productName={productName}
+            isOpen={
+              currentDisplayedDrawer === "new-firmware-available" &&
+              nextDrawerToDisplay === "new-firmware-available"
+            }
+            onSkip={() => setFirmwareUpdateStatus("completed")}
+            onUpdate={() => setFirmwareUpdateStatus("completed")}
+            onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+          />
+        </Flex>
+      )}
       <CheckCard
-        title="Genuine check"
-        status={genuineCheckStatus}
+        title={genuineCheckStepTitle}
+        status={genuineCheckUiStepStatus}
         index={1}
         mb={4}
       />
       <CheckCard
-        title="Firmware update"
-        status={firmwareUpdateStatus}
+        title={firmwareUpdateStepTitle}
+        status={firmwareUpdateUiStepStatus}
         index={2}
       />
     </Flex>

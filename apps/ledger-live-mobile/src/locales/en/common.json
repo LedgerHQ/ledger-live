@@ -1591,6 +1591,136 @@
       }
     }
   },
+  "syncOnboarding": {
+    "title": "Setup {{deviceName}}",
+    "estimatedTimeFormat": "{{estimatedTime}} min",
+    "deviceSelection": {
+      "title": "Which device do you own?",
+      "subtitle": "Choose which Ledger wallet you want to setup with Ledger Live",
+      "nanoX": {
+        "title": "Nano X",
+        "description": "We'll guide your every step to secure your crypto and NFTs"
+      },
+      "nanoFTS": {
+        "title": "Nano FTS",
+        "description": "We'll guide your every step to secure your crypto and NFTs"
+      }
+    },
+    "scanning": {
+      "title": "Looking for your {{productName}}",
+      "description": "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+    },
+    "pairing": {
+      "success": {
+        "title": "Paired with {{deviceName}}"
+      },
+      "loading": {
+        "title": "Pairing with {{deviceName}}",
+        "subtitle": "Confirm the code on your {{productName}}"
+      },
+      "error": {
+        "title": "Pairing unsucessful",
+        "subtitle": "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby"
+      }
+    },
+    "languageSelect": {
+      "title": "App Language"
+    },
+    "firmwareLanguageUpdateDrawer": {
+      "title": "Change language on your {{productName}}",
+      "description": "Ledger Live is now in {{newLanguage}}. Do you want to use {{newLanguage}} on your {{productName}} too?",
+      "updateCta": "Change language",
+      "cancelCta": "Cancel"
+    },
+    "desyncDrawer": {
+      "title": "We could not connect to your {{productName}}",
+      "description": "Please make sure your {{productName}} is nearby and unlocked. Check to see if Bluetooth is enabled on your mobile phone",
+      "retryCta": "Try again",
+      "helpCta": "Get help"
+    },
+    "resyncOverlay": {
+      "content": "It looks like your connection to your {{productName}} was lost. Reconnecting"
+    },
+    "helpDrawer": {
+      "title": "Need some help with your setup manual?",
+      "description": "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
+      "docCta": "View our FAQs",
+      "supportCta": "Speak to a human"
+    },
+    "pairingStep": {
+      "title": "{{productName}} is paired",
+      "description": "Continue setting up your {{productName}} and look back here for step by step assistance"
+    },
+    "pinStep": {
+      "title": "Choose your PIN",
+      "description": "Your PIN prevents any unwanted access to your {{productName}}. Never share it",
+      "warning": "Anyone who knows your PIN and has access to your {{productName}} can steal your assets forever"
+    },
+    "seedStep": {
+      "title": "Set your recovery phrase",
+      "description": "Your recovery phrase is a secret list of 24 words that backs up your private keys. Your {{productName}} generates a unique recovery phrase. Ledger does not keep a copy of it"
+    },
+    "softwareChecksSteps": {
+      "title": "Operating system check",
+      "genuineCheckRequestDrawer": {
+        "title": "Let's make sure your {{productName}} is genuine",
+        "checkCta": "Check genuineness"
+      },
+      "allowManagerDrawer": {
+        "wording": "Ledger Live"
+      },
+      "genuineCheckCancelledDrawer": {
+        "title": "Authenticity check was cancelled on your Nano",
+        "description": "This check is important to make sure your {{productName}} is safe to use",
+        "retryCta": "Run genuine check again",
+        "skipCta": "Maybe later"
+      },
+      "updateAvailableDrawer": {
+        "title": "New software found",
+        "description": "To access the latest security features, we highly recommend updating your {{productName}}",
+        "updateCta": "Update"
+      },
+      "genuineCheckStep": {
+        "inactive": {
+          "title": "Authenticity check"
+        },
+        "active": {
+          "title": "Checking {{productName}}"
+        },
+        "completed": {
+          "title": "Your {{productName}} is authentic"
+        },
+        "failed": {
+          "title": "Device security not checked"
+        }
+      },
+      "firmwareUpdateStep": {
+        "inactive": {
+          "title": "Software check"
+        },
+        "active": {
+          "title": "Checking software version"
+        },
+        "completed": {
+          "updateAvailable": {
+            "title": "Software version {{firmwareVersion}} available"
+          },
+          "noUpdateAvailable": {
+            "title": "Software version up-to-date"
+          }
+        },
+        "failed": {
+          "title": "Software update failed"
+        }
+      }
+    },
+    "readyStep": {
+      "title": "{{productName}} is ready"
+    },
+    "completion": {
+      "title": "Now you are in control"
+    }
+  },
   "tabs": {
     "portfolio": "Wallet",
     "accounts": "Accounts",

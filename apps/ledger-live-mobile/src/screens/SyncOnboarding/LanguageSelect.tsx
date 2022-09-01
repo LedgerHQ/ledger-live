@@ -1,11 +1,9 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import {
   BottomDrawer,
   Button,
   Flex,
-  Link,
   SelectableList,
   Text,
 } from "@ledgerhq/native-ui";
@@ -13,21 +11,31 @@ import { useDispatch } from "react-redux";
 import {
   ArrowLeftMedium,
   ChevronBottomMedium,
-  ExternalLinkMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 
-import { ScreenName } from "../../const";
-import { setLanguage } from "../../../actions/settings";
+import { useTranslation } from "react-i18next";
+import { setLanguage } from "../../actions/settings";
 import { useLocale } from "../../context/Locale";
-import {
-  fullySupportedLocales,
-  languages,
-  supportedLocales,
-} from "../../languages";
+import { languages, supportedLocales } from "../../languages";
 import Illustration from "../../images/illustration/Illustration";
 import DeviceDark from "../../images/illustration/Dark/_FamilyPackX.png";
 import DeviceLight from "../../images/illustration/Light/_FamilyPackX.png";
+
+type UiDrawerStatus =
+  | "none"
+  | "language-selection"
+  | "firmware-language-update";
+
+type LanguageSelectStatus =
+  | "unrequested"
+  | "language-selection-requested"
+  | "firmware-language-update-requested"
+  | "completed";
+
+export type Props = {
+  productName: string;
+};
 
 const ScrollViewContainer = styled(ScrollView)`
   height: 100%;
@@ -36,32 +44,78 @@ const ScrollViewContainer = styled(ScrollView)`
 // TODO: remove this when there's a real equivalent
 const firmwareSupportedLocales = ["en", "fr", "es"];
 
-const LanguageSelect = () => {
+const LanguageSelect = ({ productName }: Props) => {
+  const { t } = useTranslation();
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [isFirmwareDrawerOpen, setFirmwareDrawerOpen] = useState(false);
 
-  const handleLanguageSelect = useCallback(
-    language => {
-      dispatch(setLanguage(language));
-      if (firmwareSupportedLocales.includes(language)) {
-        setFirmwareDrawerOpen(true);
-      } else {
-        setDrawerOpen(false);
-      }
-    },
-    [dispatch],
-  );
+  const [currentDisplayedDrawer, setCurrentDisplayedDrawer] = useState<
+    UiDrawerStatus
+  >("none");
 
-  const handleFirmwareLanguageSelect = useCallback(() => {
+  // Will be computed depending on the states. Updating nextDrawerToDisplay
+  // triggers the current displayed drawer to close
+  let nextDrawerToDisplay: UiDrawerStatus = "none";
+
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+
+  const [languageSelectStatus, setLanguageSelectStatus] = useState<
+    LanguageSelectStatus
+  >("unrequested");
+
+  // Handles a newly selected language to redux-dispatch
+  useEffect(() => {
+    if (selectedLanguage) {
+      dispatch(setLanguage(selectedLanguage));
+    }
+  }, [dispatch, selectedLanguage]);
+
+  const handleLanguageSelectOnChange = useCallback(language => {
+    setSelectedLanguage(language);
+
+    if (firmwareSupportedLocales.includes(language)) {
+      setLanguageSelectStatus("firmware-language-update-requested");
+    } else {
+      setLanguageSelectStatus("completed");
+    }
+  }, []);
+
+  const handleLanguageSelectOnPress = useCallback(() => {
+    setLanguageSelectStatus("language-selection-requested");
+  }, []);
+
+  const handleLanguageSelectCancel = useCallback(() => {
+    setLanguageSelectStatus("completed");
+  }, []);
+
+  const handleFirmwareLanguageUpdate = useCallback(() => {
     // TODO: redirect to firmware localization flow when available
   }, []);
 
   const handleFirmwareLanguageCancel = useCallback(() => {
-    setFirmwareDrawerOpen(false);
-    setDrawerOpen(false);
+    setLanguageSelectStatus("completed");
   }, []);
+
+  // Handles the UI logic
+  if (languageSelectStatus === "language-selection-requested") {
+    nextDrawerToDisplay = "language-selection";
+  } else if (languageSelectStatus === "firmware-language-update-requested") {
+    nextDrawerToDisplay = "firmware-language-update";
+  } else {
+    nextDrawerToDisplay = "none";
+
+    // Resets entirely the drawer mechanism
+    if (currentDisplayedDrawer !== "none") {
+      setCurrentDisplayedDrawer("none");
+    }
+  }
+
+  // If there is already a displayed drawer, the currentDisplayedDrawer would be
+  // synchronized with nextDrawerToDisplay during the displayed drawer onClose event.
+  // Otherwise, currentDisplayDrawer needs to be set to nextDrawerToDisplay manually
+  if (currentDisplayedDrawer === "none" && nextDrawerToDisplay !== "none") {
+    setCurrentDisplayedDrawer(nextDrawerToDisplay);
+  }
 
   return (
     <Flex>
@@ -71,11 +125,19 @@ const LanguageSelect = () => {
         size="small"
         Icon={ChevronBottomMedium}
         iconPosition="right"
-        onPress={() => setDrawerOpen(true)}
+        onPress={handleLanguageSelectOnPress}
       >
         {currentLocale.toLocaleUpperCase()}
       </Button>
-      <BottomDrawer noCloseButton preventBackdropClick isOpen={isDrawerOpen}>
+      <BottomDrawer
+        noCloseButton
+        preventBackdropClick
+        isOpen={
+          currentDisplayedDrawer === "language-selection" &&
+          nextDrawerToDisplay === "language-selection"
+        }
+        onClose={() => setCurrentDisplayedDrawer(nextDrawerToDisplay)}
+      >
         <Flex
           mb={4}
           flexDirection="row"
@@ -85,11 +147,11 @@ const LanguageSelect = () => {
           <Flex flex={1}>
             <Button
               Icon={ArrowLeftMedium}
-              onPress={() => setDrawerOpen(false)}
+              onPress={handleLanguageSelectCancel}
             />
           </Flex>
-          <Text variant="h5" fontWeight="semiBold" justifySelf="center">
-            App Language
+          <Text variant="h5" fontWeight="semiBold" justifyContent="center">
+            {t("syncOnboarding.languageSelect.title")}
           </Text>
           <Flex flex={1} />
         </Flex>
@@ -97,7 +159,7 @@ const LanguageSelect = () => {
           <Flex>
             <SelectableList
               currentValue={currentLocale}
-              onChange={handleLanguageSelect}
+              onChange={handleLanguageSelectOnChange}
             >
               {supportedLocales.map((locale: string, index: number) => (
                 <SelectableList.Element key={index + locale} value={locale}>
@@ -110,7 +172,10 @@ const LanguageSelect = () => {
       </BottomDrawer>
       <BottomDrawer
         preventBackdropClick
-        isOpen={isFirmwareDrawerOpen}
+        isOpen={
+          currentDisplayedDrawer === "firmware-language-update" &&
+          nextDrawerToDisplay === "firmware-language-update"
+        }
         onClose={handleFirmwareLanguageCancel}
       >
         <Flex alignItems="center" justifyContent="center">
@@ -121,16 +186,22 @@ const LanguageSelect = () => {
           />
         </Flex>
         <Text variant="h4" fontWeight="semiBold" mb={4}>
-          Change language on your Nano
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.title", {
+            productName,
+          })}
         </Text>
         <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
-          Ledger Live is now in English. Do you want to use English on your
-          Fatstacks too?
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.description", {
+            productName,
+            newLanguage: selectedLanguage,
+          })}
         </Text>
-        <Button type="main" mb={4} onPress={handleFirmwareLanguageSelect}>
-          Change language
+        <Button type="main" mb={4} onPress={handleFirmwareLanguageUpdate}>
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.updateCta")}
         </Button>
-        <Button onPress={handleFirmwareLanguageCancel}>Cancel</Button>
+        <Button onPress={handleFirmwareLanguageCancel}>
+          {t("syncOnboarding.firmwareLanguageUpdateDrawer.cancelCta")}
+        </Button>
       </BottomDrawer>
     </Flex>
   );

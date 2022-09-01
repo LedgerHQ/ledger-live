@@ -1,24 +1,21 @@
 import React, { useCallback } from "react";
 import { BottomDrawer, Button, Link, Text } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useNavigation } from "@react-navigation/native";
-import { StackScreenProps } from "@react-navigation/stack";
-import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
-import { ScreenName } from "../../const";
+import { useTranslation } from "react-i18next";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export type Props = {
   isOpen: boolean;
   onClose?: () => void;
-} & Pick<
-  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompanion">,
-  "navigation"
->;
+  onRetry: () => void;
+  device: Device;
+};
 
-const DesyncDrawer = ({ isOpen, onClose, navigation }: Props) => {
-  const handleRetryPress = useCallback(() => {
-    // Replace to avoid going back to this screen without re-rendering
-    navigation.replace(ScreenName.BleDevicesScanning as "BleDevicesScanning");
-  }, [navigation]);
+const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
+  const { t } = useTranslation();
+  const productName =
+    getDeviceModel(device.modelId).productName || device.modelId;
 
   const handleSupportPress = useCallback(() => {
     // TODO: add logic when user press "Support" button
@@ -32,17 +29,16 @@ const DesyncDrawer = ({ isOpen, onClose, navigation }: Props) => {
       noCloseButton
     >
       <Text variant="h4" fontWeight="semiBold" mb={4} mt={8}>
-        We could not connect to your Nano
+        {t("syncOnboarding.desyncDrawer.title", { productName })}
       </Text>
       <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
-        Please make sure your Nano is nearby and unlocked. Check to see if
-        Bluetooth is enabled on your mobile phone
+        {t("syncOnboarding.desyncDrawer.description", { productName })}
       </Text>
-      <Button type="main" outline mb={6} onPress={handleRetryPress}>
-        Try again
+      <Button type="main" outline mb={6} onPress={onRetry}>
+        {t("syncOnboarding.desyncDrawer.retryCta")}
       </Button>
       <Link Icon={ExternalLinkMedium} onPress={handleSupportPress}>
-        Get help
+        {t("syncOnboarding.desyncDrawer.helpCta")}
       </Link>
     </BottomDrawer>
   );

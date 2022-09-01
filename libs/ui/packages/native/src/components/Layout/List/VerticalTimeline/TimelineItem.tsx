@@ -11,11 +11,12 @@ import styled from "styled-components/native";
 
 import { Item, ItemStatus } from ".";
 import { Flex } from "../..";
-import { Text } from "../../..";
+import { Text, Tag } from "../../..";
 import TimelineIndicator from "./TimelineIndicator";
 
 export type Props = {
   item: Item;
+  formatEstimatedTime?: (_: number) => string;
   isFirstItem?: boolean;
   isLastItem?: boolean;
 };
@@ -52,7 +53,12 @@ const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   padding: 20px 16px;
 `;
 
-export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
+export default function TimelineItem({
+  item,
+  formatEstimatedTime,
+  isFirstItem,
+  isLastItem,
+}: Props) {
   const [height, setHeight] = useState(0);
 
   const transition = useDerivedValue(() => {
@@ -87,14 +93,27 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
         mr={4}
       />
       <Container status={item.status} isLastItem={isLastItem} mb={4}>
-        <Text
-          variant="body"
-          color={
-            item.status === "inactive" ? "neutral.c80" : isLastItem ? "success.c100" : "primary.c90"
-          }
-        >
-          {item.title}
-        </Text>
+        <Flex flexDirection="row" justifyContent="space-between">
+          <Text
+            variant="body"
+            color={
+              item.status === "inactive"
+                ? "neutral.c80"
+                : isLastItem
+                ? "success.c100"
+                : "primary.c90"
+            }
+          >
+            {item.title}
+          </Text>
+          {item?.estimatedTime && item.status === "active" && (
+            <Tag>
+              {formatEstimatedTime
+                ? formatEstimatedTime(item.estimatedTime)
+                : `${item.estimatedTime / 60} min`}
+            </Tag>
+          )}
+        </Flex>
         <Animated.View style={style}>
           {item.renderBody && (
             <Flex position="relative">
