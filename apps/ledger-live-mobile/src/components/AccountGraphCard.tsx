@@ -251,15 +251,13 @@ const GraphCardHeader = ({
   const navigation = useNavigation();
 
   const openReceive = () => {
-    console.log("CURRENCY", currency);
-    console.log("ACCOUNT ID", account.id);
-    // navigation.navigate(NavigatorName.ReceiveFunds, {
-    //   screen: ScreenName.ReceiveConfirmation,
-    //   params: {
-    //     accountId: account.id,
-    //     currency,
-    //   },
-    // });
+    navigation.navigate(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveConfirmation,
+      params: {
+        accountId: account.id,
+        currency,
+      },
+    });
   };
 
   return (
