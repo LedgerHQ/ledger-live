@@ -1,5 +1,5 @@
-import Transport from "@ledgerhq/hw-transport";
-import { from } from "rxjs";
+import Transport, { DescriptorEventType } from "@ledgerhq/hw-transport";
+import { from, PartialObserver } from "rxjs";
 import { take, first, filter } from "rxjs/operators";
 import type { Device } from "@ledgerhq/react-native-hw-transport-ble/lib/types";
 import type {
@@ -8,6 +8,7 @@ import type {
 } from "@ledgerhq/hw-transport";
 import type { ApduMock } from "../logic/createAPDUMock";
 import { hookRejections } from "../logic/debugReject";
+// @ts-expect-error FIXME: port e2e files to typescript
 import { e2eBridgeSubject } from "../../e2e/bridge/client";
 
 export type DeviceMock = {
@@ -27,14 +28,15 @@ const defaultOpts = {
   ]),
 };
 export default (opts: Opts) => {
-  // $FlowFixMe
   const { observeState, createTransportDeviceMock } = {
     ...defaultOpts,
     ...opts,
   };
   return class BluetoothTransportMock extends Transport {
     static isSupported = (): Promise<boolean> => Promise.resolve(true);
-    static observeState = (o: any) => observeState.subscribe(o);
+    static observeState = (
+      o: PartialObserver<{ type: string; available: boolean }>,
+    ) => observeState.subscribe(o);
     static list = () => Promise.resolve([]);
     static disconnect = (_id: string) => Promise.resolve();
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -43,24 +45,29 @@ export default (opts: Opts) => {
     static listen(observer: TransportObserver<DescriptorEvent<Device>>) {
       return e2eBridgeSubject
         .pipe(
-          filter(msg => msg.type === "add"),
+          filter((msg: { type: string }) => msg.type === "add"),
           take(3),
         )
-        .subscribe(msg => {
-          observer.next({
-            type: msg.type,
-            descriptor: createTransportDeviceMock(
-              msg.payload.id,
-              msg.payload.name,
-            ),
-          });
-        });
+        .subscribe(
+          (msg: {
+            type: DescriptorEventType;
+            payload: { id: string; name: string };
+          }) => {
+            observer.next({
+              type: msg.type,
+              descriptor: createTransportDeviceMock(
+                msg.payload.id,
+                msg.payload.name,
+              ),
+            });
+          },
+        );
     }
 
-    static async open(device: any) {
+    static async open(device: string | Device) {
       await e2eBridgeSubject
         .pipe(
-          filter(msg => msg.type === "open"),
+          filter((msg: { type: string }) => msg.type === "open"),
           first(),
         )
         .toPromise();

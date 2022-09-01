@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper";
 import {
   Flex,
@@ -13,7 +13,7 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { DeviceNames } from "../../../types";
+import { DeviceModelId } from "@ledgerhq/devices";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
 const transitionDuration = 500;
@@ -29,7 +29,8 @@ export type Metadata = {
 };
 
 const InfoButton = ({ target }: { target: Metadata["drawer"] }) => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NavigationProp<{ [key: string]: object | undefined }>>();
 
   if (target)
     return (
@@ -114,8 +115,8 @@ export function BaseStepperView({
   onNext: () => void;
   steps: any[];
   metadata: Metadata[];
-  deviceModelId: DeviceNames;
-  params: any;
+  deviceModelId: DeviceModelId;
+  params?: any;
 }) {
   const [index, setIndex] = React.useState(0);
   const navigation = useNavigation();

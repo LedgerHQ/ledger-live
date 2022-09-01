@@ -12,8 +12,10 @@ import { useNavigation } from "@react-navigation/native";
 import { Linking, TouchableOpacityProps } from "react-native";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import { StackNavigationProp } from "@react-navigation/stack";
 import InfoModal from "../InfoModal";
 import { track } from "../../analytics";
+import { WrappedButtonProps } from "../wrappedUi/Button";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
@@ -27,7 +29,7 @@ export type ModalOnDisabledClickComponentProps = {
 };
 
 export type ActionButtonEventProps = {
-  navigationParams?: any[];
+  navigationParams?: readonly [name: string, options: object];
   linkUrl?: string;
   confirmModalProps?: {
     withCancel?: boolean;
@@ -37,7 +39,7 @@ export type ActionButtonEventProps = {
     Icon?: ComponentType;
     children?: ReactNode;
     confirmLabel?: string | ReactElement;
-    confirmProps?: any;
+    confirmProps?: WrappedButtonProps;
   };
   modalOnDisabledClick?: {
     component: React.ComponentType<ModalOnDisabledClickComponentProps>;
@@ -54,7 +56,7 @@ export type ActionButtonEvent = ActionButtonEventProps & {
   description?: React.ReactNode;
   Icon: IconType;
   event?: string;
-  eventProperties?: { [key: string]: any };
+  eventProperties?: { [key: string]: unknown };
   Component?: ComponentType;
   buttonProps?: ButtonProps;
   disabled?: boolean;
@@ -79,7 +81,7 @@ export const FabButtonBarProvider = ({
   actions: ActionButtonEvent[];
   navigationProps?: Record<string, unknown>;
   modalOnDisabledClickProps?: Partial<ModalOnDisabledClickComponentProps>;
-  eventProperties?: { [key: string]: any };
+  eventProperties?: { [key: string]: unknown };
   children: (value: { quickActions: ActionButtonProps[] }) => ReactNode;
 }) => {
   const [pressedDisabledAction, setPressedDisabledAction] = useState<
@@ -95,11 +97,13 @@ export const FabButtonBarProvider = ({
   const navigation = useNavigation();
 
   const onNavigate = useCallback(
-    (name: string, options?: any) => {
-      navigation.navigate(name, {
+    (name: string, options?: object) => {
+      (
+        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
+      ).navigate(name, {
         ...options,
         params: {
-          ...(options ? options.params : {}),
+          ...(options ? (options as { params: object }).params : {}),
           ...navigationProps,
         },
       });
@@ -108,7 +112,7 @@ export const FabButtonBarProvider = ({
   );
 
   const onPress = useCallback(
-    (data: ActionButtonEvent) => {
+    (data: Omit<ActionButtonEvent, "label" | "Icon">) => {
       const {
         navigationParams,
         confirmModalProps,

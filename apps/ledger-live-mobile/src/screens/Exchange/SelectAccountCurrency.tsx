@@ -1,6 +1,6 @@
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -19,9 +19,11 @@ import { NavigatorName, ScreenName } from "../../const";
 import DropdownArrow from "../../icons/DropdownArrow";
 import { accountsSelector } from "../../reducers/accounts";
 import { useCurrencyAccountSelect } from "./hooks";
+import { StackNavigatorNavigation } from "../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Props = {
-  flow: string;
+  flow: "buy" | "sell";
   allCurrencies: Array<TokenCurrency | CryptoCurrency>;
   defaultCurrencyId?: string | null | undefined;
   defaultAccountId?: string | null | undefined;
@@ -34,7 +36,8 @@ export default function SelectAccountCurrency({
 }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const allAccounts = useSelector(accountsSelector);
   const {
     availableAccounts,
@@ -56,7 +59,7 @@ export default function SelectAccountCurrency({
     [setCurrency],
   );
   const onAccountChange = useCallback(
-    (selectedAccount: Account | AccountLike) => {
+    (selectedAccount?: AccountLike) => {
       setAccount(selectedAccount);
     },
     [setAccount],
@@ -74,7 +77,7 @@ export default function SelectAccountCurrency({
     navigation.navigate(NavigatorName.ExchangeStack, {
       screen: ScreenName.ExchangeSelectAccount,
       params: {
-        currency,
+        currency: currency as TokenCurrency | CryptoCurrency,
         mode: flow,
         onAccountChange,
       },
@@ -82,10 +85,10 @@ export default function SelectAccountCurrency({
   }, [navigation, currency, flow, onAccountChange]);
   const onContinue = useCallback(() => {
     if (account) {
-      navigation.navigate(NavigatorName.ProviderList, {
+      navigation.navigate(ScreenName.ProviderList, {
         accountId: account.id,
         accountAddress: account.freshAddress,
-        currency,
+        currency: currency as TokenCurrency | CryptoCurrency,
         type: flow === "buy" ? "onRamp" : "offRamp",
       });
       track(
@@ -102,13 +105,19 @@ export default function SelectAccountCurrency({
   const onAddAccount = useCallback(() => {
     if (currency && currency.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
-        token: currency,
-        analyticsPropertyFlow: flow,
+        screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
+        params: {
+          token: currency as TokenCurrency,
+          analyticsPropertyFlow: flow,
+        },
       });
     } else {
       navigation.navigate(NavigatorName.AddAccounts, {
-        currency,
-        analyticsPropertyFlow: flow,
+        screen: ScreenName.AddAccountsSelectDevice,
+        params: {
+          currency: currency!,
+          analyticsPropertyFlow: flow,
+        },
       });
     }
   }, [currency, flow, navigation]);

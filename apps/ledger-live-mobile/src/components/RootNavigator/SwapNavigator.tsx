@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
-  SwapNavParamList,
   SelectAccount,
   SelectCurrency,
   SelectProvider,
@@ -16,11 +15,14 @@ import {
   OperationDetails,
   StateSelect,
 } from "../../screens/Swap/index";
-import { SwapFormNavigator } from "./SwapFormNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-// eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import { SwapNavigatorParamList } from "./types/SwapNavigator";
+import { ScreenName } from "../../const";
+import SwapFormNavigator from "./SwapFormNavigator";
+
+const Stack = createStackNavigator<SwapNavigatorParamList>();
 
 export default function SwapNavigator() {
   const { t } = useTranslation();
@@ -36,18 +38,18 @@ export default function SwapNavigator() {
       screenOptions={{ ...stackNavigationConfig, headerShown: true }}
     >
       <Stack.Screen
-        name="SwapTab"
+        name={ScreenName.SwapTab}
         component={SwapFormNavigator}
         {...noNanoBuyNanoWallScreenOptions}
         options={{
-          ...noNanoBuyNanoWallScreenOptions.options,
+          ...(noNanoBuyNanoWallScreenOptions as { options: object }).options,
           title: t("transfer.swap2.form.title"),
           headerLeft: () => null,
         }}
       />
 
       <Stack.Screen
-        name="SelectAccount"
+        name={ScreenName.SwapSelectAccount}
         component={SelectAccount}
         options={({
           route: {
@@ -64,7 +66,7 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
-        name="SelectCurrency"
+        name={ScreenName.SwapSelectCurrency}
         component={SelectCurrency}
         options={{
           headerTitle: () => (
@@ -75,7 +77,7 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
-        name="SelectProvider"
+        name={ScreenName.SwapSelectProvider}
         component={SelectProvider}
         options={{
           headerTitle: () => (
@@ -88,7 +90,7 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
-        name="SelectFees"
+        name={ScreenName.SwapSelectFees}
         component={SelectFees}
         options={{
           headerTitle: () => (
@@ -99,7 +101,7 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
-        name="Login"
+        name={ScreenName.SwapLogin}
         component={Login}
         options={({ route }) => ({
           headerTitle: getProviderName(route.params.provider),
@@ -108,7 +110,7 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
-        name="KYC"
+        name={ScreenName.SwapKYC}
         component={KYC}
         options={({ route }) => ({
           headerTitle: getProviderName(route.params.provider),
@@ -117,7 +119,7 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
-        name="SwapKYCStates"
+        name={ScreenName.SwapKYCStates}
         component={StateSelect}
         options={{
           headerTitle: () => (
@@ -128,7 +130,7 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
-        name="MFA"
+        name={ScreenName.SwapMFA}
         component={MFA}
         options={({ route }) => ({
           headerTitle: getProviderName(route.params.provider),
@@ -137,7 +139,7 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
-        name={"PendingOperation"}
+        name={ScreenName.SwapPendingOperation}
         component={PendingOperation}
         options={{
           headerTitle: t("transfer.swap.title"),
@@ -146,7 +148,7 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
-        name={"OperationDetails"}
+        name={ScreenName.SwapOperationDetails}
         component={OperationDetails}
         options={({ route }) => ({
           headerTitle: t("transfer.swap.title"),
@@ -158,5 +160,3 @@ export default function SwapNavigator() {
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator<SwapNavParamList>();

@@ -21,10 +21,10 @@ export const darken = (c: string, a: number) => color(c).darken(a).toString();
 
 export const lighten = (c: string, a: number) => color(c).lighten(a).toString();
 
-export function withTheme(Component: React.ElementType) {
-  return (props: any) => {
+export function withTheme<P>(Component: React.ComponentType<P>) {
+  return (props: Omit<P, "colors">) => {
     const { colors } = useTheme();
-    return <Component colors={colors} {...props} />;
+    return <Component colors={colors} {...(props as P)} />;
   };
 }
 
@@ -139,3 +139,10 @@ export const darkTheme = {
     skeletonBg: "#2a2d33",
   },
 };
+
+export type Theme = typeof lightTheme;
+
+declare module "@react-navigation/native" {
+  export type T = typeof lightTheme;
+  export function useTheme(): T;
+}

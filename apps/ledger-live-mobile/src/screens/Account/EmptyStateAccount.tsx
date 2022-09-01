@@ -96,7 +96,7 @@ function EmptyStateAccount({
               {"and"}
               <LText semiBold color="darkBlue">
                 {account &&
-                  account.currency &&
+                  (account as Account).currency &&
                   listTokenTypesForCryptoCurrency(mainAccount.currency).join(
                     ", ",
                   )}

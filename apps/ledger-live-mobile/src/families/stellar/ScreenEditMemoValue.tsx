@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
@@ -14,9 +14,6 @@ import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TextInput from "../../components/FocusedTextInput";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -53,7 +50,7 @@ function StellarEditMemoValue({ navigation, route }: Props) {
     });
   }, [navigation, route.params, account, memoValue]);
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView style={styles.root}>
       <KeyboardView
         style={[
           styles.body,
@@ -101,7 +98,7 @@ function StellarEditMemoValue({ navigation, route }: Props) {
 
 const options = {
   title: i18next.t("send.summary.memo.value"),
-  headerLeft: null,
+  headerLeft: undefined,
 };
 export { StellarEditMemoValue as component, options };
 const styles = StyleSheet.create({

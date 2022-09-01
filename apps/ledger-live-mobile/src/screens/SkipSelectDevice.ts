@@ -4,14 +4,30 @@ import { NativeModules } from "react-native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { lastConnectedDeviceSelector } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
+import { AddAccountsNavigatorParamList } from "../components/RootNavigator/types/AddAccountsNavigator";
+import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
+import { ReceiveFundsStackParamList } from "../components/RootNavigator/types/ReceiveFundsNavigator";
+import { ScreenName } from "../const";
+
+type Navigation =
+  | StackNavigatorProps<
+      AddAccountsNavigatorParamList,
+      ScreenName.AddAccountsSelectDevice
+    >
+  | StackNavigatorProps<
+      ReceiveFundsStackParamList,
+      ScreenName.ReceiveAddAccountSelectDevice
+    >
+  | StackNavigatorProps<
+      ReceiveFundsStackParamList,
+      ScreenName.ReceiveConnectDevice
+    >;
 
 type Props = {
   onResult: (device: any) => void;
-  route?: {
-    params: any;
-  };
+  route?: Navigation["route"] & { params: { forceSelectDevice?: boolean } };
 };
-let usbTimeout;
+let usbTimeout: ReturnType<typeof setTimeout>;
 export default function SkipSelectDevice({ onResult, route }: Props) {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const [hasUSB, setHasUSB] = useState(false);

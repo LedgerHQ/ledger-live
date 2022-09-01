@@ -1,14 +1,10 @@
 import React, { useCallback } from "react";
-import { StyleSheet, Linking } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
-import { urls } from "../../../config/urls";
 import ValidateError from "../../../components/ValidateError";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -26,9 +22,6 @@ export default function ValidationError({ navigation, route }: Props) {
   const onClose = useCallback(() => {
     navigation.getParent().pop();
   }, [navigation]);
-  const contactUs = useCallback(() => {
-    Linking.openURL(urls.contact);
-  }, []);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -40,14 +33,12 @@ export default function ValidationError({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="RebondFlow" name="ValidationError" />
       <ValidateError
         error={route.params.error}
         onRetry={retry}
         onClose={onClose}
-        onContactUs={contactUs}
       />
     </SafeAreaView>
   );

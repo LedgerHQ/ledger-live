@@ -79,7 +79,7 @@ function AppDependenciesModal({
   }, [dispatch, dispatchProps, onClose, name, hasInstalledAnyApp]);
 
   return (
-    <BottomModal isOpened={!!app} onClose={onClose} actions={[]}>
+    <BottomModal isOpened={!!app} onClose={onClose}>
       <Flex alignItems="center">
         {!!dependencies.length && (
           <>

@@ -20,8 +20,8 @@ export type FeatureCommon = {
 
 export type FeatureToggle = {
   type: "toggle";
-  valueOn?: any;
-  valueOff?: any;
+  valueOn?: unknown;
+  valueOff?: unknown;
 };
 
 export type FeatureInteger = {
@@ -136,7 +136,6 @@ export const setStorageEnvs = async (key: EnvName, val: string) => {
 export const isReadOnly = (key: EnvName) => key in Config;
 
 export const enabledExperimentalFeatures = (): string[] =>
-  // $FlowFixMe
   [...experimentalFeatures, ...developerFeatures]
     .map(e => e.name)
     .filter(k => !isEnvDefault(k));

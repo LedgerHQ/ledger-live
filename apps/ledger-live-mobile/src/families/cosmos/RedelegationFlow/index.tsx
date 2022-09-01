@@ -15,6 +15,7 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import RedelegationValidationError from "./04-ValidationError";
 import RedelegationValidationSuccess from "./04-ValidationSuccess";
+import type { CosmosRedelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -108,7 +109,7 @@ function RedelegationFlow() {
         name={ScreenName.CosmosRedelegationConnectDevice}
         component={ConnectDevice}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -133,8 +134,8 @@ function RedelegationFlow() {
         name={ScreenName.CosmosRedelegationValidationSuccess}
         component={RedelegationValidationSuccess}
         options={{
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
           headerTitle: "",
           gestureEnabled: false,
         }}
@@ -147,4 +148,4 @@ const options = {
   headerShown: false,
 };
 export { RedelegationFlow as component, options };
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<CosmosRedelegationFlowParamList>();

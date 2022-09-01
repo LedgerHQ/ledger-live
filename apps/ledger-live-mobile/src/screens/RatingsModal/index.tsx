@@ -22,6 +22,7 @@ const RatingsModal = () => {
 
   useEffect(() => {
     initRatingsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [step, setStep] = useState(ratingsInitialStep);
@@ -64,7 +65,7 @@ const RatingsModal = () => {
       disappointedDone: <DisappointedDone closeModal={closeModal} />,
     };
 
-    return components[step];
+    return components[step as keyof typeof components];
   }, [closeModal, setStep, step]);
 
   return (

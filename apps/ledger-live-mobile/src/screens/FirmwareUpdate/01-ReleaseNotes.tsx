@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import manager from "@ledgerhq/live-common/manager/index";
-import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
@@ -11,20 +10,14 @@ import Button from "../../components/Button";
 import SafeMarkdown from "../../components/SafeMarkdown";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { FirmwareUpdateNavigatorParamList } from "../../components/RootNavigator/types/FirmwareUpdateNavigator";
 
-const forceInset = {
-  bottom: "always",
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  deviceId: string;
-  firmware: FirmwareUpdateContext;
-};
+type Props = StackNavigatorProps<
+  FirmwareUpdateNavigatorParamList,
+  ScreenName.FirmwareUpdateReleaseNotes
+>;
+
 export default function FirmwareUpdateReleaseNotes({
   navigation,
   route,
@@ -45,7 +38,6 @@ export default function FirmwareUpdateReleaseNotes({
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="FirmwareUpdate" name="ReleaseNotes" />
       <NavigationScrollView

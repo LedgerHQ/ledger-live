@@ -34,7 +34,6 @@ export default function ResetThirdPartyDataRow() {
         arrowRight
       />
       <BottomDrawer
-        id="ResetThirdPartyDataRow"
         isOpen={isModalOpened}
         onClose={onRequestClose}
         Icon={Icons.InfoMedium}

@@ -8,20 +8,20 @@ import { TrackScreen } from "../../../analytics";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
 import CurrencyRow from "../../../components/CurrencyRow";
-import { SelectCurrencyProps } from "../types";
+import { SelectCurrencyParamList } from "../types";
 
 export function SelectCurrency({
   navigation,
   route: {
     params: { provider, currencies },
   },
-}: SelectCurrencyProps) {
+}: SelectCurrencyParamList) {
   const { t } = useTranslation();
 
   const onSelect = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate("SwapForm", { currency });
+      navigation.navigate(ScreenName.SwapForm, { currency });
     },
     [navigation],
   );

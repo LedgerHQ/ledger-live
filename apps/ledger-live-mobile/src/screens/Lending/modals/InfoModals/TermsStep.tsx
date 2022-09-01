@@ -18,16 +18,25 @@ import { ScreenName } from "../../../../const";
 import { acceptLendingTerms } from "../../../../logic/terms";
 import { urls } from "../../../../config/urls";
 import PreventNativeBack from "../../../../components/PreventNativeBack";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../../../components/RootNavigator/types/helpers";
+import { LendingInfoNavigatorParamList } from "../../../../components/RootNavigator/types/LendingInfoNavigator";
 
-type Props = {
-  route: {
-    params: {
-      endCallback: () => void;
-    };
-  };
-};
-export default function TermsStep({ route: { params } }: Props) {
-  const navigation = useNavigation();
+export default function TermsStep({
+  route: { params },
+}: StackNavigatorProps<
+  LendingInfoNavigatorParamList,
+  ScreenName.LendingTerms
+>) {
+  const navigation =
+    useNavigation<
+      StackNavigatorNavigation<
+        LendingInfoNavigatorParamList,
+        ScreenName.LendingTerms
+      >
+    >();
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
   const onTogleAcceptedTerms = useCallback(
     () => setHasAcceptedTerms(!hasAcceptedTerms),

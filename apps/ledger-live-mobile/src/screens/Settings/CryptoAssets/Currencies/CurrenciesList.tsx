@@ -9,24 +9,36 @@ import { cryptoCurrenciesSelector } from "../../../../reducers/accounts";
 import SettingsRow from "../../../../components/SettingsRow";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
 import { getCurrencyHasSettings } from "./CurrencySettings";
+import { State } from "../../../../reducers/types";
+import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
 
 type Props = {
-  navigation: any;
   currencies: CryptoCurrency[];
 };
 
-const mapStateToProps = createStructuredSelector({
+const mapStateToProps = createStructuredSelector<
+  State,
+  { currencies: CryptoCurrency[] }
+>({
   currencies: cryptoCurrenciesSelector,
 });
 
-function CurrenciesList({ navigation, currencies }: Props) {
+function CurrenciesList({
+  navigation,
+  currencies,
+}: Props &
+  StackNavigatorProps<
+    SettingsNavigatorStackParamList,
+    ScreenName.CryptoAssetsSettings
+  >) {
   const currenciesWithSetting = useMemo(
     () => currencies.filter(getCurrencyHasSettings),
     [currencies],
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: any }) => (
+    ({ item }: { item: CryptoCurrency }) => (
       <SettingsRow
         event="CurrenciesList"
         eventProperties={{ currency: item.id }}

@@ -6,12 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Button from "../components/Button";
+import { SettingsActionTypes } from "../actions/types";
+import { State } from "../reducers/types";
+import { Theme } from "../colors";
 
 class CollapsibleThingy extends PureComponent<
   {
-    obj: Record<string, any>;
+    obj: Record<string, unknown>;
     depth: number;
-    colors: any;
+    colors: Theme["colors"];
   },
   {
     // eslint-disable-next-line @typescript-eslint/ban-types
@@ -21,9 +24,12 @@ class CollapsibleThingy extends PureComponent<
   state = {
     shown: {},
   };
-  toggleCollapse = key =>
+  toggleCollapse = (key: string) =>
     this.setState(prevState => ({
-      shown: { ...prevState.shown, [key]: !prevState.shown[key] },
+      shown: {
+        ...prevState.shown,
+        [key]: !prevState.shown[key as keyof typeof prevState.shown],
+      },
     }));
 
   render() {
@@ -33,9 +39,9 @@ class CollapsibleThingy extends PureComponent<
       <View>
         {Object.keys(obj || {}).map(key => {
           const rowKey = depth + key;
-          const value = obj[key];
+          const value = obj[key as keyof State];
           const isObject = typeof value === "object";
-          const isOpen = shown[rowKey];
+          const isOpen = shown[rowKey as keyof typeof shown];
           const bullet = isObject ? (isOpen ? "-" : "+") : "";
           return (
             <View
@@ -62,10 +68,11 @@ class CollapsibleThingy extends PureComponent<
                 {bullet} {key}
               </Text>
               {isObject ? (
-                isOpen && (
+                isOpen &&
+                value && (
                   <CollapsibleThingy
                     colors={colors}
-                    obj={value}
+                    obj={value as Record<string, unknown>}
                     depth={depth + 1}
                   />
                 )
@@ -90,7 +97,7 @@ class CollapsibleThingy extends PureComponent<
 }
 
 export default function DebugStore() {
-  const state = useSelector(s => s);
+  const state = useSelector<State, State>(s => s);
   const { colors } = useTheme();
   const dispatch = useDispatch();
 
@@ -101,6 +108,7 @@ export default function DebugStore() {
     The store will now have your changes
   */
   const onStoreDebug = useCallback(() => {
+    // @ts-expect-error TS does not like this at all.
     window.BigNumber = BigNumber; // NB expose BigNumber to be able to modify the state easier
 
     // eslint-disable-next-line prefer-const
@@ -115,7 +123,7 @@ export default function DebugStore() {
 
     if (__DEV__ && override) {
       dispatch({
-        action: "DANGEROUSLY_OVERRIDE_STATE",
+        action: SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
         payload: appState,
       });
     }

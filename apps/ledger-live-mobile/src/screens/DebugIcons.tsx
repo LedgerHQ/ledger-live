@@ -1,14 +1,11 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { UserRefusedAddress } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import DeviceNanoAction from "../components/DeviceNanoAction";
 import NavigationScrollView from "../components/NavigationScrollView";
 
-const forceInset = {
-  bottom: "always",
-};
 export default function DebugIcons() {
   const { colors } = useTheme();
   return (
@@ -19,7 +16,6 @@ export default function DebugIcons() {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <NavigationScrollView>
         <DeviceNanoAction width={250} />

@@ -3,7 +3,7 @@ import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 import { canDelegate, canRedelegate } from "./logic";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 
-interface AccountBannerState {
+export interface AccountBannerState {
   display: boolean;
   redelegate: boolean;
   validatorSrcAddress: string;

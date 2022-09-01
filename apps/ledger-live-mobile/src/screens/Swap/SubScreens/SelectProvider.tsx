@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../icons/swap/index";
-import { SelectProviderProps } from "../types";
+import { SelectProviderParamList } from "../types";
 import CounterValue from "../../../components/CounterValue";
 import { TrackScreen } from "../../../analytics";
 
@@ -21,7 +21,7 @@ export function SelectProvider({
       selectedId,
     },
   },
-}: SelectProviderProps) {
+}: SelectProviderParamList) {
   const { t } = useTranslation();
   const fromUnit = useMemo(
     () => from.account && getAccountUnit(from.account),
@@ -31,7 +31,7 @@ export function SelectProvider({
   const onSelect = useCallback(
     (rate: ExchangeRate) => {
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate("SwapForm", { rate });
+      navigation.navigate(ScreenName.SwapForm, { rate });
     },
     [navigation],
   );

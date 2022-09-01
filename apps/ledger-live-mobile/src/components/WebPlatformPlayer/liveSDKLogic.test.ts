@@ -40,7 +40,9 @@ describe("prepareSignTransaction", () => {
     const result = prepareSignTransaction(
       childAccount,
       parentAccount,
-      createEtherumTransaction() as Partial<Transaction>,
+      createEtherumTransaction() as Partial<
+        Transaction & { gasLimit: BigNumber }
+      >,
     );
 
     // Then
