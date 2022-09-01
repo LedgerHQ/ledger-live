@@ -34,7 +34,10 @@ import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
 import { usePortfolio } from "../../actions/portfolio";
-import { counterValueCurrencySelector, countervalueFirstSelector } from "../../reducers/settings";
+import {
+  counterValueCurrencySelector,
+  countervalueFirstSelector,
+} from "../../reducers/settings";
 import { track, TrackScreen } from "../../analytics";
 import {
   useCurrentRouteName,
@@ -62,6 +65,7 @@ const AssetScreen = ({ route }: Props) => {
   const previousScreen = usePreviousRouteName();
   const useCounterValue = useSelector(countervalueFirstSelector);
   const { currency } = route?.params;
+  const isCryptoCurrency = currency?.type === "CryptoCurrency";
   const cryptoAccounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
   );
@@ -132,14 +136,18 @@ const AssetScreen = ({ route }: Props) => {
       ...(areCryptoAccountsEmpty
         ? [<EmptyAccountCard currencyTicker={currency.ticker} />]
         : []),
-      <SectionContainer px={6}>
-        <SectionTitle
-          title={t("portfolio.marketPriceSection.title", {
-            currencyTicker: currency.ticker,
-          })}
-        />
-        <MarketPriceSection currency={currency} />
-      </SectionContainer>,
+      ...(isCryptoCurrency
+        ? [
+            <SectionContainer px={6}>
+              <SectionTitle
+                title={t("portfolio.marketPriceSection.title", {
+                  currencyTicker: currency.ticker,
+                })}
+              />
+              <MarketPriceSection currency={currency} />
+            </SectionContainer>,
+          ]
+        : []),
       <SectionContainer px={6}>
         <SectionTitle
           title={t("asset.accountsSection.title", {
@@ -175,6 +183,7 @@ const AssetScreen = ({ route }: Props) => {
       cryptoAccounts,
       onAddAccount,
       currencyBalance,
+      isCryptoCurrency,
     ],
   );
 

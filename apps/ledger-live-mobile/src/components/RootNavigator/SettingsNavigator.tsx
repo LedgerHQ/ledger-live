@@ -51,6 +51,7 @@ import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/Ge
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import { track } from "../../analytics";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -62,6 +63,7 @@ export default function SettingsNavigator() {
 
   const navigation = useNavigation();
   const currentRoute = useCurrentRouteName();
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   const goBackFromNotifications = useCallback(() => {
     track("button_clicked", {
@@ -159,6 +161,7 @@ export default function SettingsNavigator() {
           title: route.params.headerTitle,
           headerRight: null,
         })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.RepairDevice}

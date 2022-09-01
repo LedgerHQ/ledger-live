@@ -28,7 +28,11 @@ import AssetCentricGraphCard from "../../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../../components/CurrencyBackgroundGradient";
 import Header from "../Header";
 import { usePortfolio } from "../../../actions/portfolio";
-import { counterValueCurrencySelector, countervalueFirstSelector, hasOrderedNanoSelector } from "../../../reducers/settings";
+import {
+  counterValueCurrencySelector,
+  countervalueFirstSelector,
+  hasOrderedNanoSelector,
+} from "../../../reducers/settings";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
@@ -52,6 +56,7 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
   const currency = route?.params?.currency;
   const { colors } = useTheme();
   const useCounterValue = useSelector(countervalueFirstSelector);
+  const isCryptoCurrency = currency?.type === "CryptoCurrency";
 
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
@@ -92,14 +97,18 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
         <FabAssetActions currency={currency} />
       </SectionContainer>,
       <EmptyAccountCard currencyTicker={currency.ticker} />,
-      <SectionContainer px={6}>
-        <SectionTitle
-          title={t("portfolio.marketPriceSection.title", {
-            currencyTicker: currency.ticker,
-          })}
-        />
-        <MarketPriceSection currency={currency} />
-      </SectionContainer>,
+      ...(isCryptoCurrency
+        ? [
+            <SectionContainer px={6}>
+              <SectionTitle
+                title={t("portfolio.marketPriceSection.title", {
+                  currencyTicker: currency.ticker,
+                })}
+              />
+              <MarketPriceSection currency={currency} />
+            </SectionContainer>,
+          ]
+        : []),
       <SectionContainer mx={6} isLast>
         {hasOrderedNano ? (
           <SetupDeviceBanner screen="Assets" />

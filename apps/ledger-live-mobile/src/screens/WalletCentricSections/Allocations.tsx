@@ -88,13 +88,13 @@ const Allocations = () => {
         <Flex flexDirection="row" alignItems="center">
           <Flex>
             <RingChart
-              size={76}
+              size={94}
               strokeWidth={5}
               data={distributionListFormatted}
               colors={colors}
             />
           </Flex>
-          <Flex flex={1} ml={9} flexDirection="row" mt={3}>
+          <Flex flex={1} ml={8} flexDirection="row" mt={3}>
             <Flex>
               {distributionListFormatted.length > 0 ? (
                 <AllocationCaption

@@ -54,10 +54,9 @@ function GraphCard({
   currentPositionY,
   graphCardEndPosition,
 }: Props) {
-  const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
+  const { countervalueChange, balanceHistory } = portfolio;
   const currentScreen = useCurrentRouteName();
   const item = balanceHistory[balanceHistory.length - 1];
-  const navigation = useNavigation();
 
   const unit = counterValueCurrency.units[0];
 

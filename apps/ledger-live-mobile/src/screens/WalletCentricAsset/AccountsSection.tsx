@@ -43,14 +43,11 @@ const AccountsSection = ({
       button: "See All",
       screen: currentScreen,
     });
-    navigation.navigate(NavigatorName.Portfolio, {
-      screen: NavigatorName.PortfolioAccounts,
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.Accounts,
       params: {
-        screen: ScreenName.Accounts,
-        params: {
-          currencyId,
-          currencyTicker,
-        },
+        currencyId,
+        currencyTicker,
       },
     });
   }, [navigation, currencyId, currencyTicker, currentScreen]);

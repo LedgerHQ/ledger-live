@@ -251,13 +251,15 @@ const GraphCardHeader = ({
   const navigation = useNavigation();
 
   const openReceive = () => {
-    navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConfirmation,
-      params: {
-        accountId: account.id,
-        currency,
-      },
-    });
+    console.log("CURRENCY", currency);
+    console.log("ACCOUNT ID", account.id);
+    // navigation.navigate(NavigatorName.ReceiveFunds, {
+    //   screen: ScreenName.ReceiveConfirmation,
+    //   params: {
+    //     accountId: account.id,
+    //     currency,
+    //   },
+    // });
   };
 
   return (
@@ -310,7 +312,7 @@ const GraphCardHeader = ({
             />
           </Text>
           <Flex flexDirection="row" alignItems="center">
-            <Delta percent valueChange={valueChange} />
+            <Delta percent show0Delta valueChange={valueChange} />
             <Flex ml={2}>
               <Delta unit={items[0].unit} valueChange={valueChange} />
             </Flex>

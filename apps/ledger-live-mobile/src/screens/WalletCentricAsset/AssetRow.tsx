@@ -41,7 +41,7 @@ const AssetRow = ({
     if (navigationParams) {
       navigation.navigate(...navigationParams);
     } else {
-      navigation.navigate(NavigatorName.PortfolioAccounts, {
+      navigation.navigate(NavigatorName.Accounts, {
         screen: ScreenName.Asset,
         params: {
           currency,

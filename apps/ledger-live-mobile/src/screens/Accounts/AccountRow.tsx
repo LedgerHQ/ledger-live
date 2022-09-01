@@ -67,27 +67,21 @@ const AccountRow = ({
     if (navigationParams) {
       navigation.navigate(...navigationParams);
     } else if (account.type === "Account") {
-      navigation.navigate(NavigatorName.Portfolio, {
-        screen: NavigatorName.PortfolioAccounts,
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Account,
         params: {
-          screen: ScreenName.Account,
-          params: {
-            currencyId: currency.id,
-            accountId,
-            isForwardedFromAccounts: true,
-          },
+          currencyId: currency.id,
+          accountId,
+          isForwardedFromAccounts: true,
         },
       });
     } else if (account.type === "TokenAccount") {
-      navigation.navigate(NavigatorName.Portfolio, {
-        screen: NavigatorName.PortfolioAccounts,
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Account,
         params: {
-          screen: ScreenName.Account,
-          params: {
-            currencyId: currency.id,
-            parentId: account?.parentId,
-            accountId: account.id,
-          },
+          currencyId: currency.id,
+          parentId: account?.parentId,
+          accountId: account.id,
         },
       });
     }

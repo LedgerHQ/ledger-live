@@ -48,13 +48,15 @@ function Header({
 
   const unit = counterValueCurrency.units[0];
 
-  const currencyUnitValueProps = useCounterValue ? {
-    unit,
-    value: item?.value,
-  } : {
-    unit: currency.units[0],
-    value: currencyBalance,
-  };
+  const currencyUnitValueProps = useCounterValue
+    ? {
+        unit,
+        value: item?.value,
+      }
+    : {
+        unit: currency.units[0],
+        value: currencyBalance,
+      };
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onBackButtonPress = useCallback(() => {
@@ -72,11 +74,8 @@ function Header({
       button: "Settings",
       screen: currentRoute,
     });
-    navigation.navigate(NavigatorName.AccountSettings, {
-      screen: ScreenName.AccountCurrencySettings,
-      params: {
-        currencyId: currency.id,
-      },
+    navigation.navigate(ScreenName.CurrencySettings, {
+      currencyId: currency.id,
     });
   }, [currency.id, currentRoute, navigation]);
 

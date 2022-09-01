@@ -88,6 +88,7 @@ import Learn from "../../screens/Learn";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 import MarketDetail from "../../screens/Market/MarketDetail";
+import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -157,6 +158,15 @@ export default function BaseNavigator() {
         name={NavigatorName.Settings}
         component={SettingsNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.CurrencySettings}
+        component={CurrencySettings}
+        options={({ route }) => ({
+          title: route.params.headerTitle,
+          headerRight: null,
+        })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.ReceiveFunds}

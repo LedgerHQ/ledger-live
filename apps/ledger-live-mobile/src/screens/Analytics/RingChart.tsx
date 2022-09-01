@@ -7,10 +7,10 @@ import type { DistributionItem } from "./DistributionCard";
 import { ensureContrast, withTheme } from "../../colors";
 
 type Props = {
-  data: Array<DistributionItem>,
-  size: number,
-  strokeWidth?: number,
-  colors: any,
+  data: Array<DistributionItem>;
+  size: number;
+  strokeWidth?: number;
+  colors: any;
 };
 
 class RingChart extends PureComponent<Props> {
@@ -81,7 +81,12 @@ class RingChart extends PureComponent<Props> {
                 d={pathData}
               />
             ))}
-            <Circle cx={0} cy={0} r={this.outerRadius - (strokeWidth || 3)} fill={colors.background.main} />
+            <Circle
+              cx={0}
+              cy={0}
+              r={this.outerRadius - (strokeWidth || 3)}
+              fill={colors.background.main}
+            />
           </G>
         </Svg>
       </View>

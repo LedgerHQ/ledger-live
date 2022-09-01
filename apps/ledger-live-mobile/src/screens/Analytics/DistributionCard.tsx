@@ -72,7 +72,7 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
 
   const navigateToAccounts = useCallback(() => {
     // @ts-expect-error navigation type issue
-    navigation.navigate(NavigatorName.PortfolioAccounts, {
+    navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Asset,
       params: {
         currency,
@@ -108,30 +108,23 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
               {`${percentage}%`}
             </Text>
           </CurrencyRow>
-          {distribution ? (
-            <>
-              <RateRow>
-                <Text variant="body" color="neutral.c70" fontWeight="medium">
-                  <CurrencyUnitValue unit={currency.units[0]} value={amount} />
-                </Text>
-                <Text variant="body" color="neutral.c70" fontWeight="medium">
-                  <CounterValue currency={currency} value={amount} />
-                </Text>
-              </RateRow>
-            </>
-          ) : null}
+          <RateRow>
+            <Text variant="body" color="neutral.c70" fontWeight="medium">
+              <CurrencyUnitValue unit={currency.units[0]} value={amount} />
+            </Text>
+            <Text variant="body" color="neutral.c70" fontWeight="medium">
+              <CounterValue currency={currency} value={amount} />
+            </Text>
+          </RateRow>
         </CoinInfoContainer>
       </Flex>
-      {distribution ? (
-        <DistributionRow>
-          {/** @ts-expect-error flow issue */}
-          <ProgressBar
-            progress={percentage}
-            progressColor={color}
-            backgroundColor={colors.neutral.c40}
-          />
-        </DistributionRow>
-      ) : null}
+      <DistributionRow>
+        <ProgressBar
+          progress={percentage || 0}
+          progressColor={color}
+          backgroundColor={colors.neutral.c40}
+        />
+      </DistributionRow>
     </Container>
   );
 }
