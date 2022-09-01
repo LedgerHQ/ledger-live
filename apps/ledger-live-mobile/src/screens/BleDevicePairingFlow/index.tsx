@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex } from "@ledgerhq/native-ui";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 import RequiresBLE from "../../components/RequiresBLE";
-import { BleDevicesScanning } from "./BleDeviceScanning";
+import { BleDevicesScanning } from "./BleDevicesScanning";
 import { BleDevicePairing } from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
 
