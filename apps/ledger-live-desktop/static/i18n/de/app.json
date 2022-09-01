@@ -198,7 +198,7 @@
     "menu" : "Menü",
     "stars" : "Favoritenliste",
     "accounts" : "Konten",
-    "manager" : "My Ledger",
+    "manager" : "Manager",
     "exchange" : "Kaufen / Verkaufen",
     "swap" : "Umtauschen",
     "lend" : "Leihen",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "Bitte installieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Wechseln Sie zu My Ledger und installieren Sie die {{appName}}-App, um Vermögenswerte zu tauschen.",
-      "cta" : "Zu My Ledger wechseln"
+      "subtitle" : "Gehen Sie zum Manager und installieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
+      "cta" : "Zum Manager gehen"
     },
     "outdatedApp" : {
       "title" : "Bitte aktualisieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Wechseln Sie zu My Ledger und aktualisieren Sie die {{appName}}-App, um Vermögenswerte zu tauschen.",
-      "cta" : "Zu My Ledger wechseln"
+      "subtitle" : "Gehen Sie zum Manager und aktualisieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
+      "cta" : "Zum Manager gehen"
     },
     "providers" : {
       "title" : "Wählen Sie einen Anbieter für den Tausch von Kryptowährungen",
@@ -959,7 +959,7 @@
       "terms" : {
         "title" : "Kryptowährungen verleihen",
         "subtitle" : "Verleihen von Vermögenswerten über das Compound-Protokoll",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "Das Compound-Protokoll ermöglicht es Ihnen, Vermögenswerte im Ethereum-Netzwerk zu leihen und zu verleihen. Sie können Vermögenswerte verleihen und Zinsen direkt von Ihrem Ledger-Konto erhalten.",
         "switchLabel" : "Ich habe die <1>Nutzungsbedingungen</1> gelesen und bin damit einverstanden"
       },
       "steps" : {
@@ -1202,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Apps auf Ihrem Gerät installieren",
-      "desc" : "Wechseln Sie zu My Ledger, um Apps auf Ihrem Gerät zu installieren. Nach der Installation der Apps können Sie Konten hinzufügen.",
+      "desc" : "Gehen Sie zum Manager, um Apps auf Ihrem Gerät zu installieren. Sie können Konten hinzufügen, sobald Sie Apps auf Ihrem Gerät haben.",
       "buttons" : {
-        "installApp" : "Zu My Ledger wechseln",
+        "installApp" : "Zum Manager gehen",
         "help" : "Hilfe"
       }
     },
@@ -1213,7 +1213,7 @@
       "desc" : "Fügen Sie ein Konto hinzu, um mit der Verwaltung Ihrer Krypto-Vermögenswerte zu beginnen. Sie müssen die App für Ihr Krypto-Vermögen auf Ihrem Gerät installiert haben.",
       "buttons" : {
         "addAccount" : "Konto hinzufügen",
-        "installApp" : "Zu My Ledger wechseln, um Apps zu installieren",
+        "installApp" : "Gehen Sie zum Manager, um Apps zu installieren",
         "help" : "Hilfe"
       }
     }
@@ -1536,12 +1536,12 @@
     "quitApp" : "Beenden Sie die Anwendung auf Ihrem Gerät",
     "appNotInstalledTitle" : "Fehlende, erforderliche App",
     "appNotInstalledTitle_plural" : "Fehlende, erforderliche Apps",
-    "appNotInstalled" : "Die {{appName}}-App ist erforderlich, um diese Aktion durchzuführen. Bitte wechseln Sie zu My Ledger und installieren Sie sie auf Ihrem Gerät.",
-    "appNotInstalled_plural" : "Die {{appName}}-Apps sind erforderlich, um diese Aktion durchzuführen. Bitte wechseln Sie zu My Ledger und installieren Sie sie auf Ihrem Gerät.",
-    "openManager" : "My Ledger öffnen",
+    "appNotInstalled" : "Die App {{appName}} ist erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
+    "appNotInstalled_plural" : "Die Apps {{appName}} sind erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
+    "openManager" : "Manager öffnen",
     "openOnboarding" : "Gerät einrichten",
     "outdated" : "App-Version veraltet",
-    "outdatedDesc" : "Für die {{appName}}-App auf Ihrem Gerät ist ein wichtiges Update verfügbar. Wechseln Sie zu My Ledger, um sie zu aktualisieren.",
+    "outdatedDesc" : "Ein wichtiges Update ist für die Anwendung {{appName}} auf Ihrem Gerät verfügbar. Bitte gehen Sie zum Manager, um das Update durchzuführen.",
     "installApp" : "{{appName}} App-Installation",
     "installAppDescription" : "Bitte warten Sie, bis die Installation beendet ist",
     "listApps" : "Prüfen von App-Abhängigkeiten",
@@ -1556,7 +1556,7 @@
       "provider" : "Anbieter",
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
-      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu."
+      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -1584,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "Es sieht so aus, als ob eine App auf Ihrem Gerät geöffnet ist",
-      "subtitle" : "Wenn Sie My Ledger erneut öffnen, wird die App auf Ihrem Gerät beendet.",
-      "ctaReopen" : "My Ledger erneut öffnen",
+      "subtitle" : "Beim erneuten Öffnen des Managers wird die App auf Ihrem Gerät beendet",
+      "ctaReopen" : "Manager erneut öffnen",
       "ctaPortfolio" : "Zurück zum Portfolio"
     },
     "deviceStorage" : {
@@ -1628,7 +1628,7 @@
         "title_plural" : "Updates verfügbar",
         "progressTitle" : "{{number}} App-Update",
         "progressTitle_plural" : "{{number}} App-Updates",
-        "progressWarning" : "Beenden Sie My Ledger nicht, solange die Aktualisierung noch läuft.",
+        "progressWarning" : "Beenden Sie den Manager nicht während der Aktualisierung.",
         "progress" : "Alle aktualisieren ..."
       },
       "item" : {
@@ -1692,7 +1692,7 @@
       "updateBtn" : "Firmware aktualisieren",
       "banner" : {
         "warning" : "Update-Firmware zu {{latestFirmware}} ist verfügbar",
-        "cta" : "Zu My Ledger wechseln",
+        "cta" : "Zum Manager gehen",
         "old" : {
           "warning" : "Geräte-Firmware-Version zu alt, um aktualisiert zu werden. Kontaktieren Sie den Ledger-Support für einen Ersatz.",
           "cta" : "Support kontaktieren"
@@ -1748,7 +1748,7 @@
         "boot" : "Drücken und halten Sie die Seitentaste, bis {{option}} angezeigt wird",
         "recoveryMode" : "Tippen Sie auf {{mode}} Modus. Warten Sie, bis das Dashboard erscheint.",
         "third" : "3. Alle Apps deinstallieren",
-        "openLive" : "Öffnen Sie My Ledger in Ledger Live.",
+        "openLive" : "Öffnen Sie den Manager in Ledger Live.",
         "uninstall" : "Klicken Sie auf das graue Papierkorbsymbol für alle derzeit auf dem {{deviceName}} installierten Apps. Dies schafft Platz für das Firmware-Installationsprogramm.",
         "disclaimer" : "Hinweis: Ihr Guthaben ist von diesem Vorgang nicht betroffen, die privaten Schlüssel zum Zugriff auf Ihr Krypto-Vermögen in der Blockchain bleiben sicher auf Ihrem Recovery Sheet."
       }
@@ -2861,7 +2861,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "Sie haben Ihre Delegation erfolgreich aktiviert."
               }
             }
           }
@@ -2873,7 +2873,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "Sie haben Ihre Delegierung erfolgreich reaktiviert."
               }
             }
           }
@@ -3130,8 +3130,8 @@
           "description" : "Benutzerdefiniertes Lückenlimit für alle Konten. Wenn Sie diesen Wert über den Standardwert (20) erhöhen, werden mehr ungenutzte öffentliche Adressen nach Coins durchsucht. Nur für fortgeschrittene Benutzer, dies kann die Kompatibilität beim Wiederherstellen Ihrer Konten beeinträchtigen."
         },
         "forceProvider" : {
-          "title" : "Anbieter in My Ledger",
-          "description" : "Das Wechseln des App-Anbieters in My Ledger kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+          "title" : "Manager-Anbieter",
+          "description" : "Das Ändern des App-Anbieters im Manager kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
         },
         "testAnimations" : {
           "title" : "Lottie-Animationen testen",
@@ -3431,11 +3431,13 @@
           }
         }
       },
-      "alerts": {
-        "beCareful": {
-          "title": "Bitte seien Sie vorsichtig",
-          "descr": "Stellen Sie sicher, dass Sie die Anweisungen dieser App bei jedem Schritt des Vorgangs befolgen.",
-          "gotIt": "Verstanden"
+      "tutorial" : {
+        "steps" : {
+          "getStarted" : "Erste Schritte",
+          "pinCode" : "PIN-Code",
+          "recoveryPhrase" : "Wiederherstellungsphrase",
+          "hideRecoveryPhrase" : "Wiederherstellungsphrase ausblenden",
+          "pairNano" : "Nano verbinden"
         },
         "screens" : {
           "importYourRecoveryPhrase" : {
@@ -3477,10 +3479,9 @@
               "title" : "Wählen Sie „Als neues Gerät einrichten“",
               "descr" : "Drücken Sie beide Tasten gleichzeitig, um die Auswahl zu bestätigen."
             },
-            "2": {
-              "heading": "Verbundenes Gerät",
-              "title": "Verbinden Sie Ihr {{deviceName}}",
-              "description": "Ist Ihr Gerät bereits eingerichtet? Verbinden Sie es mit der App!"
+            "follow" : {
+              "title" : "Anweisungen befolgen",
+              "descr" : "Kommen Sie hierher zurück, um den Anweisungen zu Ihrem PIN-Code zu folgen."
             },
             "buttons" : {
               "next" : "Nächster Schritt",
@@ -3502,27 +3503,13 @@
               "title" : "Durchsuchen",
               "descr" : "Erfahren Sie, wie Sie Ihr Gerät bedienen können, indem Sie die Anweisungen auf dem Bildschirm lesen."
             },
-            "howToGetStarted": {
-              "title": "Der beste Weg für den Anfang:",
-              "rules": {
-                "1": "Planen Sie 30 Minuten ein und nehmen Sie sich Zeit.",
-                "2": "Nehmen Sie einen Stift zum Schreiben.",
-                "3": "Bleiben Sie allein, und wählen Sie eine sichere und ruhige Umgebung."
-              },
-              "buttons": {
-                "next": "OK, ich bin bereit!",
-                "prev": "Vorheriger Schritt"
-              }
+            "select" : {
+              "title" : "Wählen Sie „Wiederherstellungsphrase eingeben“",
+              "descr" : "Drücken Sie beide Tasten gleichzeitig, um die Auswahl zu bestätigen."
             },
-            "buttons" : {
-              "next" : "OK, ich bin bereit!",
-              "prev" : "Vorheriger Schritt"
-            }
-          },
-          "deviceHowTo" : {
-            "turnOn" : {
-              "title" : "Nano einschalten",
-              "descr" : "Schließen Sie Ihr Gerät mit dem USB-Kabel an Ihren Computer an."
+            "follow" : {
+              "title" : "Anweisungen befolgen",
+              "descr" : "Kommen Sie hierher zurück, um den Anweisungen zu Ihrem PIN-Code zu folgen."
             },
             "buttons" : {
               "next" : "Nächster Schritt",
@@ -3574,9 +3561,9 @@
               "title" : "PIN-Code auswählen",
               "descr" : "Drücken Sie die linke oder rechte Taste, um Ziffern zu ändern. Drücken Sie beide Tasten, um eine Ziffer zu bestätigen. Wählen Sie <0></0> aus, um Ihren PIN-Code zu bestätigen. Wählen Sie <1></1> , um eine Ziffer zu löschen."
             },
-            "select" : {
-              "title" : "Wählen Sie „Als neues Gerät einrichten“",
-              "descr" : "Drücken Sie beide Tasten gleichzeitig, um die Auswahl zu bestätigen."
+            "confirm" : {
+              "title" : "PIN-Code bestätigen",
+              "descr" : "Geben Sie Ihren PIN-Code erneut ein, um ihn zu bestätigen."
             },
             "buttons" : {
               "next" : "Nächster Schritt",
@@ -3609,116 +3596,6 @@
               "title" : "Nehmen Sie Ihr Wiederherstellungsblatt",
               "descr" : "Nehmen Sie ein leeres Wiederherstellungsblatt, das Ihrem Nano beiliegt. Bitte wenden Sie sich an den Ledger-Support, wenn das Wiederherstellungsblatt nicht leer geliefert wurde."
             },
-            "browse" : {
-              "title" : "Durchsuchen",
-              "descr" : "Erfahren Sie, wie Sie Ihr Gerät bedienen können, indem Sie die Anweisungen auf dem Bildschirm lesen."
-            },
-            "buttons" : {
-              "next" : "Nächster Schritt",
-              "prev" : "Vorheriger Schritt",
-              "help" : "Hilfe benötigt"
-            },
-            "help" : {
-              "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
-            }
-          },
-          "newRecoveryPhrase" : {
-            "title" : "Wiederherstellungsphrase",
-            "paragraph1" : "Ihre Wiederherstellungsphrase ist eine geheime Liste von 24 Wörtern, die Ihre privaten Schlüssel sichern.",
-            "paragraph2" : "Ihr Nano erzeugt eine einzigartige Wiederherstellungsphrase. Ledger behält keine Kopie davon.",
-            "disclaimer" : "Ich verstehe, dass ich bei Verlust dieser Wiederherstellungsphrase nicht auf meine Kryptos zugreifen kann, falls ich den Zugang zu meinem Nano verliere.",
-            "buttons" : {
-              "next" : "Wiederherstellungsphrase",
-              "prev" : "Vorheriger Schritt",
-              "help" : "Hilfe benötigt"
-            },
-            "help" : {
-              "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
-            }
-          },
-          "recoveryHowTo" : {
-            "grabRecovery" : {
-              "title" : "Schnappen Sie sich Ihre Wiederherstellungsphrase"
-            },
-            "follow" : {
-              "title" : "Anweisungen befolgen",
-              "descr" : "Kommen Sie hierher zurück, um den Anweisungen zu Ihrem PIN-Code zu folgen."
-            },
-            "buttons" : {
-              "next" : "Nächster Schritt",
-              "prev" : "Vorheriger Schritt",
-              "help" : "Hilfe benötigt"
-            }
-          },
-          "pinCode" : {
-            "title" : "PIN-Code",
-            "paragraph" : "Ihr PIN-Code ist die erste Sicherheitsebene. Er sichert physisch den Zugang zu Ihrem privaten Schlüssel und Ihrem Nano. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein.",
-            "disclaimer" : "Ich verstehe, dass ich meinen PIN-Code selbst wählen und ihn geheim halten muss.",
-            "buttons" : {
-              "next" : "PIN-Code einrichten",
-              "prev" : "Vorheriger Schritt",
-              "help" : "Hilfe benötigt"
-            }
-          },
-          "quizSuccess" : {
-            "title" : "Schon ein Profi!",
-            "paragraph" : "Sie sind bereit, Ihre Kryptos sicher zu verwalten. \n\nNur noch ein kleiner Schritt!",
-            "buttons" : {
-              "next" : "Nächster Schritt",
-              "prev" : "Vorheriger Schritt",
-              "help" : "Hilfe benötigt"
-            }
-          },
-          "quizFailure" : {
-            "title" : "Sie werden bald zum Profi ...",
-            "paragraph" : "Keine Sorge, Ledger steht bereit, um Sie auf Ihrer Reise zu begleiten. Sie werden sich bald besonders gut fühlen, was Ihre Krypto-Sicherheit angeht. \n\nNur noch ein kleiner Schritt!",
-            "buttons" : {
-              "next" : "Nächster Schritt",
-              "prev" : "Vorheriger Schritt"
-            }
-          },
-          "pinCodeHowTo" : {
-            "setUp" : {
-              "title" : "PIN-Code auswählen",
-              "descr" : "Drücken Sie die linke oder rechte Taste, um Ziffern zu ändern. Drücken Sie beide Tasten, um eine Ziffer zu bestätigen. Wählen Sie <0></0> aus, um Ihren PIN-Code zu bestätigen. Wählen Sie <1></1> , um eine Ziffer zu löschen."
-            },
-            "confirm" : {
-              "title" : "PIN-Code bestätigen",
-              "descr" : "Geben Sie Ihren PIN-Code erneut ein, um ihn zu bestätigen."
-            },
-            "buttons" : {
-              "next" : "Nächster Schritt",
-              "prev" : "Vorheriger Schritt",
-              "help" : "Hilfe benötigt"
-            }
-          },
-          "existingRecoveryPhrase" : {
-            "title" : "Wiederherstellungsphrase eingeben",
-            "paragraph1" : "Ihr Wiederherstellungsphrase ist die geheime Liste von Wörtern, die Sie beim ersten Einrichten Ihrer Wallet gewählt haben.",
-            "paragraph2" : "Ledger bewahrt keine Kopie Ihrer Wiederherstellungsphrase auf.",
-            "disclaimer" : "Ich verstehe, dass ich bei Verlust der Wiederherstellungsphrase nicht mehr auf meine Kryptos zugreifen kann, falls ich den Zugang zu meinem Nano verliere.",
-            "buttons" : {
-              "next" : "Wiederherstellungsphrase eingeben",
-              "prev" : "Vorheriger Schritt",
-              "help" : "Hilfe benötigt"
-            },
-            "buttons" : {
-              "next" : "Nächster Schritt",
-              "prev" : "Vorheriger Schritt",
-              "help" : "Hilfe benötigt"
-            },
-            "help" : {
-              "help" : "Hilfe benötigt",
-              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
-            }
-          },
-          "recoveryHowTo3" : {
-            "reEnterWord" : {
-              "title" : "Bestätigen Sie Ihre Wiederherstellungsphrase",
-              "descr" : "Blättern Sie durch die Wörter, bis Sie Wort 1 gefunden haben, indem Sie die rechte Taste drücken. Bestätigen Sie, indem Sie beide Tasten drücken."
-            },
             "writeDownWords" : {
               "title" : "Schreiben Sie 24 Wörter auf",
               "descr" : "Schreiben Sie das 1. Wort, das auf Ihrem Nano angezeigt wird, in Position 1 Ihres Wiederherstellungsblatts. Drücken Sie dann auf Ihrem Nano nach rechts, um Wort Nummer 2 anzuzeigen, und notieren Sie es in Position 2. Wiederholen Sie den Vorgang für alle Wörter und achten Sie dabei sorgfältig auf die Reihenfolge und die Rechtschreibung. Drücken Sie auf Ihrem Nano nach links, um eventuelle Fehler zu finden."
@@ -3742,6 +3619,10 @@
               "next" : "Wiederherstellungsphrase",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "recoveryHowTo" : {
@@ -3765,6 +3646,39 @@
             },
             "buttons" : {
               "next" : "Nächster Schritt",
+              "prev" : "Vorheriger Schritt",
+              "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+            }
+          },
+          "recoveryHowTo3" : {
+            "reEnterWord" : {
+              "title" : "Bestätigen Sie Ihre Wiederherstellungsphrase",
+              "descr" : "Blättern Sie durch die Wörter, bis Sie Wort 1 gefunden haben, indem Sie die rechte Taste drücken. Bestätigen Sie, indem Sie beide Tasten drücken."
+            },
+            "repeat" : {
+              "title" : "Wiederholen Sie dies für alle Wörter!"
+            },
+            "buttons" : {
+              "next" : "Nächster Schritt",
+              "prev" : "Vorheriger Schritt",
+              "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+            }
+          },
+          "genuineCheck" : {
+            "success" : {
+              "title" : "Alles gut!",
+              "desc" : "Ihr Ledger {{deviceName}} ist echt und bereit zur Verwendung mit Ledger Live"
+            },
+            "buttons" : {
+              "next" : "Weiter",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
             }
@@ -3833,47 +3747,6 @@
       "descr" : "Beantworten Sie 3 einfache Fragen, um häufige Missverständnisse über Ihre Hardware-Wallet zu vermeiden.",
       "buttons" : {
         "start" : "Los geht's mit dem Quiz",
-        "next" : "Nächste Frage",
-        "finish" : "Quiz beenden"
-      },
-      "questions" : {
-        "1" : {
-          "text" : "Als Ledger-Benutzer werden meine Kryptos so gespeichert:",
-          "answers" : {
-            "1" : "Auf meinem Nano",
-            "2" : "Auf der Blockchain"
-          },
-          "linux": {
-            "title": "Aktualisieren Sie die udev-Regeln unter Linux",
-            "desc": "Klicken Sie auf die Schaltfläche unten, um die udev-Regeln hinzuzufügen. Schließen Sie Ihr Gerät an und entsperren Sie es, um zu sehen, ob es erkannt wird.",
-            "cta": "Regeln festlegen",
-            "bullets": {
-              "0": "Geben Sie den folgenden Befehl in ein Terminal ein, um die Regeln automatisch hinzuzufügen und udev neu zu laden.",
-              "1": "Schließen Sie Ihr Gerät an und entsperren Sie es, um zu sehen, ob es erkannt wird."
-            }
-          }
-        },
-        "stayOffline" : {
-          "title" : "Offline bleiben",
-          "description" : "Ihr Nano arbeitet als „Cold Storage“-Wallet. Das bedeutet, dass er Ihren privaten Schlüssel niemals online preisgibt, selbst wenn Sie die App verwenden."
-        },
-        "validateTransactions" : {
-          "title" : "Transaktionen validieren",
-          "description" : "Mit Ledger Live können Sie Krypto kaufen, verkaufen, verwalten, tauschen und verdienen und bleiben dabei geschützt. Sie werden jede Krypto-Transaktion mit Ihrem Nano validieren."
-        },
-        "setUpNanoWallet" : {
-          "title" : "Lassen Sie uns Ihren Nano einrichten!",
-          "description" : "Wir beginnen mit der Einrichtung der Nano-Sicherheit.",
-          "CTA" : "Packen wir's an!"
-        }
-      }
-    },
-    "quizz" : {
-      "heading" : "Quiz",
-      "title" : "Jetzt geht's los!",
-      "descr" : "Beantworten Sie 3 einfache Fragen, um häufige Missverständnisse über Ihre Hardware-Wallet zu vermeiden.",
-      "buttons" : {
-        "start" : "Lassen Sie uns das Quiz machen",
         "next" : "Nächste Frage",
         "finish" : "Quiz beenden"
       },
@@ -4078,392 +3951,23 @@
     "verifyData" : "Überprüfen Sie immer die Aktivitätsdetails auf Ihrem Gerät.",
     "warningWording" : {
     },
-    "votes" : "Abstimmungen ({{count}})"
-  },
-  "RecipientField" : {
-    "placeholder" : "{{currencyName}} Adresse eingeben"
-  },
-  "Terms" : {
-    "title" : "Nutzungsbedingungen",
-    "description" : "Bitte nehmen Sie sich etwas Zeit, um unsere Nutzungsbedingungen und Datenschutzrichtlinien zu lesen",
-    "termsLabel" : "Allgemeine Geschäftsbedingungen",
-    "privacyLabel" : "Datenschutzrichtlinie",
-    "switchLabel" : "Ich habe die Nutzungsbedingungen und Datenschutzrichtlinien gelesen und akzeptiere sie",
-    "cta" : "Zur Ledger-App",
-    "termsCheckboxLabel" : "Ich habe die Nutzungsbedingungen gelesen und erkläre mich damit einverstanden",
-    "privacyCheckboxLabel" : "Ich habe die Datenschutzbestimmungen gelesen und erkläre mich damit einverstanden."
-  },
-  "updatedTerms" : {
-    "title" : "Aktualisierung der Nutzungsbedingungen",
-    "body" : {
-      "intro" : "Guten Tag! Wir haben unsere Ledger Live-Nutzungsbedingungen aktualisiert – zum einen, um sie klarer zu fassen, zum anderen, um die in Ledger Live neu verfügbaren Services und Funktionen abzudecken. Die wichtigsten Änderungen:",
-      "bulletPoints" : ["Erläuterung der verfügbaren Services und ihrer Funktionsweise", "Informationen rund um die für Services erhobenen Gebühren", "Optimierung unseres Benachrichtigungsprozesses, um sicherzustellen, dass Sie über neue Änderungen unserer Nutzungsbedingungen stets zuverlässig informiert sind"],
-      "agreement" : "Durch Klicken auf „Weiter“ bestätigen Sie, dass Sie die nachstehenden Nutzungsbedingungen gelesen haben und diesen zustimmen."
-    },
-    "link" : "Nutzungsbedingungen",
-    "cta" : "Weiter"
-  },
-  "families" : {
-    "cardano" : {
-      "memoPlaceholder" : "Optional",
-      "memo" : "Memo"
-    },
-    "stellar" : {
-      "memo" : "Memo",
-      "memoType" : {
-        "MEMO_TEXT" : "Memo-Text",
-        "NO_MEMO" : "Kein Memo",
-        "MEMO_ID" : "Memo-ID",
-        "MEMO_HASH" : "Memo Hash",
-        "MEMO_RETURN" : "Memo-Rückgabe"
-      },
-      "memoWarningText" : "Wenn Sie ein Memo verwenden, überprüfen Sie sorgfältig den verwendeten Typ mit dem Empfänger",
-      "fee" : "Gebühren",
-      "feeInfoText" : "Für Transaktionen im Stellar-Netzwerk wird eine Mindesttransaktionsgebühr von 0,00001 XLM erhoben.",
-      "suggested" : "Empfohlen",
-      "recommendedFee" : "Empfohlene Gebühren",
-      "recommenndedFeeInfo" : "Die Transaktion kann auch mit einer niedrigeren Gebühr als der empfohlenen eingereicht werden, aber sie wird möglicherweise nicht abgeschlossen.",
-      "networkCongestion" : "Netzüberlastung",
-      "networkCongestionLevel" : {
-        "LOW" : "Niedrig",
-        "MEDIUM" : "Medium",
-        "HIGH" : "Hoch"
-      },
-      "assetCode" : "Vermögenswerte-Code",
-      "assetIssuer" : "Emittent der Vermögenswerte"
-    },
-    "cosmos" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Optional",
-      "memoWarningText" : "Bei Verwendung eines Memos sollten Sie alle Angaben sorgfältig beim Empfänger verifizieren."
-    },
-    "solana" : {
-      "memo" : "Memo",
-      "memoPlaceholder" : "Optional"
-    }
-  },
-  "errors" : {
-    "NoSuchAppOnProvider" : {
-      "title" : "Die {{appName}} -App kann für Ihre spezifische Konfiguration nicht gefunden werden.",
-      "description" : "Versuchen Sie, die App aus dem Manager heraus neu zu installieren"
-    },
-    "countervaluesUnavailable" : {
-      "title" : "Wir können derzeit keinen Gegenwert für diesen Vermögenswert angeben"
-    },
-    "generic" : {
-      "title" : "{{message}}",
-      "description" : "Etwas ist schief gelaufen Bitte versuchen Sie es erneut oder kontaktieren Sie den Ledger-Kundenservice."
-    },
-    "AccountAwaitingSendPendingOperations" : {
-      "title" : "Es gibt eine ausstehende Aktion für dieses Konto.",
-      "description" : "Warten Sie, bis der Vorgang abgeschlossen ist."
-    },
-    "AccountNameRequired" : {
-      "title" : "Ein Kontoname ist erforderlich",
-      "description" : "Bitte geben Sie einen Kontonamen ein"
-    },
-    "AccountNeedResync" : {
-      "title" : "Bitte versuchen Sie es erneut",
-      "description" : "Konto ist veraltet. Eine Synchronisierung ist erforderlich"
-    },
-    "AccountNotSupported" : {
-      "title" : "Konto wird nicht unterstützt.",
-      "description" : "Bitte versuchen Sie es erneut oder kontaktieren Sie den Support ({{reason}})"
-    },
-    "AlgorandASANotOptInInRecipient" : {
-      "title" : "Das Empfängerkonto hat sich nicht für den gewählten ASA entschieden."
-    },
-    "AmountRequired" : {
-      "title" : "Erforderlicher Betrag"
-    },
-    "NoAccessToCamera" : {
-      "title" : "Bitte stellen Sie sicher, dass Ihr System über eine Kamera verfügt, dass diese nicht von einer anderen Anwendung verwendet wird und dass Ledger Live die Erlaubnis hat, diese zu verwenden.",
-      "description" : ""
-    },
-    "ClaimRewardsFeesWarning" : {
-      "title" : "Die Prämien sind kleiner als die geschätzten Gebühren, die anfallen, um diese zu beanspruchen",
-      "description" : ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Sie können den freigegebenen Betrag nicht reduzieren, während Sie eine aktive Einzahlung haben."
-    },
-    "CosmosBroadcastCodeInternal" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 1)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosBroadcastCodeTxDecode" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 2)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosBroadcastCodeInvalidSequence" : {
-      "title" : "Ungültige Sequenz",
-      "description" : "Bitte versuchen Sie den Vorgang erneut"
-    },
-    "CosmosBroadcastCodeUnauthorized" : {
-      "title" : "Nicht autorisierte Signatur",
-      "description" : "Dieses Konto ist nicht berechtigt, diese Transaktion zu unterzeichnen"
-    },
-    "CosmosBroadcastCodeInsufficientFunds" : {
-      "title" : "Unzureichendes Guthaben",
-      "description" : "Vergewissern Sie sich, dass das verwendete Konto über genügend Guthaben verfügt und versuchen Sie es erneut"
-    },
-    "CosmosBroadcastCodeUnknownRequest" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 6)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosBroadcastCodeInvalidAddress" : {
-      "title" : "Ungültige Adresse",
-      "description" : "Bitte überprüfen Sie die Adresse und versuchen Sie es erneut"
-    },
-    "CosmosBroadcastCodeInvalidPubKey" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 8)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosBroadcastCodeUnknownAddress" : {
-      "title" : "Unbekannte Adresse",
-      "description" : "Bitte überprüfen Sie die Adresse und versuchen Sie es erneut"
-    },
-    "CosmosBroadcastCodeInsufficientCoins" : {
-      "title" : "Unzureichende Coins",
-      "description" : "Vergewissern Sie sich, dass das verwendete Konto über genügend Guthaben verfügt und versuchen Sie es erneut"
-    },
-    "CosmosBroadcastCodeInvalidCoins" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 11)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosBroadcastCodeOutOfGas" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 12)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosBroadcastCodeMemoTooLarge" : {
-      "title" : "Das Memo-Feld ist zu lang",
-      "description" : "Bitte verkürzen Sie den Memotext und versuchen Sie es erneut"
-    },
-    "CosmosBroadcastCodeInsufficientFee" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 14)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosBroadcastCodeTooManySignatures" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 15)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosBroadcastCodeGasOverflow" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 16)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosBroadcastCodeNoSignatures" : {
-      "title" : "Etwas ist schief gelaufen (Fehler 17)",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "CosmosDelegateAllFundsWarning" : {
-      "title" : "Stellen Sie sicher, dass Ihr Guthaben zur Deckung künftiger Transaktionsgebühren ausreicht"
-    },
-    "CurrencyNotSupported" : {
-      "title" : "{{currencyName}} wird nicht unterstützt",
-      "description" : "Dieser Krypto-Vermögenswert wird noch nicht unterstützt. Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "DeviceNotGenuine" : {
-      "title" : "Möglicherweise nicht echt",
-      "description" : "Hilfe vom Ledger-Support anfordern"
-    },
-    "DeviceGenuineSocketEarlyClose" : {
-      "title" : "Entschuldigung, versuchen Sie es erneut (echt-schließen)",
-      "description" : null
-    },
-    "DeviceInOSUExpected" : {
-      "title" : "Sorry, Update fehlgeschlagen",
-      "description" : "Bitte versuchen Sie es erneut oder kontaktieren Sie den Ledger-Support"
-    },
-    "DeviceHalted" : {
-      "title" : "Bitte starten Sie Ihr Ledger-Gerät neu und versuchen Sie es erneut",
-      "description" : "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut"
-    },
-    "DeviceNotOnboarded" : {
-      "title" : "Ihr Gerät kann noch nicht verwendet werden",
-      "description" : "Richten Sie Ihr Gerät ein, bevor Sie es mit Ledger Live verwenden."
-    },
-    "DeviceSocketFail" : {
-      "title" : "Bitte starten Sie Ihr Ledger-Gerät neu und versuchen Sie es erneut",
-      "description" : "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut. ({{message}})"
-    },
-    "DeviceSocketNoBulkStatus" : {
-      "title" : "Die Verbindung ist fehlgeschlagen",
-      "description" : "Bitte versuchen Sie es erneut."
-    },
-    "DisconnectedDevice" : {
-      "title" : "Entschuldigung, es scheint Ihr Gerät ist nicht verbunden",
-      "description" : "Bitte neu verbinden und erneut versuchen."
-    },
-    "DisconnectedDeviceDuringOperation" : {
-      "title" : "Entschuldigung, es scheint Ihr Gerät ist nicht verbunden",
-      "description" : "Bitte neu verbinden und erneut versuchen."
-    },
-    "EnpointConfig" : {
-      "title" : "Ungültiger Endpunkt",
-      "description" : "Bitte geben Sie einen gültigen Endpunkt an"
-    },
-    "FeeEstimationFailed" : {
-      "title" : "Sorry, Gebührenschätzung fehlgeschlagen",
-      "description" : "Versuchen Sie, eine benutzerdefinierte Gebühr zu setzen (Status: {{status}})"
-    },
-    "FirmwareOrAppUpdateRequired" : {
-      "title" : "Firmware- oder App-Update erforderlich",
-      "description" : "Bitte verwenden Sie den Manager, um alle Apps zu deinstallieren und dann zu prüfen, ob ein Firmware-Update verfügbar ist, bevor Sie diese neu installieren"
-    },
-    "LatestFirmwareVersionRequired" : {
-      "title" : "Nano-Firmware aktualisieren",
-      "description" : "Bitte aktualisieren Sie Ihre Geräte-Firmware auf die neueste Version, um diese Funktion nutzen zu können"
-    },
-    "FirmwareNotRecognized" : {
-      "title" : "Geräte-Firmware wird nicht erkannt",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support"
-    },
-    "HardResetFail" : {
-      "title" : "Entschuldigung, die Verbindung konnte nicht zurückgesetzt werden",
-      "description" : "Bitte versuchen Sie es erneut oder wenden Sie sich an den Ledger Kundenservice, falls das Problem weiterhin besteht."
-    },
-    "LatestMCUInstalledError" : {
-      "title" : "Entschuldigung, es gibt nichts zu aktualisieren",
-      "description" : "Bitte kontaktieren Sie den Ledger-Support, wenn Sie Ihr Gerät nicht verwenden können."
-    },
-    "LedgerAPI4xx" : {
-      "title" : "{{message}}",
-      "description" : "Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut oder wenden Sie sich an den Ledger-Kundenservice."
-    },
-    "LedgerAPI5xx" : {
-      "title" : "Entschuldigung, versuchen Sie es erneut.",
-      "description" : "Der Server konnte Ihre Anfrage nicht bearbeiten. Bitte versuchen Sie es später erneut oder wenden Sie sich an den Ledger-Kundenservice. {{message}}"
-    },
-    "LedgerAPINotAvailable" : {
-      "title" : "Sorry, {{currencyName}}-Dienste nicht verfügbar",
-      "description" : "Bitte versuchen Sie es erneut oder kontaktieren Sie den Ledger-Support"
-    },
-    "ManagerAppAlreadyInstalled" : {
-      "title" : "Entschuldigung, das ist bereits installiert",
-      "description" : "Bitte prüfen Sie, welche Apps bereits auf Ihrem Gerät installiert sind."
-    },
-    "ManagerAppDepInstallRequired" : {
-      "title" : "{{dependency}} App erforderlich",
-      "description" : "Falls die {{dependency}}-App bereits installiert ist, installieren Sie diese bitte mit der neuesten Version neu"
-    },
-    "ManagerAppDepUninstallRequired" : {
-      "title" : "Entschuldigung, diese App ist erforderlich",
-      "description" : "Sie müssen zuerst alle Apps deinstallieren, welche die {{appName}} App benötigen"
-    },
-    "ManagerDeviceLocked" : {
-      "title" : "Ihr Gerät ist gesperrt",
-      "description" : "Bitte entsperren Sie es"
-    },
-    "ManagerFirmwareNotEnoughSpace" : {
-      "title" : "Deinstallieren Sie alle Apps von Ihrem Gerät",
-      "description" : "Die privaten Schlüssel für den Zugriff auf Ihr Krypto-Vermögen bleiben sicher auf Ihrem Gerät und müssen auf Ihrem Wiederherstellungsblatt gesichert werden."
-    },
-    "ManagerNotEnoughSpace" : {
-      "title" : "Sorry, nicht genug Speicherplatz übrig",
-      "description" : "Deinstallieren Sie einige Apps, um Speicherplatz freizugeben. Die privaten Schlüssel zum Zugriff auf Ihre Krypto-Vermögenswerte bleiben sicher auf Ihrem Gerät."
-    },
-    "ManagerQuitPage" : {
-      "install" : {
-        "title" : "Abschluss App-Installation in Arbeit?",
-        "description" : "Wenn Sie den Manager beenden, wird die App-Installation abgebrochen. Bitte beenden Sie die Installation, um die Apps in der Warteschlange zu installieren.",
-        "stay" : "Installation beenden"
-      },
-      "uninstall" : {
-        "title" : "Abschluss App-Installation in Arbeit?",
-        "description" : "Durch das Beenden des Managers werden die laufenden App-Deinstallationen beendet.",
-        "stay" : "Deinstallation beenden"
-      },
-      "update" : {
-        "title" : "Abschluss App-Installation in Arbeit?",
-        "description" : "Durch das Beenden des Managers werden die laufenden App-Updates beendet.",
-        "stay" : "Updates beenden"
-      },
-      "quit" : "Manager schließen"
-    },
-    "ManagerUninstallBTCDep" : {
-      "title" : "Entschuldigung, diese App ist erforderlich",
-      "description" : "Deinstallieren Sie die Bitcoin- oder Ethereum-App zuletzt"
-    },
-    "NetworkDown" : {
-      "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
-      "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
-    },
-    "NoAddressesFound" : {
-      "title" : "Entschuldigung, es wurden keine Konten gefunden",
-      "description" : "Bei der Adressberechnung ist etwas schief gelaufen, versuchen Sie es erneut oder wenden Sie sich an den Ledger-Support"
-    },
-    "NotEnoughBalance" : {
-      "title" : "Entschuldigung, Guthaben reicht nicht aus",
-      "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
-    },
-    "NotEnoughBalanceBecauseDestinationNotCreated" : {
-      "title" : "Die Adresse des Empfängers ist inaktiv. Senden Sie mindestens {{minimalAmount}}, um sie zu aktivieren"
-    },
-    "NotEnoughGas" : {
-      "title" : "Der übergeordnete Kontostand reicht für Netzwerkgebühren nicht aus"
-    },
-    "PasswordsDontMatch" : {
-      "title" : "Die Passwörter stimmen nicht überein",
-      "description" : "Bitte versuchen Sie es erneut"
-    },
-    "PasswordIncorrect" : {
-      "title" : "Das eingegebene Passwort ist falsch",
-      "description" : "Bitte versuchen Sie es erneut"
-    },
-    "QuantityNeedsToBePositive" : {
-      "title" : "Die Menge muss größer als 0 sein"
-    },
-    "RPCHostRequired" : {
-      "title" : "Host ist erforderlich."
-    },
-    "RPCHostInvalid" : {
-      "title" : "Geben Sie einen gültigen Host ein."
-    },
-    "RPCUserRequired" : {
-      "title" : "RPC-Benutzername ist erforderlich"
-    },
-    "RPCPassRequired" : {
-      "title" : "RPC-Passwort ist erforderlich"
-    },
-    "SatStackAccessDown" : {
-      "title" : "Full Node kann nicht erreicht werden",
-      "description" : "Bitte überprüfen Sie, ob SatStack und Ihr Knoten/Node ausgeführt werden. Überprüfen Sie die vollständige Node-Einrichtung in den Einstellungen, wenn das Problem weiterhin besteht."
-    },
-    "SatStackStillSyncing" : {
-      "title" : "Knotensynchronisierung läuft...",
-      "description" : "Bitte warten Sie, während Ihr Node synchronisiert wird. Senden ist nicht möglich, da Ihr Bitcoin-Kontostand möglicherweise nicht korrekt ist."
-    },
-    "SatStackVersionTooOld" : {
-      "title" : "Bitte aktualisieren Sie SatStack",
-      "description" : "Die SatStack-Version, die Sie verwenden, ist zu alt und enthält möglicherweise Fehler oder Inkompatibilitäten."
-    },
-    "SatStackDescriptorNotImported" : {
-      "title" : "Konto nicht von Knoten (Full Node) gescannt",
-      "description" : "Bitte konfigurieren Sie Ihren Full Node so, dass er nach den Konten sucht, die mit diesem Gerät verbunden sind. Ihr Full Node muss zuerst die Blockchain nach diesem Konto durchsuchen, bevor Sie es zu Ihrem Portfolio hinzufügen können."
-    },
-    "SwapGenericAPIError" : {
-      "title" : "Etwas ist schief gelaufen",
-      "description" : "Der Umtauschvorgang wurde nicht durchgeführt. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support."
-    },
-    "TimeoutError" : {
-      "title" : "Entschuldigung, der Server hat zu lange für die Antwort gebraucht",
-      "description" : "Bitte versuchen Sie es erneut."
-    },
-    "TimeoutTagged" : {
-      "title" : "Entschuldigung, der Server hat zu lange gebraucht um zu antworten ({{tag}})",
-      "description" : "Zeitüberschreitung aufgetreten."
-    },
-    "TransportError" : {
-      "title" : "Etwas ist schief gelaufen. Bitte schließen Sie Ihr Gerät erneut an",
-      "description" : "{{message}}"
-    },
-    "TransportRaceCondition" : {
-      "title" : "Etwas ist schief gelaufen. Bitte schließen Sie Ihr Gerät erneut an",
-      "description" : "{{message}}"
-    },
-    "TransportStatusError" : {
-      "title" : "Etwas ist schief gelaufen Bitte schließen Sie Ihr Gerät erneut an",
-      "description" : "{{message}}"
+    "titleWording" : {
+      "send" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "claimReward" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "freeze" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "unfreeze" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "vote" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "delegate" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "undelegate" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "redelegate" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "claimRewardCompound" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "nominate" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "chill" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "bond" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "unbond" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "rebond" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "withdrawUnbonded" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "setController" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen"
     },
     "recipientWording" : {
       "send" : "Empfänger",
@@ -4879,7 +4383,7 @@
       "description" : "Bitte starten Sie Ihr Gerät neu, ohne die Schaltflächen zu berühren, wenn das Logo erscheint. Kontaktieren Sie den Ledger Support, falls das Problem weiterhin besteht."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger auf Gerät nicht zulässig"
+      "title" : "Manager auf Gerät abgelehnt"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Update auf Gerät abgebrochen",
@@ -4899,7 +4403,7 @@
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren Sie die {{managerAppName}}-App in My Ledger und installieren Sie sie dann neu."
+      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Zurück zum Dashboard",
@@ -4919,7 +4423,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren Sie die {{managerAppName}}-App in My Ledger und installieren Sie sie dann neu."
+      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
     },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
@@ -4964,7 +4468,7 @@
       "list" : {
         "1" : "Trennen Sie das USB-Kabel ab und schließen Sie es wieder an, ohne eine Taste zu drücken.",
         "2" : "Drücken Sie beide Tasten zusammen dreimal, um das Dashboard anzuzeigen.",
-        "3" : "Öffnen Sie My Ledger und klicken Sie auf „Firmware aktualisieren“."
+        "3" : "Öffnen Sie den Manager und klicken Sie auf Firmware aktualisieren."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
