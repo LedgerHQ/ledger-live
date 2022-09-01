@@ -38,7 +38,6 @@ const CheckTermOfUseUpdateModal = () => {
 
   return (
     <BottomDrawer
-      id="TermOfUseUpdate"
       noCloseButton={true}
       title={t("updatedTerms.title")}
       isOpen={!accepted}

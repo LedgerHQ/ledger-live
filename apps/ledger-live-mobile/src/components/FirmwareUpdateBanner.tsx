@@ -21,7 +21,7 @@ import useLatestFirmware from "../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../logic/firmwareUpdate";
 
 const FirmwareUpdateBanner = () => {
-  const lastSeenDevice: DeviceModelInfo | null = useSelector(
+  const lastSeenDevice: DeviceModelInfo | undefined | null = useSelector(
     lastSeenDeviceSelector,
   );
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);

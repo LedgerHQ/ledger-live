@@ -2,15 +2,21 @@ import React, { ReactNode } from "react";
 import {
   isAccountEmpty,
   getMainAccount,
-  getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { AccountLike, Account, ValueChange } from "@ledgerhq/types-live";
+import {
+  AccountLike,
+  Account,
+  ValueChange,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
-
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
-
+import { TFunction } from "react-i18next";
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { LayoutChangeEvent } from "react-native";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -35,7 +41,7 @@ type Props = {
   parentAccount?: Account;
   countervalueAvailable: boolean;
   useCounterValue: boolean;
-  range: any;
+  range: PortfolioRange;
   history: any;
   countervalueChange: ValueChange;
   cryptoChange: ValueChange;
@@ -43,10 +49,10 @@ type Props = {
   onAccountPress: () => void;
   onSwitchAccountCurrency: () => void;
   compoundSummary?: CompoundAccountSummary;
-  onAccountCardLayout: any;
+  onAccountCardLayout: (event: LayoutChangeEvent) => void;
   colors: ColorPalette;
   secondaryActions: ActionButtonEvent[];
-  t: any;
+  t: TFunction;
 };
 
 type MaybeComponent =
@@ -105,12 +111,15 @@ export function getListHeaderComponents({
     perFamilyAccountSubHeader as Record<string, MaybeComponent>
   )[family];
 
-  const AccountBalanceSummaryFooter = (
-    perFamilyAccountBalanceSummaryFooter as Record<string, MaybeComponent>
-  )[family];
+  const AccountBalanceSummaryFooter =
+    perFamilyAccountBalanceSummaryFooter[
+      family as keyof typeof perFamilyAccountBalanceSummaryFooter
+    ];
   const AccountBalanceSummaryFooterRendered =
     AccountBalanceSummaryFooter &&
-    AccountBalanceSummaryFooter({ account, parentAccount });
+    AccountBalanceSummaryFooter({
+      account: account as Account & CosmosAccount & PolkadotAccount,
+    });
 
   const stickyHeaderIndices = empty ? [] : [0];
 
@@ -128,9 +137,6 @@ export function getListHeaderComponents({
           countervalueAvailable={countervalueAvailable}
           counterValueCurrency={counterValueCurrency}
           onSwitchAccountCurrency={onSwitchAccountCurrency}
-          counterValueUnit={counterValueCurrency.units[0]}
-          cryptoCurrencyUnit={getAccountUnit(account)}
-          parentAccount={parentAccount}
         />
       </Box>,
       <Header />,

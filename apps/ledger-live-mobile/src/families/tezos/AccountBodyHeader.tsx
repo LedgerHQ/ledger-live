@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         shadowOffset: {
           height: 4,
+          width: 0,
         },
       },
     }),
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const OpCounterValue = ({ children }: any) => (
+const OpCounterValue = ({ children }: { children: React.ReactNode }) => (
   <Text fontWeight={"medium"} numberOfLines={1} color="neutral.c70">
     {children}
   </Text>

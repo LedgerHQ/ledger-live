@@ -14,8 +14,9 @@ import { compose } from "redux";
 import { Flex, Logos } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import type { TFunction } from "react-i18next";
-import type { Privacy } from "../../reducers/settings";
+import type { Privacy } from "../../reducers/types";
 import { withReboot } from "../Reboot";
+import type { RebootFunc } from "../Reboot";
 import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
 import { BaseButton } from "../../components/Button";
@@ -29,6 +30,7 @@ import FailBiometrics from "./FailBiometrics";
 import KeyboardBackgroundDismiss from "../../components/KeyboardBackgroundDismiss";
 import { VIBRATION_PATTERN_ERROR } from "../../constants";
 import { withTheme } from "../../colors";
+import type { Theme } from "../../colors";
 
 type State = {
   passwordError: Error | null | undefined;
@@ -44,9 +46,9 @@ type OwnProps = {
   biometricsError: Error | null | undefined;
 };
 type Props = OwnProps & {
-  reboot: (_: boolean | null | undefined) => any;
+  reboot: RebootFunc;
   t: TFunction;
-  colors: any;
+  colors: Theme["colors"];
 };
 
 function NormalHeader() {
@@ -55,7 +57,6 @@ function NormalHeader() {
     <Flex alignItems="center" justifyContent="center">
       <Logos.LedgerLiveAltRegular
         color={colors.neutral.c100}
-        style={styles.logo}
         width={50}
         height={50}
       />
@@ -69,16 +70,19 @@ function NormalHeader() {
   );
 }
 
-class FormFooter extends PureComponent<any> {
+type FormFooterProps = {
+  inputFocused: boolean;
+  onSubmit: () => void;
+  passwordError: Error | null | undefined;
+  passwordEmpty: boolean;
+  onPress: () => void;
+  colors: Theme["colors"];
+};
+
+class FormFooter extends PureComponent<FormFooterProps> {
   render() {
-    const {
-      inputFocused,
-      passwordEmpty,
-      onSubmit,
-      passwordError,
-      onPress,
-      colors,
-    } = this.props;
+    const { inputFocused, passwordEmpty, onSubmit, passwordError, onPress } =
+      this.props;
     return inputFocused ? (
       <TouchableWithoutFeedback>
         <BaseButton
@@ -87,11 +91,9 @@ class FormFooter extends PureComponent<any> {
           type="primary"
           onPress={onSubmit}
           containerStyle={styles.buttonContainer}
-          titleStyle={styles.buttonTitle}
-          disabled={passwordError || passwordEmpty}
+          disabled={!!passwordError || passwordEmpty}
           isFocused
           useTouchable
-          colors={colors}
         />
       </TouchableWithoutFeedback>
     ) : (
@@ -157,7 +159,7 @@ class AuthScreen extends PureComponent<Props, State> {
       console.log("could not load credentials"); // eslint-disable-line no-console
 
       this.setState({
-        passwordError: err,
+        passwordError: err as Error,
         password: "",
       });
     }
@@ -270,10 +272,7 @@ class AuthScreen extends PureComponent<Props, State> {
             </View>
           )}
           <BottomModal isOpened={isModalOpened} onClose={this.onRequestClose}>
-            <HardResetModal
-              onRequestClose={this.onRequestClose}
-              onHardReset={this.onHardReset}
-            />
+            <HardResetModal />
           </BottomModal>
         </SafeAreaView>
       </KeyboardBackgroundDismiss>
@@ -281,12 +280,12 @@ class AuthScreen extends PureComponent<Props, State> {
   }
 }
 
-const m: React.ComponentType<OwnProps> = compose(
+export default compose<React.ComponentType<OwnProps>>(
   withTranslation(),
   withReboot,
   withTheme,
 )(AuthScreen);
-export default m;
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,

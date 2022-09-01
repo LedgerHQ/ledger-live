@@ -18,6 +18,7 @@ import { Message } from "@ledgerhq/live-common/exchange/swap/types";
 import { swapKYCSelector } from "../../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../../actions/settings";
 import { Loading } from "../../Loading";
+import { ScreenName } from "../../../../const";
 
 interface Props {
   provider: string;
@@ -90,7 +91,7 @@ export function Widget({ provider, type }: Props) {
             );
             break;
           case "closeWidget":
-            navigation.navigate("SwapForm");
+            navigation.navigate(ScreenName.SwapForm);
             break;
           default:
             break;
@@ -117,8 +118,8 @@ export function Widget({ provider, type }: Props) {
   }, [navigation, reload]);
 
   return (
-    // @ts-expect-error lib type has issues
     <WebView
+      // @ts-expect-error lib type has issues
       ref={ref}
       source={{
         uri,

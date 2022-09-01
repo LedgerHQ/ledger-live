@@ -29,7 +29,7 @@ export type CryptoSettings = {
 export type Settings = {
   counterValue?: string;
   currenciesSettings: Record<CryptoCurrencyIds, CryptoSettings>;
-  pairExchanges: Record<string, string>;
+  pairExchanges: Record<string, string | null | undefined>;
   blacklistedTokenIds?: string[];
   hideEmptyTokenAccounts?: boolean;
 };

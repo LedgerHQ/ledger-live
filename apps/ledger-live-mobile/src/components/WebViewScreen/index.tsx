@@ -34,7 +34,7 @@ export type Props = {
   onMessage?: (_: WebViewMessageEvent) => void;
   renderHeader?: () => ReactNode;
   renderLoading?: () => ReactNode;
-  renderError?: () => ReactNode;
+  renderError?: () => JSX.Element;
 };
 
 const WebViewScreen = ({

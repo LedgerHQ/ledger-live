@@ -5,7 +5,7 @@ import invariant from "invariant";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { inferDynamicRange } from "@ledgerhq/live-common/range";
+import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -13,20 +13,22 @@ import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
 import SectionSeparator from "../../components/SectionSeparator";
 import Button from "../../components/Button";
 import EthereumGasLimit from "./SendRowGasLimit";
-import type { RouteParams } from "../../screens/SendFunds/04-Summary";
+import type {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "../../const";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+type Props = BaseComposite<
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+>;
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,
-  headerLeft: null,
+  headerLeft: undefined,
 };
 const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
-let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
+let lastNetworkGasPrice: Range; // local cache of last value to prevent extra blinks
 
 export default function EthereumCustomFees({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -49,10 +51,11 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   const onValidate = useCallback(() => {
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
+    // @ts-expect-error navigation shennanegans again
     navigation.navigate(currentNavigation, {
       ...route.params,
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: parentAccount?.id,
       transaction: bridge.updateTransaction(transaction, {
         userGasLimit: BigNumber(gasLimit || 0),
         gasPrice,
@@ -92,6 +95,7 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
           parentAccount={parentAccount}
           transaction={transaction}
           route={route}
+          navigation={navigation}
           gasLimit={gasLimit}
           setGasLimit={setGasLimit}
         />

@@ -6,13 +6,7 @@ type Props = {
 };
 
 const RaribleIcon = ({ size }: Props) => (
-  <Svg
-    width={size ?? 32}
-    height={size ?? 32}
-    viewBox="0 0 32 33"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <Svg width={size ?? 32} height={size ?? 32} viewBox="0 0 32 33" fill="none">
     <G clipPath="url(#clip0_387:5693)">
       <Path
         d="M25.6.968H6.4a6.4 6.4 0 00-6.4 6.4v19.2a6.4 6.4 0 006.4 6.4h19.2a6.4 6.4 0 006.4-6.4v-19.2a6.4 6.4 0 00-6.4-6.4z"

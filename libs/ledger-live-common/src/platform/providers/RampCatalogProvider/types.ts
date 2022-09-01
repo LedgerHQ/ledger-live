@@ -19,6 +19,7 @@ export type QueryParams = {
   fiatAmount?: string;
   cryptoAmount?: string;
   address?: string;
+  theme?: string;
 };
 
 export type CryptoCurrency = {

@@ -100,7 +100,7 @@ export default function AnimatedHeaderView({
   }, []);
   const [scrollY] = useState(new Animated.Value(0));
   const isFocused = useIsFocused();
-  const event = Animated.event([
+  const eventArgs = [
     {
       nativeEvent: {
         contentOffset: {
@@ -111,7 +111,8 @@ export default function AnimatedHeaderView({
     {
       useNativeDriver: true,
     },
-  ]);
+  ];
+  const event = Animated.event<typeof eventArgs>(eventArgs);
   const translateY = interpolateNode(scrollY, {
     inputRange: [0, 76],
     outputRange: [0, -50],
@@ -165,7 +166,6 @@ export default function AnimatedHeaderView({
         </View>
 
         <Animated.View
-          bold
           style={[
             styles.titleContainer,
             {

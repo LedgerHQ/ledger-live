@@ -41,7 +41,10 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
 
   const onPress = useCallback(() => {
     // @ts-expect-error navigation type is only partially declared
-    navigation.navigate("SelectCurrency", { currencies, provider });
+    navigation.navigate(ScreenName.SwapSelectCurrency, {
+      currencies,
+      provider,
+    });
   }, [navigation, currencies, provider]);
 
   return (

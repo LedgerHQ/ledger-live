@@ -12,6 +12,7 @@ import SelectValidator from "./SelectValidator";
 import ActivateSummary from "./02-Summary";
 import DelegationValidationError from "./ValidationError";
 import DelegationValidationSuccess from "./ValidationSuccess";
+import type { CeloActivateFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -114,4 +115,4 @@ const options = {
 
 export { ActivateFlow as component, options };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<CeloActivateFlowParamList>();

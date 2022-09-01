@@ -50,17 +50,9 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
         onPress={() => onClick(address)}
         event="PolkadotNominateSelectValidatorsOpenExplorer"
       >
-        <PolkadotIdenticon
-          style={
-            isDisabled
-              ? {
-                  backgroundColor: colors.neutral.c40,
-                }
-              : {}
-          }
-          address={address}
-          size={32}
-        />
+        {/* FIXME: I HAD TO ADD publicKey IN HERE. I LOOKED INTO THE LIB AND IT
+            SEEMS THAT THE DEFAULT VALUE FOR publicKey IS "0x" */}
+        <PolkadotIdenticon publicKey="0x" address={address} size={32} />
       </Touchable>
 
       <View style={styles.nameWrapper}>

@@ -11,12 +11,15 @@ import {
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type {
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/generated/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useSupplyMaxChoiceButtons } from "@ledgerhq/live-common/compound/react";
-import { useTheme } from "@react-navigation/native";
+import { NavigationProp, useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
@@ -31,24 +34,23 @@ import TranslatedError from "../../../components/TranslatedError";
 import Switch from "../../../components/Switch";
 
 type Props = {
-  navigation: any;
+  navigation: NavigationProp<{ [key: string]: object | undefined }>;
   route: {
-    params: RouteParams;
+    params: {
+      accountId: string;
+      parentId?: string;
+      currency: TokenCurrency;
+    };
   };
   transaction: Transaction;
-  setTransaction: (_: any) => void;
-  status: any;
+  setTransaction: (_: Transaction) => void;
+  status: TransactionStatus;
   bridgePending: boolean;
-  bridgeError: any;
+  bridgeError?: Error | null;
   max: BigNumber;
   onContinue: () => void;
   onChangeSendMax?: (_: boolean) => void;
   category: string;
-};
-type RouteParams = {
-  accountId: string;
-  parentId: string;
-  currency: TokenCurrency;
 };
 export default function AmountScreen({
   navigation,
@@ -69,10 +71,10 @@ export default function AmountScreen({
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const bridge = getAccountBridge(account, parentAccount);
-  const [selectedRatio, selectRatio] = useState();
+  const [selectedRatio, selectRatio] = useState<BigNumber | null>(null);
   const onChange = useCallback(
     (amount, keepRatio) => {
-      if (!keepRatio) selectRatio();
+      if (!keepRatio) selectRatio(null);
       setTransaction(
         bridge.updateTransaction(transaction, {
           amount,
@@ -209,8 +211,7 @@ export default function AmountScreen({
                           <Trans i18nKey="send.amount.useMax" />
                         </LText>
                         <Switch
-                          style={styles.switch}
-                          value={useAllAmount}
+                          value={useAllAmount || false}
                           onValueChange={onChangeSendMax}
                         />
                       </View>
@@ -356,8 +357,5 @@ const styles = StyleSheet.create({
   },
   maxLabel: {
     marginRight: 4,
-  },
-  switch: {
-    opacity: 0.99,
   },
 });

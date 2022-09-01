@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 import React, { ReactElement } from "react";
 import { useSelector } from "react-redux";
 import apiMock from "@ledgerhq/live-common/market/api/api.mock";

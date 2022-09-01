@@ -3,9 +3,11 @@ import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-import { Button, Flex, IconBox, Text } from "@ledgerhq/native-ui";
+import { Flex, IconBox, Text } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { TrackScreen } from "../../analytics";
+import Button from "../../components/Button";
 
 type Props = {
   device: Device;
@@ -32,7 +34,7 @@ export default function Paired({ device, onContinue: onContinueProps }: Props) {
       <Text variant={"h2"} textAlign={"center"} mb={5} mt={7}>
         <Trans
           i18nKey="PairDevices.Paired.title"
-          values={getDeviceModel("nanoX")}
+          values={getDeviceModel("nanoX" as DeviceModelId)}
         />
       </Text>
       <Text
@@ -44,7 +46,7 @@ export default function Paired({ device, onContinue: onContinueProps }: Props) {
       >
         <Trans
           i18nKey="PairDevices.Paired.desc"
-          values={getDeviceModel("nanoX")}
+          values={getDeviceModel("nanoX" as DeviceModelId)}
         />
       </Text>
       <Button

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import InfoModal from "../../modals/Info";
@@ -12,7 +13,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
 
 type Props = {
-  account: Account;
+  account: Account & CosmosAccount;
 };
 type InfoName = "available" | "delegated" | "undelegating";
 
@@ -20,7 +21,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo();
-  const { spendableBalance, cosmosResources } = account;
+  const { spendableBalance, cosmosResources } = account as CosmosAccount;
   const { delegatedBalance, unbondingBalance } = cosmosResources || {};
   const unit = getAccountUnit(account);
   const onCloseModal = useCallback(() => {
@@ -31,67 +32,65 @@ function AccountBalanceSummaryFooter({ account }: Props) {
     [],
   );
 
-  return (
-    (delegatedBalance.gt(0) || unbondingBalance.gt(0)) && (
-      <>
-        <InfoModal
-          isOpened={!!infoName}
-          onClose={onCloseModal}
-          data={infoName ? info[infoName] : []}
+  return delegatedBalance.gt(0) || unbondingBalance.gt(0) ? (
+    <>
+      <InfoModal
+        isOpened={!!infoName}
+        onClose={onCloseModal}
+        data={infoName ? info[infoName] : []}
+      />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={[
+          {
+            paddingHorizontal: 16,
+          },
+        ]}
+      >
+        <InfoItem
+          title={t("account.availableBalance")}
+          onPress={onPressInfoCreator("available")}
+          value={
+            <CurrencyUnitValue
+              unit={unit}
+              value={spendableBalance}
+              disableRounding
+            />
+          }
+          isLast={!delegatedBalance.gt(0) && !unbondingBalance.gt(0)}
         />
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={[
-            {
-              paddingHorizontal: 16,
-            },
-          ]}
-        >
+        {delegatedBalance.gt(0) && (
           <InfoItem
-            title={t("account.availableBalance")}
-            onPress={onPressInfoCreator("available")}
+            title={t("account.delegatedAssets")}
+            onPress={onPressInfoCreator("delegated")}
             value={
               <CurrencyUnitValue
                 unit={unit}
-                value={spendableBalance}
+                value={delegatedBalance}
                 disableRounding
               />
             }
-            isLast={!delegatedBalance.gt(0) && !unbondingBalance.gt(0)}
+            isLast={!unbondingBalance.gt(0)}
           />
-          {delegatedBalance.gt(0) && (
-            <InfoItem
-              title={t("account.delegatedAssets")}
-              onPress={onPressInfoCreator("delegated")}
-              value={
-                <CurrencyUnitValue
-                  unit={unit}
-                  value={delegatedBalance}
-                  disableRounding
-                />
-              }
-              isLast={!unbondingBalance.gt(0)}
-            />
-          )}
-          {unbondingBalance.gt(0) && (
-            <InfoItem
-              title={t("account.undelegating")}
-              onPress={onPressInfoCreator("undelegating")}
-              value={
-                <CurrencyUnitValue
-                  unit={unit}
-                  value={unbondingBalance}
-                  disableRounding
-                />
-              }
-              isLast={true}
-            />
-          )}
-        </ScrollView>
-      </>
-    )
-  );
+        )}
+        {unbondingBalance.gt(0) && (
+          <InfoItem
+            title={t("account.undelegating")}
+            onPress={onPressInfoCreator("undelegating")}
+            value={
+              <CurrencyUnitValue
+                unit={unit}
+                value={unbondingBalance}
+                disableRounding
+              />
+            }
+            isLast={true}
+          />
+        )}
+      </ScrollView>
+    </>
+  ) : null;
 }
 
 export default function AccountBalanceFooter({ account }: Props) {

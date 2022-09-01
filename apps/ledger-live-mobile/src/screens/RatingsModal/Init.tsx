@@ -13,8 +13,8 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  closeModal: any;
-  setStep: any;
+  closeModal: () => void;
+  setStep: (step: string) => void;
 };
 
 const Init = ({ closeModal, setStep }: Props) => {
