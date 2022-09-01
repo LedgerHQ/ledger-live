@@ -4,6 +4,8 @@ import com.facebook.react.bridge.*
 import com.hwtransportreactnativeble.tasks.Queue
 import com.ledger.live.ble.BleManagerFactory
 import timber.log.Timber
+import java.util.*
+import kotlin.concurrent.timerTask
 
 
 class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
@@ -113,19 +115,25 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
         eventEmitter.onAppStateChange(awake)
     }
 
+    private var pendingEvent: Timer? = null
     @ReactMethod
     fun disconnect(promise: Promise) {
-        Timber.d("$tag: triggering disconnect")
-        queue?.stop()
-        if (bleManager.isConnected) {
-            bleManager.disconnect {
-                Timber.d("$tag: \t disconnected")
-                promise.resolve(true)
-            }
-        } else {
-            promise.resolve(true)
-        }
-
+        /// Prevent race condition between organic disconnect (allow open app) and explicit disconnection below.
+        pendingEvent = Timer()
+        pendingEvent!!.schedule(
+            timerTask() {
+                queue?.stop()
+                if (!bleManager.isConnected) {
+                    promise.resolve(true)
+                } else {
+                    bleManager.disconnect {
+                        Timber.d("$tag: \t disconnected")
+                        promise.resolve(true)
+                    }
+                }
+            },
+            3000,
+        )
     }
 
     @ReactMethod
