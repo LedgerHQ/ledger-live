@@ -145,7 +145,6 @@ export default function SelectAccount({ navigation, route }: Props) {
   }, [analyticsPropertyFlow, currency, navigation]);
   const renderList = useCallback(
     items => {
-      // $FlowFixMe seriously WTF (60 errors just on this 😱)
       const formatedList = formatSearchResults(items, enhancedAccounts);
       return (
         <FlatList

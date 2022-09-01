@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@react-navigation/native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { getKYCStatus } from "@ledgerhq/live-common/exchange/swap/index";
 import { swapKYCSelector } from "../../../reducers/settings";
@@ -12,10 +12,6 @@ import Button from "../../../components/Button";
 import IconCheck from "../../../icons/Check";
 import IconClose from "../../../icons/Close";
 import { rgba } from "../../../colors";
-
-const forceInset = {
-  bottom: "always",
-};
 
 const Pending = ({
   onContinue,
@@ -73,7 +69,6 @@ const Pending = ({
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <View style={styles.wrapper}>
         <View
@@ -81,7 +76,7 @@ const Pending = ({
             styles.iconWrapper,
             {
               backgroundColor: rgba(
-                rejected ? colors.alertRed : colors.green,
+                rejected ? colors.alert : colors.green,
                 0.1,
               ),
             },

@@ -23,7 +23,7 @@ import { ActionButtonEvent } from "../../../components/FabActions";
 type Props = {
   account: AccountLike;
   parentAccount?: Account;
-  colors: any;
+  colors?: any;
 };
 
 const iconBuy = Icons.PlusMedium;

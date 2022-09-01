@@ -12,8 +12,10 @@ import SwapFormNavigator from "./SwapFormNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import SwapPendingOperation from "../../screens/Swap/PendingOperation";
-// eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import { SwapNavigatorParamList } from "./types/SwapNavigator";
+
+const Stack = createStackNavigator<SwapNavigatorParamList>();
 
 export default function SwapNavigator() {
   const { t } = useTranslation();
@@ -48,7 +50,7 @@ export default function SwapNavigator() {
         component={SwapKYC}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerRight: null,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen
@@ -58,7 +60,7 @@ export default function SwapNavigator() {
           headerTitle: () => (
             <StepHeader title={t("transfer.swap.kyc.states")} />
           ),
-          headerRight: null,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen
@@ -66,7 +68,7 @@ export default function SwapNavigator() {
         component={SwapError}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -74,11 +76,9 @@ export default function SwapNavigator() {
         component={SwapPendingOperation}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

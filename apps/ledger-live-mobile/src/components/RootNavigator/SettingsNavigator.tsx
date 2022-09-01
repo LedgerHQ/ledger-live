@@ -1,7 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import {
   createStackNavigator,
-  StackNavigationProp,
   TransitionPresets,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -37,7 +36,6 @@ import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/Cur
 import DebugSettings, {
   DebugDevices,
   DebugMocks,
-  DebugMocksParams,
 } from "../../screens/Settings/Debug";
 import DebugExport from "../../screens/Settings/Debug/ExportAccounts";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
@@ -52,20 +50,9 @@ import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import { track } from "../../analytics";
-// eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
-
-// TODO: types for each screens and navigators need to be set
-export type SettingsNavigatorStackParamList = {
-  DebugMocks: DebugMocksParams;
-
-  // Hack: allows any other properties
-  [otherScreens: string]: undefined | object;
-};
-
-export type SettingsNavigatorProps =
-  StackNavigationProp<SettingsNavigatorStackParamList>;
+import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -172,8 +159,8 @@ export default function SettingsNavigator() {
         name={ScreenName.CurrencySettings}
         component={CurrencySettings}
         options={({ route }) => ({
-          title: route.params.headerTitle,
-          headerRight: null,
+          title: route.params?.headerTitle,
+          headerRight: undefined,
         })}
         {...noNanoBuyNanoWallScreenOptions}
       />

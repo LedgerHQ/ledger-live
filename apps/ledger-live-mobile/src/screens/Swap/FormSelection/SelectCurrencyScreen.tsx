@@ -1,7 +1,10 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { getSupportedCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
 import { useTheme } from "@react-navigation/native";
@@ -23,7 +26,7 @@ type Props = {
   };
 };
 
-const keyExtractor = currency => currency.id;
+const keyExtractor = (currency: CryptoCurrency) => currency.id;
 
 const renderEmptyList = () => (
   <View style={styles.emptySearch}>
@@ -45,21 +48,21 @@ export default function SwapFormSelectCurrencyScreen({
   });
   const maybeFilteredCurrencies = swap.from.account
     ? selectableCurrencies.filter(
-        c => c !== getAccountCurrency(swap.from.account),
+        c => c !== getAccountCurrency(swap.from.account!),
       )
     : selectableCurrencies;
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(
     maybeFilteredCurrencies,
   );
   const onPressCurrency = useCallback(
-    (currency: CryptoCurrency) => {
+    (currency: CryptoCurrency | TokenCurrency) => {
       setCurrency && setCurrency(currency);
       navigation.navigate(ScreenName.SwapForm, { ...route.params });
     },
     [navigation, route.params, setCurrency],
   );
 
-  const renderList = items => (
+  const renderList = (items: CryptoCurrency[]) => (
     <FlatList
       contentContainerStyle={styles.list}
       data={items}

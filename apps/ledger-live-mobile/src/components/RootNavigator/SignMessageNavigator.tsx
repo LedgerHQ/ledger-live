@@ -10,25 +10,24 @@ import SignValidationSuccess from "../../screens/SignMessage/04-ValidationSucces
 import SignValidationError from "../../screens/SignMessage/04-ValidationError";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
+import { SignMessageNavigatorStackParamList } from "./types/SignMessageNavigator";
 
 const totalSteps = "3";
-export default function SignMessageNavigator({
-  route,
-}: {
-  route: {
-    params: Record<string, any>;
-  };
-}) {
+export default function SignMessageNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true, route.params.onClose),
+    () => getStackNavigatorConfig(colors, true),
     [colors],
   );
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.SignSummary}
+        initialParams={{
+          currentNavigation: ScreenName.SignSummary,
+          nextNavigation: ScreenName.SignSelectDevice,
+        }}
         component={SignSummary}
         options={{
           headerTitle: () => (
@@ -76,9 +75,9 @@ export default function SignMessageNavigator({
         name={ScreenName.SignValidationSuccess}
         component={SignValidationSuccess}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           headerShown: false,
-          headerRight: null,
+          headerRight: undefined,
           gestureEnabled: false,
         }}
       />
@@ -92,4 +91,4 @@ export default function SignMessageNavigator({
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<SignMessageNavigatorStackParamList>();

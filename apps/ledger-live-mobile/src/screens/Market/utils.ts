@@ -10,9 +10,10 @@ const indexes: [string, number][] = [
   ["Qn", 1000000000000000000],
 ];
 
-const dateFormatters = {};
+const dateFormatters: Record<string, { [key: string]: Intl.DateTimeFormat }> =
+  {};
 
-const formatters = {};
+const formatters: Record<string, { [key: string]: Intl.NumberFormat }> = {};
 
 export const getDateFormatter = (locale: string, interval: string) => {
   if (!dateFormatters[locale]) {
@@ -62,7 +63,7 @@ export const counterValueFormatter = ({
   }
 
   if (!formatters[locale]) formatters[locale] = {};
-  if (!formatters[locale]?.[currency]) {
+  if (currency && !formatters[locale]?.[currency]) {
     formatters[locale][currency] = new Intl.NumberFormat(locale, {
       style: currency ? "currency" : "decimal",
       currency,
@@ -71,9 +72,9 @@ export const counterValueFormatter = ({
     });
   }
 
-  const formatter = formatters[locale][currency];
+  const formatter = currency ? formatters[locale][currency] : undefined;
 
-  if (shorten && t) {
+  if (shorten && t && formatter) {
     const sign = value > 0 ? "" : "-";
     const v = Math.abs(value);
     const index = Math.floor(Math.log(v + 1) / Math.log(10) / 3) || 0;
@@ -91,5 +92,7 @@ export const counterValueFormatter = ({
     return formattedNumber;
   }
 
-  return formatter.format(value);
+  // FIXME: HOW DID THIS WORK WHEN CURRENCY IS EMTPY
+  // PLEASE FIX
+  return formatter ? formatter.format(value) : value + "";
 };

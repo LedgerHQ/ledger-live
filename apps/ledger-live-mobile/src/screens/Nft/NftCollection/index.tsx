@@ -7,12 +7,12 @@ import {
   SectionList,
   FlatList,
 } from "react-native";
+import type { SectionBase } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
 import Animated, { Value, event } from "react-native-reanimated";
-import { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { Operation, ProtoNFT } from "@ledgerhq/types-live";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -46,9 +46,13 @@ type RouteParams = {
 const NftList = Animated.createAnimatedComponent(FlatList);
 const OperationsList = Animated.createAnimatedComponent(SectionList);
 
-const renderOperationSectionHeader = ({ section }: any) => (
-  <SectionHeader section={section} />
-);
+const renderOperationSectionHeader = ({
+  section,
+}: {
+  section: {
+    day: Date;
+  };
+}) => <SectionHeader section={section} />;
 
 const NftCollection = ({ route }: Props) => {
   const navigation = useNavigation();

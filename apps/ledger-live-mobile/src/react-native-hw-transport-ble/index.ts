@@ -3,7 +3,7 @@ import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
 import makeMock from "./makeMock";
 import createAPDUMock from "../logic/createAPDUMock";
 
-const names = {};
+const names: { [key: string]: string } = {};
 const transport = Config.MOCK
   ? makeMock({
       // TODO E2E: This could be dynamically set in bridge/server.js

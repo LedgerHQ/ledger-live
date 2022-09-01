@@ -4,10 +4,12 @@ import { useTranslation } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
+import { AvailableProvider } from "@ledgerhq/live-common/exchange/swap/types";
 import { ScreenName } from "../../const";
 import Swap from "../../screens/Swap";
 import History from "../../screens/Swap/History";
 import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
+import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
 
 type TabLabelProps = {
   focused: boolean;
@@ -17,9 +19,11 @@ type TabLabelProps = {
 type RouteParams = {
   defaultAccount?: AccountLike;
   defaultParentAccount?: Account;
-  providers: any;
+  providers: AvailableProvider[];
   provider: string;
 };
+
+const Tab = createMaterialTopTabNavigator<SwapFormNavigatorParamList>();
 
 export default function SwapFormNavigator({
   route,
@@ -65,5 +69,3 @@ export default function SwapFormNavigator({
     </Tab.Navigator>
   );
 }
-
-const Tab = createMaterialTopTabNavigator();

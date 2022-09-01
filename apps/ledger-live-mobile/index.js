@@ -165,10 +165,10 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
   setInterval(syncTheTags, 60000);
 }
 
-if (Config.DISABLE_YELLOW_BOX) {
-  // $FlowFixMe
-  console.disableYellowBox = true; // eslint-disable-line no-console
-}
+// if (Config.DISABLE_YELLOW_BOX) {
+//
+//   console.disableYellowBox = true; // eslint-disable-line no-console
+// }
 
 logReport.logReportInit();
 

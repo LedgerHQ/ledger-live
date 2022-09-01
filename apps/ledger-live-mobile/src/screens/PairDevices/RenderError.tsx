@@ -31,12 +31,10 @@ const hitSlop = {
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
 
-  // $FlowFixMe
   if (error.errorCode === BleErrorCode.LocationServicesDisabled) {
     return <LocationRequired onRetry={onRetry} errorType="disabled" />;
   }
 
-  // $FlowFixMe
   if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
     return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
   }

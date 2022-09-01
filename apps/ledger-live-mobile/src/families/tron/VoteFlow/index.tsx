@@ -78,7 +78,7 @@ function VoteFlow() {
               })}
             />
           ),
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -124,8 +124,8 @@ function VoteFlow() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
         }}
       />
     </Stack.Navigator>

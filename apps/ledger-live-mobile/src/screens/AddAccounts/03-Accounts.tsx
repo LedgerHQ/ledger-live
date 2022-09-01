@@ -8,7 +8,7 @@ import React, {
   useMemo,
 } from "react";
 import { StyleSheet, View, Linking, SafeAreaView } from "react-native";
-import { concat, from } from "rxjs";
+import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -33,7 +33,7 @@ import { useTheme } from "@react-navigation/native";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import logger from "../../logger";
-import { withTheme } from "../../colors";
+import { Theme, withTheme } from "../../colors";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -55,6 +55,7 @@ import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 import BottomModal from "../../components/BottomModal";
 import { urls } from "../../config/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
+import { State } from "../../reducers/types";
 
 const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
   useEffect(() => {
@@ -86,9 +87,12 @@ type Props = {
   }) => void;
   existingAccounts: Account[];
   blacklistedTokenIds?: string[];
-  colors: any;
+  colors: Theme["colors"];
 };
-const mapStateToProps = createStructuredSelector({
+const mapStateToProps = createStructuredSelector<
+  State,
+  { existingAccounts: Account[]; blacklistedTokenIds: string[] }
+>({
   existingAccounts: accountsSelector,
   blacklistedTokenIds: blacklistedTokenIdsSelector,
 });
@@ -106,14 +110,14 @@ function AddAccountsAccounts({
   const { colors } = useTheme();
   const [scanning, setScanning] = useState(true);
   const [error, setError] = useState(null);
-  const [latestScannedAccount, setLatestScannedAccount] = useState(null);
-  const [scannedAccounts, setScannedAccounts] = useState([]);
+  const [latestScannedAccount, setLatestScannedAccount] =
+    useState<Account | null>(null);
+  const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [cancelled, setCancelled] = useState(false);
-  const scanSubscription = useRef();
-  const scrollView = useRef();
+  const scanSubscription = useRef<Subscription | null>(null);
   const {
     currency,
     device: { deviceId },
@@ -122,7 +126,7 @@ function AddAccountsAccounts({
   } = route.params || {};
   // Find accounts that are (scanned && !existing && !used)
   const newAccountSchemes = scannedAccounts
-    .filter(
+    ?.filter(
       a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used,
     )
     .map(a => a.derivationMode);
@@ -165,14 +169,6 @@ function AddAccountsAccounts({
       }
     }
   }, [latestScannedAccount]);
-  // workarround to apply changes of subscription with current react state -> only react to this variable
-  const handleContentSizeChange = useCallback(() => {
-    if (scrollView.current) {
-      scrollView.current.scrollToEnd({
-        animated: true,
-      });
-    }
-  }, []);
   const startSubscription = useCallback(() => {
     const cryptoCurrency = isTokenCurrency(currency)
       ? currency.parentCurrency
@@ -180,7 +176,7 @@ function AddAccountsAccounts({
     const bridge = getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
       paginationConfig: {
-        operation: 0,
+        operations: 0,
       },
       blacklistedTokenIds,
     };
@@ -307,7 +303,7 @@ function AddAccountsAccounts({
         scanning,
         preferredNewAccountSchemes: showAllCreatedAccounts
           ? undefined
-          : [preferredNewAccountScheme],
+          : [preferredNewAccountScheme!],
       }),
     [
       existingAccounts,
@@ -322,7 +318,10 @@ function AddAccountsAccounts({
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
   );
   const CustomNoAssociatedAccounts =
-    noAssociatedAccountsByFamily[currency.family];
+    noAssociatedAccountsByFamily[
+      (currency as CryptoCurrency)
+        .family as keyof typeof noAssociatedAccountsByFamily
+    ];
   const emptyTexts = {
     creatable: alreadyEmptyAccount ? (
       <LText style={styles.paddingHorizontal}>
@@ -361,9 +360,7 @@ function AddAccountsAccounts({
       <PreventNativeBack />
       <NavigationScrollView
         style={styles.inner}
-        contentContainerStyle={styles.innerContent} // $FlowFixMe
-        ref={scrollView}
-        onContentSizeChange={handleContentSizeChange}
+        contentContainerStyle={styles.innerContent}
       >
         {sections.map(({ id, selectable, defaultSelected, data }, i) => {
           const hasMultipleSchemes =
@@ -397,7 +394,7 @@ function AddAccountsAccounts({
                 }
                 onUnselectAll={!selectable ? undefined : unselectAll}
                 selectedIds={selectedIds}
-                emptyState={emptyTexts[id]}
+                emptyState={emptyTexts[id as keyof typeof emptyTexts]}
                 isDisabled={!selectable}
                 forceSelected={id === "existing"}
                 style={hasMultipleSchemes ? styles.smallMarginBottom : {}}
@@ -406,15 +403,14 @@ function AddAccountsAccounts({
                 <View style={styles.moreAddressTypesContainer}>
                   {showAllCreatedAccounts ? (
                     <AddressTypeTooltip
-                      accountSchemes={newAccountSchemes}
-                      currency={currency}
+                      accountSchemes={newAccountSchemes as DerivationMode[]}
+                      currency={currency as CryptoCurrency}
                     />
                   ) : (
                     <Button
                       event={"AddAccountsMoreAddressType"}
                       type="secondary"
                       title={<Trans i18nKey="addAccounts.showMoreChainType" />}
-                      titleStyle={styles.subtitle}
                       onPress={viewAllCreatedAccounts}
                       IconRight={Chevron}
                     />
@@ -486,7 +482,6 @@ const AddressTypeTooltip = ({
         event={"AddAccountsAddressTypeTooltip"}
         type="lightSecondary"
         title={<Trans i18nKey="addAccounts.addressTypeInfo.title" />}
-        titleStyle={styles.subtitle}
         onPress={onOpen}
         IconRight={Info}
       />

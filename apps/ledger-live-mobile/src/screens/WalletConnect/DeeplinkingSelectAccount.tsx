@@ -1,19 +1,28 @@
 import React, { Component } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ListRenderItemInfo,
+  ListRenderItem,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { compose } from "redux";
 import { Trans } from "react-i18next";
-import type { Account, AccountLikeArray } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  AccountLikeArray,
+} from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import {
-  flattenAccountsEnforceHideEmptyTokenSelector,
-  accountsSelector,
-} from "../../reducers/accounts";
+import { createStructuredSelector } from "reselect";
 import withEnv from "../../logic/withEnv";
 import { withTheme } from "../../colors";
+import type { Theme } from "../../colors";
+import type { State as StoreState } from "../../reducers/types";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -23,13 +32,13 @@ import KeyboardView from "../../components/KeyboardView";
 import PlusIcon from "../../icons/Plus";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
-// eslint-disable-next-line import/named
 import { connect as WCconnect } from "./Provider";
+import {
+  accountsCountSelector,
+  flattenAccountsEnforceHideEmptyTokenSelector,
+} from "../../reducers/accounts";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   accounts: Account[];
   allAccounts: AccountLikeArray;
@@ -39,19 +48,24 @@ type Props = {
       uri: string;
     };
   };
-  colors: any;
+  colors: Theme["colors"];
 };
-// eslint-disable-next-line @typescript-eslint/ban-types
-type State = {};
 
-class SendFundsSelectAccount extends Component<Props, State> {
-  renderList = items => {
+class SendFundsSelectAccount extends Component<Props> {
+  renderList = (items: AccountLike[]) => {
     const { accounts } = this.props;
     const formatedList = formatSearchResults(items, accounts);
     return (
       <FlatList
         data={formatedList}
-        renderItem={this.renderItem}
+        renderItem={
+          this.renderItem as ListRenderItem<
+            | SearchResult
+            | (AccountLike & {
+                match: boolean;
+              })
+          >
+        }
         keyExtractor={this.keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
@@ -79,7 +93,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
       </View>
     );
   };
-  renderItem = ({ item: result }: { item: SearchResult }) => {
+  renderItem = ({ item: result }: ListRenderItemInfo<SearchResult>) => {
     const { account, match } = result;
     return (
       <AccountCard
@@ -106,7 +120,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
       </LText>
     </View>
   );
-  keyExtractor = item => item.account.id;
+  keyExtractor = (item: SearchResult) => item.account.id;
 
   render() {
     const { allAccounts, colors } = this.props;
@@ -118,7 +132,6 @@ class SendFundsSelectAccount extends Component<Props, State> {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <TrackScreen category="WalletConnect" name="DeeplinkingSelectAccount" />
         <KeyboardView
@@ -147,10 +160,17 @@ class SendFundsSelectAccount extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = createStructuredSelector({
+const mapStateToProps = createStructuredSelector<
+  StoreState,
+  {
+    allAccounts: AccountLike[];
+    accounts: number;
+  }
+>({
   allAccounts: flattenAccountsEnforceHideEmptyTokenSelector,
-  accounts: accountsSelector,
+  accounts: accountsCountSelector,
 });
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -188,7 +208,6 @@ const styles = StyleSheet.create({
   },
 });
 export default compose(
-  // $FlowFixMe
   connect(mapStateToProps),
   withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   withTheme,

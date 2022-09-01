@@ -1,6 +1,6 @@
 import React, { useReducer, useCallback, useEffect, useRef } from "react";
 import { StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { timeout, tap } from "rxjs/operators";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
@@ -54,7 +54,6 @@ export default function PairDevices(props: PairDevicesProps) {
   return (
     <RequiresBLE>
       <SafeAreaView
-        forceInset={forceInset}
         style={[
           styles.root,
           {
@@ -249,11 +248,7 @@ function PairDevicesInner({ navigation, route }: Props) {
   switch (status) {
     case "scanning":
       return (
-        <Scanning // $FlowFixMe
-          onSelect={onSelect}
-          onError={onError}
-          onTimeout={onTimeout}
-        />
+        <Scanning onSelect={onSelect} onError={onError} onTimeout={onTimeout} />
       );
 
     case "timeout":
@@ -277,9 +272,6 @@ function PairDevicesInner({ navigation, route }: Props) {
   }
 }
 
-const forceInset = {
-  bottom: "always",
-};
 const initialState: State = {
   status: "scanning",
   device: null,

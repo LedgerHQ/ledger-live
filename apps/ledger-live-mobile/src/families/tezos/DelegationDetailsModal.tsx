@@ -17,7 +17,7 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/Feather";
 // eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import IconReceive from "../../icons/Receive";
@@ -205,12 +205,7 @@ export default function DelegationDetailsModal({
   const height = Math.min(getWindowDimensions().height - 400, 280);
   return (
     // TODO use DelegationDrawer component
-    <BottomModal
-      id="DelegationDetailsModal"
-      isOpened={isOpened}
-      onClose={onClose}
-      style={styles.modal}
-    >
+    <BottomModal isOpened={isOpened} onClose={onClose} style={styles.modal}>
       <View style={styles.root}>
         <DelegatingContainer
           left={

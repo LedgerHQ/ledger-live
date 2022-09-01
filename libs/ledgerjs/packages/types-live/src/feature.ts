@@ -23,7 +23,8 @@ export type FeatureId =
   | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "walletConnectLiveApp"
-  | "customImage";
+  | "customImage"
+  | "deviceLocalization";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

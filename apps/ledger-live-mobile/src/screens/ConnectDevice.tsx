@@ -2,16 +2,11 @@ import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../reducers/accounts";
@@ -19,26 +14,16 @@ import DeviceAction from "../components/DeviceAction";
 import { renderLoading } from "../components/DeviceAction/rendering";
 import { useSignedTxHandler } from "../logic/screenTransactionHooks";
 import { TrackScreen } from "../analytics";
+import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "../const";
+import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 
 const action = createAction(connectApp);
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-    name: string;
-  };
-};
-type RouteParams = {
-  device: Device;
-  accountId: string;
-  transaction: Transaction;
-  status: TransactionStatus;
-  appName?: string;
-  selectDeviceLink?: boolean;
-  onSuccess?: (payload: any) => void;
-  onError?: (error: any) => void;
-  analyticsPropertyFlow?: string;
-};
+type Props = StackNavigatorProps<
+  SendFundsNavigatorStackParamList,
+  ScreenName.SendConnectDevice
+>;
+
 export const navigateToSelectDevice = (navigation: any, route: any) =>
   navigation.navigate(route.name.replace("ConnectDevice", "SelectDevice"), {
     ...route.params,

@@ -3,6 +3,7 @@ import { useTheme } from "@react-navigation/native";
 import type { NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { BigNumber } from "bignumber.js";
+import { StyleProp, ViewStyle } from "react-native";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import DoubleCounterValue from "../../components/DoubleCountervalue";
 import Skeleton from "../../components/Skeleton";
@@ -16,8 +17,8 @@ type Props = {
   unit: Unit;
   isNftOperation: boolean;
   status: string;
-  metadata: $PropertyType<NFTMetadataResponse, "result">;
-  styles: Record<string, any>;
+  metadata: NFTMetadataResponse["result"];
+  styles: Record<string, StyleProp<ViewStyle>>;
 };
 
 const Title = ({

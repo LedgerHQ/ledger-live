@@ -27,7 +27,6 @@ const defaultOpts = {
   ]),
 };
 export default (opts: Opts) => {
-  // $FlowFixMe
   const { observeState, createTransportDeviceMock } = {
     ...defaultOpts,
     ...opts,

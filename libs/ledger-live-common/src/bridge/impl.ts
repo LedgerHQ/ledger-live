@@ -38,7 +38,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
 };
 export const getAccountBridge = (
   account: AccountLike,
-  parentAccount: Account | null | undefined
+  parentAccount?: Account | null
 ): AccountBridge<any> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;

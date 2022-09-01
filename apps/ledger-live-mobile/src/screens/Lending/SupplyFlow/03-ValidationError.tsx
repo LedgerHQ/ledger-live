@@ -1,11 +1,10 @@
 import React, { useCallback } from "react";
-import { StyleSheet, Linking, SafeAreaView } from "react-native";
+import { StyleSheet, SafeAreaView } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
-import { urls } from "../../../config/urls";
 
 type Props = {
   account: AccountLike;
@@ -28,9 +27,6 @@ export default function ValidationError({ navigation, route }: Props) {
   const onClose = useCallback(() => {
     navigation.getParent().pop();
   }, [navigation]);
-  const contactUs = useCallback(() => {
-    Linking.openURL(urls.contact);
-  }, []);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -51,12 +47,7 @@ export default function ValidationError({ navigation, route }: Props) {
           currencyName: currency?.name,
         }}
       />
-      <ValidateError
-        error={error}
-        onRetry={retry}
-        onClose={onClose}
-        onContactUs={contactUs}
-      />
+      <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }

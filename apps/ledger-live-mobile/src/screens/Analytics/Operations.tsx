@@ -1,12 +1,9 @@
-/* eslint-disable import/named */
 import React, { memo, useMemo, useState, useCallback } from "react";
-import { SectionList } from "react-native";
+import { SectionList, SectionBase } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import { AccountLikeArray, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLikeArray, Operation } from "@ledgerhq/types-live";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
@@ -26,21 +23,16 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-type RouteParams = {
-  accountsIds: [string];
-};
-
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+type Props = StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  ScreenName.AnalyticsOperations
+>;
 
 export function Operations({ navigation, route }: Props) {
   const accountsIds = route?.params?.accountsIds;
-
   const [opCount, setOpCount] = useState(50);
 
   function onEndReached() {
@@ -96,7 +88,7 @@ export function Operations({ navigation, route }: Props) {
     const account = allAccounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type !== "Account"
-        ? allAccounts.find(a => a.id === account.parentId)
+        ? (allAccounts.find(a => a.id === account.parentId) as Account)
         : null;
 
     if (!account) return null;

@@ -6,26 +6,34 @@ import {
   areFramesComplete,
   progressOfFrames,
 } from "qrloop";
-import { decode } from "@ledgerhq/live-common/cross";
+import {
+  Result as ImportAccountsResult,
+  decode,
+} from "@ledgerhq/live-common/cross";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import Scanner from "../../components/Scanner";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { withTheme } from "../../colors";
+import type { Theme } from "../../colors";
+import type { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+
+type NavigationProps = StackNavigatorProps<
+  ImportAccountsNavigatorParamList,
+  ScreenName.ScanAccounts
+>;
 
 type Props = {
-  navigation: any;
-  route: any;
-  colors: any;
-};
+  colors: Theme["colors"];
+} & NavigationProps;
 
 class Scan extends PureComponent<
   Props,
   {
     progress: number;
-    error: Error | null | undefined;
+    error?: Error | null;
     width: number;
     height: number;
   }
@@ -69,7 +77,7 @@ class Scan extends PureComponent<
           } catch (error) {
             this.frames = null;
             this.setState({
-              error,
+              error: error as Error,
               progress: 0,
             });
           }
@@ -84,7 +92,7 @@ class Scan extends PureComponent<
       error: null,
     });
   };
-  onResult = result => {
+  onResult = (result: ImportAccountsResult) => {
     const onFinish = this.props.route.params?.onFinish;
     this.props.navigation.replace(ScreenName.DisplayResult, {
       result,
@@ -123,4 +131,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-export default withTheme(Scan);
+
+const m: React.ComponentType<NavigationProps> = withTheme(Scan);
+
+export default m;

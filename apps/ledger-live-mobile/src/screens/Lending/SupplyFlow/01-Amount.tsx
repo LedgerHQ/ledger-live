@@ -33,7 +33,7 @@ export default function SupplyAmount({ navigation, route }: Props) {
     useBridgeTransaction(() => {
       const bridge = getAccountBridge(account, parentAccount);
       const ctoken = findCompoundToken(account.token);
-      // $FlowFixMe
+
       const t = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(t, {
         recipient: ctoken?.contractAddress || "",

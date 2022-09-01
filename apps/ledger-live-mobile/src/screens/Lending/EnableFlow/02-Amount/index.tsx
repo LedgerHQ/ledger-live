@@ -4,8 +4,6 @@ import React, { useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -13,6 +11,7 @@ import {
   formatCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
 import { accountScreenSelector } from "../../../../reducers/accounts";
 import { rgba } from "../../../../colors";
 import { ScreenName, NavigatorName } from "../../../../const";
@@ -31,20 +30,15 @@ import ArrowRight from "../../../../icons/ArrowRight";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import LendingWarnings from "../../shared/LendingWarnings";
 import { localeSelector } from "../../../../reducers/settings";
+import { LendingEnableFlowParamsList } from "../../../../components/RootNavigator/types/LendingEnableFlowNavigator";
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
-type RouteParams = {
-  accountId: string;
-  parentId: string;
-  currency: TokenCurrency;
-  transaction?: Transaction;
-};
-export default function SendAmount({ navigation, route }: Props) {
+export default function SendAmount({
+  navigation,
+  route,
+}: StackScreenProps<
+  LendingEnableFlowParamsList,
+  ScreenName.LendingEnableAmount
+>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -58,7 +52,7 @@ export default function SendAmount({ navigation, route }: Props) {
     useBridgeTransaction(() => {
       const bridge = getAccountBridge(account, parentAccount);
       const ctoken = findCompoundToken(account.token);
-      // $FlowFixMe
+
       const t = bridge.createTransaction(account);
       const transaction =
         tx ||

@@ -59,7 +59,7 @@ function UndelegationFlow() {
         name={ScreenName.CosmosUndelegationConnectDevice}
         component={ConnectDevice}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -84,9 +84,9 @@ function UndelegationFlow() {
         name={ScreenName.CosmosUndelegationValidationSuccess}
         component={UndelegationValidationSuccess}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           headerTitle: "",
-          headerRight: null,
+          headerRight: undefined,
           gestureEnabled: false,
         }}
       />

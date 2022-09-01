@@ -1,6 +1,7 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import SendRowMemo from "./SendRowMemo";
 
 type Props = {
@@ -8,9 +9,10 @@ type Props = {
   account: Account;
 };
 export default function StellarSendRowsCustom(props: Props) {
+  const { transaction, ...rest } = props;
   return (
     <>
-      <SendRowMemo {...props} />
+      <SendRowMemo {...rest} transaction={transaction as StellarTransaction} />
     </>
   );
 }

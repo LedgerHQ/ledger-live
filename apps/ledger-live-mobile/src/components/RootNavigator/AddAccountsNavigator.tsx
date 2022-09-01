@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import type { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ScreenName } from "../../const";
 import AddAccountsSelectCrypto from "../../screens/AddAccounts/01-SelectCrypto";
 import AddAccountsSelectDevice from "../../screens/AddAccounts/02-SelectDevice";
@@ -13,11 +13,12 @@ import AddAccountsHeaderRightClose from "../../screens/AddAccounts/AddAccountsHe
 import EditAccountName from "../../screens/AccountSettings/EditAccountName";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
+import { AddAccountsNavigatorParamList } from "./types";
 
 type Route = {
   params:
     | {
-        currency: Currency;
+        currency?: CryptoCurrency | TokenCurrency;
         token?: TokenCurrency;
         returnToSwap?: boolean;
         analyticsPropertyFlow?: string;
@@ -25,6 +26,7 @@ type Route = {
     | null
     | undefined;
 };
+
 const totalSteps = "3";
 export default function AddAccountsNavigator({ route }: { route: Route }) {
   const { colors } = useTheme();
@@ -119,7 +121,7 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
         component={EditAccountName}
         options={{
           title: t("account.settings.accountName.title"),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -139,4 +141,4 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AddAccountsNavigatorParamList>();

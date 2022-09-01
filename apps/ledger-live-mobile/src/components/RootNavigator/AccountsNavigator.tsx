@@ -12,16 +12,17 @@ import NftViewer from "../Nft/NftViewer";
 import NftCollectionHeaderTitle from "../../screens/Nft/NftCollection/NftCollectionHeaderTitle";
 import NftGalleryHeaderTitle from "../../screens/Nft/NftGallery/NftGalleryHeaderTitle";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-// eslint-disable-next-line import/no-cycle
 import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
 import ReadOnlyAssets from "../../screens/Portfolio/ReadOnlyAssets";
-// eslint-disable-next-line import/no-cycle
-import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
-import { accountsSelector } from "../../reducers/accounts";
 
 import Asset from "../../screens/WalletCentricAsset";
 import ReadOnlyAsset from "../../screens/WalletCentricAsset/ReadOnly";
 import Assets from "../../screens/Assets";
+
+import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
+
+import { accountsSelector } from "../../reducers/accounts";
+import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
@@ -87,4 +88,4 @@ export default function AccountsNavigator() {
   );
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AccountsNavigatorParamList>();

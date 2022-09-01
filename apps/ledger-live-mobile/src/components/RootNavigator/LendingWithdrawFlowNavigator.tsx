@@ -86,9 +86,9 @@ export default function LendingWithdrawFlowNavigator() {
         name={ScreenName.LendingWithdrawValidationSuccess}
         component={LendingWithdrawValidationSuccess}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           headerShown: false,
-          headerRight: null,
+          headerRight: undefined,
           gestureWithdrawd: false,
         }}
       />

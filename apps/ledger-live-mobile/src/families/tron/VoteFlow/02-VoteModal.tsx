@@ -44,7 +44,7 @@ const VoteModal = ({
 
   const [useAllAmount, setUseAllAmount] = useState(false);
 
-  const inputRef = useRef();
+  const inputRef = useRef<TextInput>(null);
 
   const { current: votesAvailable } = useRef(
     tronPower -
@@ -88,7 +88,6 @@ const VoteModal = ({
     <BottomDrawer
       isOpen={!!vote}
       onClose={onClose}
-      coverScreen
       onModalShow={focusInput}
       title={name || address}
       subtitle={t("vote.castVotes.voteFor")}

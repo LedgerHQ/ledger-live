@@ -42,7 +42,12 @@ export const createCustomErrorClass = <
           this[k] = fields[k];
         }
       }
-      if (isObject(options) && "cause" in options && !("cause" in this)) {
+      if (
+        options &&
+        isObject(options) &&
+        "cause" in options &&
+        !("cause" in this)
+      ) {
         // .cause was specified but the superconstructor
         // did not create an instance property.
         const cause = options.cause;
@@ -60,17 +65,18 @@ export const createCustomErrorClass = <
 };
 
 function isObject(value) {
-  return value !== null && typeof value === "object";
+  return typeof value === "object";
 }
 
 // inspired from https://github.com/programble/errio/blob/master/index.js
 export const deserializeError = (object: any): Error => {
-  if (typeof object === "object" && object) {
+  if (object && typeof object === "object") {
     try {
-      // $FlowFixMe FIXME HACK
-      const msg = JSON.parse(object.message);
-      if (msg.message && msg.name) {
-        object = msg;
+      if (typeof object.message === "string") {
+        const msg = JSON.parse(object.message);
+        if (msg.message && msg.name) {
+          object = msg;
+        }
       }
     } catch (e) {
       // nothing
@@ -102,7 +108,9 @@ export const deserializeError = (object: any): Error => {
         }
       }
     } else {
-      error = new Error(object.message);
+      if (typeof object.message === "string") {
+        error = new Error(object.message);
+      }
     }
 
     if (!error.stack && Error.captureStackTrace) {

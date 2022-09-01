@@ -44,7 +44,7 @@ export default function FreezeNavigator() {
               })}
             />
           ),
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -83,8 +83,8 @@ export default function FreezeNavigator() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen

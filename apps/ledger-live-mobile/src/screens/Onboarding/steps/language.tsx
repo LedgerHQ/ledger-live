@@ -19,6 +19,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { ParamListBase } from "@react-navigation/native";
 import { useLocale } from "../../../context/Locale";
 import {
   languages,
@@ -37,8 +38,9 @@ import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguage
 import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
 import { track } from "../../../analytics";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
+function OnboardingStepLanguage({
+  navigation,
+}: StackScreenProps<ParamListBase>) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
 
@@ -194,8 +196,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
 
 export function OnboardingStepLanguageGetStarted({
   navigation,
-}: // eslint-disable-next-line @typescript-eslint/ban-types
-StackScreenProps<{}>) {
+}: StackScreenProps<ParamListBase>) {
   const next = () => {
     navigation.getParent()?.replace(ScreenName.OnboardingTermsOfUse);
   };

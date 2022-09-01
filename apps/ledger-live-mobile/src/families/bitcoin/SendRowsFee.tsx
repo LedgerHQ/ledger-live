@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -69,7 +69,7 @@ export default function BitcoinSendRowsFee({
   return (
     <SelectFeesStrategy
       {...props}
-      strategies={strategies}
+      strategies={strategies as FeeStrategy[]}
       onStrategySelect={onFeesSelected}
       onCustomFeesPress={openCustomFees}
       account={account}

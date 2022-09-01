@@ -21,8 +21,12 @@ import { languageSelector } from "../reducers/settings";
 try {
   if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
     /** https://formatjs.io/docs/polyfills/intl-datetimeformat/#default-timezone */
-    // $FlowFixMe
-    Intl.DateTimeFormat.__setDefaultTimeZone(getTimeZone()); // eslint-disable-line no-underscore-dangle
+    // eslint-disable-next-line no-underscore-dangle
+    (
+      Intl.DateTimeFormat as typeof Intl.DateTimeFormat & {
+        __setDefaultTimeZone(_: string): void;
+      }
+    ).__setDefaultTimeZone(getTimeZone());
   }
 } catch (error) {
   // eslint-disable-next-line no-console
@@ -46,20 +50,19 @@ type Props = {
 export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru" | "pt";
 
 type LocaleState = {
-  i18n: any;
+  i18n: typeof i18next;
   t: TFunction;
   locale: SupportedLanguages;
 };
 
-function getLocaleState(i18n): LocaleState {
+function getLocaleState(i18n: typeof i18next): LocaleState {
   return {
     i18n,
-    t: i18n.getFixedT(),
-    locale: getDefaultLanguageLocale(),
+    t: i18n.getFixedT(DEFAULT_LANGUAGE_LOCALE),
+    locale: getDefaultLanguageLocale() as SupportedLanguages,
   };
 }
 
-// @ts-expect-error TODO explain why
 const LocaleContext = React.createContext(getLocaleState(i18next));
 export default function LocaleProvider({ children }: Props) {
   const language = useSelector(languageSelector);
@@ -69,8 +72,8 @@ export default function LocaleProvider({ children }: Props) {
   const value: LocaleState = useMemo(
     () => ({
       i18n: i18next,
-      t: i18next.getFixedT(),
-      locale: language,
+      t: i18next.getFixedT(DEFAULT_LANGUAGE_LOCALE),
+      locale: language as SupportedLanguages,
     }),
     [language],
   );

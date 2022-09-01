@@ -1,6 +1,7 @@
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import {
+  PaymentServiceProvider,
   RampCatalogEntry,
   RampLiveAppCatalogEntry,
 } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
@@ -13,7 +14,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import TrackScreen from "../../analytics/TrackScreen";
 import LText from "../../components/LText";
@@ -30,10 +31,7 @@ import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 import AppIcon from "../Platform/AppIcon";
 
-const forceInset = {
-  bottom: "always",
-};
-const assetMap = {
+const assetMap: Partial<Record<PaymentServiceProvider, JSX.Element>> = {
   applepay: <ApplePay />,
   googlepay: <GooglePay />,
   maestro: <Maestro />,
@@ -46,19 +44,19 @@ type ProviderItemProps = {
   provider: RampLiveAppCatalogEntry;
   onClick: (
     provider: RampLiveAppCatalogEntry,
-    icon: string,
-    name: string,
+    icon?: string | null,
+    name?: string | null,
   ) => void;
 };
 
 const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
-  const [displayedPMs, setDisplayedPMs] = useState<string[]>(
+  const [displayedPMs, setDisplayedPMs] = useState<PaymentServiceProvider[]>(
     provider.paymentProviders.slice(0, 4),
   );
   const { colors } = useTheme();
   const manifest = useRemoteLiveAppManifest(provider.appId);
   const onItemClick = useCallback(() => {
-    onClick(provider, manifest.icon, manifest.name);
+    onClick(provider, manifest?.icon, manifest?.name);
   }, [provider, manifest, onClick]);
   const onMorePMsClick = useCallback(() => {
     setDisplayedPMs([...provider.paymentProviders]);
@@ -151,7 +149,11 @@ export default function ProviderList({ route }: Props) {
     cryptoCurrencies: currency.id ? [currency.id] : undefined,
   });
   const onProviderClick = useCallback(
-    (provider: RampCatalogEntry, icon: string, name: string) => {
+    (
+      provider: RampCatalogEntry,
+      icon?: string | null,
+      name?: string | null,
+    ) => {
       navigation.navigate(NavigatorName.ProviderView, {
         provider,
         accountId,
@@ -184,7 +186,6 @@ export default function ProviderList({ route }: Props) {
           paddingTop: extraStatusBarPadding,
         },
       ]}
-      forceInset={forceInset}
     >
       <LText style={styles.title}>{t("exchange.providerList.title")}</LText>
       {filteredProviders.map(provider =>

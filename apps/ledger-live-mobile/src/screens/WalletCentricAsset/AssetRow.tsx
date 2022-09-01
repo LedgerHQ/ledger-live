@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BigNumber } from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
-import { usePortfolio } from "../../actions/portfolio";
+import { usePortfolio } from "../../hooks/portfolio";
 import AssetRowLayout from "../../components/AssetRowLayout";
 import { track } from "../../analytics";
 

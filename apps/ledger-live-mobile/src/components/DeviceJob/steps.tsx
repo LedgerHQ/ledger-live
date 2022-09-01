@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceNameTransport from "@ledgerhq/live-common/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/hw/editDeviceName";
+import { Device, DeviceModel } from "@ledgerhq/types-devices";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
@@ -21,8 +22,10 @@ import { rejectionOp } from "../../logic/debugReject";
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
 
-const inferWordingValues = meta => {
-  const deviceModel = meta.modelId ? getDeviceModel(meta.modelId) : {};
+const inferWordingValues = (meta: Device) => {
+  const deviceModel = meta.modelId
+    ? getDeviceModel(meta.modelId)
+    : ({} as Partial<DeviceModel>);
   return {
     productName: deviceModel.productName,
     deviceName: meta.deviceName,
@@ -106,7 +109,7 @@ export const accountApp: (_: Account) => Step = account => ({
             deviceId: meta.deviceId,
           })
           .pipe(
-            map(addressInfo => ({ ...meta, addressInfo })), // $FlowFixMe
+            map(addressInfo => ({ ...meta, addressInfo })),
             retryWhen(retryWhileErrors(genericCanRetryOnError)),
           ),
 });

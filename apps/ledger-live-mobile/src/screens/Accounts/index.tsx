@@ -1,8 +1,8 @@
 import React, { useCallback, useState, useEffect, memo, useMemo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, FlatListProps, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -28,7 +28,9 @@ import TabBarSafeAreaView, {
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
 
-const List = globalSyncRefreshControl(FlatList);
+const List = globalSyncRefreshControl(
+  FlatList as React.ComponentType<FlatListProps<AccountLike>>,
+);
 
 type Props = {
   navigation: any;
@@ -56,7 +58,9 @@ function Accounts({ navigation, route }: Props) {
 
   const { params } = route;
 
-  const [account, setAccount] = useState<Account | undefined>(undefined);
+  const [account, setAccount] = useState<Account | TokenAccount | undefined>(
+    undefined,
+  );
   const flattenedAccounts = useMemo(
     () =>
       route?.params?.currencyId
@@ -104,7 +108,7 @@ function Accounts({ navigation, route }: Props) {
   }, [params, accounts, navigation, account]);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Account | TokenAccount; index: number }) => (
+    ({ item, index }: ListRenderItemInfo<AccountLike>) => (
       <AccountRow
         navigation={navigation}
         account={item}
@@ -160,7 +164,7 @@ function Accounts({ navigation, route }: Props) {
         <TokenContextualModal
           onClose={() => setAccount(undefined)}
           isOpened={!!account}
-          account={account}
+          account={account as TokenAccount}
         />
       </Flex>
     </TabBarSafeAreaView>

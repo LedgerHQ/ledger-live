@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import i18next from "i18next";
 import { StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Account } from "@ledgerhq/types-live";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
@@ -15,8 +15,6 @@ import { withTheme } from "../../colors";
 import Button from "../../components/wrappedUi/Button";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
-
-const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any;
@@ -86,7 +84,6 @@ class EditAccountName extends PureComponent<Props, State> {
     return (
       <SafeAreaView
         style={[styles.safeArea, { backgroundColor: colors.background }]}
-        forceInset={forceInset}
       >
         <Box px={6} flex={1}>
           <TextInput

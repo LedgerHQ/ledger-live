@@ -19,8 +19,7 @@ import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 import { NavigatorName } from "../../../const";
 import { screen, track } from "../../../analytics";
 
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../../components/RootNavigator";
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),

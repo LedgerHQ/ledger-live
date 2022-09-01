@@ -4,6 +4,10 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import type {
+  SwapDataType,
+  SwapSelectorStateType,
+} from "@ledgerhq/live-common/exchange/swap/hooks/useSwapTransaction";
 import type { SwapRouteParams } from "..";
 import { providerIcons } from "./RatesSection";
 import CounterValue from "../../../components/CounterValue";
@@ -27,6 +31,9 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
     from: { account: fromAccount } = {},
     to: { currency: toCurrency } = {},
     rates: { value: rates = [] } = {},
+  }: Omit<Partial<SwapDataType>, "from" | "to"> & {
+    from?: Partial<SwapSelectorStateType>;
+    to?: Partial<SwapSelectorStateType>;
   } = swap;
   const filteredRates = rates.filter(r => r.provider === provider);
   const fromUnit = useMemo(
@@ -48,7 +55,8 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
     ({ item }) => {
       const { magnitudeAwareRate, provider, tradeMethod, payoutNetworkFees } =
         item || {};
-      const ProviderIcon = providerIcons[provider];
+      const ProviderIcon =
+        providerIcons[provider as keyof typeof providerIcons];
       const isSelected =
         provider === rate?.provider && item.rate === rate?.rate;
       const toValue =
@@ -81,40 +89,49 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
               ) : (
                 <Unlock size={12} color={colors.grey} />
               )}
-              <LText semiBold color="grey" style={styles.subText}>
-                <CurrencyUnitValue
-                  value={BigNumber(10).pow(fromUnit.magnitude)}
-                  unit={fromUnit}
-                  showCode
-                />
-                {" = "}
-                <CurrencyUnitValue
-                  unit={toCurrency.units[0]}
-                  value={BigNumber(10)
-                    .pow(fromUnit.magnitude)
-                    .times(magnitudeAwareRate)}
-                  showCode
-                />
-              </LText>
+              {fromUnit && (
+                <LText semiBold color="grey" style={styles.subText}>
+                  <CurrencyUnitValue
+                    value={BigNumber(10).pow(fromUnit.magnitude)}
+                    unit={fromUnit}
+                    showCode
+                  />
+
+                  {" = "}
+                  {toCurrency && (
+                    <CurrencyUnitValue
+                      unit={toCurrency.units[0]}
+                      value={BigNumber(10)
+                        .pow(fromUnit.magnitude)
+                        .times(magnitudeAwareRate)}
+                      showCode
+                    />
+                  )}
+                </LText>
+              )}
             </View>
           </View>
           <View style={[styles.col]}>
-            <LText semiBold style={[styles.valueLabel, styles.alignRight]}>
-              <CurrencyUnitValue
-                unit={toUnit}
-                value={toValue ?? BigNumber(0)}
-              />
-            </LText>
-            <LText
-              semiBold
-              color="grey"
-              style={[styles.subText, styles.alignRight]}
-            >
-              <CounterValue
-                currency={toCurrency}
-                value={toValue ?? BigNumber(0)}
-              />
-            </LText>
+            {toUnit && (
+              <LText semiBold style={[styles.valueLabel, styles.alignRight]}>
+                <CurrencyUnitValue
+                  unit={toUnit}
+                  value={toValue ?? BigNumber(0)}
+                />
+              </LText>
+            )}
+            {toCurrency && (
+              <LText
+                semiBold
+                color="grey"
+                style={[styles.subText, styles.alignRight]}
+              >
+                <CounterValue
+                  currency={toCurrency}
+                  value={toValue ?? BigNumber(0)}
+                />
+              </LText>
+            )}
           </View>
         </TouchableOpacity>
       );

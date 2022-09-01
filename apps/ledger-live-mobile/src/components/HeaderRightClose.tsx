@@ -12,7 +12,7 @@ type Props = {
   withConfirmation?: boolean;
   confirmationTitle?: React.ReactNode;
   confirmationDesc?: React.ReactNode;
-  onClose?: (..._: Array<any>) => any;
+  onClose?: () => void;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -31,18 +31,18 @@ export default function HeaderRightClose({
   const navigation = useNavigation();
   const [isConfirmationModalOpened, setIsConfirmationModalOpened] =
     useState(false);
-  const [onModalHide, setOnModalHide] = useState();
+  const [onModalHide, setOnModalHide] = useState<() => void>();
   const close = useCallback(() => {
     if (skipNavigation) {
       // onClose should always be called at the end of the close method,
       // so the callback will not interfere with the expected behavior of this component
-      onClose();
+      onClose && onClose();
       return;
     }
 
     if (navigation.getParent().pop && preferDismiss) {
       navigation.getParent().pop();
-      onClose();
+      onClose && onClose();
       return;
     }
 

@@ -1,26 +1,27 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet, Image } from "react-native";
-import { rgba, withTheme } from "../colors";
+import { rgba, Theme, withTheme } from "../colors";
 import BottomModal from "./BottomModal";
 import LText from "./LText";
-import Button from "./Button";
+import Button, { BaseButtonProps } from "./Button";
+import type { Props as BottomModalProps } from "./BottomModal";
 
 type Props = {
   isOpened: boolean;
   onClose?: () => void;
-  onConfirm: () => any;
-  onModalHide?: () => any;
+  onConfirm: BaseButtonProps["onPress"];
+  onModalHide?: () => BottomModalProps["onModalHide"];
   confirmationTitle?: React.ReactNode;
   confirmationDesc?: React.ReactNode;
-  Icon?: React.ComponentType<any>;
+  Icon?: React.ComponentType<{ size: number; color?: string }>;
   iconColor?: string;
   image?: number;
   confirmButtonText?: React.ReactNode;
   rejectButtonText?: React.ReactNode;
   hideRejectButton?: boolean;
-  alert: boolean;
-  colors: any;
+  alert?: boolean;
+  colors: Theme["colors"];
   preventBackdropClick?: boolean;
   iconMarginBottom?: number;
 };
@@ -51,7 +52,6 @@ class ConfirmationModal extends PureComponent<Props> {
     const iColor = iconColor || colors.live;
     return (
       <BottomModal
-        id="ConfirmationModal"
         isOpened={isOpened}
         onClose={onClose}
         style={styles.confirmationModal}

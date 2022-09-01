@@ -425,18 +425,27 @@ platform :android do
     end
 
     gradle(task: "clean", project_dir: 'android/')
-    gradle(
-      task: task,
-      build_type: type,
-      print_command: false,
-      properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
-      },
-      project_dir: 'android/'
-    )
+    if (options[:local])
+      gradle(
+        task: task,
+        build_type: type,
+        print_command: false,
+        project_dir: 'android/'
+      )
+    else
+      gradle(
+        task: task,
+        build_type: type,
+        print_command: false,
+        properties: {
+          "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+          "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
+          "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+          "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
+        },
+        project_dir: 'android/'
+      )
+    end
   end
 
   desc "upload to Play Store"
@@ -463,7 +472,8 @@ platform :android do
   lane :apk do
     build(
       type: "Release",
-      apk: true
+      apk: true,
+      local: true
     )
   end
 

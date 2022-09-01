@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
@@ -16,9 +16,6 @@ import DeviceActionProgress from "../../components/DeviceActionProgress";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { withTheme } from "../../colors";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -92,7 +89,6 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <TrackScreen category="FirmwareUpdate" name="CheckId" />
         <View style={styles.body}>

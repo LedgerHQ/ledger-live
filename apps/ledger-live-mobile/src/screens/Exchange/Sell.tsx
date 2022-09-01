@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import type {
   CryptoCurrency,
@@ -14,9 +14,6 @@ import BigSpinner from "../../icons/BigSpinner";
 import { useRampCatalogCurrencies } from "./hooks";
 import SelectAccountCurrency from "./SelectAccountCurrency";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -66,7 +63,6 @@ export default function OffRamp({ route }: Props) {
           paddingTop: extraStatusBarPadding,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="Multibuy" name="Sell" />
       {currencyState.isLoading ? (

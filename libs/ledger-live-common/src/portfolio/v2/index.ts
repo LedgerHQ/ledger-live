@@ -181,7 +181,7 @@ export type GetPortfolioOptionsType = typeof defaultGetPortfolioOptions;
  * @memberof account
  */
 export function getPortfolio(
-  topAccounts: Account[],
+  topAccounts: AccountLike[],
   range: PortfolioRange,
   cvState: CounterValuesState,
   cvCurrency: Currency,

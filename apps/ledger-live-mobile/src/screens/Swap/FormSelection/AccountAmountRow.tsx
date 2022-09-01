@@ -18,7 +18,6 @@ import AccountSelect from "./AccountSelect";
 import CurrencyInput from "../../../components/CurrencyInput";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import TranslatedError from "../../../components/TranslatedError";
-// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "../../../components/LText/getFontStyle";
 import CounterValue from "../../../components/CounterValue";
 import CurrencyTargetSelect from "./CurrencyTargetSelect";

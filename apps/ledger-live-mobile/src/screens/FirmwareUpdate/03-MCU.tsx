@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
@@ -9,14 +9,10 @@ import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import { BulletItem } from "../../components/BulletList";
-// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import Installing from "../../components/Installing";
 import { withTheme } from "../../colors";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -84,7 +80,6 @@ class FirmwareUpdateMCU extends Component<Props, State> {
             backgroundColor: colors.background,
           },
         ]}
-        forceInset={forceInset}
       >
         <TrackScreen category="FirmwareUpdate" name="MCU" />
         {installing ? (

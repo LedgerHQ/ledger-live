@@ -24,7 +24,7 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
-import { usePortfolio } from "../../../actions/portfolio";
+import { usePortfolio } from "../../../hooks/portfolio";
 import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
 import BackgroundGradient from "../../../components/BackgroundGradient";
 
@@ -183,7 +183,7 @@ function ReadOnlyPortfolio({ navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen("Wallet");
+      setScreen && setScreen("Wallet");
 
       return () => {
         setSource("Wallet");

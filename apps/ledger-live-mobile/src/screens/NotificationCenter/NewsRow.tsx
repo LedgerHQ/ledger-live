@@ -20,6 +20,8 @@ const icons = {
   warning: WarningMedium,
 };
 
+type IconKeys = keyof typeof icons;
+
 export default function NewsRow({ item, isUnread, isLastElement }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -33,7 +35,7 @@ export default function NewsRow({ item, isUnread, isLastElement }: Props) {
     warning: "palette.warning.c100",
   };
 
-  const Icon = icon && icons[icon];
+  const Icon = icon ? icons[icon as IconKeys] : undefined;
 
   const openUrl = useCallback(() => {
     if (!link?.href) return;
@@ -58,17 +60,16 @@ export default function NewsRow({ item, isUnread, isLastElement }: Props) {
     >
       {!hasBeenRead ? (
         <View
-          style={[
-            styles.unReadBadge,
-            { backgroundColor: colors.palette.primary.c100 },
-          ]}
+          style={[styles.unReadBadge, { backgroundColor: colors.primary.c100 }]}
         />
       ) : null}
       <Flex my={6}>
         <Notification
           variant={"secondary"}
           Icon={Icon}
-          iconColor={(icon && iconColors[icon]) || "palette.neutral.c100"}
+          iconColor={
+            (icon && iconColors[icon as IconKeys]) || "palette.neutral.c100"
+          }
           title={title}
           subtitle={text || ""}
           linkText={link?.label || t("common.learnMore")}

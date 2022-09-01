@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as TronTransaction } from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
@@ -19,14 +21,14 @@ type Props = {
 type RouteParams = {
   accountId: string;
   deviceId: string;
-  transaction: any;
+  transaction: Transaction;
   result: Operation;
 };
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const transaction = route.params.transaction;
-  const resource = transaction.resource || "";
+  const resource = (transaction as TronTransaction).resource || "";
   const onClose = useCallback(() => {
     navigation.getParent().pop();
   }, [navigation]);

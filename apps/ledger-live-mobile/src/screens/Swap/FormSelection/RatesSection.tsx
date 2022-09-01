@@ -51,7 +51,7 @@ type Props = {
   setToAccount: (
     currency: TokenCurrency | CryptoCurrency,
     account: Account | TokenAccount,
-    parentAccount?: Account | TokenAccount,
+    parentAccount?: Account,
   ) => void;
   providers: any;
   provider: any;
@@ -99,11 +99,15 @@ export default function RatesSection({
     transaction,
   ]);
   const onEditToAccount = useCallback(() => {
-    const setAccount = acc =>
+    const setAccount = (acc: Account | TokenAccount) =>
       setToAccount(
         getAccountCurrency(acc),
         acc,
-        acc.parentId && accounts.find(({ id }) => id === acc.parentId),
+        (acc as TokenAccount).parentId
+          ? (accounts.find(
+              ({ id }) => id === (acc as TokenAccount).parentId,
+            ) as Account)
+          : undefined,
       );
 
     navigation.navigate(ScreenName.SwapV2FormSelectAccount, {
@@ -148,13 +152,21 @@ export default function RatesSection({
   const onAddAccount = useCallback(() => {
     const params = {
       returnToSwap: true,
-      onSuccess: ({ scannedAccounts }) => {
+      onSuccess: ({
+        scannedAccounts,
+      }: {
+        scannedAccounts: AccountLikeArray;
+      }) => {
         if (scannedAccounts && scannedAccounts[0]) {
           setToAccount(
             getAccountCurrency(scannedAccounts[0]),
-            scannedAccounts[0],
-            scannedAccounts[0].parentId &&
-              accounts.find(({ id }) => id === scannedAccounts[0].parentId),
+            (scannedAccounts as Account[])[0],
+            (scannedAccounts[0] as TokenAccount).parentId
+              ? (accounts.find(
+                  ({ id }) =>
+                    id === (scannedAccounts[0] as TokenAccount).parentId,
+                ) as Account)
+              : undefined,
           );
         }
 
@@ -165,7 +177,7 @@ export default function RatesSection({
       analyticsPropertyFlow: "swap",
     };
 
-    if (toCurrency.type === "TokenCurrency") {
+    if (toCurrency?.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
         screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
         params: { ...params, token: toCurrency },
@@ -177,7 +189,7 @@ export default function RatesSection({
       });
     }
   }, [toCurrency, navigation, swap, setToAccount, accounts]);
-  const ProviderIcon = providerIcons[provider];
+  const ProviderIcon = providerIcons[provider as keyof typeof providerIcons];
   const { magnitudeAwareRate, tradeMethod } = rate || {};
   const toAccountName = toAccount ? getAccountName(toAccount) : null;
   const { rates: { value: rates = [] } = {} } = swap;
@@ -273,7 +285,6 @@ export default function RatesSection({
               onPress={onAddAccount}
               title={<Trans i18nKey="transfer.swap.emptyState.CTAButton" />}
               containerStyle={styles.addAccountButton}
-              titleStyle={styles.addAccountButtonLabel}
             />
           </View>
         )

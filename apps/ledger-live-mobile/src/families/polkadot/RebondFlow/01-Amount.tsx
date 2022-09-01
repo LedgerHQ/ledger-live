@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import {
   getAccountUnit,
@@ -49,18 +50,20 @@ export default function PolkadotRebondAmount({ navigation, route }: Props) {
   invariant(account, "account is required");
   const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
-  const [maxSpendable, setMaxSpendable] = useState(null);
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
-      const t = bridge.createTransaction(mainAccount);
-      const transaction = bridge.updateTransaction(t, {
-        mode: "rebond",
-      });
-      return {
-        account: mainAccount,
-        transaction,
-      };
+  const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
+  const bridgeTransaction = useBridgeTransaction(() => {
+    const t = bridge.createTransaction(mainAccount);
+    const transaction = bridge.updateTransaction(t, {
+      mode: "rebond",
     });
+    return {
+      account: mainAccount,
+      transaction,
+    };
+  });
+  const { setTransaction, status, bridgePending, bridgeError } =
+    bridgeTransaction;
+  const transaction = bridgeTransaction.transaction as PolkadotTransaction;
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;
@@ -203,11 +206,7 @@ export default function PolkadotRebondAmount({ navigation, route }: Props) {
                     </View>
                   ) : null}
                 </View>
-                <SendRowsFee
-                  account={account}
-                  parentAccount={parentAccount}
-                  transaction={transaction}
-                />
+                <SendRowsFee account={account} transaction={transaction} />
                 <View style={styles.continueWrapper}>
                   <Button
                     event="PolkadotRebondAmountContinue"

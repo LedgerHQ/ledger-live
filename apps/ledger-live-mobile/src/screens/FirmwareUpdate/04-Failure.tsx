@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
@@ -9,9 +9,6 @@ import Button from "../../components/Button";
 import NeedHelp from "../../components/NeedHelp";
 import { ScreenName } from "../../const";
 
-const forceInset = {
-  bottom: "always",
-};
 type Props = {
   navigation: any;
   route: {
@@ -42,7 +39,6 @@ export default function FirmwareUpdateFailure({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="FirmwareUpdate" name="Failure" />
       <View style={styles.body}>

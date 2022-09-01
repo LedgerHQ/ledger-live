@@ -75,11 +75,7 @@ const PushNotificationsModal = () => {
       />
     );
   return (
-    <BottomDrawer
-      id="PromptNotification"
-      isOpen={isPushNotificationsModalOpen}
-      noCloseButton
-    >
+    <BottomDrawer isOpen={isPushNotificationsModalOpen} noCloseButton>
       <TrackScreen
         category="Notification Prompt"
         name={

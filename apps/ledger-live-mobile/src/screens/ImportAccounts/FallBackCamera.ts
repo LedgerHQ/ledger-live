@@ -1,9 +1,14 @@
 import { PureComponent } from "react";
+import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
 import { ScreenName } from "../../const";
 
-export default class FallBackCamera extends PureComponent<{
-  navigation: any;
-}> {
+type NavigationProps = StackNavigatorProps<
+  ImportAccountsNavigatorParamList,
+  ScreenName.FallBackCameraScreen
+>;
+
+export class FallBackCamera extends PureComponent<NavigationProps> {
   componentDidMount() {
     // TODO do it better way to not have flickering
     const { navigation } = this.props;

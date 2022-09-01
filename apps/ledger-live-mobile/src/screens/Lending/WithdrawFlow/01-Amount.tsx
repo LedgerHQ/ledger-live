@@ -43,7 +43,6 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   const tokenUnit = ctoken?.units[0];
   const { transaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
-      // $FlowFixMe
       const t = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(t, {
         recipient: ctoken?.contractAddress || "",
