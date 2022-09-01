@@ -8,30 +8,40 @@ export class SpeculosDriver {
   }
 
   /**
-   * Press left button and release it.
+   * Press left button and release it "x" times.
    */
-  async pressLeftButton() {
-    await this.request.post(`/button/left`, { data: { action: "press-and-release" } });
+  async pressLeftButton(repeat = 1) {
+    for (let i = 0; i < repeat; i++) {
+      await this.request.post(`/button/left`, { data: { action: "press-and-release" } });
+    }
   }
 
   /**
-   * Press right button and release it.
-   * @returns List of speculos events
+   * Press right button and release it "x" times.
    */
-  async pressRightButton() {
-    await this.request.post(`/button/right`, { data: { action: "press-and-release" } });
+  async pressRightButton(repeat = 1) {
+    for (let i = 0; i < repeat; i++) {
+      await this.request.post(`/button/right`, { data: { action: "press-and-release" } });
+    }
   }
 
   /**
    * Press both buttons and release them.
+   * Reset logged device events, please assert screens before performing this action.
    */
-  async pressBothButtons() {
+  async pressBothButtons(resetEvents = true) {
     await this.request.post(`/button/both`, { data: { action: "press-and-release" } });
 
-    // Reset events for next use
-    await this.request.delete(`/events`);
+    // Automatically reset events for next use
+    if (resetEvents) {
+      await this.resetEvents();
+    }
   }
 
+  /**
+   * Retrieve and process device screens to return relevant informations
+   * @returns { recipientAddress }
+   */
   async getLastEvents() {
     const screen = await (await this.request.get(`/events`)).json();
 
@@ -47,5 +57,9 @@ export class SpeculosDriver {
     }
 
     return { recipientAddress };
+  }
+
+  async resetEvents() {
+    await this.request.delete(`/events`);
   }
 }

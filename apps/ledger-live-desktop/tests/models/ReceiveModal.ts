@@ -18,4 +18,8 @@ export class ReceiveModal extends Modal {
   async skipDevice() {
     await this.skipDeviceButton.click();
   }
+
+  async select() {
+    // find select inpu
+  }
 }

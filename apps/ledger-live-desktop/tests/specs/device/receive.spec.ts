@@ -8,7 +8,7 @@ import { SpeculosDriver } from "tests/models/SpeculosDriver";
 
 const currencies = [
   { appName: "Bitcoin", appVersion: "2.0.0", appDependency: undefined },
-  // { appName: "Ethereum", appVersion: "2.0.0", appDependency: undefined },
+  // { appName: "Litecoin", appVersion: "2.0.0", appDependency: undefined },
 ];
 
 test.describe.parallel("Add accounts & Receive", () => {
@@ -45,12 +45,10 @@ test.describe.parallel("Add accounts & Receive", () => {
 
       await test.step("Reject operation: must not display success screen", async () => {
         await layout.openReceiveModal();
+        // await receiveModal.select("Bitcoin 2");
         await receiveModal.continue();
         await receiveModal.waitForDevice();
-        await device.pressRightButton();
-        await device.pressRightButton();
-        await device.pressRightButton();
-        await device.pressRightButton();
+        await device.pressRightButton(4);
         await device.pressBothButtons(); // -> Operation rejected
         await receiveModal.retry();
       });
@@ -58,9 +56,7 @@ test.describe.parallel("Add accounts & Receive", () => {
       await test.step("Retry: displayed address must be the same on device", async () => {
         await receiveModal.waitForDevice();
         const displayedAddress = await receiveModal.verifyAddress.textContent();
-        await device.pressRightButton();
-        await device.pressRightButton();
-        await device.pressRightButton();
+        await device.pressRightButton(3);
         expect(await (await device.getLastEvents()).recipientAddress).toBe(displayedAddress);
       });
 
