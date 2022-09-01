@@ -15,6 +15,15 @@ const fromBitsToSeedPhraseType = new Map<number, SeedPhraseType>([
   [2, SeedPhraseType.Twelve],
 ]);
 
+export const fromSeedPhraseTypeToNbOfSeedWords = new Map<
+  SeedPhraseType,
+  number
+>([
+  [SeedPhraseType.TwentyFour, 24],
+  [SeedPhraseType.Eighteen, 18],
+  [SeedPhraseType.Twelve, 12],
+]);
+
 export enum OnboardingStep {
   WelcomeScreen = "WELCOME_SCREEN",
   SetupChoice = "SETUP_CHOICE",

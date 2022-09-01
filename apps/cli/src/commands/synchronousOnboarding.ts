@@ -1,7 +1,11 @@
 import {
   getOnboardingStatePolling,
   OnboardingStatePollingResult,
+<<<<<<< HEAD
 } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
+=======
+} from "@ledgerhq/live-common/lib/hw/getOnboardingStatePolling";
+>>>>>>> 3f5518e1c9 (feat(llc): getOnboardingStatePolling logic)
 import { Observable } from "rxjs";
 import { deviceOpt } from "../scan";
 
