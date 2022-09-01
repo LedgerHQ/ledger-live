@@ -745,7 +745,19 @@
     "bandwidthTooltip" : "Inmoviliza activos para ganar Ancho de banda",
     "energyTooltip" : "Inmoviliza activos para ganar Energía",
     "delegatedTooltip" : "Los activos delegados se utilizan en el proceso de votación. Esto representa tus votos totales.",
-    "undelegatingTooltip" : "Los activos desdelegados sufren un bloqueo temporal de {{timelockInDays}} días antes de estar disponibles."
+    "undelegatingTooltip" : "Los activos desdelegados sufren un bloqueo temporal de {{timelockInDays}} días antes de estar disponibles.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "Por si no lo sabías,",
+        "description" : "El validador de Ledger pone en participación con una comisión inferior a la del validador que estás utilizando.",
+        "cta" : "Redelegar con Ledger"
+      },
+      "delegation" : {
+        "title" : "Por si no lo sabías,",
+        "description" : "El validador de Ledger pone en participación tus {{asset}} con una comisión baja del {{commission}}%.",
+        "cta" : "Participar con Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "Elegir de {{providerCount}} proveedor",
@@ -1556,7 +1568,7 @@
       "provider" : "Proveedor",
       "payoutNetworkFees" : "Tarifas de pago",
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>"
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -3046,6 +3058,11 @@
       "catalogServerDesc" : "Cambiar entre distintas fuentes de aplicaciones de plataforma",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
+      "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
+      "featureFlagsEdit" : "Editar",
+      "featureFlagsRestore" : "Restaurar",
+      "featureFlagsOverride" : "Anular",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
       "addLocalAppButton" : "Navegar",
@@ -4219,6 +4236,10 @@
     },
     "NetworkDown" : {
       "title" : "Parece que no hay conexión a Internet",
+      "description" : "Comprueba tu conexión a Internet."
+    },
+    "NetworkError" : {
+      "title" : "Se ha producido un error durante la sincronización",
       "description" : "Comprueba tu conexión a Internet."
     },
     "NoAddressesFound" : {
