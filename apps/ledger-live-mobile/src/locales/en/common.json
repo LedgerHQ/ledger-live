@@ -147,6 +147,9 @@
         }
       }
     },
+    "CeloAllFundsWarning": {
+      "title": "Ensure you have enough balance left for future transaction fees"
+    },
     "ClaimRewardsFeesWarning": {
       "title": "The rewards are smaller than the estimated fees to claim them.",
       "description": ""
@@ -3583,7 +3586,255 @@
       "available": {
         "title": "CELO available",
         "description": "This amount is disposable."
+      },
+      "lockedBalance": {
+        "title": "Locked balance",
+        "description": "Assets must be locked and voted for validator groups before earning rewards."
+      },
+      "nonvotingLockedBalance": {
+        "title": "Non-voting locked balance",
+        "description": "The balance of locked assets available to be used for voting."
+      },
+      "withdrawableBalance": {
+        "title": "Withdrawable balance",
+        "description": "Unlocked Celo you can withdraw to your Available Balance."
       }
+    },
+    "delegation": {
+      "validatorGroup": "Validator Group",
+      "totalVotes": "Total Votes",
+      "actions": {
+        "activate": "Activate",
+        "revoke": "Revoke"
+      },
+      "delegationUnavailable": {
+        "title": "Insufficient Locked Funds"
+      }
+    },
+    "manage": {
+      "title": "Manage assets",
+      "titleWhenPendingRegistration": "Account Registration Pending",
+      "lock": {
+        "title": "Lock",
+        "description": "To earn rewards, first lock an amount. Then you must vote for your validator(s)."
+      },
+      "unlock": {
+        "title": "Unlock",
+        "description": "To make a locked amount available again, first you need to unlock it. You can withdraw it after the 3-day unlocking period."
+      },
+      "withdraw": {
+        "title": "Withdraw",
+        "description": "To retrieve an unlocked amount back to the available balance, you need to withdraw it manually."
+      },
+      "vote": {
+        "title": "Vote",
+        "description": "Vote for validator groups. Ensure you activate your votes to earn rewards."
+      },
+      "activate": {
+        "title": "Activate vote",
+        "description": "Activate your vote for validator group"
+      },
+      "revoke": {
+        "title": "Revoke vote",
+        "description": "Revoke your vote for validator group"
+      }
+    },
+    "unlock": {
+      "stepperHeader": {
+        "title": "Unlock assets",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "info": "Unlocked assets can be withdrawn after the 3-day unlocking period.",
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "Unlock transaction sent successfully",
+              "text": "Unlocked assets can be withdrawn in 3 days."
+            }
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "title": "Withdraw assets",
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "Your assets were withdrawn successfully",
+              "text": "The withdrawn amount will be credited to your available balance."
+            }
+          }
+        }
+      }
+    },
+    "vote": {
+      "iVote": "I vote",
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by delegating your CELO assets to a validator.",
+            "bullet": {
+              "0": "You keep ownership of delegated assets",
+              "1": "Delegate using your Ledger device",
+              "2": "Assets will be available after undelegation"
+            },
+            "warning": {
+              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+            },
+            "cta": "Continue"
+          },
+          "amount": {
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully voted",
+              "text": "You will see your operation in history soon."
+            }
+          }
+        }
+      }
+    },
+    "activate": {
+      "iActivate": "I activate my votes",
+      "stepperHeader": {
+        "title": "Activate vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "title": "Activate votes",
+      "flow": {
+        "steps": {
+          "verification": {
+            "success": {
+              "title": "Activation successful",
+              "text": "Your vote was successfully activated."
+            }
+          }
+        }
+      }
+    },
+    "revoke": {
+      "iRevoke": "I revoke",
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "validator": {
+            "active": "Active",
+            "pending": "Pending"
+          },
+          "amount": {
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully revoked your votes",
+              "text": "You will see your operation in history soon."
+            }
+          }
+        }
+      },
+      "vote": {
+        "title": "Vote",
+        "active": "Active",
+        "pending": "Pending",
+        "awaitingActivation": "Awaiting activation",
+        "info": "Only revokable votes are shown on this modal"
+      }
+    },
+    "register": {
+      "stepperHeader": {
+        "title": "Register account",
+        "continue": "Continue",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "started": {
+            "description": "Before locking any Celo you need to register your account on-chain."
+          },
+          "verification": {
+            "success": {
+              "title": "Account registered successfully",
+              "text": "You will see your operation in history soon."
+            }
+          }
+        }
+      }
+    },
+    "lock": {
+      "stepperHeader": {
+        "title": "Lock assets",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "info": "Locked assets can be unlocked at any time, but unlocking takes 3 days.",
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "Assets successfully locked",
+              "text": "You will be able to vote validators once the network has confirmed your transaction."
+            }
+          }
+        }
+      }
+    },
+    "emptyState": {
+      "description": "You can earn CELO rewards by delegating your assets.",
+      "info": "How Delegation works",
+      "delegation": "Earn rewards"
+    },
+    "earnRewards": {
+      "description": "You may earn rewards by delegating your CELO assets to a validator.",
+      "bullet": {
+        "0": "You keep ownership of delegated assets",
+        "1": "Delegate using your Ledger device",
+        "2": "Assets will be available after undelegation"
+      }
+    },
+    "alerts": {
+      "withdrawableAssets": "You have a withdrawable balance.",
+      "activatableVotes": "You have votes that can now be activated."
     }
   },
   "osmosis": {
