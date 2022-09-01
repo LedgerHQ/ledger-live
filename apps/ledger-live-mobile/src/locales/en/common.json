@@ -4273,7 +4273,10 @@
       "info": "How Delegation works",
       "broadcastSuccessTitle": "Operation sent",
       "broadcastSuccessDescription": "The status of the delegation will be updated when the transaction is confirmed.",
-      "delegatedTo": "delegated to"
+      "delegatedTo": "delegated to",
+      "started": {
+        "description": "You may earn rewards by delegating your SOL assets to a validator."
+      }
     }
   },
   "delegation": {
