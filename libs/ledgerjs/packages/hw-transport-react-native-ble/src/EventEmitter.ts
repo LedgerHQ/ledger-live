@@ -1,11 +1,3 @@
-import {
-  NativeModules,
-  Platform,
-  NativeEventEmitter,
-  DeviceEventEmitter,
-} from "react-native";
+import { NativeModules, NativeEventEmitter } from "react-native";
 
-export default Platform.select({
-  ios: new NativeEventEmitter(NativeModules.HwTransportReactNativeBle),
-  android: DeviceEventEmitter,
-});
+export default new NativeEventEmitter(NativeModules.HwTransportReactNativeBle);
