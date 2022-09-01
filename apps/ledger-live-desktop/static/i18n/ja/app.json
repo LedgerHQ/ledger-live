@@ -745,7 +745,19 @@
     "bandwidthTooltip" : "資産を凍結して、バンド幅を獲得",
     "energyTooltip" : "資産を凍結して、エネルギーを獲得",
     "delegatedTooltip" : "デリゲートされた資産は、投票プロセスで使用されます。これは、投票の総数を表します。",
-    "undelegatingTooltip" : "デリゲートを解除した資産は、{{timelockInDays}}日間のロック期間後に再び利用可能になります。"
+    "undelegatingTooltip" : "デリゲートを解除した資産は、{{timelockInDays}}日間のロック期間後に再び利用可能になります。",
+    "banner" : {
+      "redelegation" : {
+        "title" : "ご存知でしたか？",
+        "description" : "Ledgerのバリデータは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
+        "cta" : "Ledgerで再デリゲート"
+      },
+      "delegation" : {
+        "title" : "ご存知でしたか？",
+        "description" : "Ledgerのバリデーターは、{{commission}}%低額の手数料で{{asset}}のステーキングを行います。",
+        "cta" : "Ledgerでステーキング"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "{{providerCount}}プロバイダーから選択",
@@ -3046,6 +3058,11 @@
       "catalogServerDesc" : "複数のプラットフォームアプリのソースを切り替える",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
       "enablePlatformDevToolsDesc" : "プラットフォームアプリの開発ツールウィンドウ表示を有効化",
+      "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
+      "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
+      "featureFlagsEdit" : "編集",
+      "featureFlagsRestore" : "復元",
+      "featureFlagsOverride" : "上書き",
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
       "addLocalAppButton" : "画面をチェックする",
@@ -4219,6 +4236,10 @@
     },
     "NetworkDown" : {
       "title" : "インターネットがダウンしているようです。",
+      "description" : "インターネット接続を確認してください。"
+    },
+    "NetworkError" : {
+      "title" : "同期中にエラーが発生しました",
       "description" : "インターネット接続を確認してください。"
     },
     "NoAddressesFound" : {
