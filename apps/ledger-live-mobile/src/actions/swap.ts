@@ -25,7 +25,7 @@ export const resetSwapAction = createAction("SWAP/RESET_STATE");
 
 /* SELECTORS */
 export const providersSelector = (state: State) => state.swap.providers;
-const pairsSelector = (state: State) => state.swap.pairs;
+export const pairsSelector = (state: State) => state.swap.pairs || [];
 export const transactionSelector = (state: State) => state.swap.transaction;
 export const rateSelector = (state: State) => state.swap.exchangeRate;
 export const rateExpirationSelector = (state: State) =>

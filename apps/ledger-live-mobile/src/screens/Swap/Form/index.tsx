@@ -5,6 +5,7 @@ import { Button, Flex } from "@ledgerhq/native-ui";
 import {
   OnNoRatesCallback,
   ActionRequired,
+  ValidCheckQuoteErrorCodes,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   usePollKYCStatus,
@@ -81,7 +82,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   );
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
 
-  const [error, setError] = useState();
+  const [error, setError] = useState<ValidCheckQuoteErrorCodes>();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const accounts = useSelector(shallowAccountsSelector);
@@ -103,7 +104,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
   const provider = exchangeRate?.provider;
-  const providerKYC = swapKYC?.[provider];
+  const providerKYC = provider ? swapKYC?.[provider] : undefined;
   const kycStatus = providerKYC?.status;
 
   // On provider change, reset banner and flow

@@ -14,7 +14,7 @@ import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
 import { shallowAccountsSelector } from "../../../../reducers/accounts";
 import { SwapFormProps } from "../../types";
-import { fromSelector } from "../../../../actions/swap";
+import { fromSelector, pairsSelector } from "../../../../actions/swap";
 import TranslatedError from "../../../../components/TranslatedError";
 
 interface Props {
@@ -53,7 +53,7 @@ export function From({ swapTx, provider, swapError }: Props) {
     swapTx.setFromAccount,
   );
 
-  const pairs = useSelector(state => state.swap.pairs);
+  const pairs = useSelector(pairsSelector);
 
   const onPress = useCallback(() => {
     // @ts-expect-error navigation type is only partially declared
@@ -98,6 +98,7 @@ export function From({ swapTx, provider, swapError }: Props) {
         </Flex>
 
         <Text color="error.c100" textAlign="right" variant="tiny">
+          {/* @ts-expect-error TranslatedError may return null */}
           {swapError ? <TranslatedError error={swapError} /> : ""}
         </Text>
       </Flex>
