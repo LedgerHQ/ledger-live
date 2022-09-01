@@ -24,7 +24,11 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}]" Set up new"`, async () => {
-        expect(await page.screenshot()).toMatchSnapshot(`v3-device-setup-${nano}.png`);
+        expect(
+          await page.screenshot({
+            mask: [page.locator("role=animation")],
+          }),
+        ).toMatchSnapshot(`v3-device-setup-${nano}.png`);
         await onboardingPage.newDevice();
       });
 
@@ -85,16 +89,18 @@ test.describe.parallel("Onboarding", () => {
         ]);
         await onboardingPage.continueTutorial();
 
-        expect(await page.screenshot()).toMatchSnapshot([
-          "v3-setup-new-device",
-          `recovery-phrase-4-${nano}.png`,
-        ]);
+        expect(
+          await page.screenshot({
+            mask: [page.locator("role=animation")],
+          }),
+        ).toMatchSnapshot(["v3-setup-new-device", `recovery-phrase-4-${nano}.png`]);
         await onboardingPage.continueTutorial();
 
-        expect(await page.screenshot()).toMatchSnapshot([
-          "v3-setup-new-device",
-          `recovery-phrase-5-${nano}.png`,
-        ]);
+        expect(
+          await page.screenshot({
+            mask: [page.locator("role=animation")],
+          }),
+        ).toMatchSnapshot(["v3-setup-new-device", `recovery-phrase-5-${nano}.png`]);
         await onboardingPage.continueRecoverySeedDrawer();
 
         expect(await page.screenshot()).toMatchSnapshot([
