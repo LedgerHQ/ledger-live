@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { lastConnectedDeviceSelector } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
-import { promptBluetooth } from "../logic/bluetoothHelper";
+import { usePromptBluetoothCallback } from "../logic/bluetoothHelper";
 
 type Props = {
   onResult: (device: any) => void;
@@ -17,6 +17,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
   const [hasUSB, setHasUSB] = useState(false);
   const knownDevices = useSelector(knownDevicesSelector);
   const forceSelectDevice = route?.params?.forceSelectDevice;
+  const promptBluetooth = usePromptBluetoothCallback();
   useEffect(() => {
     const subscription = discoverDevices(() => true).subscribe(e => {
       setHasUSB(e.id.startsWith("usb|"));
@@ -47,6 +48,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     knownDevices?.length,
     lastConnectedDevice,
     onResult,
+    promptBluetooth,
   ]);
   return null;
 }
