@@ -164,7 +164,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
         name={`quizz-${title}-step-${stepIndex}`}
         onChange={onChoiceChanged}
         currentValue={userChoiceIndex}
-        containerProps={{ flexDirection: "column", rowGap: 5 }}
+        containerProps={{ flexDirection: "column", rowGap: 5, margin: "-10px" }}
       >
         {choices.map(({ label, correct }: QuizzChoice, index: number) => (
           <RadioElement
