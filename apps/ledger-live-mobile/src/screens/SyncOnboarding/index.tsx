@@ -177,7 +177,7 @@ export const SyncOnboarding = ({
   const goBackToPairingFlow = useCallback(() => {
     // On pairing success, navigate to the Sync Onboarding Companion
     // Replace to avoid going back to this screen on return from the pairing flow
-    navigation.replace(NavigatorName.Base as "Base", {
+    navigation.navigate(NavigatorName.Base as "Base", {
       screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
       params: {
         filterByDeviceModelId: device.modelId,
