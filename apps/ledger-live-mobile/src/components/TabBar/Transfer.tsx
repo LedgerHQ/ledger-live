@@ -21,12 +21,9 @@ import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "./shared";
 import { useTrack } from "../../analytics";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
-// FIXME me shouldn't have cycle dependencies
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../RootNavigator";
-
 import lightAnimSource from "../../animations/mainButton/light.json";
 import darkAnimSource from "../../animations/mainButton/dark.json";
+import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 
 const MainButton = proxyStyled(Touchable).attrs({
   backgroundColor: "primary.c80",

@@ -12,6 +12,7 @@ import AccountOrder from "../../screens/Accounts/AccountOrder";
 import AddAccount from "../../screens/Accounts/AddAccount";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { AccountSettingsNavigatorParamList } from "./types";
 
 export default function AccountSettingsNavigator() {
   const { colors } = useTheme();
@@ -27,7 +28,7 @@ export default function AccountSettingsNavigator() {
         component={AccountSettingsMain}
         options={{
           title: t("account.settings.header"),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -67,4 +68,4 @@ export default function AccountSettingsNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AccountSettingsNavigatorParamList>();

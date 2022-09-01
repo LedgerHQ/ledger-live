@@ -36,13 +36,13 @@ export default function HeaderRightClose({
     if (skipNavigation) {
       // onClose should always be called at the end of the close method,
       // so the callback will not interfere with the expected behavior of this component
-      onClose();
+      onClose && onClose();
       return;
     }
 
     if (navigation.getParent().pop && preferDismiss) {
       navigation.getParent().pop();
-      onClose();
+      onClose && onClose();
       return;
     }
 

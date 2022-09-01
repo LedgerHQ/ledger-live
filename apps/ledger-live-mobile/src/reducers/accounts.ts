@@ -1,9 +1,9 @@
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
-import type { OutputSelector } from "reselect";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import type {
+  Currency,
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
@@ -23,23 +23,26 @@ import {
   nestedSortAccounts,
   makeEmptyTokenAccount,
   ImportAccountsReduceInput,
+  AddAccountsProps,
+  AccountComparator,
 } from "@ledgerhq/live-common/account/index";
-import type { State } from "./index";
+import type { GetReducerPayload } from "../types/helpers";
+import type { AccountsState, State } from "../types/state";
 import accountModel from "../logic/accountModel";
 
-export type AccountsState = {
-  active: Account[];
-};
 const initialState: AccountsState = {
   active: [],
 };
-const handlers: Record<string, any> = {
-  ACCOUNTS_IMPORT: (s, { state }) => state,
+const handlers = {
+  ACCOUNTS_IMPORT: (
+    _: AccountsState,
+    { payload }: { payload: AccountsState },
+  ) => payload,
   ACCOUNTS_USER_IMPORT: (
     s: AccountsState,
-    { input }: { input: ImportAccountsReduceInput },
+    { payload }: { payload: ImportAccountsReduceInput },
   ) => ({
-    active: importAccountsReduce(s.active, input),
+    active: importAccountsReduce(s.active, payload),
   }),
   REORDER_ACCOUNTS: (
     state: AccountsState,
@@ -47,13 +50,18 @@ const handlers: Record<string, any> = {
       payload: { comparator },
     }: {
       payload: {
-        comparator: any;
+        comparator: AccountComparator;
       };
     },
-  ): AccountsState => ({
+  ) => ({
     active: nestedSortAccounts(state.active, comparator),
   }),
-  ACCOUNTS_ADD: (s, { scannedAccounts, selectedIds, renamings }) => ({
+  ACCOUNTS_ADD: (
+    s: AccountsState,
+    {
+      payload: { scannedAccounts, selectedIds, renamings },
+    }: { payload: AddAccountsProps },
+  ) => ({
     active: addAccounts({
       existingAccounts: s.active,
       scannedAccounts,
@@ -62,7 +70,7 @@ const handlers: Record<string, any> = {
     }),
   }),
   SET_ACCOUNTS: (
-    state: AccountsState,
+    _: AccountsState,
     {
       payload,
     }: {
@@ -74,14 +82,15 @@ const handlers: Record<string, any> = {
   UPDATE_ACCOUNT: (
     state: AccountsState,
     {
-      accountId,
-      updater,
+      payload: { accountId, updater },
     }: {
-      accountId: string;
-      updater: (_: Account) => Account;
+      payload: {
+        accountId: string;
+        updater: (_: Account) => Account;
+      };
     },
-  ): AccountsState => {
-    function update(existingAccount) {
+  ) => {
+    function update(existingAccount: Account) {
       if (accountId !== existingAccount.id) return existingAccount;
       return { ...existingAccount, ...updater(existingAccount) };
     }
@@ -97,10 +106,13 @@ const handlers: Record<string, any> = {
     }: {
       payload: Account;
     },
-  ): AccountsState => ({
+  ) => ({
     active: state.active.filter(acc => acc.id !== account.id),
   }),
-  CLEAN_CACHE: (state: AccountsState): AccountsState => ({
+  CLEAN_CACHE: (
+    state: AccountsState,
+    _: { payload: Record<string, unknown> },
+  ) => ({
     active: state.active.map(clearAccount),
   }),
   BLACKLIST_TOKEN: (
@@ -113,16 +125,19 @@ const handlers: Record<string, any> = {
   ) => ({
     active: state.active.map(a => withoutToken(a, tokenId)),
   }),
-  DANGEROUSLY_OVERRIDE_STATE: (state: AccountsState): AccountsState => ({
+  DANGEROUSLY_OVERRIDE_STATE: (
+    state: AccountsState,
+    _: { payload: Record<string, unknown> },
+  ) => ({
     ...state,
   }),
 };
 // Selectors
-export const exportSelector = (s: any) => ({
+export const exportSelector = (s: State) => ({
   active: s.accounts.active.map(accountModel.encode),
 });
-export const accountsSelector = (s: any): Account[] => s.accounts.active;
-export const migratableAccountsSelector = (s: any): Account[] =>
+export const accountsSelector = (s: State) => s.accounts.active;
+export const migratableAccountsSelector = (s: State) =>
   s.accounts.active.filter(canBeMigrated);
 export const flattenAccountsSelector = createSelector(
   accountsSelector,
@@ -132,7 +147,7 @@ export const flattenAccountsEnforceHideEmptyTokenSelector = createSelector(
   accountsSelector,
   accounts =>
     flattenAccounts(accounts, {
-      enforceHideEmptyTokenAccounts: true,
+      enforceHideEmptySubAccounts: true,
     }),
 );
 export const accountsCountSelector = createSelector(
@@ -157,8 +172,13 @@ export const cryptoCurrenciesSelector = createSelector(
 );
 export const accountsTuplesByCurrencySelector = createSelector(
   accountsSelector,
-  (_, { currency }) => currency,
-  (accounts, currency): AccountLike[] => {
+  (_: State, { currency }: { currency: CryptoCurrency | TokenCurrency }) =>
+    currency,
+  (
+    accounts,
+    currency,
+  ): { account: AccountLike; subAccount: SubAccount | null }[] => {
+    // ): { account: AccountLike; subAccount: SubAccount | null }[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
         .filter(account => account.currency.id === currency.parentCurrency.id)
@@ -185,7 +205,7 @@ export const accountsTuplesByCurrencySelector = createSelector(
 );
 export const flattenAccountsByCryptoCurrencySelector = createSelector(
   flattenAccountsSelector,
-  (_, { currencies }) => currencies,
+  (_: State, { currencies }: { currencies: Array<string> }) => currencies,
   (accounts, currencies): AccountLike[] =>
     currencies && currencies.length
       ? accounts.filter(a =>
@@ -195,37 +215,41 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
         )
       : accounts,
 );
-const emptyArray = [];
+const emptyArray: AccountLike[] = [];
 export const accountsByCryptoCurrencyScreenSelector =
-  (currency: CryptoCurrency) => (state: any) => {
+  (currency: CryptoCurrency) => (state: State) => {
     if (!currency) return emptyArray;
     return accountsTuplesByCurrencySelector(state, {
       currency,
     });
   };
 export const flattenAccountsByCryptoCurrencyScreenSelector =
-  (currency?: CryptoCurrency) => (state: any) => {
+  (currency?: CryptoCurrency) => (state: State) => {
     if (!currency) return emptyArray;
     return flattenAccountsByCryptoCurrencySelector(state, {
       currencies: [currency.id],
     });
   };
+
+// FIXME: NEVER USED ANYWHERE ELSE - DROP ?
 export const accountCryptoCurrenciesSelector = createSelector(
   cryptoCurrenciesSelector,
-  (_, { currencies }) => currencies,
+  (_: State, { currencies }: { currencies: Array<string> }) => currencies,
   (cryptoCurrencies, currencies) =>
     currencies && currencies.length
       ? cryptoCurrencies.filter(c => currencies.includes(c.id))
       : cryptoCurrencies,
 );
+
 export const accountSelector = createSelector(
   accountsSelector,
-  (_, { accountId }) => accountId,
+  (_: State, { accountId }: { accountId: string }) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 export const parentAccountSelector = createSelector(
   accountsSelector,
-  (_, { account }) => (account ? account.parentId : null),
+  (_: State, { account }: { account: SubAccount }) =>
+    account ? account.parentId : null,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 export const accountScreenSelector = (route: any) => (state: any) => {
@@ -259,16 +283,7 @@ export const accountScreenSelector = (route: any) => (state: any) => {
 export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
   accounts.every(isUpToDateAccount),
 );
-export const subAccountByCurrencyOrderedSelector: OutputSelector<
-  State,
-  {
-    currency: CryptoCurrency | TokenCurrency;
-  },
-  Array<{
-    parentAccount: Account | null | undefined;
-    account: AccountLike;
-  }>
-> = createSelector(
+export const subAccountByCurrencyOrderedSelector = createSelector(
   accountsSelector,
   (
     _,
@@ -306,28 +321,29 @@ export const subAccountByCurrencyOrderedSelector: OutputSelector<
   },
 );
 export const subAccountByCurrencyOrderedScreenSelector =
-  (route: any) => (state: any) => {
+  (route: any) => (state: State) => {
     const currency = route?.params?.currency || {};
     if (!currency) return [];
     return subAccountByCurrencyOrderedSelector(state, {
       currency,
     });
   };
-export const hasLendEnabledAccountsSelector: OutputSelector<
-  State,
-  void,
-  boolean
-> = createSelector(flattenAccountsSelector, accounts =>
-  accounts.some(account => {
-    if (!account || account.type !== "TokenAccount") return false;
-    // check if account already has lending enabled
-    const summary =
-      account.type === "TokenAccount" &&
-      makeCompoundSummaryForAccount(account, undefined);
-    const capabilities = summary
-      ? account.type === "TokenAccount" && getAccountCapabilities(account)
-      : null;
-    return !!capabilities;
-  }),
+export const hasLendEnabledAccountsSelector = createSelector(
+  flattenAccountsSelector,
+  accounts =>
+    accounts.some(account => {
+      if (!account || account.type !== "TokenAccount") return false;
+      // check if account already has lending enabled
+      const summary =
+        account.type === "TokenAccount" &&
+        makeCompoundSummaryForAccount(account, undefined);
+      const capabilities = summary
+        ? account.type === "TokenAccount" && getAccountCapabilities(account)
+        : null;
+      return !!capabilities;
+    }),
 );
-export default handleActions(handlers, initialState);
+
+type Payload = GetReducerPayload<typeof handlers>;
+
+export default handleActions<AccountsState, Payload>(handlers, initialState);

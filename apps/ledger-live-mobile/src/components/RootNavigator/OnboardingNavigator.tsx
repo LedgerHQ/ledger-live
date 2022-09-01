@@ -44,10 +44,17 @@ import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSele
 import GetDeviceScreen from "../../screens/GetDeviceScreen";
 // eslint-disable-next-line import/no-cycle
 import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
+import {
+  OnboardingCarefulWarningParamList,
+  OnboardingNavigatorParamList,
+  OnboardingPreQuizModalNavigatorParamList,
+} from "./types";
 
-const Stack = createStackNavigator();
-const OnboardingCarefulWarningStack = createStackNavigator();
-const OnboardingPreQuizModalStack = createStackNavigator();
+const Stack = createStackNavigator<OnboardingNavigatorParamList>();
+const OnboardingCarefulWarningStack =
+  createStackNavigator<OnboardingCarefulWarningParamList>();
+const OnboardingPreQuizModalStack =
+  createStackNavigator<OnboardingPreQuizModalNavigatorParamList>();
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 function OnboardingCarefulWarning(props: StackScreenProps<{}>) {

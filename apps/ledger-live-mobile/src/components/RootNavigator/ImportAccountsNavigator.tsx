@@ -6,7 +6,6 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import ScanAccounts from "../../screens/ImportAccounts/Scan";
 import DisplayResult from "../../screens/ImportAccounts/DisplayResult";
-// eslint-disable-next-line import/no-unresolved
 import FallBackCameraScreen from "../../screens/ImportAccounts/FallBackCameraScreen";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
@@ -33,7 +32,7 @@ export default function ImportAccountsNavigator() {
             </Text>
           ),
           headerRight: props => <HeaderRightClose {...props} color={"#fff"} />,
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen

@@ -16,6 +16,7 @@ import { Platform } from "react-native";
 import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import type { DescriptorEvent } from "@ledgerhq/types-devices";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger from "./logger";
@@ -89,7 +90,6 @@ registerTransportModule({
   // prettier-ignore
   // eslint-disable-next-line consistent-return
   open: id => {
-    // eslint-disable-line consistent-return
     if (id.startsWith("usb|")) {
       const devicePath = JSON.parse(id.slice(4));
       return retry(() => HIDTransport.open(devicePath), {
@@ -101,7 +101,8 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: Observable.create(o => HIDTransport.listen(o)).pipe(
+  discovery: new Observable(o => HIDTransport.listen(o)).pipe(
+    // DescriptorEvent<any> ?
     map(({ type, descriptor, deviceModel }) => {
       const name = deviceModel.productName;
       return {

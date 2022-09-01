@@ -90,18 +90,8 @@ import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
 
-import {
-  BleDevicePairingFlow,
-  BleDevicePairingFlowParams,
-} from "../../screens/BleDevicePairingFlow/index";
-
-// TODO: types for each screens and navigators need to be set
-export type BaseNavigatorStackParamList = {
-  BleDevicePairingFlow: BleDevicePairingFlowParams;
-
-  // Hack: allows any other properties
-  [otherScreens: string]: undefined | object;
-};
+import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
+import { BaseNavigatorStackParamList } from "./types";
 
 export type BaseNavigatorProps =
   StackNavigationProp<BaseNavigatorStackParamList>;
@@ -125,7 +115,7 @@ export default function BaseNavigator() {
     <Stack.Navigator
       screenOptions={{
         ...stackNavigationConfig,
-        ...TransitionPresets.ModalPresentation,
+        ...TransitionPresets.ModalPresentationIOS,
       }}
     >
       <Stack.Screen
@@ -152,15 +142,13 @@ export default function BaseNavigator() {
         options={{
           headerShown: false,
           presentation: "transparentModal",
-          headerMode: "none",
-          mode: "modal",
-          transparentCard: true,
+          headerMode: undefined,
           cardStyle: { opacity: 1 },
           gestureEnabled: true,
-          headerTitle: null,
+          headerTitle: undefined,
           headerRight: () => null,
           headerBackTitleVisible: false,
-          title: null,
+          title: "",
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         }}
       />
@@ -480,7 +468,7 @@ export default function BaseNavigator() {
         name={ScreenName.PairDevices}
         component={PairDevices}
         options={({ navigation, route }) => ({
-          title: null,
+          title: "",
           headerRight: () => (
             <ErrorHeaderInfo
               route={route}

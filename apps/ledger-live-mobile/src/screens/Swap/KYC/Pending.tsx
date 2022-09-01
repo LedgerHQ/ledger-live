@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@react-navigation/native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { getKYCStatus } from "@ledgerhq/live-common/exchange/swap/index";
 import { swapKYCSelector } from "../../../reducers/settings";

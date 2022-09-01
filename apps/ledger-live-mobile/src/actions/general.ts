@@ -94,6 +94,7 @@ export function useCleanCache() {
   return useCallback(async () => {
     dispatch({
       type: "CLEAN_CACHE",
+      payload: {},
     });
     dispatch({
       type: "LEDGER_CV:WIPE",

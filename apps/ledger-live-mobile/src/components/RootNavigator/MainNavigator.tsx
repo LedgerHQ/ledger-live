@@ -23,8 +23,9 @@ import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 // eslint-disable-next-line import/no-cycle
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
+import { MainNavigatorParamList } from "./types";
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
 // NB The default behaviour is not reset route params, leading to always having the same
 // search query or preselected tab after the first time (ie from Swap/Sell), that's why we

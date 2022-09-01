@@ -9,10 +9,9 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
-  Text,
   Linking,
   Appearance,
   AppState,
@@ -86,10 +85,9 @@ import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
 import PushNotificationsModal from "./screens/PushNotificationsModal";
 import RatingsModal from "./screens/RatingsModal";
-import { lightTheme, darkTheme } from "./colors";
+import { lightTheme, darkTheme, Theme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
-// eslint-disable-next-line import/no-unresolved
 import NavBarColorHandler from "./components/NavBarColorHandler";
 import { setOsTheme } from "./actions/settings";
 import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
@@ -100,8 +98,11 @@ import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
+import type { Writeable } from "./types/helpers";
 
-const themes = {
+const themes: {
+  [key: string]: Theme;
+} = {
   light: lightTheme,
   dark: darkTheme,
 };
@@ -110,7 +111,6 @@ checkLibs({
   React,
   log,
   Transport,
-  connect,
 });
 // useScreens();
 const styles = StyleSheet.create({
@@ -118,9 +118,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-// Fixme until third parties address this themselves, still relevant?
-Text.defaultProps = Text.defaultProps || {};
-Text.defaultProps.allowFontScaling = false;
 
 type AppProps = {
   importDataString?: string;
@@ -510,7 +507,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   }, [wcContext.initDone]);
   React.useEffect(
     () => () => {
-      isReadyRef.current = false;
+      (isReadyRef as Writeable<typeof isReadyRef>).current = false;
     },
     [],
   );
@@ -526,7 +523,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     compareOsTheme();
 
-    const osThemeChangeHandler = nextAppState =>
+    const osThemeChangeHandler = (nextAppState: string) =>
       nextAppState === "active" && compareOsTheme();
 
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
@@ -551,7 +548,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
         linking={linking}
         ref={navigationRef}
         onReady={() => {
-          isReadyRef.current = true;
+          (isReadyRef as Writeable<typeof isReadyRef>).current = true;
           setTimeout(() => SplashScreen.hide(), 300);
         }}
       >
@@ -673,8 +670,4 @@ export default class Root extends Component<
       </RebootProvider>
     );
   }
-}
-
-if (__DEV__) {
-  require("./snoopy");
 }

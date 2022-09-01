@@ -77,7 +77,7 @@ export const setSelectedTimeRange = (selectedTimeRange: string) => ({
 });
 export const updateCurrencySettings = (
   ticker: string,
-  patch: $Shape<CurrencySettings>,
+  patch: Partial<CurrencySettings>,
 ) => ({
   type: "UPDATE_CURRENCY_SETTINGS",
   ticker,
