@@ -20,6 +20,23 @@ import Question from "../../icons/Question";
 // eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+
+type BaseOnboardingNavigatorParamList = {
+  [NavigatorName.Onboarding]: undefined;
+  [NavigatorName.ImportAccounts]: undefined;
+  [NavigatorName.BuyDevice]: undefined;
+  [ScreenName.PairDevices]?: {
+    onDone?: (_: Device) => void;
+  };
+  [ScreenName.EditDeviceName]: {
+    deviceId: string;
+    deviceName: string;
+  };
+  [NavigatorName.PasswordAddFlow]: undefined;
+  [NavigatorName.PasswordModifyFlow]: undefined;
+};
+
 const hitSlop = {
   bottom: 10,
   left: 24,
@@ -41,7 +58,7 @@ export const ErrorHeaderInfo = ({ route, navigation }: any) => {
       hitSlop={hitSlop}
       onPress={openInfoModal}
     >
-      <Question size={20} color={colors.grey} />
+      <Question size={20} color={colors.neutral.c70} />
     </TouchableOpacity>
   ) : null;
 };
@@ -79,7 +96,7 @@ export default function BaseOnboardingNavigator() {
         name={ScreenName.PairDevices}
         component={PairDevices}
         options={({ navigation, route }) => ({
-          title: null,
+          title: undefined,
           headerRight: () => (
             <ErrorHeaderInfo route={route} navigation={navigation} />
           ),
@@ -92,7 +109,7 @@ export default function BaseOnboardingNavigator() {
         component={EditDeviceName}
         options={{
           title: t("EditDeviceName.title"),
-          headerLeft: null,
+          headerLeft: () => null,
           headerShown: true,
         }}
       />
@@ -107,4 +124,4 @@ export default function BaseOnboardingNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<BaseOnboardingNavigatorParamList>();
