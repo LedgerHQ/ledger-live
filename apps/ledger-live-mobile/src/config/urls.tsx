@@ -139,7 +139,8 @@ export const urls = {
   },
   solana: {
     supportPage: "https://support.ledger.com",
-    stakingPage: "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
+    stakingPage:
+      "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
   },
   resources: {
     gettingStarted:
