@@ -66,8 +66,14 @@ const useBIM = (
 
     async function fetchToken() {
       const queue = BIM.buildQueueFromState(state);
-      const token = await BIM.getTokenFromQueue(queue).catch(onError);
-      setToken(token);
+      // NB We were experiencing cases where the user (QA) was putting the app to the back
+      // before the token was fetched. This meant that the token resolution never happened
+      // and the native side worked with an older version of the queue.
+      // We are making that token resolution natively now, but I'm leaving this here in case
+      // we can come up with something cleaner.
+      // const token = await BIM.getTokenFromQueue(queue).catch(onError);
+      // setToken(token);
+      setToken(JSON.stringify({ tasks: queue })); // Breaks my heart.
     }
 
     if (!enabled || completed) return;
