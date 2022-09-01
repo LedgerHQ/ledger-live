@@ -61,8 +61,8 @@ const AccountRow = ({
 
   const onAccountPress = useCallback(() => {
     track("account_clicked", {
-      currency,
-      currentScreen,
+      currency: currency.name,
+      screen: currentScreen,
     });
     if (navigationParams) {
       navigation.navigate(...navigationParams);

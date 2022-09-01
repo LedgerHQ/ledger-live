@@ -2,7 +2,6 @@ import React, { useCallback, useState, memo } from "react";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
-import { useNavigation } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import Animated, {
   Extrapolate,
@@ -57,7 +56,6 @@ function GraphCard({
   const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
   const currentScreen = useCurrentRouteName();
   const item = balanceHistory[balanceHistory.length - 1];
-  const navigation = useNavigation();
 
   const unit = counterValueCurrency.units[0];
 
@@ -68,7 +66,7 @@ function GraphCard({
   const updateTimeRange = useCallback(
     index => {
       track("timeframe_clicked", {
-        timeframe: timeRangeItems[index],
+        timeframe: timeRangeItems[index].value,
         screen: currentScreen,
       });
       setTimeRange(timeRangeItems[index]);
@@ -102,7 +100,7 @@ function GraphCard({
     (item: any) => {
       track("graph_clicked", {
         graph: "Wallet Graph",
-        timeframe: timeRange,
+        timeframe: timeRange.value,
         screen: currentScreen,
       });
       setItemHover(item);
