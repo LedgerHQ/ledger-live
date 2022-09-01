@@ -1,6 +1,7 @@
-import { handleActions } from "redux-actions";
+import { handleActions, Action } from "redux-actions";
 import type { State } from ".";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
+import { UnionToIntersection } from "../types/helpers";
 
 export type NotificationsState = {
   /** Boolean indicating whether the push notifications modal is opened or closed */
@@ -24,15 +25,17 @@ const initialState: NotificationsState = {
   isPushNotificationsModalOpen: false,
   isPushNotificationsModalLocked: false,
   notificationsModalType: "generic",
-  currentRouteName: null,
-  eventTriggered: null,
-  dataOfUser: null,
+  currentRouteName: undefined,
+  eventTriggered: undefined,
+  dataOfUser: undefined,
 };
 
-const handlers: any = {
+const handlers = {
   NOTIFICATIONS_SET_MODAL_OPEN: (
     state: NotificationsState,
-    { isPushNotificationsModalOpen }: { isPushNotificationsModalOpen: boolean },
+    {
+      payload: { isPushNotificationsModalOpen },
+    }: { payload: { isPushNotificationsModalOpen: boolean } },
   ) => ({
     ...state,
     isPushNotificationsModalOpen,
@@ -40,36 +43,42 @@ const handlers: any = {
   NOTIFICATIONS_SET_MODAL_LOCKED: (
     state: NotificationsState,
     {
-      isPushNotificationsModalLocked,
-    }: { isPushNotificationsModalLocked: boolean },
+      payload: { isPushNotificationsModalLocked },
+    }: { payload: { isPushNotificationsModalLocked: boolean } },
   ) => ({
     ...state,
     isPushNotificationsModalLocked,
   }),
   NOTIFICATIONS_SET_MODAL_TYPE: (
     state: NotificationsState,
-    { notificationsModalType }: { notificationsModalType: string },
+    {
+      payload: { notificationsModalType },
+    }: { payload: { notificationsModalType: string } },
   ) => ({
     ...state,
     notificationsModalType,
   }),
   NOTIFICATIONS_SET_CURRENT_ROUTE_NAME: (
     state: NotificationsState,
-    { currentRouteName }: { currentRouteName?: string },
+    {
+      payload: { currentRouteName },
+    }: { payload: { currentRouteName?: string } },
   ) => ({
     ...state,
     currentRouteName,
   }),
   NOTIFICATIONS_SET_EVENT_TRIGGERED: (
     state: NotificationsState,
-    { eventTriggered }: { eventTriggered?: EventTrigger },
+    {
+      payload: { eventTriggered },
+    }: { payload: { eventTriggered?: EventTrigger } },
   ) => ({
     ...state,
     eventTriggered,
   }),
   NOTIFICATIONS_SET_DATA_OF_USER: (
     state: NotificationsState,
-    { dataOfUser }: { dataOfUser?: DataOfUser },
+    { payload: { dataOfUser } }: { payload: { dataOfUser?: DataOfUser } },
   ) => ({
     ...state,
     dataOfUser,
@@ -95,4 +104,12 @@ export const notificationsEventTriggeredSelector = (s: State) =>
 export const notificationsDataOfUserSelector = (s: State) =>
   s.notifications.dataOfUser;
 
-export default handleActions(handlers, initialState);
+type Payload = typeof handlers[keyof typeof handlers];
+type UnionPayload = Parameters<Payload>[1]["payload"];
+
+type IntersectionPayload = UnionToIntersection<UnionPayload>;
+
+export default handleActions<NotificationsState, IntersectionPayload>(
+  handlers,
+  initialState,
+);
