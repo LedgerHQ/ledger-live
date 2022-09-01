@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  ReactNode,
+} from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import {
   Button,
@@ -17,14 +23,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 
-import { ScreenName } from "../../const";
-import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "../../const";
+import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import SoftwareChecksStep from "./SoftwareChecksStep";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -36,9 +44,9 @@ type Step = {
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
 
-type Props = StackScreenProps<
-  SyncOnboardingStackParamList,
-  "SyncOnboardingCompanion"
+export type SyncOnboardingCompanionProps = CompositeScreenProps<
+  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompanion">,
+  StackScreenProps<BaseNavigatorStackParamList>
 >;
 
 const normalPollingPeriodMs = 1000;
@@ -49,7 +57,6 @@ const normalResyncOverlayDisplayDelayMs = 1000;
 const longResyncOverlayDisplayDelayMs = 180000;
 const readyRedirectDelayMs = 2500;
 
-/* eslint-disable no-unused-vars */
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
 enum CompanionStepKey {
   Paired = 0,
@@ -59,7 +66,6 @@ enum CompanionStepKey {
   Ready,
   Exit,
 }
-/* eslint-enable no-unused-vars */
 
 function nextStepKey(step: CompanionStepKey): CompanionStepKey {
   if (step === CompanionStepKey.Exit) {
@@ -68,7 +74,10 @@ function nextStepKey(step: CompanionStepKey): CompanionStepKey {
   return step + 1;
 }
 
-export const SyncOnboarding = ({ navigation, route }: Props) => {
+export const SyncOnboarding = ({
+  navigation,
+  route,
+}: SyncOnboardingCompanionProps) => {
   const { t } = useTranslation();
   const { device } = route.params;
 
@@ -150,10 +159,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   const [pollingPeriodMs, setPollingPeriodMs] = useState<number>(
     normalPollingPeriodMs,
   );
-  const [
-    resyncOverlayDisplayDelayMs,
-    setResyncOverlayDisplayDelayMs,
-  ] = useState<number>(normalResyncOverlayDisplayDelayMs);
+  const [resyncOverlayDisplayDelayMs, setResyncOverlayDisplayDelayMs] =
+    useState<number>(normalResyncOverlayDisplayDelayMs);
 
   const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(
     normalDesyncTimeoutMs,
@@ -167,6 +174,34 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     CompanionStepKey.Paired,
   );
 
+  const goBackToPairingFlow = useCallback(() => {
+    // On pairing success, navigate to the Sync Onboarding Companion
+    // Replace to avoid going back to this screen on return from the pairing flow
+    navigation.replace(NavigatorName.Base as "Base", {
+      screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
+      params: {
+        filterByDeviceModelId: device.modelId,
+        areKnownDevicesDisplayed: false,
+        onSuccessAddToKnownDevices: false,
+        onSuccessNavigateToConfig: {
+          navigateInput: {
+            name: NavigatorName.BaseOnboarding,
+            params: {
+              screen: NavigatorName.SyncOnboarding,
+              params: {
+                screen: ScreenName.SyncOnboardingCompanion,
+                params: {
+                  device: null,
+                },
+              },
+            },
+          },
+          pathToDeviceParam: "params.params.params.device",
+        },
+      },
+    });
+  }, [navigation, device]);
+
   const {
     onboardingState: deviceOnboardingState,
     allowedError,
@@ -178,18 +213,21 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   });
 
   const handleClose = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
+    goBackToPairingFlow();
+  }, [goBackToPairingFlow]);
 
   const handleDesyncTimedOut = useCallback(() => {
     setDesyncDrawerOpen(true);
   }, [setDesyncDrawerOpen]);
 
+  const handleDesyncRetry = useCallback(() => {
+    goBackToPairingFlow();
+  }, [goBackToPairingFlow]);
+
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);
-    // Replace to avoid going back to this screen without re-rendering
-    navigation.replace(ScreenName.BleDevicesScanning as "BleDevicesScanning");
-  }, [navigation]);
+    goBackToPairingFlow();
+  }, [goBackToPairingFlow]);
 
   const handleDeviceReady = useCallback(() => {
     navigation.navigate(
@@ -214,7 +252,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       setDesyncTimer(null);
       setPollingPeriodMs(normalPollingPeriodMs);
     }
-  }, [allowedError, handleDesyncTimedOut, desyncTimer]);
+  }, [allowedError, handleDesyncTimedOut, desyncTimer, desyncTimeoutMs]);
 
   useEffect(() => {
     if (isDesyncDrawerOpen) {
@@ -248,7 +286,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   }, [deviceOnboardingState]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
-  // and timers to a higher value. It avoids having a warning message while the connection is lost 
+  // and timers to a higher value. It avoids having a warning message while the connection is lost
   // because the device is generating the seed.
   useEffect(() => {
     if (
@@ -315,7 +353,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         <DesyncDrawer
           isOpen={isDesyncDrawerOpen}
           onClose={handleDesyncClose}
-          navigation={navigation}
+          onRetry={handleDesyncRetry}
           device={device}
         />
         <Flex
