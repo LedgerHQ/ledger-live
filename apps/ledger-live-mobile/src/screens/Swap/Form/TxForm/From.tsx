@@ -74,15 +74,17 @@ export function From({ swapTx, provider, swapError }: Props) {
     >
       <Text>{t("transfer.swap2.form.from")}</Text>
       <Flex>
-        <Flex flexDirection="row" justifyContent="space-between">
-          <Selector
-            currency={swapTx.swap.from.currency}
-            title={name}
-            subTitle={balance}
-            onPress={onPress}
-          />
+        <Flex flexDirection="row" justifyContent="space-between" width="100%">
+          <Flex flex={1} justifyContent="center">
+            <Selector
+              currency={swapTx.swap.from.currency}
+              title={name}
+              subTitle={balance}
+              onPress={onPress}
+            />
+          </Flex>
 
-          <Flex flex={1} justifyContent="center" maxWidth={120}>
+          <Flex flex={1} justifyContent="center">
             <AmountInput
               value={swapTx.swap.from.amount}
               editable={!swapTx.swap.isMaxEnabled}

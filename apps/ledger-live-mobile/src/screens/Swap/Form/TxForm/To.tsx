@@ -50,14 +50,16 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
   return (
     <Flex>
       <Text>{t("transfer.swap2.form.to")}</Text>
-      <Flex flexDirection="row" justifyContent="space-between">
-        <Selector
-          currency={swapTx.swap.to.currency}
-          title={swapTx.swap.to.currency?.name}
-          subTitle={swapTx.swap.to.currency?.units[0].code || "-"}
-          onPress={onPress}
-          disabled={!swapTx.swap.to.currency}
-        />
+      <Flex flexDirection="row" justifyContent="space-between" width="100%">
+        <Flex flex={1} justifyContent="center">
+          <Selector
+            currency={swapTx.swap.to.currency}
+            title={swapTx.swap.to.currency?.name}
+            subTitle={swapTx.swap.to.currency?.units[0].code || "-"}
+            onPress={onPress}
+            disabled={!swapTx.swap.to.currency}
+          />
+        </Flex>
 
         <Flex flex={1} justifyContent="center">
           <CurrencyValue

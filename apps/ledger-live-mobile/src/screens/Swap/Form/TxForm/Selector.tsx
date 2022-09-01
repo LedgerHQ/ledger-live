@@ -36,13 +36,13 @@ export function Selector({
 
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
-      <Flex flexDirection="row" alignItems="center" paddingY={4} width={100}>
+      <Flex flexDirection="row" alignItems="center" justifyContent="space-between" paddingY={4}>
         <Flex flexDirection="row" alignItems="center">
-          <Flex alignItems="center" justifyContent="center">
+          <Flex alignItems="center" justifyContent="center" marginRight={2}>
             {Icon}
           </Flex>
 
-          <Flex marginLeft={4} marginRight={2} width={100}>
+          <Flex flex={1} marginRight={2}>
             <Text
               variant="h3"
               marginBottom={2}
@@ -52,13 +52,16 @@ export function Selector({
             >
               {title || t("transfer.swap2.form.placeholder")}
             </Text>
+
             <Text variant="subtitle" color={"neutral.c70"}>
               {subTitle}
             </Text>
           </Flex>
         </Flex>
 
-        <Icons.ChevronBottomRegular />
+        <Flex>
+          <Icons.ChevronBottomRegular />
+        </Flex>
       </Flex>
     </TouchableOpacity>
   );
