@@ -89,7 +89,7 @@ export default function OperationRow({
 
   const goToOperationDetails = debounce(() => {
     track("transaction_clicked", {
-      transaction: operation,
+      transaction: operation.type,
       screen: currentScreen,
     });
     const params = [

@@ -35,7 +35,7 @@ const AssetRow = ({
 
   const onAssetPress = useCallback(() => {
     track("asset_clicked", {
-      asset: currency.id,
+      asset: currency.name,
       screen: currentScreen,
     });
     if (navigationParams) {

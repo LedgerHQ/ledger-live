@@ -32,7 +32,7 @@ const MarketPrice = ({ currency }: Props) => {
 
   const goToMarketPage = useCallback(() => {
     track("market_data_clicked", {
-      currency,
+      currency: currency.name,
       screen: currentScreen,
     });
     navigation.navigate(ScreenName.MarketDetail, {

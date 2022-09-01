@@ -2,7 +2,6 @@ import React, { useCallback, useState, memo } from "react";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
-import { useNavigation } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import Animated, {
   Extrapolate,
@@ -67,7 +66,7 @@ function GraphCard({
   const updateTimeRange = useCallback(
     index => {
       track("timeframe_clicked", {
-        timeframe: timeRangeItems[index],
+        timeframe: timeRangeItems[index].value,
         screen: currentScreen,
       });
       setTimeRange(timeRangeItems[index]);
@@ -101,7 +100,7 @@ function GraphCard({
     (item: any) => {
       track("graph_clicked", {
         graph: "Wallet Graph",
-        timeframe: timeRange,
+        timeframe: timeRange.value,
         screen: currentScreen,
       });
       setItemHover(item);
@@ -162,11 +161,7 @@ function GraphCard({
                   ) : (
                     <Flex flexDirection="row" alignItems="center">
                       {hoveredItem && hoveredItem.date ? (
-                        <Text
-                          variant={"body"}
-                          fontWeight={"semibold"}
-                          fontSize="16px"
-                        >
+                        <Text variant={"large"} fontWeight={"semiBold"}>
                           <FormatDate date={hoveredItem.date} />
                         </Text>
                       ) : (

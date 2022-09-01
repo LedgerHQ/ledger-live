@@ -71,7 +71,7 @@ function Header({
 
   const goToSettings = useCallback(() => {
     track("button_clicked", {
-      button: "Settings",
+      button: "Asset settings",
       screen: currentRoute,
     });
     navigation.navigate(ScreenName.CurrencySettings, {

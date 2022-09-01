@@ -74,7 +74,7 @@ class AccountSettings extends PureComponent<Props, State> {
     if (!account) return null;
     return (
       <SettingsNavigationScrollView>
-        <TrackScreen category="AccountSettings" />
+        <TrackScreen category="Account Settings" />
         <AccountNameRow account={account} navigation={navigation} />
         <AccountUnitsRow account={account} navigation={navigation} />
         <AccountAdvancedLogsRow account={account} navigation={navigation} />

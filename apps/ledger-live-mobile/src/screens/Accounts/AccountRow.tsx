@@ -21,8 +21,8 @@ type Props = {
   account: Account | TokenAccount;
   accountId: string;
   navigation: any;
-  isLast: boolean;
-  onSetAccount: (arg: TokenAccount) => void;
+  isLast?: boolean;
+  onSetAccount?: (arg: TokenAccount) => void;
   navigationParams?: any[];
   hideDelta?: boolean;
   topLink?: boolean;
@@ -37,6 +37,7 @@ const AccountRow = ({
   hideDelta,
   topLink,
   bottomLink,
+  isLast,
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -61,8 +62,8 @@ const AccountRow = ({
 
   const onAccountPress = useCallback(() => {
     track("account_clicked", {
-      currency,
-      currentScreen,
+      currency: currency.name,
+      screen: currentScreen,
     });
     if (navigationParams) {
       navigation.navigate(...navigationParams);
@@ -108,6 +109,7 @@ const AccountRow = ({
       bottomLink={bottomLink}
       hideDelta={hideDelta}
       parentAccountName={parentAccount && getAccountName(parentAccount)}
+      isLast={isLast}
     />
   );
 };
