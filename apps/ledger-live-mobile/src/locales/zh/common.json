@@ -1563,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Looking for devices",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Already paired"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Try again"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "钱包",
     "accounts" : "Account（账户）",
@@ -1698,7 +1725,13 @@
       "WITHDRAW_UNBONDED" : "提取",
       "NOMINATE" : "提名",
       "CHILL" : "清除提名",
-      "SET_CONTROLLER" : "设置控制器"
+      "SET_CONTROLLER" : "设置控制器",
+      "ACTIVATE" : "已激活",
+      "LOCK" : "已锁定",
+      "UNLOCK" : "已解锁",
+      "REVOKE" : "已撤销",
+      "REGISTER" : "已注册",
+      "WITHDRAW" : "已提取"
     }
   },
   "operationDetails" : {
@@ -1936,6 +1969,16 @@
       "noTransaction" : {
         "title" : "您没有任何交易",
         "subtitle" : "您需要有设备才能买入或接收 {{assetName}}"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta" : "重新委托"
+      },
+      "delegation" : {
+        "description" : "In case you didn’t know, the Ledger validator stakes your {{asset}} at a low commission.",
+        "cta" : "立即进行权益质押"
       }
     }
   },
@@ -4264,6 +4307,7 @@
     "delegation" : "委托",
     "viewDetails" : "查看详情",
     "validator" : "验证者",
+    "validatorGroup" : "验证者组",
     "validatorAddress" : "验证者地址",
     "delegatedAccount" : "已委托账户",
     "duration" : "持续时间",
