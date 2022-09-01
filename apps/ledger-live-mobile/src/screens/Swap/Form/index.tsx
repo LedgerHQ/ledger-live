@@ -202,8 +202,9 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
    */
   useEffect(() => {
     if (
+      !provider ||
       !providerKYC?.id ||
-      !exchangeRate?.rateId ||
+      !exchangeRate.rateId ||
       currentFlow === "KYC" ||
       currentFlow === "MFA"
     ) {

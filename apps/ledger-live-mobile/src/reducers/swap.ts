@@ -6,11 +6,11 @@ import {
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 
 export type SwapStateType = {
-  providers: AvailableProviderV3[] | null | undefined;
-  pairs: AvailableProviderV3["pairs"] | null | undefined;
-  transaction: Transaction | null | undefined;
-  exchangeRate: ExchangeRate | null | undefined;
-  exchangeRateExpiration: Date | null | undefined;
+  providers: AvailableProviderV3[] | undefined;
+  pairs: AvailableProviderV3["pairs"] | undefined;
+  transaction: Transaction | undefined;
+  exchangeRate: ExchangeRate | undefined;
+  exchangeRateExpiration: Date | undefined;
 };
 
 const initialState: SwapStateType = {
@@ -44,14 +44,14 @@ const handlers = {
   UPDATE_PROVIDERS: updateProviders,
   UPDATE_TRANSACTION: (
     state: SwapStateType,
-    { payload }: { payload: Transaction | null | undefined },
+    { payload }: { payload: Transaction | undefined },
   ) => ({
     ...state,
     transaction: payload,
   }),
   UPDATE_RATE: (
     state: SwapStateType,
-    { payload }: { payload: ExchangeRate | null | undefined },
+    { payload }: { payload: ExchangeRate | undefined },
   ) => ({
     ...state,
     exchangeRate: payload,
