@@ -16,6 +16,7 @@ import {
   DeviceExtractOnboardingStateError,
   DisconnectedDevice,
   CantOpenDevice,
+  TransportRaceCondition,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import {
@@ -149,6 +150,7 @@ export const isAllowedOnboardingStatePollingError = (error: Error): boolean => {
     (error instanceof TimeoutError ||
       error instanceof DisconnectedDevice ||
       error instanceof CantOpenDevice ||
+      error instanceof TransportRaceCondition ||
       error instanceof TransportStatusError)
   ) {
     return true;

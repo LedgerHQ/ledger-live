@@ -22,7 +22,7 @@ import Button from "../Button";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../Animation";
-import getDeviceAnimation from "./getDeviceAnimation";
+import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "../../const/manager";
