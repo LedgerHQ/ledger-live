@@ -51,6 +51,8 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
       <Flex flexDirection="row" mb={showAlert ? "16px" : 0}>
         <DeviceAction
           action={action}
+          // FIXME: request should be a Language in theory :/
+          request={undefined}
           device={device}
           onError={onError}
           renderOnResult={() => (

@@ -7,20 +7,24 @@ import {
   getAccountCurrency,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/helpers";
-import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
-import { AccountLike } from "@ledgerhq/types-live";
+import {
+  DerivationMode,
+  getTagDerivationMode,
+} from "@ledgerhq/live-common/derivation";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+import { ViewStyle, StyleProp } from "react-native";
 import Card, { Props as CardProps } from "./Card";
 import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 export type Props = CardProps & {
-  account: AccountLike;
-  style?: any;
+  account?: AccountLike | null;
+  style?: StyleProp<ViewStyle>;
   disabled?: boolean;
   useFullBalance?: boolean;
   AccountSubTitle?: ReactNode;
@@ -36,12 +40,16 @@ const AccountCard = ({
   ...props
 }: Props) => {
   const { colors } = useTheme();
+  if (!account) return null;
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const tag =
-    account.derivationMode !== undefined &&
-    account.derivationMode !== null &&
-    getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
+    (account as Account)?.derivationMode !== undefined &&
+    (account as Account)?.derivationMode !== null &&
+    getTagDerivationMode(
+      currency as CryptoCurrency,
+      (account as Account).derivationMode as DerivationMode,
+    );
 
   return (
     <TouchableOpacity disabled={disabled} onPress={onPress}>

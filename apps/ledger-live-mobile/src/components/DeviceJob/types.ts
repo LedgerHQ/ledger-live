@@ -1,12 +1,14 @@
 import type { Observable } from "rxjs";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Theme } from "../../colors";
 // meta object are accumulated over steps
 export type Step = {
   Body: React.ComponentType<{
     meta: Device & Record<string, any>;
     onDone: () => void;
     onClose?: () => void;
-    colors: any;
+    colors: Theme["colors"];
+    step?: Step;
   }>;
   ErrorFooter?: React.ComponentType<{
     onRetry: () => void;

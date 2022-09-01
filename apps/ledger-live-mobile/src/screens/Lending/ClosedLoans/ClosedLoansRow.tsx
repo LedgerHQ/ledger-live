@@ -122,7 +122,6 @@ export default function ClosedLoansRow({ item }: RowProps) {
               currency={token}
               value={amountSupplied}
               disableRounding
-              fontSize={3}
               showCode
               alwaysShowSign={false}
             />

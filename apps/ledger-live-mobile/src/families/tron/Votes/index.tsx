@@ -17,8 +17,9 @@ import {
   MIN_TRANSACTION_AMOUNT,
 } from "@ledgerhq/live-common/families/tron/react";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Box, Button, Icons, Text } from "@ledgerhq/native-ui";
+import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { urls } from "../../../config/urls";
 import Row from "./Row";
 import Header from "./Header";
@@ -36,7 +37,7 @@ import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 
 type Props = {
-  account: Account;
+  account: TronAccount;
   parentAccount?: Account;
 };
 
@@ -44,7 +45,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const [infoRewardsModal, setRewardsInfoModal] = useState();
+  const [infoRewardsModal, setRewardsInfoModal] = useState<boolean>();
 
   const superRepresentatives = useTronSuperRepresentatives();
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
@@ -208,7 +209,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
                       address={address}
                       amount={voteCount}
                       duration={lastDate}
-                      explorerView={explorerView}
+                      explorerView={explorerView ?? undefined}
                       isSR={isSR}
                       isLast={index === formattedVotes.length - 1}
                     />
@@ -354,8 +355,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Votes({ account, parentAccount }: Props) {
-  if (!account || !account.tronResources) return null;
+export default function Votes({
+  account,
+  parentAccount,
+}: { account: AccountLike } & Omit<Props, "account">) {
+  if (!account || !(account as TronAccount).tronResources) return null;
 
-  return <Delegation account={account} parentAccount={parentAccount} />;
+  return (
+    <Delegation
+      account={account as TronAccount}
+      parentAccount={parentAccount}
+    />
+  );
 }

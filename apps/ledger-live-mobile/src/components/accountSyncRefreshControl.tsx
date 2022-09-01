@@ -5,27 +5,24 @@ import {
   useBridgeSync,
   useAccountSyncState,
 } from "@ledgerhq/live-common/bridge/react/index";
-import type { Sync } from "@ledgerhq/live-common/bridge/react/types";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { SYNC_DELAY } from "../constants";
 
-type Props = {
-  error: Error | null | undefined;
-  isError: boolean;
-  accountId: string;
-  forwardedRef?: any;
-  provideSyncRefreshControlBehavior?: Sync;
-};
-export default (ScrollListLike: any) => {
+export interface Props {
+  accountId?: string;
+  error?: Error | null;
+  isError?: boolean;
+  forwardedRef?: React.Ref<unknown>;
+}
+
+export default <P,>(ScrollListLike: React.ComponentType<P>) => {
   function Inner({
     accountId,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     error,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isError,
     forwardedRef,
     ...scrollListLikeProps
-  }: Props) {
+  }: P & Props) {
     const { pending: isPending } = useAccountSyncState({
       accountId,
     });
@@ -36,6 +33,7 @@ export default (ScrollListLike: any) => {
     const [refreshing, setRefreshing] = useState(false);
 
     function onPress() {
+      if (!accountId) return;
       poll();
       setSyncBehavior({
         type: "SYNC_ONE_ACCOUNT",
@@ -67,7 +65,7 @@ export default (ScrollListLike: any) => {
     const isLoading = (isPending && isUserClick) || refreshing;
     return (
       <ScrollListLike
-        {...scrollListLikeProps}
+        {...(scrollListLikeProps as P)}
         ref={forwardedRef}
         refreshControl={
           <RefreshControl
@@ -82,8 +80,7 @@ export default (ScrollListLike: any) => {
     );
   }
 
-  // $FlowFixMe
-  return React.forwardRef((prop, ref) => (
+  return React.forwardRef((prop: P & Props, ref) => (
     <Inner {...prop} forwardedRef={ref} />
   ));
 };

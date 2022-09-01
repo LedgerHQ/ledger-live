@@ -5,7 +5,7 @@ import { useTheme } from "@react-navigation/native";
 
 type Props = {
   size?: number;
-  Icon: React.ComponentType<any>;
+  Icon: React.ComponentType<{ size?: number; color?: string }>;
   confirmed?: boolean;
   failed?: boolean;
   type: OperationType;

@@ -1,34 +1,32 @@
 import React, { useCallback } from "react";
-import { StyleSheet, Linking } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
-import { urls } from "../../../config/urls";
+import type {
+  BaseComposite,
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import type { CosmosClaimRewardsFlowParamList } from "./types";
+import { ScreenName } from "../../../const";
 
-const forceInset = {
-  bottom: "always",
-};
-type RouteParams = {
-  accountId: string;
-  deviceId: string;
-  transaction: any;
-  error: Error;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+type Props = BaseComposite<
+  StackNavigatorProps<
+    CosmosClaimRewardsFlowParamList,
+    ScreenName.CosmosClaimRewardsValidationError
+  >
+>;
+
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation.getParent().pop();
+    navigation
+      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
+      .pop();
   }, [navigation]);
-  const contactUs = useCallback(() => {
-    Linking.openURL(urls.contact);
-  }, []);
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -41,18 +39,13 @@ export default function ValidationError({ navigation, route }: Props) {
           backgroundColor: colors.background,
         },
       ]}
-      forceInset={forceInset}
     >
       <TrackScreen category="CosmosClaimRewards" name="ValidationError" />
-      <ValidateError
-        error={error}
-        onRetry={retry}
-        onClose={onClose}
-        onContactUs={contactUs}
-      />
+      <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,

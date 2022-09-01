@@ -113,7 +113,7 @@ const SelectableAccountsList = ({
             useFullBalance={useFullBalance}
           />
         )}
-        ListEmptyComponent={() => emptyState || null}
+        ListEmptyComponent={() => <>{emptyState || null}</>}
       />
     </Flex>
   );
@@ -339,7 +339,7 @@ const Header = ({
 
   return (
     <Flex
-      paddingHorizontal={16}
+      paddingX={16}
       flexDirection="row"
       alignItems="center"
       paddingBottom={8}

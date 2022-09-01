@@ -7,6 +7,7 @@ import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/logic";
 
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
+import { App } from "@ledgerhq/types-live";
 import { urls } from "../../../config/urls";
 
 import { NavigatorName } from "../../../const";
@@ -81,10 +82,10 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
     [successInstalls],
   );
 
-  const app = useMemo(
+  const app: App | undefined = useMemo(
     () =>
       (successInstalls && successInstalls.length > 0 && successInstalls[0]) ||
-      {},
+      undefined,
     [successInstalls],
   );
 
@@ -93,7 +94,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   return (
     <BottomModal isOpened={successInstalls.length >= 1} onClose={onClose}>
       <Flex alignItems="center">
-        <AppIcon app={app} size={48} radius={14} />
+        {app && <AppIcon app={app} size={48} radius={14} />}
         <TextContainer>
           <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
             <Trans i18nKey="AppAction.install.done.title" />
@@ -102,7 +103,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
             {hasLiveSupported ? (
               <Trans
                 i18nKey="AppAction.install.done.description"
-                values={{ app: app.name }}
+                values={{ app: app?.name }}
               />
             ) : (
               <Trans i18nKey="manager.installSuccess.notSupported" />

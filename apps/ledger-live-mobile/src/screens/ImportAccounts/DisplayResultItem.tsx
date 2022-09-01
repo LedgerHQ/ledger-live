@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Account } from "@ledgerhq/types-live";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { ImportItem } from "@ledgerhq/live-common/account/importAccounts";
 import AccountCard from "../../components/AccountCard";
 import CheckBox from "../../components/CheckBox";
 import { track } from "../../analytics";
@@ -10,10 +11,10 @@ const selectableModes = ["create", "update"];
 
 export default class DisplayResultItem extends Component<{
   account: Account;
-  mode: any;
+  mode: ImportItem["mode"];
   checked: boolean;
   importing: boolean;
-  onSwitch: (boolean, Account) => void;
+  onSwitch: (checked: boolean, account: Account) => void;
 }> {
   onSwitch = () => {
     track(this.props.checked ? "AccountSwitchOff" : "AccountSwitchOn");
@@ -29,22 +30,14 @@ export default class DisplayResultItem extends Component<{
         style={[styles.root, { opacity: selectable ? 1 : 0.5 }]}
       >
         <Flex flex={1}>
-          <AccountCard
-            account={account}
-            parentAccount={null}
-            style={styles.card}
-          />
+          <AccountCard account={account} style={styles.card} />
         </Flex>
         {!selectable ? null : (
           <Flex ml={8}>
             {importing ? (
               <InfiniteLoader />
             ) : (
-              <CheckBox
-                onChange={this.onSwitch}
-                isChecked={checked}
-                style={styles.marginLeft}
-              />
+              <CheckBox onChange={this.onSwitch} isChecked={checked} />
             )}
           </Flex>
         )}
@@ -62,5 +55,4 @@ const styles = StyleSheet.create({
   card: {
     marginLeft: 8,
   },
-  marginLeft: { marginLeft: 24 },
 });

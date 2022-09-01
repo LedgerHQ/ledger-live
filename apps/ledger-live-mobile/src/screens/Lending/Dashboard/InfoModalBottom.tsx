@@ -1,26 +1,28 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { rgba, withTheme } from "../../../colors";
+import { DefaultTheme } from "styled-components/native";
+import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
+import { rgba, Theme, withTheme } from "../../../colors";
 import BottomModal from "../../../components/BottomModal";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import TrackScreen from "../../../analytics/TrackScreen";
 
 type button = {
-  title: string;
-  onPress: (..._: Array<any>) => any;
+  title: React.ReactNode;
+  onPress: React.ComponentProps<typeof Button>["onPress"];
 };
 type Props = {
   isOpened: boolean;
   onClose: () => void;
-  onConfirm: () => any;
-  onModalHide?: () => any;
+  onConfirm?: () => void;
+  onModalHide?: () => void;
   title?: React.ReactNode;
   description?: React.ReactNode;
-  Icon?: React.ComponentType<any>;
+  Icon?: IconType;
   buttons: button[];
-  alert: boolean;
-  colors: any;
+  alert?: boolean;
+  colors: Theme["colors"] & DefaultTheme["colors"];
 };
 
 class ConfirmationModal extends PureComponent<Props> {
@@ -34,10 +36,8 @@ class ConfirmationModal extends PureComponent<Props> {
       onClose,
       title,
       description,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       onConfirm,
       Icon,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       alert,
       buttons,
       colors,
@@ -46,7 +46,6 @@ class ConfirmationModal extends PureComponent<Props> {
     return (
       <BottomModal
         {...rest}
-        id="ConfirmationModal"
         isOpened={isOpened}
         onClose={onClose}
         style={styles.confirmationModal}

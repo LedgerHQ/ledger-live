@@ -165,7 +165,7 @@ const LanguageSelect = ({ device, productName }: Props) => {
               currentValue={currentLocale}
               onChange={handleLanguageSelectOnChange}
             >
-              {supportedLocales.map((locale: string, index: number) => (
+              {supportedLocales.map((locale, index: number) => (
                 <SelectableList.Element key={index + locale} value={locale}>
                   {languages[locale]}
                 </SelectableList.Element>

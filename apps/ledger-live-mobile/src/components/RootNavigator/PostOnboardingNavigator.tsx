@@ -5,12 +5,12 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
-import { ParamList } from "../../screens/PostOnboarding/types";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import PostOnboardingHub from "../../screens/PostOnboarding/PostOnboardingHub";
 import PostOnboardingMockActionScreen from "../../screens/PostOnboarding/PostOnboardingMockActionScreen";
+import { PostOnboardingNavigatorParamList } from "./types/PostOnboardingNavigator";
 
-const Stack = createStackNavigator<ParamList>();
+const Stack = createStackNavigator<PostOnboardingNavigatorParamList>();
 
 const screenOptions = { headerShown: true, title: "", headerLeft: () => null };
 
@@ -29,20 +29,16 @@ const PostOnboardingNavigator = () => {
       }}
     >
       <Stack.Screen
-        name={ScreenName.PostOnboardingHub as "PostOnboardingHub"}
+        name={ScreenName.PostOnboardingHub}
         component={PostOnboardingHub}
         options={screenOptions}
       />
       <Stack.Screen
-        name={
-          ScreenName.PostOnboardingDebugScreen as "PostOnboardingDebugScreen"
-        }
+        name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
       />
       <Stack.Screen
-        name={
-          ScreenName.PostOnboardingMockActionScreen as "PostOnboardingMockActionScreen"
-        }
+        name={ScreenName.PostOnboardingMockActionScreen}
         component={PostOnboardingMockActionScreen}
         options={screenOptions}
       />

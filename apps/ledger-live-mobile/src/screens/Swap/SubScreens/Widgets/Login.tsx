@@ -1,12 +1,12 @@
 import React from "react";
 import { Widget } from "./Widget";
-import { LoginProps } from "../../types";
+import { LoginParamList } from "../../types";
 
 export function Login({
   route: {
     params: { provider },
   },
-}: LoginProps) {
+}: LoginParamList) {
   switch (provider) {
     case "ftx":
     case "ftxus":

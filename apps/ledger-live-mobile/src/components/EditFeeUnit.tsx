@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { FlatList, View, StyleSheet, Keyboard } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
+import Icon from "react-native-vector-icons/FontAwesome";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
+import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ScreenName } from "../const";
 import { useFieldByFamily, useEditTxFeeByFamily } from "../families/helpers";
 import SettingsRow from "./SettingsRow";
@@ -14,23 +16,39 @@ import CurrencyInput from "./CurrencyInput";
 import Touchable from "./Touchable";
 import BottomModal from "./BottomModal";
 import Button from "./Button";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "./RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 
 type Props = {
   account: Account;
   field: string;
 };
+
+type Navigation = BaseComposite<
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+>;
+
 export default function EditFreeUnit({ account, field }: Props) {
-  const { navigate } = useNavigation();
-  const route = useRoute();
+  const { navigate } = useNavigation<Navigation["navigation"]>();
+  const route = useRoute<Navigation["route"]>();
   const { t } = useTranslation();
   const fieldByFamily = useFieldByFamily(field);
-  const [fee, setFee] = useState<BigNumber | null | typeof undefined>(
-    fieldByFamily,
-  );
+  const [fee, setFee] = useState<BigNumber | null>(() => {
+    if (fieldByFamily && fieldByFamily instanceof BigNumber) {
+      return fieldByFamily;
+    }
+    return null;
+  });
   const [isModalOpened, setIsModalOpened] = useState(false);
   const [isValid, setIsValid] = useState(true);
-  const [transaction, setTransaction] = useState(route.params?.transaction);
-  const feeCustomUnit = transaction.feeCustomUnit || account.unit;
+  const [transaction, setTransaction] = useState<Transaction>(
+    (route.params as { transaction: Transaction })?.transaction,
+  );
+  const feeCustomUnit =
+    (transaction as { feeCustomUnit?: Unit }).feeCustomUnit || account.unit;
   const editTxFeeByFamily = useEditTxFeeByFamily();
 
   function onRequestClose() {
@@ -41,16 +59,16 @@ export default function EditFreeUnit({ account, field }: Props) {
     setIsModalOpened(true);
   }
 
-  function keyExtractor(item: any): string {
+  function keyExtractor(item: Unit): string {
     return item.code;
   }
 
-  function onChange(fee: BigNumber | null | undefined) {
+  function onChange(fee: BigNumber | null) {
     setFee(fee);
     setIsValid(!(fee && fee.isZero()));
   }
 
-  function updateTransaction(feeCustomUnit: any) {
+  function updateTransaction(feeCustomUnit: Unit) {
     const bridge = getAccountBridge(account);
     setTransaction(
       bridge.updateTransaction(transaction, {
@@ -63,7 +81,9 @@ export default function EditFreeUnit({ account, field }: Props) {
   function onValidateFees() {
     Keyboard.dismiss();
     navigate(ScreenName.SendSummary, {
+      ...route.params,
       accountId: account.id,
+      parentId: undefined,
       transaction: editTxFeeByFamily({
         account,
         field,
@@ -111,11 +131,7 @@ export default function EditFreeUnit({ account, field }: Props) {
           />
         </View>
       </View>
-      <BottomModal
-        id="EditFeeUnitModal"
-        isOpened={isModalOpened}
-        onClose={onRequestClose}
-      >
+      <BottomModal isOpened={isModalOpened} onClose={onRequestClose}>
         <View style={styles.editFeesUnitsModalTitleRow}>
           <LText secondary semiBold style={styles.editFeesUnitModalTitle}>
             {t("send.fees.edit.title")}
