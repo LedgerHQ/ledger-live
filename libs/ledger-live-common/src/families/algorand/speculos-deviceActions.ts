@@ -7,11 +7,21 @@ import { displayTokenValue } from "./deviceTransactionConfig";
 
 // Will be useful when unit is gonna be algo
 const expectedAmount = ({ account, status }) =>
-  formatCurrencyUnit(account.unit, status.amount, {
-    disableRounding: true,
-  });
+  formatCurrencyUnit(
+    {
+      ...account.unit,
+      code: account.currency.deviceTicker || account.unit.code,
+      prefixCode: true,
+    },
+    status.amount,
+    {
+      showCode: true,
+      disableRounding: true,
+      joinFragmentsSeparator: " ",
+    }
+  );
 
-const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
+export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
   deviceActionFlow({
     steps: [
       {
@@ -32,9 +42,19 @@ const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
         title: "Fee",
         button: "Rr",
         expectedValue: ({ account, status }) =>
-          formatCurrencyUnit(account.unit, status.estimatedFees, {
-            disableRounding: true,
-          }),
+          formatCurrencyUnit(
+            {
+              ...account.unit,
+              code: account.currency.deviceTicker || account.unit.code,
+              prefixCode: true,
+            },
+            status.estimatedFees,
+            {
+              showCode: true,
+              disableRounding: true,
+              joinFragmentsSeparator: " ",
+            }
+          ),
       },
       {
         title: "Asset ID",
@@ -81,6 +101,10 @@ const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
               }),
       },
       {
+        title: "APPROVE",
+        button: "LRlr",
+      },
+      {
         title: "Sign",
         button: "LRlr",
       },
@@ -98,6 +122,3 @@ const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
       }, // Only on testnet
     ],
   });
-export default {
-  acceptTransaction,
-};

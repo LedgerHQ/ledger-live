@@ -1,7 +1,15 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { ReactNode, useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import { BottomDrawer, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
+import {
+  BottomDrawer,
+  Flex,
+  Icons,
+  Link,
+  Text,
+  Divider,
+} from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 
 import { useLocalizedTermsUrl, useTermsAccept } from "../logic/terms";
@@ -10,12 +18,6 @@ import Alert from "./Alert";
 
 const Description = styled(Text).attrs(() => ({
   color: "neutral.c70",
-}))``;
-
-const Divider = styled(Flex).attrs(() => ({
-  my: 4,
-  height: 1,
-  backgroundColor: "neutral.c40",
 }))``;
 
 const Update = ({ children }: { children: ReactNode }) => (

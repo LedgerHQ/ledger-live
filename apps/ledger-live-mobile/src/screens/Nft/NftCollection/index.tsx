@@ -74,10 +74,10 @@ const NftCollection = ({ route }: Props) => {
 
   // nfts' list related -----
   const [nftCount, setNftCount] = useState(MAX_NFT_FIRST_RENDER);
-  const nfts = useMemo(() => collection?.slice(0, nftCount), [
-    nftCount,
-    collection,
-  ]);
+  const nfts = useMemo(
+    () => collection?.slice(0, nftCount),
+    [nftCount, collection],
+  );
   const sendToken = () => {
     navigation.navigate(NavigatorName.SendFunds, {
       screen: ScreenName.SendNft,

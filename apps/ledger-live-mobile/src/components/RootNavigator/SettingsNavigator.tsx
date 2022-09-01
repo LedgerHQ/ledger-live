@@ -1,10 +1,14 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import {
   createStackNavigator,
+  StackNavigationProp,
   TransitionPresets,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import { TouchableOpacity } from "react-native";
+import { Box, Icons } from "@ledgerhq/native-ui";
+import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import BenchmarkQRStream from "../../screens/BenchmarkQRStream";
 import DebugSwap from "../../screens/DebugSwap";
@@ -12,9 +16,10 @@ import DebugBLE from "../../screens/DebugBLE";
 import DebugBLEBenchmark from "../../screens/DebugBLEBenchmark";
 import DebugCrash from "../../screens/DebugCrash";
 import DebugHttpTransport from "../../screens/DebugHttpTransport";
+import DebugFeatureFlags from "../../screens/DebugFeatureFlags";
 import DebugIcons from "../../screens/DebugIcons";
-import DebugLottie from "../../screens/DebugLottie.js";
-import DebugLogs from "../../screens/DebugLogs.js";
+import DebugLottie from "../../screens/DebugLottie";
+import DebugLogs from "../../screens/DebugLogs";
 import DebugStore from "../../screens/DebugStore";
 import DebugEnv from "../../screens/DebugEnv";
 import DebugPlayground from "../../screens/DebugPlayground";
@@ -24,6 +29,7 @@ import AboutSettings from "../../screens/Settings/About";
 import Resources from "../../screens/Settings/Resources";
 import GeneralSettings from "../../screens/Settings/General";
 import CountervalueSettings from "../../screens/Settings/General/CountervalueSettings";
+import NotificationsSettings from "../../screens/Settings/Notifications";
 import HelpSettings from "../../screens/Settings/Help";
 import RegionSettings from "../../screens/Settings/General/Region";
 import CurrenciesList from "../../screens/Settings/CryptoAssets/Currencies/CurrenciesList";
@@ -31,6 +37,7 @@ import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/Cur
 import DebugSettings, {
   DebugDevices,
   DebugMocks,
+  DebugMocksParams,
 } from "../../screens/Settings/Debug";
 import DebugExport from "../../screens/Settings/Debug/ExportAccounts";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
@@ -44,14 +51,41 @@ import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
-import DebugStoryly from "../../screens/DebugStoryly";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
+
+// TODO: types for each screens and navigators need to be set
+export type SettingsNavigatorStackParamList = {
+  DebugMocks: DebugMocksParams;
+
+  // Hack: allows any other properties
+  [otherScreens: string]: undefined | object;
+};
+
+export type SettingsNavigatorProps =
+  StackNavigationProp<SettingsNavigatorStackParamList>;
+
+const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
+
+  const navigation = useNavigation();
+  const currentRoute = useCurrentRouteName();
+
+  const goBackFromNotifications = useCallback(() => {
+    track("button_clicked", {
+      button: "Back Arrow",
+      screen: currentRoute,
+    });
+    navigation.goBack();
+  }, [navigation, currentRoute]);
+
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -95,6 +129,20 @@ export default function SettingsNavigator() {
         component={AboutSettings}
         options={{
           title: t("settings.about.title"),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.NotificationsSettings}
+        component={NotificationsSettings}
+        options={{
+          headerLeft: () => (
+            <Box ml={6}>
+              <TouchableOpacity onPress={goBackFromNotifications}>
+                <Icons.ArrowLeftMedium size={24} />
+              </TouchableOpacity>
+            </Box>
+          ),
+          title: t("settings.notifications.title"),
         }}
       />
       <Stack.Screen
@@ -167,6 +215,13 @@ export default function SettingsNavigator() {
         component={DebugDevices}
         options={{
           title: "Debug Devices",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFeatureFlags}
+        component={DebugFeatureFlags}
+        options={{
+          title: "Debug Feature Flags",
         }}
       />
       <Stack.Screen
@@ -274,13 +329,6 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugStoryly}
-        component={DebugStoryly}
-        options={{
-          title: "Debug Storyly",
-        }}
-      />
-      <Stack.Screen
         name={ScreenName.DebugPlayground}
         component={DebugPlayground}
         options={{
@@ -306,5 +354,3 @@ export default function SettingsNavigator() {
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

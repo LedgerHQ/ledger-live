@@ -12,12 +12,12 @@ import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 import { installAppFirstTime } from "../../../actions/settings";
 
 type Props = {
-  app: App,
-  state: State,
-  dispatch: (action: Action) => void,
-  notEnoughMemoryToInstall: boolean,
-  setAppInstallWithDependencies: (params: { app: App, dependencies: App[] }) => void,
-  storageWarning: (appName: string) => void,
+  app: App;
+  state: State;
+  dispatch: (_: Action) => void;
+  notEnoughMemoryToInstall: boolean;
+  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
+  storageWarning: (_: string) => void;
 };
 
 const ButtonContainer = styled(Box).attrs({
@@ -55,7 +55,7 @@ export default function AppInstallButton({
     if (disabled) return;
     if (notEnoughMemoryToInstall) {
       storageWarning(name);
-      return
+      return;
     }
     if (needsDependencies && setAppInstallWithDependencies) {
       setAppInstallWithDependencies(needsDependencies);
@@ -79,8 +79,8 @@ export default function AppInstallButton({
 
   return (
     <TouchableOpacity onPress={installApp}>
-      <ButtonContainer borderColor="neutral.c40">
-        <Icons.PlusMedium size={18} color="neutral.c100"/>
+      <ButtonContainer borderColor="neutral.c30">
+        <Icons.PlusMedium size={18} color="neutral.c100" />
       </ButtonContainer>
     </TouchableOpacity>
   );

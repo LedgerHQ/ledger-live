@@ -3,6 +3,7 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
   TransitionPresets,
+  StackNavigationProp,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/native-ui";
@@ -20,10 +21,14 @@ import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
 import WalletConnectScan from "../../screens/WalletConnect/Scan";
 import WalletConnectConnect from "../../screens/WalletConnect/Connect";
 import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
+// eslint-disable-next-line import/no-unresolved
 import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
+// eslint-disable-next-line import/no-cycle
 import Main from "./MainNavigator";
+// eslint-disable-next-line import/no-cycle
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
+// eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import SendFundsNavigator from "./SendFundsNavigator";
@@ -34,6 +39,7 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeNavigator from "./ExchangeNavigator";
+import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -41,6 +47,7 @@ import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
+// eslint-disable-next-line import/no-cycle
 import SwapNavigator from "./SwapNavigator";
 import LendingNavigator from "./LendingNavigator";
 import LendingInfoNavigator from "./LendingInfoNavigator";
@@ -62,6 +69,7 @@ import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
 import PlatformApp from "../../screens/Platform/App";
+// eslint-disable-next-line import/no-cycle
 import AccountsNavigator from "./AccountsNavigator";
 
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
@@ -78,8 +86,27 @@ import ExchangeStackNavigator from "./ExchangeStackNavigator";
 
 import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
 import Learn from "../../screens/Learn";
+// eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
+
+import {
+  BleDevicePairingFlow,
+  BleDevicePairingFlowParams,
+} from "../../screens/BleDevicePairingFlow/index";
+
+// TODO: types for each screens and navigators need to be set
+export type BaseNavigatorStackParamList = {
+  BleDevicePairingFlow: BleDevicePairingFlowParams;
+
+  // Hack: allows any other properties
+  [otherScreens: string]: undefined | object;
+};
+
+export type BaseNavigatorProps =
+  StackNavigationProp<BaseNavigatorStackParamList>;
+
+const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -89,6 +116,8 @@ export default function BaseNavigator() {
     [colors],
   );
   const learn = useFeature("learn");
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
@@ -177,8 +206,10 @@ export default function BaseNavigator() {
           name={ScreenName.Learn}
           component={Learn}
           options={{
-            headerShown: false,
+            headerShown: true,
             animationEnabled: false,
+            headerTitle: "",
+            headerLeft: () => null,
           }}
         />
       ) : null}
@@ -351,8 +382,16 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={NavigatorName.Exchange}
-        component={ExchangeNavigator}
-        options={{ headerStyle: styles.headerNoShadow, headerLeft: null }}
+        component={
+          ptxSmartRoutingMobile?.enabled
+            ? ExchangeLiveAppNavigator
+            : ExchangeNavigator
+        }
+        options={
+          ptxSmartRoutingMobile?.enabled
+            ? { headerShown: false }
+            : { headerStyle: styles.headerNoShadow, headerLeft: null }
+        }
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
@@ -594,8 +633,13 @@ export default function BaseNavigator() {
           />
         );
       })}
+      <Stack.Screen
+        name={ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow"}
+        component={BleDevicePairingFlow}
+        options={{
+          title: "",
+        }}
+      />
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

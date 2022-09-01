@@ -1,5 +1,215 @@
 # ledger-live-desktop
 
+## 2.47.0-next.5
+
+### Patch Changes
+
+- [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`274d8a751e`](https://github.com/LedgerHQ/ledger-live/commit/274d8a751ebf79d401c7d123355705aff7f9480e) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fixes analytics support
+
+## 2.47.0-next.4
+
+### Patch Changes
+
+- [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`fdf009e526`](https://github.com/LedgerHQ/ledger-live/commit/fdf009e526beb5d6413ebc95666a9df58749336a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix handle new-window event in WebPlatformPlayer
+
+## 2.47.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503)]:
+  - @ledgerhq/live-common@27.0.0-next.3
+
+## 2.47.0-next.2
+
+### Minor Changes
+
+- [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
+
+* [#625](https://github.com/LedgerHQ/ledger-live/pull/625) [`2589194215`](https://github.com/LedgerHQ/ledger-live/commit/25891942151e4fefbdf6de8cdcf4264c0317f90a) Thanks [@chabroA](https://github.com/chabroA)! - Add navigation option to WebPlatformPlayer
+
+- [#855](https://github.com/LedgerHQ/ledger-live/pull/855) [`2258f1ae8e`](https://github.com/LedgerHQ/ledger-live/commit/2258f1ae8e052761003d2c92efd2e5d00198439e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add banner to external integrations
+
+### Patch Changes
+
+- Updated dependencies [[`a36d1de865`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100), [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1)]:
+  - @ledgerhq/live-common@27.0.0-next.2
+
+## 2.47.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2)]:
+  - @ledgerhq/live-common@26.1.0-next.1
+
+## 2.47.0-next.0
+
+### Minor Changes
+
+- [#814](https://github.com/LedgerHQ/ledger-live/pull/814) [`23c9bf994`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development/QA tool for feature flags [Desktop]
+
+* [#961](https://github.com/LedgerHQ/ledger-live/pull/961) [`b06c9fdf5`](https://github.com/LedgerHQ/ledger-live/commit/b06c9fdf5ccbbc68283dd73ea4c3ea0e380c1539) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Minor wording changes
+
+### Patch Changes
+
+- Updated dependencies [[`68c50cd94`](https://github.com/LedgerHQ/ledger-live/commit/68c50cd94bbe50a1bf284a2e9e5aed3781788754), [`432cfa899`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb), [`23c9bf994`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2), [`6e057f716`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4), [`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/types-live@6.24.0-next.0
+  - @ledgerhq/react-ui@0.9.0-next.0
+  - @ledgerhq/live-common@26.1.0-next.0
+  - @ledgerhq/hw-transport@6.27.3-next.0
+  - @ledgerhq/hw-transport-http@6.27.3-next.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.27.4-next.0
+  
+## 2.46.1
+
+### Patch Changes
+
+- [#1082](https://github.com/LedgerHQ/ledger-live/pull/1082) [`7b3026ba25`](https://github.com/LedgerHQ/ledger-live/commit/7b3026ba25a30d0733defe5459a37f9c6b6b1772) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fixes analytics support
+
+* [#1078](https://github.com/LedgerHQ/ledger-live/pull/1078) [`3aafec3d8b`](https://github.com/LedgerHQ/ledger-live/commit/3aafec3d8becd74a96421540388e2460dd0e4627) Thanks [@chabroA](https://github.com/chabroA)! - Fix handle new-window event in WebPlatformPlayer
+
+## 2.46.0
+
+### Minor Changes
+
+- [#451](https://github.com/LedgerHQ/ledger-live/pull/451) [`134355d561`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Type libraries usage in LLC, LLD, LLM, CLI
+
+* [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
+
+- [#625](https://github.com/LedgerHQ/ledger-live/pull/625) [`2589194215`](https://github.com/LedgerHQ/ledger-live/commit/25891942151e4fefbdf6de8cdcf4264c0317f90a) Thanks [@chabroA](https://github.com/chabroA)! - Add navigation option to WebPlatformPlayer
+
+* [#855](https://github.com/LedgerHQ/ledger-live/pull/855) [`2258f1ae8e`](https://github.com/LedgerHQ/ledger-live/commit/2258f1ae8e052761003d2c92efd2e5d00198439e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add banner to external integrations
+
+### Patch Changes
+
+- [#757](https://github.com/LedgerHQ/ledger-live/pull/757) [`1edaab40e4`](https://github.com/LedgerHQ/ledger-live/commit/1edaab40e4d457cbe96f27a6b2a149517f800091) Thanks [@gre](https://github.com/gre)! - Downgrade @sentry/node to a compatible version with @sentry/electron
+
+* [#645](https://github.com/LedgerHQ/ledger-live/pull/645) [`88002763f3`](https://github.com/LedgerHQ/ledger-live/commit/88002763f3b7dc394cb8dff67b72cc234298c5f1) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add generic lotties
+
+- [#768](https://github.com/LedgerHQ/ledger-live/pull/768) [`73cad51a50`](https://github.com/LedgerHQ/ledger-live/commit/73cad51a50af55048d56566914c2f80a2fc29f02) Thanks [@Justkant](https://github.com/Justkant)! - fix: use getMainAccount in broadcastTransaction [LIVE-3142]
+
+* [#402](https://github.com/LedgerHQ/ledger-live/pull/402) [`6cd97ea894`](https://github.com/LedgerHQ/ledger-live/commit/6cd97ea89431d506b3c7021bd5753ecdb1e562da) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Migrate webplayerplatform to typescript
+
+- [#882](https://github.com/LedgerHQ/ledger-live/pull/882) [`807f3feb94`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8) Thanks [@Justkant](https://github.com/Justkant)! - fix: bump platform API version [LIVE-3181]
+
+* [#537](https://github.com/LedgerHQ/ledger-live/pull/537) [`910a79bc7e`](https://github.com/LedgerHQ/ledger-live/commit/910a79bc7e1668f71c7db3f9abf26e8e933ca2e7) Thanks [@tomav](https://github.com/tomav)! - Fixes autofocus on password field in lock screen
+
+- [#859](https://github.com/LedgerHQ/ledger-live/pull/859) [`f66e547cb9`](https://github.com/LedgerHQ/ledger-live/commit/f66e547cb9f9c6403f3046c08c8c14789fc47bfd) Thanks [@gre](https://github.com/gre)! - Add Analytics 'reason' field in context of sync events
+
+- Updated dependencies [[`37159cbb9e`](https://github.com/LedgerHQ/ledger-live/commit/37159cbb9e0023b65593e4ed71557f80bf48989e), [`ebe1adfb7d`](https://github.com/LedgerHQ/ledger-live/commit/ebe1adfb7d264da0f8c9e30b84c188eaa931d1e6), [`3dbd4d0781`](https://github.com/LedgerHQ/ledger-live/commit/3dbd4d0781569cd0bfce575854e706def2bd951f), [`1a33d8641f`](https://github.com/LedgerHQ/ledger-live/commit/1a33d8641f9d1b4e4adfa262a179f124918e0ff5), [`807f3feb94`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8), [`9f5d214c72`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a), [`134355d561`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4), [`a36d1de865`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100), [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1), [`eb74f06064`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f), [`f4b7894426`](https://github.com/LedgerHQ/ledger-live/commit/f4b7894426341f5b909ba3a2422ae2b8ecf31466), [`97eab434de`](https://github.com/LedgerHQ/ledger-live/commit/97eab434dee361716588b256146665c99c274af9)]:
+  - @ledgerhq/live-common@26.0.0
+  - @ledgerhq/types-live@6.23.0
+  - @ledgerhq/react-ui@0.8.3
+  - @ledgerhq/types-cryptoassets@6.23.0
+
+## 2.46.0-next.4
+
+### Minor Changes
+
+- [#625](https://github.com/LedgerHQ/ledger-live/pull/625) [`258919421`](https://github.com/LedgerHQ/ledger-live/commit/25891942151e4fefbdf6de8cdcf4264c0317f90a) Thanks [@chabroA](https://github.com/chabroA)! - Add navigation option to WebPlatformPlayer
+
+## 2.46.0-next.3
+
+### Minor Changes
+
+- [#855](https://github.com/LedgerHQ/ledger-live/pull/855) [`2258f1ae8`](https://github.com/LedgerHQ/ledger-live/commit/2258f1ae8e052761003d2c92efd2e5d00198439e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add banner to external integrations
+
+## 2.46.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`a36d1de86`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100)]:
+  - @ledgerhq/live-common@26.0.0-next.2
+
+## 2.46.0-next.1
+
+### Minor Changes
+
+- [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e89`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
+
+### Patch Changes
+
+- Updated dependencies [[`0c12f3e89`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1)]:
+  - @ledgerhq/live-common@25.2.0-next.1
+
+## 2.46.0-next.0
+
+### Minor Changes
+
+- [#451](https://github.com/LedgerHQ/ledger-live/pull/451) [`134355d56`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Type libraries usage in LLC, LLD, LLM, CLI
+
+### Patch Changes
+
+- [#757](https://github.com/LedgerHQ/ledger-live/pull/757) [`1edaab40e`](https://github.com/LedgerHQ/ledger-live/commit/1edaab40e4d457cbe96f27a6b2a149517f800091) Thanks [@gre](https://github.com/gre)! - Downgrade @sentry/node to a compatible version with @sentry/electron
+
+* [#645](https://github.com/LedgerHQ/ledger-live/pull/645) [`88002763f`](https://github.com/LedgerHQ/ledger-live/commit/88002763f3b7dc394cb8dff67b72cc234298c5f1) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add generic lotties
+
+- [#768](https://github.com/LedgerHQ/ledger-live/pull/768) [`73cad51a5`](https://github.com/LedgerHQ/ledger-live/commit/73cad51a50af55048d56566914c2f80a2fc29f02) Thanks [@Justkant](https://github.com/Justkant)! - fix: use getMainAccount in broadcastTransaction [LIVE-3142]
+
+* [#402](https://github.com/LedgerHQ/ledger-live/pull/402) [`6cd97ea89`](https://github.com/LedgerHQ/ledger-live/commit/6cd97ea89431d506b3c7021bd5753ecdb1e562da) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Migrate webplayerplatform to typescript
+
+- [#882](https://github.com/LedgerHQ/ledger-live/pull/882) [`807f3feb9`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8) Thanks [@Justkant](https://github.com/Justkant)! - fix: bump platform API version [LIVE-3181]
+
+* [#537](https://github.com/LedgerHQ/ledger-live/pull/537) [`910a79bc7`](https://github.com/LedgerHQ/ledger-live/commit/910a79bc7e1668f71c7db3f9abf26e8e933ca2e7) Thanks [@tomav](https://github.com/tomav)! - Fixes autofocus on password field in lock screen
+
+- [#859](https://github.com/LedgerHQ/ledger-live/pull/859) [`f66e547cb`](https://github.com/LedgerHQ/ledger-live/commit/f66e547cb9f9c6403f3046c08c8c14789fc47bfd) Thanks [@gre](https://github.com/gre)! - Add Analytics 'reason' field in context of sync events
+
+- Updated dependencies [[`37159cbb9`](https://github.com/LedgerHQ/ledger-live/commit/37159cbb9e0023b65593e4ed71557f80bf48989e), [`ebe1adfb7`](https://github.com/LedgerHQ/ledger-live/commit/ebe1adfb7d264da0f8c9e30b84c188eaa931d1e6), [`3dbd4d078`](https://github.com/LedgerHQ/ledger-live/commit/3dbd4d0781569cd0bfce575854e706def2bd951f), [`1a33d8641`](https://github.com/LedgerHQ/ledger-live/commit/1a33d8641f9d1b4e4adfa262a179f124918e0ff5), [`807f3feb9`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8), [`9f5d214c7`](https://github.com/LedgerHQ/ledger-live/commit/9f5d214c72849221ac52b40a175c10caacb6405a), [`134355d56`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4), [`eb74f0606`](https://github.com/LedgerHQ/ledger-live/commit/eb74f06064404051b182e0f6b0e9f2a3e2f2dc9f), [`f4b789442`](https://github.com/LedgerHQ/ledger-live/commit/f4b7894426341f5b909ba3a2422ae2b8ecf31466), [`97eab434d`](https://github.com/LedgerHQ/ledger-live/commit/97eab434dee361716588b256146665c99c274af9)]:
+  - @ledgerhq/live-common@25.2.0-next.0
+  - @ledgerhq/types-live@6.23.0-next.0
+  - @ledgerhq/react-ui@0.8.3-next.0
+  - @ledgerhq/types-cryptoassets@6.23.0-next.0
+
 ## 2.45.1
 
 ### Patch Changes

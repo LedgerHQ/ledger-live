@@ -45,10 +45,8 @@ function SubAccountRow({
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
   const range = useSelector(selectedTimeRangeSelector);
-  const {
-    countervalueChange,
-    cryptoChange,
-  } = useBalanceHistoryWithCountervalue({ account, range });
+  const { countervalueChange, cryptoChange } =
+    useBalanceHistoryWithCountervalue({ account, range });
 
   return (
     <LongPressGestureHandler

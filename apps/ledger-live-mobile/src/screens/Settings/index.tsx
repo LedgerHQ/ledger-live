@@ -9,7 +9,7 @@ import { ScreenName } from "../../const";
 import { accountsSelector } from "../../reducers/accounts";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
-import TrackScreen from "../../analytics/TrackScreen";
+import { TrackScreen } from "../../analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
@@ -73,6 +73,15 @@ export default function Settings({ navigation }: Props) {
         onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         arrowRight
       />
+      <FeatureToggle feature="pushNotifications">
+        <SettingsCard
+          title={t("settings.notifications.title")}
+          desc={t("settings.notifications.desc")}
+          Icon={Icons.NotificationsMedium}
+          onClick={() => navigation.navigate(ScreenName.NotificationsSettings)}
+          arrowRight
+        />
+      </FeatureToggle>
       <SettingsCard
         title={t("settings.help.title")}
         desc={t("settings.help.desc")}
