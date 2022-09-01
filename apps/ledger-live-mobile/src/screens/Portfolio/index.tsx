@@ -8,12 +8,9 @@ import Animated, {
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  isAccountEmpty,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
-import { Box, Flex, Button, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import {
@@ -36,7 +33,6 @@ import Header from "./Header";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { NavigatorName, ScreenName } from "../../const";
-import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import Assets from "./Assets";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
@@ -103,9 +99,10 @@ function PortfolioScreen({ navigation }: Props) {
   }, [setAddModalOpened, currentScreen]);
   useProviders();
 
-  const closeAddModal = useCallback(() => setAddModalOpened(false), [
-    setAddModalOpened,
-  ]);
+  const closeAddModal = useCallback(
+    () => setAddModalOpened(false),
+    [setAddModalOpened],
+  );
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
@@ -186,7 +183,7 @@ function PortfolioScreen({ navigation }: Props) {
       ...(showAssets && showCarousel
         ? [
             <Box background={colors.background.main}>
-              <SectionContainer px={0} minHeight={175}>
+              <SectionContainer px={0} minHeight={240}>
                 <SectionTitle
                   title={t("portfolio.recommended.title")}
                   containerProps={{ mb: 7, mx: 6 }}
@@ -200,7 +197,9 @@ function PortfolioScreen({ navigation }: Props) {
         ? [
             <SectionContainer px={6}>
               <SectionTitle title={t("analytics.allocation.title")} />
-              <AllocationsSection />
+              <Flex minHeight={76}>
+                <AllocationsSection />
+              </Flex>
             </SectionContainer>,
             <SectionContainer px={6} mb={8} isLast>
               <SectionTitle title={t("analytics.operations.title")} />
@@ -256,7 +255,6 @@ function PortfolioScreen({ navigation }: Props) {
           data={data}
           style={{
             flex: 1,
-            position: "relative",
             paddingTop: 48,
           }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}

@@ -81,17 +81,14 @@ const iconSwap = Icons.BuyCryptoMedium;
 const iconReceive = Icons.ArrowBottomMedium;
 const iconSend = Icons.ArrowTopMedium;
 
-export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = ({
-  account,
-  parentAccount,
-}: FabAccountActionsProps) => {
+export const FabAccountMainActionsComponent: React.FC<
+  FabAccountActionsProps
+> = ({ account, parentAccount }: FabAccountActionsProps) => {
   const [pressedDisabledAction, setPressedDisabledAction] = useState<
     ActionButton | undefined
   >(undefined);
-  const [
-    isDisabledActionModalOpened,
-    setIsDisabledActionModalOpened,
-  ] = useState(false);
+  const [isDisabledActionModalOpened, setIsDisabledActionModalOpened] =
+    useState(false);
 
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -131,15 +128,17 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
     setIsDisabledActionModalOpened(true);
   }, []);
 
-  const quickActions: QuickActionButtonProps[] = mainActions.map(action => ({
-    Icon: action.Icon,
-    children: action.label,
-    onPress: () => onPress(action),
-    disabled: action.disabled,
-    onPressWhenDisabled: action.modalOnDisabledClick
-      ? () => onPressWhenDisabled(action)
-      : undefined,
-  })).sort(a => a.disabled ? 0 : -1);
+  const quickActions: QuickActionButtonProps[] = mainActions
+    .map(action => ({
+      Icon: action.Icon,
+      children: action.label,
+      onPress: () => onPress(action),
+      disabled: action.disabled,
+      onPressWhenDisabled: action.modalOnDisabledClick
+        ? () => onPressWhenDisabled(action)
+        : undefined,
+    }))
+    .sort(a => (a.disabled ? 0 : -1));
 
   return (
     <>
@@ -152,18 +151,21 @@ export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = 
         />
       )}
       {/* // Use two columns only when we have only two or four items, otherwise three columns */}
-      {quickActions.length === 2 || quickActions.length === 4 ?
+      {quickActions.length === 2 || quickActions.length === 4 ? (
         <QuickActionList
           data={quickActions}
           numColumns={2}
-          key={'two_columns'}
+          key={"two_columns"}
           keyExtractor={item => "two_columns_" + item.id}
-        /> : <QuickActionList
-        data={quickActions}
-        numColumns={3}
-        key={'three_columns'}
-        keyExtractor={item => "three_columns_" + item.id}
-      />}
+        />
+      ) : (
+        <QuickActionList
+          data={quickActions}
+          numColumns={3}
+          key={"three_columns"}
+          keyExtractor={item => "three_columns_" + item.id}
+        />
+      )}
     </>
   );
 };
@@ -243,28 +245,33 @@ const FabAssetActionsComponent: React.FC<Props> = ({
     [onNavigate, currentScreen],
   );
 
-  const quickActions: QuickActionButtonProps[] = mainActions.map(action => ({
-    Icon: action.Icon,
-    children: action.label,
-    onPress: () => onPress(action),
-    disabled: action.disabled,
-  })).sort(a => a.disabled ? 0 : -1);
+  const quickActions: QuickActionButtonProps[] = mainActions
+    .map(action => ({
+      Icon: action.Icon,
+      children: action.label,
+      onPress: () => onPress(action),
+      disabled: action.disabled,
+    }))
+    .sort(a => (a.disabled ? 0 : -1));
 
   return (
     <>
       {/* // Use two columns only when we have only two or four items, otherwise three columns */}
-      {quickActions.length === 2 || quickActions.length === 4 ?
+      {quickActions.length === 2 || quickActions.length === 4 ? (
         <QuickActionList
           data={quickActions}
           numColumns={2}
-          key={'two_columns'}
+          key={"two_columns"}
           keyExtractor={item => "two_columns_" + item.id}
-        /> : <QuickActionList
-        data={quickActions}
-        numColumns={3}
-        key={'three_columns'}
-        keyExtractor={item => "three_columns_" + item.id}
-      />}
+        />
+      ) : (
+        <QuickActionList
+          data={quickActions}
+          numColumns={3}
+          key={"three_columns"}
+          keyExtractor={item => "three_columns_" + item.id}
+        />
+      )}
     </>
   );
 };

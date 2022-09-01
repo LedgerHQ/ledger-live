@@ -85,7 +85,7 @@ const Allocations = () => {
   return (
     <Flex flex={1} mt={6}>
       <TouchableOpacity onPress={goToAnalyticsAllocations}>
-        <Flex flex={1} flexDirection="row" alignItems="center">
+        <Flex flexDirection="row" alignItems="center">
           <Flex>
             <RingChart
               size={76}
@@ -94,15 +94,15 @@ const Allocations = () => {
               colors={colors}
             />
           </Flex>
-          <Flex flex={1} ml={9} flexDirection="row" pt={3}>
+          <Flex flex={1} ml={9} flexDirection="row" mt={3}>
             <Flex>
-              {distributionListFormatted.length >= 0 ? (
+              {distributionListFormatted.length > 0 ? (
                 <AllocationCaption
                   assetAllocation={distributionListFormatted[0]}
                   colors={colors}
                 />
               ) : null}
-              {distributionListFormatted.length >= 1 ? (
+              {distributionListFormatted.length > 1 ? (
                 <AllocationCaption
                   assetAllocation={distributionListFormatted[1]}
                   colors={colors}
@@ -110,13 +110,13 @@ const Allocations = () => {
               ) : null}
             </Flex>
             <Flex ml={8}>
-              {distributionListFormatted.length >= 2 ? (
+              {distributionListFormatted.length > 2 ? (
                 <AllocationCaption
                   assetAllocation={distributionListFormatted[2]}
                   colors={colors}
                 />
               ) : null}
-              {distributionListFormatted.length >= 3 ? (
+              {distributionListFormatted.length > 3 ? (
                 <AllocationCaption
                   assetAllocation={distributionListFormatted[3]}
                   colors={colors}
