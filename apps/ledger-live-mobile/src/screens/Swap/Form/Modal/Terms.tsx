@@ -34,14 +34,13 @@ export function Terms({
         providerName: getProviderName(provider),
       })}
     >
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <Link type="color" Icon={Icons.ExternalLinkMedium} onPress={onPressLink}>
         {t("transfer.swap2.form.disclaimer.tos")}
       </Link>
-
       <Button type="main" onPress={onCTA} marginTop={8} marginBottom={4}>
         {t("transfer.swap2.form.disclaimer.accept")}
       </Button>
-
       <Button type="main" onPress={onClose} outline>
         {t("common.close")}
       </Button>
