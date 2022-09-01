@@ -16,7 +16,7 @@ const QuickActionList = ({
         <QuickActionButton
           {...item}
           flex={1}
-          mr={(index + 1) % numColumns > 0 ? 4 : 0}
+          mr={(index + 1) % numColumns > 0 && data && index !== data.length - 1 ? 4 : 0}
           mb={data?.length && index + numColumns < data.length ? 4 : 0}
         />
       );

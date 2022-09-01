@@ -117,11 +117,6 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
-      !empty && !!AccountHeader && (
-        <Box bg={colors.background.main}>
-          <AccountHeader account={account} parentAccount={parentAccount} />
-        </Box>
-      ),
       <SectionContainer px={6} bg={colors.background.main}>
         <SectionTitle
           title={t("account.quickActions")}

@@ -61,10 +61,7 @@ function AssetCentricGraphCard({
   const currentScreen = useCurrentRouteName();
   const dispatch = useDispatch();
   const [itemRange, setTimeRange, timeRangeItems] = useTimeRange();
-  const {
-    countervalueChange,
-    balanceHistory,
-  } = assetPortfolio;
+  const { countervalueChange, balanceHistory } = assetPortfolio;
 
   const currencyUnitValue = balanceHistory[balanceHistory.length - 1];
 
@@ -75,13 +72,13 @@ function AssetCentricGraphCard({
   const item = useMemo(() => {
     if (hoveredItem) {
       return { value: undefined, countervalue: hoveredItem.value };
-    } else if (areAccountsEmpty) {
-      return { value: 0, countervalue: 0 };
-    } else {
-      return { value: currencyBalance, countervalue: currencyUnitValue.value };
     }
+    if (areAccountsEmpty) {
+      return { value: 0, countervalue: 0 };
+    }
+    return { value: currencyBalance, countervalue: currencyUnitValue.value };
   }, [hoveredItem, areAccountsEmpty, currencyBalance, currencyUnitValue.value]);
-  
+
   const items = [
     {
       unit: currency.units[0],
@@ -208,7 +205,7 @@ function AssetCentricGraphCard({
                 ) : (
                   <Flex flexDirection="row" alignItems="center">
                     {hoveredItem && hoveredItem.date ? (
-                      <Text variant={"large"} fontWeight={"semibold"}>
+                      <Text variant={"large"} fontWeight={"semiBold"}>
                         <FormatDate date={hoveredItem.date} />
                       </Text>
                     ) : (

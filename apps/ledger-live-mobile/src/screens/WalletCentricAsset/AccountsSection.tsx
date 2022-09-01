@@ -3,16 +3,17 @@ import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import AccountRow from "../Accounts/AccountRow";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "../../const";
 import { track } from "../../analytics";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
 
-const NB_MAX_ACCOUNTS_TO_DISPLAY: number = 3;
+const NB_MAX_ACCOUNTS_TO_DISPLAY = 3;
 
 type ListProps = {
-  accounts: any;
+  accounts: Account[] | TokenAccount[];
   currencyId: string;
   currencyTicker: string;
 };
@@ -26,16 +27,21 @@ const AccountsSection = ({
   const currentScreen = useCurrentRouteName();
   const { t } = useTranslation();
 
-  const renderItem = useCallback(
-    ({ item }: { item: any }) => (
-      <AccountRow navigation={navigation} account={item} accountId={item.id} />
-    ),
-    [navigation],
-  );
-
   const accountsToDisplay = useMemo(
     () => accounts.slice(0, NB_MAX_ACCOUNTS_TO_DISPLAY),
     [accounts],
+  );
+
+  const renderItem = useCallback(
+    ({ item, index }) => (
+      <AccountRow
+        navigation={navigation}
+        account={item}
+        accountId={item.id}
+        isLast={index === accountsToDisplay.length - 1}
+      />
+    ),
+    [navigation],
   );
 
   const goToAccountsScreen = useCallback(() => {
@@ -57,7 +63,7 @@ const AccountsSection = ({
 
   return (
     <>
-      <FlatList
+      <FlatList<Account | TokenAccount>
         data={accountsToDisplay}
         renderItem={renderItem}
         keyExtractor={item => item.id}

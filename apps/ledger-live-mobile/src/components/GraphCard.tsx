@@ -163,11 +163,7 @@ function GraphCard({
                   ) : (
                     <Flex flexDirection="row" alignItems="center">
                       {hoveredItem && hoveredItem.date ? (
-                        <Text
-                          variant={"body"}
-                          fontWeight={"semibold"}
-                          fontSize="16px"
-                        >
+                        <Text variant={"large"} fontWeight={"semiBold"}>
                           <FormatDate date={hoveredItem.date} />
                         </Text>
                       ) : (
