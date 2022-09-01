@@ -39,7 +39,7 @@ struct Tasks: Codable {
 
 struct Item: Codable {
     let operation: String
-    let id: Int
+    let targetId: Int
     let appName: String
 }
 

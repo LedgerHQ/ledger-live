@@ -37,8 +37,8 @@ class HwTransportReactNativeBle: RCTEventEmitter {
             EventEmitter.sharedInstance.dispatch(
                 Payload(
                     event: Event.status.rawValue,
-                    type: nil,
-                    data: available ? "PoweredOn" : "PoweredOff",
+                    type: available ? "PoweredOn" : "PoweredOff",
+                    data: nil
                 )
             )
         }
@@ -188,16 +188,16 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         }
     }
     
-    @objc func queue(_ token: String, endpoint: String) -> Void {
+    @objc func queue(_ rawQueue: String, endpoint: String) -> Void {
         if let queue = self.queueTask {
             // If the queue is stopped we create a new one
             if !queue.stopped {
-                queue.setToken(token: token)
+                queue.setRawQueue(rawQueue: rawQueue)
                 return
             }
         }
 
-        self.queueTask = Queue(token: token, endpoint: endpoint)
+        self.queueTask = Queue(rawQueue: rawQueue, endpoint: endpoint)
         
         /// While running a queue, if the device disconnects we wouldn't be notified because we are already
         /// dealing with a connected device and the callback will come from the -connect- from this file. In order
