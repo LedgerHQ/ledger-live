@@ -115,17 +115,17 @@ export class OnboardingPage {
     await this.continueTutorial();
   }
 
-  async setPinCode(group: string) {
+  async setPinCode(group: string, nano: string) {
     expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-1.png"]);
     await this.acceptPrivatePinCode();
 
     expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-2.png"]);
     await this.continueTutorial();
 
-    expect.soft(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-3.png"]);
+    expect.soft(await this.page.screenshot()).toMatchSnapshot([group, `pin-code-3-${nano}.png`]);
     await this.continueTutorial();
 
-    expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-4.png"]);
+    expect(await this.page.screenshot()).toMatchSnapshot([group, `pin-code-4-${nano}.png`]);
     await this.continuePinDrawer();
   }
 

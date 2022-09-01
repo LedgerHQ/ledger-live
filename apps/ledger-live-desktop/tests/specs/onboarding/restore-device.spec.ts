@@ -29,7 +29,7 @@ test.describe.parallel("Onboarding", () => {
 
         await onboardingPage.startTutorial("v3-restore-tutorial", nano);
 
-        await onboardingPage.setPinCode("v3-restore-tutorial");
+        await onboardingPage.setPinCode("v3-restore-tutorial", nano);
 
         expect(await page.screenshot()).toMatchSnapshot([
           "v3-restore-tutorial",
