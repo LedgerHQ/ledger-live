@@ -95,16 +95,16 @@ export function Welcome() {
   }
 
   const buyNanoX = useCallback(() => {
-    openURL(urls.noDevice.buyNew);
-  }, []);
+    openURL(urls.noDevice.buyNew[locale in urls.terms ? locale : "en"]);
+  }, [locale]);
 
   const openTermsAndConditions = useCallback(() => {
     openURL(urls.terms[locale in urls.terms ? locale : "en"]);
-  }, []);
+  }, [locale]);
 
   const openPrivacyPolicy = useCallback(() => {
     openURL(urls.privacyPolicy[locale in urls.privacyPolicy ? locale : "en"]);
-  }, []);
+  }, [locale]);
 
   const steps = stepLogos.map((logo, index) => ({
     image: logo,
@@ -134,7 +134,14 @@ export function Welcome() {
           >
             {t("onboarding.screens.welcome.nextButton")}
           </Button>
-          <Button iconPosition="right" variant="main" onClick={buyNanoX} outline={true}>
+          <Button
+            iconPosition="right"
+            variant="main"
+            onClick={buyNanoX}
+            outline={true}
+            flexDirection="column"
+            whiteSpace="normal"
+          >
             {t("onboarding.screens.welcome.buyLink")}
           </Button>
           <TermsAndConditionsContainer>
