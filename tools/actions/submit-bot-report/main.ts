@@ -14,6 +14,7 @@ async function main() {
   const githubToken = core.getInput("githubToken");
   const githubSha = core.getInput("githubSha");
   const slackChannel = core.getInput("slackChannel");
+  const slackIconEmoji = core.getInput("slackIconEmoji");
   const slackApiToken = core.getInput("slackApiToken");
 
   // load reports
@@ -57,6 +58,7 @@ async function main() {
       body: JSON.stringify({
         text,
         channel: slackChannel || "ledger-live-bot",
+        icon_emoji: slackIconEmoji || ":mere_denis:",
       }),
     }).then(handleErrors);
   }

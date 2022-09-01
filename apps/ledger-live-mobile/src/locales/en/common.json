@@ -323,6 +323,14 @@
     "InvalidRecipient": {
       "title": "Invalid recipient"
     },
+    "LanguageInstallRefusedOnDevice": {
+      "title": "Language installation refused on device",
+      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "LanguageNotFound": {
+      "title": "Language not found",
+      "description": "The language you are trying to install was not found. Please try installing another language."
+    },
     "LatestMCUInstalledError": {
       "title": "Sorry, there's nothing to update",
       "description": "Please contact Ledger Support if you cannot use your device."
@@ -1555,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow": {
+    "scanning": {
+      "withProductName": {
+        "title": "Looking for your {{productName}}",
+        "description": "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName": {
+        "title": "Looking for devices",
+        "description": "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired": "Already paired"
+    },
+    "pairing": {
+      "success": {
+        "title": "Paired with {{deviceName}}"
+      },
+      "loading": {
+        "title": "Pairing with {{deviceName}}",
+        "subtitle": "Confirm the code on your {{productName}}"
+      },
+      "error": {
+        "title": "Pairing unsucessful",
+        "subtitle": "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta": "Try again"
+      }
+    }
+  },
   "tabs": {
     "portfolio": "Wallet",
     "accounts": "Accounts",
@@ -1750,7 +1785,8 @@
       "validatorsCount": "Validators ({{number}})",
       "storageLimit": "Storage Limit",
       "gasLimit": "Gas Limit",
-      "id": "Id"
+      "id": "Id",
+      "autoClaimedRewards": "Auto Claimed Rewards"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",
@@ -3449,6 +3485,19 @@
       "de": "German"
     }
   },
+  "deviceLocalization": {
+    "language": "Language",
+    "deviceLanguage": "Device Language",
+    "changeLanguage": "Change language",
+    "allowLanguageInstallation": "Allow language installation",
+    "languageInstalled": "Device language changed to {{language}}",
+    "installingLanguage": "Installing language",
+    "languages": {
+      "english": "English",
+      "french": "French",
+      "spanish": "Spanish"
+    }
+  },
   "FirmwareUpdateCheckId": {
     "title": "Identifier",
     "description": "Please press both buttons together on your {{fullDeviceName}} if it displays the same identifier:"
@@ -3555,6 +3604,31 @@
       "available": {
         "title": "CELO available",
         "description": "This amount is disposable."
+      }
+    }
+  },
+  "osmosis": {
+    "info": {
+      "available": {
+        "title": "OSMO available"
+      },
+      "delegated": {
+        "description": "Delegated assets are used for Osmosis voting. This is your total number of votes."
+      },
+      "undelegating": {
+        "description": "Undelegated assets are in a timelock of 14 days, before being available."
+      }
+    },
+    "delegation": {
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Delegate your OSMO to earn rewards securely, keeping control of your assets.",
+            "steps": {
+              "1": "You will have to wait 14 days for the undelegation to complete."
+            }
+          }
+        }
       }
     }
   },
@@ -4518,6 +4592,11 @@
         "redelegate": "You will have to wait 21 days for undelegated assets to return to the available balance.",
         "undelegate": "You will have to wait 21 days for undelegated assets to return to the available balance."
       },
+      "osmosis": {
+        "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
+        "redelegate": "You will have to wait 14 days for undelegated assets to return to the available balance.",
+        "undelegate": "You will have to wait 14 days for undelegated assets to return to the available balance."
+      },
       "lending": "Verify the operation details on your device before sending it."
     },
     "amount": "Amount",
@@ -4527,6 +4606,7 @@
     "redelegationAmount": "Redelegated amount",
     "gas": "Gas",
     "validatorAddress": "Validator address",
+    "validatorName": "Validator name",
     "rewardAmount": "Reward amount",
     "undelegatedAmount": "Undelegated amount",
     "memo": "Memo"

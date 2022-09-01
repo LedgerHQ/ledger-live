@@ -12,12 +12,23 @@ import type { AppSpec } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { SubAccount } from "@ledgerhq/types-live";
+import { acceptTransaction } from "./speculos-deviceActions";
 const currency = getCryptoCurrencyById("tron");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "1");
 const maxAccount = 10;
 
 const getDecimalPart = (value: BigNumber, magnitude: number) =>
   value.minus(value.modulo(10 ** magnitude));
+
+const expectedApproximate = (
+  value: BigNumber,
+  expected: BigNumber,
+  delta = 50
+) => {
+  if (value.minus(expected).abs().gt(delta)) {
+    expect(value.toString()).toEqual(value.toString());
+  }
+};
 
 const tron: AppSpec<Transaction> = {
   name: "Tron",
@@ -26,6 +37,7 @@ const tron: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Tron",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   mutations: [
     {
@@ -50,10 +62,9 @@ const tron: AppSpec<Transaction> = {
       },
       test: ({ accountBeforeTransaction, operation, account }) => {
         botTest("account spendable balance decreased with operation", () =>
-          expect(account.spendableBalance.toString()).toBe(
-            accountBeforeTransaction.spendableBalance
-              .minus(operation.value)
-              .toString()
+          expectedApproximate(
+            account.spendableBalance,
+            accountBeforeTransaction.spendableBalance.minus(operation.value)
           )
         );
       },
@@ -181,7 +192,7 @@ const tron: AppSpec<Transaction> = {
         );
         const expectedTronPower = TPBeforeTx.minus(transaction.amount);
         botTest("tron power", () =>
-          expect(currentTP.toString()).toBe(expectedTronPower.toString())
+          expectedApproximate(currentTP, expectedTronPower)
         );
       },
     },

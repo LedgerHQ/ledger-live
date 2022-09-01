@@ -150,6 +150,14 @@ platform :ios do
         build_number: build_number + 1,
         xcodeproj: XCODE_PROJECT
       })
+
+      if (options[:ci])
+        sh(
+          <<-SHELL
+          echo "IOS_BUILD_NUMBER=#{build_number}" >> $GITHUB_ENV
+          SHELL
+        )
+      end
     end
 
     if (options[:ci])
@@ -257,9 +265,10 @@ platform :ios do
 
   desc "upload to Testflight (only to be run after an app-store build)"
   private_lane :upload do |options|
+    build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
+
     if (options[:nightly])
       begin
-        build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
         pilot(
           skip_submission: false,
           app_identifier: "com.ledger.live",
@@ -318,7 +327,7 @@ platform :ios do
   lane :ci_testflight do |options|
     setup_ios_ci
     build(ci: true)
-    upload
+    upload(ci: true)
   end
 
   desc "ci: create nightly version"
@@ -407,6 +416,13 @@ platform :android do
   private_lane :build do |options|
     type = options.fetch(:type, "Release")
     task = options[:apk] ? "assemble" : "bundle"
+    if(options[:ci])
+      sh(
+          <<-SHELL
+          echo "ANDROID_BUILD_NUMBER=#{infer_android_version_code()}" >> $GITHUB_ENV
+          SHELL
+        )
+    end
 
     gradle(task: "clean", project_dir: 'android/')
     gradle(
@@ -457,14 +473,20 @@ platform :android do
   desc "build APK and send to Google Play Store"
   lane :ci_playstore do
     prepare_android_internal
-    build(type: "Release")
+    build(
+      type: "Release",
+      ci: true
+    )
     upload(ci: true)
   end
 
   desc "build nightly version"
   lane :ci_nightly do
     prepare_android_internal(nightly: true)
-    build(type: "Release")
+    build(
+      type: "Release",
+      ci: true
+    )
     upload(
       nightly: true,
       ci: true

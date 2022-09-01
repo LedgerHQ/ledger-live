@@ -53,7 +53,6 @@ type RouteParams = {
   modelId: DeviceModelId;
   wired: boolean;
   device?: Device;
-  // eslint-disable-next-line no-unused-vars
   onSuccess?: (address?: string) => void;
   onError?: () => void;
 };

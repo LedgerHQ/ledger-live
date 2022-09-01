@@ -31,7 +31,7 @@ import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Animation from "../../components/Animation";
-import getDeviceAnimation from "../../components/DeviceAction/getDeviceAnimation";
+import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Illustration from "../../images/illustration/Illustration";
 import { urls } from "../../config/urls";
 
@@ -57,7 +57,6 @@ type RouteParams = {
   device?: Device;
   currency?: Currency;
   createTokenAccount?: boolean;
-  // eslint-disable-next-line no-unused-vars
   onSuccess?: (address?: string) => void;
   onError?: () => void;
 };

@@ -41,15 +41,6 @@ module.exports = {
         allow: ["warn", "error"],
       },
     ],
-    "no-unused-vars": [
-      "error",
-      {
-        argsIgnorePattern: "^_",
-        vars: "all",
-        args: "after-used",
-        ignoreRestSiblings: true,
-      },
-    ],
     "lines-between-class-members": 0,
     "flowtype/space-after-type-colon": 0,
     "no-continue": 0,
@@ -107,7 +98,18 @@ module.exports = {
     "react-native/no-inline-styles": "warn",
     "react/jsx-fragments": 0,
     "react/no-deprecated": "warn",
-    "@typescript-eslint/no-unused-vars": ["error"],
+
+    // Enables no-unused-vars only from TypeScript
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        argsIgnorePattern: "^_",
+        vars: "all",
+        args: "after-used",
+        ignoreRestSiblings: true,
+      },
+    ],
   },
   globals: {
     __DEV__: false,

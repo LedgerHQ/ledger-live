@@ -14,14 +14,15 @@ import {
 import { sample } from "lodash";
 import { SubAccount } from "@ledgerhq/types-live";
 
+const ELROND_MIN_SAFE = new BigNumber(10000);
+const maxAccounts = 6;
+
 function expectCorrectBalanceChange(input: TransactionTestInput<Transaction>) {
   const { account, operation, accountBeforeTransaction } = input;
   expect(account.balance.toNumber()).toBe(
     accountBeforeTransaction.balance.minus(operation.value).toNumber()
   );
 }
-
-const ELROND_MIN_SAFE = new BigNumber(10000);
 
 const elrondSpec: AppSpec<Transaction> = {
   name: "Elrond",
@@ -30,6 +31,7 @@ const elrondSpec: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Elrond",
   },
+  genericDeviceAction: acceptMoveBalanceTransaction,
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(ELROND_MIN_SAFE), "balance is too low");
@@ -56,8 +58,7 @@ const elrondSpec: AppSpec<Transaction> = {
       deviceAction: acceptMoveBalanceTransaction,
       transaction: ({ account, siblings, bridge }) => {
         invariant(account.spendableBalance.gt(0), "balance is 0");
-
-        const sibling = pickSiblings(siblings, 2);
+        const sibling = pickSiblings(siblings, maxAccounts);
         let amount = account.spendableBalance
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
