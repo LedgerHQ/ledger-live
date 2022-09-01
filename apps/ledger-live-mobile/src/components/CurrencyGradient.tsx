@@ -14,19 +14,14 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
   const { colors } = useTheme();
   const contrastedColor = ensureContrast(gradientColor, colors.background.main);
   return (
-    <Svg
-      width={541}
-      height={454}
-      viewBox="0 0 541 454"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <Svg width={541} height={454} viewBox="0 0 541 454" fill="none">
       <Mask
         id="a"
         style={{
           maskType: "alpha",
         }}
-        maskUnits="userSpaceOnUse"
+        // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
+        maskUnits={"userSpaceOnUse" as const}
         x={0}
         y={0}
         width={541}

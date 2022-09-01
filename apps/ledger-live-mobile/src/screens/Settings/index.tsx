@@ -13,12 +13,14 @@ import { TrackScreen } from "../../analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
+import { SettingsNavigatorStackParamList } from "../../components/RootNavigator/types/SettingsNavigator";
 
-type Props = {
-  navigation: any;
-};
-
-export default function Settings({ navigation }: Props) {
+export default function Settings({
+  navigation,
+}: StackNavigatorProps<
+  SettingsNavigatorStackParamList,
+  ScreenName.SettingsScreen
+>) {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
   const { handleSettingsRateApp } = useRatings();

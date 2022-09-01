@@ -1,9 +1,15 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import type { AccountLike } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
+import {
+  CompositeNavigationProp,
+  useNavigation,
+  useRoute,
+  useTheme,
+} from "@react-navigation/native";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -11,26 +17,73 @@ import CounterValue from "../../components/CounterValue";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 import { ScreenName } from "../../const";
+import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import type {
+  BaseComposite,
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+
+type Navigation = CompositeNavigationProp<
+  StackNavigatorNavigation<
+    SendFundsNavigatorStackParamList,
+    ScreenName.SendSummary
+  >,
+  StackNavigatorNavigation<BaseNavigatorStackParamList>
+>;
+
+type Route = BaseComposite<
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.SendSummary
+    >
+  | StackNavigatorProps<
+      SignTransactionNavigatorParamList,
+      ScreenName.SignTransactionSummary
+    >
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.LendingEnableSummary
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.LendingSupplySummary
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.LendingWithdrawSummary
+    >
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
+>["route"];
 
 type Props = {
   account: AccountLike;
+  parentAccount?: Account | null;
   transaction: Transaction;
 };
 export default function RippleFeeRow({ account, transaction }: Props) {
   const { colors } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
+  const route = useRoute<Route>();
   const openFees = useCallback(() => {
     navigation.navigate(ScreenName.RippleEditFee, {
+      ...route.params,
       accountId: account.id,
-      transaction,
+      transaction: transaction as RippleTransaction,
     });
-  }, [navigation, account, transaction]);
+  }, [navigation, route.params, account.id, transaction]);
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
   if (account.type !== "Account") return null;
-  const fee = transaction.fee;
-  const feeCustomUnit = transaction.feeCustomUnit;
+  const fee = (transaction as RippleTransaction).fee;
+  const feeCustomUnit = (transaction as RippleTransaction).feeCustomUnit;
   return (
     <SummaryRow
       onPress={extraInfoFees}

@@ -10,6 +10,7 @@ import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import ValidationSuccess from "./03-ValidationSuccess";
 import ValidationError from "./03-ValidationError";
+import type { PolkadotNominateFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -35,7 +36,7 @@ function NominateFlow() {
               })}
             />
           ),
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
@@ -74,8 +75,8 @@ function NominateFlow() {
         options={{
           headerTitle: "",
           gestureEnabled: false,
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen
@@ -93,4 +94,4 @@ const options = {
   headerShown: false,
 };
 export { NominateFlow as component, options };
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<PolkadotNominateFlowParamList>();

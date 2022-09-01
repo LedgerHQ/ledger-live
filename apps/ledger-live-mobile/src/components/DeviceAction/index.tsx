@@ -4,8 +4,27 @@ import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import {
+  ParamListBase,
+  useNavigation,
+  useTheme,
+} from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
+import type { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike, DeviceInfo } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import {
+  Exchange,
+  ExchangeRate,
+  InitSwapResult,
+} from "@ledgerhq/live-common/exchange/swap/types";
+import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
+import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
+import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
@@ -18,7 +37,6 @@ import {
   renderRequiresAppInstallation,
   renderAllowManager,
   renderInWrongAppForAccount,
-  renderError,
   renderDeviceNotOnboarded,
   renderBootloaderStep,
   renderExchange,
@@ -31,27 +49,83 @@ import {
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
+import { PartialNullable } from "../../types/helpers";
 
-type Props<R, H, P> = {
-  onResult?: (_: any) => Promise<void> | void;
-  onError?: (_: any) => Promise<void> | void;
-  renderOnResult?: (_: P) => React.ReactNode;
-  action?: Action<R, H, P>;
-  status?: any;
-  request?: R;
+type LedgerError = InstanceType<
+  LedgerErrorConstructor<{ [key: string]: unknown }>
+>;
+
+type Status = PartialNullable<{
+  appAndVersion: AppAndVersion;
   device: Device;
-  payload?: any;
+  unresponsive: boolean;
+  error: LedgerError & {
+    name?: string;
+  };
+  isLoading: boolean;
+  allowManagerRequestedWording: string;
+  requestQuitApp: boolean;
+  deviceInfo: DeviceInfo;
+  requestOpenApp: string;
+  allowOpeningRequestedWording: string;
+  requiresAppInstallation: {
+    appName: string;
+    appNames: string[];
+  };
+  inWrongDeviceForAccount: {
+    accountName: string;
+  };
+  onRetry: () => void;
+  repairModalOpened: {
+    auto: boolean;
+  };
+  onAutoRepair: () => void;
+  closeRepairModal: () => void;
+  deviceSignatureRequested: boolean;
+  deviceStreamingProgress: number;
+  displayUpgradeWarning: boolean;
+  passWarning: () => void;
+  initSwapRequested: boolean;
+  initSwapError: Error;
+  initSwapResult: InitSwapResult | null;
+  installingLanguage: boolean;
+  languageInstallationRequested: boolean;
+  signMessageRequested: TypedMessageData | MessageData;
+  allowOpeningGranted: boolean;
+  completeExchangeStarted: boolean;
+  completeExchangeResult: Transaction;
+  completeExchangeError: Error;
+  initSellRequested: boolean;
+  initSellResult: InitSellResult;
+  initSellError: Error;
+  installingApp: boolean;
+  progress: number;
+  listingApps: boolean;
+  amountExpectedTo: string;
+  estimatedFees: string;
+}>;
+
+type Props<H extends Status, P> = {
+  onResult?: (_: NonNullable<P>) => Promise<void> | void;
+  onError?: (_: Error) => Promise<void> | void;
+  renderOnResult?: (_: P) => JSX.Element | null;
+  status: H;
+  device: Device;
+  payload?: P | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
 };
 
-export default function DeviceAction<R, H, P>({
+export default function DeviceAction<R, H extends Status, P>({
   action,
-  request = null,
+  request,
   device: selectedDevice,
   ...props
-}: Props<R, H, P>): JSX.Element {
-  const status: any = action?.useHook(selectedDevice, request);
+}: Omit<Props<H, P>, "status"> & {
+  action: Action<R, H, P>;
+  request: R;
+}): JSX.Element {
+  const status = action?.useHook(selectedDevice, request);
   const payload = action?.mapResult(status);
 
   return (
@@ -65,7 +139,7 @@ export default function DeviceAction<R, H, P>({
   );
 }
 
-export function DeviceActionDefaultRendering<R, H, P>({
+export function DeviceActionDefaultRendering<R, H extends Status, P>({
   onResult,
   onError,
   device: selectedDevice,
@@ -75,13 +149,14 @@ export function DeviceActionDefaultRendering<R, H, P>({
   status,
   request,
   payload,
-}: Props<R, H, P>): JSX.Element | null {
+}: Props<H, P> & {
+  request?: R;
+}): JSX.Element | null {
   const { colors, dark } = useTheme();
   const dispatch = useDispatch();
-  const theme = dark ? "dark" : "light";
+  const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
-  const navigation = useNavigation();
-
+  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
   const {
     appAndVersion,
     device,
@@ -125,7 +200,7 @@ export function DeviceActionDefaultRendering<R, H, P>({
     if (deviceInfo) {
       dispatch(
         setLastSeenDeviceInfo({
-          modelId: device.modelId,
+          modelId: device!.modelId,
           deviceInfo,
           apps: [],
         }),
@@ -143,7 +218,7 @@ export function DeviceActionDefaultRendering<R, H, P>({
     return renderWarningOutdated({
       t,
       appName: appAndVersion.name,
-      passWarning,
+      passWarning: passWarning!,
       navigation,
       colors,
       theme,
@@ -154,8 +229,8 @@ export function DeviceActionDefaultRendering<R, H, P>({
     return (
       <AutoRepair
         t={t}
-        onDone={closeRepairModal}
-        device={device}
+        onDone={closeRepairModal!}
+        device={device!}
         navigation={navigation}
         colors={colors}
         theme={theme}
@@ -188,14 +263,14 @@ export function DeviceActionDefaultRendering<R, H, P>({
     const props = {
       t,
       description: t("DeviceAction.installApp", {
-        percentage: (progress * 100).toFixed(0) + "%",
+        percentage: (progress! * 100).toFixed(0) + "%",
         appName,
       }),
       colors,
       theme,
       appName,
       analyticsPropertyFlow,
-      request,
+      request: request as AppRequest,
     };
     return <LoadingAppInstall {...props} />;
   }
@@ -246,22 +321,30 @@ export function DeviceActionDefaultRendering<R, H, P>({
     !completeExchangeError
   ) {
     return renderExchange({
-      exchangeType: request?.exchangeType,
+      exchangeType: (request as { exchangeType: number })?.exchangeType,
       t,
-      device,
+      device: device!,
       theme,
     });
   }
 
   if (initSwapRequested && !initSwapResult && !initSwapError) {
+    const req = request as {
+      device: Device;
+      transaction: Transaction;
+      exchangeRate: ExchangeRate;
+      exchange: Exchange;
+      amountExpectedTo?: string;
+      estimatedFees?: string;
+    };
     return renderConfirmSwap({
       t,
       device: selectedDevice,
       colors,
       theme,
-      transaction: request?.transaction,
-      exchangeRate: request?.exchangeRate,
-      exchange: request?.exchange,
+      transaction: req?.transaction,
+      exchangeRate: req?.exchangeRate,
+      exchange: req?.exchange,
       amountExpectedTo: status.amountExpectedTo,
       estimatedFees: status.estimatedFees,
     });
@@ -281,8 +364,9 @@ export function DeviceActionDefaultRendering<R, H, P>({
       t,
       navigation,
       device: selectedDevice,
-      wording,
-      tokenContext: request?.tokenCurrency,
+      wording: wording!,
+      tokenContext: (request as { tokenCurrency?: TokenCurrency })
+        ?.tokenCurrency,
       isDeviceBlocker: !requestOpenApp,
       colors,
       theme,
@@ -293,7 +377,6 @@ export function DeviceActionDefaultRendering<R, H, P>({
     return renderInWrongAppForAccount({
       t,
       onRetry,
-      accountName: inWrongDeviceForAccount.accountName,
       colors,
       theme,
     });
@@ -306,23 +389,13 @@ export function DeviceActionDefaultRendering<R, H, P>({
     // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
     // into another handled case.
     if (
-      error instanceof DeviceNotOnboarded ||
-      (error instanceof TransportStatusError &&
-        error.message.includes("0x6d06"))
+      device &&
+      (error instanceof DeviceNotOnboarded ||
+        ((error as unknown) instanceof TransportStatusError &&
+          (error as Error).message.includes("0x6d06")))
     ) {
       return renderDeviceNotOnboarded({ t, device, navigation });
     }
-
-    return renderError({
-      t,
-      navigation,
-      error,
-      managerAppName:
-        error.name === "UpdateYourApp" ? error.managerAppName : undefined,
-      onRetry,
-      colors,
-      theme,
-    });
   }
 
   if ((!isLoading && !device) || unresponsive) {
@@ -346,18 +419,19 @@ export function DeviceActionDefaultRendering<R, H, P>({
 
   if (deviceInfo && deviceInfo.isBootloader) {
     return renderBootloaderStep({
-      onAutoRepair,
+      onAutoRepair: onAutoRepair!,
       t,
     });
   }
 
   if (request && device && deviceSignatureRequested) {
-    const { account, parentAccount, status, transaction } = request;
+    const { account, parentAccount, status, transaction } =
+      request as unknown as React.ComponentProps<typeof ValidateOnDevice>;
 
     if (account && status && transaction) {
       navigation.setOptions({
-        headerLeft: null,
-        headerRight: null,
+        headerLeft: undefined,
+        headerRight: undefined,
         gestureEnabled: false,
       });
       return (
@@ -377,7 +451,7 @@ export function DeviceActionDefaultRendering<R, H, P>({
   }
 
   if (request && device && signMessageRequested) {
-    const { account } = request;
+    const { account } = request as unknown as { account: AccountLike };
     return (
       <>
         <PreventNativeBack />
@@ -420,16 +494,16 @@ export function DeviceActionDefaultRendering<R, H, P>({
   return null;
 } // work around for not updating state inside scope of main function with a callback
 
-const RenderOnResultCallback = ({
+const RenderOnResultCallback = <P,>({
   onResult,
   payload,
 }: {
-  onResult: (_: any) => Promise<void> | void;
-  payload: any;
+  onResult: ((_: NonNullable<P>) => void | Promise<void>) | undefined;
+  payload: NonNullable<P>;
 }) => {
   // onDidMount
   useEffect(() => {
-    onResult(payload);
+    onResult && onResult(payload);
   }, []);
   return null;
 };

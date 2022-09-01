@@ -3,8 +3,8 @@ import { StyleSheet } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import { Trans } from "react-i18next";
 import { PairingFailed, GenuineCheckFailed } from "@ledgerhq/errors";
-import { useTheme } from "styled-components/native";
-import { Button, Flex } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
+import { useTheme } from "@react-navigation/native";
 import LocationRequired from "../LocationRequired";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
@@ -13,9 +13,10 @@ import GenericErrorView from "../../components/GenericErrorView";
 import HelpLink from "../../components/HelpLink";
 import IconArrowRight from "../../icons/ArrowRight";
 import { urls } from "../../config/urls";
+import Button from "../../components/Button";
 
 type Props = {
-  error: Error;
+  error: Error & { errorCode: BleErrorCode };
   status: string;
   onRetry: () => void;
   onBypassGenuine: () => void;
@@ -31,12 +32,10 @@ const hitSlop = {
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
 
-  // $FlowFixMe
   if (error.errorCode === BleErrorCode.LocationServicesDisabled) {
     return <LocationRequired onRetry={onRetry} errorType="disabled" />;
   }
 
-  // $FlowFixMe
   if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
     return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
   }

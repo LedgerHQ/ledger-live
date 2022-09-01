@@ -32,9 +32,9 @@ import ExternalLink from "../../../icons/ExternalLink";
 import FormatDate from "../../../components/FormatDate";
 import { SwapStatusIndicator, getStatusColor } from "../SwapStatusIndicator";
 import Footer from "../../OperationDetails/Footer";
-import { OperationDetailsProps } from "../types";
+import { OperationDetailsParamList } from "../types";
 
-export function OperationDetails({ route }: OperationDetailsProps) {
+export function OperationDetails({ route }: OperationDetailsParamList) {
   const { swapOperation } = route.params;
   const {
     swapId,
@@ -58,13 +58,17 @@ export function OperationDetails({ route }: OperationDetailsProps) {
   const { colors } = useTheme();
   const swap =
     fromAccount && fromAccount.swapHistory.find(s => s.swapId === swapId);
-  const status = Config.DEBUG_SWAP_STATUS || swap.status;
+  const status = Config.DEBUG_SWAP_STATUS || swap?.status;
 
   const fromCurrency = fromAccount && getAccountCurrency(fromAccount);
   const toCurrency = toAccount && getAccountCurrency(toAccount);
-  const statusColorKey = getStatusColor(status, colors, true);
-  const dotStyles = { backgroundColor: colors[statusColorKey] };
-  const textColorStyles = { color: colors[statusColorKey] };
+  const statusColorKey = status && getStatusColor(status, colors, true);
+  const dotStyles = {
+    backgroundColor: colors[statusColorKey as keyof typeof colors],
+  };
+  const textColorStyles = {
+    color: colors[statusColorKey as keyof typeof colors],
+  };
 
   const url =
     fromCurrency?.type === "CryptoCurrency" &&
@@ -74,7 +78,9 @@ export function OperationDetails({ route }: OperationDetailsProps) {
     );
 
   const openProvider = useCallback(() => {
-    Linking.openURL(urls.swap.providers[provider].main);
+    Linking.openURL(
+      urls.swap.providers[provider as keyof typeof urls.swap.providers].main,
+    );
   }, [provider]);
 
   return (
@@ -83,25 +89,29 @@ export function OperationDetails({ route }: OperationDetailsProps) {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
       >
-        <SwapStatusIndicator status={status} />
-        <LText tertiary style={styles.fromAmount} color="grey">
-          <CurrencyUnitValue
-            alwaysShowSign
-            showCode
-            unit={getAccountUnit(fromAccount)}
-            value={fromAmount.times(-1)}
-          />
-        </LText>
+        {status ? <SwapStatusIndicator status={status} /> : null}
+        {fromAccount && (
+          <LText style={styles.fromAmount} color="grey">
+            <CurrencyUnitValue
+              alwaysShowSign
+              showCode
+              unit={getAccountUnit(fromAccount!)}
+              value={fromAmount.times(-1)}
+            />
+          </LText>
+        )}
         <View style={styles.arrow}>
           <Icon name="ArrowBottom" size={30} color="neutral.c70" />
         </View>
-        <LText tertiary style={styles.toAmount} color={statusColorKey}>
-          <CurrencyUnitValue
-            alwaysShowSign
-            showCode
-            unit={getAccountUnit(toAccount)}
-            value={toAmount}
-          />
+        <LText style={styles.toAmount} color={statusColorKey}>
+          {toAccount ? (
+            <CurrencyUnitValue
+              alwaysShowSign
+              showCode
+              unit={getAccountUnit(toAccount)}
+              value={toAmount}
+            />
+          ) : null}
         </LText>
         <View style={styles.statusTextWrapper}>
           <View style={[styles.statusDot, dotStyles]} />
@@ -148,26 +158,30 @@ export function OperationDetails({ route }: OperationDetailsProps) {
             <Trans i18nKey={"transfer.swap.operationDetails.from"} />
           </LText>
           <View style={styles.account}>
-            <CurrencyIcon size={16} currency={fromCurrency} />
-            <LText
-              numberOfLines={1}
-              ellipsizeMode="middle"
-              semiBold
-              style={styles.accountName}
-            >
-              {getAccountName(fromAccount)}
-            </LText>
+            {fromCurrency && <CurrencyIcon size={16} currency={fromCurrency} />}
+            {fromAccount && (
+              <LText
+                numberOfLines={1}
+                ellipsizeMode="middle"
+                semiBold
+                style={styles.accountName}
+              >
+                {getAccountName(fromAccount)}
+              </LText>
+            )}
           </View>
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.fromAmount"} />
           </LText>
-          <LText style={styles.value}>
-            <CurrencyUnitValue
-              showCode
-              unit={getAccountUnit(fromAccount)}
-              value={fromAmount}
-            />
-          </LText>
+          {fromAccount && (
+            <LText style={styles.value}>
+              <CurrencyUnitValue
+                showCode
+                unit={getAccountUnit(fromAccount)}
+                value={fromAmount}
+              />
+            </LText>
+          )}
 
           <SectionSeparator style={{ marginBottom: 32 }} />
 
@@ -175,29 +189,35 @@ export function OperationDetails({ route }: OperationDetailsProps) {
             <Trans i18nKey={"transfer.swap.operationDetails.to"} />
           </LText>
           <View style={styles.account}>
-            <CurrencyIcon size={16} currency={toCurrency} />
-            <LText
-              numberOfLines={1}
-              ellipsizeMode="middle"
-              semiBold
-              style={styles.accountName}
-            >
-              {getAccountName(toAccount)}
-            </LText>
+            {toCurrency ? (
+              <CurrencyIcon size={16} currency={toCurrency} />
+            ) : null}
+            {toAccount ? (
+              <LText
+                numberOfLines={1}
+                ellipsizeMode="middle"
+                semiBold
+                style={styles.accountName}
+              >
+                {getAccountName(toAccount)}
+              </LText>
+            ) : null}
           </View>
           <LText style={styles.label} color="grey">
             <Trans i18nKey={"transfer.swap.operationDetails.toAmount"} />
           </LText>
           <LText style={styles.value}>
-            <CurrencyUnitValue
-              showCode
-              unit={getAccountUnit(toAccount)}
-              value={toAmount}
-            />
+            {toAccount ? (
+              <CurrencyUnitValue
+                showCode
+                unit={getAccountUnit(toAccount)}
+                value={toAmount}
+              />
+            ) : null}
           </LText>
         </View>
       </ScrollView>
-      {url ? <Footer url={url} account={fromAccount} /> : null}
+      {url && fromAccount ? <Footer url={url} account={fromAccount} /> : null}
     </View>
   );
 }

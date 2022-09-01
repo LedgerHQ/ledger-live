@@ -1,12 +1,11 @@
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BigNumber } from "bignumber.js";
 import type {
-  CosmosValidatorItem,
+  CosmosAccount,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -29,6 +28,8 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import TranslatedError from "../../../components/TranslatedError";
 import ValidatorImage from "../shared/ValidatorImage";
+import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { CosmosClaimRewardsFlowParamList } from "./types";
 
 const options = [
   {
@@ -62,22 +63,16 @@ const infoModalData = [
     ),
   },
 ];
-type RouteParams = {
-  accountId: string;
-  transaction?: Transaction;
-  validator: CosmosValidatorItem;
-  value: BigNumber;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+
+type Props = StackNavigatorProps<
+  CosmosClaimRewardsFlowParamList,
+  ScreenName.CosmosClaimRewardsMethod
+>;
 
 function ClaimRewardsAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account } = useSelector(accountScreenSelector(route));
+  const account = useSelector(accountScreenSelector(route))
+    .account as CosmosAccount;
   invariant(
     account && account.cosmosResources,
     "account and cosmos transaction required",
@@ -86,35 +81,35 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, undefined);
   const unit = getAccountUnit(mainAccount);
   const currency = getAccountCurrency(mainAccount);
-  const { transaction, status, updateTransaction } = useBridgeTransaction(
-    () => {
-      const tx = route.params.transaction;
+  const bridgeTransaction = useBridgeTransaction(() => {
+    const tx = route.params.transaction;
 
-      if (!tx) {
-        const t = bridge.createTransaction(mainAccount);
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "claimReward",
-            validators: [
-              {
-                address: route.params.validator.validatorAddress,
-                amount: route.params.value,
-              },
-            ],
-
-            /** @TODO remove this once the bridge handles it */
-            recipient: mainAccount.freshAddress,
-          }),
-        };
-      }
-
+    if (!tx) {
+      const t = bridge.createTransaction(mainAccount);
       return {
         account,
-        transaction: tx,
+        transaction: bridge.updateTransaction(t, {
+          mode: "claimReward",
+          validators: [
+            {
+              address: route.params.validator.validatorAddress,
+              amount: route.params.value,
+            },
+          ],
+
+          /** @TODO remove this once the bridge handles it */
+          recipient: mainAccount.freshAddress,
+        }),
       };
-    },
-  );
+    }
+
+    return {
+      account,
+      transaction: tx,
+    };
+  });
+  const { status, updateTransaction } = bridgeTransaction;
+  const transaction = bridgeTransaction.transaction as Transaction;
   invariant(transaction, "transaction required");
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.CosmosClaimRewardsSelectDevice, {
@@ -132,7 +127,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     },
     [transaction, bridge, updateTransaction],
   );
-  const [infoModalOpen, setInfoModalOpen] = useState();
+  const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
   const openInfoModal = useCallback(() => {
     setInfoModalOpen(true);
   }, [setInfoModalOpen]);

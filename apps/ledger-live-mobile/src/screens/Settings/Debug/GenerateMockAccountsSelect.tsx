@@ -12,6 +12,8 @@ import { saveAccounts } from "../../../db";
 import { useReboot } from "../../../context/Reboot";
 import { ScreenName } from "../../../const";
 import CurrencyIcon from "../../../components/CurrencyIcon";
+import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
 
 async function injectMockAccountsInDB(currencies: CryptoCurrency[]) {
   await saveAccounts({
@@ -103,7 +105,13 @@ export const GenerateMockAccountSelectScreen = () => {
 };
 
 export default function GenerateMockAccount() {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<
+      StackNavigatorNavigation<
+        SettingsNavigatorStackParamList,
+        ScreenName.DebugMockGenerateAccounts
+      >
+    >();
 
   return (
     <SettingsRow

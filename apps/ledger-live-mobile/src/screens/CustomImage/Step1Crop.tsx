@@ -2,10 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Flex, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
 import { useTranslation } from "react-i18next";
-import {
-  StackNavigationEventMap,
-  StackScreenProps,
-} from "@react-navigation/stack";
+import { StackNavigationEventMap } from "@react-navigation/stack";
 import {
   EventListenerCallback,
   EventMapCore,
@@ -29,7 +26,18 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
 import Touchable from "../../components/Touchable";
-import { ParamList } from "./types";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
+
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<
+    CustomImageNavigatorParamList,
+    ScreenName.CustomImageStep1Crop
+  >
+>;
 
 /**
  * UI component that loads the input image (from the route params) &
@@ -37,9 +45,7 @@ import { ParamList } from "./types";
  * Then on confirmation it navigates to the preview step with the cropped image
  * file URI as a param.
  */
-const Step1Cropping: React.FC<
-  StackScreenProps<ParamList, "CustomImageStep1Crop">
-> = ({ navigation, route }) => {
+const Step1Cropping = ({ navigation, route }: NavigationProps) => {
   const cropperRef = useRef<CropView>(null);
   const [imageToCrop, setImageToCrop] = useState<ImageFileUri | null>(null);
   const [rotated, setRotated] = useState(false);
@@ -53,10 +59,7 @@ const Step1Cropping: React.FC<
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(
-        ScreenName.CustomImageErrorScreen as "CustomImageErrorScreen",
-        { error },
-      );
+      navigation.navigate(ScreenName.CustomImageErrorScreen, { error });
     },
     [navigation],
   );
@@ -64,7 +67,8 @@ const Step1Cropping: React.FC<
   useEffect(() => {
     let dead = false;
     const listener: EventListenerCallback<
-      StackNavigationEventMap & EventMapCore<StackNavigationState<ParamList>>,
+      StackNavigationEventMap &
+        EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
       "beforeRemove"
     > = e => {
       if (!isPictureFromGallery) {
@@ -123,10 +127,7 @@ const Step1Cropping: React.FC<
   /** CROP IMAGE HANDLING */
   const handleCropResult: ImageCropperProps["onResult"] = useCallback(
     (res: CropResult) => {
-      navigation.navigate(
-        ScreenName.CustomImageStep2Preview as "CustomImageStep2Preview",
-        res,
-      );
+      navigation.navigate(ScreenName.CustomImageStep2Preview, res);
     },
     [navigation],
   );
@@ -149,7 +150,7 @@ const Step1Cropping: React.FC<
   }, []);
 
   return (
-    <SafeAreaView edges={["bottom"]} flex={1}>
+    <SafeAreaView edges={["bottom"]}>
       <Flex
         flex={1}
         flexDirection="column"

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/Feather";
 import Touchable from "./Touchable";
 import { getFontStyle } from "./LText";
-import { withTheme } from "../colors";
+import { Theme, withTheme } from "../colors";
 
 type Props = {
   secureTextEntry: boolean;
@@ -13,11 +13,11 @@ type Props = {
   placeholder: string;
   autoFocus?: boolean;
   inline?: boolean;
-  onFocus?: any;
-  onBlur?: any;
-  error?: Error;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  error?: Error | null;
   password?: string;
-  colors: any;
+  colors: Theme["colors"];
 };
 
 const PasswordInput = ({
@@ -35,7 +35,7 @@ const PasswordInput = ({
   colors,
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false);
-  const ref = useRef();
+  const ref = useRef<TextInput>(null);
 
   useEffect(() => {
     if (autoFocus) {

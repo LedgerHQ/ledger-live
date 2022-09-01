@@ -110,7 +110,7 @@ const CacheAPI = {
   canHandleInstall,
   getLatestFirmwareForDevice: async (
     deviceInfo: DeviceInfo
-  ): Promise<FirmwareUpdateContext | null | undefined> => {
+  ): Promise<FirmwareUpdateContext | null> => {
     const mcusPromise = ManagerAPI.getMcus();
     // Get device infos from targetId
     const deviceVersion = await ManagerAPI.getDeviceVersion(

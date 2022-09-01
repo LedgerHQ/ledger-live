@@ -69,10 +69,10 @@ export default function AmountScreen({
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const bridge = getAccountBridge(account, parentAccount);
-  const [selectedRatio, selectRatio] = useState();
+  const [selectedRatio, selectRatio] = useState<BigNumber | null>(null);
   const onChange = useCallback(
     (amount, keepRatio) => {
-      if (!keepRatio) selectRatio();
+      if (!keepRatio) selectRatio(null);
       setTransaction(
         bridge.updateTransaction(transaction, {
           amount,
@@ -209,8 +209,7 @@ export default function AmountScreen({
                           <Trans i18nKey="send.amount.useMax" />
                         </LText>
                         <Switch
-                          style={styles.switch}
-                          value={useAllAmount}
+                          value={useAllAmount || false}
                           onValueChange={onChangeSendMax}
                         />
                       </View>
@@ -356,8 +355,5 @@ const styles = StyleSheet.create({
   },
   maxLabel: {
     marginRight: 4,
-  },
-  switch: {
-    opacity: 0.99,
   },
 });

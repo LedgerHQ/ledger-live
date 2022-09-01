@@ -1,8 +1,7 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import {
   ArrowLeftMedium,
@@ -72,9 +71,9 @@ function Header({
       button: "Asset settings",
     });
     navigation.navigate(ScreenName.CurrencySettings, {
-      currencyId: currency.id,
+      currencyId: (currency as Exclude<Currency, FiatCurrency>).id,
     });
-  }, [currency.id, navigation]);
+  }, [(currency as Exclude<Currency, FiatCurrency>).id, navigation]);
 
   return (
     <CurrencyHeaderLayout

@@ -7,9 +7,9 @@ import { useLocale } from "../context/Locale";
 import DiscreetModeContext from "../context/DiscreetModeContext";
 import { discreetModeSelector } from "../reducers/settings";
 
-type Props = {
+export type Props = {
   unit: Unit;
-  value: BigNumber | number;
+  value?: BigNumber | number | null;
   showCode?: boolean;
   alwaysShowSign?: boolean;
   alwaysShowValue?: boolean;
@@ -33,8 +33,11 @@ const CurrencyUnitValue = ({
   const { locale } = useLocale();
   const discreet = useSelector(discreetModeSelector);
   const shouldApplyDiscreetMode = useContext(DiscreetModeContext);
-  const value =
-    valueProp instanceof BigNumber ? valueProp : new BigNumber(valueProp);
+  const value = valueProp
+    ? valueProp instanceof BigNumber
+      ? valueProp
+      : new BigNumber(valueProp)
+    : null;
 
   return (
     <>

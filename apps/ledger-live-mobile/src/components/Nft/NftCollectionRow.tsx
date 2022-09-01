@@ -4,8 +4,9 @@ import {
   useNftCollectionMetadata,
   useNftMetadata,
 } from "@ledgerhq/live-common/nft/index";
-import { ProtoNFT } from "@ledgerhq/types-live";
+import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";
 import Touchable from "../Touchable";
@@ -22,13 +23,16 @@ function NftCollectionRow({
   onLongPress,
 }: Props) {
   const nft = collection[0];
+  // FIXME: wtf are those metadata properties and where do they come from?
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     nft?.contract,
     nft?.tokenId,
     nft?.currencyId,
-  );
+  ) as NFTResource & { metadata: NFTMetadata };
   const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(nft?.contract, nft?.currencyId);
+    useNftCollectionMetadata(nft?.contract, nft?.currencyId) as NFTResource & {
+      metadata: NFTMetadata;
+    };
 
   const loading = nftStatus === "loading" || collectionStatus === "loading";
 

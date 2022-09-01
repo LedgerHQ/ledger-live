@@ -3,18 +3,16 @@ import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import EmptyStatePortfolio from "../Portfolio/EmptyStatePortfolio";
 
-type Props = { navigation: any };
-
-const NoAccounts = ({ navigation }: Props) => {
+const NoAccounts = () => {
   const { colors } = useTheme();
   return (
     <View style={[styles.root, { backgroundColor: colors.card }]}>
-      <EmptyStatePortfolio showHelp={false} navigation={navigation} />
+      <EmptyStatePortfolio showHelp={false} />
     </View>
   );
 };
 
-export default memo<Props>(NoAccounts);
+export default memo(NoAccounts);
 
 const styles = StyleSheet.create({
   root: {

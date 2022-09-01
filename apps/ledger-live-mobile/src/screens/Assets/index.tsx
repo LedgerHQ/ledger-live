@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { FlatList } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -24,11 +26,26 @@ import TabBarSafeAreaView, {
 import AssetsNavigationHeader from "./AssetsNavigationHeader";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
+import { StackNavigatorNavigation } from "../../components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import { ScreenName } from "../../const";
 
+type Asset = {
+  currency: CryptoOrTokenCurrency;
+  accounts: AccountLike[];
+  distribution: number;
+  amount: number;
+  countervalue: number;
+};
 const List = globalSyncRefreshControl(FlatList);
 
+type NavigationProp = StackNavigatorNavigation<
+  AccountsNavigatorParamList,
+  ScreenName.Assets
+>;
+
 function Assets() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -65,8 +82,8 @@ function Assets() {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: any; index: number }) => (
-      <AssetRow asset={item} navigation={navigation} />
+    ({ item }: { item: unknown }) => (
+      <AssetRow asset={item as Asset} navigation={navigation} />
     ),
     [navigation],
   );
@@ -90,7 +107,8 @@ function Assets() {
           <List
             data={assets}
             renderItem={renderItem}
-            keyExtractor={(i: any) => i.id}
+            // FIXME: Weird??? Isn't this supposed to be an "Asset" without an id field?
+            keyExtractor={i => (i as CryptoOrTokenCurrency).id}
             contentContainerStyle={{
               paddingBottom: TAB_BAR_SAFE_HEIGHT,
             }}

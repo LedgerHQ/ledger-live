@@ -54,7 +54,7 @@ const CarouselCardContainer = ({
 );
 
 type Props = {
-  cardsVisibility: boolean[];
+  cardsVisibility: { [key: string]: boolean };
 };
 
 const Carousel = ({ cardsVisibility }: Props) => {

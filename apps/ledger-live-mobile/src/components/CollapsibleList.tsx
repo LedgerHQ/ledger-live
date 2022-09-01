@@ -4,8 +4,11 @@ import {
   View,
   TouchableWithoutFeedback,
   FlatList,
+  StyleProp,
+  ViewStyle,
+  ListRenderItem,
 } from "react-native";
-import Animated, { EasingNode } from "react-native-reanimated";
+import Animated, { concat, EasingNode } from "react-native-reanimated";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import Chevron from "../icons/Chevron";
@@ -29,7 +32,11 @@ const {
  * @param {Animated.Value} dest position to interpolate to
  * @returns {Animated.Node<number>}
  */
-export const runCollapse = (clock, value, dest) => {
+export const runCollapse = (
+  clock: Animated.Clock,
+  value: Animated.Adaptable<number>,
+  dest: Animated.Adaptable<number>,
+) => {
   const state = {
     finished: new Value(0),
     position: new Value(0),
@@ -57,30 +64,30 @@ export const runCollapse = (clock, value, dest) => {
   ]);
 };
 
-const renderListItem = ({ item, index }: any) => (
+const renderListItem = <T,>({ item, index }: { item: T; index: number }) => (
   <View key={index}>{item}</View>
 );
 
-const keyExtractor = (_, index) => String(index);
+const keyExtractor = <T,>(_: T, index: number) => String(index);
 
 const OPEN = 1;
 const CLOSE = 2;
-type Props = {
-  title: string;
-  data: Array<any>;
+type Props<T> = {
+  title: React.ReactNode;
+  data: Array<T>;
   itemHeight: number;
-  renderItem: (..._: Array<any>) => any;
-  containerStyle?: any;
+  renderItem: ListRenderItem<T>;
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
-const CollapsibleList = ({
+const CollapsibleList = <T,>({
   title,
   containerStyle,
   data,
   itemHeight,
   renderItem,
   ...props
-}: Props) => {
+}: Props<T>) => {
   const { colors } = useTheme();
   const [isOpen, setOpen] = useState(CLOSE);
   const onPress = useCallback(() => {
@@ -110,10 +117,13 @@ const CollapsibleList = ({
     outputRange: [itemHeight, 61 + itemHeight * data.length],
   });
   // interpolated rotation from opening anim state for chevron icon
-  const rotateZ = interpolateNode(openingAnim, {
-    inputRange: [0, 1],
-    outputRange: [-Math.PI / 2, 0],
-  });
+  const rotateZ = concat(
+    interpolateNode(openingAnim, {
+      inputRange: [0, 1],
+      outputRange: [-Math.PI / 2, 0],
+    }),
+    "rad",
+  );
   const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
   return (
     <Animated.View
@@ -148,11 +158,13 @@ const CollapsibleList = ({
         </View>
       </TouchableWithoutFeedback>
       <AnimatedFlatList
-        style={{
-          opacity: openingAnim,
-        }}
+        style={[
+          {
+            opacity: openingAnim,
+          },
+        ]}
         data={data}
-        renderItem={renderItem}
+        renderItem={renderItem as ListRenderItem<unknown>}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         {...props}

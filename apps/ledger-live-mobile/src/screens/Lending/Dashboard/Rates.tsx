@@ -3,9 +3,10 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import find from "lodash/find";
-import type { AccountLikeArray } from "@ledgerhq/types-live";
 import type { CurrentRate } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CurrencyIcon from "../../../components/CurrencyIcon";
@@ -20,7 +21,7 @@ const Row = ({
   onPress,
 }: {
   data: CurrentRate;
-  accounts: AccountLikeArray;
+  accounts: AccountLike[];
   onPress: (..._: Array<any>) => any;
 }) => {
   const { colors } = useTheme();
@@ -87,10 +88,10 @@ const Rates = ({
   accounts,
 }: {
   rates: CurrentRate[];
-  accounts: AccountLikeArray;
+  accounts: AccountLike[];
 }) => {
   const navigation = useNavigation();
-  const [modalOpen, setModalOpen] = useState();
+  const [modalOpen, setModalOpen] = useState<Currency>();
   const navigateToEnableFlow = useCallback(
     token => {
       navigation.navigate(NavigatorName.LendingEnableFlow, {
@@ -119,7 +120,7 @@ const Rates = ({
       if (
         find(
           accounts,
-          account => account.token && account.token.id === token.id,
+          (account: TokenAccount) => account?.token.id === token.id,
         )
       ) {
         return navigateToEnableFlow(token);
@@ -144,7 +145,7 @@ const Rates = ({
         />
       ),
       onPress: () => {
-        setModalOpen();
+        setModalOpen(undefined);
         navigateToBuyFlow(modalOpen);
       },
     });
@@ -160,7 +161,7 @@ const Rates = ({
       />
     ),
     onPress: () => {
-      setModalOpen();
+      setModalOpen(undefined);
       navigateToEnableFlow(modalOpen);
     },
   });
@@ -175,7 +176,7 @@ const Rates = ({
       />
       <InfoModalBottom
         isOpened={modalOpen}
-        onClose={() => setModalOpen()}
+        onClose={() => setModalOpen(undefined)}
         title={
           <Trans
             i18nKey="transfer.lending.noTokenAccount.info.title"

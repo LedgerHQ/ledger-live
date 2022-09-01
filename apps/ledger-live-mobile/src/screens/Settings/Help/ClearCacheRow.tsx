@@ -37,7 +37,6 @@ export default function ClearCacheRow() {
         arrowRight
       />
       <BottomDrawer
-        id="ClearCacheRow"
         isOpen={isModalOpened}
         onClose={onRequestClose}
         Icon={InfoMedium}

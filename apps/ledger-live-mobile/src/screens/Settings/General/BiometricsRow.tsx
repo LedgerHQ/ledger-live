@@ -20,7 +20,7 @@ export default function BiometricsRow({ iconLeft }: Props) {
 
   const [validationPending, setValidationPending] = useState(false);
   const [biometricsEnabled, setBiometricsEnabled] = useState(
-    privacy.biometricsEnabled || validationPending,
+    privacy?.biometricsEnabled || validationPending,
   );
 
   const biometricsType =

@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import LText from "../../components/LText";
 
 type Props = {
-  name?: string;
+  name?: string | null;
   icon?: string | null;
   size?: number;
   isDisabled?: boolean;

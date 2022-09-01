@@ -1,26 +1,25 @@
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
-import styles from "../../navigation/styles";
 import LendingDashboard from "../../screens/Lending/Dashboard";
 import LendingClosedLoans from "../../screens/Lending/ClosedLoans";
 import LendingHistory from "../../screens/Lending/History";
 import LText from "../LText";
+import { LendingNavigatorParamList } from "./types/LendingNavigator";
 
 type TabLabelProps = {
   focused: boolean;
   color: string;
 };
-const Tab = createMaterialTopTabNavigator();
+const Tab = createMaterialTopTabNavigator<LendingNavigatorParamList>();
 export default function LendingNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
-        headerStyle: styles.headerNoShadow,
         tabBarIndicatorStyle: {
           backgroundColor: colors.live,
         },

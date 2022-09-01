@@ -45,9 +45,13 @@ import {
   setMarketFilterByStarredAccounts,
   setMarketRequestParams,
 } from "../../actions/settings";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../components/RootNavigator";
+import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import EmptyStarredCoins from "./EmptyStarredCoins";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -59,9 +63,9 @@ const noNetworkIllustration = {
   light: require("../../images/illustration/Light/_078.png"),
 };
 
-function getAnalyticsProperties(
+function getAnalyticsProperties<P extends object>(
   requestParams: MarketListRequestParams,
-  otherProperties?: any,
+  otherProperties?: P,
 ) {
   return {
     ...otherProperties,
@@ -73,7 +77,15 @@ function getAnalyticsProperties(
   };
 }
 
-const BottomSection = ({ navigation }: { navigation: any }) => {
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
+>;
+
+const BottomSection = ({
+  navigation,
+}: {
+  navigation: NavigationProps["navigation"];
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { requestParams, counterCurrency, refresh } = useMarketData();
@@ -107,7 +119,7 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
       );
     }
     dispatch(setMarketFilterByStarredAccounts(!filterByStarredAccount));
-  }, [dispatch, filterByStarredAccount]);
+  }, [dispatch, filterByStarredAccount, requestParams, starredMarketCoins]);
 
   const timeRanges = useMemo(
     () =>
@@ -127,7 +139,7 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
    * TODO: investigate this for a possible optimization with useCallback
    * */
   const onChange = useCallback(
-    (value: any) => {
+    (value: MarketListRequestParams) => {
       track(
         "Page Market",
         getAnalyticsProperties({ ...requestParams, ...value }),
@@ -268,11 +280,11 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
   );
 };
 
-export default function Market({ navigation }: { navigation: any }) {
+export default function Market({ navigation }: NavigationProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { locale } = useLocale();
-  const { params }: { params: any } = useRoute();
+  const { params } = useRoute<NavigationProps["route"]>();
   const initialTop100 = params?.top100;
   const { isConnected } = useNetInfo();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
@@ -467,7 +479,7 @@ export default function Market({ navigation }: { navigation: any }) {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen("Market");
+      setScreen && setScreen("Market");
 
       return () => {
         setSource("Market");
