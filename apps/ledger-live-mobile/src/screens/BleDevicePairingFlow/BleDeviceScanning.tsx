@@ -10,9 +10,9 @@ import { useSelector } from "react-redux";
 import { ScannedDevice } from "@ledgerhq/live-common/ble/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
 
 import { knownDevicesSelector } from "../../reducers/ble";
-import TransportBLE from "../../react-native-hw-transport-ble";
 import LocationRequired from "../LocationRequired";
 import BleDeviceItem from "./BleDeviceItem";
 import type { BleDevicePairingFlowProps } from "./index";
