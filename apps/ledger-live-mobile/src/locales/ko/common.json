@@ -1563,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Looking for devices",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Already paired"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Try again"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "지갑",
     "accounts" : "계정",
@@ -1698,7 +1725,13 @@
       "WITHDRAW_UNBONDED" : "출금",
       "NOMINATE" : "지명",
       "CHILL" : "지명 해제",
-      "SET_CONTROLLER" : "관리자 설정"
+      "SET_CONTROLLER" : "관리자 설정",
+      "ACTIVATE" : "활성화",
+      "LOCK" : "잠금",
+      "UNLOCK" : "잠금 해제",
+      "REVOKE" : "취소",
+      "REGISTER" : "등록 완료",
+      "WITHDRAW" : "Withdrawn"
     }
   },
   "operationDetails" : {
@@ -1936,6 +1969,16 @@
       "noTransaction" : {
         "title" : "아직 트랜잭션 내역이 없습니다.",
         "subtitle" : "{{assetName}} 구매 또는 수령에는 장치가 필요합니다"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta" : "Redelegate"
+      },
+      "delegation" : {
+        "description" : "In case you didn’t know, the Ledger validator stakes your {{asset}} at a low commission.",
+        "cta" : "Stake now"
       }
     }
   },
@@ -4264,6 +4307,7 @@
     "delegation" : "위임",
     "viewDetails" : "세부사항 보기",
     "validator" : "검증인",
+    "validatorGroup" : "Validator Group",
     "validatorAddress" : "검증인 주소",
     "delegatedAccount" : "위임된 계정",
     "duration" : "기간",
