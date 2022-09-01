@@ -745,7 +745,19 @@
     "bandwidthTooltip" : "قم بتجميد الأصول لكسب نطاق ترددي (Bandwidth)",
     "energyTooltip" : "قم بتجميد الأصول لكسب الطاقة",
     "delegatedTooltip" : "الأصول المفوضة يتم استخدامها في عملية التصويت. هذا يمثل مجموع عدد أصواتك.",
-    "undelegatingTooltip" : "الأصول التي تم إلغاء تفويضها تكون في حظر زمني لمدة {{timelockInDays}} يوماً قبل أن تصبح متاحة."
+    "undelegatingTooltip" : "الأصول التي تم إلغاء تفويضها تكون في حظر زمني لمدة {{timelockInDays}} يوماً قبل أن تصبح متاحة.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta" : "Redelegate with Ledger"
+      },
+      "delegation" : {
+        "title" : "In case you didn’t know...",
+        "description" : "The Ledger validator stakes your {{asset}} at a low commission of {{commission}}%.",
+        "cta" : "Stake with Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "اختر من {{providerCount}} مزود",
@@ -3046,6 +3058,11 @@
       "catalogServerDesc" : "التبديل بين مصادر تطبيقات المنصة المتعددة",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
+      "featureFlagsEdit" : "تعديل",
+      "featureFlagsRestore" : "استعادة",
+      "featureFlagsOverride" : "تجاوز",
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
       "addLocalAppButton" : "تصفح",
@@ -4219,6 +4236,10 @@
     },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
+      "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
+    },
+    "NetworkError" : {
+      "title" : "حدث خطأ خلال المزامنة",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
     },
     "NoAddressesFound" : {
