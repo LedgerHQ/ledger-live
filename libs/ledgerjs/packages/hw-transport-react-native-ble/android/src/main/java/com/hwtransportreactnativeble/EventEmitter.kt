@@ -47,7 +47,7 @@ class EventEmitter private constructor
                 return
             }
         }
-        Timber.d("$tag adding event to queued")
+        Timber.d("$tag adding event to queue")
         queuedEvents.add(payload)
         consumeEventQueue()
     }
@@ -116,4 +116,5 @@ class EventEmitter private constructor
             return INSTANCE ?: EventEmitter(context).also { INSTANCE = it }
         }
     }
+
 }
