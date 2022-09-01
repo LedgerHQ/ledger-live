@@ -81,6 +81,7 @@ class Queue(
             }
         } catch (e: Exception) {
             onErrorWrapper(e)
+            return
         }
 
 

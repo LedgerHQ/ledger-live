@@ -15,29 +15,30 @@ const useBIM = (
   state: State,
   onEventDispatch: (event) => void
 ): any => {
-  // Whenever the queue changes, we need get a new token, but ONLY if this queue
+  // Whenever the queue changes, we need get a new rawQueue, but ONLY if this queue
   // change is because we are adding a new item and not because an item was consumed.
   const observable = useRef<Subject<RunnerEvent>>();
   const bimFeature = useFeature("bim");
   const transportModule = resolveTransportModuleForDeviceId(deviceId || "");
   const [transport, setTransport] = useState<any>(); // Nb maybe move the queue type into Transport
   const [pendingTransport, setPendingTransport] = useState<boolean>(false);
-  const [token, setToken] = useState<string | void>("");
+  const [rawQueue, setRawQueue] = useState<string | void>("");
   const lastSeenQueueSize = useRef(0);
   const { installQueue, uninstallQueue, updateAllQueue } = state;
   const queueSize: number =
     installQueue.length + uninstallQueue.length + updateAllQueue.length;
 
   const shouldStartNewJob: boolean = useMemo(
-    () => !!(deviceId && !transport && !pendingTransport && token && queueSize),
-    [deviceId, pendingTransport, queueSize, token, transport]
+    () =>
+      !!(deviceId && !transport && !pendingTransport && rawQueue && queueSize),
+    [deviceId, pendingTransport, queueSize, rawQueue, transport]
   );
 
   const enabled: boolean =
     !!bimFeature?.enabled && transportModule?.id === "ble-bim";
 
   const cleanUp = useCallback(() => {
-    setToken("");
+    setRawQueue("");
     setPendingTransport(false);
     setTransport(undefined);
   }, []);
@@ -63,8 +64,9 @@ const useBIM = (
 
   useEffect(() => {
     let completed = false;
+    if (!enabled || completed) return;
 
-    async function fetchToken() {
+    if (queueSize > lastSeenQueueSize.current) {
       const queue = BIM.buildQueueFromState(state);
       // NB We were experiencing cases where the user (QA) was putting the app to the back
       // before the token was fetched. This meant that the token resolution never happened
@@ -73,14 +75,7 @@ const useBIM = (
       // we can come up with something cleaner.
       // const token = await BIM.getTokenFromQueue(queue).catch(onError);
       // setToken(token);
-      setToken(JSON.stringify({ tasks: queue })); // Breaks my heart.
-    }
-
-    if (!enabled || completed) return;
-
-    if (queueSize > lastSeenQueueSize.current) {
-      // If the queue is larger, our token is no longer valid and we need a new one.
-      fetchToken();
+      setRawQueue(JSON.stringify({ tasks: queue })); // Breaks my heart.
     }
     // Always update the last seen
     lastSeenQueueSize.current = queueSize;
@@ -88,7 +83,7 @@ const useBIM = (
     return () => {
       completed = true;
     };
-  }, [enabled, onError, onEventDispatch, queueSize, setToken, state]);
+  }, [enabled, onError, onEventDispatch, queueSize, setRawQueue, state]);
 
   const startNewJob = useCallback(() => {
     let sub;
@@ -120,9 +115,9 @@ const useBIM = (
   }, [deviceId, shouldStartNewJob, onEventDispatch, startNewJob, enabled]);
 
   useEffect(() => {
-    if (!enabled || !token || !transport) return;
-    transport.queue(observable.current, token, getBaseApiUrl());
-  }, [enabled, token, transport]);
+    if (!enabled || !rawQueue || !transport) return;
+    transport.queue(observable.current, rawQueue, getBaseApiUrl());
+  }, [enabled, rawQueue, transport]);
 
   return enabled;
 };
