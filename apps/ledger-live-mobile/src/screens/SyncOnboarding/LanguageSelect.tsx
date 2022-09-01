@@ -12,7 +12,9 @@ import {
   ArrowLeftMedium,
   ChevronBottomMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
+import { TouchableHighlight } from "react-native-gesture-handler";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 
 import { useTranslation } from "react-i18next";
 import { setLanguage } from "../../actions/settings";
@@ -33,7 +35,7 @@ type LanguageSelectStatus =
   | "firmware-language-update-requested"
   | "completed";
 
-export type Props = {
+export type Props = FlexBoxProps & {
   productName: string;
 };
 
@@ -44,14 +46,14 @@ const ScrollViewContainer = styled(ScrollView)`
 // TODO: remove this when there's a real equivalent
 const firmwareSupportedLocales = ["en", "fr", "es"];
 
-const LanguageSelect = ({ productName }: Props) => {
+const LanguageSelect = ({ productName, ...props }: Props) => {
   const { t } = useTranslation();
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
+  const { colors } = useTheme();
 
-  const [currentDisplayedDrawer, setCurrentDisplayedDrawer] = useState<
-    UiDrawerStatus
-  >("none");
+  const [currentDisplayedDrawer, setCurrentDisplayedDrawer] =
+    useState<UiDrawerStatus>("none");
 
   // Will be computed depending on the states. Updating nextDrawerToDisplay
   // triggers the current displayed drawer to close
@@ -59,9 +61,8 @@ const LanguageSelect = ({ productName }: Props) => {
 
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
 
-  const [languageSelectStatus, setLanguageSelectStatus] = useState<
-    LanguageSelectStatus
-  >("unrequested");
+  const [languageSelectStatus, setLanguageSelectStatus] =
+    useState<LanguageSelectStatus>("unrequested");
 
   // Handles a newly selected language to redux-dispatch
   useEffect(() => {
@@ -119,16 +120,23 @@ const LanguageSelect = ({ productName }: Props) => {
 
   return (
     <Flex>
-      <Button
-        type="main"
-        outline
-        size="small"
-        Icon={ChevronBottomMedium}
-        iconPosition="right"
-        onPress={handleLanguageSelectOnPress}
-      >
-        {currentLocale.toLocaleUpperCase()}
-      </Button>
+      <TouchableHighlight onPress={handleLanguageSelectOnPress}>
+        <Flex
+          flexDirection="row"
+          justifyContent="center"
+          alignItems="center"
+          background={colors.neutral.c30}
+          height={36}
+          px={6}
+          borderRadius={32}
+          {...props}
+        >
+          <Text mr={2} variant="body" fontWeight="medium">
+            {currentLocale.toLocaleUpperCase()}
+          </Text>
+          <ChevronBottomMedium size={16} />
+        </Flex>
+      </TouchableHighlight>
       <BottomDrawer
         noCloseButton
         preventBackdropClick

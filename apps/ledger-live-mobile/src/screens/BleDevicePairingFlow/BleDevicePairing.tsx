@@ -124,18 +124,22 @@ export const BleDevicePairing = ({
           <Flex alignItems="center" justifyContent="center" p={5}>
             <CircledCrossSolidMedium color={colors.error.c80} size={56} />
           </Flex>
-          <Text mb={8} textAlign="center" variant="h4" fontWeight="semiBold">
+          <Text mb={4} textAlign="center" variant="h4" fontWeight="semiBold">
             {t("blePairingFlow.pairing.error.title")}
           </Text>
-          <Text textAlign="center">
+          <Text
+            variant="body"
+            fontWeight="medium"
+            mb={8}
+            color="neutral.c80"
+            textAlign="center"
+          >
             {t("blePairingFlow.pairing.error.subtitle", { productName })}
           </Text>
         </Flex>
-        <Flex px={4} mb={10}>
-          <Button type="main" onPress={onRetry}>
-            {t("blePairingFlow.pairing.error.retryCta")}
-          </Button>
-        </Flex>
+        <Button type="main" onPress={onRetry}>
+          {t("blePairingFlow.pairing.error.retryCta")}
+        </Button>
       </Flex>
     );
   }

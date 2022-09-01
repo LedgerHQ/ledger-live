@@ -25,6 +25,7 @@ type Props = {
   // eslint-disable-next-line @typescript-eslint/ban-types
   customCloseAction?: () => {};
   centerTitle?: boolean;
+  contentTopMargin?: number | string;
 };
 
 function OnboardingView({
@@ -37,6 +38,7 @@ function OnboardingView({
   children,
   footer,
   centerTitle,
+  contentTopMargin,
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -58,7 +60,7 @@ function OnboardingView({
       style={[{ flex: 1 }, { backgroundColor: colors.background.main }]}
     >
       {/* HEADER */}
-      <Flex mb={8} px={6} pt={8}>
+      <Flex mb={contentTopMargin || 8} px={6} pt={8}>
         <Flex
           flexDirection="row"
           justifyContent="space-between"

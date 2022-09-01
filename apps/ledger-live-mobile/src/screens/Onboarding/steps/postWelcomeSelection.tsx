@@ -176,11 +176,11 @@ function PostWelcomeSelection({
         name={userHasDevice ? "Choice With Device" : "Choice No Device"}
         source={source}
       />
-      <OnboardingView hasBackButton>
+      <OnboardingView hasBackButton contentTopMargin={3}>
         <Text variant="h4" fontWeight="semiBold" mb={2}>
           {t("onboarding.postWelcomeStep.title")}
         </Text>
-        <Text variant="large" fontWeight="medium" color="neutral.c70" mb={9}>
+        <Text variant="large" fontWeight="medium" color="neutral.c70" mb={8}>
           {t(
             userHasDevice
               ? "onboarding.postWelcomeStep.subtitle_yes"

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { StackActions, useNavigation } from "@react-navigation/native";
 import { getDeviceModel } from "@ledgerhq/devices/lib/";
-import { Flex, ScrollListContainer, Text } from "@ledgerhq/native-ui";
+import { Flex, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ArrowLeftMedium, HelpMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -66,29 +66,32 @@ function OnboardingStepDeviceSelection() {
     <SafeAreaView
       style={[{ flex: 1 }, { backgroundColor: colors.background.main }]}
     >
-      <Flex
-        px={6}
-        pt={8}
-        mb={7}
-        flexDirection="row"
-        justifyContent="space-between"
-      >
-        <Flex>
-          <TouchableOpacity onPress={handleBack}>
-            <ArrowLeftMedium size={24} />
-          </TouchableOpacity>
-        </Flex>
-        <Flex>
+      <TrackScreen category="Onboarding" name="SelectDevice" />
+      <ScrollContainerHeader
+        containerProps={{
+          marginTop: 7,
+        }}
+        TopLeftSection={
+          <Flex mr={6}>
+            <TouchableOpacity onPress={handleBack}>
+              <ArrowLeftMedium size={24} />
+            </TouchableOpacity>
+          </Flex>
+        }
+        TopRightSection={
           <TouchableOpacity onPress={handleHelp}>
             <HelpMedium size={24} />
           </TouchableOpacity>
-        </Flex>
-      </Flex>
-      <ScrollListContainer flex={1} px={6} bg="background.main">
-        <Flex flex={1}>
-          <Text variant="h4" mb={3} fontWeight="semiBold">
-            {t("syncOnboarding.deviceSelection.title")}
-          </Text>
+        }
+        MiddleSection={
+          <Flex height={48} justifyContent="center">
+            <Text variant="h4" fontWeight="semiBold">
+              Select your Ledger
+            </Text>
+          </Flex>
+        }
+      >
+        <Flex px={6}>
           <Text variant="large" color="neutral.c70" mb={8}>
             {t("syncOnboarding.deviceSelection.subtitle")}
           </Text>
@@ -117,8 +120,7 @@ function OnboardingStepDeviceSelection() {
             />
           ))}
         </Flex>
-      </ScrollListContainer>
-      <TrackScreen category="Onboarding" name="SelectDevice" />
+      </ScrollContainerHeader>
     </SafeAreaView>
   );
 }

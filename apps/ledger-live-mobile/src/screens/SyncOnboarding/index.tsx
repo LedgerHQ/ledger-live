@@ -12,6 +12,7 @@ import {
   ScrollContainer,
   VerticalTimeline,
   Text,
+  ScrollContainerHeader,
 } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -368,44 +369,47 @@ export const SyncOnboarding = ({
           onRetry={handleDesyncRetry}
           device={device}
         />
-        <Flex
-          flexDirection="row"
-          justifyContent="space-between"
-          alignItems="center"
-          pt={7}
-          px={6}
-          pb={5}
+        <ScrollContainerHeader
+          containerProps={{
+            marginTop: 5,
+          }}
+          TopLeftSection={<LanguageSelect mr={6} productName={productName} />}
+          TopRightSection={
+            <Flex
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="flex-end"
+            >
+              <Button
+                mr={2}
+                Icon={Question}
+                onPress={() => setHelpDrawerOpen(true)}
+              />
+              <TouchableOpacity onPress={handleClose}>
+                <CloseMedium size={24} />
+              </TouchableOpacity>
+            </Flex>
+          }
+          MiddleSection={
+            <Flex height={64} justifyContent="center">
+              <Text variant="h4" fontWeight="semiBold">
+                {t("syncOnboarding.title", { deviceName })}
+              </Text>
+            </Flex>
+          }
         >
-          <LanguageSelect productName={productName} />
-          <TouchableOpacity onPress={handleClose}>
-            <CloseMedium size={24} />
-          </TouchableOpacity>
-        </Flex>
-        <Flex flex={1}>
           <ResyncOverlay
             isOpen={!!desyncTimer && !stopPolling}
             delay={resyncOverlayDisplayDelayMs}
             productName={productName}
           />
-          <ScrollContainer>
-            <Flex px={7} pt={2}>
-              <Flex mb={7} flexDirection="row" alignItems="center">
-                <Text variant="h4" fontWeight="semiBold">
-                  {t("syncOnboarding.title", { deviceName })}
-                </Text>
-                <Button
-                  ml={2}
-                  Icon={Question}
-                  onPress={() => setHelpDrawerOpen(true)}
-                />
-              </Flex>
-              <VerticalTimeline
-                steps={companionSteps}
-                formatEstimatedTime={formatEstimatedTime}
-              />
-            </Flex>
-          </ScrollContainer>
-        </Flex>
+          <Flex px={6} py={8}>
+            <VerticalTimeline
+              steps={companionSteps}
+              formatEstimatedTime={formatEstimatedTime}
+            />
+          </Flex>
+        </ScrollContainerHeader>
       </Flex>
     </SafeAreaView>
   );
