@@ -82,14 +82,14 @@ class Ble extends Transport {
 
   queue = (
     observer: Observer<RunnerEvent>,
-    token: string,
+    rawQueue: string,
     endpoint: string
   ): void => {
     if (!endpoint) throw new Error("No endpoint provided for BIM");
 
-    Ble.log("request to launch queue", token);
+    Ble.log("request to launch queue", rawQueue);
     this.queueObserver = observer;
-    NativeBle.queue(token, endpoint);
+    NativeBle.queue(rawQueue, endpoint);
     runningQueue = true; // TODO there probably is a cleaner way of doing this.
   };
 

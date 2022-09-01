@@ -132,13 +132,16 @@ export const streamAppInstall = ({
           }
 
           // Transport instances now expose an optional transportId.
+          // not to be confused with the transportModule.id, this is all very confusing.
           if (["BleTransport"].includes(transport.transportId)) {
             const bimTransport = transport as BimCapableTransport;
             const observable = new Subject<RunnerEvent>();
             const queue = BIMAPI.buildQueueFromState(state);
-            return from(BIMAPI.getTokenFromQueue(queue)).pipe(
-              mergeMap((token) => {
-                bimTransport.queue(observable, token, getEnv("API_BIM"));
+            const rawQueue = JSON.stringify({ tasks: queue });
+
+            return from([rawQueue]).pipe(
+              mergeMap((rawQueue) => {
+                bimTransport.queue(observable, rawQueue, getEnv("API_BIM"));
                 return concat(
                   getGlobalProgress(observable, state).pipe(
                     map((progress) => ({
