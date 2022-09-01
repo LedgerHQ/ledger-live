@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.7.1-nightly.2
+
+### Patch Changes
+
+- [#1112](https://github.com/LedgerHQ/ledger-live/pull/1112) [`44516bce9f`](https://github.com/LedgerHQ/ledger-live/commit/44516bce9f2faae54989e508371785b50189399e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Support: LLM eslint rule no-unused-vars only from TS
+
 ## 3.7.1-nightly.1
 
 ### Patch Changes
