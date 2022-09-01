@@ -13,6 +13,7 @@ import DelegationSelectDevice from "../../../screens/SelectDevice";
 import DelegationConnectDevice from "../../../screens/ConnectDevice";
 import DelegationValidationSuccess from "./ValidationSuccess";
 import DelegationValidationError from "./ValidationError";
+import type { TezosDelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -41,7 +42,7 @@ function DelegationFlow() {
         name={ScreenName.DelegationSummary}
         component={DelegationSummary}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -58,7 +59,7 @@ function DelegationFlow() {
         name={ScreenName.DelegationSelectValidator}
         component={DelegationSelectValidator}
         options={{
-          headerRight: null,
+          headerRight: undefined,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader title={t("delegation.selectValidatorTitle")} />
@@ -69,7 +70,7 @@ function DelegationFlow() {
         name={ScreenName.DelegationConnectDevice}
         component={DelegationConnectDevice}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -121,4 +122,4 @@ const options = {
   headerShown: false,
 };
 export { DelegationFlow as component, options };
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<TezosDelegationFlowParamList>();

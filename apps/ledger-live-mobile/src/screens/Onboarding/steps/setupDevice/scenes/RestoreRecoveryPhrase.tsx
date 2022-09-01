@@ -4,6 +4,8 @@ import { Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "../../../../../const";
 import Button from "../../../../../components/PreventDoubleClickButton";
+import { StackNavigatorNavigation } from "../../../../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
 
 const RestoreRecoveryPhraseScene = () => {
   const { t } = useTranslation();
@@ -26,7 +28,8 @@ RestoreRecoveryPhraseScene.id = "RestoreRecoveryPhraseScene";
 
 const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<StackNavigatorNavigation<OnboardingNavigatorParamList>>();
 
   const handlePress = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingModalWarning, {

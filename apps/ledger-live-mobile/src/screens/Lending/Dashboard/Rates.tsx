@@ -3,13 +3,16 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import find from "lodash/find";
-import type { AccountLikeArray } from "@ledgerhq/types-live";
 import type { CurrentRate } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CurrencyIcon from "../../../components/CurrencyIcon";
-import Touchable from "../../../components/Touchable";
+import Touchable, {
+  Props as TouchableProps,
+} from "../../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../../const";
 import InfoModalBottom from "./InfoModalBottom";
 import { getSupportedCurrencies } from "../../Exchange/coinifyConfig";
@@ -20,8 +23,8 @@ const Row = ({
   onPress,
 }: {
   data: CurrentRate;
-  accounts: AccountLikeArray;
-  onPress: (..._: Array<any>) => any;
+  accounts: AccountLike[];
+  onPress: (token: TokenCurrency) => TouchableProps["onPress"];
 }) => {
   const { colors } = useTheme();
   const { token, supplyAPY } = data;
@@ -42,7 +45,7 @@ const Row = ({
           backgroundColor: colors.card,
         },
       ]}
-      onPress={() => onPress(token)}
+      onPress={onPress(token)}
       event="Page Lend deposit"
       eventProperties={{
         currency: token.id,
@@ -87,10 +90,10 @@ const Rates = ({
   accounts,
 }: {
   rates: CurrentRate[];
-  accounts: AccountLikeArray;
+  accounts: AccountLike[];
 }) => {
   const navigation = useNavigation();
-  const [modalOpen, setModalOpen] = useState();
+  const [modalOpen, setModalOpen] = useState<TokenCurrency>();
   const navigateToEnableFlow = useCallback(
     token => {
       navigation.navigate(NavigatorName.LendingEnableFlow, {
@@ -115,11 +118,11 @@ const Rates = ({
     [navigation],
   );
   const CheckIfCanNavigate = useCallback(
-    token => {
+    (token: TokenCurrency) => () => {
       if (
         find(
           accounts,
-          account => account.token && account.token.id === token.id,
+          (account: TokenAccount) => account?.token.id === token.id,
         )
       ) {
         return navigateToEnableFlow(token);
@@ -144,7 +147,7 @@ const Rates = ({
         />
       ),
       onPress: () => {
-        setModalOpen();
+        setModalOpen(undefined);
         navigateToBuyFlow(modalOpen);
       },
     });
@@ -160,7 +163,7 @@ const Rates = ({
       />
     ),
     onPress: () => {
-      setModalOpen();
+      setModalOpen(undefined);
       navigateToEnableFlow(modalOpen);
     },
   });
@@ -174,8 +177,8 @@ const Rates = ({
         keyExtractor={item => item.ctoken.id}
       />
       <InfoModalBottom
-        isOpened={modalOpen}
-        onClose={() => setModalOpen()}
+        isOpened={!!modalOpen}
+        onClose={() => setModalOpen(undefined)}
         title={
           <Trans
             i18nKey="transfer.lending.noTokenAccount.info.title"

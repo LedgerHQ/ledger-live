@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import Button from "../components/Button";
 import LText from "../components/LText";
 import Animation from "../components/Animation";
@@ -12,10 +13,6 @@ import Touchable from "../components/Touchable";
 import Alert from "../components/Alert";
 import Check from "../icons/Check";
 import { lottieAnimations } from "./Onboarding/shared/infoPagesData";
-
-const forceInset = {
-  bottom: "always",
-};
 
 const DebugLottie = () => {
   const { colors } = useTheme();
@@ -41,15 +38,18 @@ const DebugLottie = () => {
     ],
     [],
   );
-  const [modelId, setModelId] = useState(Config.OVERRIDE_MODEL_ID || "nanoS");
+  const [modelId, setModelId] = useState<DeviceModelId>(
+    (Config.OVERRIDE_MODEL_ID as DeviceModelId) || ("nanoS" as DeviceModelId),
+  );
   const [wired, setWired] = useState(false);
-  const [key, setKey] = useState<any>("plugAndPinCode");
+  const [key, setKey] = useState<string>("plugAndPinCode");
   const [keyModalVisible, setKeyModalVisible] = useState(false);
   const animation = useMemo(() => {
     if (keys.includes(key)) {
       // Normal deviceAction animations
       return getDeviceAnimation({
         device: {
+          deviceId: "",
           modelId,
           wired: wired && modelId === "nanoX",
         },
@@ -59,6 +59,7 @@ const DebugLottie = () => {
     }
 
     if (onBoardingKeys.includes(key)) {
+      // @ts-expect-error let's assume this is correct…
       return lottieAnimations[modelId][key].light;
     }
 
@@ -69,6 +70,7 @@ const DebugLottie = () => {
       // Normal deviceAction animations
       return getDeviceAnimation({
         device: {
+          deviceId: "",
           modelId,
           wired: wired && modelId === "nanoX",
         },
@@ -78,6 +80,7 @@ const DebugLottie = () => {
     }
 
     if (onBoardingKeys.includes(key)) {
+      // @ts-expect-error let's assume this is correct…
       return lottieAnimations[modelId][key].dark;
     }
 
@@ -86,7 +89,6 @@ const DebugLottie = () => {
   const allKeys = [...keys, ...onBoardingKeys];
   return (
     <SafeAreaView
-      forceInset={forceInset}
       style={[
         styles.root,
         {
@@ -122,25 +124,25 @@ const DebugLottie = () => {
         <Button
           type={modelId === "nanoS" ? "primary" : "secondary"}
           title="nanoS"
-          disabled={Config.OVERRIDE_MODEL_ID || key === "pairDevice"}
+          disabled={!!Config.OVERRIDE_MODEL_ID || key === "pairDevice"}
           onPress={() => {
-            setModelId("nanoS");
+            setModelId("nanoS" as DeviceModelId);
           }}
         />
         <Button
           type={modelId === "nanoSP" ? "primary" : "secondary"}
           title="nanoSP"
-          disabled={Config.OVERRIDE_MODEL_ID || key === "pairDevice"}
+          disabled={!!Config.OVERRIDE_MODEL_ID || key === "pairDevice"}
           onPress={() => {
-            setModelId("nanoSP");
+            setModelId("nanoSP" as DeviceModelId);
           }}
         />
         <Button
           type={modelId === "nanoX" ? "primary" : "secondary"}
           title="nanoX"
-          disabled={Config.OVERRIDE_MODEL_ID}
+          disabled={!!Config.OVERRIDE_MODEL_ID}
           onPress={() => {
-            setModelId("nanoX");
+            setModelId("nanoX" as DeviceModelId);
           }}
         />
         <Button
@@ -148,15 +150,15 @@ const DebugLottie = () => {
           title="blue"
           disabled
           onPress={() => {
-            setModelId("blue");
+            setModelId("blue" as DeviceModelId);
           }}
         />
         <Button
           type={modelId === "nanoFTS" ? "primary" : "secondary"}
           title="nanoFTS"
-          disabled={Config.OVERRIDE_MODEL_ID}
+          disabled={!!Config.OVERRIDE_MODEL_ID}
           onPress={() => {
-            setModelId("nanoFTS");
+            setModelId("nanoFTS" as DeviceModelId);
           }}
         />
       </View>
@@ -177,14 +179,17 @@ const DebugLottie = () => {
         title="Animation key"
         onPress={() => setKeyModalVisible(true)}
       />
-      <BottomModal isOpened={keyModalVisible} onClose={setKeyModalVisible}>
+      <BottomModal
+        isOpened={keyModalVisible}
+        onClose={setKeyModalVisible as () => void}
+      >
         <ScrollView style={styles.modal}>
           {allKeys.map((_key, i) => (
             <Touchable
               key={_key + i}
               onPress={() => {
                 if (_key === "pairDevice") {
-                  setModelId("nanoX");
+                  setModelId("nanoX" as DeviceModelId);
                   setWired(false);
                 }
 

@@ -8,6 +8,7 @@ import type { Operation } from "@ledgerhq/types-live";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/react";
 import { useTheme } from "@react-navigation/native";
+import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -32,7 +33,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const wasFirstBond = useRef(isFirstBond(mainAccount));
   const isLoading = usePolkadotBondLoading(mainAccount);
   const onClose = useCallback(() => {
@@ -95,7 +96,6 @@ export default function ValidationSuccess({ navigation, route }: Props) {
                 title={
                   <Trans i18nKey="polkadot.bond.steps.validation.success.nominate" />
                 }
-                isLoading={isLoading}
                 disabled={isLoading}
                 type="primary"
                 onPress={goToNominate}

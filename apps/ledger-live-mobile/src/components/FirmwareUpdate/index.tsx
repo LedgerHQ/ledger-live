@@ -11,10 +11,7 @@ import {
   DisconnectedDeviceDuringOperation,
   WebsocketConnectionError,
 } from "@ledgerhq/errors";
-import {
-  FwUpdateBackgroundEvent,
-  nextBackgroundEventSelector,
-} from "../../reducers/appstate";
+import { nextBackgroundEventSelector } from "../../reducers/appstate";
 import {
   clearBackgroundEvents,
   dequeueBackgroundEvent,
@@ -31,6 +28,7 @@ import DownloadingUpdateStep from "./DownloadingUpdateStep";
 import DeviceLanguageStep from "./DeviceLanguageStep";
 import { track } from "../../analytics";
 import { FwUpdateForegroundEvent } from "./types";
+import { FwUpdateBackgroundEvent } from "../../reducers/types";
 
 type Props = {
   device: Device;
@@ -197,7 +195,6 @@ export default function FirmwareUpdate({
 
   return (
     <BottomModal
-      id="DeviceActionModal"
       noCloseButton={!canClose}
       isOpened={isOpen}
       onClose={onCloseSilently}
@@ -231,7 +228,7 @@ export default function FirmwareUpdate({
             error={error as Error}
             withDescription={
               error instanceof DisconnectedDevice ||
-              error instanceof DisconnectedDeviceDuringOperation
+              error! instanceof DisconnectedDeviceDuringOperation
             }
             hasExportLogButton={!(error instanceof BluetoothNotSupportedError)}
             Icon={
@@ -247,7 +244,7 @@ export default function FirmwareUpdate({
           />
           {!(
             error instanceof BluetoothNotSupportedError ||
-            error instanceof WebsocketConnectionError
+            error! instanceof WebsocketConnectionError
           ) &&
             hasAppsToRestore && (
               <Button

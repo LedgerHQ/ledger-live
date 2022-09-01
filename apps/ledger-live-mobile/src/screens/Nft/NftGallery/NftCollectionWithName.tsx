@@ -1,9 +1,18 @@
 import React, { useCallback, useState, memo } from "react";
+import type { ViewProps } from "react-native";
 import { useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
 import { FlatList, View, SafeAreaView, StyleSheet } from "react-native";
-import { ProtoNFT, NFTMetadata, Account } from "@ledgerhq/types-live";
+import {
+  Account,
+  ProtoNFT,
+  NFTMetadata,
+  NFTMetadataResponse,
+} from "@ledgerhq/types-live";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import {
+  NFTResource,
+  NFTResourceLoaded,
+} from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import NftCard from "../../../components/Nft/NftCard";
 import Touchable from "../../../components/Touchable";
 import Skeleton from "../../../components/Skeleton";
@@ -27,9 +36,9 @@ const NftCollectionWithNameList = ({
 }: {
   account: Account;
   collection: ProtoNFT[];
-  contentContainerStyle?: any;
+  contentContainerStyle?: ViewProps["style"];
   status: NFTResource["status"];
-  metadata?: NFTMetadata;
+  metadata?: NFTMetadata | null;
 }) => {
   const nft = collection?.[0] || {};
   const [isCollectionMenuOpen, setIsCollectionMenuOpen] = useState(false);
@@ -51,7 +60,7 @@ const NftCollectionWithNameList = ({
           loading={status === "loading"}
         >
           <LText
-            numberOfOfLines={2}
+            numberOfLines={2}
             ellipsizeMode="tail"
             semiBold
             style={styles.tokenName}
@@ -86,7 +95,7 @@ const NftCollectionWithNameMemo = memo(NftCollectionWithNameList);
 // the rerender of all Nft Collections whenever the NFT cache changes (whenever a new NFT is loaded)
 type Props = {
   collection: ProtoNFT[];
-  contentContainerStyle?: any;
+  contentContainerStyle?: ViewProps["style"];
   account: Account;
 };
 
@@ -99,7 +108,7 @@ const NftCollectionWithName = ({
   const { status, metadata } = useNftCollectionMetadata(
     nft?.contract,
     nft?.currencyId,
-  );
+  ) as NFTResourceLoaded;
 
   return (
     <NftCollectionWithNameMemo
@@ -107,7 +116,7 @@ const NftCollectionWithName = ({
       contentContainerStyle={contentContainerStyle}
       account={account}
       status={status}
-      metadata={metadata}
+      metadata={metadata as NFTMetadataResponse["result"]}
     />
   );
 };

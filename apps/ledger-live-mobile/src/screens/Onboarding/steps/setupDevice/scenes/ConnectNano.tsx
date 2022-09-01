@@ -32,7 +32,7 @@ const ConnectNanoScene = ({
   const [device, setDevice] = useState<Device | undefined>();
 
   const onSetDevice = useCallback(
-    async device => {
+    async (device: Device) => {
       if (readOnlyMode) {
         await updateUser();
         await updateIdentify();
@@ -87,14 +87,13 @@ const ConnectNanoScene = ({
         <SelectDevice
           withArrows
           usbOnly={usbOnly}
-          deviceModelId={deviceModelId}
           onSelect={usbOnly ? onSetDevice : directNext}
           autoSelectOnAdd
           hideAnimation
         />
       </Flex>
       <DeviceActionModal
-        onClose={setDevice}
+        onClose={() => setDevice(undefined)}
         device={device}
         onResult={onResult}
         action={action}

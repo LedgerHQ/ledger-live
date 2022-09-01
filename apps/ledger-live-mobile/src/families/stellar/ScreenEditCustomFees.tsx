@@ -22,10 +22,7 @@ import CurrencyInput from "../../components/CurrencyInput";
 
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,
-  headerLeft: null,
-};
-const forceInset = {
-  bottom: "always",
+  headerLeft: undefined,
 };
 type RouteParams = {
   accountId: string;
@@ -50,7 +47,7 @@ function StellarEditCustomFees({ navigation, route }: Props) {
   const { networkCongestionLevel } = transaction?.networkInfo || {};
   const [customFee, setCustomFee] = useState(transaction.fees);
 
-  const onChange = fee => {
+  const onChange = (fee: BigNumber) => {
     setCustomFee(fee);
   };
 
@@ -75,7 +72,7 @@ function StellarEditCustomFees({ navigation, route }: Props) {
     transaction,
   ]);
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView style={styles.root}>
       <KeyboardView
         style={[
           styles.body,

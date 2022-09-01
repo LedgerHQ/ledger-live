@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
@@ -10,11 +10,15 @@ import Button from "../../components/Button";
 import Alert from "../../components/Alert";
 
 type Props = {
-  onCancel: (..._: Array<any>) => any;
-  onConfirm: (..._: Array<any>) => any;
-  account: Account;
+  onCancel: () => void;
+  onConfirm: () => void;
+  account: AccountLike;
 };
 
+// FIXME: WE ONLY ACCEPTED Account TYPES, YET THIS IS FAR FROM
+// REALITY AS THE ROUTEPARAMS ACCEPT AN AccountLike
+// WE HAVE CASTED AS ACCOUNT BUT THIS NEEDS BETTER TYPECHECKING AND SAFE CODE AS
+// WE ARE NOT CHECKING FOR TOKEN OR CHILD ACCOUNT
 const SkipDeviceVerification = ({ onCancel, onConfirm, account }: Props) => {
   const currency = getAccountCurrency(account);
   const { colors } = useTheme();
@@ -38,7 +42,7 @@ const SkipDeviceVerification = ({ onCancel, onConfirm, account }: Props) => {
       <View style={styles.account}>
         <CurrencyIcon color={colors.live} size={16} currency={currency} />
         <LText style={styles.accountName} semiBold>
-          {account.name}
+          {(account as Account).name}
         </LText>
       </View>
       <View
@@ -51,7 +55,7 @@ const SkipDeviceVerification = ({ onCancel, onConfirm, account }: Props) => {
         ]}
       >
         <LText style={styles.address} semiBold>
-          {account.freshAddress}
+          {(account as Account).freshAddress}
         </LText>
       </View>
       <Alert type="danger">

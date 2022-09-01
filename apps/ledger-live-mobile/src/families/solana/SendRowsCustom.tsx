@@ -1,4 +1,8 @@
-import { Transaction } from "@ledgerhq/live-common/families/solana/types";
+import {
+  SolanaAccount,
+  Transaction as SolanaTransaction,
+} from "@ledgerhq/live-common/families/solana/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -8,29 +12,66 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
+import {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
+import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
+import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
+import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+
+type Navigation = BaseComposite<
+  | StackNavigatorProps<
+      SendFundsNavigatorStackParamList,
+      ScreenName.SendSummary
+    >
+  | StackNavigatorProps<
+      SignTransactionNavigatorParamList,
+      ScreenName.SignTransactionSummary
+    >
+  | StackNavigatorProps<
+      LendingEnableFlowParamsList,
+      ScreenName.LendingEnableSummary
+    >
+  | StackNavigatorProps<
+      LendingSupplyFlowNavigatorParamList,
+      ScreenName.LendingSupplySummary
+    >
+  | StackNavigatorProps<
+      LendingWithdrawFlowNavigatorParamList,
+      ScreenName.LendingWithdrawSummary
+    >
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
+>;
 
 type Props = {
   account: Account;
   transaction: Transaction;
-  navigation: any;
-};
+} & Navigation;
 
 export default function SolanaSendRowsCustom({
   account,
   transaction,
   navigation,
+  route,
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { model } = transaction;
+  const { model } = transaction as SolanaTransaction;
   invariant(model.kind === "transfer", "must be a transfer tx");
 
   const editMemo = useCallback(() => {
     navigation.navigate(ScreenName.SolanaEditMemo, {
-      account,
-      transaction,
+      ...route.params,
+      accountId: account.id,
+      parentId: undefined,
+      account: account as SolanaAccount,
+      transaction: transaction as SolanaTransaction,
     });
-  }, [navigation, account, transaction]);
+  }, [navigation, route.params, account, transaction]);
 
   return (
     <View>

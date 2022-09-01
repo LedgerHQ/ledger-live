@@ -2,12 +2,28 @@ import type { Account } from "@ledgerhq/types-live";
 import { useRoute } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type {
+  BaseComposite,
+  StackNavigatorProps,
+} from "../components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "../const";
 
-export function useFieldByFamily(field: string): BigNumber | null | undefined {
-  return useRoute().params?.transaction[field];
+type Navigation = BaseComposite<
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+>;
+
+export function useFieldByFamily(
+  field: string,
+): BigNumber | string | boolean | null | undefined {
+  const route = useRoute<Navigation["route"]>();
+
+  return route.params?.transaction[
+    field as keyof typeof route.params.transaction
+  ];
 }
 export function useEditTxFeeByFamily() {
-  const transaction = useRoute().params?.transaction;
+  const transaction = useRoute<Navigation["route"]>().params?.transaction;
   return ({
     account,
     field,
@@ -31,10 +47,10 @@ export function useEditTxFeeByFamily() {
  * @param {*} type - the key to fetch first error from (errors or warnings)
  */
 export function getFirstStatusError(
-  status:
+  status?:
     | {
-        errors: any;
-        warnings: any;
+        errors: Record<string, Error>;
+        warnings: Record<string, Error>;
       }
     | null
     | undefined,

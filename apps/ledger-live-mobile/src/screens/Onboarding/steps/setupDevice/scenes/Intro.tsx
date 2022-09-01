@@ -4,6 +4,8 @@ import { Text, IconBoxList, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "../../../../../const";
 import Button from "../../../../../components/PreventDoubleClickButton";
+import { StackNavigatorNavigation } from "../../../../../components/RootNavigator/types/helpers";
+import { OnboardingCarefulWarningParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
 
 const items = [
   {
@@ -39,7 +41,10 @@ IntroScene.id = "IntroScene";
 
 const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<
+      StackNavigatorNavigation<OnboardingCarefulWarningParamList>
+    >();
 
   const next = () => {
     navigation.navigate(ScreenName.OnboardingModalWarning, {
