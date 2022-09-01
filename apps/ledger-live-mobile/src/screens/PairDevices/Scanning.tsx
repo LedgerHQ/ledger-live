@@ -60,7 +60,7 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
       onTimeout();
     }, BLE_SCANNING_NOTHING_TIMEOUT);
 
-    const sub = Observable.create(TransportBLE.listen).subscribe({
+    const sub = Observable.create(BleTransport.listen).subscribe({
       next: (e: DescriptorEvent<Device>) => {
         if (e.type === "add") {
           clearTimeout(timeout);
