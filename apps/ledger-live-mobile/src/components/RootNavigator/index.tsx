@@ -10,11 +10,17 @@ import BaseNavigator from "./BaseNavigator";
 import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 
+type RootStackParamList = {
+  [NavigatorName.ImportAccounts]: undefined;
+  [NavigatorName.BaseOnboarding]: undefined;
+  [NavigatorName.Base]: undefined;
+};
+
 export const AnalyticsContext = createContext<{
-  source: undefined | string;
-  screen: undefined | string;
-  setSource: (_: undefined | string) => void;
-  setScreen: (_: undefined | string) => void;
+  source?: string;
+  screen?: string;
+  setSource: (_?: string) => void;
+  setScreen?: (_?: string) => void;
 }>({
   source: undefined,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -75,4 +81,4 @@ export default function RootNavigator({ importDataString }: Props) {
     </AnalyticsContext.Provider>
   );
 }
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
