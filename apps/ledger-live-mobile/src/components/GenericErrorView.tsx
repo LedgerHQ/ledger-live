@@ -8,7 +8,7 @@ import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
-import { promptBluetooth } from "../logic/bluetoothHelper";
+import { usePromptBluetoothCallback } from "../logic/bluetoothHelper";
 
 type Props = {
   error: Error;
@@ -41,13 +41,14 @@ const GenericErrorView = ({
   Icon = CloseMedium,
   iconColor = "error.c100",
 }: Props) => {
+  const promptBluetooth = usePromptBluetoothCallback();
   useEffect(() => {
     if (error instanceof BluetoothRequired) {
       promptBluetooth().catch(() => {
         /* ignore */
       });
     }
-  }, [error]);
+  }, [promptBluetooth, error]);
 
   const { t } = useTranslation();
 

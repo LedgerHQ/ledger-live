@@ -740,7 +740,8 @@
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
-    "open": "Open app permissions"
+    "open": "Open app permissions",
+    "nearbyDevicesPermissionDenied": "To pair with Bluetooth, authorize the Ledger Live app to scan nearby devices."
   },
   "fees": {
     "speed": {

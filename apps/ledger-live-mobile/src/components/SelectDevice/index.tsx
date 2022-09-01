@@ -32,7 +32,7 @@ import {
 
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
-import { promptBluetooth } from "../../logic/bluetoothHelper";
+import { usePromptBluetoothCallback } from "../../logic/bluetoothHelper";
 
 type Props = {
   onBluetoothDeviceAction?: (_: Device) => void;
@@ -60,6 +60,7 @@ export default function SelectDevice({
   const knownDevices = useSelector(knownDevicesSelector);
   const dispatch = useDispatch();
   const route = useRoute();
+  const promptBluetooth = usePromptBluetoothCallback();
 
   const handleOnSelect = useCallback(
     deviceInfo => {
@@ -92,7 +93,7 @@ export default function SelectDevice({
           });
       }
     },
-    [dispatch, onSelect],
+    [dispatch, onSelect, promptBluetooth],
   );
 
   const [devices, setDevices] = useState([]);
@@ -112,7 +113,13 @@ export default function SelectDevice({
       .catch(() => {
         /* ignore */
       });
-  }, [autoSelectOnAdd, navigation, handleOnSelect]);
+  }, [
+    autoSelectOnAdd,
+    navigation,
+    handleOnSelect,
+    route.name,
+    promptBluetooth,
+  ]);
 
   const renderItem = useCallback(
     (item: Device) => (

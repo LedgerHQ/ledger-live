@@ -4,7 +4,7 @@ import { IconBox, Text } from "@ledgerhq/native-ui";
 import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import { deviceNames } from "../../wording";
-import { promptBluetooth } from "../../logic/bluetoothHelper";
+import { usePromptBluetoothCallback } from "../../logic/bluetoothHelper";
 
 const SafeAreaContainer = styled.SafeAreaView`
   flex: 1;
@@ -14,12 +14,14 @@ const SafeAreaContainer = styled.SafeAreaView`
 `;
 
 function BluetoothDisabled() {
+  const promptBluetooth = usePromptBluetoothCallback();
+
   useEffect(() => {
     // Prompts the user to enable bluetooth using native api calls when the component gets initially rendered.
     promptBluetooth().catch(() => {
       /* ignore */
     });
-  }, []);
+  }, [promptBluetooth]);
 
   return (
     <SafeAreaContainer>
