@@ -20,6 +20,8 @@ const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger
 const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const discoverLiveImg = require("../../../images/illustration/Shared/_DiscoverLive.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const syncCryptoImg = require("../../../images/illustration/Shared/_SyncFromDesktop.png");
 
 type PostWelcomeDiscoverCardProps = {
   title: string;
@@ -100,7 +102,6 @@ function PostWelcomeSelection({
   }`;
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
-
   useFocusEffect(
     useCallback(() => {
       setScreen(screenName);
@@ -130,6 +131,13 @@ function PostWelcomeSelection({
       source: screenName,
     });
   }, [navigation, screenName]);
+
+  const syncCryptos = useCallback(() => {
+    track("Onboarding PostWelcome - Sync Cryptos");
+    navigation.navigate(ScreenName.OnboardingImportAccounts, {
+      source: screenName,
+    });
+  });
 
   const onCardClick = useCallback(
     (data: DataType, value: string) => {
@@ -166,6 +174,11 @@ function PostWelcomeSelection({
 
   const pressBuy = useCallback(
     (data: DataType) => onCardClick(data, "Buy a Nano X"),
+    [onCardClick],
+  );
+
+  const pressSync = useCallback(
+    (data: DataType) => onCardClick(data, "Sync Cryptos"),
     [onCardClick],
   );
 
@@ -210,6 +223,18 @@ function PostWelcomeSelection({
           onValidate={exploreLedger}
           imageSource={discoverLiveImg}
         />
+        {userHasDevice && (
+          <PostWelcomeDiscoverCard
+            title={t("onboarding.postWelcomeStep.desktopSync.title")}
+            subTitle={t("onboarding.postWelcomeStep.desktopSync.subtitle")}
+            event="Onboarding PostWelcome - Sync Cryptos"
+            testID={`Onboarding PostWelcome - Selection|SyncCryptos`}
+            selectedOption={selectedOption}
+            onPress={pressSync}
+            onValidate={syncCryptos}
+            imageSource={syncCryptoImg}
+          />
+        )}
         {!userHasDevice && (
           <PostWelcomeDiscoverCard
             title={t("onboarding.postWelcomeStep.buyNano.title")}

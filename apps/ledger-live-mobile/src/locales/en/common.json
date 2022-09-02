@@ -1014,6 +1014,10 @@
       "discoverLedger": {
         "title": "Explore Ledger Live",
         "subtitle": "Explore the app and learn about its benefits "
+      },
+      "desktopSync": {
+        "title": "Sync with desktop app",
+        "subtitle": "Sync your assets from Ledger Live desktop with your mobile."
       }
     },
     "discoverLive": {
