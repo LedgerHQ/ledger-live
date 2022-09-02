@@ -156,16 +156,14 @@ const modes = Object.freeze({
   polkadotbip44: {
     overridesDerivation: "44'/354'/<account>'/0'/<address>'",
   },
-  // glif legacy derivation
   gliflegacy: {
     overridesDerivation: "44'/1'/0'/0/<account>",
-    tag: "glif-legacy",
+    tag: "third-party",
   },
-  // glif normal derivation
   glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
     startsAt: 1,
-    tag: "glif",
+    tag: "third-party",
   },
   solanaMain: {
     isNonIterable: true,
