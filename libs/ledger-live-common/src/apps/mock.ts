@@ -26,7 +26,7 @@ export const deviceInfo155 = {
   targetId: 823132164,
 };
 
-export const deviceInfo210lo2: DeviceInfo = {
+export const deviceInfo210lo5: DeviceInfo = {
   bootloaderVersion: "1.16",
   hardwareVersion: 0,
   isBootloader: false,
@@ -40,9 +40,9 @@ export const deviceInfo210lo2: DeviceInfo = {
   pinValidated: true,
   providerName: null,
   seTargetId: 855638020,
-  seVersion: "2.1.0-lo2",
+  seVersion: "2.1.0-lo5",
   targetId: 855638020,
-  version: "2.1.0-lo2",
+  version: "2.1.0-lo5",
 };
 
 const firmware155: FinalFirmware = {
