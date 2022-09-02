@@ -1,7 +1,6 @@
 // @flow
 
-import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import React from "react";
 import { Flex, Alert, Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/ButtonV3";
 import type { Account } from "@ledgerhq/live-common/types/index";
