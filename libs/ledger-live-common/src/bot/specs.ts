@@ -19,7 +19,14 @@ export function pickSiblings(siblings: Account[], maxAccount = 5): Account {
 
   if (siblings.length > maxAccount) {
     // we are no longer creating accounts
-    return sample(withoutEmpties) as Account;
+    const maybeAccount = sample(withoutEmpties);
+    if (!maybeAccount) {
+      throw new Error(
+        "at least one non-empty sibling account exists. maxAccount=" +
+          maxAccount
+      );
+    }
+    return maybeAccount;
   }
 
   // we are only keeping empty account that have smaller index to favorize creation of non created derivation modes
@@ -30,8 +37,15 @@ export function pickSiblings(siblings: Account[], maxAccount = 5): Account {
     empties = empties.filter((e) => e.index === empties[0].index);
   }
 
-  return sample(withoutEmpties.concat(empties)) as Account;
+  const maybeAccount = sample(withoutEmpties.concat(empties));
+  if (!maybeAccount) {
+    throw new Error(
+      "at least one sibling account exists. maxAccount=" + maxAccount
+    );
+  }
+  return maybeAccount;
 }
+
 type State<T extends Transaction> = {
   finalState: boolean;
   stepTitle: string;

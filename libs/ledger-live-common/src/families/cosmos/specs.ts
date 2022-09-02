@@ -26,7 +26,7 @@ import {
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
 
-const minAmount = new BigNumber(20000);
+const minAmount = new BigNumber(10000);
 const maxAccounts = 32;
 
 // amounts of delegation are not exact so we are applying an approximation
@@ -158,13 +158,13 @@ const cosmos: AppSpec<Transaction> = {
           "already enough delegations"
         );
         const data = getCurrentCosmosPreloadData();
-        const count = 1 + Math.floor(2 * Math.random());
+        const count = 1 + Math.round(2 * Math.random() * Math.random());
         let remaining = getMaxDelegationAvailable(
           account as CosmosAccount,
           count
         )
           .minus(minAmount.times(2))
-          .times(0.25 * Math.random());
+          .times(0.1 * Math.random());
         invariant(remaining.gt(0), "not enough funds in account for delegate");
         const all = data.validators.filter(
           (v) =>
@@ -222,7 +222,7 @@ const cosmos: AppSpec<Transaction> = {
     },
     {
       name: "undelegate",
-      maxRun: 3,
+      maxRun: 5,
       transaction: ({ account, bridge }) => {
         invariant(canUndelegate(account as CosmosAccount), "can undelegate");
         const { cosmosResources } = account as CosmosAccount;
@@ -246,8 +246,8 @@ const cosmos: AppSpec<Transaction> = {
         );
         invariant(undelegateCandidate, "already pending");
 
-        const amount = (undelegateCandidate as CosmosDelegation).amount // most of the time, undelegate all
-          .times(Math.random() > 0.3 ? 1 : Math.random())
+        const amount = (undelegateCandidate as CosmosDelegation).amount
+          .times(Math.random() > 0.2 ? 1 : Math.random()) // most of the time, undelegate all
           .integerValue();
         invariant(amount.gt(0), "random amount to be positive");
 
