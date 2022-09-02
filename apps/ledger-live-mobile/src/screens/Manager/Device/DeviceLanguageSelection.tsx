@@ -36,7 +36,7 @@ const DeviceLanguageSelection: React.FC<Props> = ({
   return (
     <Flex height="100%" justifyContent="space-between">
       <Flex flexShrink={1}>
-        <Text variant="h1" textAlign="center">
+        <Text variant="h4" textAlign="center">
           {t("deviceLocalization.language")}
         </Text>
         <Text variant="paragraph" mb={2} mt={5} color="neutral.c70">
