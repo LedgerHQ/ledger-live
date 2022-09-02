@@ -16,6 +16,9 @@ import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { ValidatorType } from "~/renderer/families/elrond/types";
 import type { StepProps } from "../types";
 
 const StepWithdraw = (props: StepProps) => {
@@ -32,11 +35,11 @@ const StepWithdraw = (props: StepProps) => {
     amount,
     name,
   } = props;
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
 
   const onDelegationChange = useCallback(
-    validator => {
-      onUpdateTransaction(transaction =>
+    (validator: ValidatorType) => {
+      onUpdateTransaction((transaction: Transaction): AccountBridge<Transaction> =>
         bridge.updateTransaction(transaction, {
           ...transaction,
           recipient: validator.contract,
@@ -78,7 +81,7 @@ const StepWithdraw = (props: StepProps) => {
           amount,
           bridge,
           transaction,
-          onDelegationChange,
+          onChange: onDelegationChange,
           onUpdateTransaction,
         }}
       />
@@ -96,11 +99,13 @@ const StepWithdrawFooter = (props: StepProps) => {
 
   return (
     <Fragment>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      <AccountFooter {...{ status, account, parentAccount }} />
+
       <Box horizontal={true}>
         <Button mr={1} secondary={true} onClick={onClose}>
           <Trans i18nKey="common.cancel" />
         </Button>
+
         <Button disabled={!canNext} primary={true} onClick={() => transitionTo("connectDevice")}>
           <Trans i18nKey="common.continue" />
         </Button>

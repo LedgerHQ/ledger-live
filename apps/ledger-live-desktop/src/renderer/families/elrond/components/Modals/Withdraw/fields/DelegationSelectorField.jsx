@@ -12,8 +12,28 @@ import Text from "~/renderer/components/Text";
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
-const renderItem = item => {
-  const label = item.data.validator.identity.name || item.data.contract;
+import type { TFunction } from "react-i18next";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { UnbondingType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { Option } from "~/renderer/components/Select";
+
+type NoOptionsMessageCallbackType = { inputValue: string };
+type EnhancedUnbonding = UnbondingType & { disabled: Boolean };
+
+interface Props {
+  onChange: (validator: ValidatorType) => void;
+  onUpdateTransaction: (transaction: Transaction) => void;
+  bridge: AccountBridge<Transaction>;
+  transaction: Transaction;
+  unbondings: Array<UnbondingType>;
+  contract: string;
+  amount: string;
+  t: TFunction;
+}
+
+const renderItem = (item: Option) => {
+  const label: string = item.data.validator.identity.name || item.data.contract;
   const balance = denominate({
     input: item.data.amount,
     decimals: 6,
@@ -33,7 +53,7 @@ const renderItem = item => {
   );
 };
 
-const DelegationSelectorField = props => {
+const DelegationSelectorField = (props: Props) => {
   const {
     unbondings,
     amount,
@@ -48,7 +68,7 @@ const DelegationSelectorField = props => {
   const options = useMemo(
     () =>
       unbondings.reduce(
-        (total, unbonding) => {
+        (total: Array<EnhancedUnbonding>, unbonding: UnbondingType) => {
           const current = Object.assign(unbonding, {
             disabled: unbonding.seconds > 0,
           });
@@ -64,10 +84,10 @@ const DelegationSelectorField = props => {
   );
 
   const [query, setQuery] = useState("");
-  const [value, setValue] = useState(options[0]);
+  const [value, setValue] = useState(options.find(() => true));
 
   const noOptionsMessageCallback = useCallback(
-    needle =>
+    (needle: NoOptionsMessageCallbackType): string =>
       t("common.selectValidatorNoOption", {
         accountName: needle.inputValue,
       }),
@@ -75,7 +95,7 @@ const DelegationSelectorField = props => {
   );
 
   const filterOptions = useCallback(
-    (option, needle) =>
+    (option: Option, needle: string): boolean =>
       option.data.validator.identity.name
         ? option.data.validator.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,
@@ -83,7 +103,7 @@ const DelegationSelectorField = props => {
   );
 
   const onValueChange = useCallback(
-    option => {
+    (option: EnhancedUnbonding) => {
       setValue(option);
       if (onChange) {
         onChange(option);
@@ -96,7 +116,7 @@ const DelegationSelectorField = props => {
     const [defaultOption] = options;
 
     if (defaultOption && !Boolean(transaction.recipient) && transaction.amount.isEqualTo(0)) {
-      onUpdateTransaction(transaction =>
+      onUpdateTransaction((transaction: Transaction): AccountBridge<Transaction> =>
         bridge.updateTransaction(transaction, {
           recipient: defaultOption.contract,
           amount: BigNumber(defaultOption.amount),
@@ -108,6 +128,7 @@ const DelegationSelectorField = props => {
   return (
     <Box flow={1} mt={5}>
       <Label>{t("elrond.withdraw.flow.steps.withdraw.selectLabel")}</Label>
+
       <Select
         value={value}
         options={options}

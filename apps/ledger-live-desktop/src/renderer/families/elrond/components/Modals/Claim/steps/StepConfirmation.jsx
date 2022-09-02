@@ -2,9 +2,9 @@
 
 import React from "react";
 import { Trans } from "react-i18next";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import styled, { withTheme } from "styled-components";
 
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -12,11 +12,14 @@ import RetryButton from "~/renderer/components/RetryButton";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
+
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
+
+import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -26,18 +29,13 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({
-  optimisticOperation,
-  error,
-  theme,
-  device,
-  signed,
-  transaction,
-  validators,
-}) {
+const StepConfirmation = (props: StepProps) => {
+  const { optimisticOperation, error, signed, transaction, validators } = props;
+
   if (optimisticOperation) {
-    const provider = transaction && transaction.recipient;
-    const v = provider && validators.find(validator => validator.contract === provider);
+    const provider: string | undefined = transaction && transaction.recipient;
+    const v: ValidatorType | undefined =
+      provider && validators.find(validator => validator.contract === provider);
 
     const amount = `${denominate({
       input: String(transaction.amount),
@@ -51,6 +49,7 @@ function StepConfirmation({
       <Container>
         <TrackPage category="ClaimRewards Elrond Flow" name="Step Confirmed" />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+
         <SuccessDisplay
           title={
             <Trans i18nKey={`elrond.claimRewards.flow.steps.confirmation.success.${titleKey}`} />
@@ -85,16 +84,11 @@ function StepConfirmation({
   }
 
   return null;
-}
+};
 
-export function StepConfirmationFooter({
-  account,
-  parentAccount,
-  onRetry,
-  error,
-  onClose,
-  optimisticOperation,
-}) {
+const StepConfirmationFooter = (props: StepProps) => {
+  const { account, parentAccount, onRetry, error, onClose, optimisticOperation } = props;
+
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]
@@ -106,8 +100,8 @@ export function StepConfirmationFooter({
       <Button ml={2} onClick={onClose}>
         <Trans i18nKey="common.close" />
       </Button>
+
       {concernedOperation ? (
-        // FIXME make a standalone component!
         <Button
           primary={true}
           ml={2}
@@ -130,6 +124,7 @@ export function StepConfirmationFooter({
       ) : null}
     </Box>
   );
-}
+};
 
+export { StepConfirmationFooter };
 export default withTheme(StepConfirmation);

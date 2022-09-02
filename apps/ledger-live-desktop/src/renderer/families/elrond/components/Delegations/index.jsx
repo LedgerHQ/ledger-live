@@ -10,13 +10,15 @@ import Delegation from "~/renderer/families/elrond/components/Delegations/compon
 import type { Account as AccountType } from "@ledgerhq/types-live";
 import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
 
-interface DelegationsType {
+interface Props {
   delegations: Array<DelegationType>;
   validators: Array<ValidatorType>;
   account: AccountType;
 }
 
-const Delegations = ({ delegations, validators, account }: DelegationsType) => {
+const Delegations = (props: Props) => {
+  const { delegations, validators, account } = props;
+
   const columns = [
     "delegation.validator",
     "delegation.status",

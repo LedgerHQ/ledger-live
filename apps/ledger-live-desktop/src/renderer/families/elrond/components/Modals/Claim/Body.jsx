@@ -6,27 +6,26 @@ import { connect, useDispatch } from "react-redux";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import Track from "~/renderer/analytics/Track";
-
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import type { StepProps, St } from "./types";
-import type { Operation } from "@ledgerhq/live-common/types/index";
-
-import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 
+import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewards";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/logger/logger";
+
+import type { Operation } from "@ledgerhq/live-common/types/index";
+import type { Transaction, AccountBridge } from "@ledgerhq/types-live";
+import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { StepProps, St } from "./types";
 
 interface OwnProps {|
   stepId: StepId,
@@ -35,8 +34,8 @@ interface OwnProps {|
   params: {
     account: Account,
     parentAccount: ?Account,
-    delegations?: any,
-    validators?: any,
+    delegations?: Array<DelegationType>,
+    validators?: Array<ValidatorType>,
     contract?: string,
   },
   name: string,
@@ -84,16 +83,18 @@ const mapDispatchToProps = {
   openModal,
 };
 
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
+const Body = (props: Props) => {
+  const {
+    t,
+    stepId,
+    device,
+    closeModal,
+    openModal,
+    onChangeStepId,
+    params,
+    name,
+  } = props;
+
   const [optimisticOperation, setOptimisticOperation] = useState(null);
   const [transactionError, setTransactionError] = useState(null);
   const [signed, setSigned] = useState(false);
@@ -109,8 +110,8 @@ const Body = ({
     status,
     parentAccount,
   } = useBridgeTransaction(() => {
-    const bridge = getAccountBridge(params.account, undefined);
-    const transaction = bridge.createTransaction(params.account);
+    const bridge: AccountBridge<Transaction> = getAccountBridge(params.account, undefined);
+    const transaction: Transaction = bridge.createTransaction(params.account);
 
     return {
       account: params.account,

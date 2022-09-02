@@ -16,6 +16,9 @@ import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator
 
 import { ValidatorField, AmountField } from "../fields";
 
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { DelegationType } from "~/renderer/families/elrond/types";
 import type { StepProps } from "../types";
 
 const StepAmount = (props: StepProps) => {
@@ -26,17 +29,23 @@ const StepAmount = (props: StepProps) => {
   const bridge = getAccountBridge(account);
 
   const updateValidator = useCallback(
-    payload => {
-      onUpdateTransaction(transaction => bridge.updateTransaction(transaction, payload));
+    (payload: Transaction) => {
+      onUpdateTransaction((transaction: Transaction): AccountBridge<Transaction> =>
+        bridge.updateTransaction(transaction, payload),
+      );
     },
     [onUpdateTransaction, bridge],
   );
 
   const onChangeValidator = useCallback(
-    ({ userActiveStake, contract }) => {
-      updateValidator({ recipient: contract, amount: BigNumber(userActiveStake) });
-      setInitialAmount(BigNumber(userActiveStake));
-      setValue(BigNumber(userActiveStake));
+    (delegation: DelegationType) => {
+      updateValidator({
+        recipient: delegation.contract,
+        amount: BigNumber(delegation.userActiveStake),
+      });
+
+      setInitialAmount(BigNumber(delegation.userActiveStake));
+      setValue(BigNumber(delegation.userActiveStake));
     },
     [updateValidator],
   );
@@ -50,7 +59,7 @@ const StepAmount = (props: StepProps) => {
   );
 
   useEffect(() => {
-    onUpdateTransaction(transaction =>
+    onUpdateTransaction((transaction: Transaction): AccountBridge<Transaction> =>
       bridge.updateTransaction(transaction, {
         mode: "unDelegate",
         amount: value,
@@ -62,6 +71,7 @@ const StepAmount = (props: StepProps) => {
     <Box flow={1}>
       <TrackPage category="Undelegation Flow" name="Step 1" />
       {error && <ErrorBanner error={error} />}
+
       <Box horizontal={true} justifyContent="center" mb={2}>
         <Text ff="Inter|Medium" fontSize={4}>
           <Trans i18nKey="elrond.undelegation.flow.steps.amount.subtitle">

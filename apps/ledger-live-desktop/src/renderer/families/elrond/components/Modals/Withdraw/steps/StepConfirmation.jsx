@@ -18,6 +18,8 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
+import type { StepProps } from "../types";
+
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -26,7 +28,7 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-const StepConfirmation = props => {
+const StepConfirmation = (props: StepProps) => {
   const { optimisticOperation, error, signed, transaction } = props;
 
   if (optimisticOperation) {
@@ -73,7 +75,7 @@ const StepConfirmation = props => {
   return null;
 };
 
-const StepConfirmationFooter = props => {
+const StepConfirmationFooter = (props: StepProps) => {
   const { account, parentAccount, onRetry, error, onClose, optimisticOperation } = props;
 
   const concernedOperation = optimisticOperation
@@ -87,8 +89,8 @@ const StepConfirmationFooter = props => {
       <Button ml={2} onClick={onClose}>
         <Trans i18nKey="common.close" />
       </Button>
+
       {concernedOperation ? (
-        // FIXME make a standalone component!
         <Button
           primary={true}
           ml={2}

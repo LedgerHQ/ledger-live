@@ -9,6 +9,11 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import Text from "~/renderer/components/Text";
 import Popover from "~/renderer/components/Popover";
 
+interface Props {
+  mode: string;
+  onChange: (mode: string) => void;
+}
+
 const options = [
   {
     value: "reDelegateRewards",
@@ -20,46 +25,58 @@ const options = [
   },
 ];
 
-const ModeSelectorField = ({ mode, onChange }) => (
-  <Box style={{ width: 300 }} alignSelf="center">
-    <ToggleButton value={mode} options={options} onChange={onChange} />
+const ModeSelectorField = (props: Props) => {
+  const { mode, onChange } = props;
 
-    <Box horizontal={true} alignItems="center" justifyContent="center" color="palette.text.shade60">
-      <Popover
-        position="right"
-        content={
-          <Box vertical={true} px={2}>
-            <Box vertical={true} alignItems="start" justifyContent="start" my={2}>
-              <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
-                <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.compound" />
-              </Text>
-              <Text fontSize={3} textAlign="left" color="palette.text.shade80">
-                <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.compoundDescription" />
-              </Text>
-            </Box>
+  return (
+    <Box style={{ width: 300 }} alignSelf="center">
+      <ToggleButton value={mode} options={options} onChange={onChange} />
 
-            <Box vertical={true} alignItems="start" justifyContent="start" my={2}>
-              <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
-                <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.claim" />
-              </Text>
-              <Text fontSize={3} textAlign="left" color="palette.text.shade80">
-                <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.claimDescription" />
-              </Text>
-            </Box>
-          </Box>
-        }
+      <Box
+        horizontal={true}
+        alignItems="center"
+        justifyContent="center"
+        color="palette.text.shade60"
       >
-        <Box horizontal={true} alignItems="center" p={2} justifyContent="center">
-          <Text ff="Inter|SemiBold" fontSize={4}>
-            <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.compoundOrClaim" />
-          </Text>
-          <Box ml={1}>
-            <InfoCircle size={16} />
+        <Popover
+          position="right"
+          content={
+            <Box vertical={true} px={2}>
+              <Box vertical={true} alignItems="start" justifyContent="start" my={2}>
+                <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
+                  <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.compound" />
+                </Text>
+
+                <Text fontSize={3} textAlign="left" color="palette.text.shade80">
+                  <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.compoundDescription" />
+                </Text>
+              </Box>
+
+              <Box vertical={true} alignItems="start" justifyContent="start" my={2}>
+                <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
+                  <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.claim" />
+                </Text>
+
+                <Text fontSize={3} textAlign="left" color="palette.text.shade80">
+                  <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.claimDescription" />
+                </Text>
+              </Box>
+            </Box>
+          }
+        >
+          <Box horizontal={true} alignItems="center" p={2} justifyContent="center">
+            <Text ff="Inter|SemiBold" fontSize={4}>
+              <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.compoundOrClaim" />
+            </Text>
+
+            <Box ml={1}>
+              <InfoCircle size={16} />
+            </Box>
           </Box>
-        </Box>
-      </Popover>
+        </Popover>
+      </Box>
     </Box>
-  </Box>
-);
+  );
+};
 
 export default ModeSelectorField;

@@ -18,6 +18,7 @@ import { constants } from "~/renderer/families/elrond/constants";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
+import type { ValidatorType } from "~/renderer/families/elrond/types";
 import type { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
@@ -33,8 +34,9 @@ const StepConfirmation = (props: StepProps) => {
   const { t } = useTranslation();
 
   if (optimisticOperation) {
-    const provider = transaction && transaction.recipient;
-    const v = provider && validators.find(validator => validator.contract === provider);
+    const provider: string | undefined = transaction && transaction.recipient;
+    const v: ValidatorType | undefined =
+      provider && validators.find(validator => validator.contract === provider);
 
     const amount = `${denominate({
       input: String(transaction.amount),

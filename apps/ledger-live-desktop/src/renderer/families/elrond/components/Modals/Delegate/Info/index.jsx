@@ -4,21 +4,29 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 
-import { openModal, closeModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { constants } from "~/renderer/families/elrond/constants";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { openModal, closeModal } from "~/renderer/actions/modals";
 
-export default function ElrondEarnRewardsInfoModal({
-  name,
-  account,
-  parentAccount,
-  validators,
-  delegations,
-}: any) {
+import type { Account } from "@ledgerhq/types-live";
+import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+
+interface Props {
+  name: string;
+  account: Account;
+  parentAccount?: Account;
+  validators: Array<ValidatorType>;
+  delegations: Array<DelegationType>;
+}
+
+const ElrondEarnRewardsInfoModal = (props: Props) => {
+  const { name, account, parentAccount, validators, delegations } = props;
+
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
@@ -42,11 +50,9 @@ export default function ElrondEarnRewardsInfoModal({
       name={name}
       onNext={onNext}
       description={t("elrond.delegation.flow.steps.starter.description")}
-      bullets={[
-        t("elrond.delegation.flow.steps.starter.bullet.0"),
-        t("elrond.delegation.flow.steps.starter.bullet.1"),
-        t("elrond.delegation.flow.steps.starter.bullet.2"),
-      ]}
+      bullets={Array.from({ length: 3 }).map((_, index) =>
+        t(`elrond.delegation.flow.steps.starter.bullet.${index}`),
+      )}
       additional={
         <WarnBox>{t("elrond.delegation.flow.steps.starter.warning.description")}</WarnBox>
       }
@@ -58,4 +64,6 @@ export default function ElrondEarnRewardsInfoModal({
       }
     />
   );
-}
+};
+
+export default ElrondEarnRewardsInfoModal;

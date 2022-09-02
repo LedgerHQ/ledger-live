@@ -1,13 +1,11 @@
 // @flow
 
-import invariant from "invariant";
 import React, { Fragment, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-
-import type { StepProps } from "../types";
-
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import invariant from "invariant";
+
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -19,37 +17,45 @@ import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 
-export default function StepClaimRewards({
-  account,
-  parentAccount,
-  onUpdateTransaction,
-  transaction,
-  warning,
-  error,
-  t,
-  validators,
-  delegations,
-  contract,
-}: StepProps) {
+import type { Transaction, AccountBridge } from "@ledgerhq/types-live";
+import type { ValidatorType } from "~/renderer/families/elrond/types";
+import type { StepProps } from "../types";
+
+const StepClaimRewards = (props: StepProps) => {
+  const {
+    account,
+    parentAccount,
+    onUpdateTransaction,
+    transaction,
+    warning,
+    error,
+    t,
+    validators,
+    delegations,
+    contract,
+  } = props;
+
   invariant(account && account.elrondResources && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
 
   const updateClaimRewards = useCallback(
-    newTransaction => {
-      onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
+    (newTransaction: Transaction) => {
+      onUpdateTransaction((transaction: Transaction): AccountBridge<Transaction> =>
+        bridge.updateTransaction(transaction, newTransaction),
+      );
     },
     [bridge, onUpdateTransaction],
   );
 
   const onChangeMode = useCallback(
-    mode => {
+    (mode: string) => {
       updateClaimRewards({ ...transaction, mode });
     },
     [updateClaimRewards, transaction],
   );
 
   const onDelegationChange = useCallback(
-    validator => {
+    (validator: ValidatorType) => {
       updateClaimRewards({
         ...transaction,
         recipient: validator.delegation.contract,
@@ -98,16 +104,11 @@ export default function StepClaimRewards({
       />
     </Box>
   );
-}
+};
 
-export function StepClaimRewardsFooter({
-  transitionTo,
-  account,
-  parentAccount,
-  onClose,
-  status,
-  bridgePending,
-}: StepProps) {
+const StepClaimRewardsFooter = (props: StepProps) => {
+  const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
+
   invariant(account, "account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
@@ -128,4 +129,7 @@ export function StepClaimRewardsFooter({
       </Box>
     </Fragment>
   );
-}
+};
+
+export { StepClaimRewardsFooter };
+export default StepClaimRewards;

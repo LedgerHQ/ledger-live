@@ -3,20 +3,22 @@
 import React, { useState, useCallback } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
+
 import type { StepId } from "./types";
 
 interface Props {
   name: string;
 }
 
-export default function UndelegationModal({ name }: Props) {
+const UndelegationModal = (props: Props) => {
+  const { name } = props;
   const [stepId, setStepId] = useState<StepId>("amount");
 
   const onHide = useCallback(() => {
     setStepId("amount");
   }, []);
 
-  const onChange = useCallback(id => {
+  const onChange = useCallback((id: string) => {
     setStepId(id);
   }, []);
 
@@ -44,4 +46,6 @@ export default function UndelegationModal({ name }: Props) {
       )}
     />
   );
-}
+};
+
+export default UndelegationModal;

@@ -26,6 +26,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { denominate, randomizeProviders } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
+import type { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
 import type { Account } from "@ledgerhq/types-live";
 
 interface Props {
@@ -41,7 +42,7 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 /* eslint-disable react/display-name */
-const withDelegation = (Component: any) => (props: any) =>
+const withDelegation = (Component: JSX.Element) => (props: Props) =>
   props.account.elrondResources ? <Component {...props} /> : null;
 
 const Delegation = (props: Props) => {
@@ -56,7 +57,7 @@ const Delegation = (props: Props) => {
 
   const dispatch = useDispatch();
   const delegationEnabled = useMemo(
-    () => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
+    (): boolean => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
     [account.spendableBalance],
   );
 
@@ -66,7 +67,7 @@ const Delegation = (props: Props) => {
   );
 
   const hasRewards = useMemo(
-    () =>
+    (): boolean =>
       delegationResources
         .reduce(
           (total, delegation) => BigNumber(delegation.claimableRewards).plus(total),
@@ -76,19 +77,19 @@ const Delegation = (props: Props) => {
     [delegationResources],
   );
 
-  const delegations = useMemo(() => {
-    const transform = (input: string) =>
+  const delegations = useMemo((): Array<DelegationType> => {
+    const transform = (input: string): BigNumber =>
       BigNumber(denominate({ input, showLastNonZeroDecimal: true }));
 
-    const assignValidator = delegation => ({
+    const assignValidator = (delegation: DelegationType) => ({
       ...delegation,
       validator: findValidator(delegation.contract),
     });
 
-    const sortDelegations = (alpha, beta) =>
+    const sortDelegations = (alpha: DelegationType, beta: DelegationType) =>
       transform(alpha.userActiveStake).isGreaterThan(transform(beta.userActiveStake)) ? -1 : 1;
 
-    const filterDelegations = delegation =>
+    const filterDelegations = (delegation: DelegationType): boolean =>
       BigNumber(delegation.userActiveStake).isGreaterThan(0) ||
       BigNumber(delegation.claimableRewards).isGreaterThan(0);
 
@@ -99,7 +100,7 @@ const Delegation = (props: Props) => {
   }, [findValidator, delegationResources]);
 
   const unbondings = useMemo(
-    () =>
+    (): Array<UnbondingType> =>
       delegationResources
         .reduce(
           (total, item) =>

@@ -21,6 +21,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { ValidatorType } from "~/renderer/families/elrond/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import type { ValidatorItemType } from "./ValidatorItem";
 
 const ValidatorsFieldContainer: ThemedComponent<{}> = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -46,14 +47,15 @@ const SeeAllButton: ThemedComponent<{ expanded: boolean }> = styled.div`
   }
 `;
 
-type ValidatorListType = {
+type EnhancedValidator = ValidatorType & { disabled: boolean };
+type Props = {
   account: Account,
   validators: Array<ValidatorType>,
   onSelectValidator: (recipient: string) => void,
   transaction: Transaction,
 };
 
-const ValidatorList = (props: ValidatorListType) => {
+const ValidatorList = (props: Props) => {
   const { account, validators, onSelectValidator, transaction } = props;
 
   const [showAll, setShowAll] = useState(false);
@@ -74,7 +76,7 @@ const ValidatorList = (props: ValidatorListType) => {
     };
 
     // Map the providers such that they'll be assigned the "disabled" key if conditions are met.
-    const disable = (validator: ValidatorType) => {
+    const disable = (validator: ValidatorType): EnhancedValidator => {
       const [alpha, beta] = [validator.maxDelegationCap, validator.totalActiveStake];
       const delegative = alpha !== "0" && validator.withDelegationCap;
       const difference = new BigNumber(alpha).minus(beta);
@@ -111,7 +113,7 @@ const ValidatorList = (props: ValidatorListType) => {
   );
 
   const renderItem = useCallback(
-    props =>
+    (props: ValidatorItemType) =>
       props ? (
         <ValidatorItem
           {...{
@@ -126,15 +128,14 @@ const ValidatorList = (props: ValidatorListType) => {
     [ValidatorItem, onSelectValidator, account, unit, isActiveValidator],
   );
 
+  const onSearch = useCallback(
+    (event: SyntheticInputEvent<HTMLInputElement>) => setSearch(event.target.value),
+    [],
+  );
+
   return (
     <Fragment>
-      {showAll && (
-        <ValidatorSearchInput
-          noMargin={true}
-          search={search}
-          onSearch={event => setSearch(event.target.value)}
-        />
-      )}
+      {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
 
       <ValidatorsFieldContainer>
         <Box p={1}>

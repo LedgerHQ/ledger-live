@@ -12,8 +12,29 @@ import Text from "~/renderer/components/Text";
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
-const renderItem = item => {
-  const name = item.data.identity.name || item.data.contract;
+import type { TFunction } from "react-i18next";
+import type { Transaction, AccountBridge } from "@ledgerhq/types-live";
+import type { ValidatorType, DelegationType } from "~/renderer/families/elrond/types";
+import type { Option } from "~/renderer/components/Select";
+
+type NoOptionsMessageCallbackType = { inputValue: string };
+type OptionType = ValidatorType & {
+  delegation: DelegationType | undefined,
+};
+
+interface DelegationSelectorFieldType {
+  validators: Array<ValidatorType>;
+  delegations: Array<DelegationType>;
+  contract: string;
+  transaction: Transaction;
+  onChange: (validator: ValidatorType) => void;
+  onUpdateTransaction: (transaction: Transaction) => void;
+  t: TFunction;
+  bridge: AccountBridge<Transaction>;
+}
+
+const renderItem = (item: Option) => {
+  const name: string = item.data.identity.name || item.data.contract;
   const balance = denominate({
     input: item.data.delegation.claimableRewards,
     decimals: 6,
@@ -33,20 +54,22 @@ const renderItem = item => {
   );
 };
 
-const DelegationSelectorField = ({
-  validators,
-  delegations,
-  contract,
-  t,
-  onChange,
-  bridge,
-  transaction,
-  onUpdateTransaction,
-}) => {
+const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
+  const {
+    validators,
+    delegations,
+    contract,
+    t,
+    onChange,
+    bridge,
+    transaction,
+    onUpdateTransaction,
+  } = props;
+
   const options = useMemo(
-    () =>
+    (): Array<OptionType> =>
       validators.reduce((total, validator) => {
-        const item = {
+        const item: OptionType = {
           ...validator,
           delegation: delegations.find(
             delegation =>
@@ -65,10 +88,10 @@ const DelegationSelectorField = ({
   );
 
   const [query, setQuery] = useState<string>("");
-  const [value, setValue] = useState<any>(options[0]);
+  const [value, setValue] = useState<OptionType>(options.find(() => true));
 
   const noOptionsMessageCallback = useCallback(
-    needle =>
+    (needle: NoOptionsMessageCallbackType): string =>
       t("common.selectValidatorNoOption", {
         accountName: needle.inputValue,
       }),
@@ -76,14 +99,15 @@ const DelegationSelectorField = ({
   );
 
   const filterOptions = useCallback(
-    (option, needle) =>
-      BigNumber(option.data.delegation.claimableRewards).gt(0) &&
-      option.data.identity.name.toLowerCase().includes(needle.toLowerCase()),
+    (option: Option, needle: string): boolean =>
+      BigNumber(option.data.delegation.claimableRewards).gt(0) && option.data.identity.name
+        ? option.data.identity.name.toLowerCase().includes(needle.toLowerCase())
+        : false,
     [],
   );
 
   const onValueChange = useCallback(
-    option => {
+    (option: OptionType) => {
       setValue(option);
       if (onChange) {
         onChange(option);
@@ -96,7 +120,7 @@ const DelegationSelectorField = ({
     const [defaultOption] = options;
 
     if (defaultOption && !Boolean(transaction.recipient) && transaction.amount.isEqualTo(0)) {
-      onUpdateTransaction(transaction =>
+      onUpdateTransaction((transaction: Transaction): Transaction =>
         bridge.updateTransaction(transaction, {
           recipient: defaultOption.delegation.contract,
           amount: BigNumber(defaultOption.delegation.claimableRewards),
@@ -108,6 +132,7 @@ const DelegationSelectorField = ({
   return (
     <Box flow={1} mt={5}>
       <Label>{t("elrond.claimRewards.flow.steps.claimRewards.selectLabel")}</Label>
+
       <Select
         value={value}
         options={options}

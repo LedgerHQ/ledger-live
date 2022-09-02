@@ -25,8 +25,11 @@ import logger from "~/logger/logger";
 
 import { constants } from "../../../constants";
 
-import type { StepProps, St } from "./types";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Account, Operation } from "@ledgerhq/live-common/types/index";
+import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { StepProps, St } from "./types";
 
 interface OwnProps {|
   stepId: StepId,
@@ -35,8 +38,8 @@ interface OwnProps {|
   params: {
     account: Account,
     parentAccount: ?Account,
-    validators?: any,
-    delegations?: any,
+    validators?: Array<ValidatorType>,
+    delegations?: Array<DelegationType>,
   },
   name: string,
 |};
@@ -91,22 +94,24 @@ const mapDispatchToProps = {
   openModal,
 };
 
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
+const Body = (props: Props) => {
+  const {
+    t,
+    stepId,
+    device,
+    closeModal,
+    openModal,
+    onChangeStepId,
+    params,
+    name,
+  } = props
+
   const [optimisticOperation, setOptimisticOperation] = useState(null);
   const [transactionError, setTransactionError] = useState(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
 
-  const defaultValidator = params.validators.find(validator => validator.contract === constants.figment)
+  const defaultValidator: ValidatorType | undefined = params.validators.find(validator => validator.contract === constants.figment)
 
   const {
     transaction,
@@ -120,8 +125,8 @@ const Body = ({
   } = useBridgeTransaction(() => {
     const { account } = params;
 
-    const bridge = getAccountBridge(account, undefined);
-    const transaction = bridge.createTransaction(account);
+    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
+    const transaction: Transaction = bridge.createTransaction(account);
 
     return {
       account,

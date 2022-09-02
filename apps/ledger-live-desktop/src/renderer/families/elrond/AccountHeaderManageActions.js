@@ -23,7 +23,7 @@ const AccountHeaderActions = (props: Props) => {
   const dispatch = useDispatch();
 
   const earnRewardEnabled = useMemo(
-    () => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
+    (): boolean => BigNumber(denominate({ input: account.spendableBalance })).gt(1),
     [account.spendableBalance],
   );
 

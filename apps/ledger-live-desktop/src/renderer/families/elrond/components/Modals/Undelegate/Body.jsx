@@ -20,7 +20,10 @@ import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
 
+import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Operation } from "@ledgerhq/live-common/types/index";
+import type { ValidatorType } from "~/renderer/families/elrond/types";
 
 
 interface OwnProps {|
@@ -29,7 +32,7 @@ interface OwnProps {|
   onClose: () => void,
   onChangeStepId: StepId => void,
   contract: string,
-  validators: Array<any>,
+  validators: Array<ValidatorType>,
   name: string,
   amount: string,
 |};
@@ -54,20 +57,22 @@ const mapDispatchToProps = {
   openModal,
 };
 
-function Body({
-  t,
-  account: accountProp,
-  stepId,
-  onChangeStepId,
-  closeModal,
-  openModal,
-  device,
-  name,
-  contract,
-  validators,
-  amount,
-  delegations,
-}: Props) {
+const Body = (props: Props) => {
+  const {
+    t,
+    account: accountProp,
+    stepId,
+    onChangeStepId,
+    closeModal,
+    openModal,
+    device,
+    name,
+    contract,
+    validators,
+    amount,
+    delegations,
+  } = props;
+
   const dispatch = useDispatch();
 
   const [optimisticOperation, setOptimisticOperation] = useState(null);
@@ -83,8 +88,8 @@ function Body({
     bridgePending,
     status,
   } = useBridgeTransaction(() => {
-    const bridge = getAccountBridge(accountProp, undefined);
-    const transaction = bridge.createTransaction(accountProp);
+    const bridge: AccountBridge<Transaction> = getAccountBridge(accountProp, undefined);
+    const transaction: Transaction = bridge.createTransaction(accountProp);
 
     return {
       account: accountProp,

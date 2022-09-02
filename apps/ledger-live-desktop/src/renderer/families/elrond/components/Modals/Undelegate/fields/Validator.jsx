@@ -12,8 +12,22 @@ import Text from "~/renderer/components/Text";
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
-const Item = item => {
-  const label = item.data.validator.identity.name || item.data.validator.contract;
+import type { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import type { Option } from "~/renderer/components/Select";
+
+type NoOptionsMessageCallbackType = { inputValue: string };
+type OptionType = ValidatorType & {
+  delegation: DelegationType | undefined,
+};
+
+interface Props {
+  delegations: Array<DelegationType>;
+  onChange: (delegation: DelegationType) => void;
+  contract: string;
+}
+
+const Item = (item: Option) => {
+  const label: string = item.data.validator.identity.name || item.data.validator.contract;
   const amount = useMemo(() => denominate({ input: item.data.userActiveStake, decimals: 6 }), [
     item.data.userActiveStake,
   ]);
@@ -42,7 +56,7 @@ const Dropdown = (props: Props) => {
   const { t } = useTranslation();
 
   const [defaultOption, ...options] = useMemo(
-    () =>
+    (): Array<DelegationType> =>
       delegations.reduce(
         (total, delegation) =>
           delegation.contract === contract
@@ -57,7 +71,7 @@ const Dropdown = (props: Props) => {
   const [value, setValue] = useState(defaultOption);
 
   const noOptionsMessageCallback = useCallback(
-    needle =>
+    (needle: NoOptionsMessageCallbackType): string =>
       t("common.selectValidatorNoOption", {
         accountName: needle.inputValue,
       }),
@@ -65,7 +79,7 @@ const Dropdown = (props: Props) => {
   );
 
   const filterOptions = useCallback(
-    (option, needle) =>
+    (option: Option, needle: string): boolean =>
       option.data.validator.identity.name
         ? option.data.validator.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,
@@ -73,7 +87,7 @@ const Dropdown = (props: Props) => {
   );
 
   const onValueChange = useCallback(
-    option => {
+    (option: OptionType) => {
       setValue(option);
 
       if (onChange) {
@@ -86,6 +100,7 @@ const Dropdown = (props: Props) => {
   return (
     <Box mb={4}>
       <Label>{t("elrond.undelegation.flow.steps.amount.fields.validator")}</Label>
+
       <Select
         value={value}
         options={[defaultOption].concat(options)}

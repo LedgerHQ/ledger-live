@@ -1,6 +1,6 @@
 // @flow
 
-const type = "mainnet";
+const type = "testnet";
 const modals = {
   rewards: "MODAL_ELROND_REWARDS_INFO",
   claim: "MODAL_ELROND_CLAIM_REWARDS",

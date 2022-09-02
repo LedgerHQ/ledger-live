@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 
 import Box from "~/renderer/components/Box";
@@ -9,6 +10,9 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 
 import { constants } from "~/renderer/families/elrond/constants";
+
+import type { Account, TransactionStatus } from "@ledgerhq/types-live";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
@@ -59,7 +63,21 @@ const AmountButton = styled.button.attrs(() => ({
   }
 `;
 
-const AmountField = props => {
+interface Props {
+  amount: BigNumber;
+  initialAmount: BigNumber;
+  account: Account;
+  label: JSX.Element;
+  onChange: (amount: BigNumber) => void;
+  status: TransactionStatus;
+}
+
+interface OptionType {
+  value: BigNumber;
+  label: string;
+}
+
+const AmountField = (props: Props) => {
   const {
     amount,
     initialAmount,
@@ -72,12 +90,12 @@ const AmountField = props => {
   const unit = getAccountUnit(account);
   const [focused, setFocused] = useState(false);
 
-  const onAmountChange = (amount, unit) => {
+  const onAmountChange = (amount: BigNumber, unit?: Unit) => {
     onChange(amount, unit);
   };
 
   const options = useMemo(
-    () => [
+    (): Array<OptionType> => [
       {
         label: "25%",
         value: initialAmount.multipliedBy(0.25).integerValue(),
@@ -99,7 +117,10 @@ const AmountField = props => {
   );
 
   const error = errors.amount || errors.unbonding;
-  const warning = useMemo(() => focused && Object.values(warnings || {})[0], [focused, warnings]);
+  const warning: string | undefined = useMemo(() => focused && Object.values(warnings || {})[0], [
+    focused,
+    warnings,
+  ]);
 
   return (
     <Box my={2}>

@@ -37,9 +37,9 @@ const Summary = (props: Props) => {
     return () => setDelegationResources(account.elrondResources.delegations || []);
   }, [JSON.stringify(account.elrondResources.delegations)]);
 
-  const available = useMemo(() => account.spendableBalance, [account.spendableBalance]);
+  const available = useMemo((): BigNumber => account.spendableBalance, [account.spendableBalance]);
   const delegations = useMemo(
-    () =>
+    (): BigNumber =>
       delegationsResources.reduce(
         (total, delegation) => total.plus(delegation.userActiveStake),
         BigNumber(0),
@@ -48,7 +48,7 @@ const Summary = (props: Props) => {
   );
 
   const unbondings = useMemo(
-    () =>
+    (): BigNumber =>
       delegationsResources.reduce((total, item) => total.plus(item.userUnBondable), BigNumber(0)),
     [delegationsResources],
   );

@@ -1,12 +1,12 @@
 // @flow
 
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { Step } from "~/renderer/components/Stepper";
 import type { Account, Transaction, TransactionStatus, Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";
+import type { Step } from "~/renderer/components/Stepper";
+import type { DelegationType } from "~/renderer/families/elrond/types";
 
 export type StepId = "amount" | "device" | "confirmation";
-
 export type StepProps = {
   t: TFunction,
   transitionTo: (param: string) => void,
@@ -28,6 +28,9 @@ export type StepProps = {
   setSigned: (assigned: boolean) => void,
   bridgePending: boolean,
   validatorAddress: string,
+  contract: string,
+  amount: string,
+  delegations: Array<DelegationType>,
 };
 
 export type St = Step<StepId, StepProps>;

@@ -13,16 +13,13 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 
 import { ValidatorList } from "../fields";
+
+import type { Transaction } from "@ledgerhq/types-live";
 import type { StepProps } from "../types";
 
-const StepDelegation = ({
-  account,
-  parentAccount,
-  onUpdateTransaction,
-  transaction,
-  error,
-  validators,
-}: StepProps) => {
+const StepDelegation = (props: StepProps) => {
+  const { account, parentAccount, onUpdateTransaction, transaction, error, validators } = props;
+
   invariant(account && transaction, "account and transaction required");
 
   const { elrondResources } = account;
@@ -30,7 +27,9 @@ const StepDelegation = ({
 
   const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
   const onSelectValidator = (recipient: string) =>
-    onUpdateTransaction(transaction => bridge.updateTransaction(transaction, { recipient }));
+    onUpdateTransaction((transaction: Transaction): Transaction =>
+      bridge.updateTransaction(transaction, { recipient }),
+    );
 
   return (
     <Box flow={1}>
@@ -43,14 +42,9 @@ const StepDelegation = ({
   );
 };
 
-const StepDelegationFooter = ({
-  transitionTo,
-  account,
-  parentAccount,
-  onClose,
-  status,
-  bridgePending,
-}: StepProps) => {
+const StepDelegationFooter = (props: StepProps) => {
+  const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
+
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;

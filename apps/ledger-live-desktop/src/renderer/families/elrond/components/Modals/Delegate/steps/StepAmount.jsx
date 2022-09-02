@@ -13,23 +13,26 @@ import SpendableBanner from "~/renderer/components/SpendableBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 
+import type { Transaction } from "@ledgerhq/types-live";
 import type { StepProps } from "../types";
 
-const StepAmount = ({
-  t,
-  account,
-  parentAccount,
-  transaction,
-  onChangeTransaction,
-  error,
-  status,
-  bridgePending,
-}: StepProps) => {
+const StepAmount = (props: StepProps) => {
+  const {
+    t,
+    account,
+    parentAccount,
+    transaction,
+    onChangeTransaction,
+    error,
+    status,
+    bridgePending,
+  } = props;
+
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
   const onUpdateTransactionCallback = useCallback(
-    transaction =>
+    (transaction: Transaction) =>
       onChangeTransaction({
         ...transaction,
         mode: "delegate",
@@ -42,24 +45,23 @@ const StepAmount = ({
       <TrackPage category="Delegation Elrond" name="Step Amount" />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
+
       {account && transaction && mainAccount && (
         <Fragment key={account.id}>
           {account && transaction ? (
-            <SpendableBanner
-              account={account}
-              parentAccount={parentAccount}
-              transaction={transaction}
-            />
+            <SpendableBanner {...{ account, transaction, parentAccount }} />
           ) : null}
 
           <AmountField
-            status={status}
-            account={account}
-            parentAccount={parentAccount}
-            transaction={transaction}
-            onChangeTransaction={onUpdateTransactionCallback}
-            bridgePending={bridgePending}
-            t={t}
+            {...{
+              status,
+              account,
+              transaction,
+              t,
+              bridgePending,
+              parentAccount,
+              onChangeTransaction: onUpdateTransactionCallback,
+            }}
           />
         </Fragment>
       )}
@@ -85,11 +87,12 @@ export class StepAmountFooter extends PureComponent<StepProps> {
 
     return (
       <Fragment>
-        <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+        <AccountFooter {...{ account, status, parentAccount }} />
+
         <Button
-          id={"send-amount-continue-button"}
+          id="send-amount-continue-button"
           isLoading={bridgePending}
-          primary
+          primary={true}
           disabled={!canNext}
           onClick={this.onNext}
         >

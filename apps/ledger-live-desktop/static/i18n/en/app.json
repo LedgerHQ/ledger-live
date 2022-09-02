@@ -2028,7 +2028,7 @@
     "delegation": {
       "emptyState": {
         "description": "Delegate your EGLD to secure the network and capture your share of the rewards.",
-        "info": "What is delegation and how does it work?",
+        "info": "What is a delegation?",
         "delegation": "Earn rewards"
       },
       "commission": "Commission",

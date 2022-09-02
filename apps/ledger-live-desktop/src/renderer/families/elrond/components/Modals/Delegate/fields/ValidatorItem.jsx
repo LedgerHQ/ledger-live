@@ -23,7 +23,8 @@ import type { ValidatorType } from "~/renderer/families/elrond/types";
 import type { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-type ValidatorItemType = ValidatorType & {
+export type Recipient = { address: string };
+export type ValidatorItemType = ValidatorType & {
   onSelectValidator: (recipient: string) => void,
   disabled: boolean,
   active: boolean,
@@ -76,7 +77,7 @@ const ValidatorItem = (props: ValidatorItemType) => {
   );
 
   const onClick = useCallback(
-    recipient => {
+    (recipient: Recipient) => {
       if (!disabled) {
         onSelectValidator(recipient.address);
       }

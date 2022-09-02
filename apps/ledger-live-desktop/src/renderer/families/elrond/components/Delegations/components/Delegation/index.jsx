@@ -38,6 +38,25 @@ interface RenderDropdownItemType {
   };
 }
 
+interface DropDownItemType {
+  key: string;
+  label: string;
+  show: boolean;
+  parameters: {
+    account: AccountType,
+    contract: string,
+    validators: Array<ValidatorType>,
+    delegations: Array<DelegationType>,
+    amount?: string,
+  };
+}
+
+type Props = DelegationType &
+  AccountType &
+  Array<DelegationType> &
+  Array<ValidatorType> &
+  Array<UnbondingType>;
+
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   <Fragment>
     {item.key === constants.modals.claim && <Divider />}
@@ -54,21 +73,18 @@ const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   </Fragment>
 );
 
-const Delegation = ({
-  contract,
-  claimableRewards,
-  userActiveStake,
-  validator,
-  account,
-  delegations,
-  validators,
-}: DelegationType &
-  AccountType &
-  Array<DelegationType> &
-  Array<ValidatorType> &
-  Array<UnbondingType>) => {
-  const dispatch = useDispatch();
+const Delegation = (props: Props) => {
+  const {
+    contract,
+    claimableRewards,
+    userActiveStake,
+    validator,
+    account,
+    delegations,
+    validators,
+  } = props;
 
+  const dispatch = useDispatch();
   const onSelect = useCallback(
     action => {
       dispatch(openModal(action.key, action.parameters));
@@ -77,7 +93,7 @@ const Delegation = ({
   );
 
   const dropDownItems = useMemo(
-    () =>
+    (): Array<DropDownItemType> =>
       [
         {
           key: constants.modals.unstake,

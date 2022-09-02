@@ -49,5 +49,5 @@ export type DelegationType = {
   userActiveStake: string;
   userUnBondable: string;
   userUndelegatedList: Array<UnbondingType>;
-  validator: ValidatorType;
+  validator?: ValidatorType;
 };
