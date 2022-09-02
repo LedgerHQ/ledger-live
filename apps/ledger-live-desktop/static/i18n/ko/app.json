@@ -198,7 +198,7 @@
     "menu" : "메뉴",
     "stars" : "즐겨찾는 계정",
     "accounts" : "계정",
-    "manager" : "관리자",
+    "manager" : "My Ledger",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "lend" : "대출",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "장치에 {{appName}} 앱을 설치하세요",
-      "subtitle" : "관리자로 이동하고 {{appName}} 앱을 설치하여 자산을 스왑하세요.",
-      "cta" : "관리자로 이동"
+      "subtitle" : "Go to My Ledger and install {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "outdatedApp" : {
       "title" : "장치에 {{appName}} 앱을 업데이트 하세요",
-      "subtitle" : "관리자로 이동하고 {{appName}} 앱을 업데이트 하여 자산을 스왑하세요.",
-      "cta" : "관리자로 이동"
+      "subtitle" : "Go to My Ledger and update {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -697,6 +697,17 @@
     }
   },
   "account" : {
+    "subHeader" : {
+      "moreInfo" : "자세한 정보",
+      "cardTitle" : "{{team}} 기반",
+      "drawer" : {
+        "title" : "{{family}} 통합",
+        "subTitle" : "{{family}} 통합은 {{team}} 팀에서 수행했습니다.",
+        "description" : "Ledger Live는 오픈 소스 플랫폼입니다.",
+        "description2" : "전 세계 어디에서나 개발자가 Ledger Live와 통합할 수 있습니다.",
+        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다."
+      }
+    },
     "lastOperations" : "최신 운영",
     "contractAddress" : "계약:",
     "openInExplorer" : "탐색기에서 열기",
@@ -733,8 +744,8 @@
     "frozenAssetsTooltip" : "트론 투표 과정에 동결 자산이 사용되었습니다. 총 투표 수를 나타내는 숫자입니다.",
     "bandwidthTooltip" : "자산을 동결하여 대역폭을 확보합니다",
     "energyTooltip" : "자산을 동결하여 에너지를 확보합니다",
-    "delegatedAssetsTooltip" : "Cosmos(코스모스) 투표 과정에 위임 자산이 사용되었습니다. 총 투표 수를 나타내는 숫자입니다.",
-    "undelegatingTooltip" : "위임 해제 자산은 21일 후 타임락이 해제되면 사용 가능합니다."
+    "delegatedTooltip" : "투표 과정에 위임 자산이 사용됩니다. 이는 총 투표 수를 나타내는 숫자입니다.",
+    "undelegatingTooltip" : "위임 해제 자산은 {{timelockInDays}}일 후 타임락이 해제되면 사용 가능합니다."
   },
   "exchange" : {
     "chooseProvider" : "{{providerCount}} 제공자에서 선택",
@@ -948,7 +959,7 @@
       "terms" : {
         "title" : "암호화폐 대출",
         "subtitle" : "컴파운드 프로토콜에서 자산 대출",
-        "description" : "컴파운드 프로토콜로 이더리움 네트워크에서 자산을 대출해 주거나 받을 수 있습니다. Ledger 계정에서 바로 자산을 대출해 주고 이자를 받을 수 있습니다.",
+        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
         "switchLabel" : "<1></1><0>이용 약관</0><1>을 읽고 동의합니다.</1>"
       },
       "steps" : {
@@ -1191,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "장치에 앱을 설치하세요",
-      "desc" : "관리자로 이동해 보유한 장치에 앱을 설치하세요. 장치에 앱이 설치되면 계정을 추가할 수 있습니다.",
+      "desc" : "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
       "buttons" : {
-        "installApp" : "관리자로 이동",
+        "installApp" : "Go to My Ledger",
         "help" : "도움말"
       }
     },
@@ -1202,7 +1213,7 @@
       "desc" : "계정을 추가해서 암호화폐를 관리하세요. 장치에 암호화 자산 앱이 설치되어 있어야 합니다",
       "buttons" : {
         "addAccount" : "계정 추가",
-        "installApp" : "관리자로 이동하여 앱 설치",
+        "installApp" : "Go to My Ledger to install apps",
         "help" : "도움말"
       }
     }
@@ -1283,7 +1294,7 @@
       "noSearchResults" : "죄송합니다. 검색 결과를 찾지 못했습니다.",
       "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
       "retrySearchParams" : "다른 매개변수로 검색을 다시 시도해 주세요.",
-      "trackFavAssets" : "즐겨찾기를 찾아보세요",
+      "trackFavAssets" : "선호 항목 트래킹",
       "clickOnStarIcon" : "자산 옆에 있는 별 아이콘을 클릭하면 자산이 자동으로 즐겨찾기에 추가됩니다.",
       "browseAssets" : "자산 찾기"
     }
@@ -1348,6 +1359,14 @@
       "link" : "자산(ASA)은 어떻게 운영되나요?",
       "seeTokens" : "ASA 보기 ({{tokenCount}})",
       "hideTokens" : "ASA 숨기기 ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "자산",
+      "cta" : "자산 추가",
+      "placeholder" : "{{currencyName}} 계정에 자산을 추가할 수 있습니다.",
+      "link" : "스텔라 자산에 대해 자세히 알아보기",
+      "seeTokens" : "자산 표시({{tokenCount}})",
+      "hideTokens" : "자산 숨기기({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1494,6 +1513,7 @@
       "memo" : "메모",
       "assetId" : "자산 ID",
       "rewards" : "받은 보상",
+      "autoClaimedRewards" : "자동으로 청구된 보상",
       "bondedAmount" : "본딩된 금액",
       "unbondedAmount" : "언본딩된 금액",
       "withdrawUnbondedAmount" : "출금된 금액",
@@ -1516,12 +1536,12 @@
     "quitApp" : "장치에서 앱을 중단하세요",
     "appNotInstalledTitle" : "필수 앱 없음",
     "appNotInstalledTitle_plural" : "필수 앱 없음",
-    "appNotInstalled" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 관리자로 이동하여 장치에 앱을 설치하세요",
-    "appNotInstalled_plural" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 관리자로 이동해 장치에 앱을 설치하세요",
-    "openManager" : "관리자 열기",
+    "appNotInstalled" : "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
+    "appNotInstalled_plural" : "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "openManager" : "Open My Ledger",
     "openOnboarding" : "장치 설정",
     "outdated" : "앱 버전이 오래됨",
-    "outdatedDesc" : "장치의 {{appName}} 앱에 중요한 업데이트가 있습니다. 관리자로 이동하여 업데이트하세요.",
+    "outdatedDesc" : "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
     "installApp" : "{{appName}} 앱 설치",
     "installAppDescription" : "설치가 완료될 때까지 기다려 주세요",
     "listApps" : "앱 의존성 확인",
@@ -1564,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "귀하의 장치에서 앱이 실행되고 있는 것 같습니다",
-      "subtitle" : "관리자를 다시 열면 장치에서 앱이 종료됩니다",
-      "ctaReopen" : "관리자 다시 열기",
+      "subtitle" : "Reopening My Ledger will quit the app on your device",
+      "ctaReopen" : "Reopen My Ledger",
       "ctaPortfolio" : "포트폴리오로 돌아가기"
     },
     "deviceStorage" : {
@@ -1608,7 +1628,7 @@
         "title_plural" : "업데이트 이용 가능",
         "progressTitle" : "{{number}} 앱 업데이트",
         "progressTitle_plural" : "{{number}} 앱 업데이트",
-        "progressWarning" : "업데이트 중에 관리자를 중단하지 마세요.",
+        "progressWarning" : "Do not quit My Ledger during update.",
         "progress" : "모두 업데이트 중..."
       },
       "item" : {
@@ -1672,7 +1692,7 @@
       "updateBtn" : "펌웨어를 업데이트하세요",
       "banner" : {
         "warning" : "펌웨어 {{latestFirmware}}으로 업데이트하실 수 있습니다",
-        "cta" : "관리자로 이동",
+        "cta" : "Go to My Ledger",
         "old" : {
           "warning" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
           "cta" : "지원 부서 연락"
@@ -1728,7 +1748,7 @@
         "boot" : "{{option}}(이)가 표시될 때까지 길게 누르세요",
         "recoveryMode" : "{{mode}} 모드를 탭하세요. 대시보드가 나타날 때까지 기다려 주세요.",
         "third" : "3. 모든 앱 제거",
-        "openLive" : "Leddger Live에서 관리자 열기",
+        "openLive" : "Open My Ledger in Ledger Live.",
         "uninstall" : "회색 휴지통 아이콘을 설치하여 현재 {{deviceName}}에 설치된 모든 앱을 표시하세요. 그러면 펌웨어 설치자를 위한 공간이 생깁니다.",
         "disclaimer" : "참고: 사용자의 자금은 이 거래의 영향을 받지 않으며, 블록체인의 사용자 암호화폐에 대한 접근 권한을 주는 개인 키는 복구 시트에 안전하게 있습니다."
       }
@@ -1982,17 +2002,10 @@
     "value" : "가치",
     "header" : "계정 배분 ({{count}})"
   },
-  "elrond" : {
+  "cardano" : {
     "account" : {
-      "subHeader" : {
-        "cardTitle" : "Elrond 제공",
-        "moreInfo" : "자세한 정보",
-        "drawerTitle" : "Elrond 통합",
-        "title" : "이제 Ledger Live에서 Elrond eGold(EGLD) 토큰을 이용할 수 있습니다",
-        "description" : "이제 Ledger Live로 eGold(EGLD) 토큰을 안전하게 보관하고 관리할 수 있습니다.",
-        "description2" : "Elrond eGold(EGLD) 토큰은 Elrond 네트워크의 네이티브 토큰으로, 트랜잭션, 스테이킹, 스마트 계약, 거버넌스, 검증인 보상 등 모든 분야에 사용됩니다.",
-        "description3" : "본사는 스테이킹, 네이티브 ESDT(Elrond 스탠다드 디지털 토큰) 지원 등의 다양한 기능을 추가하기 위해 Ellrond 팀과 활발히 협업 중입니다.",
-        "website" : "인터넷 스케일 블록체인"
+      "stakingRewardsBanner" : {
+        "cardTitle" : "스테이킹 보상은 총 잔액에 포함되지 않습니다."
       }
     }
   },
@@ -2323,6 +2336,176 @@
       }
     }
   },
+  "osmosis" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Figment 기반",
+        "moreInfo" : "자세한 정보",
+        "drawerTitle" : "Figment 기반",
+        "title" : "이제 Ledger Live에서 OSMO 토큰을 사용할 수 있습니다.",
+        "description" : "이제 Ledger Live로 OSMO 토큰을 관리하고 안전하게 보호할 수 있습니다.",
+        "description2" : "OSMO 토큰은 OSMO 체인의 네이티브 토큰이며 트랜잭션과 스테이킹을 비롯하여 앞으로 공개될 다양한 기능에 사용됩니다.",
+        "website" : "Figment 기반"
+      }
+    },
+    "memo" : "메모",
+    "memoPlaceholder" : "선택 사항",
+    "memoWarningText" : "메모 기능을 사용할 때는 관련 정보를 수령인과 신중하게 확인하세요",
+    "delegation" : {
+      "emptyState" : {
+        "description" : "자산을 위임하여 OSMO 보상을 받을 수 있습니다.",
+        "info" : "위임은 어떤 원리인가요?",
+        "delegation" : "보상 받기"
+      },
+      "commission" : "커미션",
+      "totalStake" : "총 스테이킹",
+      "claimRewards" : "보상 수령",
+      "header" : "위임",
+      "noRewards" : "이용 가능한 보상이 없습니다",
+      "delegate" : "추가",
+      "undelegate" : "위임 해제",
+      "redelegate" : "재위임",
+      "redelegateDisabledTooltip" : "<0>{{days}}</0>에 재위임할 수 있습니다",
+      "redelegateMaxDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 재위임할 수 없습니다",
+      "undelegateDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 위임 해제할 수 없습니다",
+      "reward" : "보상 수령",
+      "currentDelegation" : "위임됨: <0>{{amount}}</0>",
+      "estYield" : "추산 수익",
+      "activeTooltip" : "위임된 금액이 보상을 생성합니다",
+      "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
+      "minSafeWarning" : "자금이 부족합니다",
+      "flow" : {
+        "title" : "위임하기",
+        "steps" : {
+          "starter" : {
+            "description" : "OSMO 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
+            "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 해제 14일 후에 이용 가능합니다"],
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
+            }
+          },
+          "amount" : {
+            "title" : "금액"
+          },
+          "validator" : {
+            "title" : "검증인"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔금이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "보상 수령",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "보상",
+            "compound" : "컴파운드",
+            "claim" : "현금화",
+            "compoundOrClaim" : "컴파운드 또는 현금화",
+            "compoundDescription" : "위임된 금액에 보상이 추가됩니다",
+            "claimDescription" : "보상이 이용 가능 잔금에 추가됩니다",
+            "compoundInfo" : "<0>{{amount}}</0>의 보상을 획득했습니다. '계속'을 클릭하면, 바로 보상을 수령하고 동일한 검증인에게 자동 위임합니다.",
+            "claimInfo" : "아래 검증인으로부터 <0>{{amount}}</0>의 수익을 획득했습니다. '계속'을 클릭하면, 바로 보상을 수령하고 이용 가능 잔액에 자동 추가됩니다.",
+            "selectLabel" : "위임 선택"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "label" : "확인",
+            "success" : {
+              "title" : "보상을 성공적으로 현금화 했습니다",
+              "titleCompound" : "성공적으로 보상에 복리를 적용했습니다.",
+              "text" : "보상이 이용 가능 잔액에 추가되었습니다",
+              "textCompound" : "귀하의 보상이 <0>{{amount}}</0>자동으로 <0>{{validator}}</0>에게 위임되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "redelegation" : {
+      "flow" : {
+        "title" : "자산 재위임",
+        "steps" : {
+          "starter" : {
+            "title" : "재위임",
+            "description" : "재위임 기능을 이용해 손쉽게 검증인을 변경하세요. 하지만 재위임 시 14일 타임 락이 적용되기 때문에, 다시 변경을 원하는 경우 14일을 기다려야 합니다.",
+            "warning" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다. 최대 <0>7개의 대기 중 재위임</0>이 있을 수 있습니다.",
+            "howDelegationWorks" : "위임은 어떤 원리인가요?"
+          },
+          "validators" : {
+            "title" : "검증인",
+            "currentDelegation" : "현재 위임",
+            "newDelegation" : "새로운 위임",
+            "chooseValidator" : "검증인 선택",
+            "warning" : "다시 마음이 바뀌어 새로운 검증인 교체하고 재위임하려면 <0>14일</0>을 기다려야 합니다",
+            "amountLabel" : "재위임할 금액"
+          },
+          "device" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "귀하의 자산을 성공적으로 재위임했습니다",
+              "text" : "블록체인이 트랜잭션 확인을 마치고 나면 재위임이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "위임 해제",
+      "headerTooltip" : "141일 타임 락이 끝나면 이용할 수 있습니다",
+      "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
+      "flow" : {
+        "title" : "위임 해제 자산",
+        "steps" : {
+          "amount" : {
+            "title" : "금액",
+            "subtitle" : "위임 해제 절차 완료까지 <0>14일</0>이 소요됩니다.",
+            "warning" : "보상은 즉시 현금화할 수 있습니다. 위임 해제 금액은 <0>14일 시간 잠금 후에 가용 잔금으로 되돌아옵니다.",
+            "fields" : {
+              "validator" : "검증인",
+              "amount" : "위임 해제 금액"
+            }
+          },
+          "device" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "귀하의 자산을 성공적으로 위임 해제했습니다.",
+              "description" : "<0>{{amount}}</0>가 <0>{{validator}}</0>로부터 위임 해제되었습니다",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    }
+  },
   "polkadot" : {
     "lockedBalance" : "본딩됨",
     "lockedTooltip" : "자산을 본딩 하여 검증인을 지정해야 보상을 받을 수 있습니다.",
@@ -2576,6 +2759,31 @@
       }
     }
   },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "자산 추가",
+      "steps" : {
+        "assets" : {
+          "title" : "자산",
+          "info" : "자산을 추가하려면 최소 수수료로 트랜잭션을 전송해야 합니다. 이 사항은 사용자의 트랜잭션 내역에 표시됩니다.",
+          "selectLabel" : "자산 선택",
+          "disabledTooltip" : "이미 스텔라 계정에 있는 자산입니다."
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "success" : {
+            "title" : "{{token}} 자산이 추가되었습니다",
+            "text" : "이제 스텔라 계정에서 <0>{{token}}</0> 자산을 보내고 받을 수 있습니다.",
+            "cta" : "세부사항 보기"
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요.",
@@ -2653,7 +2861,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "위임을 성공적으로 활성화했습니다."
+                "title" : "You have successfully activated your delegation."
               }
             }
           }
@@ -2665,7 +2873,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "위임을 성공적으로 재활성화했습니다."
+                "title" : "You have successfully reactivated your delegation."
               }
             }
           }
@@ -2838,6 +3046,11 @@
       "catalogServerDesc" : "다중 플랫폼 앱 소스 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
+      "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
+      "featureFlagsEdit" : "편집",
+      "featureFlagsRestore" : "복구",
+      "featureFlagsOverride" : "재정의",
       "addLocalApp" : "로컬 앱 추가",
       "addLocalAppDesc" : "로컬 매니페스트 기능으로 로컬 파일을 둘러보고 로컬 앱 추가하기",
       "addLocalAppButton" : "둘러보기",
@@ -2902,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "개발자 모드",
-          "description" : "관리자에 개발자 및 테스트넷 앱을 보여줍니다."
+          "description" : "Show developer and testnet apps in My Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "확장 계정 검색",
@@ -2917,8 +3130,8 @@
           "description" : "모든 계정에 대한 맞춤형 갭 한도입니다. 기본값(20) 이상으로 이 값을 올리면 더 많은 미사용 공용 주소에서 코인을 스캔합니다. 숙련된 사용자만 이용하세요. 계정 복원 시 호환성 문제가 발생할 수 있습니다."
         },
         "forceProvider" : {
-          "title" : "관리자 공급자",
-          "description" : "관리자에서 앱 공급자를 변경하면 Ledger 기기에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
+          "title" : "My Ledger provider",
+          "description" : "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
         },
         "testAnimations" : {
           "title" : "테스트 로티 애니메이션",
@@ -3692,8 +3905,10 @@
     "recipientWording" : {
       "send" : "수령인",
       "delegate" : "검증인",
+      "redelegate" : "검증인",
       "undelegate" : "검증인",
       "claimReward" : "보상 수령인",
+      "claimRewardCompound" : "보상을 받을 검증인",
       "optIn" : "수령인",
       "nominate" : "검증인",
       "erc721" : {
@@ -3740,7 +3955,20 @@
         "MEMO_HASH" : "메모 해시",
         "MEMO_RETURN" : "메모 반환"
       },
-      "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요"
+      "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요",
+      "fee" : "수수료",
+      "feeInfoText" : "스텔라 네트워크 상의 트랜잭션에는 최소 거래 수수료 0.00001 XLM이 필요합니다",
+      "suggested" : "추천",
+      "recommendedFee" : "권장 수수료",
+      "recommenndedFeeInfo" : "권장 수수료보다 낮은 수수료로도 여전히 트랜잭션 제출이 가능하지만 거래가 체결되지 않을 수 있습니다.",
+      "networkCongestion" : "네트워크 혼잡",
+      "networkCongestionLevel" : {
+        "LOW" : "낮음",
+        "MEDIUM" : "Medium",
+        "HIGH" : "높음"
+      },
+      "assetCode" : "자산 코드",
+      "assetIssuer" : "자산 발행인"
     },
     "cosmos" : {
       "memo" : "메모",
@@ -3755,7 +3983,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
-      "description" : "관리자에서 앱을 다시 설치해 보세요"
+      "description" : "Try reinstalling the app from My Ledger"
     },
     "countervaluesUnavailable" : {
       "title" : "현재 이 자산에 대한 등가를 제공할 수 없습니다"
@@ -3918,7 +4146,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "펌웨어나 앱 업데이트가 필요합니다",
-      "description" : "관리자를 사용하여 모든 앱을 삭제하고 펌웨어 업데이트가 가능한지 확인한 뒤 재설치하세요"
+      "description" : "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Nano 펌웨어 업데이트",
@@ -3975,20 +4203,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "진행 중인 앱 설치를 완료할까요?",
-        "description" : "관리자를 중단하면 앱 설치가 종료됩니다. 설치를 완료하여 대기 중인 앱을 설치하세요.",
+        "description" : "Quitting My Ledger will terminate the app installation. Please finish the installation to install the apps in the queue.",
         "stay" : "설치 완료"
       },
       "uninstall" : {
         "title" : "진행 중인 앱 삭제를 완료할까요?",
-        "description" : "관리자를 중단하면 진행 중인 앱 삭제가 종료됩니다.",
+        "description" : "Quitting My Ledger will terminate the app uninstallations in progress.",
         "stay" : "삭제 완료"
       },
       "update" : {
         "title" : "진행 중인 앱 업데이트를 완료할까요?",
-        "description" : "관리자를 중단하면 진행 중인 앱 업데이트가 종료됩니다.",
+        "description" : "Quitting My Ledger will terminate the app updates in progress.",
         "stay" : "업데이트 완료"
       },
-      "quit" : "관리자 종료"
+      "quit" : "Quit My Ledger"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "죄송하지만 반드시 필요한 앱입니다",
@@ -3996,6 +4224,10 @@
     },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
+      "description" : "인터넷 연결을 확인하세요."
+    },
+    "NetworkError" : {
+      "title" : "동기화 중 오류가 발생했습니다",
       "description" : "인터넷 연결을 확인하세요."
     },
     "NoAddressesFound" : {
@@ -4084,7 +4316,7 @@
       "description" : "로고가 나타나면 버튼을 누르지 말고 장치를 재시작하세요. 문제가 지속되면 Ledger 고객 지원에 문의해주세요."
     },
     "UserRefusedAllowManager" : {
-      "title" : "장치에서 관리자가 거부됨"
+      "title" : "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "장치의 업데이트가 취소되었습니다",
@@ -4104,7 +4336,7 @@
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트가 필요합니다",
-      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "대시보드로 돌아가기",
@@ -4124,7 +4356,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "앱 업데이트가 필요합니다",
-      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "InvalidAddress" : {
       "title" : "유효한 {{currencyName}} 주소가 아닙니다"
@@ -4169,7 +4401,7 @@
       "list" : {
         "1" : "아무 버튼도 누르지 않은 채로 USB 케이블을 해제한 뒤 다시 연결하세요.",
         "2" : "양쪽 버튼을 동시에 3회 눌러 대시보드를 표시하세요.",
-        "3" : "관리자를 열고 '펌웨어 업데이트'를 클릭하세요."
+        "3" : "Open My Ledger and click Update firmware."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
@@ -4293,14 +4525,8 @@
     "FeeTooHigh" : {
       "title" : "네트워크 수수료가 금액의 10%를 넘습니다"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "메모 형식이 잘못되었습니다"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "금액은 {{minAmountFromFormatted}} 이상이어야 합니다"
@@ -4368,20 +4594,50 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "사용 가능한 토큰 수를 초과했습니다"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "전송할 수 있는 최소 금액은 {{amount}} ADA입니다"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "수수료 지불에 필요한 충분한 자금이 있는지 반드시 확인해 주세요"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "메모 형식이 잘못되었습니다"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "이 수령인은 아직 {{assetCode}}에 대한 트러스트라인(trustline)이 없습니다."
+    },
+    "StellarAssetRequired" : {
+      "title" : "트러스트라인 추가 전 스텔라 자산을 선택해야 합니다."
+    },
+    "StellarAssetNotFound" : {
+      "title" : "선택한 스텔라 자산을 찾을 수 없습니다."
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 수수료를 지불할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "권장 수수료 대비 선택 수수료가 낮습니다"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "최소 트랜잭션 수수료는 0.00001 XLM입니다"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 신규 트러스트라인을 추가할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "스텔라 계정이 없습니다"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
     }
   },
   "cryptoOrg" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Crypto.org에서 제공됨",
-        "moreInfo" : "자세한 정보",
-        "drawerTitle" : "Crypto.org 통합",
-        "title" : "이제 Ledger Live에서 Crypto.org(CRO) 토큰을 사용할 수 있습니다",
-        "description" : "이제 CRO(Crypto.org) 토큰 관리를 시작하고 Ledger Live를 통해 토큰을 보호할 수 있습니다.",
-        "description2" : "Crypto.org(CRO) 토큰은 Crypto.org 체인의 기본 토큰이며 트랜잭션, 스테이킹 및 향후 많은 기능에 사용됩니다.",
-        "website" : "모든 지갑의 암호화폐"
-      }
-    },
     "memo" : "메모",
     "memoPlaceholder" : "선택 사항",
     "memoWarningText" : "메모 기능을 사용할 때는 해당 정보를 수령인과 신중하게 확인하세요"
@@ -4394,6 +4650,20 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ledger 장치에서 귀하의 {{name}} 주소를 확인할 수 없습니다. 사용은 본인의 책임입니다."
+    },
+    "send" : {
+      "memo" : {
+        "label" : "메모(선택)",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "자산 선택"
+    },
+    "selectAccount" : {
+      "title" : "계정 선택"
     }
   }
 }
