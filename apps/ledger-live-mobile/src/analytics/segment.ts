@@ -29,9 +29,9 @@ import {
   sensitiveAnalyticsSelector,
   firstConnectionHasDeviceSelector,
 } from "../reducers/settings";
-import { knownDevicesSelector } from "../reducers/ble";
+import { knownDevicesSelector, DeviceLike } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
-import type { State } from "../reducers";
+import type { AppStore, State } from "../reducers";
 import { NavigatorName } from "../const";
 
 const sessionId = uuid();
@@ -40,7 +40,7 @@ const appVersion = `${VersionNumber.appVersion || ""} (${
 })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
-const extraProperties = store => {
+const extraProperties = (store: AppStore) => {
   const state: State = store.getState();
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics
@@ -55,7 +55,7 @@ const extraProperties = store => {
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
-        appLength: lastDevice?.appsInstalled,
+        appLength: (lastDevice as DeviceLike)?.appsInstalled,
         modelId: lastDevice.modelId,
       }
     : {};

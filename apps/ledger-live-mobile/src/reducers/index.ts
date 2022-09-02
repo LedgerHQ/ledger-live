@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import { combineReducers, Store } from "redux";
 import accounts from "./accounts";
 import settings from "./settings";
 import appstate from "./appstate";
@@ -20,6 +20,8 @@ export type State = {
   ratings: RatingsState;
   notifications: NotificationsState;
 };
+
+export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
