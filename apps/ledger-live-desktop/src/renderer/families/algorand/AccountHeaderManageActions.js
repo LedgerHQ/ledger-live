@@ -1,8 +1,8 @@
 // @flow
 
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
@@ -16,6 +16,7 @@ type Props = {
 };
 
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const balance = account.balance;
@@ -37,7 +38,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       key: "algorand",
       onClick: onClick,
       icon: IconCoins,
-      label: <Trans i18nKey="account.stake" />,
+      label: t("account.stake"),
     },
   ];
 };
