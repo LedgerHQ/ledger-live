@@ -8,7 +8,7 @@ enum Nano {
   nanoSP = "nanoSP",
 }
 
-const nanos = [Nano.nanoSP];
+const nanos = [Nano.nanoX, Nano.nanoS, Nano.nanoSP];
 
 test.describe.parallel("Onboarding", () => {
   for (const nano of nanos) {
