@@ -10,6 +10,7 @@ import Button from "../../wrappedUi/Button";
 
 function ZeroBalanceDisabledModalContent({
   account,
+  parentAccount,
   currency,
   action,
   onClose,
@@ -40,6 +41,7 @@ function ZeroBalanceDisabledModalContent({
         selectedCurrency: actionCurrency,
         currency: actionCurrency,
         accountId: account?.id,
+        parentId: parentAccount?.id,
       },
     });
     onClose();

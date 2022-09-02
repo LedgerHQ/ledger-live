@@ -31,6 +31,7 @@ import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
+  parentAccount?: Account;
   currency?: CryptoCurrency;
   isOpen?: boolean;
   onClose: () => void;
@@ -145,6 +146,7 @@ export const FabAccountMainActionsComponent: React.FC<
       {pressedDisabledAction?.modalOnDisabledClick?.component && (
         <pressedDisabledAction.modalOnDisabledClick.component
           account={account}
+          parentAccount={parentAccount}
           action={pressedDisabledAction}
           isOpen={isDisabledActionModalOpened}
           onClose={() => setIsDisabledActionModalOpened(false)}

@@ -196,21 +196,19 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
 );
 const emptyArray = [];
 
-export const accountsByCryptoCurrencyScreenSelector = (
-  currency: CryptoCurrency,
-) => (state: any) => {
-  if (!currency) return emptyArray;
-  return accountsTuplesByCurrencySelector(state, { currency });
-};
+export const accountsByCryptoCurrencyScreenSelector =
+  (currency: CryptoCurrency) => (state: any) => {
+    if (!currency) return emptyArray;
+    return accountsTuplesByCurrencySelector(state, { currency });
+  };
 
-export const flattenAccountsByCryptoCurrencyScreenSelector = (
-  currency?: CryptoCurrency | TokenCurrency,
-) => (state: any) => {
-  if (!currency) return emptyArray;
-  return flattenAccountsByCryptoCurrencySelector(state, {
-    currencies: [currency.id],
-  });
-};
+export const flattenAccountsByCryptoCurrencyScreenSelector =
+  (currency?: CryptoCurrency | TokenCurrency) => (state: any) => {
+    if (!currency) return emptyArray;
+    return flattenAccountsByCryptoCurrencySelector(state, {
+      currencies: [currency.id],
+    });
+  };
 
 // $FlowFixMe
 export const accountCryptoCurrenciesSelector = createSelector(

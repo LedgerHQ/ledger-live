@@ -255,6 +255,7 @@ const GraphCardHeader = ({
       screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId: account.id,
+        parentId: parentAccount?.id,
         currency,
       },
     });

@@ -14,6 +14,8 @@ import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 // eslint-disable-next-line import/no-unresolved
+import { DeviceModelId } from "@ledgerhq/devices/lib/";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
