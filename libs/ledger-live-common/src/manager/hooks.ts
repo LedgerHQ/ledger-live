@@ -10,9 +10,15 @@ import type {
   Language,
 } from "@ledgerhq/types-live";
 
-async function hasOudatedApps({ deviceInfo, apps }: DeviceModelInfo): Promise<boolean> {
+async function hasOudatedApps({
+  deviceInfo,
+  apps,
+}: DeviceModelInfo): Promise<boolean> {
   const provider = getProviderId(deviceInfo);
-  const deviceVersion = await ManagerAPI.getDeviceVersion(deviceInfo.targetId, provider);
+  const deviceVersion = await ManagerAPI.getDeviceVersion(
+    deviceInfo.targetId,
+    provider
+  );
   const firmware = await ManagerAPI.getCurrentFirmware({
     deviceId: deviceVersion.id,
     version: deviceInfo.version,
@@ -29,7 +35,9 @@ async function hasOudatedApps({ deviceInfo, apps }: DeviceModelInfo): Promise<bo
   });
 }
 
-export function useManagerBlueDot(dmi: DeviceModelInfo | null | undefined): boolean {
+export function useManagerBlueDot(
+  dmi: DeviceModelInfo | null | undefined
+): boolean {
   const [display, setDisplay] = useState(!dmi);
   const forceProvider = useEnv("FORCE_PROVIDER");
   useEffect(() => {
@@ -45,7 +53,10 @@ export function useManagerBlueDot(dmi: DeviceModelInfo | null | undefined): bool
     }
 
     const { deviceInfo } = dmi;
-    Promise.all([manager.getLatestFirmwareForDevice(deviceInfo), hasOudatedApps(dmi)])
+    Promise.all([
+      manager.getLatestFirmwareForDevice(deviceInfo),
+      hasOudatedApps(dmi),
+    ])
       .then(([fw, outdatedApp]) => {
         if (cancelled) return;
 
