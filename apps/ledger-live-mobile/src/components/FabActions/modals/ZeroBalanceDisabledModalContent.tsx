@@ -38,6 +38,7 @@ function ZeroBalanceDisabledModalContent({
         : ScreenName.ReceiveSelectAccount,
       params: {
         selectedCurrency: actionCurrency,
+        currency: actionCurrency,
         accountId: account?.id,
       },
     });
