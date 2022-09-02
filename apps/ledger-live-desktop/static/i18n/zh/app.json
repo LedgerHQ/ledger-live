@@ -198,7 +198,7 @@
     "menu" : "菜单",
     "stars" : "已标星账户",
     "accounts" : "账户",
-    "manager" : "管理器",
+    "manager" : "My Ledger",
     "exchange" : "买入 / 卖出",
     "swap" : "互换",
     "lend" : "借出",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "请在您的设备上安装 {{appName}} 应用程序",
-      "subtitle" : "前往 Manager（管理器）并安装 {{appName}} 应用程序以互换资产",
-      "cta" : "前往管理器"
+      "subtitle" : "Go to My Ledger and install {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "outdatedApp" : {
       "title" : "请在您的设备上更新 {{appName}} 应用程序",
-      "subtitle" : "前往管理器并更新 {{appName}} 应用程序以互换资产。",
-      "cta" : "前往管理器"
+      "subtitle" : "Go to My Ledger and update {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -697,6 +697,17 @@
     }
   },
   "account" : {
+    "subHeader" : {
+      "moreInfo" : "更多信息",
+      "cardTitle" : "由 {{team}} 提供支持",
+      "drawer" : {
+        "title" : "{{family}} 集成",
+        "subTitle" : "{{family}} 集成已由 {{team}} 团队完成",
+        "description" : "Ledger Live 是一个开源平台。",
+        "description2" : "全球各地的开发者都可以与我们的 Ledger Live 相集成",
+        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。"
+      }
+    },
     "lastOperations" : "近期操作",
     "contractAddress" : "合约：",
     "openInExplorer" : "在浏览器中打开",
@@ -733,8 +744,8 @@
     "frozenAssetsTooltip" : "冻结资产被用于 Tron 投票过程。这表示了您的投票总数。",
     "bandwidthTooltip" : "冻结资产以获得带宽",
     "energyTooltip" : "冻结资产以获得能量",
-    "delegatedAssetsTooltip" : "已委托资产被用于 Cosmos 投票过程。这表示了您的投票总数。",
-    "undelegatingTooltip" : "解除委托的资产会有 21 天的时间锁，之后才可用。"
+    "delegatedTooltip" : "委托资产用于投票流程。这代表您的总得票数。",
+    "undelegatingTooltip" : "取消委托的资产在 {{timelockInDays}} 天锁定期后才能使用。"
   },
   "exchange" : {
     "chooseProvider" : "从 {{providerCount}} 个供应商中选择",
@@ -948,7 +959,7 @@
       "terms" : {
         "title" : "借出加密货币",
         "subtitle" : "按照 Compound 复利协议借出资产",
-        "description" : "Compound 复利协议允许您在以太坊网络上贷出或借入资产。您可以直接通过您的 Ledger 账户贷出资产并赚取利息。",
+        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
         "switchLabel" : "<1>我已阅读并同意</1> <0>使用条款</0><1>。</1>"
       },
       "steps" : {
@@ -1191,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "在您的设备上安装应用程序",
-      "desc" : "前往管理器在您的设备上安装应用。一旦您设备上有应用程序，您就可以添加账户。",
+      "desc" : "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
       "buttons" : {
-        "installApp" : "前往 Manager（管理器）",
+        "installApp" : "Go to My Ledger",
         "help" : "帮助"
       }
     },
@@ -1202,7 +1213,7 @@
       "desc" : "添加账户来开始管理您的加密资产。您必须在您的设备上安装您的加密资产的应用程序。",
       "buttons" : {
         "addAccount" : "添加账户",
-        "installApp" : "前往 Manager（管理器）安装应用程序",
+        "installApp" : "Go to My Ledger to install apps",
         "help" : "帮助"
       }
     }
@@ -1283,7 +1294,7 @@
       "noSearchResults" : "对不起，我们没有找到任何搜索结果。",
       "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
       "retrySearchParams" : "请用其他参数重新进行搜索。",
-      "trackFavAssets" : "追踪您最喜爱的",
+      "trackFavAssets" : "追踪您的收藏",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
       "browseAssets" : "浏览资产"
     }
@@ -1348,6 +1359,14 @@
       "link" : "资产 (ASA) 如何运作？",
       "seeTokens" : "显示 ASA ({{tokenCount}})",
       "hideTokens" : "隐藏 ASA ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "多种资产",
+      "cta" : "添加资产",
+      "placeholder" : "您可以向您的 {{currencyName}} 账户添加资产。",
+      "link" : "详细了解 Stellar（恒星）资产",
+      "seeTokens" : "显示资产 ({{tokenCount}})",
+      "hideTokens" : "隐藏资产 ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1494,6 +1513,7 @@
       "memo" : "Memo",
       "assetId" : "资产 ID",
       "rewards" : "已赚取的奖励",
+      "autoClaimedRewards" : "自动领取的奖励",
       "bondedAmount" : "已绑定数额",
       "unbondedAmount" : "已解绑数额",
       "withdrawUnbondedAmount" : "已提取数额",
@@ -1516,12 +1536,12 @@
     "quitApp" : "在您的设备上退出该应用程序",
     "appNotInstalledTitle" : "缺少所需的应用程序",
     "appNotInstalledTitle_plural" : "缺少所需的应用程序",
-    "appNotInstalled" : "需要 {{appName}} 应用程序来完成此操作。请前往管理器并在您的设备上安装它",
-    "appNotInstalled_plural" : "需要 {{appName}} 应用程序来完成此操作。请前往管理器并在您的设备上安装它",
-    "openManager" : "打开 Manager（管理器）",
+    "appNotInstalled" : "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
+    "appNotInstalled_plural" : "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "openManager" : "Open My Ledger",
     "openOnboarding" : "设置设备",
     "outdated" : "应用程序版本过期",
-    "outdatedDesc" : "您设备上的 {{appName}} 应用程序有可用的重要更新。请前往管理器对其进行更新。",
+    "outdatedDesc" : "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
     "installApp" : "{{appName}} 应用程序安装",
     "installAppDescription" : "请耐心等待，直至安装完成",
     "listApps" : "正在检查应用程序依存关系",
@@ -1564,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "似乎您设备上有一个开启的应用",
-      "subtitle" : "重新打开 Manager（管理器）将退出您设备上的应用程序",
-      "ctaReopen" : "重新打开 Manager（管理器）",
+      "subtitle" : "Reopening My Ledger will quit the app on your device",
+      "ctaReopen" : "Reopen My Ledger",
       "ctaPortfolio" : "返回 Portfolio（资产组合）"
     },
     "deviceStorage" : {
@@ -1608,7 +1628,7 @@
         "title_plural" : "可用更新",
         "progressTitle" : "{{number}} 个应用程序更新",
         "progressTitle_plural" : "{{number}} 个应用程序更新",
-        "progressWarning" : "更新期间，请勿退出 Manager（管理器）。",
+        "progressWarning" : "Do not quit My Ledger during update.",
         "progress" : "正在更新全部……"
       },
       "item" : {
@@ -1672,7 +1692,7 @@
       "updateBtn" : "更新固件",
       "banner" : {
         "warning" : "可将固件更新到 {{latestFirmware}} 版本",
-        "cta" : "前往管理器",
+        "cta" : "Go to My Ledger",
         "old" : {
           "warning" : "设备固件版本太旧而无法更新。请联系 Ledger 客服以获取替代版本。",
           "cta" : "联系客服"
@@ -1728,7 +1748,7 @@
         "boot" : "持续按住设备侧面按钮，直至 {{option}} 显示",
         "recoveryMode" : "轻击 {{mode}} 模式。等候片刻直至功能面板出现。",
         "third" : "3. 卸载所有应用",
-        "openLive" : "在 Ledger Live 中打开 Manager（管理器）。",
+        "openLive" : "Open My Ledger in Ledger Live.",
         "uninstall" : "点击 {{deviceName}} 上当前安装的所有应用程序的灰色回收站图标。这将为固件安装程序释放空间。",
         "disclaimer" : "注：该操作不会对您的资金造成影响，用以访问您区块链中加密资产的私钥，依旧会安全保存在您的恢复表中。"
       }
@@ -1982,17 +2002,10 @@
     "value" : "价值",
     "header" : "账户配置 ({{count}})"
   },
-  "elrond" : {
+  "cardano" : {
     "account" : {
-      "subHeader" : {
-        "cardTitle" : "由 Elrond 提供支持",
-        "moreInfo" : "更多信息",
-        "drawerTitle" : "Elrond 集成",
-        "title" : "Elrond eGold (EGLD) 代币现已在 Ledger Live 上可用",
-        "description" : "您现在可以安全地保护您的 eGold (EGLD) 代币，并通过 Ledger Live 管理它们。",
-        "description2" : "Elrond eGold (EGLD) 代币是 Elrond 网络的原生代币，将被用于交易、权益质押、智能合约、治理和验证者奖励等各个方面。",
-        "description3" : "我们正在积极与 Elrond 团队合作，以增加更多的功能，如权益质押、原生 ESDT（Elrond 标准数字代币）支持等。",
-        "website" : "互联网规模的区块链"
+      "stakingRewardsBanner" : {
+        "cardTitle" : "总余额不包括权益质押奖励"
       }
     }
   },
@@ -2323,6 +2336,176 @@
       }
     }
   },
+  "osmosis" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "由 Figment 提供支持",
+        "moreInfo" : "更多信息",
+        "drawerTitle" : "由 Figment 提供支持",
+        "title" : "Ledger Live 现已支持 OSMO 代币",
+        "description" : "您现在可以通过 Ledger Live 管理并保护您的 OSMO 代币。",
+        "description2" : "OSMO 代币是 Osmosis 链的原生代币，可用于交易、权益质押以及即将推出的许多功能。",
+        "website" : "由 Figment 提供支持"
+      }
+    },
+    "memo" : "Memo",
+    "memoPlaceholder" : "可选",
+    "memoWarningText" : "当使用 Memo 标签时，请与接收人仔细核对信息",
+    "delegation" : {
+      "emptyState" : {
+        "description" : "您可以通过委托资产赚取 OSMO 奖励。",
+        "info" : "委托机制如何运作",
+        "delegation" : "赚取奖励"
+      },
+      "commission" : "佣金",
+      "totalStake" : "质押总额",
+      "claimRewards" : "申领奖励",
+      "header" : "委托",
+      "noRewards" : "没有奖励可用",
+      "delegate" : "添加",
+      "undelegate" : "解除委托",
+      "redelegate" : "重新委托",
+      "redelegateDisabledTooltip" : "您可以再次重新委托 <0>{{days}}</0>",
+      "redelegateMaxDisabledTooltip" : "每次重新委托的验证者不能多于 <0>7</0> 个",
+      "undelegateDisabledTooltip" : "每次取消委托的验证者不能多于 <0>7</0> 个",
+      "reward" : "申领奖励",
+      "currentDelegation" : "已委托：<0>{{amount}}</0>",
+      "estYield" : "预估收益",
+      "activeTooltip" : "已委托的数额会生成奖励",
+      "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
+      "minSafeWarning" : "资金不足",
+      "flow" : {
+        "title" : "委托",
+        "steps" : {
+          "starter" : {
+            "description" : "您可以通过将 OSMO 资产委托给验证者来赚取奖励。",
+            "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产将在取消委托 14 天后可用"],
+            "warning" : {
+              "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
+            }
+          },
+          "amount" : {
+            "title" : "数额"
+          },
+          "validator" : {
+            "title" : "验证者"
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您的资产已经成功委托。",
+              "text" : "该交易一经区块链确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "申领奖励",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "奖励",
+            "compound" : "Compound",
+            "claim" : "兑现",
+            "compoundOrClaim" : "复利或兑现",
+            "compoundDescription" : "奖励将被添加至已委托的数额",
+            "claimDescription" : "奖励将被添加至可用余额",
+            "compoundInfo" : "您已赚取了<0>{{amount}}</0>。点击 Continue（继续）后，它们将被即刻申领并被自动委托给同一个验证者。",
+            "claimInfo" : "您已从下方的验证者赚取了 <0>{{amount}}</0>。点击 Continue（继续）后，它们将被即刻申领并被自动添加到可用余额。",
+            "selectLabel" : "选择委托"
+          },
+          "connectDevice" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "label" : "确认",
+            "success" : {
+              "title" : "奖励已成功兑现",
+              "titleCompound" : "奖励已成功复利",
+              "text" : "您的奖励已经添加进您的可用余额中。",
+              "textCompound" : "你的奖励 <0>{{amount}}</0> 被自动委托给 <0>{{validator}} </0>",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    },
+    "redelegation" : {
+      "flow" : {
+        "title" : "重新委托资产",
+        "steps" : {
+          "starter" : {
+            "title" : "重新委托",
+            "description" : "利用重新委托，轻松从一个验证者更改为另一验证者。但如果再次改变主意，那么需要等待一段时间，因为重新委托会触发 14 天的锁定期。",
+            "warning" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。您最多可以有<0> 7 个待定重新委托</0>。",
+            "howDelegationWorks" : "委托机制如何运作？"
+          },
+          "validators" : {
+            "title" : "验证者",
+            "currentDelegation" : "当前委托",
+            "newDelegation" : "新的委托",
+            "chooseValidator" : "选择一个验证者",
+            "warning" : "如果再次改变主意，那么必须等待 <0>14 天</0>才能从新验证者重新委托。",
+            "amountLabel" : "要重新委托的数额"
+          },
+          "device" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您的资产已成功重新委托",
+              "text" : "一旦区块链确认该交易，就会更新重新委托信息",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "解除委托",
+      "headerTooltip" : "14 天锁定期后可用",
+      "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
+      "flow" : {
+        "title" : "解除资产委托",
+        "steps" : {
+          "amount" : {
+            "title" : "数额",
+            "subtitle" : "取消委托过程需要 <0>14 天</0>才能完成。",
+            "warning" : "奖励将立即兑现。取消委托的数额在 <0>14 天锁定期</0>后才会返还至可用余额。",
+            "fields" : {
+              "validator" : "验证者",
+              "amount" : "要解除委托的数额"
+            }
+          },
+          "device" : {
+            "title" : "设备"
+          },
+          "confirmation" : {
+            "title" : "确认",
+            "success" : {
+              "title" : "您的资产已成功解除委托",
+              "description" : "<0>{{amount}}</0>已从<0>{{validator}}</0>解除委托",
+              "cta" : "查看详情"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      }
+    }
+  },
   "polkadot" : {
     "lockedBalance" : "已绑定",
     "lockedTooltip" : "必须将资产绑定到提名的验证者才能赚取奖励。",
@@ -2576,6 +2759,31 @@
       }
     }
   },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "添加资产",
+      "steps" : {
+        "assets" : {
+          "title" : "资产",
+          "info" : "添加资产需要以最低费用发送一笔交易。这笔交易将出现在您的交易记录中",
+          "selectLabel" : "选择一种资产",
+          "disabledTooltip" : "您的 Stellar（恒星）账户中已经有此资产"
+        },
+        "connectDevice" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认",
+          "success" : {
+            "title" : "已成功添加 {{token}} 资产",
+            "text" : "您现在可以在 Stellar（恒星）账户上接收和发送 <0>{{token}}</0> 资产了。",
+            "cta" : "查看详情"
+          },
+          "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+        }
+      }
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。",
@@ -2653,7 +2861,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "您的委托已成功激活。"
+                "title" : "You have successfully activated your delegation."
               }
             }
           }
@@ -2665,7 +2873,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "您的委托已成功重新激活。"
+                "title" : "You have successfully reactivated your delegation."
               }
             }
           }
@@ -2838,6 +3046,11 @@
       "catalogServerDesc" : "在多个平台应用源之间切换",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
+      "featureFlagsTitle" : "Ledger Live 中使用的已定义功能标志",
+      "featureFlagsDesc" : "如果重新启动应用程序，将重置覆盖的值。仅接受有效的 JSON 字符串。",
+      "featureFlagsEdit" : "编辑",
+      "featureFlagsRestore" : "重置",
+      "featureFlagsOverride" : "覆盖",
       "addLocalApp" : "添加一个本地应用程序",
       "addLocalAppDesc" : "浏览本地文件并使用本地清单添加本地应用程序",
       "addLocalAppButton" : "浏览",
@@ -2902,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "开发者模式",
-          "description" : "在管理器中显示开发者和测试网应用程序。"
+          "description" : "Show developer and testnet apps in My Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "扩展的账户搜索",
@@ -2917,8 +3130,8 @@
           "description" : "自定义所有账户的间隔限制将此值增加到高于其默认值（20），可以扫描更多未使用的货币公共地址。仅限高级用户，这可能会在恢复你的账户时破坏兼容性。"
         },
         "forceProvider" : {
-          "title" : "管理器提供方",
-          "description" : "在管理器中更改应用程序提供方可能会导致无法在您的 Ledger 设备上安装或卸载应用程序。"
+          "title" : "My Ledger provider",
+          "description" : "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
         },
         "testAnimations" : {
           "title" : "测试 Lottie 动画",
@@ -3692,8 +3905,10 @@
     "recipientWording" : {
       "send" : "接收方",
       "delegate" : "验证者",
+      "redelegate" : "验证者",
       "undelegate" : "验证者",
       "claimReward" : "奖励接收方",
+      "claimRewardCompound" : "将接收奖励的验证者",
       "optIn" : "接收方",
       "nominate" : "验证者",
       "erc721" : {
@@ -3740,7 +3955,20 @@
         "MEMO_HASH" : "Memo Hash 标签哈希",
         "MEMO_RETURN" : "Memo 返回"
       },
-      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的类型。"
+      "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的类型。",
+      "fee" : "费用",
+      "feeInfoText" : "在 Stellar（恒星）网络上进行交易的最低交易费用为 0.00001 XLM",
+      "suggested" : "建议",
+      "recommendedFee" : "建议费用",
+      "recommenndedFeeInfo" : "您仍可以低于建议的费用提交此交易，但交易可能无法完成",
+      "networkCongestion" : "网络拥塞",
+      "networkCongestionLevel" : {
+        "LOW" : "低",
+        "MEDIUM" : "中",
+        "HIGH" : "高"
+      },
+      "assetCode" : "资产代码",
+      "assetIssuer" : "资产发行者"
     },
     "cosmos" : {
       "memo" : "Memo",
@@ -3755,7 +3983,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "无法为您的特定配置找到 {{appName}} 应用程序。",
-      "description" : "尝试从管理器重新安装应用程序"
+      "description" : "Try reinstalling the app from My Ledger"
     },
     "countervaluesUnavailable" : {
       "title" : "我们目前无法为此资产提供对价"
@@ -3918,7 +4146,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "固件或应用程序需更新",
-      "description" : "请使用管理器卸载所有的应用程序，且在重新安装应用程序之前检查是否有可用的固件更新。"
+      "description" : "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "更新 Nano 的固件",
@@ -3975,20 +4203,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "完成应用程序的安装进程？",
-        "description" : "退出 Manager（管理器）将会终止应用程序的安装。请完成列队中应用程序的安装。",
+        "description" : "Quitting My Ledger will terminate the app installation. Please finish the installation to install the apps in the queue.",
         "stay" : "完成安装"
       },
       "uninstall" : {
         "title" : "完成应用程序的卸载进程？",
-        "description" : "退出 Manager（管理器）会终止应用程序的卸载进程。",
+        "description" : "Quitting My Ledger will terminate the app uninstallations in progress.",
         "stay" : "完成卸载"
       },
       "update" : {
         "title" : "完成应用程序的更新进程？",
-        "description" : "退出 Manager（管理器）会终止应用程序的更新进程。",
+        "description" : "Quitting My Ledger will terminate the app updates in progress.",
         "stay" : "完成更新"
       },
-      "quit" : "退出管理器"
+      "quit" : "Quit My Ledger"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "抱歉，需要安装此应用程序",
@@ -3996,6 +4224,10 @@
     },
     "NetworkDown" : {
       "title" : "抱歉，网络连接似乎已断开",
+      "description" : "请检查您的网络连接。"
+    },
+    "NetworkError" : {
+      "title" : "同步期间发生错误",
       "description" : "请检查您的网络连接。"
     },
     "NoAddressesFound" : {
@@ -4084,7 +4316,7 @@
       "description" : "请重新启动您的设备，而不要在图标出现时触摸按钮。如果问题仍然存在，请联系 Ledger 客服。"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager（管理器）在设备上被拒绝"
+      "title" : "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "设备上的更新已取消",
@@ -4104,7 +4336,7 @@
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
-      "description" : "在 Manager（管理器）中卸载并重新安装 {{managerAppName}} 应用程序"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "返回功能面板",
@@ -4124,7 +4356,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "需要更新应用程序",
-      "description" : "在 Manager（管理器）中卸载并重新安装 {{managerAppName}} 应用程序"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
@@ -4169,7 +4401,7 @@
       "list" : {
         "1" : "断开连接并重新连接 USB 数据线，而不按下任何按钮。",
         "2" : "同时按下两个按钮三次来显示功能面板。",
-        "3" : "打开管理器并点击更新固件。"
+        "3" : "Open My Ledger and click Update firmware."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
@@ -4293,14 +4525,8 @@
     "FeeTooHigh" : {
       "title" : "网络费用超过数额的10%"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo 格式错误"
-    },
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "发送到该接收方时，或许需要添加 memo（目的地标签）"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "数额必须至少为 {{minAmountFromFormatted}}"
@@ -4368,20 +4594,50 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "您已超过可用代币的数量"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "最小可发送数额为 {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "请确保您的资金足够支付费用"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo 格式错误"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "发送到该接收方时，或许需要添加 memo（目的地标签）"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "此接收人还没有 {{assetCode}} 的信任额度"
+    },
+    "StellarAssetRequired" : {
+      "title" : "应在添加信任额度之前先选择 Stellar（恒星）资产"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "找不到所选的 Stellar（恒星）资产"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金足够支付交易费用"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "所选费用低于建议费用"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低交易费用为 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金多于新的信任额度"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar（恒星）账户不存在"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     }
   },
   "cryptoOrg" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "由 Crypto.org 提供支持",
-        "moreInfo" : "更多信息",
-        "drawerTitle" : "Crypto.org 集成",
-        "title" : "Crypto.org (CRO) 代币现在可以在 Ledger Live 上使用",
-        "description" : "您现在可以开始管理您的 Crypto.org (CRO) 代币，并通过 Ledger Live 保护它们。",
-        "description2" : "Crypto.org (CRO) 代币是 Crypto.org 链的原生币种，用于所有交易、质押和许多即将到来的功能。",
-        "website" : "每个钱包里的加密货币"
-      }
-    },
     "memo" : "Memo",
     "memoPlaceholder" : "可选",
     "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的信息。"
@@ -4394,6 +4650,20 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
+    },
+    "send" : {
+      "memo" : {
+        "label" : "Memo（可选）",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "选择资产"
+    },
+    "selectAccount" : {
+      "title" : "选择账户"
     }
   }
 }
