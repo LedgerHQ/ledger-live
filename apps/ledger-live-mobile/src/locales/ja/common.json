@@ -81,7 +81,8 @@
     "seeMore" : "詳細を表示",
     "moreInfo" : "詳細はこちら",
     "buyEth" : "Ethereumを購入",
-    "popular" : "人気"
+    "popular" : "人気",
+    "comingSoon" : "近日公開"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -322,6 +323,14 @@
     "InvalidRecipient" : {
       "title" : "無効な送付先"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "言語のインストールがデバイス上で拒否されました",
+      "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+    },
+    "LanguageNotFound" : {
+      "title" : "言語が見つかりません",
+      "description" : "インストールしようとしている言語が見つかりませんでした。他の言語のインストールをお試しください。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "アップデートの必要はありません。",
       "description" : "デバイスを使用できない場合は、Ledgerサポートに連絡してください。"
@@ -560,14 +569,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "レガシーアドレス形式はサポートを終了しました。"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "メモのフォーマットに誤りがあります。"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "この受取人に送金するには、Memo(メモ)が必要な場合があります"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratisブロックチェーンのメジャーアップデートが実施されたため、正しく動作しない可能性があります。旧Stratisブロックチェーンのサポートは、2021年10月16日まで引き続き提供されます。"
@@ -644,7 +647,45 @@
       "title" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
     },
     "CardanoMinAmountError" : {
-      "title" : "最低{{amount}} ADA以上必要"
+      "title" : "送付可能な最低金額は、{{amount}} ADAです"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "お支払いに十分な資金があることをご確認ください"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "メモのフォーマットに誤りがあります。"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "この受取人に送金するには、Memo(メモ)が必要な場合があります"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "この受取人にはまだ{{assetCode}}へのトラストラインがありません"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Stellar資産はトラストライン追加前に選択する必要があります"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "選択されたStellar資産が見つかりませんでした"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントにトランザクション手数料をカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "選択された手数料は推奨手数料を下回っています"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低トランザクション手数料は0.00001 XLMです"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに新しいトラストラインをカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellarアカウントが存在しません"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     }
   },
   "bluetooth" : {
@@ -820,8 +861,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Ledger Liveをお楽しみいただいていますか?",
-      "description" : "Ledger Liveの改善点等にお気づきでしょうか。弊社にとって、お客様のご意見やご感想は非常に大切です。",
+      "title" : "アプリの使い勝手はいかがですか？",
+      "description" : "ご意見は、Ledger Liveの改善に重要です。",
       "cta" : {
         "enjoy" : "素晴らしい",
         "disappointed" : "がっかりした",
@@ -838,7 +879,8 @@
     },
     "disappointed" : {
       "title" : "より良い製品の開発にぜひご協力ください",
-      "description" : "弊社は常に改善に取り組んでいます。お客様の率直なご意見をいただけますと、改善点の正確な把握に非常に役立ちます。",
+      "description" : "さらにサポートが必要な場合、またはお問合せを希望される場合は、ライブチャットを",
+      "here" : "ご利用ください",
       "cta" : {
         "sendFeedback" : "意見を送る",
         "notNow" : "後で"
@@ -929,6 +971,10 @@
       "earn" : {
         "title" : "報酬獲得",
         "desc" : "不労所得を獲得して暗号資産を運用する"
+      },
+      "mint" : {
+        "title" : "ミント",
+        "desc" : "[ L ] Marketにおける専用コラボレーションからNFTをミント"
       }
     },
     "comingSoon" : "近日公開",
@@ -1517,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Looking for devices",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Already paired"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Try again"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "ウォレット",
     "accounts" : "アカウント",
@@ -1712,7 +1785,8 @@
       "validatorsCount" : "バリデータ（{{number}}）",
       "storageLimit" : "ストレージ上限",
       "gasLimit" : "ガスリミット",
-      "id" : "ID"
+      "id" : "ID",
+      "autoClaimedRewards" : "自動獲得報酬"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -1733,6 +1807,17 @@
     "subaccountCount_plural" : "+{{count}}個のサブアカウント"
   },
   "account" : {
+    "subHeader" : {
+      "moreInfo" : "詳細はこちら",
+      "cardTitle" : "Powered by {{team}}",
+      "drawer" : {
+        "title" : "{{family}}の統合",
+        "subTitle" : "{{family}}の統合は{{team}}チームによって行われました",
+        "description" : "Ledger Liveはオープンソースのプラットフォームです。",
+        "description2" : "世界中の開発者がLedger Liveと統合できます",
+        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました"
+      }
+    },
     "tokens" : {
       "contractAddress" : "コントラクトアドレス",
       "viewInExplorer" : "エクスプローラーで表示",
@@ -1749,6 +1834,13 @@
         "howTo" : "Algorandアカウントに資産を追加できます。",
         "addAsa" : "ASA（資産）の追加",
         "howAsaWorks" : "ASA（資産）の仕組み"
+      },
+      "stellar" : {
+        "seeMore" : "さらに資産を見る",
+        "seeLess" : "資産の表示を減らす",
+        "addTokens" : "資産を追加",
+        "howTo" : "Stellarアカウントに資産を追加できます。",
+        "addAsset" : "資産を追加"
       }
     },
     "subaccounts" : {
@@ -1897,6 +1989,12 @@
         "showTokens_plural" : "{{length}}ASAを表示",
         "hideTokens" : "ASAを非表示",
         "hideTokens_plural" : "ASAを非表示"
+      },
+      "stellar" : {
+        "showTokens" : "{{length}}資産を表示",
+        "showTokens_plural" : "{{length}}資産を表示",
+        "hideTokens" : "資産を非表示",
+        "hideTokens_plural" : "資産を非表示"
       }
     },
     "noResultsFound" : "資産が見つかりません",
@@ -2057,6 +2155,36 @@
         "android" : "Google Playストアでレビュー"
       }
     },
+    "notifications" : {
+      "title" : "通知",
+      "desc" : "通知を管理",
+      "disabledNotifications" : {
+        "title" : "通知はオフです",
+        "desc" : "{{platform}}はLedger Liveからの通知をブロックしています。スマートフォンで通知を受信するには、デバイスの設定からLedger Liveの通知をオンにしてください。",
+        "turnOnNotif" : "通知をオンにする",
+        "goToSettings" : "設定を開く"
+      },
+      "allowed" : {
+        "title" : "通知を許可",
+        "desc" : "暗号資産、マーケットの傾向に関する通知を受け取る"
+      },
+      "transactions" : {
+        "title" : "トランザクション",
+        "desc" : "暗号資産を送受信の際に通知を受け取りましょう"
+      },
+      "market" : {
+        "title" : "Market",
+        "desc" : "マーケットの重要な変化に関する最新情報を受け取る"
+      },
+      "announcement" : {
+        "title" : "お知らせ",
+        "desc" : "Ledger Liveの重要なアップデートを受け取る"
+      },
+      "price" : {
+        "title" : "価格アラート",
+        "desc" : "お気に入りのコインの価格アラートを設定して、市場の動きを見逃さないようにしましょう"
+      }
+    },
     "help" : {
       "title" : "ヘルプ",
       "header" : "ヘルプ",
@@ -2088,6 +2216,23 @@
       "customManifest" : {
         "title" : "カスタムプラットフォームマニフェストを読み込む"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
+      "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
+      "featureFlagsOverride" : "上書き",
+      "featureFlagsEdit" : "編集",
+      "featureFlagsRestore" : "復元",
+      "featureFlagsDisplayValue" : "値を表示",
+      "featureFlagsHideValue" : "値を非表示"
+    }
+  },
+  "notifications" : {
+    "prompt" : {
+      "title" : "通知をオンにする",
+      "desc" : "Ledger LiveやLedger製品、セキュリティに関する最新情報を入手しましょう。いつでも購読解除が可能です。",
+      "allow" : "通知を許可",
+      "later" : "後で"
     }
   },
   "migrateAccounts" : {
@@ -2153,10 +2298,67 @@
       "verifyAgain" : "もう一度確認",
       "noAccount" : "アカウントが見つかりません",
       "address" : "アカウントのアドレス",
-      "copyAddress" : "アドレスをコピー",
+      "copyAddress" : "コピー",
       "shareAddress" : "アドレスを共有",
-      "addressCopied" : "アドレスをコピーしました！",
+      "addressCopied" : "コピー済み",
       "taprootWarning" : "送付元がtaprootに対応しているか確認してください",
+      "selectCrypto" : {
+        "title" : "暗号資産を選択"
+      },
+      "stepperHeader" : {
+        "range" : "ステップ{{currentStep}}/{{totalSteps}}",
+        "connectDevice" : "デバイスを接続"
+      },
+      "selectAccount" : {
+        "title" : "アカウントを選択",
+        "subtitle" : "{{currencyTicker}}はこの口座に入金されます。"
+      },
+      "addAccount" : {
+        "title" : "ブロックチェーンを検索",
+        "subtitle" : "{{currencyTicker}}アカウントを所有しているか確認します。",
+        "foundAccounts" : "{{count}}件のアカウントが見つかりました",
+        "stopSynchronization" : "同期の停止"
+      },
+      "verifyAddress" : {
+        "title" : "アドレスの認証",
+        "subtitle" : "デバイス上に表示されているアドレスが、次のアドレスと一致しているかご確認ください。確認後、デバイスの「Approve(承認)」をクリックできます。",
+        "cancel" : {
+          "title" : "このアドレスを拒否しました",
+          "subtitle" : "これが誤操作によるものである場合は、下のボタンをクリックして再試行できます。",
+          "info" : "アドレスの不一致が確実な場合、お使いのスマートフォンが情報漏洩している可能性があります。<0>できるだけ早くお問い合わせいただく</0>ことをお勧めします。"
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "{{currencyTicker}}を受け取る",
+        "addressVerified" : "認証済みアドレス",
+        "verifyAddress" : "タップしてアドレスを認証",
+        "adviceVerify" : "当社では常にLedgerデバイスでアドレス認証することを推奨しています",
+        "sendWarning" : "このアドレスには、 {{currencyName}} ({{currencyTicker}}) のみを送信します。その他の暗号資産を送信すると、資金が永久に失われる可能性があります。"
+      },
+      "securityVerify" : {
+        "title" : "安全上の理由から、当社ではLedgerデバイスでこのアドレスの認証を推奨しています。",
+        "subtitle1" : "アドレスを認証することで安全にご利用いただけます。Ledgerデバイスに表示されるアドレスが情報漏洩することはありません。",
+        "subtitle2" : "アドレスを認証することで、デバイスに表示されているアドレスがLedger Liveに表示されているアドレスと同一であることを確認できます。",
+        "verifyCta" : "アドレスを認証",
+        "dontVerifyCta" : "認証せずにアドレスを提示"
+      },
+      "securityDontVerify" : {
+        "title" : "本当によろしいですか？",
+        "subtitle" : "Ledger Liveに表示されているアドレスは認証されません。",
+        "doNotRemindAgain" : "今後、このメッセージを表示しない",
+        "no" : "いいえ",
+        "yes" : "はい"
+      },
+      "toastMessages" : {
+        "accountImported" : "{{currencyTicker}}アカウントをインポートしました。 ",
+        "why" : "その理由とは。",
+        "addressVerified" : "アドレスが認証されました"
+      },
+      "additionalInfoModal" : {
+        "title" : "アカウントをインポートした理由は？",
+        "subtitle" : "シードに以前の{{currencyTicker}}アカウントがあることが検出されました。このアカウントをインポートしました。",
+        "closeCta" : "了解"
+      },
       "notSynced" : {
         "text" : "同期中",
         "desc" : "トランザクションの数が多い場合やインターネット接続が遅い場合、しばらく時間がかかることがあります。"
@@ -2259,7 +2461,7 @@
       },
       "payoutModal" : {
         "title" : "ペイアウト手数料",
-        "description" : "ペイアウト手数料はデバイス上に表示されず、送金額から差し引かれます。",
+        "description" : "ペイアウト手数料はデバイス上に表示されず、送付額から差し引かれます。",
         "cta" : "閉じる"
       },
       "pendingOperation" : {
@@ -3255,7 +3457,9 @@
     "newVersion" : "お使いの{{deviceName}}で{{version}}のアップデートが利用可能です",
     "drawerUpdate" : {
       "title" : "ファームウェアのアップデート",
-      "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。"
+      "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。",
+      "pleaseConnectUsbTitle" : "USBケーブルが必要です",
+      "pleaseConnectUsbDescription" : "ファームウェアのアップデートを開始するには、 {{deviceName}}をUSBケーブルでスマートフォンに接続します。"
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3281,6 +3485,19 @@
       "es" : "Spanish",
       "zh" : "中国語",
       "de" : "ドイツ語"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "言語",
+    "deviceLanguage" : "デバイスの言語",
+    "changeLanguage" : "言語の変更",
+    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
+    "installingLanguage" : "言語をインストール",
+    "languages" : {
+      "english" : "英語",
+      "french" : "フランス語",
+      "spanish" : "スペイン語"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3377,11 +3594,43 @@
       }
     }
   },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "合計残高にはステーキング報酬は含まれません"
+      }
+    }
+  },
   "celo" : {
     "info" : {
       "available" : {
         "title" : "CELO利用可能",
         "description" : "これは利用可能額です。"
+      }
+    }
+  },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO利用可"
+      },
+      "delegated" : {
+        "description" : "デリゲートされた資産は、Osmosisの投票に使われます。これがお客様の合計票数です。"
+      },
+      "undelegating" : {
+        "description" : "デリゲートを解除した資産は、14日間のロック期間後に再び利用可能になります。"
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "資産を管理しながら、OSMOをデリゲートして報酬を獲得しましょう。",
+            "steps" : {
+              "1" : "デリゲート解除が完了するまで、14日待つ必要があります。"
+            }
+          }
+        }
       }
     }
   },
@@ -3588,33 +3837,6 @@
       }
     }
   },
-  "cryptoOrg" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Crypto.org",
-        "moreInfo" : "詳細はこちら",
-        "drawerTitle" : "Crypto.orgを統合",
-        "title" : "Crypto.org(CRO)トークンがLedger Liveでご利用可能になりました",
-        "description" : "Crypto.org (CRO) トークンを管理し、Ledger Liveを通じて保護することができます。",
-        "description2" : "Crypto.orgチェーンのネイティブトークンであるCrypto.org (CRO) は、トランザクション、ステーキングに利用されています。今後さらに多くの機能へ対応予定です。",
-        "website" : "全てのウォレットに暗号資産を"
-      }
-    }
-  },
-  "elrond" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Elrond",
-        "drawerTitle" : "Elrondの統合",
-        "moreInfo" : "詳細はこちら",
-        "title" : "Ledger Liveは、Elrond eGold（EGLD）トークン対応です。",
-        "description" : "Ledger Liveで、eGold（EGLD）トークンを安全に保管・管理できるようになりました。",
-        "description2" : "Elrond eGold（EGLD）トークンは、Elrond Networkのネイティブトークンであり、トランザクション、ステーキング、スマートコントラクト、ガバナンス、バリデーターの報酬など、さまざまな用途に使用されます。",
-        "description3" : "LedgerはElrondチームと積極的に協力し、ステーキングやESDT（Elrond Standard Digital Token）のネイティブサポートなどの機能を追加予定です。",
-        "website" : "The Internet Scale Blockchain"
-      }
-    }
-  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "アカウントをデリゲートすることで報酬を得ることができます。",
@@ -3730,6 +3952,7 @@
     }
   },
   "stellar" : {
+    "token" : "資産",
     "memo" : {
       "title" : "Memo(メモ)",
       "warning" : "メモを使用する場合は、受取人とメモのタイプをしっかりと確認してください。"
@@ -3740,6 +3963,48 @@
       "MEMO_ID" : "メモID",
       "MEMO_HASH" : "メモハッシュ",
       "MEMO_RETURN" : "メモリターン"
+    },
+    "fee" : "ネットワーク手数料",
+    "feeAction" : "更新料",
+    "recommendedFee" : "推奨手数料",
+    "recommenndedFeeInfo" : "このトランザクションを推奨手数料より低額で提出可能ですが、完了しない場合があります",
+    "suggested" : "提案済み",
+    "networkCongestion" : "ネットワーク混雑",
+    "networkCongestionLevel" : {
+      "LOW" : "低速",
+      "MEDIUM" : "標準",
+      "HIGH" : "高速"
+    },
+    "assetCode" : "資産コード",
+    "assetIssuer" : "資産発行者",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "資産を追加",
+        "connectDevice" : "デバイスを接続",
+        "verification" : "認証",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "追加済みの資産",
+              "description" : "すでに、Stellarアカウントに{{token}}資産を所有しています。"
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}}資産が正常に追加されました！",
+              "text" : "Stellarアカウントで、{{token}}資産の受け取りや送付が可能になりました。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、トランザクションの不成立を確認した上で、もう一度やり直してください。"
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4105,6 +4370,11 @@
         "redelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、21日待つ必要があります。",
         "undelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、21日待つ必要があります。"
       },
+      "osmosis" : {
+        "claimReward" : "選択したバリデーターに未請求の報酬がある場合は、自動的に請求されます。",
+        "redelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、14日間待機する必要があります。",
+        "undelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、14日間待機する必要があります。"
+      },
       "lending" : "送信する前に、取引の詳細をデバイスで確認してください。"
     },
     "amount" : "数量",
@@ -4114,6 +4384,7 @@
     "redelegationAmount" : "再デリゲート数",
     "gas" : "ガス",
     "validatorAddress" : "バリデータのアドレス",
+    "validatorName" : "バリデーター名",
     "rewardAmount" : "報酬額",
     "undelegatedAmount" : "デリゲート解除数",
     "memo" : "メモ"
@@ -4403,6 +4674,16 @@
     },
     "operations" : {
       "title" : "取引履歴"
+    }
+  },
+  "hedera" : {
+    "name" : "Hedera",
+    "createHederaAccountHelp" : {
+      "text" : "Hederaアカウントの作成方法については、",
+      "link" : "こちらのサポート記事をご参照ください。"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"
     }
   }
 }
