@@ -33,6 +33,7 @@ import { knownDevicesSelector, DeviceLike } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
 import type { AppStore, State } from "../reducers";
 import { NavigatorName } from "../const";
+import { Maybe } from "../types/helpers";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${
@@ -86,10 +87,13 @@ const extraProperties = (store: AppStore) => {
 const context = {
   ip: "0.0.0.0",
 };
-let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
+
+type MaybeAppStore = Maybe<AppStore>;
+
+let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
 
 const token = __DEV__ ? null : ANALYTICS_TOKEN;
-export const start = async (store: any) => {
+export const start = async (store: AppStore) => {
   if (token) {
     await analytics.setup(token, {
       android: {

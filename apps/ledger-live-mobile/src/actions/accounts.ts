@@ -7,13 +7,15 @@ import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import accountModel from "../logic/accountModel";
 
-export const importStore = (state: { active: { data: AccountRaw[] } }) => ({
+export const importStore = (state: { active: AccountRaw[] }) => ({
   type: "ACCOUNTS_IMPORT",
   payload: {
     state: {
       active:
         state && Array.isArray(state.active)
-          ? implicitMigration(state.active.map(accountModel.decode))
+          ? implicitMigration(
+              state.active.map(acc => accountModel.decode({ data: acc })),
+            )
           : [],
     },
   },

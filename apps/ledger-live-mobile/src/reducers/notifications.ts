@@ -1,7 +1,7 @@
-import { handleActions, Action } from "redux-actions";
+import { handleActions } from "redux-actions";
 import type { State } from ".";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
-import { UnionToIntersection } from "../types/helpers";
+import { GetReducerPayload } from "../types/helpers";
 
 export type NotificationsState = {
   /** Boolean indicating whether the push notifications modal is opened or closed */
@@ -104,12 +104,9 @@ export const notificationsEventTriggeredSelector = (s: State) =>
 export const notificationsDataOfUserSelector = (s: State) =>
   s.notifications.dataOfUser;
 
-type Payload = typeof handlers[keyof typeof handlers];
-type UnionPayload = Parameters<Payload>[1]["payload"];
+type Payload = GetReducerPayload<typeof handlers>;
 
-type IntersectionPayload = UnionToIntersection<UnionPayload>;
-
-export default handleActions<NotificationsState, IntersectionPayload>(
+export default handleActions<NotificationsState, Payload>(
   handlers,
   initialState,
 );

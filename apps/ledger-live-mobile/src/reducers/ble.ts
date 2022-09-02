@@ -16,7 +16,7 @@ export type BleState = {
 const initialState: BleState = {
   knownDevices: [],
 };
-const handlers: Record<string, any> = {
+const handlers = {
   BLE_ADD_DEVICE: (
     state: BleState,
     {
