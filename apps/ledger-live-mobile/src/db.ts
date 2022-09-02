@@ -19,8 +19,8 @@ export async function clearDb() {
   await store.delete(list.filter(k => k !== "user"));
 }
 export async function getUser(): Promise<User> {
-  const user = await store.get("user");
-  return user as User;
+  const user = await store.get<User>(["user"]);
+  return user;
 }
 export async function setUser(user: User): Promise<void> {
   await store.update("user", user);
@@ -64,16 +64,17 @@ export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
     };
   }
 
-  return (await store.get(keys)).reduce(
+  return ((await store.get(keys)) as CounterValuesStateRaw[]).reduce(
     (
       prev: CounterValuesStateRaw,
       val: RateMapRaw | CounterValuesStatus,
       i: number,
-    ) => ({
-      ...prev,
-      [keys[i].split(COUNTERVALUES_DB_PREFIX)[1]]: val,
-    }),
-    {},
+    ) =>
+      ({
+        ...prev,
+        [keys[i].split(COUNTERVALUES_DB_PREFIX)[1]]: val,
+      } as CounterValuesStateRaw),
+    {} as CounterValuesStateRaw,
   );
 }
 
@@ -134,7 +135,7 @@ async function unsafeGetAccounts(): Promise<{
     let active = await store.get(accountKeys);
 
     if (keys.includes(ACCOUNTS_KEY_SORT)) {
-      const ids = await store.get(ACCOUNTS_KEY_SORT);
+      const ids = (await store.get(ACCOUNTS_KEY_SORT)) as string[];
       active = active
         .map(a => [a, ids.indexOf(a.data.id)])
         .sort((a, b) => a[1] - b[1])

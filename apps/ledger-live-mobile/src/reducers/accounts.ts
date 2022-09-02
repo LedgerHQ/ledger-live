@@ -4,6 +4,7 @@ import uniq from "lodash/uniq";
 import type { OutputSelector } from "reselect";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import type {
+  Currency,
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
@@ -26,6 +27,7 @@ import {
   AddAccountsProps,
   AccountComparator,
 } from "@ledgerhq/live-common/account/index";
+import type { GetReducerPayload } from "../types/helpers";
 import type { State } from "./index";
 import accountModel from "../logic/accountModel";
 
@@ -36,11 +38,13 @@ const initialState: AccountsState = {
   active: [],
 };
 const handlers = {
-  ACCOUNTS_IMPORT: (s: AccountsState, { state }: { state: AccountsState }) =>
-    state,
+  ACCOUNTS_IMPORT: (
+    s: AccountsState,
+    { payload: state }: { payload: AccountsState },
+  ) => state,
   ACCOUNTS_USER_IMPORT: (
     s: AccountsState,
-    { input }: { input: ImportAccountsReduceInput },
+    { payload: input }: { payload: ImportAccountsReduceInput },
   ) => ({
     active: importAccountsReduce(s.active, input),
   }),
@@ -58,7 +62,9 @@ const handlers = {
   }),
   ACCOUNTS_ADD: (
     s: AccountsState,
-    { scannedAccounts, selectedIds, renamings }: AddAccountsProps,
+    {
+      payload: { scannedAccounts, selectedIds, renamings },
+    }: { payload: AddAccountsProps },
   ) => ({
     active: addAccounts({
       existingAccounts: s.active,
@@ -80,13 +86,14 @@ const handlers = {
   UPDATE_ACCOUNT: (
     state: AccountsState,
     {
-      accountId,
-      updater,
+      payload: { accountId, updater },
     }: {
-      accountId: string;
-      updater: (_: Account) => Account;
+      payload: {
+        accountId: string;
+        updater: (_: Account) => Account;
+      };
     },
-  ): AccountsState => {
+  ) => {
     function update(existingAccount: Account) {
       if (accountId !== existingAccount.id) return existingAccount;
       return { ...existingAccount, ...updater(existingAccount) };
@@ -127,8 +134,8 @@ const handlers = {
 export const exportSelector = (s: State) => ({
   active: s.accounts.active.map(accountModel.encode),
 });
-export const accountsSelector = (s: State): Account[] => s.accounts.active;
-export const migratableAccountsSelector = (s: State): Account[] =>
+export const accountsSelector = (s: State) => s.accounts.active;
+export const migratableAccountsSelector = (s: State) =>
   s.accounts.active.filter(canBeMigrated);
 export const flattenAccountsSelector = createSelector(
   accountsSelector,
@@ -163,8 +170,11 @@ export const cryptoCurrenciesSelector = createSelector(
 );
 export const accountsTuplesByCurrencySelector = createSelector(
   accountsSelector,
-  (_: State, { currency }) => currency,
-  (accounts, currency): AccountLike[] => {
+  (_: State, { currency }: { currency: Currency }) => currency,
+  (
+    accounts,
+    currency,
+  ): { account: AccountLike; subAccount: SubAccount | null }[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
         .filter(account => account.currency.id === currency.parentCurrency.id)
@@ -336,4 +346,7 @@ export const hasLendEnabledAccountsSelector: OutputSelector<
     return !!capabilities;
   }),
 );
-export default handleActions(handlers, initialState);
+
+type Payload = GetReducerPayload<typeof handlers>;
+
+export default handleActions<AccountsState, Payload>(handlers, initialState);

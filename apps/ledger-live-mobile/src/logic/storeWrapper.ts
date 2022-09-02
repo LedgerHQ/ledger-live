@@ -83,23 +83,27 @@ const getCompressedValue = async <T = unknown>(
   }
 };
 
+type ArrayOrSingle<T, K> = K extends string[] ? T[] : T;
+
 const deviceStorage = {
   /**
    * Get a one or more value for a key or array of keys from AsyncStorage
    * @param {String|Array} key A key or array of keys
    * @return {Promise}
    */
-  async get<T = unknown, K = string | string[]>(
+  async get<T, K extends string | string[]>(
     key: K,
-  ): Promise<(K extends string[] ? T[] : T) | undefined> {
+  ): Promise<ArrayOrSingle<T, K> | undefined> {
     if (!Array.isArray(key)) {
       const value = await AsyncStorage.getItem(key);
       return getCompressedValue(key, value);
     }
 
     const values = await AsyncStorage.multiGet(key);
-    const data = values.map(value => getCompressedValue(value[0], value[1]));
-    return Promise.all(data).then(array => array.filter(Boolean) as T[]);
+    const data = values.map(value =>
+      getCompressedValue(value[0], value[1]),
+    ) as Promise<T>[];
+    return Promise.all(data).then(array => array.filter(Boolean) as any);
   },
 
   /**
