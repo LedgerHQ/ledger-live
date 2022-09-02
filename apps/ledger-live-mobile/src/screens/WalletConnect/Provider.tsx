@@ -31,7 +31,6 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
     return () => clearInterval(interval);
   });
   return (
-    // $FlowFixMe
     <ProviderCommon
       onMessage={(wcCallRequest, account) => {
         if (

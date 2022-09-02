@@ -12,3 +12,5 @@ export type GetReducerPayload<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   P extends { [key: string]: (arg1: any, arg2: { payload: any }) => any },
 > = UnionToIntersection<Parameters<P[keyof P]>[1]["payload"]>;
+
+export type Unpacked<T> = T extends (infer U)[] ? U : T;

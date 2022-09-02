@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { atomicQueue } from "@ledgerhq/live-common/promise";
-import type { AccountRaw } from "@ledgerhq/types-live";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type {
   CounterValuesStateRaw,
   RateMapRaw,
@@ -19,7 +19,7 @@ export async function clearDb() {
   await store.delete(list.filter(k => k !== "user"));
 }
 export async function getUser(): Promise<User> {
-  const user = await store.get<User>(["user"]);
+  const user = (await store.get("user")) as User;
   return user;
 }
 export async function setUser(user: User): Promise<void> {
@@ -28,8 +28,8 @@ export async function setUser(user: User): Promise<void> {
 export async function updateUser(user: User): Promise<void> {
   await store.update("user", user);
 }
-export async function getSettings(): Promise<any> {
-  const settings = await store.get("settings");
+export async function getSettings(): Promise<Partial<SettingsState>> {
+  const settings = (await store.get("settings")) as Partial<SettingsState>;
   return settings;
 }
 export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
@@ -124,7 +124,7 @@ function onlyAccountsKeys(keys: string[]): Array<string> {
 
 // get accounts specific method to aggregate all account keys into the correct format
 async function unsafeGetAccounts(): Promise<{
-  active: AccountRaw[];
+  active: { data: AccountRaw }[];
 }> {
   await migrateAccountsIfNecessary();
   const keys = await store.keys();
@@ -132,12 +132,12 @@ async function unsafeGetAccounts(): Promise<{
 
   // if some account keys, we retrieve them and return
   if (accountKeys && accountKeys.length > 0) {
-    let active = await store.get(accountKeys);
+    let active = (await store.get(accountKeys)) as { data: AccountRaw }[];
 
     if (keys.includes(ACCOUNTS_KEY_SORT)) {
       const ids = (await store.get(ACCOUNTS_KEY_SORT)) as string[];
       active = active
-        .map(a => [a, ids.indexOf(a.data.id)])
+        .map<[{ data: AccountRaw }, number]>(a => [a, ids.indexOf(a.data.id)])
         .sort((a, b) => a[1] - b[1])
         .map(a => a[0]);
     }
@@ -158,7 +158,7 @@ async function unsafeSaveAccounts(
   {
     active: newAccounts,
   }: {
-    active: any[];
+    active: { data: Account }[];
   },
   stats?:
     | {
@@ -172,13 +172,14 @@ async function unsafeSaveAccounts(
   const currentAccountKeys = onlyAccountsKeys(keys);
 
   /** format data for DB persist */
-  const dbData = newAccounts.map(({ data }) => [
-    formatAccountDBKey(data.id),
-    {
-      data,
-      version: 1,
-    },
-  ]);
+  const dbData: [string, { data: Account; version: number }][] =
+    newAccounts.map(({ data }) => [
+      formatAccountDBKey(data.id),
+      {
+        data,
+        version: 1,
+      },
+    ]);
 
   /** Find current DB accounts keys diff with app state to remove them */
   const deletedKeys =
@@ -196,7 +197,7 @@ async function unsafeSaveAccounts(
   await store.save([
     ...dbDataWithOnlyChanges, // also store an index of ids to keep sort in memory
     [ACCOUNTS_KEY_SORT, newAccounts.map(a => a.data.id)],
-  ]);
+  ] as [string, string | { data: Account; version: number }][]);
 
   /** then delete potential removed keys */
   if (deletedKeys.length > 0) {
@@ -225,25 +226,31 @@ async function migrateAccountsIfNecessary(): Promise<void> {
 
   if (hasOldAccounts) {
     log("db", "should migrateAccountsIfNecessary");
-    let oldAccounts = null;
+    let oldAccounts: {
+      active: { data: Account }[];
+    } | null = null;
 
     try {
       /** fetch old accounts db data */
-      oldAccounts = await store.get(ACCOUNTS_KEY);
+      oldAccounts = (await store.get(ACCOUNTS_KEY)) as {
+        active: { data: Account }[];
+      };
     } catch (e) {
       /** catch possible "Row too big to fit into CursorWindow" */
       console.error(e);
     }
 
     /** format old data to be saved on an account based key */
-    const accountsData = (oldAccounts && oldAccounts.active) || [];
-    const newDBData = accountsData.map(({ data }) => [
-      formatAccountDBKey(data.id),
-      {
-        data,
-        version: 1,
-      },
-    ]);
+    const accountsData: { data: Account }[] =
+      (oldAccounts && oldAccounts.active) || [];
+    const newDBData: [string, { data: Account; version: number }][] =
+      accountsData.map(({ data }) => [
+        formatAccountDBKey(data.id),
+        {
+          data,
+          version: 1,
+        },
+      ]);
 
     /** save new formatted data then remove old data from DB */
     await store.save(newDBData);
