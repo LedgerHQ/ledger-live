@@ -1,9 +1,13 @@
-import { ImportAccountsReduceInput } from "@ledgerhq/live-common/lib/account/index";
+import {
+  AccountComparator,
+  ImportAccountsReduceInput,
+} from "@ledgerhq/live-common/lib/account/index";
+import { Dispatch } from "redux";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import accountModel from "../logic/accountModel";
 
-export const importStore = (state: any) => ({
+export const importStore = (state: { active: { data: AccountRaw[] } }) => ({
   type: "ACCOUNTS_IMPORT",
   payload: {
     state: {
@@ -14,16 +18,17 @@ export const importStore = (state: any) => ({
     },
   },
 });
-export const reorderAccounts = (comparator: any) => (dispatch: any) =>
-  dispatch({
-    type: "REORDER_ACCOUNTS",
-    payload: {
-      comparator,
-    },
-  });
+export const reorderAccounts =
+  (comparator: AccountComparator) => (dispatch: Dispatch) =>
+    dispatch({
+      type: "REORDER_ACCOUNTS",
+      payload: {
+        comparator,
+      },
+    });
 export const importAccounts = (input: ImportAccountsReduceInput) => ({
   type: "ACCOUNTS_USER_IMPORT",
-  input,
+  payload: { input },
 });
 export const replaceAccounts = (payload: {
   scannedAccounts: Account[];
@@ -44,17 +49,25 @@ export const setAccounts = (accounts: Account[]) => ({
 export type UpdateAccountWithUpdater = (
   accountId: string,
   arg1: (arg0: Account) => Account,
-) => never;
+) => {
+  type: "UPDATE_ACCOUNT";
+  payload: {
+    accountId: string;
+    updater: (arg0: Account) => Account;
+  };
+};
 
 export const updateAccountWithUpdater: UpdateAccountWithUpdater = (
   accountId,
   updater,
 ) => ({
   type: "UPDATE_ACCOUNT",
-  accountId,
-  updater,
+  payload: {
+    accountId,
+    updater,
+  },
 });
-export type UpdateAccount = (_: $Shape<Account>) => any;
+export type UpdateAccount = (_: Pick<Account, "id"> & Partial<Account>) => any;
 export const updateAccount: UpdateAccount = payload =>
   updateAccountWithUpdater(payload.id, (account: Account) => ({
     ...account,
