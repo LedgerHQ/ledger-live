@@ -1,7 +1,11 @@
 import { getCurrentCosmosPreloadData } from "./preloadedData";
-import { getAccountBridge } from "../../bridge";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
-import type { CosmosAccount, CosmosValidatorItem } from "./types";
+import { canDelegate, canRedelegate } from "./logic";
+import type {
+  CosmosAccount,
+  CosmosValidatorItem,
+  CosmosDelegation,
+} from "./types";
 
 interface AccountBannerState {
   display: boolean;
@@ -43,7 +47,8 @@ export async function getAccountBannerState(
     if (
       worstValidator &&
       validator &&
-      worstValidator.commission < validator.commission
+      worstValidator.commission < validator.commission &&
+      canRedelegate(account, validator as unknown as CosmosDelegation)
     ) {
       worstValidator = validator;
     }
@@ -58,15 +63,7 @@ export async function getAccountBannerState(
       worstValidator?.validatorAddress === ledgerValidator?.validatorAddress
     ) {
       // Not found worst validator than ledger
-      const maxSpendable = await getAccountBridge(
-        account,
-        undefined
-      ).estimateMaxSpendable({
-        account,
-        parentAccount: undefined,
-        transaction: undefined,
-      });
-      if (maxSpendable.gt(0)) {
+      if (canDelegate(account)) {
         // Delegate remaining ATOM (not staked)
         display = true;
       }

@@ -1,10 +1,14 @@
 import { getAccountBannerState } from "./banner";
 import * as preloadedData from "./preloadedData";
-import * as bridge from "../../bridge";
+import * as logic from "./logic";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 import data from "./preloadedData.mock";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 import { BigNumber } from "bignumber.js";
+
+jest.mock("./js-prepareTransaction", () => ({
+  calculateFees: jest.fn(() => Promise.resolve({ md5: "md5", uri: "uri" })),
+}));
 
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
   (x) => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS
@@ -103,12 +107,9 @@ describe("cosmos/banner", () => {
         .mockReturnValue({ validators } as {
           validators: CosmosValidatorItem[];
         });
-
-      jest.spyOn(bridge, "getAccountBridge").mockReturnValue({
-        estimateMaxSpendable: () => Promise.resolve(new BigNumber(0)),
-      } as any);
+      jest.spyOn(logic, "canDelegate").mockReturnValue(false);
+      jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       const result = await getAccountBannerState(account);
-      expect(1 + 1).toBe(2);
       expect(result).toStrictEqual({
         display: false,
         redelegate: false,
@@ -122,9 +123,8 @@ describe("cosmos/banner", () => {
         .mockReturnValue({ validators } as {
           validators: CosmosValidatorItem[];
         });
-      jest.spyOn(bridge, "getAccountBridge").mockReturnValue({
-        estimateMaxSpendable: () => Promise.resolve(new BigNumber(5000)),
-      } as any);
+      jest.spyOn(logic, "canDelegate").mockReturnValue(true);
+      jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       const result = await getAccountBannerState(account);
       expect(result).toStrictEqual({
         display: true,
@@ -139,9 +139,8 @@ describe("cosmos/banner", () => {
         .mockReturnValue({ validators } as {
           validators: CosmosValidatorItem[];
         });
-      jest.spyOn(bridge, "getAccountBridge").mockReturnValue({
-        estimateMaxSpendable: () => Promise.resolve(new BigNumber(5000)),
-      } as any);
+      jest.spyOn(logic, "canDelegate").mockReturnValue(false);
+      jest.spyOn(logic, "canRedelegate").mockReturnValue(true);
       account.cosmosResources.redelegations.push({
         validatorSrcAddress: "xxxx",
         validatorDstAddress: expensiveValidator?.validatorAddress as string,
@@ -153,6 +152,28 @@ describe("cosmos/banner", () => {
         display: true,
         redelegate: true,
         validatorSrcAddress: expensiveValidator?.validatorAddress,
+        ledgerValidator,
+      });
+    });
+    it("should return not display redelegate mode", async () => {
+      jest
+        .spyOn(preloadedData, "getCurrentCosmosPreloadData")
+        .mockReturnValue({ validators } as {
+          validators: CosmosValidatorItem[];
+        });
+      jest.spyOn(logic, "canDelegate").mockReturnValue(false);
+      jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
+      account.cosmosResources.redelegations.push({
+        validatorSrcAddress: "xxxx",
+        validatorDstAddress: expensiveValidator?.validatorAddress as string,
+        amount: new BigNumber(1000),
+        completionDate: new Date(),
+      });
+      const result = await getAccountBannerState(account);
+      expect(result).toStrictEqual({
+        display: false,
+        redelegate: false,
+        validatorSrcAddress: "",
         ledgerValidator,
       });
     });
