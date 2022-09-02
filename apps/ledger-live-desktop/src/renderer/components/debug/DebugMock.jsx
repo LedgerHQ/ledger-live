@@ -8,7 +8,7 @@ import { deserializeError } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import {
   deviceInfo155,
-  deviceInfo210lo2,
+  deviceInfo210lo5,
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
 
@@ -186,7 +186,7 @@ const localizationEvents = [
     name: "listAppsWithLocalization",
     event: {
       type: "listingApps",
-      deviceInfo: deviceInfo210lo2,
+      deviceInfo: deviceInfo210lo5,
     },
   },
   {
@@ -196,7 +196,7 @@ const localizationEvents = [
       result: mockListAppsResult(
         "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
         "Bitcoin,Tron,Litecoin,Ethereum (outdated)",
-        deviceInfo210lo2,
+        deviceInfo210lo5,
       ),
     },
   },

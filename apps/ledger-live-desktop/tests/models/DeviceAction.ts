@@ -1,7 +1,7 @@
 import { Page, Locator } from "@playwright/test";
 import {
   deviceInfo155 as deviceInfo,
-  deviceInfo210lo2,
+  deviceInfo210lo5,
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
 
@@ -95,16 +95,16 @@ export class DeviceAction {
     appDesc: string = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
     installedDesc: string = "Bitcoin,Litecoin,Ethereum (outdated)",
   ) {
-    const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo2);
+    const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo5);
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo210lo2, result] = args;
+        const [deviceInfo210lo5, result] = args;
 
         (window as any).mock.events.mockDeviceEvent(
           {
             type: "listingApps",
-            deviceInfo: deviceInfo210lo2,
+            deviceInfo: deviceInfo210lo5,
           },
           {
             type: "result",
@@ -113,7 +113,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo210lo2, result],
+      [deviceInfo210lo5, result],
     );
 
     await this.loader.waitFor({ state: "hidden" });
