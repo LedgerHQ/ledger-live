@@ -11,10 +11,10 @@ import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 
 export const AnalyticsContext = createContext<{
-  source: undefined | string;
-  screen: undefined | string;
-  setSource: (_: undefined | string) => void;
-  setScreen: (_: undefined | string) => void;
+  source?: string;
+  screen?: string;
+  setSource?: (_?: string) => void;
+  setScreen?: (_?: string) => void;
 }>({
   source: undefined,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -32,6 +32,7 @@ export default function RootNavigator({ importDataString }: Props) {
 
     return JSON.parse(Buffer.from(importDataString, "base64").toString("utf8"));
   }, [importDataString]);
+
   const goToOnboarding = !hasCompletedOnboarding && !Config.SKIP_ONBOARDING;
   const [analyticsSource, setAnalyticsSource] = useState<undefined | string>(
     undefined,

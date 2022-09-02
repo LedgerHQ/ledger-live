@@ -2,11 +2,19 @@ import { log } from "@ledgerhq/logs";
 import { atomicQueue } from "@ledgerhq/live-common/promise";
 import type { AccountRaw } from "@ledgerhq/types-live";
 import type { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+// @ts-expect-error This import is hardcoded in the metro config
+// eslint-disable-next-line import/no-unresolved
+import mockedAppJson from "__app_json__";
+
 import store from "./logic/storeWrapper";
 
-const ACCOUNTS_KEY = "accounts";
-const ACCOUNTS_KEY_SORT = "accounts.sort";
-const ACCOUNTS_DB_PREFIX = "accounts.active.";
+const ACCOUNTS_KEY = mockedAppJson ? "accounts.mocked" : "accounts";
+const ACCOUNTS_KEY_SORT = mockedAppJson
+  ? "accounts.mocked.sort"
+  : "accounts.sort";
+const ACCOUNTS_DB_PREFIX = mockedAppJson
+  ? "accounts.mocked.active."
+  : "accounts.active.";
 const COUNTERVALUES_DB_PREFIX = "countervalues.";
 export async function clearDb() {
   const list = await store.keys();

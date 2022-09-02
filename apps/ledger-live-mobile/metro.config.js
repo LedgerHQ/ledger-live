@@ -8,6 +8,7 @@
 /* eslint-disable no-console */
 
 const extraConfig = require("metro-extra-config");
+const path = require("path");
 
 // Dependencies that are forcefully resolved from the LLM folder.
 const forcedDependencies = [
@@ -16,6 +17,19 @@ const forcedDependencies = [
   "react-native-reanimated",
   "styled-components",
 ];
+
+// Used to mock accounts using an app.json from LLD.
+const mockedAppJson = process.env.APP_JSON_PATH;
+
+// Hijacks the import to point to either the file or a null json.
+const appJsonPath = mockedAppJson
+  ? path.isAbsolute(mockedAppJson)
+    ? mockedAppJson
+    : path.resolve(__dirname, "..", "..", mockedAppJson)
+  : path.resolve(__dirname, "src", "__mocks__", "null.json");
+
+if (mockedAppJson)
+  console.log("[MOCK] Mocking app.json accounts @ " + appJsonPath);
 
 const specificConfig = {
   resolver: {
@@ -48,6 +62,14 @@ const extraConfigOptions = {
 
     // For other modules, it seems to be fine :).
     return moduleName;
+  },
+  earlyResolver: (context, realModuleName, platform, moduleName) => {
+    if (moduleName === "__app_json__") {
+      return {
+        type: "sourceFile",
+        filePath: appJsonPath,
+      };
+    }
   },
 };
 

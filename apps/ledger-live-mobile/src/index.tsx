@@ -97,6 +97,7 @@ import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
+import MockAppJson from "./components/MockAppJson";
 
 const themes = {
   light: lightTheme,
@@ -575,11 +576,13 @@ export default class Root extends Component<
                                                     <SnackbarContainer />
                                                     <NftMetadataProvider>
                                                       <MarketDataProvider>
-                                                        <App
-                                                          importDataString={
-                                                            importDataString
-                                                          }
-                                                        />
+                                                        <MockAppJson>
+                                                          <App
+                                                            importDataString={
+                                                              importDataString
+                                                            }
+                                                          />
+                                                        </MockAppJson>
                                                       </MarketDataProvider>
                                                     </NftMetadataProvider>
                                                   </NotificationsProvider>
