@@ -542,8 +542,9 @@ export async function bot({
     return sumResults((r) => sumMutation(r.mutations, f));
   }
 
-  body +=
-    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n";
+  appendBody(
+    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n"
+  );
   appendBody("|---|---|---|---|---|---|---|---|\n");
 
   appendBody("| **TOTAL** |");
