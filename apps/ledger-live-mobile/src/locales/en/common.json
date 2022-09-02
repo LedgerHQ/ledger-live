@@ -1563,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow": {
+    "scanning": {
+      "withProductName": {
+        "title": "Looking for your {{productName}}",
+        "description": "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName": {
+        "title": "Looking for devices",
+        "description": "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired": "Already paired"
+    },
+    "pairing": {
+      "success": {
+        "title": "Paired with {{deviceName}}"
+      },
+      "loading": {
+        "title": "Pairing with {{deviceName}}",
+        "subtitle": "Confirm the code on your {{productName}}"
+      },
+      "error": {
+        "title": "Pairing unsucessful",
+        "subtitle": "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta": "Try again"
+      }
+    }
+  },
   "tabs": {
     "portfolio": "Wallet",
     "accounts": "Accounts",
@@ -4246,7 +4273,10 @@
       "info": "How Delegation works",
       "broadcastSuccessTitle": "Operation sent",
       "broadcastSuccessDescription": "The status of the delegation will be updated when the transaction is confirmed.",
-      "delegatedTo": "delegated to"
+      "delegatedTo": "delegated to",
+      "started": {
+        "description": "You may earn rewards by delegating your SOL assets to a validator."
+      }
     }
   },
   "delegation": {
