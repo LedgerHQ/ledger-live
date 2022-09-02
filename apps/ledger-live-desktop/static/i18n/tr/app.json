@@ -198,7 +198,7 @@
     "menu" : "Menü",
     "stars" : "Favori hesaplar",
     "accounts" : "Hesaplar",
-    "manager" : "Yönetici",
+    "manager" : "My Ledger",
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
     "lend" : "Borç ver",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "Lütfen cihazınıza {{appName}} uygulamasını yükleyin",
-      "subtitle" : "Varlık takas etmek için yönetici sekmesine gidin ve {{appName}} uygulamasını yükleyin.",
-      "cta" : "Yönetici sayfasına git"
+      "subtitle" : "Varlıkları takas etmek için My Ledger'a gidin ve {{appName}} uygulamasını yükleyin.",
+      "cta" : "My Ledger'a Git"
     },
     "outdatedApp" : {
       "title" : "Lütfen cihazınızdaki {{appName}} uygulamasını güncelleyin",
-      "subtitle" : "Varlık takas etmek için yönetici sekmesine gidin ve {{appName}} uygulamasını güncelleyin.",
-      "cta" : "Yönetici sayfasına git"
+      "subtitle" : "Varlıkları takas etmek için My Ledger'a gidin ve {{appName}} uygulamasını güncelleyin.",
+      "cta" : "My Ledger'a Git"
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -697,6 +697,17 @@
     }
   },
   "account" : {
+    "subHeader" : {
+      "moreInfo" : "Daha fazla bilgi",
+      "cardTitle" : "{{team}} desteğiyle",
+      "drawer" : {
+        "title" : "{{family}} entegrasyonu",
+        "subTitle" : "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
+        "description" : "Ledger Live, açık kaynaklı bir platformdur.",
+        "description2" : "Dünyanın her yerinden developer'lar Ledger Live ile entegre olabilir",
+        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir."
+      }
+    },
     "lastOperations" : "Son işlemler",
     "contractAddress" : "Sözleşme:",
     "openInExplorer" : "Tarayıcıda aç",
@@ -733,8 +744,8 @@
     "frozenAssetsTooltip" : "Donmuş varlıklar Tron oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
     "bandwidthTooltip" : "Bant genişliği elde etmek için varlık dondurun",
     "energyTooltip" : "Enerji kazanmak için varlık dondurun",
-    "delegatedAssetsTooltip" : "Yetkisi devredilen varlıklar Cosmos oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
-    "undelegatingTooltip" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce 21 gün boyunca zaman kilidinde tutulurlar."
+    "delegatedTooltip" : "Yetkisi devredilen varlıklar oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
+    "undelegatingTooltip" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce {{timelockInDays}} gün boyunca zaman kilidinde tutulurlar."
   },
   "exchange" : {
     "chooseProvider" : "{{providerCount}} sağlayıcı arasından birini seçin",
@@ -948,7 +959,7 @@
       "terms" : {
         "title" : "Kripto Borç Verin",
         "subtitle" : "Varlıklarınızı Compound protokolünde borç verin",
-        "description" : "Compound protokolü, Ethereum ağındaki varlıkları borç vermenizi ve almanızı sağlar. Doğrudan Ledger hesabınızı kullanarak varlıklarınızı borç verebilir ve faiz getirisi kazanabilirsiniz.",
+        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
         "switchLabel" : "<0>Kullanım Koşullarını</0><1> okudum ve kabul ediyorum.</1>"
       },
       "steps" : {
@@ -1191,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Uygulamaları cihazınıza yükleyin",
-      "desc" : "Uygulamaları cihazınıza yüklemek için Yöneticiye gidin. Uygulamalar cihazınıza yüklendikten sonra hesap ekleyebilirsiniz.",
+      "desc" : "Cihazınıza uygulama yüklemek için My Ledger'a gidin. Uygulamalar cihazınıza yüklendikten sonra hesap ekleyebilirsiniz.",
       "buttons" : {
-        "installApp" : "Yönetici sayfasına git",
+        "installApp" : "My Ledger'a Git",
         "help" : "Yardım"
       }
     },
@@ -1202,7 +1213,7 @@
       "desc" : "Kripto varlıklarınızı yönetmeye başlamak için bir hesap ekleyin. Kripto varlığınızın uygulamasının cihazınızda yüklü olması gerekir.",
       "buttons" : {
         "addAccount" : "Hesap ekle",
-        "installApp" : "Uygulamaları yüklemek için Yöneticiye gidin",
+        "installApp" : "Uygulama yüklemek için My Ledger'a gidin",
         "help" : "Yardım"
       }
     }
@@ -1283,7 +1294,7 @@
       "noSearchResults" : "Üzgünüz, herhangi bir arama sonucu bulamadık.",
       "retrySearchKeyword" : "Lütfen aramayı başka bir anahtar kelime ile yeniden deneyin.",
       "retrySearchParams" : "Lütfen aramayı farklı bir değişkenle yeniden deneyin.",
-      "trackFavAssets" : "Favorilerinizi takip edin",
+      "trackFavAssets" : "En sevdiklerinizi takip edin",
       "clickOnStarIcon" : "Bir varlığın yanındaki yıldız simgesine tıklamak onu otomatik bir şekilde favori varlıklarınız arasına ekler.",
       "browseAssets" : "Varlıklara göz atın"
     }
@@ -1348,6 +1359,14 @@
       "link" : "Asset'ler (ASA) nasıl çalışır?",
       "seeTokens" : "ASA'ları göster ({{tokenCount}})",
       "hideTokens" : "ASA'ları gizle ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "Varlıklar",
+      "cta" : "Varlık ekle",
+      "placeholder" : "{{currencyName}} hesabınıza varlıklar ekleyebilirsiniz.",
+      "link" : "Stellar varlıklarıyla ilgili daha çok bilgi alın",
+      "seeTokens" : "Varlıkları göster ({{tokenCount}})",
+      "hideTokens" : "Varlıkları gizle ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1494,6 +1513,7 @@
       "memo" : "Memo",
       "assetId" : "Varlık Kimliği",
       "rewards" : "Kazanılan ödüller",
+      "autoClaimedRewards" : "Otomatik Alınan Ödüller",
       "bondedAmount" : "Bağlanmış Tutar",
       "unbondedAmount" : "Çözülmüş Tutar",
       "withdrawUnbondedAmount" : "Çekilen Tutar",
@@ -1516,12 +1536,12 @@
     "quitApp" : "Cihazınızdaki uygulamadan çıkın",
     "appNotInstalledTitle" : "Gerekli uygulama eksik",
     "appNotInstalledTitle_plural" : "Gerekli uygulamalar eksik",
-    "appNotInstalled" : "Bu eylemi tamamlamak için {{appName}} uygulaması gerekli. Lütfen yöneticiye gidin ve cihazınıza yükleyin",
-    "appNotInstalled_plural" : "Bu eylemi tamamlamak için {{appName}} uygulamaları gerekli. Lütfen yöneticiye gidin ve cihazınıza yükleyin",
-    "openManager" : "Yöneticiyi Aç",
+    "appNotInstalled" : "Bu eylemi tamamlamak için {{appName}} uygulaması gerekli. Lütfen My Ledger'a gidin ve uygulamayı cihazınıza yükleyin",
+    "appNotInstalled_plural" : "Bu eylemi tamamlamak için {{appName}} uygulamaları gerekli. Lütfen My Ledger'a gidin ve uygulamaları cihazınıza yükleyin",
+    "openManager" : "My Ledger'ı Aç",
     "openOnboarding" : "Cihaz kurulumu",
     "outdated" : "Uygulama sürümü eski",
-    "outdatedDesc" : "Cihazınızdaki {{appName}} uygulaması için önemli bir güncelleme mevcut. Güncellemek için lütfen Yöneticiye gidin.",
+    "outdatedDesc" : "Cihazınızdaki {{appName}} uygulaması için önemli bir güncelleme mevcut. Güncellemek için lütfen My Ledger'a gidin.",
     "installApp" : "{{appName}} uygulama yüklemesi",
     "installAppDescription" : "Lütfen kurulum bitene kadar bekleyin",
     "listApps" : "Uygulama şartları denetleniyor",
@@ -1564,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "Cihazınızda bir uygulama açık görünüyor",
-      "subtitle" : "Yöneticiyi yeniden açtığınızda cihazınızdaki uygulama kapatılır",
-      "ctaReopen" : "Yöneticiyi Yeniden Aç",
+      "subtitle" : "My Ledger'ı yeniden açarsanız uygulama, cihazınızda kapatılır.",
+      "ctaReopen" : "My Ledger'ı Yeniden Aç",
       "ctaPortfolio" : "Portföye geri dön"
     },
     "deviceStorage" : {
@@ -1608,7 +1628,7 @@
         "title_plural" : "Güncellemeler mevcut",
         "progressTitle" : "{{number}} uygulama güncellemesi",
         "progressTitle_plural" : "{{number}} uygulama güncellemesi",
-        "progressWarning" : "Güncelleştirme sırasında Yöneticiden çıkmayın.",
+        "progressWarning" : "Güncelleme sırasında My Ledger'dan çıkmayın.",
         "progress" : "Hepsi güncelleniyor..."
       },
       "item" : {
@@ -1672,7 +1692,7 @@
       "updateBtn" : "Donanım yazılımını güncelle",
       "banner" : {
         "warning" : "Donanım yazılımının {{latestFirmware}} güncellemesi mevcut",
-        "cta" : "Yönetici sayfasına git",
+        "cta" : "My Ledger'a Git",
         "old" : {
           "warning" : "Cihazın yazılım sürümü güncellenemeyecek kadar eski. Değiştirmek için Ledger Destek ekibiyle iletişime geçin.",
           "cta" : "Destek al"
@@ -1728,7 +1748,7 @@
         "boot" : "{{option}} görüntülenene kadar yan tuşu basılı tutun",
         "recoveryMode" : "{{mode}} Moduna dokunun. Kontrol paneli görünene kadar bekleyin.",
         "third" : "3. Tüm uygulamaları kaldırma",
-        "openLive" : "Ledger Live'da Yöneticiyi açın.",
+        "openLive" : "Ledger Live'da My Ledger'ı açın.",
         "uninstall" : "{{deviceName}} cihazında yüklü olan tüm uygulamalar için gri çöp kutusu simgesine tıklayın. Bu, donanım yazılımı yükleyicisine yer açacak.",
         "disclaimer" : "Not: Bu işlem fonlarınızı etkilemez; blok zincirindeki kripto varlıklarınıza erişmek için gereken özel anahtarlarınız Kurtarma kağıdınızda güvende kalır."
       }
@@ -1982,17 +2002,10 @@
     "value" : "Değer",
     "header" : "Hesap dağılımı ({{count}})"
   },
-  "elrond" : {
+  "cardano" : {
     "account" : {
-      "subHeader" : {
-        "cardTitle" : "Elrond desteğiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "Elrond entegrasyonu",
-        "title" : "Elrond eGold (EGLD) token'ı artık Ledger Live'da kullanılabilir",
-        "description" : "eGold (EGLD) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
-        "description2" : "Elrond Network'e özgü olan Elrond eGold (EGLD) Token, bu ağ üzerindeki her türlü işlem, staking, akıllı sözleşme, yönetişim ve doğrulayıcı ödülleri için kullanılır.",
-        "description3" : "Elrond ekibiyle aktif bir işbirliği gerçekleştirerek staking işlemleri, dahili ESDT (Elrond Standart Dijital Token) desteği ve daha birçok işlevi eklemek için çalışıyoruz.",
-        "website" : "İnternet Ölçeğinde Blok Zinciri"
+      "stakingRewardsBanner" : {
+        "cardTitle" : "Staking ödülleri toplam bakiyeye dahil edilmez"
       }
     }
   },
@@ -2323,6 +2336,176 @@
       }
     }
   },
+  "osmosis" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Figment desteğiyle",
+        "moreInfo" : "Daha fazla bilgi",
+        "drawerTitle" : "Figment desteğiyle",
+        "title" : "OSMO token artık Ledger Live'da",
+        "description" : "Artık OSMO token'larınızı yönetmeye başlayabilir ve Ledger Live ile güvenceye alabilirsiniz.",
+        "description2" : "OSMO token, Osmosis zincirinin native token'ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
+        "website" : "Figment desteğiyle"
+      }
+    },
+    "memo" : "Memo",
+    "memoPlaceholder" : "Opsiyonel",
+    "memoWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin",
+    "delegation" : {
+      "emptyState" : {
+        "description" : "Varlıklarınızın yetkisini devrederek OSMO ödülleri kazanabilirsiniz.",
+        "info" : "Yetki Devri nasıl çalışır?",
+        "delegation" : "Ödüller kazanın"
+      },
+      "commission" : "Komisyon",
+      "totalStake" : "Toplam Stake",
+      "claimRewards" : "Ödüllerinizi alın",
+      "header" : "Yetki Devirleri",
+      "noRewards" : "Ödül yok",
+      "delegate" : "Ekle",
+      "undelegate" : "Yetki İptali",
+      "redelegate" : "Yetki devret",
+      "redelegateDisabledTooltip" : "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
+      "redelegateMaxDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcıya yeniden yetki devredebilirsiniz.",
+      "undelegateDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
+      "reward" : "Ödüllerinizi alın",
+      "currentDelegation" : "Yetkisi devredilen tutar: <0>{{amount}}</0>",
+      "estYield" : "tahmini getiri",
+      "activeTooltip" : "Yetkisi devredilen tutarlar üzerinden ödül kazanırsınız",
+      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız",
+      "minSafeWarning" : "Yetersiz fon miktarı",
+      "flow" : {
+        "title" : "Yetki Devredin",
+        "steps" : {
+          "starter" : {
+            "description" : "OSMO varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
+            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetkisi iptal edilen varlıklar 14 gün sonra yeniden kullanılabilir"],
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
+            }
+          },
+          "amount" : {
+            "title" : "Tutar"
+          },
+          "validator" : {
+            "title" : "Doğrulayıcılar"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "flow" : {
+        "title" : "Ödüllerinizi alın",
+        "steps" : {
+          "claimRewards" : {
+            "title" : "Ödüller",
+            "compound" : "Birleştir",
+            "claim" : "Hesaba al",
+            "compoundOrClaim" : "Birleştir veya hesaba al",
+            "compoundDescription" : "Ödülleriniz, yetki devrinde kullanılan tutara eklenecek",
+            "claimDescription" : "Ödüller mevcut bakiyeye eklenecek",
+            "compoundInfo" : "<0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak aynı doğrulayıcıya devredin.",
+            "claimInfo" : "Aşağıdaki doğrulayıcıdan <0>{{amount}}</0> kazandınız. Devam butonuna tıklayarak ödülünüzü hemen alın ve otomatik olarak mevcut bakiyenize ekleyin.",
+            "selectLabel" : "Bir yetkili seçin"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "label" : "Onaylayın",
+            "success" : {
+              "title" : "Ödüller başarıyla hesaba alındı",
+              "titleCompound" : "Ödüller başarıyla birleştirildi",
+              "text" : "Ödülleriniz mevcut bakiyenize eklendi.",
+              "textCompound" : "<0>{{amount}}</0> tutarındaki ödülünüz otomatik olarak <0>{{validator}}</0> hesabına devredildi",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "redelegation" : {
+      "flow" : {
+        "title" : "Varlıkların Yetkisini Yeniden Devredin",
+        "steps" : {
+          "starter" : {
+            "title" : "Yetkinin Yeniden Devri",
+            "description" : "Yetkinin Yeniden Devrini kullanarak yetkiyi kolayca bir doğrulayıcıdan diğerine devredebilirsiniz. Fikrinizi değiştirdiğiniz takdirde beklemeniz gerekir çünkü yetkiyi yeniden devretmek 14 günlük bir zaman kilidini etkinleştirir.",
+            "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz. Aynı anda en fazla <0>7 tane yetki devri beklemede</0> olabilir.",
+            "howDelegationWorks" : "Yetki devri nasıl çalışır?"
+          },
+          "validators" : {
+            "title" : "Doğrulayıcılar",
+            "currentDelegation" : "Mevcut yetkili",
+            "newDelegation" : "Yeni yetkili",
+            "chooseValidator" : "Doğrulayıcı seçin",
+            "warning" : "Fikrinizin tekrar değiştiği takdirde, yeni doğrulayıcının yetkisini başkasına devretmek için <0>14 gün</0> beklemeniz gerekir",
+            "amountLabel" : "Yetkisi devredilecek tutar"
+          },
+          "device" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
+              "text" : "İşlem blok zinciri tarafından onaylandığında yetkinizin yeniden devri gerçekleşecek",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "header" : "Yetki İptalleri",
+      "headerTooltip" : "14 günlük zaman kilidinden sonra kullanılabilir",
+      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
+      "flow" : {
+        "title" : "Varlıkların Yetkisini İptal Edin",
+        "steps" : {
+          "amount" : {
+            "title" : "Tutar",
+            "subtitle" : "Yetki iptal etme işleminin sonuçlanması <0>14 gün</0> sürer.",
+            "warning" : "Ödüller hemen hesaba alınır. Yetkisi iptal edilen tutar <0>14 günlük zaman kilidinden sonra kullanılabilir bakiyeye geri döner.",
+            "fields" : {
+              "validator" : "Doğrulayıcı",
+              "amount" : "Yetkisi iptal edilecek tutar"
+            }
+          },
+          "device" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
+              "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    }
+  },
   "polkadot" : {
     "lockedBalance" : "Bağlı",
     "lockedTooltip" : "Ödül kazanmak için öncelikle varlıklarınız aday doğrulayıcılara bağlanmış olmalıdır.",
@@ -2576,6 +2759,31 @@
       }
     }
   },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "Varlık ekle",
+      "steps" : {
+        "assets" : {
+          "title" : "Varlık",
+          "info" : "Bir varlık eklemek için minimum ücretle bir işlem gönderilmesi gerekir. Bu, işlem geçmişinizde görünür",
+          "selectLabel" : "Bir varlık seçin",
+          "disabledTooltip" : "Bu varlık Stellar hesabınızda zaten var"
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "title" : "Onaylayın",
+          "success" : {
+            "title" : "{{token}} varlığı başarıyla eklendi",
+            "text" : "Artık Stellar hesabınızla <0>{{token}}</0> varlıkları gönderip alabilirsiniz.",
+            "cta" : "Ayrıntıları göster"
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",
@@ -2653,7 +2861,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "Yetkilendirmenizi başarıyla etkinleştirdiniz."
+                "title" : "You have successfully activated your delegation."
               }
             }
           }
@@ -2665,7 +2873,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "Yetkilendirmenizi başarıyla yeniden etkinleştirdiniz."
+                "title" : "You have successfully reactivated your delegation."
               }
             }
           }
@@ -2838,6 +3046,11 @@
       "catalogServerDesc" : "Birden çok platform uygulama kaynağı arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
+      "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
+      "featureFlagsEdit" : "Düzenle",
+      "featureFlagsRestore" : "Geri yükle",
+      "featureFlagsOverride" : "Geçersiz bırak",
       "addLocalApp" : "Yerel uygulama ekleyin",
       "addLocalAppDesc" : "Yerel dizini kullanarak yerel dosyalara göz atın ve yerel bir uygulama ekleyin",
       "addLocalAppButton" : "Göz Atın",
@@ -2902,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "Geliştirici modu",
-          "description" : "Yönetici sayfasında geliştirici ve testnet uygulamalarını gösterir."
+          "description" : "My Ledger'da developer ve testnet uygulamalarını görüntüleyin."
         },
         "scanForInvalidPaths" : {
           "title" : "Genişletilmiş hesap arama",
@@ -2917,8 +3130,8 @@
           "description" : "Tüm hesaplar için özel boşluk sınırı. Bu değerin, varsayılan değerinin (20) üzerine çıkartılması, coin'ler için pek kullanılmayan açık adresleri taramaya yarar. Yalnızca ileri düzey kullanıcılar içindir. Bu özellik, hesaplarınızı geri yüklerken uyumluluğu bozabilir."
         },
         "forceProvider" : {
-          "title" : "Yönetici sağlayıcı",
-          "description" : "Yönetici'de uygulama sağlayıcısını değiştirmek, Ledger cihazınıza uygulama yüklemeyi veya kaldırmayı imkansız hale getirebilir."
+          "title" : "My Ledger sağlayıcısı",
+          "description" : "My Ledger'da uygulama sağlayıcısını değiştirmek, Ledger cihazınıza uygulama yüklemeyi veya kaldırmayı imkansız hâle getirebilir."
         },
         "testAnimations" : {
           "title" : "Lottie animasyonlarını test edin",
@@ -3692,8 +3905,10 @@
     "recipientWording" : {
       "send" : "alıcı",
       "delegate" : "doğrulayıcı",
+      "redelegate" : "doğrulayıcı",
       "undelegate" : "doğrulayıcı",
       "claimReward" : "ödüllerin alıcısı",
+      "claimRewardCompound" : "ödülleri alacak olan doğrulayıcı",
       "optIn" : "alıcı",
       "nominate" : "doğrulayıcı",
       "erc721" : {
@@ -3740,7 +3955,20 @@
         "MEMO_HASH" : "Memo Hash",
         "MEMO_RETURN" : "Memo Dönüşü"
       },
-      "memoWarningText" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın"
+      "memoWarningText" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın",
+      "fee" : "Ücretler",
+      "feeInfoText" : "Stellar ağındaki işlem için en az 0,00001 XLM'lik bir işlem ücreti alınır.",
+      "suggested" : "Önerilen",
+      "recommendedFee" : "Önerilen ücret",
+      "recommenndedFeeInfo" : "Bu işlemi önerilenden daha düşük bir ücretle gönderebilirsiniz ancak tamamlanmayabilir",
+      "networkCongestion" : "ağ yoğunluğu",
+      "networkCongestionLevel" : {
+        "LOW" : "Düşük",
+        "MEDIUM" : "Orta",
+        "HIGH" : "Yüksek"
+      },
+      "assetCode" : "Varlık kodu",
+      "assetIssuer" : "Varlık yaratıcısı"
     },
     "cosmos" : {
       "memo" : "Memo",
@@ -3755,7 +3983,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "{{appName}} uygulaması, özel yapılandırmanız için bulunamadı.",
-      "description" : "Uygulamayı Yönetici sekmesinden yeniden yüklemeyi deneyin"
+      "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
     "countervaluesUnavailable" : {
       "title" : "Şu anda bu varlık için bir karşı değer sağlayamıyoruz"
@@ -3918,7 +4146,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "Donanım yazılımı veya uygulama güncellemesi gerekli",
-      "description" : "Lütfen tüm uygulamaları kaldırmak için Yöneticiyi kullanın, ardından yeniden yüklemeden önce bir donanım yazılımı güncellemesi olup olmadığını kontrol edin"
+      "description" : "Lütfen tüm uygulamaları kaldırmak için My Ledger'ı kullanın ve yeniden yüklemeden önce bir donanım yazılımı güncellemesi olup olmadığını kontrol edin."
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Nano Donanım Yazılımını Güncelleyin",
@@ -3975,20 +4203,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "Devam eden uygulama yüklemesini tamamlamak istiyor musunuz?",
-        "description" : "Yöneticiden çıktığınızda uygulama yüklemesi sonlandırılır. Sıraya aldığınız uygulamaları yüklemek için lütfen mevcut yüklemenin bitmesini bekleyin.",
+        "description" : "My Ledger'dan çıkarsanız uygulama yüklemesi sonlandırılır. Sıraya aldığınız uygulamaları yüklemek için lütfen mevcut yüklemenin bitmesini bekleyin.",
         "stay" : "Yüklemeyi tamamla"
       },
       "uninstall" : {
         "title" : "Devam eden uygulama kaldırma işlemini tamamlamak istiyor musunuz?",
-        "description" : "Yöneticiden çıktığınızda uygulama kaldırma işlemi sonlandırılır.",
+        "description" : "My Ledger'dan çıkarsanız devam eden uygulama kaldırma işlemleri sonlandırılır.",
         "stay" : "Kaldırmayı tamamla"
       },
       "update" : {
         "title" : "Devam eden uygulama güncellemelerini tamamlamak istiyor musunuz?",
-        "description" : "Yöneticiden çıktığınızda uygulama güncelleme işlemleri sonlandırılır.",
+        "description" : "My Ledger'dan çıkarsanız devam eden uygulama güncellemeleri sonlandırılır.",
         "stay" : "Güncellemeleri tamamla"
       },
-      "quit" : "Yöneticiden Çık"
+      "quit" : "My Ledger'dan Çık"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "Üzgünüz, bu uygulama gerekli",
@@ -3996,6 +4224,10 @@
     },
     "NetworkDown" : {
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
+      "description" : "Lütfen internet bağlantınızı kontrol edin."
+    },
+    "NetworkError" : {
+      "title" : "Senkronizasyon sırasında bir hata oluştu",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
     },
     "NoAddressesFound" : {
@@ -4084,7 +4316,7 @@
       "description" : "Lütfen cihazınızı yeniden başlatın ve logo göründüğünde tuşlara dokunmayın. Sorun devam ederse Ledger Destek ile iletişime geçin."
     },
     "UserRefusedAllowManager" : {
-      "title" : "Yönetici cihazda reddedildi"
+      "title" : "My Ledger cihazda reddedildi"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Güncelleme cihazda iptal edildi",
@@ -4104,7 +4336,7 @@
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekli",
-      "description" : "Yönetici sekmesinde {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin"
+      "description" : "My Ledger'daki {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Kontrol Paneline Dön",
@@ -4124,7 +4356,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Uygulama güncellemesi gerekli",
-      "description" : "Yönetici sekmesinde {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin"
+      "description" : "My Ledger'daki {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin"
     },
     "InvalidAddress" : {
       "title" : "Bu geçerli bir {{currencyName}} adresi değil"
@@ -4169,7 +4401,7 @@
       "list" : {
         "1" : "Herhangi bir tuşa basmadan USB kablosunun çıkartıp yeniden takın.",
         "2" : "Kontrol Panelini görüntülemek için her iki düğmeye de üç kez birlikte basın.",
-        "3" : "Yöneticiyi açın ve Donanım Yazılımını Güncelle butonuna tıklayın."
+        "3" : "My Ledger'ı açın ve Donanım Yazılımını Güncelle butonuna tıklayın."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
@@ -4293,14 +4525,8 @@
     "FeeTooHigh" : {
       "title" : "Ağ ücretleri, tutarın % 10'unun üzerindedir"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo biçimi yanlış"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Bu alıcıya gönderirken bir memo gerekebilir"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "Tutar en az {{minAmountFromFormatted}} olmalıdır"
@@ -4368,20 +4594,50 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "Mevcut token sayısını aştınız"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "En az {{amount}} ADA gönderilebilir"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Lütfen ücretleri ödemeye yetecek kadar fonunuz olduğundan emin olun"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo biçimi yanlış"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Bu alıcıya gönderirken bir memo gerekebilir"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Bu alıcının henüz {{assetCode}} için bir trustline'ı yok."
+    },
+    "StellarAssetRequired" : {
+      "title" : "Bir trustline eklemek için bir Stellar varlığı seçmelisiniz"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Seçilen Stellar varlığı bulunamadı"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta işlem ücretini karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Seçilen ücret önerilen ücretten az"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Minimum işlem ücreti 0,00001 XLM'dir"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta yeni trustline'ı karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar hesabı mevcut değil"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     }
   },
   "cryptoOrg" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Crypto.org desteğiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "Crypto.org entegrasyonu",
-        "title" : "Crypto.org (CRO) token'ı artık Ledger Live'da",
-        "description" : "Crypto.org (CRO) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
-        "description2" : "Crypto.org (CRO), Crypto.org zincirinin ana token'ıdır ve ağ üzerindeki işlemler, staking ve yakında çıkacak pek çok özellik için kullanılır.",
-        "website" : "Her cüzdanda kripto para"
-      }
-    },
     "memo" : "Memo",
     "memoPlaceholder" : "Opsiyonel",
     "memoWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
@@ -4394,6 +4650,20 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
+    },
+    "send" : {
+      "memo" : {
+        "label" : "Memo (isteğe bağlı)",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "varlık seç"
+    },
+    "selectAccount" : {
+      "title" : "hesap seç"
     }
   }
 }
