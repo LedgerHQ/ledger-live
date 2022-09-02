@@ -86,7 +86,7 @@ const Delegation = (props: Props) => {
 
   const dispatch = useDispatch();
   const onSelect = useCallback(
-    action => {
+    (action: DropDownItemType) => {
       dispatch(openModal(action.key, action.parameters));
     },
     [dispatch],

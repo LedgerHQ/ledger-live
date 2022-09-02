@@ -20,9 +20,17 @@ import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
 import type { Account } from "@ledgerhq/live-common/types/index";
+import type { UnbondingType, DelegationType } from "./types";
 
 interface Props {
   account: Account;
+}
+
+interface BalanceType {
+  tooltip: string;
+  title: string;
+  show: boolean;
+  amount: BigNumber;
 }
 
 const Summary = (props: Props) => {
@@ -41,7 +49,7 @@ const Summary = (props: Props) => {
   const delegations = useMemo(
     (): BigNumber =>
       delegationsResources.reduce(
-        (total, delegation) => total.plus(delegation.userActiveStake),
+        (total: BigNumber, delegation: DelegationType) => total.plus(delegation.userActiveStake),
         BigNumber(0),
       ),
     [delegationsResources],
@@ -49,12 +57,15 @@ const Summary = (props: Props) => {
 
   const unbondings = useMemo(
     (): BigNumber =>
-      delegationsResources.reduce((total, item) => total.plus(item.userUnBondable), BigNumber(0)),
+      delegationsResources.reduce(
+        (total: BigNumber, item: UnbondingType) => total.plus(item.userUnBondable),
+        BigNumber(0),
+      ),
     [delegationsResources],
   );
 
   const balances = useMemo(
-    () =>
+    (): Array<BalanceType> =>
       [
         {
           tooltip: "elrond.summary.availableBalanceTooltip",

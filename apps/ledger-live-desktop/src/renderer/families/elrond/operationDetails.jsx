@@ -32,6 +32,7 @@ import { urls } from "~/config/urls";
 import type { ComponentType } from "react";
 import type { Operation, Account } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { ValidatorType } from "~/renderer/families/elrond/types";
 
 const getURLFeesInfo = (op: Operation): ?string => {
   if (op.fee.gt(200000)) {
@@ -62,7 +63,7 @@ type OperationDetailsDelegationProps = {
 
 const OperationDetailsDelegation = (props: OperationDetailsDelegationProps) => {
   const { isTransactionField, account, operation } = props;
-  const formattedValidator = account.elrondResources.providers.find(
+  const formattedValidator: ValidatorType | undefined = account.elrondResources.providers.find(
     v => v.contract === operation.contract,
   );
 
@@ -264,7 +265,7 @@ type Props = {
 };
 
 const UndelegateAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount =
+  const amount: BigNumber =
     operation.extra && operation.extra.validators
       ? BigNumber(operation.extra.validators[0].amount)
       : BigNumber(0);

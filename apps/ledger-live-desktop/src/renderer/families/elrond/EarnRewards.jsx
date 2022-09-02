@@ -70,7 +70,7 @@ const Delegation = (props: Props) => {
     (): boolean =>
       delegationResources
         .reduce(
-          (total, delegation) => BigNumber(delegation.claimableRewards).plus(total),
+          (total: BigNumber, delegation: DelegationType) => total.plus(delegation.claimableRewards),
           BigNumber(0),
         )
         .gt(0),
@@ -81,7 +81,7 @@ const Delegation = (props: Props) => {
     const transform = (input: string): BigNumber =>
       BigNumber(denominate({ input, showLastNonZeroDecimal: true }));
 
-    const assignValidator = (delegation: DelegationType) => ({
+    const assignValidator = (delegation: DelegationType): DelegationType => ({
       ...delegation,
       validator: findValidator(delegation.contract),
     });
@@ -103,7 +103,7 @@ const Delegation = (props: Props) => {
     (): Array<UnbondingType> =>
       delegationResources
         .reduce(
-          (total, item) =>
+          (total: Array<UnbondingType>, item: DelegationType) =>
             total.concat(
               item.userUndelegatedList.map(unbonding => ({
                 ...unbonding,
@@ -199,7 +199,7 @@ const Delegation = (props: Props) => {
                 content={!hasRewards ? <Trans i18nKey="elrond.delegation.noRewards" /> : null}
               >
                 <Button
-                  id={"account-rewards-button"}
+                  id="account-rewards-button"
                   disabled={!hasRewards}
                   color="palette.primary.main"
                   small={true}
@@ -263,7 +263,7 @@ const Delegation = (props: Props) => {
         )}
       </TableContainer>
 
-      {hasUnbondings && <Unbondings unbondings={unbondings} account={account} />}
+      {hasUnbondings && <Unbondings {...{ account, unbondings }} />}
     </Fragment>
   );
 };
