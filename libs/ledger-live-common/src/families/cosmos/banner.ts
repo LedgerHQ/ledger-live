@@ -1,5 +1,4 @@
 import { getCurrentCosmosPreloadData } from "./preloadedData";
-import { getAccountBridge } from "../../bridge";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 

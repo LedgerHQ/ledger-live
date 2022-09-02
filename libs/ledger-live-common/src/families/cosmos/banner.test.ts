@@ -1,6 +1,5 @@
 import { getAccountBannerState } from "./banner";
 import * as preloadedData from "./preloadedData";
-import * as bridge from "../../bridge";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 import data from "./preloadedData.mock";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
