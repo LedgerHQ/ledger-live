@@ -1,6 +1,6 @@
 import React from "react";
 import color from "color";
-import { useTheme, ExtendedTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 
 export const ensureContrast = (color1: string, color2: string) => {
   const colorL1 = color(color1).luminosity() + 0.05;
@@ -28,7 +28,7 @@ export function withTheme(Component: React.ElementType) {
   };
 }
 
-export const lightTheme: ExtendedTheme = {
+export const lightTheme = {
   dark: false,
   colors: {
     primary: "hsla(247, 56%, 68%, 1)",
@@ -84,7 +84,7 @@ export const lightTheme: ExtendedTheme = {
   },
 };
 
-export const darkTheme: ExtendedTheme = {
+export const darkTheme = {
   dark: true,
   colors: {
     primary: "hsla(247, 56%, 68%, 1)",
@@ -139,3 +139,5 @@ export const darkTheme: ExtendedTheme = {
     skeletonBg: "#2a2d33",
   },
 };
+
+export type Theme = typeof lightTheme;

@@ -1,7 +1,11 @@
 import { log } from "@ledgerhq/logs";
 import { atomicQueue } from "@ledgerhq/live-common/promise";
 import type { AccountRaw } from "@ledgerhq/types-live";
-import type { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+import type {
+  CounterValuesStateRaw,
+  RateMapRaw,
+  CounterValuesStatus,
+} from "@ledgerhq/live-common/countervalues/types";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
 import type { SettingsState } from "./reducers/settings";
@@ -16,7 +20,7 @@ export async function clearDb() {
 }
 export async function getUser(): Promise<User> {
   const user = await store.get("user");
-  return user;
+  return user as User;
 }
 export async function setUser(user: User): Promise<void> {
   await store.update("user", user);
@@ -61,7 +65,11 @@ export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
   }
 
   return (await store.get(keys)).reduce(
-    (prev, val, i) => ({
+    (
+      prev: CounterValuesStateRaw,
+      val: RateMapRaw | CounterValuesStatus,
+      i: number,
+    ) => ({
       ...prev,
       [keys[i].split(COUNTERVALUES_DB_PREFIX)[1]]: val,
     }),
@@ -88,10 +96,9 @@ async function unsafeSaveCountervalues(
     k =>
       ![...pairIds, "status"].includes(k.replace(COUNTERVALUES_DB_PREFIX, "")),
   );
-  const data = Object.entries(state).map(([key, val]) => [
-    `${COUNTERVALUES_DB_PREFIX}${key}`,
-    val,
-  ]);
+  const data = Object.entries(state).map<
+    [string, RateMapRaw | CounterValuesStatus]
+  >(([key, val]) => [`${COUNTERVALUES_DB_PREFIX}${key}`, val]);
   await store.save(data);
 
   if (deletedKeys.length) {

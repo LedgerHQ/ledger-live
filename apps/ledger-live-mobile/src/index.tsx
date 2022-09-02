@@ -9,10 +9,9 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
-  Text,
   Linking,
   Appearance,
   AppState,
@@ -87,7 +86,6 @@ import RatingsModal from "./screens/RatingsModal";
 import { lightTheme, darkTheme, Theme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
-// eslint-disable-next-line import/no-unresolved
 import NavBarColorHandler from "./components/NavBarColorHandler";
 import { setOsTheme } from "./actions/settings";
 import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
@@ -97,6 +95,7 @@ import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
+import type { Writeable } from "./types/helpers";
 
 const themes: {
   [key: string]: Theme;
@@ -109,7 +108,6 @@ checkLibs({
   React,
   log,
   Transport,
-  connect,
 });
 // useScreens();
 const styles = StyleSheet.create({
@@ -117,9 +115,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-// Fixme until third parties address this themselves, still relevant?
-Text.defaultProps = Text.defaultProps || {};
-Text.defaultProps.allowFontScaling = false;
 
 type AppProps = {
   importDataString?: string;
@@ -223,7 +218,7 @@ const linkingOptions = {
     return getProxyURL(url);
   },
 
-  subscribe(listener) {
+  subscribe(listener: (url?: string | null) => void) {
     function onReceiveURL({ url: _url }: { url: string }) {
       const url = getProxyURL(_url);
       listener(url);
@@ -401,7 +396,10 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
     () => ({
       ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
       enabled: wcContext.initDone && !wcContext.session.session,
-      getStateFromPath: (path, config) => {
+      getStateFromPath: (
+        path: string,
+        config: Parameters<typeof getStateFromPath>[1],
+      ) => {
         const url = new URL(`ledgerlive://${path}`);
         const { hostname, pathname } = url;
         const platform = pathname.split("/")[1];
@@ -450,7 +448,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   }, [wcContext.initDone]);
   React.useEffect(
     () => () => {
-      isReadyRef.current = false;
+      (isReadyRef as Writeable<typeof isReadyRef>).current = false;
     },
     [],
   );
@@ -466,7 +464,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     compareOsTheme();
 
-    const osThemeChangeHandler = nextAppState =>
+    const osThemeChangeHandler = (nextAppState: string) =>
       nextAppState === "active" && compareOsTheme();
 
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
@@ -489,7 +487,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
         linking={linking}
         ref={navigationRef}
         onReady={() => {
-          isReadyRef.current = true;
+          (isReadyRef as Writeable<typeof isReadyRef>).current = true;
           setTimeout(() => SplashScreen.hide(), 300);
         }}
       >
@@ -611,8 +609,4 @@ export default class Root extends Component<
       </RebootProvider>
     );
   }
-}
-
-if (__DEV__) {
-  require("./snoopy");
 }

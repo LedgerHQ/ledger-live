@@ -5,7 +5,7 @@ import changeNavigationBarColor from "react-native-navigation-bar-color";
 export default function NavBarColorHandler() {
   const { dark, colors } = useTheme();
   useEffect(() => {
-    changeNavigationBarColor(colors.card, !dark);
+    changeNavigationBarColor(colors.card, !dark, true);
   }, [colors, dark]);
   return null;
 }
