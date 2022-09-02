@@ -103,11 +103,11 @@ describe("cosmos/banner", () => {
         .mockReturnValue({ validators } as {
           validators: CosmosValidatorItem[];
         });
-
-      jest.spyOn(bridge, "getAccountBridge").mockReturnValue({
-        estimateMaxSpendable: () => Promise.resolve(new BigNumber(0)),
-      } as any);
-      const result = await getAccountBannerState(account);
+      const accountWithoutSpendable = {
+        ...account,
+        spendableBalance: new BigNumber(0),
+      };
+      const result = getAccountBannerState(accountWithoutSpendable);
       expect(1 + 1).toBe(2);
       expect(result).toStrictEqual({
         display: false,
@@ -122,10 +122,11 @@ describe("cosmos/banner", () => {
         .mockReturnValue({ validators } as {
           validators: CosmosValidatorItem[];
         });
-      jest.spyOn(bridge, "getAccountBridge").mockReturnValue({
-        estimateMaxSpendable: () => Promise.resolve(new BigNumber(5000)),
-      } as any);
-      const result = await getAccountBannerState(account);
+      const accountWithSpendable5000 = {
+        ...account,
+        spendableBalance: new BigNumber(5000),
+      };
+      const result = getAccountBannerState(accountWithSpendable5000);
       expect(result).toStrictEqual({
         display: true,
         redelegate: false,
@@ -139,16 +140,17 @@ describe("cosmos/banner", () => {
         .mockReturnValue({ validators } as {
           validators: CosmosValidatorItem[];
         });
-      jest.spyOn(bridge, "getAccountBridge").mockReturnValue({
-        estimateMaxSpendable: () => Promise.resolve(new BigNumber(5000)),
-      } as any);
       account.cosmosResources.redelegations.push({
         validatorSrcAddress: "xxxx",
         validatorDstAddress: expensiveValidator?.validatorAddress as string,
         amount: new BigNumber(1000),
         completionDate: new Date(),
       });
-      const result = await getAccountBannerState(account);
+      const accountWithSpendable5000 = {
+        ...account,
+        spendableBalance: new BigNumber(5000),
+      };
+      const result = getAccountBannerState(accountWithSpendable5000);
       expect(result).toStrictEqual({
         display: true,
         redelegate: true,

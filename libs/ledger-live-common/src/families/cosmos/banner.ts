@@ -10,9 +10,9 @@ interface AccountBannerState {
   ledgerValidator: CosmosValidatorItem | undefined;
 }
 
-export async function getAccountBannerState(
+export function getAccountBannerState(
   account: CosmosAccount
-): Promise<AccountBannerState> {
+): AccountBannerState {
   // Group current validator
   const cosmosResources = account.cosmosResources
     ? account.cosmosResources
@@ -57,16 +57,7 @@ export async function getAccountBannerState(
     if (
       worstValidator?.validatorAddress === ledgerValidator?.validatorAddress
     ) {
-      // Not found worst validator than ledger
-      const maxSpendable = await getAccountBridge(
-        account,
-        undefined
-      ).estimateMaxSpendable({
-        account,
-        parentAccount: undefined,
-        transaction: undefined,
-      });
-      if (maxSpendable.gt(0)) {
+      if (account.spendableBalance?.gt(0)) {
         // Delegate remaining ATOM (not staked)
         display = true;
       }

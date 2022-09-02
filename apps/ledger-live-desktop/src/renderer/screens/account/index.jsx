@@ -99,7 +99,7 @@ const AccountPage = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const bannerProps = await getBannerProps(account, { t, dispatch });
+      const bannerProps = getBannerProps(account, { t, dispatch });
       setBanner(bannerProps);
     };
     fetchData();
