@@ -81,7 +81,8 @@
     "seeMore" : "Показать больше",
     "moreInfo" : "Подробнее",
     "buyEth" : "Купить Эфириум",
-    "popular" : "популярное"
+    "popular" : "популярное",
+    "comingSoon" : "Скоро"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -322,6 +323,14 @@
     "InvalidRecipient" : {
       "title" : "Получатель недействителен"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Установка языка на устройстве невозможна",
+      "description" : "Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Язык не найден",
+      "description" : "Мы не смогли найти язык, который вы пытаетесь установить. Пожалуйста, попробуйте установить другой язык."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Кажется, обновлений нет",
       "description" : "Свяжитесь с Поддержкой, если у вас не получается использовать устройство."
@@ -560,14 +569,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "Старый формат адреса больше не поддерживается"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Неправильный формат Memo"
-    },
     "SourceHasMultiSign" : {
       "title" : "Пожалуйста, отключите мультиподписи, чтобы отправить {{currencyName}}"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "При отправке этому получателю может потребоваться Memo"
     },
     "StratisDown2021Warning" : {
       "description" : "Блокчейн Stratis претерпел изменения и может работать некорректно. Исходный блокчейн Stratis поддерживался поддерживаться до 16 октября 2021 г."
@@ -644,7 +647,45 @@
       "title" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, пожалуйста, подождите минуту, а затем проверьте историю транзакций."
     },
     "CardanoMinAmountError" : {
-      "title" : "Необходимо мин. {{amount}} ADA"
+      "title" : "Минимальная сумма для отправки — {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Также убедитесь, что у вас достаточно средств для оплаты комиссий"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Неправильный формат Memo"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "При отправке этому получателю может потребоваться Memo"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "У получателя ещё не открыт трастлайн для {{assetCode}}"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Перед пополнением трастлайна необходимо выбрать актив Stellar"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Выбранный актив Stellar не найден"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Кажется, у вас недостаточно средств",
+      "description" : "Пожалуйста, убедитесь, что на счёту достаточно средств для оплаты комиссии за транзакцию"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Выбранная комиссия ниже рекомендуемой"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Минимальная комиссия для проведения транзакции составляет 0,00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Кажется, у вас недостаточно средств",
+      "description" : "Пожалуйста, убедитесь, что на счету достаточно средств для оплаты нового трастлайна"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Счёта Stellar не существует"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Отключите функцию мультиподписи, чтобы проводить транзакции в Stellar"
     }
   },
   "bluetooth" : {
@@ -820,8 +861,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Вам нравится Ledger Live?",
-      "description" : "Всё отлично или что-то хотелось бы улучшить? Мы очень ценим любое ваше мнение!",
+      "title" : "Вам нравится наше приложение?",
+      "description" : "Ваши отзывы важны для улучшения Ledger Live.",
       "cta" : {
         "enjoy" : "Всё замечательно",
         "disappointed" : "Продукт разочаровал",
@@ -838,7 +879,8 @@
     },
     "disappointed" : {
       "title" : "Помогите улучшить продукт для вас",
-      "description" : "Мы хотим быть лучше, и ваше честное мнение поможет нам узнать, в чём именно стоит улучшиться.",
+      "description" : "Если вам нужна дополнительная помощь или вы хотели бы, чтобы мы связались с вами, пожалуйста, воспользуйтесь нашим онлайн-чатом",
+      "here" : "здесь",
       "cta" : {
         "sendFeedback" : "Отправить отзыв",
         "notNow" : "Отвечу позже"
@@ -929,6 +971,10 @@
       "earn" : {
         "title" : "Растите",
         "desc" : "Получайте пассивный доход и приумножайте криптоактивы"
+      },
+      "mint" : {
+        "title" : "Собирайте",
+        "desc" : "Минтите NFT от эксклюзивных коллабораций прямо в [ L ] Market"
       }
     },
     "comingSoon" : "Уже скоро",
@@ -1021,7 +1067,7 @@
       "desktopSync" : {
         "title" : "Есть фраза восстановления?",
         "label" : "Синхронизация с ПК",
-        "subTitle" : "Синхронизация валют из настольного приложения",
+        "subTitle" : "Синхронизировать с настольным приложением",
         "desc" : "Используете настольное приложение? Синхронизируйте его, чтобы управлять криптовалютой со смартфона."
       },
       "restoreDevice" : {
@@ -1517,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Looking for devices",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Already paired"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Try again"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "Кошелёк",
     "accounts" : "Счета",
@@ -1712,7 +1785,8 @@
       "validatorsCount" : "Валидаторов: {{number}}",
       "storageLimit" : "Объём хранилища",
       "gasLimit" : "Лимит Газа",
-      "id" : "ID"
+      "id" : "ID",
+      "autoClaimedRewards" : "Автоматически запрошенные вознаграждения"
     },
     "multipleAddresses" : "Почему несколько адресов?",
     "tokenName" : "Название токена",
@@ -1733,6 +1807,17 @@
     "subaccountCount_plural" : "+субсчета ({{count}})"
   },
   "account" : {
+    "subHeader" : {
+      "moreInfo" : "Подробнее...",
+      "cardTitle" : "Powered by {{team}}",
+      "drawer" : {
+        "title" : "интеграция {{family}}",
+        "subTitle" : "Интеграция {{family}} выполнена командой {{team}}",
+        "description" : "Ledger Live – это платформа с открытым исходным кодом.",
+        "description2" : "Разработчики из любой точки мира могут интегрироваться в наше приложение Ledger Live",
+        "description3" : "Эта интеграция проведена {{team}} в сотрудничестве с Ledger"
+      }
+    },
     "tokens" : {
       "contractAddress" : "Адрес контракта",
       "viewInExplorer" : "Посмотреть в Обозревателе",
@@ -1749,6 +1834,13 @@
         "howTo" : "Вы можете добавить активы на свой счёт в Algorand.",
         "addAsa" : "Добавить активы ASA",
         "howAsaWorks" : "Как работают активы ASA?"
+      },
+      "stellar" : {
+        "seeMore" : "Показать больше",
+        "seeLess" : "Меньше активов",
+        "addTokens" : "Скрыть",
+        "howTo" : "Вы можете добавить активы на счёт Stellar.",
+        "addAsset" : "Добавить актив"
       }
     },
     "subaccounts" : {
@@ -1897,6 +1989,12 @@
         "showTokens_plural" : "Показать {{length}} ASA",
         "hideTokens" : "Скрыть ASA",
         "hideTokens_plural" : "Скрыть ASA"
+      },
+      "stellar" : {
+        "showTokens" : "Показать {{length}} актив",
+        "showTokens_plural" : "Показать {{length}} актив(-ов)",
+        "hideTokens" : "Скрыть актив",
+        "hideTokens_plural" : "Скрыть активы"
       }
     },
     "noResultsFound" : "Активы не найдены",
@@ -2057,6 +2155,36 @@
         "android" : "Просмотреть в Google Play"
       }
     },
+    "notifications" : {
+      "title" : "Уведомления",
+      "desc" : "Управляйте уведомлениями",
+      "disabledNotifications" : {
+        "title" : "Уведомления отключены",
+        "desc" : "{{platform}} блокирует уведомления от Ledger Live. Для активации уведомлений перейдите в настройки смартфона и включите уведомления непосредственно для Ledger Live.",
+        "turnOnNotif" : "Включите уведомления",
+        "goToSettings" : "Перейдите в настройки системы"
+      },
+      "allowed" : {
+        "title" : "Допуск уведомлений",
+        "desc" : "Получайте уведомления о криптовалютах, ситуации на рынке и не только."
+      },
+      "transactions" : {
+        "title" : "Транзакции",
+        "desc" : "Получайте уведомления о получении или отправке криптовалют"
+      },
+      "market" : {
+        "title" : "Рынок",
+        "desc" : "Узнавайте о важных изменениях на крипторынке"
+      },
+      "announcement" : {
+        "title" : "Новости",
+        "desc" : "Не пропускайте детали важных обновлений Ledger Live"
+      },
+      "price" : {
+        "title" : "Уведомления о курсах",
+        "desc" : "Настраивайте оповещения о курсах любимых криптовалют, чтобы не пропустить движения рынка"
+      }
+    },
     "help" : {
       "title" : "Помощь",
       "header" : "Помощь",
@@ -2088,6 +2216,23 @@
       "customManifest" : {
         "title" : "Загрузить манифест пользовательской платформы"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
+      "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
+      "featureFlagsOverride" : "Переписать",
+      "featureFlagsEdit" : "Редактировать",
+      "featureFlagsRestore" : "Восстановить",
+      "featureFlagsDisplayValue" : "Показать значение",
+      "featureFlagsHideValue" : "Скрыть значение"
+    }
+  },
+  "notifications" : {
+    "prompt" : {
+      "title" : "Активация уведомлений",
+      "desc" : "Получайте важные новости о Ledger Live, продуктах Ledger и безопасности. Отписаться можно в любое время.",
+      "allow" : "Разрешить уведомления",
+      "later" : "Не сейчас"
     }
   },
   "migrateAccounts" : {
@@ -2153,10 +2298,67 @@
       "verifyAgain" : "Перепроверить",
       "noAccount" : "Счета не найдены",
       "address" : "Адрес счёта",
-      "copyAddress" : "Копировать",
+      "copyAddress" : "Скопировать",
       "shareAddress" : "Поделиться",
-      "addressCopied" : "Адрес скопирован!",
+      "addressCopied" : "Скопировано",
       "taprootWarning" : "Убедитесь, что у отправителя есть поддержка Taproot",
+      "selectCrypto" : {
+        "title" : "Выбор криптовалюты"
+      },
+      "stepperHeader" : {
+        "range" : "Шаг {{currentStep}} из {{totalSteps}}",
+        "connectDevice" : "Подключение устройства"
+      },
+      "selectAccount" : {
+        "title" : "Выберите счёт",
+        "subtitle" : "Ваши {{currencyTicker}} будут зачислены на этот счёт."
+      },
+      "addAccount" : {
+        "title" : "Поиск в блокчейне",
+        "subtitle" : "Проверка наличия ваших счетов {{currencyTicker}}.",
+        "foundAccounts" : "Найдено счетов: {{count}}",
+        "stopSynchronization" : "Остановить синхронизацию"
+      },
+      "verifyAddress" : {
+        "title" : "Подтвердите адрес",
+        "subtitle" : "Убедитесь, что адрес на экране вашего устройства совпадает с адресом ниже. Если они идентичны, нажмите соответствующую кнопку подтверждения на вашем устройстве.",
+        "cancel" : {
+          "title" : "Адрес отклонён",
+          "subtitle" : "Если это было сделано случайно, повторите процедуру.",
+          "info" : "Если вы уверены, что адреса не совпадают, значит ваш телефон мог быть взломан. В таком случае <0>свяжитесь с нами как можно скорее</0>."
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "Получить {{currencyTicker}}",
+        "addressVerified" : "Адрес подтверждён",
+        "verifyAddress" : "Нажмите здесь для подтверждения адреса",
+        "adviceVerify" : "Мы рекомендуем подтверждать адрес с помощью устройства Ledger",
+        "sendWarning" : "Отправляйте на этот адрес исключительно {{currencyName}} ({{currencyTicker}}). Любые другие криптоактивы могут быть потеряны навсегда."
+      },
+      "securityVerify" : {
+        "title" : "Из соображений безопасности мы рекомендуем подтвердить этот адрес с помощью устройства Ledger.",
+        "subtitle1" : "Подтверждение адреса необходимо для безопасности криптоактивов. Помните, что адрес на экране устройства Ledger подделать невозможно.",
+        "subtitle2" : "Подтверждение адреса позволяет убедиться, что адрес на экране вашего устройства Ledger совпадает с адресом, который отображается в Ledger Live.",
+        "verifyCta" : "Подтвердить адрес",
+        "dontVerifyCta" : "Показать мой адрес без проверки"
+      },
+      "securityDontVerify" : {
+        "title" : "Вы уверены?",
+        "subtitle" : "Адрес, отображаемый в Ledger Live, не будет проверен.",
+        "doNotRemindAgain" : "Больше не напоминать",
+        "no" : "Нет",
+        "yes" : "Да"
+      },
+      "toastMessages" : {
+        "accountImported" : "Счёт {{currencyTicker}} успешно импортирован. ",
+        "why" : "Узнать причину.",
+        "addressVerified" : "Ваш адрес подтверждён"
+      },
+      "additionalInfoModal" : {
+        "title" : "Почему счёт был импортирован?",
+        "subtitle" : "Мы обнаружили, что с вашей сид-фразой связан ещё один предыдущий счёт {{currencyTicker}}. Его мы и импортировали.",
+        "closeCta" : "Понятно"
+      },
       "notSynced" : {
         "text" : "Синхронизируем",
         "desc" : "При большой очереди транзакций или медленном интернете это может занять некоторое время."
@@ -3255,7 +3457,9 @@
     "newVersion" : "Обновление версии {{version}} доступно для {{deviceName}}",
     "drawerUpdate" : {
       "title" : "Обновление прошивки",
-      "description" : "Обновите прошивку Nano, подключив кошелёк к настольному приложению Ledger Live"
+      "description" : "Обновите прошивку Nano, подключив кошелёк к настольному приложению Ledger Live",
+      "pleaseConnectUsbTitle" : "Необходим USB-кабель",
+      "pleaseConnectUsbDescription" : "Чтобы начать обновление прошивки, подключите {{deviceName}} к мобильному телефону с помощью USB-кабеля."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3281,6 +3485,19 @@
       "es" : "Español",
       "zh" : "简体中文",
       "de" : "Deutsch"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Язык интерфейса",
+    "deviceLanguage" : "Язык устройства",
+    "changeLanguage" : "Поменять язык",
+    "allowLanguageInstallation" : "Разрешить установку языка",
+    "languageInstalled" : "Новый язык устройства — {{language}}",
+    "installingLanguage" : "Установка языка",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3377,11 +3594,43 @@
       }
     }
   },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Общий баланс не включает вознаграждения за стейкинг"
+      }
+    }
+  },
   "celo" : {
     "info" : {
       "available" : {
         "title" : "Доступные токены CELO",
         "description" : "Сумма токенов в вашем распоряжении."
+      }
+    }
+  },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO доступно"
+      },
+      "delegated" : {
+        "description" : "Делегированные активы используются при голосовании на Osmosis. Это общее количество ваших голосов."
+      },
+      "undelegating" : {
+        "description" : "Отозванные средства блокируются на 14 дней, прежде чем вы сможете их получить."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Делегируйте OSMO, чтобы безопасно получать вознаграждения, не теряя контроль над активами.",
+            "steps" : {
+              "1" : "Отмена делегирования занимает 14 дней."
+            }
+          }
+        }
       }
     }
   },
@@ -3588,33 +3837,6 @@
       }
     }
   },
-  "cryptoOrg" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Разработано Crypto.org",
-        "moreInfo" : "Подробнее...",
-        "drawerTitle" : "Интеграция с Crypto.org",
-        "title" : "Токен Crypto.org (CRO) теперь доступен на Ledger Live",
-        "description" : "Теперь вы можете начать управлять своими монетами Crypto.org (CRO) и хранить их в Ledger Live.",
-        "description2" : "Монета Crypto.org (CRO) – нативная монета блокчейна Crypto.org, которая используется для всех транзакций, стейкинга и множества предстоящих функций.",
-        "website" : "Криптовалюта в каждом кошельке"
-      }
-    }
-  },
-  "elrond" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Работает на Elrond",
-        "drawerTitle" : "Интеграция с Elrond",
-        "moreInfo" : "Подробнее...",
-        "title" : "Токен Elrond eGold (EGLD) теперь доступен в Ledger Live",
-        "description" : "Теперь вы можете безопасно хранить токены eGold (EGLD) и взаимодействовать с ними в Ledger Live.",
-        "description2" : "Elrond eGold (EGLD) – нативный токен сети Elrond. Его можно использовать для чего угодно, включая транзакции, стейкинг, смарт-контракты, управление или получение вознаграждения от валидаторов.",
-        "description3" : "Мы активно сотрудничаем с командой Elrond над расширением функциональности, чтобы сделать доступными стейкинг, поддержку нативного токена ESDT (Elrond Standard Digital Token), а также многое другое.",
-        "website" : "Блокчейн масштаба интернета"
-      }
-    }
-  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "Можно получать вознаграждения за делегирование счёта",
@@ -3730,6 +3952,7 @@
     }
   },
   "stellar" : {
+    "token" : "Активы",
     "memo" : {
       "title" : "Memo",
       "warning" : "При использовании Memo необходимо тщательно проверять соответствие типа с получателем."
@@ -3740,6 +3963,48 @@
       "MEMO_ID" : "Memo ID",
       "MEMO_HASH" : "Хэш Memo",
       "MEMO_RETURN" : "Возврат Memo"
+    },
+    "fee" : "Комиссия сети",
+    "feeAction" : "Обновить комиссию",
+    "recommendedFee" : "Рекомендуемая комиссия",
+    "recommenndedFeeInfo" : "Вы можете отправить транзакцию с меньшей комиссией, чем рекомендуется. Однако она может не пройти",
+    "suggested" : "Рекомендовано",
+    "networkCongestion" : "перегрузка сети",
+    "networkCongestionLevel" : {
+      "LOW" : "Низкая",
+      "MEDIUM" : "Средне",
+      "HIGH" : "Высокая"
+    },
+    "assetCode" : "Код актива",
+    "assetIssuer" : "Создатель актива",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "Добавить актив",
+        "connectDevice" : "Добавление устройства",
+        "verification" : "Проверка",
+        "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "Актив уже добавлен",
+              "description" : "На счету Stellar уже есть {{token}}."
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Актив {{token}} добавлен!",
+              "text" : "Теперь вы можете получать и отправлять активы {{token}} на счёт Stellar.",
+              "cta" : "Подробнее"
+            },
+            "pending" : {
+              "title" : "Транслируем транзакцию..."
+            },
+            "broadcastError" : "Вероятно, при обработке транзакции произошла ошибка. Чтобы убедиться в этом, проверьте её статус спустя несколько минут, прежде чем попробовать снова."
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4105,6 +4370,11 @@
         "redelegate" : "Возврат отозванных активов на баланс счёта осуществляется в течение 21 дня.",
         "undelegate" : "Возврат отозванных активов на баланс счёта осуществляется в течение 21 дня."
       },
+      "osmosis" : {
+        "claimReward" : "Вознаграждения будут получены автоматически при их наличии у валидатора.",
+        "redelegate" : "Возврат отозванных активов на баланс счёта осуществляется в течение 14 дней.",
+        "undelegate" : "Возврат отозванных активов на баланс счёта осуществляется в течение 14 дней."
+      },
       "lending" : "Проверяйте детали операции на устройстве перед отправкой."
     },
     "amount" : "Сумма",
@@ -4114,6 +4384,7 @@
     "redelegationAmount" : "Переделегированная сумма",
     "gas" : "Газ",
     "validatorAddress" : "Адрес валидатора",
+    "validatorName" : "Имя валидатора",
     "rewardAmount" : "Сумма вознаграждения",
     "undelegatedAmount" : "Отозванная сумма",
     "memo" : "Memo"
@@ -4403,6 +4674,16 @@
     },
     "operations" : {
       "title" : "История транзакций"
+    }
+  },
+  "hedera" : {
+    "name" : "Hedera",
+    "createHederaAccountHelp" : {
+      "text" : "Используйте информацию из этой статьи",
+      "link" : "для создания аккаунта на Hedera"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "Адрес {{name}} не может быть подтверждён на устройстве Ledger. Вы принимаете на себя все последующие риски."
     }
   }
 }
