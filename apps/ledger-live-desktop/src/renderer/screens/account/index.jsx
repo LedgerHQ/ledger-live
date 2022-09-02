@@ -93,6 +93,16 @@ const AccountPage = ({
 
   const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
 
+  const [banner, setBanner] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const bannerProps = await getBannerProps(account, { t, dispatch });
+      setBanner(bannerProps);
+    };
+    fetchData();
+  }, [account]);
+
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
     (operation, account) => {
@@ -113,16 +123,6 @@ const AccountPage = ({
   const color = getCurrencyColor(currency, bgColor);
 
   const dispatch = useDispatch();
-
-  const [banner, setBanner] = useState({});
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const bannerProps = await getBannerProps(account, { t, dispatch });
-      setBanner(bannerProps);
-    };
-    fetchData();
-  }, [account]);
 
   return (
     <Box key={account.id}>
