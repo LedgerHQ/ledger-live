@@ -98,11 +98,10 @@ const AccountPage = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (account) {
       const bannerProps = getBannerProps(account, { t, dispatch });
       setBanner(bannerProps);
-    };
-    fetchData();
+    }
   }, [account, t, dispatch]);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
