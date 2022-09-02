@@ -1035,8 +1035,8 @@
     "stepLanguage": {
       "title": "Select your language",
       "cta": "Continue",        
-      "changeDeviceLanguage": "Change your device language?",
-      "changeDeviceLanguageDescription": "Ledger Live is now in {{language}}. Do you want to use {{language}} on your device too?",
+      "changeDeviceLanguage": "{{language}} is also available for your {{deviceName}}",
+      "changeDeviceLanguageDescription": "Would you like to change its language to {{language}}?",
       "warning": {
         "title": "Get started in English",
         "cta": "Got it!",
@@ -3465,6 +3465,7 @@
     "deviceLanguage": "Device Language",
     "chooseLanguage": "Choose a language for your {{deviceName}}.",
     "changeLanguage": "Change language",
+    "yesChangeLanguage": "Yes, change language",
     "allowLanguageInstallation": "Approve language installation on {{deviceName}}",
     "languageInstalled": "Language changed to {{language}}",
     "firmwareUpdatePrompt": {

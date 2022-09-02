@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import {
   Flex,
   SelectableList,
@@ -17,6 +17,7 @@ import { from } from "rxjs";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { useLocale } from "../../../context/Locale";
 import {
   languages,
@@ -40,8 +41,6 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
 
-  const { t } = useTranslation();
-
   const next = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -51,7 +50,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const [preventPromptBackdropClick, setPreventPromptBackdropClick] =
     useState<boolean>(false);
 
-  const lastSeenDevice: DeviceModelInfo | null = useSelector(
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
     lastSeenDeviceSelector,
   );
 
@@ -109,13 +108,24 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         next();
       }
     },
-    [dispatch, next, availableLanguages, loaded],
+    [
+      dispatch,
+      lastSeenDevice?.deviceInfo.languageId,
+      availableLanguages,
+      currentLocale,
+      loaded,
+      deviceLocalizationFeatureFlag.enabled,
+      next,
+    ],
   );
 
   const closeDeviceLanguagePrompt = useCallback(() => {
     setIsDeviceLanguagePromptOpen(false);
     next();
   }, [next]);
+
+  const deviceName =
+    lastSeenDevice && getDeviceModel(lastSeenDevice?.modelId).productName;
 
   return (
     <>
@@ -143,7 +153,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         <Flex alignItems="center">
           {deviceForChangeLanguageAction ? (
             <ChangeDeviceLanguageAction
-              onError={(error: any) => {
+              onError={(error: Error) => {
                 onActionFinished();
                 track("Page LiveLanguageChange LanguageInstallError", {
                   error,
@@ -165,15 +175,8 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
             />
           ) : (
             <ChangeDeviceLanguagePrompt
-              titleWording={t("onboarding.stepLanguage.changeDeviceLanguage")}
-              descriptionWording={t(
-                "onboarding.stepLanguage.changeDeviceLanguageDescription",
-                {
-                  language: t(
-                    `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
-                  ),
-                },
-              )}
+              language={localeIdToDeviceLanguage[currentLocale] as Language}
+              deviceName={deviceName ?? ""}
               onConfirm={() => {
                 track("Page LiveLanguageChange LanguageInstallTriggered", {
                   selectedLanguage: localeIdToDeviceLanguage[currentLocale],

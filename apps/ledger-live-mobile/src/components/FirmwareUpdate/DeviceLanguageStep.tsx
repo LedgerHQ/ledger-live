@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { useTranslation } from "react-i18next";
-
 import { Flex } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
@@ -53,8 +51,6 @@ const DeviceLanguageStep = ({
   const [languageToInstall, setLanguageToInstall] =
     useState<Language>("english");
   const [deviceForAction, setDeviceForAction] = useState<Device | null>(null);
-
-  const { t } = useTranslation();
 
   const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
 
@@ -116,21 +112,8 @@ const DeviceLanguageStep = ({
         <>
           <Track event="Page Manager FwUpdateDeviceLanguagePrompt" onMount />
           <ChangeDeviceLanguagePrompt
-            titleWording={t("deviceLocalization.firmwareUpdatePrompt.title", {
-              language: t(
-                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
-              ),
-              deviceName,
-            })}
-            descriptionWording={t(
-              "deviceLocalization.firmwareUpdatePrompt.description",
-              {
-                language: t(
-                  `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
-                ),
-                deviceName,
-              },
-            )}
+            language={localeIdToDeviceLanguage[currentLocale] as Language}
+            deviceName={deviceName}
             canSkip
             onSkip={() => {
               track("Page Manager FwUpdateDeviceLanguagePromptDismissed");

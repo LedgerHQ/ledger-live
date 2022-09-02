@@ -2,21 +2,22 @@ import { Flex, Text, Button, Link, Icons } from "@ledgerhq/native-ui";
 import React from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
+import { Language } from "@ledgerhq/types-live";
 import NanoXFolded from "../images/devices/NanoXFolded";
 import { urls } from "../config/urls";
 
 type Props = {
   onConfirm: () => void;
-  descriptionWording: string;
-  titleWording: string;
+  deviceName: string;
+  language: Language;
 } & (
   | { canSkip: true; onSkip: () => void }
   | { canSkip?: false; onSkip?: undefined }
 );
 
 const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
-  descriptionWording,
-  titleWording,
+  deviceName,
+  language,
   onConfirm,
   canSkip,
   onSkip,
@@ -27,15 +28,20 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
     <Flex alignItems="center">
       <NanoXFolded size={200} />
       <Text variant="h4" textAlign="center">
-        {titleWording}
+        {t("onboarding.stepLanguage.changeDeviceLanguage", {
+          language: t(`deviceLocalization.languages.${language}`),
+          deviceName,
+        })}
       </Text>
       <Flex px={7} mt={4} mb={8}>
         <Text variant="paragraph" textAlign="center" color="neutral.c70">
-          {descriptionWording}
+          {t("onboarding.stepLanguage.changeDeviceLanguageDescription", {
+            language: t(`deviceLocalization.languages.${language}`),
+          })}
         </Text>
       </Flex>
       <Button type="main" onPress={onConfirm} alignSelf="stretch">
-        {t("deviceLocalization.changeLanguage")}
+        {t("deviceLocalization.yesChangeLanguage")}
       </Button>
       {canSkip && (
         <Button mt={4} onPress={onSkip} alignSelf="stretch" type="main" outline>
