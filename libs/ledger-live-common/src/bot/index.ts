@@ -436,9 +436,11 @@ export async function bot({
   }
 
   appendBody("<details>\n");
-  appendBody(`<summary>Portfolio $){
-    totalUSD ? " (" + totalUSD + ")" : ""
-  } – Details of the ${results.length} currencies</summary>\n\n`);
+  appendBody(
+    `<summary>Portfolio ${
+      totalUSD ? " (" + totalUSD + ")" : ""
+    } – Details of the ${results.length} currencies</summary>\n\n`
+  );
   appendBody("| Spec (accounts) | Operations | Balance | funds? |\n");
   appendBody("|-----------------|------------|---------|--------|\n");
   results.forEach((r) => {
