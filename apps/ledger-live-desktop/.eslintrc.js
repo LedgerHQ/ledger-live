@@ -7,6 +7,7 @@ module.exports = {
   },
   extends: [
     "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
     "plugin:flowtype/recommended",
     "standard",
     "plugin:prettier/recommended",
@@ -41,7 +42,7 @@ module.exports = {
     "no-prototype-builtins": 0,
     "promise/param-names": 0,
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-    "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
+    "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
     "jest/no-done-callback": 0,
     "react/jsx-filename-extension": "error",
   },
@@ -51,6 +52,7 @@ module.exports = {
       plugins: ["react", "react-hooks", "@typescript-eslint"],
       extends: [
         "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
         "standard",
         "plugin:prettier/recommended",
         "plugin:jest/recommended",
@@ -64,7 +66,7 @@ module.exports = {
         "no-prototype-builtins": 0,
         "promise/param-names": 0,
         "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-        "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
+        "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
         "flowtype/no-types-missing-file-annotation": 0,

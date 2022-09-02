@@ -55,6 +55,6 @@ export const ConnectEnvsToSentry = () => {
       clearTimeout(timeout);
       clearInterval(interval);
     };
-  }, []);
+  }, [featureFlags]);
   return null;
 };

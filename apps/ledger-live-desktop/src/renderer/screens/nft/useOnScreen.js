@@ -22,7 +22,9 @@ const useOnScreen = (ref: any) => {
     return () => {
       observer.unobserve(target);
     };
-  }, []); // Empty array ensures that effect is only run on mount and unmount
+    // Empty array ensures that effect is only run on mount and unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return isIntersecting;
 };
