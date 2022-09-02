@@ -177,7 +177,11 @@ export default function useAccountActions({
     navigationParams: [
       NavigatorName.ReceiveFunds,
       {
-        screen: ScreenName.ReceiveConnectDevice,
+        screen: ScreenName.ReceiveConfirmation,
+        params: {
+          accountId: account.id,
+          currency,
+        },
       },
     ],
     label: t("account.receive"),

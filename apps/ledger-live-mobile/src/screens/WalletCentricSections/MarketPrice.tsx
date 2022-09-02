@@ -8,7 +8,7 @@ import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import { localeSelector } from "../../reducers/settings";
 import DeltaVariation from "../Market/DeltaVariation";
 import { track } from "../../analytics";
@@ -23,15 +23,12 @@ const MarketPrice = ({ currency }: Props) => {
   const currentScreen = useCurrentRouteName();
   const locale = useSelector(localeSelector);
   const navigation = useNavigation();
-  const {
-    selectedCoinData,
-    selectCurrency,
-    counterCurrency,
-  } = useSingleCoinMarketData();
+  const { selectedCoinData, selectCurrency, counterCurrency } =
+    useSingleCoinMarketData();
 
   useEffect(() => {
     selectCurrency(currency.id, currency, "24h");
-  }, [currency]);
+  }, [currency, selectCurrency]);
 
   const goToMarketPage = useCallback(() => {
     track("market_data_clicked", {
@@ -41,7 +38,7 @@ const MarketPrice = ({ currency }: Props) => {
     navigation.navigate(ScreenName.MarketDetail, {
       currencyId: currency.id,
     });
-  }, [navigation, currency]);
+  }, [currency, currentScreen, navigation]);
 
   return (
     <Flex flex={1} mt={6}>

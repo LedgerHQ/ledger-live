@@ -26,7 +26,7 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const currency = route.params.currency;
   const primaryCTA = useCallback(() => {
-    navigation.navigate(NavigatorName.PortfolioAccounts, {
+    navigation.replace(NavigatorName.Accounts, {
       screen: ScreenName.Asset,
       params: {
         currency,

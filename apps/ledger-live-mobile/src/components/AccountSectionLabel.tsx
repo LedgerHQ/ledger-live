@@ -26,14 +26,14 @@ export default function AccountSectionLabel({
         <Text
           variant="small"
           fontWeight="semiBold"
-          color="neutral.c60"
+          color="neutral.c70"
           uppercase
         >
           {name}
         </Text>
         {Icon && (
           <Box ml={2}>
-            <Icon size={16} color={"neutral.c60"}></Icon>
+            <Icon size={16} color={"neutral.c70"}></Icon>
           </Box>
         )}
       </Flex>

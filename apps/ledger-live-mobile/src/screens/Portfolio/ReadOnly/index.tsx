@@ -98,7 +98,7 @@ function ReadOnlyPortfolio({ navigation }: Props) {
   }, []);
 
   const goToAssets = useCallback(() => {
-    navigation.navigate(NavigatorName.PortfolioAccounts, {
+    navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Assets,
     });
   }, [navigation]);

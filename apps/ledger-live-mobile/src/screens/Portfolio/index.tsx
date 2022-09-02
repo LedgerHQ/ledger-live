@@ -118,7 +118,7 @@ function PortfolioScreen({ navigation }: Props) {
   }, []);
 
   const goToAssets = useCallback(() => {
-    navigation.navigate(NavigatorName.PortfolioAccounts, {
+    navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Assets,
     });
   }, [navigation]);
@@ -197,7 +197,7 @@ function PortfolioScreen({ navigation }: Props) {
         ? [
             <SectionContainer px={6}>
               <SectionTitle title={t("analytics.allocation.title")} />
-              <Flex minHeight={76}>
+              <Flex minHeight={94}>
                 <AllocationsSection />
               </Flex>
             </SectionContainer>,

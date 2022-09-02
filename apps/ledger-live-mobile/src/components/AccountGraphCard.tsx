@@ -250,7 +250,7 @@ const GraphCardHeader = ({
 
   const navigation = useNavigation();
 
-  const openReceive = () => {
+  const openReceive = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
       screen: ScreenName.ReceiveConfirmation,
       params: {
@@ -258,7 +258,7 @@ const GraphCardHeader = ({
         currency,
       },
     });
-  };
+  }, [account.id, currency, navigation]);
 
   return (
     <Flex px={6} justifyContent={"space-between"}>
@@ -310,7 +310,7 @@ const GraphCardHeader = ({
             />
           </Text>
           <Flex flexDirection="row" alignItems="center">
-            <Delta percent valueChange={valueChange} />
+            <Delta percent show0Delta valueChange={valueChange} />
             <Flex ml={2}>
               <Delta unit={items[0].unit} valueChange={valueChange} />
             </Flex>

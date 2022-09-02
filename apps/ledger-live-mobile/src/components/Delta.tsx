@@ -57,7 +57,7 @@ function Delta({
       ? delta > 0
         ? ["success.c100", ArrowEvolutionUpMedium, "+"]
         : ["error.c100", ArrowEvolutionDownMedium, "-"]
-      : ["neutral.c100", () => null, ""];
+      : ["neutral.c70", () => null, ""];
 
   if (
     percent &&

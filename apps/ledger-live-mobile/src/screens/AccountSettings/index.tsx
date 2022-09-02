@@ -56,7 +56,7 @@ class AccountSettings extends PureComponent<Props, State> {
     deleteAccount(account);
     if (route?.params?.hasOtherAccountsForThisCrypto) {
       const currency = getAccountCurrency(account);
-      navigation.navigate(NavigatorName.PortfolioAccounts, {
+      navigation.navigate(NavigatorName.Accounts, {
         screen: ScreenName.Asset,
         params: {
           currency,
