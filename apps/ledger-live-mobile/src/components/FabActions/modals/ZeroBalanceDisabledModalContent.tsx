@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { BottomDrawer, Flex } from "@ledgerhq/native-ui";
-import { ModalOnDisabledClickComponentProps } from "../index";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useNavigation } from "@react-navigation/native";
+import { ModalOnDisabledClickComponentProps } from "../index";
 import ParentCurrencyIcon from "../../ParentCurrencyIcon";
 import { NavigatorName, ScreenName } from "../../../const";
-import { useNavigation } from "@react-navigation/native";
 import Button from "../../wrappedUi/Button";
 
 function ZeroBalanceDisabledModalContent({
@@ -20,41 +20,40 @@ function ZeroBalanceDisabledModalContent({
 
   const actionCurrency = account ? getAccountCurrency(account) : currency;
 
-  const goToBuy = useCallback(
-    () =>
-      navigation.navigate(NavigatorName.Exchange, {
-        screen: ScreenName.ExchangeBuy,
-        params: {
-          defaultCurrencyId: actionCurrency.id,
-          defaultAccountId: account && account.id,
-        },
-      }),
-    [],
-  );
+  const goToBuy = useCallback(() => {
+    navigation.navigate(NavigatorName.Exchange, {
+      screen: ScreenName.ExchangeBuy,
+      params: {
+        defaultCurrencyId: actionCurrency?.id,
+        defaultAccountId: account?.id,
+      },
+    });
+    onClose();
+  }, [account?.id, actionCurrency?.id, navigation, onClose]);
 
-  const goToReceive = useCallback(
-    () =>
-      navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: account
-          ? ScreenName.ReceiveConnectDevice
-          : ScreenName.ReceiveSelectAccount,
-        params: {
-          selectedCurrency: actionCurrency,
-          accountId: account && account.id,
-        },
-      }),
-    [navigation],
-  );
+  const goToReceive = useCallback(() => {
+    navigation.navigate(NavigatorName.ReceiveFunds, {
+      screen: account
+        ? ScreenName.ReceiveConfirmation
+        : ScreenName.ReceiveSelectAccount,
+      params: {
+        selectedCurrency: actionCurrency,
+        currency: actionCurrency,
+        accountId: account?.id,
+      },
+    });
+    onClose();
+  }, [account, actionCurrency, navigation, onClose]);
 
   return (
     <BottomDrawer
       isOpen={isOpen}
       onClose={onClose}
       title={t("account.modals.zeroBalanceDisabledAction.title", {
-        currencyTicker: actionCurrency.ticker,
+        currencyTicker: actionCurrency?.ticker,
       })}
       description={t("account.modals.zeroBalanceDisabledAction.description", {
-        currencyTicker: actionCurrency.ticker,
+        currencyTicker: actionCurrency?.ticker,
         actionName: action.label,
       })}
       Icon={<ParentCurrencyIcon size={48} currency={actionCurrency} />}

@@ -1,18 +1,18 @@
 import React, { useMemo } from "react";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "../../../const";
 // eslint-disable-next-line import/named
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
 } from "../../../reducers/settings";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import { ActionButton } from "../../../components/FabActions";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { ActionButton } from "..";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -35,9 +35,10 @@ export default function useAssetActions({
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
-  const defaultAccount = useMemo(() => (accounts ? accounts[0] : undefined), [
-    accounts,
-  ]);
+  const defaultAccount = useMemo(
+    () => (accounts ? accounts[0] : undefined),
+    [accounts],
+  );
 
   const swapSelectableCurrencies = useSelector(
     swapSelectableCurrenciesSelector,
@@ -77,10 +78,7 @@ export default function useAssetActions({
                 {
                   screen: ScreenName.ExchangeBuy,
                   params: {
-                    defaultTicker:
-                      currency &&
-                      currency.ticker &&
-                      currency.ticker.toUpperCase(),
+                    defaultCurrencyId: currency?.id,
                   },
                 },
               ],
@@ -98,10 +96,7 @@ export default function useAssetActions({
                 {
                   screen: ScreenName.ExchangeSell,
                   params: {
-                    defaultTicker:
-                      currency &&
-                      currency.ticker &&
-                      currency.ticker.toUpperCase(),
+                    defaultCurrencyId: currency?.id,
                   },
                 },
               ],
@@ -136,7 +131,9 @@ export default function useAssetActions({
                 NavigatorName.ReceiveFunds,
                 {
                   screen: ScreenName.ReceiveSelectCrypto,
-                  params: { currency },
+                  params: {
+                    filterCurrencyIds: currency ? [currency.id] : undefined,
+                  },
                 },
               ],
             },

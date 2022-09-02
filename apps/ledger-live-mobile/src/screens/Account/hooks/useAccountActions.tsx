@@ -8,6 +8,8 @@ import {
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { NavigatorName, ScreenName } from "../../../const";
 // eslint-disable-next-line import/named
 import {
@@ -16,8 +18,6 @@ import {
 } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButton } from "../../../components/FabActions";
 
@@ -150,6 +150,9 @@ export default function useAccountActions({
     label: t("account.sell"),
     Icon: iconSell,
     disabled: isZeroBalance,
+    modalOnDisabledClick: {
+      component: ZeroBalanceDisabledModalContent,
+    },
     event: "Sell Crypto Account Button",
     eventProperties: {
       currencyName: currency.name,
