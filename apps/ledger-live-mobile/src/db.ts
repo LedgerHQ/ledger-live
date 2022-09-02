@@ -158,7 +158,7 @@ async function unsafeSaveAccounts(
   {
     active: newAccounts,
   }: {
-    active: { data: Account }[];
+    active: { data: AccountRaw }[];
   },
   stats?:
     | {
@@ -172,7 +172,7 @@ async function unsafeSaveAccounts(
   const currentAccountKeys = onlyAccountsKeys(keys);
 
   /** format data for DB persist */
-  const dbData: [string, { data: Account; version: number }][] =
+  const dbData: [string, { data: AccountRaw; version: number }][] =
     newAccounts.map(({ data }) => [
       formatAccountDBKey(data.id),
       {
@@ -197,7 +197,7 @@ async function unsafeSaveAccounts(
   await store.save([
     ...dbDataWithOnlyChanges, // also store an index of ids to keep sort in memory
     [ACCOUNTS_KEY_SORT, newAccounts.map(a => a.data.id)],
-  ] as [string, string | { data: Account; version: number }][]);
+  ] as [string, string | { data: AccountRaw; version: number }][]);
 
   /** then delete potential removed keys */
   if (deletedKeys.length > 0) {
