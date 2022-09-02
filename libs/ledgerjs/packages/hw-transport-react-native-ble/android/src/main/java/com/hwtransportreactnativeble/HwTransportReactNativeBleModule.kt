@@ -12,7 +12,7 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
     private var tag: String = "BleTransport"
     private var onDisconnect: ((Any) -> Void)? = null
-
+    private var retriesLeft = 1
     private var bleManager = BleManagerFactory.newInstance(reactContext)
     private var eventEmitter = EventEmitter.getInstance(reactContext)
     private var queue: Queue? = null
@@ -90,6 +90,7 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
         bleManager.connect(
             address = uuid,
             onConnectSuccess = {
+                retriesLeft = 1
                 Timber.d("$tag: \t connection success")
                 if (!consumed) {
                     promise.resolve(it.id)
@@ -99,8 +100,15 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
                 }
             },
             onConnectError = {
-                Timber.d("$tag: \t connection failure")
-                if (!consumed) {
+                if (it === "Device connection lost") {
+                    // We shouldn't have `Device connection lost` here, we should only get a failure
+                    // to connect.
+                    Timber.d("$tag: \t connection failure ignored, trying again")
+                    if (retriesLeft > 0) {
+                        connect(uuid, promise)
+                    }
+                } else if (!consumed) {
+                    Timber.d("$tag: \t connection failure")
                     promise.reject("connectError", Exception(it))
                     consumed = true
                 } else {
