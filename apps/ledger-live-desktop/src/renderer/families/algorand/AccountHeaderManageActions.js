@@ -1,4 +1,5 @@
 // @flow
+
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";

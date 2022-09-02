@@ -14,7 +14,6 @@ await rimraf(generatedPath, async e => {
 const families = await fs.readdir(path.join(rendererPath, "families"));
 const targets = [
   "operationDetails.jsx",
-  "operationDetails.js",
   "accountActions.jsx",
   "TransactionConfirmFields.jsx",
   "AccountBodyHeader.js",
