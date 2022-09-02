@@ -1,5 +1,25 @@
 # live-mobile
 
+## 3.7.1-nightly.3
+
+### Patch Changes
+
+- [#1131](https://github.com/LedgerHQ/ledger-live/pull/1131) [`0f60c43344`](https://github.com/LedgerHQ/ledger-live/commit/0f60c433444b56cd1f33640108b9cd175040337c) Thanks [@alexandremgo](https://github.com/alexandremgo)! - New BLE pairing flow
+
+  Not yet used in production. Accessible from the debug menu.
+
+  Features:
+
+  - scanning and pairing: one screen to go to from anywhere
+  - navigate to after pairing success: configuration of the screen (and its associated navigator) with params and name of the route param that will have newly paired device info
+  - scanning: filtering on device models
+  - scanning: filtering out or displaying already known devices
+  - pairing: new animation for pairing (lotties placeholders for now)
+  - pairing: possibility to add (or not) the newly paired device to the "known devices" of the app (redux store)
+
+- Updated dependencies [[`0f60c43344`](https://github.com/LedgerHQ/ledger-live/commit/0f60c433444b56cd1f33640108b9cd175040337c)]:
+  - @ledgerhq/live-common@27.0.1-nightly.1
+
 ## 3.7.1-nightly.2
 
 ### Patch Changes
