@@ -11,6 +11,7 @@ import {
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FwUpdateForegroundEvent } from "./types";
 
 import Track from "../../analytics/Track";
@@ -52,7 +53,7 @@ const DeviceLanguageStep = ({
     useState<Language>("english");
   const [deviceForAction, setDeviceForAction] = useState<Device | null>(null);
 
-  const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   const installLanguage = useCallback(
     (language: Language) => {
@@ -78,7 +79,7 @@ const DeviceLanguageStep = ({
         langAvailableForTheFirstTime &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag.enabled
+        deviceLocalizationFeatureFlag?.enabled
       ) {
         setIsLanguagePromptOpen(true);
       } else if (
@@ -101,7 +102,7 @@ const DeviceLanguageStep = ({
     oldDeviceInfo,
     updatedDeviceInfo,
     installLanguage,
-    deviceLocalizationFeatureFlag.enabled,
+    deviceLocalizationFeatureFlag?.enabled,
   ]);
 
   const deviceName = getDeviceModel(device.modelId).productName;

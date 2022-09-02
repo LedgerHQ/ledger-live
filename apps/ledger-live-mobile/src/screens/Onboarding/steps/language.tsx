@@ -18,6 +18,7 @@ import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useLocale } from "../../../context/Locale";
 import {
   languages,
@@ -74,8 +75,8 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const [deviceForChangeLanguageAction, setDeviceForChangeLanguageAction] =
     useState<Device | null>(null);
 
-  const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
-  // TODO: reactivate this feature flag once QA is done
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
+
   const { availableLanguages, loaded } = useAvailableLanguagesForDevice(
     lastSeenDevice?.deviceInfo,
   );
@@ -98,7 +99,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
         langAvailableOnDevice &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag.enabled
+        deviceLocalizationFeatureFlag?.enabled
       ) {
         track("Page LiveLanguageChange DeviceLanguagePrompt", {
           selectedLanguage: potentialDeviceLanguage,
@@ -114,7 +115,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
       availableLanguages,
       currentLocale,
       loaded,
-      deviceLocalizationFeatureFlag.enabled,
+      deviceLocalizationFeatureFlag?.enabled,
       next,
     ],
   );
