@@ -113,7 +113,7 @@ export class OnboardingPage {
 
     expect(
       await this.page.screenshot({
-        mask: [this.page.locator("role=animation")],
+        mask: [page.locator("[role=animation]")],
       }),
     ).toMatchSnapshot([group, `get-started-2-${nano}.png`]);
     await this.continueTutorial();
@@ -128,14 +128,14 @@ export class OnboardingPage {
 
     expect(
       await this.page.screenshot({
-        mask: [this.page.locator("role=animation")],
+        mask: [page.locator("[role=animation]")],
       }),
     ).toMatchSnapshot([group, `pin-code-3-${nano}.png`]);
     await this.continueTutorial();
 
     expect(
       await this.page.screenshot({
-        mask: [this.page.locator("role=animation")],
+        mask: [page.locator("[role=animation]")],
       }),
     ).toMatchSnapshot([group, `pin-code-4-${nano}.png`]);
     await this.continuePinDrawer();

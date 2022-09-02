@@ -8,7 +8,7 @@ enum Nano {
   nanoSP = "nanoSP",
 }
 
-const nanos = [Nano.nanoX, Nano.nanoS, Nano.nanoSP];
+const nanos = [Nano.nanoSP];
 
 test.describe.parallel("Onboarding", () => {
   for (const nano of nanos) {
@@ -24,7 +24,7 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}]" Set up new"`, async () => {
-        expect(await page.screenshot()).toMatchSnapshot(`v3-device-setup-${nano}.png`);
+        // expect(await page.screenshot()).toMatchSnapshot(`v3-device-setup-${nano}.png`);
         await onboardingPage.newDevice();
       });
 
@@ -87,14 +87,14 @@ test.describe.parallel("Onboarding", () => {
 
         expect(
           await page.screenshot({
-            mask: [page.locator("role=animation")],
+            mask: [page.locator("[role=animation]")],
           }),
         ).toMatchSnapshot(["v3-setup-new-device", `recovery-phrase-4-${nano}.png`]);
         await onboardingPage.continueTutorial();
 
         expect(
           await page.screenshot({
-            mask: [page.locator("role=animation")],
+            mask: [page.locator("[role=animation]")],
           }),
         ).toMatchSnapshot(["v3-setup-new-device", `recovery-phrase-5-${nano}.png`]);
         await onboardingPage.continueRecoverySeedDrawer();
