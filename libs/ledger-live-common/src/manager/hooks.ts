@@ -4,7 +4,11 @@ import { useEnv } from "../env.react";
 import manager from ".";
 import { getProviderId } from "./provider";
 import ManagerAPI from "../api/Manager";
-import type { DeviceModelInfo, DeviceInfo, Language } from "@ledgerhq/types-live";
+import type {
+  DeviceModelInfo,
+  DeviceInfo,
+  Language,
+} from "@ledgerhq/types-live";
 
 async function hasOudatedApps({ deviceInfo, apps }: DeviceModelInfo): Promise<boolean> {
   const provider = getProviderId(deviceInfo);
