@@ -91,11 +91,10 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
           attributes.amount === ""
         ) {
           op.type = "REWARD";
-          op.value = new BigNumber(
-            message.attributes
-              .find((attr) => attr.key === "amount")
-              .value.replace("uatom", "")
-          );
+          const reward = message.attributes
+            .find((attr) => attr.key === "amount")
+            .value.replace("uatom", "");
+          op.value = new BigNumber(reward || 0);
           op.extra.validators.push({
             address: attributes.validator,
             amount: attributes.amount.replace(currency.units[1].code, "") || 0,
@@ -130,7 +129,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
             address: attributes.destination_validator,
             amount: attributes.amount.replace(currency.units[1].code, ""),
           });
-          op.extra.cosmosSourceValidator = attributes.source_validator;
+          op.extra.sourceValidator = attributes.source_validator;
         }
         break;
 
