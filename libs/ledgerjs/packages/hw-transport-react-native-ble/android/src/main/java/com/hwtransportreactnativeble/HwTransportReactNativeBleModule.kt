@@ -105,6 +105,7 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
                     // to connect.
                     Timber.d("$tag: \t connection failure ignored, trying again")
                     if (retriesLeft > 0) {
+                        retriesLeft -= 1
                         connect(uuid, promise)
                     }
                 } else if (!consumed) {
