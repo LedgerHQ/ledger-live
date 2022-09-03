@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex } from "@ledgerhq/native-ui";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
 import RequiresBLE from "../../components/RequiresBLE";
-import { BleDevicesScanning } from "./BleDeviceScanning";
+import { BleDevicesScanning } from "./BleDevicesScanning";
 import { BleDevicePairing } from "./BleDevicePairing";
 import { addKnownDevice } from "../../actions/ble";
 
@@ -20,14 +20,16 @@ export type NavigateInput = {
 };
 
 export type PathToDeviceParam = PropertyPath;
+export type NavigationType = "navigate" | "replace";
 
 export type BleDevicePairingFlowParams = {
   filterByDeviceModelId?: DeviceModelId;
   areKnownDevicesDisplayed?: boolean;
   onSuccessAddToKnownDevices?: boolean;
+  navigationType?: NavigationType;
   onSuccessNavigateToConfig: {
     navigateInput: NavigateInput;
-    pathToDeviceParam: string;
+    pathToDeviceParam: PathToDeviceParam;
   };
 };
 
@@ -40,9 +42,11 @@ export type BleDevicePairingFlowProps = StackScreenProps<
  * Screen handling the BLE flow with a scanning step and a pairing step
  * @param navigation react-navigation navigation object
  * @param route react-navigation route object. The route params are:
- * - filterByDeviceModelId: a device model id to filter on
+ * - filterByDeviceModelId: (optional, default to none) a device model id to filter on
  * - areKnownDevicesDisplayed: boolean, display the already known device if true,
  *   filter out them if false (default to true)
+ * - navigationType: (optional, default to "navigate") when navigating after a successful pairing,
+ *   choose between a "replace" or a "navigate"
  * - onSuccessNavigateToConfig: object containing navigation config parameters when successful pairing:
  *   - navigateInput: navigation object given as input to navigation.navigate. 2 mandatory props:
  *     - name: navigator name or screen name if no need to specify a navigator
@@ -74,6 +78,7 @@ export const BleDevicePairingFlow = ({
     filterByDeviceModelId,
     areKnownDevicesDisplayed = true,
     onSuccessAddToKnownDevices = false,
+    navigationType = "navigate",
     onSuccessNavigateToConfig: { navigateInput, pathToDeviceParam },
   } = route.params;
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
@@ -106,16 +111,26 @@ export const BleDevicePairingFlow = ({
         setFromPath(navigateInput, pathToDeviceParam, device);
       } else {
         console.error(
-          `BLE pairing flow: device path param ${pathToDeviceParam} not existing on navigation input`,
+          `BLE pairing flow: device path param ${String(
+            pathToDeviceParam,
+          )} not existing on navigation input`,
         );
       }
 
-      navigation.navigate(navigateInput);
+      // Before navigating, to never come back a the successful pairing but to the scanning part
+      setDeviceToPair(null);
+
+      if (navigationType === "replace") {
+        navigation.replace(navigateInput.name, { ...navigateInput.params });
+      } else {
+        navigation.navigate(navigateInput);
+      }
     },
     [
       dispatchRedux,
       navigateInput,
       navigation,
+      navigationType,
       onSuccessAddToKnownDevices,
       pathToDeviceParam,
     ],
