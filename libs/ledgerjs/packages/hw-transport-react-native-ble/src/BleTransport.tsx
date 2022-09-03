@@ -1,4 +1,4 @@
-import { AppState, NativeModules } from "react-native";
+import { AppState, NativeModules, NativeEventEmitter } from "react-native";
 import Transport, {
   DescriptorEvent,
   Device,
@@ -15,7 +15,6 @@ import {
 import type { RawRunnerEvent, RunnerEvent, GlobalBridgeEvent } from "./types";
 import { log } from "@ledgerhq/logs";
 import { type EventSubscription } from "react-native/Libraries/vendor/emitter/EventEmitter";
-import EventEmitter from "./EventEmitter";
 
 const NativeBle = NativeModules.HwTransportReactNativeBle;
 
@@ -45,13 +44,17 @@ class Ble extends Transport {
 
   constructor(deviceId: string) {
     super();
+    const eventEmitter = new NativeEventEmitter(
+      NativeModules.HwTransportReactNativeBle
+    );
+
     this.id = deviceId;
     this.queueObserver;
     this.appStateSubscription = AppState.addEventListener(
       "change",
       this.onAppStateChanged
     );
-    this.bridgeEventSubscription = EventEmitter?.addListener(
+    this.bridgeEventSubscription = eventEmitter.addListener(
       "BleTransport",
       this.onBridgeEvent
     );
@@ -117,6 +120,7 @@ class Ble extends Transport {
 
   static onBridgeGlobalEvent(rawEvent: GlobalBridgeEvent): void {
     const { event, type, data } = rawEvent;
+    Ble.log("raw global bridge", JSON.stringify(rawEvent));
     // For Device events we need to polyfill the model since it's expected
     // throughout our codebase. We do this based on the serviceUUID from
     // the descriptor.
@@ -185,7 +189,11 @@ class Ble extends Transport {
     observer: Observer<DescriptorEvent<unknown>>
   ): Subscription => {
     Ble.scanObserver = observer;
-    Ble.globalBridgeEventSubscription = EventEmitter?.addListener(
+    const eventEmitter = new NativeEventEmitter(
+      NativeModules.HwTransportReactNativeBle
+    );
+
+    Ble.globalBridgeEventSubscription = eventEmitter.addListener(
       "BleTransport",
       Ble.onBridgeGlobalEvent
     );
