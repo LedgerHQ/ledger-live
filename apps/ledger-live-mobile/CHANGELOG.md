@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.7.1-nightly.4
+
+### Patch Changes
+
+- [#1143](https://github.com/LedgerHQ/ledger-live/pull/1143) [`5f15da1746`](https://github.com/LedgerHQ/ledger-live/commit/5f15da174652ebc39ec8f07a0671ab265317214c) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix new BLE pairing flow, with more flexible options
+
 ## 3.7.1-nightly.3
 
 ### Patch Changes
