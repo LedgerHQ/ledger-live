@@ -37,6 +37,7 @@ const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
       <Button type="main" outline mb={6} onPress={onRetry}>
         {t("syncOnboarding.desyncDrawer.retryCta")}
       </Button>
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <Link Icon={ExternalLinkMedium} onPress={handleSupportPress}>
         {t("syncOnboarding.desyncDrawer.helpCta")}
       </Link>
