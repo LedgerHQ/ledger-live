@@ -760,7 +760,7 @@
       },
       "delegation": {
         "title": "In case you didn’t know...",
-        "description": "The Ledger validator stakes your {{asset}} at a low commission of {{commission}}%.",
+        "description": "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
         "cta": "Stake with Ledger"
       }
     }

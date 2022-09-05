@@ -1,5 +1,6 @@
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import { canDelegate, canRedelegate } from "./logic";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 
 interface AccountBannerState {
@@ -42,7 +43,8 @@ export function getAccountBannerState(
     if (
       worstValidator &&
       validator &&
-      worstValidator.commission < validator.commission
+      worstValidator.commission < validator.commission &&
+      canRedelegate(account, validator)
     ) {
       worstValidator = validator;
     }
@@ -56,7 +58,8 @@ export function getAccountBannerState(
     if (
       worstValidator?.validatorAddress === ledgerValidator?.validatorAddress
     ) {
-      if (account.spendableBalance?.gt(0)) {
+      // Not found worst validator than ledger
+      if (canDelegate(account)) {
         // Delegate remaining ATOM (not staked)
         display = true;
       }
