@@ -96,17 +96,9 @@ function GraphCard({
     };
   }, [graphCardEndPosition]);
 
-  const onItemHover = useCallback(
-    (item: any) => {
-      track("graph_clicked", {
-        graph: "Wallet Graph",
-        timeframe: timeRange.value,
-        screen: currentScreen,
-      });
-      setItemHover(item);
-    },
-    [currentScreen, timeRange],
-  );
+  const onItemHover = (item: any) => {
+    setItemHover(item);
+  };
 
   return (
     <Flex>
