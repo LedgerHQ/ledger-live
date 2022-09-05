@@ -32,7 +32,7 @@ function DelegationFlow() {
       }}
     >
       <Stack.Screen
-        name={ScreenName.DelegationStarted}
+        name={ScreenName.SolanaDelegationStarted}
         component={DelegationStarted}
         options={{
           headerTitle: () => (
