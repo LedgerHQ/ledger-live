@@ -109,8 +109,8 @@ const getAccountShape: GetAccountShape = async (info) => {
       // hwapp not provided
       throw new Error("hwapp required to generate the xpub");
     }
-    const btc = new Btc(transport);
     const { bitcoinLikeInfo } = currency;
+    const btc = new Btc(transport, "BTC", currency.id);
     const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
       // FIXME It's supposed to be optional
       //XPUBVersion?: number;
@@ -261,8 +261,7 @@ const postSync = (initial: Account, synced: Account) => {
 };
 
 const getAddressFn = (transport) => {
-  const btc = new Btc(transport);
-  return (opts) => getAddressWithBtcInstance(transport, btc, opts);
+  return (opts) => getAddressWithBtcInstance(transport, opts);
 };
 
 export const scanAccounts = makeScanAccounts({

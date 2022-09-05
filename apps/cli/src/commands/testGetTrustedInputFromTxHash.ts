@@ -9,8 +9,8 @@ import { findCurrencyExplorer } from "@ledgerhq/live-common/api/Ledger";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const command = async (transport, currencyId, hash) => {
-  const btc = new Btc(transport);
   const currency = findCryptoCurrencyById(currencyId);
+  const btc = new Btc(transport, "BTC", currency.id);
   invariant(currency, "currency not found");
   if (!currency) throw new Error("currency not found");
   const { bitcoinLikeInfo } = currency;

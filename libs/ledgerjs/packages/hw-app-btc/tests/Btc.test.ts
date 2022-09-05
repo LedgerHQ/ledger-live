@@ -6,7 +6,6 @@ import {
 import Btc from "../src/Btc";
 import BtcNew from "../src/BtcNew";
 import BtcOld, { AddressFormat } from "../src/BtcOld";
-import { AppAndVersion, getAppAndVersion } from "../src/getAppAndVersion";
 import { TestingClient } from "./newops/integrationtools";
 
 test("btc.getWalletXpub", async () => {

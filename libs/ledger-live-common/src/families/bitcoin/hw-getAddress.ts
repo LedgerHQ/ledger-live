@@ -10,7 +10,6 @@ import type {
 } from "../../hw/getAddress/types";
 import { UnsupportedDerivation } from "../../errors";
 import Transport from "@ledgerhq/hw-transport";
-import BtcOld from "@ledgerhq/hw-app-btc/BtcOld";
 
 const oldP2SH = {
   digibyte: 5,
@@ -18,7 +17,6 @@ const oldP2SH = {
 
 export const getAddressWithBtcInstance = async (
   transport: Transport,
-  btc: Btc | BtcOld,
   {
     currency,
     path,
@@ -29,6 +27,7 @@ export const getAddressWithBtcInstance = async (
   }: GetAddressOptions
 ): Promise<Result> => {
   const format = forceFormat || getAddressFormatDerivationMode(derivationMode);
+  const btc = new Btc(transport, "BTC", currency.id);
   let result;
   try {
     result = await btc.getWalletPublicKey(path, {
@@ -95,6 +94,6 @@ export const getAddressWithBtcInstance = async (
 };
 
 const resolver: Resolver = (transport, opts) =>
-  getAddressWithBtcInstance(transport, new Btc(transport), opts);
+  getAddressWithBtcInstance(transport, opts);
 
 export default resolver;
