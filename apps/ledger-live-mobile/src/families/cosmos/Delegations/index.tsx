@@ -137,14 +137,10 @@ function Delegations({ account }: Props) {
     });
   }, [onNavigate, delegation, account]);
 
-  const fetchBannerData = async () => {
-    const state = await getCosmosBannerState({ ...account });
-    const bannerText = getCosmosBannerProps(state, { ...account }, { t });
-    return { ...state, ...bannerText };
-  };
-
   useEffect(() => {
-    fetchBannerData().then(banner => setBanner(banner));
+    const state = getCosmosBannerState({ ...account });
+    const bannerText = getCosmosBannerProps(state, { ...account }, { t });
+    setBanner({ ...state, ...bannerText });
   }, []);
 
   const onRedelegateLedger = () => {
