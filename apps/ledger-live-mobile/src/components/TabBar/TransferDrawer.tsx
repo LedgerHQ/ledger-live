@@ -103,7 +103,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
               : null
           }
           Icon={Icons.ArrowTopMedium}
-          disabled={readOnlyModeEnabled}
+          disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
       <Box mb={8}>
@@ -160,7 +160,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           description={t("transfer.swap.description")}
           Icon={Icons.BuyCryptoMedium}
           onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSwap : null}
-          disabled={readOnlyModeEnabled}
+          disabled={!accountsCount || readOnlyModeEnabled}
         />
       </Box>
       {lendingEnabled ? (
@@ -178,7 +178,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
             onPress={
               accountsCount > 0 && !readOnlyModeEnabled ? onLending : null
             }
-            disabled={readOnlyModeEnabled}
+            disabled={!accountsCount || readOnlyModeEnabled}
           />
         </Box>
       ) : null}
@@ -219,10 +219,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
 
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9}>
-      <ScrollView
-        alwaysBounceVertical={false}
-        style={{ opacity: readOnlyModeEnabled ? 0.3 : 1, width: "100%" }}
-      >
+      <ScrollView alwaysBounceVertical={false} style={{ width: "100%" }}>
         {buttons}
       </ScrollView>
       {readOnlyModeEnabled && !hasOrderedNano && (
