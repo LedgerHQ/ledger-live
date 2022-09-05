@@ -1035,6 +1035,8 @@
     "stepLanguage" : {
       "title" : "选择您的语言",
       "cta" : "继续",
+      "changeDeviceLanguage" : "要更改您的设备语言？",
+      "changeDeviceLanguageDescription" : "Ledger Live 现在支持{{language}}。您也想在设备上使用{{language}}吗？",
       "warning" : {
         "title" : "以英语开始",
         "cta" : "知道了！",
@@ -3466,6 +3468,10 @@
     "changeLanguage" : "更改语言",
     "allowLanguageInstallation" : "允许安装语言",
     "languageInstalled" : "设备语言已更改为 {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "将您的 {{deviceName}} 设置为 {{language}}？",
+      "description" : "您的 {{deviceName}} 现已可以使用 {{language}}。您可以立即设置语言，或随时在 My Ledger（我的 Ledger）中更改设备语言。"
+    },
     "installingLanguage" : "正在安装语言",
     "languages" : {
       "english" : "English",

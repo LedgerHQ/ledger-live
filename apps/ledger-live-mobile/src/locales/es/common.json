@@ -1035,6 +1035,8 @@
     "stepLanguage" : {
       "title" : "Elige tu idioma",
       "cta" : "Continuar",
+      "changeDeviceLanguage" : "¿Deseas cambiar el idioma de tu dispositivo?",
+      "changeDeviceLanguageDescription" : "Ledger Live está ahora disponible en {{language}}. ¿Quieres usar tu dispositivo en {{language}} también?",
       "warning" : {
         "title" : "Comenzar en español",
         "cta" : "¡Entendido!",
@@ -3466,6 +3468,10 @@
     "changeLanguage" : "Cambiar idioma",
     "allowLanguageInstallation" : "Permitir instalación de idioma",
     "languageInstalled" : "Idioma del dispositivo cambiado a {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "¿Establecer tu {{deviceName}} en {{language}}?",
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes establecerlo ahora o cambiar el idioma de tu dispositivo en cualquier momento desde My Ledger."
+    },
     "installingLanguage" : "Instalando idioma",
     "languages" : {
       "english" : "English",
