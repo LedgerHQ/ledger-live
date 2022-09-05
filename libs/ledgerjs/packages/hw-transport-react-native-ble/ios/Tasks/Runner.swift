@@ -104,9 +104,9 @@ class Runner: NSObject  {
     private func startScriptRunner() -> Void {
         withBIM(){ [self] in
             var request = URLRequest(url: endpoint)
-            request.timeoutInterval = 60 // No idea if we need this much
-            
+            request.timeoutInterval = 30 // No idea if we need this much
             socket = WebSocket(request: request)
+
             print("BIM opening \(self.endpoint)")
             socket!.connect()
             socket!.onEvent = { [self] event in
@@ -145,6 +145,7 @@ class Runner: NSObject  {
                             RunnerAction.runError,
                             ExtraData(message: message)
                         )
+                        self.pendingRequest?.cancel()
                         return
                     }
 
@@ -171,9 +172,26 @@ class Runner: NSObject  {
                     } catch {
                         onEmit!(
                             RunnerAction.runError,
-                            ExtraData(message: error.localizedDescription)
+                            ExtraData(code: TransportError.networkDown.rawValue, message: error.localizedDescription)
+                        )
+                        self.pendingRequest?.cancel()
+                    }
+                    break
+                case .error(let error):
+                    onEmit!(
+                        RunnerAction.runError,
+                        ExtraData(code: TransportError.networkDown.rawValue, message: error?.localizedDescription)
+                    )
+                    self.pendingRequest?.cancel()
+                    break
+                case .viabilityChanged(let isChanged):
+                    if !isChanged {
+                        onEmit!(
+                            RunnerAction.runError,
+                            ExtraData(code: TransportError.networkDown.rawValue)
                         )
                     }
+                    self.pendingRequest?.cancel()
                     break
                 default:
                     print("BIM ws \(event)")
@@ -185,6 +203,7 @@ class Runner: NSObject  {
                 RunnerAction.runError,
                 ExtraData(message: TransportError.networkDown.rawValue)
             )
+            self.pendingRequest?.cancel()
         }
     }
     
@@ -230,7 +249,7 @@ class Runner: NSObject  {
         case .failure(let error):
             onEmit!(
                 RunnerAction.runError,
-                ExtraData(message: error.localizedDescription)
+                ExtraData(code: TransportError.cantOpenDevice.rawValue, message: error.localizedDescription) // Fixme, not necessarily a can't open device error, message should improve the mapping though
             )
         }
     }

@@ -88,7 +88,7 @@ class Queue: NSObject  {
                     }
                     onEventWrapper(
                         RunnerAction.runError,
-                        withData: ExtraData(message: String(describing:error))
+                        withData: ExtraData(code: TransportError.networkDown.rawValue, message: String(describing:error))
                     )
                 }
                 else if let token = data {

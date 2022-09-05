@@ -106,7 +106,8 @@ class Ble extends Transport {
       this.queueObserver.complete();
       runningQueue = false;
     } else if (type === "runError") {
-      this.queueObserver.error(Ble.remapError(data.message));
+      this.queueObserver.error(Ble.remapError(data));
+      this.queueObserver = undefined;
       runningQueue = false;
     } else {
       const progress = Math.round((data?.progress || 0) * 100) / 100;
@@ -246,6 +247,8 @@ class Ble extends Transport {
   };
 
   private static remapError = (error: any, extras?: unknown) => {
+    Ble.log(`raw error data ${JSON.stringify(error)}`);
+
     const mappedErrors = {
       "pairing-failed": PairingFailed,
       "bluetooth-required": BluetoothRequired,
