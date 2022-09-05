@@ -147,6 +147,9 @@
         }
       }
     },
+    "CeloAllFundsWarning" : {
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
+    },
     "ClaimRewardsFeesWarning" : {
       "title" : "Les récompenses sont inférieures aux frais estimés pour les demander.",
       "description" : ""
@@ -916,7 +919,7 @@
     "cta" : "Acheter votre Ledger maintenant",
     "footer" : "J’ai déjà un appareil, je veux le configurer",
     "bannerTitle" : "Protégez vos cryptos et vos NFT",
-    "bannerTitle2" : "Vous aurez besoin d’un Nano pour le trading",
+    "bannerTitle2" : "Accédez au trading avec un Nano",
     "bannerSubtitle" : "avec un appareil Ledger",
     "bannerButtonTitle" : "Découvrez le Nano",
     "bannerButtonTitle2" : "Achetez un appareil",
@@ -1012,8 +1015,12 @@
         "subtitle" : "Les wallets physiques sont les seuls outils permettant de sécuriser vos actifs. "
       },
       "discoverLedger" : {
-        "title" : "Explorez Ledger Live",
-        "subtitle" : "Découvrez l’app et tous ses avantages "
+        "title" : "Explorer Ledger Live",
+        "subtitle" : "Découvrez l’app et tous ses avantages. "
+      },
+      "desktopSync" : {
+        "title" : "Synchroniser avec Ledger Live pour l’ordinateur",
+        "subtitle" : "Synchroniser vos actifs avec votre mobile à partir de Ledger Live pour l’ordinateur."
       }
     },
     "discoverLive" : {
@@ -1026,10 +1033,10 @@
         "title" : "Gardez un œil sur les marchés."
       },
       "2" : {
-        "title" : "Découvrez les apps et l’univers du Web3"
+        "title" : "Découvrez les apps et l’univers du Web3."
       },
       "3" : {
-        "title" : "Protégez vos cryptos et vos NFT"
+        "title" : "Protégez vos cryptos et vos NFT."
       }
     },
     "stepLanguage" : {
@@ -1563,6 +1570,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Recherche d’appareils",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Déjà couplé"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Réessayer"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "Wallet",
     "accounts" : "Comptes",
@@ -1698,7 +1732,13 @@
       "WITHDRAW_UNBONDED" : "Retiré",
       "NOMINATE" : "Nomination",
       "CHILL" : "Retirer les nominations",
-      "SET_CONTROLLER" : "Définir contrôleur"
+      "SET_CONTROLLER" : "Définir contrôleur",
+      "ACTIVATE" : "Activé",
+      "LOCK" : "Immobilisé",
+      "UNLOCK" : "Dégelé",
+      "REVOKE" : "Révoqué",
+      "REGISTER" : "Enregistré",
+      "WITHDRAW" : "Retiré"
     }
   },
   "operationDetails" : {
@@ -1784,7 +1824,7 @@
       "moreInfo" : "Plus d’informations",
       "cardTitle" : "Propulsé par {{team}}",
       "drawer" : {
-        "title" : "Intégration :{{family}}",
+        "title" : "Intégration : {{family}}",
         "subTitle" : "L’intégration {{family}} a été réalisée par l’équipe {{team}}.",
         "description" : "Ledger Live est une plateforme open source.",
         "description2" : "Les développeurs du monde entier peuvent intégrer et construire sur Ledger Live.",
@@ -2245,7 +2285,7 @@
       }
     },
     "connectDevice" : {
-      "headerTitle" : "Connecter l’appareil"
+      "headerTitle" : "Connecter votre appareil"
     }
   },
   "transfer" : {
@@ -2264,7 +2304,7 @@
       "description" : "Recevez des cryptos d’un autre wallet",
       "titleReadOnly" : "Adresse non vérifiée",
       "headerTitle" : "Crypto-actif",
-      "titleDevice" : "Connecter l’appareil",
+      "titleDevice" : "Connecter votre appareil",
       "verifySkipped" : "Vous n’avez pas confirmé votre adresse de bénéficiaire sur votre appareil Ledger. Vérifiez votre adresse {{accountType}} pour une sécurité optimale.",
       "verifyPending" : "Vérifiez que l’adresse {{currencyName}} affichée sur votre appareil Ledger est identique à celle indiquée sur votre téléphone.",
       "verified" : "Adresse confirmée. Si vous l’aviez copiée ou scannée, revérifiez.",
@@ -2280,7 +2320,7 @@
       },
       "stepperHeader" : {
         "range" : "Étape {{currentStep}} sur {{totalSteps}}",
-        "connectDevice" : "Connecter l’appareil"
+        "connectDevice" : "Connecter votre appareil"
       },
       "selectAccount" : {
         "title" : "Sélectionner un compte",
@@ -2480,7 +2520,7 @@
         "noApp" : {
           "title" : "App {{appName}} non installée",
           "desc" : "Allez dans le Gestionnaire pour installer l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "noAccounts" : {
@@ -2492,7 +2532,7 @@
         "outdatedApp" : {
           "title" : "Mise à jour de l’app disponible",
           "desc" : "Vous devez mettre à jour l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "summary" : {
@@ -2534,12 +2574,12 @@
       "missingApp" : {
         "title" : "Installez l’app Exchange sur votre appareil.",
         "description" : "Installez l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "outdatedApp" : {
         "title" : "Merci de mettre à jour l’app Exchange sur votre appareil.",
         "description" : "Mettez à jour l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "emptyState" : {
         "title" : "Aucun compte {{currency}}",
@@ -2687,8 +2727,8 @@
           "advanced" : "Avancé",
           "amount" : "Entrer le montant",
           "summary" : "Récapitulatif",
-          "selectDevice" : "Sélectionner l’appareil",
-          "connectDevice" : "Connecter l’appareil",
+          "selectDevice" : "Sélectionner votre appareil",
+          "connectDevice" : "Connecter votre appareil",
           "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
         },
         "selectAccount" : {
@@ -2728,8 +2768,8 @@
         "stepperHeader" : {
           "amount" : "Déposer",
           "summary" : "Récapitulatif",
-          "selectDevice" : "Sélectionner l’appareil",
-          "connectDevice" : "Connecter l’appareil",
+          "selectDevice" : "Sélectionner votre appareil",
+          "connectDevice" : "Connecter votre appareil",
           "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
         },
         "amount" : {
@@ -2750,8 +2790,8 @@
         "stepperHeader" : {
           "amount" : "Retirer",
           "summary" : "Récapitulatif",
-          "selectDevice" : "Sélectionner l’appareil",
-          "connectDevice" : "Connecter l’appareil",
+          "selectDevice" : "Sélectionner votre appareil",
+          "connectDevice" : "Connecter votre appareil",
           "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
         },
         "validation" : {
@@ -2794,8 +2834,8 @@
       "recipientAddress" : "Adresse du bénéficiaire",
       "selectAmount" : "Montant",
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
       "quantity" : "Montant",
       "selectCollection" : "Collection",
@@ -2889,8 +2929,8 @@
       "info" : "Gagner des récompenses",
       "selectAmount" : "Geler",
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "info" : {
@@ -2927,8 +2967,8 @@
     "stepperHeader" : {
       "selectAmount" : "Dégeler",
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "amount" : {
@@ -2947,8 +2987,8 @@
   },
   "claimReward" : {
     "stepperHeader" : {
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "validation" : {
@@ -2963,8 +3003,8 @@
     "stepperHeader" : {
       "selectValidator" : "Voter",
       "castVote" : "Mes votes",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "selectValidator" : {
@@ -3501,7 +3541,7 @@
       "stepperHeader" : {
         "info" : "Gagner des récompenses",
         "starter" : "Récompenses",
-        "connectDevice" : "Connecter l’appareil",
+        "connectDevice" : "Connecter votre appareil",
         "verification" : "Vérification",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
@@ -3540,7 +3580,7 @@
     "optIn" : {
       "stepperHeader" : {
         "selectToken" : "Ajouter des ASA (actif)",
-        "connectDevice" : "Connecter l’appareil",
+        "connectDevice" : "Connecter votre appareil",
         "verification" : "Vérification",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
@@ -3579,7 +3619,255 @@
       "available" : {
         "title" : "CELO disponible",
         "description" : "Ce montant est disponible."
+      },
+      "lockedBalance" : {
+        "title" : "Solde immobilisé",
+        "description" : "Vous devez immobiliser des actifs puis voter pour des groupes de validateurs pour gagner des récompenses."
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "Solde immobilisé non utilisé pour voter",
+        "description" : "The balance of locked assets available to be used for voting."
+      },
+      "withdrawableBalance" : {
+        "title" : "Solde pouvant être retiré",
+        "description" : "Unlocked Celo you can withdraw to your Available Balance."
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "Groupe de validateurs",
+      "totalVotes" : "Total des votes",
+      "actions" : {
+        "activate" : "Activer",
+        "revoke" : "Révoquer"
+      },
+      "delegationUnavailable" : {
+        "title" : "Insufficient Locked Funds"
+      }
+    },
+    "manage" : {
+      "title" : "Gérer les actifs",
+      "titleWhenPendingRegistration" : "Enregistrement du compte en attente",
+      "lock" : {
+        "title" : "Immobiliser",
+        "description" : "Pour gagner des récompenses, vous devez d’abord immobiliser un montant. Vous devez ensuite voter pour des validateurs."
+      },
+      "unlock" : {
+        "title" : "Dégeler",
+        "description" : "Pour libérer un montant immobilisé, vous devez d’abord le dégeler. Vous pourrez ensuite le retirer après la période de gel de 3 jours."
+      },
+      "withdraw" : {
+        "title" : "Retirer",
+        "description" : "Pour verser un montant dégelé sur votre solde disponible, vous devez le retirer manuellement."
+      },
+      "vote" : {
+        "title" : "Voter",
+        "description" : "Votez pour des groupes de validateurs. N’oubliez pas d’activer vos votes pour gagner des récompenses."
+      },
+      "activate" : {
+        "title" : "Activer le vote",
+        "description" : "Activez votre vote pour le groupe de validateurs."
+      },
+      "revoke" : {
+        "title" : "Révoquer le vote",
+        "description" : "Révoquez votre vote pour le groupe de validateurs."
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "Dégeler des actifs",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Les actifs dégelés peuvent être retirés après une période de 3 jours.",
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Transaction de dégel bien envoyée",
+              "text" : "Les actifs dégelés pourront être retirés après 3 jours."
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "Retirer des actifs",
+      "stepperHeader" : {
+        "title" : "Voter",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Your assets were withdrawn successfully",
+              "text" : "Le montant retiré sera crédité sur votre solde disponible."
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "I vote",
+      "stepperHeader" : {
+        "title" : "Voter",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Vous pouvez gagner des récompenses en déléguant vos CELO à un validateur.",
+            "bullet" : {
+              "0" : "Vous gardez la propriété de vos actifs délégués.",
+              "1" : "Déléguez avec votre appareil Ledger.",
+              "2" : "Les actifs seront disponibles une fois la délégation arrêtée."
+            },
+            "warning" : {
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
+            },
+            "cta" : "Continuer"
+          },
+          "amount" : {
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Votre vote a bien été effectué.",
+              "text" : "L’opération apparaîtra dans votre historique sous peu."
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "I activate my votes",
+      "stepperHeader" : {
+        "title" : "Activer le vote",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "title" : "Activer les votes",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Activation successful",
+              "text" : "Votre vote a bien été activé."
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "I revoke",
+      "stepperHeader" : {
+        "title" : "Voter",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "Actif",
+            "pending" : "En attente"
+          },
+          "amount" : {
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Vos votes ont bien été révoqués.",
+              "text" : "L’opération apparaîtra dans votre historique sous peu."
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "Voter",
+        "active" : "Actif",
+        "pending" : "En attente",
+        "awaitingActivation" : "En attente d’activation",
+        "info" : "Seuls les votes révocables sont affichés dans cette fenêtre."
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "Enregistrer un compte",
+        "continue" : "Continuer",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "Avant d’immobiliser des CELO, vous devez enregistrer votre compte sur la blockchain."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Compte bien enregistré",
+              "text" : "L’opération apparaîtra dans votre historique sous peu."
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "Immobiliser des actifs",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Les actifs immobilisés peuvent être dégelés à tout moment. Ils peuvent ensuite être retirés après 3 jours.",
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien immobilisés",
+              "text" : "Vous pourrez voter pour des validateurs une fois que le réseau aura confirmé votre transaction."
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "Vous pouvez gagner des récompenses CELO en déléguant vos actifs.",
+      "info" : "Fonctionnement de la délégation",
+      "delegation" : "Gagner des récompenses"
+    },
+    "earnRewards" : {
+      "description" : "Vous pouvez gagner des récompenses en déléguant vos CELO à un validateur.",
+      "bullet" : {
+        "0" : "Vous gardez la propriété de vos actifs délégués.",
+        "1" : "Déléguez avec votre appareil Ledger.",
+        "2" : "Les actifs seront disponibles une fois la délégation arrêtée."
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "You have a withdrawable balance.",
+      "activatableVotes" : "Vos votes peuvent maintenant être activés."
     }
   },
   "osmosis" : {
@@ -3648,8 +3936,8 @@
         "amountSubTitle" : "Montant à déléguer",
         "summary" : "Récapitulatif",
         "verification" : "Vérification",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3712,8 +4000,8 @@
         "amountSubTitle" : "Montant à redéléguer",
         "amountTitle" : "{{from}} → {{to}}",
         "summary" : "Récapitulatif",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3748,8 +4036,8 @@
       "stepperHeader" : {
         "amountSubTitle" : "Montant à interrompre",
         "summary" : "Récapitulatif",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3776,8 +4064,8 @@
         "validator" : "Sélectionner la récompense à toucher",
         "method" : "Demander les récompenses",
         "summary" : "Récapitulatif",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3953,7 +4241,7 @@
     "addAsset" : {
       "stepperHeader" : {
         "selectAsset" : "Ajouter un actif",
-        "connectDevice" : "Connecter l’appareil",
+        "connectDevice" : "Connecter votre appareil",
         "verification" : "Vérification",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
@@ -4082,8 +4370,8 @@
     "nominate" : {
       "stepperHeader" : {
         "validators" : "Validateurs à nommer",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4118,8 +4406,8 @@
       "stepperHeader" : {
         "starter" : "Gagner des récompenses",
         "amount" : "Montant à lier",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4154,8 +4442,8 @@
     "rebond" : {
       "stepperHeader" : {
         "amount" : "Montant à relier",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4177,8 +4465,8 @@
     "unbond" : {
       "stepperHeader" : {
         "amount" : "Montant à délier",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4216,8 +4504,8 @@
       },
       "stepperHeader" : {
         "info" : "Informations",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4244,7 +4532,10 @@
       "info" : "Fonctionnement de la délégation",
       "broadcastSuccessTitle" : "Opération envoyée",
       "broadcastSuccessDescription" : "Le statut de la délégation sera mis à jour une fois la transaction confirmée.",
-      "delegatedTo" : "délégué à"
+      "delegatedTo" : "délégué à",
+      "started" : {
+        "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
+      }
     }
   },
   "delegation" : {
@@ -4264,6 +4555,7 @@
     "delegation" : "Délégation",
     "viewDetails" : "Voir les détails",
     "validator" : "Validateur",
+    "validatorGroup" : "Groupe de validateurs",
     "validatorAddress" : "Adresse du validateur",
     "delegatedAccount" : "Compte délégué",
     "duration" : "Durée",
@@ -4466,8 +4758,8 @@
     "successDescription" : "Vous avez signé le message reçu d’une app tierce.",
     "stepperHeader" : {
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "stepVerification" : {
