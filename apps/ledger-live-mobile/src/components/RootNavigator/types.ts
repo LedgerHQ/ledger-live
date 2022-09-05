@@ -1,9 +1,9 @@
 import type {
-  // CompositeScreenProps,
+  CompositeScreenProps,
   NavigatorScreenParams,
 } from "@react-navigation/native";
-// import type { StackScreenProps } from "@react-navigation/stack";
-// import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import type { StackScreenProps } from "@react-navigation/stack";
+import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 
 import { Device } from "@ledgerhq/types-devices";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
@@ -37,10 +37,12 @@ export type AccountSettingsNavigatorParamList = {
 
 export type AccountsNavigatorParamList = {
   [ScreenName.Accounts]: { currency?: string; search?: string };
-  [ScreenName.Account]: {
+  [ScreenName.Account]:
+  | {
     currencyId: string;
     currencyType: "CryptoCurrency" | "TokenCurrency";
-  } | {
+  }
+  | {
     accountId: string;
     parentId?: string;
   };
@@ -89,7 +91,7 @@ export type AddAccountsNavigatorParamList = {
 };
 
 export type ImportAccountsNavigatorParamList = {
-  [ScreenName.ScanAccounts]: { data?: any[]; onFinish?: () => void; };
+  [ScreenName.ScanAccounts]: { data?: any[]; onFinish?: () => void };
   [ScreenName.DisplayResult]: {
     result: ImportAccountsResult;
     onFinish?: () => void;
@@ -163,21 +165,90 @@ export type BaseOnboardingNavigatorParamList = {
   [NavigatorName.PasswordModifyFlow]: undefined;
 };
 
-export type BaseNavigatorStackParamList = {
-  BleDevicePairingFlow: BleDevicePairingFlowParams;
+export type PortfolioNavigatorStackParamList = {
+  [ScreenName.Portfolio]: undefined;
+  [NavigatorName.PortfolioAccounts]: NavigatorScreenParams<AccountsNavigatorParamList>;
+};
 
-  [NavigatorName.Main]: {
-    hideTabNavigation?: boolean;
-  };
+export type MainNavigatorParamList = {
+  [NavigatorName.Portfolio]: NavigatorScreenParams<PortfolioNavigatorStackParamList>;
+  [NavigatorName.Market]: undefined;
+  [ScreenName.Transfer]: undefined;
+  [NavigatorName.Discover]: undefined;
+  [NavigatorName.Manager]: undefined;
+};
+
+export type BaseNavigatorStackParamList = {
+  [NavigatorName.Main]: CompositeScreenProps<
+    StackScreenProps<{ [NavigatorName.Main]: { hideTabNavigation?: boolean } }>,
+    BottomTabScreenProps<MainNavigatorParamList>
+  >;
   [NavigatorName.BuyDevice]: undefined;
   [ScreenName.NoDeviceWallScreen]: undefined;
   [ScreenName.PostBuyDeviceSetupNanoWallScreen]: undefined;
+
+  [ScreenName.PostBuyDeviceScreen]: undefined;
+  [ScreenName.PlatformApp]: undefined;
+  [ScreenName.Learn]: undefined;
+  [ScreenName.SwapV2FormSelectAccount]: undefined;
+  [ScreenName.SwapOperationDetails]: undefined;
+  [ScreenName.SwapV2FormSelectCurrency]: undefined;
+  [ScreenName.SwapFormSelectProviderRate]: undefined;
+  [ScreenName.SwapV2FormSelectFees]: undefined;
+  [ScreenName.VerifyAccount]: undefined;
+  [ScreenName.OperationDetails]: undefined;
+  [ScreenName.PairDevices]: undefined;
+  [ScreenName.EditDeviceName]: undefined;
+  [ScreenName.MarketCurrencySelect]: undefined;
+  [ScreenName.PortfolioOperationHistory]: undefined;
+  [ScreenName.Account]: undefined;
+  [ScreenName.ScanRecipient]: undefined;
+  [ScreenName.WalletConnectScan]: undefined;
+  [ScreenName.WalletConnectDeeplinkingSelectAccount]: undefined;
+  [ScreenName.WalletConnectConnect]: undefined;
+  [ScreenName.FallbackCameraSend]: undefined;
+  [ScreenName.BleDevicePairingFlow]: BleDevicePairingFlowParams;
+
+  [NavigatorName.Settings]: NavigatorScreenParams<undefined>;
+  [NavigatorName.ReceiveFunds]: NavigatorScreenParams<undefined>;
+  [NavigatorName.SendFunds]: NavigatorScreenParams<undefined>;
+  [NavigatorName.SignMessage]: NavigatorScreenParams<undefined>;
+  [NavigatorName.SignTransaction]: NavigatorScreenParams<undefined>;
+  [NavigatorName.Swap]: NavigatorScreenParams<undefined>;
+  [NavigatorName.Lending]: NavigatorScreenParams<undefined>;
+  [NavigatorName.LendingInfo]: NavigatorScreenParams<undefined>;
+  [NavigatorName.LendingEnableFlow]: NavigatorScreenParams<undefined>;
+  [NavigatorName.LendingSupplyFlow]: NavigatorScreenParams<undefined>;
+  [NavigatorName.LendingWithdrawFlow]: NavigatorScreenParams<undefined>;
+  [NavigatorName.Freeze]: NavigatorScreenParams<undefined>;
+  [NavigatorName.Unfreeze]: NavigatorScreenParams<undefined>;
+  [NavigatorName.ClaimRewards]: NavigatorScreenParams<undefined>;
+  [NavigatorName.AddAccounts]: NavigatorScreenParams<undefined>;
+  [NavigatorName.RequestAccount]: NavigatorScreenParams<undefined>;
+  [NavigatorName.FirmwareUpdate]: NavigatorScreenParams<undefined>;
+  [NavigatorName.Exchange]: NavigatorScreenParams<undefined>;
+  [NavigatorName.ProviderList]: NavigatorScreenParams<undefined>;
+  [NavigatorName.ProviderView]: NavigatorScreenParams<undefined>;
+  [NavigatorName.ExchangeStack]: NavigatorScreenParams<undefined>;
+  [NavigatorName.PlatformExchange]: NavigatorScreenParams<undefined>;
+  [NavigatorName.AccountSettings]: NavigatorScreenParams<undefined>;
+  [NavigatorName.ImportAccounts]: NavigatorScreenParams<undefined>;
+  [NavigatorName.PasswordAddFlow]: NavigatorScreenParams<undefined>;
+  [NavigatorName.PasswordModifyFlow]: NavigatorScreenParams<undefined>;
+  [NavigatorName.MigrateAccountsFlow]: NavigatorScreenParams<undefined>;
+  [NavigatorName.Analytics]: NavigatorScreenParams<undefined>;
+  [NavigatorName.NotificationCenter]: NavigatorScreenParams<undefined>;
+  [NavigatorName.NftNavigator]: NavigatorScreenParams<undefined>;
+  [NavigatorName.Accounts]: NavigatorScreenParams<undefined>;
 };
+
+export type RootStackScreenProps<T extends keyof RootStackParamList> =
+  StackScreenProps<RootStackParamList, T>;
 
 export type RootStackParamList = {
   [NavigatorName.ImportAccounts]: NavigatorScreenParams<ImportAccountsNavigatorParamList>;
   [NavigatorName.BaseOnboarding]: NavigatorScreenParams<BaseOnboardingNavigatorParamList>;
-  [NavigatorName.Base]: undefined;
+  [NavigatorName.Base]: NavigatorScreenParams<BaseNavigatorStackParamList>;
 };
 
 /* eslint-disable @typescript-eslint/no-namespace */
