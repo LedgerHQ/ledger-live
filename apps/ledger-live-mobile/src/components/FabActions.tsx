@@ -13,6 +13,7 @@ import {
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Icons } from "@ledgerhq/native-ui";
+import { useSelectableCurrencies } from "@ledgerhq/live-common/lib/exchange/swap/hooks/useSelectableCurrencies";
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
@@ -21,6 +22,7 @@ import { accountsCountSelector } from "../reducers/accounts";
 import { NavigatorName, ScreenName } from "../const";
 import FabAccountButtonBar, { ActionButton } from "./FabAccountButtonBar";
 import useActions from "../screens/Account/hooks/useActions";
+import { toSelector } from "../actions/swap";
 
 type FabAccountActionsProps = {
   account: AccountLike;
@@ -42,11 +44,10 @@ export const FabAccountActionsComponent: React.FC<FabAccountActionsProps> = ({
   const { t } = useTranslation();
 
   const currency = getAccountCurrency(account);
-  const swapSelectableCurrencies = useSelector(
-    swapSelectableCurrenciesSelector,
-  );
+  const allCurrencies = useSelector(toSelector)(currency.id);
+  const swapSelectableCurrencies = useSelectableCurrencies({ allCurrencies });
   const availableOnSwap =
-    swapSelectableCurrencies.includes(currency.id) && account.balance.gt(0);
+    swapSelectableCurrencies.length && account.balance.gt(0);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const rampCatalog = useRampCatalog();
