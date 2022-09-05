@@ -4,7 +4,6 @@ import uniq from "lodash/uniq";
 import type { OutputSelector } from "reselect";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import type {
-  Currency,
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
@@ -39,14 +38,14 @@ const initialState: AccountsState = {
 };
 const handlers = {
   ACCOUNTS_IMPORT: (
-    s: AccountsState,
-    { payload: state }: { payload: AccountsState },
-  ) => state,
+    _: AccountsState,
+    { payload }: { payload: AccountsState },
+  ) => payload,
   ACCOUNTS_USER_IMPORT: (
     s: AccountsState,
-    { payload: input }: { payload: ImportAccountsReduceInput },
+    { payload }: { payload: ImportAccountsReduceInput },
   ) => ({
-    active: importAccountsReduce(s.active, input),
+    active: importAccountsReduce(s.active, payload),
   }),
   REORDER_ACCOUNTS: (
     state: AccountsState,
@@ -57,7 +56,7 @@ const handlers = {
         comparator: AccountComparator;
       };
     },
-  ): AccountsState => ({
+  ) => ({
     active: nestedSortAccounts(state.active, comparator),
   }),
   ACCOUNTS_ADD: (
@@ -74,7 +73,7 @@ const handlers = {
     }),
   }),
   SET_ACCOUNTS: (
-    state: AccountsState,
+    _: AccountsState,
     {
       payload,
     }: {
@@ -110,10 +109,10 @@ const handlers = {
     }: {
       payload: Account;
     },
-  ): AccountsState => ({
+  ) => ({
     active: state.active.filter(acc => acc.id !== account.id),
   }),
-  CLEAN_CACHE: (state: AccountsState): AccountsState => ({
+  CLEAN_CACHE: (state: AccountsState, _: { payload: null }) => ({
     active: state.active.map(clearAccount),
   }),
   BLACKLIST_TOKEN: (
@@ -126,7 +125,7 @@ const handlers = {
   ) => ({
     active: state.active.map(a => withoutToken(a, tokenId)),
   }),
-  DANGEROUSLY_OVERRIDE_STATE: (state: AccountsState): AccountsState => ({
+  DANGEROUSLY_OVERRIDE_STATE: (state: AccountsState, _: { payload: null }) => ({
     ...state,
   }),
 };
@@ -170,11 +169,13 @@ export const cryptoCurrenciesSelector = createSelector(
 );
 export const accountsTuplesByCurrencySelector = createSelector(
   accountsSelector,
-  (_: State, { currency }: { currency: Currency }) => currency,
+  (_: State, { currency }: { currency: CryptoCurrency | TokenCurrency }) =>
+    currency,
   (
     accounts,
     currency,
   ): { account: AccountLike; subAccount: SubAccount | null }[] => {
+    // ): { account: AccountLike; subAccount: SubAccount | null }[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
         .filter(account => account.currency.id === currency.parentCurrency.id)
@@ -201,7 +202,7 @@ export const accountsTuplesByCurrencySelector = createSelector(
 );
 export const flattenAccountsByCryptoCurrencySelector = createSelector(
   flattenAccountsSelector,
-  (_, { currencies }) => currencies,
+  (_: State, { currencies }: { currencies: Array<string> }) => currencies,
   (accounts, currencies): AccountLike[] =>
     currencies && currencies.length
       ? accounts.filter(a =>
@@ -226,22 +227,25 @@ export const flattenAccountsByCryptoCurrencyScreenSelector =
       currencies: [currency.id],
     });
   };
+
+// FIXME: NEVER USED ANYWHERE ELSE - DROP ?
 export const accountCryptoCurrenciesSelector = createSelector(
   cryptoCurrenciesSelector,
-  (_, { currencies }) => currencies,
+  (_: State, { currencies }: { currencies: Array<string> }) => currencies,
   (cryptoCurrencies, currencies) =>
     currencies && currencies.length
       ? cryptoCurrencies.filter(c => currencies.includes(c.id))
       : cryptoCurrencies,
 );
+
 export const accountSelector = createSelector(
   accountsSelector,
-  (_, { accountId }) => accountId,
+  (_: State, { accountId }: { accountId: string }) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 export const parentAccountSelector = createSelector(
   accountsSelector,
-  (_, { account }) => (account ? account.parentId : null),
+  (_: State, { account }: { account }) => (account ? account.parentId : null),
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 export const accountScreenSelector = (route: any) => (state: any) => {

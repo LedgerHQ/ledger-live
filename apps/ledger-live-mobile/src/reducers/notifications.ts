@@ -1,7 +1,7 @@
 import { handleActions } from "redux-actions";
 import type { State } from ".";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
-import { GetReducerPayload } from "../types/helpers";
+import type { GetReducerPayload } from "../types/helpers";
 
 export type NotificationsState = {
   /** Boolean indicating whether the push notifications modal is opened or closed */
