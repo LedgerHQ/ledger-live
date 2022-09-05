@@ -21,7 +21,6 @@ import FilteredSearchBar from "../../components/FilteredSearchBar";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { flattenAccountsSelector } from "../../reducers/accounts";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 const SEARCH_KEYS = ["name", "ticker"];
 
@@ -60,7 +59,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     () => route.params?.filterCurrencyIds || [],
     [route.params?.filterCurrencyIds],
   );
-  const lastRoute = usePreviousRouteName();
   const cryptoCurrencies = useMemo(
     () =>
       listSupportedCurrencies()
@@ -150,7 +148,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="Receive" name="Select Crypto" source={lastRoute} />
+      <TrackScreen category="Receive" name="Select Crypto" />
       <LText fontSize={32} fontFamily="InterMedium" semiBold px={6} my={3}>
         {t("transfer.receive.selectCrypto.title")}
       </LText>

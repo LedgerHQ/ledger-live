@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { BottomDrawer, Flex, Text, Button } from "@ledgerhq/native-ui";
 import { track, TrackScreen } from "../../analytics";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   isOpen: boolean;
@@ -11,8 +10,6 @@ type Props = {
 };
 
 const AdditionalInfoModal = ({ isOpen, onClose, currencyTicker }: Props) => {
-  const lastRoute = usePreviousRouteName();
-
   const onUnderstood = useCallback(() => {
     track("button_clicked", {
       button: "Ok, got it",
@@ -34,7 +31,6 @@ const AdditionalInfoModal = ({ isOpen, onClose, currencyTicker }: Props) => {
       <TrackScreen
         category="Receive"
         name="Explication Account Import/Creation"
-        source={lastRoute}
         type="drawer"
       />
       <Text

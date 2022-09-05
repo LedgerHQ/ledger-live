@@ -39,7 +39,6 @@ import {
   countervalueFirstSelector,
 } from "../../reducers/settings";
 import { track, TrackScreen } from "../../analytics";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 type RouteParams = {
   currency: CryptoCurrency | TokenCurrency;
@@ -58,7 +57,6 @@ const AssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const previousScreen = usePreviousRouteName();
   const useCounterValue = useSelector(countervalueFirstSelector);
   const { currency } = route?.params;
   const cryptoAccounts = useSelector(
@@ -178,11 +176,7 @@ const AssetScreen = ({ route }: Props) => {
 
   return (
     <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
-      <TrackScreen
-        category="Asset"
-        assetName={currency.name}
-        screen={previousScreen}
-      />
+      <TrackScreen category="Asset" assetName={currency.name} />
       <CurrencyBackgroundGradient
         currentPositionY={currentPositionY}
         graphCardEndPosition={graphCardEndPosition}

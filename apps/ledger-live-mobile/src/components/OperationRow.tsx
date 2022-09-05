@@ -21,7 +21,6 @@ import OperationRowDate from "./OperationRowDate";
 import OperationRowNftName from "./OperationRowNftName";
 import perFamilyOperationDetails from "../generated/operationDetails";
 import { track } from "../analytics";
-import { useCurrentRouteName } from "../helpers/routeHooks";
 
 const ContainerTouchable = styled(Flex).attrs(_ => ({
   height: "64px",
@@ -85,12 +84,10 @@ export default function OperationRow({
   isLast,
 }: Props) {
   const navigation = useNavigation();
-  const currentScreen = useCurrentRouteName();
 
   const goToOperationDetails = debounce(() => {
     track("transaction_clicked", {
       transaction: operation.type,
-      screen: currentScreen,
     });
     const params = [
       ScreenName.OperationDetails,
