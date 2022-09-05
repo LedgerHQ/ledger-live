@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.1.0-next.6
+
+### Minor Changes
+
+- [#1155](https://github.com/LedgerHQ/ledger-live/pull/1155) [`3849ee3f30`](https://github.com/LedgerHQ/ledger-live/commit/3849ee3f30987b51d648ce29bfee4721f4ddff5f) Thanks [@sarneijim](https://github.com/sarneijim)! - Add requirement to cosmos banner
+
 ## 27.1.0-next.5
 
 ### Patch Changes
