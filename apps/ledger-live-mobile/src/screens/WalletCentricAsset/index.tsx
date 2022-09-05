@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
@@ -16,6 +16,7 @@ import {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { useNavigation } from "@react-navigation/native";
+import { useSingleCoinMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -69,6 +70,17 @@ const AssetScreen = ({ route }: Props) => {
   const cryptoAccounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
   );
+
+  const assetPortfolio = usePortfolio(cryptoAccounts, {
+    flattenSourceAccounts: false,
+  });
+  const { selectedCoinData, selectCurrency, counterCurrency } =
+    useSingleCoinMarketData();
+
+  useEffect(() => {
+    selectCurrency(currency.id, currency, "24h");
+  }, [currency, selectCurrency]);
+
   const areCryptoAccountsEmpty = useMemo(
     () => cryptoAccounts.every(account => isAccountEmpty(account)),
     [cryptoAccounts],
@@ -76,10 +88,6 @@ const AssetScreen = ({ route }: Props) => {
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
-
-  const assetPortfolio = usePortfolio(cryptoAccounts, {
-    flattenSourceAccounts: false,
-  });
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);
@@ -136,7 +144,7 @@ const AssetScreen = ({ route }: Props) => {
       ...(areCryptoAccountsEmpty
         ? [<EmptyAccountCard currencyTicker={currency.ticker} />]
         : []),
-      ...(isCryptoCurrency
+      ...(isCryptoCurrency && selectedCoinData?.price
         ? [
             <SectionContainer px={6}>
               <SectionTitle
@@ -144,7 +152,11 @@ const AssetScreen = ({ route }: Props) => {
                   currencyTicker: currency.ticker,
                 })}
               />
-              <MarketPriceSection currency={currency} />
+              <MarketPriceSection
+                currency={currency}
+                selectedCoinData={selectedCoinData}
+                counterCurrency={counterCurrency}
+              />
             </SectionContainer>,
           ]
         : []),

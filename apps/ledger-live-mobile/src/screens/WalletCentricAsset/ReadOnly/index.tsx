@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { FlatList } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
@@ -14,6 +14,7 @@ import {
   Currency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
+import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import accountSyncRefreshControl from "../../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
@@ -63,6 +64,12 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
   );
 
   const assetPortfolio = usePortfolio();
+  const { selectedCoinData, selectCurrency, counterCurrency } =
+    useSingleCoinMarketData();
+
+  useEffect(() => {
+    selectCurrency(currency.id, currency, "24h");
+  }, [currency, selectCurrency]);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);
@@ -97,7 +104,7 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
         <FabAssetActions currency={currency} />
       </SectionContainer>,
       <EmptyAccountCard currencyTicker={currency.ticker} />,
-      ...(isCryptoCurrency
+      ...(isCryptoCurrency && selectedCoinData?.price
         ? [
             <SectionContainer px={6}>
               <SectionTitle
@@ -105,7 +112,11 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
                   currencyTicker: currency.ticker,
                 })}
               />
-              <MarketPriceSection currency={currency} />
+              <MarketPriceSection
+                currency={currency}
+                selectedCoinData={selectedCoinData}
+                counterCurrency={counterCurrency}
+              />
             </SectionContainer>,
           ]
         : []),
