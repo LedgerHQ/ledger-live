@@ -34,7 +34,7 @@ const MarketPrice = ({
     navigation.navigate(ScreenName.MarketDetail, {
       currencyId: currency.id,
     });
-  }, [currency, currentScreen, navigation]);
+  }, [currency, navigation]);
 
   return (
     <Flex flex={1} mt={6}>

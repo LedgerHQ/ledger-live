@@ -13,6 +13,7 @@ import {
   TokenAccount,
   Operation,
 } from "@ledgerhq/types-live";
+import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import {
   getAccountCapabilities,
@@ -177,12 +178,13 @@ const AccountScreenInner = ({
           <SectionContainer px={6} isLast>
             <SectionTitle title={t("analytics.operations.title")} />
             <OperationsHistorySection accounts={[account]} />
-            {areCryptoAccountsEmpty ? (
-              <EmptyAccountCard currencyTicker={currency.ticker} />
-            ) : null}
           </SectionContainer>,
         ]
-      : []),
+      : [
+          <Flex px={6}>
+            <EmptyAccountCard currencyTicker={currency.ticker} />
+          </Flex>,
+        ]),
   ];
 
   return (
