@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -8,7 +6,7 @@ import { ScreenName } from "../../../const";
 import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
 import StepHeader from "../../../components/StepHeader";
 
-import LockAmount from "./01-Amount";
+import RegisterAccountStarted from "./01-Started";
 import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
 import ValidationSuccess from "./ValidationSuccess";
@@ -16,7 +14,7 @@ import ValidationError from "./ValidationError";
 
 const totalSteps = "3";
 
-function LockFlow() {
+function RegisterAccountFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -28,13 +26,13 @@ function LockFlow() {
   return (
     <Stack.Navigator screenOptions={stackNavigatorConfig}>
       <Stack.Screen
-        name={ScreenName.CeloLockAmount}
-        component={LockAmount}
+        name={ScreenName.CeloRegistrationStarted}
+        component={RegisterAccountStarted}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("celo.lock.stepperHeader.title")}
-              subtitle={t("celo.lock.stepperHeader.stepRange", {
+              title={t("celo.register.stepperHeader.title")}
+              subtitle={t("celo.register.stepperHeader.stepRange", {
                 currentStep: "1",
                 totalSteps,
               })}
@@ -44,13 +42,13 @@ function LockFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CeloLockSelectDevice}
+        name={ScreenName.CeloRegistrationSelectDevice}
         component={SelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("celo.lock.stepperHeader.selectDevice")}
-              subtitle={t("celo.lock.stepperHeader.stepRange", {
+              title={t("celo.register.stepperHeader.selectDevice")}
+              subtitle={t("celo.register.stepperHeader.stepRange", {
                 currentStep: "2",
                 totalSteps,
               })}
@@ -59,13 +57,13 @@ function LockFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CeloLockConnectDevice}
+        name={ScreenName.CeloRegistrationConnectDevice}
         component={ConnectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("celo.lock.stepperHeader.connectDevice")}
-              subtitle={t("celo.lock.stepperHeader.stepRange", {
+              title={t("celo.register.stepperHeader.connectDevice")}
+              subtitle={t("celo.register.stepperHeader.stepRange", {
                 currentStep: "3",
                 totalSteps,
               })}
@@ -74,7 +72,7 @@ function LockFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CeloLockValidationSuccess}
+        name={ScreenName.CeloRegistrationValidationSuccess}
         component={ValidationSuccess}
         options={{
           headerTitle: "",
@@ -84,7 +82,7 @@ function LockFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CeloLockValidationError}
+        name={ScreenName.CeloRegistrationValidationError}
         component={ValidationError}
         options={{ headerShown: false }}
       />
@@ -96,6 +94,6 @@ const options = {
   headerShown: false,
 };
 
-export { LockFlow as component, options };
+export { RegisterAccountFlow as component, options };
 
 const Stack = createStackNavigator();

@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -17,8 +16,8 @@ import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
 type Props = {
-  account: AccountLike,
-  transaction: Transaction,
+  account: AccountLike;
+  transaction: Transaction;
 };
 
 export default function CeloFeeRow({ account, transaction }: Props) {

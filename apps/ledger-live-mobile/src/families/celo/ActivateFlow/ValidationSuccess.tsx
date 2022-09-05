@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -12,15 +11,15 @@ import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  accountId: string,
-  deviceId: string,
-  transaction: any,
-  result: Operation,
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  result: Operation;
 };
 
 export default function ValidationSuccess({ navigation, route }: Props) {

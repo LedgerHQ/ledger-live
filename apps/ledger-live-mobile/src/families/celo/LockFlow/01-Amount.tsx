@@ -1,4 +1,3 @@
-/* @flow */
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
@@ -37,16 +36,16 @@ import { getFirstStatusError, hasStatusError } from "../../helpers";
 import SendRowsFee from "../SendRowsFee";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
+  accountId: string;
+  transaction: Transaction;
 };
 
-export default function UnlockAmount({ navigation, route }: Props) {
+export default function LockAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -61,7 +60,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
       const t = bridge.createTransaction(mainAccount);
 
       const transaction = bridge.updateTransaction(t, {
-        mode: "unlock",
+        mode: "lock",
       });
 
       return { account: mainAccount, transaction };
@@ -73,7 +72,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
     if (!account) return;
 
     let cancelled = false;
-    bridge
+    getAccountBridge(account, parentAccount)
       .estimateMaxSpendable({
         account,
         parentAccount,
@@ -101,6 +100,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
   );
 
   const toggleUseAllAmount = useCallback(() => {
+    const bridge = getAccountBridge(account, parentAccount);
     if (!transaction) return;
 
     setTransaction(
@@ -112,7 +112,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
   }, [setTransaction, account, parentAccount, transaction]);
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.CeloUnlockSelectDevice, {
+    navigation.navigate(ScreenName.CeloLockSelectDevice, {
       accountId: account.id,
       transaction,
       status,
@@ -136,7 +136,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="UnlockFlow" name="Amount" />
+      <TrackScreen category="LockFlow" name="Amount" />
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
       >
@@ -176,14 +176,14 @@ export default function UnlockAmount({ navigation, route }: Props) {
                   <TranslatedError error={error || warning} />
                 </LText>
                 <LText style={styles.info}>
-                  <Trans i18nKey={`celo.unlock.flow.steps.amount.info`} />
+                  <Trans i18nKey={`celo.lock.flow.steps.amount.info`} />
                 </LText>
               </View>
               <View style={styles.bottomWrapper}>
                 <View style={styles.available}>
                   <View style={styles.availableLeft}>
                     <LText>
-                      <Trans i18nKey="celo.unlock.flow.steps.amount.available" />
+                      <Trans i18nKey="celo.lock.flow.steps.amount.available" />
                     </LText>
                     <LText semiBold>
                       {maxSpendable ? (
@@ -200,7 +200,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
                   {typeof useAllAmount === "boolean" ? (
                     <View style={styles.availableRight}>
                       <LText style={styles.maxLabel}>
-                        <Trans i18nKey="celo.unlock.flow.steps.amount.max" />
+                        <Trans i18nKey="celo.lock.flow.steps.amount.max" />
                       </LText>
                       <Switch
                         style={styles.switch}
@@ -217,7 +217,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
                 />
                 <View style={styles.continueWrapper}>
                   <Button
-                    event="CeloUnlockAmountContinue"
+                    event="CeloLockAmountContinue"
                     type="primary"
                     title={
                       <Trans

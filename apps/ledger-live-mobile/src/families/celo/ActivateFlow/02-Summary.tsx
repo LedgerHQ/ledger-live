@@ -5,6 +5,7 @@ import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import {
   CeloValidatorGroup,
   Transaction,
+  CeloAccount,
 } from "@ledgerhq/live-common/families/celo/types";
 import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { Text } from "@ledgerhq/native-ui";
@@ -14,7 +15,6 @@ import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import Touchable from "../../../components/Touchable";

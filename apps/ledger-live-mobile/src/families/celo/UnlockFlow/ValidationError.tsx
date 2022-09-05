@@ -7,16 +7,16 @@ import ValidateError from "../../../components/ValidateError";
 import { urls } from "../../../config/urls";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  accountId: string,
-  parentId: string,
-  deviceId: string,
-  transaction: any,
-  error: Error,
+  accountId: string;
+  parentId: string;
+  deviceId: string;
+  transaction: any;
+  error: Error;
 };
 
 export default function ValidationError({ navigation, route }: Props) {

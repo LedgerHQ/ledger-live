@@ -16,8 +16,8 @@ import LText from "../../../components/LText";
 import TranslatedError from "../../../components/TranslatedError";
 
 type Props = {
-  navigation: any,
-  route: { params: any },
+  navigation: any;
+  route: { params: any };
 };
 
 export default function RegisterAccountStarted({ navigation, route }: Props) {
