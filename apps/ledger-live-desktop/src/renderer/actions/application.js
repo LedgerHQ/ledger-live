@@ -27,3 +27,7 @@ export const toggleSkeletonVisibility = createAction(
   "APPLICATION_SET_DATA",
   alwaysShowSkeletons => ({ debug: { alwaysShowSkeletons } }),
 );
+
+export const relaunchOnboarding = createAction("RELAUNCH_ONBOARDING", onboardingRelaunched => ({
+  onboardingRelaunched,
+}));
