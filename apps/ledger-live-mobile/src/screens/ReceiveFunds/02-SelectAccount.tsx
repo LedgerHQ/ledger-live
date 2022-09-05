@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
-import { useRoute } from "@react-navigation/native";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
@@ -23,7 +22,6 @@ type Props = {
 function ReceiveSelectAccount({ navigation, route }: Props) {
   const lastRoute = usePreviousRouteName();
   const currency = route.params?.currency;
-  const routerRoute = useRoute();
   const { t } = useTranslation();
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
@@ -65,7 +63,6 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
         setSelectedAccount(account.id);
         track("account_clicked", {
           currency: currency.name,
-          screen: routerRoute.name,
         });
         navigation.navigate(ScreenName.ReceiveConfirmation, {
           ...route.params,
@@ -74,13 +71,7 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
         });
       }
     },
-    [
-      currency.name,
-      navigation,
-      route.params,
-      routerRoute.name,
-      selectedAccount,
-    ],
+    [currency.name, navigation, route.params, selectedAccount],
   );
 
   const renderItem = useCallback(

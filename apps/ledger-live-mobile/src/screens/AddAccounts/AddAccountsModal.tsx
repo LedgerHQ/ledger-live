@@ -10,7 +10,6 @@ import NanoXFolded from "../../images/devices/NanoXFolded";
 
 import ChoiceCard from "../../components/ChoiceCard";
 import { track, TrackScreen } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 const images = {
   light: {
@@ -37,14 +36,12 @@ export default function AddAccountsModal({
   currency,
 }: Props) {
   const { t } = useTranslation();
-  const currentScreen = useCurrentRouteName();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onClickAdd = useCallback(() => {
     track("button_clicked", {
       button: "With your Ledger",
       drawer: "AddAccountsModal",
-      screen: currentScreen,
     });
     navigation.navigate(NavigatorName.AddAccounts);
     if (currency?.type === "TokenCurrency") {
@@ -57,26 +54,24 @@ export default function AddAccountsModal({
       });
     }
     onClose();
-  }, [currentScreen, navigation, currency, onClose]);
+  }, [navigation, currency, onClose]);
 
   const onClickImport = useCallback(() => {
     track("button_clicked", {
       button: "Import from Desktop",
       drawer: "AddAccountsModal",
-      screen: currentScreen,
     });
     navigation.navigate(NavigatorName.ImportAccounts);
     onClose();
-  }, [navigation, onClose, currentScreen]);
+  }, [navigation, onClose]);
 
   const onPressClose = useCallback(() => {
     track("button_clicked", {
       button: "Close 'x'",
       drawer: "AddAccountsModal",
-      screen: currentScreen,
     });
     onClose();
-  }, [onClose, currentScreen]);
+  }, [onClose]);
 
   return (
     <BottomDrawer
@@ -85,11 +80,7 @@ export default function AddAccountsModal({
       onClose={onPressClose}
       title={t("portfolio.emptyState.addAccounts.addAccounts")}
     >
-      <TrackScreen
-        category="Add/Import accounts"
-        type="drawer"
-        screen={currentScreen}
-      />
+      <TrackScreen category="Add/Import accounts" type="drawer" />
       {!readOnlyModeEnabled && (
         <ChoiceCard
           title={t("addAccountsModal.add.title")}

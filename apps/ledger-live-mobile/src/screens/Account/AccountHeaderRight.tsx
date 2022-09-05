@@ -11,11 +11,9 @@ import {
   accountsSelector,
 } from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 export default function AccountHeaderRight() {
   const navigation = useNavigation();
-  const currentScreen = useCurrentRouteName();
   const route = useRoute();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const accounts = useSelector(accountsSelector);
@@ -67,7 +65,6 @@ export default function AccountHeaderRight() {
         event="button_clicked"
         eventProperties={{
           button: "Account Settings",
-          screen: currentScreen,
         }}
         onPress={() => {
           navigation.navigate(NavigatorName.AccountSettings, {

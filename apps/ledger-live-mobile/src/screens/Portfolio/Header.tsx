@@ -28,7 +28,6 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import DiscreetModeButton from "../../components/DiscreetModeButton";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 function PortfolioHeader({
   currentPositionY,
@@ -44,7 +43,6 @@ function PortfolioHeader({
   hidePortfolio: boolean;
 }) {
   const navigation = useNavigation();
-  const currentRoute = useCurrentRouteName();
   const { colors } = useTheme();
 
   const { allIds, seenIds } = useAnnouncements();
@@ -54,11 +52,10 @@ function PortfolioHeader({
   const onNotificationButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "Notification Center",
-      screen: currentRoute,
     });
     // @ts-expect-error navigation ts issue
     navigation.navigate(NavigatorName.NotificationCenter);
-  }, [navigation, currentRoute]);
+  }, [navigation]);
 
   const onStatusErrorButtonPress = useCallback(() => {
     // @ts-expect-error navigation ts issue
@@ -69,11 +66,10 @@ function PortfolioHeader({
   const onSettingsButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "Settings",
-      screen: currentRoute,
     });
     // @ts-expect-error navigation ts issue
     navigation.navigate(NavigatorName.Settings);
-  }, [currentRoute, navigation]);
+  }, [navigation]);
 
   const notificationsCount = allIds.length - seenIds.length;
 

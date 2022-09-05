@@ -47,10 +47,7 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
-import {
-  useCurrentRouteName,
-  usePreviousRouteName,
-} from "../../helpers/routeHooks";
+import { usePreviousRouteName } from "../../helpers/routeHooks";
 import { track } from "../../analytics";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
@@ -73,7 +70,6 @@ const maxAssetsToDisplay = 5;
 
 function PortfolioScreen({ navigation }: Props) {
   const { t } = useTranslation();
-  const currentScreen = useCurrentRouteName();
   const previousScreen = usePreviousRouteName();
   const carouselVisibility = useSelector(carouselVisibilitySelector);
   const showCarousel = useMemo(
@@ -93,16 +89,14 @@ function PortfolioScreen({ navigation }: Props) {
   const openAddModal = useCallback(() => {
     track("button_clicked", {
       button: "Add Account",
-      screen: currentScreen,
     });
     setAddModalOpened(true);
-  }, [setAddModalOpened, currentScreen]);
+  }, [setAddModalOpened]);
   useProviders();
 
-  const closeAddModal = useCallback(
-    () => setAddModalOpened(false),
-    [setAddModalOpened],
-  );
+  const closeAddModal = useCallback(() => setAddModalOpened(false), [
+    setAddModalOpened,
+  ]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 

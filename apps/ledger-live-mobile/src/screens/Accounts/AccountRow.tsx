@@ -15,8 +15,6 @@ import AccountRowLayout from "../../components/AccountRowLayout";
 import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
 
-import { useCurrentRouteName } from "../../helpers/routeHooks";
-
 type Props = {
   account: Account | TokenAccount;
   accountId: string;
@@ -41,7 +39,6 @@ const AccountRow = ({
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const currentScreen = useCurrentRouteName();
   const currency = getAccountCurrency(account);
   const parentAccount = useSelector(state =>
     parentAccountSelector(state, { account }),
@@ -63,7 +60,6 @@ const AccountRow = ({
   const onAccountPress = useCallback(() => {
     track("account_clicked", {
       currency: currency.name,
-      screen: currentScreen,
     });
     if (navigationParams) {
       navigation.navigate(...navigationParams);
