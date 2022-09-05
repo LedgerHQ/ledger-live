@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { compose } from "redux";
 import { connect, useDispatch, useSelector } from "react-redux";
-import { useTranslation, withTranslation } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { Redirect } from "react-router";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
@@ -93,6 +93,17 @@ const AccountPage = ({
 
   const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
 
+  const [banner, setBanner] = useState({});
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (account) {
+      const bannerProps = getBannerProps(account, { t, dispatch });
+      setBanner(bannerProps);
+    }
+  }, [account, t, dispatch]);
+
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
     (operation, account) => {
@@ -111,18 +122,6 @@ const AccountPage = ({
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency, bgColor);
-
-  const dispatch = useDispatch();
-
-  const [banner, setBanner] = useState({});
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const bannerProps = await getBannerProps(account, { t, dispatch });
-      setBanner(bannerProps);
-    };
-    fetchData();
-  }, [account]);
 
   return (
     <Box key={account.id}>

@@ -109,7 +109,7 @@ describe("cosmos/banner", () => {
         });
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
-      const result = await getAccountBannerState(account);
+      const result = getAccountBannerState(account);
       expect(result).toStrictEqual({
         display: false,
         redelegate: false,
@@ -125,7 +125,7 @@ describe("cosmos/banner", () => {
         });
       jest.spyOn(logic, "canDelegate").mockReturnValue(true);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
-      const result = await getAccountBannerState(account);
+      const result = getAccountBannerState(account);
       expect(result).toStrictEqual({
         display: true,
         redelegate: false,
@@ -147,7 +147,11 @@ describe("cosmos/banner", () => {
         amount: new BigNumber(1000),
         completionDate: new Date(),
       });
-      const result = await getAccountBannerState(account);
+      const accountWithSpendable5000 = {
+        ...account,
+        spendableBalance: new BigNumber(5000),
+      };
+      const result = getAccountBannerState(accountWithSpendable5000);
       expect(result).toStrictEqual({
         display: true,
         redelegate: true,

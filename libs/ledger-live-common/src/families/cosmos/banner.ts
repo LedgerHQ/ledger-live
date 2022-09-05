@@ -14,9 +14,9 @@ interface AccountBannerState {
   ledgerValidator: CosmosValidatorItem | undefined;
 }
 
-export async function getAccountBannerState(
+export function getAccountBannerState(
   account: CosmosAccount
-): Promise<AccountBannerState> {
+): AccountBannerState {
   // Group current validator
   const cosmosResources = account.cosmosResources
     ? account.cosmosResources
