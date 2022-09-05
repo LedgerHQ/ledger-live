@@ -6,12 +6,12 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { withdrawableBalance } from "@ledgerhq/live-common/families/celo/logic";
+import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
-import { withdrawableBalance } from "@ledgerhq/live-common/families/celo/logic";
-import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
 
 type Props = {
   account: Account;

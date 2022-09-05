@@ -14,5 +14,5 @@ export {
   CeloUnlockFlow,
   CeloVoteFlow,
   CeloActivateFlow,
-  CeloRevokeFlow
+  CeloRevokeFlow,
 };

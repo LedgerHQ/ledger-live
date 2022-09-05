@@ -1,4 +1,3 @@
-import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { useTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useMemo } from "react";

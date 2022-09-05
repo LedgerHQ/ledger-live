@@ -1,14 +1,8 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import ValidatorHead from "../ValidatorHead";
-import ValidatorRow from "../ValidatorRow";
 import {
   CeloAccount,
   CeloValidatorGroup,
@@ -19,6 +13,11 @@ import {
   fallbackValidatorGroup,
   revokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
+import { TrackScreen } from "../../../analytics";
+import { ScreenName } from "../../../const";
+import { accountScreenSelector } from "../../../reducers/accounts";
+import ValidatorHead from "../ValidatorHead";
+import ValidatorRow from "../ValidatorRow";
 
 type Props = {
   navigation: any;
@@ -57,7 +56,7 @@ export default function SelectValidator({ navigation, route }: Props) {
       navigation.navigate(ScreenName.CeloRevokeSummary, {
         ...route.params,
         validator,
-        vote
+        vote,
       });
     },
     [navigation, route.params],

@@ -1,6 +1,4 @@
-import {
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
@@ -12,23 +10,17 @@ import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Trans } from "react-i18next";
-import {  SafeAreaView, StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/dist/Feather";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
+import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
 import { TrackScreen } from "../../../analytics";
-import { rgba } from "../../../colors";
 import Button from "../../../components/Button";
 import Touchable from "../../../components/Touchable";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
+import Selectable from "../components/Selectable";
 
 type Props = {
   navigation: any;
@@ -58,7 +50,7 @@ export default function ActivateSummary({ navigation, route }: Props) {
       return validator;
     }
 
-    if(votes.length) {
+    if (votes.length) {
       return validators.find(v => v.address === votes[0].validatorGroup);
     }
 
@@ -98,12 +90,7 @@ export default function ActivateSummary({ navigation, route }: Props) {
         recipient: chosenValidator?.address ?? "",
       }),
     );
-  }, [
-    updateTransaction,
-    bridge,
-    setTransaction,
-    chosenValidator,
-  ]);
+  }, [updateTransaction, bridge, setTransaction, chosenValidator]);
 
   const onChangeDelegator = useCallback(() => {
     navigation.navigate(ScreenName.CeloActivateValidatorSelect, {
@@ -254,39 +241,3 @@ const Words = ({
     {children}
   </Text>
 );
-
-const Selectable = ({
-  name,
-  readOnly,
-}: {
-  name: string;
-  readOnly?: boolean;
-}) => {
-  const { colors } = useTheme();
-  return (
-    <View
-      style={[
-        styles.validatorSelection,
-        { backgroundColor: rgba(colors.primary, 0.2) },
-      ]}
-    >
-      <Text
-        fontWeight="bold"
-        numberOfLines={1}
-        style={styles.validatorSelectionText}
-        color={colors.primary}
-      >
-        {name}
-      </Text>
-
-      <View
-        style={[
-          styles.validatorSelectionIcon,
-          { backgroundColor: colors.primary },
-        ]}
-      >
-        <Icon size={16} name="edit-2" color={colors.text} />
-      </View>
-    </View>
-  );
-};

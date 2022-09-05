@@ -15,10 +15,7 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import {
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
@@ -33,14 +30,14 @@ import SendRowsFee from "../SendRowsFee";
 import { getFirstStatusError } from "../../helpers";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  amount?: number,
+  accountId: string;
+  transaction: Transaction;
+  amount?: number;
 };
 
 export default function VoteAmount({ navigation, route }: Props) {
@@ -53,32 +50,26 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account);
 
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-  } = useBridgeTransaction(() => {
-    return {
-      account,
-      transaction: {
-        ...route.params.transaction,
-        amount: new BigNumber(route.params.amount ?? 0),
-        mode: "vote",
-      },
-    };
-  });
+  const { transaction, setTransaction, status, bridgePending } =
+    useBridgeTransaction(() => {
+      return {
+        account,
+        transaction: {
+          ...route.params.transaction,
+          amount: new BigNumber(route.params.amount ?? 0),
+          mode: "vote",
+        },
+      };
+    });
 
   invariant(transaction, "transaction must be defined");
 
   useEffect(() => {
     let cancelled = false;
-    bridge
-      .estimateMaxSpendable({ account, transaction: transaction })
-      .then(estimate => {
-        if (cancelled) return;
-        setMaxSpendable(estimate.toNumber());
-      });
+    bridge.estimateMaxSpendable({ account, transaction }).then(estimate => {
+      if (cancelled) return;
+      setMaxSpendable(estimate.toNumber());
+    });
 
     return () => {
       cancelled = true;
@@ -109,7 +100,6 @@ export default function VoteAmount({ navigation, route }: Props) {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const currency = getAccountCurrency(account);
   const error =
     amount.eq(0) || bridgePending
       ? null
@@ -284,5 +274,5 @@ const styles = StyleSheet.create({
   },
   switch: {
     opacity: 0.99,
-  }
+  },
 });

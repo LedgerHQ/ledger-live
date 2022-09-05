@@ -1,17 +1,16 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
+import { CeloValidatorGroup } from "@ledgerhq/live-common/lib/families/celo/types";
+import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
-import { CeloValidatorGroup } from "@ledgerhq/live-common/lib/families/celo/types";
-import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 
 type Props = {
   navigation: any;
@@ -46,7 +45,7 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const renderItem = useCallback(
     ({ item }) => (
-       <ValidatorRow
+      <ValidatorRow
         account={account}
         validator={item}
         onPress={onItemPress}

@@ -5,20 +5,23 @@ import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
+import {
+  CeloValidatorGroup,
+  CeloVote,
+} from "@ledgerhq/live-common/lib/families/celo/types";
+import { useTheme } from "@react-navigation/native";
+import BigNumber from "bignumber.js";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Touchable from "../../components/Touchable";
 import ValidatorImage from "./ValidatorImage";
-import { CeloValidatorGroup, CeloVote } from "@ledgerhq/live-common/lib/families/celo/types";
-import { useTheme } from "@react-navigation/native";
-import BigNumber from "bignumber.js";
 
 const ValidatorRow = ({
   onPress,
   validator,
   account,
   vote,
-  amount
-  }: {
+  amount,
+}: {
   onPress: (validator: CeloValidatorGroup, vote?: CeloVote) => void;
   validator: CeloValidatorGroup;
   account: AccountLike;
@@ -57,7 +60,10 @@ const ValidatorRow = ({
             <Text
               fontWeight="semiBold"
               numberOfLines={1}
-              style={[styles.overdelegated, { color: vote.type === "active" ? colors.green : colors.grey }]}
+              style={[
+                styles.overdelegated,
+                { color: vote.type === "active" ? colors.green : colors.grey },
+              ]}
             >
               {vote.type === "active" ? (
                 <Trans i18nKey="celo.revoke.flow.steps.validator.active" />

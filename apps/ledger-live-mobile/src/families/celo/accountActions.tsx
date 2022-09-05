@@ -1,12 +1,9 @@
 import React from "react";
-import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
-
-import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
-import { NavigatorName, ScreenName } from "../../const";
 import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
-import CeloIcon from './Icon';
 import invariant from "invariant";
+import { NavigatorName, ScreenName } from "../../const";
+import CeloIcon from "./Icon";
 
 const getActions = ({ account }: { account: CeloAccount }) => {
   invariant(account, "celo account not found");
@@ -21,7 +18,7 @@ const getActions = ({ account }: { account: CeloAccount }) => {
         {
           screen: ScreenName.CosmosDelegationStarted,
           params: {
-            account: account,
+            account,
           },
         },
       ],

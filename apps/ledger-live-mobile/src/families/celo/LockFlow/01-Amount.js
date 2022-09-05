@@ -56,20 +56,16 @@ export default function LockAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState(null);
 
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-  } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
+  const { transaction, setTransaction, status, bridgePending } =
+    useBridgeTransaction(() => {
+      const t = bridge.createTransaction(mainAccount);
 
-    const transaction = bridge.updateTransaction(t, {
-      mode: "lock",
+      const transaction = bridge.updateTransaction(t, {
+        mode: "lock",
+      });
+
+      return { account: mainAccount, transaction };
     });
-
-    return { account: mainAccount, transaction };
-  });
 
   const debouncedTransaction = useDebounce(transaction, 500);
 

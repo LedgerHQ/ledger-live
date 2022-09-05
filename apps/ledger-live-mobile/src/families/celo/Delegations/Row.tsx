@@ -1,23 +1,22 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import {
-  CosmosMappedDelegation,
-  CosmosMappedUnbonding,
-} from "@ledgerhq/live-common/families/cosmos/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
+import { isDefaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
+import {
+  CeloAccount,
+  CeloVote,
+} from "@ledgerhq/live-common/lib/families/celo/types";
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
-import { isDefaultValidatorGroupAddress, revokableVotes, voteStatus } from "@ledgerhq/live-common/families/celo/logic";
-import { CeloAccount, CeloVote } from "@ledgerhq/live-common/lib/families/celo/types";
 import { formatAmount } from "./utils";
 
 type Props = {
-  account: CeloAccount,
+  account: CeloAccount;
   vote: CeloVote;
   currency: Currency;
   onPress: (vote: CeloVote) => void;
@@ -37,7 +36,6 @@ export default function DelegationRow({
   const { t } = useTranslation();
   const { validatorGroup, amount } = vote;
   const validatorName = getValidatorName(vote) ?? "";
-  const status = voteStatus(vote);
 
   return (
     <TouchableOpacity
@@ -121,4 +119,3 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
 });
-

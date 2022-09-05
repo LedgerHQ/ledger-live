@@ -42,6 +42,7 @@ import { ScreenName } from "../../../const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorImage from "../ValidatorImage";
+import Selectable from "../components/Selectable";
 
 type Props = {
   navigation: any;
@@ -303,25 +304,6 @@ const styles = StyleSheet.create({
     marginRight: 6,
     fontSize: 18,
   },
-  validatorSelection: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 4,
-    height: 40,
-  },
-  validatorSelectionText: {
-    paddingHorizontal: 8,
-    fontSize: 18,
-    maxWidth: 240,
-  },
-  validatorSelectionIcon: {
-    borderTopRightRadius: 4,
-    borderBottomRightRadius: 4,
-    alignItems: "center",
-    justifyContent: "center",
-    width: 32,
-    height: 40,
-  },
   footer: {
     flexDirection: "column",
     alignItems: "center",
@@ -426,39 +408,3 @@ const Words = ({
     {children}
   </Text>
 );
-
-const Selectable = ({
-  name,
-  readOnly,
-}: {
-  name: string;
-  readOnly?: boolean;
-}) => {
-  const { colors } = useTheme();
-  return (
-    <View
-      style={[
-        styles.validatorSelection,
-        { backgroundColor: rgba(colors.primary, 0.2) },
-      ]}
-    >
-      <Text
-        fontWeight="bold"
-        numberOfLines={1}
-        style={styles.validatorSelectionText}
-        color={colors.primary}
-      >
-        {name}
-      </Text>
-
-      <View
-        style={[
-          styles.validatorSelectionIcon,
-          { backgroundColor: colors.primary },
-        ]}
-      >
-        <Icon size={16} name="edit-2" color={colors.text} />
-      </View>
-    </View>
-  );
-};

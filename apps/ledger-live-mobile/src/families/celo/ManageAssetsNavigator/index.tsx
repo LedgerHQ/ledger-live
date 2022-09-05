@@ -1,30 +1,20 @@
-import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import {
-  NavigationContainer,
-  useNavigation,
-  useTheme,
-} from "@react-navigation/native";
-import { View, StyleSheet, Linking } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
-import React, { useCallback, useMemo } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { View, StyleSheet } from "react-native";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import Button from "../../../components/Button";
-import { ScreenName, NavigatorName } from "../../../const";
 import { useSelector } from "react-redux";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { useRoute } from "@react-navigation/native";
 import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { activatableVotes, hasActivatableVotes, hasRevokableVotes, revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
+import {
+  hasActivatableVotes,
+  hasRevokableVotes,
+} from "@ledgerhq/live-common/families/celo/logic";
+import { accountScreenSelector } from "../../../reducers/accounts";
+import { ScreenName, NavigatorName } from "../../../const";
+import Button from "../../../components/Button";
 
 function ManageAssetsNavigator() {
   const { t } = useTranslation();
-  const { colors } = useTheme();
 
   const navigation = useNavigation();
   navigation.setOptions({ title: t("celo.manage.title") });
@@ -101,7 +91,10 @@ function ManageAssetsNavigator() {
   const onVote = useCallback(() => {
     onNavigate({
       route: NavigatorName.CeloVoteFlow,
-      screen: votes?.length === 0 ? ScreenName.CeloVoteStarted : ScreenName.CeloVoteSummary,
+      screen:
+        votes?.length === 0
+          ? ScreenName.CeloVoteStarted
+          : ScreenName.CeloVoteSummary,
       params: {},
     });
   }, [onNavigate]);
@@ -112,7 +105,6 @@ function ManageAssetsNavigator() {
       screen: ScreenName.CeloRevokeSummary,
       params: {},
     });
-
   }, [onNavigate]);
 
   const isRegistered = (account as CeloAccount).celoResources

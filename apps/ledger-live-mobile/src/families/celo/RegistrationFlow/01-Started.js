@@ -5,13 +5,13 @@ import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
-import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { accountScreenSelector } from "../reducers/accounts";
-import { useSelector } from "react-redux";
+import { accountScreenSelector } from "../../../reducers/accounts";
 import LText from "../../../components/LText";
 import TranslatedError from "../../../components/TranslatedError";
 

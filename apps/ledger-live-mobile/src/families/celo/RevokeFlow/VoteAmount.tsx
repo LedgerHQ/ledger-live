@@ -15,10 +15,9 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import {
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { CeloVote } from "@ledgerhq/live-common/lib/families/celo/types";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -30,18 +29,17 @@ import CurrencyInput from "../../../components/CurrencyInput";
 import TranslatedError from "../../../components/TranslatedError";
 import SendRowsFee from "../SendRowsFee";
 import { getFirstStatusError } from "../../helpers";
-import { CeloVote } from "@ledgerhq/live-common/lib/families/celo/types";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  accountId: string,
-  transaction: Transaction,
-  amount?: number,
-  vote: CeloVote
+  accountId: string;
+  transaction: Transaction;
+  amount?: number;
+  vote: CeloVote;
 };
 
 export default function VoteAmount({ navigation, route }: Props) {
@@ -54,33 +52,27 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account);
 
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-  } = useBridgeTransaction(() => {
-    return {
-      account,
-      transaction: {
-        ...route.params.transaction,
-        amount: new BigNumber(route.params.amount ?? 0),
-        mode: "revoke",
-        index: route.params.vote?.index
-      },
-    };
-  });
+  const { transaction, setTransaction, status, bridgePending } =
+    useBridgeTransaction(() => {
+      return {
+        account,
+        transaction: {
+          ...route.params.transaction,
+          amount: new BigNumber(route.params.amount ?? 0),
+          mode: "revoke",
+          index: route.params.vote?.index,
+        },
+      };
+    });
 
   invariant(transaction, "transaction must be defined");
 
   useEffect(() => {
     let cancelled = false;
-    bridge
-      .estimateMaxSpendable({ account, transaction: transaction })
-      .then(estimate => {
-        if (cancelled) return;
-        setMaxSpendable(estimate.toNumber());
-      });
+    bridge.estimateMaxSpendable({ account, transaction }).then(estimate => {
+      if (cancelled) return;
+      setMaxSpendable(estimate.toNumber());
+    });
 
     return () => {
       cancelled = true;
@@ -285,5 +277,5 @@ const styles = StyleSheet.create({
   },
   switch: {
     opacity: 0.99,
-  }
+  },
 });
