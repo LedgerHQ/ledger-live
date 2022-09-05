@@ -90,7 +90,7 @@ const tron: AppSpec<Transaction> = {
       },
       test: ({ account }) => {
         botTest("account spendable balance is zero", () =>
-          expect(account.spendableBalance.toString()).toBe("0")
+          expectedApproximate(account.spendableBalance, new BigNumber(0))
         );
       },
     },
