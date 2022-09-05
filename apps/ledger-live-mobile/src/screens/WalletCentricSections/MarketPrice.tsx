@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { ScreenName } from "../../const";
 import { localeSelector } from "../../reducers/settings";
@@ -16,19 +15,19 @@ import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   currency: CryptoCurrency;
+  selectedCoinData: any;
+  counterCurrency: string | undefined;
 };
 
-const MarketPrice = ({ currency }: Props) => {
+const MarketPrice = ({
+  currency,
+  selectedCoinData,
+  counterCurrency,
+}: Props) => {
   const { t } = useTranslation();
   const currentScreen = useCurrentRouteName();
   const locale = useSelector(localeSelector);
   const navigation = useNavigation();
-  const { selectedCoinData, selectCurrency, counterCurrency } =
-    useSingleCoinMarketData();
-
-  useEffect(() => {
-    selectCurrency(currency.id, currency, "24h");
-  }, [currency, selectCurrency]);
 
   const goToMarketPage = useCallback(() => {
     track("market_data_clicked", {
