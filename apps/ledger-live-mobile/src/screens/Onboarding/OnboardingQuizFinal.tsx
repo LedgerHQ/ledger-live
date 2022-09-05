@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 
+import { StackNavigationProp } from "@react-navigation/stack";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { ScreenName } from "../../const";
 import BaseStepperView, {
   QuizzFinal,
@@ -14,17 +16,19 @@ import quizProFailLight from "../../images/illustration/Light/_063.png";
 import quizProSuccessDark from "../../images/illustration/Dark/_065.png";
 import quizProFailDark from "../../images/illustration/Dark/_063.png";
 import Illustration from "../../images/illustration/Illustration";
+import { OnboardingNavigatorParamList } from "../../components/RootNavigator/types";
 
 const scenes = [QuizzFinal, QuizzFinal];
 
 function OnboardingStepQuizFinal() {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<StackNavigationProp<OnboardingNavigatorParamList>>();
   const route = useRoute<
     RouteProp<
       {
         params: {
           success: boolean;
-          deviceModelId: string;
+          deviceModelId: DeviceModelId;
         };
       },
       "params"
@@ -57,12 +61,13 @@ function OnboardingStepQuizFinal() {
         success,
       },
     ],
-    [success],
+    [darkSource, lightSource, success],
   );
 
   const nextPage = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingPairNew, {
-      ...route.params,
+      deviceModelId: route.params.deviceModelId,
+      showSeedWarning: false,
     });
   }, [navigation, route.params]);
 

@@ -66,7 +66,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
 
   useFocusEffect(
     useCallback(() => {
-      setScreen("Has Device?");
+      setScreen && setScreen("Has Device?");
 
       return () => {
         setSource("Has Device?");

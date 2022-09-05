@@ -33,7 +33,7 @@ export default function ImportAccountsNavigator() {
             </Text>
           ),
           headerRight: props => <HeaderRightClose {...props} color={"#fff"} />,
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen

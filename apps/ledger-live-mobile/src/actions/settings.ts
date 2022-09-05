@@ -77,7 +77,7 @@ export const setSelectedTimeRange = (selectedTimeRange: string) => ({
 });
 export const updateCurrencySettings = (
   ticker: string,
-  patch: $Shape<CurrencySettings>,
+  patch: Partial<CurrencySettings>,
 ) => ({
   type: "UPDATE_CURRENCY_SETTINGS",
   ticker,
@@ -201,8 +201,9 @@ export const setSensitiveAnalytics = (enabled: boolean) => ({
   type: "SET_SENSITIVE_ANALYTICS",
   enabled,
 });
-export const setFirstConnectionHasDevice = () => ({
+export const setFirstConnectionHasDevice = (payload: boolean) => ({
   type: "SET_FIRST_CONNECTION_HAS_DEVICE",
+  payload,
 });
 export const setNotifications = (payload: any) => ({
   type: "SET_NOTIFICATIONS",

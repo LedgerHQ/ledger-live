@@ -36,9 +36,8 @@ import { NavigatorName } from "../const";
 import { Maybe } from "../types/helpers";
 
 const sessionId = uuid();
-const appVersion = `${VersionNumber.appVersion || ""} (${
-  VersionNumber.buildVersion || ""
-})`;
+const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""
+  })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 const extraProperties = (store: AppStore) => {
@@ -55,10 +54,10 @@ const extraProperties = (store: AppStore) => {
     lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
     ? {
-        deviceVersion: lastDevice.deviceInfo?.version,
-        appLength: (lastDevice as DeviceLike)?.appsInstalled,
-        modelId: lastDevice.modelId,
-      }
+      deviceVersion: lastDevice.deviceInfo?.version,
+      appLength: (lastDevice as DeviceLike)?.appsInstalled,
+      modelId: lastDevice.modelId,
+    }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
   return {
@@ -77,8 +76,8 @@ const extraProperties = (store: AppStore) => {
     // $FlowFixMe
     ...(satisfaction
       ? {
-          satisfaction,
-        }
+        satisfaction,
+      }
       : {}),
     ...deviceInfo,
   };
@@ -225,13 +224,13 @@ export const useAnalytics = () => {
 export const screen = (
   category: string,
   name: string | null | undefined,
-  properties: Record<string, any> | null | undefined,
+  properties?: Record<string, any> | null | undefined,
 ) => {
   const title = `Page ${category + (name ? ` ${name}` : "")}`;
   Sentry.addBreadcrumb({
     message: title,
     category: "screen",
-    data: properties,
+    data: properties || {},
     level: "info",
   });
 
