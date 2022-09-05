@@ -3,7 +3,6 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
 import { track, TrackScreen } from "../../../analytics";
-import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 type Props = {
   closeModal: any;
@@ -17,7 +16,6 @@ const ConfirmUnverified = ({
   setShouldNotRemindUserAgain,
 }: Props) => {
   const [doNotRemindUserAgain, setDoNotRemindUserAgain] = useState(false);
-  const lastRoute = usePreviousRouteName();
   const toggleDoNotRemindUserAgain = useCallback(() => {
     track("button_clicked", {
       button: "Do not remind me",
@@ -50,7 +48,6 @@ const ConfirmUnverified = ({
         category="ReceiveFunds"
         name="No Verification Confirmation"
         type="drawer"
-        source={lastRoute}
       />
       <Text
         variant="h4"

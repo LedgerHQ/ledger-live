@@ -35,7 +35,6 @@ import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
-import { usePreviousRouteName } from "../../../helpers/routeHooks";
 import useNotifications from "../../../logic/notifications";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
@@ -110,10 +109,10 @@ function MarketDetail({
 
   const { range } = chartRequestParams;
 
-  const dateRangeFormatter = useMemo(
-    () => getDateFormatter(locale, range),
-    [locale, range],
-  );
+  const dateRangeFormatter = useMemo(() => getDateFormatter(locale, range), [
+    locale,
+    range,
+  ]);
 
   const renderAccountItem = useCallback(
     ({ item, index }: { item: Account; index: number }) => (
@@ -158,13 +157,12 @@ function MarketDetail({
   }, [refreshControlVisible, loading]);
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const previousRoute = usePreviousRouteName();
 
   useEffect(() => {
     if (readOnlyModeEnabled) {
-      screen("ReadOnly", "Market Coin", { source: previousRoute });
+      screen("ReadOnly", "Market Coin");
     }
-  }, [readOnlyModeEnabled, previousRoute]);
+  }, [readOnlyModeEnabled]);
 
   const [hoveredItem, setHoverItem] = useState<any>(null);
 

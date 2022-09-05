@@ -9,7 +9,6 @@ import Button from "../components/wrappedUi/Button";
 import { NavigatorName, ScreenName } from "../const";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { TrackScreen } from "../analytics";
-import { useCurrentRouteName } from "../helpers/routeHooks";
 
 export default function PostBuyDeviceSetupNanoWallScreen() {
   const { t } = useTranslation();
@@ -27,8 +26,6 @@ export default function PostBuyDeviceSetupNanoWallScreen() {
     });
   }, [navigation]);
 
-  const currentRoute = useCurrentRouteName();
-
   return (
     <SafeAreaView
       style={{
@@ -41,7 +38,6 @@ export default function PostBuyDeviceSetupNanoWallScreen() {
         category="ReadOnly"
         name="Have you Received Device?"
         type="drawer"
-        source={currentRoute}
       />
       {/* A transparent clickable overlay filling the remaining space on the screen */}
       <Pressable

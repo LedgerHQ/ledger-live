@@ -12,7 +12,6 @@ import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import AccountCard from "../../components/AccountCard";
 import LText from "../../components/LText";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   navigation: any;
@@ -20,7 +19,6 @@ type Props = {
 };
 
 function ReceiveSelectAccount({ navigation, route }: Props) {
-  const lastRoute = usePreviousRouteName();
   const currency = route.params?.currency;
   const { t } = useTranslation();
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -100,7 +98,6 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
       <TrackScreen
         category="ReceiveFunds"
         name="Receive Account Select"
-        source={lastRoute}
         currency={currency.name}
       />
       <Flex p={6}>

@@ -26,7 +26,6 @@ import AdditionalInfoModal from "./AdditionalInfoModal";
 import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import byFamily from "../../generated/Confirmation";
 
@@ -81,7 +80,6 @@ function ReceiveConfirmationInner({
     useState(verified);
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const dispatch = useDispatch();
-  const lastRoute = usePreviousRouteName();
 
   const hideToast = useCallback(() => {
     setIsToastDisplayed(false);
@@ -197,7 +195,6 @@ function ReceiveConfirmationInner({
         <TrackScreen
           category="Receive"
           name="Qr Code"
-          source={lastRoute}
           currency={currency.name}
         />
         <Flex p={6} alignItems="center" justifyContent="center">

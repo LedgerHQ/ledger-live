@@ -47,7 +47,6 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 import { track } from "../../analytics";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
@@ -70,7 +69,6 @@ const maxAssetsToDisplay = 5;
 
 function PortfolioScreen({ navigation }: Props) {
   const { t } = useTranslation();
-  const previousScreen = usePreviousRouteName();
   const carouselVisibility = useSelector(carouselVisibilitySelector);
   const showCarousel = useMemo(
     () => Object.values(carouselVisibility).some(Boolean),
@@ -237,7 +235,6 @@ function PortfolioScreen({ navigation }: Props) {
         <CheckTermOfUseUpdate />
         <TrackScreen
           category="Wallet"
-          source={previousScreen}
           accountsLength={distribution.list && distribution.list.length}
           discreet={discreetMode}
         />
