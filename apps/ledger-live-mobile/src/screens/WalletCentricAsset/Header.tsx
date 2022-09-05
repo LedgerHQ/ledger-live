@@ -20,7 +20,6 @@ import { track } from "../../analytics";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Placeholder from "../../components/Placeholder";
 import CurrencyHeaderLayout from "../../components/CurrencyHeaderLayout";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 function Header({
   currentPositionY,
@@ -40,7 +39,6 @@ function Header({
   currencyBalance: number;
 }) {
   const navigation = useNavigation();
-  const currentRoute = useCurrentRouteName();
   const { t } = useTranslation();
 
   const { balanceHistory } = assetPortfolio;
@@ -72,12 +70,11 @@ function Header({
   const goToSettings = useCallback(() => {
     track("button_clicked", {
       button: "Asset settings",
-      screen: currentRoute,
     });
     navigation.navigate(ScreenName.CurrencySettings, {
       currencyId: currency.id,
     });
-  }, [currency.id, currentRoute, navigation]);
+  }, [currency.id, navigation]);
 
   return (
     <CurrencyHeaderLayout

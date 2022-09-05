@@ -82,7 +82,6 @@ function ReceiveConfirmationInner({
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const dispatch = useDispatch();
   const lastRoute = usePreviousRouteName();
-  const routerRoute = useRoute();
 
   const hideToast = useCallback(() => {
     setIsToastDisplayed(false);
@@ -94,11 +93,10 @@ function ReceiveConfirmationInner({
   const openAdditionalInfoModal = useCallback(() => {
     track("notification_clicked", {
       button: "Imported and created account",
-      screen: routerRoute.name,
     });
     setIsAddionalInfoModalOpen(true);
     hideToast();
-  }, [setIsAddionalInfoModalOpen, hideToast, routerRoute.name]);
+  }, [setIsAddionalInfoModalOpen, hideToast]);
 
   const closeAdditionalInfoModal = useCallback(() => {
     setIsAddionalInfoModalOpen(false);
@@ -107,12 +105,11 @@ function ReceiveConfirmationInner({
   const onRetry = useCallback(() => {
     track("button_clicked", {
       button: "Verify your address",
-      screen: routerRoute.name,
     });
     const params = { ...route.params, notSkippable: true };
     setIsModalOpened(false);
     navigation.navigate(ScreenName.ReceiveConnectDevice, params);
-  }, [navigation, route.params, routerRoute]);
+  }, [navigation, route.params]);
 
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
@@ -174,19 +171,17 @@ function ReceiveConfirmationInner({
   const onShare = useCallback(() => {
     track("button_clicked", {
       button: "Share",
-      screen: routerRoute.name,
     });
     if (mainAccount?.freshAddress) {
       Share.share({ message: mainAccount?.freshAddress });
     }
-  }, [mainAccount?.freshAddress, routerRoute.name]);
+  }, [mainAccount?.freshAddress]);
 
   const onCopy = useCallback(() => {
     track("button_clicked", {
       button: "Copy",
-      screen: routerRoute.name,
     });
-  }, [routerRoute.name]);
+  }, []);
 
   if (!account || !currency || !mainAccount) return null;
 

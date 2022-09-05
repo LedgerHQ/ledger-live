@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
-import { useRoute } from "@react-navigation/native";
 import { track, TrackScreen } from "../../../analytics";
 import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
@@ -17,37 +16,33 @@ const ConfirmUnverified = ({
   setStep,
   setShouldNotRemindUserAgain,
 }: Props) => {
-  const route = useRoute();
   const [doNotRemindUserAgain, setDoNotRemindUserAgain] = useState(false);
   const lastRoute = usePreviousRouteName();
   const toggleDoNotRemindUserAgain = useCallback(() => {
     track("button_clicked", {
       button: "Do not remind me",
-      screen: route.name,
       drawer: "confirmUnverified",
     });
     setDoNotRemindUserAgain(!doNotRemindUserAgain);
-  }, [doNotRemindUserAgain, route]);
+  }, [doNotRemindUserAgain]);
 
   const onGoBack = useCallback(() => {
     setStep("initMessage");
     track("button_clicked", {
       button: "No",
-      screen: route.name,
       drawer: "confirmUnverified",
     });
-  }, [setStep, route]);
+  }, [setStep]);
   const onCloseModal = useCallback(() => {
     track("button_clicked", {
       button: "Yes",
-      screen: route.name,
       drawer: "confirmUnverified",
     });
     closeModal();
     if (doNotRemindUserAgain) {
       setShouldNotRemindUserAgain();
     }
-  }, [closeModal, doNotRemindUserAgain, setShouldNotRemindUserAgain, route]);
+  }, [closeModal, doNotRemindUserAgain, setShouldNotRemindUserAgain]);
 
   return (
     <Flex flex={1} justifyContent="center" mt={3}>

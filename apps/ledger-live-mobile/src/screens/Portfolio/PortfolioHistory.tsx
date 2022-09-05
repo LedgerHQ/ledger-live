@@ -22,7 +22,6 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   navigation: any;
@@ -37,7 +36,6 @@ export const PortfolioHistoryList = withDiscreetMode(({
   opCount?: number,
   navigation: any,
 }) => {
-  const currentScreen = useCurrentRouteName()
   const accounts = useSelector(accountsSelector);
   const allAccounts = useSelector(flattenAccountsSelector);
 
@@ -92,10 +90,9 @@ export const PortfolioHistoryList = withDiscreetMode(({
   const onTransactionButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "See All Transactions",
-      screen: currentScreen
     })
     navigation.navigate(ScreenName.PortfolioOperationHistory);
-  }, [navigation, currentScreen]);
+  }, [navigation]);
 
     return (
       <SectionList

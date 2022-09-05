@@ -11,7 +11,6 @@ import { ScreenName } from "../../const";
 import { localeSelector } from "../../reducers/settings";
 import DeltaVariation from "../Market/DeltaVariation";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   currency: CryptoCurrency;
@@ -25,14 +24,12 @@ const MarketPrice = ({
   counterCurrency,
 }: Props) => {
   const { t } = useTranslation();
-  const currentScreen = useCurrentRouteName();
   const locale = useSelector(localeSelector);
   const navigation = useNavigation();
 
   const goToMarketPage = useCallback(() => {
     track("market_data_clicked", {
       currency: currency.name,
-      screen: currentScreen,
     });
     navigation.navigate(ScreenName.MarketDetail, {
       currencyId: currency.id,

@@ -15,7 +15,6 @@ import {
 
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
-import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
@@ -57,7 +56,6 @@ const findAccountByCurrency = (
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const routerRoute = useRoute();
   const filterCurrencyIds = useMemo(
     () => route.params?.filterCurrencyIds || [],
     [route.params?.filterCurrencyIds],
@@ -81,7 +79,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const onPressItem = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
       track("currency_clicked", {
-        screen: routerRoute.name,
         currency: currency.name,
       });
 
@@ -132,7 +129,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         });
       }
     },
-    [accounts, navigation, routerRoute.name],
+    [accounts, navigation],
   );
 
   const renderList = useCallback(

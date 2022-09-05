@@ -5,7 +5,6 @@ import { NavigatorName, ScreenName } from "../../const";
 import { usePortfolio } from "../../actions/portfolio";
 import AssetRowLayout from "../../components/AssetRowLayout";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   asset: any;
@@ -26,7 +25,6 @@ const AssetRow = ({
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const currentScreen = useCurrentRouteName();
   const currency = asset.currency;
   const name = currency.name;
   const unit = currency.units[0];
@@ -36,7 +34,6 @@ const AssetRow = ({
   const onAssetPress = useCallback(() => {
     track("asset_clicked", {
       asset: currency.name,
-      screen: currentScreen,
     });
     if (navigationParams) {
       navigation.navigate(...navigationParams);
@@ -48,7 +45,7 @@ const AssetRow = ({
         },
       });
     }
-  }, [currency, currentScreen, navigation, navigationParams]);
+  }, [currency, navigation, navigationParams]);
 
   return (
     <AssetRowLayout

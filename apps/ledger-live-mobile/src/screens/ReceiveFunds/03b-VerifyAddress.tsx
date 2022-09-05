@@ -19,7 +19,6 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { useRoute } from "@react-navigation/native";
 import { track, TrackScreen } from "../../analytics";
 import { usePreviousRouteName } from "../../helpers/routeHooks";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -75,7 +74,6 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
   const [error, setError] = useState(null);
-  const routerRoute = useRoute();
   const lastRoute = usePreviousRouteName();
 
   const onModalClose = useCallback(() => {
@@ -127,33 +125,30 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const onRetry = useCallback(() => {
     track("button_clicked", {
       button: "Retry",
-      screen: routerRoute.name,
     });
     onModalClose();
     if (device) {
       verifyOnDevice(device);
     }
-  }, [device, onModalClose, routerRoute.name, verifyOnDevice]);
+  }, [device, onModalClose, verifyOnDevice]);
 
   const goBack = useCallback(() => {
     track("button_clicked", {
       button: "Cancel",
-      screen: routerRoute.name,
     });
     navigation.navigate(ScreenName.ReceiveConfirmation, {
       ...route.params,
       verified: false,
     });
-  }, [navigation, route.params, routerRoute.name]);
+  }, [navigation, route.params]);
 
   const redirectToSupport = useCallback(() => {
     track("message_clicked", {
       message: "contact us asap",
-      screen: routerRoute.name,
       url: urls.receiveVerifyAddress,
     });
     Linking.openURL(urls.receiveVerifyAddress);
-  }, [routerRoute.name]);
+  }, []);
 
   useEffect(() => {
     if (device) {

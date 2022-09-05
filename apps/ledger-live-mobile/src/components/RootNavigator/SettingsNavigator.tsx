@@ -50,28 +50,24 @@ import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
+    colors,
+  ]);
 
   const navigation = useNavigation();
-  const currentRoute = useCurrentRouteName();
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   const goBackFromNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Back Arrow",
-      screen: currentRoute,
     });
     navigation.goBack();
-  }, [navigation, currentRoute]);
+  }, [navigation]);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>

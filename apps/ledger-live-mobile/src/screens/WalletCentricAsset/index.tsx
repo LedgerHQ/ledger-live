@@ -40,10 +40,7 @@ import {
   countervalueFirstSelector,
 } from "../../reducers/settings";
 import { track, TrackScreen } from "../../analytics";
-import {
-  useCurrentRouteName,
-  usePreviousRouteName,
-} from "../../helpers/routeHooks";
+import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 type RouteParams = {
   currency: CryptoCurrency | TokenCurrency;
@@ -62,7 +59,6 @@ const AssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const currentScreen = useCurrentRouteName();
   const previousScreen = usePreviousRouteName();
   const useCounterValue = useSelector(countervalueFirstSelector);
   const { currency } = route?.params;
@@ -74,8 +70,11 @@ const AssetScreen = ({ route }: Props) => {
   const assetPortfolio = usePortfolio(cryptoAccounts, {
     flattenSourceAccounts: false,
   });
-  const { selectedCoinData, selectCurrency, counterCurrency } =
-    useSingleCoinMarketData();
+  const {
+    selectedCoinData,
+    selectCurrency,
+    counterCurrency,
+  } = useSingleCoinMarketData();
 
   useEffect(() => {
     selectCurrency(currency.id, currency, "24h");
@@ -108,7 +107,6 @@ const AssetScreen = ({ route }: Props) => {
   const onAddAccount = useCallback(() => {
     track("button_clicked", {
       button: "Add new",
-      screen: currentScreen,
     });
     if (currency && currency.type === "TokenCurrency") {
       navigation.navigate(NavigatorName.AddAccounts, {
@@ -119,7 +117,7 @@ const AssetScreen = ({ route }: Props) => {
         currency,
       });
     }
-  }, [currency, navigation, currentScreen]);
+  }, [currency, navigation]);
 
   const data = useMemo(
     () => [

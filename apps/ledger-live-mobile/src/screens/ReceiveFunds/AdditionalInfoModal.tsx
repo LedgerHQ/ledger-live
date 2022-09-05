@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { BottomDrawer, Flex, Text, Button } from "@ledgerhq/native-ui";
-import { useRoute } from "@react-navigation/native";
 import { track, TrackScreen } from "../../analytics";
 import { usePreviousRouteName } from "../../helpers/routeHooks";
 
@@ -12,26 +11,23 @@ type Props = {
 };
 
 const AdditionalInfoModal = ({ isOpen, onClose, currencyTicker }: Props) => {
-  const route = useRoute();
   const lastRoute = usePreviousRouteName();
 
   const onUnderstood = useCallback(() => {
     track("button_clicked", {
       button: "Ok, got it",
-      screen: route.name,
       drawer: "AdditionalInfoModal",
     });
     onClose();
-  }, [onClose, route.name]);
+  }, [onClose]);
 
   const handleClose = useCallback(() => {
     track("button_clicked", {
       button: "Close 'x'",
-      screen: route.name,
       drawer: "AdditionalInfoModal",
     });
     onClose();
-  }, [onClose, route.name]);
+  }, [onClose]);
 
   return (
     <BottomDrawer isOpen={isOpen} onClose={handleClose}>

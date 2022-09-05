@@ -10,7 +10,6 @@ import { ScreenName } from "../../const";
 import { useDistribution } from "../../actions/general";
 import RingChart from "../Analytics/RingChart";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 const NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY = 4;
 
@@ -40,7 +39,6 @@ const AllocationCaption = ({
 
 const Allocations = () => {
   const { t } = useTranslation();
-  const currentScreen = useCurrentRouteName();
   const navigation = useNavigation();
   const distribution = useDistribution({ showEmptyAccounts: true });
   const { colors } = useTheme();
@@ -48,10 +46,9 @@ const Allocations = () => {
   const goToAnalyticsAllocations = useCallback(() => {
     track("analytics_clicked", {
       analytics: "Allocations",
-      screen: currentScreen,
     });
     navigation.navigate(ScreenName.AnalyticsAllocation);
-  }, [navigation, currentScreen]);
+  }, [navigation]);
 
   const distributionListFormatted = useMemo(() => {
     if (distribution.list.length <= NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY) {
