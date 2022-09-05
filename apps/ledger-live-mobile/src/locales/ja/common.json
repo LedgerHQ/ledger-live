@@ -2300,7 +2300,7 @@
         "cancel" : {
           "title" : "このアドレスを拒否しました",
           "subtitle" : "これが誤操作によるものである場合は、下のボタンをクリックして再試行できます。",
-          "info" : "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
+          "info" : "アドレスの不一致が確実な場合、お使いのスマートフォンが情報漏洩している可能性があります。<0>できるだけ早くお問い合わせいただく</0>ことをお勧めします。"
         }
       },
       "receiveConfirmation" : {
@@ -2315,7 +2315,7 @@
         "subtitle1" : "アドレスを認証することで安全にご利用いただけます。Ledgerデバイスに表示されるアドレスが情報漏洩することはありません。",
         "subtitle2" : "アドレスを認証することで、デバイスに表示されているアドレスがLedger Liveに表示されているアドレスと同一であることを確認できます。",
         "verifyCta" : "アドレスを認証",
-        "dontVerifyCta" : "Reveal my address without verifying"
+        "dontVerifyCta" : "認証せずにアドレスを提示"
       },
       "securityDontVerify" : {
         "title" : "本当によろしいですか？",
