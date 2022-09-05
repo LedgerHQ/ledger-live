@@ -188,7 +188,7 @@ export function Summary({
         </Text>
       </Item>
 
-      {to.currency ? (
+      {to.account ? (
         <Item
           title={t("transfer.swap2.form.details.label.target")}
           onEdit={() => {
