@@ -19,23 +19,7 @@ import styles from "../../navigation/styles";
 import Question from "../../icons/Question";
 // eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
-
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-
-type BaseOnboardingNavigatorParamList = {
-  [NavigatorName.Onboarding]: undefined;
-  [NavigatorName.ImportAccounts]: undefined;
-  [NavigatorName.BuyDevice]: undefined;
-  [ScreenName.PairDevices]?: {
-    onDone?: (_: Device) => void;
-  };
-  [ScreenName.EditDeviceName]: {
-    deviceId: string;
-    deviceName: string;
-  };
-  [NavigatorName.PasswordAddFlow]: undefined;
-  [NavigatorName.PasswordModifyFlow]: undefined;
-};
+import { BaseOnboardingNavigatorParamList } from "./types";
 
 const hitSlop = {
   bottom: 10,

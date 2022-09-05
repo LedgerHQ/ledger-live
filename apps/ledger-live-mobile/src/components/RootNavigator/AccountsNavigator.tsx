@@ -26,6 +26,7 @@ import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnly/ReadOnlyA
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import { accountsSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
+import { AccountsNavigatorParamList } from "./types";
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
@@ -109,4 +110,4 @@ export default function AccountsNavigator() {
   );
 }
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AccountsNavigatorParamList>();

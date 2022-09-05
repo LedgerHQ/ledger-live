@@ -9,12 +9,7 @@ import BaseNavigator from "./BaseNavigator";
 // eslint-disable-next-line import/no-cycle
 import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
-
-type RootStackParamList = {
-  [NavigatorName.ImportAccounts]: undefined;
-  [NavigatorName.BaseOnboarding]: undefined;
-  [NavigatorName.Base]: undefined;
-};
+import { RootStackParamList } from "./types";
 
 export const AnalyticsContext = createContext<{
   source?: string;

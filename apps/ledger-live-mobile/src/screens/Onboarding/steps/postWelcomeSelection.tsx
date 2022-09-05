@@ -1,7 +1,11 @@
 import React, { useCallback, useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+} from "@react-navigation/native";
 import { Text, Button, Flex } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { track, TrackScreen } from "../../../analytics";
