@@ -82,7 +82,8 @@
     "moreInfo" : "Plus d’informations",
     "buyEth" : "Acheter de l’Ethereum",
     "popular" : "Populaire",
-    "comingSoon" : "Bientôt disponibles"
+    "comingSoon" : "Bientôt disponibles",
+    "getSupport" : "Obtenir de l’aide"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -688,6 +689,9 @@
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
     }
   },
+  "crash" : {
+    "title" : "Une erreur est survenue."
+  },
   "bluetooth" : {
     "required" : "Le Bluetooth semble être désactivé.",
     "locationRequiredTitle" : "La localisation est requise pour le Bluetooth LE.",
@@ -916,7 +920,7 @@
     "cta" : "Acheter votre Ledger maintenant",
     "footer" : "J’ai déjà un appareil, je veux le configurer",
     "bannerTitle" : "Protégez vos cryptos et vos NFT",
-    "bannerTitle2" : "Vous aurez besoin d’un Nano pour le trading",
+    "bannerTitle2" : "Accédez au trading avec un Nano",
     "bannerSubtitle" : "avec un appareil Ledger",
     "bannerButtonTitle" : "Découvrez le Nano",
     "bannerButtonTitle2" : "Achetez un appareil",
@@ -1012,8 +1016,8 @@
         "subtitle" : "Les wallets physiques sont les seuls outils permettant de sécuriser vos actifs. "
       },
       "discoverLedger" : {
-        "title" : "Explorez Ledger Live",
-        "subtitle" : "Découvrez l’app et tous ses avantages "
+        "title" : "Explorer Ledger Live",
+        "subtitle" : "Découvrez l’app et tous ses avantages. "
       }
     },
     "discoverLive" : {
@@ -1026,10 +1030,10 @@
         "title" : "Gardez un œil sur les marchés."
       },
       "2" : {
-        "title" : "Découvrez les apps et l’univers du Web3"
+        "title" : "Découvrez les apps et l’univers du Web3."
       },
       "3" : {
-        "title" : "Protégez vos cryptos et vos NFT"
+        "title" : "Protégez vos cryptos et vos NFT."
       }
     },
     "stepLanguage" : {
@@ -1784,7 +1788,7 @@
       "moreInfo" : "Plus d’informations",
       "cardTitle" : "Propulsé par {{team}}",
       "drawer" : {
-        "title" : "Intégration :{{family}}",
+        "title" : "Intégration : {{family}}",
         "subTitle" : "L’intégration {{family}} a été réalisée par l’équipe {{team}}.",
         "description" : "Ledger Live est une plateforme open source.",
         "description2" : "Les développeurs du monde entier peuvent intégrer et construire sur Ledger Live.",
@@ -2173,6 +2177,10 @@
       "clearCacheButton" : "Effacer",
       "exportLogs" : "Enregistrer les logs",
       "exportLogsDesc" : "Sauvegardez les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
+      "resetThirdPartyData" : "Réinitialiser les données fournies à des tiers",
+      "resetThirdPartyDataDesc" : "Supprimez toutes vos données stockées localement et partagées avec des tiers, qui sont utilisées pour accéder aux prestataires de transactions tiers.",
+      "resetThirdPartyDataModal" : "Supprimer vos données locales partagées avec des tiers",
+      "resetThirdPartyDataModalDesc" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos partenaires.",
       "hardReset" : "Réinitialiser Ledger Live",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
       "repairDevice" : "Réparer son appareil Ledger",
@@ -2245,7 +2253,7 @@
       }
     },
     "connectDevice" : {
-      "headerTitle" : "Connecter l’appareil"
+      "headerTitle" : "Connecter votre appareil"
     }
   },
   "transfer" : {
@@ -2264,7 +2272,7 @@
       "description" : "Recevez des cryptos d’un autre wallet",
       "titleReadOnly" : "Adresse non vérifiée",
       "headerTitle" : "Crypto-actif",
-      "titleDevice" : "Connecter l’appareil",
+      "titleDevice" : "Connecter votre appareil",
       "verifySkipped" : "Vous n’avez pas confirmé votre adresse de bénéficiaire sur votre appareil Ledger. Vérifiez votre adresse {{accountType}} pour une sécurité optimale.",
       "verifyPending" : "Vérifiez que l’adresse {{currencyName}} affichée sur votre appareil Ledger est identique à celle indiquée sur votre téléphone.",
       "verified" : "Adresse confirmée. Si vous l’aviez copiée ou scannée, revérifiez.",
@@ -2280,7 +2288,7 @@
       },
       "stepperHeader" : {
         "range" : "Étape {{currentStep}} sur {{totalSteps}}",
-        "connectDevice" : "Connecter l’appareil"
+        "connectDevice" : "Connecter votre appareil"
       },
       "selectAccount" : {
         "title" : "Sélectionner un compte",
@@ -2480,7 +2488,7 @@
         "noApp" : {
           "title" : "App {{appName}} non installée",
           "desc" : "Allez dans le Gestionnaire pour installer l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "noAccounts" : {
@@ -2492,7 +2500,7 @@
         "outdatedApp" : {
           "title" : "Mise à jour de l’app disponible",
           "desc" : "Vous devez mettre à jour l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "summary" : {
@@ -2534,12 +2542,12 @@
       "missingApp" : {
         "title" : "Installez l’app Exchange sur votre appareil.",
         "description" : "Installez l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "outdatedApp" : {
         "title" : "Merci de mettre à jour l’app Exchange sur votre appareil.",
         "description" : "Mettez à jour l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "emptyState" : {
         "title" : "Aucun compte {{currency}}",
@@ -2557,19 +2565,80 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "De",
-          "to" : "À",
-          "send" : "Envoyer",
-          "payoutNetworkFees" : "Frais de réception",
-          "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
-          "receive" : "Montant",
-          "receiveFloat" : "Montant à recevoir sans les frais de service",
-          "provider" : "Prestataire",
-          "method" : "Taux",
-          "fees" : "Frais"
+        "ratesDrawer" : {
+          "title" : "Taux",
+          "quote" : "Prix",
+          "receive" : "Recevoir"
+        },
+        "placeholder" : "Sélectionner",
+        "title" : "Échanger",
+        "cta" : "Échanger",
+        "from" : "De",
+        "to" : "À",
+        "loading" : "Chargement...",
+        "disclaimer" : {
+          "title" : "Conditions d’utilisation",
+          "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de {{providerName}}.",
+          "tos" : "Conditions d’utilisation",
+          "accept" : "Accepter"
+        },
+        "notAvailable" : {
+          "title" : "Le swap n’est pas encore disponible pour votre territoire.",
+          "content" : "Merci pour votre patience. Nous lancerons cette fonctionnalité très rapidement."
+        },
+        "amount" : {
+          "useMax" : "Choisir le maximum",
+          "available" : "Total disponible"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Prestataire",
+            "rate" : "Taux",
+            "fees" : "Frais de réseau",
+            "target" : "Compte bénéficiaire"
+          },
+          "noAccount" : "Créez un compte pour recevoir des {{name}}.",
+          "noAccountCTA" : "Ajouter un compte"
+        },
+        "select" : {
+          "from" : {
+            "title" : "De"
+          },
+          "to" : {
+            "title" : "À"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "Vérification",
+            "required" : "Vous devez passer la vérification d’identité.",
+            "complete" : "Vérifier",
+            "update" : "Actualiser",
+            "rejected" : "Vérification d’identité rejetée, merci de recommencer.",
+            "rejectedContactProviderSupport" : "Vérification rejetée, contactez l’assistance de {{providerName}}",
+            "updateRequired" : "Complétez ou mettez à jour votre vérification d’identité",
+            "status" : {
+              "pending" : "En attente",
+              "approved" : "Approuvé",
+              "closed" : "Rejeté",
+              "upgradeRequired" : "Incomplet"
+            }
+          },
+          "login" : {
+            "title" : "Connexion",
+            "required" : "Connectez-vous pour utiliser ce prestataire.",
+            "complete" : "Me connecter"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Configurez une authentification multifactorielle pour utiliser ce prestataire.",
+            "complete" : "Configurer une MFA"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour en savoir plus, contactez leur service d’assistance."
+          }
         }
       }
     },
@@ -2687,8 +2756,8 @@
           "advanced" : "Avancé",
           "amount" : "Entrer le montant",
           "summary" : "Récapitulatif",
-          "selectDevice" : "Sélectionner l’appareil",
-          "connectDevice" : "Connecter l’appareil",
+          "selectDevice" : "Sélectionner votre appareil",
+          "connectDevice" : "Connecter votre appareil",
           "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
         },
         "selectAccount" : {
@@ -2728,8 +2797,8 @@
         "stepperHeader" : {
           "amount" : "Déposer",
           "summary" : "Récapitulatif",
-          "selectDevice" : "Sélectionner l’appareil",
-          "connectDevice" : "Connecter l’appareil",
+          "selectDevice" : "Sélectionner votre appareil",
+          "connectDevice" : "Connecter votre appareil",
           "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
         },
         "amount" : {
@@ -2750,8 +2819,8 @@
         "stepperHeader" : {
           "amount" : "Retirer",
           "summary" : "Récapitulatif",
-          "selectDevice" : "Sélectionner l’appareil",
-          "connectDevice" : "Connecter l’appareil",
+          "selectDevice" : "Sélectionner votre appareil",
+          "connectDevice" : "Connecter votre appareil",
           "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
         },
         "validation" : {
@@ -2794,8 +2863,8 @@
       "recipientAddress" : "Adresse du bénéficiaire",
       "selectAmount" : "Montant",
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
       "quantity" : "Montant",
       "selectCollection" : "Collection",
@@ -2889,8 +2958,8 @@
       "info" : "Gagner des récompenses",
       "selectAmount" : "Geler",
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "info" : {
@@ -2927,8 +2996,8 @@
     "stepperHeader" : {
       "selectAmount" : "Dégeler",
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "amount" : {
@@ -2947,8 +3016,8 @@
   },
   "claimReward" : {
     "stepperHeader" : {
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "validation" : {
@@ -2963,8 +3032,8 @@
     "stepperHeader" : {
       "selectValidator" : "Voter",
       "castVote" : "Mes votes",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "selectValidator" : {
@@ -3024,7 +3093,6 @@
     "retry" : "Réessayer",
     "done" : "Terminé",
     "finalCta" : "Continuer",
-    "finalCtaForSwap" : "Retour au Swap",
     "synchronizing" : "Synchronisation",
     "synchronizingDesc" : "Synchronisation de vos comptes en cours. Cela peut prendre quelques minutes...",
     "noAccountToCreate" : "Impossible de créer le compte <1><0>{{currencyName}}</0></1>. Recommencez et synchronisez vos comptes.",
@@ -3101,7 +3169,17 @@
     "confirmSwap" : {
       "title" : "Confirmer l’opération de swap sur l’appareil",
       "alert" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>."
+      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>.",
+      "notice" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
+    },
+    "swap2" : {
+      "notice" : "Vérifiez les détails du swap sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
+      "amountSent" : "Montant à envoyer",
+      "amountReceived" : "Montant à recevoir",
+      "provider" : "Prestataire",
+      "fees" : "Frais de réseau",
+      "sourceAccount" : "Compte émetteur",
+      "targetAccount" : "Compte bénéficiaire"
     },
     "confirmSell" : {
       "title" : "Confirmer l’opération de vente sur l’appareil",
@@ -3501,7 +3579,7 @@
       "stepperHeader" : {
         "info" : "Gagner des récompenses",
         "starter" : "Récompenses",
-        "connectDevice" : "Connecter l’appareil",
+        "connectDevice" : "Connecter votre appareil",
         "verification" : "Vérification",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
@@ -3540,7 +3618,7 @@
     "optIn" : {
       "stepperHeader" : {
         "selectToken" : "Ajouter des ASA (actif)",
-        "connectDevice" : "Connecter l’appareil",
+        "connectDevice" : "Connecter votre appareil",
         "verification" : "Vérification",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
@@ -3648,8 +3726,8 @@
         "amountSubTitle" : "Montant à déléguer",
         "summary" : "Récapitulatif",
         "verification" : "Vérification",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3712,8 +3790,8 @@
         "amountSubTitle" : "Montant à redéléguer",
         "amountTitle" : "{{from}} → {{to}}",
         "summary" : "Récapitulatif",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3748,8 +3826,8 @@
       "stepperHeader" : {
         "amountSubTitle" : "Montant à interrompre",
         "summary" : "Récapitulatif",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3776,8 +3854,8 @@
         "validator" : "Sélectionner la récompense à toucher",
         "method" : "Demander les récompenses",
         "summary" : "Récapitulatif",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3953,7 +4031,7 @@
     "addAsset" : {
       "stepperHeader" : {
         "selectAsset" : "Ajouter un actif",
-        "connectDevice" : "Connecter l’appareil",
+        "connectDevice" : "Connecter votre appareil",
         "verification" : "Vérification",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
@@ -4082,8 +4160,8 @@
     "nominate" : {
       "stepperHeader" : {
         "validators" : "Validateurs à nommer",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4118,8 +4196,8 @@
       "stepperHeader" : {
         "starter" : "Gagner des récompenses",
         "amount" : "Montant à lier",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4154,8 +4232,8 @@
     "rebond" : {
       "stepperHeader" : {
         "amount" : "Montant à relier",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4177,8 +4255,8 @@
     "unbond" : {
       "stepperHeader" : {
         "amount" : "Montant à délier",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4216,8 +4294,8 @@
       },
       "stepperHeader" : {
         "info" : "Informations",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4466,8 +4544,8 @@
     "successDescription" : "Vous avez signé le message reçu d’une app tierce.",
     "stepperHeader" : {
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "stepVerification" : {
