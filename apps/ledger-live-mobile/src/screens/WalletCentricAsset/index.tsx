@@ -136,10 +136,10 @@ const AssetScreen = ({ route }: Props) => {
           containerProps={{ mb: 6 }}
         />
         <FabAssetActions currency={currency} accounts={cryptoAccounts} />
+        {areCryptoAccountsEmpty ? (
+          <EmptyAccountCard currencyTicker={currency.ticker} />
+        ) : null}
       </SectionContainer>,
-      ...(areCryptoAccountsEmpty
-        ? [<EmptyAccountCard currencyTicker={currency.ticker} />]
-        : []),
       ...(isCryptoCurrency && selectedCoinData?.price
         ? [
             <SectionContainer px={6}>

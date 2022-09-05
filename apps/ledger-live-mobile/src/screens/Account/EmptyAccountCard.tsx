@@ -8,7 +8,7 @@ function EmptyAccountCard({ currencyTicker }: { currencyTicker: string }) {
 
   return (
     <Box mt={8}>
-      <GradientContainer containerStyle={{ marginHorizontal: 16 }}>
+      <GradientContainer>
         <Flex
           flex={1}
           px={10}

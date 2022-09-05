@@ -102,8 +102,8 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
           containerProps={{ mb: 6 }}
         />
         <FabAssetActions currency={currency} />
+        <EmptyAccountCard currencyTicker={currency.ticker} />
       </SectionContainer>,
-      <EmptyAccountCard currencyTicker={currency.ticker} />,
       ...(isCryptoCurrency && selectedCoinData?.price
         ? [
             <SectionContainer px={6}>

@@ -177,9 +177,12 @@ const AccountScreenInner = ({
           <SectionContainer px={6} isLast>
             <SectionTitle title={t("analytics.operations.title")} />
             <OperationsHistorySection accounts={[account]} />
+            {areCryptoAccountsEmpty ? (
+              <EmptyAccountCard currencyTicker={currency.ticker} />
+            ) : null}
           </SectionContainer>,
         ]
-      : [<EmptyAccountCard currencyTicker={currency.ticker} />]),
+      : []),
   ];
 
   return (
