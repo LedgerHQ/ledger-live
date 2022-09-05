@@ -12,7 +12,9 @@ export const setRatingsCurrentRouteName = (currentRouteName?: string) => ({
   type: "RATINGS_SET_CURRENT_ROUTE_NAME",
   currentRouteName,
 });
-export const setRatingsHappyMoment = (happyMoment?: RatingsHappyMoment) => ({
+export const setRatingsHappyMoment = (
+  happyMoment?: Partial<RatingsHappyMoment>,
+) => ({
   type: "RATINGS_SET_HAPPY_MOMENT",
   happyMoment,
 });
