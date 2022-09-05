@@ -198,7 +198,7 @@
     "menu" : "القائمة",
     "stars" : "الحسابات المفضلة",
     "accounts" : "الحسابات",
-    "manager" : "المدير",
+    "manager" : "My Ledger",
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
     "lend" : "إقراض",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "يرجى تثبيت تطبيق {{appName}} على جهازك",
-      "subtitle" : "انتقل إلى المدير وقم بتثبيت تطبيق {{appName}} لمبادلة الأصول.",
-      "cta" : "الانتقال إلى المدير"
+      "subtitle" : "Go to My Ledger and install {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "outdatedApp" : {
       "title" : "يرجى تثبيت تطبيق {{appName}} على جهازك",
-      "subtitle" : "انتقل إلى المدير وقم بتثبيت تطبيق {{appName}} لمبادلة الأصول.",
-      "cta" : "الانتقال إلى المدير"
+      "subtitle" : "Go to My Ledger and update {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -1202,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "قم بتثبيت التطبيقات على جهازك",
-      "desc" : "انتقل إلى المدير لتثبيت التطبيقات على جهازك. يمكنك إضافة الحسابات بمجرد أن يكون لديك تطبيقات على جهازك.",
+      "desc" : "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
       "buttons" : {
-        "installApp" : "الانتقال إلى المدير",
+        "installApp" : "Go to My Ledger",
         "help" : "مساعدة"
       }
     },
@@ -1213,7 +1213,7 @@
       "desc" : "أضف حساب لبدء إدارة أصولك المشفرة. يجب أن يكون لديك تطبيق لأصلك المشفر المُثبت على جهازك.",
       "buttons" : {
         "addAccount" : "إضافة حساب",
-        "installApp" : "الانتقال إلى المدير لتثبيت التطبيقات",
+        "installApp" : "Go to My Ledger to install apps",
         "help" : "مساعدة"
       }
     }
@@ -1536,12 +1536,12 @@
     "quitApp" : "الخروج من التطبيق على جهازك",
     "appNotInstalledTitle" : "التطبيق المطلوب غير موجود",
     "appNotInstalledTitle_plural" : "التطبيقات المطلوبة غير موجودة",
-    "appNotInstalled" : "تطبيق {{appName}} مطلوب لإكمال هذا الإجراء. يرجى الانتقال إلى المدير وتثبيته على جهازك",
-    "appNotInstalled_plural" : "تطبيقات {{appName}} مطلوبة لإكمال هذا الإجراء. يرجى الانتقال إلى المدير وتثبيتهم على جهازك",
-    "openManager" : "افتح المدير",
+    "appNotInstalled" : "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
+    "appNotInstalled_plural" : "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "openManager" : "Open My Ledger",
     "openOnboarding" : "إعداد الجهاز",
     "outdated" : "إصدار التطبيق قديم",
-    "outdatedDesc" : "هناك تحديث هام لتطبيق {{appName}} متاح على جهازك. يُرجى الانتقال إلى المدير لتحديثه.",
+    "outdatedDesc" : "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
     "installApp" : "تثبيت تطبيق {{appName}}",
     "installAppDescription" : "يُرجى الانتظار حتى الانتهاء من التثبيت",
     "listApps" : "التحقق من تبعيات التطبيق",
@@ -1584,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "يبدو أن هناك تطبيق مفتوح على جهازك",
-      "subtitle" : "إعادة فتح المدير سوف يغلق التطبيق على جهازك",
-      "ctaReopen" : "إعادة فتح المدير",
+      "subtitle" : "Reopening My Ledger will quit the app on your device",
+      "ctaReopen" : "Reopen My Ledger",
       "ctaPortfolio" : "الرجوع إلى المحفظة الاستثمارية"
     },
     "deviceStorage" : {
@@ -1628,7 +1628,7 @@
         "title_plural" : "التحديثات المتاحة",
         "progressTitle" : "{{number}} تحديث تطبيق",
         "progressTitle_plural" : "{{number}} تحديثات للتطبيق",
-        "progressWarning" : "لا تغادر المدير أثناء التحديث.",
+        "progressWarning" : "Do not quit My Ledger during update.",
         "progress" : "جارى تحديث الكل..."
       },
       "item" : {
@@ -1692,7 +1692,7 @@
       "updateBtn" : "قم بتحديث البرنامج الثابت",
       "banner" : {
         "warning" : "تحديث البرنامج الثابت إلى {{latestFirmware}} متاح",
-        "cta" : "الانتقال إلى المدير",
+        "cta" : "Go to My Ledger",
         "old" : {
           "warning" : "إصدار البرنامج الثابت للجهاز قديم للغاية ليتم تحديثه. تواصل مع دعم Ledger للحصول على بديل.",
           "cta" : "تواصل مع الدعم"
@@ -1748,7 +1748,7 @@
         "boot" : "اضغط مع الاستمرار على الزر الجانبي حتى يتم عرض {{option}}",
         "recoveryMode" : "اضغط على وضع {{mode}}. انتظر حتى تظهر اللوحة الرئيسية>",
         "third" : "3. إلغاء تثبيت جميع التطبيقات",
-        "openLive" : "افتح المدير في Ledger Live.",
+        "openLive" : "Open My Ledger in Ledger Live.",
         "uninstall" : "انقر على أيقونة سلة المهملات الرمادية لجميع التطبيقات المثبتة حالياً على {{deviceName}}. هذا يفسح المجال لمثبت البرنامج الثابت.",
         "disclaimer" : "ملاحظة: لا تتأثر أموالك بهذه العملية، المفاتيح الخاصة التي تُمكن من الوصول إلى أصولك المشفرة في سلسلة الكتل تظل آمنة على ورقة الاسترداد الخاصة بك."
       }
@@ -3046,6 +3046,11 @@
       "catalogServerDesc" : "التبديل بين مصادر تطبيقات المنصة المتعددة",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
+      "featureFlagsEdit" : "تعديل",
+      "featureFlagsRestore" : "استعادة",
+      "featureFlagsOverride" : "تجاوز",
       "addLocalApp" : "إضافة تطبيق محلي",
       "addLocalAppDesc" : "تصفح الملفات المحلية وقم بإضافة تطبيق محلي باستخدام بيان محلي",
       "addLocalAppButton" : "تصفح",
@@ -3110,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "وضع المطور",
-          "description" : "اعرض تطبيقات المطوّر و testnet في المدير."
+          "description" : "Show developer and testnet apps in My Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "بحث موسع عن الحساب",
@@ -3125,8 +3130,8 @@
           "description" : "تخصيص حد الفجوة لجميع الحسابات. زيادة هذه القيمة فوق القيمة الافتراضية (20) يؤدي إلى مسح المزيد من العناوين العامة غير المستخدمة للعملات. للمستخدمين المتقدمين فقط، قد يؤدي ذلك إلى الإضرار بالتوافق عند استعادة حسابك."
         },
         "forceProvider" : {
-          "title" : "مزود المدير",
-          "description" : "تغيير مزود التطبيقات في المدير قد يجعله من المستحيل تثبيت أو إلغاء تثبيت التطبيقات على جهازك Ledger."
+          "title" : "My Ledger provider",
+          "description" : "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
         },
         "testAnimations" : {
           "title" : "اختبر الرسوم المتحركة Lottie",
@@ -3978,7 +3983,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
-      "description" : "حاول إعادة تثبيت التطبيق من المدير"
+      "description" : "Try reinstalling the app from My Ledger"
     },
     "countervaluesUnavailable" : {
       "title" : "نحن غير قادرين على توفير قيمة مقابلة لهذا الأصل في الوقت الحالي"
@@ -4141,7 +4146,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "مطلوب تحديث البرنامج الثابت أو التطبيق",
-      "description" : "يرجى استخدام المدير لإلغاء تثبيت جميع التطبيقات، ثم تحقق مما إذا كان تحديث البرنامج الثابت متاحاً قبل إعادة تثبيتهم مرة أخرى"
+      "description" : "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "تحديث برنامج Nano الثابت",
@@ -4198,20 +4203,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "هل تريد إنهاء تثبيت التطبيق قيد التنفيذ؟",
-        "description" : "ستؤدي مغادرة برنامج المدير إلى إنهاء تثبيت التطبيق. يرجى إنهاء التثبيت لتثبيت التطبيقات الواردة في قائمة الانتظار.",
+        "description" : "Quitting My Ledger will terminate the app installation. Please finish the installation to install the apps in the queue.",
         "stay" : "إنهاء التثبيت"
       },
       "uninstall" : {
         "title" : "هل تريد إنهاء تثبيت التطبيق قيد التنفيذ؟",
-        "description" : "مغادرة المدير ستؤدي إلى إنهاء عمليات إلغاء تثبيت التطبيق قيد التنفيذ.",
+        "description" : "Quitting My Ledger will terminate the app uninstallations in progress.",
         "stay" : "إنهاء إزالة التثبيت"
       },
       "update" : {
         "title" : "هل تريد إنهاء تحديثات التطبيق قيد التنفيذ؟",
-        "description" : "مغادرة المدير ستؤدي إلى إنهاء تحديثات التطبيق قيد التنفيذ.",
+        "description" : "Quitting My Ledger will terminate the app updates in progress.",
         "stay" : "إنهاء التحديثات"
       },
-      "quit" : "مغادرة المدير"
+      "quit" : "Quit My Ledger"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "عذراً، هذا التطبيق مطلوب",
@@ -4219,6 +4224,10 @@
     },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
+      "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
+    },
+    "NetworkError" : {
+      "title" : "حدث خطأ خلال المزامنة",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
     },
     "NoAddressesFound" : {
@@ -4307,7 +4316,7 @@
       "description" : "يرجى إعادة تشغيل جهازك دون لمس الأزرار عندما يظهر الشعار. تواصل مع دعم Ledger إذا استمرت المشكلة."
     },
     "UserRefusedAllowManager" : {
-      "title" : "تم رفض المدير على الجهاز"
+      "title" : "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "تم إلغاء التحديث على الجهاز",
@@ -4327,7 +4336,7 @@
     },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث التطبيق",
-      "description" : "قم بإزالة تطبيق {{managerAppName}} وأعد تثبيته من المدير"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "العودة إلى اللوحة الرئيسية",
@@ -4347,7 +4356,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "مطلوب تحديث التطبيق",
-      "description" : "قم بإزالة تطبيق {{managerAppName}} وأعد تثبيته في المدير"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
@@ -4392,7 +4401,7 @@
       "list" : {
         "1" : "افصل كبل USB وأعد توصيله دون الضغط على أي أزرار.",
         "2" : "اضغط على كلا الزرين معاً ثلاث مرات لعرض اللوحة الرئيسية.",
-        "3" : "افتح المدير وانقر على \"Update firmware\" (تحديث البرنامج الثابت)."
+        "3" : "Open My Ledger and click Update firmware."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
