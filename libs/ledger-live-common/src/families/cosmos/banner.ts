@@ -1,11 +1,7 @@
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 import { canDelegate, canRedelegate } from "./logic";
-import type {
-  CosmosAccount,
-  CosmosValidatorItem,
-  CosmosDelegation,
-} from "./types";
+import type { CosmosAccount, CosmosValidatorItem } from "./types";
 
 interface AccountBannerState {
   display: boolean;
@@ -48,7 +44,7 @@ export function getAccountBannerState(
       worstValidator &&
       validator &&
       worstValidator.commission < validator.commission &&
-      canRedelegate(account, validator as unknown as CosmosDelegation)
+      canRedelegate(account, validator)
     ) {
       worstValidator = validator;
     }
