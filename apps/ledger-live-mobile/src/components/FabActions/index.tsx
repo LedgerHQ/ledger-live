@@ -27,7 +27,6 @@ import FabAccountButtonBar from "./FabAccountButtonBar";
 import useAccountActions from "../../screens/Account/hooks/useAccountActions";
 import useAssetActions from "./hooks/useAssetActions";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
@@ -82,14 +81,17 @@ const iconSwap = Icons.BuyCryptoMedium;
 const iconReceive = Icons.ArrowBottomMedium;
 const iconSend = Icons.ArrowTopMedium;
 
-export const FabAccountMainActionsComponent: React.FC<
-  FabAccountActionsProps
-> = ({ account, parentAccount }: FabAccountActionsProps) => {
+export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = ({
+  account,
+  parentAccount,
+}: FabAccountActionsProps) => {
   const [pressedDisabledAction, setPressedDisabledAction] = useState<
     ActionButton | undefined
   >(undefined);
-  const [isDisabledActionModalOpened, setIsDisabledActionModalOpened] =
-    useState(false);
+  const [
+    isDisabledActionModalOpened,
+    setIsDisabledActionModalOpened,
+  ] = useState(false);
 
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -114,6 +116,9 @@ export const FabAccountMainActionsComponent: React.FC<
 
   const onPress = useCallback(
     (data: ActionButton) => {
+      track("button_clicked", {
+        button: data.label,
+      });
       const { navigationParams, linkUrl } = data;
       if (linkUrl) {
         Linking.openURL(linkUrl);
@@ -215,7 +220,6 @@ const FabAssetActionsComponent: React.FC<Props> = ({
   ...props
 }) => {
   const navigation = useNavigation();
-  const currentScreen = useCurrentRouteName();
 
   const { mainActions } = useAssetActions({ currency, accounts });
 
@@ -235,7 +239,6 @@ const FabAssetActionsComponent: React.FC<Props> = ({
     (data: ActionButton) => {
       track("button_clicked", {
         button: data.label,
-        screen: currentScreen,
       });
       const { navigationParams, linkUrl } = data;
       if (linkUrl) {
@@ -244,7 +247,7 @@ const FabAssetActionsComponent: React.FC<Props> = ({
         onNavigate(...navigationParams);
       }
     },
-    [onNavigate, currentScreen],
+    [onNavigate],
   );
 
   const quickActions: QuickActionButtonProps[] = mainActions

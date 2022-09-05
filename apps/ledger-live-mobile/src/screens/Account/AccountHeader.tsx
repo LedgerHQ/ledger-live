@@ -2,7 +2,6 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
 import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -16,7 +15,6 @@ import Animated from "react-native-reanimated";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
 import Touchable from "../../components/Touchable";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { track } from "../../analytics";
 import AccountHeaderRight from "./AccountHeaderRight";
 import CurrencyHeaderLayout from "../../components/CurrencyHeaderLayout";
@@ -64,17 +62,13 @@ function AccountHeader({
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
 
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-
   const onBackButtonPress = useCallback(() => {
-    if (readOnlyModeEnabled) {
-      track("button_clicked", {
-        button: "Back",
-        screen: "Account",
-      });
-    }
+    track("button_clicked", {
+      button: "Back",
+      screen: "Account",
+    });
     navigation.goBack();
-  }, [navigation, readOnlyModeEnabled]);
+  }, [navigation]);
 
   const isToken = parentAccount && parentAccount.name !== undefined;
 
