@@ -1,4 +1,4 @@
-import React, { useMemo, createContext, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import Config from "react-native-config";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -10,17 +10,8 @@ import BaseNavigator from "./BaseNavigator";
 import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import { RootStackParamList } from "./types";
+import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 
-export const AnalyticsContext = createContext<{
-  source?: string;
-  screen?: string;
-  setSource: (_?: string) => void;
-  setScreen?: (_?: string) => void;
-}>({
-  source: undefined,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setSource: () => {},
-});
 type Props = {
   importDataString?: string;
 };
