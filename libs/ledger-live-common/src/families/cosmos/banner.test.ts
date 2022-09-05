@@ -7,7 +7,7 @@ import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 import { BigNumber } from "bignumber.js";
 
 jest.mock("./js-prepareTransaction", () => ({
-  calculateFees: jest.fn(() => Promise.resolve({ md5: "md5", uri: "uri" })),
+  calculateFees: jest.fn(() => Promise.resolve({})),
 }));
 
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
@@ -173,7 +173,7 @@ describe("cosmos/banner", () => {
         amount: new BigNumber(1000),
         completionDate: new Date(),
       });
-      const result = await getAccountBannerState(account);
+      const result = getAccountBannerState(account);
       expect(result).toStrictEqual({
         display: false,
         redelegate: false,
