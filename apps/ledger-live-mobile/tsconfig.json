@@ -12,11 +12,7 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "strict": true,
-    "target": "esnext",
-    "baseUrl": ".",
-    "paths": {
-        "*": ["*", "*.ios", "*.android"]
-    }
+    "target": "esnext"
   },
   "exclude": [
     "node_modules",
