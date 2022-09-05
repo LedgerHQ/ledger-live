@@ -3,12 +3,15 @@ import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SettingsMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
-import { accountScreenSelector, accountsSelector } from "../../reducers/accounts";
+import {
+  accountScreenSelector,
+  accountsSelector,
+} from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 
 export default function AccountHeaderRight() {
   const navigation = useNavigation();
@@ -25,7 +28,9 @@ export default function AccountHeaderRight() {
   };
 
   const currency = getAccountCurrency(account);
-  const cryptoAccounts = accounts.filter(account => account.currency.id === currency.id)
+  const cryptoAccounts = accounts.filter(
+    account => account.currency.id === currency.id,
+  );
 
   useEffect(() => {
     if (!account) {
@@ -62,14 +67,15 @@ export default function AccountHeaderRight() {
         event="button_clicked"
         eventProperties={{
           button: "Account Settings",
-          source: currentScreen,
+          screen: currentScreen,
         }}
         onPress={() => {
           navigation.navigate(NavigatorName.AccountSettings, {
             screen: ScreenName.AccountSettingsMain,
             params: {
               accountId: account.id,
-              hasOtherAccountsForThisCrypto: cryptoAccounts && cryptoAccounts.length > 1,
+              hasOtherAccountsForThisCrypto:
+                cryptoAccounts && cryptoAccounts.length > 1,
             },
           });
         }}

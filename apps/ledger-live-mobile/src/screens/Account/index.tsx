@@ -30,7 +30,7 @@ import {
   countervalueFirstSelector,
 } from "../../reducers/settings";
 import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { ScreenName } from "../../const";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
@@ -89,7 +89,11 @@ const AccountScreenInner = ({
 
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
-  }, [dispatch]);
+    track("button_clicked", {
+      button: "Switch Account Currency",
+      countervalue: useCounterValue,
+    });
+  }, [dispatch, useCounterValue]);
 
   const onAccountPress = debounce((tokenAccount: TokenAccount) => {
     navigation.push(ScreenName.Account, {
