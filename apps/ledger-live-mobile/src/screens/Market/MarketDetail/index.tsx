@@ -29,13 +29,13 @@ import AccountRow from "../../Accounts/AccountRow";
 import { track, screen } from "../../../analytics";
 import Button from "../../../components/wrappedUi/Button";
 import MarketGraph from "./MarketGraph";
-import { FabMarketActions } from "../../../components/FabActions";
 import { ScreenName } from "../../../const";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import useNotifications from "../../../logic/notifications";
+import { FabMarketActions } from "../../../components/FabActions/actionsList/market";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
   <Button

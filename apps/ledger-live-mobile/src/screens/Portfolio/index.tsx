@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
-import { FlatList } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -12,7 +12,8 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
 
-import styled, { useTheme } from "styled-components/native";
+import { useTheme } from "styled-components/native";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -62,8 +63,6 @@ const AnimatedFlatListWithRefreshControl = createNativeWrapper(
 type Props = {
   navigation: any;
 };
-
-export const Gradient = styled(BackgroundGradient)``;
 
 const maxAssetsToDisplay = 5;
 

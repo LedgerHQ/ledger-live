@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { FlatList } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -23,7 +23,6 @@ import TabBarSafeAreaView, {
 import SectionContainer from "../../WalletCentricSections/SectionContainer";
 import SectionTitle from "../../WalletCentricSections/SectionTitle";
 import MarketPriceSection from "../../WalletCentricSections/MarketPrice";
-import { FabAssetActions } from "../../../components/FabActions";
 import EmptyAccountCard from "../../Account/EmptyAccountCard";
 import AssetCentricGraphCard from "../../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../../components/CurrencyBackgroundGradient";
@@ -38,6 +37,7 @@ import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
+import { FabAssetActions } from "../../../components/FabActions/actionsList/asset";
 
 type RouteParams = {
   currency: CryptoCurrency | TokenCurrency;

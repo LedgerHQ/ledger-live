@@ -1,16 +1,16 @@
 import React, { useCallback, memo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
-import { AccountLike, Account } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 
 import { ScrollContainer } from "@ledgerhq/native-ui";
-import ChoiceButton from "../ChoiceButton";
-import InfoModal from "../InfoModal";
-import Button from "../wrappedUi/Button";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { track } from "../../analytics";
-import { ActionButton, ActionButtonEventProps } from "./index";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import ChoiceButton from "../../../ChoiceButton";
+import InfoModal from "../../../InfoModal";
+import Button from "../../../wrappedUi/Button";
+import { readOnlyModeEnabledSelector } from "../../../../reducers/settings";
+import { track } from "../../../../analytics";
+import { ActionButton, ActionButtonEventProps } from "../../index";
 
 type Props = {
   buttons: ActionButton[];
@@ -31,7 +31,7 @@ function FabAccountButtonBar({
   const [infoModalProps, setInfoModalProps] = useState<
     ActionButtonEventProps | undefined
   >();
-  const [isModalInfoOpened, setIsModalInfoOpened] = useState();
+  const [isModalInfoOpened, setIsModalInfoOpened] = useState<boolean>();
 
   const onNavigate = useCallback(
     (name: string, options?: any) => {
@@ -63,7 +63,7 @@ function FabAccountButtonBar({
       }
 
       if (!confirmModalProps) {
-        setInfoModalProps();
+        setInfoModalProps(undefined);
         if (linkUrl) {
           Linking.openURL(linkUrl);
         } else if (navigationParams) {
@@ -83,7 +83,7 @@ function FabAccountButtonBar({
   }, [infoModalProps, onPress]);
 
   const onClose = useCallback(() => {
-    setIsModalInfoOpened();
+    setIsModalInfoOpened(false);
   }, []);
 
   const onChoiceSelect = useCallback(({ navigationParams, linkUrl }) => {
