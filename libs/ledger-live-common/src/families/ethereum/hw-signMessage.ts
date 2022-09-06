@@ -46,7 +46,7 @@ function tryConvertToJSON(message: string): string | EIP712Message {
   return message;
 }
 
-export const prepareMessageToSign = (
+const prepareMessageToSign = (
   currency: CryptoCurrency,
   path: string,
   derivationMode: DerivationMode,
@@ -79,9 +79,14 @@ export const prepareMessageToSign = (
   }
 };
 
+type PartialMessageData = {
+  path: string;
+  message: string | EIP712Message;
+  rawMessage: string;
+};
 const signMessage: EthSignMessage = async (
-  transport,
-  { path, message, rawMessage }
+  transport: Transport,
+  { path, message, rawMessage }: PartialMessageData
 ) => {
   const eth = new Eth(transport);
   let parsedMessage = message;
