@@ -198,7 +198,7 @@
     "menu" : "菜单",
     "stars" : "已标星账户",
     "accounts" : "账户",
-    "manager" : "My Ledger",
+    "manager" : "管理器",
     "exchange" : "买入 / 卖出",
     "swap" : "互换",
     "lend" : "借出",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "请在您的设备上安装 {{appName}} 应用程序",
-      "subtitle" : "Go to My Ledger and install {{appName}} app to swap assets.",
-      "cta" : "Go to My Ledger"
+      "subtitle" : "前往 Manager（管理器）并安装 {{appName}} 应用程序以互换资产",
+      "cta" : "前往管理器"
     },
     "outdatedApp" : {
       "title" : "请在您的设备上更新 {{appName}} 应用程序",
-      "subtitle" : "Go to My Ledger and update {{appName}} app to swap assets.",
-      "cta" : "Go to My Ledger"
+      "subtitle" : "前往管理器并更新 {{appName}} 应用程序以互换资产。",
+      "cta" : "前往管理器"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -959,7 +959,7 @@
       "terms" : {
         "title" : "借出加密货币",
         "subtitle" : "按照 Compound 复利协议借出资产",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "Compound 复利协议允许您在以太坊网络上贷出或借入资产。您可以直接通过您的 Ledger 账户贷出资产并赚取利息。",
         "switchLabel" : "<1>我已阅读并同意</1> <0>使用条款</0><1>。</1>"
       },
       "steps" : {
@@ -1202,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "在您的设备上安装应用程序",
-      "desc" : "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
+      "desc" : "前往管理器在您的设备上安装应用。一旦您设备上有应用程序，您就可以添加账户。",
       "buttons" : {
-        "installApp" : "Go to My Ledger",
+        "installApp" : "前往 Manager（管理器）",
         "help" : "帮助"
       }
     },
@@ -1213,7 +1213,7 @@
       "desc" : "添加账户来开始管理您的加密资产。您必须在您的设备上安装您的加密资产的应用程序。",
       "buttons" : {
         "addAccount" : "添加账户",
-        "installApp" : "Go to My Ledger to install apps",
+        "installApp" : "前往 Manager（管理器）安装应用程序",
         "help" : "帮助"
       }
     }
@@ -1294,7 +1294,7 @@
       "noSearchResults" : "对不起，我们没有找到任何搜索结果。",
       "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
       "retrySearchParams" : "请用其他参数重新进行搜索。",
-      "trackFavAssets" : "追踪您的收藏",
+      "trackFavAssets" : "追踪您最喜爱的",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
       "browseAssets" : "浏览资产"
     }
@@ -1536,12 +1536,12 @@
     "quitApp" : "在您的设备上退出该应用程序",
     "appNotInstalledTitle" : "缺少所需的应用程序",
     "appNotInstalledTitle_plural" : "缺少所需的应用程序",
-    "appNotInstalled" : "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
-    "appNotInstalled_plural" : "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
-    "openManager" : "Open My Ledger",
+    "appNotInstalled" : "需要 {{appName}} 应用程序来完成此操作。请前往管理器并在您的设备上安装它",
+    "appNotInstalled_plural" : "需要 {{appName}} 应用程序来完成此操作。请前往管理器并在您的设备上安装它",
+    "openManager" : "打开 Manager（管理器）",
     "openOnboarding" : "设置设备",
     "outdated" : "应用程序版本过期",
-    "outdatedDesc" : "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
+    "outdatedDesc" : "您设备上的 {{appName}} 应用程序有可用的重要更新。请前往管理器对其进行更新。",
     "installApp" : "{{appName}} 应用程序安装",
     "installAppDescription" : "请耐心等待，直至安装完成",
     "listApps" : "正在检查应用程序依存关系",
@@ -1584,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "似乎您设备上有一个开启的应用",
-      "subtitle" : "Reopening My Ledger will quit the app on your device",
-      "ctaReopen" : "Reopen My Ledger",
+      "subtitle" : "重新打开 Manager（管理器）将退出您设备上的应用程序",
+      "ctaReopen" : "重新打开 Manager（管理器）",
       "ctaPortfolio" : "返回 Portfolio（资产组合）"
     },
     "deviceStorage" : {
@@ -1628,7 +1628,7 @@
         "title_plural" : "可用更新",
         "progressTitle" : "{{number}} 个应用程序更新",
         "progressTitle_plural" : "{{number}} 个应用程序更新",
-        "progressWarning" : "Do not quit My Ledger during update.",
+        "progressWarning" : "更新期间，请勿退出 Manager（管理器）。",
         "progress" : "正在更新全部……"
       },
       "item" : {
@@ -1692,7 +1692,7 @@
       "updateBtn" : "更新固件",
       "banner" : {
         "warning" : "可将固件更新到 {{latestFirmware}} 版本",
-        "cta" : "Go to My Ledger",
+        "cta" : "前往管理器",
         "old" : {
           "warning" : "设备固件版本太旧而无法更新。请联系 Ledger 客服以获取替代版本。",
           "cta" : "联系客服"
@@ -1748,7 +1748,7 @@
         "boot" : "持续按住设备侧面按钮，直至 {{option}} 显示",
         "recoveryMode" : "轻击 {{mode}} 模式。等候片刻直至功能面板出现。",
         "third" : "3. 卸载所有应用",
-        "openLive" : "Open My Ledger in Ledger Live.",
+        "openLive" : "在 Ledger Live 中打开 Manager（管理器）。",
         "uninstall" : "点击 {{deviceName}} 上当前安装的所有应用程序的灰色回收站图标。这将为固件安装程序释放空间。",
         "disclaimer" : "注：该操作不会对您的资金造成影响，用以访问您区块链中加密资产的私钥，依旧会安全保存在您的恢复表中。"
       }
@@ -2861,7 +2861,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "您的委托已成功激活。"
               }
             }
           }
@@ -2873,7 +2873,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "您的委托已成功重新激活。"
               }
             }
           }
@@ -3115,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "开发者模式",
-          "description" : "Show developer and testnet apps in My Ledger."
+          "description" : "在管理器中显示开发者和测试网应用程序。"
         },
         "scanForInvalidPaths" : {
           "title" : "扩展的账户搜索",
@@ -3130,8 +3130,8 @@
           "description" : "自定义所有账户的间隔限制将此值增加到高于其默认值（20），可以扫描更多未使用的货币公共地址。仅限高级用户，这可能会在恢复你的账户时破坏兼容性。"
         },
         "forceProvider" : {
-          "title" : "My Ledger provider",
-          "description" : "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
+          "title" : "管理器提供方",
+          "description" : "在管理器中更改应用程序提供方可能会导致无法在您的 Ledger 设备上安装或卸载应用程序。"
         },
         "testAnimations" : {
           "title" : "测试 Lottie 动画",
@@ -3336,6 +3336,7 @@
         "link" : "有关恢复短语的更多详情",
         "title2" : "如果我的 Nano 无法使用了该怎么办？",
         "paragraph3" : "不要担心并遵循以下步骤：",
+        "paragraph4" : "为了恢复对您加密资产的访问，任何钱包都能通过您的恢复短语算出同样的私钥。",
         "points" : {
           "1" : "获得一个新的硬件钱包。",
           "2" : "在 Ledger 应用程序中选择 “Restore recovery phrase on a new device” (在新设备上还原恢复短语)",
@@ -3376,40 +3377,57 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "欢迎使用 Ledger",
-        "description" : "通过您的电脑来安全管理您的加密资产。",
-        "cta" : "开始",
-        "noDevice" : "没有设备？<0>购买 Ledger Nano X</0>",
-        "languageWarning" : {
-          "title" : "以{{language}}开始",
-          "desc" : "为了让大家更好地使用 Ledger，我们正在推出其他语言版本。需要注意的是，Ledger 其他功能目前只有英语版可用。",
-          "cta" : "知道了"
+        "title" : "最安全的加密货币和 NFT 钱包",
+        "description" : "在 Ledger Live 上安全地管理、买入和增长您的加密货币和 NFT。",
+        "nextButton" : "开始",
+        "noDevice" : "没有设备？",
+        "buyLink" : "没有设备？购买 Ledger Nano X",
+        "byTapping" : "点按“开始”即表示您应允并同意我们的",
+        "termsAndConditions" : "条款与条件",
+        "and" : "和",
+        "privacyPolicy" : "隐私政策",
+        "steps" : {
+          "0" : {
+            "title" : "访问您的加密资产",
+            "desc" : "您的加密资产存储在区块链上。使用您的私钥访问和管理加密资产"
+          },
+          "1" : {
+            "title" : "保管好您的私钥",
+            "desc" : "您的私钥存储在 Nano 设备中。\n您必须是私钥的唯一持有者才能控制您的资金"
+          },
+          "2" : {
+            "title" : "保持离线状态",
+            "desc" : "Nano 是一种“冷存储”钱包。\n这意味着它永远不会联网泄露您的私钥，即使在使用应用程序时也不会泄露"
+          },
+          "3" : {
+            "title" : "验证交易",
+            "desc" : "利用 Ledger Live，您可以买入、卖出、管理、兑换和赚取加密货币，同时保护您的加密货币。\n您需要使用 Nano 核实每笔加密货币交易"
+          },
+          "4" : {
+            "title" : "开始设置 Nano",
+            "desc" : "我们首先要设置 Nano"
+          }
         }
       },
       "selectDevice" : {
-        "title" : "您使用的是哪款设备？"
+        "title" : "选择您的设备",
+        "selectLabel" : "选择"
       },
       "selectUseCase" : {
-        "greetings" : "您好！",
         "hasNoRecovery" : "首次使用您的 {{deviceName}} ？",
         "hasRecovery" : "已经有了恢复短语？",
-        "separator" : "或者",
-        "switchDevice" : "切换设备",
         "options" : {
           "1" : {
-            "heading" : "首次使用",
             "title" : "设置一个新的 {{deviceName}}",
-            "description" : "让我们开始设置您的设备吧！"
+            "description" : "开始设置您的设备"
           },
           "2" : {
-            "heading" : "连接设备",
             "title" : "请连接您的{{deviceName}}",
             "description" : "设备已经设置好了？将其连接到应用程序！"
           },
           "3" : {
-            "heading" : "还原设备",
             "title" : "在新设备上还原您的恢复短语",
-            "description" : "使用现有的恢复短语在新的 {{deviceName}} 上恢复您的私钥！"
+            "description" : "在新的 Nano 设备上使用现有的恢复短语来还原您的私钥！"
           }
         }
       },
@@ -3442,6 +3460,10 @@
             "buttons" : {
               "next" : "好的，我一切就绪！",
               "prev" : "上一步"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "deviceHowTo" : {
@@ -3465,9 +3487,14 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "deviceHowTo2" : {
+            "title" : "最佳的开始方式：",
             "turnOn" : {
               "title" : "启动 Nano",
               "descr" : "使用 USB 数据线，将您的设备连接到您的电脑上。"
@@ -3488,6 +3515,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "pinCode" : {
@@ -3498,6 +3529,10 @@
               "next" : "设置 PIN 识别码",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "quizSuccess" : {
@@ -3511,10 +3546,14 @@
           },
           "quizFailure" : {
             "title" : "距成为高手仅一步之遥……",
-            "paragraph" : "别担心，Ledger 会全程为您的操作提供指导。很快，您就会对自己加密资产的安全性感到格外舒心。\n\n只剩下最后一小步！",
+            "paragraph" : "不必担心，Ledger 将指导您完成每一步。很快您就会对您的加密货币安全更加放心了。\n\n只剩一小步了！",
             "buttons" : {
               "next" : "下一步",
               "prev" : "上一步"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "pinCodeHowTo" : {
@@ -3530,6 +3569,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "existingRecoveryPhrase" : {
@@ -3544,7 +3587,7 @@
             },
             "warning" : {
               "title" : "请勿使用非您本人生成的恢复短语。",
-              "desc" : "您的 Ledger 硬件钱包的 PIN 识别码和恢复短语应该由您本人单独完成初始化操作。如果您收到的设备含有一个已经存在的种子词或一个已经初始化的 PIN 识别码，那么请勿使用该产品，并请联系我们的客服。",
+              "desc" : "您的 Ledger 硬件钱包识别码和恢复短语应该仅由您本人执行初始化。如果您收到的设备带有预设的种子助记词或已初始化的识别码，请勿使用该产品，应尽快联系我们的客服。",
               "supportLink" : "联系客服"
             }
           },
@@ -3561,6 +3604,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "newRecoveryPhrase" : {
@@ -3572,6 +3619,10 @@
               "next" : "恢复短语",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "recoveryHowTo" : {
@@ -3597,6 +3648,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "recoveryHowTo3" : {
@@ -3611,6 +3666,10 @@
               "next" : "下一步",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "genuineCheck" : {
@@ -3634,6 +3693,10 @@
               "prev" : "上一步",
               "help" : "需要帮助",
               "learn" : "了解如何保管您的恢复短语"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           },
           "pairMyNano" : {
@@ -3643,6 +3706,10 @@
               "next" : "检验我的 Nano",
               "prev" : "上一步",
               "help" : "需要帮助"
+            },
+            "help" : {
+              "help" : "需要帮助",
+              "descr" : "不知道如何操作？获取完成此步骤的帮助。"
             }
           }
         }
@@ -3668,9 +3735,9 @@
           "description" : "Ledger Live 在确保您的安全性的同时，允许您买入、卖出、管理、交易并赚取加密货币。您将使用您的 Nano 对每一笔交易进行验证。"
         },
         "setUpNanoWallet" : {
-          "title" : "让我们设置您的 Nano 吧！",
+          "title" : "开始设置 Nano！",
           "description" : "首先要设置 Nano 的安全性。",
-          "CTA" : "动手吧！"
+          "CTA" : "我们开始吧！"
         }
       }
     },
@@ -3679,7 +3746,7 @@
       "title" : "游戏开始！",
       "descr" : "回答 3 个简单问题，消除您对硬币钱包的常见误解。",
       "buttons" : {
-        "start" : "接受测验",
+        "start" : "参加测验",
         "next" : "下一题",
         "finish" : "完成测验"
       },
@@ -3929,7 +3996,9 @@
     "termsLabel" : "服务条款",
     "privacyLabel" : "隐私政策",
     "switchLabel" : "我已阅读并接受服务条款和隐私政策",
-    "cta" : "进入 Ledger 应用程序"
+    "cta" : "进入 Ledger 应用程序",
+    "termsCheckboxLabel" : "我已阅读并同意使用条款",
+    "privacyCheckboxLabel" : "我已阅读并接受隐私政策"
   },
   "updatedTerms" : {
     "title" : "使用条款更新",
@@ -3983,7 +4052,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "无法为您的特定配置找到 {{appName}} 应用程序。",
-      "description" : "Try reinstalling the app from My Ledger"
+      "description" : "尝试从管理器重新安装应用程序"
     },
     "countervaluesUnavailable" : {
       "title" : "我们目前无法为此资产提供对价"
@@ -4146,7 +4215,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "固件或应用程序需更新",
-      "description" : "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
+      "description" : "请使用管理器卸载所有的应用程序，且在重新安装应用程序之前检查是否有可用的固件更新。"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "更新 Nano 的固件",
@@ -4203,20 +4272,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "完成应用程序的安装进程？",
-        "description" : "Quitting My Ledger will terminate the app installation. Please finish the installation to install the apps in the queue.",
+        "description" : "退出 Manager（管理器）将会终止应用程序的安装。请完成列队中应用程序的安装。",
         "stay" : "完成安装"
       },
       "uninstall" : {
         "title" : "完成应用程序的卸载进程？",
-        "description" : "Quitting My Ledger will terminate the app uninstallations in progress.",
+        "description" : "退出 Manager（管理器）会终止应用程序的卸载进程。",
         "stay" : "完成卸载"
       },
       "update" : {
         "title" : "完成应用程序的更新进程？",
-        "description" : "Quitting My Ledger will terminate the app updates in progress.",
+        "description" : "退出 Manager（管理器）会终止应用程序的更新进程。",
         "stay" : "完成更新"
       },
-      "quit" : "Quit My Ledger"
+      "quit" : "退出管理器"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "抱歉，需要安装此应用程序",
@@ -4224,10 +4293,6 @@
     },
     "NetworkDown" : {
       "title" : "抱歉，网络连接似乎已断开",
-      "description" : "请检查您的网络连接。"
-    },
-    "NetworkError" : {
-      "title" : "同步期间发生错误",
       "description" : "请检查您的网络连接。"
     },
     "NoAddressesFound" : {
@@ -4316,7 +4381,7 @@
       "description" : "请重新启动您的设备，而不要在图标出现时触摸按钮。如果问题仍然存在，请联系 Ledger 客服。"
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger denied on device"
+      "title" : "Manager（管理器）在设备上被拒绝"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "设备上的更新已取消",
@@ -4336,7 +4401,7 @@
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
-      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
+      "description" : "在 Manager（管理器）中卸载并重新安装 {{managerAppName}} 应用程序"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "返回功能面板",
@@ -4356,7 +4421,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "需要更新应用程序",
-      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
+      "description" : "在 Manager（管理器）中卸载并重新安装 {{managerAppName}} 应用程序"
     },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
@@ -4401,7 +4466,7 @@
       "list" : {
         "1" : "断开连接并重新连接 USB 数据线，而不按下任何按钮。",
         "2" : "同时按下两个按钮三次来显示功能面板。",
-        "3" : "Open My Ledger and click Update firmware."
+        "3" : "打开管理器并点击更新固件。"
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {

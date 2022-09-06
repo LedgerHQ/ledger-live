@@ -198,7 +198,7 @@
     "menu" : "Menü",
     "stars" : "Favoritenliste",
     "accounts" : "Konten",
-    "manager" : "My Ledger",
+    "manager" : "Manager",
     "exchange" : "Kaufen / Verkaufen",
     "swap" : "Umtauschen",
     "lend" : "Leihen",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "Bitte installieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Wechseln Sie zu My Ledger und installieren Sie die {{appName}}-App, um Vermögenswerte zu tauschen.",
-      "cta" : "Zu My Ledger wechseln"
+      "subtitle" : "Gehen Sie zum Manager und installieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
+      "cta" : "Zum Manager gehen"
     },
     "outdatedApp" : {
       "title" : "Bitte aktualisieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Wechseln Sie zu My Ledger und aktualisieren Sie die {{appName}}-App, um Vermögenswerte zu tauschen.",
-      "cta" : "Zu My Ledger wechseln"
+      "subtitle" : "Gehen Sie zum Manager und aktualisieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
+      "cta" : "Zum Manager gehen"
     },
     "providers" : {
       "title" : "Wählen Sie einen Anbieter für den Tausch von Kryptowährungen",
@@ -959,7 +959,7 @@
       "terms" : {
         "title" : "Kryptowährungen verleihen",
         "subtitle" : "Verleihen von Vermögenswerten über das Compound-Protokoll",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "Das Compound-Protokoll ermöglicht es Ihnen, Vermögenswerte im Ethereum-Netzwerk zu leihen und zu verleihen. Sie können Vermögenswerte verleihen und Zinsen direkt von Ihrem Ledger-Konto erhalten.",
         "switchLabel" : "Ich habe die <1>Nutzungsbedingungen</1> gelesen und bin damit einverstanden"
       },
       "steps" : {
@@ -1202,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Apps auf Ihrem Gerät installieren",
-      "desc" : "Wechseln Sie zu My Ledger, um Apps auf Ihrem Gerät zu installieren. Nach der Installation der Apps können Sie Konten hinzufügen.",
+      "desc" : "Gehen Sie zum Manager, um Apps auf Ihrem Gerät zu installieren. Sie können Konten hinzufügen, sobald Sie Apps auf Ihrem Gerät haben.",
       "buttons" : {
-        "installApp" : "Zu My Ledger wechseln",
+        "installApp" : "Zum Manager gehen",
         "help" : "Hilfe"
       }
     },
@@ -1213,7 +1213,7 @@
       "desc" : "Fügen Sie ein Konto hinzu, um mit der Verwaltung Ihrer Krypto-Vermögenswerte zu beginnen. Sie müssen die App für Ihr Krypto-Vermögen auf Ihrem Gerät installiert haben.",
       "buttons" : {
         "addAccount" : "Konto hinzufügen",
-        "installApp" : "Zu My Ledger wechseln, um Apps zu installieren",
+        "installApp" : "Gehen Sie zum Manager, um Apps zu installieren",
         "help" : "Hilfe"
       }
     }
@@ -1536,12 +1536,12 @@
     "quitApp" : "Beenden Sie die Anwendung auf Ihrem Gerät",
     "appNotInstalledTitle" : "Fehlende, erforderliche App",
     "appNotInstalledTitle_plural" : "Fehlende, erforderliche Apps",
-    "appNotInstalled" : "Die {{appName}}-App ist erforderlich, um diese Aktion durchzuführen. Bitte wechseln Sie zu My Ledger und installieren Sie sie auf Ihrem Gerät.",
-    "appNotInstalled_plural" : "Die {{appName}}-Apps sind erforderlich, um diese Aktion durchzuführen. Bitte wechseln Sie zu My Ledger und installieren Sie sie auf Ihrem Gerät.",
-    "openManager" : "My Ledger öffnen",
+    "appNotInstalled" : "Die App {{appName}} ist erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
+    "appNotInstalled_plural" : "Die Apps {{appName}} sind erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
+    "openManager" : "Manager öffnen",
     "openOnboarding" : "Gerät einrichten",
     "outdated" : "App-Version veraltet",
-    "outdatedDesc" : "Für die {{appName}}-App auf Ihrem Gerät ist ein wichtiges Update verfügbar. Wechseln Sie zu My Ledger, um sie zu aktualisieren.",
+    "outdatedDesc" : "Ein wichtiges Update ist für die Anwendung {{appName}} auf Ihrem Gerät verfügbar. Bitte gehen Sie zum Manager, um das Update durchzuführen.",
     "installApp" : "{{appName}} App-Installation",
     "installAppDescription" : "Bitte warten Sie, bis die Installation beendet ist",
     "listApps" : "Prüfen von App-Abhängigkeiten",
@@ -1556,7 +1556,7 @@
       "provider" : "Anbieter",
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
-      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu."
+      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -1584,8 +1584,8 @@
     },
     "disconnected" : {
       "title" : "Es sieht so aus, als ob eine App auf Ihrem Gerät geöffnet ist",
-      "subtitle" : "Wenn Sie My Ledger erneut öffnen, wird die App auf Ihrem Gerät beendet.",
-      "ctaReopen" : "My Ledger erneut öffnen",
+      "subtitle" : "Beim erneuten Öffnen des Managers wird die App auf Ihrem Gerät beendet",
+      "ctaReopen" : "Manager erneut öffnen",
       "ctaPortfolio" : "Zurück zum Portfolio"
     },
     "deviceStorage" : {
@@ -1628,7 +1628,7 @@
         "title_plural" : "Updates verfügbar",
         "progressTitle" : "{{number}} App-Update",
         "progressTitle_plural" : "{{number}} App-Updates",
-        "progressWarning" : "Beenden Sie My Ledger nicht, solange die Aktualisierung noch läuft.",
+        "progressWarning" : "Beenden Sie den Manager nicht während der Aktualisierung.",
         "progress" : "Alle aktualisieren ..."
       },
       "item" : {
@@ -1692,7 +1692,7 @@
       "updateBtn" : "Firmware aktualisieren",
       "banner" : {
         "warning" : "Update-Firmware zu {{latestFirmware}} ist verfügbar",
-        "cta" : "Zu My Ledger wechseln",
+        "cta" : "Zum Manager gehen",
         "old" : {
           "warning" : "Geräte-Firmware-Version zu alt, um aktualisiert zu werden. Kontaktieren Sie den Ledger-Support für einen Ersatz.",
           "cta" : "Support kontaktieren"
@@ -1748,7 +1748,7 @@
         "boot" : "Drücken und halten Sie die Seitentaste, bis {{option}} angezeigt wird",
         "recoveryMode" : "Tippen Sie auf {{mode}} Modus. Warten Sie, bis das Dashboard erscheint.",
         "third" : "3. Alle Apps deinstallieren",
-        "openLive" : "Öffnen Sie My Ledger in Ledger Live.",
+        "openLive" : "Öffnen Sie den Manager in Ledger Live.",
         "uninstall" : "Klicken Sie auf das graue Papierkorbsymbol für alle derzeit auf dem {{deviceName}} installierten Apps. Dies schafft Platz für das Firmware-Installationsprogramm.",
         "disclaimer" : "Hinweis: Ihr Guthaben ist von diesem Vorgang nicht betroffen, die privaten Schlüssel zum Zugriff auf Ihr Krypto-Vermögen in der Blockchain bleiben sicher auf Ihrem Recovery Sheet."
       }
@@ -2861,7 +2861,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "Sie haben Ihre Delegation erfolgreich aktiviert."
               }
             }
           }
@@ -2873,7 +2873,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "Sie haben Ihre Delegierung erfolgreich reaktiviert."
               }
             }
           }
@@ -3115,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "Entwicklermodus",
-          "description" : "Zeigen Sie Entwickler- und Testnet-Apps in My Ledger an."
+          "description" : "Zeige Entwickler- und Testnet-Apps im Manager."
         },
         "scanForInvalidPaths" : {
           "title" : "Erweiterte Kontosuche",
@@ -3130,8 +3130,8 @@
           "description" : "Benutzerdefiniertes Lückenlimit für alle Konten. Wenn Sie diesen Wert über den Standardwert (20) erhöhen, werden mehr ungenutzte öffentliche Adressen nach Coins durchsucht. Nur für fortgeschrittene Benutzer, dies kann die Kompatibilität beim Wiederherstellen Ihrer Konten beeinträchtigen."
         },
         "forceProvider" : {
-          "title" : "Anbieter in My Ledger",
-          "description" : "Das Wechseln des App-Anbieters in My Ledger kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+          "title" : "Manager-Anbieter",
+          "description" : "Das Ändern des App-Anbieters im Manager kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
         },
         "testAnimations" : {
           "title" : "Lottie-Animationen testen",
@@ -3336,6 +3336,7 @@
         "link" : "Mehr zur Wiederherstellungsphrase",
         "title2" : "Was passiert, wenn ich den Zugriff auf meinen Nano verliere?",
         "paragraph3" : "Machen Sie sich keine Sorgen und folgen Sie diesen Schritten:",
+        "paragraph4" : "Um den Zugriff auf Ihre Kryptos wiederherzustellen, kann jede Wallet die gleichen privaten Schlüssel aus Ihrem Wiederherstellungssatz berechnen.",
         "points" : {
           "1" : "Besorgen Sie sich eine neue Hardware-Wallet.",
           "2" : "Wählen Sie „Wiederherstellungsphrase auf einem neuen Gerät wiederherstellen“ in der Ledger-App",
@@ -3376,40 +3377,57 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "Willkommen bei Ledger",
-        "description" : "Verwalten Sie Ihre Kryptowährungen sicher von Ihrem Computer aus.",
-        "cta" : "Erste Schritte",
-        "noDevice" : "Kein Gerät? <0>Kaufen Sie einen Ledger Nano X",
-        "languageWarning" : {
-          "title" : "Erste Schritte in {{language}}",
-          "desc" : "Wir führen zusätzliche Sprachen ein, um Ihnen das Onboarding mit Ledger zu erleichtern. Bitte beachten Sie, dass der Rest der Ledger-Erfahrung derzeit nur auf Englisch verfügbar ist.",
-          "cta" : "Verstanden"
+        "title" : "Die sicherste Wallet für Kryptowährungen & NFTs",
+        "description" : "Verwalten, kaufen und vermehren Sie Ihre Krypto und NFTs auf Ledger Live.",
+        "nextButton" : "Erste Schritte",
+        "noDevice" : "Kein Gerät?",
+        "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
+        "byTapping" : "Indem Sie auf „Get Started\" (Loslegen) tippen, erklären Sie sich mit unserem",
+        "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
+        "and" : "Hinzu kommt:",
+        "privacyPolicy" : "Datenschutzrichtlinie",
+        "steps" : {
+          "0" : {
+            "title" : "Zugriff auf Ihre Kryptos",
+            "desc" : "Ihre Krypto-Vermögenswerte werden auf der Blockchain gespeichert. Verwenden Sie Ihren privaten Schlüssel, um auf sie zuzugreifen und sie zu verwalten"
+          },
+          "1" : {
+            "title" : "Achten Sie auf Ihren privaten Schlüssel",
+            "desc" : "Ihr privater Schlüssel ist in Ihrem Nano gespeichert.Sie müssen der einzige sein, der ihn besitzt, um die Kontrolle über Ihr Geld zu haben."
+          },
+          "2" : {
+            "title" : "Offline bleiben",
+            "desc" : "Ihr Nano arbeitet als „Cold Storage“-Wallet.Das bedeutet, dass er Ihren privaten Schlüssel niemals online preisgibt, selbst wenn Sie die App verwenden."
+          },
+          "3" : {
+            "title" : "Transaktionen validieren",
+            "desc" : "Mit Ledger Live können Sie Krypto kaufen, verkaufen, verwalten, tauschen und verdienen und bleiben dabei geschützt.Sie werden jede Krypto-Transaktion mit Ihrem Nano validieren."
+          },
+          "4" : {
+            "title" : "Lassen Sie uns Ihren Nano einrichten",
+            "desc" : "Wir beginnen mit der Einrichtung Ihres Nano"
+          }
         }
       },
       "selectDevice" : {
-        "title" : "Welches Gerät haben Sie?"
+        "title" : "Gerät auswählen",
+        "selectLabel" : "Auswählen"
       },
       "selectUseCase" : {
-        "greetings" : "Hallo!",
         "hasNoRecovery" : "Verwenden Sie Ihr {{deviceName}} zum ersten Mal?",
         "hasRecovery" : "Haben Sie bereits eine Wiederherstellungsphrase?",
-        "separator" : "oder",
-        "switchDevice" : "Gerät wechseln",
         "options" : {
           "1" : {
-            "heading" : "Erste Verwendung",
             "title" : "Einrichten eines neuen {{deviceName}}",
             "description" : "Lassen Sie uns beginnen und Ihr Gerät einrichten!"
           },
           "2" : {
-            "heading" : "Verbundenes Gerät",
             "title" : "Verbinden Sie Ihr {{deviceName}}",
             "description" : "Ist Ihr Gerät bereits eingerichtet? Verbinden Sie es mit der App!"
           },
           "3" : {
-            "heading" : "Gerät wiederherstellen",
             "title" : "Wiederherstellen Ihrer Wiederherstellungsphrase auf einem neuen Gerät",
-            "description" : "Verwenden Sie eine vorhandene Wiederherstellungsphrase, um Ihre privaten Schlüssel auf einem neuen {{deviceName}} wiederherzustellen!"
+            "description" : "Verwenden Sie eine vorhandene Wiederherstellungsphrase, um Ihre privaten Schlüssel auf einem neuen Nano wiederherzustellen!"
           }
         }
       },
@@ -3442,6 +3460,10 @@
             "buttons" : {
               "next" : "OK, ich bin bereit!",
               "prev" : "Vorheriger Schritt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "deviceHowTo" : {
@@ -3465,9 +3487,14 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "deviceHowTo2" : {
+            "title" : "Der beste Weg für den Anfang:",
             "turnOn" : {
               "title" : "Nano einschalten",
               "descr" : "Schließen Sie Ihr Gerät mit dem USB-Kabel an Ihren Computer an."
@@ -3488,6 +3515,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "pinCode" : {
@@ -3498,6 +3529,10 @@
               "next" : "PIN-Code einrichten",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "quizSuccess" : {
@@ -3515,6 +3550,10 @@
             "buttons" : {
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "pinCodeHowTo" : {
@@ -3530,6 +3569,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "existingRecoveryPhrase" : {
@@ -3544,7 +3587,7 @@
             },
             "warning" : {
               "title" : "Verwenden Sie keinen Wiederherstellungssatz, den Sie nicht selbst erstellt haben.",
-              "desc" : "Der PIN-Code und der Wiederherstellungssatz Ihrer Ledger-Hardware-Wallet sollten von Ihnen und nur von Ihnen erstellt werden. Falls Sie ein Gerät mit einem bereits existierendem Seed-Wort oder einem bereits initialisierten PIN-Code erhalten haben, verwenden Sie das Produkt bitte nicht und kontaktieren Sie unseren Kundendienst.",
+              "desc" : "Der PIN-Code und die Wiederherstellungsphrase Ihrer Ledger-Hardware-Wallet sollten von Ihnen und nur von Ihnen erstellt werden. Falls Sie ein Gerät mit einem bereits existierendem Seed-Wort oder einem bereits initialisierten PIN-Code erhalten haben, verwenden Sie das Produkt bitte nicht und kontaktieren Sie unseren Kundendienst.",
               "supportLink" : "Kundensupport kontaktieren"
             }
           },
@@ -3561,6 +3604,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "newRecoveryPhrase" : {
@@ -3572,6 +3619,10 @@
               "next" : "Wiederherstellungsphrase",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "recoveryHowTo" : {
@@ -3597,6 +3648,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "recoveryHowTo3" : {
@@ -3611,6 +3666,10 @@
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "genuineCheck" : {
@@ -3634,6 +3693,10 @@
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt",
               "learn" : "Erfahren Sie wie man gut versteckt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           },
           "pairMyNano" : {
@@ -3643,6 +3706,10 @@
               "next" : "Meinen Nano prüfen",
               "prev" : "Vorheriger Schritt",
               "help" : "Hilfe benötigt"
+            },
+            "help" : {
+              "help" : "Hilfe benötigt",
+              "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
             }
           }
         }
@@ -3679,7 +3746,7 @@
       "title" : "Jetzt geht's los!",
       "descr" : "Beantworten Sie 3 einfache Fragen, um häufige Missverständnisse über Ihre Hardware-Wallet zu vermeiden.",
       "buttons" : {
-        "start" : "Lassen Sie uns das Quiz machen",
+        "start" : "Los geht's mit dem Quiz",
         "next" : "Nächste Frage",
         "finish" : "Quiz beenden"
       },
@@ -4316,7 +4383,7 @@
       "description" : "Bitte starten Sie Ihr Gerät neu, ohne die Schaltflächen zu berühren, wenn das Logo erscheint. Kontaktieren Sie den Ledger Support, falls das Problem weiterhin besteht."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger auf Gerät nicht zulässig"
+      "title" : "Manager auf Gerät abgelehnt"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Update auf Gerät abgebrochen",
@@ -4336,7 +4403,7 @@
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren Sie die {{managerAppName}}-App in My Ledger und installieren Sie sie dann neu."
+      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Zurück zum Dashboard",
@@ -4356,7 +4423,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren Sie die {{managerAppName}}-App in My Ledger und installieren Sie sie dann neu."
+      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
     },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
@@ -4401,7 +4468,7 @@
       "list" : {
         "1" : "Trennen Sie das USB-Kabel ab und schließen Sie es wieder an, ohne eine Taste zu drücken.",
         "2" : "Drücken Sie beide Tasten zusammen dreimal, um das Dashboard anzuzeigen.",
-        "3" : "Öffnen Sie My Ledger und klicken Sie auf „Firmware aktualisieren“."
+        "3" : "Öffnen Sie den Manager und klicken Sie auf Firmware aktualisieren."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
