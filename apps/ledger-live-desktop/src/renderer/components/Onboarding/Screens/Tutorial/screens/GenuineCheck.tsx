@@ -11,7 +11,6 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { command } from "~/renderer/commands";
 import { useDispatch } from "react-redux";
 import { saveSettings } from "~/renderer/actions/settings";
-import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 import { track } from "~/renderer/analytics/segment";
 import { OnboardingContext } from "../../../index";
 
@@ -46,7 +45,6 @@ export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {
     res => {
       setConnectedDevice(res.device);
       dispatch(saveSettings({ hasCompletedOnboarding: true }));
-      dispatch(relaunchOnboarding(false));
       track("Onboarding - End");
     },
     [setConnectedDevice, dispatch],
