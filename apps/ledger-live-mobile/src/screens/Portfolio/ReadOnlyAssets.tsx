@@ -70,6 +70,7 @@ function ReadOnlyAssets({ navigation }: Props) {
             paddingHorizontal: 16,
             paddingBottom: TAB_BAR_SAFE_HEIGHT,
           }}
+          showsVerticalScrollIndicator={false}
           ListFooterComponent={
             <GradientContainer containerStyle={{ width: "100%" }}>
               <Flex p={6} alignItems="center" justifyContent="center">
