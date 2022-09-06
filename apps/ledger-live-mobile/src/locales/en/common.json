@@ -3444,13 +3444,6 @@
     }
   },
   "celo": {
-    "delegation": {
-      "totalVotes": "Total Votes",
-      "actions": {
-        "activate": "Activate",
-        "revoke": "Revoke"
-      }
-    },
     "info": {
       "available": {
         "title": "CELO available",
@@ -3471,6 +3464,7 @@
     },
     "delegation": {
       "validatorGroup": "Validator Group",
+      "totalVotes": "Total Votes",
       "actions": {
         "activate": "Activate",
         "revoke": "Revoke"
@@ -3522,29 +3516,6 @@
             "success": {
               "title": "Unlock transaction sent successfully",
               "text": "Unlocked assets can be withdrawn in 3 days."
-            }
-          }
-        }
-      }
-    },
-    "withdraw": {
-      "title": "Withdraw assets",
-      "stepperHeader": {
-        "title": "Vote",
-        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device"
-      },
-      "flow": {
-        "steps": {
-          "amount": {
-            "available": "Available",
-            "max": "Max"
-          },
-          "verification": {
-            "success": {
-              "title": "Your assets were withdrawn successfully",
-              "text": "The withdrawn amount will be credited to your available balance."
             }
           }
         }
@@ -3679,6 +3650,47 @@
             "success": {
               "title": "Assets successfully locked",
               "text": "You will be able to vote validators once the network has confirmed your transaction."
+            }
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "iWithdraw": "I withdraw",
+      "title": "Withdraw assets",
+      "steps": {
+        "amount": {
+          "title": "Withdraw"
+        },
+        "connectDevice": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation",
+          "success": {
+            "title": "Withdraw transaction sent successfully",
+            "text": "The withdrawn amount will be credited to your available balance.",
+            "cta": "View details"
+          },
+          "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+        }
+      },
+      "stepperHeader": {
+        "title": "Vote",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "available": "Available",
+            "max": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "Your assets were withdrawn successfully",
+              "text": "The withdrawn amount will be credited to your available balance."
             }
           }
         }
