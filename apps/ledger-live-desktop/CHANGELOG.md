@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.47.0-nightly.4
+
+### Minor Changes
+
+- [#593](https://github.com/LedgerHQ/ledger-live/pull/593) [`6edf507caa`](https://github.com/LedgerHQ/ledger-live/commit/6edf507caa3d452ab3b785b8f001b05f2509715f) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Migrate Onboarding v3 to LLD
+
 ## 2.47.0-nightly.3
 
 ### Patch Changes
