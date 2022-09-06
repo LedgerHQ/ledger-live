@@ -7,7 +7,7 @@ import ble from "./ble";
 import ratings from "./ratings";
 import notifications from "./notifications";
 import walletconnect from "./walletconnect";
-import { State } from "../types/state";
+import { State } from "./types";
 
 export type AppStore = Store<State>;
 

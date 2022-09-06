@@ -174,6 +174,8 @@ export type SettingsState = {
   };
 };
 
+// === ROOT STATE ===
+
 export type State = {
   accounts: AccountsState;
   settings: SettingsState;

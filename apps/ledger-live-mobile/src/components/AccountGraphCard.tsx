@@ -29,7 +29,7 @@ import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import { Item } from "./Graph/types";
-import { useBalanceHistoryWithCountervalue } from "../actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../hooks/portfolio";
 // eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";

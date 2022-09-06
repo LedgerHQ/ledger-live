@@ -1,9 +1,9 @@
 import { handleActions } from "redux-actions";
+import type { Action } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import type {
-  Currency,
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
@@ -22,45 +22,50 @@ import {
   clearAccount,
   nestedSortAccounts,
   makeEmptyTokenAccount,
-  ImportAccountsReduceInput,
-  AddAccountsProps,
-  AccountComparator,
 } from "@ledgerhq/live-common/account/index";
-import type { GetReducerPayload } from "../types/helpers";
-import type { AccountsState, State } from "../types/state";
+import type { AccountsState, State } from "./types";
+import type {
+  AccountsDeleteAccountPayload,
+  AccountsImportAccountsPayload,
+  AccountsImportStorePayload,
+  AccountsPayload,
+  AccountsReorderPayload,
+  AccountsReplaceAccountsPayload,
+  AccountsSetAccountsPayload,
+  AccountsUpdateAccountWithUpdaterPayload,
+  SettingsBlacklistTokenPayload,
+} from "../actions/types";
+import { AccountsActionTypes, SettingsActionTypes } from "../actions/types";
 import accountModel from "../logic/accountModel";
 
 const initialState: AccountsState = {
   active: [],
 };
 const handlers = {
-  ACCOUNTS_IMPORT: (
+  [AccountsActionTypes.ACCOUNTS_IMPORT]: (
     _: AccountsState,
-    { payload }: { payload: AccountsState },
+    { payload }: Action<AccountsImportStorePayload>,
   ) => payload,
-  ACCOUNTS_USER_IMPORT: (
+
+  [AccountsActionTypes.ACCOUNTS_USER_IMPORT]: (
     s: AccountsState,
-    { payload }: { payload: ImportAccountsReduceInput },
-  ) => ({
-    active: importAccountsReduce(s.active, payload),
+    { payload }: Action<AccountsImportAccountsPayload>,
+  ): AccountsState => ({
+    active: importAccountsReduce(s.active, payload.input),
   }),
-  REORDER_ACCOUNTS: (
+
+  [AccountsActionTypes.REORDER_ACCOUNTS]: (
     state: AccountsState,
-    {
-      payload: { comparator },
-    }: {
-      payload: {
-        comparator: AccountComparator;
-      };
-    },
+    { payload: { comparator } }: Action<AccountsReorderPayload>,
   ) => ({
     active: nestedSortAccounts(state.active, comparator),
   }),
-  ACCOUNTS_ADD: (
+
+  [AccountsActionTypes.ACCOUNTS_ADD]: (
     s: AccountsState,
     {
       payload: { scannedAccounts, selectedIds, renamings },
-    }: { payload: AddAccountsProps },
+    }: Action<AccountsReplaceAccountsPayload>,
   ) => ({
     active: addAccounts({
       existingAccounts: s.active,
@@ -69,26 +74,17 @@ const handlers = {
       renamings,
     }),
   }),
-  SET_ACCOUNTS: (
+
+  [AccountsActionTypes.SET_ACCOUNTS]: (
     _: AccountsState,
-    {
-      payload,
-    }: {
-      payload: Account[];
-    },
-  ) => ({
-    active: payload,
-  }),
-  UPDATE_ACCOUNT: (
+    { payload }: Action<AccountsSetAccountsPayload>,
+  ) => payload,
+
+  [AccountsActionTypes.UPDATE_ACCOUNT]: (
     state: AccountsState,
     {
       payload: { accountId, updater },
-    }: {
-      payload: {
-        accountId: string;
-        updater: (_: Account) => Account;
-      };
-    },
+    }: Action<AccountsUpdateAccountWithUpdaterPayload>,
   ) => {
     function update(existingAccount: Account) {
       if (accountId !== existingAccount.id) return existingAccount;
@@ -99,39 +95,30 @@ const handlers = {
       active: state.active.map(update),
     };
   },
-  DELETE_ACCOUNT: (
+
+  [AccountsActionTypes.DELETE_ACCOUNT]: (
     state: AccountsState,
-    {
-      payload: account,
-    }: {
-      payload: Account;
-    },
+    { payload: account }: Action<AccountsDeleteAccountPayload>,
   ) => ({
     active: state.active.filter(acc => acc.id !== account.id),
   }),
-  CLEAN_CACHE: (
-    state: AccountsState,
-    _: { payload: Record<string, unknown> },
-  ) => ({
+
+  [AccountsActionTypes.CLEAN_CACHE]: (state: AccountsState) => ({
     active: state.active.map(clearAccount),
   }),
-  BLACKLIST_TOKEN: (
+
+  [SettingsActionTypes.BLACKLIST_TOKEN]: (
     state: AccountsState,
-    {
-      payload: tokenId,
-    }: {
-      payload: string;
-    },
+    { payload: tokenId }: Action<SettingsBlacklistTokenPayload>,
   ) => ({
     active: state.active.map(a => withoutToken(a, tokenId)),
   }),
-  DANGEROUSLY_OVERRIDE_STATE: (
-    state: AccountsState,
-    _: { payload: Record<string, unknown> },
-  ) => ({
+
+  [AccountsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state: AccountsState) => ({
     ...state,
   }),
 };
+
 // Selectors
 export const exportSelector = (s: State) => ({
   active: s.accounts.active.map(accountModel.encode),
@@ -344,6 +331,6 @@ export const hasLendEnabledAccountsSelector = createSelector(
     }),
 );
 
-type Payload = GetReducerPayload<typeof handlers>;
+type Payload = AccountsPayload & SettingsBlacklistTokenPayload;
 
 export default handleActions<AccountsState, Payload>(handlers, initialState);

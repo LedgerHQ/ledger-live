@@ -13,7 +13,7 @@ import {
 } from "@ledgerhq/live-common/countervalues/react";
 import { useDistribution as useDistributionCommon } from "@ledgerhq/live-common/portfolio/v2/react";
 import { BehaviorSubject } from "rxjs";
-import { reorderAccounts } from "./accounts";
+import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";
 import {
   counterValueCurrencySelector,
@@ -92,13 +92,13 @@ export function useCleanCache() {
   const dispatch = useDispatch();
   const { wipe } = useCountervaluesPolling();
   return useCallback(async () => {
-    dispatch({
-      type: "CLEAN_CACHE",
-      payload: {},
-    });
+    dispatch(cleanCache());
+
+    // FIXME: THIS DOES NOT TRIGGER ANY REDUCER ACTION
     dispatch({
       type: "LEDGER_CV:WIPE",
     });
+
     await clearBridgeCache();
     wipe();
     flushAll();

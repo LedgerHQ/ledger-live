@@ -23,7 +23,7 @@ import {
 import { Trans } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { switchCountervalueFirst } from "../../actions/settings";
-import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,

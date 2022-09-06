@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import { BigNumber } from "bignumber.js";
 import { ScreenName } from "../../const";
-import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 import AccountRowLayout from "../../components/AccountRowLayout";
 

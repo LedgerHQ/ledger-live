@@ -1,8 +1,15 @@
-/* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
-import type { RatingsState, State } from "../types/state";
-import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
-import { GetReducerPayload } from "../types/helpers";
+import type { Action } from "redux-actions";
+import type { RatingsState, State } from "./types";
+import type {
+  RatingsDataOfUserPayload,
+  RatingsPayload,
+  RatingsSetCurrentRouteNamePayload,
+  RatingsSetHappyMomentPayload,
+  RatingsSetModalLockedPayload,
+  RatingsSetModalOpenPayload,
+} from "../actions/types";
+import { RatingsActionTypes } from "../actions/types";
 
 const initialState: RatingsState = {
   isRatingsModalOpen: false,
@@ -12,47 +19,34 @@ const initialState: RatingsState = {
   isRatingsModalLocked: false,
 };
 const handlers = {
-  RATINGS_SET_MODAL_OPEN: (
+  [RatingsActionTypes.RATINGS_SET_MODAL_OPEN]: (
     state: RatingsState,
-    {
-      payload: isRatingsModalOpen,
-    }: {
-      payload: boolean;
-    },
+    { payload: { isRatingsModalOpen } }: Action<RatingsSetModalOpenPayload>,
   ) => ({ ...state, isRatingsModalOpen }),
-  RATINGS_SET_MODAL_LOCKED: (
+
+  [RatingsActionTypes.RATINGS_SET_MODAL_LOCKED]: (
     state: RatingsState,
-    {
-      payload: isRatingsModalLocked,
-    }: {
-      payload: boolean;
-    },
+    { payload: { isRatingsModalLocked } }: Action<RatingsSetModalLockedPayload>,
   ) => ({ ...state, isRatingsModalLocked }),
-  RATINGS_SET_CURRENT_ROUTE_NAME: (
+
+  [RatingsActionTypes.RATINGS_SET_CURRENT_ROUTE_NAME]: (
     state: RatingsState,
     {
       payload: { currentRouteName },
-    }: {
-      payload: { currentRouteName?: string };
-    },
+    }: Action<RatingsSetCurrentRouteNamePayload>,
   ) => ({ ...state, currentRouteName }),
-  RATINGS_SET_HAPPY_MOMENT: (
+
+  [RatingsActionTypes.RATINGS_SET_HAPPY_MOMENT]: (
     state: RatingsState,
-    {
-      payload: { happyMoment },
-    }: {
-      payload: { happyMoment?: RatingsHappyMoment };
-    },
+    { payload: { happyMoment } }: Action<RatingsSetHappyMomentPayload>,
   ) => ({ ...state, happyMoment }),
-  RATINGS_SET_DATA_OF_USER: (
+
+  [RatingsActionTypes.RATINGS_SET_DATA_OF_USER]: (
     state: RatingsState,
-    {
-      payload: { dataOfUser },
-    }: {
-      payload: { dataOfUser?: RatingsDataOfUser };
-    },
+    { payload: { dataOfUser } }: Action<RatingsDataOfUserPayload>,
   ) => ({ ...state, dataOfUser }),
 };
+
 // Selectors
 export const ratingsModalOpenSelector = (s: State) =>
   s.ratings.isRatingsModalOpen;
@@ -65,6 +59,7 @@ export const ratingsDataOfUserSelector = (s: State) => s.ratings.dataOfUser;
 export const satisfactionSelector = (s: State) =>
   s.ratings.dataOfUser?.satisfaction;
 
-type Payload = GetReducerPayload<typeof handlers>;
-
-export default handleActions<RatingsState, Payload>(handlers, initialState);
+export default handleActions<RatingsState, RatingsPayload>(
+  handlers,
+  initialState,
+);

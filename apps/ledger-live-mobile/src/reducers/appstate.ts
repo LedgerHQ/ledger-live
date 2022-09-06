@@ -1,8 +1,16 @@
 import { handleActions } from "redux-actions";
+import type { Action } from "redux-actions";
 import { createSelector } from "reselect";
 import { NetworkDown } from "@ledgerhq/errors";
-import type { AppState, BackgroundEvent, State } from "../types/state";
-import type { GetReducerPayload } from "../types/helpers";
+import type { AppState, State } from "./types";
+import type {
+  AppStateAddBackgroundEventPayload,
+  AppStateIsConnectedPayload,
+  AppStatePayload,
+  AppStateSetHasConnectedDevicePayload,
+  AppStateSetModalLockPayload,
+} from "../actions/types";
+import { AppStateActionTypes } from "../actions/types";
 
 const initialState: AppState = {
   isConnected: true,
@@ -12,37 +20,38 @@ const initialState: AppState = {
 };
 
 const handlers = {
-  SYNC_IS_CONNECTED: (
+  [AppStateActionTypes.SYNC_IS_CONNECTED]: (
     state: AppState,
-    { payload: { isConnected } }: { payload: { isConnected: boolean | null } },
+    { payload: { isConnected } }: Action<AppStateIsConnectedPayload>,
   ) => ({
     ...state,
     isConnected,
   }),
-  HAS_CONNECTED_DEVICE: (
+
+  [AppStateActionTypes.HAS_CONNECTED_DEVICE]: (
     state: AppState,
     {
       payload: { hasConnectedDevice },
-    }: { payload: { hasConnectedDevice: boolean } },
+    }: Action<AppStateSetHasConnectedDevicePayload>,
   ) => ({ ...state, hasConnectedDevice }),
-  SET_MODAL_LOCK: (
+
+  [AppStateActionTypes.SET_MODAL_LOCK]: (
     state: AppState,
-    { payload: { modalLock } }: { payload: { modalLock: boolean } },
+    { payload: { modalLock } }: Action<AppStateSetModalLockPayload>,
   ) => ({
     ...state,
     modalLock,
   }),
-  QUEUE_BACKGROUND_EVENT: (
+
+  [AppStateActionTypes.QUEUE_BACKGROUND_EVENT]: (
     state: AppState,
-    { payload: { event } }: { payload: { event: BackgroundEvent } },
+    { payload: { event } }: Action<AppStateAddBackgroundEventPayload>,
   ) => ({
     ...state,
     backgroundEvents: [...state.backgroundEvents, event],
   }),
-  DEQUEUE_BACKGROUND_EVENT: (
-    state: AppState,
-    _: { payload: Record<string, unknown> },
-  ) => {
+
+  [AppStateActionTypes.DEQUEUE_BACKGROUND_EVENT]: (state: AppState) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_drop, ...tail] = state.backgroundEvents;
     return {
@@ -50,10 +59,8 @@ const handlers = {
       backgroundEvents: tail,
     };
   },
-  CLEAR_BACKGROUND_EVENTS: (
-    state: AppState,
-    _: { payload: Record<string, unknown> },
-  ) => ({
+
+  [AppStateActionTypes.CLEAR_BACKGROUND_EVENTS]: (state: AppState) => ({
     ...state,
     backgroundEvents: [],
   }),
@@ -79,6 +86,4 @@ export const networkErrorSelector = createSelector(
   (isConnected: boolean | null) => (!isConnected ? globalNetworkDown : null),
 );
 
-type Payload = GetReducerPayload<typeof handlers>;
-
-export default handleActions<AppState, Payload>(handlers, initialState);
+export default handleActions<AppState, AppStatePayload>(handlers, initialState);

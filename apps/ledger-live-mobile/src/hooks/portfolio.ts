@@ -29,6 +29,7 @@ export function useBalanceHistoryWithCountervalue({
     to,
   });
 }
+
 export function usePortfolio() {
   const to = useSelector(counterValueCurrencySelector);
   const accounts = useSelector(accountsSelector);
@@ -39,6 +40,7 @@ export function usePortfolio() {
     to,
   });
 }
+
 export function useCurrencyPortfolio({
   currency,
   range,

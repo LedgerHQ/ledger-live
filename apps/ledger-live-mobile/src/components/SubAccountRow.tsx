@@ -18,7 +18,7 @@ import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
 import { accountSelector } from "../reducers/accounts";
 import { selectedTimeRangeSelector } from "../reducers/settings";
-import { useBalanceHistoryWithCountervalue } from "../actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../hooks/portfolio";
 import Delta from "./Delta";
 
 type Props = {

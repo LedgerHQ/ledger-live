@@ -22,7 +22,7 @@ import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { usePortfolio } from "../../actions/portfolio";
+import { usePortfolio } from "../../hooks/portfolio";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import Spinning from "../../components/Spinning";

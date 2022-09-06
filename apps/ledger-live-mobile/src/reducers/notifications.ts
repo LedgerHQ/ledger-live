@@ -1,7 +1,15 @@
 import { handleActions } from "redux-actions";
-import type { NotificationsState, State } from "../types/state";
+import type { Action } from "redux-actions";
+import type { NotificationsState, State } from "./types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
-import type { GetReducerPayload } from "../types/helpers";
+import type {
+  NotificationsPayload,
+  NotificationsSetCurrentRouteNamePayload,
+  NotificationsSetModalLockedPayload,
+  NotificationsSetModalOpenPayload,
+  NotificationsSetModalTypePayload,
+} from "../actions/types";
+import { NotificationsActionTypes } from "../actions/types";
 
 const initialState: NotificationsState = {
   isPushNotificationsModalOpen: false,
@@ -13,43 +21,43 @@ const initialState: NotificationsState = {
 };
 
 const handlers = {
-  NOTIFICATIONS_SET_MODAL_OPEN: (
+  [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_OPEN]: (
     state: NotificationsState,
     {
       payload: { isPushNotificationsModalOpen },
-    }: { payload: { isPushNotificationsModalOpen: boolean } },
+    }: Action<NotificationsSetModalOpenPayload>,
   ) => ({
     ...state,
     isPushNotificationsModalOpen,
   }),
-  NOTIFICATIONS_SET_MODAL_LOCKED: (
+  [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_LOCKED]: (
     state: NotificationsState,
     {
       payload: { isPushNotificationsModalLocked },
-    }: { payload: { isPushNotificationsModalLocked: boolean } },
+    }: Action<NotificationsSetModalLockedPayload>,
   ) => ({
     ...state,
     isPushNotificationsModalLocked,
   }),
-  NOTIFICATIONS_SET_MODAL_TYPE: (
+  [NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_TYPE]: (
     state: NotificationsState,
     {
       payload: { notificationsModalType },
-    }: { payload: { notificationsModalType: string } },
+    }: Action<NotificationsSetModalTypePayload>,
   ) => ({
     ...state,
     notificationsModalType,
   }),
-  NOTIFICATIONS_SET_CURRENT_ROUTE_NAME: (
+  [NotificationsActionTypes.NOTIFICATIONS_SET_CURRENT_ROUTE_NAME]: (
     state: NotificationsState,
     {
       payload: { currentRouteName },
-    }: { payload: { currentRouteName?: string } },
+    }: Action<NotificationsSetCurrentRouteNamePayload>,
   ) => ({
     ...state,
     currentRouteName,
   }),
-  NOTIFICATIONS_SET_EVENT_TRIGGERED: (
+  [NotificationsActionTypes.NOTIFICATIONS_SET_EVENT_TRIGGERED]: (
     state: NotificationsState,
     {
       payload: { eventTriggered },
@@ -58,7 +66,7 @@ const handlers = {
     ...state,
     eventTriggered,
   }),
-  NOTIFICATIONS_SET_DATA_OF_USER: (
+  [NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER]: (
     state: NotificationsState,
     { payload: { dataOfUser } }: { payload: { dataOfUser?: DataOfUser } },
   ) => ({
@@ -86,9 +94,7 @@ export const notificationsEventTriggeredSelector = (s: State) =>
 export const notificationsDataOfUserSelector = (s: State) =>
   s.notifications.dataOfUser;
 
-type Payload = GetReducerPayload<typeof handlers>;
-
-export default handleActions<NotificationsState, Payload>(
+export default handleActions<NotificationsState, NotificationsPayload>(
   handlers,
   initialState,
 );

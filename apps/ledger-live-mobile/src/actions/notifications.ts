@@ -1,34 +1,69 @@
+import { createAction } from "redux-actions";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
+import type {
+  NotificationsSetCurrentRouteNamePayload,
+  NotificationsSetDataOfUserPayload,
+  NotificationsSetEventTriggeredPayload,
+  NotificationsSetModalLockedPayload,
+  NotificationsSetModalOpenPayload,
+  NotificationsSetModalTypePayload,
+} from "./types";
+import { NotificationsActionTypes } from "./types";
 
+const setNotificationsModalOpenAction =
+  createAction<NotificationsSetModalOpenPayload>(
+    NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_OPEN,
+  );
 export const setNotificationsModalOpen = (
   isPushNotificationsModalOpen: boolean,
-) => ({
-  type: "NOTIFICATIONS_SET_MODAL_OPEN",
-  isPushNotificationsModalOpen,
-});
+) =>
+  setNotificationsModalOpenAction({
+    isPushNotificationsModalOpen,
+  });
+
+const setNotificationsModalLockedAction =
+  createAction<NotificationsSetModalLockedPayload>(
+    NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_LOCKED,
+  );
 export const setNotificationsModalLocked = (
   isPushNotificationsModalLocked: boolean,
-) => ({
-  type: "NOTIFICATIONS_SET_MODAL_LOCKED",
-  isPushNotificationsModalLocked,
-});
-export const setNotificationsModalType = (notificationsModalType: string) => ({
-  type: "NOTIFICATIONS_SET_MODAL_TYPE",
-  notificationsModalType,
-});
-export const setNotificationsCurrentRouteName = (
-  currentRouteName?: string,
-) => ({
-  type: "NOTIFICATIONS_SET_CURRENT_ROUTE_NAME",
-  currentRouteName,
-});
-export const setNotificationsEventTriggered = (
-  eventTriggered?: Partial<EventTrigger>,
-) => ({
-  type: "NOTIFICATIONS_SET_EVENT_TRIGGERED",
-  eventTriggered,
-});
-export const setNotificationsDataOfUser = (dataOfUser?: DataOfUser) => ({
-  type: "NOTIFICATIONS_SET_DATA_OF_USER",
-  dataOfUser,
-});
+) =>
+  setNotificationsModalLockedAction({
+    isPushNotificationsModalLocked,
+  });
+
+const setNotificationsModalTypeAction =
+  createAction<NotificationsSetModalTypePayload>(
+    NotificationsActionTypes.NOTIFICATIONS_SET_MODAL_TYPE,
+  );
+export const setNotificationsModalType = (notificationsModalType: string) =>
+  setNotificationsModalTypeAction({
+    notificationsModalType,
+  });
+
+const setNotificationsCurrentRouteNameAction =
+  createAction<NotificationsSetCurrentRouteNamePayload>(
+    NotificationsActionTypes.NOTIFICATIONS_SET_CURRENT_ROUTE_NAME,
+  );
+export const setNotificationsCurrentRouteName = (currentRouteName?: string) =>
+  setNotificationsCurrentRouteNameAction({
+    currentRouteName,
+  });
+
+const setNotificationsEventTriggeredAction =
+  createAction<NotificationsSetEventTriggeredPayload>(
+    NotificationsActionTypes.NOTIFICATIONS_SET_EVENT_TRIGGERED,
+  );
+export const setNotificationsEventTriggered = (eventTriggered?: EventTrigger) =>
+  setNotificationsEventTriggeredAction({
+    eventTriggered,
+  });
+
+const setNotificationsDataOfUserAction =
+  createAction<NotificationsSetDataOfUserPayload>(
+    NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER,
+  );
+export const setNotificationsDataOfUser = (dataOfUser?: DataOfUser) =>
+  setNotificationsDataOfUserAction({
+    dataOfUser,
+  });

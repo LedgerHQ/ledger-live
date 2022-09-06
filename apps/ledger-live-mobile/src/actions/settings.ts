@@ -23,6 +23,7 @@ type SetExchangePairs = (
     exchange: string | null | undefined;
   }>,
 ) => any;
+
 export type Theme = "system" | "light" | "dark";
 export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",

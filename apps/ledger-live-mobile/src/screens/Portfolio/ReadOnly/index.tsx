@@ -26,7 +26,7 @@ import {
   hasOrderedNanoSelector,
   carouselVisibilitySelector,
 } from "../../../reducers/settings";
-import { usePortfolio } from "../../../actions/portfolio";
+import { usePortfolio } from "../../../hooks/portfolio";
 import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
 
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
