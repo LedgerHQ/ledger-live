@@ -13,6 +13,7 @@ import {
   TokenAccount,
   Operation,
 } from "@ledgerhq/types-live";
+import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import {
   getAccountCapabilities,
@@ -30,7 +31,7 @@ import {
   countervalueFirstSelector,
 } from "../../reducers/settings";
 import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { ScreenName } from "../../const";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
@@ -85,7 +86,11 @@ const AccountScreenInner = ({
 
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
-  }, [dispatch]);
+    track("button_clicked", {
+      button: "Switch Account Currency",
+      countervalue: useCounterValue,
+    });
+  }, [dispatch, useCounterValue]);
 
   const onAccountPress = debounce((tokenAccount: TokenAccount) => {
     navigation.push(ScreenName.Account, {
@@ -173,12 +178,13 @@ const AccountScreenInner = ({
           <SectionContainer px={6} isLast>
             <SectionTitle title={t("analytics.operations.title")} />
             <OperationsHistorySection accounts={[account]} />
-            {areCryptoAccountsEmpty ? (
-              <EmptyAccountCard currencyTicker={currency.ticker} />
-            ) : null}
           </SectionContainer>,
         ]
-      : []),
+      : [
+          <Flex px={6}>
+            <EmptyAccountCard currencyTicker={currency.ticker} />
+          </Flex>,
+        ]),
   ];
 
   return (

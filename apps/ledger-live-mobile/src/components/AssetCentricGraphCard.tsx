@@ -19,7 +19,6 @@ import ParentCurrencyIcon from "./ParentCurrencyIcon";
 import FormatDate from "./FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "../analytics";
-import { useCurrentRouteName } from "../helpers/routeHooks";
 import { countervalueFirstSelector } from "../reducers/settings";
 
 const Placeholder = styled(Flex).attrs({
@@ -58,7 +57,6 @@ function AssetCentricGraphCard({
   currencyBalance,
 }: Props) {
   const { colors } = useTheme();
-  const currentScreen = useCurrentRouteName();
   const dispatch = useDispatch();
   const [itemRange, setTimeRange, timeRangeItems] = useTimeRange();
   const { countervalueChange, balanceHistory } = assetPortfolio;
@@ -99,16 +97,19 @@ function AssetCentricGraphCard({
     index => {
       track("timeframe_clicked", {
         timeframe: timeRangeItems[index],
-        screen: currentScreen,
       });
       setTimeRange(timeRangeItems[index]);
     },
-    [setTimeRange, timeRangeItems, currentScreen],
+    [setTimeRange, timeRangeItems],
   );
 
   const onSwitchAccountCurrency = useCallback(() => {
+    track("button_clicked", {
+      button: "Switch Account Currency",
+      countervalue: useCounterValue,
+    });
     dispatch(switchCountervalueFirst());
-  }, [dispatch]);
+  }, [dispatch, useCounterValue]);
 
   const mapGraphValue = useCallback(d => d.value || 0, []);
 
@@ -142,11 +143,10 @@ function AssetCentricGraphCard({
       track("graph_clicked", {
         graph: "Asset Graph",
         timeframe: itemRange,
-        screen: currentScreen,
       });
       setHoverItem(item);
     },
-    [currentScreen, itemRange],
+    [itemRange],
   );
 
   return (
@@ -163,8 +163,6 @@ function AssetCentricGraphCard({
           <Flex alignItems="center">
             <ParentCurrencyIcon size={32} currency={currency} />
             <TouchableOpacity
-              event="SwitchAssetCurrency"
-              eventProperties={{ useCounterValue }}
               onPress={onSwitchAccountCurrency}
               style={{ alignItems: "center" }}
             >

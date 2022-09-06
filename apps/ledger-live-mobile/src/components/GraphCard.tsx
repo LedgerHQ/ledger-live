@@ -19,7 +19,6 @@ import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import FormatDate from "./FormatDate";
 import { track } from "../analytics";
-import { useCurrentRouteName } from "../helpers/routeHooks";
 
 type Props = {
   areAccountsEmpty: boolean;
@@ -54,7 +53,6 @@ function GraphCard({
   graphCardEndPosition,
 }: Props) {
   const { countervalueChange, balanceHistory } = portfolio;
-  const currentScreen = useCurrentRouteName();
   const item = balanceHistory[balanceHistory.length - 1];
 
   const unit = counterValueCurrency.units[0];
@@ -67,11 +65,10 @@ function GraphCard({
     index => {
       track("timeframe_clicked", {
         timeframe: timeRangeItems[index].value,
-        screen: currentScreen,
       });
       setTimeRange(timeRangeItems[index]);
     },
-    [setTimeRange, timeRangeItems, currentScreen],
+    [setTimeRange, timeRangeItems],
   );
 
   const mapGraphValue = useCallback(d => d.value || 0, []);
@@ -96,17 +93,9 @@ function GraphCard({
     };
   }, [graphCardEndPosition]);
 
-  const onItemHover = useCallback(
-    (item: any) => {
-      track("graph_clicked", {
-        graph: "Wallet Graph",
-        timeframe: timeRange.value,
-        screen: currentScreen,
-      });
-      setItemHover(item);
-    },
-    [currentScreen, timeRange],
-  );
+  const onItemHover = (item: any) => {
+    setItemHover(item);
+  };
 
   return (
     <Flex>

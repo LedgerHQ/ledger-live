@@ -8,12 +8,10 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import Touchable from "../../components/Touchable";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 import { track } from "../../analytics";
 
 function AddAccount({ currencyId }: { currencyId?: string }) {
   const navigation = useNavigation();
-  const currentScreen = useCurrentRouteName();
   const currency = currencyId
     ? findCryptoCurrencyById(currencyId) || findTokenById(currencyId)
     : undefined;
@@ -22,7 +20,6 @@ function AddAccount({ currencyId }: { currencyId?: string }) {
   function openAddModal() {
     track("button_clicked", {
       button: "Add Account",
-      screen: currentScreen,
     });
     setIsAddModalOpened(true);
   }

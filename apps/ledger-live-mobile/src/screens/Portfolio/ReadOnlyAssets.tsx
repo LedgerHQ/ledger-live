@@ -16,7 +16,6 @@ import GradientContainer from "../../components/GradientContainer";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 import AssetRow from "../WalletCentricAsset/AssetRow";
 import AssetsNavigationHeader from "../Assets/AssetsNavigationHeader";
 
@@ -58,11 +57,9 @@ function ReadOnlyAssets({ navigation }: Props) {
     [navigation],
   );
 
-  const previousRoute = usePreviousRouteName();
-
   return (
     <TabBarSafeAreaView>
-      <TrackScreen category="ReadOnly" name="Assets" source={previousRoute} />
+      <TrackScreen category="ReadOnly" name="Assets" />
       <Flex flex={1} bg={"background.main"}>
         <AssetsNavigationHeader readOnly />
         <FlatList

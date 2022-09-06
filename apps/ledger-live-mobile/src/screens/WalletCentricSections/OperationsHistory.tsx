@@ -13,7 +13,6 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { NavigatorName, ScreenName } from "../../const";
 import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -30,7 +29,6 @@ const renderSectionHeader = ({ section }: { section: { day: Date } }) => (
 const OperationsHistory = ({ accounts }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const currentScreen = useCurrentRouteName();
   const { sections, completed } = useMemo(
     () =>
       groupAccountsOperationsByDay(accounts, {
@@ -73,12 +71,11 @@ const OperationsHistory = ({ accounts }: Props) => {
   const goToAnalyticsOperations = useCallback(() => {
     track("button_clicked", {
       button: "See All",
-      screen: currentScreen,
     });
     navigation.navigate(ScreenName.AnalyticsOperations, {
       accountsIds: accounts.map(account => account.id),
     });
-  }, [currentScreen, navigation, accounts]);
+  }, [navigation, accounts]);
 
   return (
     <Flex flex={1}>

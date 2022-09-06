@@ -10,7 +10,6 @@ import Touchable from "../Touchable";
 // eslint-disable-next-line import/no-cycle
 import { track } from "../../analytics";
 import { SlideProps } from "./shared";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 const StyledTouchable = styled(Touchable)`
   flex: 1;
@@ -43,19 +42,17 @@ const Slide = ({
 }: SlideProps) => {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
-  const currentScreen = useCurrentRouteName();
   const onClick = useCallback(() => {
     track("banner_clicked", {
       banner: name,
       url,
-      screen: currentScreen,
     });
     if (onPress) {
       onPress(navigate);
     } else {
       Linking.openURL(url);
     }
-  }, [onPress, navigate, url, currentScreen]);
+  }, [onPress, navigate, url]);
   return (
     <StyledTouchable event={`${name} Carousel`} onPress={onClick}>
       <Flex

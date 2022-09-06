@@ -7,7 +7,6 @@ import styled from "styled-components/native";
 import { setCarouselVisibility } from "../../actions/settings";
 import { track } from "../../analytics";
 import { getDefaultSlides, SLIDES, WIDTH } from "./shared";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 const DismissCarousel = styled(TouchableOpacity)`
   position: absolute;
@@ -60,7 +59,6 @@ type Props = {
 
 const Carousel = ({ cardsVisibility }: Props) => {
   const dispatch = useDispatch();
-  const currentScreen = useCurrentRouteName();
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentPositionX, setCurrentPositionX] = useState(0);
 
@@ -88,12 +86,11 @@ const Carousel = ({ cardsVisibility }: Props) => {
         track("button_clicked", {
           button: "Close Card",
           url: slide.url,
-          screen: currentScreen,
         });
       }
       dispatch(setCarouselVisibility({ ...cardsVisibility, [cardId]: false }));
     },
-    [dispatch, cardsVisibility, currentScreen],
+    [dispatch, cardsVisibility],
   );
 
   const onScrollEnd = useCallback(event => {

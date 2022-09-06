@@ -78,7 +78,12 @@ import RootNavigator from "./components/RootNavigator";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 import CounterValuesProvider from "./components/CounterValuesProvider";
 import type { State } from "./reducers";
-import { navigationRef, isReadyRef } from "./rootnavigation";
+import {
+  navigationRef,
+  isReadyRef,
+  previousRouteNameRef,
+  currentRouteNameRef,
+} from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
@@ -489,6 +494,11 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
         onReady={() => {
           isReadyRef.current = true;
           setTimeout(() => SplashScreen.hide(), 300);
+        }}
+        onStateChange={() => {
+          previousRouteNameRef.current = currentRouteNameRef.current;
+          currentRouteNameRef.current =
+            navigationRef.current.getCurrentRoute().name;
         }}
       >
         {children}

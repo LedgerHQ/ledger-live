@@ -49,7 +49,6 @@ import BuyDeviceBanner, {
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 // eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
-import { useCurrentRouteName } from "../../../helpers/routeHooks";
 import FabActions from "../../../components/FabActions";
 import Assets from "../Assets";
 import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
@@ -125,7 +124,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
       })),
     [topCryptoCurrencies],
   );
-  const currentRoute = useCurrentRouteName();
 
   const data = useMemo(
     () => [
@@ -166,7 +164,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
               event="button_clicked"
               eventProperties={{
                 button: "Discover the Nano",
-                screen: currentRoute,
               }}
               screen="Wallet"
               {...IMAGE_PROPS_BIG_NANO}
@@ -185,7 +182,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
       assetsToDisplay,
       goToAssets,
       t,
-      currentRoute,
     ],
   );
 

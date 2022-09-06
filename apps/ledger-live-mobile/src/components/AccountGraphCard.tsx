@@ -46,6 +46,7 @@ import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirm
 import { NoCountervaluePlaceholder } from "./CounterValue";
 import { ensureContrast } from "../colors";
 import { NavigatorName, ScreenName } from "../const";
+import { track } from "../analytics";
 
 const { width } = getWindowDimensions();
 
@@ -130,12 +131,20 @@ function AccountGraphCard({
     index => {
       if (ranges[index]) {
         const range: PortfolioRange = ranges[index].value;
+        track("timeframe_clicked", { timeframe: range });
         setLoading(true);
         setTimeRange(range);
       }
     },
     [ranges, setTimeRange],
   );
+
+  const handleGraphTouch = useCallback(() => {
+    track("graph_clicked", {
+      graph: "Account Graph",
+      timeframe: timeRange,
+    });
+  });
 
   useEffect(() => {
     if (history && history.length > 0) {
@@ -172,7 +181,12 @@ function AccountGraphCard({
         currency={currency}
       />
 
-      <Flex height={120} alignItems="center" justifyContent="center">
+      <Flex
+        height={120}
+        alignItems="center"
+        justifyContent="center"
+        onTouchEnd={handleGraphTouch}
+      >
         {!loading ? (
           <Transitions.Fade duration={400} status="entering">
             {/** @ts-expect-error import js issue */}
