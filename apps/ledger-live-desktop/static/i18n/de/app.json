@@ -198,7 +198,7 @@
     "menu" : "Menü",
     "stars" : "Favoritenliste",
     "accounts" : "Konten",
-    "manager" : "Manager",
+    "manager" : "My Ledger",
     "exchange" : "Kaufen / Verkaufen",
     "swap" : "Umtauschen",
     "lend" : "Leihen",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "Bitte installieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Gehen Sie zum Manager und installieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
-      "cta" : "Zum Manager gehen"
+      "subtitle" : "Wechseln Sie zu My Ledger und installieren Sie die {{appName}}-App, um Vermögenswerte zu tauschen.",
+      "cta" : "Zu My Ledger wechseln"
     },
     "outdatedApp" : {
       "title" : "Bitte aktualisieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Gehen Sie zum Manager und aktualisieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
-      "cta" : "Zum Manager gehen"
+      "subtitle" : "Wechseln Sie zu My Ledger und aktualisieren Sie die {{appName}}-App, um Vermögenswerte zu tauschen.",
+      "cta" : "Zu My Ledger wechseln"
     },
     "providers" : {
       "title" : "Wählen Sie einen Anbieter für den Tausch von Kryptowährungen",
@@ -1202,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Apps auf Ihrem Gerät installieren",
-      "desc" : "Gehen Sie zum Manager, um Apps auf Ihrem Gerät zu installieren. Sie können Konten hinzufügen, sobald Sie Apps auf Ihrem Gerät haben.",
+      "desc" : "Wechseln Sie zu My Ledger, um Apps auf Ihrem Gerät zu installieren. Nach der Installation der Apps können Sie Konten hinzufügen.",
       "buttons" : {
-        "installApp" : "Zum Manager gehen",
+        "installApp" : "Zu My Ledger wechseln",
         "help" : "Hilfe"
       }
     },
@@ -1213,7 +1213,7 @@
       "desc" : "Fügen Sie ein Konto hinzu, um mit der Verwaltung Ihrer Krypto-Vermögenswerte zu beginnen. Sie müssen die App für Ihr Krypto-Vermögen auf Ihrem Gerät installiert haben.",
       "buttons" : {
         "addAccount" : "Konto hinzufügen",
-        "installApp" : "Gehen Sie zum Manager, um Apps zu installieren",
+        "installApp" : "Zu My Ledger wechseln, um Apps zu installieren",
         "help" : "Hilfe"
       }
     }
@@ -1536,12 +1536,12 @@
     "quitApp" : "Beenden Sie die Anwendung auf Ihrem Gerät",
     "appNotInstalledTitle" : "Fehlende, erforderliche App",
     "appNotInstalledTitle_plural" : "Fehlende, erforderliche Apps",
-    "appNotInstalled" : "Die App {{appName}} ist erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
-    "appNotInstalled_plural" : "Die Apps {{appName}} sind erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
-    "openManager" : "Manager öffnen",
+    "appNotInstalled" : "Die {{appName}}-App ist erforderlich, um diese Aktion durchzuführen. Bitte wechseln Sie zu My Ledger und installieren Sie sie auf Ihrem Gerät.",
+    "appNotInstalled_plural" : "Die {{appName}}-Apps sind erforderlich, um diese Aktion durchzuführen. Bitte wechseln Sie zu My Ledger und installieren Sie sie auf Ihrem Gerät.",
+    "openManager" : "My Ledger öffnen",
     "openOnboarding" : "Gerät einrichten",
     "outdated" : "App-Version veraltet",
-    "outdatedDesc" : "Ein wichtiges Update ist für die Anwendung {{appName}} auf Ihrem Gerät verfügbar. Bitte gehen Sie zum Manager, um das Update durchzuführen.",
+    "outdatedDesc" : "Für die {{appName}}-App auf Ihrem Gerät ist ein wichtiges Update verfügbar. Wechseln Sie zu My Ledger, um sie zu aktualisieren.",
     "installApp" : "{{appName}} App-Installation",
     "installAppDescription" : "Bitte warten Sie, bis die Installation beendet ist",
     "listApps" : "Prüfen von App-Abhängigkeiten",
@@ -1556,7 +1556,7 @@
       "provider" : "Anbieter",
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu."
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -1584,12 +1584,12 @@
     },
     "disconnected" : {
       "title" : "Es sieht so aus, als ob eine App auf Ihrem Gerät geöffnet ist",
-      "subtitle" : "Beim erneuten Öffnen des Managers wird die App auf Ihrem Gerät beendet",
-      "ctaReopen" : "Manager erneut öffnen",
+      "subtitle" : "Wenn Sie My Ledger erneut öffnen, wird die App auf Ihrem Gerät beendet.",
+      "ctaReopen" : "My Ledger erneut öffnen",
       "ctaPortfolio" : "Zurück zum Portfolio"
     },
     "deviceStorage" : {
-      "freeSpace" : "<0>{{space}}</0>kostenlos",
+      "freeSpace" : "<0>{{space}}</0> verfügbar",
       "noFreeSpace" : "Kein Speicher mehr frei",
       "installed" : "Apps",
       "capacity" : "Kapazität",
@@ -1628,7 +1628,7 @@
         "title_plural" : "Updates verfügbar",
         "progressTitle" : "{{number}} App-Update",
         "progressTitle_plural" : "{{number}} App-Updates",
-        "progressWarning" : "Beenden Sie den Manager nicht während der Aktualisierung.",
+        "progressWarning" : "Beenden Sie My Ledger nicht, solange die Aktualisierung noch läuft.",
         "progress" : "Alle aktualisieren ..."
       },
       "item" : {
@@ -1692,7 +1692,7 @@
       "updateBtn" : "Firmware aktualisieren",
       "banner" : {
         "warning" : "Update-Firmware zu {{latestFirmware}} ist verfügbar",
-        "cta" : "Zum Manager gehen",
+        "cta" : "Zu My Ledger wechseln",
         "old" : {
           "warning" : "Geräte-Firmware-Version zu alt, um aktualisiert zu werden. Kontaktieren Sie den Ledger-Support für einen Ersatz.",
           "cta" : "Support kontaktieren"
@@ -1748,7 +1748,7 @@
         "boot" : "Drücken und halten Sie die Seitentaste, bis {{option}} angezeigt wird",
         "recoveryMode" : "Tippen Sie auf {{mode}} Modus. Warten Sie, bis das Dashboard erscheint.",
         "third" : "3. Alle Apps deinstallieren",
-        "openLive" : "Öffnen Sie den Manager in Ledger Live.",
+        "openLive" : "Öffnen Sie My Ledger in Ledger Live.",
         "uninstall" : "Klicken Sie auf das graue Papierkorbsymbol für alle derzeit auf dem {{deviceName}} installierten Apps. Dies schafft Platz für das Firmware-Installationsprogramm.",
         "disclaimer" : "Hinweis: Ihr Guthaben ist von diesem Vorgang nicht betroffen, die privaten Schlüssel zum Zugriff auf Ihr Krypto-Vermögen in der Blockchain bleiben sicher auf Ihrem Recovery Sheet."
       }
@@ -2861,7 +2861,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "Sie haben Ihre Delegation erfolgreich aktiviert."
+                "title" : "Sie haben Ihre Delegierung erfolgreich aktiviert."
               }
             }
           }
@@ -3115,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "Entwicklermodus",
-          "description" : "Zeige Entwickler- und Testnet-Apps im Manager."
+          "description" : "Zeigen Sie Entwickler- und Testnet-Apps in My Ledger an."
         },
         "scanForInvalidPaths" : {
           "title" : "Erweiterte Kontosuche",
@@ -3130,8 +3130,8 @@
           "description" : "Benutzerdefiniertes Lückenlimit für alle Konten. Wenn Sie diesen Wert über den Standardwert (20) erhöhen, werden mehr ungenutzte öffentliche Adressen nach Coins durchsucht. Nur für fortgeschrittene Benutzer, dies kann die Kompatibilität beim Wiederherstellen Ihrer Konten beeinträchtigen."
         },
         "forceProvider" : {
-          "title" : "Manager-Anbieter",
-          "description" : "Das Ändern des App-Anbieters im Manager kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+          "title" : "Anbieter in My Ledger",
+          "description" : "Das Wechseln des App-Anbieters in My Ledger kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
         },
         "testAnimations" : {
           "title" : "Lottie-Animationen testen",
@@ -3996,7 +3996,9 @@
     "termsLabel" : "Allgemeine Geschäftsbedingungen",
     "privacyLabel" : "Datenschutzrichtlinie",
     "switchLabel" : "Ich habe die Nutzungsbedingungen und Datenschutzrichtlinien gelesen und akzeptiere sie",
-    "cta" : "Zur Ledger-App"
+    "cta" : "Zur Ledger-App",
+    "termsCheckboxLabel" : "Ich habe die Nutzungsbedingungen gelesen und erkläre mich damit einverstanden",
+    "privacyCheckboxLabel" : "Ich habe die Datenschutzbestimmungen gelesen und erkläre mich damit einverstanden."
   },
   "updatedTerms" : {
     "title" : "Aktualisierung der Nutzungsbedingungen",
@@ -4383,7 +4385,7 @@
       "description" : "Bitte starten Sie Ihr Gerät neu, ohne die Schaltflächen zu berühren, wenn das Logo erscheint. Kontaktieren Sie den Ledger Support, falls das Problem weiterhin besteht."
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager auf Gerät abgelehnt"
+      "title" : "My Ledger auf Gerät nicht zulässig"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Update auf Gerät abgebrochen",
@@ -4403,7 +4405,7 @@
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
+      "description" : "Deinstallieren Sie die {{managerAppName}}-App in My Ledger und installieren Sie sie dann neu."
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Zurück zum Dashboard",
@@ -4423,7 +4425,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
+      "description" : "Deinstallieren Sie die {{managerAppName}}-App in My Ledger und installieren Sie sie dann neu."
     },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
@@ -4468,7 +4470,7 @@
       "list" : {
         "1" : "Trennen Sie das USB-Kabel ab und schließen Sie es wieder an, ohne eine Taste zu drücken.",
         "2" : "Drücken Sie beide Tasten zusammen dreimal, um das Dashboard anzuzeigen.",
-        "3" : "Öffnen Sie den Manager und klicken Sie auf Firmware aktualisieren."
+        "3" : "Öffnen Sie My Ledger und klicken Sie auf „Firmware aktualisieren“."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
