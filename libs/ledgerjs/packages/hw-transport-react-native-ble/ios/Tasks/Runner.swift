@@ -9,82 +9,137 @@ import Foundation
 import Starscream
 import BleTransport
 
+
 class Runner: NSObject  {
-    var endpoint : URL
-    var health : URL
-    var pendingRequest: URLSessionDataTask?     /// Backend request for network down
+    let scriptRunnerOK = ["CONTINUE", "TERMINATE"]
+    let scriptRunnerKO = ["CANCELLED",
+                          "SR DISCONNECTION",
+                          "INDEX OUT OF BOUNDS",
+                          "NOT CONNECTED TO SCRIPT RUNNER"]
+    
+    var scriptRunnerURL : URL
+    var healthCheckURL : URL
+    var initialMessage: String = ""                             /// First message to send upon connecting to the script runner.
+    
+    var socket: WebSocket?                                      /// Connection to the scriptrunner
+    var pendingRequest: URLSessionDataTask?                     /// Backend request for network down
     
     var onEmit: ((RunnerAction, ExtraData?)->Void)?
-    var onDone: ((String, String)->Void)?
-    var onStop: (()->Void)?
-    var initialMessage: String = ""
+    var onDone: ((String)->Void)?
     
-    var isRunning: Bool = false
-    var isUserBlocked: Bool = false
-    var isInBulkMode: Bool = false
-    var pendingOnDone: Bool = false
-    var socket: WebSocket?
     
-    var HSMNonce: Int = 0               /// HSM uses this nonce to know which frame we are replying to
-    var APDUMaxCount: Int = 0
-    var APDUQueue: [APDU] = []
-    var lastBLEResponse: String = ""
-    var lastScriptRunnerMessage: String = ""
-
-    var stopped: Bool = false
-
-    public func setURL(_ url : URL) {
-        self.endpoint = url
+    var isRunning: Bool = false                                 /// Is the Runner _running_
+    var isInBulkMode: Bool = false                              /// Are we exchanging a bulk payload or individual messages
+    var isPendingOnDone: Bool = false                           /// Scriptrunner connection is closed, but we haven't finished the exchange?
+    
+    
+    var backgroundTaskID: UIBackgroundTaskIdentifier?           /// iOS identifier for a background network connection in this case
+    
+    var HSMNonce: Int = 0                                       /// HSM uses this nonce to know which frame we are replying to
+    var APDUMaxCount: Int = 0                                   /// Total number of APDUS from a bulk message, used for % calculation
+    var APDUQueue: [APDU] = []                                  /// Pending APDU array to send to the device
+    
+    
+    var lastBLEResponse: String = ""                            /// Last received APDU from the device
+    var lastScriptRunnerMessage: String = ""                    /// Last message from the SR, this allows us to know whether to connect again, or complete.
+    
+    
+    
+    /**
+     Constructor for the Runner class.
+     - Parameter endpoint:  The URL of the scriptrunner we will consume with this Runner.
+     - Parameter health:    The URL of the health endpoint used to check if the backend is alive and ready for us.
+     - Parameter onEvent:   Callback to trigger the emision of events that will either be queued or bridged to the JavaScript side.
+     - Parameter onDone:    Callback to trigger when we have completed the exchange with the scriptrunner.
+     */
+    public init (
+        endpoint : URL,
+        health: URL,
+        onEvent: @escaping ((RunnerAction, ExtraData?)->Void),
+        onDone: ((String)->Void)?
+    ) {
+        self.scriptRunnerURL = endpoint
+        self.healthCheckURL = health
+        self.onEmit = onEvent
+        self.onDone = onDone
+        
+        super.init()
+        self.startBackgroundTask()
+        self.startScriptRunner()
     }
-
+    
     convenience init (
         endpoint : URL,
         health: URL,
         onEvent: @escaping ((RunnerAction, ExtraData?)->Void),
-        onDone: ((String, String)->Void)?,
+        onDone: ((String)->Void)?,
         withInitialMessage: String
     ) {
         self.init(endpoint: endpoint, health: health, onEvent: onEvent, onDone: onDone)
         self.initialMessage = withInitialMessage
     }
     
-    public init (
-        endpoint : URL,
-        health: URL,
-        onEvent: @escaping ((RunnerAction, ExtraData?)->Void),
-        onDone: ((String, String)->Void)?
-    ) {
-        self.endpoint = endpoint
-        self.health = health
-        self.isRunning = true
-        self.onEmit = onEvent
-        self.onDone = onDone
-        
-        super.init()
-        self.startScriptRunner()
-    }
     
-    
+    /**
+     Used for cleaning up if we end up in a bad state higher up the chain, for instance if we receive a disconnect request
+     from the transport itself we can't just continue to try to consume the scriptrunner. A disconnect is a disconnect afterall
+     and we need to honor it
+     - Parameter onStop: A callback to invoke after the completion of the socket disconnection
+     */
     public func stop(_ onStop: @escaping (()->Void)) {
-        self.stopped = true
+        self.isRunning = false
         socket?.disconnect()
         onStop();
     }
     
-    /// Based on the apdu in/out we could infer some events that we need to emit up to javascript. Not all exchanges need an event.
-    private func onEventFromAPDU(_ apdu : String, fromHSM: Bool = true) {
-        if self.isInBulkMode {
-            let progress = ((Double(self.APDUMaxCount-self.APDUQueue.count))/Double(self.APDUMaxCount))
-            self.onEmit!(
-                RunnerAction.runProgress,
-                ExtraData(progress: progress)
-            )
+    /**
+     Request to begin a new background task, this is essentially asking iOS to allow us to communicate over the network
+     even when the application is in the background. Without this, after the completion of one or two runners, a parent queue
+     would lose the ability to connect to the network, resulting in incomplete installations. This may not be enough either /!\
+     */
+    func startBackgroundTask() {
+        self.backgroundTaskID = UIApplication.shared.beginBackgroundTask (withName: "Runner"){ self.endBackgroundTask()}
+    }
+    
+    /**
+     Notify that our background task has completed. We should probably add some cleanup code to run over there in case
+     we get terminated before we do all we need. Perhaps adding some reconciliation code on the JavaScript side would be
+     enough.
+     */
+    func endBackgroundTask() {
+        // End the task assertion.
+        UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
+        self.backgroundTaskID = UIBackgroundTaskIdentifier.invalid
+    }
+    
+    /**
+     Convenience method used to  encapsulate all the needed actions to perform when we fail a script runner interaction.
+     We can fail due to network issues, but also due to dropped connectivity on the BLE front, or not valid responses from
+     the runner side. This a bit catch-all fail callback
+     - Parameter code: Used on the live side for error mapping from a string to a known error type.
+     - Parameter message: Raw error message, used for logging and to not miss traces from the JavaScript side.
+     - Returns: Void
+     **/
+    private func onFailedScriptRunner(_ code: TransportError, _ message: String?) -> Void {
+        onEmit!(
+            RunnerAction.runError,
+            ExtraData(code: code.rawValue, message: message)
+        )
+        self.pendingRequest?.cancel()
+        self.endBackgroundTask()
+        self.stop(){
+            print("BIM runner failed.")
         }
     }
     
-    /// This will detect global network down too but the main focus was to detect a dead bim server.
-    private func withBIM(_ callback: @escaping () -> Void, errorCallback: @escaping (_ error: Error?) -> Void) {
-        var request = URLRequest(url: self.health)
+    /**
+     Wrapper before we do any attempt at communicating with the BIM backend. We hit the Health endpoint and only after
+     we acknowledge it's working as expected do we attempt to connect via the websocket protocol to consume a scriptrunner
+     - Parameter onSuccess
+     - Parameter onError
+     */
+    private func withBIM(_ onSuccess: @escaping () -> Void, onError: @escaping (_ error: Error?) -> Void) {
+        var request = URLRequest(url: self.healthCheckURL)
         request.httpMethod = "GET"
         if let task = self.pendingRequest {
             task.cancel()
@@ -93,26 +148,28 @@ class Runner: NSObject  {
         let session = URLSession.shared
         self.pendingRequest = session.dataTask(with: request) { (_, response, error) -> Void in
             guard error == nil else {
-              errorCallback(error)
-              return
+                onError(error)
+                self.endBackgroundTask()
+                return
             }
-            callback()
+            onSuccess()
         }
         self.pendingRequest!.resume()
     }
     
     private func startScriptRunner() -> Void {
+        self.isRunning = true
         withBIM(){ [self] in
-            var request = URLRequest(url: endpoint)
+            var request = URLRequest(url: scriptRunnerURL)
             request.timeoutInterval = 30 // No idea if we need this much
             socket = WebSocket(request: request)
-
-            print("BIM opening \(self.endpoint)")
+            
+            print("BIM opening \(self.scriptRunnerURL)")
             socket!.connect()
             socket!.onEvent = { [self] event in
                 switch event {
                 case .connected(_):
-                    // In the case of BIM, we should initiate the message exchange
+                    /// In the case of BIM, we should initiate the message exchange
                     if initialMessage != "" {
                         print("BIM -> \(initialMessage)")
                         socket!.write(string: initialMessage)
@@ -124,31 +181,22 @@ class Runner: NSObject  {
                     /// the communication with the backend may over, we may very well still be communicating
                     /// with the device.
                     if !isInBulkMode {
-                        onDone!(reason, lastScriptRunnerMessage)
+                        onDone!(lastScriptRunnerMessage)
                     } else {
-                        pendingOnDone = true
+                        isPendingOnDone = true
                     }
                     break
                 case .text(let message):
                     lastScriptRunnerMessage = message
-                    // Receive a message from the scriptrunner
                     let data = Data(message.utf8)
-
-                    if ["CONTINUE", "TERMINATE"].contains(message) { return } /// OK cases
-                    else if[                                                  /// KO cases
-                        "CANCELLED",
-                        "SR DISCONNECTION",
-                        "INDEX OUT OF BOUNDS",
-                        "NOT CONNECTED TO SCRIPT RUNNER"
-                    ].contains(message) {
-                        onEmit!(
-                            RunnerAction.runError,
-                            ExtraData(message: message)
-                        )
-                        self.pendingRequest?.cancel()
+                    
+                    /// If it's a known end message, handle it.
+                    if scriptRunnerOK.contains(message) { return }
+                    else if scriptRunnerKO.contains(message) {
+                        self.onFailedScriptRunner(.unknownError, message)
                         return
                     }
-
+                    
                     do {
                         if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                             print("BIM <- \(json)")
@@ -157,7 +205,7 @@ class Runner: NSObject  {
                                 let rawAPDUs = json["data"] as? [String] ?? []
                                 APDUQueue = []
                                 isInBulkMode = true
-                                APDUMaxCount = rawAPDUs.count // Used for percentage reports
+                                APDUMaxCount = rawAPDUs.count /// Used for percentage reports
                                 
                                 for rawAPDU in rawAPDUs {
                                     APDUQueue.append(APDU(raw: rawAPDU));
@@ -170,87 +218,65 @@ class Runner: NSObject  {
                             handleNextAPDU();
                         }
                     } catch {
-                        onEmit!(
-                            RunnerAction.runError,
-                            ExtraData(code: TransportError.networkDown.rawValue, message: error.localizedDescription)
-                        )
-                        self.pendingRequest?.cancel()
+                        self.onFailedScriptRunner(.networkDown, error.localizedDescription)
                     }
                     break
                 case .error(let error):
-                    onEmit!(
-                        RunnerAction.runError,
-                        ExtraData(code: TransportError.networkDown.rawValue, message: error?.localizedDescription)
-                    )
-                    self.pendingRequest?.cancel()
+                    self.onFailedScriptRunner(.networkDown, error?.localizedDescription)
                     break
                 case .viabilityChanged(let isChanged):
                     if !isChanged {
-                        onEmit!(
-                            RunnerAction.runError,
-                            ExtraData(code: TransportError.networkDown.rawValue)
-                        )
+                        self.onFailedScriptRunner(.networkDown, "")
                     }
-                    self.pendingRequest?.cancel()
                     break
                 default:
                     print("BIM ws \(event)")
                     break
                 }
             }
-        } errorCallback: { [self] error in
-            onEmit!(
-                RunnerAction.runError,
-                ExtraData(message: TransportError.networkDown.rawValue)
-            )
-            self.pendingRequest?.cancel()
+        } onError: { [self] error in
+            self.onFailedScriptRunner(.networkDown, error?.localizedDescription)
         }
     }
     
+    /**
+     For as long as we have APDU entries in the APDUQueue, attempt to send the next one to the device. This can either
+     happen due to a successful response from the device coming from onDeviceResponse or from a message from the
+     scriptrunner.
+     */
     func handleNextAPDU() -> Void {
-        if let onStop = self.onStop {
-            /// We have been stopped mid bulk exchange, send a cleanup apdu to get out of it.
-            /// This apdu is an 'openApp' command with a white space as the app name, this causes a 6870
-            /// response, we follow that with a getAppAndVersion apdu which also fails. Then we can disconnect.
-            if self.APDUQueue.count > 0 {
-                let apdu = self.APDUQueue.removeFirst()
-                self.onEventFromAPDU((apdu.data.hexEncodedString()))
-                BleTransport.shared.exchange(apdu: apdu) { _ in
-                    self.handleNextAPDU()
-                }
-            } else {
-                onStop()
-            }
-        } else if !self.APDUQueue.isEmpty {
+        if !self.APDUQueue.isEmpty {
             let apdu = self.APDUQueue.removeFirst()
-            self.onEventFromAPDU((apdu.data.hexEncodedString()))
             BleTransport.shared.exchange(apdu: apdu, callback: self.onDeviceResponse)
-        } else if self.pendingOnDone {
-            /// We don't have pending apdus, and we have gone past a bulk payload, we can emit the disconnect
-            self.onDone!("reason", self.lastScriptRunnerMessage) // TODO not quite right
+        } else if self.isPendingOnDone {
+            self.onDone!(self.lastScriptRunnerMessage)
         }
     }
     
+    /**
+     Callback for the result of an exchange with a device.
+     - Parameter result: Either a success string, containing the response or a BleTransportError
+     */
     func onDeviceResponse(_ result : Result<String, BleTransportError>) {
         switch result {
         case .success(let response):
             let data = response.dropLast(4)
             
-            self.onEventFromAPDU(response, fromHSM: false)
-            if (self.isInBulkMode) {
+            if self.isInBulkMode {
+                let progress = ((Double(self.APDUMaxCount-self.APDUQueue.count))/Double(self.APDUMaxCount))
+                self.onEmit!(
+                    RunnerAction.runProgress,
+                    ExtraData(progress: progress)
+                )
                 self.handleNextAPDU()
             } else {
-                // Send message back to the script runner
-                // Probably a good idea to move this to an encoded string
+                /// Send message back to the scriptrunner
                 let response = "{\"nonce\":\(self.HSMNonce),\"response\":\"success\",\"data\":\"\(data)\"}"
                 print("BIM -> \(response)")
                 self.socket!.write(string: response)
             }
         case .failure(let error):
-            onEmit!(
-                RunnerAction.runError,
-                ExtraData(code: TransportError.cantOpenDevice.rawValue, message: error.localizedDescription) // Fixme, not necessarily a can't open device error, message should improve the mapping though
-            )
+            self.onFailedScriptRunner(.cantOpenDevice, error.localizedDescription)
         }
     }
 }

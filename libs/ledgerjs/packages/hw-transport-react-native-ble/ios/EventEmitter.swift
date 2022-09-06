@@ -45,10 +45,10 @@ struct Item: Codable {
 
 struct ExtraData: Codable {
     var msg: String?
-
+    
     /// Devices
     var devices: [ExtraData]?
-
+    
     /// Device extras
     var id: String?
     var rssi: Int?
@@ -98,7 +98,7 @@ class EventEmitter {
         if self.queuedEvents.count > 0 {
             let previousLog = self.queuedEvents.last
             if previousLog?.type == payload.type
-            && previousLog?.event == payload.event {
+                && previousLog?.event == payload.event {
                 self.queuedEvents[self.queuedEvents.count-1] = payload
                 self.consumeEventQueue()
                 return
@@ -120,15 +120,15 @@ class EventEmitter {
         
         while self.queuedEvents.count > 0 && self.isJavaScriptAvailable {
             let event = self.queuedEvents.removeFirst()
-
+            
             let exec: () -> Void = {
                 self.eventEmitter.sendEvent(withName:Event.parent.rawValue, body: event.dictionary)
                 self.lastEventType = event.type
                 self.lastEventTime = Date().timeIntervalSince1970
-
+                
                 if self.pendingEvent != nil {
-                  self.pendingEvent.cancel()
-                  self.pendingEvent = nil
+                    self.pendingEvent.cancel()
+                    self.pendingEvent = nil
                 }
             }
             
@@ -157,15 +157,15 @@ class EventEmitter {
         /// Yummy!
         self.isConsumingQueue = false
     }
-
+    
     lazy var allEvents: [String] = {
         return ["BleTransport"] // All events can be wrapped through this channel.
     }()
 }
 
 extension Encodable {
-  var dictionary: [String: Any]? {
-    guard let data = try? JSONEncoder().encode(self) else { return nil }
-    return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
-  }
+    var dictionary: [String: Any]? {
+        guard let data = try? JSONEncoder().encode(self) else { return nil }
+        return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
+    }
 }

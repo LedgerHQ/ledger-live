@@ -9,26 +9,22 @@ import Foundation
 import Starscream
 import BleTransport
 
-/// A QueueRunner is a convenience wrapper to be able to consume multiple script runners through the BIM
-/// interface. This interface allows a consumer to go over multiple app operations (installs/uninstalls) without
-/// needing to resolve the scriptrunner url for each one of them (we have it already on Live side, ok, fair enough)
-/// while at the same time breaking the dependency with the JS thread, this is the highlight, yes.
 class Queue: NSObject  {
     let BIMWebsocketEndpoint: URL
     let BIMPackQueue: URL
     let BIMHealth: URL
-
+    
     var runner : Runner?                        /// Handler of the current task
     var pendingRequest: URLSessionDataTask?     /// Backend request to unpack a token
-
+    
     var token: String = ""                      /// Tokenized representation of our queue
     var rawQueue: String = ""                   /// Unresolved queue to fetch a token from
     var index: Int = 0                          /// Current index on the queue
     var item: Item?                             /// Current item we are processing
     var tasks: Tasks = Tasks(tasks: [])         /// Resolved items from the queue token
-
+    
     var stopped: Bool = false
-
+    
     public init (
         rawQueue: String,
         endpoint: String
@@ -53,7 +49,7 @@ class Queue: NSObject  {
         item = nil
         tasks = Tasks(tasks: [])
         pendingRequest?.cancel()
-
+        
         if let runner = self.runner {
             runner.stop(onStop)
         } else {
@@ -69,16 +65,16 @@ class Queue: NSObject  {
         
         do {
             let tasks: Tasks = try JSONDecoder().decode(Tasks.self, from: self.rawQueue.data(using: .utf8)!)
-        
+            
             var request = URLRequest(url: BIMPackQueue)
             request.httpMethod = "PUT"
             request.httpBody = self.rawQueue.data(using: .utf8)!
-
+            
             let session = URLSession.shared
             if let task = self.pendingRequest {
                 task.cancel()
             }
-
+            
             /// Pending error handling if backend is toast.
             self.pendingRequest = session.dataTask(with: request) { [self] (data, response, error) in
                 if let error = error, let request = self.pendingRequest {
@@ -94,13 +90,13 @@ class Queue: NSObject  {
                 else if let token = data {
                     self.token = String(decoding: token, as: UTF8.self)
                     self.tasks = tasks
-
+                    
                     if autoStart {
-                        self.startRunner()
+                        self.startNextRunner()
                     }
                 }
             }
-
+            
             self.pendingRequest!.resume()
         } catch {
             onEventWrapper(
@@ -111,17 +107,22 @@ class Queue: NSObject  {
         }
     }
     
-
+    /**
+     Allow to override the queue of items that we are using. This happens when we are processing a queue
+     and the user adds a new element to it, we essentially invalidate the previous one and replace it with this
+     one.
+     - Parameter rawQueue: A string representation of the JSOn data of a queue, to be resolved into a token
+     */
     public func setRawQueue(rawQueue: String) {
         self.rawQueue = rawQueue
         self.index = 0
         self.resolveTokenFromQueue(self.runner == nil)
     }
     
-    ///
-    ///startRunner
-    ///Launch the next Runner and start emitting the events used by the UI
-    private func startRunner() -> Void {
+    /**
+     Start the next Runner for this Queue
+     */
+    private func startNextRunner() -> Void {
         self.item = self.tasks.tasks[self.index]
         if let item = self.item {
             EventEmitter.sharedInstance.dispatch(
@@ -131,7 +132,7 @@ class Queue: NSObject  {
                     data: ExtraData(name: item.appName, type: item.operation)
                 )
             )
-
+            
             self.runner = Runner(
                 endpoint: BIMWebsocketEndpoint,
                 health: BIMHealth,
@@ -139,24 +140,24 @@ class Queue: NSObject  {
                 onDone: self.onDoneWrapper,
                 withInitialMessage: "{\"token\":\"\(self.token)\",\"index\":\(self.index)}"
             )
-        } /// What if we don't have the item here?
+        }
     }
     
-    ///
-    ///onEventWrapper
-    ///The Wrapper is needed to alter the emitted event from a regular runner in case we want to use runners outside of
-    ///a Queue context. We are essentially introducing the application name and operation into the event since that's
-    ///expected from the UI as part of the multi item logic.
-    ///
-    ///- Parameter type: RunnerAction.runProgress or RunnerAction.runError
-    ///- Parameter withData: Event information to send
+    /**
+     The wrapper is needed to alter the emitted events from a regular Runner in case we want to use runners outside of a Queue
+     context. Here we are polyfilling the data from the runner with some extra runner only available at the Queue level, namely
+     the application name and the operation. This is used by the UI to reconciliate the state of the application list.
+     
+     - Parameter type: RunnerAction.runProgress | RunnerAction.runError
+     - Parameter withData: Lazy data holder for any event funneled upwards, could do with better typing.
+     */
     private func onEventWrapper(_ runnerAction: RunnerAction, withData: ExtraData?) -> Void {
         var wrappedData = withData ?? ExtraData()
         if let item = self.item {
             wrappedData.name = item.appName
             wrappedData.type = item.operation
         }
-
+        
         EventEmitter.sharedInstance.dispatch(
             Payload(
                 event: Event.task.rawValue,
@@ -166,13 +167,21 @@ class Queue: NSObject  {
         )
     }
     
-    ///
-    ///onDoneWrapper
-    ///
-    ///- Parameter disconnectReason : Not sure what I used this for
-    ///- Parameter doneMessage : Last message received from the WS before closing a connection, it can mark that we
-    ///                          are still processing a queue or that we are done, allowing us to react to it.
-    private func onDoneWrapper (disconnectReason: String, doneMessage : String) -> Void {
+    
+    /**
+     This method wraps the internal onDone of a child Runner. The reason for a wrapper is that depending on whether we still
+     have elements in the queue or not (ie, more Runners) we will start the next one or communicate the completion of the queue
+     through the event emitter.
+     
+     - Parameter lastScriptRunnerMessage : The last mesage received from the scriptrunner. This allows us to know if
+     there are more elements in the queue (as far as that particular token is concerned) or not.
+     
+     --------------------------------------------------------------------------------------------
+     
+     - Note  that even if the last message from the scriptrunner is a TERMINATE for instance, we may still have more items because
+     the token ha s been updated during the execution of that last Runner. That's why we check against self.tasks right afterward.
+     */
+    private func onDoneWrapper (_ lastScriptRunnerMessage : String) -> Void {
         if let item = self.item {
             EventEmitter.sharedInstance.dispatch(
                 Payload(
@@ -182,15 +191,16 @@ class Queue: NSObject  {
                 )
             )
             if self.stopped { return }
-
-            if (doneMessage == "CONTINUE") {
+            
+            if (lastScriptRunnerMessage == "CONTINUE") {
                 self.index += 1
-                self.startRunner()
+                self.startNextRunner()
             } else if (self.index+1 < self.tasks.tasks.count) {
                 self.index += 1
-                self.startRunner()
+                self.startNextRunner()
                 print("Token modified, try to get next one ignoring the HSM message")
             } else {
+                self.runner?.endBackgroundTask()
                 self.runner = nil
                 EventEmitter.sharedInstance.dispatch(
                     Payload(
