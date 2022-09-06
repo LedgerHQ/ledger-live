@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import {
   createStackNavigator,
+  StackNavigationProp,
   TransitionPresets,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -17,8 +18,8 @@ import DebugCrash from "../../screens/DebugCrash";
 import DebugHttpTransport from "../../screens/DebugHttpTransport";
 import DebugFeatureFlags from "../../screens/DebugFeatureFlags";
 import DebugIcons from "../../screens/DebugIcons";
-import DebugLottie from "../../screens/DebugLottie.js";
-import DebugLogs from "../../screens/DebugLogs.js";
+import DebugLottie from "../../screens/DebugLottie";
+import DebugLogs from "../../screens/DebugLogs";
 import DebugStore from "../../screens/DebugStore";
 import DebugEnv from "../../screens/DebugEnv";
 import DebugPlayground from "../../screens/DebugPlayground";
@@ -36,6 +37,7 @@ import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/Cur
 import DebugSettings, {
   DebugDevices,
   DebugMocks,
+  DebugMocksParams,
 } from "../../screens/Settings/Debug";
 import DebugExport from "../../screens/Settings/Debug/ExportAccounts";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
@@ -52,12 +54,26 @@ import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftColle
 import { track } from "../../analytics";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
 
+// TODO: types for each screens and navigators need to be set
+export type SettingsNavigatorStackParamList = {
+  DebugMocks: DebugMocksParams;
+
+  // Hack: allows any other properties
+  [otherScreens: string]: undefined | object;
+};
+
+export type SettingsNavigatorProps =
+  StackNavigationProp<SettingsNavigatorStackParamList>;
+
+const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
+
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
 
   const navigation = useNavigation();
   const currentRoute = useCurrentRouteName();
@@ -338,5 +354,3 @@ export default function SettingsNavigator() {
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

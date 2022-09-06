@@ -21,7 +21,7 @@ const targets = [
   "AccountSubHeader.jsx",
   "SendAmountFields.jsx",
   "SendRecipientFields.jsx",
-  "SendWarning.js",
+  "SendWarning.jsx",
   "ReceiveWarning.jsx",
   "AccountBalanceSummaryFooter.jsx",
   "TokenList.jsx",

@@ -87,13 +87,15 @@ const Delegation = ({ account, parentAccount }: Props) => {
     0,
   );
 
-  const openRewardsInfoModal = useCallback(() => setRewardsInfoModal(true), [
-    setRewardsInfoModal,
-  ]);
+  const openRewardsInfoModal = useCallback(
+    () => setRewardsInfoModal(true),
+    [setRewardsInfoModal],
+  );
 
-  const closeRewardsInfoModal = useCallback(() => setRewardsInfoModal(false), [
-    setRewardsInfoModal,
-  ]);
+  const closeRewardsInfoModal = useCallback(
+    () => setRewardsInfoModal(false),
+    [setRewardsInfoModal],
+  );
 
   const bridge = getAccountBridge(account, undefined);
 

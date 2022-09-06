@@ -51,12 +51,11 @@ const BackgroundRunnerService = async ({
     NativeModules.BackgroundRunner.stop();
   };
 
-  const waitForOnlineDevice = (maxWait: number) => {
-    return withDevicePolling(deviceId)(
+  const waitForOnlineDevice = (maxWait: number) =>
+    withDevicePolling(deviceId)(
       transport => from(getDeviceInfo(transport)),
       () => true,
     ).pipe(timeout(maxWait));
-  };
 
   prepareFirmwareUpdate(deviceId, latestFirmware).subscribe({
     next: ({ progress, displayedOnDevice }) => {

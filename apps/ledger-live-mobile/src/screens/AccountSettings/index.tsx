@@ -18,6 +18,7 @@ type Props = {
   navigation: any;
   route: { params: RouteParams };
   account: Account;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   deleteAccount: Function;
 };
 

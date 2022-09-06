@@ -7,14 +7,14 @@ import React, {
   useEffect,
 } from "react";
 import { useTheme } from "styled-components/native";
-import { AccountLike } from "@ledgerhq/types-live";
-import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   ValueChange,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
-} from "@ledgerhq/live-common/portfolio/v2/types";
+  AccountLike,
+} from "@ledgerhq/types-live";
+import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   Box,
   Flex,
@@ -30,6 +30,7 @@ import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import { Item } from "./Graph/types";
 import { useBalanceHistoryWithCountervalue } from "../actions/portfolio";
+// eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import Touchable from "./Touchable";

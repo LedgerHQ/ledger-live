@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-hid-singleton",
-  "version": "6.27.3",
+  "version": "6.27.4",
   "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid and usb-detection",
   "keywords": [
     "Ledger",

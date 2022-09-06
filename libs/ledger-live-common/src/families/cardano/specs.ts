@@ -1,7 +1,7 @@
 import expect from "expect";
 import type { AppSpec } from "../../bot/types";
 import type { CardanoAccount, CardanoResources, Transaction } from "./types";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
@@ -10,6 +10,7 @@ import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
 import { parseCurrencyUnit } from "../../currencies";
 import { SubAccount } from "@ledgerhq/types-live";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("cardano");
 const minBalanceRequired = parseCurrencyUnit(currency.units[0], "2.2");
@@ -26,6 +27,7 @@ const cardano: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "CardanoADA",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   mutations: [
     {
@@ -54,11 +56,16 @@ const cardano: AppSpec<Transaction> = {
         };
       },
       test: ({ operation, transaction }): void => {
-        expect(operation.extra).toEqual({
-          memo: transaction.memo,
-        });
-        expect(transaction.amount).toEqual(
-          operation.value.minus(operation.fee)
+        botTest("operation extra matches memo", () =>
+          expect(operation.extra).toEqual({
+            memo: transaction.memo,
+          })
+        );
+
+        botTest("optimistic value matches transaction amount", () =>
+          expect(transaction.amount).toEqual(
+            operation.value.minus(operation.fee)
+          )
         );
       },
     },
@@ -95,8 +102,10 @@ const cardano: AppSpec<Transaction> = {
               false
             )
           : new BigNumber(0);
-        expect(operation.value).toEqual(
-          accountBeforeTransaction.balance.minus(requiredAdaForTokens)
+        botTest("operation value matches (balance-requiredAdaForTokens)", () =>
+          expect(operation.value).toEqual(
+            accountBeforeTransaction.balance.minus(requiredAdaForTokens)
+          )
         );
       },
     },
@@ -134,12 +143,20 @@ const cardano: AppSpec<Transaction> = {
         };
       },
       test: ({ operation, transaction }): void => {
-        expect(operation.subOperations).toBeTruthy();
-        expect(operation.subOperations?.length).toEqual(1);
+        botTest("subOperations is defined", () =>
+          expect(operation.subOperations).toBeTruthy()
+        );
+
+        botTest("there are one subOperation", () =>
+          expect(operation.subOperations?.length).toEqual(1)
+        );
 
         const subOperation =
           operation.subOperations && operation.subOperations[0];
-        expect(subOperation?.value).toEqual(transaction.amount);
+
+        botTest("subOperation have correct tx amount", () =>
+          expect(subOperation?.value).toEqual(transaction.amount)
+        );
       },
     },
   ],

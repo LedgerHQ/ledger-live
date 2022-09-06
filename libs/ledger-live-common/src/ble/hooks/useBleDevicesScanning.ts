@@ -9,6 +9,7 @@ import type {
   DescriptorEvent,
   DescriptorEventType,
 } from "@ledgerhq/hw-transport";
+import { DeviceId } from "@ledgerhq/types-live";
 import { TransportBleDevice, ScannedDevice, BleError } from "../types";
 
 export type ScanningBleError = BleError | null;
@@ -26,14 +27,16 @@ export type UseBleDevicesScanningDependencies = {
 
 export type UseBleDevicesScanningOptions = {
   stopBleScanning?: boolean;
-  filterByModelIds?: DeviceModelId[];
+  filterByDeviceModelIds?: DeviceModelId[];
+  filterOutDevicesByDeviceIds?: DeviceId[];
 };
 
 const DEFAULT_DEVICE_NAME = "Device";
 
 /**
  * Scans the BLE devices around the user
- * @param filterByModelIds An array of model ids to filter on
+ * @param filterByDeviceModelIds An array of device model ids to filter on
+ * @param filterOutDevicesByDeviceIds An array of device ids to filter out
  * @param stopBleScanning Flag to stop or continue the scanning
  * @returns An object containing:
  * - scannedDevices: list of ScannedDevice found by the scanning
@@ -42,7 +45,8 @@ const DEFAULT_DEVICE_NAME = "Device";
 export const useBleDevicesScanning = ({
   bleTransportListen,
   stopBleScanning,
-  filterByModelIds,
+  filterByDeviceModelIds,
+  filterOutDevicesByDeviceIds,
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
   const [scanningBleError, setScanningBleError] =
@@ -84,6 +88,15 @@ export const useBleDevicesScanning = ({
               return;
             }
 
+            const shouldScannedDeviceBeFilteredOut =
+              filterOutDevicesByDeviceIds?.some(
+                (deviceId) => deviceId === transportDevice.id
+              );
+
+            if (shouldScannedDeviceBeFilteredOut) {
+              return;
+            }
+
             if (
               transportDevice.serviceUUIDs &&
               transportDevice.serviceUUIDs.length > 0
@@ -98,8 +111,8 @@ export const useBleDevicesScanning = ({
 
               // Filters on the model ids, if asked
               if (
-                filterByModelIds &&
-                !filterByModelIds.includes(bleInfo.deviceModel.id)
+                filterByDeviceModelIds &&
+                !filterByDeviceModelIds.includes(bleInfo.deviceModel.id)
               ) {
                 return;
               }
@@ -136,8 +149,9 @@ export const useBleDevicesScanning = ({
   }, [
     bleTransportListen,
     stopBleScanning,
-    filterByModelIds,
+    filterByDeviceModelIds,
     setScannedDevices,
+    filterOutDevicesByDeviceIds,
   ]);
 
   return {

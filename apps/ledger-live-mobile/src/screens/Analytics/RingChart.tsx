@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from "react";
 import * as d3shape from "d3-shape";
 import { View } from "react-native";
@@ -9,9 +7,9 @@ import type { DistributionItem } from "./DistributionCard";
 import { ensureContrast, withTheme } from "../../colors";
 
 type Props = {
-  data: Array<DistributionItem>,
-  size: number,
-  colors: any,
+  data: Array<DistributionItem>;
+  size: number;
+  colors: any;
 };
 
 class RingChart extends PureComponent<Props> {
@@ -72,7 +70,7 @@ class RingChart extends PureComponent<Props> {
       <View>
         <Svg width={size} height={size} viewBox="0 0 76 76">
           <G transform="translate(38, 38)">
-            {(this.paths.items || []).map(({ pathData, color, id }, i) => (
+            {(this.paths.items || []).map(({ pathData, color, id }) => (
               <Path
                 key={id}
                 stroke={colors.background.main}

@@ -4,7 +4,11 @@ import { useEnv } from "../env.react";
 import manager from ".";
 import { getProviderId } from "./provider";
 import ManagerAPI from "../api/Manager";
-import type { DeviceModelInfo } from "@ledgerhq/types-live";
+import type {
+  DeviceModelInfo,
+  DeviceInfo,
+  Language,
+} from "@ledgerhq/types-live";
 
 async function hasOudatedApps({
   deviceInfo,
@@ -71,3 +75,19 @@ export function useManagerBlueDot(
   }, [dmi, forceProvider]);
   return display;
 }
+
+export const useAvailableLanguagesForDevice = (
+  deviceInfo: DeviceInfo
+): Language[] => {
+  const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
+
+  useEffect(() => {
+    if (deviceInfo) {
+      manager
+        .getAvailableLanguagesDevice(deviceInfo)
+        .then(setAvailableLanguages);
+    }
+  }, [deviceInfo, setAvailableLanguages]);
+
+  return availableLanguages;
+};

@@ -26,7 +26,7 @@ import {
   readOnlyModeEnabledSelector,
 } from "../reducers/settings";
 import { track, TrackScreen } from "../analytics";
-import { StringNullableChain } from "lodash";
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../components/RootNavigator";
 
 const hitSlop = {
@@ -41,7 +41,9 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background.main};
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sourceDark = require("../../assets/videos/NanoX_LL_Black.mp4");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sourceLight = require("../../assets/videos/NanoX_LL_White.mp4");
 
 const items = [

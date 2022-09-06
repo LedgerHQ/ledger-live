@@ -1,5 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { memo, useCallback, useState, useMemo, useRef } from "react";
-import { View, StyleSheet, TextInput, SafeAreaView } from "react-native";
+import { View, StyleSheet, TextInput } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { Vote } from "@ledgerhq/live-common/families/tron/types";
 
@@ -10,6 +11,7 @@ import Switch from "../../../components/Switch";
 import LText from "../../../components/LText";
 import Check from "../../../icons/Check";
 
+// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "../../../components/LText/getFontStyle";
 import KeyboardView from "../../../components/KeyboardView";
 
@@ -75,10 +77,10 @@ const VoteModal = ({
 
   const remove = useCallback(() => onRemove(vote), [onRemove, vote]);
 
-  const votesRemaining = useMemo(() => Math.max(0, votesAvailable - value), [
-    value,
-    votesAvailable,
-  ]);
+  const votesRemaining = useMemo(
+    () => Math.max(0, votesAvailable - value),
+    [value, votesAvailable],
+  );
 
   const error = value <= 0 || value > votesAvailable;
 

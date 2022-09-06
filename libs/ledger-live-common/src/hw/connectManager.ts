@@ -9,12 +9,12 @@ import { listApps } from "../apps/hw";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import getAppAndVersion from "./getAppAndVersion";
-import appSupportsQuitApp from "../appSupportsQuitApp";
 import { isDashboardName } from "./isDashboardName";
 import { DeviceNotOnboarded } from "../errors";
-import type { AppAndVersion } from "./connectApp";
-import quitApp from "./quitApp";
+
 import { DeviceInfo } from "@ledgerhq/types-live";
+import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
+
 export type Input = {
   devicePath: string;
   managerRequest:
@@ -24,13 +24,9 @@ export type Input = {
     | null
     | undefined;
 };
+
 export type ConnectManagerEvent =
-  | {
-      type: "appDetected";
-    }
-  | {
-      type: "unresponsiveDevice";
-    }
+  | AttemptToQuitAppEvent
   | {
       type: "osu";
       deviceInfo: DeviceInfo;
@@ -44,23 +40,6 @@ export type ConnectManagerEvent =
       deviceInfo: DeviceInfo;
     }
   | ListAppsEvent;
-
-const attemptToQuitApp = (
-  transport,
-  appAndVersion?: AppAndVersion
-): Observable<ConnectManagerEvent> =>
-  appAndVersion && appSupportsQuitApp(appAndVersion)
-    ? from(quitApp(transport)).pipe(
-        concatMap(() =>
-          of(<ConnectManagerEvent>{
-            type: "unresponsiveDevice",
-          })
-        ),
-        catchError((e) => throwError(e))
-      )
-    : of({
-        type: "appDetected",
-      });
 
 const cmd = ({
   devicePath,
