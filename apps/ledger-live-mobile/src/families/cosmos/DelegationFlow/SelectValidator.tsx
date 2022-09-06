@@ -3,8 +3,7 @@ import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
@@ -32,7 +31,10 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily("cosmos", searchQuery);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    "cosmos",
+    searchQuery,
+  );
 
   const onItemPress = useCallback(
     (validator: CosmosValidatorItem) => {

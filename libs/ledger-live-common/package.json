@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "26.0.0",
+  "version": "27.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -152,7 +152,7 @@
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "1.41.3",
     "@stricahq/bip32ed25519": "^1.0.3",
-    "@stricahq/typhonjs": "^1.2.5",
+    "@stricahq/typhonjs": "^1.2.6",
     "@taquito/ledger-signer": "^13.0.1",
     "@taquito/taquito": "^13.0.1",
     "@taquito/utils": "^13.0.1",

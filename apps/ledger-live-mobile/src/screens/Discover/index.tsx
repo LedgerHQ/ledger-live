@@ -9,19 +9,20 @@ import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "../../config/urls";
-// @ts-ignore issue with exports
 import { TrackScreen, track } from "../../analytics";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+// eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../components/RootNavigator";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const learnImg = require("../../images/illustration/Shared/_Learn.png");
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const appsImg = require("../../images/illustration/Shared/_Apps.png");
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const earnImg = require("../../images/illustration/Shared/_Earn.png");
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const mintImg = require("../../images/illustration/Shared/_Mint.png");
 
 const StyledSafeAreaView = styled(TabBarSafeAreaView)`
@@ -85,8 +86,6 @@ function Discover() {
               });
               Linking.openURL(urls.discover.academy);
             } else {
-              // TODO: FIX @react-navigation/native using Typescript
-              // @ts-ignore next-line
               navigation.navigate(ScreenName.Learn);
             }
           },

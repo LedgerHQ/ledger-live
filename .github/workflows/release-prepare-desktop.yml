@@ -19,7 +19,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.ref }}
-          fetch-depth: 0
           token: ${{ secrets.GH_PAT }}
 
       - name: set git user
@@ -57,6 +56,10 @@ jobs:
         run: |
           git push origin ${{ github.event.inputs.ref }}
           git fetch origin
+
+      - name: fetch develop and main
+        run: |
+          git fetch origin develop main
 
       - name: merge into develop
         run: |

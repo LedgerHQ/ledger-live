@@ -1,16 +1,15 @@
 import React, { useCallback, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-import styled from "styled-components/native";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import { track, TrackScreen } from "../../../analytics";
 import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 type Props = {
-  closeModal: Function;
-  setStep: Function;
-  setShouldNotRemindUserAgain: Function;
+  closeModal: any;
+  setStep: any;
+  setShouldNotRemindUserAgain: any;
 };
 
 const ConfirmUnverified = ({

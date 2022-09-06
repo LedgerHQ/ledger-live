@@ -9,7 +9,7 @@ import withEnv from "../../../logic/withEnv";
 
 type Props = {
   hideEmptyTokenAccountsEnabled: boolean;
-  setHideEmptyTokenAccounts: (val: boolean) => void;
+  setHideEmptyTokenAccounts: (_: boolean) => void;
 };
 
 const mapDispatchToProps = {

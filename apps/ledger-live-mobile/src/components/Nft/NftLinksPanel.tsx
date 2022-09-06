@@ -25,7 +25,7 @@ const NftLink = ({
   subtitle,
   onPress,
 }: {
-  style?: Object;
+  style?: any;
   leftIcon: React$Node;
   rightIcon?: React$Node;
   title: string;

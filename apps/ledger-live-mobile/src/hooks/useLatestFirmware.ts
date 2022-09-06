@@ -3,7 +3,7 @@ import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import manager from "@ledgerhq/live-common/manager/index";
 
 const useLatestFirmware: (
-  deviceInfo?: DeviceInfo,
+  _?: DeviceInfo,
 ) => FirmwareUpdateContext | null | undefined = deviceInfo => {
   const [latestFirmware, setLatestFirmware] = useState<
     FirmwareUpdateContext | null | undefined

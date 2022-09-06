@@ -458,13 +458,7 @@ const Words = ({
   </Text>
 );
 
-const Selectable = ({
-  name,
-  readOnly,
-}: {
-  name: string;
-  readOnly?: boolean;
-}) => {
+const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
   const { colors } = useTheme();
   return (
     <View

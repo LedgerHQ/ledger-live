@@ -1,5 +1,132 @@
 # @ledgerhq/live-common
 
+## 27.0.0
+
+### Major Changes
+
+- [#918](https://github.com/LedgerHQ/ledger-live/pull/918) [`a36d1de865`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - fix useAllAmount usage when fees are higher than balance
+
+### Minor Changes
+
+- [#492](https://github.com/LedgerHQ/ledger-live/pull/492) [`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2) Thanks [@grsoares21](https://github.com/grsoares21)! - Adds device action logic for installing and uninstalling language packs
+
+* [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`c7aaafa769`](https://github.com/LedgerHQ/ledger-live/commit/c7aaafa76924252f3c7e30371012bd0e69d8100a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Added development/QA tool for feature flags [Desktop]
+
+- [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
+
+### Patch Changes
+
+- [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503) Thanks [@github-actions](https://github.com/apps/github-actions)! - LLM: fixes import from desktop to fully sync accounts before save
+
+* [#730](https://github.com/LedgerHQ/ledger-live/pull/730) [`6e057f7163`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4) Thanks [@LFBarreto](https://github.com/LFBarreto)! - update ptx smart routing feature flag and live app web player undefined uri params
+
+- [#970](https://github.com/LedgerHQ/ledger-live/pull/970) [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311) Thanks [@alexandremgo](https://github.com/alexandremgo)! - BLE scanning and pairing hooks
+
+- Updated dependencies [[`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1), [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/cryptoassets@6.33.0
+  - @ledgerhq/hw-transport@6.27.3
+  - @ledgerhq/hw-app-eth@6.29.5
+  - @ledgerhq/hw-app-algorand@6.27.3
+  - @ledgerhq/hw-app-btc@8.0.1
+  - @ledgerhq/hw-app-cosmos@6.27.3
+  - @ledgerhq/hw-app-polkadot@6.27.3
+  - @ledgerhq/hw-app-solana@6.27.3
+  - @ledgerhq/hw-app-str@6.27.3
+  - @ledgerhq/hw-app-tezos@6.27.3
+  - @ledgerhq/hw-app-trx@6.27.3
+  - @ledgerhq/hw-app-xrp@6.27.3
+  - @ledgerhq/hw-transport-mocker@6.27.3
+  - @ledgerhq/hw-transport-node-speculos@6.27.3
+
+## 27.0.0-next.3
+
+### Patch Changes
+
+- [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503) Thanks [@github-actions](https://github.com/apps/github-actions)! - LLM: fixes import from desktop to fully sync accounts before save
+
+## 27.0.0-next.2
+
+### Major Changes
+
+- [#918](https://github.com/LedgerHQ/ledger-live/pull/918) [`a36d1de865`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - fix useAllAmount usage when fees are higher than balance
+
+### Minor Changes
+
+- [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
+
+  For additional context on what changed:
+
+  - Ledger Live Desktop: functionality for Osmosis send, receive and staking.
+  - Ledger Live Desktop: refactor of some Cosmos components to enable reusing some components for Osmosis.
+    and easily integrate future Cosmos-based cryptocurrencies.
+
+  - Ledger Live Common: functionality for Osmosis send, receive and staking.
+  - Ledger Live Common: refactor of some Cosmos modules to enable reusing code for Osmosis.
+    Notable changes are: renaming the hook useCosmosPreloadData to useCosmosFamilyPreloadData and turning
+    validators.ts and js-synchronisation.ts into classes.
+
+  - Ledger Live Mobile: only marked as major because the useCosmosPreloadData hook changed name, which is a breaking change.
+
+  - Cryptoassets: updated a URL in the Osmosis cryptocurrency definition.
+
+  - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
+
+### Patch Changes
+
+- Updated dependencies [[`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1)]:
+  - @ledgerhq/cryptoassets@6.33.0-next.0
+  - @ledgerhq/hw-app-eth@6.29.5-next.1
+
+## 26.1.0-next.1
+
+### Minor Changes
+
+- [#492](https://github.com/LedgerHQ/ledger-live/pull/492) [`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2) Thanks [@grsoares21](https://github.com/grsoares21)! - Adds device action logic for installing and uninstalling language packs
+
+## 26.1.0-next.0
+
+### Minor Changes
+
+- [#814](https://github.com/LedgerHQ/ledger-live/pull/814) [`23c9bf994`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development/QA tool for feature flags [Desktop]
+
+### Patch Changes
+
+- [#730](https://github.com/LedgerHQ/ledger-live/pull/730) [`6e057f716`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4) Thanks [@LFBarreto](https://github.com/LFBarreto)! - update ptx smart routing feature flag and live app web player undefined uri params
+
+* [#970](https://github.com/LedgerHQ/ledger-live/pull/970) [`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311) Thanks [@alexandremgo](https://github.com/alexandremgo)! - BLE scanning and pairing hooks
+
+* Updated dependencies [[`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/hw-transport@6.27.3-next.0
+  - @ledgerhq/hw-app-algorand@6.27.3-next.0
+  - @ledgerhq/hw-app-btc@8.0.1-next.0
+  - @ledgerhq/hw-app-cosmos@6.27.3-next.0
+  - @ledgerhq/hw-app-eth@6.29.5-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.3-next.0
+  - @ledgerhq/hw-app-solana@6.27.3-next.0
+  - @ledgerhq/hw-app-str@6.27.3-next.0
+  - @ledgerhq/hw-app-tezos@6.27.3-next.0
+  - @ledgerhq/hw-app-trx@6.27.3-next.0
+  - @ledgerhq/hw-app-xrp@6.27.3-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.3-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.3-next.0
+
 ## 26.0.0
 
 ### Major Changes

@@ -27,7 +27,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, [navigation, route.params]);
 
   const howDelegationWorks = useCallback(() => {
-    Linking.openURL(urls.delegation);
+    Linking.openURL(urls.solana.stakingPage);
   }, []);
 
   return (
@@ -45,7 +45,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
           <Trans i18nKey="delegation.started.title" />
         </Text>
         <Text style={styles.description}>
-          <Trans i18nKey="delegation.started.description" />
+          <Trans i18nKey="solana.delegation.started.description" />
         </Text>
         <BulletList
           Bullet={BulletGreenCheck}

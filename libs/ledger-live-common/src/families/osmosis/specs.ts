@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type {
@@ -19,10 +19,11 @@ import sample from "lodash/sample";
 import expect from "expect";
 import { toOperationRaw } from "../../account";
 import { BigNumber } from "bignumber.js";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("osmosis");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.00001");
-const maxAccount = 3;
+const maxAccount = 16;
 // amounts of delegation are not exact so we are applying an approximation
 function approximateValue(value) {
   return "~" + value.div(100).integerValue().times(100).toString();
@@ -48,6 +49,7 @@ const osmosis: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Cosmos",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "balance is too low");
@@ -59,9 +61,11 @@ const osmosis: AppSpec<Transaction> = {
     if (allOperationsMatchingId.length > 1) {
       console.warn(allOperationsMatchingId);
     }
-    expect({ allOperationsMatchingId }).toEqual({
-      allOperationsMatchingId: [operation],
-    });
+    botTest("only one operation emerged on the tx id", () =>
+      expect({ allOperationsMatchingId }).toEqual({
+        allOperationsMatchingId: [operation],
+      })
+    );
     const opExpected: Record<string, any> = toOperationRaw({
       ...optimisticOperation,
     });
@@ -74,8 +78,12 @@ const osmosis: AppSpec<Transaction> = {
     delete opExpected.extra;
     delete opExpected.transactionSequenceNumber;
     const op = toOperationRaw(operation);
-    expect(op).toMatchObject(opExpected);
-    expect(approximateExtra(op.extra)).toMatchObject(approximateExtra(extra));
+    botTest("optimistic operation matches op", () =>
+      expect(op).toMatchObject(opExpected)
+    );
+    botTest("operation extra matches", () =>
+      expect(approximateExtra(op.extra)).toMatchObject(approximateExtra(extra))
+    );
   },
   mutations: [
     {

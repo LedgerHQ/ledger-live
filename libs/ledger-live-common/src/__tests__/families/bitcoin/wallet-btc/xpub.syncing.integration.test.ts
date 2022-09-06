@@ -199,7 +199,7 @@ describe("xpub integration sync", () => {
       balance: 200000000,
       network: coininfo.bitcoin.main.toBitcoinJS(),
       coin: "kmd",
-      explorerVersion: "v2",
+      explorerVersion: "v3",
     },
     {
       xpub: "ToEA6kVVodfRW2DuuMjPPMsLLukY4EsScxdHYJkTtdopPD5Z5t9gpB2zEwpschy7rFzTqxQCXQFUBnxT5MAnfkNT4dkWqtHPE2L7bG7GC24XnLy",
@@ -208,7 +208,7 @@ describe("xpub integration sync", () => {
       balance: 400000000,
       network: coininfo.bitcoin.main.toBitcoinJS(),
       coin: "pivx",
-      explorerVersion: "v2",
+      explorerVersion: "v3",
     },
     {
       xpub: "XSTpb6G8xAzX1fqbWuzTSrcwqtvtEcnVinz7EtjJ6rBxmKmJ4XWSrTbNhvabfe4FXWc7cyUUxwgzsJDFeubQEx1dZPvMncd7LycUhXSShHikr8AN",

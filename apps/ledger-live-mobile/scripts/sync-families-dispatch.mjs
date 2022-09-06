@@ -37,9 +37,9 @@ const targets = [
 ];
 
 async function genTarget(target) {
-  let imports = `// @flow`;
+  let imports = ``;
   let exprts = `export default {`;
-  const outpath = path.join(generatedPath, `${target}.js`);
+  const outpath = path.join(generatedPath, `${target}.ts`);
 
   for (const family of families) {
     const f = path.join(basePath, "families", family);
@@ -49,8 +49,7 @@ async function genTarget(target) {
       .map(ent => ent.name);
     const file = files.find(f => f.startsWith(target));
     if (file) {
-      imports += `
-import ${family} from "../families/${family}/${target}";`;
+      imports += `import ${family} from "../families/${family}/${target}";`;
       exprts += `
   ${family},`;
     }

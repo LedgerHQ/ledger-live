@@ -1,6 +1,6 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import { CardStyleInterpolators } from "@react-navigation/stack";
+// eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "../components/RootNavigator/BuyDeviceNavigator";
 import {
   hasOrderedNanoSelector,

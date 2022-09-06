@@ -29,8 +29,6 @@ const Next = ({ onNext }: { onNext: () => void }) => {
   const navigation = useNavigation();
 
   const handlePress = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingModalWarning, {
       screen: ScreenName.OnboardingModalRecoveryPhraseWarning,
       params: { onNext },

@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -21,10 +20,10 @@ import EmptyStateAccountIllu from "../../images/EmptyStateAccount";
 import { withTheme } from "../../colors";
 
 type Props = {
-  account: AccountLike,
-  parentAccount?: Account,
-  navigation: any,
-  colors: any,
+  account: AccountLike;
+  parentAccount?: Account;
+  navigation: any;
+  colors: any;
 };
 
 function EmptyStateAccount({

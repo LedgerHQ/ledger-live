@@ -20,7 +20,7 @@ type Props = {
   onClose?: () => void;
   onModalHide?: () => void;
   onResult?: (payload: any) => Promise<void> | void;
-  renderOnResult?: (p: any) => React.ReactNode;
+  renderOnResult?: (_: any) => React.ReactNode;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
 };

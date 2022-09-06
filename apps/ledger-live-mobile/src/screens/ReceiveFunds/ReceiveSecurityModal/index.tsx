@@ -15,7 +15,7 @@ const shouldNotRemindUserAgainToVerifyAddressOnReceive =
 const ReceiveSecurityModal = ({
   onVerifyAddress,
 }: {
-  onVerifyAddress: Function;
+  onVerifyAddress: any;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 

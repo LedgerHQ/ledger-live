@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import Clipboard from "@react-native-community/clipboard";
@@ -49,10 +47,7 @@ class CopyLink extends PureComponent<Props, State> {
     const { style, children, replacement } = this.props;
     const { copied } = this.state;
     return (
-      <Touchable
-        style={[styles.linkContainer, style]}
-        onPress={this.onPress}
-      >
+      <Touchable style={[styles.linkContainer, style]} onPress={this.onPress}>
         <Icons.CheckAloneMedium
           size={16}
           color={copied ? "success.c100" : "neutral.c30"}

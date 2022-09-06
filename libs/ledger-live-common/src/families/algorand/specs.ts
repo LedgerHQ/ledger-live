@@ -3,7 +3,7 @@ import invariant from "invariant";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { isAccountEmpty } from "../../account";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { BigNumber } from "bignumber.js";
 import sample from "lodash/sample";
@@ -11,6 +11,8 @@ import { listTokensForCryptoCurrency } from "../../currencies";
 import { extractTokenId } from "./tokens";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Account } from "@ledgerhq/types-live";
+import { acceptTransaction } from "./speculos-deviceActions";
+
 const currency = getCryptoCurrencyById("algorand");
 // Minimum balance required for a new non-ASA account
 const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
@@ -72,6 +74,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
     model: DeviceModelId.nanoS,
     appName: "Algorand",
   },
+  genericDeviceAction: acceptTransaction,
   mutations: [
     {
       name: "move ~50%",
@@ -102,8 +105,10 @@ const algorand: AppSpec<AlgorandTransaction> = {
         const rewards =
           (accountBeforeTransaction as AlgorandAccount).algorandResources
             ?.rewards || 0;
-        expect(account.balance.plus(rewards).toString()).toBe(
-          accountBeforeTransaction.balance.minus(operation.value).toString()
+        botTest("account balance moved with the operation value", () =>
+          expect(account.balance.plus(rewards).toString()).toBe(
+            accountBeforeTransaction.balance.minus(operation.value).toString()
+          )
         );
       },
     },
@@ -132,7 +137,9 @@ const algorand: AppSpec<AlgorandTransaction> = {
         // Ensure that there is no more than 20 μALGOs (discretionary value)
         // between the actual balance and the expected one to take into account
         // the eventual pending rewards added _after_ the transaction
-        expect(account.spendableBalance.lt(20)).toBe(true);
+        botTest("account spendable balance is very low", () =>
+          expect(account.spendableBalance.lt(20)).toBe(true)
+        );
       },
     },
     {
@@ -179,8 +186,10 @@ const algorand: AppSpec<AlgorandTransaction> = {
           accountBeforeTransaction.subAccounts?.find(
             (sa) => sa.id === subAccountId
           );
-        expect(subAccount?.balance.toString()).toBe(
-          subAccountBeforeTransaction?.balance.minus(status.amount).toString()
+        botTest("subAccount balance moved with the tx status amount", () =>
+          expect(subAccount?.balance.toString()).toBe(
+            subAccountBeforeTransaction?.balance.minus(status.amount).toString()
+          )
         );
       },
     },
@@ -219,13 +228,12 @@ const algorand: AppSpec<AlgorandTransaction> = {
       test: ({ account, transaction }) => {
         invariant(transaction.assetId, "should have an assetId");
         const assetId = extractTokenId(transaction.assetId as string);
-        expect({
-          haveSubAccountWithAssetId:
+        botTest("have sub account with asset id", () =>
+          expect(
             account.subAccounts &&
-            account.subAccounts.some((a) => a.id.endsWith(assetId)),
-        }).toMatchObject({
-          haveSubAccountWithAssetId: true,
-        });
+              account.subAccounts.some((a) => a.id.endsWith(assetId))
+          ).toBe(true)
+        );
       },
     },
     {
@@ -250,10 +258,12 @@ const algorand: AppSpec<AlgorandTransaction> = {
         };
       },
       test: ({ account }) => {
-        expect(
-          (account as AlgorandAccount).algorandResources &&
-            (account as AlgorandAccount).algorandResources.rewards.eq(0)
-        ).toBe(true);
+        botTest("algoResources rewards is zero", () =>
+          expect(
+            (account as AlgorandAccount).algorandResources &&
+              (account as AlgorandAccount).algorandResources.rewards.eq(0)
+          ).toBe(true)
+        );
       },
     },
   ],

@@ -112,13 +112,12 @@ function Delegations({ account }: Props) {
     }
   };
 
-  const formatAmount = (amount: number) => {
-    return formatCurrencyUnit(unit, new BigNumber(amount), {
+  const formatAmount = (amount: number) =>
+    formatCurrencyUnit(unit, new BigNumber(amount), {
       disableRounding: true,
       alwaysShowSign: false,
       showCode: true,
     });
-  };
 
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     if (selectedStakeWithMeta === undefined) {
