@@ -576,6 +576,7 @@ export const createAction = (
   ): AppState => {
     const dependenciesResolvedRef = useRef(false);
     const latestFirmwareResolvedRef = useRef(false);
+    const outdatedAppRef = useRef<AppAndVersion>();
 
     const connectApp = useCallback(
       (device, params) =>
@@ -591,12 +592,15 @@ export const createAction = (
               requireLatestFirmware: latestFirmwareResolvedRef.current
                 ? undefined
                 : params.requireLatestFirmware,
+              outdatedApp: outdatedAppRef.current,
             }).pipe(
               tap((e) => {
                 if (e.type === "dependencies-resolved") {
                   dependenciesResolvedRef.current = true;
                 } else if (e.type === "latest-firmware-resolved") {
                   latestFirmwareResolvedRef.current = true;
+                } else if (e.type === "has-outdated-app") {
+                  outdatedAppRef.current = e.outdatedApp as AppAndVersion;
                 }
               }),
               catchError((error: Error) =>
