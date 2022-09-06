@@ -89,7 +89,7 @@
     "retry" : "Tentar novamente",
     "range" : "Intervalo",
     "stop" : "Parar",
-    "updateNow" : "Atualizar Agora",
+    "updateNow" : "Atualizar agora",
     "close" : "Fechar",
     "eastern" : "Oriental",
     "western" : "Ocidental",
@@ -198,7 +198,7 @@
     "menu" : "Menu",
     "stars" : "Contas Favoritas",
     "accounts" : "Contas",
-    "manager" : "Manager",
+    "manager" : "My Ledger",
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
     "lend" : "Emprestar",
@@ -384,13 +384,13 @@
     },
     "missingApp" : {
       "title" : "Instale o aplicativo {{appName}} no seu dispositivo",
-      "subtitle" : "Vá para o Manager instale o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Ir para o Manager"
+      "subtitle" : "Vá ao My Ledger e instale o aplicativo {{appName}} para trocar ativos.",
+      "cta" : "Vá ao My Ledger"
     },
     "outdatedApp" : {
       "title" : "Atualize o aplicativo {{appName}} no seu dispositivo",
-      "subtitle" : "Vá para o Manager e atualize o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Ir para o Manager"
+      "subtitle" : "Vá ao My Ledger e atualize o aplicativo {{appName}} para trocar ativos.",
+      "cta" : "Vá ao My Ledger"
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar criptos",
@@ -959,7 +959,7 @@
       "terms" : {
         "title" : "Emprestar Cripto",
         "subtitle" : "Empreste ativos no protocolo Compound",
-        "description" : "O protocolo Compound permite emprestar e pegar emprestado ativos na rede Ethereum. Você pode emprestar ativos e receber juros diretamente da sua conta Ledger.",
+        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
         "switchLabel" : "<1>Eu li e concordo com os </1><0>Termos de uso</0><1>.</1>"
       },
       "steps" : {
@@ -1111,7 +1111,7 @@
     "buyCrypto" : {
       "title" : "Comprar Cripto",
       "description" : "Compre criptoativos com nossos parceiros e os receba diretamente na sua conta Ledger",
-      "cta" : "Comprar Agora"
+      "cta" : "Comprar agora"
     },
     "familyPack" : {
       "title" : "Pacote Família",
@@ -1202,9 +1202,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Instalar aplicativos no seu dispositivo",
-      "desc" : "Vá ao Manager para instalar aplicativos no seu dispositivo. Você pode adicionar contas quando tiver aplicativos no seu dispositivo.",
+      "desc" : "Acesse a My Ledger para instalar aplicativos em seu dispositivo. Você pode adicionar contas quando tiver aplicativos no seu dispositivo.",
       "buttons" : {
-        "installApp" : "Vá ao Manager",
+        "installApp" : "Vá ao My Ledger",
         "help" : "Ajuda"
       }
     },
@@ -1213,7 +1213,7 @@
       "desc" : "Adicione uma conta para começar a gerenciar suas criptos. Você precisa instalar o aplicativo da sua cripto no seu dispositivo.",
       "buttons" : {
         "addAccount" : "Adicionar Conta",
-        "installApp" : "Vá a o Manager para instalar aplicativos",
+        "installApp" : "Vá ao My Ledger para instalar aplicativos",
         "help" : "Ajuda"
       }
     }
@@ -1233,7 +1233,7 @@
   "market" : {
     "title" : "Mercado",
     "currency" : "Moeda",
-    "rangeLabel" : "Hora",
+    "rangeLabel" : "Tempo",
     "goBack" : "Voltar",
     "filters" : {
       "title" : "Filtros",
@@ -1536,12 +1536,12 @@
     "quitApp" : "Feche o aplicativo no seu dispositivo",
     "appNotInstalledTitle" : "Aplicativo necessário em falta",
     "appNotInstalledTitle_plural" : "Aplicativos necessários em falta",
-    "appNotInstalled" : "O aplicativo {{appName}} é necessário para completar esta ação. Vá para o Manager e instale-o no seu dispositivo",
-    "appNotInstalled_plural" : "Os aplicativos {{appName}} são necessários para completar esta ação. Vá para o Manager e os instale no seu dispositivo",
-    "openManager" : "Abrir Manager",
+    "appNotInstalled" : "O aplicativo {{appName}} é necessário para completar esta ação. Vá ao My Ledger e instale-o em seu dispositivo",
+    "appNotInstalled_plural" : "Os aplicativos {{appName}} são necessários para completar esta ação. Vá ao My Ledger e instale-os em seu dispositivo",
+    "openManager" : "Abra o My Ledger",
     "openOnboarding" : "Configurar Dispositivo",
     "outdated" : "Versão do aplicativo desatualizada",
-    "outdatedDesc" : "Uma atualização importante está disponível para o aplicativo {{appName}} no seu dispositivo. Vá ao Manager para atualizá-lo.",
+    "outdatedDesc" : "Uma atualização importante está disponível para o aplicativo {{appName}} no seu dispositivo. Vá ao My Ledger e o atualize.",
     "installApp" : "Instalação do aplicativo {{appName}}",
     "installAppDescription" : "Aguarde a instalação ser concluída",
     "listApps" : "Verificando dependências do aplicativo",
@@ -1556,7 +1556,7 @@
       "provider" : "Provedor",
       "payoutNetworkFees" : "Taxas de pagamento",
       "payoutNetworkFeesTooltip" : "Esta quantia não será mostrada no seu dispositivo",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms" : "Ao validar esta transação, eu aceito\n<0>os termos de uso da {{provider}}</0>"
     },
     "swap2" : {
       "amountSent" : "Quantia a enviar",
@@ -1584,12 +1584,12 @@
     },
     "disconnected" : {
       "title" : "Parece que um aplicativo está aberto no seu dispositivo",
-      "subtitle" : "Ao reabrir o Manager, o aplicativo será fechado no seu dispositivo",
-      "ctaReopen" : "Reabrir Manager",
+      "subtitle" : "Ao reabrir o My Ledger, o aplicativo será fechado em seu dispositivo",
+      "ctaReopen" : "Reabra o My Ledger",
       "ctaPortfolio" : "Voltar ao Portfólio"
     },
     "deviceStorage" : {
-      "freeSpace" : "<0>{{space}}</0> grátis",
+      "freeSpace" : "<0>{{space}}</0> livre",
       "noFreeSpace" : "Armazenamento Esgotado",
       "installed" : "Aplicativos",
       "capacity" : "Capacidade",
@@ -1613,7 +1613,7 @@
         "not_installed" : "Não Instalado"
       },
       "sort" : {
-        "title" : "Ordenar",
+        "title" : "Ordem",
         "name_asc" : "Nome A-Z",
         "name_desc" : "Nome Z-A",
         "marketcap_desc" : "Capitalização de mercado"
@@ -1628,7 +1628,7 @@
         "title_plural" : "Atualizações disponíveis",
         "progressTitle" : "{{number}} atualização de aplicativo",
         "progressTitle_plural" : "{{number}} atualizações de aplicativo",
-        "progressWarning" : "Não saia do Manager durante a atualização.",
+        "progressWarning" : "Não feche o My Ledger durante a atualização.",
         "progress" : "Atualizando todos..."
       },
       "item" : {
@@ -1692,7 +1692,7 @@
       "updateBtn" : "Atualizar Firmware",
       "banner" : {
         "warning" : "Atualização disponível para o firmware {{latestFirmware}}",
-        "cta" : "Ir para o Manager",
+        "cta" : "Vá ao My Ledger",
         "old" : {
           "warning" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
           "cta" : "Contatar Suporte"
@@ -1748,7 +1748,7 @@
         "boot" : "Mantenha o botão lateral pressionado até {{option}} ser exibido",
         "recoveryMode" : "Selecione Modo {{mode}}. Aguarde o painel principal aparecer.",
         "third" : "3. Desinstale todos os aplicativos",
-        "openLive" : "Abra o Manager no Ledger Live.",
+        "openLive" : "Abra o My Ledger em sua Ledger Live.",
         "uninstall" : "Selecione o ícone de lixeira cinza em todos os aplicativos atualmente instalados na sua {{deviceName}}. Isso liberará espaço para o instalador de firmware.",
         "disclaimer" : "Nota: seus fundos não são afetados por esta operação, as chaves privadas para acessar seus criptoativos na blockchain permanecem seguras em sua folha de recuperação."
       }
@@ -1880,7 +1880,7 @@
     "steps" : {
       "chooseAccount" : {
         "title" : "Conta",
-        "label" : "Conta para creditar",
+        "label" : "Conta a creditar",
         "parentAccount" : "1. Selecione a conta {{currencyName}}",
         "token" : "2. Selecione um token",
         "verifyTokenType" : "Verifique se <0>{{token}}</0> é um token <0>{{tokenType}}</0>. Qualquer outro criptoativo enviado para uma conta de {{currency}} poderá ser perdido.",
@@ -2029,7 +2029,7 @@
       "remainingVotes" : {
         "title" : "Você ainda tem {{amount}} votos restantes",
         "description" : "Você pode enviar seus votos restantes para ganhar mais recompensas",
-        "button" : "Votar Agora"
+        "button" : "Votar agora"
       },
       "flow" : {
         "steps" : {
@@ -2099,7 +2099,7 @@
     "replaceable" : "substituível",
     "cannotSelect" : {
       "unconfirmed" : "Você não pode selecionar moedas de transações não confirmadas e substituíveis.",
-      "pending" : "You cannot select coins from pending transactions. (except your change output)",
+      "pending" : "Você não pode selecionar moedas que estão em transações pendentes. (exceto o troco da operação)",
       "last" : "Você precisa de pelo menos uma selecionada"
     },
     "pending" : "pendente",
@@ -2861,7 +2861,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "Você ativou sua delegação com sucesso."
+                "title" : "You have successfully activated your delegation."
               }
             }
           }
@@ -2873,7 +2873,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "Você reativou sua delegação com sucesso."
+                "title" : "You have successfully reactivated your delegation."
               }
             }
           }
@@ -3053,7 +3053,7 @@
       "featureFlagsOverride" : "Sobrepor",
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
-      "addLocalAppButton" : "Navegar",
+      "addLocalAppButton" : "Navegue",
       "runLocalAppDeleteButton" : "Excluir",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
@@ -3115,7 +3115,7 @@
         },
         "managerDevMode" : {
           "title" : "Modo Desenvolvedor",
-          "description" : "Mostrar testnets e aplicativos de desenvolvedor no Manager."
+          "description" : "Mostrar aplicativos testnet e de desenvolvedor no My Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "Pesquisa de contas ampliada",
@@ -3130,8 +3130,8 @@
           "description" : "Habilita limite de intervalo personalizado para todas as contas. Ao aumentar este valor acima do padrão (20), o Ledger Live buscará moedas em mais endereços públicos não utilizados. Apenas para usuários avançados, pois pode quebrar a compatibilidade ao restaurar suas contas."
         },
         "forceProvider" : {
-          "title" : "Provedor do Manager",
-          "description" : "Alterar o provedor de aplicativos no Manager pode impossibilitar a instalação ou desinstalação de aplicativos no seu dispositivo Ledger."
+          "title" : "Provedor My Ledger",
+          "description" : "Alterar o provedor de aplicativos no My Ledger pode impossibilitar a instalação ou desinstalação de aplicativos no seu dispositivo Ledger."
         },
         "testAnimations" : {
           "title" : "Testar animações Lottie",
@@ -3253,7 +3253,7 @@
     "titleSuccess" : "Histórico de operações salvo com sucesso",
     "cta" : "Salvar",
     "ctaSuccess" : "Concluído",
-    "noAccounts" : "Nenhuma conta para exportar",
+    "noAccounts" : "Nenhuma conta a exportar",
     "selectedAccounts" : "Contas a serem incluídas",
     "selectedAccounts_plural" : "Contas a serem incluídas ({{count}})",
     "disclaimer" : "Os contravalores na exportação são fornecidos apenas para fins informativos. Não confie nesses dados para fins contábeis, fiscais, regulatórios ou legais, pois eles representam apenas uma estimativa do preço dos ativos no momento das transações e da exportação, sob os métodos de avaliação fornecidos pelo nosso provedor de serviços, Kaiko"
@@ -3396,12 +3396,12 @@
             "desc" : "Sua chave privada é armazenada dentro da sua Nano.\nSó você deve possuí-la para estar no controle do seu dinheiro"
           },
           "2" : {
-            "title" : "Ficar Offline",
+            "title" : "Fique Offline",
             "desc" : "Sua Nano funciona como uma carteira de \"armazenamento frio\".\nIsso significa que ela nunca expõe sua chave privada na internet, nem mesmo ao utilizar o aplicativo"
           },
           "3" : {
             "title" : "Validar Transações",
-            "desc" : "O Ledger Live permite que você compre, venda, gerencie, troque e ganhe criptoativos enquanto permanece protegido.\nVocê validará cada transação de criptoativos com sua Nano"
+            "desc" : "O Ledger Live permite a você comprar, vender, gerenciar, negociar e ganhar criptoativos com proteção.\nVocê validará cada transação cripto com sua Nano"
           },
           "4" : {
             "title" : "Vamos configurar sua Nano",
@@ -3472,11 +3472,11 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegar",
+              "title" : "Navegue",
               "descr" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
-              "title" : "Selecione “Configurar como um novo dispositivo”",
+              "title" : "Selecione “Set up as new device\"",
               "descr" : "Pressione ambos os botões simultaneamente para validar a seleção."
             },
             "follow" : {
@@ -3500,7 +3500,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegar",
+              "title" : "Navegue",
               "descr" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -3594,7 +3594,7 @@
           "useRecoverySheet" : {
             "takeYourRecoverySheet" : {
               "title" : "Pegue sua folha de recuperação",
-              "descr" : "Pegue uma folha de recuperação em branco, que veio junto com sua Nano. Se a folha de recuperação não tiver chegado em branco, contate o Suporte Ledger."
+              "descr" : "Pegue uma folha de recuperação em branco que veio junto com sua Nano. Se a folha de recuperação não tiver chegado em branco, contate o Suporte Ledger."
             },
             "writeDownWords" : {
               "title" : "Escreva as 24 palavras",
@@ -3614,7 +3614,7 @@
             "title" : "Frase de recuperação",
             "paragraph1" : "Sua frase de recuperação é uma lista secreta de 24 palavras que respaldam suas chaves privadas.",
             "paragraph2" : "Sua Nano gera uma frase de recuperação única. A Ledger não guarda uma cópia dela.",
-            "disclaimer" : "Eu entendo que, se eu perder esta frase de recuperação, não poderei acessar minhas criptomoedas caso eu perca o acesso à minha Nano.",
+            "disclaimer" : "Eu entendo que, se perder esta frase de recuperação, não poderei acessar minhas criptos caso perca o acesso à minha Nano.",
             "buttons" : {
               "next" : "Frase de recuperação",
               "prev" : "Passo Anterior",
@@ -3642,7 +3642,7 @@
               "descr" : "Escolha a palavra nº 1 entre as sugestões. Pressione ambos os botões para validar."
             },
             "andNext" : {
-              "title" : "Repita para todas as palavras!"
+              "title" : "Repita isso para todas as palavras!"
             },
             "buttons" : {
               "next" : "Próximo Passo",
@@ -3660,7 +3660,7 @@
               "descr" : "Pressione o botão direito para percorrer as palavras até encontrar a palavra nº 1. Pressione ambos os botões para validá-la."
             },
             "repeat" : {
-              "title" : "Repita para todas as palavras!"
+              "title" : "Repita isso para todas as palavras!"
             },
             "buttons" : {
               "next" : "Próximo Passo",
@@ -3732,7 +3732,7 @@
         },
         "validateTransactions" : {
           "title" : "Validar Transações",
-          "description" : "O Ledger Live permite que você compre, venda, gerencie, troque e receba criptoativos enquanto permanece protegido. Você validará cada transação de criptoativos com sua Nano."
+          "description" : "O Ledger Live permite a você comprar, vender, gerenciar, negociar e ganhar criptoativos com proteção. Você validará cada transação cripto com sua Nano."
         },
         "setUpNanoWallet" : {
           "title" : "Vamos configurar sua Nano!",
@@ -3786,19 +3786,19 @@
           }
         },
         "3" : {
-          "text" : "Quando eu conecto minha Nano ao aplicativo Ledger, minha chave privada...",
+          "text" : "Ao conectar minha Nano ao aplicativo Ledger, minha chave privada...",
           "answers" : {
-            "1" : "Permanece desconectada",
-            "2" : "Se conecta brevemente à internet"
+            "1" : "permanece desconectada",
+            "2" : "se conecta brevemente à internet"
           },
           "results" : {
             "success" : {
               "title" : "Parabéns!",
-              "text" : "Sua chave privada permanece sempre desconectada da internet na sua carteira hardware. Mesmo quando conectado à sua Nano, o aplicativo da Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo."
+              "text" : "Sua chave privada sempre está offline na sua carteira hardware. Mesmo conectado à sua Nano, o aplicativo da Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo."
             },
             "fail" : {
               "title" : "Incorreto!",
-              "text" : "Sua chave privada permanece sempre desconectada da internet na sua carteira hardware. Mesmo quando conectado à sua Nano, o aplicativo da Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo."
+              "text" : "Sua chave privada sempre está offline na sua carteira hardware. Mesmo conectado à sua Nano, o aplicativo da Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo."
             }
           }
         }
@@ -4052,7 +4052,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "O aplicativo {{appName}} não pode ser encontrado para sua configuração específica.",
-      "description" : "Tente reinstalar o aplicativo através do Manager"
+      "description" : "Tente reinstalar o aplicativo através do My Ledger"
     },
     "countervaluesUnavailable" : {
       "title" : "Não foi possível fornecer um contravalor para este ativo no momento"
@@ -4215,7 +4215,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "Atualização de firmware ou de aplicativos necessária",
-      "description" : "Use o Manager para desinstalar todos os aplicativos e verifique se há uma atualização de firmware disponível antes de reinstalá-los"
+      "description" : "Use o My Ledger para desinstalar todos os aplicativos e verifique se há uma atualização de firmware disponível antes de reinstalá-los"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Atualizar firmware da Nano",
@@ -4272,20 +4272,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "Finalizar a instalação de aplicativo em andamento?",
-        "description" : "Sair do Manager encerrará a instalação do aplicativo. Finalize a instalação para instalar os aplicativos na fila.",
+        "description" : "Sair do My Ledger encerrará a instalação do aplicativo. Finalize a instalação para instalar os aplicativos na fila.",
         "stay" : "Finalizar Instalação"
       },
       "uninstall" : {
         "title" : "Finalizar a desinstalação de aplicativo em andamento?",
-        "description" : "Sair do Manager encerrará as desinstalações de aplicativo em andamento.",
+        "description" : "Sair do My Ledger encerrará as desinstalações de aplicativos em progresso.",
         "stay" : "Finalizar Desinstalação"
       },
       "update" : {
         "title" : "Finalizar as atualizações de aplicativo em andamento?",
-        "description" : "Sair do Manager encerrará as atualizações de aplicativo em andamento.",
+        "description" : "Sair do My Ledger encerrará as atualizações de aplicativos em progresso.",
         "stay" : "Finalizar Atualizações"
       },
-      "quit" : "Sair do Manager"
+      "quit" : "Sair do My Ledger"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "Este aplicativo é necessário",
@@ -4294,6 +4294,10 @@
     "NetworkDown" : {
       "title" : "A internet parece estar desconectada",
       "description" : "Verifique sua conexão à internet."
+    },
+    "NetworkError" : {
+      "title" : "Ocorreu um erro durante a sincronização",
+      "description" : "Verifique sua conexão de internet."
     },
     "NoAddressesFound" : {
       "title" : "Nenhuma conta encontrada",
@@ -4381,7 +4385,7 @@
       "description" : "Reinicie seu dispositivo sem tocar nos botões quando o logotipo aparecer. Contate o Suporte Ledger se o problema persistir."
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager negado no dispositivo"
+      "title" : "My Ledger negado no dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Atualização cancelada no dispositivo",
@@ -4401,7 +4405,7 @@
     },
     "UpdateYourApp" : {
       "title" : "Atualização de aplicativo necessária",
-      "description" : "Desinstale e reinstale o aplicativo {{managerAppName}} no Manager"
+      "description" : "Desinstale e reinstale o aplicativo {{managerAppName}} no My Ledger"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Voltar ao Painel Principal",
@@ -4421,7 +4425,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Atualização de aplicativo necessária",
-      "description" : "Desinstale e reinstale o aplicativo {{managerAppName}} no Manager"
+      "description" : "Desinstale e reinstale o aplicativo {{managerAppName}} no My Ledger"
     },
     "InvalidAddress" : {
       "title" : "Este não é um endereço válido de {{currencyName}}"
@@ -4466,7 +4470,7 @@
       "list" : {
         "1" : "Desconecte e reconecte o cabo USB sem pressionar nenhum botão.",
         "2" : "Pressione os dois botões juntos três vezes para exibir o painel principal.",
-        "3" : "Abra o Manager e clique em Atualizar firmware."
+        "3" : "Abra o My Ledger e selecione Atualizar Firmware."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {
