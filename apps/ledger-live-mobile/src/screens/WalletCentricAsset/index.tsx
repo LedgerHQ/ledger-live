@@ -6,7 +6,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Box } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
 import { useTheme } from "styled-components/native";
@@ -145,11 +145,13 @@ const AssetScreen = ({ route }: Props) => {
                   currencyTicker: currency.ticker,
                 })}
               />
-              <MarketPriceSection
-                currency={currency}
-                selectedCoinData={selectedCoinData}
-                counterCurrency={counterCurrency}
-              />
+              <Flex minHeight={"60px"}>
+                <MarketPriceSection
+                  currency={currency}
+                  selectedCoinData={selectedCoinData}
+                  counterCurrency={counterCurrency}
+                />
+              </Flex>
             </SectionContainer>,
           ]
         : []),
