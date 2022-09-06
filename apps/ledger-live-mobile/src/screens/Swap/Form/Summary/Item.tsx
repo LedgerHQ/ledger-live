@@ -19,7 +19,7 @@ export function Item({ title, children, onEdit }: RowProps) {
         {onEdit && (
           <TouchableOpacity onPress={onEdit}>
             <Flex
-              marginLeft={4}
+              marginLeft={2}
               width={20}
               height={20}
               alignItems="center"

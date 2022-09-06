@@ -8,6 +8,7 @@ import {
   KYCStatus,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
+  getAccountName,
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
@@ -206,7 +207,7 @@ export function Summary({
         >
           <Flex flexDirection="row" alignItems="center">
             {<CurrencyIcon size={20} currency={to.currency} />}
-            <Text marginLeft={2}>{to.currency.name}</Text>
+            <Text marginLeft={2}>{getAccountName(to.account)}</Text>
           </Flex>
         </Item>
       ) : (
