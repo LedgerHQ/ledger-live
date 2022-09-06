@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BluetoothHelperPackage implements ReactPackage {
+public class NativeModulesPackage implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
@@ -22,6 +22,7 @@ public class BluetoothHelperPackage implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new BluetoothHelperModule(reactContext));
+        modules.add(new ImagePickerModule(reactContext));
         return modules;
     }
 

@@ -33,7 +33,7 @@ export const localeIds: Locale[] = Object.keys(allLocales) as Locale[];
  */
 export const supportedLocales: Locale[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
-  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
+  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
 
 export type Locale = keyof typeof languages;
 
@@ -56,8 +56,7 @@ export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
  * or in the case of existing users, they will be prompted once to change their
  * Ledger Live language.
  */
-export const fullySupportedLocales: Locale[] = ["en", "fr", "ru", "es", "zh"];
-
+export const fullySupportedLocales: Locale[] = ["en", "fr", "ru", "es", "zh", "pt"];
 type LocaleIndexed<T> = { [key in Locale]?: T };
 
 export const locales = supportedLocales.reduce(
@@ -70,7 +69,6 @@ export const locales = supportedLocales.reduce(
 
 /** For the "language" setting which is used for translations. */
 export const DEFAULT_LANGUAGE_LOCALE = "en";
-
 /** This allows us to have the language set by default to the system language
  * if & only if that language is supported.
  */
@@ -93,7 +91,7 @@ const languageLocaleToDefaultLocaleMap = {
   nl: "nl-NL",
   no: "no-NO",
   pl: "pl-PL",
-  pt: "pt-PT",
+  pt: "pt-BR",
   ru: "ru-RU",
   sr: "sr-SR",
   sv: "sv-SV",
@@ -103,7 +101,6 @@ const languageLocaleToDefaultLocaleMap = {
 
 /** For the "region" setting which is used for dates & numbers formatting. */
 export const DEFAULT_LOCALE = "en-US";
-
 /** This allows us to have the region set by default to the region corresponding
  * to the system language if & only if that language is supported. */
 export const getDefaultLocale = () => {
