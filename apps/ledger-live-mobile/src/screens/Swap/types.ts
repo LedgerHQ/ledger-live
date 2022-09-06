@@ -49,7 +49,7 @@ export type OperationDetailsProps = StackScreenProps<
 type Target = "from" | "to";
 
 export type SwapNavParamList = {
-  Swap: undefined;
+  SwapTab: undefined;
   SelectAccount: {
     target: Target;
     provider: string;

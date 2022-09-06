@@ -74,10 +74,13 @@ export const FabAccountActionsComponent: React.FC<FabAccountActionsProps> = ({
     navigationParams: [
       NavigatorName.Swap,
       {
-        screen: ScreenName.Swap,
+        screen: "SwapTab",
         params: {
-          defaultAccount: account,
-          defaultParentAccount: parentAccount,
+          screen: "SwapForm",
+          params: {
+            accountId: account.id,
+            target: "from",
+          },
         },
       },
     ],
@@ -246,7 +249,10 @@ const FabMarketActionsComponent: React.FC<Props> = ({
                       NavigatorName.Swap,
                       {
                         screen: ScreenName.Swap,
-                        params: { currencyId: currency?.id, defaultAccount },
+                        params: {
+                          account: defaultAccount,
+                          target: "from",
+                        },
                       },
                     ],
                     disabled: defaultAccount?.balance.lte(0),

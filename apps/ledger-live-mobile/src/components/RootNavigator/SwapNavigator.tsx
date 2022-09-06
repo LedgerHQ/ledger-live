@@ -35,7 +35,7 @@ export default function SwapNavigator() {
       screenOptions={{ ...stackNavigationConfig, headerShown: true }}
     >
       <Stack.Screen
-        name="Swap"
+        name="SwapTab"
         component={SwapFormNavigator}
         {...noNanoBuyNanoWallScreenOptions}
         options={{
