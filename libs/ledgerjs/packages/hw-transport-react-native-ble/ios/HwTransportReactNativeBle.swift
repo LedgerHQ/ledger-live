@@ -25,13 +25,13 @@ enum TransportError: String, CaseIterable {
 class HwTransportReactNativeBle: RCTEventEmitter {
     var rejectCallback: ((_ code: String, _ message: String, _ error: NSError?) -> Void)?
     var queueTask: Queue?
-
+    
     override init() {
         super.init()
         print(BleTransport.shared)
         EventEmitter.sharedInstance.registerEventEmitter(eventEmitter: self)
     }
-
+    
     @objc func observeBluetooth() -> Void {
         BleTransport.shared.bluetoothAvailabilityCallback { available in
             EventEmitter.sharedInstance.dispatch(
@@ -52,9 +52,9 @@ class HwTransportReactNativeBle: RCTEventEmitter {
             reject(TransportError.bluetoothRequired.rawValue, "", nil)
             return
         }
-
+        
         DispatchQueue.main.async {
-
+            
             BleTransport.shared.scan { discoveries in
                 let devices = discoveries.map{
                     ExtraData(
@@ -64,7 +64,7 @@ class HwTransportReactNativeBle: RCTEventEmitter {
                         serviceUUIDs: [$0.serviceUUID.uuidString]
                     )
                 }
-
+                
                 EventEmitter.sharedInstance.dispatch(
                     Payload(
                         event: Event.newDevices.rawValue,
@@ -196,7 +196,7 @@ class HwTransportReactNativeBle: RCTEventEmitter {
                 return
             }
         }
-
+        
         self.queueTask = Queue(rawQueue: rawQueue, endpoint: endpoint)
         
         /// While running a queue, if the device disconnects we wouldn't be notified because we are already
@@ -210,7 +210,7 @@ class HwTransportReactNativeBle: RCTEventEmitter {
     ) -> Void {
         EventEmitter.sharedInstance.onAppStateChange(awake: awake)
     }
-
+    
     @objc open override func supportedEvents() -> [String] {
         return EventEmitter.sharedInstance.allEvents
     }
