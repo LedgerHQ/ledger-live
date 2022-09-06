@@ -1,6 +1,10 @@
 package com.ledger.live;
 
 public class Constants {
-    public static final int REQUEST_ENABLE_BT = 0;
-    public static final int REQUEST_IMAGE = 1;
+    /**
+     * the idea here is just to have a unique arbitrary int for each request type
+     */
+    public static final int REQUEST_BT_PERMISSIONS = 0;
+    public static final int REQUEST_ENABLE_BT = 1;
+    public static final int REQUEST_IMAGE = 2;
 }
