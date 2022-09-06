@@ -1,14 +1,15 @@
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { ScreenName } from "../../const";
 import { SyncOnboarding } from "../../screens/SyncOnboarding";
 import CompletionScreen from "../../screens/SyncOnboarding/CompletionScreen";
+import { SyncOnboardingCompanionParams } from "../../screens/SyncOnboarding/types";
 
 export type SyncOnboardingStackParamList = {
-  SyncOnboardingCompanion: { device: Device };
+  SyncOnboardingCompanion: SyncOnboardingCompanionParams;
   SyncOnboardingCompletion: undefined;
 };
 
