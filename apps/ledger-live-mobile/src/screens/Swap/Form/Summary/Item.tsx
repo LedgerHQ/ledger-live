@@ -17,11 +17,17 @@ export function Item({ title, children, onEdit }: RowProps) {
         {children}
 
         {onEdit && (
-          <Flex paddingLeft={4}>
-            <TouchableOpacity onPress={onEdit}>
+          <TouchableOpacity onPress={onEdit}>
+            <Flex
+              marginLeft={4}
+              width={20}
+              height={20}
+              alignItems="center"
+              justifyContent="center"
+            >
               <Icon name="Pen" color="primary.c70" />
-            </TouchableOpacity>
-          </Flex>
+            </Flex>
+          </TouchableOpacity>
         )}
       </Flex>
     </Flex>
