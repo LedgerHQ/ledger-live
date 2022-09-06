@@ -3,6 +3,7 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
   TransitionPresets,
+  StackNavigationProp,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/native-ui";
@@ -88,6 +89,25 @@ import Learn from "../../screens/Learn";
 // eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
+import CustomImageNavigator from "./CustomImageNavigator";
+
+import {
+  BleDevicePairingFlow,
+  BleDevicePairingFlowParams,
+} from "../../screens/BleDevicePairingFlow/index";
+
+// TODO: types for each screens and navigators need to be set
+export type BaseNavigatorStackParamList = {
+  BleDevicePairingFlow: BleDevicePairingFlowParams;
+
+  // Hack: allows any other properties
+  [otherScreens: string]: undefined | object;
+};
+
+export type BaseNavigatorProps =
+  StackNavigationProp<BaseNavigatorStackParamList>;
+
+const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -603,6 +623,11 @@ export default function BaseNavigator() {
         component={AccountsNavigator}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name={NavigatorName.CustomImage}
+        component={CustomImageNavigator}
+        options={{ headerShown: false }}
+      />
       {Object.keys(families).map(name => {
         const { component, options } = families[name];
         return (
@@ -614,8 +639,13 @@ export default function BaseNavigator() {
           />
         );
       })}
+      <Stack.Screen
+        name={ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow"}
+        component={BleDevicePairingFlow}
+        options={{
+          title: "",
+        }}
+      />
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

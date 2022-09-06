@@ -19,6 +19,7 @@
     "device": "Device",
     "cryptoAsset": "Crypto asset",
     "skip": "Skip",
+    "next": "Next",
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Do you need help?",
     "edit": "Edit",
@@ -689,6 +690,38 @@
     },
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
+    },
+    "ImageLoadFromGalleryError": {
+      "title": "Image loading from gallery failed",
+      "description": "Please try again with another image"
+    },
+    "ImageDownloadError": {
+      "title": "Image download failed",
+      "description": "Please try again with another image"
+    },
+    "ImageMetadataLoadingError": {
+      "title": "Image metadata loading failed",
+      "description": "Please try again with another image"
+    },
+    "ImageTooLargeError": {
+      "title": "Image too large",
+      "description": "Please try with a smaller image"
+    },
+    "ImageCropError": {
+      "title": "Cropping of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageResizeError": {
+      "title": "Resizing of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImagePreviewError": {
+      "title": "Preview of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageProcessingError": {
+      "title": "Processing of the image failed",
+      "description": "Please try again with another image"
     }
   },
   "bluetooth": {
@@ -1017,6 +1050,10 @@
       "discoverLedger": {
         "title": "Explore Ledger Live",
         "subtitle": "Explore the app and learn about its benefits "
+      },
+      "desktopSync": {
+        "title": "Sync with desktop app",
+        "subtitle": "Sync your assets from Ledger Live desktop with your mobile."
       }
     },
     "discoverLive": {
@@ -1563,6 +1600,33 @@
         "warning": "Only use a recovery phrase that your device displayed when it was set up",
         "continueCTA": "Continue",
         "contactSupportCTA": "Contact support"
+      }
+    }
+  },
+  "blePairingFlow": {
+    "scanning": {
+      "withProductName": {
+        "title": "Looking for your {{productName}}",
+        "description": "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName": {
+        "title": "Looking for devices",
+        "description": "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired": "Already paired"
+    },
+    "pairing": {
+      "success": {
+        "title": "Paired with {{deviceName}}"
+      },
+      "loading": {
+        "title": "Pairing with {{deviceName}}",
+        "subtitle": "Confirm the code on your {{productName}}"
+      },
+      "error": {
+        "title": "Pairing unsucessful",
+        "subtitle": "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta": "Try again"
       }
     }
   },
@@ -4254,7 +4318,10 @@
       "info": "How Delegation works",
       "broadcastSuccessTitle": "Operation sent",
       "broadcastSuccessDescription": "The status of the delegation will be updated when the transaction is confirmed.",
-      "delegatedTo": "delegated to"
+      "delegatedTo": "delegated to",
+      "started": {
+        "description": "You may earn rewards by delegating your SOL assets to a validator."
+      }
     }
   },
   "delegation": {
@@ -4672,5 +4739,17 @@
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     }
+  },
+  "customImage": {
+    "drawer": {
+      "title": "Choose an image",
+      "options": {
+        "uploadFromPhone": "Upload from my phone"
+      }
+    },
+    "cropImage": "Crop image",
+    "chooseConstrast": "Choose contrast",
+    "uploadAnotherImage": "Upload another image",
+    "selectContrast": "Select your contrast"
   }
 }

@@ -20,7 +20,7 @@ async function main() {
   // load reports
   const reportsFolder = path.resolve(core.getInput("path"));
   const reportBodyP = fs.promises.readFile(
-    path.join(reportsFolder, "full-report.md"),
+    path.join(reportsFolder, "github-report.md"),
     "utf-8"
   );
   const slackCommentTemplateP = fs.promises.readFile(
