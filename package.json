@@ -117,8 +117,7 @@
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
-      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch",
-      "usb@2.5.0": "patches/usb@2.5.0.patch"
+      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch"
     }
   }
 }
