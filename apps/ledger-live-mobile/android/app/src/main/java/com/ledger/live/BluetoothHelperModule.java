@@ -1,5 +1,6 @@
 package com.ledger.live;
 
+import static com.ledger.live.Constants.REQUEST_BT_PERMISSIONS;
 import static com.ledger.live.Constants.REQUEST_ENABLE_BT;
 
 import android.Manifest;
