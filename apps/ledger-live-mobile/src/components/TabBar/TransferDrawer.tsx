@@ -145,8 +145,12 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           title={t("transfer.sell.title")}
           description={t("transfer.sell.description")}
           Icon={Icons.MinusMedium}
-          onPress={onSell}
-          disabled={readOnlyModeEnabled}
+          onPress={
+            accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+              ? onSell
+              : null
+          }
+          disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
       <Box mb={8}>
