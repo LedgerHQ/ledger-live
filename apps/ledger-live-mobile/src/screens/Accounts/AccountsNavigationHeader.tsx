@@ -1,8 +1,7 @@
 import React, { memo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
 import AddAccount from "./AddAccount";
 import Touchable from "../../components/Touchable";
 import { ScreenName } from "../../const";
@@ -10,17 +9,11 @@ import { track } from "../../analytics";
 
 type Props = {
   readOnly?: boolean;
-  currencyTicker?: string;
   currencyId?: string;
 };
 
-function AccountsNavigationHeader({
-  readOnly,
-  currencyTicker,
-  currencyId,
-}: Props) {
+function AccountsNavigationHeader({ readOnly, currencyId }: Props) {
   const navigation = useNavigation();
-  const { t } = useTranslation();
 
   const handleOnReadOnlyAddAccountPress = useCallback(() => {
     track("button_clicked", {
@@ -40,25 +33,11 @@ function AccountsNavigationHeader({
 
   return (
     <Flex p={6} flexDirection="row" alignItems="center">
-      <Box mr={3}>
+      <Box mr={3} flex={1}>
         <TouchableOpacity onPress={goBack}>
           <Icons.ArrowLeftMedium size={24} />
         </TouchableOpacity>
       </Box>
-      <Flex
-        height={30}
-        flexDirection="column"
-        justifyContent="center"
-        mt={4}
-        mb={3}
-        flex={1}
-      >
-        <Text variant="h1">
-          {currencyTicker
-            ? t("accounts.cryptoAccountsTitle", { currencyTicker })
-            : t("accounts.title")}
-        </Text>
-      </Flex>
       <Flex flexDirection="row" alignItems={"center"}>
         {/**
          <Box mr={7}>
