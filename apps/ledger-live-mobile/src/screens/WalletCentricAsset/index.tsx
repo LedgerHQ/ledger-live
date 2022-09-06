@@ -27,7 +27,6 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
-import { FabAssetActions } from "../../components/FabActions";
 import AccountsSection from "./AccountsSection";
 import { NavigatorName } from "../../const";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
@@ -40,6 +39,7 @@ import {
   countervalueFirstSelector,
 } from "../../reducers/settings";
 import { track, TrackScreen } from "../../analytics";
+import { FabAssetActions } from "../../components/FabActions/actionsList/asset";
 
 type RouteParams = {
   currency: CryptoCurrency | TokenCurrency;
