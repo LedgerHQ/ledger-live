@@ -54,7 +54,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
-          packages.add(new BluetoothHelperPackage());
+          packages.add(new NativeModulesPackage());
           packages.add(new ReactVideoPackage());
           packages.add(new BackgroundRunnerPackager());
           return packages;

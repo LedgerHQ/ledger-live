@@ -6,7 +6,7 @@ import Config from "react-native-config";
 import Button from "../components/Button";
 import LText from "../components/LText";
 import Animation from "../components/Animation";
-import getDeviceAnimation from "../components/DeviceAction/getDeviceAnimation";
+import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
 import BottomModal from "../components/BottomModal";
 import Touchable from "../components/Touchable";
 import Alert from "../components/Alert";

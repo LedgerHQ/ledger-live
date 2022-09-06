@@ -1563,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Recherche d’appareils",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Déjà couplé"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Réessayer"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "Wallet",
     "accounts" : "Comptes",
@@ -2245,7 +2272,7 @@
       }
     },
     "connectDevice" : {
-      "headerTitle" : "Connecter l’appareil"
+      "headerTitle" : "Connecter votre appareil"
     }
   },
   "transfer" : {
@@ -2264,7 +2291,7 @@
       "description" : "Recevez des cryptos d’un autre wallet",
       "titleReadOnly" : "Adresse non vérifiée",
       "headerTitle" : "Crypto-actif",
-      "titleDevice" : "Connecter l’appareil",
+      "titleDevice" : "Connecter votre appareil",
       "verifySkipped" : "Vous n’avez pas confirmé votre adresse de bénéficiaire sur votre appareil Ledger. Vérifiez votre adresse {{accountType}} pour une sécurité optimale.",
       "verifyPending" : "Vérifiez que l’adresse {{currencyName}} affichée sur votre appareil Ledger est identique à celle indiquée sur votre téléphone.",
       "verified" : "Adresse confirmée. Si vous l’aviez copiée ou scannée, revérifiez.",
@@ -2280,7 +2307,7 @@
       },
       "stepperHeader" : {
         "range" : "Étape {{currentStep}} sur {{totalSteps}}",
-        "connectDevice" : "Connecter l’appareil"
+        "connectDevice" : "Connecter votre appareil"
       },
       "selectAccount" : {
         "title" : "Sélectionner un compte",
@@ -2480,7 +2507,7 @@
         "noApp" : {
           "title" : "App {{appName}} non installée",
           "desc" : "Allez dans le Gestionnaire pour installer l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "noAccounts" : {
@@ -2492,7 +2519,7 @@
         "outdatedApp" : {
           "title" : "Mise à jour de l’app disponible",
           "desc" : "Vous devez mettre à jour l’app {{appName}}.",
-          "cta" : "Aller dans le Gestionnaire",
+          "cta" : "Accéder au Gestionnaire",
           "close" : "Fermer"
         },
         "summary" : {
@@ -2534,12 +2561,12 @@
       "missingApp" : {
         "title" : "Installez l’app Exchange sur votre appareil.",
         "description" : "Installez l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "outdatedApp" : {
         "title" : "Merci de mettre à jour l’app Exchange sur votre appareil.",
         "description" : "Mettez à jour l’app Exchange dans le Gestionnaire pour échanger des actifs.",
-        "button" : "Aller dans le Gestionnaire"
+        "button" : "Accéder au Gestionnaire"
       },
       "emptyState" : {
         "title" : "Aucun compte {{currency}}",
@@ -2687,8 +2714,8 @@
           "advanced" : "Avancé",
           "amount" : "Entrer le montant",
           "summary" : "Récapitulatif",
-          "selectDevice" : "Sélectionner l’appareil",
-          "connectDevice" : "Connecter l’appareil",
+          "selectDevice" : "Sélectionner votre appareil",
+          "connectDevice" : "Connecter votre appareil",
           "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
         },
         "selectAccount" : {
@@ -2728,8 +2755,8 @@
         "stepperHeader" : {
           "amount" : "Déposer",
           "summary" : "Récapitulatif",
-          "selectDevice" : "Sélectionner l’appareil",
-          "connectDevice" : "Connecter l’appareil",
+          "selectDevice" : "Sélectionner votre appareil",
+          "connectDevice" : "Connecter votre appareil",
           "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
         },
         "amount" : {
@@ -2750,8 +2777,8 @@
         "stepperHeader" : {
           "amount" : "Retirer",
           "summary" : "Récapitulatif",
-          "selectDevice" : "Sélectionner l’appareil",
-          "connectDevice" : "Connecter l’appareil",
+          "selectDevice" : "Sélectionner votre appareil",
+          "connectDevice" : "Connecter votre appareil",
           "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
         },
         "validation" : {
@@ -2794,8 +2821,8 @@
       "recipientAddress" : "Adresse du bénéficiaire",
       "selectAmount" : "Montant",
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
       "quantity" : "Montant",
       "selectCollection" : "Collection",
@@ -2889,8 +2916,8 @@
       "info" : "Gagner des récompenses",
       "selectAmount" : "Geler",
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "info" : {
@@ -2927,8 +2954,8 @@
     "stepperHeader" : {
       "selectAmount" : "Dégeler",
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "amount" : {
@@ -2947,8 +2974,8 @@
   },
   "claimReward" : {
     "stepperHeader" : {
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "validation" : {
@@ -2963,8 +2990,8 @@
     "stepperHeader" : {
       "selectValidator" : "Voter",
       "castVote" : "Mes votes",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "selectValidator" : {
@@ -3501,7 +3528,7 @@
       "stepperHeader" : {
         "info" : "Gagner des récompenses",
         "starter" : "Récompenses",
-        "connectDevice" : "Connecter l’appareil",
+        "connectDevice" : "Connecter votre appareil",
         "verification" : "Vérification",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
@@ -3540,7 +3567,7 @@
     "optIn" : {
       "stepperHeader" : {
         "selectToken" : "Ajouter des ASA (actif)",
-        "connectDevice" : "Connecter l’appareil",
+        "connectDevice" : "Connecter votre appareil",
         "verification" : "Vérification",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
@@ -3648,8 +3675,8 @@
         "amountSubTitle" : "Montant à déléguer",
         "summary" : "Récapitulatif",
         "verification" : "Vérification",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3712,8 +3739,8 @@
         "amountSubTitle" : "Montant à redéléguer",
         "amountTitle" : "{{from}} → {{to}}",
         "summary" : "Récapitulatif",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3748,8 +3775,8 @@
       "stepperHeader" : {
         "amountSubTitle" : "Montant à interrompre",
         "summary" : "Récapitulatif",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3776,8 +3803,8 @@
         "validator" : "Sélectionner la récompense à toucher",
         "method" : "Demander les récompenses",
         "summary" : "Récapitulatif",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow" : {
@@ -3953,7 +3980,7 @@
     "addAsset" : {
       "stepperHeader" : {
         "selectAsset" : "Ajouter un actif",
-        "connectDevice" : "Connecter l’appareil",
+        "connectDevice" : "Connecter votre appareil",
         "verification" : "Vérification",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
@@ -4082,8 +4109,8 @@
     "nominate" : {
       "stepperHeader" : {
         "validators" : "Validateurs à nommer",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4118,8 +4145,8 @@
       "stepperHeader" : {
         "starter" : "Gagner des récompenses",
         "amount" : "Montant à lier",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4154,8 +4181,8 @@
     "rebond" : {
       "stepperHeader" : {
         "amount" : "Montant à relier",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4177,8 +4204,8 @@
     "unbond" : {
       "stepperHeader" : {
         "amount" : "Montant à délier",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4216,8 +4243,8 @@
       },
       "stepperHeader" : {
         "info" : "Informations",
-        "selectDevice" : "Sélectionner l’appareil",
-        "connectDevice" : "Connecter l’appareil",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
         "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "steps" : {
@@ -4466,8 +4493,8 @@
     "successDescription" : "Vous avez signé le message reçu d’une app tierce.",
     "stepperHeader" : {
       "summary" : "Récapitulatif",
-      "selectDevice" : "Sélectionner l’appareil",
-      "connectDevice" : "Connecter l’appareil",
+      "selectDevice" : "Sélectionner votre appareil",
+      "connectDevice" : "Connecter votre appareil",
       "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "stepVerification" : {

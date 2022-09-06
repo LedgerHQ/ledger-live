@@ -19,6 +19,9 @@ patchedDependencies:
   react-native-video@5.2.0:
     hash: lojvl6twgoj4rxeqeytmq4uduq
     path: patches/react-native-video@5.2.0.patch
+  react-native-image-crop-tools@1.6.2:
+    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
+    path: patches/react-native-image-crop-tools@1.6.2.patch
 
 importers:
 
@@ -541,6 +544,7 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble': workspace:^
       '@ledgerhq/react-native-passcode-auth': ^2.1.0
       '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-devices': workspace:^
       '@ledgerhq/types-live': workspace:^
       '@polkadot/reactnative-identicon': 2.2.1
       '@polkadot/x-randomvalues': 9.1.1
@@ -577,6 +581,7 @@ importers:
       '@types/redux-actions': ^2.6.2
       '@types/semver': ^7.3.9
       '@types/styled-components': ^5.1.25
+      '@types/styled-components-react-native': ^5.1.3
       '@types/styled-system': ^5.1.15
       '@typescript-eslint/eslint-plugin': ^5.33.1
       '@typescript-eslint/parser': ^5.33.1
@@ -607,7 +612,10 @@ importers:
       expo: ^43.0.1
       expo-barcode-scanner: ~11.2.0
       expo-camera: ~12.0.3
+      expo-file-system: ~13.1.3
       expo-image-loader: ~3.1.1
+      expo-image-manipulator: ~10.2.1
+      expo-image-picker: 12.0.2
       expo-modules-autolinking: ^0.5.5
       expo-modules-core: ^0.6.5
       flipper-plugin-rn-performance-android: ^0.1.0
@@ -654,6 +662,7 @@ importers:
       react-native-fingerprint-scanner: git+https://github.com/hieuvp/react-native-fingerprint-scanner.git#f1d136f605412d58e4de9e7e155d6f818ba24731
       react-native-flipper-performance-plugin: ^0.2.1
       react-native-gesture-handler: ^2.5.0
+      react-native-image-crop-tools: ^1.6.2
       react-native-keyboard-aware-scroll-view: ^0.9.5
       react-native-keychain: ^7.0.0
       react-native-level-fs: ^3.0.0
@@ -687,6 +696,7 @@ importers:
       redux-actions: 2.6.5
       redux-thunk: 2.3.0
       reselect: 4.0.0
+      rn-fetch-blob: ^0.12.0
       rn-snoopy: ^2.0.2
       rxjs: ^6.6.6
       rxjs-compat: ^6.6.6
@@ -717,6 +727,7 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble': link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
       '@ledgerhq/react-native-passcode-auth': 2.1.0
       '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-devices': link:../../libs/ledgerjs/packages/types-devices
       '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@polkadot/reactnative-identicon': 2.2.1_zqxy7fpkavjkgz5xll7ed4r6rq
       '@polkadot/x-randomvalues': 9.1.1
@@ -750,7 +761,10 @@ importers:
       expo: 43.0.5_@babel+core@7.17.10
       expo-barcode-scanner: 11.2.1_expo@43.0.5
       expo-camera: 12.0.3_react@17.0.2
+      expo-file-system: 13.1.4_expo@43.0.5
       expo-image-loader: 3.1.1_expo@43.0.5
+      expo-image-manipulator: 10.2.1_expo@43.0.5
+      expo-image-picker: 12.0.2_expo@43.0.5
       expo-modules-autolinking: 0.5.5
       expo-modules-core: 0.6.5
       fuse.js: 6.6.2
@@ -783,6 +797,7 @@ importers:
       react-native-fast-image: 8.5.11_zqxy7fpkavjkgz5xll7ed4r6rq
       react-native-fingerprint-scanner: github.com/hieuvp/react-native-fingerprint-scanner/f1d136f605412d58e4de9e7e155d6f818ba24731_react-native@0.68.2
       react-native-gesture-handler: 2.5.0_mk7ksnag22facomrynqrp7v6gy
+      react-native-image-crop-tools: 1.6.2_ykxjy5s7xujdxmsgrwxo5mh3y4_zqxy7fpkavjkgz5xll7ed4r6rq
       react-native-keyboard-aware-scroll-view: 0.9.5_react-native@0.68.2
       react-native-keychain: 7.0.0
       react-native-level-fs: 3.0.1_asyncstorage-down@4.2.0
@@ -816,6 +831,7 @@ importers:
       redux-actions: 2.6.5
       redux-thunk: 2.3.0_redux@4.2.0
       reselect: 4.0.0
+      rn-fetch-blob: 0.12.0
       rn-snoopy: 2.0.2_eslint@7.32.0
       rxjs: 6.6.7
       rxjs-compat: 6.6.7
@@ -844,6 +860,7 @@ importers:
       '@types/redux-actions': 2.6.2
       '@types/semver': 7.3.9
       '@types/styled-components': 5.1.25_@types+react@17.0.45
+      '@types/styled-components-react-native': 5.1.3_@types+react@17.0.45
       '@types/styled-system': 5.1.15
       '@typescript-eslint/eslint-plugin': 5.36.0_ssyo6ofo6acarud5ztoceyl6vq
       '@typescript-eslint/parser': 5.36.0_e4zyhrvfnqudwdx5bevnvkluy4
@@ -22777,7 +22794,7 @@ packages:
     dev: true
 
   /base-64/0.1.0:
-    resolution: {integrity: sha1-eAqZyE59YAJgNhURxId2E78k9rs=}
+    resolution: {integrity: sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==}
     dev: false
 
   /base-x/3.0.9:
@@ -24795,7 +24812,7 @@ packages:
     dev: true
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
 
   /concat-stream/1.5.2:
     resolution: {integrity: sha1-cIl4Yk2FavQaWnQd790mHadSwmY=}
@@ -25204,7 +25221,7 @@ packages:
     dev: false
 
   /core-util-is/1.0.2:
-    resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
+    resolution: {integrity: sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=}
 
   /core-util-is/1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -30485,6 +30502,18 @@ packages:
       - supports-color
     dev: false
 
+  /expo-file-system/13.1.4_expo@43.0.5:
+    resolution: {integrity: sha512-/C2FKCzrdWuEt4m8Pzl9J4MhKgfU0denVLbqoKjidv8DnsLQrscFNlLhXuiooqWwsxB2OWAtGEVnPGJBWVuNEQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/config-plugins': 4.1.4
+      expo: 43.0.5_@babel+core@7.17.10
+      uuid: 3.4.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /expo-file-system/13.1.4_expo@44.0.6:
     resolution: {integrity: sha512-/C2FKCzrdWuEt4m8Pzl9J4MhKgfU0denVLbqoKjidv8DnsLQrscFNlLhXuiooqWwsxB2OWAtGEVnPGJBWVuNEQ==}
     peerDependencies:
@@ -30530,6 +30559,27 @@ packages:
       expo: '*'
     dependencies:
       expo: 43.0.5_@babel+core@7.17.10
+    dev: false
+
+  /expo-image-manipulator/10.2.1_expo@43.0.5:
+    resolution: {integrity: sha512-0klgPMn8fIUkbWpRVT0LVCtq0ozzm3gO60jZEcJPofJRQWDKuv3Rcf0+8pTqpn45J53eAGsuZ72/Yj0AJqaedQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 43.0.5_@babel+core@7.17.10
+      expo-image-loader: 3.1.1_expo@43.0.5
+    dev: false
+
+  /expo-image-picker/12.0.2_expo@43.0.5:
+    resolution: {integrity: sha512-rAoNGtofV5cg3UN+cdIGDVfbMvbutBX6uNV7jCIEw/WZxZlbW+R7HC8l5lGDFtoLVqcpkHE/6JpAXvESxVSAOA==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/config-plugins': 4.1.5
+      expo: 43.0.5_@babel+core@7.17.10
+      uuid: 7.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /expo-keep-awake/10.0.2_expo@43.0.5:
@@ -32486,6 +32536,17 @@ packages:
       once: 1.4.0
       path-is-absolute: 1.0.1
     dev: true
+
+  /glob/7.0.6:
+    resolution: {integrity: sha512-f8c0rE8JiCxpa52kWPAOa3ZaYEnzofDzCQLCn3Vdk0Z5OVLq3BsRFJI4S4ykpeVW6QMGBUkMeUpoEgWnMTnw5Q==}
+    dependencies:
+      fs.realpath: 1.0.0
+      inflight: 1.0.6
+      inherits: 2.0.4
+      minimatch: 3.1.2
+      once: 1.4.0
+      path-is-absolute: 1.0.1
+    dev: false
 
   /glob/7.1.3:
     resolution: {integrity: sha512-vcfuiIxogLV4DlGBHIUOwI0IbrJ8HWPc4MU7HzviGeNho/UJDfi6B5p3sHeWIQ0KGIU0Jpxi5ZHxemQfLkkAwQ==}
@@ -45690,7 +45751,7 @@ packages:
     dependencies:
       '@babel/parser': 7.17.10
       flow-parser: 0.121.0
-      glob: 7.2.0
+      glob: 8.0.1
       invariant: 2.2.4
       jscodeshift: 0.13.1
       nullthrows: 1.1.1
@@ -45840,6 +45901,17 @@ packages:
   /react-native-gradle-plugin/0.0.6:
     resolution: {integrity: sha512-eIlgtsmDp1jLC24dRn43hB3kEcZVqx6DUQbR0N1ABXGnMEafm9I3V3dUUeD1vh+Dy5WqijSoEwLNUPLgu5zDMg==}
     dev: false
+
+  /react-native-image-crop-tools/1.6.2_ykxjy5s7xujdxmsgrwxo5mh3y4_zqxy7fpkavjkgz5xll7ed4r6rq:
+    resolution: {integrity: sha512-yndxSrHTCKPxxXlkCS62JQzlSlAK/K4pxyqu+IfacK/baykfXvSB7ps7WB74C0gFFnhfXSrgcktrjHMjJwXTyA==}
+    peerDependencies:
+      react: ^16.8.1
+      react-native: '>=0.59.0-rc.0 <1.0.x'
+    dependencies:
+      react: 17.0.2
+      react-native: 0.68.2_qiqqwmyv63yhnuboofexv3s7x4
+    dev: false
+    patched: true
 
   /react-native-iphone-x-helper/1.3.1_react-native@0.68.2:
     resolution: {integrity: sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==}
@@ -47980,6 +48052,13 @@ packages:
   /rlp/3.0.0:
     resolution: {integrity: sha512-PD6U2PGk6Vq2spfgiWZdomLvRGDreBLxi5jv5M8EpRo3pU6VEm31KO+HFxE18Q3vgqfDrQ9pZA3FP95rkijNKw==}
     hasBin: true
+    dev: false
+
+  /rn-fetch-blob/0.12.0:
+    resolution: {integrity: sha512-+QnR7AsJ14zqpVVUbzbtAjq0iI8c9tCg49tIoKO2ezjzRunN7YL6zFSFSWZm6d+mE/l9r+OeDM3jmb2tBb2WbA==}
+    dependencies:
+      base-64: 0.1.0
+      glob: 7.0.6
     dev: false
 
   /rn-range-slider/2.1.1:
@@ -52492,6 +52571,11 @@ packages:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
     hasBin: true
+
+  /uuid/7.0.2:
+    resolution: {integrity: sha512-vy9V/+pKG+5ZTYKf+VcphF5Oc6EFiu3W8Nv3P3zIh0EqVI80ZxOzuPfe9EHjkFNvf8+xuTHVeei4Drydlx4zjw==}
+    hasBin: true
+    dev: false
 
   /uuid/7.0.3:
     resolution: {integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==}
