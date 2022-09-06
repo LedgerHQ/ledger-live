@@ -151,6 +151,10 @@ const Delegation = ({ account, parentAccount }: Props) => {
 
   const percentVotesUsed = totalVotesUsed / tronPower;
 
+  if (!hasRewards && (!tronPower || !formattedVotes.length) && !canFreeze) {
+    return null;
+  }
+
   return (
     <View style={styles.root}>
       {(hasRewards || (tronPower > 0 && formattedVotes.length > 0)) && (
