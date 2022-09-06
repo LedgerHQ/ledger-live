@@ -33,7 +33,7 @@ export default function AccountSectionLabel({
         </Text>
         {Icon && (
           <Box ml={2}>
-            <Icon size={16} color={"neutral.c70"}></Icon>
+            <Icon size={16} color={"neutral.c70"} />
           </Box>
         )}
       </Flex>

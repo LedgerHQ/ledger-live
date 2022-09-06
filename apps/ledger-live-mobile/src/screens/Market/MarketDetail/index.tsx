@@ -109,10 +109,10 @@ function MarketDetail({
 
   const { range } = chartRequestParams;
 
-  const dateRangeFormatter = useMemo(() => getDateFormatter(locale, range), [
-    locale,
-    range,
-  ]);
+  const dateRangeFormatter = useMemo(
+    () => getDateFormatter(locale, range),
+    [locale, range],
+  );
 
   const renderAccountItem = useCallback(
     ({ item, index }: { item: Account; index: number }) => (

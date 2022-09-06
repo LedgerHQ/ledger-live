@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { Portfolio } from "@ledgerhq/types-live";
 import Animated from "react-native-reanimated";
 import Touchable from "../../components/Touchable";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { track } from "../../analytics";

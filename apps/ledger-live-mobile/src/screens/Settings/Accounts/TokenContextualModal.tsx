@@ -21,7 +21,7 @@ import Button from "../../../components/Button";
 import { parentAccountSelector } from "../../../reducers/accounts";
 import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
 import BottomModalChoice from "../../../components/BottomModalChoice";
-import { NavigatorName, ScreenName } from "../../../const";
+import { ScreenName } from "../../../const";
 
 const mapDispatchToProps = {
   blacklistToken,

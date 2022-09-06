@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
 
@@ -73,7 +73,7 @@ const OperationsHistory = ({ accounts }: Props) => {
       button: "See All",
     });
     navigation.navigate(ScreenName.AnalyticsOperations, {
-      accountsIds: accounts.map(account => account.id),
+      accountsIds: accounts.map(account => account.parentId || account.id),
     });
   }, [navigation, accounts]);
 

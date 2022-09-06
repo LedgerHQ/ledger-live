@@ -27,7 +27,7 @@ function CurrencyHeaderLayout({
   centerAfterScrollElement?: React.ReactNode;
   centerBeforeScrollElement?: React.ReactNode;
   leftElement?: React.ReactNode;
-  currencyColor: String;
+  currencyColor: string;
 }) {
   const BeforeScrollAnimation = useAnimatedStyle(() => {
     const opacity =

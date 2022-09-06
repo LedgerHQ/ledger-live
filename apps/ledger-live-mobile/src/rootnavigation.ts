@@ -6,7 +6,6 @@ export const isReadyRef = React.createRef();
 export const previousRouteNameRef = React.createRef();
 export const currentRouteNameRef = React.createRef();
 
-
 export function navigate(name, params) {
   if (isReadyRef.current && navigationRef.current) {
     // Perform navigation if the app has mounted

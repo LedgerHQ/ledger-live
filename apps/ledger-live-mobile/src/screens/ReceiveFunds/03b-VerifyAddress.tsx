@@ -161,10 +161,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       <SkipLock />
       {error ? (
         <>
-          <TrackScreen
-            category="Receive"
-            name="Address Verification Denied"
-          />
+          <TrackScreen category="Receive" name="Address Verification Denied" />
           <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
             <Illustration
               lightSource={illustrations.light}
@@ -211,10 +208,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
         </>
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
-          <TrackScreen
-            category="ReceiveFunds"
-            name="Verify Address"
-          />
+          <TrackScreen category="ReceiveFunds" name="Verify Address" />
           <LText variant="h4" textAlign="center" mb={6}>
             {t("transfer.receive.verifyAddress.title")}
           </LText>

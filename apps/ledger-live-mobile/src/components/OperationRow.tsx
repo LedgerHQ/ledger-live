@@ -114,8 +114,8 @@ export default function OperationRow({
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
-    const specific = mainAccount.currency.family
-      ? perFamilyOperationDetails[mainAccount.currency.family]
+    const specific = mainAccount?.currency?.family
+      ? perFamilyOperationDetails[mainAccount?.currency?.family]
       : null;
 
     const SpecificAmountCell =

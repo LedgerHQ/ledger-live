@@ -81,17 +81,14 @@ const iconSwap = Icons.BuyCryptoMedium;
 const iconReceive = Icons.ArrowBottomMedium;
 const iconSend = Icons.ArrowTopMedium;
 
-export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = ({
-  account,
-  parentAccount,
-}: FabAccountActionsProps) => {
+export const FabAccountMainActionsComponent: React.FC<
+  FabAccountActionsProps
+> = ({ account, parentAccount }: FabAccountActionsProps) => {
   const [pressedDisabledAction, setPressedDisabledAction] = useState<
     ActionButton | undefined
   >(undefined);
-  const [
-    isDisabledActionModalOpened,
-    setIsDisabledActionModalOpened,
-  ] = useState(false);
+  const [isDisabledActionModalOpened, setIsDisabledActionModalOpened] =
+    useState(false);
 
   const { colors } = useTheme();
   const navigation = useNavigation();

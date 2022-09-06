@@ -68,11 +68,8 @@ const AssetScreen = ({ route }: Props) => {
   const assetPortfolio = usePortfolio(cryptoAccounts, {
     flattenSourceAccounts: false,
   });
-  const {
-    selectedCoinData,
-    selectCurrency,
-    counterCurrency,
-  } = useSingleCoinMarketData();
+  const { selectedCoinData, selectCurrency, counterCurrency } =
+    useSingleCoinMarketData();
 
   useEffect(() => {
     selectCurrency(currency.id, currency, "24h");

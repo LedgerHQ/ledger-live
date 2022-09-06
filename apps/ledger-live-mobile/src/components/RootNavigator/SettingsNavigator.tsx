@@ -70,9 +70,10 @@ const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
-    colors,
-  ]);
+  const stackNavConfig = useMemo(
+    () => getStackNavigatorConfig(colors),
+    [colors],
+  );
 
   const navigation = useNavigation();
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();

@@ -103,7 +103,7 @@ export default function SubAccountsList({
           </>
         }
         containerProps={{ mb: 6 }}
-      ></SectionTitle>
+      />
     ),
     [
       isToken,

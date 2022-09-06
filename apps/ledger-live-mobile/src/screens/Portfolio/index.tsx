@@ -92,9 +92,10 @@ function PortfolioScreen({ navigation }: Props) {
   }, [setAddModalOpened]);
   useProviders();
 
-  const closeAddModal = useCallback(() => setAddModalOpened(false), [
-    setAddModalOpened,
-  ]);
+  const closeAddModal = useCallback(
+    () => setAddModalOpened(false),
+    [setAddModalOpened],
+  );
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 

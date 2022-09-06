@@ -22,9 +22,8 @@ import {
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 
-const extraSessionTrackingPairsChanges: BehaviorSubject<
-  TrackingPair[],
-> = new BehaviorSubject([]);
+const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> =
+  new BehaviorSubject([]);
 
 export function useDistribution(opts) {
   const accounts = useSelector(accountsSelector);

@@ -9,7 +9,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { DroprightMedium } from "@ledgerhq/native-ui/assets/icons";
+import { DroprightMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import NftCollectionOptionsMenu from "../../components/Nft/NftCollectionOptionsMenu";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import NftCollectionRow from "../../components/Nft/NftCollectionRow";
@@ -17,7 +17,6 @@ import { NavigatorName, ScreenName } from "../../const";
 import Button from "../../components/wrappedUi/Button";
 import Touchable from "../../components/Touchable";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
-import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 
 const MAX_COLLECTIONS_TO_SHOW = 3;
 

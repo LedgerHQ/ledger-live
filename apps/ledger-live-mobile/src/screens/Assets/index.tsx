@@ -49,13 +49,15 @@ function Assets() {
 
   const [isAddModalOpened, setAddModalOpened] = useState(false);
 
-  const openAddModal = useCallback(() => setAddModalOpened(true), [
-    setAddModalOpened,
-  ]);
+  const openAddModal = useCallback(
+    () => setAddModalOpened(true),
+    [setAddModalOpened],
+  );
 
-  const closeAddModal = useCallback(() => setAddModalOpened(false), [
-    setAddModalOpened,
-  ]);
+  const closeAddModal = useCallback(
+    () => setAddModalOpened(false),
+    [setAddModalOpened],
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: any; index: number }) => (

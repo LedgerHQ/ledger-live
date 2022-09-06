@@ -27,17 +27,18 @@ type Props = {
   navigation: any;
 };
 
-export const PortfolioHistoryList = withDiscreetMode(({
-  onEndReached,
-  opCount = 5,
-  navigation,
-}: {
-  onEndReached?: () => void,
-  opCount?: number,
-  navigation: any,
-}) => {
-  const accounts = useSelector(accountsSelector);
-  const allAccounts = useSelector(flattenAccountsSelector);
+export const PortfolioHistoryList = withDiscreetMode(
+  ({
+    onEndReached,
+    opCount = 5,
+    navigation,
+  }: {
+    onEndReached?: () => void;
+    opCount?: number;
+    navigation: any;
+  }) => {
+    const accounts = useSelector(accountsSelector);
+    const allAccounts = useSelector(flattenAccountsSelector);
 
     const refreshAccountsOrdering = useRefreshAccountsOrdering();
     useFocusEffect(refreshAccountsOrdering);
@@ -87,12 +88,12 @@ export const PortfolioHistoryList = withDiscreetMode(({
       return <SectionHeader section={section} />;
     }
 
-  const onTransactionButtonPress = useCallback(() => {
-    track("button_clicked", {
-      button: "See All Transactions",
-    })
-    navigation.navigate(ScreenName.PortfolioOperationHistory);
-  }, [navigation]);
+    const onTransactionButtonPress = useCallback(() => {
+      track("button_clicked", {
+        button: "See All Transactions",
+      });
+      navigation.navigate(ScreenName.PortfolioOperationHistory);
+    }, [navigation]);
 
     return (
       <SectionList

@@ -1,11 +1,11 @@
 import React, { PureComponent } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { connect } from "react-redux";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
 import { TrackScreen } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";

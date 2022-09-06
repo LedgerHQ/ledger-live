@@ -120,10 +120,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen
-        category="ReceiveFunds"
-        name="Device Selection"
-      />
+      <TrackScreen category="ReceiveFunds" name="Device Selection" />
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}

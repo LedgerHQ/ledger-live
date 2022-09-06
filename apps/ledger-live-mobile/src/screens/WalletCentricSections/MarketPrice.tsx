@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect } from "react";
+import React, { memo, useCallback } from "react";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
