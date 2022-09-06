@@ -133,6 +133,7 @@ export function Operations({ navigation, route }: Props) {
         renderSectionHeader={renderSectionHeader}
         stickySectionHeadersEnabled={false}
         onEndReached={onEndReached}
+        showsVerticalScrollIndicator={false}
         ListFooterComponent={
           !completed ? (
             !onEndReached ? (

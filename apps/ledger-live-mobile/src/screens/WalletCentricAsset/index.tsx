@@ -137,9 +137,29 @@ const AssetScreen = ({ route }: Props) => {
           <EmptyAccountCard currencyTicker={currency.ticker} />
         ) : null}
       </SectionContainer>,
+      <SectionContainer
+        px={6}
+        isLast={
+          (!isCryptoCurrency || !selectedCoinData?.price) &&
+          areCryptoAccountsEmpty
+        }
+      >
+        <SectionTitle
+          title={t("asset.accountsSection.title", {
+            currencyName: currency.ticker,
+          })}
+          seeMoreText={t("addAccounts.addNew")}
+          onSeeAllPress={onAddAccount}
+        />
+        <AccountsSection
+          accounts={cryptoAccounts}
+          currencyId={currency.id}
+          currencyTicker={currency.ticker}
+        />
+      </SectionContainer>,
       ...(isCryptoCurrency && selectedCoinData?.price
         ? [
-            <SectionContainer px={6}>
+            <SectionContainer px={6} isLast={areCryptoAccountsEmpty}>
               <SectionTitle
                 title={t("portfolio.marketPriceSection.title", {
                   currencyTicker: currency.ticker,
@@ -155,20 +175,6 @@ const AssetScreen = ({ route }: Props) => {
             </SectionContainer>,
           ]
         : []),
-      <SectionContainer px={6}>
-        <SectionTitle
-          title={t("asset.accountsSection.title", {
-            currencyName: currency.ticker,
-          })}
-          seeMoreText={t("addAccounts.addNew")}
-          onSeeAllPress={onAddAccount}
-        />
-        <AccountsSection
-          accounts={cryptoAccounts}
-          currencyId={currency.id}
-          currencyTicker={currency.ticker}
-        />
-      </SectionContainer>,
       ...(!areCryptoAccountsEmpty
         ? [
             <SectionContainer px={6} isLast>
@@ -185,12 +191,14 @@ const AssetScreen = ({ route }: Props) => {
       currentPositionY,
       graphCardEndPosition,
       currency,
+      currencyBalance,
       areCryptoAccountsEmpty,
       t,
       cryptoAccounts,
-      onAddAccount,
-      currencyBalance,
       isCryptoCurrency,
+      selectedCoinData,
+      onAddAccount,
+      counterCurrency,
     ],
   );
 

@@ -89,6 +89,7 @@ function Assets() {
             contentContainerStyle={{
               paddingBottom: TAB_BAR_SAFE_HEIGHT,
             }}
+            showsVerticalScrollIndicator={false}
             ListFooterComponent={
               <Button
                 type="shade"
