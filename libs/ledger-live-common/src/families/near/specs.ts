@@ -1,8 +1,9 @@
 import invariant from "invariant";
+import expect from "expect";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, NearAccount } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
@@ -10,7 +11,7 @@ import { acceptTransaction } from "./speculos-deviceActions";
 const currency = getCryptoCurrencyById("near");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.00001");
 const stakingFee = parseCurrencyUnit(currency.units[0], "0.002");
-const maxAccount = 3;
+const maxAccount = 8;
 const validator = "ledgerbyfigment.poolv1.near";
 
 const near: AppSpec<Transaction> = {
@@ -36,6 +37,13 @@ const near: AppSpec<Transaction> = {
           updates: [{ recipient }, { amount }],
         };
       },
+      test: ({ accountBeforeTransaction, operation, account }) => {
+        botTest("account spendable balance decreased with operation", () =>
+          expect(account.spendableBalance).toEqual(
+            accountBeforeTransaction.spendableBalance.minus(operation.value)
+          )
+        );
+      },
     },
     {
       name: "Send max to another account",
@@ -48,6 +56,11 @@ const near: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [{ recipient }, { useAllAmount: true }],
         };
+      },
+      test: ({ account }) => {
+        botTest("account spendable balance is zero", () =>
+          expect(account.spendableBalance.toString()).toBe("0")
+        );
       },
     },
     {
@@ -68,6 +81,17 @@ const near: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [{ mode: "stake", recipient: validator }, { amount }],
         };
+      },
+      test: ({ accountBeforeTransaction, operation, account }) => {
+        const { nearResources } = account as NearAccount;
+        const { nearResources: beforeTransactionNearResources } =
+          accountBeforeTransaction as NearAccount;
+
+        botTest("account staked balance increased with operation", () =>
+          expect(nearResources.stakedBalance).toEqual(
+            beforeTransactionNearResources.stakedBalance.plus(operation.value)
+          )
+        );
       },
     },
     {
@@ -96,6 +120,19 @@ const near: AppSpec<Transaction> = {
           updates: [{ mode: "unstake", recipient: validator }, { amount }],
         };
       },
+      test: ({ accountBeforeTransaction, account }) => {
+        const { nearResources } = account as NearAccount;
+        const { nearResources: beforeTransactionNearResources } =
+          accountBeforeTransaction as NearAccount;
+
+        botTest("account pending balance increased", () =>
+          expect(
+            nearResources.pendingBalance.gt(
+              beforeTransactionNearResources.pendingBalance
+            )
+          ).toBe(true)
+        );
+      },
     },
     {
       name: "Withdraw",
@@ -122,6 +159,19 @@ const near: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [{ mode: "withdraw", recipient: validator }, { amount }],
         };
+      },
+      test: ({ accountBeforeTransaction, account }) => {
+        const { nearResources } = account as NearAccount;
+        const { nearResources: beforeTransactionNearResources } =
+          accountBeforeTransaction as NearAccount;
+
+        botTest("account withdrawable balance decreased", () =>
+          expect(
+            nearResources.availableBalance.lt(
+              beforeTransactionNearResources.availableBalance
+            )
+          ).toBe(true)
+        );
       },
     },
   ],
