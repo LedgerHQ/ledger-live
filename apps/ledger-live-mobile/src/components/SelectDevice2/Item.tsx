@@ -8,7 +8,7 @@ import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import Touchable from "../Touchable";
 
 type Props = {
-  device: Device;
+  device: Device & { available?: boolean };
   isScanning?: boolean;
 };
 

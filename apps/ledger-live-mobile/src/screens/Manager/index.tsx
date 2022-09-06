@@ -9,7 +9,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
-import { Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { removeKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";
 import { ManagerTab } from "./Manager";
@@ -177,36 +177,38 @@ class ChooseDevice extends Component<
         style={[styles.root]}
         contentContainerStyle={styles.scrollContainer}
       >
-        <TrackScreen category="Manager" name="ChooseDevice" />
-        <Text fontWeight="semiBold" variant="h3">
-          <Trans i18nKey="manager.connect" />
-        </Text>
-        <SelectDevice
-          // usbOnly={params?.firmwareUpdate}
-          // usbOnly
-          onWithoutDevice={()=>{}}
-          autoSelectOnAdd
-          onSelect={this.onSelectDevice}
-          onStepEntered={this.onStepEntered}
-          onBluetoothDeviceAction={this.onShowMenu}
-        />
-        <DeviceActionModal
-          onClose={() => this.onSelectDevice()}
-          device={device}
-          onResult={this.onSelect}
-          onModalHide={this.onModalHide}
-          action={action}
-          request={null}
-        />
-
-        {this.chosenDevice && (
-          <RemoveDeviceModal
-            onHideMenu={this.onHideMenu}
-            open={showMenu}
-            remove={this.remove}
-            deviceName={this.chosenDevice.deviceName || ""}
+        <Flex mt={70}>
+          <TrackScreen category="Manager" name="ChooseDevice" />
+          <Text fontWeight="semiBold" variant="h4">
+            <Trans i18nKey="manager.title" />
+          </Text>
+          <SelectDevice
+            // usbOnly={params?.firmwareUpdate}
+            // usbOnly
+            onWithoutDevice={() => {}}
+            autoSelectOnAdd
+            onSelect={this.onSelectDevice}
+            onStepEntered={this.onStepEntered}
+            onBluetoothDeviceAction={this.onShowMenu}
           />
-        )}
+          <DeviceActionModal
+            onClose={() => this.onSelectDevice()}
+            device={device}
+            onResult={this.onSelect}
+            onModalHide={this.onModalHide}
+            action={action}
+            request={null}
+          />
+
+          {this.chosenDevice && (
+            <RemoveDeviceModal
+              onHideMenu={this.onHideMenu}
+              open={showMenu}
+              remove={this.remove}
+              deviceName={this.chosenDevice.deviceName || ""}
+            />
+          )}
+        </Flex>
       </NavigationScrollView>
     );
   }

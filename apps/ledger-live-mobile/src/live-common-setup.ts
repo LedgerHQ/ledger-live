@@ -12,6 +12,7 @@ import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import type { TransportModule } from "@ledgerhq/live-common/hw/index";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import axios from "axios";
@@ -102,9 +103,11 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: Observable.create(o => HIDTransport.listen(o)).pipe(
+  discovery: new Observable<DescriptorEvent<any>>(o =>
+    HIDTransport.listen(o),
+  ).pipe(
     map(({ type, descriptor, deviceModel }) => {
-      const name = deviceModel.productName;
+      const name = deviceModel?.productName ?? "";
       return {
         type,
         id: `usb|${JSON.stringify(descriptor)}`,
