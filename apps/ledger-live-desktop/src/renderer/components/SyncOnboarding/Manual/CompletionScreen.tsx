@@ -7,7 +7,7 @@ import ConnectNano from "../../Onboarding/Screens/Tutorial/assets/connectNano.pn
 import Image from "~/renderer/components/Image";
 import { saveSettings } from "~/renderer/actions/settings";
 
-const GO_TO_HOMEPAGE_TIMEOUT = 5000;
+const GO_TO_POSTONBOARDING_TIMEOUT = 5000;
 
 const CompletionScreen = () => {
   const history = useHistory();
@@ -15,7 +15,10 @@ const CompletionScreen = () => {
 
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
-    setTimeout(() => history.push("/"), GO_TO_HOMEPAGE_TIMEOUT);
+    setTimeout(
+      () => history.push("/sync-onboarding/post-onboarding-screen"),
+      GO_TO_POSTONBOARDING_TIMEOUT,
+    );
   }, [history, dispatch]);
 
   return (

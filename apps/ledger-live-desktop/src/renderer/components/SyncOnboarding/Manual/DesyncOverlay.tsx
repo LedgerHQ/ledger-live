@@ -11,7 +11,6 @@ type Props = {
 export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
   const [showContent, setShowContent] = useState<boolean>(false);
   const { colors } = useTheme();
-  console.log(useTheme());
 
   useEffect(() => {
     if (isOpen) {
