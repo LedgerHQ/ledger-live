@@ -135,7 +135,7 @@ ascii(1NjiCsVBuKDT62LmaUd7WZZZBK2gPAkisb)
     <= ${responseAcc}9000
     `)
   );
-  const btc = new Btc(transport);
+  const btc = new Btc(transport, "BTC", "oldbitcoin");
   const result = await btc.getWalletXpub({
     path: "44'/0'/17'",
     xpubVersion: 0x043587cf, // mainnet
@@ -154,7 +154,7 @@ test("btc.getWalletPublicKey", async () => {
       <= 410486b865b52b753d0a84d09bc20063fab5d8453ec33c215d4019a5801c9c6438b917770b2782e29a9ecc6edb67cd1f0fbf05ec4c1236884b6d686d6be3b1588abb2231334b453654666641724c683466564d36756f517a7673597135767765744a63564dbce80dd580792cd18af542790e56aa813178dc28644bb5f03dbd44c85f2d2e7a9000
     `)
   );
-  const btc = new Btc(transport);
+  const btc = new Btc(transport, "BTC", "oldbitcoin");
   const result = await btc.getWalletPublicKey("44'/0'/0'/0");
   expect(result).toEqual({
     bitcoinAddress: "13KE6TffArLh4fVM6uoQzvsYq5vwetJcVM",
@@ -204,7 +204,7 @@ test("btc 2", async () => {
     <= 3145022100ff492ad0b3a634aa7751761f7e063bf6ef4148cd44ef8930164580d5ba93a17802206fac94b32e296549e2e478ce806b58d61cfacbfed35ac4ceca26ac531f92b20a019000
     `)
   );
-  const btc = new Btc(transport);
+  const btc = new Btc(transport, "BTC", "oldbitcoin");
   const tx1 = btc.splitTransaction(
     "01000000014ea60aeac5252c14291d428915bd7ccd1bfc4af009f4d4dc57ae597ed0420b71010000008a47304402201f36a12c240dbf9e566bc04321050b1984cd6eaf6caee8f02bb0bfec08e3354b022012ee2aeadcbbfd1e92959f57c15c1c6debb757b798451b104665aa3010569b49014104090b15bde569386734abf2a2b99f9ca6a50656627e77de663ca7325702769986cf26cc9dd7fdea0af432c8e2becc867c932e1b9dd742f2a108997c2252e2bdebffffffff0281b72e00000000001976a91472a5d75c8d2d0565b656a5232703b167d50d5a2b88aca0860100000000001976a9144533f5fb9b4817f713c48f0bfe96b9f50c476c9b88ac00000000"
   );
@@ -342,7 +342,7 @@ test("btc seg multi", async () => {
     <= 3145022100c820c90ce84c6567617733cd6409c4b8f7469b863d811a3cdc73bf3fa43912bc0220320b7fd259939a6821d371f2b49a755d1ca588bffb1476fbb2da68907427b54b019000
     `)
   );
-  const btc = new Btc(transport);
+  const btc = new Btc(transport, "BTC", "oldbitcoin");
   const tx1 = btc.splitTransaction(
     "0100000000010130992c1559a43de1457f23380fefada09124d22594bbeb46ab6e9356e8407d39010000001716001417507f91a6594df7367a0561e4d3df376a829e1fffffffff02c03b47030000000017a9142397c9bb7a3b8a08368a72b3e58c7bb850555792875f810acf0900000017a914813a2e6c7538f0d0afbdeb5db38608804f5d76ab8702483045022100e09ca8a5357623438daee5b7804e73c9209de7c645efd405f13f83420157c48402207d3e4a30f362e062e361967c7afdd45e7f21878a067b661a6635669e620f99910121035606550fd51f6b063b69dc92bd182934a34463f773222743f300d3c7fd3ae47300000000",
     true
@@ -435,7 +435,7 @@ test("signMessage", async () => {
     s: "385d83273c9d03c469596292fb354b07d193034f83c2633a4c1f057838e12a5b",
   });
 });
-
+/*
 function testBackend(s: string): any {
   return async () => {
     return { publicKey: s, bitcoinAddress: "", chainCode: "" };
@@ -532,3 +532,4 @@ async function testDispatch(
   addressFormat: AddressFormat | undefined,
   exp: string
 ): Promise<void> {}
+*/

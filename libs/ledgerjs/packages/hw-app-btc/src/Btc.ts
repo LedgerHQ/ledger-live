@@ -60,7 +60,13 @@ export default class Btc {
    * @returns XPUB of the account
    */
   getWalletXpub(arg: { path: string; xpubVersion: number }): Promise<string> {
-    return this.getAppVersion().then(() => this._lazyImpl.getWalletXpub(arg));
+    if (this._needGetAppversion) {
+      this._needGetAppversion = false;
+      return getAppAndVersion(this._transport).then(() =>
+        this._lazyImpl.getWalletXpub(arg)
+      );
+    }
+    return this._lazyImpl.getWalletXpub(arg);
   }
 
   /**
@@ -109,9 +115,13 @@ export default class Btc {
     } else {
       options = opts || {};
     }
-    return this.getAppVersion().then(() =>
-      this._lazyImpl.getWalletPublicKey(path, options)
-    );
+    if (this._needGetAppversion) {
+      this._needGetAppversion = false;
+      return getAppAndVersion(this._transport).then(() =>
+        this._lazyImpl.getWalletPublicKey(path, options)
+      );
+    }
+    return this._lazyImpl.getWalletPublicKey(path, options);
   }
 
   /**
@@ -176,9 +186,13 @@ export default class Btc {
         "@ledgerhq/hw-app-btc: createPaymentTransactionNew multi argument signature is deprecated. please switch to named parameters."
       );
     }
-    return this.getAppVersion().then(() =>
-      this._lazyImpl.createPaymentTransactionNew(arg)
-    );
+    if (this._needGetAppversion) {
+      this._needGetAppversion = false;
+      return getAppAndVersion(this._transport).then(() =>
+        this._lazyImpl.createPaymentTransactionNew(arg)
+      );
+    }
+    return this._lazyImpl.createPaymentTransactionNew(arg);
   }
 
   /**
@@ -258,11 +272,5 @@ export default class Btc {
       transaction,
       additionals
     );
-  }
-  private async getAppVersion(): Promise<void> {
-    if (this._needGetAppversion) {
-      await getAppAndVersion(this._transport);
-      this._needGetAppversion = false;
-    }
   }
 }
