@@ -20,7 +20,7 @@ import {
  * Factory to create the recursive function that will pass on each
  * field level and APDUs to describe its structure implementation
  *
- * @param {Eth["EIP712SendStructImplem"]} EIP712SendStructImplem
+ * @param {Eth["sendStructImplem"]} sendStructImplem
  * @param {EIP712MessageTypes} types
  * @returns {void}
  */
@@ -51,7 +51,7 @@ const makeRecursiveFieldStructImplem = (
       !EIP712_TYPE_PROPERTIES[typeDescription?.name?.toUpperCase() || ""];
 
     if (Array.isArray(data) && typeof currSize !== "undefined") {
-      await EIP712SendStructImplem(transport, {
+      await sendStructImplem(transport, {
         structType: "array",
         value: data.length,
       });
@@ -72,7 +72,7 @@ const makeRecursiveFieldStructImplem = (
         }
       }
     } else {
-      await EIP712SendStructImplem(transport, {
+      await sendStructImplem(transport, {
         structType: "field",
         value: {
           data,
@@ -90,13 +90,13 @@ const makeRecursiveFieldStructImplem = (
  * @ignore for the README
  *
  * This method is used to send the message definition with all its types.
- * This method should be used before the EIP712SendStructImplem one
+ * This method should be used before the sendStructImplem one
  *
  * @param {String} structType
  * @param {String|Buffer} value
  * @returns {Promise<void>}
  */
-const EIP712SendStructDef = (
+const sendStructDef = (
   transport: Transport,
   structDef: StructDefData
 ): Promise<Buffer> => {
@@ -128,7 +128,7 @@ const EIP712SendStructDef = (
  * @ignore for the README
  *
  * This method provides a trusted new display name to use for the upcoming field.
- * This method should be used after the EIP712SendStructDef one.
+ * This method should be used after the sendStructDef one.
  *
  * If the method describes an empty name (length of 0), the upcoming field will be taken
  * into account but won’t be shown on the device.
@@ -143,7 +143,7 @@ const EIP712SendStructDef = (
  * @param {string | number | StructFieldData} value
  * @returns {Promise<Buffer | void>}
  */
-const EIP712SendStructImplem = async (
+const sendStructImplem = async (
   transport: Transport,
   structImplem: StructImplemData
 ): Promise<Buffer | void> => {
@@ -276,14 +276,14 @@ export const signEIP712Message = async (
   ][];
   // Looping on all types entries and fields to send structures' definitions
   for (const [typeName, entries] of typeEntries) {
-    await EIP712SendStructDef(transport, {
+    await sendStructDef(transport, {
       structType: "name",
       value: typeName as string,
     });
 
     for (const { name, type } of entries) {
       const typeEntryBuffer = makeTypeEntryStructBuffer({ name, type });
-      await EIP712SendStructDef(transport, {
+      await sendStructDef(transport, {
         structType: "field",
         value: typeEntryBuffer,
       });
@@ -300,7 +300,7 @@ export const signEIP712Message = async (
   // Looping on all domain type entries and fields to send
   // structures' implementations
   const domainName = "EIP712Domain";
-  await EIP712SendStructImplem(transport, {
+  await sendStructImplem(transport, {
     structType: "root",
     value: domainName,
   });
@@ -315,7 +315,7 @@ export const signEIP712Message = async (
 
   // Looping on all primaryType type entries and fields to send
   // structures' implementations
-  await EIP712SendStructImplem(transport, {
+  await sendStructImplem(transport, {
     structType: "root",
     value: primaryType,
   });
