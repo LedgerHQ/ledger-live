@@ -3,6 +3,8 @@ import { KYCProps } from "../../../types";
 import { Widget } from "../Widget";
 import { WyreKYC } from "./Wyre";
 
+export { StateSelect } from "./StateSelect";
+
 export function KYC({
   route: {
     params: { provider },

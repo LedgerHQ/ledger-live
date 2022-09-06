@@ -14,6 +14,7 @@ import {
   MFA,
   PendingOperation,
   OperationDetails,
+  StateSelect,
 } from "../../screens/Swap/index";
 import { SwapFormNavigator } from "./SwapFormNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
@@ -116,6 +117,17 @@ export default function SwapNavigator() {
       />
 
       <Stack.Screen
+        name="SwapKYCStates"
+        component={StateSelect}
+        options={{
+          headerTitle: () => (
+            <StepHeader title={t("transfer.swap.kyc.states")} />
+          ),
+          headerRight: () => null,
+        }}
+      />
+
+      <Stack.Screen
         name="MFA"
         component={MFA}
         options={({ route }) => ({
@@ -132,6 +144,7 @@ export default function SwapNavigator() {
           headerLeft: () => null,
         }}
       />
+
       <Stack.Screen
         name={"OperationDetails"}
         component={OperationDetails}

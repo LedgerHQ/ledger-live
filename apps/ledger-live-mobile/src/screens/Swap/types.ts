@@ -78,6 +78,7 @@ export type SwapNavParamList = {
   KYC: {
     provider: string;
   };
+  SwapKYCStates: undefined;
   MFA: {
     provider: string;
   };
