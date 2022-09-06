@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.47.0-next.7
+
+### Patch Changes
+
+- [#1194](https://github.com/LedgerHQ/ledger-live/pull/1194) [`f531077013`](https://github.com/LedgerHQ/ledger-live/commit/f531077013ae2486cee2b0953f2e7d3fe0f7dd20) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixing the usage of account to get a currency as some account types don't have one
+
 ## 2.47.0-next.6
 
 ### Minor Changes
