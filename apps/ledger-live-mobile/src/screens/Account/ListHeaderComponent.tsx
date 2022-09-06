@@ -22,13 +22,13 @@ import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
-import {
-  FabAccountActions,
-  FabAccountMainActionsComponent,
-} from "../../components/FabActions";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import useAccountActions from "./hooks/useAccountActions";
+import {
+  FabAccountActions,
+  FabAccountMainActions,
+} from "../../components/FabActions/actionsList/account";
 
 type Props = {
   account?: AccountLike;
@@ -122,7 +122,7 @@ export function getListHeaderComponents({
           title={t("account.quickActions")}
           containerProps={{ mb: 6 }}
         />
-        <FabAccountMainActionsComponent
+        <FabAccountMainActions
           account={account}
           parentAccount={parentAccount}
         />

@@ -17,7 +17,7 @@ import {
   listTokens,
   listSupportedCurrencies,
   useCurrenciesByMarketcap,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
 import {
@@ -46,10 +46,8 @@ import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
-import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 // eslint-disable-next-line import/no-cycle
 import { AnalyticsContext } from "../../../components/RootNavigator";
-import FabActions from "../../../components/FabActions";
 import Assets from "../Assets";
 import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
 

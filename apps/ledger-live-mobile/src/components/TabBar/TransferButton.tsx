@@ -38,9 +38,9 @@ export default function TransferButton({
         <BoxedIcon
           Icon={Icon}
           variant={"circle"}
-          iconColor={disabled ? "neutral.c40" : "neutral.c100"}
-          backgroundColor={disabled ? "neutral.c20" : "neutral.c40"}
-          borderColor={disabled ? "neutral.c20" : "neutral.c40"}
+          iconColor={disabled ? "neutral.c50" : "neutral.c100"}
+          backgroundColor={disabled ? "neutral.c30" : "neutral.c40"}
+          borderColor={disabled ? "neutral.c30" : "neutral.c40"}
         />
         <Flex
           flexDirection="column"
@@ -49,11 +49,11 @@ export default function TransferButton({
           ml="16px"
           py="1px"
         >
-          <Flex flexDirection="row">
+          <Flex flexDirection="row" alignItems={"center"}>
             <Text
               variant="large"
               fontWeight="semiBold"
-              color={disabled ? "neutral.c40" : "neutral.c100"}
+              color={disabled ? "neutral.c50" : "neutral.c100"}
             >
               {title}
             </Text>
@@ -71,7 +71,7 @@ export default function TransferButton({
           <Text
             variant="body"
             fontWeight="medium"
-            color={disabled ? "neutral.c30" : "neutral.c70"}
+            color={disabled ? "neutral.c40" : "neutral.c70"}
           >
             {description}
           </Text>
