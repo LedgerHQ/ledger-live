@@ -16,8 +16,7 @@ import nanoXSvg from "../assets/nanoX";
 import { ScreenName, NavigatorName } from "../../../const";
 import DiscoverCard from "../../Discover/DiscoverCard";
 import Illustration from "../../../images/illustration/Illustration";
-
-const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.png");
+import setupLedgerImg from "../../../images/illustration/Shared/_SetupLedger.png";
 
 const nanoX = { SvgDevice: nanoXSvg, id: "nanoX", setupTime: 600000 };
 const nanoS = { SvgDevice: nanoSSvg, id: "nanoS", setupTime: 600000 };
