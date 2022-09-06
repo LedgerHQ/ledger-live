@@ -80,7 +80,11 @@ function AccountBalanceSummaryFooter({ account }: Props) {
             disableRounding
           />
         }
-        isLast={!unlockingBalance.gt(0) && !lockedBalance.gt(0)}
+        isLast={
+          !unlockingBalance.gt(0) &&
+          !lockedBalance.gt(0) &&
+          !unlockedBalance.gt(0)
+        }
       />
       {lockedBalance.gt(0) && (
         <InfoItem
@@ -96,7 +100,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
               disableRounding
             />
           }
-          isLast={!unlockingBalance.gt(0)}
+          isLast={!unlockingBalance.gt(0) && !unlockedBalance.gt(0)}
         />
       )}
       {unlockingBalance.gt(0) && (
@@ -110,6 +114,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
               disableRounding
             />
           }
+          isLast={!unlockedBalance.gt(0)}
         />
       )}
       {unlockedBalance.gt(0) && (
