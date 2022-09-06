@@ -99,6 +99,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
               : currency,
         }}
         onSelectDeviceLink={() => setDevice()}
+        onModalHide={() => setDevice()}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
       />
     </SafeAreaView>
