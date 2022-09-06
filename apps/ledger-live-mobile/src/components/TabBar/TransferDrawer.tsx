@@ -163,8 +163,12 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           title={t("transfer.swap.title")}
           description={t("transfer.swap.description")}
           Icon={Icons.BuyCryptoMedium}
-          onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSwap : null}
-          disabled={!accountsCount || readOnlyModeEnabled}
+          onPress={
+            accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+              ? onSwap
+              : null
+          }
+          disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
         />
       </Box>
       {lendingEnabled ? (
@@ -180,9 +184,11 @@ export default function TransferDrawer({ onClose }: ModalProps) {
             tag={t("common.popular")}
             Icon={Icons.LendMedium}
             onPress={
-              accountsCount > 0 && !readOnlyModeEnabled ? onLending : null
+              accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+                ? onLending
+                : null
             }
-            disabled={!accountsCount || readOnlyModeEnabled}
+            disabled={!accountsCount || readOnlyModeEnabled || areAccountsEmpty}
           />
         </Box>
       ) : null}
