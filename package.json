@@ -117,7 +117,8 @@
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
-      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch"
+      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch",
+      "react-native-image-crop-tools@1.6.2": "patches/react-native-image-crop-tools@1.6.2.patch"
     }
   }
 }
