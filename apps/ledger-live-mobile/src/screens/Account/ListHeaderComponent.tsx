@@ -195,11 +195,13 @@ export function getListHeaderComponents({
       account.type === "TokenAccount" &&
       parentAccount
         ? [
-            <CompoundAccountBodyHeader
-              account={account}
-              parentAccount={parentAccount}
-              compoundSummary={compoundSummary}
-            />,
+            <SectionContainer px={6}>
+              <CompoundAccountBodyHeader
+                account={account}
+                parentAccount={parentAccount}
+                compoundSummary={compoundSummary}
+              />
+            </SectionContainer>,
           ]
         : []),
     ],
