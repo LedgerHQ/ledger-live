@@ -148,11 +148,11 @@ class ChooseDevice extends Component<
     }
   };
 
-  remove = async () => {
+  remove = () => {
     const { removeKnownDevice } = this.props;
     removeKnownDevice(this.chosenDevice.deviceId);
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await disconnect(this.chosenDevice.deviceId).catch(() => {});
+    disconnect(this.chosenDevice.deviceId).catch(() => {}); // NB no need to await it, it delays the UI.
     this.onHideMenu();
   };
 
