@@ -5,6 +5,7 @@ export type FeatureId =
   | "llmUsbFirmwareUpdate"
   | "ratings"
   | "counterValue"
+  | "deviceLocalization"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
   | "currencyOsmosis"
