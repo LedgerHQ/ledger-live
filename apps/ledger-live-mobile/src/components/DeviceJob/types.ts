@@ -12,9 +12,7 @@ export type Step = {
     onRetry: () => void;
   }>;
   run: (
-    // eslint-disable-next-line no-unused-vars
     meta: Record<string, any>,
-    // eslint-disable-next-line no-unused-vars
     onDoneO: Observable<any>,
   ) => Observable<Record<string, any>>;
 };

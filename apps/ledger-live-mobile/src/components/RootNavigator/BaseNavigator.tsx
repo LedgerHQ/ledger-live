@@ -3,6 +3,7 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
   TransitionPresets,
+  StackNavigationProp,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/native-ui";
@@ -89,6 +90,24 @@ import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWa
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 import MarketDetail from "../../screens/Market/MarketDetail";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
+
+import {
+  BleDevicePairingFlow,
+  BleDevicePairingFlowParams,
+} from "../../screens/BleDevicePairingFlow/index";
+
+// TODO: types for each screens and navigators need to be set
+export type BaseNavigatorStackParamList = {
+  BleDevicePairingFlow: BleDevicePairingFlowParams;
+
+  // Hack: allows any other properties
+  [otherScreens: string]: undefined | object;
+};
+
+export type BaseNavigatorProps =
+  StackNavigationProp<BaseNavigatorStackParamList>;
+
+const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -634,8 +653,13 @@ export default function BaseNavigator() {
           />
         );
       })}
+      <Stack.Screen
+        name={ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow"}
+        component={BleDevicePairingFlow}
+        options={{
+          title: "",
+        }}
+      />
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator();

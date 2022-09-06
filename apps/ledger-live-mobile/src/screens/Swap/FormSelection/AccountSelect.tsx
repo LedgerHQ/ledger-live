@@ -22,7 +22,6 @@ type Props = {
     params: SwapRouteParams;
   };
   swap: SwapDataType;
-  // eslint-disable-next-line no-unused-vars
   setFromAccount: (account?: Account | TokenAccount) => void;
   providers: any;
   provider: any;

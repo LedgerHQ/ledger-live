@@ -23,7 +23,6 @@ const forceInset = {
 type OwnProps = {};
 type Props = OwnProps & {
   navigation: any;
-  // eslint-disable-next-line no-unused-vars
   addKnownDevice: (arg0: any) => void;
   colors: any;
 };

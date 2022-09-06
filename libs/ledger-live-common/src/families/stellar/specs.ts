@@ -12,6 +12,7 @@ import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { SubAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("stellar");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
@@ -33,6 +34,7 @@ const stellar: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Stellar",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   mutations: [
     {

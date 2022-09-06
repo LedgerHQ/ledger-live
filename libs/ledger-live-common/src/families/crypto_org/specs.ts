@@ -4,6 +4,7 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const sharedMutations = ({ maxAccount }) => [
   {
@@ -28,6 +29,7 @@ const crypto_org_croeseid: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Crypto.orgChain",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 4 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
@@ -50,6 +52,7 @@ const crypto_org: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Crypto.orgChain",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 4 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(

@@ -19,6 +19,7 @@ import { getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const testTimeout = 5 * 60 * 1000;
 
@@ -125,6 +126,7 @@ const ethereum: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
@@ -376,6 +378,7 @@ const ethereumClassic: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Ethereum Classic",
   },
+  genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {
@@ -400,6 +403,7 @@ const ethereumGoerli: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
@@ -424,6 +428,7 @@ const bsc: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Binance Smart Chain",
   },
+  genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {
@@ -471,6 +476,7 @@ const polygon: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Polygon",
   },
+  genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {

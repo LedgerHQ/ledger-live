@@ -5,9 +5,12 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
+
 const currency = getCryptoCurrencyById("ripple");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
 const reserve = parseCurrencyUnit(currency.units[0], "20");
+
 const ripple: AppSpec<Transaction> = {
   name: "XRP",
   currency,
@@ -15,6 +18,7 @@ const ripple: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "XRP",
   },
+  genericDeviceAction: acceptTransaction,
   mutations: [
     {
       name: "move ~50%",
