@@ -21,7 +21,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 
-const testTimeout = 5 * 60 * 1000;
+const testTimeout = 10 * 60 * 1000;
 
 const ethereumBasicMutations = ({ maxAccount }) => [
   {
