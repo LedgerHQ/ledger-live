@@ -19,6 +19,8 @@ import java.util.Locale;
 
 import expo.modules.ReactActivityDelegateWrapper;
 
+import com.facebook.react.modules.i18nmanager.I18nUtil;
+
 public class MainActivity extends ReactActivity {
 
     String importDataString = null;
