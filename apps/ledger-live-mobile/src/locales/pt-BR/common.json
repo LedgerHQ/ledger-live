@@ -804,8 +804,8 @@
       },
       "familyPackX" : {
         "title" : "Ledger Nano X pacote família",
-        "description" : "Nano X 3-pack com desconto, perfeito para presentes ou backups",
-        "cta" : "Economizar Agora"
+        "description" : "Pacote promocional com 3 Nano X, para presentes e backups",
+        "cta" : "Economizar agora"
       },
       "buyCrypto" : {
         "title" : "Comprar cripto",
@@ -815,7 +815,7 @@
       "swap" : {
         "title" : "Trocar Cripto",
         "description" : "Troque mais de 100 criptos com custódia total com nossos parceiros",
-        "cta" : "Trocar Agora"
+        "cta" : "Trocar agora"
       },
       "algorand" : {
         "title" : "Algorand",
@@ -839,12 +839,12 @@
       },
       "lido" : {
         "title" : "Aplicar ETH com Lido",
-        "description" : "Receba recompensas fazendo staking de ETH com segurança na Lido",
-        "cta" : "Aplicar Agora"
+        "description" : "Ganhe recompensas com o staking seguro de ETH na Lido",
+        "cta" : "Aplicar agora"
       },
       "market" : {
         "title" : "Mercados Cripto",
-        "description" : "Verifique o preço de criptomoedas e os movimentos de mercado diretamente no aplicativo",
+        "description" : "Acompanhe preços e tendências do mercado cripto no aplicativo",
         "cta" : "Navegue"
       },
       "manageCard" : {
@@ -864,16 +864,16 @@
       "title" : "O que você acha do nosso aplicativo?",
       "description" : "Seu feedback é importante para melhorar o Ledger Live.",
       "cta" : {
-        "enjoy" : "É ótimo",
+        "enjoy" : "É incrível",
         "disappointed" : "Estou desapontado",
         "notNow" : "Agora não"
       }
     },
     "enjoy" : {
-      "title" : "Você também é ótimo",
-      "description" : "Ficaríamos gratos se você puder tomar o tempo de nos escrever uma avaliação. Seu apoio nos ajuda a alcançar mais pessoas e nos motiva a lançar novos recursos no aplicativo.",
+      "title" : "Você também é incrível",
+      "description" : "Agradeceríamos se você tiver um tempinho para escrever uma avaliação. Seu apoio nos ajuda a alcançar mais pessoas e nos motiva a lançar novos recursos no aplicativo.",
       "cta" : {
-        "rate" : "Dê 5 estrelas",
+        "rate" : "Dar 5 estrelas",
         "notNow" : "Agora não"
       }
     },
@@ -1440,7 +1440,7 @@
     },
     "stepImportAccounts" : {
       "title" : "Sincronizar criptos do desktop",
-      "desc" : "Se você já tem suas criptos configuradas no aplicativo Ledger de desktop, você pode sincronizá-las para gerenciá-las do seu telefone.",
+      "desc" : "Se você já configurou suas criptos no aplicativo para desktop, você pode sincronizá-las para gerenciá-las pelo celular.",
       "cta" : "Tudo pronto para escanear",
       "bullets" : {
         "0" : {
@@ -1450,12 +1450,12 @@
           "label" : "Escaneie o LiveQR Code com seu telefone."
         },
         "2" : {
-          "label" : "Selecione as contas de criptoativos para importar."
+          "label" : "Selecione as contas cripto a importar."
         }
       },
       "warning" : {
-        "title" : "Seus aplicativos de desktop e móvel devem ser sincronizados manualmente.",
-        "desc" : "O Ledger Live respeita sua privacidade e armazena seus dados localmente. Se você mudar as contas e configurações em seu telefone, você precisará fazer o mesmo em seu computador e vice-versa. Suas transações permanecem sincronizadas com a blockchain.",
+        "title" : "Seus aplicativos desktop e mobile devem ser sincronizados manualmente.",
+        "desc" : "O Ledger Live respeita sua privacidade e armazena seus dados localmente. Se você mudar contas e configurações no seu telefone, precisará fazer o mesmo em seu computador e vice-versa. Suas transações são sincronizadas com a blockchain.",
         "cta" : "Entendi!"
       }
     },
@@ -1565,6 +1565,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Looking for devices",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Already paired"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Try again"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "Carteira",
     "accounts" : "Contas",
@@ -1629,11 +1656,11 @@
     "description" : "Você pode escolher adicionar criptoativos diretamente com sua Ledger, ou importá-los do Ledger Live de desktop.",
     "add" : {
       "title" : "Com sua Ledger",
-      "description" : "Criar ou importar ativos com sua Ledger"
+      "description" : "Crie ou importe ativos com sua Ledger"
     },
     "import" : {
       "title" : "Importar do desktop",
-      "description" : "Importar ativos do Ledger Live Desktop"
+      "description" : "Importe ativos do Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -1885,7 +1912,7 @@
         "title" : "Importar do desktop",
         "descTop" : {
           "line1" : "No Ledger Live desktop, vá para:",
-          "line2" : "Configurações > Contas > Exportar contas > Exportar"
+          "line2" : "Configurações > Contas > Exportar Contas > Exportar"
         },
         "descBottom" : "Abra o Ledger Live desktop e escaneie o QR code"
       },
@@ -2274,7 +2301,7 @@
       "noAccount" : "Nenhuma conta encontrada",
       "address" : "Endereço para conta",
       "copyAddress" : "Copiar",
-      "shareAddress" : "Endereço de compartilhamento",
+      "shareAddress" : "Compartilhar Endereço",
       "addressCopied" : "Copiado",
       "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot",
       "selectCrypto" : {
@@ -2308,12 +2335,12 @@
         "addressVerified" : "Endereço Verificado",
         "verifyAddress" : "Clique aqui para verificar seu endereço",
         "adviceVerify" : "Recomendamos que você sempre verifique seu endereço com seu dispositivo Ledger",
-        "sendWarning" : "Enviar somente {{currencyName}} ({{currencyTicker}}) para este endereço. O envio de quaisquer outras moedas pode resultar em perda permanente."
+        "sendWarning" : "Envie somente {{currencyName}} ({{currencyTicker}}) para este endereço. Enviar qualquer outra moeda pode resultar em perda permanente."
       },
       "securityVerify" : {
         "title" : "Por segurança, recomendamos verificar este endereço com seu dispositivo Ledger.",
-        "subtitle1" : "A verificação de seu endereço lhe proporciona segurança. O endereço exibido em seu dispositivo ledger não pode ser comprometido.",
-        "subtitle2" : "Ao verificar o endereço, você poderá confirmar que o endereço mostrado em seu dispositivo é o mesmo que o endereço mostrado no Ledger Live.",
+        "subtitle1" : "Verificar seu endereço lhe dá segurança. O endereço exibido em seu dispositivo Ledger não pode ser comprometido.",
+        "subtitle2" : "Ao verificar o endereço, você poderá confirmar que o endereço exibido em seu dispositivo é o mesmo que o endereço exibido no Ledger Live.",
         "verifyCta" : "Verificar meu endereço",
         "dontVerifyCta" : "Revelar meu endereço sem verificar"
       },
@@ -2663,7 +2690,7 @@
           "label" : "Etapa 3/3",
           "title" : "Saque ativos a qualquer momento.",
           "description" : "Você pode sacar seus ativos e juros recebidos a qualquer momento, parcial ou totalmente, diretamente na sua conta Ledger.",
-          "cta" : "Emprestar Agora"
+          "cta" : "Emprestar agora"
         },
         "title" : "Emprestar Cripto"
       },
@@ -2792,7 +2819,7 @@
       }
     },
     "stepperHeader" : {
-      "selectAccount" : "Conta para debitar",
+      "selectAccount" : "Conta a debitar",
       "recipientAddress" : "Endereço de destino",
       "selectAmount" : "Quantia",
       "summary" : "Resumo",
@@ -3369,7 +3396,7 @@
       "apply" : "Aplicar"
     },
     "sort" : {
-      "title" : "Ordenar",
+      "title" : "Ordem",
       "default" : "Padrão",
       "name_asc" : "Nome A-Z",
       "name_desc" : "Nome Z-A",
@@ -4277,10 +4304,10 @@
     "receive" : "Receber Mais",
     "changeValidator" : "Mudar Validador",
     "endDelegation" : "Encerrar Delegação",
-    "durationForDays0" : "Agora Mesmo",
+    "durationForDays0" : "Agora mesmo",
     "durationForDays" : "Por um dia",
     "durationForDays_plural" : "Por {{count}} dias",
-    "durationDays0" : "Agora Mesmo",
+    "durationDays0" : "Agora mesmo",
     "durationDays" : "1 dia",
     "durationDays_plural" : "{{count}} dias",
     "selectValidatorTitle" : "Selecionar Validador",
@@ -4503,7 +4530,7 @@
       "title" : "Status",
       "ok" : {
         "title" : "O Ledger Live está em pleno funcionamento",
-        "desc" : "<0>Com problemas? Vá à nossa </0><1>página de ajuda</1>"
+        "desc" : "<0>Com problemas? Vá para nossa </0><1>página de ajuda</1>"
       },
       "error" : {
         "title" : "O Ledger Live está enfrentando problemas"
@@ -4552,7 +4579,7 @@
   "market" : {
     "title" : "Mercado",
     "filters" : {
-      "sort" : "Ordenar",
+      "sort" : "Ordem",
       "filter" : "Filtrar",
       "view" : {
         "label" : "Ver",
@@ -4562,13 +4589,13 @@
         "liveCompatible_label" : "Compatível apenas com o Live"
       },
       "order" : {
-        "topGainers" : "Maiores Altas",
-        "market_cap" : "Classificação",
-        "market_cap_asc" : "Classificação (capitalização de mercado) asc.",
-        "market_cap_desc" : "Classificação (capitalização de mercado) desc."
+        "topGainers" : "Maiores altas",
+        "market_cap" : "Ranking",
+        "market_cap_asc" : "Ranking ascendente (cap. de mercado)",
+        "market_cap_desc" : "Ranking descendente (cap. de mercado)"
       },
       "currency" : "Moeda",
-      "time" : "Hora",
+      "time" : "Tempo",
       "apply" : "Aplicar"
     },
     "marketList" : {
@@ -4652,7 +4679,7 @@
       "title" : "Alocação"
     },
     "operations" : {
-      "title" : "Histórico das transações"
+      "title" : "Histórico de transações"
     }
   },
   "hedera" : {

@@ -339,6 +339,15 @@ export const ScreenName = {
   OnboardingModalSyncDesktopInformation:
     "OnboardingModalSyncDesktopInformation",
   OnboardingModalRecoveryPhraseWarning: "OnboardingModalRecoveryPhraseWarning",
+
+  SyncOnboardingCompanion: "SyncOnboardingCompanion",
+  SyncOnboardingCompletion: "SyncOnboardingCompletion",
+  DeviceModelSelection: "DeviceModelSelection",
+  BleDevicesScanning: "BleDevicesScanning",
+  BleDevicePairing: "BleDevicePairing",
+
+  BleDevicePairingFlow: "BleDevicePairingFlow",
+
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
   PlatformStartExchange: "PlatformStartExchange",
@@ -364,6 +373,8 @@ export const ScreenName = {
   // solana
   SolanaEditMemo: "SolanaEditMemo",
   SolanaEditAmount: "SolanaEditAmount",
+  SolanaDelegationStarted: "SolanaDelegationStarted",
+
   PostBuyDeviceScreen: "PostBuyDeviceScreen",
   PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
   NoDeviceWallScreen: "NoDeviceWallScreen",

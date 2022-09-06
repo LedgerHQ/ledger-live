@@ -8,7 +8,7 @@ import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import LText from "./LText";
 import Animation from "./Animation";
-import getDeviceAnimation from "./DeviceAction/getDeviceAnimation";
+import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
 
 type Props = {
   device: Device;

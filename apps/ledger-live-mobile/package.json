@@ -75,6 +75,7 @@
     "@ledgerhq/react-native-hw-transport-ble": "workspace:^",
     "@ledgerhq/react-native-passcode-auth": "^2.1.0",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/reactnative-identicon": "2.2.1",
     "@polkadot/x-randomvalues": "9.1.1",
