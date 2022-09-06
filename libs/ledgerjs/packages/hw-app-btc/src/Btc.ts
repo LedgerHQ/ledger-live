@@ -13,6 +13,7 @@ import type { Transaction } from "./types";
 export type { AddressFormat };
 import { signP2SHTransaction } from "./signP2SHTransaction";
 import { signMessage } from "./signMessage";
+import { getAppAndVersion } from "./getAppAndVersion";
 
 /**
  * Bitcoin API.
@@ -25,6 +26,7 @@ import { signMessage } from "./signMessage";
 export default class Btc {
   private _transport: Transport;
   private _lazyImpl: BtcOld | BtcNew;
+  private _needGetAppversion: boolean;
 
   constructor(transport: Transport, scrambleKey = "BTC", currency = "bitcoin") {
     this._transport = transport;
@@ -47,6 +49,7 @@ export default class Btc {
     } else {
       this._lazyImpl = new BtcOld(this._transport);
     }
+    this._needGetAppversion = true;
   }
 
   /**
@@ -57,7 +60,7 @@ export default class Btc {
    * @returns XPUB of the account
    */
   getWalletXpub(arg: { path: string; xpubVersion: number }): Promise<string> {
-    return this._lazyImpl.getWalletXpub(arg);
+    return this.getAppVersion().then(() => this._lazyImpl.getWalletXpub(arg));
   }
 
   /**
@@ -106,7 +109,9 @@ export default class Btc {
     } else {
       options = opts || {};
     }
-    return this._lazyImpl.getWalletPublicKey(path, options);
+    return this.getAppVersion().then(() =>
+      this._lazyImpl.getWalletPublicKey(path, options)
+    );
   }
 
   /**
@@ -171,7 +176,9 @@ export default class Btc {
         "@ledgerhq/hw-app-btc: createPaymentTransactionNew multi argument signature is deprecated. please switch to named parameters."
       );
     }
-    return this._lazyImpl.createPaymentTransactionNew(arg);
+    return this.getAppVersion().then(() =>
+      this._lazyImpl.createPaymentTransactionNew(arg)
+    );
   }
 
   /**
@@ -251,5 +258,11 @@ export default class Btc {
       transaction,
       additionals
     );
+  }
+  private async getAppVersion(): Promise<void> {
+    if (this._needGetAppversion) {
+      await getAppAndVersion(this._transport);
+      this._needGetAppversion = false;
+    }
   }
 }
