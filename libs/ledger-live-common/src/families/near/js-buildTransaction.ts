@@ -20,6 +20,7 @@ export const buildTransaction = async (
   const currency = getCryptoCurrencyById("near");
   const formattedAmount = formatCurrencyUnit(currency.units[0], t.amount, {
     disableRounding: true,
+    showAllDigits: true,
   });
   const parsedNearAmount =
     nearAPI.utils.format.parseNearAmount(formattedAmount);
