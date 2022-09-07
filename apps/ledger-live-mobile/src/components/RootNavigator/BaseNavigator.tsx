@@ -145,7 +145,7 @@ export default function BaseNavigator() {
           headerMode: undefined,
           cardStyle: { opacity: 1 },
           gestureEnabled: true,
-          headerTitle: undefined,
+          headerTitle: "",
           headerRight: () => null,
           headerBackTitleVisible: false,
           title: "",

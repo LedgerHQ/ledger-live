@@ -425,40 +425,10 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
     () => ({
       ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
       enabled: wcContext.initDone && !wcContext.session.session,
-      subscribe(listener) {
-        const sub = Linking.addEventListener("url", ({ url }) => {
-          // Prevent default deeplink if invalid wallet connect link
-          if (isInvalidWalletConnectLink(url)) {
-            return;
-          }
-
-          // Prevent default deeplink if we're already in a wallet connect route.
-          const route = navigationRef.current?.getCurrentRoute();
-          if (
-            isWalletConnectLink(url) &&
-            route &&
-            [
-              ScreenName.WalletConnectScan,
-              ScreenName.WalletConnectDeeplinkingSelectAccount,
-              ScreenName.WalletConnectConnect,
-            ].includes(route.name)
-          ) {
-            const uri = isWalletConnectUrl(url)
-              ? url
-              : // we know uri exists in the searchParams because we check it in isValidWalletConnectUrl
-                new URL(url).searchParams.get("uri")!;
-            dispatch(setWallectConnectUri(uri));
-            return;
-          }
-
-          listener(getProxyURL(url));
-        });
-        // Clean up the event listeners
-        return () => {
-          sub.remove();
-        };
-      },
-      getStateFromPath: (path, config) => {
+      getStateFromPath: (
+        path: string,
+        config: Parameters<typeof getStateFromPath>[1],
+      ) => {
         const url = new URL(`ledgerlive://${path}`);
         const { hostname, pathname } = url;
         const platform = pathname.split("/")[1];

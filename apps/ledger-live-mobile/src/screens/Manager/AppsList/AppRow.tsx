@@ -19,8 +19,7 @@ type Props = {
   isInstalledView: boolean;
   setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  setStorageWarning: () => void;
-  managerTabs: any;
+  setStorageWarning: (value: string | null) => void;
   optimisticState: State;
 };
 

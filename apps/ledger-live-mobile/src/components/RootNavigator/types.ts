@@ -4,14 +4,18 @@ import type {
 } from "@react-navigation/native";
 import type { StackScreenProps } from "@react-navigation/stack";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-
-import { Device } from "@ledgerhq/types-devices";
-import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { DeviceModelId } from "@ledgerhq/devices";
-import { Result as ImportAccountsResult } from "@ledgerhq/live-common/cross";
+import type { ListAppsResult } from "@ledgerhq/live-common/lib/apps/types";
+import type { Device } from "@ledgerhq/types-devices";
+import type { Account, DeviceInfo, ProtoNFT } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import type { DeviceModelId } from "@ledgerhq/devices";
+import type { Result as ImportAccountsResult } from "@ledgerhq/live-common/cross";
 import { NavigatorName, ScreenName } from "../../const";
-import { BleDevicePairingFlowParams } from "../../screens/BleDevicePairingFlow/index";
+import type { ManagerTab } from "../../const/manager";
+import type { BleDevicePairingFlowParams } from "../../screens/BleDevicePairingFlow/index";
 
 export type AccountSettingsNavigatorParamList = {
   [ScreenName.AccountSettingsMain]: {
@@ -182,8 +186,38 @@ export type MainNavigatorParamList = {
   [NavigatorName.Portfolio]: NavigatorScreenParams<PortfolioNavigatorStackParamList>;
   [NavigatorName.Market]: NavigatorScreenParams<MarketNavigatorStackParamList>;
   [ScreenName.Transfer]: undefined;
-  [NavigatorName.Discover]: undefined;
-  [NavigatorName.Manager]: undefined;
+  [NavigatorName.Discover]: NavigatorScreenParams<DiscoverNavigatorStackParamList>;
+  [NavigatorName.Manager]: NavigatorScreenParams<ManagerNavigatorStackParamList>;
+};
+
+export type DiscoverNavigatorStackParamList = {
+  [ScreenName.DiscoverScreen]: undefined;
+  [ScreenName.PlatformCatalog]: {
+    defaultAccount?: AccountLike | null;
+    defaultParentAccount?: Account | null;
+    platform?: string | null;
+  };
+};
+
+export type ManagerNavigatorStackParamList = {
+  [ScreenName.Manager]: {
+    searchQuery?: string;
+    tab?: ManagerTab;
+    installApp?: string;
+    firmwareUpdate?: boolean;
+    device?: Device;
+    appsToRestore?: string[];
+  };
+  [ScreenName.ManagerMain]: {
+    device: Device;
+    deviceInfo: DeviceInfo;
+    result: ListAppsResult;
+    searchQuery?: string;
+    firmwareUpdate?: boolean;
+    appsToRestore?: string[];
+    updateModalOpened?: boolean;
+    tab: ManagerTab;
+  };
 };
 
 export type BaseNavigatorStackParamList = {

@@ -37,9 +37,9 @@ type Props = {
   dispatch: (_: Action) => void;
   setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
   setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
-  setStorageWarning: () => void;
+  setStorageWarning: (value: string | null) => void;
   deviceId: string;
-  initialDeviceName: string;
+  initialDeviceName?: string;
   navigation: any;
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
