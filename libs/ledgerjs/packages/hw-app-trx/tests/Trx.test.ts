@@ -107,3 +107,23 @@ test("getSharedKey", async () => {
     "04f3087b3d8f99fff119458a5e66f47a391af594e06e4f23e7849347125648a4c93369c0e4a5cce4aabec92f0abf90c94ca33cdeef905d848dfba5e12a8d77137a"
   );
 });
+
+test("signEIP712HashedMessage", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+    => e00c000055058000002c8000003c800000008000000000000000c24f499b8c957196651b13edd64aaccc3980009674b2aea0966c8a56ba81278e9d96be8a7cca396e711a3ba356bd9878df02a726d753ddb6cda3c507d888bc77
+    <= 1c47937d12e45197f2f4c47fe34e88944ee10c8e9ee1faf7aa4658f5aab8e0d2bb026c0d81290478fbc45d5bc1308c4b7119ab43d986805413e7f85da5d94597e79000
+    `)
+  );
+  const trx = new Trx(transport);
+  const result = await trx.signEIP712HashedMessage(
+    "44'/60'/0'/0'/0",
+    Buffer.from("c24f499b8c957196651b13edd64aaccc3980009674b2aea0966c8a56ba81278e", "hex").toString("hex"),
+    Buffer.from("9d96be8a7cca396e711a3ba356bd9878df02a726d753ddb6cda3c507d888bc77", "hex").toString("hex")
+  );
+  expect(result).toEqual({
+    r: "47937d12e45197f2f4c47fe34e88944ee10c8e9ee1faf7aa4658f5aab8e0d2bb",
+    s: "026c0d81290478fbc45d5bc1308c4b7119ab43d986805413e7f85da5d94597e7",
+    v: 28
+  });
+});

@@ -15,9 +15,17 @@
  *  limitations under the License.
  ********************************************************************************/
 // FIXME drop:
-import { splitPath, foreach, decodeVarint } from "./utils";
+import { splitPath, foreach, decodeVarint, hexBuffer } from "./utils";
 //import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
+import {
+  signEIP712HashedMessage,
+  signEIP712Message,
+  EIP712Message,
+  isEIP712Message,
+} from "./modules/EIP712";
+
+export { isEIP712Message };
 
 const remapTransactionRelatedErrors = (e) => {
   if (e && e.statusCode === 0x6a80) {
@@ -334,6 +342,50 @@ export default class Trx {
     }).then(() => {
       return response.slice(0, 65).toString("hex");
     });
+  }
+
+  /**
+  * Sign a prepared message following web3.eth.signTypedData specification. The host computes the domain separator and hashStruct(message)
+  * @example
+  eth.signEIP712HashedMessage("44'/60'/0'/0/0", Buffer.from("0101010101010101010101010101010101010101010101010101010101010101").toString("hex"), Buffer.from("0202020202020202020202020202020202020202020202020202020202020202").toString("hex")).then(result => {
+  var v = result['v'] - 27;
+  v = v.toString(16);
+  if (v.length < 2) {
+    v = "0" + v;
+  }
+  console.log("Signature 0x" + result['r'] + result['s'] + v);
+})
+   */
+  signEIP712HashedMessage(
+    path: string,
+    domainSeparatorHex: string,
+    hashStructMessageHex: string
+  ): Promise<{
+    v: number,
+    s: string,
+    r: string,
+  }> {
+    const domainSeparator = hexBuffer(domainSeparatorHex);
+    const hashStruct = hexBuffer(hashStructMessageHex);
+    let paths = splitPath(path);
+    let buffer = Buffer.alloc(1 + paths.length * 4 + 32 + 32, 0);
+    let offset = 0;
+    buffer[0] = paths.length;
+    paths.forEach((element, index) => {
+      buffer.writeUInt32BE(element, 1 + 4 * index);
+    });
+    offset = 1 + 4 * paths.length;
+    domainSeparator.copy(buffer, offset);
+    offset += 32;
+    hashStruct.copy(buffer, offset);
+    return this.transport
+      .send(0xe0, 0x0c, 0x00, 0x00, buffer)
+      .then((response) => {
+        const v = response[0];
+        const r = response.slice(1, 1 + 32).toString("hex");
+        const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+        return { v, r, s };
+      });
   }
 
   /**

@@ -130,3 +130,20 @@ export function decodeVarint(stream: Buffer, index: number): DecodeResult {
 
   throw new Error("Too many bytes when decoding varint.");
 }
+
+export function hexBuffer(str: string): Buffer {
+  return Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex");
+}
+
+/**
+ * @ignore for the README
+ *
+ * Helper to convert an integer as a hexadecimal string with the right amount of digits
+ * to respect the number of bytes given as parameter
+ *
+ * @param int Integer
+ * @param bytes Number of bytes it should be represented as (1 byte = 2 caraters)
+ * @returns The given integer as an hexa string padded with the right number of 0
+ */
+export const intAsHexBytes = (int: number, bytes: number): string =>
+  int.toString(16).padStart(2 * bytes, "0");

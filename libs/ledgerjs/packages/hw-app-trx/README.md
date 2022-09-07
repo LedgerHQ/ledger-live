@@ -26,26 +26,33 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
-*   [Trx](#trx)
-    *   [Parameters](#parameters)
-    *   [Examples](#examples)
-    *   [getAddress](#getaddress)
-        *   [Parameters](#parameters-1)
-        *   [Examples](#examples-1)
-    *   [signTransaction](#signtransaction)
-        *   [Parameters](#parameters-2)
-        *   [Examples](#examples-2)
-    *   [signTransactionHash](#signtransactionhash)
-        *   [Parameters](#parameters-3)
-        *   [Examples](#examples-3)
-    *   [getAppConfiguration](#getappconfiguration)
-        *   [Examples](#examples-4)
-    *   [signPersonalMessage](#signpersonalmessage)
-        *   [Parameters](#parameters-4)
-        *   [Examples](#examples-5)
-    *   [getECDHPairKey](#getecdhpairkey)
-        *   [Parameters](#parameters-5)
-        *   [Examples](#examples-6)
+- [@ledgerhq/hw-app-trx](#ledgerhqhw-app-trx)
+- [Are you adding Ledger support to your software wallet?](#are-you-adding-ledger-support-to-your-software-wallet)
+- [API](#api)
+    - [Table of Contents](#table-of-contents)
+  - [Trx](#trx)
+    - [Parameters](#parameters)
+    - [Examples](#examples)
+    - [getAddress](#getaddress)
+      - [Parameters](#parameters-1)
+      - [Examples](#examples-1)
+    - [signTransaction](#signtransaction)
+      - [Parameters](#parameters-2)
+      - [Examples](#examples-2)
+    - [signTransactionHash](#signtransactionhash)
+      - [Parameters](#parameters-3)
+      - [Examples](#examples-3)
+    - [getAppConfiguration](#getappconfiguration)
+      - [Examples](#examples-4)
+    - [signPersonalMessage](#signpersonalmessage)
+      - [Parameters](#parameters-4)
+      - [Examples](#examples-5)
+    - [signEIP712HashedMessage](#signeip712hashedmessage)
+      - [Parameters](#parameters-5)
+      - [Examples](#examples-6)
+    - [getECDHPairKey](#getecdhpairkey)
+      - [Parameters](#parameters-6)
+      - [Examples](#examples-7)
 
 ### Trx
 
@@ -153,6 +160,31 @@ const signature = await tron.signPersonalMessage("44'/195'/0'/0/0", "43727970746
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** a signature as hex string
+
+#### signEIP712HashedMessage
+
+Sign a prepared message following web3.tron.signTypedData specification. The host computes the domain separator and hashStruct(message)
+
+##### Parameters
+
+-   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `domainSeparatorHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `hashStructMessageHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+
+##### Examples
+
+```javascript
+tron.signEIP712HashedMessage("44'/60'/0'/0/0", Buffer.from("0101010101010101010101010101010101010101010101010101010101010101").toString("hex"), Buffer.from("0202020202020202020202020202020202020202020202020202020202020202").toString("hex")).then(result => {
+var v = result['v'] - 27;
+v = v.toString(16);
+if (v.length < 2) {
+v = "0" + v;
+}
+console.log("Signature 0x" + result['r'] + result['s'] + v);
+})
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
 #### getECDHPairKey
 
