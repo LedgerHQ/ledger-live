@@ -224,7 +224,7 @@ const EIP712SendStructImplem = async (
  * Sign an EIP-721 formatted message following the specification here:
  * https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
  * @example
-  eth.signEIP721Message("44'/60'/0'/0/0", {
+  trx.signEIP721Message("44'/60'/0'/0/0", {
     domain: {
       chainId: 69,
       name: "Da Domain",
@@ -359,9 +359,9 @@ export const signEIP712Message = async (
 
 /**
  * @ignore for the README
- * Sign a prepared message following web3.eth.signTypedData specification. The host computes the domain separator and hashStruct(message)
+ * Sign a prepared message following web3.trx.signTypedData specification. The host computes the domain separator and hashStruct(message)
  * @example
- eth.signEIP712HashedMessage("44'/60'/0'/0/0", Buffer.from("0101010101010101010101010101010101010101010101010101010101010101").toString("hex"), Buffer.from("0202020202020202020202020202020202020202020202020202020202020202").toString("hex")).then(result => {
+ trx.signEIP712HashedMessage("44'/60'/0'/0/0", Buffer.from("0101010101010101010101010101010101010101010101010101010101010101").toString("hex"), Buffer.from("0202020202020202020202020202020202020202020202020202020202020202").toString("hex")).then(result => {
  var v = result['v'] - 27;
  v = v.toString(16);
  if (v.length < 2) {
