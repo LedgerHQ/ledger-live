@@ -24,7 +24,7 @@ type Props = {
   route: { params: RouteParams };
 };
 
-export default function DelegationStarted({ navigation, route }: Props) {
+export default function VoteStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const onNext = useCallback(() => {

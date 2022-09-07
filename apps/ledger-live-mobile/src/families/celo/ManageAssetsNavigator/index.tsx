@@ -10,8 +10,6 @@ import {
   hasRevokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName, NavigatorName } from "../../../const";
-import Button from "../../../components/Button";
 
 function ManageAssetsNavigator() {
   const { t } = useTranslation();
@@ -79,14 +77,13 @@ function ManageAssetsNavigator() {
     });
   }, [onNavigate]);
 
-  // const onWithdraw = useCallback(() => {
-  //   onNavigate({
-  //     route: NavigatorName.CosmosDelegationFlow,
-  //     screen: ScreenName.CosmosDelegationStarted,
-  //     params: {},
-  //   });
-
-  // }, [onNavigate]);
+  const onWithdraw = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.CeloWithdrawFlow,
+      screen: ScreenName.CeloWithdrawAmount,
+      params: {},
+    });
+  }, [onNavigate]);
 
   const onVote = useCallback(() => {
     onNavigate({
@@ -113,6 +110,8 @@ function ManageAssetsNavigator() {
   const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
   const activatingEnabled = hasActivatableVotes(account as CeloAccount);
   const revokingEnabled = hasRevokableVotes(account as CeloAccount);
+  const withdrawEnabled = availablePendingWithdrawals(account as CeloAccount)
+    .length;
 
   return (
     <SafeAreaView
@@ -148,11 +147,11 @@ function ManageAssetsNavigator() {
         />
         <Button
           event="Celo Withdraw Click"
-          onPress={onLock}
+          onPress={onWithdraw}
           type="main"
           title={t("celo.manage.withdraw.title")}
           containerStyle={styles.button}
-          disabled={true}
+          disabled={!withdrawEnabled}
         />
         <Button
           event="Celo Vote Click"

@@ -104,10 +104,7 @@ function Delegations({ account }: Props) {
   const onWithdraw = useCallback(() => {
     onNavigate({
       route: NavigatorName.CeloWithdrawFlow,
-      screen: ScreenName.CeloWithdrawSummary,
-      params: {
-        accountId: account.id,
-      },
+      screen: ScreenName.CeloWithdrawAmount,
     });
   }, [onNavigate, vote, account]);
 
