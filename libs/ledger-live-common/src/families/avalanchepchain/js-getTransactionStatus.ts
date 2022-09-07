@@ -9,8 +9,7 @@ import {
 import { AvalancheInvalidDateTimeError } from "./errors";
 import { Account, TransactionStatus } from "../../types";
 import { Transaction } from "./types";
-import { AVAX_MINIMUM_STAKE_AMOUNT } from "./utils";
-import { FIVE_MINUTES, TWO_WEEKS } from "./utils";
+import { FIVE_MINUTES, TWO_WEEKS, AVAX_MINIMUM_STAKE_AMOUNT } from "./utils";
 
 const getTransactionStatus = async (
   account: Account,
@@ -32,9 +31,7 @@ const getTransactionStatus = async (
 
   if (amount.lte(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
-  }
-
-  if (amount.lt(AVAX_MINIMUM_STAKE_AMOUNT)) {
+  } else if (amount.lt(AVAX_MINIMUM_STAKE_AMOUNT)) {
     errors.amount = new NotEnoughBalanceToDelegate();
   }
 
