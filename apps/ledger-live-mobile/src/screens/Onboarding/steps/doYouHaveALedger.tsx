@@ -10,8 +10,7 @@ import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 import { TrackScreen, updateIdentify } from "../../../analytics";
 import { setFirstConnectionHasDevice } from "../../../actions/settings";
-// eslint-disable-next-line import/no-cycle
-import { AnalyticsContext } from "../../../components/RootNavigator";
+import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const RenderVertical = require("../../../../assets/images/devices/3DRenderVertical.png");

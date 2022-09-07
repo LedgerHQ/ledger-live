@@ -5,6 +5,8 @@ import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type {
   NotificationsPayload,
   NotificationsSetCurrentRouteNamePayload,
+  NotificationsSetDataOfUserPayload,
+  NotificationsSetEventTriggeredPayload,
   NotificationsSetModalLockedPayload,
   NotificationsSetModalOpenPayload,
   NotificationsSetModalTypePayload,
@@ -61,14 +63,14 @@ const handlers = {
     state: NotificationsState,
     {
       payload: { eventTriggered },
-    }: { payload: { eventTriggered?: EventTrigger } },
+    }: Action<NotificationsSetEventTriggeredPayload>,
   ) => ({
     ...state,
     eventTriggered,
   }),
   [NotificationsActionTypes.NOTIFICATIONS_SET_DATA_OF_USER]: (
     state: NotificationsState,
-    { payload: { dataOfUser } }: { payload: { dataOfUser?: DataOfUser } },
+    { payload: { dataOfUser } }: Action<NotificationsSetDataOfUserPayload>,
   ) => ({
     ...state,
     dataOfUser,

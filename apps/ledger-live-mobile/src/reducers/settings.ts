@@ -1,4 +1,5 @@
 import { handleActions } from "redux-actions";
+import type { Action } from "redux-actions";
 import merge from "lodash/merge";
 import {
   findCurrencyByTicker,
@@ -10,18 +11,57 @@ import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { DeviceModelInfo, AccountLike } from "@ledgerhq/types-live";
-import type {
-  CurrencySettings,
-  Privacy,
-  SettingsState,
-  State,
-} from "../types/state";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type { CurrencySettings, SettingsState, State } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 // eslint-disable-next-line import/no-cycle
 import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
+import type {
+  SettingsAcceptSwapProviderPayload,
+  SettingsAddStarredMarketcoinsPayload,
+  SettingsBlacklistTokenPayload,
+  SettingsDismissBannerPayload,
+  SettingsSetSwapKycPayload,
+  SettingsHideEmptyTokenAccountsPayload,
+  SettingsHideNftCollectionPayload,
+  SettingsImportDesktopPayload,
+  SettingsImportPayload,
+  SettingsInstallAppFirstTimePayload,
+  SettingsLastSeenDeviceInfoPayload,
+  SettingsPayload,
+  SettingsRemoveStarredMarketcoinsPayload,
+  SettingsSetAnalyticsPayload,
+  SettingsSetAvailableUpdatePayload,
+  SettingsSetCarouselVisibilityPayload,
+  SettingsSetCountervaluePayload,
+  SettingsSetDiscreetModePayload,
+  SettingsSetExperimentalUsbSupportPayload,
+  SettingsSetFirstConnectionHasDevicePayload,
+  SettingsSetHasOrderedNanoPayload,
+  SettingsSetLanguagePayload,
+  SettingsSetLastConnectedDevicePayload,
+  SettingsSetLocalePayload,
+  SettingsSetMarketCounterCurrencyPayload,
+  SettingsSetMarketFilterByStarredAccountsPayload,
+  SettingsSetMarketRequestParamsPayload,
+  SettingsSetNotificationsPayload,
+  SettingsSetOrderAccountsPayload,
+  SettingsSetOsThemePayload,
+  SettingsSetPairsPayload,
+  SettingsSetPrivacyBiometricsPayload,
+  SettingsSetPrivacyPayload,
+  SettingsSetReadOnlyModePayload,
+  SettingsSetReportErrorsPayload,
+  SettingsSetSelectedTimeRangePayload,
+  SettingsSetSensitiveAnalyticsPayload,
+  SettingsSetThemePayload,
+  SettingsShowTokenPayload,
+  SettingsUnhideNftCollectionPayload,
+  SettingsUpdateCurrencyPayload,
+  SettingsSetSwapSelectableCurrenciesPayload,
+} from "../actions/types";
+import { SettingsActionTypes } from "../actions/types";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -109,25 +149,19 @@ const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
   `${from.ticker}_${to.ticker}`;
 
 const handlers = {
-  SETTINGS_IMPORT: (
+  [SettingsActionTypes.SETTINGS_IMPORT]: (
     state: SettingsState,
-    { settings }: { settings: Partial<SettingsState> },
+    { payload }: Action<SettingsImportPayload>,
   ) => ({
     ...state,
-    ...settings,
+    ...payload,
   }),
-  SETTINGS_IMPORT_DESKTOP: (
+
+  [SettingsActionTypes.SETTINGS_IMPORT_DESKTOP]: (
     state: SettingsState,
-    {
-      settings,
-    }: {
-      settings: {
-        developerModeEnabled: boolean;
-        currenciesSettings: Record<string, CurrencySettings>;
-      };
-    },
+    { payload }: Action<SettingsImportDesktopPayload>,
   ) => {
-    const { developerModeEnabled, ...rest } = settings;
+    const { developerModeEnabled, ...rest } = payload;
     if (developerModeEnabled !== undefined)
       setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
     return {
@@ -135,19 +169,14 @@ const handlers = {
       ...rest,
       currenciesSettings: merge(
         state.currenciesSettings,
-        settings.currenciesSettings,
+        payload.currenciesSettings,
       ),
     };
   },
-  UPDATE_CURRENCY_SETTINGS: (
+
+  [SettingsActionTypes.UPDATE_CURRENCY_SETTINGS]: (
     { currenciesSettings, ...state }: SettingsState,
-    {
-      ticker,
-      patch,
-    }: {
-      ticker: string;
-      patch: Partial<CurrencySettings>;
-    },
+    { payload: { ticker, patch } }: Action<SettingsUpdateCurrencyPayload>,
   ) => ({
     ...state,
     currenciesSettings: {
@@ -155,58 +184,68 @@ const handlers = {
       [ticker]: { ...currenciesSettings[ticker], ...patch },
     },
   }),
-  SETTINGS_SET_PRIVACY: (
+
+  [SettingsActionTypes.SETTINGS_SET_PRIVACY]: (
     state: SettingsState,
-    { privacy }: { privacy: Privacy },
+    { payload: { privacy } }: Action<SettingsSetPrivacyPayload>,
   ) => ({
     ...state,
-    privacy,
+    privacy: {
+      ...state.privacy,
+      ...privacy,
+    },
   }),
-  SETTINGS_SET_PRIVACY_BIOMETRICS: (
+
+  [SettingsActionTypes.SETTINGS_SET_PRIVACY_BIOMETRICS]: (
     state: SettingsState,
-    { enabled }: { enabled: boolean },
+    {
+      payload: { biometricsEnabled },
+    }: Action<SettingsSetPrivacyBiometricsPayload>,
   ) => ({
     ...state,
-    privacy: { ...state.privacy, biometricsEnabled: enabled },
+    privacy: { ...state.privacy, biometricsEnabled },
   }),
-  SETTINGS_DISABLE_PRIVACY: (state: SettingsState) => ({
+
+  [SettingsActionTypes.SETTINGS_DISABLE_PRIVACY]: (state: SettingsState) => ({
     ...state,
     privacy: null,
   }),
-  SETTINGS_SET_REPORT_ERRORS: (
+
+  [SettingsActionTypes.SETTINGS_SET_REPORT_ERRORS]: (
     state: SettingsState,
-    { reportErrorsEnabled }: { reportErrorsEnabled: boolean },
+    {
+      payload: { reportErrorsEnabled },
+    }: Action<SettingsSetReportErrorsPayload>,
   ) => ({ ...state, reportErrorsEnabled }),
-  SETTINGS_SET_ANALYTICS: (
+
+  [SettingsActionTypes.SETTINGS_SET_ANALYTICS]: (
     state: SettingsState,
-    { analyticsEnabled }: { analyticsEnabled: boolean },
+    { payload: { analyticsEnabled } }: Action<SettingsSetAnalyticsPayload>,
   ) => ({
     ...state,
     analyticsEnabled,
   }),
-  SETTINGS_SET_COUNTERVALUE: (
+
+  [SettingsActionTypes.SETTINGS_SET_COUNTERVALUE]: (
     state: SettingsState,
-    { counterValue }: { counterValue: string },
+    { payload: { counterValue } }: Action<SettingsSetCountervaluePayload>,
   ) => ({
     ...state,
     counterValue,
     counterValueExchange: null, // also reset the exchange
   }),
-  SETTINGS_SET_ORDER_ACCOUNTS: (state: SettingsState, { orderAccounts }) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_ORDER_ACCOUNTS]: (
+    state: SettingsState,
+    { payload: { orderAccounts } }: Action<SettingsSetOrderAccountsPayload>,
+  ) => ({
     ...state,
     orderAccounts,
   }),
-  SETTINGS_SET_PAIRS: (
+
+  [SettingsActionTypes.SETTINGS_SET_PAIRS]: (
     state: SettingsState,
-    {
-      pairs,
-    }: {
-      pairs: Array<{
-        from: Currency;
-        to: Currency;
-        exchange: any;
-      }>;
-    },
+    { payload: { pairs } }: Action<SettingsSetPairsPayload>,
   ) => {
     const copy = { ...state };
     copy.pairExchanges = { ...copy.pairExchanges };
@@ -217,100 +256,192 @@ const handlers = {
 
     return copy;
   },
-  SETTINGS_SET_SELECTED_TIME_RANGE: (
+
+  [SettingsActionTypes.SETTINGS_SET_SELECTED_TIME_RANGE]: (
     state: SettingsState,
-    { payload: selectedTimeRange },
+    {
+      payload: { selectedTimeRange },
+    }: Action<SettingsSetSelectedTimeRangePayload>,
   ) => ({ ...state, selectedTimeRange }),
-  SETTINGS_COMPLETE_ONBOARDING: (state: SettingsState) => ({
+
+  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (
+    state: SettingsState,
+  ) => ({
     ...state,
     hasCompletedOnboarding: true,
   }),
-  SETTINGS_INSTALL_APP_FIRST_TIME: (state: SettingsState, action) => ({
+
+  [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (
+    state: SettingsState,
+    {
+      payload: { hasInstalledAnyApp },
+    }: Action<SettingsInstallAppFirstTimePayload>,
+  ) => ({
     ...state,
-    hasInstalledAnyApp: action.hasInstalledAnyApp,
+    hasInstalledAnyApp,
   }),
-  SETTINGS_SET_READONLY_MODE: (state: SettingsState, action) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_READONLY_MODE]: (
+    state: SettingsState,
+    {
+      payload: { readOnlyModeEnabled },
+    }: Action<SettingsSetReadOnlyModePayload>,
+  ) => ({
     ...state,
-    readOnlyModeEnabled: action.enabled,
+    readOnlyModeEnabled,
   }),
-  SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT: (state: SettingsState, action) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT]: (
+    state: SettingsState,
+    {
+      payload: { experimentalUSBEnabled },
+    }: Action<SettingsSetExperimentalUsbSupportPayload>,
+  ) => ({
     ...state,
-    experimentalUSBEnabled: action.enabled,
+    experimentalUSBEnabled,
   }),
-  SETTINGS_SWITCH_COUNTERVALUE_FIRST: (state: SettingsState) => ({
+
+  [SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST]: (
+    state: SettingsState,
+  ) => ({
     ...state,
     graphCountervalueFirst: !state.graphCountervalueFirst,
   }),
-  SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (
+
+  [SettingsActionTypes.SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS]: (
     state: SettingsState,
-    { hideEmptyTokenAccounts }: { hideEmptyTokenAccounts: boolean },
+    {
+      payload: { hideEmptyTokenAccounts },
+    }: Action<SettingsHideEmptyTokenAccountsPayload>,
   ) => ({
     ...state,
     hideEmptyTokenAccounts,
   }),
-  SHOW_TOKEN: (
+
+  [SettingsActionTypes.SHOW_TOKEN]: (
     state: SettingsState,
-    { payload: tokenId }: { payload: string },
+    { payload: { tokenId } }: Action<SettingsShowTokenPayload>,
   ) => {
     const ids = state.blacklistedTokenIds;
     return { ...state, blacklistedTokenIds: ids.filter(id => id !== tokenId) };
   },
-  BLACKLIST_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+
+  [SettingsActionTypes.BLACKLIST_TOKEN]: (
+    state: SettingsState,
+    { payload: { tokenId } }: Action<SettingsBlacklistTokenPayload>,
+  ) => {
     const ids = state.blacklistedTokenIds;
     return { ...state, blacklistedTokenIds: [...ids, tokenId] };
   },
-  HIDE_NFT_COLLECTION: (state: SettingsState, { payload: collectionId }) => {
+
+  [SettingsActionTypes.HIDE_NFT_COLLECTION]: (
+    state: SettingsState,
+    { payload: { collectionId } }: Action<SettingsHideNftCollectionPayload>,
+  ) => {
     const ids = state.hiddenNftCollections;
     return { ...state, hiddenNftCollections: [...ids, collectionId] };
   },
-  UNHIDE_NFT_COLLECTION: (state: SettingsState, { payload: collectionId }) => {
+
+  [SettingsActionTypes.UNHIDE_NFT_COLLECTION]: (
+    state: SettingsState,
+    { payload: { collectionId } }: Action<SettingsUnhideNftCollectionPayload>,
+  ) => {
     const ids = state.hiddenNftCollections;
     return {
       ...state,
       hiddenNftCollections: ids.filter(id => id !== collectionId),
     };
   },
-  SETTINGS_DISMISS_BANNER: (state: SettingsState, { payload }) => ({
+
+  [SettingsActionTypes.SETTINGS_DISMISS_BANNER]: (
+    state: SettingsState,
+    { payload: { bannerId } }: Action<SettingsDismissBannerPayload>,
+  ) => ({
     ...state,
-    dismissedBanners: [...state.dismissedBanners, payload],
+    dismissedBanners: [...state.dismissedBanners, bannerId],
   }),
-  SETTINGS_SET_AVAILABLE_UPDATE: (state: SettingsState, action) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_AVAILABLE_UPDATE]: (
+    state: SettingsState,
+    {
+      payload: { hasAvailableUpdate },
+    }: Action<SettingsSetAvailableUpdatePayload>,
+  ) => ({
     ...state,
-    hasAvailableUpdate: action.enabled,
+    hasAvailableUpdate,
   }),
-  DANGEROUSLY_OVERRIDE_STATE: (state: SettingsState): SettingsState => ({
+
+  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
+    state: SettingsState,
+  ): SettingsState => ({
     ...state,
   }),
-  SETTINGS_SET_THEME: (state: SettingsState, { payload: theme }) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_THEME]: (
+    state: SettingsState,
+    { payload: { theme } }: Action<SettingsSetThemePayload>,
+  ) => ({
     ...state,
     theme,
   }),
-  SETTINGS_SET_OS_THEME: (state: SettingsState, { payload: osTheme }) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_OS_THEME]: (
+    state: SettingsState,
+    { payload: { osTheme } }: Action<SettingsSetOsThemePayload>,
+  ) => ({
     ...state,
     osTheme,
   }),
-  SETTINGS_SET_CAROUSEL_VISIBILITY: (state: SettingsState, { payload }) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_CAROUSEL_VISIBILITY]: (
+    state: SettingsState,
+    {
+      payload: { carouselVisibility },
+    }: Action<SettingsSetCarouselVisibilityPayload>,
+  ) => ({
     ...state,
-    carouselVisibility: payload,
+    carouselVisibility,
   }),
-  SETTINGS_SET_DISCREET_MODE: (state: SettingsState, { payload }) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (
+    state: SettingsState,
+    { payload: { discreetMode } }: Action<SettingsSetDiscreetModePayload>,
+  ) => ({
     ...state,
-    discreetMode: payload,
+    discreetMode,
   }),
-  SETTINGS_SET_LANGUAGE: (state: SettingsState, { payload }) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_LANGUAGE]: (
+    state: SettingsState,
+    { payload: { language } }: Action<SettingsSetLanguagePayload>,
+  ) => ({
     ...state,
-    language: payload,
+    language,
     languageIsSetByUser: true,
   }),
-  SETTINGS_SET_LOCALE: (state: SettingsState, { payload }) => ({
+
+  [SettingsActionTypes.SETTINGS_SET_LOCALE]: (
+    state: SettingsState,
+    { payload: { locale } }: Action<SettingsSetLocalePayload>,
+  ) => ({
     ...state,
-    locale: payload,
+    locale,
   }),
-  SET_SWAP_SELECTABLE_CURRENCIES: (state: SettingsState, { payload }) => ({
+
+  [SettingsActionTypes.SET_SWAP_SELECTABLE_CURRENCIES]: (
+    state: SettingsState,
+    {
+      payload: { selectableCurrencies },
+    }: Action<SettingsSetSwapSelectableCurrenciesPayload>,
+  ) => ({
     ...state,
-    swap: { ...state.swap, selectableCurrencies: payload },
+    swap: { ...state.swap, selectableCurrencies },
   }),
-  SET_SWAP_KYC: (state: SettingsState, { payload }) => {
+
+  [SettingsActionTypes.SET_SWAP_KYC]: (
+    state: SettingsState,
+    { payload }: Action<SettingsSetSwapKycPayload>,
+  ) => {
     const { provider, id, status } = payload;
     const KYC = { ...state.swap.KYC };
 
@@ -325,76 +456,135 @@ const handlers = {
 
     return { ...state, swap: { ...state.swap, KYC } };
   },
-  ACCEPT_SWAP_PROVIDER: (state: SettingsState, { payload }) => ({
+
+  [SettingsActionTypes.ACCEPT_SWAP_PROVIDER]: (
+    state: SettingsState,
+    {
+      payload: { acceptedProvider },
+    }: Action<SettingsAcceptSwapProviderPayload>,
+  ) => ({
     ...state,
     swap: {
       ...state.swap,
       acceptedProviders: [
-        ...new Set([...(state.swap?.acceptedProviders || []), payload]),
+        ...new Set([
+          ...(state.swap?.acceptedProviders || []),
+          acceptedProvider,
+        ]),
       ],
     },
   }),
-  LAST_SEEN_DEVICE_INFO: (
+
+  [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (
     state: SettingsState,
-    {
-      payload: dmi,
-    }: {
-      payload: DeviceModelInfo;
-    },
+    { payload: { dmi } }: Action<SettingsLastSeenDeviceInfoPayload>,
   ) => ({
     ...state,
     lastSeenDevice: { ...(state.lastSeenDevice || {}), ...dmi },
   }),
-  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: [...state.starredMarketCoins, payload],
-  }),
-  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
-  }),
-  SET_LAST_CONNECTED_DEVICE: (
+
+  [SettingsActionTypes.ADD_STARRED_MARKET_COINS]: (
     state: SettingsState,
     {
-      payload: lastConnectedDevice,
-    }: {
-      payload: Device;
-    },
-  ) => ({ ...state, lastConnectedDevice }),
-  SET_HAS_ORDERED_NANO: (state, action) => ({
-    ...state,
-    hasOrderedNano: action.enabled,
-  }),
-  SET_MARKET_REQUEST_PARAMS: (state: SettingsState, { payload }) => ({
-    ...state,
-    marketRequestParams: { ...state.marketRequestParams, ...payload },
-  }),
-  SET_MARKET_COUNTER_CURRENCY: (state: SettingsState, { payload }) => ({
-    ...state,
-    marketCounterCurrency: payload,
-  }),
-  SET_MARKET_FILTER_BY_STARRED_ACCOUNTS: (
-    state: SettingsState,
-    { payload },
-  ) => ({ ...state, marketFilterByStarredAccounts: payload }),
-  SET_SENSITIVE_ANALYTICS: (state: SettingsState, action) => ({
-    ...state,
-    sensitiveAnalytics: action.enabled,
-  }),
-  SET_FIRST_CONNECTION_HAS_DEVICE: (
-    state: SettingsState,
-    payload?: boolean,
+      payload: { starredMarketCoin },
+    }: Action<SettingsAddStarredMarketcoinsPayload>,
   ) => ({
     ...state,
-    firstConnectionHasDevice: payload,
+    starredMarketCoins: [...state.starredMarketCoins, starredMarketCoin],
   }),
-  SET_NOTIFICATIONS: (state: SettingsState, { payload }) => ({
+
+  [SettingsActionTypes.REMOVE_STARRED_MARKET_COINS]: (
+    state: SettingsState,
+    {
+      payload: { starredMarketCoin },
+    }: Action<SettingsRemoveStarredMarketcoinsPayload>,
+  ) => ({
     ...state,
-    notifications: { ...state.notifications, ...payload },
+    starredMarketCoins: state.starredMarketCoins.filter(
+      id => id !== starredMarketCoin,
+    ),
+  }),
+
+  [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (
+    state: SettingsState,
+    {
+      payload: { lastConnectedDevice },
+    }: Action<SettingsSetLastConnectedDevicePayload>,
+  ) => ({ ...state, lastConnectedDevice }),
+
+  [SettingsActionTypes.SET_HAS_ORDERED_NANO]: (
+    state: SettingsState,
+    { payload: { hasOrderedNano } }: Action<SettingsSetHasOrderedNanoPayload>,
+  ) => ({
+    ...state,
+    hasOrderedNano,
+  }),
+
+  [SettingsActionTypes.SET_MARKET_REQUEST_PARAMS]: (
+    state: SettingsState,
+    {
+      payload: { marketRequestParams },
+    }: Action<SettingsSetMarketRequestParamsPayload>,
+  ) => ({
+    ...state,
+    marketRequestParams: {
+      ...state.marketRequestParams,
+      ...marketRequestParams,
+    },
+  }),
+
+  [SettingsActionTypes.SET_MARKET_COUNTER_CURRENCY]: (
+    state: SettingsState,
+    {
+      payload: { marketCounterCurrency },
+    }: Action<SettingsSetMarketCounterCurrencyPayload>,
+  ) => ({
+    ...state,
+    marketCounterCurrency,
+  }),
+
+  [SettingsActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS]: (
+    state: SettingsState,
+    {
+      payload: { marketFilterByStarredAccounts },
+    }: Action<SettingsSetMarketFilterByStarredAccountsPayload>,
+  ) => ({ ...state, marketFilterByStarredAccounts }),
+
+  [SettingsActionTypes.SET_SENSITIVE_ANALYTICS]: (
+    state: SettingsState,
+    {
+      payload: { sensitiveAnalytics },
+    }: Action<SettingsSetSensitiveAnalyticsPayload>,
+  ) => ({
+    ...state,
+    sensitiveAnalytics,
+  }),
+
+  [SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE]: (
+    state: SettingsState,
+    {
+      payload: { firstConnectionHasDevice },
+    }: Action<SettingsSetFirstConnectionHasDevicePayload>,
+  ) => ({
+    ...state,
+    firstConnectionHasDevice,
+  }),
+
+  [SettingsActionTypes.SET_NOTIFICATIONS]: (
+    state: SettingsState,
+    { payload: { notifications } }: Action<SettingsSetNotificationsPayload>,
+  ) => ({
+    ...state,
+    notifications: { ...state.notifications, ...notifications },
   }),
 };
 
-const storeSelector = (state: any): SettingsState => state.settings;
+export default handleActions<SettingsState, SettingsPayload>(
+  handlers,
+  INITIAL_STATE,
+);
+
+const storeSelector = (state: State): SettingsState => state.settings;
 
 export const exportSelector = storeSelector;
 
@@ -425,8 +615,6 @@ const defaultCurrencySettingsForCurrency: (
     exchange: null,
   };
 };
-
-// DEPRECATED
 export const currencySettingsSelector = (
   state: State,
   {
@@ -452,7 +640,7 @@ export const experimentalUSBEnabledSelector = createSelector(
   s => s.experimentalUSBEnabled,
 );
 export const currencySettingsForAccountSelector = (
-  s: any,
+  s: State,
   {
     account,
   }: {
@@ -534,7 +722,6 @@ export const carouselVisibilitySelector = (state: State) => {
      * We show all the slides as they are different from the ones in V2.
      * Users will then be able to hide them one by one if they want.
      */
-    // $FlowFixMe
     return Object.fromEntries(SLIDES.map(slide => [slide.name, true]));
   }
 
@@ -542,7 +729,7 @@ export const carouselVisibilitySelector = (state: State) => {
 };
 export const discreetModeSelector = (state: State): boolean =>
   state.settings.discreetMode === true;
-export default handleActions(handlers, INITIAL_STATE);
+
 export const themeSelector = (state: State) => {
   const val = state.settings.theme;
   return val;
@@ -556,12 +743,11 @@ export const localeSelector = (state: State) =>
   state.settings.locale || getDefaultLocale();
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
-export const swapSelectableCurrenciesSelector = (state: Record<string, any>) =>
+export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
-export const swapKYCSelector = (state: Record<string, any>) =>
-  state.settings.swap.KYC;
+export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;
 export const starredMarketCoinsSelector = (state: State) =>

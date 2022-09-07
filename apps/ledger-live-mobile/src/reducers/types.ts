@@ -6,6 +6,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
@@ -109,14 +110,23 @@ export type RatingsState = {
 
 export type CurrencySettings = {
   confirmationsNb: number;
+  exchange: any | null | undefined;
 };
 
 export type Privacy = {
   // when we set the privacy, we also retrieve the biometricsType info
-  biometricsType: string | null | undefined;
+  biometricsType?: string | null | undefined;
   // this tells if the biometrics was enabled by user yet
   biometricsEnabled: boolean;
 };
+
+export type Pair = {
+  from: Currency;
+  to: Currency;
+  exchange: string | null | undefined;
+};
+
+// export type SetExchangePairs = (_: Array<Pair>) => any;
 
 export type Theme = "system" | "light" | "dark";
 
@@ -144,7 +154,10 @@ export type SettingsState = {
   hasAvailableUpdate: boolean;
   theme: Theme;
   osTheme: string | null | undefined;
-  carouselVisibility: number | Record<string, boolean>;
+  // FIXME: WARNING, I REMOVED NUMBER FROM THE TYPE ??
+  // carouselVisibility: number | Record<string, boolean>;
+  carouselVisibility: { [key: string]: boolean };
+
   // number is the legacy type from LLM V2
   discreetMode: boolean;
   language: string;
@@ -152,10 +165,9 @@ export type SettingsState = {
   locale: string | null | undefined;
   swap: {
     hasAcceptedIPSharing: false;
-    acceptedProviders: [];
-    selectableCurrencies: [];
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    KYC: {};
+    acceptedProviders: string[];
+    selectableCurrencies: string[];
+    KYC: Record<string, { id: string; status: string }>;
   };
   lastSeenDevice: DeviceModelInfo | null | undefined;
   starredMarketCoins: string[];

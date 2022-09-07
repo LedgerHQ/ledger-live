@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, useRoute, useNavigation } from "@react-navigation/native";
 import { getProviders } from "@ledgerhq/live-common/exchange/swap/index";
 import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
+import type { AvailableProvider } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import NotAvailable from "./NotAvailable";
 import { swapKYCSelector } from "../../reducers/settings";
 import { setSwapSelectableCurrencies } from "../../actions/settings";
@@ -18,10 +19,12 @@ export const useProviders = () => {
   const [providers, setProviders] = useState();
   const [provider, setProvider] = useState();
   useEffect(() => {
-    getProviders().then((providers: any) => {
+    getProviders().then(providers => {
       let resultProvider;
       const disabledProviders = Config.SWAP_DISABLED_PROVIDERS || "ftx,ftxus";
-      const providersByName = providers.reduce((acc, providerData) => {
+      const providersByName = providers.reduce<{
+        [key: string]: AvailableProvider;
+      }>((acc, providerData) => {
         if (!disabledProviders.includes(providerData.provider)) {
           acc[providerData.provider] = providerData;
         }
@@ -38,6 +41,7 @@ export const useProviders = () => {
         );
       }
 
+      // FIXME: SEEMS TO BE ONLY USING PROVIDERSV3, CAN WE DROP V2 ?
       // Only set as available currencies from this provider, on swp-agg this changes
       if (resultProvider) {
         dispatch(

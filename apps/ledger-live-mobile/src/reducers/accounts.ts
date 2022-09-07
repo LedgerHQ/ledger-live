@@ -109,7 +109,7 @@ const handlers = {
 
   [SettingsActionTypes.BLACKLIST_TOKEN]: (
     state: AccountsState,
-    { payload: tokenId }: Action<SettingsBlacklistTokenPayload>,
+    { payload: { tokenId } }: Action<SettingsBlacklistTokenPayload>,
   ) => ({
     active: state.active.map(a => withoutToken(a, tokenId)),
   }),
