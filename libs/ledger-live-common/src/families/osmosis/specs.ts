@@ -192,13 +192,15 @@ const osmosis: AppSpec<Transaction> = {
             (d) => d.validatorAddress === v.address
           );
           invariant(d, "delegated %s must be found in account", v.address);
-          expect({
-            address: v.address,
-            amount: approximateValue(v.amount),
-          }).toMatchObject({
-            address: (d as CosmosDelegation).validatorAddress,
-            amount: approximateValue((d as CosmosDelegation).amount),
-          });
+          botTest("delegator have planned address and amount", () =>
+            expect({
+              address: v.address,
+              amount: approximateValue(v.amount),
+            }).toMatchObject({
+              address: (d as CosmosDelegation).validatorAddress,
+              amount: approximateValue((d as CosmosDelegation).amount),
+            })
+          );
         });
       },
     },
@@ -260,13 +262,15 @@ const osmosis: AppSpec<Transaction> = {
             (d) => d.validatorAddress === v.address
           );
           invariant(d, "undelegated %s must be found in account", v.address);
-          expect({
-            address: v.address,
-            amount: approximateValue(v.amount),
-          }).toMatchObject({
-            address: (d as CosmosUnbonding).validatorAddress,
-            amount: approximateValue((d as CosmosUnbonding).amount),
-          });
+          botTest("validator have planned address and amount", () =>
+            expect({
+              address: v.address,
+              amount: approximateValue(v.amount),
+            }).toMatchObject({
+              address: (d as CosmosUnbonding).validatorAddress,
+              amount: approximateValue((d as CosmosUnbonding).amount),
+            })
+          );
         });
       },
     },
@@ -338,13 +342,15 @@ const osmosis: AppSpec<Transaction> = {
                   d.validatorSrcAddress === transaction.sourceValidator
               );
             invariant(d, "redelegated %s must be found in account", v.address);
-            expect({
-              address: v.address,
-              amount: approximateValue(v.amount),
-            }).toMatchObject({
-              address: (d as CosmosRedelegation).validatorDstAddress,
-              amount: approximateValue((d as CosmosRedelegation).amount),
-            });
+            botTest("validator have planned address and amount", () =>
+              expect({
+                address: v.address,
+                amount: approximateValue(v.amount),
+              }).toMatchObject({
+                address: (d as CosmosRedelegation).validatorDstAddress,
+                amount: approximateValue((d as CosmosRedelegation).amount),
+              })
+            );
           }
         });
       },
@@ -385,10 +391,14 @@ const osmosis: AppSpec<Transaction> = {
           const d = (cosmosResources as CosmosResources).delegations.find(
             (d) => d.validatorAddress === v.address
           );
-          invariant(d, "delegation %s must be found in account", v.address);
-          invariant(
-            !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
-            "reward no longer be claimable"
+          botTest("delegation exists in account", () =>
+            invariant(d, "delegation %s must be found in account", v.address)
+          );
+          botTest("reward is no longer claimable after claim", () =>
+            invariant(
+              !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
+              "reward no longer be claimable"
+            )
           );
         });
       },
