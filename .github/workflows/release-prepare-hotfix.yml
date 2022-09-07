@@ -47,6 +47,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
+      - name: Update changeset config
+        uses: jossef/action-set-json-field@v2
+        with:
+          file: .changeset/config.json
+          field: ignore
+          value: "[]"
+          parse_json: true
+
       - name: commit
         run: |
           git add .
