@@ -17,3 +17,17 @@ export const getMetadataMediaType = (
     mimeTypesMap[type].includes(mediaType),
   );
 };
+
+export const getMetadataMediaTypes = (
+  metadata: NFTMetadata,
+): Record<NFTMediaSize, keyof typeof mimeTypesMap | undefined> => {
+  const sizes: NFTMediaSize[] = ["preview", "big", "original"];
+  const sizeToTypeMap = sizes.map(size => [
+    size,
+    getMetadataMediaType(metadata, size),
+  ]);
+  return Object.fromEntries(sizeToTypeMap) as Record<
+    NFTMediaSize,
+    keyof typeof mimeTypesMap | undefined
+  >;
+};

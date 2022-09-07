@@ -23,7 +23,7 @@ export interface TransactionResponse {
   hash: string;
   timestamp: number;
   height: number;
-  fee?: string;
+  fee?: number;
 }
 
 export interface BalanceResponse {

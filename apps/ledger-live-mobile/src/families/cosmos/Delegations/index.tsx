@@ -1,5 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useMemo, ElementProps } from "react";
+import React, {
+  useCallback,
+  useState,
+  useMemo,
+  ElementProps,
+  useEffect,
+} from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -29,6 +35,7 @@ import {
   canDelegate,
 } from "@ledgerhq/live-common/families/cosmos/logic";
 import { Text } from "@ledgerhq/native-ui";
+import { getAccountBannerState as getCosmosBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
@@ -50,6 +57,8 @@ import DelegationLabelRight from "./LabelRight";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import DateFromNow from "../../../components/DateFromNow";
+import AccountBanner from "../../../components/AccountBanner";
+import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
 
 type Props = {
@@ -81,6 +90,7 @@ function Delegations({ account }: Props) {
 
   const [delegation, setDelegation] = useState<CosmosMappedDelegation>();
   const [undelegation, setUndelegation] = useState<CosmosMappedUnbonding>();
+  const [banner, setBanner] = useState({ display: false });
 
   const totalRewardsAvailable = delegations.reduce(
     (sum, d) => sum.plus(d.pendingRewards || 0),
@@ -126,6 +136,34 @@ function Delegations({ account }: Props) {
       },
     });
   }, [onNavigate, delegation, account]);
+
+  useEffect(() => {
+    const state = getCosmosBannerState({ ...account });
+    const bannerText = getCosmosBannerProps(state, { ...account }, { t });
+    setBanner({ ...state, ...bannerText });
+  }, []);
+
+  const onRedelegateLedger = () => {
+    const { validatorSrcAddress, ledgerValidator } = { ...banner };
+    const worstValidator = delegations.find(
+      delegation => delegation.validatorAddress === validatorSrcAddress,
+    );
+    onNavigate({
+      route: NavigatorName.CosmosRedelegationFlow,
+      screen: ScreenName.CosmosDefaultRedelegationAmount,
+      params: {
+        accountId: account.id,
+        validatorSrcAddress,
+        transaction: {
+          validators: [worstValidator],
+        },
+        validatorSrc: worstValidator.validator,
+        validator: ledgerValidator,
+        max: worstValidator.amount,
+        nextScreen: ScreenName.CosmosRedelegationSelectDevice,
+      },
+    });
+  };
 
   const onCollectRewards = useCallback(() => {
     onNavigate({
@@ -441,7 +479,14 @@ function Delegations({ account }: Props) {
           </View>
         </>
       )}
-
+      {banner.display && (
+        <View style={styles.banner}>
+          <AccountBanner
+            {...banner}
+            onPress={banner.redelegate ? onRedelegateLedger : onDelegate}
+          />
+        </View>
+      )}
       {delegations.length === 0 ? (
         <AccountDelegationInfo
           title={t("account.delegation.info.title")}
@@ -542,5 +587,8 @@ const styles = StyleSheet.create({
   },
   valueText: {
     fontSize: 14,
+  },
+  banner: {
+    marginBottom: 16,
   },
 });

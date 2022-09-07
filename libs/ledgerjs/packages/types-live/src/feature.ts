@@ -9,8 +9,19 @@ export type FeatureId =
   | "ptxSmartRouting"
   | "currencyOsmosis"
   | "currencyOsmosisMobile"
+  | "currencyFantom"
+  | "currencyMoonbeam"
+  | "currencyCronos"
+  | "currencySongbird"
+  | "currencyFlare"
+  | "currencyFantomMobile"
+  | "currencyMoonbeamMobile"
+  | "currencyCronosMobile"
+  | "currencySongbirdMobile"
+  | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
-  | string;
+  | "walletConnectLiveApp"
+  | "customImage";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
@@ -31,4 +42,4 @@ export type Feature = {
 };
 
 /** */
-export type DefaultFeatures = { [key in FeatureId]: Feature };
+export type DefaultFeatures = { [key in FeatureId]?: Feature };

@@ -406,10 +406,14 @@ const cosmos: AppSpec<Transaction> = {
           const d = (cosmosResources as CosmosResources).delegations.find(
             (d) => d.validatorAddress === v.address
           );
-          invariant(d, "delegation %s must be found in account", v.address);
-          invariant(
-            !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
-            "reward no longer be claimable"
+          botTest("delegation exists in account", () =>
+            invariant(d, "delegation %s must be found in account", v.address)
+          );
+          botTest("reward is no longer claimable after claim", () =>
+            invariant(
+              !canClaimRewards(account as CosmosAccount, d as CosmosDelegation),
+              "reward no longer be claimable"
+            )
           );
         });
       },
