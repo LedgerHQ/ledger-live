@@ -247,6 +247,7 @@ const OpenManagerBtn = ({
 const OpenOnboardingBtn = () => {
   const { setDrawer } = useContext(context);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onClick = useCallback(() => {
     setTrackingSource("device action open onboarding button");
@@ -254,7 +255,8 @@ const OpenOnboardingBtn = () => {
     dispatch(relaunchOnboarding(true));
     dispatch(closeAllModal());
     setDrawer(undefined);
-  }, [dispatch, setDrawer]);
+    history.push("/onboarding");
+  }, [dispatch, history, setDrawer]);
 
   return (
     <Button primary onClick={onClick}>

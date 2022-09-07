@@ -104,7 +104,7 @@ export default function CustomManifest({
           ]}
           value={manifest}
           onChangeText={onChange}
-          placeholder="Paste your manufest json"
+          placeholder="Paste your manifest json"
           multiline
           autoCorrect={false}
         />
