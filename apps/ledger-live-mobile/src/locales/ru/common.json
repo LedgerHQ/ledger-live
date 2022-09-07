@@ -19,6 +19,7 @@
     "device" : "Устройство",
     "cryptoAsset" : "Криптоактив",
     "skip" : "Пропустить",
+    "next" : "Далее",
     "noCryptoFound" : "Криптоактивы не найдены",
     "needHelp" : "Нужна помощь?",
     "edit" : "Редактировать",
@@ -82,7 +83,8 @@
     "moreInfo" : "Подробнее",
     "buyEth" : "Купить Эфириум",
     "popular" : "популярное",
-    "comingSoon" : "Скоро"
+    "comingSoon" : "Скоро",
+    "getSupport" : "Поддержка"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -686,7 +688,42 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Отключите функцию мультиподписи, чтобы проводить транзакции в Stellar"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "Не удалось загрузить изображение из галереи",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageDownloadError" : {
+      "title" : "Не удалось загрузить изображение",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Не удалось загрузить метаданные изображения",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Изображение слишком большое",
+      "description" : "Попробуйте использовать изображение меньшего размера"
+    },
+    "ImageCropError" : {
+      "title" : "Не удалось обрезать изображение",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageResizeError" : {
+      "title" : "Не удалось изменить размер изображения",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImagePreviewError" : {
+      "title" : "Предпросмотр изображения невозможен",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageProcessingError" : {
+      "title" : "Не удалось обработать изображение",
+      "description" : "Попробуйте другое изображение"
     }
+  },
+  "crash" : {
+    "title" : "Что-то пошло не так"
   },
   "bluetooth" : {
     "required" : "Похоже, Bluetooth отключён",
@@ -1014,6 +1051,10 @@
       "discoverLedger" : {
         "title" : "Ознакомиться с Ledger Live",
         "subtitle" : "Откройте для себя это приложение и узнайте о его преимуществах "
+      },
+      "desktopSync" : {
+        "title" : "Синхронизировать с настольным приложением",
+        "subtitle" : "Синхронизируйте криптоактивы из настольного приложения Ledger Live на мобильном устройстве."
       }
     },
     "discoverLive" : {
@@ -1566,27 +1607,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "Поиск {{productName}}",
+        "description" : "Обязательно разблокируйте {{productName}} и включите Bluetooth"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "Поиск устройств",
+        "description" : "Убедитесь, что ваше устройство включено и разблокировано, а Bluetooth — активирован"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "Уже сопряжено"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "Подключено к {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "Подключение к {{deviceName}}",
+        "subtitle" : "Подтвердите код на устройстве {{productName}}"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "Не удалось подключить устройство",
+        "subtitle" : "Похоже, что-то пошло не так. Убедитесь, что Bluetooth активирован, а устройство {{productName}} находится неподалёку",
+        "retryCta" : "Попробуйте ещё раз"
       }
     }
   },
@@ -2200,6 +2241,10 @@
       "clearCacheButton" : "Очистить",
       "exportLogs" : "Сохранение логов",
       "exportLogsDesc" : "Сохранённые логи Ledger Live могут потребоваться для устранения неполадок.",
+      "resetThirdPartyData" : "Сброс данных посредников",
+      "resetThirdPartyDataDesc" : "Удалите все данные посредников, использованные для доступа к сторонним поставщикам услуг.",
+      "resetThirdPartyDataModal" : "Удаление данных посредников",
+      "resetThirdPartyDataModalDesc" : "Удалите данные посредников. Чтобы получить доступ к услугам наших партнёров, вам может потребоваться заново пройти KYC и/или авторизоваться.",
       "hardReset" : "Сброс Ledger Live",
       "hardResetDesc" : "Это действие не затрагивает активы и позволяет удалить все данные в Ledger Live, включая данные счетов, историю транзакций и настройки. Используйте устройство Ledger для перезагрузки криптоактивов и управления ими в Ledger Live с исходными настройками.",
       "repairDevice" : "Ремонт устройства Ledger",
@@ -2584,19 +2629,79 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "Откуда",
-          "to" : "Куда",
-          "send" : "Отправить",
-          "payoutNetworkFees" : "Комиссия",
-          "payoutNetworkFeesTooltip" : "Эта сумма не будет отображаться на устройстве",
-          "receive" : "Сумма",
-          "receiveFloat" : "Сумма к получению до вычета комиссии за обслуживание",
-          "provider" : "Оператор",
-          "method" : "Курс",
-          "fees" : "Комиссия"
+        "ratesDrawer" : {
+          "title" : "Курс",
+          "quote" : "Курс",
+          "receive" : "Получить"
+        },
+        "placeholder" : "Выберите",
+        "title" : "Обмен",
+        "cta" : "Обмен",
+        "from" : "Откуда",
+        "to" : "Куда",
+        "loading" : "Загружаем...",
+        "disclaimer" : {
+          "title" : "Условия использования",
+          "desc" : "Нажимая кнопку «Принять», я признаю и соглашаюсь с тем, что эта услуга регулируется исключительно Положениями и условиями {{providerName}}.",
+          "tos" : "Условия использования",
+          "accept" : "Принять"
+        },
+        "notAvailable" : {
+          "title" : "Обмен пока недоступен в вашем регионе",
+          "content" : "Потерпите немного, уже скоро всё заработает"
+        },
+        "amount" : {
+          "useMax" : "Макс."
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Оператор",
+            "rate" : "Курс",
+            "fees" : "Комиссия сети",
+            "target" : "Куда"
+          },
+          "noAccount" : "Создайте счёт, чтобы получить {{name}}",
+          "noAccountCTA" : "Добавить счёт"
+        },
+        "select" : {
+          "from" : {
+            "title" : "Откуда"
+          },
+          "to" : {
+            "title" : "Куда"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC",
+            "required" : "Вам нужно пройти процедуру KYC",
+            "complete" : "Пройти процедуру KYC",
+            "update" : "Обновить данные KYC",
+            "rejected" : "Данные KYC отклонены, пройдите проверку ещё раз",
+            "rejectedContactProviderSupport" : "Данные KYC отклонены, обратитесь в Поддержку {{providerName}}",
+            "updateRequired" : "Пройдите процедуру KYC или дополните данные",
+            "status" : {
+              "pending" : "Данные KYC в обработке",
+              "approved" : "Данные KYC одобрены",
+              "closed" : "Данные KYC отклонены",
+              "upgradeRequired" : "KYC не соответствует требованиям"
+            }
+          },
+          "login" : {
+            "title" : "Авторизация",
+            "required" : "Войдите при помощи этого оператора",
+            "complete" : "Войти"
+          },
+          "mfa" : {
+            "title" : "Многофакторная аутентификация",
+            "required" : "Необходимо настроить многофакторную аутентификацию через этого оператора",
+            "complete" : "Настроить многофакторную аутентификацию"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Вывод заблокирован {{providerName}}.\n\n Свяжитесь с Поддержкой платформы для дополнительной информации."
+          }
         }
       }
     },
@@ -3051,7 +3156,6 @@
     "retry" : "Повторить",
     "done" : "Готово",
     "finalCta" : "Продолжить",
-    "finalCtaForSwap" : "Вернуться к Обмену",
     "synchronizing" : "Синхронизируем...",
     "synchronizingDesc" : "Синхронизируем счета. Это может занять некоторое время...",
     "noAccountToCreate" : "Не удалось создать счёт <1><0>{{currencyName}}</></>. Перезапустите процедуру и синхронизируйте счета.",
@@ -3128,7 +3232,17 @@
     "confirmSwap" : {
       "title" : "Подтвердите обмен на устройстве",
       "alert" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки.",
-      "acceptTerms" : "Подтверждая эту транзакцию, я принимаю\n<0>условия использования <0>{{provider}}</0></0>"
+      "acceptTerms" : "Подтверждая эту транзакцию, я принимаю\n<0>условия использования <0>{{provider}}</0></0>",
+      "notice" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки."
+    },
+    "swap2" : {
+      "notice" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки.",
+      "amountSent" : "Сумма к отправке",
+      "amountReceived" : "Сумма к получению",
+      "provider" : "Оператор",
+      "fees" : "Комиссия сети",
+      "sourceAccount" : "Исходный счёт",
+      "targetAccount" : "Целевой счёт"
     },
     "confirmSell" : {
       "title" : "Подтвердите продажу на устройстве",
@@ -4271,7 +4385,10 @@
       "info" : "Как работает делегирование",
       "broadcastSuccessTitle" : "Операция отправлена",
       "broadcastSuccessDescription" : "Статус делегирования обновится, когда транзакция будет подтверждена.",
-      "delegatedTo" : "Делегировано кому:"
+      "delegatedTo" : "Делегировано кому:",
+      "started" : {
+        "description" : "Вы можете получать вознаграждения, делегируя активы SOL валидатору."
+      }
     }
   },
   "delegation" : {
@@ -4685,5 +4802,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "Адрес {{name}} не может быть подтверждён на устройстве Ledger. Вы принимаете на себя все последующие риски."
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "Выбрать изображение",
+      "options" : {
+        "uploadFromPhone" : "Загрузить с телефона"
+      }
+    },
+    "cropImage" : "Обрезать изображение",
+    "chooseConstrast" : "Указать контраст",
+    "uploadAnotherImage" : "Загрузить другое изображение",
+    "selectContrast" : "Выберите контрастность"
   }
 }
