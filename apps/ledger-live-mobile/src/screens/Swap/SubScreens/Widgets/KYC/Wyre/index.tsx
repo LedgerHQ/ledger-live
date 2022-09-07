@@ -214,7 +214,10 @@ export function WyreKYC() {
                       styles.input,
                       {
                         color: state ? color : borderColor,
-                        borderColor: errors?.state ? colors.alert : borderColor,
+                        borderColor:
+                          hasSubmittedOnce && errors?.state
+                            ? colors.alert
+                            : borderColor,
                       },
                     ]}
                   >
