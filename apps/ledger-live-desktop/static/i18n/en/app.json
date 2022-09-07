@@ -603,6 +603,9 @@
   "storylyDebugger": {
     "buttonTitle": "Test"
   },
+  "postOnboardingDebugger": {
+    "buttonTitle": "Test"
+  },
   "fullNode": {
     "status": "Status",
     "connect": "Connect",
@@ -3552,6 +3555,10 @@
         "testStories": {
           "title": "Test Storyly stories",
           "description": "Test all stories used in Ledger Live"
+        },
+        "testPostonboarding": {
+          "title": "Test Post Onboarding",
+          "description": "Test all post onboarding features"
         }
       }
     },
