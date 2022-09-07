@@ -63,9 +63,12 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
       }}
       onSessionRestarted={account => {
         navigate(NavigatorName.Base, {
-          screen: ScreenName.WalletConnectConnect,
+          screen: NavigatorName.WalletConnect,
           params: {
-            accountId: account.id,
+            screen: ScreenName.WalletConnectConnect,
+            params: {
+              accountId: account.id,
+            },
           },
         });
       }}
