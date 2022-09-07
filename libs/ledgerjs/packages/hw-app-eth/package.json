@@ -35,7 +35,8 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "axios": "^0.26.1",
-    "bignumber.js": "^9.1.0"
+    "bignumber.js": "^9.1.0",
+    "crypto-js": "^4.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
