@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { AccountLike } from "@ledgerhq/types-live";
+import { useMemo } from "react";
+import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
@@ -16,7 +16,7 @@ import { ActionButton } from "..";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
-  accounts?: AccountLike[];
+  accounts?: AccountLikeArray;
 };
 
 const iconBuy = Icons.PlusMedium;
@@ -35,8 +35,12 @@ export default function useAssetActions({
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
+  const areAccountsBalanceEmpty = useMemo(
+    () => (accounts ? accounts.every(account => account.balance.lte(0)) : true),
+    [accounts],
+  );
   const defaultAccount = useMemo(
-    () => (accounts ? accounts[0] : undefined),
+    () => (accounts && accounts.length === 1 ? accounts[0] : undefined),
     [accounts],
   );
 
@@ -100,7 +104,7 @@ export default function useAssetActions({
                   },
                 },
               ],
-              disabled: defaultAccount?.balance.lte(0),
+              disabled: areAccountsBalanceEmpty,
             },
           ]
         : []),
@@ -119,7 +123,7 @@ export default function useAssetActions({
                         params: { currencyId: currency?.id, defaultAccount },
                       },
                     ],
-                    disabled: defaultAccount?.balance.lte(0),
+                    disabled: areAccountsBalanceEmpty,
                   },
                 ]
               : []),
@@ -129,12 +133,24 @@ export default function useAssetActions({
               Icon: iconReceive,
               navigationParams: [
                 NavigatorName.ReceiveFunds,
-                {
-                  screen: ScreenName.ReceiveSelectCrypto,
-                  params: {
-                    filterCurrencyIds: currency ? [currency.id] : undefined,
-                  },
-                },
+                defaultAccount
+                  ? {
+                      screen: ScreenName.ReceiveConfirmation,
+                      params: {
+                        accountId: defaultAccount.id,
+                        parentId:
+                          defaultAccount.type === "TokenAccount"
+                            ? defaultAccount.parentId
+                            : undefined,
+                        currency,
+                      },
+                    }
+                  : {
+                      screen: ScreenName.ReceiveSelectCrypto,
+                      params: {
+                        filterCurrencyIds: currency ? [currency.id] : undefined,
+                      },
+                    },
               ],
             },
             {
@@ -143,12 +159,23 @@ export default function useAssetActions({
               Icon: iconSend,
               navigationParams: [
                 NavigatorName.SendFunds,
-                {
-                  screen: ScreenName.SendCoin,
-                  params: { selectedCurrency: currency },
-                },
+                defaultAccount
+                  ? {
+                      screen: ScreenName.SendSelectRecipient,
+                      params: {
+                        accountId: defaultAccount.id,
+                        parentId:
+                          defaultAccount.type === "TokenAccount"
+                            ? defaultAccount.parentId
+                            : undefined,
+                      },
+                    }
+                  : {
+                      screen: ScreenName.SendCoin,
+                      params: { selectedCurrency: currency },
+                    },
               ],
-              disabled: defaultAccount?.balance.lte(0),
+              disabled: areAccountsBalanceEmpty,
             },
           ]
         : [
