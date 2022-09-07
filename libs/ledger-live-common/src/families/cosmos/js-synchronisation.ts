@@ -11,6 +11,7 @@ import { pubkeyToAddress, decodeBech32Pubkey } from "@cosmjs/amino";
 import { encodeOperationId } from "../../operation";
 import { CosmosDelegationInfo } from "./types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
+import { getMainMessage } from "./helpers";
 
 const getBlankOperation = (tx, fees, id) => ({
   id: "",
@@ -30,11 +31,6 @@ const getBlankOperation = (tx, fees, id) => ({
   transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
 });
 
-type Message = {
-  type: string;
-  attributes: { [key: string]: any };
-};
-
 const txToOps = (info: any, id: string, txs: any): Operation[] => {
   const { address, currency } = info;
   const ops: Operation[] = [];
@@ -50,7 +46,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
 
     const messages = tx.logs.map((log) => log.events).flat(1);
 
-    const message: Message = getMainMessage(messages);
+    const message = getMainMessage(messages);
 
     if (message == null) {
       continue;
@@ -162,23 +158,6 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
   }
 
   return ops;
-};
-
-const getMainMessage = (messages: Message[]): Message => {
-  const messagePriorities: string[] = [
-    "withdraw_rewards",
-    "unbond",
-    "redelegate",
-    "delegate",
-    "transfer",
-  ];
-  const sortedTypes = messages
-    .filter((m) => messagePriorities.includes(m.type))
-    .sort(
-      (a, b) =>
-        messagePriorities.indexOf(a.type) - messagePriorities.indexOf(b.type)
-    );
-  return sortedTypes[0];
 };
 
 export const getAccountShape: GetAccountShape = async (info) => {
