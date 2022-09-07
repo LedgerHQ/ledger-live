@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -64,9 +64,14 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   if (!lastNetworkMaxBaseFee && networkMaxBaseFee) {
     lastNetworkMaxBaseFee = networkMaxBaseFee;
   }
-  const maxBaseFeeRange = inferDynamicRange(
-    networkMaxBaseFee || lastNetworkMaxBaseFee || fallbackMaxBaseFee,
-  );
+
+  const initialMaxBaseFee =
+    networkMaxBaseFee || lastNetworkMaxBaseFee || fallbackMaxBaseFee;
+  const maxBaseFeeMaxRangeMultiplier = 4;
+  const maxBaseFeeRange = inferDynamicRange(initialMaxBaseFee, {
+    minValue: new BigNumber(0),
+    maxValue: initialMaxBaseFee.times(maxBaseFeeMaxRangeMultiplier),
+  });
 
   const [maxBaseFee, setMaxBaseFee] = useState(
     transaction.maxBaseFeePerGas ||
@@ -75,28 +80,48 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
       fallbackMaxBaseFee,
   );
 
+  const upperLimitMaxBaseFeeMultiplier = 2;
+  const maxBaseFeeError = useMemo(
+    () =>
+      maxBaseFee.isLessThan(lastNetworkMaxBaseFee)
+        ? "MaxBaseFeeLow"
+        : maxBaseFee.isGreaterThan(
+            lastNetworkMaxBaseFee.times(upperLimitMaxBaseFeeMultiplier),
+          )
+        ? "MaxBaseFeeHigh"
+        : null,
+    [maxBaseFee],
+  );
+
   const networkPriorityFee =
     transaction.networkInfo && transaction.networkInfo.maxPriorityFeePerGas;
   if (!lastNetworkPriorityFee && networkPriorityFee) {
     lastNetworkPriorityFee = networkPriorityFee;
   }
-  const maxPriorityFeeMinRangeMult = new BigNumber(0.9);
-  const maxPriorityFeeMaxRangeMult = new BigNumber(1.1);
+  const maxPriorityFeeMaxRangeMultiplier = new BigNumber(1.25);
   const maxPriorityFeeRange =
     networkPriorityFee || lastNetworkPriorityFee || fallbackGasPrice;
   const maxPriorityFeeExtendedRange = inferDynamicRange(
     maxPriorityFeeRange.initial,
     {
-      minValue: maxPriorityFeeRange.min.times(maxPriorityFeeMinRangeMult),
-      maxValue: maxPriorityFeeRange.max.times(maxPriorityFeeMaxRangeMult),
+      minValue: new BigNumber(0),
+      maxValue: maxPriorityFeeRange.max.times(maxPriorityFeeMaxRangeMultiplier),
     },
   );
   const [priorityFee, setPriorityFee] = useState(
     transaction.maxPriorityFeePerGas || maxPriorityFeeRange.initial,
   );
-  const priorityFeeOutOfSuggestedRange =
-    priorityFee.isLessThan(maxPriorityFeeRange.min) ||
-    priorityFee.isGreaterThan(maxPriorityFeeRange.max);
+
+  const priorityFeeError = useMemo(
+    () =>
+      priorityFee.isLessThan(maxPriorityFeeRange.min)
+        ? "PriorityFeeTooLow"
+        : priorityFee.isGreaterThan(maxPriorityFeeRange.max)
+        ? "PriorityFeeTooHigh"
+        : null,
+    [priorityFee],
+  );
+
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
   const onValidate = useCallback(() => {
     const bridge = getAccountBridge(account, parentAccount);
@@ -137,6 +162,11 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
             }}
             title={"send.summary.maxBaseFee"}
           />
+          {maxBaseFeeError ? (
+            <LText style={styles.warning} color="orange">
+              <Trans i18nKey={`errors.${maxBaseFeeError}.title`} />
+            </LText>
+          ) : null}
           <View style={styles.infoLabel}>
             <LText color="grey">
               <Trans
@@ -165,9 +195,9 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
             }}
             title={"send.summary.priorityFee"}
           />
-          {priorityFeeOutOfSuggestedRange ? (
+          {priorityFeeError ? (
             <LText style={styles.warning} color="orange">
-              <Trans i18nKey="errors.PriorityFeeOutOfSuggestedRange.title" />
+              <Trans i18nKey={`errors.${priorityFeeError}.title`} />
             </LText>
           ) : null}
           <View style={styles.sectionSeparator}>

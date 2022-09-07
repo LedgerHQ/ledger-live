@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import styled from "styled-components";
@@ -46,7 +46,6 @@ type Props = {
 };
 
 const fallbackMaxPriorityFeePerGas = inferDynamicRange(BigNumber(10e9));
-let lastNetworkPriorityFee;
 
 const FeesField = ({
   account,
@@ -68,16 +67,23 @@ const FeesField = ({
     [updateTransaction, bridge],
   );
 
-  const networkPriorityFee = transaction.networkInfo && transaction.networkInfo.maxPriorityFeePerGas;
-  if (!lastNetworkPriorityFee && networkPriorityFee) {
-    lastNetworkPriorityFee = networkPriorityFee;
-  }
-  const range = networkPriorityFee || lastNetworkPriorityFee || fallbackMaxPriorityFeePerGas;
+  const networkPriorityFee = useMemo(
+    () => transaction.networkInfo?.maxPriorityFeePerGas || fallbackMaxPriorityFeePerGas,
+    [transaction.networkInfo]
+  );
 
   const maxPriorityFee = transaction.maxPriorityFeePerGas || range.initial;
   const { units } = account.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
+
+  const [lowPriorityFeeValue, highPriorityFeeValue] = useMemo(
+    () => [
+      formatCurrencyUnit(unit, networkPriorityFee.min),
+      formatCurrencyUnit(unit, networkPriorityFee.max)
+    ],
+    [networkPriorityFee]
+  );
 
   const validTransactionError = status.errors.maxPriorityFee;
   const validTransactionWarning = status.warnings.maxPriorityFee;
@@ -118,8 +124,8 @@ const FeesField = ({
           <Trans
             i18nKey="send.steps.details.suggestedPriorityFee"
             values={{
-              lowPriorityFee: formatCurrencyUnit(unit, range.min),
-              highPriorityFee: formatCurrencyUnit(unit, range.max),
+              lowPriorityFee: lowPriorityFeeValue,
+              highPriorityFee: highPriorityFeeValue,
               unitName
             }}
           />

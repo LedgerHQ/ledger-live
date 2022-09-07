@@ -153,16 +153,6 @@ const defaultGasLimit = new BigNumber(0x5208);
 export const getGasLimit = (t: Transaction): BigNumber =>
   t.userGasLimit || t.estimatedGasLimit || defaultGasLimit;
 
-export const getLowerBoundForPriorityFee = (t: Transaction): BigNumber => {
-  const minimalValueMultiplier = new BigNumber(0.1); // 10% of initial value
-  return BigNumber.min(
-    minimalValueMultiplier.multipliedBy(
-      t.networkInfo?.maxPriorityFeePerGas?.initial || new BigNumber(0)
-    ),
-    t.networkInfo?.maxPriorityFeePerGas?.min || new BigNumber(0)
-  );
-};
-
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;

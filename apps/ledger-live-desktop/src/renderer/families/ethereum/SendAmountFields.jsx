@@ -47,19 +47,18 @@ const Root = (props: *) => {
             <>
               <MaxBaseFeeField {...props} />
               <PriorityFeeField {...props} />
-              <GasLimitField {...props} readonly={false}/>
+              <GasLimitField {...props}/>
             </>
           ) :
           (
             <>
               <GasPriceField {...props} />
-              <GasLimitField {...props} readonly={false}/>
+              <GasLimitField {...props}/>
             </>
           ) :
         (
           <>
             <SelectFeeStrategy strategies={strategies} onClick={onFeeStrategyClick} {...props} />
-            <GasLimitField {...props} />
           </>
         )}
     </>

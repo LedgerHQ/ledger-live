@@ -5,8 +5,10 @@ import {
   FeeNotLoaded,
   FeeRequired,
   GasLessThanEstimate,
+  MaxBaseFeeLow,
+  MaxBaseFeeHigh,
   PriorityFeeTooLow,
-  PriorityFeeOutOfSuggestedRange,
+  PriorityFeeTooHigh,
 } from "@ledgerhq/errors";
 import type { CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
 import {
@@ -25,7 +27,6 @@ import {
   inferEthereumGasLimitRequest,
   estimateGasLimit,
   EIP1559ShouldBeUsed,
-  getLowerBoundForPriorityFee,
 } from "../transaction";
 import { getAccountShape } from "../synchronisation";
 import {
@@ -83,7 +84,6 @@ const updateTransaction = (t, patch) => {
 
 const getTransactionStatus = (a, t) => {
   const gasLimit = getGasLimit(t);
-  const priorityFeeLowerBound = getLowerBoundForPriorityFee(t);
   let estimatedGasPrice;
   if (EIP1559ShouldBeUsed(a.currency)) {
     estimatedGasPrice = (t.maxBaseFeePerGas || new BigNumber(0)).plus(
@@ -101,9 +101,9 @@ const getTransactionStatus = (a, t) => {
     recipient?: Error;
   } = {};
   const warnings: {
-    gasLimit?: Error;
     maxBaseFee?: Error;
     maxPriorityFee?: Error;
+    gasLimit?: Error;
   } = {};
   const result = {
     errors,
@@ -131,22 +131,26 @@ const getTransactionStatus = (a, t) => {
     }
   }
 
-  if (t.maxPriorityFeePerGas) {
-    if (t.maxPriorityFeePerGas.lt(priorityFeeLowerBound)) {
-      errors.maxPriorityFee = new PriorityFeeTooLow();
+  const maxBaseFeeUpperBoundMultiplier = 2;
+  if (t.maxBaseFeePerGas) {
+    if (t.maxBaseFeePerGas.lt(t.networkInfo.nextBaseFeePerGas)) {
+      warnings.maxBaseFee = new MaxBaseFeeLow();
     } else if (
-      t.maxPriorityFeePerGas.lt(t.networkInfo.maxPriorityFeePerGas.min) ||
+      t.maxBaseFeePerGas.gt(
+        t.networkInfo.nextBaseFeePerGas.times(maxBaseFeeUpperBoundMultiplier)
+      )
+    ) {
+      warnings.maxBaseFee = new MaxBaseFeeHigh();
+    }
+  }
+
+  if (t.maxPriorityFeePerGas) {
+    if (t.maxPriorityFeePerGas.lt(t.networkInfo.maxPriorityFeePerGas.min)) {
+      warnings.maxPriorityFee = new PriorityFeeTooLow();
+    } else if (
       t.maxPriorityFeePerGas.gt(t.networkInfo.maxPriorityFeePerGas.max)
     ) {
-      const weiToGweiMultiplier = new BigNumber(10e-10);
-      warnings.maxPriorityFee = new PriorityFeeOutOfSuggestedRange(undefined, {
-        lowPriorityFee: t.networkInfo.maxPriorityFeePerGas.min
-          .times(weiToGweiMultiplier)
-          .toString(),
-        highPriorityFee: t.networkInfo.maxPriorityFeePerGas.max
-          .times(weiToGweiMultiplier)
-          .toString(),
-      });
+      warnings.maxPriorityFee = new PriorityFeeTooHigh();
     }
   }
 
@@ -216,9 +220,11 @@ const inferGasPrice = (t: Transaction, networkInfo: NetworkInfo) => {
     : t.gasPrice || networkInfo?.gasPrice?.initial;
 };
 
+const initialMaxBaseFeeMultiplier = 2;
 const inferNextBaseFeePerGas = (t: Transaction, networkInfo: NetworkInfo) => {
   return ["slow", "medium", "fast"].includes(String(t.feesStrategy))
-    ? networkInfo?.nextBaseFeePerGas
+    ? t.maxBaseFeePerGas ||
+        networkInfo?.nextBaseFeePerGas?.times(initialMaxBaseFeeMultiplier)
     : t.maxBaseFeePerGas;
 };
 

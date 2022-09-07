@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import styled from "styled-components";
@@ -28,8 +28,7 @@ const ErrorContainer = styled(Box)`
   will-change: max-height;
   max-height: ${p => (p.hasError ? 60 : 0)}px;
   min-height: ${p => (p.hasError ? 22 : 0)}px;
-  `;
-
+`;
   
 const ErrorDisplay = styled(Box)`
   color: ${p => p.theme.colors.pearl};
@@ -46,8 +45,6 @@ type Props = {
   updateTransaction: (updater: any) => void,
 };
 
-let lastNetworkNextBaseFeePerGas;
-
 const FeesField = ({
   account,
   transaction,
@@ -56,7 +53,6 @@ const FeesField = ({
   t
 }: Props & { t: TFunction }) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
-
 
   const bridge = getAccountBridge(account);
 
@@ -69,16 +65,25 @@ const FeesField = ({
     [updateTransaction, bridge],
   );
 
-  const networkNextBaseFeePerGas = transaction.networkInfo && transaction.networkInfo.nextBaseFeePerGas;
-  if ((!lastNetworkNextBaseFeePerGas && networkNextBaseFeePerGas)
-    || lastNetworkNextBaseFeePerGas !== networkNextBaseFeePerGas) {
-    lastNetworkNextBaseFeePerGas = networkNextBaseFeePerGas;
-  }
-  console.log('Now my1 transaction is (in maxBaseFee):', transaction)
-  const maxBaseFeePerGas = transaction.maxBaseFeePerGas || lastNetworkNextBaseFeePerGas;
+  const nextBaseFeePerGas = useMemo(
+    () => transaction.networkInfo?.nextBaseFeePerGas,
+    [transaction.networkInfo]
+  );
+
+  const maxBaseFeePerGas = transaction.maxBaseFeePerGas || nextBaseFeePerGas;
   const { units } = account.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
+
+  const nextBaseFeeValue = useMemo(
+    () =>
+      formatCurrencyUnit(unit, nextBaseFeePerGas,
+        {
+          showCode: true,
+          disableRounding: true,
+        }),
+    [nextBaseFeePerGas],
+  );
 
   const validTransactionError = status.errors.maxBaseFee;
   const validTransactionWarning = status.warnings.maxBaseFee;
@@ -117,11 +122,7 @@ const FeesField = ({
       <Label>
         <span>
           <Trans i18nKey="send.steps.details.nextBlock" values={{
-            nextBaseFee: formatCurrencyUnit(unit, lastNetworkNextBaseFeePerGas,
-              {
-                showCode: true,
-                disableRounding: true,
-              })
+            nextBaseFee: nextBaseFeeValue
             }}
           />
         </span>

@@ -4483,11 +4483,17 @@
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
-    "PriorityFeeTooLow": {
-      "title": "Priority is too low. Your transaction will not go through, despite the gas fee being charged."
+    "MaxBaseFeeLow": {
+      "title": "Max base fee is lower than the network conditions. Your transaction might stay pending for a while"
     },
-    "PriorityFeeOutOfSuggestedRange": {
-      "title": "To optimise your fees we suggest you to stay in the suggested range of {{lowPriorityFee}} - {{highPriorityFee}}"
+    "MaxBaseFeeHigh": {
+      "title": "Your max base fee is overestimated. If applicable, you will be refunded by the network"
+    },
+    "PriorityFeeTooLow": {
+      "title": "Priority fee is lower than the recommended value"
+    },
+    "PriorityFeeTooHigh": {
+      "title": "Priority fee is higher than necessary. You might be overpaying"
     },
     "UnknownMCU": {
       "title": "Unknown MCU version",
