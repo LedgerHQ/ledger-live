@@ -47,3 +47,21 @@ export type APIDelegation = {
     ticker: string;
   };
 };
+
+export type StakePool = {
+  poolId: string;
+  name: string | undefined;
+  ticker: string | undefined;
+  website: string | undefined;
+  margin: string;
+  cost: string;
+  pledge: string;
+  retiredEpoch: number | undefined;
+};
+
+export type APIGetPoolList = {
+  pageNo: number;
+  limit: number;
+  count: number;
+  pools: Array<StakePool>;
+};
