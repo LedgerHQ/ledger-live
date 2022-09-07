@@ -109,24 +109,6 @@ export type BaseNavigatorProps =
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
-import {
-  BleDevicePairingFlow,
-  BleDevicePairingFlowParams,
-} from "../../screens/BleDevicePairingFlow/index";
-
-// TODO: types for each screens and navigators need to be set
-export type BaseNavigatorStackParamList = {
-  BleDevicePairingFlow: BleDevicePairingFlowParams;
-
-  // Hack: allows any other properties
-  [otherScreens: string]: undefined | object;
-};
-
-export type BaseNavigatorProps =
-  StackNavigationProp<BaseNavigatorStackParamList>;
-
-const Stack = createStackNavigator<BaseNavigatorStackParamList>();
-
 export default function BaseNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
