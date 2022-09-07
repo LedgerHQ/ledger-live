@@ -1,4 +1,5 @@
 // @flow
+
 /* eslint-disable consistent-return */
 import type { Operation } from "@ledgerhq/types-live";
 
