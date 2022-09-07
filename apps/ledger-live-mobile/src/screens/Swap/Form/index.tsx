@@ -398,7 +398,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
             {swapTransaction.swap.rates.status === "loading" ? (
               <Flex height={200}>
-                <Loading size={20} />
+                <Loading size={20} color="neutral.c70" />
               </Flex>
             ) : (
               <>
