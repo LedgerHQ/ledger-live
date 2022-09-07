@@ -18,12 +18,7 @@
 import { splitPath, foreach, decodeVarint, hexBuffer } from "./utils";
 //import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
-import {
-  signEIP712HashedMessage,
-  signEIP712Message,
-  EIP712Message,
-  isEIP712Message,
-} from "./modules/EIP712";
+import { isEIP712Message } from "./modules/EIP712";
 
 export { isEIP712Message };
 
@@ -361,14 +356,14 @@ export default class Trx {
     domainSeparatorHex: string,
     hashStructMessageHex: string
   ): Promise<{
-    v: number,
-    s: string,
-    r: string,
+    v: number;
+    s: string;
+    r: string;
   }> {
     const domainSeparator = hexBuffer(domainSeparatorHex);
     const hashStruct = hexBuffer(hashStructMessageHex);
-    let paths = splitPath(path);
-    let buffer = Buffer.alloc(1 + paths.length * 4 + 32 + 32, 0);
+    const paths = splitPath(path);
+    const buffer = Buffer.alloc(1 + paths.length * 4 + 32 + 32, 0);
     let offset = 0;
     buffer[0] = paths.length;
     paths.forEach((element, index) => {
