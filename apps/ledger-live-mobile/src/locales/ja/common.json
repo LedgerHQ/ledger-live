@@ -1563,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Looking for your {{productName}}",
+        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName" : {
+        "title" : "Looking for devices",
+        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired" : "Already paired"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Paired with {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Pairing with {{deviceName}}",
+        "subtitle" : "Confirm the code on your {{productName}}"
+      },
+      "error" : {
+        "title" : "Pairing unsucessful",
+        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta" : "Try again"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "ウォレット",
     "accounts" : "アカウント",
@@ -1698,7 +1725,13 @@
       "WITHDRAW_UNBONDED" : "引き出す",
       "NOMINATE" : "ノミネート",
       "CHILL" : "ノミネートを解除する",
-      "SET_CONTROLLER" : "コントローラーを設定"
+      "SET_CONTROLLER" : "コントローラーを設定",
+      "ACTIVATE" : "有効化されました",
+      "LOCK" : "ロックされました",
+      "UNLOCK" : "ロック解除されました",
+      "REVOKE" : "取り消されました",
+      "REGISTER" : "登録されました",
+      "WITHDRAW" : "引き出し済み"
     }
   },
   "operationDetails" : {
@@ -1936,6 +1969,16 @@
       "noTransaction" : {
         "title" : "トランザクションはありません",
         "subtitle" : "{{assetName}}の購入と受け取りには、デバイスが必要です"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "ご存知でしたか？Ledgerのバリデーターは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
+        "cta" : "再デリゲート"
+      },
+      "delegation" : {
+        "description" : "ご存知でしたか？Ledgerのバリデーターは、低額の手数料で{{asset}}のステーキングを行います。",
+        "cta" : "今すぐステーキング"
       }
     }
   },
@@ -4264,6 +4307,7 @@
     "delegation" : "デリゲート",
     "viewDetails" : "詳細を表示",
     "validator" : "バリデータ",
+    "validatorGroup" : "バリデーターグループ",
     "validatorAddress" : "バリデータのアドレス",
     "delegatedAccount" : "デリゲート済みアカウント",
     "duration" : "期間",
