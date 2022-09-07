@@ -11,7 +11,10 @@ const StorylyTester = () => {
   const onOpenModal = useCallback(() => dispatch(openModal("MODAL_STORYLY_DEBUGGER")), [dispatch]);
 
   return (
-    <SettingsSectionRow title={t("settings.experimental.features.testStories.title")} desc="">
+    <SettingsSectionRow
+      title={t("settings.experimental.features.testStories.title")}
+      desc={t("settings.experimental.features.testStories.description")}
+    >
       <Button onClick={onOpenModal} primary>
         <Trans i18nKey={"storylyDebugger.buttonTitle"} />
       </Button>
