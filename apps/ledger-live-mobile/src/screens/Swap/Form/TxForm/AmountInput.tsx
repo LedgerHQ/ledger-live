@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { StyleSheet } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Unit } from "@ledgerhq/types-cryptoassets";
@@ -11,12 +11,24 @@ interface Props {
   unit: Unit | undefined;
   onChange: (_: BigNumber) => void;
   error: Error | undefined;
+  loading: boolean;
 }
 
-export function AmountInput({ value, onChange, editable, unit, error }: Props) {
+export function AmountInput({
+  value,
+  onChange,
+  editable,
+  unit,
+  error,
+  loading,
+}: Props) {
   return (
     <Flex justifyContent="flex-end" alignItems="flex-end">
-      {unit ? (
+      {loading ? (
+        <Flex marginRight={2}>
+          <InfiniteLoader size={20} color="neutral.c70" />
+        </Flex>
+      ) : unit ? (
         <CurrencyInput
           editable={editable}
           onChange={onChange}

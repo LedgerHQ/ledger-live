@@ -21,9 +21,10 @@ interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
   swapError?: Error;
+  isSendMaxLoading: boolean;
 }
 
-export function From({ swapTx, provider, swapError }: Props) {
+export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormProps>();
 
@@ -90,6 +91,7 @@ export function From({ swapTx, provider, swapError }: Props) {
             <AmountInput
               value={swapTx.swap.from.amount}
               editable={!swapTx.swap.isMaxEnabled}
+              loading={isSendMaxLoading}
               unit={unit}
               onChange={swapTx.setFromAmount}
               error={swapError}

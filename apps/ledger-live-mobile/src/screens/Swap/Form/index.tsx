@@ -393,6 +393,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
               provider={provider}
               exchangeRate={exchangeRate}
               swapError={swapError}
+              isSendMaxLoading={isSendMaxLoading}
             />
 
             {swapTransaction.swap.rates.status === "loading" ? (
@@ -421,7 +422,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
           </Flex>
 
           <Flex paddingY={4}>
-            <Max swapTx={swapTransaction} isSendMaxLoading={isSendMaxLoading} />
+            <Max swapTx={swapTransaction} />
 
             <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
               {t("transfer.swap2.form.cta")}

@@ -12,12 +12,24 @@ interface Props {
   provider?: string;
   exchangeRate?: ExchangeRate;
   swapError?: Error;
+  isSendMaxLoading: boolean;
 }
 
-export function TxForm({ swapTx, provider, exchangeRate, swapError }: Props) {
+export function TxForm({
+  swapTx,
+  provider,
+  exchangeRate,
+  swapError,
+  isSendMaxLoading,
+}: Props) {
   return (
     <Flex marginBottom={4}>
-      <From swapTx={swapTx} provider={provider} swapError={swapError} />
+      <From
+        swapTx={swapTx}
+        provider={provider}
+        swapError={swapError}
+        isSendMaxLoading={isSendMaxLoading}
+      />
       <To swapTx={swapTx} exchangeRate={exchangeRate} provider={provider} />
     </Flex>
   );
