@@ -186,6 +186,12 @@ export type SettingsState = {
   };
 };
 
+// === WALLET CONNECT STATE ===
+
+export type WalletConnectState = {
+  uri?: string;
+};
+
 // === ROOT STATE ===
 
 export type State = {
@@ -195,4 +201,5 @@ export type State = {
   ble: BleState;
   ratings: RatingsState;
   notifications: NotificationsState;
+  walletconnect: WalletConnectState;
 };

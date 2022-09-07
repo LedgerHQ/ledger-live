@@ -17,6 +17,7 @@ import type {
   Privacy,
   RatingsState,
   SettingsState,
+  WalletConnectState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 
@@ -396,3 +397,11 @@ export type SettingsPayload = SettingsImportPayload &
   SettingsSetSensitiveAnalyticsPayload &
   SettingsSetFirstConnectionHasDevicePayload &
   SettingsSetNotificationsPayload;
+
+// === WALLET CONNECT ACTIONS ===
+
+export enum WalletConnectActionTypes {
+  WALLET_CONNECT_SET_URI = "WALLET_CONNECT_SET_URI",
+}
+
+export type WalletConnectSetUriPayload = Pick<WalletConnectState, "uri">;
