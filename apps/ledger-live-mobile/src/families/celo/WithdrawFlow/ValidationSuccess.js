@@ -50,7 +50,9 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={<Trans i18nKey="celo.withdraw.steps.confirmation.title" />}
+        title={
+          <Trans i18nKey="celo.withdraw.steps.confirmation.success.title" />
+        }
         description={
           <Trans i18nKey="celo.withdraw.steps.confirmation.success.text" />
         }

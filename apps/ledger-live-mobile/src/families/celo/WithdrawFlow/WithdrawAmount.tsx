@@ -91,7 +91,6 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   );
 
   const onContinue = () => {
-    console.log(`transaction is: ${JSON.stringify(transaction)}`)
     navigation.navigate(ScreenName.CeloWithdrawSelectDevice, {
       ...route.params,
       transaction,
@@ -107,40 +106,6 @@ export default function WithdrawAmount({ navigation, route }: Props) {
       onChange(pendingWithdrawals[0].index);
     }
   }
-
-  // const pendingWithdrawals = [
-  //   {
-  //     value: new BigNumber("6660000000000000"),
-  //     time: new BigNumber("1662042839"),
-  //     index: 0,
-  //   },
-  //   {
-  //     value: new BigNumber("1000000000000000"),
-  //     time: new BigNumber("1661439326"),
-  //     index: 1,
-  //   },
-  //   {
-  //     value: new BigNumber("6660000040000000"),
-  //     time: new BigNumber("1662042839"),
-  //     index: 2,
-  //   },
-  //   {
-  //     value: new BigNumber("1000000000000000"),
-  //     time: new BigNumber("1661439326"),
-  //     index: 3,
-  //   },
-  //   {
-  //     value: new BigNumber("6660000000000000"),
-  //     time: new BigNumber("1662042839"),
-  //     index: 4,
-  //   },
-  //   {
-  //     value: new BigNumber("1000000000000000"),
-  //     time: new BigNumber("1661439326"),
-  //     index: 5,
-  //   }
-  // ];
-
 
   const [infoModalOpen, setInfoModalOpen] = useState(false);
 
@@ -178,7 +143,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
 
   return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        <TrackScreen category="WithdrawFlow" name="Amount" />
+        <TrackScreen category="CeloWithdraw" name="Amount" />
         <View style={styles.body}>
           <View style={styles.amount}>
             <Line>

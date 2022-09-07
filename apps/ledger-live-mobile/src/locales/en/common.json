@@ -3685,7 +3685,9 @@
         "steps": {
           "amount": {
             "available": "Available",
-            "max": "Max"
+            "max": "Max",
+            "waitingTitle": "Amount not ready for withdrawal",
+            "waitingPeriod": "You need to wait until {{date}} to withdraw this amount."
           },
           "verification": {
             "success": {
