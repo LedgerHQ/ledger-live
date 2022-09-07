@@ -165,7 +165,7 @@ describe("Eth hw-signMessage", () => {
         rawMessage: "0xtest",
       });
 
-      expect(rsv.v).toBe(1);
+      expect(rsv.v).toBe(28);
     });
 
     it("should not be returning parity for signEIP712HashedMessage", async () => {

@@ -97,8 +97,6 @@ const signMessage: EthSignMessage = async (
   let result: Awaited<ReturnType<typeof eth.signPersonalMessage>>;
   if (typeof parsedMessage === "string") {
     result = await eth.signPersonalMessage(path, rawMessage?.slice(2) || "");
-    result.v -= 27;
-    // here the expected v is the parity/recoveryId, so we need to remove 27 (v is either 27 or 28)
   } else {
     result = getEnv("EXPERIMENTAL_EIP712")
       ? await eth.signEIP712Message(path, parsedMessage)
@@ -107,7 +105,6 @@ const signMessage: EthSignMessage = async (
           bufferToHex(domainHash(parsedMessage)),
           bufferToHex(messageHash(parsedMessage))
         );
-    // result.v stays untouched for EIP712 as the expected v is already good (27 or 28)
   }
 
   let v = result.v.toString(16);
