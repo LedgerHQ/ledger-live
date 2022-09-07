@@ -1563,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "正在寻找您的 {{productName}}",
+        "description" : "请确保您的 {{productName}} 已解锁并且已启用蓝牙"
+      },
+      "withoutProductName" : {
+        "title" : "正在寻找设备",
+        "description" : "确保您的设备已开机、已解锁且已启用蓝牙"
+      },
+      "alreadyPaired" : "已配对"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "已和 {{deviceName}} 配对"
+      },
+      "loading" : {
+        "title" : "正在和 {{deviceName}} 配对",
+        "subtitle" : "在您的 {{productName}} 上确认代码"
+      },
+      "error" : {
+        "title" : "配对成功",
+        "subtitle" : "似乎出了点问题！检查蓝牙是否开启，以及 {{productName}} 是否在附近",
+        "retryCta" : "请重试"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "钱包",
     "accounts" : "Account（账户）",
@@ -1698,7 +1725,13 @@
       "WITHDRAW_UNBONDED" : "提取",
       "NOMINATE" : "提名",
       "CHILL" : "清除提名",
-      "SET_CONTROLLER" : "设置控制器"
+      "SET_CONTROLLER" : "设置控制器",
+      "ACTIVATE" : "已激活",
+      "LOCK" : "已锁定",
+      "UNLOCK" : "已解锁",
+      "REVOKE" : "已撤销",
+      "REGISTER" : "已注册",
+      "WITHDRAW" : "已提取"
     }
   },
   "operationDetails" : {
@@ -1936,6 +1969,16 @@
       "noTransaction" : {
         "title" : "您没有任何交易",
         "subtitle" : "您需要有设备才能买入或接收 {{assetName}}"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "您知道吗？Ledger 验证器权益质押的佣金低于您目前使用的验证器。",
+        "cta" : "重新委托"
+      },
+      "delegation" : {
+        "description" : "您知道吗？Ledger 验证器只需超低佣金即可为您权益质押 {{asset}}。",
+        "cta" : "立即进行权益质押"
       }
     }
   },
@@ -4264,6 +4307,7 @@
     "delegation" : "委托",
     "viewDetails" : "查看详情",
     "validator" : "验证者",
+    "validatorGroup" : "验证者组",
     "validatorAddress" : "验证者地址",
     "delegatedAccount" : "已委托账户",
     "duration" : "持续时间",

@@ -1563,6 +1563,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "Nach Ihrer {{productName}} wird gesucht",
+        "description" : "Bitte stellen Sie sicher, dass Ihre {{productName}} entsperrt und Bluetooth aktiviert ist."
+      },
+      "withoutProductName" : {
+        "title" : "Suche nach Geräten",
+        "description" : "Vergewissern Sie sich, dass Ihr Gerät eingeschaltet und entsperrt und Bluetooth aktiviert ist."
+      },
+      "alreadyPaired" : "Bereits gekoppelt"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "Gekoppelt mit {{deviceName}}"
+      },
+      "loading" : {
+        "title" : "Koppeln mit {{deviceName}}",
+        "subtitle" : "Bestätigen Sie den Code auf Ihrer {{productName}}"
+      },
+      "error" : {
+        "title" : "Kopplung fehlgeschlagen",
+        "subtitle" : "Offenbar ist ein Problem aufgetreten. Überprüfen Sie, ob Bluetooth aktiviert ist und sich Ihre {{productName}} in der Nähe befindet.",
+        "retryCta" : "Wiederholen"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "Wallet",
     "accounts" : "Konten",
@@ -1698,7 +1725,13 @@
       "WITHDRAW_UNBONDED" : "Abhebung",
       "NOMINATE" : "Nominierung",
       "CHILL" : "Nominierungen löschen",
-      "SET_CONTROLLER" : "Controller einstellen"
+      "SET_CONTROLLER" : "Controller einstellen",
+      "ACTIVATE" : "Aktiviert",
+      "LOCK" : "Gesperrt",
+      "UNLOCK" : "Entsperrt",
+      "REVOKE" : "Widerrufen",
+      "REGISTER" : "Registriert",
+      "WITHDRAW" : "Ausgezahlt"
     }
   },
   "operationDetails" : {
@@ -1936,6 +1969,16 @@
       "noTransaction" : {
         "title" : "Sie haben keine Transaktionen",
         "subtitle" : "Sie benötigen ein Gerät um {{assetName}} zu kaufen oder zu empfangen"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking zu einer günstigeren Provision als Ihr derzeitiger Validator.",
+        "cta" : "Erneut delegieren"
+      },
+      "delegation" : {
+        "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking Ihrer {{asset}} zu einer günstigen Provision.",
+        "cta" : "Jetzt staken"
       }
     }
   },
@@ -4264,6 +4307,7 @@
     "delegation" : "Delegation",
     "viewDetails" : "Details anzeigen",
     "validator" : "Validator",
+    "validatorGroup" : "Validator-Gruppe",
     "validatorAddress" : "Validator-Adresse",
     "delegatedAccount" : "Delegiertes Konto",
     "duration" : "Dauer",
