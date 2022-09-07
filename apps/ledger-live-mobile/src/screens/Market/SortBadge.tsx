@@ -41,7 +41,7 @@ type Props = {
   Icon?: any;
   options: Option[];
   disabled?: boolean;
-  onChange: (value: any) => void;
+  onChange: (_: any) => void;
 };
 
 function SortBadge({

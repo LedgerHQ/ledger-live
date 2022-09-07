@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import { Trans } from "react-i18next";
 import { PairingFailed, GenuineCheckFailed } from "@ledgerhq/errors";

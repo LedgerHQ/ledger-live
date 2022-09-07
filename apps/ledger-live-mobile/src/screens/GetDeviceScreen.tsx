@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import {
   Flex,
   Icons,
@@ -23,10 +23,11 @@ import { NavigatorName, ScreenName } from "../const";
 import useIsAppInBackground from "../components/useIsAppInBackground";
 import {
   hasCompletedOnboardingSelector,
-  discreetModeSelector,
+  readOnlyModeEnabledSelector,
 } from "../reducers/settings";
 import { track, TrackScreen } from "../analytics";
-import { useCurrentRouteName } from "../helpers/routeHooks";
+// eslint-disable-next-line import/no-cycle
+import { AnalyticsContext } from "../components/RootNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -40,7 +41,9 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background.main};
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sourceDark = require("../../assets/videos/NanoX_LL_Black.mp4");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sourceLight = require("../../assets/videos/NanoX_LL_White.mp4");
 
 const items = [
@@ -83,18 +86,17 @@ export default function GetDeviceScreen() {
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const discreetMode = useSelector(discreetModeSelector);
-  const currentRoute = useCurrentRouteName();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const handleBack = useCallback(() => {
     navigation.goBack();
-    if (discreetMode) {
+    if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "close",
-        screen: currentRoute,
+        screen: "Upsell Nano",
       });
     }
-  }, [currentRoute, discreetMode, navigation]);
+  }, [readOnlyModeEnabled, navigation]);
 
   const setupDevice = useCallback(() => {
     setShowWelcome(false);
@@ -105,19 +107,13 @@ export default function GetDeviceScreen() {
         screen: ScreenName.OnboardingDeviceSelection,
       },
     });
-    if (discreetMode) {
+    if (readOnlyModeEnabled) {
       track("message_clicked", {
         message: "I already have a device, set it up now",
-        screen: currentRoute,
+        screen: "Upsell Nano",
       });
     }
-  }, [
-    currentRoute,
-    discreetMode,
-    navigation,
-    setFirstTimeOnboarding,
-    setShowWelcome,
-  ]);
+  }, [readOnlyModeEnabled, navigation, setFirstTimeOnboarding, setShowWelcome]);
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {
@@ -129,14 +125,12 @@ export default function GetDeviceScreen() {
 
   const videoMounted = !useIsAppInBackground();
 
+  const { source } = useContext(AnalyticsContext);
+
   return (
     <StyledSafeAreaView>
-      {discreetMode ? (
-        <TrackScreen
-          category="ReadOnly"
-          name="Upsell Nano"
-          source={currentRoute}
-        />
+      {readOnlyModeEnabled ? (
+        <TrackScreen category="ReadOnly" name="Upsell Nano" source={source} />
       ) : null}
       <Flex
         flexDirection="row"

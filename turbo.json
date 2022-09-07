@@ -69,6 +69,10 @@
       "dependsOn": ["^build"],
       "outputs": ["react/**", "native/**", "index.js"]
     },
+    "@ledgerhq/crypto-icons-ui#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["react/**", "native/**", "index.js"]
+    },
     "@ledgerhq/live-common#build": {
       "dependsOn": ["^build"],
       "outputs": [

@@ -50,6 +50,7 @@ const test = base.extend<TestFixtures>({
       {
         ...process.env,
         MOCK: true,
+        MOCK_COUNTERVALUES: true,
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,

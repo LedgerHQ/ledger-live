@@ -7,9 +7,9 @@ import styled from "styled-components/native";
 import { Icons, Box } from "@ledgerhq/native-ui";
 
 type Props = {
-  app: App,
-  state: State,
-  dispatch: (action: Action) => void,
+  app: App;
+  state: State;
+  dispatch: (_: Action) => void;
 };
 
 const ButtonContainer = styled(Box).attrs({
@@ -26,7 +26,7 @@ export default function AppUpdateButton({
   dispatch: dispatchProps,
 }: Props) {
   const { name } = app;
-  const { installed, updateAllQueue } = state;
+  const { installed } = state;
 
   const canUpdate = useMemo(
     () => installed.some(({ name, updated }) => name === app.name && !updated),
@@ -36,16 +36,12 @@ export default function AppUpdateButton({
   const updateApp = useCallback(() => {
     if (!canUpdate) return;
     dispatchProps({ type: "install", name });
-  }, [
-    canUpdate,
-    dispatchProps,
-    name,
-  ]);
+  }, [canUpdate, dispatchProps, name]);
 
   return (
     <TouchableOpacity onPress={updateApp}>
       <ButtonContainer backgroundColor="primary.c80">
-        <Icons.RefreshMedium size={18} color="neutral.c00"/>
+        <Icons.RefreshMedium size={18} color="neutral.c00" />
       </ButtonContainer>
     </TouchableOpacity>
   );

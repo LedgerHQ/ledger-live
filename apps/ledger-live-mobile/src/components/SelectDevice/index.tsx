@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import {
   useNavigation,
+  useRoute,
   useTheme as useNavTheme,
 } from "@react-navigation/native";
 import {
@@ -19,6 +20,7 @@ import { knownDevicesSelector } from "../../reducers/ble";
 import { setHasConnectedDevice } from "../../actions/appstate";
 import DeviceItem from "./DeviceItem";
 import BluetoothEmpty from "./BluetoothEmpty";
+// eslint-disable-next-line import/no-unresolved
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";
@@ -32,12 +34,12 @@ import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.js
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 
 type Props = {
-  onBluetoothDeviceAction?: (device: Device) => void;
-  onSelect: (device: Device) => void;
+  onBluetoothDeviceAction?: (_: Device) => void;
+  onSelect: (_: Device) => void;
   onWithoutDevice?: () => void;
   withArrows?: boolean;
   usbOnly?: boolean;
-  filter?: (transportModule: TransportModule) => boolean;
+  filter?: (_: TransportModule) => boolean;
   autoSelectOnAdd?: boolean;
   hideAnimation?: boolean;
 };
@@ -56,12 +58,13 @@ export default function SelectDevice({
   const navigation = useNavigation();
   const knownDevices = useSelector(knownDevicesSelector);
   const dispatch = useDispatch();
+  const route = useRoute();
 
   const handleOnSelect = useCallback(
     deviceInfo => {
       const { modelId, wired } = deviceInfo;
 
-      dispatch(setLastConnectedDevice(deviceInfo));  
+      dispatch(setLastConnectedDevice(deviceInfo));
       if (wired) {
         track("Device selection", {
           modelId,
@@ -94,6 +97,10 @@ export default function SelectDevice({
   const [devices, setDevices] = useState([]);
 
   const onPairNewDevice = useCallback(() => {
+    track("button_clicked", {
+      button: "Pair with bluetooth",
+      screen: route.name,
+    });
     NativeModules.BluetoothHelperModule.prompt()
       .then(() =>
         // @ts-expect-error navigation issue

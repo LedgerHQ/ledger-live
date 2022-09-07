@@ -13,6 +13,7 @@ import {
 } from "./specs/index";
 import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("celo");
 const send50PercentMutation = createSend50PercentMutation();
@@ -33,6 +34,7 @@ const celo: AppSpec<Transaction> = {
     appName: "Celo",
   },
   testTimeout: 2 * 60 * 1000,
+  genericDeviceAction: acceptTransaction,
   mutations: [
     send50PercentMutation,
     sendMaxMutation,

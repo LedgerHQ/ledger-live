@@ -81,7 +81,8 @@
     "seeMore" : "Daha fazla gör",
     "moreInfo" : "Daha fazla bilgi",
     "buyEth" : "Ethereum Satın Al",
-    "popular" : "popüler"
+    "popular" : "popüler",
+    "comingSoon" : "Çok yakında"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -322,6 +323,14 @@
     "InvalidRecipient" : {
       "title" : "Geçersiz alıcı"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Dil yüklemesi cihaz tarafından reddedildi",
+      "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+    },
+    "LanguageNotFound" : {
+      "title" : "Dil bulunamadı",
+      "description" : "Yüklemek istediğiniz dil bulunamadı. Lütfen farklı bir dil yüklemeyi deneyin."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Üzgünüz, güncellenecek bir şey yok",
       "description" : "Cihazınızı kullanamıyorsanız lütfen Ledger Destek ile iletişime geçin."
@@ -560,14 +569,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "Legacy adres biçimi artık desteklenmiyor"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo biçimi yanlış"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Bu alıcıya gönderirken bir memo gerekebilir"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratis blok zinciri evrimleşti ve artık düzgün çalışmayabilir. Orijinal Stratis blok zinciri desteği 16 Ekim 2021'e kadar sürdürülecektir."
@@ -644,7 +647,45 @@
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
     },
     "CardanoMinAmountError" : {
-      "title" : "En az {{amount}} ADA gerekli"
+      "title" : "En az {{amount}} ADA gönderilebilir"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Lütfen ücretleri ödemeye yetecek kadar fonunuz olduğundan emin olun"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo biçimi yanlış"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Bu alıcıya gönderirken bir memo gerekebilir"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Bu alıcının henüz {{assetCode}} için bir trustline'ı yok."
+    },
+    "StellarAssetRequired" : {
+      "title" : "Bir trustline eklemek için bir Stellar varlığı seçmelisiniz"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Seçilen Stellar varlığı bulunamadı"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta işlem ücretini karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Seçilen ücret önerilen ücretten az"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Minimum işlem ücreti 0,00001 XLM'dir"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta yeni trustline'ı karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar hesabı mevcut değil"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     }
   },
   "bluetooth" : {
@@ -820,8 +861,8 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Ledger Live'ı sevdiniz mi?",
-      "description" : "İster sevmiş ister daha iyi olabileceğini düşünüyor olun. Geri bildiriminiz bizim için gerçekten çok önemli.",
+      "title" : "Uygulamamızı beğendiniz mi?",
+      "description" : "Geri bildiriminiz Ledger Live'ı geliştirmemize yardımcı olacak.",
       "cta" : {
         "enjoy" : "Harika",
         "disappointed" : "Beğenmedim",
@@ -838,7 +879,8 @@
     },
     "disappointed" : {
       "title" : "Sizin için daha iyi bir ürün geliştirmemize yardımcı olun",
-      "description" : "Daha iyisini yapmak istiyoruz ve samimi geri bildiriminiz, neyi geliştirmemiz gerektiğini bilmemize yardımcı oluyor.",
+      "description" : "Başka bir konuda yardıma ihtiyacınız varsa ya da size dönüş yapmamızı isterseniz canlı sohbet işlevini kullanmak için lütfen",
+      "here" : "buraya tıklayın",
       "cta" : {
         "sendFeedback" : "Geri bildirim gönder",
         "notNow" : "Şimdi değil"
@@ -930,9 +972,9 @@
         "title" : "Kazanın",
         "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
       },
-      "mint": {
-        "title": "Mintleyin",
-        "desc": "[ L ] Market’teki özel iş birlikleri kapsamında NFT’ler mintleyin"
+      "mint" : {
+        "title" : "Mint'leyin",
+        "desc" : "[ L ] Market'teki özel iş birliklerini kullanarak NFT'ler mint'leyin"
       }
     },
     "comingSoon" : "Çok yakında",
@@ -1716,7 +1758,8 @@
       "validatorsCount" : "Doğrulayıcılar ({{number}})",
       "storageLimit" : "Depolama Limiti",
       "gasLimit" : "Gas limiti",
-      "id" : "Kimlik (ID)"
+      "id" : "Kimlik (ID)",
+      "autoClaimedRewards" : "Otomatik Alınan Ödüller"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -1737,6 +1780,17 @@
     "subaccountCount_plural" : "+{{count}} alt hesap"
   },
   "account" : {
+    "subHeader" : {
+      "moreInfo" : "Daha fazla bilgi",
+      "cardTitle" : "{{team}} desteğiyle",
+      "drawer" : {
+        "title" : "{{family}} entegrasyonu",
+        "subTitle" : "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
+        "description" : "Ledger Live, açık kaynaklı bir platformdur.",
+        "description2" : "Dünyanın her yerinden developer'lar Ledger Live ile entegre olabilir",
+        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir."
+      }
+    },
     "tokens" : {
       "contractAddress" : "Sözleşme adresi",
       "viewInExplorer" : "Tarayıcıda görüntüle",
@@ -1753,6 +1807,13 @@
         "howTo" : "Algorand hesabınıza varlık ekleyebilirsiniz.",
         "addAsa" : "ASA Ekle (Varlık)",
         "howAsaWorks" : "ASA (varlık) nasıl çalışır?"
+      },
+      "stellar" : {
+        "seeMore" : "Diğer varlıkları gör",
+        "seeLess" : "Diğer varlıkları kapat",
+        "addTokens" : "Varlık ekle",
+        "howTo" : "Stellar hesabınıza varlık ekleyebilirsiniz.",
+        "addAsset" : "Varlık ekle"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1962,12 @@
         "showTokens_plural" : "{{length}} ASA göster",
         "hideTokens" : "ASA'yı Gizle",
         "hideTokens_plural" : "ASA'yı Gizle"
+      },
+      "stellar" : {
+        "showTokens" : "{{length}} varlığı göster",
+        "showTokens_plural" : "{{length}} varlığı göster",
+        "hideTokens" : "Varlığı gizle",
+        "hideTokens_plural" : "Varlıkları gizle"
       }
     },
     "noResultsFound" : "Varlık bulunamadı",
@@ -2061,6 +2128,36 @@
         "android" : "Google Play mağazasında değerlendir"
       }
     },
+    "notifications" : {
+      "title" : "Bildirimler",
+      "desc" : "Bildirimlerinizi yönetin",
+      "disabledNotifications" : {
+        "title" : "Bildirimleriniz kapalı",
+        "desc" : "{{platform}}, Ledger Live bildirimlerini engelliyor. Telefonunuza bildirim almak için cihazınızın ayarlar bölümüne gidip Ledger Live bildirimlerini açın.",
+        "turnOnNotif" : "Bildirimleri aç",
+        "goToSettings" : "Sistem ayarlarına git"
+      },
+      "allowed" : {
+        "title" : "Bildirimlere izin ver",
+        "desc" : "Kriptolarınız, piyasa eğilimleri ve diğer şeylerle ilgili bildirim alın"
+      },
+      "transactions" : {
+        "title" : "İşlemler",
+        "desc" : "Kripto aldığınızda ya da gönderdiğinizde bildirim alın"
+      },
+      "market" : {
+        "title" : "Piyasa",
+        "desc" : "Önemli piyasa değişikliklerinden haberdar olun"
+      },
+      "announcement" : {
+        "title" : "Duyurular",
+        "desc" : "Önemli Ledger Live haberlerini alın"
+      },
+      "price" : {
+        "title" : "Fiyat Uyarıları",
+        "desc" : "En çok tercih ettiğiniz coin'ler için fiyat uyarıları belirleyerek piyasa hareketlerini kaçırmayın"
+      }
+    },
     "help" : {
       "title" : "Yardım",
       "header" : "Yardım",
@@ -2092,6 +2189,23 @@
       "customManifest" : {
         "title" : "Özel Platform Manifest Dosyası Yükle"
       }
+    },
+    "debug" : {
+      "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
+      "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
+      "featureFlagsOverride" : "Geçersiz bırak",
+      "featureFlagsEdit" : "Düzenle",
+      "featureFlagsRestore" : "Geri yükle",
+      "featureFlagsDisplayValue" : "Değeri göster",
+      "featureFlagsHideValue" : "Değeri gizle"
+    }
+  },
+  "notifications" : {
+    "prompt" : {
+      "title" : "Bildirimleri aç",
+      "desc" : "Ledger Live, Ledger ürünleri ve güvenlik ile ilgili önemli gelişmeleri öğrenin. İstediğiniz zaman devre dışı bırakabilirsiniz.",
+      "allow" : "Bildirimlere izin ver",
+      "later" : "Belki sonra"
     }
   },
   "migrateAccounts" : {
@@ -2157,10 +2271,67 @@
       "verifyAgain" : "Tekrar kontrol et",
       "noAccount" : "Hesap bulunamadı",
       "address" : "Hesap adresi",
-      "copyAddress" : "Adresi kopyala",
+      "copyAddress" : "Kopyala",
       "shareAddress" : "Adresi paylaş",
-      "addressCopied" : "Adres kopyalandı!",
+      "addressCopied" : "Kopyalandı",
       "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
+      "selectCrypto" : {
+        "title" : "Bir kripto seçin"
+      },
+      "stepperHeader" : {
+        "range" : "Adım {{currentStep}} / {{totalSteps}}",
+        "connectDevice" : "Cihazı Bağlayın"
+      },
+      "selectAccount" : {
+        "title" : "Bir hesap seçin",
+        "subtitle" : "{{currencyTicker}} varlıklarınız bu hesaba yatırılacak."
+      },
+      "addAccount" : {
+        "title" : "Blok zinciri aranıyor",
+        "subtitle" : "Önceden {{currencyTicker}} hesabınızın olup olmadığı kontrol ediliyor.",
+        "foundAccounts" : "{{count}} hesap bulundu",
+        "stopSynchronization" : "Senkronizasyonu durdur"
+      },
+      "verifyAddress" : {
+        "title" : "Adresi doğrula",
+        "subtitle" : "Cihazınızda gösterilen adresin aşağıda gösterilen adresle aynı olduğunu doğrulayın. Emin olduktan sonra cihazınızdan \"approve\" (doğrula) düğmesine basabilirsiniz.",
+        "cancel" : {
+          "title" : "Bu adresi reddettiniz",
+          "subtitle" : "Bunu yapmak istemediyseniz aşağıdaki düğmeye tıklayarak tekrar deneyebilirsiniz.",
+          "info" : "Adreslerin eşleşmediğinden eminseniz telefonunuza virüs bulaşmış olabilir. <0>En kısa sürede bizimle iletişime geçmenizi</0> öneririz."
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "{{currencyTicker}} al",
+        "addressVerified" : "Adres doğrulandı",
+        "verifyAddress" : "Adresinizi doğrulamak için buraya dokunun",
+        "adviceVerify" : "Adresinizi daima Ledger cihazınız ile doğrulamanızı öneririz",
+        "sendWarning" : "Bu adrese sadece {{currencyName}} ({{currencyTicker}}) gönderin. Başka herhangi bir coin gönderdiğiniz takdirde bu coin'leri kalıcı olarak yitirebilirsiniz."
+      },
+      "securityVerify" : {
+        "title" : "Güvenliğiniz açısından bu adresi Ledger cihazınızla doğrulamanızı öneririz.",
+        "subtitle1" : "Adresinizi doğrulamak güvende olmanızı sağlar. Ledger cihazınızda görüntülenen adresin hatalı olma ihtimali yoktur.",
+        "subtitle2" : "Adresi doğrulayarak cihazınızda gösterilen adresin Ledger Live'da gösterilen adresle aynı olduğunu onaylayabilirsiniz.",
+        "verifyCta" : "Adresimi doğrula",
+        "dontVerifyCta" : "Adresimi doğrulamadan göster"
+      },
+      "securityDontVerify" : {
+        "title" : "Emin misiniz?",
+        "subtitle" : "Ledger Live'da gösterilen adres doğrulanmayacak.",
+        "doNotRemindAgain" : "Tekrar hatırlatma",
+        "no" : "Hayır",
+        "yes" : "Evet"
+      },
+      "toastMessages" : {
+        "accountImported" : "Sizin için bir {{currencyTicker}} hesabını içe aktardık. ",
+        "why" : "Nedenini belirt.",
+        "addressVerified" : "Adresiniz doğrulandı"
+      },
+      "additionalInfoModal" : {
+        "title" : "Neden bir hesabı içe aktardık?",
+        "subtitle" : "Seed'inizde önceden bir {{currencyTicker}} hesabı olduğunu tespit ettik. Sizin için bu hesabı içe aktardık.",
+        "closeCta" : "Tamam, anladım"
+      },
       "notSynced" : {
         "text" : "Senkronize ediliyor",
         "desc" : "Çok sayıda işlem yaptıysanız veya internet bağlantınız yavaşsa bu işlem biraz zaman alabilir."
@@ -3259,7 +3430,9 @@
     "newVersion" : "{{deviceName}} cihazınız için {{version}} güncellemesi mevcut",
     "drawerUpdate" : {
       "title" : "Donanım Yazılımı Güncellemesi",
-      "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın"
+      "description" : "Ledger Nano donanım yazılımını güncellemek için cihazınızı bilgisayarınızdaki Ledger Live uygulamasına bağlayın",
+      "pleaseConnectUsbTitle" : "USB kablosu gerekli",
+      "pleaseConnectUsbDescription" : "Donanım yazılımı güncellemesini başlatmak için {{deviceName}} cihazınızı bir USB kablosuyla cep telefonunuza bağlayın."
     }
   },
   "FirmwareUpdateReleaseNotes" : {
@@ -3285,6 +3458,19 @@
       "es" : "İspanyolca",
       "zh" : "Çince",
       "de" : "Almanca"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Dil",
+    "deviceLanguage" : "Cihaz Dili",
+    "changeLanguage" : "Dili değiştir",
+    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
+    "languageInstalled" : "Cihaz dili {{language}} oldu",
+    "installingLanguage" : "Dil yükleniyor",
+    "languages" : {
+      "english" : "İngilizce",
+      "french" : "Fransızca",
+      "spanish" : "İspanyolca"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -3381,11 +3567,43 @@
       }
     }
   },
+  "cardano" : {
+    "info" : {
+      "balanceDoesNotIncludeRewards" : {
+        "title" : "Staking ödülleri toplam bakiyeye dahil edilmez"
+      }
+    }
+  },
   "celo" : {
     "info" : {
       "available" : {
         "title" : "CELO mevcut",
         "description" : "Bu tutar, kullanabileceğiniz fondur."
+      }
+    }
+  },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO mevcut"
+      },
+      "delegated" : {
+        "description" : "Yetkisi devredilen varlıklar Osmosis oylaması için kullanılır. Bu tutar toplam oy sayınızdır."
+      },
+      "undelegating" : {
+        "description" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce 14 gün boyunca zaman kilidinde tutulurlar."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "OSMO'larınızla yetki devri yaparak hem güvenle ödül kazanın hem de varlıklarınızın kontrolünü muhafaza edin edin.",
+            "steps" : {
+              "1" : "Yetki iptallerinin tamamlanması için 14 gün beklemeniz gerekir."
+            }
+          }
+        }
       }
     }
   },
@@ -3592,33 +3810,6 @@
       }
     }
   },
-  "cryptoOrg" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Crypto.org desteğiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "Crypto.org entegrasyonu",
-        "title" : "Crypto.org (CRO) token'ı artık Ledger Live'da",
-        "description" : "Crypto.org (CRO) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
-        "description2" : "Crypto.org (CRO), Crypto.org zincirinin ana token'ıdır ve ağ üzerindeki işlemler, staking ve yakında çıkacak pek çok özellik için kullanılır.",
-        "website" : "Her cüzdanda kripto para"
-      }
-    }
-  },
-  "elrond" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Elrond desteğiyle",
-        "drawerTitle" : "Elrond entegrasyonu",
-        "moreInfo" : "Daha fazla bilgi",
-        "title" : "Elrond eGold (EGLD) token'ı artık Ledger Live'da kullanılabilir",
-        "description" : "eGold (EGLD) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
-        "description2" : "Elrond Network'e özgü olan Elrond eGold (EGLD) Token, bu ağ üzerindeki her türlü işlem, staking, akıllı sözleşme, yönetişim ve doğrulayıcı ödülleri için kullanılır.",
-        "description3" : "Elrond ekibiyle aktif bir işbirliği gerçekleştirerek staking işlemleri, dahili ESDT (Elrond Standart Dijital Token) desteği ve daha birçok işlevi eklemek için çalışıyoruz.",
-        "website" : "İnternet Ölçeğinde Blok Zinciri"
-      }
-    }
-  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "Hesabınızı yetki devretmek için kullanarak ödüller kazanabilirsiniz",
@@ -3734,6 +3925,7 @@
     }
   },
   "stellar" : {
+    "token" : "Varlıklar",
     "memo" : {
       "title" : "Memo",
       "warning" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın."
@@ -3744,6 +3936,48 @@
       "MEMO_ID" : "Memo Kimliği",
       "MEMO_HASH" : "Memo Hash",
       "MEMO_RETURN" : "Memo Dönüşü"
+    },
+    "fee" : "Ağ ücreti",
+    "feeAction" : "Güncelleme ücreti",
+    "recommendedFee" : "Önerilen ücret",
+    "recommenndedFeeInfo" : "Bu işlemi önerilenden daha düşük bir ücretle gönderebilirsiniz ancak tamamlanmayabilir",
+    "suggested" : "Önerilen",
+    "networkCongestion" : "ağ yoğunluğu",
+    "networkCongestionLevel" : {
+      "LOW" : "Düşük",
+      "MEDIUM" : "Orta",
+      "HIGH" : "Yüksek"
+    },
+    "assetCode" : "Varlık kodu",
+    "assetIssuer" : "Varlık yaratıcısı",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "Varlık ekle",
+        "connectDevice" : "Cihazı bağlayın",
+        "verification" : "Doğrulama",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "Varlık zaten eklendi",
+              "description" : "Stellar hesabınızda zaten {{token}} varlığı mevcut."
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}} varlığı başarıyla eklendi",
+              "text" : "Artık Stellar hesabınızla <0>{{token}}</0> varlıkları gönderip alabilirsiniz.",
+              "cta" : "Ayrıntıları göster"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Tekrar denemeden önce, işleminizin gerçekleşmediğinden emin olmak için birkaç dakika sonra yeniden kontrol edin."
+          }
+        }
+      }
     }
   },
   "polkadot" : {
@@ -4109,6 +4343,11 @@
         "redelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için 21 gün beklemeniz gerekir.",
         "undelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için 21 gün beklemeniz gerekir."
       },
+      "osmosis" : {
+        "claimReward" : "Seçilen doğrulayıcıda bekleyen ödüller varsa ödüller otomatik olarak alınır.",
+        "redelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için 14 gün beklemeniz gerekir.",
+        "undelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için 14 gün beklemeniz gerekir."
+      },
       "lending" : "Göndermeden önce işlem bilgilerini cihazınızdan doğrulayın."
     },
     "amount" : "Tutar",
@@ -4118,6 +4357,7 @@
     "redelegationAmount" : "Yetkisi devredilen tutar",
     "gas" : "Gas",
     "validatorAddress" : "Doğrulayıcı adresi",
+    "validatorName" : "Doğrulayıcı adı",
     "rewardAmount" : "Ödül tutarı",
     "undelegatedAmount" : "Yetkisi iptal edilen tutar",
     "memo" : "Memo"
@@ -4147,7 +4387,7 @@
       "tabTitle" : "Satın Al",
       "selectCurrency" : "Bir para birimi seçin",
       "selectAccount" : "Bir hesap seçin",
-      "wantToBuy" : "Satın almak istiyorum",
+      "wantToBuy" : "Almak istediğim varlık:",
       "connectDevice" : "Cihazınızı bağlayın",
       "title" : "Ortağımız üzerinden kripto satın alın",
       "coinifyTitle" : "Ortağımız üzerinden kripto satın alın",
@@ -4407,6 +4647,16 @@
     },
     "operations" : {
       "title" : "İşlem geçmişi"
+    }
+  },
+  "hedera" : {
+    "name" : "hedera",
+    "createHederaAccountHelp" : {
+      "text" : "Bu destek makalesini inceleyerek",
+      "link" : "Hedera hesabının nasıl oluşturulduğunu öğrenebilirsiniz"
+    },
+    "currentAddress" : {
+      "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
     }
   }
 }

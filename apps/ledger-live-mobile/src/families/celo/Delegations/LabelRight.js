@@ -32,8 +32,8 @@ export default function DelegationLabelRight({ onPress, disabled }: Props) {
         onClose={onCloseModal}
         data={[
           {
-            title: t("cosmos.info.delegationUnavailable.title"),
-            description: t("cosmos.info.delegationUnavailable.description"),
+            title: t("celo.delegation.delegationUnavailable.title"),
+            description: t("celo.manage.lock.description"),
           },
         ]}
       />

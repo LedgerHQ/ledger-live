@@ -30,7 +30,7 @@ export default function ActivityIndicatorInner() {
 
   const onClick = useCallback(() => {
     cvPolling.poll();
-    bridgeSync({ type: "SYNC_ALL_ACCOUNTS", priority: 5 });
+    bridgeSync({ type: "SYNC_ALL_ACCOUNTS", priority: 5, reason: "user-click" });
     setLastclickTime(Date.now());
     track("SyncRefreshClick");
   }, [cvPolling, bridgeSync]);

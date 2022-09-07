@@ -20,7 +20,9 @@ type Props = {
   footer?: React.ReactNode;
   hasBackButton?: boolean;
   hasCloseButton?: boolean;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   customBackAction?: () => {};
+  // eslint-disable-next-line @typescript-eslint/ban-types
   customCloseAction?: () => {};
   centerTitle?: boolean;
 };
@@ -39,11 +41,13 @@ function OnboardingView({
   const { colors } = useTheme();
   const navigation = useNavigation();
 
+  // eslint-disable-next-line consistent-return
   const handlecustomBackAction = () => {
     if (customBackAction) return customBackAction();
     navigation.goBack();
   };
 
+  // eslint-disable-next-line consistent-return
   const handlecustomCloseAction = () => {
     if (customCloseAction) return customCloseAction();
     navigation.dispatch(StackActions.popToTop());

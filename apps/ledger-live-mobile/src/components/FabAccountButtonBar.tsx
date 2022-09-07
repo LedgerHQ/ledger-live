@@ -69,8 +69,11 @@ function FabAccountButtonBar({
 
   const onNavigate = useCallback(
     (name: string, options?: any) => {
-      const accountId = account ? account.id : undefined;
-      const parentId = parentAccount ? parentAccount.id : undefined;
+      const accountId = account ? account.id : options?.params?.accountId;
+      const parentId = parentAccount
+        ? parentAccount.id
+        : options?.params?.parentId;
+
       navigation.navigate(name, {
         ...options,
         params: {
@@ -139,6 +142,7 @@ function FabAccountButtonBar({
             Icon,
             event,
             eventProperties,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             Component,
             type = "color",
             outline = false,

@@ -1,12 +1,12 @@
 import { Flex, Text, Log } from "@ledgerhq/native-ui";
 import React from "react";
-import Animation from "../Animation";
-import getDeviceAnimation from "../DeviceAction/getDeviceAnimation";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { useTheme } from "styled-components/native";
+import getDeviceAnimation from "../DeviceAction/getDeviceAnimation";
+import Animation from "../Animation";
 import Track from "../../analytics/Track";
 
 type Props = {

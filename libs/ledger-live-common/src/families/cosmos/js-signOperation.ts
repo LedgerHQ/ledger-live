@@ -1,5 +1,5 @@
 import type { CosmosAccount, Transaction } from "./types";
-import { getAccount, getChainId } from "./api/Cosmos";
+import { defaultCosmosAPI } from "./api/Cosmos";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
@@ -33,11 +33,11 @@ const signOperation = ({
       async function main() {
         const hwApp = new Cosmos(transport);
 
-        const { accountNumber, sequence } = await getAccount(
+        const { accountNumber, sequence } = await defaultCosmosAPI.getAccount(
           account.freshAddress
         );
 
-        const chainId = await getChainId();
+        const chainId = await defaultCosmosAPI.getChainId();
 
         o.next({ type: "device-signature-requested" });
 
@@ -138,7 +138,7 @@ const signOperation = ({
 
         if (transaction.mode === "redelegate") {
           Object.assign(extra, {
-            cosmosSourceValidator: transaction.cosmosSourceValidator,
+            sourceValidator: transaction.sourceValidator,
           });
         }
 

@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 
 type Props = {
   parentAccount: Account;
-  onAccountPress: (subAccount: SubAccount) => void;
+  onAccountPress: (_: SubAccount) => void;
   accountId: string;
   useCounterValue?: boolean;
 };
@@ -79,7 +79,7 @@ export default function SubAccountsList({
 
   const navigateToReceiveConnectDevice = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId,
       },

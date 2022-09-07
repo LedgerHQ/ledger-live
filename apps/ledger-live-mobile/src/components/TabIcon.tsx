@@ -7,7 +7,7 @@ type Props = {
   color: string;
   focused: boolean;
   i18nKey: string;
-  Icon: (props: { size?: number; color?: string }) => React.ReactElement;
+  Icon: (_: { size?: number; color?: string }) => React.ReactElement;
 };
 
 const TabIconContainer = styled.View`

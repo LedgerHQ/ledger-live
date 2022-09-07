@@ -6,10 +6,9 @@ import Flex from "../../layout/Flex";
 const Wrapper = styled(Flex)<{ image?: string }>`
   width: 100%;
   height: 100%;
-  background: gray;
   flex-direction: column;
   padding: ${(p) => p.theme.space[8]}px ${(p) => p.theme.space[10]}px;
-  padding-right: 280px; // Nb gives air to not overlap the illustration
+  padding-right: 280px; /* Nb gives air to not overlap the illustration */
   z-index: ${(p) => p.theme.zIndexes[8]};
   background: url(${(p) => p.image}) no-repeat ${(p) => p.theme.colors.neutral.c100};
   background-size: contain;

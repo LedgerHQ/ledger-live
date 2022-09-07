@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback } from "react";
 import { Linking, ScrollView } from "react-native";
 import { Trans } from "react-i18next";

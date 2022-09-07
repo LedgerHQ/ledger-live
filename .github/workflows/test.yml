@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
@@ -37,6 +37,29 @@ jobs:
         run: pnpm i --filter="!./apps/**" --frozen-lockfile
       - name: run doc
         run: pnpm doc:ljs
+      - name: check if diff
+        run: git diff --exit-code || exit 1
+
+  test-cli:
+    name: "Test CLI"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+      - name: build cli
+        run: pnpm build:cli
       - name: check if diff
         run: git diff --exit-code || exit 1
 
@@ -64,7 +87,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v2.1.0
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
@@ -74,7 +97,7 @@ jobs:
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: actions/setup-python@v2
         with:
-          python-version: "2.7.x"
+          python-version: "3.10"
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
@@ -83,20 +106,21 @@ jobs:
         run: |
           npm i -g npm@8.12.2
           npm --version
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-gh-cache
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries (Pull Request)
         if: ${{ github.event_name != 'push' }}
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}]" --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: Build and Test affected libraries (Pull Request)
         if: ${{ github.event_name == 'push' }}
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[HEAD^1]" --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[HEAD^1]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3

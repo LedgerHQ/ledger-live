@@ -1,9 +1,0 @@
-*                 @ledgerhq/live-blockchain-support
-.github           @ledgerhq/live-devx
-src/hw            @ledgerhq/live-devices
-src/manager       @ledgerhq/live-devices
-src/apps          @ledgerhq/live-devices
-src/notifications @ledgerhq/live-hub
-src/featureFlags  @ledgerhq/live-hub
-src/exchange      @ledgerhq/live-platform-and-services
-src/platform      @ledgerhq/live-platform-and-services

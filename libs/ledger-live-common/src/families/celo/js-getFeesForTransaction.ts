@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { CeloAccount, Transaction } from "./types";
 import { celoKit } from "./api/sdk";
-import { getVote } from "./logic";
+import { getPendingStakingOperationAmounts, getVote } from "./logic";
 
 const getFeesForTransaction = async ({
   account,
@@ -16,13 +16,26 @@ const getFeesForTransaction = async ({
   // A workaround - estimating gas throws an error if value > funds
   let value: BigNumber = new BigNumber(0);
 
+  const pendingOperationAmounts = getPendingStakingOperationAmounts(account);
+  const lockedGold = await kit.contracts.getLockedGold();
+  const nonvotingLockedGoldBalance =
+    await lockedGold.getAccountNonvotingLockedGold(account.freshAddress);
+  // Deduct pending vote operations from the non-voting locked balance
+  const totalNonVotingLockedBalance = nonvotingLockedGoldBalance.minus(
+    pendingOperationAmounts.vote
+  );
+  // Deduct pending lock operations from the spendable balance
+  const totalSpendableBalance = account.spendableBalance.minus(
+    pendingOperationAmounts.lock
+  );
+
   if (
     (transaction.mode === "unlock" || transaction.mode === "vote") &&
     account.celoResources
   ) {
     value = transaction.useAllAmount
-      ? account.celoResources.nonvotingLockedBalance
-      : BigNumber.minimum(amount, account.celoResources.nonvotingLockedBalance);
+      ? totalNonVotingLockedBalance
+      : BigNumber.minimum(amount, totalNonVotingLockedBalance);
   } else if (transaction.mode === "revoke" && account.celoResources) {
     const vote = getVote(account, transaction.recipient, transaction.index);
     if (vote) {
@@ -32,14 +45,12 @@ const getFeesForTransaction = async ({
     }
   } else {
     value = transaction.useAllAmount
-      ? account.spendableBalance
-      : BigNumber.minimum(amount, account.spendableBalance);
+      ? totalSpendableBalance
+      : BigNumber.minimum(amount, totalSpendableBalance);
   }
 
   let gas: number | null = null;
   if (transaction.mode === "lock") {
-    const lockedGold = await kit.contracts.getLockedGold();
-
     gas = await lockedGold
       .lock()
       .txo.estimateGas({ from: account.freshAddress, value: value.toFixed() });

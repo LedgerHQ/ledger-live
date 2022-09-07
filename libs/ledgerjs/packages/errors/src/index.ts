@@ -111,6 +111,7 @@ export const ManagerUninstallBTCDep = createCustomErrorClass(
   "ManagerUninstallBTCDep"
 );
 export const NetworkDown = createCustomErrorClass("NetworkDown");
+export const NetworkError = createCustomErrorClass("NetworkError");
 export const NoAddressesFound = createCustomErrorClass("NoAddressesFound");
 export const NotEnoughBalance = createCustomErrorClass("NotEnoughBalance");
 export const NotEnoughBalanceToDelegate = createCustomErrorClass(
@@ -217,6 +218,8 @@ export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
 export const FirmwareOrAppUpdateRequired = createCustomErrorClass(
   "FirmwareOrAppUpdateRequired"
 );
+
+export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 
 // db stuff, no need to translate
 export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");

@@ -7,6 +7,9 @@ import { isAccountEmpty } from "../account";
 import type { DeviceAction, DeviceActionArg } from "./types";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../generated/types";
+import { botTest } from "./bot-test-context";
+
+export { botTest };
 
 const stepValueTransformDefault = (s) => s.trim();
 
@@ -89,11 +92,13 @@ export function deviceActionFlow<T extends Transaction>(
             currentStep.stepValueTransform || stepValueTransformDefault;
 
           if (!ignoreAssertionFailure) {
-            expect({
-              [stepTitle]: stepValueTransform(stepValue),
-            }).toMatchObject({
-              [stepTitle]: expectedValue(arg, acc).trim(),
-            });
+            botTest("deviceAction confirm step '" + stepTitle + "'", () =>
+              expect({
+                [stepTitle]: stepValueTransform(stepValue),
+              }).toMatchObject({
+                [stepTitle]: expectedValue(arg, acc).trim(),
+              })
+            );
           }
         }
 

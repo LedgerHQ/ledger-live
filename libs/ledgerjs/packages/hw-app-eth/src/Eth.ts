@@ -1205,9 +1205,6 @@ export default class Eth {
   }
 
   provideERC20TokenInformation({ data }: { data: Buffer }): Promise<boolean> {
-    console.warn(
-      "hw-app-eth: eth.provideERC20TokenInformation is deprecated. signTransaction solves this for you when providing it in `resolution`."
-    );
     return provideERC20TokenInformation(this.transport, data);
   }
 

@@ -118,7 +118,7 @@ const AccountPage = ({
         currency={currency.id}
         operationsLength={account.operations.length}
       />
-      <SyncOneAccountOnMount priority={10} accountId={mainAccount.id} />
+      <SyncOneAccountOnMount reason="view-account" priority={10} accountId={mainAccount.id} />
       <Box
         horizontal
         mb={1}
