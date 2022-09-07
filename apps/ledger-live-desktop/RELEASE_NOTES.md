@@ -1,3 +1,15 @@
+# 2.47.0
+
+Here's a look at what's new in Ledger Live.
+
+### 🚀 Features
+
+- Put your CELO tokens to work—stake CELO and earn rewards directly from Ledger Live.
+
+### 🐛 Fixes
+
+We've released a few improvements and patches to reduce friction when sending transactions.
+
 # 2.46.0
 
 We're releasing a slew of new features and improvements. Here is what’s new in Ledger Live 👇

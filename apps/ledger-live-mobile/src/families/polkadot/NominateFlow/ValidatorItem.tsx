@@ -11,9 +11,7 @@ import Touchable from "../../../components/Touchable";
 type Props = {
   item: PolkadotValidator;
   disabled: boolean;
-  // eslint-disable-next-line no-unused-vars
   onSelect: (item: PolkadotValidator, selected: boolean) => void;
-  // eslint-disable-next-line no-unused-vars
   onClick: (address: string) => void;
   selected: boolean;
 };

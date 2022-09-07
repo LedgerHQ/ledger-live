@@ -14,7 +14,6 @@ function VerifyAddress({
 }: {
   account: Account;
   device: Device | null | undefined;
-  // eslint-disable-next-line no-unused-vars
   onResult: (confirmed: boolean, error?: Error) => void;
 }) {
   const { theme } = useTheme();

@@ -282,7 +282,7 @@ function MarketList({
   const currenciesLength = marketData.length;
   const freshLoading = loading && !currenciesLength;
 
-  const resetSearch = useCallback(() => refresh({ search: "" }), []);
+  const resetSearch = useCallback(() => refresh({ search: "" }), [refresh]);
 
   const toggleStar = useCallback(
     (id, isStarred) => {

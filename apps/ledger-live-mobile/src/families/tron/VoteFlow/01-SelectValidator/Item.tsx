@@ -22,7 +22,6 @@ type ItemProp = {
 type Props = {
   item: ItemProp;
   disabled: boolean;
-  // eslint-disable-next-line no-unused-vars
   onSelectSuperRepresentative: (item: ItemProp, selected: boolean) => void;
   selected: boolean;
 };

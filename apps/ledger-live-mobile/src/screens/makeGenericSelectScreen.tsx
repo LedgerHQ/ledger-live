@@ -6,7 +6,6 @@ import SettingsRow from "../components/SettingsRow";
 
 type EntryProps<Item> = {
   item: Item;
-  // eslint-disable-next-line no-unused-vars
   onPress: (value: Item) => void;
   selected: boolean;
 };
@@ -62,7 +61,6 @@ export default function makeGenericSelectScreen<Item>(opts: Opts<Item>) {
   return class GenericSelectScreen extends Component<{
     selectedKey?: string;
     items: Item[];
-    // eslint-disable-next-line no-unused-vars
     onValueChange: (items: Item, props: any) => void;
     navigation: any;
     cancelNavigateBack?: boolean;

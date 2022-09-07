@@ -51,6 +51,7 @@ describe("walletconnect", () => {
       })
     ).rejects.toThrow("wrong payload");
   });
+
   test("should parse personal_sign payloads", async () => {
     expect(
       await parseCallRequest(account, {
@@ -132,6 +133,7 @@ describe("walletconnect", () => {
       type: "message",
     });
   });
+
   test("should parse eth_sendTransaction payloads", async () => {
     const raw: WCPayloadTransaction = {
       data: "0x",
