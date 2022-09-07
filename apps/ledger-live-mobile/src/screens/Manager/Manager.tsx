@@ -77,7 +77,7 @@ const Manager = ({ navigation, route }: Props) => {
   /** general error state */
   const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
-  const [storageWarning, setStorageWarning] = useState(null);
+  const [storageWarning, setStorageWarning] = useState<string | null>(null);
   /** install app with dependencies modal state */
   const [appInstallWithDependencies, setAppInstallWithDependencies] =
     useState(null);

@@ -6,12 +6,19 @@ import type { StackScreenProps } from "@react-navigation/stack";
 import type { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 
 import { Device } from "@ledgerhq/types-devices";
-import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  DeviceInfo,
+  ProtoNFT,
+} from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Result as ImportAccountsResult } from "@ledgerhq/live-common/cross";
+import { ListAppsResult } from "@ledgerhq/live-common/lib/apps";
 import { NavigatorName, ScreenName } from "../../const";
 import { BleDevicePairingFlowParams } from "../../screens/BleDevicePairingFlow/index";
+import { ManagerTab } from "../../const/manager";
 
 export type AccountSettingsNavigatorParamList = {
   [ScreenName.AccountSettingsMain]: {
@@ -38,14 +45,14 @@ export type AccountSettingsNavigatorParamList = {
 export type AccountsNavigatorParamList = {
   [ScreenName.Accounts]: { currency?: string; search?: string };
   [ScreenName.Account]:
-    | {
-        currencyId: string;
-        currencyType: "CryptoCurrency" | "TokenCurrency";
-      }
-    | {
-        accountId: string;
-        parentId?: string;
-      };
+  | {
+    currencyId: string;
+    currencyType: "CryptoCurrency" | "TokenCurrency";
+  }
+  | {
+    accountId: string;
+    parentId?: string;
+  };
   [ScreenName.NftCollection]: {
     accountId: string;
     collection: ProtoNFT[];
@@ -178,12 +185,42 @@ export type MarketNavigatorStackParamList = {
   };
 };
 
+export type DiscoverNavigatorStackParamList = {
+  [ScreenName.DiscoverScreen]: undefined;
+  [ScreenName.PlatformCatalog]: {
+    defaultAccount?: AccountLike | null;
+    defaultParentAccount?: Account | null;
+    platform?: string | null;
+  };
+};
+
+export type ManagerNavigatorStackParamList = {
+  [ScreenName.Manager]: {
+    searchQuery?: string;
+    tab?: ManagerTab;
+    installApp?: string;
+    firmwareUpdate?: boolean;
+    device?: Device;
+    appsToRestore?: string[];
+  };
+  [ScreenName.ManagerMain]: {
+    device: Device;
+    deviceInfo: DeviceInfo;
+    result: ListAppsResult;
+    searchQuery?: string;
+    firmwareUpdate?: boolean;
+    appsToRestore?: string[];
+    updateModalOpened?: boolean;
+    tab: ManagerTab;
+  };
+};
+
 export type MainNavigatorParamList = {
   [NavigatorName.Portfolio]: NavigatorScreenParams<PortfolioNavigatorStackParamList>;
   [NavigatorName.Market]: NavigatorScreenParams<MarketNavigatorStackParamList>;
   [ScreenName.Transfer]: undefined;
-  [NavigatorName.Discover]: undefined;
-  [NavigatorName.Manager]: undefined;
+  [NavigatorName.Discover]: NavigatorScreenParams<DiscoverNavigatorStackParamList>;
+  [NavigatorName.Manager]: NavigatorScreenParams<ManagerNavigatorStackParamList>;
 };
 
 export type BaseNavigatorStackParamList = {
@@ -263,6 +300,6 @@ export type RootStackParamList = {
 declare global {
   namespace ReactNavigation {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface RootParamList extends RootStackParamList {}
+    interface RootParamList extends RootStackParamList { }
   }
 }

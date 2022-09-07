@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSelector } from "react-redux";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
 import { ScreenName } from "../../const";
@@ -18,18 +19,21 @@ import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { useFilteredManifests } from "./shared";
+import {
+  BaseNavigatorStackParamList,
+  MainNavigatorParamList,
+} from "../../components/RootNavigator/types";
 
 type RouteParams = {
-  defaultAccount: AccountLike | null | undefined;
-  defaultParentAccount: Account | null | undefined;
-  platform?: string | null | undefined;
+  defaultAccount?: AccountLike | null;
+  defaultParentAccount?: Account | null;
+  platform?: string | null;
 };
-type DisclaimerOpts = $Diff<
-  DisclaimerProps,
-  {
-    isOpened: boolean;
-  }
-> | null;
+type DisclaimerOpts =
+  | (DisclaimerProps & {
+      isOpened: boolean;
+    })
+  | null;
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
 const PlatformCatalog = ({
@@ -40,7 +44,10 @@ const PlatformCatalog = ({
   };
 }) => {
   const { platform, ...routeParams } = route.params ?? {};
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<
+      StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>
+    >();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const filteredManifests = useFilteredManifests();
   // Disclaimer State
@@ -59,11 +66,17 @@ const PlatformCatalog = ({
 
       if (!disclaimerDisabled && !readOnlyModeEnabled) {
         setDisclaimerOpts({
-          disableDisclaimer: () => setDisclaimerDisabled(),
-          closeDisclaimer: () => setDisclaimerOpened(false),
+          disableDisclaimer: () => {
+            if (typeof setDisclaimerDisabled === "function")
+              setDisclaimerDisabled();
+          },
+          closeDisclaimer: () => {
+            setDisclaimerOpened(false);
+          },
           icon: manifest.icon,
           name: manifest.name,
           onContinue: openDApp,
+          isOpened: false,
         });
         setDisclaimerOpened(true);
       } else {
