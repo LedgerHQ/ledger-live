@@ -21,7 +21,6 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
-import { setNotSeededDeviceRelaunch } from "~/renderer/actions/application";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
 import TranslatedError from "~/renderer/components/TranslatedError";
@@ -49,7 +48,6 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { SWAP_VERSION } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
-import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
 
 export const AnimationWrapper: ThemedComponent<{ modelId?: DeviceModelId }> = styled.div`
@@ -251,8 +249,6 @@ const OpenOnboardingBtn = () => {
 
   const onClick = useCallback(() => {
     setTrackingSource("device action open onboarding button");
-    dispatch(setNotSeededDeviceRelaunch(true));
-    dispatch(relaunchOnboarding(true));
     dispatch(closeAllModal());
     setDrawer(undefined);
     history.push("/onboarding");
