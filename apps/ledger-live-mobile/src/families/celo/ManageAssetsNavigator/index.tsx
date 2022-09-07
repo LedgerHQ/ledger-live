@@ -1,15 +1,18 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useNavigation,
+  useTheme,
+} from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import Button from "../../../components/Button";
+import { ScreenName, NavigatorName } from "../../../const";
 import { useSelector } from "react-redux";
+import { accountScreenSelector } from "../../../reducers/accounts";
+import { useRoute } from "@react-navigation/native";
 import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  hasActivatableVotes,
-  hasRevokableVotes,
-} from "@ledgerhq/live-common/families/celo/logic";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { availablePendingWithdrawals, hasActivatableVotes, hasRevokableVotes } from "@ledgerhq/live-common/families/celo/logic";
 
 function ManageAssetsNavigator() {
   const { t } = useTranslation();
@@ -88,10 +91,7 @@ function ManageAssetsNavigator() {
   const onVote = useCallback(() => {
     onNavigate({
       route: NavigatorName.CeloVoteFlow,
-      screen:
-        votes?.length === 0
-          ? ScreenName.CeloVoteStarted
-          : ScreenName.CeloVoteSummary,
+      screen: votes?.length === 0 ? ScreenName.CeloVoteStarted : ScreenName.CeloVoteSummary,
       params: {},
     });
   }, [onNavigate]);
@@ -110,8 +110,7 @@ function ManageAssetsNavigator() {
   const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
   const activatingEnabled = hasActivatableVotes(account as CeloAccount);
   const revokingEnabled = hasRevokableVotes(account as CeloAccount);
-  const withdrawEnabled = availablePendingWithdrawals(account as CeloAccount)
-    .length;
+  const withdrawEnabled = availablePendingWithdrawals(account as CeloAccount).length;
 
   return (
     <SafeAreaView
