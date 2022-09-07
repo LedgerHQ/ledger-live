@@ -1,5 +1,12 @@
 # live-common-tools
 
+## 0.2.6-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668)]:
+  - @ledgerhq/live-common@27.0.1-nightly.2
+
 ## 0.2.6-nightly.1
 
 ### Patch Changes

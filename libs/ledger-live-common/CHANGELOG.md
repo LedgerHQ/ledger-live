@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.0.1-nightly.2
+
+### Patch Changes
+
+- [#743](https://github.com/LedgerHQ/ledger-live/pull/743) [`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add "customImage" feature flag.
+
 ## 27.0.1-nightly.1
 
 ### Patch Changes

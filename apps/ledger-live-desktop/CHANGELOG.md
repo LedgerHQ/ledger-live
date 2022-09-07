@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.47.0-nightly.5
+
+### Patch Changes
+
+- [#1193](https://github.com/LedgerHQ/ledger-live/pull/1193) [`a9e280763`](https://github.com/LedgerHQ/ledger-live/commit/a9e2807636d7499a8067a83ed356ba5dd9e1245c) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Fix onboarding launch from my ledger
+
+- Updated dependencies [[`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668)]:
+  - @ledgerhq/live-common@27.0.1-nightly.2
+
 ## 2.47.0-nightly.4
 
 ### Minor Changes

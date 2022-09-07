@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.7.1-nightly.5
+
+### Patch Changes
+
+- [#743](https://github.com/LedgerHQ/ledger-live/pull/743) [`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add custom image tool
+
+* [#1136](https://github.com/LedgerHQ/ledger-live/pull/1136) [`d66472e57`](https://github.com/LedgerHQ/ledger-live/commit/d66472e5716b2465835bfd332f895229acdc6b40) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fix several issues regarding analytics
+
+* Updated dependencies [[`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668)]:
+  - @ledgerhq/live-common@27.0.1-nightly.2
+
 ## 3.7.1-nightly.4
 
 ### Patch Changes
