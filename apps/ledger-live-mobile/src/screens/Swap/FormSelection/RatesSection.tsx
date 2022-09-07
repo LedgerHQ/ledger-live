@@ -23,6 +23,7 @@ import type {
   ExchangeRate,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { Flex } from "@ledgerhq/native-ui";
 import type { SwapRouteParams } from "..";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -34,6 +35,7 @@ import Unlock from "../../../icons/Unlock";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
+import { CountdownTimer } from "./CountdownTimer";
 
 export const providerIcons = {
   changelly: Changelly,
@@ -197,6 +199,16 @@ export default function RatesSection({
           label={<Trans i18nKey="transfer.swap.form.summary.method" />}
           onEdit={canEdit ? onEditRateProvider : undefined}
         >
+          {swap.ratesExpiration &&
+            rate.tradeMethod === "fixed" &&
+            swap.ratesExpiration > Date.now() && (
+              <Flex paddingX={2}>
+                <CountdownTimer
+                  end={swap.ratesExpiration}
+                  callback={swap.refetchRates}
+                />
+              </Flex>
+            )}
           {tradeMethod === "fixed" ? (
             <Lock size={12} color={colors.darkBlue} />
           ) : (

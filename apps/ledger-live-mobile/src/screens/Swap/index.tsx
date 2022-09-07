@@ -66,6 +66,7 @@ export type SwapRouteParams = {
   setCurrency?: (currency?: TokenCurrency | CryptoCurrency) => void;
 };
 export const ratesExpirationThreshold = 60000;
+
 type Props = {
   route: {
     params: SwapRouteParams;
@@ -167,26 +168,7 @@ function SwapForm({
     setConfirmed(false);
     setConfirmed(false);
   }, []);
-  useEffect(() => {
-    let expirationInterval;
-    let rateExpiration;
 
-    if (rate && rate.tradeMethod === "fixed") {
-      rateExpiration = new Date(
-        new Date().getTime() + ratesExpirationThreshold,
-      );
-      clearInterval(expirationInterval);
-      expirationInterval = setInterval(() => {
-        if (rate && rateExpiration && rateExpiration <= new Date()) {
-          refetchRates();
-          rateExpiration = null;
-          clearInterval(expirationInterval);
-        }
-      }, 1000);
-    }
-
-    return () => clearInterval(expirationInterval);
-  }, [rate, refetchRates]);
   useEffect(() => {
     if (!fromAccount) return;
     let cancelled = false;
@@ -205,12 +187,14 @@ function SwapForm({
       cancelled = true;
     };
   }, [fromAccount, fromParentAccount, transaction]);
+
   useEffect(() => {
     // update tx after a form navigation from fees edit to main screen
     if (route.params?.transaction) {
       setTransaction(route.params.transaction);
     }
   }, [route.params, setTransaction]);
+
   const exchangeRatesState = swap?.rates;
   const swapError = fromAmountError || exchangeRatesState?.error;
   const isSwapReady =
@@ -220,6 +204,7 @@ function SwapForm({
     !swapError &&
     rate &&
     swap.to.account;
+
   const swapBody = (
     <KeyboardView
       style={[
@@ -353,6 +338,7 @@ function SwapForm({
       </View>
     </KeyboardView>
   );
+
   return showDeviceConnect ? (
     <Connect provider={provider} setResult={setDeviceMeta} />
   ) : (
