@@ -50,9 +50,6 @@ export const defaultFeatures: DefaultFeatures = {
   currencyFlareMobile: {
     enabled: false,
   },
-  currency: {
-    enabled: false,
-  },
   ratings: {
     enabled: false,
     params: {
