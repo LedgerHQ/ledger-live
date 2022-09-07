@@ -126,9 +126,6 @@
     "CantScanQRCode": {
       "title": "Could not scan this QR code: auto-verification not supported by this address."
     },
-    "PriorityFeeOutOfSuggestedRange": {
-      "title": "To optimise your fees we suggest you to stay in the suggested range."
-    },
     "ConnectAppTimeout": {
       "title": "Sorry, no device found",
       "description": {
@@ -413,6 +410,12 @@
       "title": "Sorry, this app is needed",
       "description": "Uninstall the Bitcoin or Ethereum app last."
     },
+    "MaxBaseFeeHigh": {
+      "title": "Your max base fee is overestimated. If applicable, you will be refunded by the network"
+    },
+    "MaxBaseFeeLow": {
+      "title": "Max base fee is lower than the network conditions. Your transaction might stay pending for a while"
+    },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
       "description": "Please check your internet connection."
@@ -459,6 +462,12 @@
     "PasswordsDontMatch": {
       "title": "Password does not match",
       "description": "Please try again."
+    },
+    "PriorityFeeTooHigh": {
+      "title": "Priority fee is higher than necessary. You might be overpaying"
+    },
+    "PriorityFeeTooLow": {
+      "title": "Priority fee is lower than the recommended value"
     },
     "SelectExchangesLoadError": {
       "title": "Unable to load",

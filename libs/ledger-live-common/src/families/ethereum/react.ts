@@ -15,6 +15,9 @@ export function useFeesStrategy(t: Transaction): FeeStrategy[] {
   if (!networkInfo) return [];
 
   const gasLimit = getGasLimit(t);
+  const slowStrategyBaseFeeMultiplier = 1.2;
+  const mediumStrategyBaseFeeMultiplier = 2;
+  const fastStrategyBaseFeeMultiplier = 2;
   let strategies;
 
   if (networkInfo.gasPrice) {
@@ -42,46 +45,52 @@ export function useFeesStrategy(t: Transaction): FeeStrategy[] {
     strategies = [
       {
         label: "slow",
-        amount: networkInfo.nextBaseFeePerGas.plus(
-          networkInfo.maxPriorityFeePerGas.min
-        ),
+        amount: networkInfo.nextBaseFeePerGas
+          .times(slowStrategyBaseFeeMultiplier)
+          .plus(networkInfo.maxPriorityFeePerGas.min),
         displayedAmount: calculateEIP1559NetworkFees(
-          networkInfo.nextBaseFeePerGas,
+          networkInfo.nextBaseFeePerGas.times(slowStrategyBaseFeeMultiplier),
           networkInfo.maxPriorityFeePerGas.min,
           gasLimit
         ),
         txParameters: {
-          maxBaseFeePerGas: networkInfo.nextBaseFeePerGas,
+          maxBaseFeePerGas: networkInfo.nextBaseFeePerGas.times(
+            slowStrategyBaseFeeMultiplier
+          ),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.min,
         },
       },
       {
         label: "medium",
-        amount: networkInfo.nextBaseFeePerGas.plus(
-          networkInfo.maxPriorityFeePerGas?.initial
-        ),
+        amount: networkInfo.nextBaseFeePerGas
+          .times(mediumStrategyBaseFeeMultiplier)
+          .plus(networkInfo.maxPriorityFeePerGas?.initial),
         displayedAmount: calculateEIP1559NetworkFees(
-          networkInfo.nextBaseFeePerGas,
+          networkInfo.nextBaseFeePerGas.times(mediumStrategyBaseFeeMultiplier),
           networkInfo.maxPriorityFeePerGas.initial,
           gasLimit
         ),
         txParameters: {
-          maxBaseFeePerGas: networkInfo.nextBaseFeePerGas,
+          maxBaseFeePerGas: networkInfo.nextBaseFeePerGas.times(
+            mediumStrategyBaseFeeMultiplier
+          ),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.initial,
         },
       },
       {
         label: "fast",
-        amount: networkInfo.nextBaseFeePerGas.plus(
-          networkInfo.maxPriorityFeePerGas?.max
-        ),
+        amount: networkInfo.nextBaseFeePerGas
+          .times(fastStrategyBaseFeeMultiplier)
+          .plus(networkInfo.maxPriorityFeePerGas?.max),
         displayedAmount: calculateEIP1559NetworkFees(
-          networkInfo.nextBaseFeePerGas,
+          networkInfo.nextBaseFeePerGas.times(fastStrategyBaseFeeMultiplier),
           networkInfo.maxPriorityFeePerGas.max,
           gasLimit
         ),
         txParameters: {
-          maxBaseFeePerGas: networkInfo.nextBaseFeePerGas,
+          maxBaseFeePerGas: networkInfo.nextBaseFeePerGas.times(
+            fastStrategyBaseFeeMultiplier
+          ),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.max,
         },
       },
