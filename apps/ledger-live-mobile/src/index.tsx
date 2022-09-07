@@ -342,6 +342,7 @@ const linkingOptions = {
             initialRouteName: "buy",
             screens: {
               [ScreenName.ExchangeBuy]: "buy/:currency?",
+              [ScreenName.ExchangeSell]: "sell/:currency?",
             },
           },
 
