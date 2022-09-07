@@ -11,7 +11,7 @@ import {
   useDistribution,
   useRefreshAccountsOrdering,
 } from "../../actions/general";
-import { accountsSelector, isUpToDateSelector } from "../../reducers/accounts";
+import { isUpToDateSelector } from "../../reducers/accounts";
 import TrackScreen from "../../analytics/TrackScreen";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import AssetRow from "../WalletCentricAsset/AssetRow";
@@ -90,6 +90,11 @@ function Assets() {
               paddingBottom: TAB_BAR_SAFE_HEIGHT,
             }}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              <Flex mt={3} mb={3}>
+                <Text variant="h4">{t("distribution.title")}</Text>
+              </Flex>
+            }
             ListFooterComponent={
               <Button
                 type="shade"
