@@ -96,7 +96,12 @@ const signMessage: EthSignMessage = async (
 
   let result: Awaited<ReturnType<typeof eth.signPersonalMessage>>;
   if (typeof parsedMessage === "string") {
-    result = await eth.signPersonalMessage(path, rawMessage?.slice(2) || "");
+    result = await eth.signPersonalMessage(
+      path,
+      rawMessage
+        ? rawMessage?.slice(2)
+        : Buffer.from(parsedMessage).toString("hex") || ""
+    );
   } else {
     result = getEnv("EXPERIMENTAL_EIP712")
       ? await eth.signEIP712Message(path, parsedMessage)
