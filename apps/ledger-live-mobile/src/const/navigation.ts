@@ -173,6 +173,7 @@ export const ScreenName = {
   CosmosDelegationConnectDevice: "CosmosDelegationConnectDevice",
   CosmosDelegationValidationError: "CosmosDelegationValidationError",
   CosmosDelegationValidationSuccess: "CosmosDelegationValidationSuccess",
+  CosmosDefaultRedelegationAmount: "CosmosDefaultRedelegationAmount",
   CosmosRedelegationValidator: "CosmosRedelegationValidator",
   CosmosRedelegationAmount: "CosmosRedelegationAmount",
   CosmosRedelegationSelectDevice: "CosmosRedelegationSelectDevice",
