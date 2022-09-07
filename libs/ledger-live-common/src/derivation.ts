@@ -158,7 +158,7 @@ const modes = Object.freeze({
   },
   gliflegacy: {
     overridesDerivation: "44'/1'/0'/0/<account>",
-    tag: "third-party",
+    tag: "legacy",
   },
   glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
