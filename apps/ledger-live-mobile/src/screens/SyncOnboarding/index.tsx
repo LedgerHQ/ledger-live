@@ -23,10 +23,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useDispatch } from "react-redux";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
-import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
@@ -34,6 +34,7 @@ import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import SoftwareChecksStep from "./SoftwareChecksStep";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/BaseNavigator";
+import { SyncOnboardingCompanionParams } from "./types";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -46,7 +47,7 @@ type Step = {
 };
 
 export type SyncOnboardingCompanionProps = CompositeScreenProps<
-  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompanion">,
+  StackScreenProps<SyncOnboardingCompanionParams, "SyncOnboardingCompanion">,
   StackScreenProps<BaseNavigatorStackParamList>
 >;
 
@@ -370,12 +371,15 @@ export const SyncOnboarding = ({
         <Flex
           flexDirection="row"
           justifyContent="space-between"
+          alignItems="center"
           pt={7}
-          px={7}
-          pb={4}
+          px={6}
+          pb={5}
         >
           <LanguageSelect productName={productName} />
-          <Button type="default" Icon={CloseMedium} onPress={handleClose} />
+          <TouchableOpacity onPress={handleClose}>
+            <CloseMedium size={24} />
+          </TouchableOpacity>
         </Flex>
         <Flex flex={1}>
           <ResyncOverlay
