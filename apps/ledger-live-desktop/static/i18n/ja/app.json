@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "引き出す",
       "NOMINATE" : "ノミネート",
       "CHILL" : "ノミネートを解除する",
-      "SET_CONTROLLER" : "コントローラーを設定"
+      "SET_CONTROLLER" : "コントローラーを設定",
+      "LOCK" : "ロックされました",
+      "UNLOCK" : "ロック解除されました",
+      "WITHDRAW" : "引き出し済み",
+      "REVOKE" : "取り消されました",
+      "ACTIVATE" : "有効化されました",
+      "REGISTER" : "登録されました"
     }
   },
   "byteSize" : {
@@ -745,7 +751,19 @@
     "bandwidthTooltip" : "資産を凍結して、バンド幅を獲得",
     "energyTooltip" : "資産を凍結して、エネルギーを獲得",
     "delegatedTooltip" : "デリゲートされた資産は、投票プロセスで使用されます。これは、投票の総数を表します。",
-    "undelegatingTooltip" : "デリゲートを解除した資産は、{{timelockInDays}}日間のロック期間後に再び利用可能になります。"
+    "undelegatingTooltip" : "デリゲートを解除した資産は、{{timelockInDays}}日間のロック期間後に再び利用可能になります。",
+    "banner" : {
+      "redelegation" : {
+        "title" : "ご存知でしたか？",
+        "description" : "Ledgerのバリデータは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
+        "cta" : "Ledgerで再デリゲート"
+      },
+      "delegation" : {
+        "title" : "ご存知でしたか？",
+        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "cta" : "Ledgerでステーキング"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "{{providerCount}}プロバイダーから選択",
@@ -2110,6 +2128,272 @@
       "MERGE_OUTPUTS" : "今後の手数料を最小限に抑える(コインを統合)"
     }
   },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "詳細はこちら",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "CELOトークンがLedger Liveでご利用可能になりました",
+        "description" : "CELOトークンを管理して、Ledger Liveで保護できるようになりました。",
+        "description2" : "CeloチェーンのネイティブトークンであるCeloトークンは、トランザクション、ステーキングに利用されています。今後さらに多くの機能へ対応予定です。",
+        "website" : "Powered by Figment"
+      }
+    },
+    "lockedBalance" : "ロックされた残高",
+    "lockedTooltip" : "報酬を得るには、資産をロックし、バリデーターグループに投票する必要があります。",
+    "nonvotingLockedBalance" : "非投票のロックされた残高",
+    "nonvotingLockedTooltip" : "投票に使用できるロックされた資産の残高",
+    "withdrawableBalance" : "出金可能残高",
+    "withdrawableTooltip" : "ロック解除されたCeloは、利用可能残高に引き出すことができます",
+    "delegation" : {
+      "activeTooltip" : "積極的な投票が報酬を生み出します",
+      "pendingTooltip" : "保留中の投票は報酬を生成しないため、24時間後に有効にする必要があります",
+      "awaitingActivationTooltip" : "この保留中の投票を有効にできるようになりました",
+      "listHeader" : "デリゲート",
+      "add" : "追加",
+      "validatorGroup" : "バリデーターグループ",
+      "manageMultipleVoteWarning" : "この投票を管理する前に、同じバリデーターグループの他の投票を有効化するか、取り消す必要があります。",
+      "actions" : {
+        "activate" : "有効化",
+        "revoke" : "取り消す"
+      },
+      "emptyState" : {
+        "description" : "資産をデリゲートすることで、CELOの報酬を獲得できます。",
+        "info" : "デリゲートの仕組み",
+        "delegation" : "報酬を獲得する"
+      },
+      "earnRewards" : {
+        "description" : "CELO資産をバリデーターにデリゲートすることで報酬を得ることができます。",
+        "bullet" : {
+          "0" : "デリゲートされた資産の所有権を保持する",
+          "1" : "Ledgerデバイスを使ってデリゲートしましょう",
+          "2" : "資産はデリゲート解除後に使用可能"
+        },
+        "warning" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
+      }
+    },
+    "manage" : {
+      "title" : "資産管理",
+      "titleWhenPendingRegistration" : "アカウント登録保留中",
+      "lock" : {
+        "title" : "ロック",
+        "description" : "報酬を獲得するには、まず任意の金額をロックします。次に、バリデーター(複数)に投票する必要があります。"
+      },
+      "unlock" : {
+        "title" : "ロック解除",
+        "description" : "ロックされた金額を再び引き出せるようにするには、まずロックを解除する必要があります。3日間のロック解除期間が過ぎると、引き出すことが可能となります。"
+      },
+      "withdraw" : {
+        "title" : "引き出し",
+        "description" : "ロック解除済み金額を利用可能残高に戻すには、手動で引き出す必要があります。"
+      },
+      "vote" : {
+        "title" : "投票",
+        "description" : "バリデーターグループに投票します。投票を有効にして報酬を獲得してください。",
+        "descriptionMaxVotes" : "最大{{maxVotes}}までバリデーターグループに投票できます。今のバリデーターグループへの投票を取り消して、新しいバリデーターグループに投票する"
+      },
+      "activate" : {
+        "title" : "投票を有効にする",
+        "description" : "バリデーターグループへの投票を有効にする"
+      },
+      "revoke" : {
+        "title" : "投票を取り消す",
+        "description" : "バリデーターグループへの投票を取り消す"
+      }
+    },
+    "lock" : {
+      "title" : "資産をロック",
+      "steps" : {
+        "amount" : {
+          "title" : "数量",
+          "amountLabel" : "ロックする金額",
+          "availableLabel" : "利用可能",
+          "maxLabel" : "最大",
+          "info" : "ロックされた資産はいつでも解除できますが、ロック解除には3日かかります。"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "資産が正常にロックされました",
+            "text" : "ネットワークによるトランザクションの承認後、バリデーターに投票できます。",
+            "textVote" : "ネットワークによるトランザクションの承認後、バリデーターに投票できるようになります。",
+            "cta" : "詳細を表示"
+          },
+          "pending" : {
+            "title" : "資産をロックしています..."
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "資産のロック解除",
+      "steps" : {
+        "amount" : {
+          "title" : "数量",
+          "amountLabel" : "ロック解除する金額",
+          "availableLabel" : "ロックされました",
+          "maxLabel" : "最大",
+          "info" : "ロック解除された資産は、3日間のロック解除期間後に引き出せるようになります。",
+          "learnMore" : "詳細はこちら"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "label" : "確認",
+          "success" : {
+            "title" : "ロック解除されたトランザクションが正常に送信されました",
+            "text" : "ロック解除された資産は3日後に引き出せるようになります。",
+            "cta" : "詳細を表示"
+          },
+          "pending" : {
+            "title" : "資産のロックを解除しています..."
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "アカウントの登録",
+          "description" : "",
+          "info" : "Celoをロックする前に、オンチェーンにアカウントを登録する必要があります。"
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "情報"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "label" : "確認",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "アカウントが正常に登録されました",
+                "text" : "操作は、すぐに履歴で確認できます。",
+                "cta" : "ロック"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "トランザクションをブロードキャスト中…"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "資産を引き出す",
+      "steps" : {
+        "amount" : {
+          "title" : "引き出し"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "",
+            "text" : "資産が正常に引き出されました。引き出された金額は、利用可能残高に加算されます。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "vote" : {
+      "title" : "投票",
+      "steps" : {
+        "amount" : {
+          "title" : "数量"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "投票に成功しました",
+            "text" : "操作は、すぐに履歴で確認できます。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        },
+        "validatorGroup" : {
+          "title" : "バリデーターグループ",
+          "ledgerByFigmentTC" : "Ledger by Figment T&Cs",
+          "totalVotes" : "総投票数",
+          "commission" : "コミッション"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "投票を有効にする",
+      "steps" : {
+        "vote" : {
+          "title" : "投票"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "",
+            "text" : "投票は正常に有効になりました。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "投票を取り消す",
+      "steps" : {
+        "amount" : {
+          "title" : "数量",
+          "amountLabel" : "取り消す金額",
+          "availableLabel" : "利用可能",
+          "maxLabel" : "最大"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "投票の取り消しに成功しました",
+            "text" : "操作は、すぐに履歴で確認できます。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        },
+        "vote" : {
+          "title" : "投票",
+          "active" : "アクティブ",
+          "pending" : "保留状態",
+          "awaitingActivation" : "有効化を待っています",
+          "info" : "このモーダルには、取り消し可能な投票のみが表示されます。"
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "引き出し可能な残高があります",
+      "activatableVotes" : "有効化できるようになった投票があります。"
+    }
+  },
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
@@ -3336,6 +3620,7 @@
         "link" : "リカバリーフレーズについての詳細はこちら",
         "title2" : "Nanoにアクセスできなくなった場合は、どうなりますか？",
         "paragraph3" : "以下の手順に従ってください:",
+        "paragraph4" : "リカバリーフレーズから秘密鍵を算出して、どのウォレットからでも保有する暗号資産の復元が可能です。",
         "points" : {
           "1" : "新しいハードウェアウォレットを入手しましょう。",
           "2" : "Ledgerアプリで「新しいデバイスでリカバリーフレーズを復元」を選択します。",
@@ -3376,40 +3661,57 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "ようこそ、Ledgerへ",
-        "description" : "コンピューターで暗号資産を安全に管理しましょう。",
-        "cta" : "はじめに",
-        "noDevice" : "デバイスをお持ちでない場合<0>Ledger Nano Xを購入する</0>",
-        "languageWarning" : {
-          "title" : "{{language}} で始める",
-          "desc" : "Ledgerをよりスムーズに導入していただけるよう、多数の言語でガイドをご用意しております。なお現時点では、その他Ledger関連コンテンツは英語でのみ提供されています。予めご了承ください。",
-          "cta" : "了解"
+        "title" : "暗号資産とNFTの最も安全なウォレット",
+        "description" : "Ledger Liveで、暗号資産とNFTを安全に管理・購入・運用しましょう。",
+        "nextButton" : "はじめに",
+        "noDevice" : "デバイスをお持ちでない場合",
+        "buyLink" : "デバイスをお持ちですか？Nano Xの購入はこちら",
+        "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
+        "termsAndConditions" : "利用規約",
+        "and" : "そして",
+        "privacyPolicy" : "プライバシーポリシー",
+        "steps" : {
+          "0" : {
+            "title" : "保有する暗号資産にアクセス",
+            "desc" : "暗号資産は、ブロックチェーンに保存されています。暗号資産にアクセスし管理するには、秘密鍵をお使いください"
+          },
+          "1" : {
+            "title" : "秘密鍵は自分で管理しましょう",
+            "desc" : "秘密鍵はお使いのNano上に保存されています。\n資産は、お客様ご自身で管理・所有しなければなりません。"
+          },
+          "2" : {
+            "title" : "常にオフラインで保管する",
+            "desc" : "Nanoは、「コールドストレージ」のウォレットとして機能します。\nつまり、アプリを使用しても秘密鍵がオンラインで公開されることは絶対にありません。"
+          },
+          "3" : {
+            "title" : "トランザクションを検証する",
+            "desc" : "Ledger Liveでは、暗号資産の購入、売却、管理、取引、および報酬の獲得を、保護された安全な状態で行うことができます。\n暗号資産の取引はすべて、Nanoを使って認証されます。"
+          },
+          "4" : {
+            "title" : "Nanoをセットアップしましょう",
+            "desc" : "まずはNanoをセットアップ"
+          }
         }
       },
       "selectDevice" : {
-        "title" : "どのデバイスをお使いですか？"
+        "title" : "お使いのデバイスを選択してください",
+        "selectLabel" : "選択"
       },
       "selectUseCase" : {
-        "greetings" : "こんにちは！",
         "hasNoRecovery" : "{{deviceName}}を初めてお使いですか？",
         "hasRecovery" : "リカバリーフレーズをすでにお持ちですか？",
-        "separator" : "または",
-        "switchDevice" : "デバイスの切り替え",
         "options" : {
           "1" : {
-            "heading" : "初期設定",
             "title" : "新しい{{deviceName}}をセットアップ",
             "description" : "デバイスを起動してセットアップしましょう！"
           },
           "2" : {
-            "heading" : "デバイスを接続",
             "title" : "{{deviceName}}を接続",
             "description" : "デバイスをセットアップ済みですか？アプリと接続しましょう！"
           },
           "3" : {
-            "heading" : "デバイスの復元",
             "title" : "新しいデバイスでリカバリーフレーズを復元",
-            "description" : "既存のリカバリーフレーズを使って、新しい {{deviceName}}に秘密鍵を復元できます。"
+            "description" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
           }
         }
       },
@@ -3442,6 +3744,10 @@
             "buttons" : {
               "next" : "OK、準備完了！",
               "prev" : "前のステップ"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "deviceHowTo" : {
@@ -3465,9 +3771,14 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "deviceHowTo2" : {
+            "title" : "正しい事前準備：",
             "turnOn" : {
               "title" : "Nanoの電源をオンにする",
               "descr" : "USBケーブルでデバイスをコンピューターに接続する。"
@@ -3488,6 +3799,10 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "pinCode" : {
@@ -3498,6 +3813,10 @@
               "next" : "PINコードの設定",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "quizSuccess" : {
@@ -3511,10 +3830,14 @@
           },
           "quizFailure" : {
             "title" : "残念ながら不合格です...",
-            "paragraph" : "大丈夫、Ledgerがガイドします。安心安全に暗号資産を管理しましょう。\n\n残り1ステップです！",
+            "paragraph" : "ご心配なく。Ledgerが丁寧にガイドします。すぐに、安心安全に暗号資産を管理できるようになります。\n\n残り1ステップです！",
             "buttons" : {
               "next" : "次のステップ",
               "prev" : "前のステップ"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "pinCodeHowTo" : {
@@ -3530,6 +3853,10 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "existingRecoveryPhrase" : {
@@ -3544,7 +3871,7 @@
             },
             "warning" : {
               "title" : "自分で取得していないリカバリーフレーズは使用しないでください。",
-              "desc" : "LedgerハードウェアウォレットのPINコードとリカバリーフレーズの初期設定は、絶対にご自身のみで行ってください。\nリカバリーフレーズやPINコードがすでに設定されたデバイスを受け取った場合は、デバイスを使用せず、カスタマーサポートまでご連絡ください。",
+              "desc" : "LedgerハードウェアウォレットのPINコードとリカバリーフレーズの初期化は、絶対にご自身のみで行ってください。シードワードがすでに設定されていたり、PINコードがすでに初期化されたデバイスを受け取った場合は、そのデバイスを使用せず、カスタマーサポートまでご連絡ください。",
               "supportLink" : "カスタマーサポートに問い合わせる"
             }
           },
@@ -3561,6 +3888,10 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "newRecoveryPhrase" : {
@@ -3572,6 +3903,10 @@
               "next" : "リカバリーフレーズ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "recoveryHowTo" : {
@@ -3597,6 +3932,10 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "recoveryHowTo3" : {
@@ -3611,6 +3950,10 @@
               "next" : "次のステップ",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "genuineCheck" : {
@@ -3634,6 +3977,10 @@
               "prev" : "前のステップ",
               "help" : "お困りですか？",
               "learn" : "安全に保管する方法"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           },
           "pairMyNano" : {
@@ -3643,6 +3990,10 @@
               "next" : "Nanoをチェックする",
               "prev" : "前のステップ",
               "help" : "お困りですか？"
+            },
+            "help" : {
+              "help" : "お困りですか？",
+              "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
             }
           }
         }
@@ -3929,7 +4280,9 @@
     "termsLabel" : "サービス利用規約",
     "privacyLabel" : "プライバシーポリシー",
     "switchLabel" : "私はサービス利用規約とプライバシーポリシーを読んだ上で、内容に同意します。",
-    "cta" : "Ledgerアプリを開く"
+    "cta" : "Ledgerアプリを開く",
+    "termsCheckboxLabel" : "私は利用規約を読み、内容に同意しました",
+    "privacyCheckboxLabel" : "私はプライバシーポリシーを読んだ上で、同意しました"
   },
   "updatedTerms" : {
     "title" : "利用規約の更新",
@@ -4017,6 +4370,9 @@
     "NoAccessToCamera" : {
       "title" : "システムにカメラがあり、別のアプリケーションで使用されていないこと、およびLedger Liveが使用する権限を持っていることを確認してください。",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "報酬額が、申請に必要な推定手数料を下回っています。",

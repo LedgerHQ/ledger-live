@@ -13,24 +13,34 @@ export const addCustomErrorDeserializer = (
   deserializers[name] = deserializer;
 };
 
-export type CustomErrorFunc = (
-  message?: string,
-  fields?: { [key: string]: any },
-  options?: any
-) => void;
+export interface LedgerErrorConstructor<F extends { [key: string]: unknown }>
+  extends ErrorConstructor {
+  new (message?: string, fields?: F, options?: any): Error;
+  (message?: string, fields?: F, options?: any): Error;
+  readonly prototype: Error;
+}
 
-export const createCustomErrorClass = (name: string): CustomErrorFunc => {
+export const createCustomErrorClass = <
+  F extends { [key: string]: unknown },
+  T extends LedgerErrorConstructor<F>
+>(
+  name: string
+): T => {
   class CustomErrorClass extends Error {
     cause?: Error;
-    constructor(message, fields, options) {
+    constructor(message?: string, fields?: F, options?: any) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       super(message || name, options);
       // Set the prototype explicitly. See https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
       Object.setPrototypeOf(this, CustomErrorClass.prototype);
       this.name = name;
-      for (const k in fields) {
-        this[k] = fields[k];
+      if (fields) {
+        for (const k in fields) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          this[k] = fields[k];
+        }
       }
       if (isObject(options) && "cause" in options && !("cause" in this)) {
         // .cause was specified but the superconstructor
@@ -46,9 +56,7 @@ export const createCustomErrorClass = (name: string): CustomErrorFunc => {
 
   errorClasses[name] = CustomErrorClass;
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return CustomErrorClass;
+  return CustomErrorClass as unknown as T;
 };
 
 function isObject(value) {
@@ -106,7 +114,9 @@ export const deserializeError = (object: any): Error => {
 };
 
 // inspired from https://github.com/sindresorhus/serialize-error/blob/master/index.js
-export const serializeError = (value: any): undefined | To | string => {
+export const serializeError = (
+  value: undefined | To | string | (() => unknown)
+): undefined | To | string => {
   if (!value) return value;
   if (typeof value === "object") {
     return destroyCircular(value, []);
@@ -124,7 +134,7 @@ interface To {
 }
 
 // https://www.npmjs.com/package/destroy-circular
-function destroyCircular(from: any, seen: any[]): To {
+function destroyCircular(from: To, seen: Array<To>): To {
   const to: To = {};
   seen.push(from);
   for (const key of Object.keys(from)) {

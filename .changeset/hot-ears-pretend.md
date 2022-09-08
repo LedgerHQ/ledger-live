@@ -1,6 +1,5 @@
 ---
 "live-mobile": patch
-"@ledgerhq/live-common": patch
 ---
 
 New BLE pairing flow

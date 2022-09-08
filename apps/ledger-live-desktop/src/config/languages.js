@@ -23,13 +23,13 @@ export const allLanguages = [
   "zh",
 ];
 
-export const prodStableLanguages = ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
+export const prodStableLanguages = ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
 
 /**
  * List of languages that should be prompted to existing users once if they are
  * using LL in english.
  * */
-export const pushedLanguages = ["fr", "ru", "es", "zh"];
+export const pushedLanguages = ["fr", "ru", "es", "zh", "pt"];
 
 export const getLanguages = () =>
   getEnv("EXPERIMENTAL_LANGUAGES") ? allLanguages : prodStableLanguages;
@@ -48,7 +48,7 @@ export const defaultLocaleForLanguage = {
   nl: "nl-NL",
   no: "no-NO",
   pl: "pl-PL",
-  pt: "pt-PT",
+  pt: "pt-BR",
   ru: "ru-RU",
   sr: "sr-SR",
   sv: "sv-SV",

@@ -19,6 +19,7 @@
     "device" : "Cihaz",
     "cryptoAsset" : "Kripto varlık",
     "skip" : "Atla",
+    "next" : "Sonraki",
     "noCryptoFound" : "Kripto varlık bulunamadı",
     "needHelp" : "Yardıma mı ihtiyacınız var?",
     "edit" : "Düzenle",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "Galeriden görüntü yüklenemedi",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageDownloadError" : {
+      "title" : "Görüntü indirilemedi",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Görüntü meta verileri yüklenemedi",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Görüntü çok büyük",
+      "description" : "Lütfen daha küçük bir görüntü seçmeyi deneyin"
+    },
+    "ImageCropError" : {
+      "title" : "Görüntü kırpılamadı",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageResizeError" : {
+      "title" : "Görüntü yeniden boyutlandırılamadı",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImagePreviewError" : {
+      "title" : "Görüntü ön izlemesi yapılamadı",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageProcessingError" : {
+      "title" : "Görüntü işlenemedi",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "Ledger Live'ı keşfedin",
         "subtitle" : "Uygulamayı keşfedip ne gibi faydaları olduğunu öğrenin "
+      },
+      "desktopSync" : {
+        "title" : "Masaüstü uygulamasıyla senkronize edin",
+        "subtitle" : "Ledger Live Desktop uygulamasındaki varlıklarınızı mobil uygulamanızla senkronize edin."
       }
     },
     "discoverLive" : {
@@ -1725,7 +1762,13 @@
       "WITHDRAW_UNBONDED" : "Çekim",
       "NOMINATE" : "Aday gösterme",
       "CHILL" : "Aday gösterimi temizleme",
-      "SET_CONTROLLER" : "Denetleyici belirleme"
+      "SET_CONTROLLER" : "Denetleyici belirleme",
+      "ACTIVATE" : "Etkin",
+      "LOCK" : "Kilitli",
+      "UNLOCK" : "Kilidi Açık",
+      "REVOKE" : "İptal Edilmiş",
+      "REGISTER" : "Kaydedilmiş",
+      "WITHDRAW" : "Çekildi"
     }
   },
   "operationDetails" : {
@@ -1963,6 +2006,16 @@
       "noTransaction" : {
         "title" : "Hiçbir işleminiz yok",
         "subtitle" : "{{assetName}} satın almak veya teslim almak için bir cihaza ihtiyacınız olacak"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Haberiniz olsun! Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
+        "cta" : "Yetki devret"
+      },
+      "delegation" : {
+        "description" : "Haberiniz olsun! Ledger doğrulayıcısı {{asset}} varlığınızı düşük bir komisyonla stake eder.",
+        "cta" : "Stake etmeye başla"
       }
     }
   },
@@ -4271,7 +4324,10 @@
       "info" : "Yetki Devri nasıl çalışır?",
       "broadcastSuccessTitle" : "İşlem gönderildi",
       "broadcastSuccessDescription" : "İşlem onaylandığında yetki devrinin durumu güncellenir.",
-      "delegatedTo" : "yetkiyi devralan"
+      "delegatedTo" : "yetkiyi devralan",
+      "started" : {
+        "description" : "ATOM varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz."
+      }
     }
   },
   "delegation" : {
@@ -4291,6 +4347,7 @@
     "delegation" : "Yetki Devri",
     "viewDetails" : "Ayrıntıları göster",
     "validator" : "Doğrulayıcı",
+    "validatorGroup" : "Doğrulayıcı Grubu",
     "validatorAddress" : "Doğrulayıcı adresi",
     "delegatedAccount" : "Yetkisi devredilen hesap",
     "duration" : "Süre",
@@ -4685,5 +4742,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "Bir görüntü seçin",
+      "options" : {
+        "uploadFromPhone" : "Telefonumdan yükle"
+      }
+    },
+    "cropImage" : "Crop image",
+    "chooseConstrast" : "Choose contrast",
+    "uploadAnotherImage" : "Başka bir görsel yükleyin",
+    "selectContrast" : "Kontrastınızı seçin"
   }
 }

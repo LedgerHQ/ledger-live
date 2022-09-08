@@ -31,6 +31,10 @@ import { enabledExperimentalFeatures } from "./src/experimental";
 import { languageSelector } from "./src/reducers/settings";
 import { store } from "./src/context/LedgerStore";
 
+if (__DEV__) {
+  require('react-native-performance-flipper-reporter').setupDefaultFlipperReporter();
+}
+
 // we exclude errors related to user's environment, not fixable by us
 const excludedErrorName = [
   // networking conditions
