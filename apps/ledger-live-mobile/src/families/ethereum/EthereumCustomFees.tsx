@@ -148,6 +148,8 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
     route.params,
     transaction,
     gasPrice,
+    maxBaseFee,
+    priorityFee,
   ]);
   return (
     <View style={styles.root}>
