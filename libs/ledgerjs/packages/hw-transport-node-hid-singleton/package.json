@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/hw-transport-node-hid-singleton",
   "version": "6.27.4",
-  "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid and usb-detection",
+  "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid and node-usb",
   "keywords": [
     "Ledger",
     "LedgerWallet",
@@ -34,7 +34,7 @@
     "@ledgerhq/logs": "workspace:^",
     "lodash": "^4.17.21",
     "node-hid": "2.1.1",
-    "usb-detection": "4.13.0"
+    "usb": "2.5.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
