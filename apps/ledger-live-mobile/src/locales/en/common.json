@@ -286,6 +286,14 @@
       "title": "{{message}}",
       "description": "Something went wrong. Please retry. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "LedgerAPI4xx": {
+      "title": "{{message}}",
+      "description": "Please check your connection and try again or contact Ledger Support."
+    },
+    "LedgerAPI5xx": {
+      "title": "Sorry, try again.",
+      "description": "The server could not handle your request. Please try again later or contact Ledger Support. {{message}}"
+    },
     "FeeEstimationFailed": {
       "title": "Sorry, fee estimation failed",
       "description": "Try setting the fee manually (status: {{status}})."
