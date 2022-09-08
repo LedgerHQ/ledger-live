@@ -211,7 +211,7 @@ export async function createTransaction(
     }
   }
 
-  targetTransaction.inputs = inputs.map((input) => {
+  targetTransaction.inputs = inputs.map((input, idx) => {
     const sequence = Buffer.alloc(4);
     sequence.writeUInt32LE(
       input.length >= 4 && typeof input[3] === "number"
@@ -220,7 +220,7 @@ export async function createTransaction(
       0
     );
     return {
-      script: nullScript,
+      script: isZcash ? regularOutputs[idx].script : nullScript,
       prevout: nullPrevout,
       sequence,
     };
