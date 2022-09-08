@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.8.0-next.8
+
+### Patch Changes
+
+- [#1222](https://github.com/LedgerHQ/ledger-live/pull/1222) [`5df97cb44`](https://github.com/LedgerHQ/ledger-live/commit/5df97cb44863834fa16b28ffd20849500c92b652) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fix issue on lottie animations for nanoS nanoSP and blue
+
 ## 3.8.0-next.7
 
 ### Minor Changes
