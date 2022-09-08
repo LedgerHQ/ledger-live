@@ -41,7 +41,7 @@ const RoundButton = styled(Button)`
 const Main: ThemedComponent<{}> = styled.section`
   display: flex;
   flex-direction: column;
-  row-gap: 50px;
+  row-gap: 12px;
   margin-bottom: 5px;
 `;
 

@@ -71,8 +71,8 @@ const InputSection = styled(Box)`
     font-size: 11px;
     text-align: right;
     margin-left: calc(calc(100% + 45px) * -1);
-    width: calc(calc(100% + 30px) * 2);
     margin-top: 6px;
+    align-self: flex-end;
   }
 `;
 
