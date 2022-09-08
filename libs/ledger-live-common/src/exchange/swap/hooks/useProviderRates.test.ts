@@ -137,6 +137,50 @@ describe("useProviderRates", () => {
     expect(mockedGetExchangeRates).toHaveBeenCalledTimes(1);
   });
 
+  it("should refetch with the corrected selected rate", async () => {
+    const setExchangeRate = jest.fn();
+
+    mockedGetExchangeRates.mockResolvedValue(mockedRatesPromise);
+
+    const { result, waitForNextUpdate, rerender } = renderHook(
+      useProviderRates,
+      {
+        initialProps: { ...baseInitalProps, setExchangeRate }
+      }
+    );
+    mockedGetExchangeRates.mockClear();
+
+    act(() => {
+      result.current.refetchRates();
+    });
+    await waitForNextUpdate({ timeout: 1000 });
+
+    expect(setExchangeRate).toBeCalledWith(
+      expect.objectContaining({
+        provider: "ftx",
+        tradeMethod: "fixed"
+      })
+    );
+
+    act(() => {
+      result.current.refetchRates({
+        rate: new BigNumber(1),
+        toAmount: new BigNumber(1),
+        magnitudeAwareRate: new BigNumber(1),
+        provider: "ftx",
+        tradeMethod: "float",
+      });
+    });
+    await waitForNextUpdate({ timeout: 1000 });
+
+    expect(setExchangeRate).toBeCalledWith(
+      expect.objectContaining({
+        provider: "ftx",
+        tradeMethod: "float",
+      })
+    );
+  });
+
   it("should refetch the rates if refetchRates is called", async () => {
     const { result, waitForNextUpdate } = renderHook(useProviderRates, {
       initialProps: baseInitalProps,

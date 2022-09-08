@@ -31,7 +31,7 @@ export type SwapDataType = {
   isMaxEnabled: boolean;
   isSwapReversable: boolean;
   rates: RatesReducerState;
-  refetchRates: () => void;
+  refetchRates: (selected?: ExchangeRate) => void;
   targetAccounts?: Account[];
 };
 export const selectorStateDefaultValues = {
