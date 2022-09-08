@@ -145,27 +145,11 @@
 
   - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
-- [#961](https://github.com/LedgerHQ/ledger-live/pull/961) [`b06c9fdf5c`](https://github.com/LedgerHQ/ledger-live/commit/b06c9fdf5ccbbc68283dd73ea4c3ea0e380c1539) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Minor wording changes
-  > > > > > > > ledger/develop
-
-* # [#961](https://github.com/LedgerHQ/ledger-live/pull/961) [`b06c9fdf5c`](https://github.com/LedgerHQ/ledger-live/commit/b06c9fdf5ccbbc68283dd73ea4c3ea0e380c1539) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Minor wording changes
-* [#625](https://github.com/LedgerHQ/ledger-live/pull/625) [`2589194215`](https://github.com/LedgerHQ/ledger-live/commit/25891942151e4fefbdf6de8cdcf4264c0317f90a) Thanks [@chabroA](https://github.com/chabroA)! - Add navigation option to WebPlatformPlayer
-  > > > > > > > ledger/develop
+* [#961](https://github.com/LedgerHQ/ledger-live/pull/961) [`b06c9fdf5c`](https://github.com/LedgerHQ/ledger-live/commit/b06c9fdf5ccbbc68283dd73ea4c3ea0e380c1539) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Minor wording changes
 
 - [#855](https://github.com/LedgerHQ/ledger-live/pull/855) [`2258f1ae8e`](https://github.com/LedgerHQ/ledger-live/commit/2258f1ae8e052761003d2c92efd2e5d00198439e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add banner to external integrations
 
 ### Patch Changes
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-
-> > > > > > > ledger/develop
 
 - [#1019](https://github.com/LedgerHQ/ledger-live/pull/1019) [`49f5c28d4b`](https://github.com/LedgerHQ/ledger-live/commit/49f5c28d4b199e4564a7f93255a9546c3b11befe) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix one incorrect filename in custom component generation mechanism
 
@@ -174,41 +158,8 @@
 - [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`fdf009e526`](https://github.com/LedgerHQ/ledger-live/commit/fdf009e526beb5d6413ebc95666a9df58749336a) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix handle new-window event in WebPlatformPlayer
 
 - Updated dependencies [[`7e812a738d`](https://github.com/LedgerHQ/ledger-live/commit/7e812a738db718200138dcb9b7bcc2f6dd0ddd6f), [`058a1af7ff`](https://github.com/LedgerHQ/ledger-live/commit/058a1af7ff463d21afe85d03563b61e1d543c95b), [`d6634bc0b7`](https://github.com/LedgerHQ/ledger-live/commit/d6634bc0b720d8a13f3681caf33e2f23d5c64968), [`5da717c523`](https://github.com/LedgerHQ/ledger-live/commit/5da717c523db7678edeb0f86bdfa88256dfe96c4)]:
-  <<<<<<< HEAD
-  - # @ledgerhq/live-common@27.0.1-next.0
-- Updated dependencies [[`a36d1de865`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100), [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1)]:
-  - @ledgerhq/live-common@27.0.0-next.2
 
-## 2.47.0-next.1
-
-### Patch Changes
-
-- Updated dependencies [[`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2)]:
-  - @ledgerhq/live-common@26.1.0-next.1
-
-## 2.47.0-next.0
-
-### Minor Changes
-
-=======
-
-> > > > > > > ledger/develop
-
-- @ledgerhq/live-common@27.0.1-next.0
-
-<<<<<<< HEAD
-
-- Updated dependencies [[`68c50cd94`](https://github.com/LedgerHQ/ledger-live/commit/68c50cd94bbe50a1bf284a2e9e5aed3781788754), [`432cfa899`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb), [`23c9bf994`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2), [`6e057f716`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4), [`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
-  - @ledgerhq/types-live@6.24.0-next.0
-  - @ledgerhq/react-ui@0.9.0-next.0
-  - @ledgerhq/live-common@26.1.0-next.0
-  - @ledgerhq/hw-transport@6.27.3-next.0
-  - @ledgerhq/hw-transport-http@6.27.3-next.0
-  - @ledgerhq/hw-transport-node-hid-singleton@6.27.4-next.0
-
-=======
-
-> > > > > > > ledger/develop
+  - @ledgerhq/live-common@27.0.1-next.0
 
 ## 2.46.1
 
@@ -217,10 +168,6 @@
 - [#1082](https://github.com/LedgerHQ/ledger-live/pull/1082) [`7b3026ba25`](https://github.com/LedgerHQ/ledger-live/commit/7b3026ba25a30d0733defe5459a37f9c6b6b1772) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fixes analytics support
 
 * [#1078](https://github.com/LedgerHQ/ledger-live/pull/1078) [`3aafec3d8b`](https://github.com/LedgerHQ/ledger-live/commit/3aafec3d8becd74a96421540388e2460dd0e4627) Thanks [@chabroA](https://github.com/chabroA)! - Fix handle new-window event in WebPlatformPlayer
-  <<<<<<< HEAD
-  > > > > > > > # ledger/develop
-  > > > > > > >
-  > > > > > > > ledger/develop
 
 ## 2.46.0
 
