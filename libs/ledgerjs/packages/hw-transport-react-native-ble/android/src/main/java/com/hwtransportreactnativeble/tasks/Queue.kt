@@ -30,13 +30,13 @@ class Queue(
     private val eventEmitter: EventEmitter,
     private val bleManager: BleManager,
 ) {
-    private var tag: String = "BleTransport Queue"
+    private val tag: String = "BleTransport Queue"
     private var index: Int = 0
     private var token: String? = null
 
     private val client = OkHttpClient()
     private var runner: Runner? = null
-    private var tasks: ArrayList<Item> = ArrayList()
+    private val tasks: ArrayList<Item> = ArrayList()
     private var item: Item? = null
 
     private val websocketURL: URL
@@ -67,25 +67,22 @@ class Queue(
         try {
             val jsonResponse = JSONTokener(rawQueue).nextValue() as JSONObject
             val rawTasks = jsonResponse.getJSONArray("tasks")
-            if (rawTasks.length() > 0) {
-                for (i in 0 until rawTasks.length()) {
-                    val rawItem = rawTasks.getJSONObject(i)
-                    newTasks.add(
-                        Item(
-                            id = rawItem.getInt("id"),
-                            operation = rawItem.getString("operation"),
-                            appName = rawItem.getString("appName")
-                        )
+            for (i in 0 until rawTasks.length()) {
+                val rawItem = rawTasks.getJSONObject(i)
+                newTasks.add(
+                    Item(
+                        id = rawItem.getInt("id"),
+                        operation = rawItem.getString("operation"),
+                        appName = rawItem.getString("appName")
                     )
-                }
+                )
             }
         } catch (e: Exception) {
             onErrorWrapper(e)
             return
         }
 
-
-        for (call in client.dispatcher.queuedCalls()) call.cancel()
+        client.dispatcher.queuedCalls().forEach { it.cancel() }
         val body: RequestBody = rawQueue.toRequestBody(JSON)
 
         val request = Request.Builder()
@@ -95,7 +92,7 @@ class Queue(
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                onErrorWrapper(IOException("Network error")) // FIXME, be more precise?
+                onErrorWrapper(IOException("Network error", e))
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -138,11 +135,11 @@ class Queue(
 
             onDone = ::onDoneWrapper,
             onEvent = ::onEventWrapper,
-            onStop = ::none
+            onStop = ::onStopWrapper
         )
     }
-    fun none() {
-
+    private fun onStopWrapper() {
+        Timber.d("Runner stopped for ${item.toString()}")
     }
 
     fun stop() {
@@ -161,15 +158,7 @@ class Queue(
         if (index >= tasks.size) return
         val item = tasks[index]
         Timber.d("Completed runner for ${item.toString()}")
-
-        eventEmitter.dispatch(Arguments.createMap().apply {
-            putString("event", "task")
-            putString("type", RunnerAction.runSuccess.toString())
-            putMap("data", Arguments.createMap().apply {
-                putString("name", item.appName)
-                putString("type", item.operation)
-            })
-        })
+        onEventWrapper(RunnerAction.runSuccess, Arguments.createMap().apply {})
 
         if (isStopped) return
 

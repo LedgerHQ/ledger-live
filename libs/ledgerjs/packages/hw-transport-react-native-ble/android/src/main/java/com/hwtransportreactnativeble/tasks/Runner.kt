@@ -9,10 +9,7 @@ import org.json.JSONObject
 import org.json.JSONTokener
 import timber.log.Timber
 import java.net.URL
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.concurrent.schedule
-
 
 /**
  * A runner is in charge of opening a connection with a script-runner and acting as a proxy
@@ -36,7 +33,7 @@ class Runner(
     val onEvent: (action: RunnerAction, data: WritableMap) -> Unit,
     val onStop: () -> Unit,
 ) : WebSocketListener() {
-    private var tag: String = "BleTransport Runner"
+    private val tag: String = "BleTransport Runner"
 
     private var isPendingOnDone: Boolean = false
     private var isInBulkMode: Boolean = false
@@ -44,7 +41,7 @@ class Runner(
 
     private var socket: WebSocket
 
-    private var APDUQueue: ArrayList<String> = ArrayList()
+    private val APDUQueue: ArrayList<String> = ArrayList()
     private var bulkSize: Int = -1
     private var nonce: Int = 0
     private var lastHSMMessage: String = ""
@@ -94,6 +91,7 @@ class Runner(
     }
 
     private fun onDeviceResponse(response: String) {
+        // Nb Remove the status code from the response, script-runner only wants the data.
         val data = response.dropLast(4)
         Timber.d("$tag <= $response")
         if (isInBulkMode) {
@@ -104,7 +102,7 @@ class Runner(
             )
             handleNextAPDU()
         } else {
-            val out = "{\"nonce\":$nonce, \"response\":\"success\",\"data\":\"$data\"}"
+            val out = """"{"nonce":$nonce, "response":"success","data":\"$data\"}"""
             Timber.d("$tag -> $out")
             socket.send(out)
         }

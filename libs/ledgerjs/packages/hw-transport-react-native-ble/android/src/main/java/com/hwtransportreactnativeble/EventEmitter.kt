@@ -4,6 +4,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import timber.log.Timber
+import java.lang.Long.max
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -12,7 +13,7 @@ class EventEmitter private constructor
     (
     private val context: ReactContext
 ) {
-    private var tag: String = "BleTransport EventEmitter"
+    private val tag: String = "BleTransport EventEmitter"
     private var isConsumingQueue: Boolean = false
     private var isJavaScriptAvailable: Boolean = true
     private val msOffset: Long = 1200
@@ -73,32 +74,29 @@ class EventEmitter private constructor
                 lastEventType = it.getString("type").toString()
                 lastEventTime = System.currentTimeMillis()
 
-                if (pendingEvent != null) {
-                    pendingEvent!!.cancel()
-                    pendingEvent = null
-                }
+                pendingEvent?.cancel()
+                pendingEvent = null
             }
 
             val currentTime = System.currentTimeMillis()
             if (pendingEvent != null && lastEventType == event.getString("type")) {
                 Timber.d("$tag Cancel the scheduled task, schedule a new one with the new lambda")
-                val delay = pendingEventScheduledTime - currentTime
-                try {
-                    pendingEvent!!.cancel()
-                } catch (e: NullPointerException) {
-                    // It may have been consumed in the meantime
+                pendingEvent?.cancel()
+                pendingEvent = Timer().apply {
+                    schedule(
+                        timerTask() { lambdaExec(event) },
+                        max(pendingEventScheduledTime - currentTime, 0)
+                    )
                 }
-
-                pendingEvent = Timer()
-                pendingEvent!!.schedule(
-                    timerTask() { lambdaExec(event) },
-                    if (delay > 0) delay else 0
-                )
                 // No need to update the pendingSchedule since we reused it
             } else if (lastEventTime + msOffset >= currentTime && lastEventType == event.getString("type")) {
                 Timber.d("$tag Scheduling the event, it's too soon")
-                pendingEvent = Timer()
-                pendingEvent!!.schedule(timerTask() { lambdaExec(event) }, msOffset)
+                pendingEvent = Timer().apply {
+                    schedule(
+                        timerTask() { lambdaExec(event) },
+                        msOffset
+                    )
+                }
                 pendingEventScheduledTime = System.currentTimeMillis() + msOffset
             } else {
                 // It's a different type, or it's been long enough
