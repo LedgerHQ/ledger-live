@@ -99,7 +99,13 @@ const useBIM = (
         next: onEventDispatch,
         error: onError,
         complete: () => {
-          // Nb If this version is working better, remove the completion :thinkingface:
+          // Nb If we are here and the queue is not empty, it means we completed
+          // an outdated queue, we can either trigger a new queue or clear it. If
+          // you are reading this then clearing it wasn't enough and you need to trigger
+          // a new queue :trollface:
+          onEventDispatch({
+            type: "wipe-queue",
+          });
         },
       });
     }
