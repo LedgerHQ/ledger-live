@@ -3,6 +3,7 @@ import { Flex, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
 import { useTranslation } from "react-i18next";
 import { StackScreenProps } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 import ImageCropper, {
   Props as ImageCropperProps,
   CropResult,
@@ -18,7 +19,6 @@ import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
 import Touchable from "../../components/Touchable";
 import { ParamList } from "./types";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 /**
  * UI component that loads the input image (from the route params) &
