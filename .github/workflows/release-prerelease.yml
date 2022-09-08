@@ -67,16 +67,24 @@ jobs:
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
       - name: build libs
         run: pnpm run build:libs
+      - name: Get changeset ignore value
+        id: get-ignore
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: ".changeset/config.json"
+          prop_path: "ignore.0"
       - name: versioning desktop
         if: ${{ contains(steps.PR.outputs.pr_title, 'LLD') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm changeset version --ignore live-mobile
+        run: |
+          [[ "${{ steps.get-ignore.outputs.prop }}" = "live-mobile" ]] && pnpm changeset version || pnpm changeset version --ignore live-mobile
       - name: versioning mobile
         if: ${{ contains(steps.PR.outputs.pr_title, 'LLM') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm changeset version --ignore ledger-live-desktop
+        run: |
+          [[ "${{ steps.get-ignore.outputs.prop }}" = "ledger-live-desktop" ]] && pnpm changeset version || pnpm changeset version --ignore ledger-live-desktop
       - name: versioning all
         if: ${{ !contains(steps.PR.outputs.pr_title, 'LLD') && !contains(steps.PR.outputs.pr_title, 'LLM') }}
         env:
