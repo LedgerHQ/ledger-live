@@ -1,5 +1,16 @@
 # @ledgerhq/hw-app-eth
 
+## 6.29.7-next.0
+
+### Patch Changes
+
+- [#892](https://github.com/LedgerHQ/ledger-live/pull/892) [`d70bb7042`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add EIP-712 capability when preparing message to sign
+
+- Updated dependencies [[`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7)]:
+  - @ledgerhq/errors@6.10.2-next.0
+  - @ledgerhq/hw-transport@6.27.4-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.4-next.0
+
 ## 6.29.6
 
 ### Patch Changes

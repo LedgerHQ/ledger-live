@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-xrp
 
+## 6.27.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.27.4-next.0
+
 ## 6.27.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.10.2-next.0
+
+### Patch Changes
+
+- [#1179](https://github.com/LedgerHQ/ledger-live/pull/1179) [`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7) Thanks [@gre](https://github.com/gre)! - Improve TypeScript of @ledgerhq/errors and fixes 2 bugs in swap and stellar on their error handling
+
 ## 6.10.1
 
 ### Patch Changes

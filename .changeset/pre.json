@@ -76,5 +76,26 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "big-panthers-promise2",
+    "big-windows-mix",
+    "clever-coins-battle",
+    "curly-dryers-explain",
+    "cyan-cats-begin",
+    "eight-mayflies-compare",
+    "eight-rabbits-double",
+    "five-carpets-leave",
+    "fresh-pants-talk",
+    "green-ties-sit",
+    "hot-ears-pretend",
+    "hungry-jokes-join",
+    "lemon-pears-punch",
+    "pretty-waves-switch",
+    "quiet-singers-beg",
+    "real-owls-repair",
+    "red-spies-shake",
+    "rotten-seals-mix",
+    "twelve-planets-whisper",
+    "unlucky-dingos-study"
+  ]
 }

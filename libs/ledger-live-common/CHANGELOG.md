@@ -1,5 +1,34 @@
 # @ledgerhq/live-common
 
+## 27.2.0-next.0
+
+### Minor Changes
+
+- [#892](https://github.com/LedgerHQ/ledger-live/pull/892) [`d70bb7042`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add EIP-712 capability when preparing message to sign
+
+### Patch Changes
+
+- [#743](https://github.com/LedgerHQ/ledger-live/pull/743) [`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add "customImage" feature flag.
+
+* [#1179](https://github.com/LedgerHQ/ledger-live/pull/1179) [`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7) Thanks [@gre](https://github.com/gre)! - Improve TypeScript of @ledgerhq/errors and fixes 2 bugs in swap and stellar on their error handling
+
+* Updated dependencies [[`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7), [`d70bb7042`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
+  - @ledgerhq/errors@6.10.2-next.0
+  - @ledgerhq/hw-app-eth@6.29.7-next.0
+  - @ledgerhq/devices@7.0.1-next.0
+  - @ledgerhq/hw-app-algorand@6.27.4-next.0
+  - @ledgerhq/hw-app-cosmos@6.27.4-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.4-next.0
+  - @ledgerhq/hw-app-solana@6.27.4-next.0
+  - @ledgerhq/hw-app-trx@6.27.4-next.0
+  - @ledgerhq/hw-transport@6.27.4-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.4-next.0
+  - @ledgerhq/hw-app-btc@8.0.2-next.0
+  - @ledgerhq/hw-app-str@6.27.4-next.0
+  - @ledgerhq/hw-app-tezos@6.27.4-next.0
+  - @ledgerhq/hw-app-xrp@6.27.4-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.4-next.0
+
 ## 27.1.0
 
 ### Minor Changes
