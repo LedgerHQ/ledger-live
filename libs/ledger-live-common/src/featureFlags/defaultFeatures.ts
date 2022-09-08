@@ -121,4 +121,7 @@ export const defaultFeatures: DefaultFeatures = {
   mockFeature: {
     enabled: false,
   },
+  syncOnboarding: {
+    enabled: false,
+  },
 };
