@@ -8,6 +8,7 @@ const {
   E_ACTIVITY_DOES_NOT_EXIST,
   E_BLE_CANCELLED,
   E_BLE_PERMISSIONS_DENIED,
+  E_ENABLE_BLE_UNKNOWN_RESPONSE,
   E_SECURITY_EXCEPTION,
   E_UNKNOWN_ERROR,
 } = BluetoothHelperModule;
@@ -40,6 +41,7 @@ export function usePromptBluetoothCallback() {
             break;
           case E_BLE_CANCELLED: // in case the user didn't turn bluetooth on
           case E_ACTIVITY_DOES_NOT_EXIST:
+          case E_ENABLE_BLE_UNKNOWN_RESPONSE:
           case E_SECURITY_EXCEPTION:
           case E_UNKNOWN_ERROR:
           default:

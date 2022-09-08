@@ -26,7 +26,6 @@ import com.facebook.react.modules.core.PermissionAwareActivity;
 import com.facebook.react.modules.core.PermissionListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +38,7 @@ public class BluetoothHelperModule extends ReactContextBaseJavaModule implements
   private static final String E_BLE_PERMISSIONS_DENIED = "E_BLE_PERMISSIONS_DENIED";
   private static final String E_SECURITY_EXCEPTION = "E_SECURITY_EXCEPTION";
   private static final String E_UNKNOWN_ERROR = "E_UNKNOWN_ERROR";
+  private static final String E_ENABLE_BLE_UNKNOWN_RESPONSE = "E_ENABLE_BLE_UNKNOWN_RESPONSE";
 
   private Promise blePromise;
 
@@ -56,6 +56,7 @@ public class BluetoothHelperModule extends ReactContextBaseJavaModule implements
     constants.put("E_BLE_PERMISSIONS_DENIED", E_BLE_PERMISSIONS_DENIED);
     constants.put("E_SECURITY_EXCEPTION", E_SECURITY_EXCEPTION);
     constants.put("E_UNKNOWN_ERROR", E_UNKNOWN_ERROR);
+    constants.put("E_ENABLE_BLE_UNKNOWN_RESPONSE", E_ENABLE_BLE_UNKNOWN_RESPONSE);
     return constants;
   }
 
@@ -75,6 +76,8 @@ public class BluetoothHelperModule extends ReactContextBaseJavaModule implements
             blePromise.reject(E_BLE_CANCELLED, "Ble activation was cancelled");
           } else if (resultCode == Activity.RESULT_OK) {
             blePromise.resolve(true);
+          } else {
+            blePromise.reject(E_ENABLE_BLE_UNKNOWN_RESPONSE, "Received an unknown response");
           }
           blePromise = null;
         }
@@ -87,10 +90,8 @@ public class BluetoothHelperModule extends ReactContextBaseJavaModule implements
     if (requestCode == REQUEST_BT_PERMISSIONS) {
       if (permissionsResponseHandler == null)
         return true;
-      Log.d(TAG, "onRequestPermissionsResult: permissions" + Arrays.toString(permissions));
-      Log.d(TAG, "onRequestPermissionsResult: grantResults" + Arrays.toString(grantResults));
 
-      ArrayList<String> deniedPermissions = new ArrayList<String>();
+      ArrayList<String> deniedPermissions = new ArrayList<>();
 
       for (int i = 0; i< permissions.length; i++) {
         String permission = permissions[i];
@@ -99,13 +100,11 @@ public class BluetoothHelperModule extends ReactContextBaseJavaModule implements
         if (!granted) deniedPermissions.add(permission);
       }
       if (deniedPermissions.isEmpty()) {
-        Log.d(TAG, "onRequestPermissionsResult: ");
         permissionsResponseHandler.onPermissionsGranted();
-        permissionsResponseHandler = null;
       } else {
         permissionsResponseHandler.onPermissionsDenied(deniedPermissions);
-        permissionsResponseHandler = null;
       }
+      permissionsResponseHandler = null;
     }
     return true;
   }
@@ -150,12 +149,14 @@ public class BluetoothHelperModule extends ReactContextBaseJavaModule implements
     Activity activity = this.getCurrentActivity();
     if (activity == null) {
       blePromise.reject(E_ACTIVITY_DOES_NOT_EXIST, "Activity is null in enableBluetooth()");
+      blePromise = null;
       return;
     }
     try {
       activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     } catch (SecurityException e) {
       blePromise.reject(E_SECURITY_EXCEPTION, "Permissions missing for enabling bluetooth", e);
+      blePromise = null;
     }
   }
 
@@ -166,18 +167,15 @@ public class BluetoothHelperModule extends ReactContextBaseJavaModule implements
   public void prompt(Promise promise) {
     try {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        Log.d(TAG, "prompt: is ANDROID >=12");
         getPermissionAwareActivity().requestPermissions(ANDROID_12_PERMISSIONS, REQUEST_BT_PERMISSIONS, this);
         permissionsResponseHandler = new PermissionsResponseHandler() {
           @Override
           public void onPermissionsGranted() {
-            Log.d(TAG, "onPermissionsGranted: ");
             enableBluetooth(promise);
           }
 
           @Override
           public void onPermissionsDenied(ArrayList<String> permissionsDenied) {
-            Log.d(TAG, "onPermissionsDenied: ");
             WritableMap map = Arguments.createMap();
             WritableArray array = Arguments.createArray();
             for (String p: permissionsDenied) {
@@ -188,7 +186,6 @@ public class BluetoothHelperModule extends ReactContextBaseJavaModule implements
           }
         };
       } else {
-        Log.d(TAG, "prompt: is ANDROID <12");
         // Activity Action: Show a system activity that allows the user to turn on Bluetooth.
         // This system activity will return once Bluetooth has completed turning on, or the user has decided not to turn Bluetooth on.
         // See: https://developer.android.com/reference/android/bluetooth/BluetoothAdapter#ACTION_REQUEST_ENABLE
