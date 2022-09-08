@@ -363,6 +363,10 @@ export const ScreenName = {
 
   // cardano
   CardanoEditMemo: "CardanoEditMemo",
+
+  // avalanche
+  AvalancheDelegationStarted: "AvalancheDelegationStarted",
+  AvalancheDelegationValidator: "AvalancheDelegationValidator",
 };
 
 export const NavigatorName = {
@@ -431,6 +435,9 @@ export const NavigatorName = {
 
   NotificationCenter: "NotificationCenter",
   Market: "Market",
+
+  // Avalanche
+  AvalancheDelegationFlow: "AvalancheDelegationFlow",
 
   // Tab
   Main: "Main",
