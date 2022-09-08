@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import type { Observer } from "@ledgerhq/hw-transport";
+import type { BimCapableTransport } from "@ledgerhq/types-devices";
 import { getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import {
@@ -53,11 +53,6 @@ export const execWithTransport =
   };
 
 const appsThatKeepChangingHashes = ["Fido U2F"];
-
-// TODO move this to types-devices when it's ready.
-interface BimCapableTransport extends Transport {
-  queue: (observer: Observer<any>, token: string, endpoint: string) => void;
-}
 
 export type StreamAppInstallEvent =
   | {
@@ -131,10 +126,10 @@ export const streamAppInstall = ({
             });
           }
 
-          // Transport instances now expose an optional transportId.
-          // not to be confused with the transportModule.id, this is all very confusing.
+          // Transport instances now expose an optional transportId, in this case we use it to
+          // leverage BIM capabilities when available.
           if (["BleTransport"].includes(transport.transportId)) {
-            const bimTransport = transport as BimCapableTransport;
+            const bimTransport = transport as unknown as BimCapableTransport;
             const observable = new Subject<RunnerEvent>();
             const queue = BIMAPI.buildQueueFromState(state);
             const rawQueue = JSON.stringify({ tasks: queue });

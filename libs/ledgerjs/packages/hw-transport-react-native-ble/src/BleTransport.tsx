@@ -49,7 +49,6 @@ class Ble extends Transport {
     );
 
     this.id = deviceId;
-    this.queueObserver;
     this.appStateSubscription = AppState.addEventListener(
       "change",
       this.onAppStateChanged
@@ -83,39 +82,48 @@ class Ble extends Transport {
     }
   };
 
-  queue = (
-    observer: Observer<RunnerEvent>,
-    rawQueue: string,
-    endpoint: string
-  ): void => {
-    if (!endpoint) throw new Error("No endpoint provided for BIM");
-
-    Ble.log("request to launch queue", rawQueue);
-    this.queueObserver = observer;
-    NativeBle.queue(rawQueue, endpoint);
-    runningQueue = true; // TODO there probably is a cleaner way of doing this.
-  };
-
   private onBridgeEvent = (rawEvent: RawRunnerEvent) => {
     const { event, type, data } = rawEvent;
     Ble.log("raw bridge", JSON.stringify(rawEvent));
     if (!this.queueObserver || event !== "task") return;
 
-    if (type === "runComplete") {
-      // we've completed a queue, complete the subject
-      this.queueObserver.complete();
-      runningQueue = false;
-    } else if (type === "runError") {
-      this.queueObserver.error(Ble.remapError(data));
-      this.queueObserver = undefined;
-      runningQueue = false;
-    } else {
-      const progress = Math.round((data?.progress || 0) * 100) / 100;
-      this.queueObserver.next({
-        type,
-        appOp: { name: data.name, type: data.type },
-        progress: type === "runProgress" ? progress || 0 : undefined,
-      });
+    switch (type) {
+      case "runComplete":
+        this.queueObserver.complete();
+        runningQueue = false;
+        break;
+
+      case "runError":
+        this.queueObserver.error(Ble.remapError(data));
+        this.queueObserver = undefined;
+        runningQueue = false;
+        break;
+
+      case "runSuccess":
+        this.queueObserver.next({
+          type,
+          appOp: { name: data.name, type: data.type },
+        });
+        break;
+
+      case "runProgress": {
+        const progress = Math.round((data?.progress || 0) * 100) / 100;
+        this.queueObserver.next({
+          type,
+          appOp: { name: data.name, type: data.type },
+          progress,
+        });
+        break;
+      }
+
+      case "runBulkProgress":
+        this.queueObserver.next({
+          type: "bulk-progress",
+          progress: data.progress,
+          index: data.index,
+          total: data.total,
+        });
+        break;
     }
   };
 
@@ -261,10 +269,22 @@ class Ble extends Transport {
     return new TransportError(error?.code, error);
   };
 
-  /// Long running tasks below, buckle up, queues use runners internally
-  /// whereas the firmware update may just use runners, tbd
-  static runner = (url: string): void => {
+  queue = (
+    observer: Observer<RunnerEvent>,
+    rawQueue: string,
+    endpoint: string
+  ): void => {
+    if (!endpoint) throw new Error("No endpoint provided for BIM");
+
+    Ble.log("request to launch queue", rawQueue);
+    this.queueObserver = observer;
+    NativeBle.queue(rawQueue, endpoint);
+    runningQueue = true; // TODO there probably is a cleaner way of doing this.
+  };
+
+  runner = (observer: Observer<RunnerEvent>, url: string): void => {
     Ble.log(`request to launch runner for url ${url}`);
+    this.queueObserver = observer;
     NativeBle.runner(url);
   };
 }
