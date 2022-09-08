@@ -94,13 +94,13 @@
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.6",
-    "@changesets/cli": "^2.24.3",
+    "@changesets/cli": "^2.24.4",
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
     "rimraf": "^3.0.2",
     "turbo": "1.4.3",
-    "zx": "^7.0.7"
+    "zx": "^7.0.8"
   },
   "pnpm": {
     "overrides": {
