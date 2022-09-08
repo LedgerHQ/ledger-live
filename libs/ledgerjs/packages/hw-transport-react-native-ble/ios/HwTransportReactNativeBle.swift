@@ -57,7 +57,7 @@ class HwTransportReactNativeBle: RCTEventEmitter {
             
             BleTransport.shared.scan(duration: 60.0) { discoveries in
                 let devices = discoveries.map{
-                    ExtraData(
+                    Device(
                         id: $0.peripheral.uuid.uuidString,
                         rssi: $0.rssi,
                         name: $0.peripheral.name,
