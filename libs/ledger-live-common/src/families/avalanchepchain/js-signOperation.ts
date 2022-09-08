@@ -88,10 +88,19 @@ const signOperation = ({
 
           o.next({ type: "device-signature-granted" });
 
+          const sha256Hash = AvalancheBuffer.from(
+            createHash("sha256").update(signedTx.toBuffer()).digest().buffer
+          );
+          const txId: string = binTools.cb58Encode(sha256Hash);
+
           const signature =
             "0x" + binTools.addChecksum(signedTx.toBuffer()).toString("hex");
 
-          const operation = buildOptimisticOperation(account, transaction);
+          const operation = buildOptimisticOperation(
+            account,
+            transaction,
+            txId
+          );
 
           o.next({
             type: "signed",
@@ -333,7 +342,8 @@ const getPathFromAddress = (address: string, pAddresses: string[]) => {
 
 const buildOptimisticOperation = (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
+  hash: string
 ): Operation => {
   let type: OperationType;
 
@@ -349,7 +359,7 @@ const buildOptimisticOperation = (
   const value = new BigNumber(transaction.amount).plus(fee);
 
   const operation: Operation = {
-    id: encodeOperationId(account.id, "", type),
+    id: encodeOperationId(account.id, hash, type),
     hash: "",
     type,
     value: new BigNumber(0),

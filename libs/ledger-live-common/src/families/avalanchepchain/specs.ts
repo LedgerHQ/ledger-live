@@ -34,7 +34,9 @@ const avalanche: AppSpec<Transaction> = {
         const { avalanchePChainResources } = account;
         invariant(avalanchePChainResources, "avalanche");
 
-        const amount = minimalAmount;
+        let amount = new BigNumber(Math.floor(25 + (Math.random() * 5))).integerValue();
+        amount = parseCurrencyUnit(currency.units[0], amount.toString());
+
         const stakeStartTime = new BigNumber(
           Math.round(new Date().getTime() / 1000) + MINUTE
         );

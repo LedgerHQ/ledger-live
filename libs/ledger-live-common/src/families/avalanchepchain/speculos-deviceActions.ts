@@ -2,6 +2,10 @@ import type { DeviceAction } from "../../bot/types";
 import { deviceActionFlow } from "../../bot/specs";
 import type { Transaction } from "./types";
 import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "../../currencies";
+import { getAccountUnit } from "../../account";
+
+const nonBreakableSpace = " ";
 
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
@@ -37,6 +41,12 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Total Stake",
       button: "Rr",
+      expectedValue: ({ transaction, account }) => {
+        return formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+          disableRounding: true,
+          showCode: true
+        }).replace(nonBreakableSpace, " ");
+      },
     },
     {
       title: "Reject",
@@ -57,8 +67,16 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Fee",
       button: "Rr",
-      expectedValue: ({ transaction }) =>
-        `${(transaction.fees as BigNumber).toString()} AVAX`,
+      expectedValue: ({ transaction, account }) => {
+        return formatCurrencyUnit(
+          getAccountUnit(account),
+          transaction.fees as BigNumber,
+          {
+            disableRounding: true,
+            showCode: true
+          }
+        ).replace(nonBreakableSpace, " ");;
+      },
     },
     {
       title: "Finalize",
