@@ -172,6 +172,11 @@ export const shouldShowKYCBanner = ({
   return kycStatus !== KYC_STATUS.approved;
 };
 
+export const registrationIsRequired = (provider: string): boolean => {
+  const { needsBearerToken, needsKYC } = getProviderConfig(provider);
+  return needsBearerToken || needsKYC;
+};
+
 export const getProviderName = (provider: string): string => {
   switch (provider) {
     case "ftx":
