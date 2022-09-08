@@ -92,6 +92,9 @@ export type Action =  // recover from an error
   | {
       type: "onRunnerEvent";
       event: RunnerEvent;
+    } // wipe the queue
+  | {
+      type: "wipe-queue";
     };
 export type RunnerEvent =
   | {

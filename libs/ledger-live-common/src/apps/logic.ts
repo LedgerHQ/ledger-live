@@ -394,6 +394,15 @@ export const reducer = (state: State, action: Action): State => {
 
       return { ...state, currentError: null, installQueue, uninstallQueue };
     }
+
+    case "wipe-queue": {
+      return {
+        ...state,
+        installQueue: [],
+        uninstallQueue: [],
+        updateAllQueue: [],
+      };
+    }
   }
 };
 const defaultConfig = {
