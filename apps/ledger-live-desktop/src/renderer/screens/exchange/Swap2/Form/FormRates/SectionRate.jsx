@@ -16,9 +16,8 @@ import ExclamationCircleIcon from "~/renderer/icons/ExclamationCircle";
 import { rgba } from "~/renderer/styles/helpers";
 import { iconByProviderName } from "../../utils";
 import Rates from "../Rates";
-import SummaryLabel from "./SummaryLabel";
-import SummarySection from "./SummarySection";
-import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
+import ProvidersSection from "./ProvidersSection";
+import ProvidersValue, { NoValuePlaceholder } from "./ProvidersValue";
 
 const StatusTag = styled.div`
   display: flex;
@@ -68,42 +67,36 @@ const SectionProvider = ({
   fromCurrency,
   toCurrency,
   ratesState,
+  countdown,
+  setSelectedRate,
 }: SectionProviderProps) => {
   const { t } = useTranslation();
   const ProviderIcon = provider && iconByProviderName[provider.toLowerCase()];
 
   const { setDrawer } = useContext(context);
   const rates = ratesState.value;
-  const handleChange = useMemo(
-    () =>
-      rates &&
-      rates.length > 1 &&
-      (() =>
-        setDrawer(Rates, {
-          fromCurrency,
-          toCurrency,
-          rates,
-          provider,
-        })),
-    [setDrawer, rates, fromCurrency, toCurrency, provider],
-  );
+  const loadingRates = ratesState.status === "loading";
 
   return (
-    <SummarySection>
-      <SummaryLabel label={t("swap2.form.details.label.provider")} />
+    <ProvidersSection>
       {(provider && (
-        <div style={{ display: "flex", columnGap: "6px", alignItems: "center" }}>
-          <SummaryValue value={getProviderName(provider)} handleChange={handleChange}>
-            {status ? <ProviderStatusTag status={status} /> : null}
-            {ProviderIcon && <ProviderIcon size={19} />}
-          </SummaryValue>
-        </div>
+        <Rates
+          {...{
+            fromCurrency,
+            toCurrency,
+            rates,
+            provider,
+            countdown,
+            loadingRates,
+            setSelectedRate,
+          }}
+        />
       )) || (
-        <SummaryValue>
+        <ProvidersValue>
           <NoValuePlaceholder />
-        </SummaryValue>
+        </ProvidersValue>
       )}
-    </SummarySection>
+    </ProvidersSection>
   );
 };
 

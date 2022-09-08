@@ -6,7 +6,10 @@ import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import {
+  getProviderName,
+  registrationIsRequired,
+} from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { rgba } from "~/renderer/styles/helpers";
 import type { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import IconLock from "~/renderer/icons/Lock";
@@ -14,6 +17,7 @@ import IconLockOpen from "~/renderer/icons/LockOpen";
 import Price from "~/renderer/components/Price";
 import CounterValue from "~/renderer/components/CounterValue";
 import { iconByProviderName } from "../../utils";
+import { Trans } from "react-i18next";
 
 const ProviderContainer: ThemedComponent<{}> = styled(Box).attrs({
   horizontal: true,
@@ -27,7 +31,8 @@ const ProviderContainer: ThemedComponent<{}> = styled(Box).attrs({
     p.selected
       ? `
     border-color: ${p.theme.colors.palette.primary.main};
-    box-shadow: 0px 0px 0px 4px ${rgba(p.theme.colors.palette.primary.main, 0.3)};
+    box-shadow: 0px 0px 0px 4px ${rgba(p.theme.colors.palette.primary.main, 0.8)};
+    background-color: ${rgba(p.theme.colors.palette.primary.main, 0.2)};
     `
       : `
     :hover {
@@ -57,55 +62,65 @@ function Rate({ value, selected, onSelect, fromCurrency, toCurrency }: Props) {
         </Box>
       )}
       <Box flex={1}>
-        <Box
-          horizontal
-          justifyContent="space-between"
-          color="palette.text.shade100"
-          fontWeight="600"
-        >
-          <Box horizontal alignItems="center">
-            <Text capitalize fontSize={4}>
-              {getProviderName(value.provider)}
-            </Text>
-          </Box>
-          <FormattedVal
-            inline
-            fontSize={6}
-            val={amount}
-            currency={toCurrency}
-            unit={toCurrency?.units[0]}
-            showCode={true}
-            color="palette.text.shade100"
-          />
-        </Box>
-        <Box
-          horizontal
-          justifyContent="space-between"
-          fontSize={3}
-          fontWeight={500}
-          color="palette.text.shade40"
-        >
-          <Box horizontal alignItems="center">
-            <Box mr={1}>
-              {value.tradeMethod === "fixed" ? <IconLock size={16} /> : <IconLockOpen size={16} />}
+        <Box horizontal color="palette.text.shade100" fontSize={4}>
+          <Box flex={1}>
+            <Text fontWeight="600">{getProviderName(value.provider)}</Text>
+            <Box>
+              <Text fontSize={3} color="palette.text.shade40">
+                <Trans
+                  i18nKey={
+                    registrationIsRequired(value.provider)
+                      ? "swap2.form.rates.registration"
+                      : "swap2.form.rates.noRegistration"
+                  }
+                />
+              </Text>
             </Box>
-            <Price
-              withEquality
-              withIcon={false}
-              from={fromCurrency}
-              to={toCurrency}
-              rate={value.magnitudeAwareRate}
+          </Box>
+          <Box alignItems="center" flex={1}>
+            <Box>
+              <Box style={{ height: "19.5px", justifyContent: "center" }}>
+                <Price
+                  withEquality
+                  withIcon={false}
+                  from={fromCurrency}
+                  to={toCurrency}
+                  rate={value.magnitudeAwareRate}
+                  fontWeight="600"
+                />
+              </Box>
+              <Text fontSize={3} color="palette.text.shade40">
+                <Trans
+                  i18nKey={
+                    value.tradeMethod === "fixed"
+                      ? "swap2.form.rates.fixed"
+                      : "swap2.form.rates.float"
+                  }
+                />
+              </Text>
+            </Box>
+          </Box>
+          <Box alignItems="flex-end" flex={1}>
+            <FormattedVal
+              inline
+              fontSize={4}
+              val={amount}
+              currency={toCurrency}
+              unit={toCurrency?.units[0]}
+              showCode={true}
+              color="palette.text.shade100"
+              fontWeight="600"
+            />
+            <CounterValue
               fontSize={3}
+              inline
+              currency={toCurrency}
+              value={amount}
+              disableRounding
+              showCode
+              color="palette.text.shade40"
             />
           </Box>
-          <CounterValue
-            inline
-            currency={toCurrency}
-            value={amount}
-            disableRounding
-            showCode
-            color="palette.text.shade40"
-          />
         </Box>
       </Box>
     </ProviderContainer>

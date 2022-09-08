@@ -12,7 +12,7 @@ import {
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
@@ -48,14 +48,17 @@ import FormMFABanner from "./FormMFABanner";
 import FormNotAvailable from "./FormNotAvailable";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
+import SwapFormRates from "./FormRates";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
-  mt: 35,
+  mt: 12,
 })`
-  row-gap: 1.75rem;
-  max-width: 27.5rem;
+  row-gap: 2rem;
+  max-width: 37rem;
 `;
+
+const refreshTime = 30000;
 
 const Button = styled(ButtonBase)`
   justify-content: center;
@@ -94,6 +97,11 @@ const SwapForm = () => {
   const [currentFlow, setCurrentFlow] = useState(null);
   const [currentBanner, setCurrentBanner] = useState(null);
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
+
+  const [countdown, setCountdown] = useState(refreshTime);
+  const [selectedRate, setSelectedRate] = useState({});
+  const selectedRateRef = useRef(selectedRate);
+  selectedRateRef.current = selectedRate;
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -155,6 +163,28 @@ const SwapForm = () => {
   }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
 
   const { setDrawer } = React.useContext(context);
+
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      swapTransaction?.swap?.refetchRates(selectedRateRef.current);
+    }, refreshTime);
+    return () => {
+      clearInterval(refreshInterval);
+    };
+  }, [swapTransaction.swap.from.amount]);
+
+  useEffect(() => {
+    const startTime = new Date().getTime();
+    setCountdown(refreshTime);
+    const countdownInterval = setInterval(() => {
+      const now = new Date().getTime();
+      const newCountdown = refreshTime + startTime - now;
+      setCountdown(newCountdown);
+    }, 1000);
+    return () => {
+      clearInterval(countdownInterval);
+    };
+  }, [swapTransaction?.swap?.rates?.value]);
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
@@ -406,6 +436,13 @@ const SwapForm = () => {
           swapTransaction={swapTransaction}
           kycStatus={kycStatus}
           provider={provider}
+        />
+        <SwapFormRates
+          swap={swapTransaction.swap}
+          kycStatus={kycStatus}
+          provider={provider}
+          countdown={Math.round(countdown / 1000)}
+          setSelectedRate={setSelectedRate}
         />
 
         {currentBanner === "LOGIN" ? (
