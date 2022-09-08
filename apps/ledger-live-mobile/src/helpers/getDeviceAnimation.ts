@@ -230,10 +230,10 @@ export function getDeviceAnimation({
     )
   ) {
     animation = animations[modelId][key][theme];
+  } else {
+    animation =
+      animations[modelId]?.[wired ? "wired" : "bluetooth"]?.[key][theme];
   }
-
-  animation =
-    animations[modelId]?.[wired ? "wired" : "bluetooth"]?.[key][theme];
 
   if (!animation) {
     console.error(`No animation for ${modelId} ${key}`);
