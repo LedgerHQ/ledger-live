@@ -100,6 +100,7 @@ class Ble extends Transport {
         break;
 
       case "runSuccess":
+      case "runStart":
         this.queueObserver.next({
           type,
           appOp: { name: data.name, type: data.type },
