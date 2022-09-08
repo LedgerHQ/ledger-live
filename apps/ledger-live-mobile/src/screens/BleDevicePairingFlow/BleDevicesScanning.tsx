@@ -11,21 +11,26 @@ import { ScannedDevice } from "@ledgerhq/live-common/ble/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
+import { useTheme } from "styled-components/native";
 
 import { knownDevicesSelector } from "../../reducers/ble";
 import LocationRequired from "../LocationRequired";
 import BleDeviceItem from "./BleDeviceItem";
 import type { BleDevicePairingFlowProps } from "./index";
 
-const BluetoothLogo = () => (
-  <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
-    <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={4}>
-      <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
-        <BluetoothMedium size={48} />
+const BluetoothLogo = () => {
+  const { colors } = useTheme();
+
+  return (
+    <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
+      <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={4}>
+        <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
+          <BluetoothMedium size={48} color={colors.constant.white} />
+        </Flex>
       </Flex>
     </Flex>
-  </Flex>
-);
+  );
+};
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 
