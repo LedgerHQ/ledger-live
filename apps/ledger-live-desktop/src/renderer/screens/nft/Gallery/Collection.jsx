@@ -81,7 +81,7 @@ const Collection = () => {
     if (isAtBottom && maxVisibleNTFs < nfts.length) {
       setMaxVisibleNFTs(maxVisibleNTFs => maxVisibleNTFs + 5);
     }
-  }, [isAtBottom]);
+  }, [isAtBottom, maxVisibleNTFs, nfts.length]);
 
   const slicedNfts = useMemo(() => nfts.slice(0, maxVisibleNTFs), [nfts, maxVisibleNTFs]);
 

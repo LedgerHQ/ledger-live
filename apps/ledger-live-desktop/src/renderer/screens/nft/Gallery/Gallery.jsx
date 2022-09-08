@@ -90,7 +90,7 @@ const Gallery = () => {
     if (isAtBottom && maxVisibleNFTs < account.nfts.length) {
       setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
     }
-  }, [isAtBottom]);
+  }, [isAtBottom, account.nfts.length, maxVisibleNFTs]);
 
   const [collectionsRender, isLoading] = useMemo(() => {
     const collectionsRender = [];

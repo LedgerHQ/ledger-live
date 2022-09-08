@@ -8,7 +8,6 @@ import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
-import ToolTip from "~/renderer/components/Tooltip";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import Loader from "~/renderer/icons/Loader";
 import type { CeloVote } from "@ledgerhq/live-common/families/celo/types";
@@ -55,7 +54,7 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
     action => {
       onManageAction(vote, action.key);
     },
-    [onManageAction],
+    [onManageAction, vote],
   );
 
   const onExternalLinkClick = () => onExternalLink(vote);
@@ -97,23 +96,23 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
       <S.Column>
         {status === "active" && (
           <Box color="positiveGreen">
-            <ToolTip content={<Trans i18nKey="celo.delegation.activeTooltip" />}>
+            <Tooltip content={<Trans i18nKey="celo.delegation.activeTooltip" />}>
               <CheckCircle size={14} />
-            </ToolTip>
+            </Tooltip>
           </Box>
         )}
         {status === "awaitingActivation" && (
           <Box color="orange">
-            <ToolTip content={<Trans i18nKey="celo.delegation.awaitingActivationTooltip" />}>
+            <Tooltip content={<Trans i18nKey="celo.delegation.awaitingActivationTooltip" />}>
               <Loader size={14} />
-            </ToolTip>
+            </Tooltip>
           </Box>
         )}
         {status === "pending" && (
           <Box color="grey">
-            <ToolTip content={<Trans i18nKey="celo.delegation.pendingTooltip" />}>
+            <Tooltip content={<Trans i18nKey="celo.delegation.pendingTooltip" />}>
               <Loader size={14} />
-            </ToolTip>
+            </Tooltip>
           </Box>
         )}
         <Box ml={1}>
