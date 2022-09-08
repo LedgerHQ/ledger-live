@@ -12,7 +12,7 @@ type Props = {
   withConfirmation?: boolean;
   confirmationTitle?: React.ReactNode;
   confirmationDesc?: React.ReactNode;
-  onClose: (..._: Array<any>) => any;
+  onClose?: (..._: Array<any>) => any;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

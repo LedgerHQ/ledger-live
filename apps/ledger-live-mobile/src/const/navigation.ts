@@ -470,4 +470,6 @@ export const NavigatorName = {
 
   // Custom Image
   CustomImage: "CustomImage",
+
+  WalletConnect: "WalletConnect",
 };
