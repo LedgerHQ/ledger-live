@@ -2,11 +2,11 @@ import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { PermissionsAndroid, Platform } from "react-native";
 import LocationRequired from "../../screens/LocationRequired";
 
-const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
+const permission = PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;
 
 /**
  * Location permission is not required to perform a bluetooth scan on devices
- * with Android 12 and above (API 31)
+ * with Android 12 (API 31) and above
  * https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#assert-never-for-location
  * */
 const requiresLocation = Platform.OS === "android" && Platform.Version < 31;
