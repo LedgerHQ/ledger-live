@@ -113,7 +113,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (10481)
+## Tokens (10482)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -929,6 +929,7 @@
 | Cardano | SPACE | d894897411707efa755a76deb66d26dfd50593f2e70863e1661e98a07370616365636f696e73 | spacecoins |  | cardano/native/d894897411707efa755a76deb66d26dfd50593f2e70863e1661e98a07370616365636f696e73 |
 | Cardano (Testnet) | tToken | 581684861359b6d4d00594073a9aa4223c6fc24d24da05e1b34fb865544553545f544f4b454e | TEST_TOKEN |  | cardano_testnet/native/581684861359b6d4d00594073a9aa4223c6fc24d24da05e1b34fb865544553545f544f4b454e |
 | Elrond | MEX | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | MEX |  | elrond/esdt/4d45582d343535633537 |
+| Elrond | UTK | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Utrust |  | elrond/esdt/55544B2D326638306539 |
 | Elrond | USDC | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedUSDC |  | elrond/esdt/555344432d633736663166 |
 | Elrond | RIDE | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | holoride |  | elrond/esdt/524944452d376431386539 |
 | Ethereum | INJ | 0x84bFFfFD702d924C6d9b25F87151bf0FB1A8913E |  Injective Protocol | countervalues disabled | ethereum/erc20/_injective_protocol |
