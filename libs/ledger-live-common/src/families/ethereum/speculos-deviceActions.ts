@@ -86,7 +86,9 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
           return formatCurrencyUnit(
             {
               ...unit,
-              code: account.currency.deviceTicker || account.unit.code,
+              code:
+                (a || account).currency.deviceTicker ||
+                (a || account).unit.code,
               prefixCode: true,
             },
             amount,
