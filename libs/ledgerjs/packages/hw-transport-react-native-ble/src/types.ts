@@ -17,6 +17,7 @@ export type RunnerEvent = any;
 export type RawRunnerEvent = {
   event: "task";
   type:
+    | "runStart"
     | "runComplete"
     | "runError"
     | "runProgress"
