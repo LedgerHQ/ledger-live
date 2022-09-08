@@ -11,8 +11,8 @@ import BleTransport
 
 
 class Runner: NSObject  {
-    let scriptRunnerOK = ["CONTINUE", "TERMINATE"]
-    let scriptRunnerKO = ["CANCELLED",
+    private let scriptRunnerOK = ["CONTINUE", "TERMINATE"]
+    private let scriptRunnerKO = ["CANCELLED",
                           "SR DISCONNECTION",
                           "INDEX OUT OF BOUNDS",
                           "NOT CONNECTED TO SCRIPT RUNNER"]
@@ -98,7 +98,8 @@ class Runner: NSObject  {
      would lose the ability to connect to the network, resulting in incomplete installations. This may not be enough either /!\
      */
     func startBackgroundTask() {
-        self.backgroundTaskID = UIApplication.shared.beginBackgroundTask (withName: "Runner"){ self.endBackgroundTask()}
+        self.backgroundTaskID = UIApplication.shared.beginBackgroundTask (withName: "Runner"){ self.endBackgroundTask()
+        }
     }
     
     /**
@@ -179,7 +180,7 @@ class Runner: NSObject  {
                         socket!.write(string: initialMessage)
                     }
                     break
-                case .disconnected(let reason, _):
+                case .disconnected(_, _):
                     /// We need to communicate this **only** when have finished the device exchange.
                     /// Never forget that we are a bridge between a backend and the device and even though
                     /// the communication with the backend may over, we may very well still be communicating
@@ -221,7 +222,8 @@ class Runner: NSObject  {
                             }
                             // Trigger a disconnect too
                             isPendingOnDone = true
-                            handleNextAPDU();
+                            endBackgroundTask()
+                            handleNextAPDU()
                         }
                     } catch {
                         self.onFailedScriptRunner(.networkDown, error.localizedDescription)

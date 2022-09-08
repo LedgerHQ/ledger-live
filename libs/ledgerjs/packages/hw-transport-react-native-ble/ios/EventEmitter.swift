@@ -71,7 +71,7 @@ struct ExtraData: Codable {
 }
 
 class EventEmitter {
-    public static var sharedInstance = EventEmitter()
+    public static let sharedInstance = EventEmitter()
     private var eventEmitter: HwTransportReactNativeBle!
     
     private var isJavaScriptAvailable: Bool = true

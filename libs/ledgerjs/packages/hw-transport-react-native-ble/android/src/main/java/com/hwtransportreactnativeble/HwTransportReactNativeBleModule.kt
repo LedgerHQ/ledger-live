@@ -10,7 +10,7 @@ import kotlin.concurrent.timerTask
 
 class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
-    private var tag: String = "BleTransport"
+    private val tag: String = "BleTransport"
     private var onDisconnect: ((Any) -> Void)? = null
     private var retriesLeft = 1
     private var bleManager = BleManagerFactory.newInstance(reactContext)
@@ -32,26 +32,22 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun observeBluetooth() {
-        // if (!planted) {
-        //     Timber.plant(Timber.DebugTree())
-        //     planted = true
-        // }
-    }
+    fun observeBluetooth() = Unit
 
     @ReactMethod
     fun listen(promise: Promise) {
         Timber.d("$tag: \t start scanning")
         bleManager.startScanning {
-            val devices = Arguments.createArray()
-            for (device in it) {
-                devices.pushMap(Arguments.createMap().apply {
+            val devices = it.fold(Arguments.createArray()) { acc, device ->
+                acc.pushMap(Arguments.createMap().apply {
                     putString("id", device.id)
                     putString("name", device.name)
                     putString("rssi", device.rssi.toString())
                     putArray("serviceUUIDs", Arguments.createArray().apply{pushString(device.serviceId)})
                 })
+                acc
             }
+
             // We hit this callback whenever a device is seen or goes away, this means we effectively
             // replace the list instead of emitting new events one by one. This solves the
             val event = Arguments.createMap().apply {
@@ -128,6 +124,7 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     @ReactMethod
     fun disconnect(promise: Promise) {
         /// Prevent race condition between organic disconnect (allow open app) and explicit disconnection below.
+        
         pendingEvent = Timer()
         pendingEvent!!.schedule(
             timerTask() {
