@@ -151,7 +151,6 @@ function SwapForm({
   const [maxSpendable, setMaxSpendable] = useState();
   const {
     from: { account: fromAccount, parentAccount: fromParentAccount },
-    refetchRates,
   } = swap;
   const resetError = useCallback(() => {
     setError();
