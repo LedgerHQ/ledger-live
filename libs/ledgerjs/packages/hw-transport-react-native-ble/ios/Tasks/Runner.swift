@@ -18,7 +18,7 @@ class Runner: NSObject  {
                           "NOT CONNECTED TO SCRIPT RUNNER"]
     
     var scriptRunnerURL : URL
-    var healthCheckURL : URL
+    var healthCheckURL : URL?
     var initialMessage: String = ""                             /// First message to send upon connecting to the script runner.
     
     var socket: WebSocket?                                      /// Connection to the scriptrunner
@@ -54,7 +54,7 @@ class Runner: NSObject  {
      */
     public init (
         endpoint : URL,
-        health: URL,
+        health: URL?,
         onEvent: @escaping ((RunnerAction, ExtraData?)->Void),
         onDone: ((String)->Void)?
     ) {
@@ -139,22 +139,26 @@ class Runner: NSObject  {
      - Parameter onError
      */
     private func withBIM(_ onSuccess: @escaping () -> Void, onError: @escaping (_ error: Error?) -> Void) {
-        var request = URLRequest(url: self.healthCheckURL)
-        request.httpMethod = "GET"
-        if let task = self.pendingRequest {
-            task.cancel()
-        }
-        
-        let session = URLSession.shared
-        self.pendingRequest = session.dataTask(with: request) { (_, response, error) -> Void in
-            guard error == nil else {
-                onError(error)
-                self.endBackgroundTask()
-                return
+        if let healthCheckURL = self.healthCheckURL {
+            var request = URLRequest(url: healthCheckURL)
+            request.httpMethod = "GET"
+            if let task = self.pendingRequest {
+                task.cancel()
             }
-            onSuccess()
+            
+            let session = URLSession.shared
+            self.pendingRequest = session.dataTask(with: request) { (_, response, error) -> Void in
+                guard error == nil else {
+                    onError(error)
+                    self.endBackgroundTask()
+                    return
+                }
+                onSuccess()
+            }
+            self.pendingRequest!.resume()
+        } else {
+            onSuccess() /// Bypass the health check if no URL was provided
         }
-        self.pendingRequest!.resume()
     }
     
     private func startScriptRunner() -> Void {
@@ -215,6 +219,8 @@ class Runner: NSObject  {
                                 APDUQueue = [APDU(raw: json["data"] as? String ?? "")]
                                 HSMNonce = json["nonce"] as? Int ?? 0;
                             }
+                            // Trigger a disconnect too
+                            isPendingOnDone = true
                             handleNextAPDU();
                         }
                     } catch {
@@ -263,10 +269,11 @@ class Runner: NSObject  {
             let data = response.dropLast(4)
             
             if self.isInBulkMode {
-                let progress = ((Double(self.APDUMaxCount-self.APDUQueue.count))/Double(self.APDUMaxCount))
+                let index = self.APDUMaxCount - self.APDUQueue.count
+                let progress = ((Double(index))/Double(self.APDUMaxCount))
                 self.onEmit!(
                     RunnerAction.runProgress,
-                    ExtraData(progress: progress)
+                    ExtraData(progress: progress, index: index, total: self.APDUMaxCount)
                 )
                 self.handleNextAPDU()
             } else {

@@ -16,12 +16,19 @@ export type GlobalBridgeEvent = {
 export type RunnerEvent = any;
 export type RawRunnerEvent = {
   event: "task";
-  type: "runComplete" | "runError" | "runProgress";
+  type:
+    | "runComplete"
+    | "runError"
+    | "runProgress"
+    | "runSuccess"
+    | "runBulkProgress";
 
   data: {
     name: string;
     type: string;
     progress: number;
+    index?: number;
+    total?: number;
 
     message?: string; // Used for error inference.
   };

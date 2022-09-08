@@ -25,6 +25,7 @@ enum TransportError: String, CaseIterable {
 class HwTransportReactNativeBle: RCTEventEmitter {
     var rejectCallback: ((_ code: String, _ message: String, _ error: NSError?) -> Void)?
     var queueTask: Queue?
+    var runnerTask: Runner?
     
     override init() {
         super.init()
@@ -203,6 +204,33 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         /// dealing with a connected device and the callback will come from the -connect- from this file. In order
         /// to handle this eventuality, register here what to do in that case.
         self.rejectCallback = self.queueTask?.onDisconnect
+    }
+    
+    @objc func runner(_ endpoint: String) -> Void {
+        self.runnerTask = Runner(
+            endpoint: URL(string: endpoint)!,
+            health: nil
+        ) { (action, data) in
+            /// TBD if we need to emit the individual exchanges or progress is enough
+            if case .runProgress = action {
+                /// Map this progress to the raw socket.ts event mark
+                EventEmitter.sharedInstance.dispatch(
+                    Payload(
+                        event: Event.task.rawValue,
+                        type: RunnerAction.runBulkProgress.rawValue,
+                        data: data
+                    )
+                )
+            }
+        } onDone: { finalMessage in
+            EventEmitter.sharedInstance.dispatch(
+                Payload(
+                    event: Event.task.rawValue,
+                    type: RunnerAction.runComplete.rawValue,
+                    data: nil
+                )
+            )
+        }
     }
     
     @objc func onAppStateChange(
