@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import type { Transaction } from "./types";
+import type { AvalanchePChainResources, Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -66,8 +66,8 @@ const avalanche: AppSpec<Transaction> = {
         } = accountBeforeTransaction;
         invariant(avalanchePChainResources, "avalanchepchain");
 
-        expect(avalanchePChainResources.stakedBalance).toEqual(
-          avalanchePChainResourcesBeforeTransaction.stakedBalance.plus(
+        expect((avalanchePChainResources as AvalanchePChainResources).stakedBalance).toEqual(
+          (avalanchePChainResourcesBeforeTransaction as AvalanchePChainResources).stakedBalance.plus(
             operation.extra.stakeValue
           )
         );
