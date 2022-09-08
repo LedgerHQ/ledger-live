@@ -47,7 +47,7 @@ type Step = {
 };
 
 export type SyncOnboardingCompanionProps = CompositeScreenProps<
-  StackScreenProps<SyncOnboardingCompanionParams, "SyncOnboardingCompanion">,
+  StackScreenProps<SyncOnboardingCompanionParams>,
   StackScreenProps<BaseNavigatorStackParamList>
 >;
 
