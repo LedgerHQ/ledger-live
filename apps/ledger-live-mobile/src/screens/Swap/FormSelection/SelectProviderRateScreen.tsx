@@ -14,6 +14,8 @@ import Lock from "../../../icons/Lock";
 import Unlock from "../../../icons/Unlock";
 import { TrackScreen } from "../../../analytics";
 
+const ratesExpirationThreshold = 60000;
+
 type Props = {
   route: {
     params: SwapRouteParams;
@@ -40,6 +42,10 @@ export default function SelectProviderRateScreen({ route, navigation }: Props) {
         ...route.params,
         rate: newRate,
         provider: newRate.provider,
+        ratesExpiration:
+          newRate.tradeMethod === "fixed"
+            ? new Date(new Date().getTime() + ratesExpirationThreshold)
+            : null,
       });
     },
     [navigation, route.params],

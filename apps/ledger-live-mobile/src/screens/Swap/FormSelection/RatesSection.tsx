@@ -199,12 +199,12 @@ export default function RatesSection({
           label={<Trans i18nKey="transfer.swap.form.summary.method" />}
           onEdit={canEdit ? onEditRateProvider : undefined}
         >
-          {swap.ratesExpiration &&
+          {route.params?.ratesExpiration &&
             rate.tradeMethod === "fixed" &&
-            swap.ratesExpiration > Date.now() && (
+            route.params?.ratesExpiration > Date.now() && (
               <Flex paddingX={2}>
                 <CountdownTimer
-                  end={swap.ratesExpiration}
+                  end={route.params?.ratesExpiration}
                   callback={swap.refetchRates}
                 />
               </Flex>

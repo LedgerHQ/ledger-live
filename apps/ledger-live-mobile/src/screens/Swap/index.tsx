@@ -58,14 +58,13 @@ export type SwapRouteParams = {
   provider: any;
   installedApps: any;
   target: "from" | "to";
-  rateExpiration?: Date;
+  ratesExpiration?: Date;
   rate?: ExchangeRate;
   rates?: ExchangeRate[];
   tradeMethod?: string;
   setAccount?: (account?: Account | TokenAccount) => void;
   setCurrency?: (currency?: TokenCurrency | CryptoCurrency) => void;
 };
-export const ratesExpirationThreshold = 60000;
 
 type Props = {
   route: {
