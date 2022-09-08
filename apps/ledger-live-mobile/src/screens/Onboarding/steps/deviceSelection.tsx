@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { StackActions, useNavigation } from "@react-navigation/native";
@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ArrowLeftMedium, HelpMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 
 import { TrackScreen } from "../../../analytics";
 import nanoSSvg from "../assets/nanoS";
@@ -23,12 +24,18 @@ const nanoS = { SvgDevice: nanoSSvg, id: "nanoS", setupTime: 600000 };
 const nanoSP = { SvgDevice: nanoSPSvg, id: "nanoSP", setupTime: 600000 };
 const nanoFTS = { SvgDevice: nanoXSvg, id: "nanoFTS", setupTime: 300000 };
 
-const devices = [nanoFTS, nanoX, nanoSP, nanoS];
-
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const syncOnboarding = useFeature("syncOnboarding");
+
+  const devices = useMemo(() => {
+    if (syncOnboarding?.enabled) {
+      return [nanoFTS, nanoX, nanoSP, nanoS];
+    }
+    return [nanoX, nanoSP, nanoS];
+  }, [syncOnboarding?.enabled]);
 
   const getProductName = (modelId: string) =>
     getDeviceModel(modelId)?.productName || modelId;
