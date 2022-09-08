@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.47.1-nightly.0
+
+### Patch Changes
+
+- [#1196](https://github.com/LedgerHQ/ledger-live/pull/1196) [`d9800ac826`](https://github.com/LedgerHQ/ledger-live/commit/d9800ac826fce88e3d1722ec41583f9bf400dcb8) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Remove onboarding v2 code
+
+- Updated dependencies [[`d70bb7042a`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
+  - @ledgerhq/live-common@27.2.0-nightly.0
+
 ## 2.47.0
 
 ### Minor Changes

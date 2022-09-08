@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-eth
 
+## 6.29.7-nightly.0
+
+### Patch Changes
+
+- [#892](https://github.com/LedgerHQ/ledger-live/pull/892) [`d70bb7042a`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add EIP-712 capability when preparing message to sign
+
 ## 6.29.6
 
 ### Patch Changes
