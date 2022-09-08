@@ -147,7 +147,6 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         DispatchQueue.main.asyncAfter(deadline: .now() + 3){
             if !BleTransport.shared.isConnected {
                 resolve(true)
-                return
             } else if let queueTask = self.queueTask {
                 queueTask.stop(disconnectImpl)
                 self.queueTask = nil
