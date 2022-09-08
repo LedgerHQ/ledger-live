@@ -1,4 +1,4 @@
-name: "[Release](Desktop) Prepare for releasing"
+name: "[Release] Prepare for releasing"
 
 on:
   workflow_dispatch:
@@ -45,7 +45,15 @@ jobs:
       - name: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm changeset version --ignore live-mobile
+        run: pnpm changeset version
+
+      - name: Update changeset config
+        uses: jossef/action-set-json-field@v2
+        with:
+          file: .changeset/config.json
+          field: ignore
+          value: "[]"
+          parse_json: true
 
       - name: commit
         run: |
