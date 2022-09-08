@@ -17,6 +17,39 @@ export const defaultFeatures: DefaultFeatures = {
   currencyOsmosis: {
     enabled: false,
   },
+  currencyFantom: {
+    enabled: false,
+  },
+  currencyMoonbeam: {
+    enabled: false,
+  },
+  currencyCronos: {
+    enabled: false,
+  },
+  currencySongbird: {
+    enabled: false,
+  },
+  currencyFlare: {
+    enabled: false,
+  },
+  currencyOsmosisMobile: {
+    enabled: false,
+  },
+  currencyFantomMobile: {
+    enabled: false,
+  },
+  currencyMoonbeamMobile: {
+    enabled: false,
+  },
+  currencyCronosMobile: {
+    enabled: false,
+  },
+  currencySongbirdMobile: {
+    enabled: false,
+  },
+  currencyFlareMobile: {
+    enabled: false,
+  },
   ratings: {
     enabled: false,
     params: {

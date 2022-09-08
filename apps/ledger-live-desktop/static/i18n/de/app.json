@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "Abhebung",
       "NOMINATE" : "Nominierung",
       "CHILL" : "Nominierungen löschen",
-      "SET_CONTROLLER" : "Controller einstellen"
+      "SET_CONTROLLER" : "Controller einstellen",
+      "LOCK" : "Gesperrt",
+      "UNLOCK" : "Entsperrt",
+      "WITHDRAW" : "Ausgezahlt",
+      "REVOKE" : "Widerrufen",
+      "ACTIVATE" : "Aktiviert",
+      "REGISTER" : "Registriert"
     }
   },
   "byteSize" : {
@@ -198,7 +204,7 @@
     "menu" : "Menü",
     "stars" : "Favoritenliste",
     "accounts" : "Konten",
-    "manager" : "Manager",
+    "manager" : "My Ledger",
     "exchange" : "Kaufen / Verkaufen",
     "swap" : "Umtauschen",
     "lend" : "Leihen",
@@ -384,13 +390,13 @@
     },
     "missingApp" : {
       "title" : "Bitte installieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Gehen Sie zum Manager und installieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
-      "cta" : "Zum Manager gehen"
+      "subtitle" : "Wechseln Sie zu My Ledger und installieren Sie die {{appName}}-App, um Vermögenswerte zu tauschen.",
+      "cta" : "Zu My Ledger wechseln"
     },
     "outdatedApp" : {
       "title" : "Bitte aktualisieren Sie die App {{appName}} auf Ihrem Gerät",
-      "subtitle" : "Gehen Sie zum Manager und aktualisieren Sie die App {{appName}}, um Vermögenswerte zu tauschen.",
-      "cta" : "Zum Manager gehen"
+      "subtitle" : "Wechseln Sie zu My Ledger und aktualisieren Sie die {{appName}}-App, um Vermögenswerte zu tauschen.",
+      "cta" : "Zu My Ledger wechseln"
     },
     "providers" : {
       "title" : "Wählen Sie einen Anbieter für den Tausch von Kryptowährungen",
@@ -745,7 +751,19 @@
     "bandwidthTooltip" : "Vermögenswerte sperren, um Bandbreite zu gewinnen",
     "energyTooltip" : "Vermögenswerte sperren, um Energie zu gewinnen",
     "delegatedTooltip" : "Delegierte Vermögenswerte werden im Abstimmungsprozess verwendet. Dies entspricht Ihrer Gesamtzahl an Stimmen.",
-    "undelegatingTooltip" : "Nicht delegierte Vermögenswerte befinden sich in einer Zeitsperre von{{timelockInDays}} Tagen, bevor sie verfügbar sind."
+    "undelegatingTooltip" : "Nicht delegierte Vermögenswerte befinden sich in einer Zeitsperre von{{timelockInDays}} Tagen, bevor sie verfügbar sind.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "Schon gewusst?",
+        "description" : "Der Ledger-Validator erledigt das Staking zu einer günstigeren Provision als Ihr derzeitiger Validator.",
+        "cta" : "Mit Ledger erneut delegieren"
+      },
+      "delegation" : {
+        "title" : "Schon gewusst?",
+        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "cta" : "Mit Ledger staken"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "Wählen Sie aus {{providerCount}} Anbieter",
@@ -1202,9 +1220,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Apps auf Ihrem Gerät installieren",
-      "desc" : "Gehen Sie zum Manager, um Apps auf Ihrem Gerät zu installieren. Sie können Konten hinzufügen, sobald Sie Apps auf Ihrem Gerät haben.",
+      "desc" : "Wechseln Sie zu My Ledger, um Apps auf Ihrem Gerät zu installieren. Nach der Installation der Apps können Sie Konten hinzufügen.",
       "buttons" : {
-        "installApp" : "Zum Manager gehen",
+        "installApp" : "Zu My Ledger wechseln",
         "help" : "Hilfe"
       }
     },
@@ -1213,7 +1231,7 @@
       "desc" : "Fügen Sie ein Konto hinzu, um mit der Verwaltung Ihrer Krypto-Vermögenswerte zu beginnen. Sie müssen die App für Ihr Krypto-Vermögen auf Ihrem Gerät installiert haben.",
       "buttons" : {
         "addAccount" : "Konto hinzufügen",
-        "installApp" : "Gehen Sie zum Manager, um Apps zu installieren",
+        "installApp" : "Zu My Ledger wechseln, um Apps zu installieren",
         "help" : "Hilfe"
       }
     }
@@ -1536,12 +1554,12 @@
     "quitApp" : "Beenden Sie die Anwendung auf Ihrem Gerät",
     "appNotInstalledTitle" : "Fehlende, erforderliche App",
     "appNotInstalledTitle_plural" : "Fehlende, erforderliche Apps",
-    "appNotInstalled" : "Die App {{appName}} ist erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
-    "appNotInstalled_plural" : "Die Apps {{appName}} sind erforderlich, um diese Aktion durchzuführen. Bitte gehen Sie zum Manager und installieren Sie sie auf Ihrem Gerät",
-    "openManager" : "Manager öffnen",
+    "appNotInstalled" : "Die {{appName}}-App ist erforderlich, um diese Aktion durchzuführen. Bitte wechseln Sie zu My Ledger und installieren Sie sie auf Ihrem Gerät.",
+    "appNotInstalled_plural" : "Die {{appName}}-Apps sind erforderlich, um diese Aktion durchzuführen. Bitte wechseln Sie zu My Ledger und installieren Sie sie auf Ihrem Gerät.",
+    "openManager" : "My Ledger öffnen",
     "openOnboarding" : "Gerät einrichten",
     "outdated" : "App-Version veraltet",
-    "outdatedDesc" : "Ein wichtiges Update ist für die Anwendung {{appName}} auf Ihrem Gerät verfügbar. Bitte gehen Sie zum Manager, um das Update durchzuführen.",
+    "outdatedDesc" : "Für die {{appName}}-App auf Ihrem Gerät ist ein wichtiges Update verfügbar. Wechseln Sie zu My Ledger, um sie zu aktualisieren.",
     "installApp" : "{{appName}} App-Installation",
     "installAppDescription" : "Bitte warten Sie, bis die Installation beendet ist",
     "listApps" : "Prüfen von App-Abhängigkeiten",
@@ -1556,7 +1574,7 @@
       "provider" : "Anbieter",
       "payoutNetworkFees" : "Auszahlungsgebühren",
       "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu."
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -1584,12 +1602,12 @@
     },
     "disconnected" : {
       "title" : "Es sieht so aus, als ob eine App auf Ihrem Gerät geöffnet ist",
-      "subtitle" : "Beim erneuten Öffnen des Managers wird die App auf Ihrem Gerät beendet",
-      "ctaReopen" : "Manager erneut öffnen",
+      "subtitle" : "Wenn Sie My Ledger erneut öffnen, wird die App auf Ihrem Gerät beendet.",
+      "ctaReopen" : "My Ledger erneut öffnen",
       "ctaPortfolio" : "Zurück zum Portfolio"
     },
     "deviceStorage" : {
-      "freeSpace" : "<0>{{space}}</0>kostenlos",
+      "freeSpace" : "<0>{{space}}</0> verfügbar",
       "noFreeSpace" : "Kein Speicher mehr frei",
       "installed" : "Apps",
       "capacity" : "Kapazität",
@@ -1628,7 +1646,7 @@
         "title_plural" : "Updates verfügbar",
         "progressTitle" : "{{number}} App-Update",
         "progressTitle_plural" : "{{number}} App-Updates",
-        "progressWarning" : "Beenden Sie den Manager nicht während der Aktualisierung.",
+        "progressWarning" : "Beenden Sie My Ledger nicht, solange die Aktualisierung noch läuft.",
         "progress" : "Alle aktualisieren ..."
       },
       "item" : {
@@ -1692,7 +1710,7 @@
       "updateBtn" : "Firmware aktualisieren",
       "banner" : {
         "warning" : "Update-Firmware zu {{latestFirmware}} ist verfügbar",
-        "cta" : "Zum Manager gehen",
+        "cta" : "Zu My Ledger wechseln",
         "old" : {
           "warning" : "Geräte-Firmware-Version zu alt, um aktualisiert zu werden. Kontaktieren Sie den Ledger-Support für einen Ersatz.",
           "cta" : "Support kontaktieren"
@@ -1748,7 +1766,7 @@
         "boot" : "Drücken und halten Sie die Seitentaste, bis {{option}} angezeigt wird",
         "recoveryMode" : "Tippen Sie auf {{mode}} Modus. Warten Sie, bis das Dashboard erscheint.",
         "third" : "3. Alle Apps deinstallieren",
-        "openLive" : "Öffnen Sie den Manager in Ledger Live.",
+        "openLive" : "Öffnen Sie My Ledger in Ledger Live.",
         "uninstall" : "Klicken Sie auf das graue Papierkorbsymbol für alle derzeit auf dem {{deviceName}} installierten Apps. Dies schafft Platz für das Firmware-Installationsprogramm.",
         "disclaimer" : "Hinweis: Ihr Guthaben ist von diesem Vorgang nicht betroffen, die privaten Schlüssel zum Zugriff auf Ihr Krypto-Vermögen in der Blockchain bleiben sicher auf Ihrem Recovery Sheet."
       }
@@ -2108,6 +2126,272 @@
       "DEEP_OUTPUTS_FIRST" : "Älteste Coins zuerst (FIFO)",
       "OPTIMIZE_SIZE" : "Gebühren minimieren (Größe optimieren)",
       "MERGE_OUTPUTS" : "Zukünftige Gebühren minimieren (Coins zusammenführen)"
+    }
+  },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Mehr Infos",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "Der CELO-Token ist jetzt auf Ledger Live verfügbar",
+        "description" : "Sie können jetzt damit beginnen, Ihre CELO-Token zu verwalten und sie über Ledger Live zu sichern.",
+        "description2" : "Der Celo-Token ist Teil der Celo-Blockchain und wird für alle Transaktionen, Einsätze und viele zukünftige Funktionen verwendet.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "lockedBalance" : "Gesperrtes Guthaben",
+    "lockedTooltip" : "Vermögenswerte müssen gesperrt und für Validatorgruppen abgestimmt worden sein, bevor sie Belohnungen verdienen.",
+    "nonvotingLockedBalance" : "Nicht-abgestimmtes gesperrtes Guthaben",
+    "nonvotingLockedTooltip" : "Der Saldo der gesperrten Vermögenswerte, die für Abstimmungen verwendet werden können",
+    "withdrawableBalance" : "Auszahlbares Guthaben",
+    "withdrawableTooltip" : "Ungesperrte Celo können Sie auf Ihr verfügbares Guthaben abheben",
+    "delegation" : {
+      "activeTooltip" : "Aktive Abstimmung generiert Belohnungen",
+      "pendingTooltip" : "Die ausstehende Abstimmung generiert keine Belohnungen und muss nach 24 Stunden aktiviert werden",
+      "awaitingActivationTooltip" : "Diese ausstehende Abstimmung kann jetzt aktiviert werden",
+      "listHeader" : "Delegierungen",
+      "add" : "Hinzufügen",
+      "validatorGroup" : "Validator-Gruppe",
+      "manageMultipleVoteWarning" : "Sie müssen andere Stimmen in derselben Validatorgruppe aktivieren oder widerrufen, bevor Sie diese Abstimmung verwalten können.",
+      "actions" : {
+        "activate" : "Aktivieren",
+        "revoke" : "Widerrufen"
+      },
+      "emptyState" : {
+        "description" : "Sie können CELO-Prämien verdienen, indem Sie Ihre Vermögenswerte übertragen.",
+        "info" : "So funktioniert Delegierung",
+        "delegation" : "Verdienen Sie Belohnungen"
+      },
+      "earnRewards" : {
+        "description" : "Sie können Belohnungen verdienen, indem Sie Ihre CELO-Werte an einen Validator delegieren.",
+        "bullet" : {
+          "0" : "Sie behalten das Eigentum an delegierten Vermögenswerten",
+          "1" : "Delegieren Sie mit Ihrem Ledger-Gerät",
+          "2" : "Vermögenswerte sind nach nach Aufhebung der Delegierung verfügbar"
+        },
+        "warning" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer übertragenen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+      }
+    },
+    "manage" : {
+      "title" : "Vermögenswerte verwalten",
+      "titleWhenPendingRegistration" : "Kontoregistrierung steht aus",
+      "lock" : {
+        "title" : "Sperren",
+        "description" : "Um Prämien zu verdienen, sperren Sie zunächst einen Betrag. Dann müssen Sie für Ihre(n) Validator(s) abstimmen."
+      },
+      "unlock" : {
+        "title" : "Entsperren",
+        "description" : "Um einen gesperrten Betrag wieder verfügbar zu machen, müssen Sie ihn zunächst entsperren. Sie können ihn nach der 3-tägigen Entsperrungsfrist zurückziehen."
+      },
+      "withdraw" : {
+        "title" : "Abheben",
+        "description" : "Um einen nicht gesperrten Betrag wieder auf das verfügbare Guthaben zurück zu holen, müssen Sie ihn manuell abheben."
+      },
+      "vote" : {
+        "title" : "Abstimmen",
+        "description" : "Für Validatorgruppen abstimmen. Stellen Sie sicher, dass Sie Ihre Stimmen aktivieren, um Belohnungen zu verdienen.",
+        "descriptionMaxVotes" : "Sie können für bis zu {{maxVotes}} Validatorgruppen stimmen. Wenn Sie für eine neue Validatorgruppe stimmen möchten, können Sie eine frühere Stimme auch widerrufen."
+      },
+      "activate" : {
+        "title" : "Stimmen aktivieren",
+        "description" : "Aktivieren Sie ihre Stimme für Validator-Gruppe"
+      },
+      "revoke" : {
+        "title" : "Stimme widerrufen",
+        "description" : "Widerrufen Sie Ihre Stimme für die Validator-Gruppe"
+      }
+    },
+    "lock" : {
+      "title" : "Vermögenswerte sperren",
+      "steps" : {
+        "amount" : {
+          "title" : "Betrag",
+          "amountLabel" : "Zu sperrender Betrag",
+          "availableLabel" : "Verfügbar",
+          "maxLabel" : "Max.",
+          "info" : "Gesperrte Vermögenswerte können jederzeit freigeschaltet werden, das Entsperren dauert jedoch 3 Tage."
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "Vermögenswerte erfolgreich gesperrt",
+            "text" : "Sie können für Validatoren stimmen, sobald das Netzwerk die Transaktion bestätigt hat.",
+            "textVote" : "Sie können die Validatoren wählen, sobald das Netzwerk Ihre Transaktion bestätigt hat.",
+            "cta" : "Details anzeigen"
+          },
+          "pending" : {
+            "title" : "Vermögenswerte werden gesperrt..."
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "Vermögenswerte entsperren",
+      "steps" : {
+        "amount" : {
+          "title" : "Betrag",
+          "amountLabel" : "Zu entsperrender Betrag",
+          "availableLabel" : "Gesperrt",
+          "maxLabel" : "Max.",
+          "info" : "Entsperrte Vermögenswerte können nach Ablauf der dreitägigen Entsperrungsfrist abgehoben werden.",
+          "learnMore" : "Weitere Informationen"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "label" : "Bestätigung",
+          "success" : {
+            "title" : "Nicht gesperrte Transaktion erfolgreich gesendet",
+            "text" : "Entsperrte Vermögenswerte können innerhalb von 3 Tagen abgehoben werden.",
+            "cta" : "Details anzeigen"
+          },
+          "pending" : {
+            "title" : "Vermögenswerte werden entsperrt..."
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "Konto registrieren",
+          "description" : "",
+          "info" : "Bevor Sie Celo sperren können, müssen Sie Ihr Konto in der Blockchain registrieren."
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "Informationen"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "label" : "Bestätigung",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "Konto wurde erfolgreich registriert",
+                "text" : "Sie werden Ihre Aktion bald in Ihrem Verlauf sehen.",
+                "cta" : "Sperren"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "Sende Transaktion..."
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "Vermögenswerte abheben",
+      "steps" : {
+        "amount" : {
+          "title" : "Abheben"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "",
+            "text" : "Ihre Vermögenswerte wurden erfolgreich abgehoben Der Abbuchungsbetrag wird Ihrem verfügbaren Guthaben gutgeschrieben.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "vote" : {
+      "title" : "Abstimmen",
+      "steps" : {
+        "amount" : {
+          "title" : "Betrag"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "Sie haben erfolgreich gestimmt",
+            "text" : "Sie werden Ihre Aktion bald in Ihrem Verlauf sehen.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        },
+        "validatorGroup" : {
+          "title" : "Validator-Gruppe",
+          "ledgerByFigmentTC" : "Ledger laut Figment AGBs",
+          "totalVotes" : "Stimmen insgesamt",
+          "commission" : "Provision"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "Stimmen aktivieren",
+      "steps" : {
+        "vote" : {
+          "title" : "Abstimmen"
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "",
+            "text" : "Ihre Stimme wurde erfolgreich aktiviert.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "Stimme widerrufen",
+      "steps" : {
+        "amount" : {
+          "title" : "Betrag",
+          "amountLabel" : "Zu widerrufender Betrag",
+          "availableLabel" : "Verfügbar",
+          "maxLabel" : "Max."
+        },
+        "connectDevice" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung",
+          "success" : {
+            "title" : "Sie haben Ihre Stimmen erfolgreich widerrufen",
+            "text" : "Sie werden Ihre Aktion bald in Ihrem Verlauf sehen.",
+            "cta" : "Details anzeigen"
+          },
+          "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+        },
+        "vote" : {
+          "title" : "Abstimmen",
+          "active" : "Aktiv",
+          "pending" : "Ausstehend",
+          "awaitingActivation" : "Warten auf Aktivierung",
+          "info" : "In diesem Modal werden nur widerrufbare Stimmen angezeigt"
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Sie haben ein abhebbares Guthaben",
+      "activatableVotes" : "Sie haben Stimmen, die jetzt aktiviert werden können."
     }
   },
   "cosmos" : {
@@ -2861,7 +3145,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "Sie haben Ihre Delegation erfolgreich aktiviert."
+                "title" : "Sie haben Ihre Delegierung erfolgreich aktiviert."
               }
             }
           }
@@ -3115,7 +3399,7 @@
         },
         "managerDevMode" : {
           "title" : "Entwicklermodus",
-          "description" : "Zeige Entwickler- und Testnet-Apps im Manager."
+          "description" : "Zeigen Sie Entwickler- und Testnet-Apps in My Ledger an."
         },
         "scanForInvalidPaths" : {
           "title" : "Erweiterte Kontosuche",
@@ -3130,8 +3414,8 @@
           "description" : "Benutzerdefiniertes Lückenlimit für alle Konten. Wenn Sie diesen Wert über den Standardwert (20) erhöhen, werden mehr ungenutzte öffentliche Adressen nach Coins durchsucht. Nur für fortgeschrittene Benutzer, dies kann die Kompatibilität beim Wiederherstellen Ihrer Konten beeinträchtigen."
         },
         "forceProvider" : {
-          "title" : "Manager-Anbieter",
-          "description" : "Das Ändern des App-Anbieters im Manager kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+          "title" : "Anbieter in My Ledger",
+          "description" : "Das Wechseln des App-Anbieters in My Ledger kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
         },
         "testAnimations" : {
           "title" : "Lottie-Animationen testen",
@@ -3996,7 +4280,9 @@
     "termsLabel" : "Allgemeine Geschäftsbedingungen",
     "privacyLabel" : "Datenschutzrichtlinie",
     "switchLabel" : "Ich habe die Nutzungsbedingungen und Datenschutzrichtlinien gelesen und akzeptiere sie",
-    "cta" : "Zur Ledger-App"
+    "cta" : "Zur Ledger-App",
+    "termsCheckboxLabel" : "Ich habe die Nutzungsbedingungen gelesen und erkläre mich damit einverstanden",
+    "privacyCheckboxLabel" : "Ich habe die Datenschutzbestimmungen gelesen und erkläre mich damit einverstanden."
   },
   "updatedTerms" : {
     "title" : "Aktualisierung der Nutzungsbedingungen",
@@ -4084,6 +4370,9 @@
     "NoAccessToCamera" : {
       "title" : "Bitte stellen Sie sicher, dass Ihr System über eine Kamera verfügt, dass diese nicht von einer anderen Anwendung verwendet wird und dass Ledger Live die Erlaubnis hat, diese zu verwenden.",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Stellen Sie sicher, dass Sie genug Guthaben für zukünftige Transaktionsgebühren übrig haben"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Die Prämien sind kleiner als die geschätzten Gebühren, die anfallen, um diese zu beanspruchen",
@@ -4383,7 +4672,7 @@
       "description" : "Bitte starten Sie Ihr Gerät neu, ohne die Schaltflächen zu berühren, wenn das Logo erscheint. Kontaktieren Sie den Ledger Support, falls das Problem weiterhin besteht."
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager auf Gerät abgelehnt"
+      "title" : "My Ledger auf Gerät nicht zulässig"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Update auf Gerät abgebrochen",
@@ -4403,7 +4692,7 @@
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
+      "description" : "Deinstallieren Sie die {{managerAppName}}-App in My Ledger und installieren Sie sie dann neu."
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Zurück zum Dashboard",
@@ -4423,7 +4712,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "App-Update erforderlich",
-      "description" : "Deinstallieren und installieren Sie die App {{managerAppName}} im Manager neu"
+      "description" : "Deinstallieren Sie die {{managerAppName}}-App in My Ledger und installieren Sie sie dann neu."
     },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
@@ -4468,7 +4757,7 @@
       "list" : {
         "1" : "Trennen Sie das USB-Kabel ab und schließen Sie es wieder an, ohne eine Taste zu drücken.",
         "2" : "Drücken Sie beide Tasten zusammen dreimal, um das Dashboard anzuzeigen.",
-        "3" : "Öffnen Sie den Manager und klicken Sie auf Firmware aktualisieren."
+        "3" : "Öffnen Sie My Ledger und klicken Sie auf „Firmware aktualisieren“."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {

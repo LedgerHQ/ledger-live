@@ -9,7 +9,18 @@ export type FeatureId =
   | "ptxSmartRouting"
   | "currencyOsmosis"
   | "currencyOsmosisMobile"
+  | "currencyFantom"
+  | "currencyMoonbeam"
+  | "currencyCronos"
+  | "currencySongbird"
+  | "currencyFlare"
+  | "currencyFantomMobile"
+  | "currencyMoonbeamMobile"
+  | "currencyCronosMobile"
+  | "currencySongbirdMobile"
+  | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
+  | "walletConnectLiveApp"
   | "customImage";
 
 /**  We use objects instead of direct booleans for potential future improvements

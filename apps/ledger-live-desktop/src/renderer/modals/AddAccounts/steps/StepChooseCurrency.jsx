@@ -28,17 +28,33 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
-  const currencyOsmosis = useFeature("currencyOsmosis");
+  const osmo = useFeature("currencyOsmosis");
+  const fantom = useFeature("currencyFantom");
+  const moonbeam = useFeature("currencyMoonbeam");
+  const cronos = useFeature("currencyCronos");
+  const songbird = useFeature("currencySongbird");
+  const flare = useFeature("currencyFlare");
+
+  const featureFlaggedCurrencies = useMemo(
+    () => ({
+      osmo,
+      fantom,
+      moonbeam,
+      cronos,
+      songbird,
+      flare,
+    }),
+    [osmo, fantom, moonbeam, cronos, songbird, flare],
+  );
 
   const currencies = useMemo(() => {
-    const currencies = listSupportedCurrencies().concat(listSupportedTokens())
-    
-    if (currencyOsmosis?.enabled) {
-      return currencies;
-    }
+    const currencies = listSupportedCurrencies().concat(listSupportedTokens());
+    const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
+      .filter(([, feature]) => !feature?.enabled)
+      .map(([name]) => name);
 
-    return currencies.filter(c => c.family !== "osmosis");
-  }, [currencyOsmosis]);
+    return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
+  }, [featureFlaggedCurrencies]);
 
   const url =
     currency && currency.type === "TokenCurrency"
