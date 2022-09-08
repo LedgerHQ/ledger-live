@@ -44,17 +44,18 @@ struct Item: Codable {
     let appName: String
 }
 
-struct ExtraData: Codable {
-    var msg: String?
-    
-    /// Devices
-    var devices: [ExtraData]?
-    
-    /// Device extras
+struct Device: Codable {
     var id: String?
     var rssi: Int?
     var name: String?
     var serviceUUIDs: [String]?
+}
+
+struct ExtraData: Codable {
+    var msg: String?
+    
+    /// Devices
+    var devices: [Device]?
     
     /// Bulk action extras
     var progress: Double?
