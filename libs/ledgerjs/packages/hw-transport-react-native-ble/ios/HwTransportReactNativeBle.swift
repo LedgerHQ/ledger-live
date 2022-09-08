@@ -7,7 +7,6 @@
 
 import Foundation
 import BleTransport
-import Bluejay
 
 enum TransportError: String, CaseIterable {
     case bluetoothRequired = "bluetooth-required"
@@ -56,7 +55,7 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         
         DispatchQueue.main.async {
             
-            BleTransport.shared.scan { discoveries in
+            BleTransport.shared.scan(duration: 60.0) { discoveries in
                 let devices = discoveries.map{
                     ExtraData(
                         id: $0.peripheral.uuid.uuidString,
@@ -75,7 +74,9 @@ class HwTransportReactNativeBle: RCTEventEmitter {
                         )
                     )
                 )
-            } stopped: {_ in }
+            } stopped: { _ in
+                
+            }
         }
     }
     
@@ -109,7 +110,7 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         var consumed = false /// Callbacks can only be called once in rn
         
         DispatchQueue.main.async {
-            BleTransport.shared.connect(toPeripheralID: peripheral, timeout: .seconds(5)){
+            BleTransport.shared.connect(toPeripheralID: peripheral) {
                 /// Disconnect callback is called regardless of the original -connect- having resolved already
                 /// we use this to notify exchanges (background or foreground) about the disconnection.
                 if consumed {
