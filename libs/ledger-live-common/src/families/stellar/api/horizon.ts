@@ -50,6 +50,41 @@ StellarSdk.HorizonAxiosClient.interceptors.response.use((response) => {
   return response;
 });
 
+function maybeStellarAPIerror<T>({
+  error,
+  fallbackValue,
+}: {
+  error: unknown;
+  fallbackValue: T;
+}) {
+  // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
+  // (https://github.com/stellar/js-stellar-sdk/issues/638)
+  const errorMsg = error ? String(error) : "";
+
+  if (error instanceof NotFoundError || errorMsg.match(/status code 404/)) {
+    // These cases are actually legit and a fallback should be returned...
+    return fallbackValue;
+  }
+
+  if (errorMsg.match(/status code 4[0-9]{2}/)) {
+    throw new LedgerAPI4xx();
+  }
+
+  if (errorMsg.match(/status code 5[0-9]{2}/)) {
+    throw new LedgerAPI5xx();
+  }
+
+  if (
+    error instanceof StellarSdkNetworkError ||
+    errorMsg.match(/ECONNRESET|ECONNREFUSED|ENOTFOUND|EPIPE|ETIMEDOUT/) ||
+    errorMsg.match(/undefined is not an object/)
+  ) {
+    throw new NetworkError();
+  }
+
+  throw error;
+}
+
 const getFormattedAmount = (amount: BigNumber) => {
   return amount
     .div(new BigNumber(10).pow(currency.units[0].magnitude))
@@ -127,12 +162,8 @@ export const fetchAccount = async (
     assets = account.balances?.filter((balance) => {
       return balance.asset_type !== "native";
     });
-  } catch (e: any) {
-    if (e instanceof NotFoundError || e?.response?.status === 400) {
-      balance.balance = "0";
-    } else {
-      throw new NetworkError();
-    }
+  } catch (error: unknown) {
+    balance.balance = maybeStellarAPIerror({ error, fallbackValue: "0" });
   }
 
   const formattedBalance = parseCurrencyUnit(
@@ -191,32 +222,8 @@ export const fetchOperations = async ({
       .includeFailed(true)
       .join("transactions")
       .call();
-  } catch (e: unknown) {
-    // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
-    // (https://github.com/stellar/js-stellar-sdk/issues/638)
-    const errorMsg = e ? String(e) : "";
-
-    if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
-      return [];
-    }
-
-    if (errorMsg.match(/status code 4[0-9]{2}/)) {
-      throw new LedgerAPI4xx();
-    }
-
-    if (errorMsg.match(/status code 5[0-9]{2}/)) {
-      throw new LedgerAPI5xx();
-    }
-
-    if (
-      e instanceof StellarSdkNetworkError ||
-      errorMsg.match(/ECONNRESET|ECONNREFUSED|ENOTFOUND|EPIPE|ETIMEDOUT/) ||
-      errorMsg.match(/undefined is not an object/)
-    ) {
-      throw new NetworkError();
-    }
-
-    throw e;
+  } catch (error: unknown) {
+    return maybeStellarAPIerror({ error, fallbackValue: [] });
   }
 
   if (!rawOperations || !rawOperations.records.length) {
