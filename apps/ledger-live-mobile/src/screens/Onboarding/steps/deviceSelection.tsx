@@ -49,13 +49,30 @@ function OnboardingStepDeviceSelection() {
   };
 
   const next = (deviceModelId: string) => {
+    // TODO: do better
     if (deviceModelId === "nanoFTS") {
-      // TODO: do better
-      // @ts-expect-error navigator typing issue
-      navigation.navigate(NavigatorName.SyncOnboarding, {
-        screen: ScreenName.BleDevicesScanning as "BleDevicesScanning",
+      // On pairing success, navigate to the Sync Onboarding Companion
+      navigation.navigate(NavigatorName.Base as "Base", {
+        screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
         params: {
-          filterByModelId: DeviceModelId.nanoFTS,
+          filterByDeviceModelId: DeviceModelId.nanoFTS,
+          areKnownDevicesDisplayed: false,
+          onSuccessAddToKnownDevices: false,
+          onSuccessNavigateToConfig: {
+            navigateInput: {
+              name: NavigatorName.BaseOnboarding,
+              params: {
+                screen: NavigatorName.SyncOnboarding,
+                params: {
+                  screen: ScreenName.SyncOnboardingCompanion,
+                  params: {
+                    device: null,
+                  },
+                },
+              },
+            },
+            pathToDeviceParam: "params.params.params.device",
+          },
         },
       });
     } else {
