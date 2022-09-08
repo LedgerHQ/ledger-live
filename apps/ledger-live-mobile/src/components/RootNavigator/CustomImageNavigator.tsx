@@ -27,12 +27,15 @@ export default function CustomImageNavigator() {
       <Stack.Screen
         name={ScreenName.CustomImageStep1Crop as "CustomImageStep1Crop"}
         component={Step1Cropping}
-        options={{ title: t("customImage.cropImage") }}
+        options={{ title: t("customImage.cropImage"), headerRight: Empty }}
       />
       <Stack.Screen
         name={ScreenName.CustomImageStep2Preview as "CustomImageStep2Preview"}
         component={Step2Preview}
-        options={{ title: t("customImage.chooseConstrast") }}
+        options={{
+          title: t("customImage.chooseConstrast"),
+          headerRight: Empty,
+        }}
       />
       <Stack.Screen
         name={ScreenName.CustomImageStep3Transfer as "CustomImageStep3Transfer"}
