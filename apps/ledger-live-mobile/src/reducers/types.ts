@@ -110,12 +110,13 @@ export type RatingsState = {
 
 export type CurrencySettings = {
   confirmationsNb: number;
-  exchange: any | null | undefined;
+  // FIXME: SEEMS TO NEVER BE USED - DROPPING ?
+  // exchange?: any | null;
 };
 
 export type Privacy = {
   // when we set the privacy, we also retrieve the biometricsType info
-  biometricsType?: string | null | undefined;
+  biometricsType?: string | null;
   // this tells if the biometrics was enabled by user yet
   biometricsEnabled: boolean;
 };
@@ -123,7 +124,7 @@ export type Privacy = {
 export type Pair = {
   from: Currency;
   to: Currency;
-  exchange: string | null | undefined;
+  exchange?: string | null;
 };
 
 // export type SetExchangePairs = (_: Array<Pair>) => any;
