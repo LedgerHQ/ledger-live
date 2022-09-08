@@ -9,6 +9,7 @@ import { PreviewImage } from "./Step2Preview";
 import Alert from "../../components/Alert";
 import { ScreenName } from "../../const";
 import { ParamList } from "./types";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const boxToFitDimensions = {
   height: (Dimensions.get("screen").height * 2) / 3,
@@ -82,8 +83,10 @@ const Step3Transfer: React.FC<
     [reconstructedPreviewResult?.height, reconstructedPreviewResult?.width],
   );
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom }}>
       <Flex p={6}>
         {rawData?.hexData && (
           <>

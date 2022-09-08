@@ -18,6 +18,7 @@ import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
 import Touchable from "../../components/Touchable";
 import { ParamList } from "./types";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 /**
  * UI component that loads the input image (from the route params) &
@@ -106,7 +107,7 @@ const Step1Cropping: React.FC<
   );
 
   return (
-    <Flex flex={1}>
+    <SafeAreaView edges={["bottom"]} flex={1}>
       <Flex
         flex={1}
         flexDirection="column"
@@ -161,7 +162,7 @@ const Step1Cropping: React.FC<
           </BottomContainer>
         ) : null}
       </Flex>
-    </Flex>
+    </SafeAreaView>
   );
 };
 

@@ -25,6 +25,7 @@ import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
 import { ImagePreviewError } from "../../components/CustomImage/errors";
 import { ParamList } from "./types";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",
@@ -154,7 +155,7 @@ const Step2Preview: React.FC<
   );
 
   return (
-    <Flex flex={1}>
+    <SafeAreaView edges={["bottom"]} flex={1}>
       {resizedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
@@ -211,7 +212,7 @@ const Step2Preview: React.FC<
           {t("common.confirm")}
         </Button>
       </BottomButtonsContainer>
-    </Flex>
+    </SafeAreaView>
   );
 };
 
