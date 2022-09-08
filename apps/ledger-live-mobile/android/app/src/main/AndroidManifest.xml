@@ -9,10 +9,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- Bluetooth permissions: Android API <= 30 (Android 11) https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare-android11-or-lower -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="replace" android:maxSdkVersion="30" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="replace" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="replace" android:maxSdkVersion="30" /> <!-- adding the maxSdkVersion, replacing the one from react-native-android-location-services-dialog-box -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" /> <!-- we only need ACCESS_COARSE_LOCATION for Bluetooth purposes, removing this one which is coming from react-native-android-location-services-dialog-box -->
     
     <!-- Bluetooth permissions: Android API >= 31 (Android 12) https://developer.android.com/guide/topics/connectivity/bluetooth/permissions#declare-android12-or-higher -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
