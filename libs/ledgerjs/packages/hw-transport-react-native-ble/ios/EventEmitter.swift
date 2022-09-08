@@ -21,6 +21,7 @@ enum Event: String, CaseIterable {
 enum RunnerAction: String, CaseIterable {
     case runStart = "runStart"
     case runProgress = "runProgress"
+    case runBulkProgress = "runBulkProgress" /// Raw runner event, no queue
     case runSuccess = "runSuccess"
     case runComplete = "runComplete"
     case runError = "runError"
@@ -57,6 +58,8 @@ struct ExtraData: Codable {
     
     /// Bulk action extras
     var progress: Double?
+    var index: Int?
+    var total: Int?
     
     /// Queue action extras
     var queueItem: Int?

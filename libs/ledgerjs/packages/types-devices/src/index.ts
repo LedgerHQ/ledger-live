@@ -132,3 +132,9 @@ export interface Transport {
     scrambleKey: string
   ) => (...args: A) => Promise<R>;
 }
+
+// TODO Improve typing of this
+export type BimCapableTransport = {
+  queue: (observer: Observer<any>, token: string, endpoint: string) => void;
+  runner: (observer: Observer<any>, endpoint: string) => void;
+};
