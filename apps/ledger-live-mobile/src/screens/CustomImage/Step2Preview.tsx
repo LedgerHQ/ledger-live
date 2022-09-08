@@ -9,6 +9,7 @@ import {
   Pressable,
 } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 import useResizedImage, {
   Params as ImageResizerParams,
   ResizeResult,
@@ -25,7 +26,6 @@ import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
 import { ImagePreviewError } from "../../components/CustomImage/errors";
 import { ParamList } from "./types";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",

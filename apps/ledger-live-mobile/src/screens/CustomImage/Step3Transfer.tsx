@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ProcessorPreviewResult } from "../../components/CustomImage/ImageProcessor";
 import ResultDataTester from "../../components/CustomImage/ResultDataTester";
 import { fitImageContain } from "../../components/CustomImage/imageUtils";
@@ -9,7 +10,6 @@ import { PreviewImage } from "./Step2Preview";
 import Alert from "../../components/Alert";
 import { ScreenName } from "../../const";
 import { ParamList } from "./types";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const boxToFitDimensions = {
   height: (Dimensions.get("screen").height * 2) / 3,
