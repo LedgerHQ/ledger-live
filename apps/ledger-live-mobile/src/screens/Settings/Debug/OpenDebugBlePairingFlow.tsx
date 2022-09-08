@@ -13,7 +13,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import SettingsRow from "../../../components/SettingsRow";
 import { NavigatorName, ScreenName } from "../../../const";
-import type { BaseNavigatorProps } from "../../../components/RootNavigator/BaseNavigator";
+import type { BaseNavigatorProps } from "../../../components/RootNavigator/BaseNavigatorTypes";
 import type { DebugMockScreenProps } from "./index";
 
 const availableDeviceModelFilter = [

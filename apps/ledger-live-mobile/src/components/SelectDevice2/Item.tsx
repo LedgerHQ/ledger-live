@@ -1,37 +1,33 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
 import { Text, Flex, Icons } from "@ledgerhq/native-ui";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import Touchable from "../Touchable";
+import RemoveDeviceMenu from "./RemoveDeviceMenu";
 
 type Props = {
   device: Device & { available?: boolean };
   isScanning?: boolean;
+  onPress: (_: Device) => void;
 };
 
 // This item will also come from the pr from alexandre.
-const Item = ({ device, isScanning = false }: Props) => {
-  const { colors } = useTheme();
-  const { name, id, wired, available } = device;
+const Item = ({ device, onPress }: Props) => {
+  const { wired, available } = device;
+  const [isRemoveDeviceMenuOpen, setIsRemoveDeviceMenuOpen] =
+    useState<boolean>(false);
 
   const wording = wired ? "usb" : available ? "available" : "unavailable";
   const color = wording === "unavailable" ? "neutral.c60" : "primary.c80";
 
-  const onItemPress = useCallback(() => {
-    console.log("onItemPress");
-    // TODO Track the event of selecting the device and call the received cb
-  }, []);
-
   const onItemContextPress = useCallback(() => {
-    console.log("onItemContextPress");
-    // TODO Pass the modal callback from the manager to forget a device
+    setIsRemoveDeviceMenuOpen(true);
   }, []);
 
   return (
-    <Touchable event="something" onPress={onItemPress}>
+    <Touchable event="something" onPress={() => onPress(device)}>
       <Flex
         backgroundColor="neutral.c30"
         borderRadius={2}
@@ -45,7 +41,7 @@ const Item = ({ device, isScanning = false }: Props) => {
         <Icons.NanoFoldedMedium size={24} />
 
         <Flex ml={5} flex={1}>
-          <Text color="neutral.c100">{name}</Text>
+          <Text color="neutral.c100">{device.deviceName}</Text>
           <Text color={color}>
             <Trans i18nKey={`manager.selectDevice.item.${wording}`} />
           </Text>
@@ -57,6 +53,11 @@ const Item = ({ device, isScanning = false }: Props) => {
           </Touchable>
         ) : null}
       </Flex>
+      <RemoveDeviceMenu
+        open={isRemoveDeviceMenuOpen}
+        device={device}
+        onHideMenu={() => setIsRemoveDeviceMenuOpen(false)}
+      />
     </Touchable>
   );
 };

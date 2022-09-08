@@ -3,7 +3,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { useNavigation } from "@react-navigation/native";
-import { Text, Flex, Icons } from "@ledgerhq/native-ui";
+import { Text, Flex, Icons, BottomDrawer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/lib/ble/hooks/useBleDevicesScanning";
 
@@ -12,6 +12,7 @@ import { NavigatorName, ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
 import Touchable from "../Touchable";
 import Item from "./Item";
+import { BaseNavigatorProps } from "../RootNavigator/BaseNavigatorTypes";
 
 type Props = {
   onSelect: (_: Device) => void;
@@ -21,10 +22,12 @@ export default function SelectDevice({ onSelect }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
+  const [isAddNewDrawerOpen, setIsAddNewDrawerOpen] = useState<boolean>(false);
+
   const { t } = useTranslation();
 
   const knownDevices = useSelector(knownDevicesSelector);
-  const navigation = useNavigation();
+  const navigation = useNavigation<BaseNavigatorProps>();
   const { scannedDevices } = useBleDevicesScanning({
     bleTransportListen: TransportBLE.listen,
   });
@@ -57,6 +60,7 @@ export default function SelectDevice({ onSelect }: Props) {
             ...device,
             wired: false,
             deviceId: device.id,
+            deviceName: device.name,
             available: !!scannedDevices.find(
               ({ deviceId }) => device.id === deviceId,
             ),
@@ -75,17 +79,42 @@ export default function SelectDevice({ onSelect }: Props) {
     return devices;
   }, [knownDevices, scannedDevices, USBDevice, ProxyDevice]);
 
-  const onAddNewPress = useCallback(() => {
-    navigation.navigate(ScreenName.PairDevices, {
-      onDone: () => {
-        console.log("TODO, hook in the after pairing flow");
-      },
-    });
-  }, [navigation]);
+  const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
 
   const onBuyDevicePress = useCallback(() => {
     navigation.navigate(NavigatorName.BuyDevice, {
       screen: ScreenName.GetDevice,
+    });
+  }, [navigation]);
+
+  const onPairDevices = useCallback(() => {
+    navigation.navigate(
+      ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
+      {
+        areKnownDevicesDisplayed: false,
+        onSuccessAddToKnownDevices: true,
+        onSuccessNavigateToConfig: {
+          navigateInput: {
+            name: NavigatorName.Manager,
+            params: {
+              screen: ScreenName.Manager,
+              params: {
+                device: null,
+              },
+            },
+          },
+          pathToDeviceParam: "params.params.device",
+        },
+      },
+    );
+  }, [navigation]);
+
+  const onSetUpNewDevice = useCallback(() => {
+    navigation.navigate(NavigatorName.BaseOnboarding, {
+      screen: NavigatorName.Onboarding,
+      params: {
+        screen: ScreenName.OnboardingDeviceSelection,
+      },
     });
   }, [navigation]);
 
@@ -110,7 +139,11 @@ export default function SelectDevice({ onSelect }: Props) {
       <Flex my={4}>
         {deviceList.length > 0 ? (
           deviceList.map(device => (
-            <Item key={device.deviceId} device={device as Device} />
+            <Item
+              key={device.deviceId}
+              device={device as Device}
+              onPress={onSelect}
+            />
           ))
         ) : (
           <Touchable onPress={onAddNewPress}>
@@ -139,6 +172,65 @@ export default function SelectDevice({ onSelect }: Props) {
           </Text>
         </Touchable>
       </Flex>
+      <BottomDrawer
+        isOpen={isAddNewDrawerOpen}
+        onClose={() => setIsAddNewDrawerOpen(false)}
+      >
+        <Flex>
+          <Touchable onPress={onPairDevices}>
+            <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>
+              <Flex flexDirection="row">
+                <Flex flexShrink={1}>
+                  <Text variant="large" fontWeight="semiBold" mb={3}>
+                    {t("manager.selectDevice.connectExistingLedger")}
+                  </Text>
+                  <Text variant="paragraph" color="neutral.c80">
+                    {t("manager.selectDevice.connectExistingLedgerDescription")}
+                  </Text>
+                </Flex>
+                <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
+                  <Flex
+                    borderRadius="9999px"
+                    backgroundColor="primary.c20"
+                    p={4}
+                  >
+                    <Icons.BluetoothMedium color="primary.c80" size={24} />
+                  </Flex>
+                </Flex>
+              </Flex>
+            </Flex>
+          </Touchable>
+          <Touchable onPress={onSetUpNewDevice}>
+            <Flex
+              backgroundColor="neutral.c30"
+              mt={4}
+              px={6}
+              py={7}
+              borderRadius={8}
+            >
+              <Flex flexDirection="row">
+                <Flex flexShrink={1}>
+                  <Text variant="large" fontWeight="semiBold" mb={3}>
+                    {t("manager.selectDevice.setUpNewLedger")}
+                  </Text>
+                  <Text variant="paragraph" color="neutral.c80">
+                    {t("manager.selectDevice.setUpNewLedgerDescription")}
+                  </Text>
+                </Flex>
+                <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
+                  <Flex
+                    borderRadius="9999px"
+                    backgroundColor="primary.c20"
+                    p={4}
+                  >
+                    <Icons.PlusMedium color="primary.c80" size={24} />
+                  </Flex>
+                </Flex>
+              </Flex>
+            </Flex>
+          </Touchable>
+        </Flex>
+      </BottomDrawer>
     </Flex>
   );
 }

@@ -3511,6 +3511,10 @@
     "selectDevice": {
       "saved": "Saved ledgers",
       "addNewCTA": "Add new",
+      "connectExistingLedger": "Connect an existing Ledger",
+      "connectExistingLedgerDescription": "Already have a Ledger that is set up? Pair it with bluetooth",
+      "setUpNewLedger": "Set up a new Ledger",
+      "setUpNewLedgerDescription": "Bought a new Ledger? Click here to set it up",
       "buyDeviceCTA": "Need a new Ledger? Buy one",
       "item": {
         "usb": "Connected with USB",
