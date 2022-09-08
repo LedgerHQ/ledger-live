@@ -5036,6 +5036,9 @@
     },
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
+    },
+    "HederaAddAccountError": {
+      "title": "Your account has not been added. Please try again."
     }
   },
   "cryptoOrg": {
