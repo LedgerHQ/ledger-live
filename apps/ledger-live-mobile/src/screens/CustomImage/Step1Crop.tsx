@@ -98,13 +98,9 @@ const Step1Cropping: React.FC<
 
   const [containerDimensions, setContainerDimensions] =
     useState<ImageDimensions | null>(null);
-  const onContainerLayout = useCallback(
-    ({ nativeEvent: { layout } }) => {
-      if (containerDimensions !== null) return;
-      setContainerDimensions({ height: layout.height, width: layout.width });
-    },
-    [containerDimensions],
-  );
+  const onContainerLayout = useCallback(({ nativeEvent: { layout } }) => {
+    setContainerDimensions({ height: layout.height, width: layout.width });
+  }, []);
 
   return (
     <SafeAreaView edges={["bottom"]} flex={1}>
@@ -116,7 +112,7 @@ const Step1Cropping: React.FC<
       >
         <Flex
           flex={1}
-          onLayout={onContainerLayout}
+          onLayout={imageToCrop ? onContainerLayout : undefined}
           width="100%"
           justifyContent="center"
           alignItems="center"
