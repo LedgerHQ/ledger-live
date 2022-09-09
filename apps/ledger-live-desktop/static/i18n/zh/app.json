@@ -4582,10 +4582,6 @@
       "title" : "抱歉，网络连接似乎已断开",
       "description" : "请检查您的网络连接。"
     },
-    "NetworkError" : {
-      "title" : "同步期间发生错误",
-      "description" : "请检查您的网络连接。"
-    },
     "NoAddressesFound" : {
       "title" : "抱歉，没有找到账户",
       "description" : "地址计算出错，请重试或联系 Ledger 客服"
