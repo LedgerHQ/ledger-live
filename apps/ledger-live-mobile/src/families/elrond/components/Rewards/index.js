@@ -45,9 +45,10 @@ const Rewards = (props: any) => {
 
   const navigation = useNavigation();
   const unit = getAccountUnit(account);
-  const currency = useMemo(() => getAccountCurrency(getMainAccount(account)), [
-    account,
-  ]);
+  const currency = useMemo(
+    () => getAccountCurrency(getMainAccount(account)),
+    [account],
+  );
 
   const onCollect = useCallback(
     () =>

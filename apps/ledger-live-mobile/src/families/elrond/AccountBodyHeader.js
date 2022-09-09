@@ -1,15 +1,17 @@
 // @flow
+
+import type { Account } from "@ledgerhq/types-live";
+
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { Account } from "@ledgerhq/live-common/types/index";
 
 import Delegations from "./components/Delegations";
 import Unbondings from "./components/Unbondings";
 import Rewards from "./components/Rewards";
 import Drawer from "./components/Drawer";
 
-import { denominate } from "./helpers";
+import { denominate, randomizeProviders } from "./helpers";
 
 const styles = StyleSheet.create({
   root: {
@@ -62,9 +64,13 @@ const Staking = (props: Props) => {
   const { account } = props;
 
   const [drawer, setDrawer] = useState();
-  const [validators, setValidators] = useState([]);
   const [delegationResources, setDelegationResources] = useState(
     account.elrondResources.delegations,
+  );
+
+  const validators = useMemo(
+    () => randomizeProviders(account.elrondResources.providers),
+    [account.elrondResources.providers],
   );
 
   const onDrawer = useCallback(setDrawer, [setDrawer]);

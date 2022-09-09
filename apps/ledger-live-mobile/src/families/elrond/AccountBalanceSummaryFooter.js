@@ -1,4 +1,7 @@
 // @flow
+
+import type { Account } from "@ledgerhq/types-live";
+
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -8,7 +11,6 @@ import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 import { BigNumber } from "bignumber.js";
 
-import { Account } from "@ledgerhq/live-common/types/index";
 import InfoModal from "../../modals/Info";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
