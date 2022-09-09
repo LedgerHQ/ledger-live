@@ -4582,10 +4582,6 @@
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
     },
-    "NetworkError" : {
-      "title" : "Während der Synchronisierung ist ein Fehler aufgetreten",
-      "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
-    },
     "NoAddressesFound" : {
       "title" : "Entschuldigung, es wurden keine Konten gefunden",
       "description" : "Bei der Adressberechnung ist etwas schief gelaufen, versuchen Sie es erneut oder wenden Sie sich an den Ledger-Support"
