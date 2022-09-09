@@ -13,6 +13,7 @@ export type SwitchProps = {
   onChange?: (value: boolean) => void;
   disabled?: boolean;
   label?: string;
+  testID?: string;
 } & Omit<Partial<NativeSwitchProps>, "onChange">;
 
 const Pressable = proxyStyled(BasePressable).attrs({
@@ -20,7 +21,7 @@ const Pressable = proxyStyled(BasePressable).attrs({
   alignItems: "center",
 })``;
 
-const Switch = ({ checked, onChange, disabled, label }: SwitchProps): JSX.Element => {
+const Switch = ({ checked, onChange, disabled, label, testID }: SwitchProps): JSX.Element => {
   const { colors, space } = useTheme();
 
   const handlePress = useCallback(() => {
@@ -40,6 +41,7 @@ const Switch = ({ checked, onChange, disabled, label }: SwitchProps): JSX.Elemen
         value={checked}
         disabled={disabled}
         ios_backgroundColor={colors.neutral.c50}
+        testID={testID}
       />
       {label ? (
         <Text
