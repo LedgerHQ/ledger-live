@@ -11,7 +11,7 @@ import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
 import {
-  Account,
+  Account as ErdjsAccount,
   Address,
   GasLimit,
   NetworkConfig,
@@ -20,6 +20,8 @@ import {
   Transaction as ElrondSdkTransaction,
   TransactionPayload,
 } from "@elrondnetwork/erdjs/out";
+import { BinaryUtils } from "../utils/binary.utils";
+import { ELROND_STAKING_POOL } from "../constants";
 const api = new ElrondApi(
   getEnv("ELROND_API_ENDPOINT"),
   getEnv("ELROND_DELEGATION_API_ENDPOINT")
@@ -53,7 +55,7 @@ export const getNetworkConfig = async (): Promise<NetworkConfig> => {
 
 export const getAccountNonce = async (addr: string): Promise<Nonce> => {
   const address = new Address(addr);
-  const account = new Account(address);
+  const account = new ErdjsAccount(address);
 
   await account.sync(proxy);
 
@@ -122,6 +124,11 @@ function getOperationValue(
     }
   }
 
+  switch (transaction.mode) {
+    case "delegate":
+      return new BigNumber(transaction.fee ?? 0);
+  }
+
   if (!isSender(transaction, addr)) {
     return new BigNumber(transaction.value ?? 0);
   }
@@ -140,17 +147,24 @@ function transactionToOperation(
 ): Operation {
   const type = getOperationType(transaction, addr);
 
+  const delegationAmount = getDelegationOperationAmount(addr, transaction);
+
   return {
     id: encodeOperationId(accountId, transaction.txHash ?? "", type),
     accountId,
     fee: new BigNumber(transaction.fee || 0),
-    value: getOperationValue(transaction, addr, tokenIdentifier),
+    value:
+      transaction.mode == "claimRewards" && delegationAmount
+        ? delegationAmount
+        : getOperationValue(transaction, addr, tokenIdentifier),
     type,
     hash: transaction.txHash ?? "",
     blockHash: transaction.miniBlockHash,
     blockHeight: transaction.round,
     date: new Date(transaction.timestamp ? transaction.timestamp * 1000 : 0),
-    extra: {},
+    extra: {
+      amount: delegationAmount,
+    },
     senders:
       (type == "OUT" || type == "IN") && transaction.sender
         ? [transaction.sender]
@@ -171,6 +185,46 @@ function transactionToOperation(
       : undefined,
   };
 }
+
+export const getDelegationOperationAmount = (
+  address: string,
+  transaction: Transaction
+): BigNumber | undefined => {
+  if (transaction.mode === "send") {
+    return undefined;
+  }
+
+  const operations = transaction.operations;
+  let operation;
+  if (operations) {
+    operation = operations.find(
+      ({ sender, receiver, action, type }) =>
+        action == "transfer" &&
+        type == "egld" &&
+        sender == transaction.receiver &&
+        (receiver == address || receiver == ELROND_STAKING_POOL)
+    );
+  }
+
+  let dataDecoded;
+  switch (transaction.mode) {
+    case "delegate":
+      return new BigNumber(transaction.value ?? 0);
+
+    case "reDelegateRewards":
+      return operation ? new BigNumber(operation.value) : undefined;
+
+    case "claimRewards":
+      return operation ? new BigNumber(operation.value) : undefined;
+
+    case "withdraw":
+      return operation ? new BigNumber(operation.value) : undefined;
+
+    case "unDelegate":
+      dataDecoded = BinaryUtils.base64Decode(transaction.data ?? "");
+      return new BigNumber(`0x${dataDecoded.split("@")[1]}`);
+  }
+};
 
 /**
  * Fetch operation list

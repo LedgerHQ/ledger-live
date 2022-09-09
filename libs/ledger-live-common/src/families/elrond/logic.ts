@@ -92,9 +92,9 @@ export const computeDelegationBalance = (
   let totalDelegationBalance = new BigNumber(0);
 
   for (const delegation of delegations) {
-    let delegationBalance = new BigNumber(delegation.userActiveStake)
-      .plus(new BigNumber(delegation.claimableRewards))
-      .plus(new BigNumber(delegation.userUnBondable));
+    let delegationBalance = new BigNumber(delegation.userActiveStake).plus(
+      new BigNumber(delegation.claimableRewards)
+    );
 
     for (const undelegation of delegation.userUndelegatedList) {
       delegationBalance = delegationBalance.plus(

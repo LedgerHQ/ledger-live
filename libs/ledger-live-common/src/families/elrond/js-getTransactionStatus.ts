@@ -44,6 +44,7 @@ const getTransactionStatus = async (
     a,
     tokenAccount
   );
+
   if (estimatedFees.gt(a.balance)) {
     errors.amount = new NotEnoughBalance();
   }
@@ -60,7 +61,8 @@ const getTransactionStatus = async (
       errors.amount = new NotEnoughBalance();
     }
 
-    if (amount.div(10).lt(estimatedFees)) {
+    const isZeroAmountOperation = t.mode !== "send" && t.mode !== "delegate";
+    if (!isZeroAmountOperation && amount.div(10).lt(estimatedFees)) {
       warnings.feeTooHigh = new FeeTooHigh();
     }
   }

@@ -37,7 +37,7 @@ export const buildTransaction = async (
     transactionValue = new BigNumber(0); //amount of EGLD to be sent should be 0 in an ESDT transfer
   } else {
     transactionValue = t.useAllAmount
-      ? a.balance.minus(t.fees ? t.fees : new BigNumber(0))
+      ? a.spendableBalance.minus(t.fees ? t.fees : new BigNumber(0))
       : t.amount;
 
     switch (t.mode) {
@@ -56,19 +56,25 @@ export const buildTransaction = async (
         t.gasLimit = GAS.CLAIM;
         t.data = ElrondEncodeTransaction.claimRewards();
 
-        transactionValue = new BigNumber(0); //amount of EGLD to be sent should be 0 in a claimRewards transaction
+        //amount of EGLD to be sent should be 0 in a claimRewards transaction
+        transactionValue = new BigNumber(0);
+        t.amount = new BigNumber(0);
         break;
       case "withdraw":
         t.gasLimit = GAS.DELEGATE;
         t.data = ElrondEncodeTransaction.withdraw();
 
-        transactionValue = new BigNumber(0); //amount of EGLD to be sent should be 0 in a withdraw transaction
+        //amount of EGLD to be sent should be 0 in a withdraw transaction
+        transactionValue = new BigNumber(0);
+        t.amount = new BigNumber(0);
         break;
       case "reDelegateRewards":
         t.gasLimit = GAS.DELEGATE;
         t.data = ElrondEncodeTransaction.reDelegateRewards();
 
-        transactionValue = new BigNumber(0); //amount of EGLD to be sent should be 0 in a reDelegateRewards transaction
+        //amount of EGLD to be sent should be 0 in a reDelegateRewards transaction
+        transactionValue = new BigNumber(0);
+        t.amount = new BigNumber(0);
         break;
       case "unDelegate":
         if (transactionValue.lt(MIN_DELEGATION_AMOUNT)) {
@@ -80,7 +86,9 @@ export const buildTransaction = async (
         t.gasLimit = GAS.DELEGATE;
         t.data = ElrondEncodeTransaction.unDelegate(t);
 
-        transactionValue = new BigNumber(0); //amount of EGLD to be sent should be 0 in a unDelegate transaction
+        //amount of EGLD to be sent should be 0 in a unDelegate transaction
+        transactionValue = new BigNumber(0);
+        t.amount = new BigNumber(0);
         break;
       case "send":
         break;
