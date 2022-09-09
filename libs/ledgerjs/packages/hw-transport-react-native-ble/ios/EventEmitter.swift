@@ -64,6 +64,7 @@ struct ExtraData: Codable {
     
     /// Queue action extras
     var queueItem: Int?
+    var name: String?
     var type: String?
     
     /// Error extras
