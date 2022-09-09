@@ -31,7 +31,7 @@ const getProviders: GetProviders = async () => {
   }
 
   const responseV4 = res.data as ProvidersResponseV4;
-  if (responseV4.providers.size == 0) {
+  if (!responseV4.providers || !Object.keys(responseV4.providers).length) {
     throw new SwapNoAvailableProviders();
   }
   return Object.entries(responseV4.providers).flatMap(([provider, groups]) => ({

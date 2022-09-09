@@ -82,13 +82,16 @@ export type AvailableProviderV3 = {
   provider: string;
   pairs: Array<{ from: string; to: string; tradeMethod: string }>;
 };
-export type TradeMethodGroup = {
+
+type TradeMethodGroup = {
   methods: TradeMethod[];
-  pairs: Map<string, number[]>;
+  pairs: {
+    [currencyIndex: number]: number[];
+  };
 };
 export type ProvidersResponseV4 = {
-  currencies: Map<string, string>;
-  providers: Map<string, TradeMethodGroup[]>;
+  currencies: { [currencyIndex: number]: string };
+  providers: { [providerName: string]: TradeMethodGroup[] };
 };
 
 type CheckQuoteOkStatus = {
