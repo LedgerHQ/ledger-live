@@ -4015,6 +4015,18 @@
       "delegatedTo": "delegated to"
     }
   },
+  "avalanchepchain": {
+    "info": {
+      "available": {
+        "title": "AVAX available",
+        "description": "This amount is disposable."
+      },
+      "delegated": {
+        "title": "AVAX staked",
+        "description": "Amount staked to validators."
+      }
+    }
+  },
   "delegation": {
     "overdelegated": "Overdelegated",
     "delegationSendWarnDesc": "The amount to be sent will be deducted from your delegated account.",
@@ -4395,8 +4407,8 @@
       "tokenId": "Token ID",
       "tokenIdCopied": "Token ID copied !",
       "quantity": "Quantity",
-      "attributes" : {
-        "floorPrice" : "Floor Price"
+      "attributes": {
+        "floorPrice": "Floor Price"
       }
     },
     "viewerModal": {
