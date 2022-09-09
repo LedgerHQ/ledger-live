@@ -4582,10 +4582,6 @@
       "title" : "Üzgünüz, internet bağlantısı görünmüyor",
       "description" : "Lütfen internet bağlantınızı kontrol edin."
     },
-    "NetworkError" : {
-      "title" : "Senkronizasyon sırasında bir hata oluştu",
-      "description" : "Lütfen internet bağlantınızı kontrol edin."
-    },
     "NoAddressesFound" : {
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
