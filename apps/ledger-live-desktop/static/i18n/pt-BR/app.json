@@ -4582,10 +4582,6 @@
       "title" : "A internet parece estar desconectada",
       "description" : "Verifique sua conexão à internet."
     },
-    "NetworkError" : {
-      "title" : "Ocorreu um erro durante a sincronização",
-      "description" : "Verifique sua conexão de internet."
-    },
     "NoAddressesFound" : {
       "title" : "Nenhuma conta encontrada",
       "description" : "Algo deu errado com o cálculo do endereço, tente novamente ou contate o Suporte Ledger"
