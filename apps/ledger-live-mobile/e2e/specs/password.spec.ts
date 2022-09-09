@@ -1,3 +1,4 @@
+import { device } from "detox";
 import PortfolioPage from "../models/portfolioPage";
 import SettingsPage from "../models/settings/settingsPage";
 import GeneralSettingsPage from "../models/settings/generalSettingsPage";
@@ -8,10 +9,6 @@ import { loadConfig } from "../bridge/server";
 const CORRECT_PASSWORD = "passWORD$123!";
 
 describe("Password Lock Screen", () => {
-  beforeAll(async () => {
-    await device.launchApp();
-  });
-
   it("should be able to enter the correct password", async () => {
     await loadConfig("1AccountBTC1AccountETH", true);
 

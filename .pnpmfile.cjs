@@ -144,6 +144,7 @@ function readPackage(pkg, context) {
         glob: "*",
       }),
       /* Other packages */
+      addDependencies("detox", { "@jest/reporters": "*", "jest-environment-node": "*", "jest-circus": "*" }),
       addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
       addDependencies("@sentry/react-native", {
         tslib: "*",

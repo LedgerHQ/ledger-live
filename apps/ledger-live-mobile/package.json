@@ -216,7 +216,7 @@
     "@typescript-eslint/parser": "^5.33.1",
     "babel-jest": "^26.6.3",
     "babel-plugin-module-resolver": "^4.1.0",
-    "detox": "^19.6.5",
+    "detox": "^19.12.1",
     "eslint": "7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",
@@ -244,6 +244,7 @@
     "react-native-flipper": "^0.162.0",
     "react-native-performance": "^3.1.2",
     "react-native-performance-flipper-reporter": "^3.0.0",
+    "ts-jest": "^28.0.5",
     "typescript": "^4.6.4",
     "ws": "^7.5.2"
   }

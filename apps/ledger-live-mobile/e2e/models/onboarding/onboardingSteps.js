@@ -10,9 +10,16 @@ export default class OnboardingSteps {
     await testHelpers.tapByText("Get started");
   }
 
+  static async DoIOwnDevice(answer = true) {
+    answer
+      ? await testHelpers.tapByText("Yes, I do")
+      : await testHelpers.tapByText("Not yet");
+  }
+
   // change to tap by text
   static async chooseToSetupLedger() {
-    await testHelpers.tapByText("SET UP MY LEDGER");
+    await testHelpers.tapByText("Set up my Ledger");
+    await testHelpers.tapByText("Continue");
     // await testHelpers.tap("Onboarding PostWelcome - Selection|SetupLedger");
   }
 
@@ -34,7 +41,8 @@ export default class OnboardingSteps {
   }
 
   static async selectPairWithBluetooth() {
-    await testHelpers.tapByText("Pair with bluetooth");
+    // await testHelpers.tapByText("Pair with bluetooth");
+    await testHelpers.tap("pair-device");
   }
 
   static async addDeviceViaBluetooth() {
@@ -58,5 +66,9 @@ export default class OnboardingSteps {
 
   static async openLedgerLive() {
     await testHelpers.tapByText("Continue");
+  }
+
+  static async declineNotifications() {
+    await testHelpers.tapByText("Maybe later");
   }
 }

@@ -1,3 +1,4 @@
+import { by, element, expect, waitFor } from "detox";
 import { readFileSync } from "fs";
 
 const DEFAULT_TIMEOUT = 30000;

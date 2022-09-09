@@ -1,7 +1,7 @@
-const detox = require("detox");
+import detox from "detox";
 
 async function globalSetup() {
   await detox.globalInit();
 }
 
-module.exports = globalSetup;
+export default globalSetup;

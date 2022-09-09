@@ -16,7 +16,11 @@ export type DeviceMock = {
   apduMock: ApduMock;
 };
 type Opts = {
-  createTransportDeviceMock: (id: string, name: string) => DeviceMock;
+  createTransportDeviceMock: (
+    id: string,
+    name: string,
+    serviceUUID: string,
+  ) => DeviceMock;
 };
 const defaultOpts = {
   observeState: from([
@@ -52,6 +56,7 @@ export default (opts: Opts) => {
             descriptor: createTransportDeviceMock(
               msg.payload.id,
               msg.payload.name,
+              msg.payload.serviceUUID,
             ),
           });
         });
@@ -66,7 +71,7 @@ export default (opts: Opts) => {
         .toPromise();
       return new BluetoothTransportMock(
         typeof device === "string"
-          ? createTransportDeviceMock(device, "")
+          ? createTransportDeviceMock(device, "", "")
           : device,
       );
     }
