@@ -15,55 +15,144 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
-  is-affected:
-    outputs:
-      is-mobile-affected: ${{ steps.affected.outputs.is-package-affected }}
-    runs-on: [ubuntu-latest]
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: develop
-          fetch-depth: 0
-      - name: checkout branch
-        run: |
-          git checkout ${{ github.event.pull_request.head.ref || github.event.push.base.ref }}
-      - uses: ./tools/actions/turbo-affected
-        id: affected
-        with:
-          package: "live-mobile"
-          head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+  # is-affected:
+  #   outputs:
+  #     is-mobile-affected: ${{ steps.affected.outputs.is-package-affected }}
+  #   runs-on: [ubuntu-latest]
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: develop
+  #         fetch-depth: 0
+  #     - name: checkout branch
+  #       run: |
+  #         git checkout ${{ github.event.pull_request.head.ref || github.event.push.base.ref }}
+  #     - uses: ./tools/actions/turbo-affected
+  #       id: affected
+  #       with:
+  #         package: "live-mobile"
+  #         head-ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
 
-  codecheck:
-    name: "Ledger Live Mobile CodeCheck"
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
+  detox-tests-ios:
+    # needs: is-affected
+    # if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
+    name: "Ledger Live Mobile - iOS Detox Tests"
+    runs-on: macos-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+      - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Install applesimutils
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+      - name: install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - name: Build dependencies
+        run: pnpm build:llm:deps
+      - name: Clear and build detox cache # investigate how to properly cache this
+        run: pnpm mobile detox clean-framework-cache && pnpm mobile detox build-framework-cache
+      - name: Build iOS app for Detox test run
+        run: pnpm mobile e2e:build -c ios.sim.release
+      - name: Test iOS app
+        run: pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: test-ios-artifacts
+          path: apps/ledger-live-mobile/artifacts
+
+  detox-tests-android:
+    # needs: is-affected
+    # if: ${{ needs.is-affected.outputs.is-mobile-affected == 'true' }}
+    name: "Ledger Live Mobile - Android Detox Tests"
+    runs-on: macos-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
+          ruby-version: 3.1.2
+        env:
+          ImageOS: ubuntu20
+      - name: setup JDK 11
+        uses: actions/setup-java@v3
         with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
+          distribution: "zulu"
+          java-version: "11"
+          cache: "gradle"
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.8
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - name: Run linter
-        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
-      - name: Run code checkers
-        run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Build dependencies
+        run: pnpm build:llm:deps
+      # May be taken care of by the `setup-java` action caching
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+      - name: Clear and build detox cache # investigate how to properly cache this
+        run: pnpm mobile detox clean-framework-cache && pnpm mobile detox build-framework-cache
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-30
+      # Removing this step for now as it doesn't seem to ever get triggers and it's wasting 5 mins. Requires investigation
+      # - name: create AVD and generate snapshot for caching
+      #   if: steps.avd-cache.outputs.cache-hit != 'true'
+      #   uses: reactivecircus/android-emulator-runner@v2
+      #   with:
+      #     api-level: 30
+      #     arch: x86_64
+      #     target: default
+      #     force-avd-creation: false
+      #     emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+      #     disable-animations: false
+      #     ram-size: 4096M
+      #     script: echo "Generated AVD snapshot for caching."
+      - name: Build Android app for Detox test run
+        run: pnpm mobile e2e:build -c android.emu.release
+      - name: Run Android tests
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 20
+        with:
+          api-level: 30
+          arch: x86_64
+          target: default
+          avd-name: Nexus_6
+          emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          ram-size: 4096M
+          script: pnpm mobile e2e:test -c android.emu.release --loglevel trace --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-android-artifacts
+          path: apps/ledger-live-mobile/artifacts/
