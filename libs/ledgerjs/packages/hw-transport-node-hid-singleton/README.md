@@ -7,7 +7,7 @@
 
 Allows to communicate with Ledger Hardware Wallets.
 
-**\[Node]**/Electron **(HID)** – uses `node-hid` and `usb-detection`. Keep transport opened and re-use it as a singleton, one device at a time on a computer but more robust implementation.
+**\[Node]**/Electron **(HID)** – uses `node-hid` and `node-usb`. Keep transport opened and re-use it as a singleton, one device at a time on a computer but more robust implementation.
 
 ***
 

@@ -359,7 +359,7 @@ const cmd = ({
                 return of(e);
               }
             }),
-            catchError((e: Error) => {
+            catchError((e: unknown) => {
               if (
                 e instanceof DisconnectedDeviceDuringOperation ||
                 e instanceof DisconnectedDevice

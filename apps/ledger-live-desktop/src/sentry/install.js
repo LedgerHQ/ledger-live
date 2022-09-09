@@ -28,10 +28,13 @@ const ignoreErrors = [
   "ECONNREFUSED",
   "ECONNRESET",
   "EHOSTUNREACH",
+  "ENETDOWN",
   "ENETUNREACH",
+  "ENOSPC",
   "ENOTFOUND",
   "ERR_CONNECTION_RESET",
   "ERR_INTERNET_DISCONNECTED",
+  "ERR_NETWORK_CHANGED",
   "ETIMEDOUT",
   "getaddrinfo",
   "HttpError",
@@ -41,10 +44,12 @@ const ignoreErrors = [
   "NotConnectedError",
   "socket disconnected",
   "socket hang up",
+  "ERR_SSL_PROTOCOL_ERROR",
   "status code 404",
   // API issues
   "LedgerAPI4xx",
   "LedgerAPI5xx",
+  "<!DOCTYPE html",
   // timeouts
   "ERR_CONNECTION_TIMED_OUT",
   "request timed out",
@@ -79,6 +84,7 @@ const ignoreErrors = [
   "SwapNoAvailableProviders",
   "TransactionRefusedOnDevice",
   "Please reimport your Tezos accounts",
+  "failed to find a healthy working node", // LIVE-3506 workaround
 ];
 
 export function init(Sentry: any, opts: any) {
