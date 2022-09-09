@@ -4582,10 +4582,6 @@
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
       "description" : "인터넷 연결을 확인하세요."
     },
-    "NetworkError" : {
-      "title" : "동기화 중 오류가 발생했습니다",
-      "description" : "인터넷 연결을 확인하세요."
-    },
     "NoAddressesFound" : {
       "title" : "죄송하지만 발견된 계정이 없습니다",
       "description" : "주소 계산에 문제가 발생했습니다. 재시도하거나 Ledger 지원 부서에 연락하세요"
