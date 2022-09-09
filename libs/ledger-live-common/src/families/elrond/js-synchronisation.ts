@@ -29,6 +29,9 @@ const getAccountShape: GetAccountShape = async (info) => {
 
   // get the current account balance state depending your api implementation
   const { blockHeight, balance, nonce } = await getAccount(address);
+
+  const delegations = await getAccountDelegations(address);
+
   // Merge new operations with the previously synced ones
   const newOperations = await getOperations(accountId, address, startAt);
   const operations = mergeOps(oldOperations, newOperations);
@@ -50,8 +53,6 @@ const getAccountShape: GetAccountShape = async (info) => {
       subAccounts = reconciliateSubAccounts(tokenAccounts, initialAccount);
     }
   }
-
-  const delegations = await getAccountDelegations(address);
 
   const providers = await getProviders();
 

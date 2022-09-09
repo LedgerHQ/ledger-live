@@ -160,10 +160,10 @@ export default class ElrondApi {
     let allTransactions: Transaction[] = [];
     let from = 0;
     let before = Math.floor(Date.now() / 1000);
-    while (from <= transactionsCount) {
+    while (from < transactionsCount) {
       let { data: transactions } = await network({
         method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?after=${startAt}&before=${before}&size=${MAX_PAGINATION_SIZE}`,
+        url: `${this.API_URL}/accounts/${addr}/transactions?after=${startAt}&before=${before}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
       });
 
       transactions = transactions.map((transaction) =>
@@ -173,7 +173,8 @@ export default class ElrondApi {
       allTransactions = [...allTransactions, ...transactions];
 
       from = from + MAX_PAGINATION_SIZE;
-      before = transactions.slice(-1).timestamp;
+
+      before = transactions.slice(-1)[0].timestamp;
     }
 
     return allTransactions;

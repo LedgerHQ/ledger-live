@@ -5,7 +5,7 @@ export const HASH_TRANSACTION = {
   options: 1,
 };
 export const METACHAIN_SHARD = 4294967295;
-export const MAX_PAGINATION_SIZE = 10000;
+export const MAX_PAGINATION_SIZE = 50;
 export const GAS = {
   ESDT_TRANSFER: 500000,
   DELEGATE: 12000000,
@@ -18,3 +18,5 @@ export const MIN_DELEGATION_AMOUNT: BigNumber = new BigNumber(
 export const MIN_DELEGATION_AMOUNT_DENOMINATED: BigNumber = new BigNumber(1);
 export const FEES_BALANCE: BigNumber = new BigNumber("5000000000000000"); // 0.005 EGLD for future transactions
 export const DECIMALS_LIMIT = 18;
+export const ELROND_STAKING_POOL =
+  "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l";
