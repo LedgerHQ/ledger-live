@@ -4582,10 +4582,6 @@
       "title" : "Parece que no hay conexión a Internet",
       "description" : "Comprueba tu conexión a Internet."
     },
-    "NetworkError" : {
-      "title" : "Se ha producido un error durante la sincronización",
-      "description" : "Comprueba tu conexión a Internet."
-    },
     "NoAddressesFound" : {
       "title" : "No se encontró ninguna cuenta",
       "description" : "Algo ha salido mal con el cálculo de la dirección, inténtalo de nuevo o contacta al Soporte de Ledger"
