@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 27.2.0-nightly.1
+
+### Patch Changes
+
+- [#1179](https://github.com/LedgerHQ/ledger-live/pull/1179) [`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7) Thanks [@gre](https://github.com/gre)! - Improve TypeScript of @ledgerhq/errors and fixes 2 bugs in swap and stellar on their error handling
+
+- Updated dependencies [[`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7)]:
+  - @ledgerhq/errors@6.10.2-nightly.0
+  - @ledgerhq/devices@7.0.1-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.4-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.27.4-nightly.0
+  - @ledgerhq/hw-app-eth@6.29.7-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.27.4-nightly.0
+  - @ledgerhq/hw-app-solana@6.27.4-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.4-nightly.0
+  - @ledgerhq/hw-transport@6.27.4-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.4-nightly.0
+  - @ledgerhq/hw-app-btc@8.0.2-nightly.0
+  - @ledgerhq/hw-app-str@6.27.4-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.4-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.4-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.4-nightly.0
+
 ## 27.2.0-nightly.0
 
 ### Minor Changes

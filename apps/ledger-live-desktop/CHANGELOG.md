@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.47.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7), [`41d82e7bb3`](https://github.com/LedgerHQ/ledger-live/commit/41d82e7bb3a30fb4a82c45ece43d13242342f91c)]:
+  - @ledgerhq/live-common@27.2.0-nightly.1
+  - @ledgerhq/errors@6.10.2-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.0-nightly.0
+  - @ledgerhq/devices@7.0.1-nightly.0
+  - @ledgerhq/hw-transport@6.27.4-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.4-nightly.0
+
 ## 2.47.1-nightly.0
 
 ### Patch Changes
