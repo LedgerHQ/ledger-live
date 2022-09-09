@@ -4,3 +4,4 @@ node_modules
 .pnpm-*
 /temp
 .idea
+*.md
