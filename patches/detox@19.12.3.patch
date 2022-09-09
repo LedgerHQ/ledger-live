@@ -1,0 +1,21 @@
+diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
+index 9b0b346a5ae812809be308fbf83f2c15b3d1c6a5..88d5b7fe0cbcc3d80da8e29a184aa15057847a86 100644
+--- a/src/devices/common/drivers/android/exec/ADB.js
++++ b/src/devices/common/drivers/android/exec/ADB.js
+@@ -8,7 +8,7 @@ const { escape } = require('../../../../../utils/pipeCommands');
+ const DeviceHandle = require('../tools/DeviceHandle');
+ const EmulatorHandle = require('../tools/EmulatorHandle');
+ 
+-const INSTALL_TIMEOUT = 45000; // TODO Double check 45s makes sense
++const INSTALL_TIMEOUT = 120000; // Edited from 45000 so the slow GH runner have time to install the apps
+ 
+ class ADB {
+   constructor() {
+@@ -103,6 +103,7 @@ class ADB {
+   }
+ 
+   async install(deviceId, _apkPath) {
++    console.log(`======INSTALL TIMEOUT====== >>>>${INSTALL_TIMEOUT}`);
+     const apkPath = escape.inQuotedString(_apkPath);
+     const apiLvl = await this.apiLevel(deviceId);
+     const command = (apiLvl >= 23)
