@@ -98,8 +98,10 @@ class Runner: NSObject  {
      would lose the ability to connect to the network, resulting in incomplete installations. This may not be enough either /!\
      */
     func startBackgroundTask() {
-        self.backgroundTaskID = UIApplication.shared.beginBackgroundTask (withName: "Runner"){ self.endBackgroundTask()
+        self.backgroundTaskID = UIApplication.shared.beginBackgroundTask (withName: "Runner"){
+            self.endBackgroundTask()
         }
+        print("Runner starting background task", self.backgroundTaskID?.rawValue)
     }
     
     /**
@@ -109,8 +111,13 @@ class Runner: NSObject  {
      */
     func endBackgroundTask() {
         // End the task assertion.
-        UIApplication.shared.endBackgroundTask(self.backgroundTaskID!)
-        self.backgroundTaskID = UIBackgroundTaskIdentifier.invalid
+        if let backgroundTaskID = self.backgroundTaskID {
+            if backgroundTaskID != UIBackgroundTaskIdentifier.invalid {
+                print("Runner ending background task", self.backgroundTaskID?.rawValue)
+                UIApplication.shared.endBackgroundTask(backgroundTaskID)
+                self.backgroundTaskID = UIBackgroundTaskIdentifier.invalid
+            }
+        }
     }
     
     /**
@@ -127,7 +134,6 @@ class Runner: NSObject  {
             ExtraData(code: code.rawValue, message: message)
         )
         self.pendingRequest?.cancel()
-        self.endBackgroundTask()
         self.stop(){
             print("BIM runner failed.")
         }
@@ -215,14 +221,15 @@ class Runner: NSObject  {
                                 for rawAPDU in rawAPDUs {
                                     APDUQueue.append(APDU(raw: rawAPDU));
                                 }
+                                
+                                /// Release the background task now that we've finished the network interaction
+                                isPendingOnDone = true
+                                endBackgroundTask()
                             } else {
                                 isInBulkMode = false
                                 APDUQueue = [APDU(raw: json["data"] as? String ?? "")]
                                 HSMNonce = json["nonce"] as? Int ?? 0;
                             }
-                            // Trigger a disconnect too
-                            isPendingOnDone = true
-                            endBackgroundTask()
                             handleNextAPDU()
                         }
                     } catch {
