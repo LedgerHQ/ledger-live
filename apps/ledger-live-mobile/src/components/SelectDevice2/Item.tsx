@@ -1,8 +1,9 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Trans } from "react-i18next";
 import { Text, Flex, Icons } from "@ledgerhq/native-ui";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 import Touchable from "../Touchable";
 import RemoveDeviceMenu from "./RemoveDeviceMenu";
@@ -26,6 +27,19 @@ const Item = ({ device, onPress }: Props) => {
     setIsRemoveDeviceMenuOpen(true);
   }, []);
 
+  const deviceIcon = useMemo(() => {
+    switch (device.modelId) {
+      case DeviceModelId.nanoS:
+      case DeviceModelId.nanoSP:
+        return <Icons.NanoSFoldedMedium size={24} />;
+      case DeviceModelId.nanoFTS:
+        return <Icons.PowerMedium size={24} />;
+      case DeviceModelId.nanoX:
+      default:
+        return <Icons.NanoXFoldedMedium size={24} />;
+    }
+  }, [device.modelId]);
+
   return (
     <Touchable event="something" onPress={() => onPress(device)}>
       <Flex
@@ -36,9 +50,7 @@ const Item = ({ device, onPress }: Props) => {
         mb={4}
         padding={4}
       >
-        {/* TODO account for other device icons */}
-        {/* Right now all devices will show the same icon */}
-        <Icons.NanoFoldedMedium size={24} />
+        {deviceIcon}
 
         <Flex ml={5} flex={1}>
           <Text color="neutral.c100">{device.deviceName}</Text>
