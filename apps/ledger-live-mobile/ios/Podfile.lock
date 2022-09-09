@@ -160,6 +160,10 @@ PODS:
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
   - hermes-engine (0.11.0)
+  - hw-transport-react-native-ble (0.1.0):
+    - BleTransport
+    - React-Core
+    - Starscream (~> 4.0.0)
   - InputMask (6.1.0)
   - libevent (2.1.12)
   - libwebp (1.2.1):
@@ -660,6 +664,7 @@ DEPENDENCIES:
   - FlipperKit/SKIOSNetworkPlugin (= 0.162.0)
   - "glog (from `../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/third-party-podspecs/glog.podspec`)"
   - hermes-engine (~> 0.11.0)
+  - hw-transport-react-native-ble (from `../../../libs/ledgerjs/packages/hw-transport-react-native-ble`)
   - libevent (~> 2.1.12)
   - "lottie-ios (from `../../../node_modules/.pnpm/lottie-ios@3.2.3/node_modules/lottie-ios`)"
   - "lottie-react-native (from `../../../node_modules/.pnpm/lottie-react-native@5.1.3_kudd2ybslvnlycdin3ykfqrgrm/node_modules/lottie-react-native`)"
@@ -806,6 +811,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../../../node_modules/.pnpm/react-native@0.68.2_qiqqwmyv63yhnuboofexv3s7x4/node_modules/react-native/third-party-podspecs/glog.podspec"
+  hw-transport-react-native-ble:
+    :path: "../../../libs/ledgerjs/packages/hw-transport-react-native-ble"
   lottie-ios:
     :path: "../../../node_modules/.pnpm/lottie-ios@3.2.3/node_modules/lottie-ios"
   lottie-react-native:
@@ -986,6 +993,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   hermes-engine: 84e3af1ea01dd7351ac5d8689cbbea1f9903ffc3
+  hw-transport-react-native-ble: f2857ec4e9578d0d0a39aa310d986fc7a9efb15b
   InputMask: 71d291dc54d2deaeac6512afb6ec2304228c0bb7
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
