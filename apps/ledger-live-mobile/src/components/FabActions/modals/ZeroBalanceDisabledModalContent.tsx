@@ -41,7 +41,9 @@ function ZeroBalanceDisabledModalContent({
         selectedCurrency: actionCurrency,
         currency: actionCurrency,
         accountId: account?.id,
-        parentId: parentAccount?.id,
+        parentId:
+          parentAccount?.id ||
+          (account?.type === "TokenAccount" && account?.parentId),
       },
     });
     onClose();

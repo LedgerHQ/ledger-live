@@ -5,10 +5,10 @@ import { useSelector } from "react-redux";
 import { Icons } from "@ledgerhq/native-ui";
 
 import { readOnlyModeEnabledSelector } from "../../../../reducers/settings";
-import { ActionButton } from "../..";
+import { ActionButtonEvent, FabButtonBarProvider } from "../..";
 import { NavigatorName, ScreenName } from "../../../../const";
-import FabAccountButtonBar from "../account/FabAccountButtonBar";
 import { accountsCountSelector } from "../../../../reducers/accounts";
+import FabButtonBar from "../../FabButtonBar";
 
 const iconBuy = Icons.PlusMedium;
 const iconSell = Icons.MinusMedium;
@@ -28,8 +28,8 @@ export const FabPortfolioActions: React.FC<FabActionsProps> = ({
   const accountsCount: number = useSelector(accountsCountSelector);
   const hasAccounts = accountsCount > 0;
 
-  const actions = useMemo<ActionButton[]>(() => {
-    const actionButtonBuy: ActionButton = {
+  const actions = useMemo<ActionButtonEvent[]>(() => {
+    const actionButtonBuy: ActionButtonEvent = {
       event: "TransferExchange",
       label: t("exchange.buy.tabTitle"),
       Icon: iconBuy,
@@ -41,7 +41,7 @@ export const FabPortfolioActions: React.FC<FabActionsProps> = ({
       ],
     };
 
-    const actionButtonSell: ActionButton = {
+    const actionButtonSell: ActionButtonEvent = {
       event: "TransferExchange",
       label: t("exchange.sell.tabTitle"),
       Icon: iconSell,
@@ -53,7 +53,7 @@ export const FabPortfolioActions: React.FC<FabActionsProps> = ({
       ],
     };
 
-    const actionButtonTransferSwap: ActionButton = {
+    const actionButtonTransferSwap: ActionButtonEvent = {
       event: "TransferSwap",
       label: t("transfer.swap.title"),
       Icon: iconSwap,
@@ -65,7 +65,7 @@ export const FabPortfolioActions: React.FC<FabActionsProps> = ({
       ],
     };
 
-    const actionButtonTransferReceive: ActionButton = {
+    const actionButtonTransferReceive: ActionButtonEvent = {
       event: "TransferReceive",
       label: t("transfer.receive.title"),
       Icon: iconReceive,
@@ -77,7 +77,7 @@ export const FabPortfolioActions: React.FC<FabActionsProps> = ({
       ],
     };
 
-    const actionButtonTransferSend: ActionButton = {
+    const actionButtonTransferSend: ActionButtonEvent = {
       event: "TransferSend",
       label: t("transfer.send.title"),
       Icon: iconSend,
@@ -102,5 +102,9 @@ export const FabPortfolioActions: React.FC<FabActionsProps> = ({
     ];
   }, [hasAccounts, readOnlyModeEnabled, t, areAccountsEmpty]);
 
-  return <FabAccountButtonBar buttons={actions} />;
+  return (
+    <FabButtonBarProvider actions={actions}>
+      {({ quickActions }) => <FabButtonBar data={quickActions} />}
+    </FabButtonBarProvider>
+  );
 };

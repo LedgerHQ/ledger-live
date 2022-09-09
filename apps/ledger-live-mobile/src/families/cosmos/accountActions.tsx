@@ -1,12 +1,17 @@
 import React from "react";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
-
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({ account }: { account: CosmosAccount }) => {
+import { NavigatorName, ScreenName } from "../../const";
+import { ActionButtonEvent } from "../../components/FabActions";
+
+const getActions = ({
+  account,
+}: {
+  account: CosmosAccount;
+}): ActionButtonEvent[] | null | undefined => {
   const delegationDisabled = !canDelegate(account);
 
   return [

@@ -12,7 +12,8 @@ import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
 } from "../../../reducers/settings";
-import { ActionButton } from "..";
+import { ActionButtonEvent } from "..";
+import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -30,7 +31,7 @@ export default function useAssetActions({
   currency,
   accounts,
 }: useAssetActionsProps): {
-  mainActions: ActionButton[];
+  mainActions: ActionButtonEvent[];
 } {
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -69,7 +70,7 @@ export default function useAssetActions({
     return [onRampProviders.length > 0, offRampProviders.length > 0];
   }, [rampCatalog.value, currency]);
 
-  const actions = useMemo<ActionButton[]>(
+  const actions = useMemo<ActionButtonEvent[]>(
     () => [
       ...(canBeBought
         ? [
@@ -105,6 +106,9 @@ export default function useAssetActions({
                 },
               ],
               disabled: areAccountsBalanceEmpty,
+              modalOnDisabledClick: {
+                component: ZeroBalanceDisabledModalContent,
+              },
             },
           ]
         : []),
@@ -124,6 +128,9 @@ export default function useAssetActions({
                       },
                     ],
                     disabled: areAccountsBalanceEmpty,
+                    modalOnDisabledClick: {
+                      component: ZeroBalanceDisabledModalContent,
+                    },
                   },
                 ]
               : []),
@@ -176,6 +183,9 @@ export default function useAssetActions({
                     },
               ],
               disabled: areAccountsBalanceEmpty,
+              modalOnDisabledClick: {
+                component: ZeroBalanceDisabledModalContent,
+              },
             },
           ]
         : [
@@ -202,6 +212,7 @@ export default function useAssetActions({
           ]),
     ],
     [
+      areAccountsBalanceEmpty,
       availableOnSwap,
       canBeBought,
       canBeSold,

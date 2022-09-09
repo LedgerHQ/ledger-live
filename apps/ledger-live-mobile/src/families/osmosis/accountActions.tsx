@@ -1,12 +1,17 @@
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/types/index";
 import { canDelegate } from "@ledgerhq/live-common/families/osmosis/logic";
 
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
+import { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "../../const";
+import { ActionButtonEvent } from "../../components/FabActions";
 
-const getActions = ({ account }: { account: Account }) => {
+const getActions = ({
+  account,
+}: {
+  account: Account;
+}): ActionButtonEvent[] | null | undefined => {
   const delegationDisabled = !canDelegate(account);
 
   return [

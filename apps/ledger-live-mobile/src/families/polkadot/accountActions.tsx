@@ -18,8 +18,13 @@ import WithdrawUnbondedIcon from "../../icons/Coins";
 import NominateIcon from "../../icons/Vote";
 import ChillIcon from "../../icons/VoteNay";
 import { NavigatorName, ScreenName } from "../../const";
+import { ActionButtonEvent } from "../../components/FabActions";
 
-const getActions = ({ account }: { account: Account }) => {
+const getActions = ({
+  account,
+}: {
+  account: Account;
+}): ActionButtonEvent[] | null | undefined => {
   if (!account.polkadotResources) return null;
   const { staking } = getCurrentPolkadotPreloadData();
   const accountId = account.id;

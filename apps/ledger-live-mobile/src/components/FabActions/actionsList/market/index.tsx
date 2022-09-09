@@ -4,9 +4,11 @@ import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import useAssetActions from "../../hooks/useAssetActions";
 import FabAccountButtonBar from "../account/FabAccountButtonBar";
+import { FabButtonBarProvider } from "../../index";
+import FabButtonBar from "../../FabButtonBar";
 
 type Props = {
-  account?: AccountLike;
+  defaultAccount?: AccountLike;
   parentAccount?: Account;
   currency?: CryptoCurrency | TokenCurrency;
   accounts?: AccountLike[];
@@ -15,11 +17,18 @@ type Props = {
 const FabMarketActionsComponent: React.FC<Props> = ({
   currency,
   accounts,
-  ...props
+  defaultAccount,
 }) => {
   const { mainActions } = useAssetActions({ currency, accounts });
 
-  return <FabAccountButtonBar {...props} buttons={mainActions} />;
+  return (
+    <FabButtonBarProvider
+      actions={mainActions}
+      modalOnDisabledClickProps={{ currency, account: defaultAccount }}
+    >
+      {({ quickActions }) => <FabButtonBar data={quickActions} />}
+    </FabButtonBarProvider>
+  );
 };
 
 export const FabMarketActions = memo(FabMarketActionsComponent);

@@ -19,7 +19,7 @@ import {
 import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
-import { ActionButton } from "../../../components/FabActions";
+import { ActionButtonEvent } from "../../../components/FabActions";
 
 type Props = {
   account: AccountLike;
@@ -36,8 +36,8 @@ export default function useAccountActions({
   parentAccount,
   colors,
 }: Props): {
-  mainActions: ActionButton[];
-  secondaryActions: ActionButton[];
+  mainActions: ActionButtonEvent[];
+  secondaryActions: ActionButtonEvent[];
 } {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const { t } = useTranslation();
@@ -96,7 +96,7 @@ export default function useAccountActions({
     [account, parentAccount, decorators],
   );
 
-  const actionButtonSwap: ActionButton = {
+  const actionButtonSwap: ActionButtonEvent = {
     navigationParams: [
       NavigatorName.Swap,
       {
@@ -117,7 +117,7 @@ export default function useAccountActions({
     eventProperties: { currencyName: currency.name },
   };
 
-  const actionButtonBuy: ActionButton = {
+  const actionButtonBuy: ActionButtonEvent = {
     navigationParams: [
       NavigatorName.Exchange,
       {
@@ -136,7 +136,7 @@ export default function useAccountActions({
     },
   };
 
-  const actionButtonSell: ActionButton = {
+  const actionButtonSell: ActionButtonEvent = {
     navigationParams: [
       NavigatorName.Exchange,
       {
