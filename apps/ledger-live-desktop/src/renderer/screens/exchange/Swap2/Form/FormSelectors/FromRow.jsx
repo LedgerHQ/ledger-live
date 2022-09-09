@@ -106,6 +106,11 @@ function FromRow({
     setFromAccount(account);
   };
 
+  const setValue = fromAmount => {
+    updateSelectedRate();
+    setFromAmount(fromAmount);
+  };
+
   return (
     <>
       <Box
@@ -150,7 +155,7 @@ function FromRow({
           <InputCurrency
             loading={isSendMaxLoading}
             value={fromAmount}
-            onChange={setFromAmount}
+            onChange={setValue}
             disabled={!fromAccount || isMaxEnabled}
             placeholder="0"
             textAlign="right"
