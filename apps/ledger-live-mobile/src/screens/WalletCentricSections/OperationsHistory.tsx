@@ -70,7 +70,7 @@ const OperationsHistory = ({ accounts }: Props) => {
 
   const goToAnalyticsOperations = useCallback(() => {
     track("button_clicked", {
-      button: "See All",
+      button: "See All Transactions",
     });
     navigation.navigate(ScreenName.AnalyticsOperations, {
       accountsIds: accounts.map(account => account.parentId || account.id),

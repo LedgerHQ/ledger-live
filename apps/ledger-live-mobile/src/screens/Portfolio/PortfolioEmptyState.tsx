@@ -5,6 +5,7 @@ import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import WalletCoinsSupported from "../../icons/WalletCoinsSupported";
 import { NavigatorName, ScreenName } from "../../const";
+import { track, TrackScreen } from "../../analytics";
 
 const PortfolioEmptyState = ({
   openAddAccountModal,
@@ -16,12 +17,16 @@ const PortfolioEmptyState = ({
   const { colors } = useTheme();
 
   const goToReceiveFunds = useCallback(() => {
+    track("button_clicked", { button: "Receive" });
     navigation.navigate(NavigatorName.ReceiveFunds, {
       // screen: ScreenName.ReceiveConnectDevice,
     });
   }, [navigation]);
 
   const goToBuyCrypto = useCallback(() => {
+    track("button_clicked", {
+      button: "Buy",
+    });
     navigation.navigate(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
     });
@@ -29,6 +34,7 @@ const PortfolioEmptyState = ({
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">
+      <TrackScreen category="Start CTAs" />
       <WalletCoinsSupported moreAssetsBackgroundColor={colors.neutral.c100} />
       <Flex mt={8} alignItems="center" justifyContent="center">
         <Text variant="h4" fontWeight="semiBold" textAlign="center">
