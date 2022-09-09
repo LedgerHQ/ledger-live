@@ -16,6 +16,7 @@ const getActions = ({
 
   return [
     {
+      id: "stake",
       disabled: delegationDisabled,
       navigationParams: [
         NavigatorName.CosmosDelegationFlow,

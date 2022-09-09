@@ -48,6 +48,8 @@ export type ActionButtonEventProps = {
 
 export type ActionButtonEvent = ActionButtonEventProps & {
   label: React.ReactNode;
+  // An id to be used for tracking the action button click
+  id?: string;
   // Description : Seems unused
   description?: React.ReactNode;
   Icon: IconType;
@@ -107,11 +109,14 @@ export const FabButtonBarProvider = ({
 
   const onPress = useCallback(
     (data: ActionButtonEvent) => {
-      const { navigationParams, confirmModalProps, linkUrl, event } = data;
+      const { navigationParams, confirmModalProps, linkUrl, event, id } = data;
 
       if (!confirmModalProps) {
         if (event) {
           track(event, { ...eventProperties });
+        }
+        if (id) {
+          track("button_clicked", { button: id });
         }
         setInfoModalProps(undefined);
         if (linkUrl) {

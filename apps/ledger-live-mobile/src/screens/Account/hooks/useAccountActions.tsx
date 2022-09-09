@@ -97,6 +97,7 @@ export default function useAccountActions({
   );
 
   const actionButtonSwap: ActionButtonEvent = {
+    id: "swap",
     navigationParams: [
       NavigatorName.Swap,
       {
@@ -118,6 +119,7 @@ export default function useAccountActions({
   };
 
   const actionButtonBuy: ActionButtonEvent = {
+    id: "buy",
     navigationParams: [
       NavigatorName.Exchange,
       {
@@ -137,6 +139,7 @@ export default function useAccountActions({
   };
 
   const actionButtonSell: ActionButtonEvent = {
+    id: "sell",
     navigationParams: [
       NavigatorName.Exchange,
       {
@@ -160,6 +163,7 @@ export default function useAccountActions({
   };
 
   const SendAction = {
+    id: "send",
     navigationParams: [
       NavigatorName.SendFunds,
       {
@@ -177,6 +181,7 @@ export default function useAccountActions({
   };
 
   const ReceiveAction = {
+    id: "receive",
     navigationParams: [
       NavigatorName.ReceiveFunds,
       {
@@ -215,6 +220,7 @@ export default function useAccountActions({
     ...(isEthereum
       ? [
           {
+            id: "stake",
             navigationParams: [
               NavigatorName.Base,
               {
@@ -235,6 +241,7 @@ export default function useAccountActions({
     ...(isWalletConnectSupported
       ? [
           {
+            id: "walletconnect",
             navigationParams: [
               NavigatorName.Base,
               {

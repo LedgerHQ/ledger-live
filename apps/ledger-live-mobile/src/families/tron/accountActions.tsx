@@ -47,6 +47,7 @@ const getActions = ({
   const lastVotedDate = getLastVotedDate(account);
   return [
     {
+      id: "stake",
       disabled: !canVote && !canFreeze,
       navigationParams: [
         canVote ? NavigatorName.TronVoteFlow : NavigatorName.Freeze,
@@ -64,6 +65,7 @@ const getActions = ({
       Icon: Icons.ClaimRewardsMedium,
     },
     {
+      id: "freeze",
       disabled: !canFreeze,
       navigationParams: [
         NavigatorName.Freeze,
@@ -79,6 +81,7 @@ const getActions = ({
       Icon: Icons.FreezeMedium,
     },
     {
+      id: "unfreeze",
       disabled: !canUnfreeze,
       navigationParams: [
         NavigatorName.Unfreeze,
@@ -98,6 +101,7 @@ const getActions = ({
       },
     },
     {
+      id: "vote",
       disabled: !canVote,
       navigationParams: [
         NavigatorName.TronVoteFlow,

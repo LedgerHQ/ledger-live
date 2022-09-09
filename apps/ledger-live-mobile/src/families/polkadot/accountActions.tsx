@@ -58,6 +58,7 @@ const getActions = ({
 
   return [
     {
+      id: "stake",
       disabled: !(earnRewardsEnabled || nominationEnabled),
       navigationParams: isStash(account)
         ? [
@@ -82,6 +83,7 @@ const getActions = ({
       Icon: Icons.ClaimRewardsMedium,
     },
     {
+      id: "bond",
       disabled: !bondingEnabled,
       navigationParams: [
         NavigatorName.PolkadotBondFlow,
@@ -97,6 +99,7 @@ const getActions = ({
       Icon: BondIcon,
     },
     {
+      id: "unbond",
       disabled: !unbondingEnabled,
       navigationParams: [
         NavigatorName.PolkadotUnbondFlow,
@@ -112,6 +115,7 @@ const getActions = ({
       Icon: UnbondIcon,
     },
     {
+      id: "withdrawUnbonded",
       disabled: !withdrawEnabled,
       navigationParams: [
         NavigatorName.PolkadotSimpleOperationFlow,
@@ -130,6 +134,7 @@ const getActions = ({
       Icon: WithdrawUnbondedIcon,
     },
     {
+      id: "nominate",
       disabled: !nominationEnabled,
       navigationParams: [
         NavigatorName.PolkadotNominateFlow,
@@ -145,6 +150,7 @@ const getActions = ({
       Icon: NominateIcon,
     },
     {
+      id: "chill",
       disabled: !chillEnabled,
       navigationParams: [
         NavigatorName.PolkadotSimpleOperationFlow,
