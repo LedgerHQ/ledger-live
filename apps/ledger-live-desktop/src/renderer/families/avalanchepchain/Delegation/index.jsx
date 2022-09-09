@@ -128,7 +128,7 @@ const Delegation = ({ account }: Props) => {
               </Box>
             </Box>
             <Box>
-              <Button primary small onClick={onEarnRewards}>
+              <Button primary small onClick={onEarnRewards} disabled={!isDelegationEnabled}>
                 <Box horizontal flow={1} alignItems="center">
                   <IconChartLine size={12} />
                   <Box>
