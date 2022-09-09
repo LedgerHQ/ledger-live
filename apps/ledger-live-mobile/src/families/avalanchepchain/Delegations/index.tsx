@@ -1,0 +1,233 @@
+import { BigNumber } from "bignumber.js";
+import React, { useCallback, useState, useMemo, ElementProps } from "react";
+import { View, StyleSheet, Linking } from "react-native";
+import { useNavigation, useTheme } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
+import {
+  getDefaultExplorerView,
+  getAddressExplorer,
+} from "@ledgerhq/live-common/explorers";
+import { Account } from "@ledgerhq/live-common/types/index";
+import { canDelegate } from "@ledgerhq/live-common/families/avalanchepchain/utils";
+import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
+import IlluRewards from "../../../icons/images/Rewards";
+import { urls } from "../../../config/urls";
+import AccountSectionLabel from "../../../components/AccountSectionLabel";
+import DelegationDrawer from "../../../components/DelegationDrawer";
+import Touchable from "../../../components/Touchable";
+import { ScreenName, NavigatorName } from "../../../const";
+import LText from "../../../components/LText";
+import DelegationRow from "./Row";
+import DelegationLabelRight from "./LabelRight";
+import ValidatorImage from "../../cosmos/shared/ValidatorImage";
+import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
+import { AvalancheDelegation } from "@ledgerhq/live-common/families/avalanchepchain/types";
+
+type Props = {
+  account: Account;
+};
+
+type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
+
+function Delegations({ account }: Props) {
+  const { t } = useTranslation();
+  const mainAccount = getMainAccount(account);
+  const currency = getAccountCurrency(mainAccount);
+  const navigation = useNavigation();
+
+  const { avalanchePChainResources } = mainAccount;
+  const delegations =
+    (avalanchePChainResources && avalanchePChainResources.delegations) ?? [];
+
+  const [delegation, setDelegation] = useState<AvalancheDelegation>();
+
+  const onNavigate = useCallback(
+    ({
+      route,
+      screen,
+      params,
+    }: {
+      route: typeof NavigatorName | typeof ScreenName;
+      screen?: typeof ScreenName;
+      params?: { [key: string]: any };
+    }) => {
+      setDelegation();
+      navigation.navigate(route, {
+        screen,
+        params: { ...params, accountId: account.id },
+      });
+    },
+    [navigation, account.id],
+  );
+
+  const onDelegate = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.AvalancheDelegationFlow,
+      screen:
+        delegations.length > 0
+          ? ScreenName.AvalancheDelegationValidator
+          : ScreenName.AvalancheDelegationStarted,
+    });
+  }, [onNavigate, delegations]);
+
+  const onCloseDrawer = useCallback(() => {
+    setDelegation();
+  }, []);
+
+  const onOpenExplorer = useCallback(
+    (address: string) => {
+      const url = getAddressExplorer(
+        getDefaultExplorerView(account.currency),
+        address,
+      );
+      if (url) Linking.openURL(url);
+    },
+    [account.currency],
+  );
+
+  const data = useMemo<DelegationDrawerProps["data"]>(() => {
+    const d = delegation;
+
+    return d
+      ? [
+          {
+            label: t("delegation.validator"),
+            Component: (
+              <Touchable
+                onPress={() => onOpenExplorer(d.nodeID)}
+                event="DelegationOpenExplorer"
+              >
+                <LText
+                  numberOfLines={1}
+                  semiBold
+                  ellipsizeMode="middle"
+                  style={[styles.valueText]}
+                  color="live"
+                >
+                  {d.nodeID}
+                </LText>
+              </Touchable>
+            ),
+          },
+          {
+            label: t("delegation.delegatedAccount"),
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText]}
+                color="live"
+              >
+                {account.name}{" "}
+              </LText>
+            ),
+          },
+        ]
+      : [];
+  }, [delegation, t, account, onOpenExplorer]);
+
+  const delegationDisabled = delegations.length === 0 || !canDelegate(account);
+
+  return (
+    <View style={styles.root}>
+      <DelegationDrawer
+        isOpen={data && data.length > 0}
+        onClose={onCloseDrawer}
+        account={account}
+        ValidatorImage={({ size }) => (
+          <ValidatorImage
+            isLedger={isDefaultValidatorNode(delegation?.nodeID)}
+            name={delegation?.nodeID.split("-")[1] ?? ""}
+            size={size}
+          />
+        )}
+        amount={delegation?.stakeAmount ?? new BigNumber(0)}
+        data={data}
+        actions={[]}
+      />
+      {delegations.length === 0 ? (
+        <AccountDelegationInfo
+          title={t("account.delegation.info.title")}
+          image={<IlluRewards style={styles.illustration} />}
+          description={t("avalanchepchain.delegation.delegationEarn", {
+            name: account.currency.name,
+          })}
+          infoUrl={urls.avalanche.staking}
+          infoTitle={t("avalanchepchain.delegation.info")}
+          onPress={onDelegate}
+          ctaTitle={t("account.delegation.info.cta")}
+        />
+      ) : (
+        <View style={styles.wrapper}>
+          <AccountSectionLabel
+            name={t("account.delegation.sectionLabel")}
+            RightComponent={
+              <DelegationLabelRight
+                disabled={delegationDisabled}
+                onPress={onDelegate}
+              />
+            }
+          />
+          {delegations.map((d, i) => (
+            <View key={d.nodeID} style={[styles.delegationsWrapper]}>
+              <DelegationRow
+                account={account}
+                delegation={d}
+                currency={currency}
+                onPress={() => setDelegation(d)}
+                isLast={i === delegations.length - 1}
+              />
+            </View>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
+export default function AvalancheDelegations({ account }: Props) {
+  if (!account.avalanchePChainResources) return null;
+  return <Delegations account={account} />;
+}
+
+const styles = StyleSheet.create({
+  root: {
+    marginHorizontal: 16,
+  },
+  illustration: { alignSelf: "center", marginBottom: 16 },
+  rewardsWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    paddingVertical: 16,
+    marginBottom: 16,
+
+    borderRadius: 4,
+  },
+  label: {
+    fontSize: 20,
+    flex: 1,
+  },
+  subLabel: {
+    fontSize: 14,
+
+    flex: 1,
+  },
+  column: {
+    flexDirection: "column",
+  },
+  wrapper: {
+    marginBottom: 16,
+  },
+  delegationsWrapper: {
+    borderRadius: 4,
+  },
+  valueText: {
+    fontSize: 14,
+  },
+});

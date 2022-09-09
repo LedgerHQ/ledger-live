@@ -4016,6 +4016,10 @@
     }
   },
   "avalanchepchain": {
+    "delegation": {
+      "delegationEarn": "You can earn AVAX rewards by delegating your assets.",
+      "info": "How Delegation works"
+    },
     "info": {
       "available": {
         "title": "AVAX available",
