@@ -17,7 +17,11 @@ export type DeviceMock = {
   apduMock: ApduMock;
 };
 type Opts = {
-  createTransportDeviceMock: (id: string, name: string) => DeviceMock;
+  createTransportDeviceMock: (
+    id: string,
+    name: string,
+    serviceUUID: string,
+  ) => DeviceMock;
 };
 const defaultOpts = {
   observeState: from([
@@ -51,13 +55,14 @@ export default (opts: Opts) => {
         .subscribe(
           (msg: {
             type: DescriptorEventType;
-            payload: { id: string; name: string };
+            payload: { id: string; name: string; serviceUUID: string };
           }) => {
             observer.next({
               type: msg.type,
               descriptor: createTransportDeviceMock(
                 msg.payload.id,
                 msg.payload.name,
+                msg.payload.serviceUUID,
               ),
             });
           },
@@ -73,7 +78,7 @@ export default (opts: Opts) => {
         .toPromise();
       return new BluetoothTransportMock(
         typeof device === "string"
-          ? createTransportDeviceMock(device, "")
+          ? createTransportDeviceMock(device, "", "")
           : device,
       );
     }
