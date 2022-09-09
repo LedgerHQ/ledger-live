@@ -102,7 +102,7 @@ class Runner(
             )
             handleNextAPDU()
         } else {
-            val out = """"{"nonce":$nonce, "response":"success","data":\"$data\"}"""
+            val out = """{"nonce":$nonce, "response":"success","data":"$data"}"""
             Timber.d("$tag -> $out")
             socket.send(out)
         }
