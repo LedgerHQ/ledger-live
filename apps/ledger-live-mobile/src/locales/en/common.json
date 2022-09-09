@@ -3531,11 +3531,15 @@
     "no": "I prefer not to",
     "languages": {
       "en": "English",
-      "fr": "French",
-      "ru": "Russian",
-      "es": "Spanish",
-      "zh": "Chinese",
-      "de": "German"
+      "fr": "Français",
+      "ru": "Русский",
+      "es": "Español",
+      "zh": "中国人",
+      "de": "Deutsch",
+      "tr": "Türk",
+      "ja": "日本",
+      "ko": "한국인",
+      "pt": "Português"
     }
   },
   "deviceLocalization": {
