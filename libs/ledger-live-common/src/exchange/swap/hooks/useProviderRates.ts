@@ -159,7 +159,7 @@ export const useProviderRates = ({
               }
               const { provider, tradeMethod } = getSelectedRate as ExchangeRate;
               const rate = rates.find(
-                rate =>
+                (rate) =>
                   rate.provider === provider && rate.tradeMethod === tradeMethod
               );
               return rate ? rate : rates[0];

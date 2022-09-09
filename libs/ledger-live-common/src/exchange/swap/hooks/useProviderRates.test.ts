@@ -142,12 +142,10 @@ describe("useProviderRates", () => {
 
     mockedGetExchangeRates.mockResolvedValue(mockedRatesPromise);
 
-    const { result, waitForNextUpdate, rerender } = renderHook(
-      useProviderRates,
-      {
-        initialProps: { ...baseInitalProps, setExchangeRate }
-      }
-    );
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: { ...baseInitalProps, setExchangeRate },
+    });
+
     mockedGetExchangeRates.mockClear();
 
     act(() => {
@@ -158,7 +156,7 @@ describe("useProviderRates", () => {
     expect(setExchangeRate).toBeCalledWith(
       expect.objectContaining({
         provider: "ftx",
-        tradeMethod: "fixed"
+        tradeMethod: "fixed",
       })
     );
 
