@@ -163,13 +163,14 @@ describe("useProviderRates", () => {
     );
 
     act(() => {
-      result.current.refetchRates({
+      result.current.updateSelectedRate({
         rate: new BigNumber(1),
         toAmount: new BigNumber(1),
         magnitudeAwareRate: new BigNumber(1),
         provider: "ftx",
         tradeMethod: "float",
       });
+      result.current.refetchRates();
     });
     await waitForNextUpdate({ timeout: 1000 });
 

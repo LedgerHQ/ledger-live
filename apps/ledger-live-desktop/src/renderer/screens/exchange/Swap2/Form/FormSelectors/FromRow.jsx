@@ -86,6 +86,7 @@ function FromRow({
   fromAmountError,
   provider,
   isSendMaxLoading,
+  updateSelectedRate,
 }: Props) {
   const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
   const unit = fromAccount && getAccountUnit(fromAccount);
@@ -97,6 +98,7 @@ function FromRow({
       swapVersion: SWAP_VERSION,
     });
   const setAccountAndTrack = account => {
+    updateSelectedRate();
     track("Page Swap Form - New Source Account", {
       provider,
       swapVersion: SWAP_VERSION,

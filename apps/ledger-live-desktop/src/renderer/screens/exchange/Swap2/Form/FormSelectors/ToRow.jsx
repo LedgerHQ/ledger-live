@@ -60,6 +60,7 @@ function ToRow({
   provider,
   toAccount,
   loadingRates,
+  updateSelectedRate,
 }: Props) {
   const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : null;
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
@@ -74,6 +75,7 @@ function ToRow({
       swapVersion: SWAP_VERSION,
     });
   const setCurrencyAndTrack = currency => {
+    updateSelectedRate();
     track("Page Swap Form - New Target Currency", {
       provider,
       swapVersion: SWAP_VERSION,

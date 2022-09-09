@@ -33,8 +33,8 @@ const SwapFormProviders = ({
   kycStatus,
   provider,
   countdown,
-  setSelectedRate,
 }: SwapFormProvidersProps) => {
+  const { updateSelectedRate } = swap;
   const { currency: fromCurrency } = swap.from;
   const { currency: toCurrency } = swap.to;
   const ratesState = swap.rates;
@@ -52,7 +52,7 @@ const SwapFormProviders = ({
         toCurrency={toCurrency}
         ratesState={ratesState}
         countdown={countdown}
-        setSelectedRate={setSelectedRate}
+        updateSelectedRate={updateSelectedRate}
       />
     </Form>
   );

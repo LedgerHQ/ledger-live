@@ -99,9 +99,6 @@ const SwapForm = () => {
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
 
   const [countdown, setCountdown] = useState(refreshTime);
-  const [selectedRate, setSelectedRate] = useState({});
-  const selectedRateRef = useRef(selectedRate);
-  selectedRateRef.current = selectedRate;
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -166,7 +163,7 @@ const SwapForm = () => {
 
   useEffect(() => {
     const refreshInterval = setInterval(() => {
-      swapTransaction?.swap?.refetchRates(selectedRateRef.current);
+      swapTransaction?.swap?.refetchRates();
     }, refreshTime);
     return () => {
       clearInterval(refreshInterval);
@@ -431,6 +428,7 @@ const SwapForm = () => {
           provider={provider}
           loadingRates={swapTransaction.swap.rates.status === "loading"}
           isSendMaxLoading={isSendMaxLoading}
+          updateSelectedRate={swapTransaction.swap.updateSelectedRate}
         />
         <SwapFormSummary
           swapTransaction={swapTransaction}
@@ -442,7 +440,6 @@ const SwapForm = () => {
           kycStatus={kycStatus}
           provider={provider}
           countdown={Math.round(countdown / 1000)}
-          setSelectedRate={setSelectedRate}
         />
 
         {currentBanner === "LOGIN" ? (

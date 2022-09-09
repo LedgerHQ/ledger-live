@@ -44,7 +44,8 @@ export const useProviderRates = ({
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
 }): {
   rates: RatesReducerState;
-  refetchRates: (selected?: ExchangeRate) => void;
+  refetchRates: () => void;
+  updateSelectedRate: (selected?: ExchangeRate) => void;
 } => {
   const { account: fromAccount } = fromState;
   const { currency: toCurrency } = toState;
@@ -57,10 +58,12 @@ export const useProviderRates = ({
   );
   const [getSelectedRate, setGetSelectedRate] = useState<ExchangeRate | {}>({});
 
-  const refetchRates = useCallback((selected = {}) => {
-    setGetSelectedRate(selected);
-    setGetRatesDependency({});
-  }, []);
+  const refetchRates = useCallback(() => setGetRatesDependency({}), []);
+
+  const updateSelectedRate = useCallback(
+    (selected = {}) => setGetSelectedRate(selected),
+    []
+  );
 
   useEffect(
     () => {
@@ -189,5 +192,6 @@ export const useProviderRates = ({
   return {
     rates,
     refetchRates,
+    updateSelectedRate,
   };
 };

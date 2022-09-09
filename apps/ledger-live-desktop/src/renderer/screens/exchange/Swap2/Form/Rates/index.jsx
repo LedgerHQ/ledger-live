@@ -34,7 +34,7 @@ export default function ProviderRateDrawer({
   provider,
   countdown,
   loadingRates,
-  setSelectedRate,
+  updateSelectedRate,
 }: Props) {
   const dispatch = useDispatch();
   const selectedRate = useSelector(rateSelector);
@@ -42,7 +42,7 @@ export default function ProviderRateDrawer({
 
   const setRate = useCallback(
     rate => {
-      setSelectedRate(rate);
+      updateSelectedRate(rate);
       dispatch(updateRateAction(rate));
       setDrawer(undefined);
     },

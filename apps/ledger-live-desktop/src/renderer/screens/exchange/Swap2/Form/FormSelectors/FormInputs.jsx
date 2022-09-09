@@ -75,6 +75,7 @@ export default function FormInputs({
   provider,
   loadingRates,
   isSendMaxLoading,
+  updateSelectedRate,
 }: FormInputsProps) {
   return (
     <Main>
@@ -89,6 +90,7 @@ export default function FormInputs({
           fromAmountError={fromAmountError}
           provider={provider}
           isSendMaxLoading={isSendMaxLoading}
+          updateSelectedRate={updateSelectedRate}
         />
       </Box>
       <Box horizontal justifyContent="center" alignContent="center">
@@ -104,6 +106,7 @@ export default function FormInputs({
           provider={provider}
           toAccount={toAccount}
           loadingRates={loadingRates}
+          updateSelectedRate={updateSelectedRate}
         />
       </Box>
     </Main>

@@ -31,7 +31,8 @@ export type SwapDataType = {
   isMaxEnabled: boolean;
   isSwapReversable: boolean;
   rates: RatesReducerState;
-  refetchRates: (selected?: ExchangeRate) => void;
+  refetchRates: () => void;
+  updateSelectedRate: (selected?: ExchangeRate) => void;
   targetAccounts?: Account[];
 };
 export const selectorStateDefaultValues = {
@@ -139,7 +140,7 @@ export const useSwapTransaction = ({
     setIsSendMaxLoading,
   });
 
-  const { rates, refetchRates } = useProviderRates({
+  const { rates, refetchRates, updateSelectedRate } = useProviderRates({
     fromState,
     toState,
     transaction,
@@ -156,6 +157,7 @@ export const useSwapTransaction = ({
       isSwapReversable,
       rates,
       refetchRates,
+      updateSelectedRate,
       targetAccounts,
     },
     setFromAmount,

@@ -69,6 +69,7 @@ const SectionProvider = ({
   ratesState,
   countdown,
   setSelectedRate,
+  updateSelectedRate,
 }: SectionProviderProps) => {
   const { t } = useTranslation();
   const ProviderIcon = provider && iconByProviderName[provider.toLowerCase()];
@@ -89,6 +90,7 @@ const SectionProvider = ({
             countdown,
             loadingRates,
             setSelectedRate,
+            updateSelectedRate,
           }}
         />
       )) || (
