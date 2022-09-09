@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.8.0-next.9
+
+### Patch Changes
+
+- [#1239](https://github.com/LedgerHQ/ledger-live/pull/1239) [`691ef324f`](https://github.com/LedgerHQ/ledger-live/commit/691ef324ff02c3341b72c7dc9754537bd9f8b73a) Thanks [@ThomasLaforge](https://github.com/ThomasLaforge)! - use brazilian portuguese smartling translation and add some missing keys for system language available popup
+
 ## 3.8.0-next.8
 
 ### Patch Changes
