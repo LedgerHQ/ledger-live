@@ -83,7 +83,7 @@ class EventEmitter {
     /// Throttling optimization feat
     private var pendingEvent : DispatchSourceTimer!
     private var lastEventTime : Double = 0
-    private var lastEventType : String = "none"
+    private var lastEvent : Payload?
     private var throttle : Int = 1500 /// Minimum time in ms between events of same type.
     
     private init() {}
@@ -128,7 +128,7 @@ class EventEmitter {
             
             let exec: () -> Void = {
                 self.eventEmitter.sendEvent(withName:Event.parent.rawValue, body: event.dictionary)
-                self.lastEventType = event.type
+                self.lastEvent = event
                 self.lastEventTime = Date().timeIntervalSince1970
                 
                 if self.pendingEvent != nil {
@@ -137,14 +137,20 @@ class EventEmitter {
                 }
             }
             
-            /// There's a scheduled event of the same type, replace it with this one
-            if (self.pendingEvent != nil && self.lastEventType == event.type) {
-                // We know we can replace this with our event, no need to touch the
+            /// Prepare some flags
+            let isTooSoon = (self.lastEventTime + Double(self.throttle)/1000) >= Date().timeIntervalSince1970
+            var isEventForSameTask = false
+            if let lastEvent = self.lastEvent {
+                isEventForSameTask = lastEvent.type == event.type && lastEvent.data?.name == event.data?.name
+            }
+            
+            /// There's a scheduled event of the same type for the same app, replace it with this one
+            if self.pendingEvent != nil && isEventForSameTask {
                 self.pendingEvent.setEventHandler(handler: exec)
             }
-            /// It's too soon to dispatch another event of the same type
-            else if (self.lastEventTime + Double(self.throttle)/1000) >= Date().timeIntervalSince1970 &&
-                        self.lastEventType == event.type {
+
+            /// It's too soon to dispatch another event of the same task
+            else if isTooSoon && isEventForSameTask {
                 let offset = Date(timeIntervalSince1970: TimeInterval((self.lastEventTime))).timeIntervalSinceNow
                 let msOffset = Int(offset * 1000) + self.throttle
                 
@@ -153,6 +159,7 @@ class EventEmitter {
                 self.pendingEvent.setEventHandler(handler: exec)
                 self.pendingEvent.resume()
             }
+
             /// All other cases can safely dispatch the event
             else {
                 exec()
