@@ -130,7 +130,7 @@ export default class BtcOld {
    */
   createPaymentTransactionNew(arg: CreateTransactionArg): Promise<string> {
     if (arguments.length > 1) {
-      console.warn(
+      throw new Error(
         "@ledgerhq/hw-app-btc: createPaymentTransactionNew multi argument signature is deprecated. please switch to named parameters."
       );
     }

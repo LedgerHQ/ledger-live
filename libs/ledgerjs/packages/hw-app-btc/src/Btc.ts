@@ -25,7 +25,7 @@ import { getAppAndVersion } from "./getAppAndVersion";
 
 export default class Btc {
   private _transport: Transport;
-  private _lazyImpl: BtcOld | BtcNew;
+  private _impl: BtcOld | BtcNew;
   private _needGetAppversion: boolean;
 
   constructor(transport: Transport, scrambleKey = "BTC", currency = "bitcoin") {
@@ -45,9 +45,9 @@ export default class Btc {
     );
     // new APDU (nano app API) for bitcoin and old APDU for altcoin
     if (currency === "bitcoin" || currency === "bitcoin_testnet") {
-      this._lazyImpl = new BtcNew(new AppClient(this._transport));
+      this._impl = new BtcNew(new AppClient(this._transport));
     } else {
-      this._lazyImpl = new BtcOld(this._transport);
+      this._impl = new BtcOld(this._transport);
     }
     this._needGetAppversion = true;
   }
@@ -63,10 +63,10 @@ export default class Btc {
     if (this._needGetAppversion) {
       this._needGetAppversion = false;
       return getAppAndVersion(this._transport).then(() =>
-        this._lazyImpl.getWalletXpub(arg)
+        this._impl.getWalletXpub(arg)
       );
     }
-    return this._lazyImpl.getWalletXpub(arg);
+    return this._impl.getWalletXpub(arg);
   }
 
   /**
@@ -118,10 +118,10 @@ export default class Btc {
     if (this._needGetAppversion) {
       this._needGetAppversion = false;
       return getAppAndVersion(this._transport).then(() =>
-        this._lazyImpl.getWalletPublicKey(path, options)
+        this._impl.getWalletPublicKey(path, options)
       );
     }
-    return this._lazyImpl.getWalletPublicKey(path, options);
+    return this._impl.getWalletPublicKey(path, options);
   }
 
   /**
@@ -182,17 +182,17 @@ export default class Btc {
    */
   createPaymentTransactionNew(arg: CreateTransactionArg): Promise<string> {
     if (arguments.length > 1) {
-      console.warn(
+      throw new Error(
         "@ledgerhq/hw-app-btc: createPaymentTransactionNew multi argument signature is deprecated. please switch to named parameters."
       );
     }
     if (this._needGetAppversion) {
       this._needGetAppversion = false;
       return getAppAndVersion(this._transport).then(() =>
-        this._lazyImpl.createPaymentTransactionNew(arg)
+        this._impl.createPaymentTransactionNew(arg)
       );
     }
-    return this._lazyImpl.createPaymentTransactionNew(arg);
+    return this._impl.createPaymentTransactionNew(arg);
   }
 
   /**
