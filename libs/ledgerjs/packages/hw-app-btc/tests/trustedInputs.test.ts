@@ -8,8 +8,6 @@ test("transaction on btc – nano s 1.3.1 – native segwit", async () => {
   const transport = await openTransportReplayer(
     RecordStore.fromString(`
     => b001000000
-    <= 0107426974636f696e06312e332e323301029000
-    => b001000000
     <= 6d00
     => e04000001505800000548000000080000000000000010000001b
     <= 41042e00ef5ab04c270bf697e817c5fd433aa4509b063745d6f82c2157a59d59c1b7146956cee1b5ce1c7739a87fb59de3ad918872b14301af3f00b538934837b1382231354a707a787578426b6358384576465a6e6d4d736a74664771314d676e6d465356b9b92151a60d39e94e5be7a91003d0f43f03cafd69db00ebc60a65434d83e66d9000
@@ -58,8 +56,6 @@ test("transaction on btc – nano s 1.3.1 – native segwit", async () => {
 test("transaction on btc – nano s 1.6.0 – native segwit", async () => {
   const transport = await openTransportReplayer(
     RecordStore.fromString(`
-    => b001000000
-    <= 0107426974636f696e06312e332e323301029000
     => b001000000
     <= 0107426974636f696e05312e342e3201029000
     => e042000009000000010100000002

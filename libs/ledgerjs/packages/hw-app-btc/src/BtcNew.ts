@@ -112,9 +112,6 @@ export default class BtcNew {
     bitcoinAddress: string;
     chainCode: string;
   }> {
-    if (!isPathNormal(path)) {
-      throw new Error(`Non-standard path ${path} is not supported`);
-    }
     const pathElements: number[] = pathStringToArray(path);
     const xpub = await this.client.getExtendedPubkey(false, pathElements);
 
@@ -444,39 +441,4 @@ function accountTypeFromArg(
   if (arg.additionals.includes("bech32")) return new p2wpkh(psbt, masterFp);
   if (arg.segwit) return new p2wpkhWrapped(psbt, masterFp);
   return new p2pkh(psbt, masterFp);
-}
-
-function isPathNormal(path: string): boolean {
-  //path is not deepest hardened node of a standard path or deeper, use BtcOld
-  const h = 0x80000000;
-  const pathElems = pathStringToArray(path);
-
-  const hard = (n: number) => n >= h;
-  const soft = (n: number | undefined) => !n || n < h;
-  const change = (n: number | undefined) => !n || n == 0 || n == 1;
-
-  if (
-    pathElems.length >= 3 &&
-    pathElems.length <= 5 &&
-    [44 + h, 49 + h, 84 + h, 86 + h].some((v) => v == pathElems[0]) &&
-    [0 + h, 1 + h].some((v) => v == pathElems[1]) &&
-    hard(pathElems[2]) &&
-    change(pathElems[3]) &&
-    soft(pathElems[4])
-  ) {
-    return true;
-  }
-  if (
-    pathElems.length >= 4 &&
-    pathElems.length <= 6 &&
-    48 + h == pathElems[0] &&
-    [0 + h, 1 + h].some((v) => v == pathElems[1]) &&
-    hard(pathElems[2]) &&
-    hard(pathElems[3]) &&
-    change(pathElems[4]) &&
-    soft(pathElems[5])
-  ) {
-    return true;
-  }
-  return false;
 }

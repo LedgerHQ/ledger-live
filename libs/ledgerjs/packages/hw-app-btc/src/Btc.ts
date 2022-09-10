@@ -13,7 +13,6 @@ import type { Transaction } from "./types";
 export type { AddressFormat };
 import { signP2SHTransaction } from "./signP2SHTransaction";
 import { signMessage } from "./signMessage";
-import { getAppAndVersion } from "./getAppAndVersion";
 
 /**
  * Bitcoin API.
@@ -26,7 +25,6 @@ import { getAppAndVersion } from "./getAppAndVersion";
 export default class Btc {
   private _transport: Transport;
   private _impl: BtcOld | BtcNew;
-  private _needGetAppversion: boolean;
 
   constructor(transport: Transport, scrambleKey = "BTC", currency = "bitcoin") {
     this._transport = transport;
@@ -49,7 +47,6 @@ export default class Btc {
     } else {
       this._impl = new BtcOld(this._transport);
     }
-    this._needGetAppversion = true;
   }
 
   /**
@@ -60,12 +57,6 @@ export default class Btc {
    * @returns XPUB of the account
    */
   getWalletXpub(arg: { path: string; xpubVersion: number }): Promise<string> {
-    if (this._needGetAppversion) {
-      this._needGetAppversion = false;
-      return getAppAndVersion(this._transport).then(() =>
-        this._impl.getWalletXpub(arg)
-      );
-    }
     return this._impl.getWalletXpub(arg);
   }
 
@@ -114,12 +105,6 @@ export default class Btc {
       };
     } else {
       options = opts || {};
-    }
-    if (this._needGetAppversion) {
-      this._needGetAppversion = false;
-      return getAppAndVersion(this._transport).then(() =>
-        this._impl.getWalletPublicKey(path, options)
-      );
     }
     return this._impl.getWalletPublicKey(path, options);
   }
@@ -184,12 +169,6 @@ export default class Btc {
     if (arguments.length > 1) {
       throw new Error(
         "@ledgerhq/hw-app-btc: createPaymentTransactionNew multi argument signature is deprecated. please switch to named parameters."
-      );
-    }
-    if (this._needGetAppversion) {
-      this._needGetAppversion = false;
-      return getAppAndVersion(this._transport).then(() =>
-        this._impl.createPaymentTransactionNew(arg)
       );
     }
     return this._impl.createPaymentTransactionNew(arg);
