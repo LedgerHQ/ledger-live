@@ -30,23 +30,23 @@ const scenarios = [
         dispatch: {
           type: "wipe",
         },
-        expectPlan: "-Litecoin, -Bitcoin, -XRP, -Ethereum Classic, -Ethereum",
+        expectPlan: "-Bitcoin, -Litecoin, -XRP, -Ethereum Classic, -Ethereum",
         expectInstalled: "",
       },
     ],
   },
   {
     name: "install an app install its dep",
-    apps: "Bitcoin, Litecoin, Dogecoin",
+    apps: "Ethereum, Ethereum Classic",
     installed: "",
     actions: [
       {
         dispatch: {
           type: "install",
-          name: "Dogecoin",
+          name: "Ethereum Classic",
         },
-        expectPlan: "+Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin",
+        expectPlan: "+Ethereum, +Ethereum Classic",
+        expectInstalled: "Ethereum, Ethereum Classic",
       },
       {
         dispatch: {
@@ -82,7 +82,7 @@ const scenarios = [
     ],
   },
   {
-    name: "install an app install its dep",
+    name: "install an app install its dep, verify that altcoin doesn't depend on bitcoin",
     apps: "Bitcoin, Litecoin, Dogecoin",
     installed: "",
     actions: [
@@ -91,8 +91,8 @@ const scenarios = [
           type: "install",
           name: "Dogecoin",
         },
-        expectPlan: "+Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin",
+        expectPlan: "+Dogecoin",
+        expectInstalled: "Dogecoin",
       },
       {
         dispatch: {
@@ -100,12 +100,12 @@ const scenarios = [
           name: "Litecoin",
         },
         expectPlan: "+Litecoin",
-        expectInstalled: "Bitcoin, Dogecoin, Litecoin",
+        expectInstalled: "Dogecoin, Litecoin",
       },
     ],
   },
   {
-    name: "uninstall an app that have deps",
+    name: "uninstall an app that have deps, verify that altcoin doesn't depend on bitcoin",
     apps: "Bitcoin, Litecoin, Dogecoin",
     installed: "Bitcoin, Litecoin, Dogecoin",
     actions: [
@@ -114,8 +114,8 @@ const scenarios = [
           type: "uninstall",
           name: "Bitcoin",
         },
-        expectPlan: "-Litecoin, -Dogecoin, -Bitcoin",
-        expectInstalled: "",
+        expectPlan: "-Bitcoin",
+        expectInstalled: "Litecoin, Dogecoin",
       },
     ],
   },
@@ -174,8 +174,8 @@ const scenarios = [
           type: "install",
           name: "Dogecoin",
         },
-        expectPlan: "-Dogecoin, -Bitcoin, +Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin",
+        expectPlan: "-Dogecoin, +Dogecoin",
+        expectInstalled: "Bitcoin (outdated), Dogecoin",
       },
     ],
   },
@@ -189,22 +189,22 @@ const scenarios = [
           type: "install",
           name: "Dogecoin",
         },
-        expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Litecoin, Dogecoin",
+        expectPlan: "+Dogecoin",
+        expectInstalled: "Bitcoin (outdated), Litecoin (outdated), Dogecoin",
       },
     ],
   },
   {
     name: "install an outdated app with dependents",
     apps: "Bitcoin, Dogecoin",
-    installed: "Bitcoin (outdated), Dogecoin (outdated)",
+    installed: "Dogecoin (outdated), Bitcoin",
     actions: [
       {
         dispatch: {
           type: "install",
           name: "Bitcoin",
         },
-        expectPlan: "-Dogecoin, -Bitcoin, +Bitcoin, +Dogecoin",
+        expectPlan: "-Bitcoin, +Bitcoin",
         expectInstalled: "Bitcoin, Dogecoin",
       },
     ],
@@ -218,7 +218,7 @@ const scenarios = [
         dispatch: {
           type: "updateAll",
         },
-        expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin",
+        expectPlan: "-Bitcoin, -Litecoin, +Bitcoin, +Litecoin",
         expectInstalled: "Ethereum, Bitcoin, Litecoin",
       },
     ],
@@ -232,7 +232,7 @@ const scenarios = [
         dispatch: {
           type: "updateAll",
         },
-        expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin",
+        expectPlan: "-Bitcoin, -Litecoin, +Bitcoin, +Litecoin",
         expectInstalled: "Ethereum, Unknown, Bitcoin, Litecoin",
       },
     ],
@@ -282,10 +282,8 @@ const scenarios = [
             name: "Zcash",
           },
         ],
-        expectPlan:
-          "+XRP, +Ethereum, +Ethereum Classic, +Bitcoin, +Dogecoin, +Zcash",
-        expectInstalled:
-          "XRP, Ethereum, Ethereum Classic, Bitcoin, Dogecoin, Zcash",
+        expectPlan: "+XRP, +Ethereum, +Ethereum Classic, +Dogecoin, +Zcash",
+        expectInstalled: "XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
       },
     ],
   },
@@ -313,9 +311,8 @@ const scenarios = [
             name: "Bitcoin",
           },
         ],
-        expectPlan:
-          "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Zcash, -Bitcoin",
-        expectInstalled: "",
+        expectPlan: "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Bitcoin",
+        expectInstalled: "Zcash",
       },
     ],
   },

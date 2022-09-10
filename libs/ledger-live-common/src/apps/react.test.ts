@@ -22,8 +22,7 @@ test("Apps hooks - useAppInstallNeedsDeps - Expect dep apps", () => {
   const { result = <any>{} } = renderHook(() =>
     useAppInstallNeedsDeps(mockedState, mockedState.appByName["Bitcoin Cash"])
   );
-  expect(result?.current.dependencies.length).toBe(1);
-  expect(result?.current.dependencies[0].name).toBe("Bitcoin");
+  expect(result.current).toBe(null);
 });
 test("Apps hooks - useAppInstallNeedsDeps - Expect Decred to not depend on bitcoin", () => {
   const { result = <any>{} } = renderHook(() =>
