@@ -37,7 +37,7 @@ const scenarios = [
   },
   {
     name: "install an app install its dep",
-    apps: "Ethereum, Ethereum Classic",
+    apps: "Ethereum, Ethereum Classic, Polygon",
     installed: "",
     actions: [
       {
@@ -51,10 +51,10 @@ const scenarios = [
       {
         dispatch: {
           type: "install",
-          name: "Litecoin",
+          name: "Polygon",
         },
-        expectPlan: "+Litecoin",
-        expectInstalled: "Bitcoin, Dogecoin, Litecoin",
+        expectPlan: "+Polygon",
+        expectInstalled: "Ethereum, Ethereum Classic, Polygon",
       },
     ],
   },
@@ -196,16 +196,17 @@ const scenarios = [
   },
   {
     name: "install an outdated app with dependents",
-    apps: "Bitcoin, Dogecoin",
-    installed: "Dogecoin (outdated), Bitcoin",
+    apps: "Ethereum, Ethereum Classic",
+    installed: "Ethereum (outdated), Ethereum Classic (outdated)",
     actions: [
       {
         dispatch: {
           type: "install",
-          name: "Bitcoin",
+          name: "Ethereum",
         },
-        expectPlan: "-Bitcoin, +Bitcoin",
-        expectInstalled: "Bitcoin, Dogecoin",
+        expectPlan:
+          "-Ethereum Classic, -Ethereum, +Ethereum, +Ethereum Classic",
+        expectInstalled: "Ethereum, Ethereum Classic",
       },
     ],
   },
