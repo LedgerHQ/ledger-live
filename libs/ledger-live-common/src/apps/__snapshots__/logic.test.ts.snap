@@ -6,14 +6,14 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": "ethereum",
+      "name": "Ethereum",
     },
     Object {
       "blocks": 1,
       "bytes": 4096,
-      "currencyId": "dogecoin",
-      "name": "Dogecoin",
+      "currencyId": "ethereum_classic",
+      "name": "Ethereum Classic",
     },
   ],
   "appsSpaceBlocks": 60,
@@ -36,20 +36,20 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": "ethereum",
+      "name": "Ethereum",
     },
     Object {
       "blocks": 1,
       "bytes": 4096,
-      "currencyId": "dogecoin",
-      "name": "Dogecoin",
+      "currencyId": "ethereum_classic",
+      "name": "Ethereum Classic",
     },
     Object {
       "blocks": 1,
       "bytes": 4096,
-      "currencyId": "litecoin",
-      "name": "Litecoin",
+      "currencyId": "polygon",
+      "name": "Polygon",
     },
   ],
   "appsSpaceBlocks": 60,
@@ -66,67 +66,55 @@ Object {
 }
 `;
 
-exports[`Scenario: install an app install its dep 3`] = `
+exports[`Scenario: install an app install its dep, verify that altcoin doesn't depend on bitcoin 1`] = `
 Object {
   "apps": Array [
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
-    },
-    Object {
-      "blocks": 1,
-      "bytes": 4096,
       "currencyId": "dogecoin",
       "name": "Dogecoin",
     },
   ],
   "appsSpaceBlocks": 60,
   "appsSpaceBytes": 245760,
-  "freeSpaceBlocks": 49,
-  "freeSpaceBytes": 200704,
+  "freeSpaceBlocks": 50,
+  "freeSpaceBytes": 204800,
   "osBlocks": 20,
   "osBytes": 81920,
   "shouldWarnMemory": false,
-  "totalAppsBlocks": 11,
-  "totalAppsBytes": 45056,
+  "totalAppsBlocks": 10,
+  "totalAppsBytes": 40960,
   "totalBlocks": 80,
   "totalBytes": 327680,
 }
 `;
 
-exports[`Scenario: install an app install its dep 4`] = `
+exports[`Scenario: install an app install its dep, verify that altcoin doesn't depend on bitcoin 2`] = `
 Object {
   "apps": Array [
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
-    },
-    Object {
-      "blocks": 1,
-      "bytes": 4096,
       "currencyId": "dogecoin",
       "name": "Dogecoin",
     },
     Object {
-      "blocks": 1,
-      "bytes": 4096,
+      "blocks": 10,
+      "bytes": 40960,
       "currencyId": "litecoin",
       "name": "Litecoin",
     },
   ],
   "appsSpaceBlocks": 60,
   "appsSpaceBytes": 245760,
-  "freeSpaceBlocks": 48,
-  "freeSpaceBytes": 196608,
+  "freeSpaceBlocks": 40,
+  "freeSpaceBytes": 163840,
   "osBlocks": 20,
   "osBytes": 81920,
   "shouldWarnMemory": false,
-  "totalAppsBlocks": 12,
-  "totalAppsBytes": 49152,
+  "totalAppsBlocks": 20,
+  "totalAppsBytes": 81920,
   "totalBlocks": 80,
   "totalBytes": 327680,
 }
@@ -136,8 +124,8 @@ exports[`Scenario: install an app with outdated dep 1`] = `
 Object {
   "apps": Array [
     Object {
-      "blocks": 10,
-      "bytes": 40960,
+      "blocks": 1,
+      "bytes": 4096,
       "currencyId": "bitcoin",
       "name": "Bitcoin",
     },
@@ -148,8 +136,8 @@ Object {
       "name": "Litecoin",
     },
     Object {
-      "blocks": 1,
-      "bytes": 4096,
+      "blocks": 10,
+      "bytes": 40960,
       "currencyId": "dogecoin",
       "name": "Dogecoin",
     },
@@ -196,14 +184,14 @@ exports[`Scenario: install an outdated app dep 1`] = `
 Object {
   "apps": Array [
     Object {
-      "blocks": 10,
-      "bytes": 40960,
+      "blocks": 1,
+      "bytes": 4096,
       "currencyId": "bitcoin",
       "name": "Bitcoin",
     },
     Object {
-      "blocks": 1,
-      "bytes": 4096,
+      "blocks": 10,
+      "bytes": 40960,
       "currencyId": "dogecoin",
       "name": "Dogecoin",
     },
@@ -228,14 +216,14 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
+      "currencyId": "ethereum",
+      "name": "Ethereum",
     },
     Object {
       "blocks": 1,
       "bytes": 4096,
-      "currencyId": "dogecoin",
-      "name": "Dogecoin",
+      "currencyId": "ethereum_classic",
+      "name": "Ethereum Classic",
     },
   ],
   "appsSpaceBlocks": 60,
@@ -358,15 +346,33 @@ Object {
     Object {
       "blocks": 10,
       "bytes": 40960,
-      "currencyId": "bitcoin",
-      "name": "Bitcoin",
-    },
-    Object {
-      "blocks": 1,
-      "bytes": 4096,
       "currencyId": "dogecoin",
       "name": "Dogecoin",
     },
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "zcash",
+      "name": "Zcash",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 19,
+  "freeSpaceBytes": 77824,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 41,
+  "totalAppsBytes": 167936,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
+exports[`Scenario: order is preserved in uninstall action plan 1`] = `
+Object {
+  "apps": Array [
     Object {
       "blocks": 1,
       "bytes": 4096,
@@ -376,47 +382,43 @@ Object {
   ],
   "appsSpaceBlocks": 60,
   "appsSpaceBytes": 245760,
-  "freeSpaceBlocks": 27,
-  "freeSpaceBytes": 110592,
+  "freeSpaceBlocks": 59,
+  "freeSpaceBytes": 241664,
   "osBlocks": 20,
   "osBytes": 81920,
   "shouldWarnMemory": false,
-  "totalAppsBlocks": 33,
-  "totalAppsBytes": 135168,
+  "totalAppsBlocks": 1,
+  "totalAppsBytes": 4096,
   "totalBlocks": 80,
   "totalBytes": 327680,
 }
 `;
 
-exports[`Scenario: order is preserved in uninstall action plan 1`] = `
+exports[`Scenario: uninstall an app that have deps, verify that altcoin doesn't depend on bitcoin 1`] = `
 Object {
-  "apps": Array [],
+  "apps": Array [
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "litecoin",
+      "name": "Litecoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+  ],
   "appsSpaceBlocks": 60,
   "appsSpaceBytes": 245760,
-  "freeSpaceBlocks": 60,
-  "freeSpaceBytes": 245760,
+  "freeSpaceBlocks": 58,
+  "freeSpaceBytes": 237568,
   "osBlocks": 20,
   "osBytes": 81920,
   "shouldWarnMemory": false,
-  "totalAppsBlocks": 0,
-  "totalAppsBytes": 0,
-  "totalBlocks": 80,
-  "totalBytes": 327680,
-}
-`;
-
-exports[`Scenario: uninstall an app that have deps 1`] = `
-Object {
-  "apps": Array [],
-  "appsSpaceBlocks": 60,
-  "appsSpaceBytes": 245760,
-  "freeSpaceBlocks": 60,
-  "freeSpaceBytes": 245760,
-  "osBlocks": 20,
-  "osBytes": 81920,
-  "shouldWarnMemory": false,
-  "totalAppsBlocks": 0,
-  "totalAppsBytes": 0,
+  "totalAppsBlocks": 2,
+  "totalAppsBytes": 8192,
   "totalBlocks": 80,
   "totalBytes": 327680,
 }
@@ -461,21 +463,21 @@ Object {
       "name": "Bitcoin",
     },
     Object {
-      "blocks": 1,
-      "bytes": 4096,
+      "blocks": 10,
+      "bytes": 40960,
       "currencyId": "litecoin",
       "name": "Litecoin",
     },
   ],
   "appsSpaceBlocks": 60,
   "appsSpaceBytes": 245760,
-  "freeSpaceBlocks": 47,
-  "freeSpaceBytes": 192512,
+  "freeSpaceBlocks": 38,
+  "freeSpaceBytes": 155648,
   "osBlocks": 20,
   "osBytes": 81920,
   "shouldWarnMemory": false,
-  "totalAppsBlocks": 13,
-  "totalAppsBytes": 53248,
+  "totalAppsBlocks": 22,
+  "totalAppsBytes": 90112,
   "totalBlocks": 80,
   "totalBytes": 327680,
 }
@@ -497,21 +499,21 @@ Object {
       "name": "Bitcoin",
     },
     Object {
-      "blocks": 1,
-      "bytes": 4096,
+      "blocks": 10,
+      "bytes": 40960,
       "currencyId": "litecoin",
       "name": "Litecoin",
     },
   ],
   "appsSpaceBlocks": 60,
   "appsSpaceBytes": 245760,
-  "freeSpaceBlocks": 48,
-  "freeSpaceBytes": 196608,
+  "freeSpaceBlocks": 39,
+  "freeSpaceBytes": 159744,
   "osBlocks": 20,
   "osBytes": 81920,
   "shouldWarnMemory": false,
-  "totalAppsBlocks": 12,
-  "totalAppsBytes": 49152,
+  "totalAppsBlocks": 21,
+  "totalAppsBytes": 86016,
   "totalBlocks": 80,
   "totalBytes": 327680,
 }
