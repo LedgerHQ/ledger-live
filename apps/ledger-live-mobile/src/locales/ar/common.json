@@ -19,6 +19,7 @@
     "device" : "جهاز",
     "cryptoAsset" : "الأصول المشفرة",
     "skip" : "تخطي",
+    "next" : "التالي",
     "noCryptoFound" : "لم يتم العثور على أي أصول مشفرة",
     "needHelp" : "هل تحتاج إلى مساعدة؟",
     "edit" : "تعديل",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "يرجى تعطيل التوقيع المتعدد لإجراء معاملات Stellar"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "فشل تحميل الصورة من المعرض",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageDownloadError" : {
+      "title" : "فشل تنزيل الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "فشل تحميل البيانات الوصفية للصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageTooLargeError" : {
+      "title" : "حجم الصورة كبير جداً",
+      "description" : "يُرجى المحاولة بصورة أصغر"
+    },
+    "ImageCropError" : {
+      "title" : "فشل قص الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageResizeError" : {
+      "title" : "فشل تغيير حجم الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImagePreviewError" : {
+      "title" : "Preview of the image failed",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageProcessingError" : {
+      "title" : "فشل معالجة الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "استكشف Ledger Live",
         "subtitle" : "استكشف التطبيق وتعرّف على مزاياه "
+      },
+      "desktopSync" : {
+        "title" : "المزامنة مع تطبيق سطح المكتب",
+        "subtitle" : "قم بمزامنة أصولك الموجودة على Ledger Live لسطح المكتب مع جوّالك."
       }
     },
     "discoverLive" : {
@@ -1570,10 +1607,10 @@
         "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
+        "title" : "البحث عن الأجهزة",
         "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "تم الإقران بالفعل"
     },
     "pairing" : {
       "success" : {
@@ -1586,7 +1623,7 @@
       "error" : {
         "title" : "Pairing unsucessful",
         "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "retryCta" : "أعد المحاولة"
       }
     }
   },
@@ -1725,7 +1762,13 @@
       "WITHDRAW_UNBONDED" : "سحب",
       "NOMINATE" : "ترشيح",
       "CHILL" : "حذف الترشيحات",
-      "SET_CONTROLLER" : "إعداد وحدة التحكم"
+      "SET_CONTROLLER" : "إعداد وحدة التحكم",
+      "ACTIVATE" : "مُنشّط",
+      "LOCK" : "مُقفل",
+      "UNLOCK" : "غير مُقفل",
+      "REVOKE" : "مُبطل",
+      "REGISTER" : "مُسجّل",
+      "WITHDRAW" : "مسحوب"
     }
   },
   "operationDetails" : {
@@ -1963,6 +2006,16 @@
       "noTransaction" : {
         "title" : "ليس لديك أي معاملات",
         "subtitle" : "ستحتاج إلى جهاز لشراء أو تلقي {{assetName}}"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "في حالة أنك لم تكن تعلم، مدقق Ledger يقوم بالتكديس بعمولة منخفضة عن المدقق الذي تستخدمه.",
+        "cta" : "إعادة التفويض"
+      },
+      "delegation" : {
+        "description" : "في حالة أنك لم تكن تعلم، مدقق Ledger يقوم بتكديس {{asset}} خاصتك بعمولة منخفضة.",
+        "cta" : "قم بالتكديس الآن"
       }
     }
   },
@@ -4271,7 +4324,10 @@
       "info" : "كيف يعمل التفويض",
       "broadcastSuccessTitle" : "تم إرسال العملية",
       "broadcastSuccessDescription" : "ستُحدّث حالة التفويض عندما يتم تأكيد المعاملة.",
-      "delegatedTo" : "تم التفويض إلى"
+      "delegatedTo" : "تم التفويض إلى",
+      "started" : {
+        "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
+      }
     }
   },
   "delegation" : {
@@ -4291,6 +4347,7 @@
     "delegation" : "التفويض",
     "viewDetails" : "عرض التفاصيل",
     "validator" : "المدقق",
+    "validatorGroup" : "مجموعة المدققين",
     "validatorAddress" : "عنوان المدقق",
     "delegatedAccount" : "الحساب المفوض",
     "duration" : "المدة",
@@ -4685,5 +4742,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "اختر صورة",
+      "options" : {
+        "uploadFromPhone" : "قم بالتحميل من هاتفك"
+      }
+    },
+    "cropImage" : "Crop image",
+    "chooseConstrast" : "Choose contrast",
+    "uploadAnotherImage" : "قم بتحميل صورة أخرى",
+    "selectContrast" : "اختر مستوى التباين"
   }
 }

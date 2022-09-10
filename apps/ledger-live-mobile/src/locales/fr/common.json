@@ -19,6 +19,7 @@
     "device" : "Appareil",
     "cryptoAsset" : "Crypto-actif",
     "skip" : "Passer",
+    "next" : "Suivant",
     "noCryptoFound" : "Aucun crypto-actif trouvé",
     "needHelp" : "Besoin d’aide ?",
     "edit" : "Modifier",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "Échec du chargement de l’image depuis la galerie",
+      "description" : "Veuillez réessayer avec une autre image."
+    },
+    "ImageDownloadError" : {
+      "title" : "Échec du téléchargement de l’image",
+      "description" : "Veuillez réessayer avec une autre image."
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Échec du chargement des métadonnées de l’image",
+      "description" : "Veuillez réessayer avec une autre image."
+    },
+    "ImageTooLargeError" : {
+      "title" : "Image trop grande",
+      "description" : "Veuillez essayer avec une image plus petite."
+    },
+    "ImageCropError" : {
+      "title" : "Échec du recadrage de l’image",
+      "description" : "Veuillez réessayer avec une autre image."
+    },
+    "ImageResizeError" : {
+      "title" : "Échec du redimensionnement de l’image",
+      "description" : "Veuillez réessayer avec une autre image."
+    },
+    "ImagePreviewError" : {
+      "title" : "Aperçu de l’image indisponible",
+      "description" : "Veuillez réessayer avec une autre image."
+    },
+    "ImageProcessingError" : {
+      "title" : "Échec du traitement de l’image",
+      "description" : "Veuillez réessayer avec une autre image."
     }
   },
   "bluetooth" : {
@@ -916,7 +949,7 @@
     "cta" : "Acheter votre Ledger maintenant",
     "footer" : "J’ai déjà un appareil, je veux le configurer",
     "bannerTitle" : "Protégez vos cryptos et vos NFT",
-    "bannerTitle2" : "Vous aurez besoin d’un Nano pour le trading",
+    "bannerTitle2" : "Accédez au trading avec un Nano",
     "bannerSubtitle" : "avec un appareil Ledger",
     "bannerButtonTitle" : "Découvrez le Nano",
     "bannerButtonTitle2" : "Achetez un appareil",
@@ -1012,8 +1045,12 @@
         "subtitle" : "Les wallets physiques sont les seuls outils permettant de sécuriser vos actifs. "
       },
       "discoverLedger" : {
-        "title" : "Explorez Ledger Live",
-        "subtitle" : "Découvrez l’app et tous ses avantages "
+        "title" : "Explorer Ledger Live",
+        "subtitle" : "Découvrez l’app et tous ses avantages. "
+      },
+      "desktopSync" : {
+        "title" : "Synchroniser avec Ledger Live pour l’ordinateur",
+        "subtitle" : "Synchroniser vos actifs avec votre mobile à partir de Ledger Live pour l’ordinateur."
       }
     },
     "discoverLive" : {
@@ -1026,10 +1063,10 @@
         "title" : "Gardez un œil sur les marchés."
       },
       "2" : {
-        "title" : "Découvrez les apps et l’univers du Web3"
+        "title" : "Découvrez les apps et l’univers du Web3."
       },
       "3" : {
-        "title" : "Protégez vos cryptos et vos NFT"
+        "title" : "Protégez vos cryptos et vos NFT."
       }
     },
     "stepLanguage" : {
@@ -1566,26 +1603,26 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "Recherche de votre {{productName}}",
+        "description" : "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
       },
       "withoutProductName" : {
         "title" : "Recherche d’appareils",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "description" : "Assurez-vous que votre appareil est allumé, déverrouillé et que le Bluetooth est activé."
       },
       "alreadyPaired" : "Déjà couplé"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "Couplé avec votre {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "Couplage avec votre {{deviceName}}",
+        "subtitle" : "Confirmez le code sur votre {{productName}}."
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "title" : "Échec du couplage",
+        "subtitle" : "Une erreur est survenue. Vérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité.",
         "retryCta" : "Réessayer"
       }
     }
@@ -1725,7 +1762,13 @@
       "WITHDRAW_UNBONDED" : "Retiré",
       "NOMINATE" : "Nomination",
       "CHILL" : "Retirer les nominations",
-      "SET_CONTROLLER" : "Définir contrôleur"
+      "SET_CONTROLLER" : "Définir contrôleur",
+      "ACTIVATE" : "Activé",
+      "LOCK" : "Immobilisé",
+      "UNLOCK" : "Dégelé",
+      "REVOKE" : "Révoqué",
+      "REGISTER" : "Enregistré",
+      "WITHDRAW" : "Retiré"
     }
   },
   "operationDetails" : {
@@ -1811,7 +1854,7 @@
       "moreInfo" : "Plus d’informations",
       "cardTitle" : "Propulsé par {{team}}",
       "drawer" : {
-        "title" : "Intégration :{{family}}",
+        "title" : "Intégration : {{family}}",
         "subTitle" : "L’intégration {{family}} a été réalisée par l’équipe {{team}}.",
         "description" : "Ledger Live est une plateforme open source.",
         "description2" : "Les développeurs du monde entier peuvent intégrer et construire sur Ledger Live.",
@@ -1963,6 +2006,16 @@
       "noTransaction" : {
         "title" : "Aucune transaction pour le moment",
         "subtitle" : "Vous avez besoin d’un appareil pour acheter ou recevoir des {{assetName}}"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Bon à savoir : le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
+        "cta" : "Redéléguer"
+      },
+      "delegation" : {
+        "description" : "Bon à savoir : en stakant vos {{asset}} via le validateur Ledger, vous bénéficiez de faibles frais.",
+        "cta" : "Staker maintenant"
       }
     }
   },
@@ -2670,7 +2723,7 @@
       "terms" : {
         "label" : "Prêter des cryptos",
         "title" : "Prêter vos actifs sur le protocole Compound",
-        "description" : "Le protocole Compound vous permet de prêter et d’emprunter des actifs sur le réseau Ethereum. Vous pouvez prêter vos actifs et gagner des intérêts directement depuis votre compte Ledger Live.",
+        "description" : "Le protocole Compound vous permet de prêter et d’emprunter des actifs sur le réseau Ethereum. Vous pouvez prêter vos actifs et gagner des intérêts directement depuis votre compte Ledger.",
         "switchLabel" : "J’ai lu et accepte les <0><0>Conditions d’utilisation</0></0>."
       },
       "info" : {
@@ -4271,7 +4324,10 @@
       "info" : "Fonctionnement de la délégation",
       "broadcastSuccessTitle" : "Opération envoyée",
       "broadcastSuccessDescription" : "Le statut de la délégation sera mis à jour une fois la transaction confirmée.",
-      "delegatedTo" : "délégué à"
+      "delegatedTo" : "délégué à",
+      "started" : {
+        "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
+      }
     }
   },
   "delegation" : {
@@ -4291,6 +4347,7 @@
     "delegation" : "Délégation",
     "viewDetails" : "Voir les détails",
     "validator" : "Validateur",
+    "validatorGroup" : "Groupe de validateurs",
     "validatorAddress" : "Adresse du validateur",
     "delegatedAccount" : "Compte délégué",
     "duration" : "Durée",
@@ -4685,5 +4742,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "Choisissez une image",
+      "options" : {
+        "uploadFromPhone" : "Télécharger à partir de mon téléphone"
+      }
+    },
+    "cropImage" : "Recadrez l’image",
+    "chooseConstrast" : "Choisissez un contraste",
+    "uploadAnotherImage" : "Télécharger une autre image",
+    "selectContrast" : "Sélectionnez le contraste voulu"
   }
 }

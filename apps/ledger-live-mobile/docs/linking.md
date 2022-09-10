@@ -33,6 +33,12 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://buy/bitcoin` will redirect to buy page with bitcoin accounts search prefilled
 
+- **_sell/:currency_** 🠒 Sell Crypto Flow
+
+  `ledgerlive://sell` will redirect to sell page
+
+  `ledgerlive://sell/bitcoin` will redirect to sell page with bitcoin accounts search prefilled
+
 - **_manager_** 🠒 Manager page
 
   `ledgerlive://manager` will redirect to manager page

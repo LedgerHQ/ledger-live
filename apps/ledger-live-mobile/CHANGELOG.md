@@ -1,20 +1,95 @@
 # live-mobile
 
+## 3.8.0-next.6
+
+### Patch Changes
+
+- [#756](https://github.com/LedgerHQ/ledger-live/pull/756) [`708f647d88`](https://github.com/LedgerHQ/ledger-live/commit/708f647d88ae484b5f1829fcab64139561bbd21f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent navigation without user confirmation with ongoing installs/uninstalls
+- Updated dependencies [[`3849ee3f30`](https://github.com/LedmgerHQ/ledger-live/commit/3849ee3f30987b51d648ce29bfee4721f4ddff5f)]:
+  - @ledgerhq/live-common@27.1.0-next.6
+
+## 3.8.0-next.5
+
+### Patch Changes
+
+- [#1097](https://github.com/LedgerHQ/ledger-live/pull/1097) [`936b6dc545`](https://github.com/LedgerHQ/ledger-live/commit/936b6dc5450fcd69a31e03fa2040346d512c0912) Thanks [@alexandremgo](https://github.com/alexandremgo)! - New BLE pairing flow
+
+  Not yet used in production. Accessible from the debug menu.
+
+  Features:
+
+  - scanning and pairing: one screen to go to from anywhere
+  - navigate to after pairing success: configuration of the screen (and its associated navigator) with params and name of the route param that will have newly paired device info
+  - scanning: filtering on device models
+  - scanning: filtering out or displaying already known devices
+  - pairing: new animation for pairing (lotties placeholders for now)
+  - pairing: possibility to add (or not) the newly paired device to the "known devices" of the app (redux store)
+
+- Updated dependencies [[`936b6dc545`](https://github.com/LedgerHQ/ledger-live/commit/936b6dc5450fcd69a31e03fa2040346d512c0912)]:
+  - @ledgerhq/live-common@27.1.0-next.5
+
+## 3.8.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`0ebdec50bf`](https://github.com/LedgerHQ/ledger-live/commit/0ebdec50bfca81b2d814726f8f9a82237ad42ffc)]:
+  - @ledgerhq/live-common@27.1.0-next.4
+
+## 3.8.0-next.3
+
+### Minor Changes
+
+- [#961](https://github.com/LedgerHQ/ledger-live/pull/961) [`b06c9fdf5c`](https://github.com/LedgerHQ/ledger-live/commit/b06c9fdf5ccbbc68283dd73ea4c3ea0e380c1539) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Minor wording changes
+- [#963](https://github.com/LedgerHQ/ledger-live/pull/963) [`80aa008719`](https://github.com/LedgerHQ/ledger-live/commit/80aa00871943788d730cc8bb95a6d57ea2e9be96) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Enable Filecoin integration on LLM
+
+### Patch Changes
+
+- Updated dependencies [[`685348dd35`](https://github.com/LedgerHQ/ledger-live/commit/685348dd351181a9ed7f23cedb3e3d289b16fe9e), [`dd538c3723`](https://github.com/LedgerHQ/ledger-live/commit/dd538c3723853334ce19a89353f20766432d12fd), [`0601b6541f`](https://github.com/LedgerHQ/ledger-live/commit/0601b6541f10635aea72f916626432a334aa49fa)]:
+  - @ledgerhq/live-common@27.1.0-next.3
+
+## 3.8.0-next.2
+
+### Minor Changes
+
+- [#1017](https://github.com/LedgerHQ/ledger-live/pull/1017) [`21ed0bd521`](https://github.com/LedgerHQ/ledger-live/commit/21ed0bd5219a3629abc0bbb547fc4d75f5e71300) Thanks [@sarneijim](https://github.com/sarneijim)! - Add cosmos account banner in LLM
+
+### Patch Changes
+
+- Updated dependencies [[`8fe44e12d7`](https://github.com/LedgerHQ/ledger-live/commit/8fe44e12d73fe96636282666dd8f3b02ef96d0e6), [`21ed0bd521`](https://github.com/LedgerHQ/ledger-live/commit/21ed0bd5219a3629abc0bbb547fc4d75f5e71300)]:
+  - @ledgerhq/live-common@27.1.0-next.2
+
+## 3.8.0-next.1
+
+### Minor Changes
+
+- [#669](https://github.com/LedgerHQ/ledger-live/pull/669) [`b615140ba2`](https://github.com/LedgerHQ/ledger-live/commit/b615140ba2e326e1466d15f123d412ea90db3754) Thanks [@andyhass](https://github.com/andyhass)! - Add Celo Staking
+
+### Patch Changes
+
+- Updated dependencies [[`b615140ba2`](https://github.com/LedgerHQ/ledger-live/commit/b615140ba2e326e1466d15f123d412ea90db3754), [`336eb879a8`](https://github.com/LedgerHQ/ledger-live/commit/336eb879a80573fd81027232c4c6c9b383bd2a97), [`3615a06f19`](https://github.com/LedgerHQ/ledger-live/commit/3615a06f19ef659480d50a1a1a28f6df952b117a)]:
+  - @ledgerhq/live-common@27.1.0-next.1
+
+## 3.7.1-next.0
+
+### Patch Changes
+
+- [#1112](https://github.com/LedgerHQ/ledger-live/pull/1112) [`44516bce9f`](https://github.com/LedgerHQ/ledger-live/commit/44516bce9f2faae54989e508371785b50189399e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Support: LLM eslint rule no-unused-vars only from TS
+
+* [#1000](https://github.com/LedgerHQ/ledger-live/pull/1000) [`dc3fd1841e`](https://github.com/LedgerHQ/ledger-live/commit/dc3fd1841e3e8b164f047fe84efd3776e16f8ff1) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Migration from JavaScript to TypeScript for LLM
+
+- [#1070](https://github.com/LedgerHQ/ledger-live/pull/1070) [`533e658dcd`](https://github.com/LedgerHQ/ledger-live/commit/533e658dcd7862d4e6c9cb1b55c400652c68ae26) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix crash when scanning for bluetooth devices
+
+- Updated dependencies [[`7e812a738d`](https://github.com/LedgerHQ/ledger-live/commit/7e812a738db718200138dcb9b7bcc2f6dd0ddd6f), [`058a1af7ff`](https://github.com/LedgerHQ/ledger-live/commit/058a1af7ff463d21afe85d03563b61e1d543c95b), [`d6634bc0b7`](https://github.com/LedgerHQ/ledger-live/commit/d6634bc0b720d8a13f3681caf33e2f23d5c64968), [`5da717c523`](https://github.com/LedgerHQ/ledger-live/commit/5da717c523db7678edeb0f86bdfa88256dfe96c4), [`533e658dcd`](https://github.com/LedgerHQ/ledger-live/commit/533e658dcd7862d4e6c9cb1b55c400652c68ae26)]:
+  - @ledgerhq/live-common@27.0.1-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.5-next.0
+
 ## 3.7.0
 
 ### Minor Changes
 
-- [#756](https://github.com/LedgerHQ/ledger-live/pull/756) [`708f647d88`](https://github.com/LedgerHQ/ledger-live/commit/708f647d88ae484b5f1829fcab64139561bbd21f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent navigation without user confirmation with ongoing installs/uninstalls
+- [#921](https://github.com/LedgerHQ/ledger-live/pull/921) [`cce2e7a4e7`](https://github.com/LedgerHQ/ledger-live/commit/cce2e7a4e76445921066593a07964ed7d0875f54) Thanks [@github-actions](https://github.com/apps/github-actions)! - Type libraries usage in LLC, LLD, LLM, CLI
 
-* [#492](https://github.com/LedgerHQ/ledger-live/pull/492) [`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2) Thanks [@grsoares21](https://github.com/grsoares21)! - Adds a device language change feature under feature flag
-
-- [#890](https://github.com/LedgerHQ/ledger-live/pull/890) [`6430701903`](https://github.com/LedgerHQ/ledger-live/commit/643070190386c2242315c9f79d54ca2a3feda6d9) Thanks [@marco-figment](https://github.com/marco-figment)! - Adding support for sending, receiving and staking funds in Ledger Live Mobile.
-
-* [`2a30133598`](https://github.com/LedgerHQ/ledger-live/commit/2a301335985cadf937a7acfc661d55572eb73301) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Type libraries usage in LLC, LLD, LLM, CLI
-
-- [#814](https://github.com/LedgerHQ/ledger-live/pull/814) [`23c9bf9949`](https://github.com/LedgerHQ/ledger-live/commit/23c9bf9949169d31d534f12dca48e21e35df05b2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added development/QA tool for feature flags [mobile]
-
-* [`2a30133598`](https://github.com/LedgerHQ/ledger-live/commit/2a301335985cadf937a7acfc661d55572eb73301) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Osmosis Send, Receive and Staking + Cosmos refactor
+* [#921](https://github.com/LedgerHQ/ledger-live/pull/921) [`cce2e7a4e7`](https://github.com/LedgerHQ/ledger-live/commit/cce2e7a4e76445921066593a07964ed7d0875f54) Thanks [@github-actions](https://github.com/apps/github-actions)! - Osmosis Send, Receive and Staking + Cosmos refactor
 
   For additional context on what changed:
 
@@ -33,59 +108,23 @@
 
   - Live CLI: updated references to cosmosSourceValidators to sourceValidators for re-usability.
 
-- [#961](https://github.com/LedgerHQ/ledger-live/pull/961) [`b06c9fdf5c`](https://github.com/LedgerHQ/ledger-live/commit/b06c9fdf5ccbbc68283dd73ea4c3ea0e380c1539) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Minor wording changes
-
-* [#730](https://github.com/LedgerHQ/ledger-live/pull/730) [`e1173f5f4c`](https://github.com/LedgerHQ/ledger-live/commit/e1173f5f4c521bdf50c9c1be431f63ae17aa2793) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Redirect buy sell in app links to live app implementation if feature flag is activated
-
-- [`2a30133598`](https://github.com/LedgerHQ/ledger-live/commit/2a301335985cadf937a7acfc661d55572eb73301) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Add banner to external integrations
+- [#921](https://github.com/LedgerHQ/ledger-live/pull/921) [`cce2e7a4e7`](https://github.com/LedgerHQ/ledger-live/commit/cce2e7a4e76445921066593a07964ed7d0875f54) Thanks [@github-actions](https://github.com/apps/github-actions)! - Add banner to external integrations
 
 ### Patch Changes
 
-- [#958](https://github.com/LedgerHQ/ledger-live/pull/958) [`68c50cd94b`](https://github.com/LedgerHQ/ledger-live/commit/68c50cd94bbe50a1bf284a2e9e5aed3781788754) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix getFeature being a hook and getting called outside of React
-
-* [#798](https://github.com/LedgerHQ/ledger-live/pull/798) [`222335854d`](https://github.com/LedgerHQ/ledger-live/commit/222335854d412cd748c0add73b5f0bb93e02ba42) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - bug fix issue on storyly package version
-
-- [#808](https://github.com/LedgerHQ/ledger-live/pull/808) [`7060810545`](https://github.com/LedgerHQ/ledger-live/commit/70608105451e29cbb543ee98d2a8a4cf5ada38df) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Fix redirection to stories from device selection screen
+- [#798](https://github.com/LedgerHQ/ledger-live/pull/798) [`222335854d`](https://github.com/LedgerHQ/ledger-live/commit/222335854d412cd748c0add73b5f0bb93e02ba42) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - bug fix issue on storyly package version
 
 * [#882](https://github.com/LedgerHQ/ledger-live/pull/882) [`807f3feb94`](https://github.com/LedgerHQ/ledger-live/commit/807f3feb947ffd31d47d43b5aa7b8e85f2bbf6d8) Thanks [@Justkant](https://github.com/Justkant)! - fix: bump platform API version [LIVE-3181]
 
-- [#965](https://github.com/LedgerHQ/ledger-live/pull/965) [`186256abac`](https://github.com/LedgerHQ/ledger-live/commit/186256abac2ff3992a37ce15424bd1a3251e0c89) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Display more of the essential information in Feature Flags debugging screen
-
-* [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503) Thanks [@github-actions](https://github.com/apps/github-actions)! - LLM: fixes import from desktop to fully sync accounts before save
-
-- [#1013](https://github.com/LedgerHQ/ledger-live/pull/1013) [`7d7b38fa6c`](https://github.com/LedgerHQ/ledger-live/commit/7d7b38fa6c6089e60194b536131777d2035ef892) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix rendering of last app item in manager
-
-* [#751](https://github.com/LedgerHQ/ledger-live/pull/751) [`be4ad4860c`](https://github.com/LedgerHQ/ledger-live/commit/be4ad4860c3954549c8ac955e1971f52cdb99679) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Fix redirection from upsell screen
-
-- [`2a30133598`](https://github.com/LedgerHQ/ledger-live/commit/2a301335985cadf937a7acfc661d55572eb73301) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Add Analytics 'reason' field in context of sync events
+- [#921](https://github.com/LedgerHQ/ledger-live/pull/921) [`cce2e7a4e7`](https://github.com/LedgerHQ/ledger-live/commit/cce2e7a4e76445921066593a07964ed7d0875f54) Thanks [@github-actions](https://github.com/apps/github-actions)! - Add Analytics 'reason' field in context of sync events
 
 * [#815](https://github.com/LedgerHQ/ledger-live/pull/815) [`152339dcee`](https://github.com/LedgerHQ/ledger-live/commit/152339dceeaca4b4b7656aad1c690589189900a8) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add generics lotties animations
 
-- [#730](https://github.com/LedgerHQ/ledger-live/pull/730) [`6e057f7163`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4) Thanks [@LFBarreto](https://github.com/LFBarreto)! - update ptx smart routing feature flag and live app web player undefined uri params
-
-- Updated dependencies [[`2fd6f6244c`](https://github.com/LedgerHQ/ledger-live/commit/2fd6f6244c41158883ca44accf9cbda4fd8d3418), [`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2), [`d679e5feeb`](https://github.com/LedgerHQ/ledger-live/commit/d679e5feebc02e7cd138e1026b7bad5392866ea2), [`68c50cd94b`](https://github.com/LedgerHQ/ledger-live/commit/68c50cd94bbe50a1bf284a2e9e5aed3781788754), [`092a887af5`](https://github.com/LedgerHQ/ledger-live/commit/092a887af5a1405a1de3704bc5954c761cd53457), [`432cfa8994`](https://github.com/LedgerHQ/ledger-live/commit/432cfa8994e21c2e67d72bd0e6e94a64d7cc2dfb), [`c7aaafa769`](https://github.com/LedgerHQ/ledger-live/commit/c7aaafa76924252f3c7e30371012bd0e69d8100a), [`c7aaafa769`](https://github.com/LedgerHQ/ledger-live/commit/c7aaafa76924252f3c7e30371012bd0e69d8100a), [`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503), [`a36d1de865`](https://github.com/LedgerHQ/ledger-live/commit/a36d1de865fd318051c46335d1c86f5cf12b2100), [`6e057f7163`](https://github.com/LedgerHQ/ledger-live/commit/6e057f7163dc53658604429e3e6c8057ae9988f4), [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1), [`f28d403542`](https://github.com/LedgerHQ/ledger-live/commit/f28d4035426e741822108daf172f4509ce030751), [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311), [`2fd6f6244c`](https://github.com/LedgerHQ/ledger-live/commit/2fd6f6244c41158883ca44accf9cbda4fd8d3418)]:
-  - @ledgerhq/native-ui@0.9.0
-  - @ledgerhq/live-common@27.0.0
-  - @ledgerhq/types-live@6.24.0
-  - @ledgerhq/hw-transport@6.27.3
-  - @ledgerhq/react-native-hw-transport-ble@6.27.4
-  - @ledgerhq/hw-transport-http@6.27.3
-  - @ledgerhq/react-native-hid@6.28.5
-
-## 3.7.0-next.4
-
-### Patch Changes
-
-- [#998](https://github.com/LedgerHQ/ledger-live/pull/998) [`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503) Thanks [@github-actions](https://github.com/apps/github-actions)! - LLM: fixes import from desktop to fully sync accounts before save
-
-- Updated dependencies [[`f47b2b1f47`](https://github.com/LedgerHQ/ledger-live/commit/f47b2b1f47c2256ad006ed35db9a0935e87cd503)]:
-  - @ledgerhq/live-common@27.0.0-next.3
-
-## 3.7.0-next.3
+## 3.7.0-hotfix.0
 
 ### Minor Changes
 
-- [#890](https://github.com/LedgerHQ/ledger-live/pull/890) [`6430701903`](https://github.com/LedgerHQ/ledger-live/commit/643070190386c2242315c9f79d54ca2a3feda6d9) Thanks [@marco-figment](https://github.com/marco-figment)! - Adding support for sending, receiving and staking funds in Ledger Live Mobile.
+- [#921](https://github.com/LedgerHQ/ledger-live/pull/921) [`cce2e7a4e7`](https://github.com/LedgerHQ/ledger-live/commit/cce2e7a4e76445921066593a07964ed7d0875f54) Thanks [@github-actions](https://github.com/apps/github-actions)! - Type libraries usage in LLC, LLD, LLM, CLI
 
 * [#723](https://github.com/LedgerHQ/ledger-live/pull/723) [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1) Thanks [@marco-figment](https://github.com/marco-figment)! - Osmosis Send, Receive and Staking + Cosmos refactor
 

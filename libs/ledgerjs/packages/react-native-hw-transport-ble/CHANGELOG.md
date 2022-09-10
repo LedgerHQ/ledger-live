@@ -1,5 +1,23 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.27.5
+
+### Patch Changes
+
+- [#1117](https://github.com/LedgerHQ/ledger-live/pull/1117) [`a7976db5d`](https://github.com/LedgerHQ/ledger-live/commit/a7976db5d3836d3d41ef0a0507373cad0bd8725c) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix crash when scanning for bluetooth devices
+
+## 6.27.5-next.0
+
+### Patch Changes
+
+- [#1070](https://github.com/LedgerHQ/ledger-live/pull/1070) [`533e658dcd`](https://github.com/LedgerHQ/ledger-live/commit/533e658dcd7862d4e6c9cb1b55c400652c68ae26) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix crash when scanning for bluetooth devices
+
+## 6.27.3
+
+### Patch Changes
+
+- [`3cc45438a8`](https://github.com/LedgerHQ/ledger-live/commit/3cc45438a8aced1922742ff077946d1216f63525) Thanks [@elbywan](https://github.com/elbywan)! - Use commonjs imports for @ledgerhq/devices. Fixes #777.
+
 ## 6.27.4
 
 ### Patch Changes

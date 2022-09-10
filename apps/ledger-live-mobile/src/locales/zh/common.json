@@ -19,6 +19,7 @@
     "device" : "设备",
     "cryptoAsset" : "加密资产",
     "skip" : "跳过",
+    "next" : "下一步",
     "noCryptoFound" : "未找到加密资产",
     "needHelp" : "您是否需要帮助？",
     "edit" : "编辑",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "从图库加载图片失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageDownloadError" : {
+      "title" : "图片下载失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "图片元数据加载失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageTooLargeError" : {
+      "title" : "图片过大",
+      "description" : "请尝试使用较小的图片"
+    },
+    "ImageCropError" : {
+      "title" : "图片裁剪失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageResizeError" : {
+      "title" : "调整图片大小失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImagePreviewError" : {
+      "title" : "图片预览失败",
+      "description" : "请使用另一张图片重试"
+    },
+    "ImageProcessingError" : {
+      "title" : "图片处理失败",
+      "description" : "请使用另一张图片重试"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "探索 Ledger Live",
         "subtitle" : "探索应用程序并了解其好处 "
+      },
+      "desktopSync" : {
+        "title" : "通过桌面应用程序同步",
+        "subtitle" : "在 Ledger Live 桌面版中与您的手机同步资产。"
       }
     },
     "discoverLive" : {
@@ -1566,27 +1603,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "正在寻找您的 {{productName}}",
+        "description" : "请确保您的 {{productName}} 已解锁并且已启用蓝牙"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "正在寻找设备",
+        "description" : "确保您的设备已开机、已解锁且已启用蓝牙"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "已配对"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "已和 {{deviceName}} 配对"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "正在和 {{deviceName}} 配对",
+        "subtitle" : "在您的 {{productName}} 上确认代码"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "配对成功",
+        "subtitle" : "似乎出了点问题！检查蓝牙是否开启，以及 {{productName}} 是否在附近",
+        "retryCta" : "请重试"
       }
     }
   },
@@ -1725,7 +1762,13 @@
       "WITHDRAW_UNBONDED" : "提取",
       "NOMINATE" : "提名",
       "CHILL" : "清除提名",
-      "SET_CONTROLLER" : "设置控制器"
+      "SET_CONTROLLER" : "设置控制器",
+      "ACTIVATE" : "已激活",
+      "LOCK" : "已锁定",
+      "UNLOCK" : "已解锁",
+      "REVOKE" : "已撤销",
+      "REGISTER" : "已注册",
+      "WITHDRAW" : "已提取"
     }
   },
   "operationDetails" : {
@@ -1963,6 +2006,16 @@
       "noTransaction" : {
         "title" : "您没有任何交易",
         "subtitle" : "您需要有设备才能买入或接收 {{assetName}}"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "您知道吗？Ledger 验证器权益质押的佣金低于您目前使用的验证器。",
+        "cta" : "重新委托"
+      },
+      "delegation" : {
+        "description" : "您知道吗？Ledger 验证器只需超低佣金即可为您权益质押 {{asset}}。",
+        "cta" : "立即进行权益质押"
       }
     }
   },
@@ -4271,7 +4324,10 @@
       "info" : "委托机制是如何运作的",
       "broadcastSuccessTitle" : "操作已发送",
       "broadcastSuccessDescription" : "交易确认后，委托状态将更新。",
-      "delegatedTo" : "委托给"
+      "delegatedTo" : "委托给",
+      "started" : {
+        "description" : "您可以将 SOL 资产委托给验证者，从而赚取奖励。"
+      }
     }
   },
   "delegation" : {
@@ -4291,6 +4347,7 @@
     "delegation" : "委托",
     "viewDetails" : "查看详情",
     "validator" : "验证者",
+    "validatorGroup" : "验证者组",
     "validatorAddress" : "验证者地址",
     "delegatedAccount" : "已委托账户",
     "duration" : "持续时间",
@@ -4685,5 +4742,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "选择一张图片",
+      "options" : {
+        "uploadFromPhone" : "从我的手机上传"
+      }
+    },
+    "cropImage" : "裁剪图片",
+    "chooseConstrast" : "选择对比度",
+    "uploadAnotherImage" : "上传另一张图片",
+    "selectContrast" : "选择对比度"
   }
 }
