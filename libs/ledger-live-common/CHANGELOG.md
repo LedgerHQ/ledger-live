@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.2.0-nightly.2
+
+### Minor Changes
+
+- [#1130](https://github.com/LedgerHQ/ledger-live/pull/1130) [`3d2fa9adbb`](https://github.com/LedgerHQ/ledger-live/commit/3d2fa9adbbd408b4be3748f1d2180e90b83de536) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Switch to swap backend API v4
+
 ## 27.2.0-nightly.1
 
 ### Patch Changes
