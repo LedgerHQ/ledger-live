@@ -137,6 +137,40 @@ describe("BIM feature", () => {
         })
       );
     });
+
+    test("Completing the queue observer emits a cleanup event", (done) => {
+      const mockedBleTransport = {
+        queue: (observer, rawQueue) => {
+          expect(rawQueue.includes('"appName":"Bitcoin"')).toBe(true);
+          observer.complete();
+        },
+      };
+      mockedWithDevice.mockReturnValue((job) => job(mockedBleTransport));
+      const state = { ...mockedState, uninstallQueue: ["Bitcoin"] };
+      renderHook(() =>
+        useBIM("12:34:56:78", state, (e) => {
+          expect(e).toEqual({ type: "wipe-queue" });
+          done();
+        })
+      );
+    });
+
+    test("Failing the queue observer emits a cleanup event", (done) => {
+      const mockedBleTransport = {
+        queue: (observer, rawQueue) => {
+          expect(rawQueue.includes('"appName":"Bitcoin"')).toBe(true);
+          observer.error(new Error("something-bad-happened"));
+        },
+      };
+      mockedWithDevice.mockReturnValue((job) => job(mockedBleTransport));
+      const state = { ...mockedState, uninstallQueue: ["Bitcoin"] };
+      renderHook(() =>
+        useBIM("12:34:56:78", state, (e) => {
+          expect(e.type).toEqual("runError");
+          done();
+        })
+      );
+    });
   });
 });
 
