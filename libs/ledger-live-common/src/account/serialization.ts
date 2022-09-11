@@ -91,7 +91,6 @@ import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
 import type { TronAccount, TronAccountRaw } from "../families/tron/types";
 import { getAccountBridge } from "../bridge";
 
-
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
@@ -900,7 +899,7 @@ export function toAccountRaw(account: Account): AccountRaw {
       if (assignToAccountRaw) {
         assignToAccountRaw(account, res);
       }
-    }    
+    }
   }
 
   if (swapHistory) {

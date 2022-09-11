@@ -29,7 +29,6 @@ import {
   fromNFTRaw,
   toTronResourcesRaw,
   toCosmosResourcesRaw,
-  toAlgorandResourcesRaw,
   toCardanoResourceRaw,
   toPolkadotResourcesRaw,
   toTezosResourcesRaw,
