@@ -10,8 +10,6 @@ import Foundation
 
 enum Event: String, CaseIterable {
     case parent = "BleTransport"
-    
-    case newDevice = "add"
     case newDevices = "replace"
     case status = "status"
     case apdu = "apdu" /// We are currently not exposing these when in background

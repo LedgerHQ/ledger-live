@@ -131,28 +131,21 @@ class Ble extends Transport {
   static onBridgeGlobalEvent(rawEvent: GlobalBridgeEvent): void {
     const { event, type, data } = rawEvent;
     Ble.log("raw global bridge", JSON.stringify(rawEvent));
-    // For Device events we need to polyfill the model since it's expected
-    // throughout our codebase. We do this based on the serviceUUID from
-    // the descriptor.
-    if (event === "replace") {
-      // A replace is here mapped to multiple events:
-      //  - flushing the existing devices
-      //  - emit the new ones as `add` events.
-      Ble.scanObserver?.next({ type: "flush" });
-      data.devices.forEach((descriptor) => {
-        Ble.scanObserver?.next({
-          type: "add",
-          descriptor,
+
+    switch (event) {
+      case "replace": {
+        Ble.scanObserver?.next({ type: "flush" });
+        data.devices.forEach((descriptor) => {
+          Ble.scanObserver?.next({
+            type: "add",
+            descriptor,
+          });
         });
-      });
-    } else if (event === "add") {
-      Ble.scanObserver?.next({
-        type: "add",
-        descriptor: data,
-      });
-    } else if (event === "status") {
-      if (Ble.stateObserver) {
-        Ble.stateObserver.next({
+        break;
+      }
+
+      case "status": {
+        Ble.stateObserver?.next({
           type,
         });
       }
@@ -173,8 +166,8 @@ class Ble extends Transport {
       return new Ble(_uuid);
     } catch (error) {
       Ble.log("failed to connect to device");
-      throw Ble.remapError(error, { uuid });
       Ble.disconnect();
+      throw Ble.remapError(error, { uuid });
     }
   };
 
@@ -182,8 +175,18 @@ class Ble extends Transport {
     observer: Observer<{ type: string }>
   ): Subscription => {
     Ble.stateObserver = observer;
+    const eventEmitter = new NativeEventEmitter(
+      NativeModules.HwTransportReactNativeBle
+    );
+
+    Ble.globalBridgeEventSubscription = eventEmitter.addListener(
+      "BleTransport",
+      Ble.onBridgeGlobalEvent
+    );
+
     NativeBle.observeBluetooth(); // Nb currently we are still relying on the RequiresBluetooth cmp
 
+    // This is not the state, it's the app state, in case you are wondering.
     AppState.addEventListener("change", (state) => {
       NativeBle.onAppStateChange(state === "active");
     });
@@ -255,7 +258,7 @@ class Ble extends Transport {
     return true;
   };
 
-  private static remapError = (error: any, extras?: unknown) => {
+  protected static remapError = (error: any, extras?: unknown) => {
     Ble.log(`raw error data ${JSON.stringify(error)}`);
 
     const mappedErrors = {
@@ -267,6 +270,10 @@ class Ble extends Transport {
 
     if (error?.code in mappedErrors)
       return new mappedErrors[error?.code](extras);
+
+    if (error?.error in mappedErrors)
+      return new mappedErrors[error?.error](extras);
+
     return new TransportError(error?.code, error);
   };
 
@@ -276,6 +283,7 @@ class Ble extends Transport {
     endpoint: string
   ): void => {
     if (!endpoint) throw new Error("No endpoint provided for BIM");
+    if (!instances.length) throw new Error("No transport instances");
 
     Ble.log("request to launch queue", rawQueue);
     this.queueObserver = observer;
