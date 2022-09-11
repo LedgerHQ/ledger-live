@@ -16,6 +16,7 @@ import {
   DeviceExtractOnboardingStateError,
   DisconnectedDevice,
   CantOpenDevice,
+  TransportRaceCondition,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import {
@@ -142,13 +143,16 @@ export const getOnboardingStatePolling = ({
   return delayedOnceOnboardingStateObservable.pipe(repeat());
 };
 
-export const isAllowedOnboardingStatePollingError = (error: Error): boolean => {
+export const isAllowedOnboardingStatePollingError = (
+  error: unknown
+): boolean => {
   if (
     error &&
     // Timeout error is thrown by rxjs's timeout
     (error instanceof TimeoutError ||
       error instanceof DisconnectedDevice ||
       error instanceof CantOpenDevice ||
+      error instanceof TransportRaceCondition ||
       error instanceof TransportStatusError)
   ) {
     return true;

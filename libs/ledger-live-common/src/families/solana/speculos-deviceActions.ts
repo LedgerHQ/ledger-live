@@ -230,8 +230,3 @@ export const acceptStakeWithdrawTransaction: DeviceAction<Transaction, any> =
 function throwUnexpectedTransaction(): never {
   throw new Error("unexpected or unprepared transaction");
 }
-
-export default {
-  acceptTransferTransaction,
-  acceptStakeCreateAccountTransaction,
-};

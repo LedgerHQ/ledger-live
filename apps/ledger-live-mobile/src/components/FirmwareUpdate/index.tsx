@@ -34,7 +34,6 @@ type Props = {
   device: Device;
   deviceInfo: DeviceInfo;
   isOpen: boolean;
-  // eslint-disable-next-line no-unused-vars
   onClose: (restoreApps?: boolean) => void;
   hasAppsToRestore: boolean;
 };

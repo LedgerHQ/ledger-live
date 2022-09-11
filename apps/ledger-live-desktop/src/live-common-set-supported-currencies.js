@@ -45,4 +45,10 @@ setSupportedCurrencies([
   "hedera",
   "cardano",
   "filecoin",
+  "osmosis",
+  "fantom",
+  "cronos",
+  "moonbeam",
+  "songbird",
+  "flare",
 ]);

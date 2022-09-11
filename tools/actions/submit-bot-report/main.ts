@@ -14,12 +14,13 @@ async function main() {
   const githubToken = core.getInput("githubToken");
   const githubSha = core.getInput("githubSha");
   const slackChannel = core.getInput("slackChannel");
+  const slackIconEmoji = core.getInput("slackIconEmoji");
   const slackApiToken = core.getInput("slackApiToken");
 
   // load reports
   const reportsFolder = path.resolve(core.getInput("path"));
   const reportBodyP = fs.promises.readFile(
-    path.join(reportsFolder, "full-report.md"),
+    path.join(reportsFolder, "github-report.md"),
     "utf-8"
   );
   const slackCommentTemplateP = fs.promises.readFile(
@@ -57,6 +58,7 @@ async function main() {
       body: JSON.stringify({
         text,
         channel: slackChannel || "ledger-live-bot",
+        icon_emoji: slackIconEmoji || ":mere_denis:",
       }),
     }).then(handleErrors);
   }

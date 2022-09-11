@@ -2044,7 +2044,7 @@ var require_core = __commonJS({
       process.env["PATH"] = `${inputPath}${path3.delimiter}${process.env["PATH"]}`;
     }
     exports.addPath = addPath;
-    function getInput(name, options) {
+    function getInput2(name, options) {
       const val = process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] || "";
       if (options && options.required && !val) {
         throw new Error(`Input required and not supplied: ${name}`);
@@ -2054,16 +2054,16 @@ var require_core = __commonJS({
       }
       return val.trim();
     }
-    exports.getInput = getInput;
+    exports.getInput = getInput2;
     function getMultilineInput(name, options) {
-      const inputs = getInput(name, options).split("\n").filter((x) => x !== "");
+      const inputs = getInput2(name, options).split("\n").filter((x) => x !== "");
       return inputs;
     }
     exports.getMultilineInput = getMultilineInput;
     function getBooleanInput(name, options) {
       const trueValue = ["true", "True", "TRUE"];
       const falseValue = ["false", "False", "FALSE"];
-      const val = getInput(name, options);
+      const val = getInput2(name, options);
       if (trueValue.includes(val))
         return true;
       if (falseValue.includes(val))
@@ -4795,6 +4795,11 @@ var logFileName = "__turbo_server.log";
 var portFileName = "__turbo_port.txt";
 
 // src/main.ts
+var cleanupCacheFolder = (0, import_core.getInput)("cleanup-cache-folder", {
+  required: true,
+  trimWhitespace: true
+});
+(0, import_core.saveState)("cleanupCacheFolder", cleanupCacheFolder);
 (async () => {
   fs.ensureDirSync(absoluteCacheDirectory);
   const out = fs.openSync(path2.join(absoluteCacheDirectory, logFileName), "w");
@@ -4806,6 +4811,7 @@ var portFileName = "__turbo_port.txt";
   });
   subprocess.unref();
   let interval = null;
+  let timeout = null;
   try {
     await Promise.race([
       new Promise((resolve3) => {
@@ -4818,12 +4824,15 @@ var portFileName = "__turbo_port.txt";
           }
         }, 1e3);
       }),
-      new Promise((_, reject) => setTimeout(reject, 1e4))
+      new Promise((_, reject) => {
+        timeout = setTimeout(reject, 1e4);
+      })
     ]);
   } catch (error) {
     console.error("Timeout while waiting for the server to boot.");
   } finally {
     clearInterval(interval);
+    clearTimeout(timeout);
   }
   (0, import_core.info)(`Server PID: ${subprocess.pid}`);
   (0, import_core.saveState)("pidToKill", subprocess.pid);

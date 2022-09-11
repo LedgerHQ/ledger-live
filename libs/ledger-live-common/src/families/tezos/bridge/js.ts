@@ -43,7 +43,7 @@ import { InvalidAddressBecauseAlreadyDelegated } from "../../../errors";
 import api from "../api/tzkt";
 
 const validateRecipient = (currency, recipient) => {
-  let recipientError = null;
+  let recipientError: Error | null = null;
   const recipientWarning = null;
   if (!recipient) {
     recipientError = new RecipientRequired("");

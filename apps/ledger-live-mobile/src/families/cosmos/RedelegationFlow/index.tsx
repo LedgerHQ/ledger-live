@@ -56,6 +56,25 @@ function RedelegationFlow() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.CosmosDefaultRedelegationAmount}
+        component={RedelegationAmount}
+        options={({ route }) => ({
+          headerTitle: () => (
+            <StepHeader
+              title={t("cosmos.redelegation.stepperHeader.amountTitle", {
+                from: route.params?.validatorSrc?.name ?? "",
+                to: route.params?.validator?.name ?? "",
+              })}
+              subtitle={t("cosmos.redelegation.stepperHeader.stepRange", {
+                currentStep: "1",
+                totalSteps,
+              })}
+            />
+          ),
+          headerLeft: () => null,
+        })}
+      />
+      <Stack.Screen
         name={ScreenName.CosmosRedelegationAmount}
         component={RedelegationAmount}
         options={({ route }) => ({

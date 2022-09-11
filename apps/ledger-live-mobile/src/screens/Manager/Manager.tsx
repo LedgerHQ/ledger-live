@@ -22,13 +22,7 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
-
-export const MANAGER_TABS = {
-  CATALOG: "CATALOG",
-  INSTALLED_APPS: "INSTALLED_APPS",
-};
-
-export type ManagerTab = keyof typeof MANAGER_TABS;
+import { ManagerTab, MANAGER_TABS } from "../../const/manager";
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -63,7 +57,7 @@ const Manager = ({ navigation, route }: Props) => {
   const reduxDispatch = useDispatch();
 
   const { apps, currentError, installQueue, uninstallQueue } = state;
-  const blockNavigation = installQueue.length + uninstallQueue.length > 0;
+  const pendingInstalls = installQueue.length + uninstallQueue.length > 0;
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const latestFirmware = useLatestFirmware(deviceInfo);
@@ -99,7 +93,7 @@ const Manager = ({ navigation, route }: Props) => {
   }, [setError, currentError]);
 
   // send informations to main router in order to lock navigation
-  useLockNavigation(blockNavigation, setQuitManagerAction, navigation);
+  useLockNavigation(pendingInstalls, setQuitManagerAction, navigation);
 
   // Save last seen device
   useEffect(() => {
@@ -186,6 +180,7 @@ const Manager = ({ navigation, route }: Props) => {
       <AppsScreen
         state={state}
         dispatch={dispatch}
+        device={device}
         navigation={navigation}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
@@ -193,7 +188,7 @@ const Manager = ({ navigation, route }: Props) => {
         managerTabs={MANAGER_TABS}
         deviceId={deviceId}
         initialDeviceName={deviceName}
-        blockNavigation={blockNavigation}
+        pendingInstalls={pendingInstalls}
         deviceInfo={deviceInfo}
         searchQuery={searchQuery}
         updateModalOpened={updateModalOpened}

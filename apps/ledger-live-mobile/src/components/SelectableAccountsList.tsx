@@ -50,7 +50,6 @@ type Props = FlexBoxProps & {
   style?: any;
   index: number;
   showHint: boolean;
-  // eslint-disable-next-line no-unused-vars
   onAccountNameChange?: (name: string, changedAccount: Account) => void;
   useFullBalance?: boolean;
 };
@@ -129,7 +128,6 @@ type SelectableAccountProps = {
   rowIndex: number;
   listIndex: number;
   navigation: any;
-  // eslint-disable-next-line no-unused-vars
   onAccountNameChange?: (name: string, changedAccount: Account) => void;
   colors: any;
   useFullBalance?: boolean;

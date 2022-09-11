@@ -8,6 +8,7 @@ import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getAccountDelegationSync, isAccountDelegating } from "./bakers";
 import whitelist from "./bakers.whitelist-default";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const maxAccount = 12;
 
@@ -35,6 +36,7 @@ const tezos: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "TezosWallet",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(

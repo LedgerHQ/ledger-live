@@ -30,6 +30,8 @@ import { getEnv } from "../env";
 import { makeLRUCache } from "../cache";
 import { getUserHashes } from "../user";
 import {
+  LanguagePackage,
+  LanguagePackageResponse,
   Application,
   ApplicationVersion,
   Category,
@@ -41,6 +43,7 @@ import {
   OsuFirmware,
   SocketEvent,
 } from "@ledgerhq/types-live";
+import { getProviderId } from "../manager/provider";
 
 declare global {
   namespace NodeJS {
@@ -205,6 +208,50 @@ const findBestMCU = (compatibleMCU: McuVersion[]): McuVersion | undefined => {
   return best;
 };
 
+const getLanguagePackagesForDevice = async (
+  deviceInfo: DeviceInfo
+): Promise<LanguagePackage[]> => {
+  const deviceVersion = await getDeviceVersion(
+    deviceInfo.targetId,
+    getProviderId(deviceInfo)
+  );
+
+  const seFirmwareVersion = await getCurrentFirmware({
+    version: deviceInfo.version,
+    deviceId: deviceVersion.id,
+    provider: getProviderId(deviceInfo),
+  });
+
+  const { data }: { data: LanguagePackageResponse[] } = await network({
+    method: "GET",
+    url: URL.format({
+      pathname: `${getEnv("MANAGER_API_BASE")}/language-package`,
+      query: {
+        livecommonversion,
+      },
+    }),
+  });
+
+  const allPackages: LanguagePackage[] = data.reduce(
+    (acc, response) => [
+      ...acc,
+      ...response.language_package_version.map((p) => ({
+        ...p,
+        language: response.language,
+      })),
+    ],
+    [] as LanguagePackage[]
+  );
+
+  const packages = allPackages.filter(
+    (pack) =>
+      pack.device_versions.includes(deviceVersion.id) &&
+      pack.se_firmware_final_versions.includes(seFirmwareVersion.id)
+  );
+
+  return packages;
+};
+
 const getLatestFirmware: (arg0: {
   current_se_firmware_final_version: Id;
   device_version: Id;
@@ -340,8 +387,8 @@ const getDeviceVersion: (
         target_id: targetId,
       },
     }).catch((error) => {
-      const status = // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
-        error && (error.status || (error.response && error.response.status));
+      const status =
+        error && (error.status || (error.response && error.response.status)); // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
 
       if (status === 404) {
         throw new FirmwareNotRecognized(
@@ -528,6 +575,7 @@ const API = {
   listInstalledApps,
   listCategories,
   getMcus,
+  getLanguagePackagesForDevice,
   getLatestFirmware,
   getCurrentOSU,
   compatibleMCUForDeviceInfo,

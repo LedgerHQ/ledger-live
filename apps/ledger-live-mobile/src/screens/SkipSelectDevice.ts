@@ -6,7 +6,6 @@ import { lastConnectedDeviceSelector } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 
 type Props = {
-  // eslint-disable-next-line no-unused-vars
   onResult: (device: any) => void;
   route?: {
     params: any;
