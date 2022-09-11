@@ -19,6 +19,7 @@ import kotlin.collections.ArrayList
 enum class RunnerAction {
     runStart,
     runProgress,
+    runBulkProgress,
     runSuccess,
     runComplete,
     runError,
@@ -98,7 +99,13 @@ class Runner(
             val progress: Double = (bulkSize - APDUQueue.size) / bulkSize.toDouble()
             onEvent(
                 RunnerAction.runProgress,
-                Arguments.fromBundle(bundleOf(Pair("progress", progress))),
+                Arguments.fromBundle(
+                    bundleOf(
+                        Pair("progress", progress),
+                        Pair("index", bulkSize - APDUQueue.size),
+                        Pair("total", bulkSize)
+                    )
+                ),
             )
             handleNextAPDU()
         } else {
