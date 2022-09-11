@@ -1,15 +1,19 @@
 import { renderHook } from "@testing-library/react-hooks";
 import useBIM from "./reactBIM";
 import { useFeature } from "../featureFlags";
+import { withDevice } from "../hw/deviceAccess";
 import { resolveTransportModuleForDeviceId } from "../hw";
 import { deviceInfo155, mockListAppsResult } from "./mock";
 import { initState } from ".";
 
 jest.mock("../featureFlags"); // Nb we can't rely on the real thing
+jest.mock("../hw/deviceAccess"); // Nb we can't rely on the real thing
 jest.mock("../hw"); // Nb the resolution is handled per platform on the live-common-setup file
 
 const mockedUseFeature = jest.mocked(useFeature);
 const mockedTransportResolver = jest.mocked(resolveTransportModuleForDeviceId);
+const mockedWithDevice = jest.mocked(withDevice);
+
 const mockedState = initState(
   mockListAppsResult(
     "Bitcoin, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
@@ -28,8 +32,7 @@ const mockedState = initState(
  * running the communication part on the native side. There are separate implementations for iOS and
  * Android in their corresponding languages.
  */
-
-const scenarios = [
+const gateKeepingScenarios = [
   // The only case where we should be using this hook.
   {
     name: "Expect it to run if flag is ON & transport is correct.",
@@ -61,20 +64,78 @@ const scenarios = [
     expectedValue: false,
   },
 ];
+describe("BIM feature", () => {
+  describe("Gatekeeping", () => {
+    gateKeepingScenarios.forEach((scenario) => {
+      const { name, flagEnabled, transportId, expectedValue } = scenario;
 
-describe("BIM feature, gatekeeping", () => {
-  scenarios.forEach((scenario) => {
-    const { name, flagEnabled, transportId, expectedValue } = scenario;
+      it(name, () => {
+        // Mock the feature flag
+        mockedUseFeature.mockReturnValue({ enabled: flagEnabled });
 
-    it(name, () => {
-      // Mock the feature flag
-      mockedUseFeature.mockReturnValue({ enabled: flagEnabled });
+        // @ts-expect-error Mock the transport resolution, we only run on llm-ble
+        mockedTransportResolver.mockReturnValue({ id: transportId });
 
-      // @ts-expect-error Mock the transport resolution, we only run on llm-ble
-      mockedTransportResolver.mockReturnValue({ id: transportId });
+        const { result } = renderHook(() => useBIM("", mockedState, () => {}));
+        expect(result.current).toBe(expectedValue);
+      });
+    });
+  });
 
-      const { result } = renderHook(() => useBIM("", mockedState, () => {}));
-      expect(result.current).toBe(expectedValue);
+  // Super finicky to test this, we can only rely on the state changes by mocking
+  // the transport communication and whatnot. Maybe this is a futile endeavour.
+  describe("Queues", () => {
+    beforeEach(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      mockedUseFeature.mockReturnValue({ enabled: true });
+      mockedTransportResolver.mockReturnValue({ id: "ble-bim" });
+    });
+
+    test("Expect to trigger a Queue if state has install items", (done) => {
+      const mockedBleTransport = {
+        queue: (observer, rawQueue) => {
+          expect(rawQueue.includes('"appName":"Bitcoin"')).toBe(true);
+          expect(rawQueue.includes('"appName":"SomeOtherApp"')).toBe(false);
+          done();
+        },
+      };
+      mockedWithDevice.mockReturnValue((job) => job(mockedBleTransport));
+      const state = { ...mockedState, installQueue: ["Bitcoin"] };
+      renderHook(() => useBIM("12:34:56:78", state, (_) => {}));
+    });
+
+    test("Expect to trigger a Queue if state has uninstall items", (done) => {
+      const mockedBleTransport = {
+        queue: (observer, rawQueue) => {
+          expect(rawQueue.includes('"appName":"Bitcoin"')).toBe(true);
+          expect(rawQueue.includes('"appName":"SomeOtherApp"')).toBe(false);
+          done();
+        },
+      };
+      mockedWithDevice.mockReturnValue((job) => job(mockedBleTransport));
+      const state = { ...mockedState, uninstallQueue: ["Bitcoin"] };
+      renderHook(() => useBIM("12:34:56:78", state, (_) => {}));
+    });
+
+    test("Events triggered from the transport, reach the dispatcher", (done) => {
+      const mockedBleTransport = {
+        queue: (observer) => {
+          observer.next({
+            type: "runStart",
+            appOp: {
+              name: "Bitcoin",
+              type: "install",
+            },
+          });
+        },
+      };
+      mockedWithDevice.mockReturnValue((job) => job(mockedBleTransport));
+      const state = { ...mockedState, installQueue: ["Bitcoin"] };
+      renderHook(() =>
+        useBIM("12:34:56:78", state, (_) => {
+          done();
+        })
+      );
     });
   });
 });
