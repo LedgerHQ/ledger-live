@@ -10,8 +10,6 @@ import Step2Preview from "../../screens/CustomImage/Step2Preview";
 import Step3Transfer from "../../screens/CustomImage/Step3Transfer";
 import ErrorScreen from "../../screens/CustomImage/ErrorScreen";
 
-const Empty = () => null;
-
 export type CustomImageParamList = ParamList;
 
 export default function CustomImageNavigator() {
@@ -27,14 +25,14 @@ export default function CustomImageNavigator() {
       <Stack.Screen
         name={ScreenName.CustomImageStep1Crop as "CustomImageStep1Crop"}
         component={Step1Cropping}
-        options={{ title: t("customImage.cropImage"), headerRight: Empty }}
+        options={{ title: t("customImage.cropImage"), headerRight: undefined }}
       />
       <Stack.Screen
         name={ScreenName.CustomImageStep2Preview as "CustomImageStep2Preview"}
         component={Step2Preview}
         options={{
           title: t("customImage.chooseConstrast"),
-          headerRight: Empty,
+          headerRight: undefined,
         }}
       />
       <Stack.Screen
@@ -45,7 +43,7 @@ export default function CustomImageNavigator() {
       <Stack.Screen
         name={ScreenName.CustomImageErrorScreen as "CustomImageErrorScreen"}
         component={ErrorScreen}
-        options={{ title: "", headerLeft: Empty, gestureEnabled: false }}
+        options={{ title: "", headerLeft: undefined, gestureEnabled: false }}
       />
     </Stack.Navigator>
   );
