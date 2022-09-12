@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { renderHook } from "@testing-library/react-hooks";
 import useBIM from "./reactBIM";
 import { useFeature } from "../featureFlags";
@@ -89,11 +88,15 @@ describe("BIM feature", () => {
     beforeEach(() => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       mockedUseFeature.mockReturnValue({ enabled: true });
-      mockedTransportResolver.mockReturnValue({ id: "ble-bim" });
+      mockedTransportResolver.mockReturnValue({
+        id: "ble-bim",
+        open: () => {},
+        disconnect: () => {},
+      } as any);
     });
 
     test("Expect to trigger a Queue if state has install items", (done) => {
-      const mockedBleTransport = {
+      const mockedBleTransport: any = {
         queue: (observer, rawQueue) => {
           expect(rawQueue.includes('"appName":"Bitcoin"')).toBe(true);
           expect(rawQueue.includes('"appName":"SomeOtherApp"')).toBe(false);
@@ -106,7 +109,7 @@ describe("BIM feature", () => {
     });
 
     test("Expect to trigger a Queue if state has uninstall items", (done) => {
-      const mockedBleTransport = {
+      const mockedBleTransport: any = {
         queue: (observer, rawQueue) => {
           expect(rawQueue.includes('"appName":"Bitcoin"')).toBe(true);
           expect(rawQueue.includes('"appName":"SomeOtherApp"')).toBe(false);
@@ -119,7 +122,7 @@ describe("BIM feature", () => {
     });
 
     test("Events triggered from the transport, reach the dispatcher", (done) => {
-      const mockedBleTransport = {
+      const mockedBleTransport: any = {
         queue: (observer) => {
           observer.next({
             type: "runStart",
@@ -140,7 +143,7 @@ describe("BIM feature", () => {
     });
 
     test("Completing the queue observer emits a cleanup event", (done) => {
-      const mockedBleTransport = {
+      const mockedBleTransport: any = {
         queue: (observer, rawQueue) => {
           expect(rawQueue.includes('"appName":"Bitcoin"')).toBe(true);
           observer.complete();
@@ -157,7 +160,7 @@ describe("BIM feature", () => {
     });
 
     test("Failing the queue observer emits a cleanup event", (done) => {
-      const mockedBleTransport = {
+      const mockedBleTransport: any = {
         queue: (observer, rawQueue) => {
           expect(rawQueue.includes('"appName":"Bitcoin"')).toBe(true);
           observer.error(new Error("something-bad-happened"));
