@@ -1,15 +1,11 @@
-import React, { useCallback, useContext } from "react";
-import { useDispatch } from "react-redux";
+import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { openModal } from "~/renderer/actions/modals";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { Separator } from "./Separator";
-
-import { deviceById } from "~/renderer/components/Onboarding/Screens/SelectDevice/devices";
 
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
@@ -28,6 +24,7 @@ import restorePhraseDark from "./assets/restorePhraseDark.png";
 import setupNanoDark from "./assets/setupNanoDark.png";
 
 import Illustration from "~/renderer/components/Illustration";
+import { getDeviceModel } from "~/../../../libs/ledgerjs/packages/devices/lib";
 
 registerAssets([
   connectNanoLight,
@@ -88,14 +85,9 @@ type Props = {
 
 export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const { deviceModelId } = useContext(OnboardingContext);
   const history = useHistory();
-  const device = deviceById(deviceModelId);
-
-  const onWrappedUseCase = useCallback(() => {
-    dispatch(openModal("MODAL_RECOVERY_SEED_WARNING", { deviceModelId }));
-  }, [deviceModelId, dispatch]);
+  const device = deviceModelId ? getDeviceModel(deviceModelId) : undefined;
 
   return (
     <ScrollArea withHint>
@@ -107,7 +99,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               <Trans
                 i18nKey="onboarding.screens.selectUseCase.hasNoRecovery"
                 values={{
-                  deviceName: device.productName,
+                  deviceName: device?.productName,
                 }}
               />
             </LeftText>
@@ -120,7 +112,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 <Trans
                   i18nKey="onboarding.screens.selectUseCase.options.1.title"
                   values={{
-                    deviceName: device.productName,
+                    deviceName: device?.productName,
                   }}
                 />
               }
@@ -137,7 +129,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
             />
           </RightColumn>
         </Row>
-        <Separator label={t("onboarding.screens.selectUseCase.separator")} />
+        <Separator />
         <Row>
           <LeftColumn>
             <LeftText variant="h3">{t("onboarding.screens.selectUseCase.hasRecovery")}</LeftText>
@@ -150,7 +142,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 <Trans
                   i18nKey="onboarding.screens.selectUseCase.options.2.title"
                   values={{
-                    deviceName: device.productName,
+                    deviceName: device?.productName,
                   }}
                 />
               }
@@ -166,7 +158,6 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 track("Onboarding - Connect");
                 setUseCase(UseCase.connectDevice);
                 history.push(`/onboarding/${UseCase.connectDevice}/${ScreenId.pairMyNano}`);
-                // onWrappedUseCase();
               }}
             />
             <UseCaseOption
@@ -177,7 +168,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 <Trans
                   i18nKey="onboarding.screens.selectUseCase.options.3.description"
                   values={{
-                    deviceName: device.productName,
+                    deviceName: device?.productName,
                   }}
                 />
               }
@@ -194,7 +185,6 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 history.push(
                   `/onboarding/${UseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
                 );
-                // onWrappedUseCase();
               }}
             />
           </RightColumn>
