@@ -3370,6 +3370,10 @@
     "appNotInstalled": "Please install the {{appName}} app",
     "appNotInstalled_plural": "Please install the {{appName}} apps",
     "useAnotherDevice": "Use another device",
+    "deviceNotOnboarded": {
+      "title": "Your Ledger is not ready to use yet",
+      "description": "You need to setup {{deviceName}} first. We will guide you through the device setup process"
+    },
     "deviceInBootloader": {
       "title": "Device in Bootloader mode.",
       "description": "Click on \"Continue\" to update it."

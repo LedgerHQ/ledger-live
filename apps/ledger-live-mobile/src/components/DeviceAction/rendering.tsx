@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
@@ -17,6 +18,7 @@ import {
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
@@ -33,6 +35,12 @@ import { MANAGER_TABS } from "../../const/manager";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
+import Illustration from "../../images/illustration/Illustration";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const notOnboardedDarkImg = require("../../images/illustration/Dark/_010.png");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const notOnboardedLightImg = require("../../images/illustration/Light/_010.png");
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -439,6 +447,72 @@ export function renderError({
           </ActionContainer>
         ) : null}
       </GenericErrorView>
+    </Wrapper>
+  );
+}
+
+export function renderDeviceNotOnboarded({
+  t,
+  device,
+  navigation,
+}: {
+  t: TFunction;
+  device: Device;
+  // TODO: correctly type the navigation prop here AND in the DeviceAction component
+  navigation: any;
+}) {
+  const navigateToOnboarding = () => {
+    // TODO: do better
+    if (device.modelId === "nanoFTS") {
+      // On pairing success, navigate to the Sync Onboarding Companion
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.SyncOnboardingCompanion,
+          params: {
+            device,
+          },
+        },
+      });
+    } else {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore next-line
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.Onboarding,
+        params: {
+          screen: ScreenName.OnboardingSetNewDevice,
+          params: {
+            deviceModelId: device.modelId,
+          },
+        },
+      });
+    }
+  };
+
+  const deviceName = getDeviceModel(device.modelId).productName;
+
+  return (
+    <Wrapper>
+      <Illustration
+        lightSource={notOnboardedLightImg}
+        darkSource={notOnboardedDarkImg}
+        size={175}
+      />
+      <Text variant="h4" textAlign="center" mt={4}>
+        {t("DeviceAction.deviceNotOnboarded.title")}
+      </Text>
+      <Text variant="body" color="neutral.c70" textAlign="center" mt={4} mx={4}>
+        {t("DeviceAction.deviceNotOnboarded.description", { deviceName })}
+      </Text>
+      <Button
+        type="main"
+        outline={false}
+        onPress={navigateToOnboarding}
+        mt={7}
+        alignSelf="stretch"
+      >
+        {t("DeviceAction.button.openOnboarding")}
+      </Button>
     </Wrapper>
   );
 }
