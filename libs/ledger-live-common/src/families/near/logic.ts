@@ -14,7 +14,7 @@ import { getCurrentNearPreloadData } from "./preload";
 
 export const FALLBACK_STORAGE_AMOUNT_PER_BYTE = "10000000000000000000";
 export const NEW_ACCOUNT_SIZE = 182;
-export const MIN_ACCOUNT_BALANCE_BUFFER = "30000000000000000000000";
+export const MIN_ACCOUNT_BALANCE_BUFFER = "50000000000000000000000";
 export const STAKING_GAS_BASE = "25000000000000";
 export const FIGMENT_NEAR_VALIDATOR_ADDRESS = "ledgerbyfigment.poolv1.near";
 export const FRACTIONAL_DIGITS = 5;
@@ -46,10 +46,13 @@ export const getStakingGas = (t?: Transaction, multiplier = 5): BigNumber => {
   return stakingGasBase.multipliedBy(multiplier);
 };
 
+/*
+ * Get the max amount that can be spent, taking into account tx type and pending operations.
+ */
 export const getMaxAmount = (
   a: NearAccount,
   t: Transaction,
-  fees: BigNumber
+  fees: BigNumber = new BigNumber(0)
 ): BigNumber => {
   let maxAmount;
   const selectedValidator = a.nearResources?.stakingPositions.find(
@@ -60,10 +63,15 @@ export const getMaxAmount = (
   let pendingWithdrawingAmount = new BigNumber(0);
   let pendingDefaultAmount = new BigNumber(0);
 
-  a.pendingOperations.forEach(({ type, value }) => {
-    if (type === "UNSTAKE") {
+  a.pendingOperations.forEach(({ type, value, recipients }) => {
+    const recipient = recipients[0];
+
+    if (type === "UNSTAKE" && recipient === selectedValidator?.validatorId) {
       pendingUnstakingAmount = pendingUnstakingAmount.plus(value);
-    } else if (type === "WITHDRAW") {
+    } else if (
+      type === "WITHDRAW" &&
+      recipient === selectedValidator?.validatorId
+    ) {
       pendingWithdrawingAmount = pendingWithdrawingAmount.plus(value);
     } else {
       pendingDefaultAmount = pendingDefaultAmount.plus(value);
@@ -79,6 +87,10 @@ export const getMaxAmount = (
       break;
     default:
       maxAmount = a.spendableBalance.minus(fees).minus(pendingDefaultAmount);
+  }
+
+  if (maxAmount.lt(0)) {
+    return new BigNumber(0);
   }
 
   return maxAmount;
@@ -141,7 +153,7 @@ export const canStake = (a: NearAccount): boolean => {
 
   const fees = getStakingFees(transaction, gasPrice).multipliedBy(3);
 
-  return a.spendableBalance.minus(fees).gt(0);
+  return getMaxAmount(a, transaction, fees).gt(0);
 };
 
 export const canUnstake = (

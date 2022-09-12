@@ -3511,7 +3511,7 @@
       }
     },
     "withdraw": {
-      "disabledTooltip": "There aren't enough available assets to withdraw",
+      "disabledTooltip": "There aren't enough assets to withdraw",
       "flow": {
         "title": "Withdraw",
         "steps": {

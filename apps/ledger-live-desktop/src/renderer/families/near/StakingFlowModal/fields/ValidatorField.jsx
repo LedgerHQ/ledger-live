@@ -17,6 +17,7 @@ import ValidatorRow from "~/renderer/families/near/shared/components/ValidatorRo
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { Account } from "@ledgerhq/live-common/types/index";
 import type { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
 
 type Props = {
   account: Account,
@@ -45,6 +46,10 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   };
 
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+
+  if (!chosenVoteAccAddr && validators[0].validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS) {
+    onChangeValidator({ address: FIGMENT_NEAR_VALIDATOR_ADDRESS });
+  }
 
   return (
     <>

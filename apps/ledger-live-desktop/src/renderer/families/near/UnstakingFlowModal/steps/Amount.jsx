@@ -18,11 +18,9 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 export default function StepAmount({
   account,
   transaction,
-  bridgePending,
   onUpdateTransaction,
   status,
   error,
-  validatorAddress,
 }: StepProps) {
   invariant(account && account.nearResources && transaction, "account and transaction required");
 

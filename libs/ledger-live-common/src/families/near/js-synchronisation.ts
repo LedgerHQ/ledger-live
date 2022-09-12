@@ -1,3 +1,4 @@
+import type { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
@@ -33,6 +34,22 @@ const getAccountShape: GetAccountShape = async (info) => {
   return { ...shape, operations };
 };
 
+const postSync = (initial: Account, synced: Account): Account => {
+  const pendingOperations = initial.pendingOperations || [];
+
+  if (pendingOperations.length === 0) {
+    return synced;
+  }
+
+  const { operations } = synced;
+
+  synced.pendingOperations = pendingOperations.filter(
+    (po) => !operations.some((o) => o.hash === po.hash)
+  );
+
+  return synced;
+};
+
 export const scanAccounts = makeScanAccounts({ getAccountShape });
 
-export const sync = makeSync({ getAccountShape });
+export const sync = makeSync({ getAccountShape, postSync });

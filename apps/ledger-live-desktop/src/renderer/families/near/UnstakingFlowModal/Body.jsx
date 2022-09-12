@@ -5,12 +5,12 @@ import { withTranslation } from "react-i18next";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { BigNumber } from "bignumber.js";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import type { TFunction } from "react-i18next";
@@ -83,19 +83,20 @@ function Body({
   } = useBridgeTransaction(() => {
     invariant(accountProp.nearResources, "near: account and near resources required");
 
-    const { stakingPositions } = accountProp.nearResources;
-    const stakingPosition = stakingPositions.find(
-      ({ validatorId, staked }) => validatorAddress === validatorId,
-    );
-
     const bridge = getAccountBridge(accountProp, undefined);
 
     const initTx = bridge.createTransaction(accountProp);
+
+    const mode = "unstake";
+    const recipient = validatorAddress;
+
+    const maxAmount = getMaxAmount(accountProp, { ...initTx, mode, recipient });
+
     const newTx = {
-      mode: "unstake",
-      recipient: validatorAddress,
-      amount: stakingPosition?.staked ? stakingPosition.staked : new BigNumber(0),
-      useAllAmount: stakingPosition?.staked,
+      mode,
+      recipient,
+      amount: maxAmount,
+      useAllAmount: true,
     };
 
     const transaction = bridge.updateTransaction(initTx, newTx);
