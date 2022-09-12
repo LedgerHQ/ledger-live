@@ -19,7 +19,7 @@ export function useFeesStrategy(t: Transaction): FeeStrategy[] {
   if (!networkInfo) return [];
 
   const gasLimit = getGasLimit(t);
-  const slowStrategyBaseFeeMultiplier = 1.2;
+  const slowStrategyBaseFeeMultiplier = 2;
   const mediumStrategyBaseFeeMultiplier = 2;
   const fastStrategyBaseFeeMultiplier = 2;
   let strategies;

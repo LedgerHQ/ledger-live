@@ -414,7 +414,7 @@
       "title": "Your max base fee is overestimated. If applicable, you will be refunded by the network"
     },
     "MaxBaseFeeLow": {
-      "title": "Max base fee is lower than the network conditions. Your transaction might stay pending for a while"
+      "title": "Max base fee is too low. Your transaction might stay pending for a while"
     },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
