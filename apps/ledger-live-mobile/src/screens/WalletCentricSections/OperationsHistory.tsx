@@ -48,6 +48,7 @@ const OperationsHistory = ({ accounts }: Props) => {
       section: SectionBase<any>;
     }) => {
       const account = accounts.find(a => a.id === item.accountId);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const parentAccount = useSelector(state =>
         parentAccountSelector(state, { account }),
       );
