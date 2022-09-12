@@ -324,6 +324,14 @@
     "InvalidRecipient" : {
       "title" : "無効な送付先"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "言語のインストールがデバイス上で拒否されました",
+      "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+    },
+    "LanguageNotFound" : {
+      "title" : "言語が見つかりません",
+      "description" : "インストールしようとしている言語が見つかりませんでした。他の言語のインストールをお試しください。"
+    },
     "LatestMCUInstalledError" : {
       "title" : "アップデートの必要はありません。",
       "description" : "デバイスを使用できない場合は、Ledgerサポートに連絡してください。"
@@ -1595,27 +1603,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}}を検出中",
+        "description" : "{{productName}}のロックが解除済みで、Bluetoothが有効であることを確認してください"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "デバイスを探しています",
+        "description" : "デバイスの電源が入っていて、ロックが解除されていて、Bluetooth が有効になっていることを確認してください"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "ペアリング済み"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}}とペアリング完了"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}}とペアリング中",
+        "subtitle" : "{{productName}}のコードを確認してください"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "ペアリング失敗",
+        "subtitle" : "何か問題が発生したようです。Bluetoothがオンになっていて、{{productName}}が近くにあることを確認してください",
+        "retryCta" : "再試行"
       }
     }
   },
@@ -1820,7 +1828,8 @@
       "validatorsCount" : "バリデータ（{{number}}）",
       "storageLimit" : "ストレージ上限",
       "gasLimit" : "ガスリミット",
-      "id" : "ID"
+      "id" : "ID",
+      "autoClaimedRewards" : "自動獲得報酬"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -3531,6 +3540,19 @@
       "de" : "ドイツ語"
     }
   },
+  "deviceLocalization" : {
+    "language" : "言語",
+    "deviceLanguage" : "デバイスの言語",
+    "changeLanguage" : "言語の変更",
+    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
+    "installingLanguage" : "言語をインストール",
+    "languages" : {
+      "english" : "英語",
+      "french" : "フランス語",
+      "spanish" : "スペイン語"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "識別子",
     "description" : "同じ識別子が表示されている場合は、{{fullDeviceName}}の両方のボタンを同時に押してください："
@@ -3637,6 +3659,31 @@
       "available" : {
         "title" : "CELO利用可能",
         "description" : "これは利用可能額です。"
+      }
+    }
+  },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO利用可"
+      },
+      "delegated" : {
+        "description" : "デリゲートされた資産は、Osmosisの投票に使われます。これがお客様の合計票数です。"
+      },
+      "undelegating" : {
+        "description" : "デリゲートを解除した資産は、14日間のロック期間後に再び利用可能になります。"
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "資産を管理しながら、OSMOをデリゲートして報酬を獲得しましょう。",
+            "steps" : {
+              "1" : "デリゲート解除が完了するまで、14日待つ必要があります。"
+            }
+          }
+        }
       }
     }
   },
@@ -4380,6 +4427,11 @@
         "redelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、21日待つ必要があります。",
         "undelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、21日待つ必要があります。"
       },
+      "osmosis" : {
+        "claimReward" : "選択したバリデーターに未請求の報酬がある場合は、自動的に請求されます。",
+        "redelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、14日間待機する必要があります。",
+        "undelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、14日間待機する必要があります。"
+      },
       "lending" : "送信する前に、取引の詳細をデバイスで確認してください。"
     },
     "amount" : "数量",
@@ -4389,6 +4441,7 @@
     "redelegationAmount" : "再デリゲート数",
     "gas" : "ガス",
     "validatorAddress" : "バリデータのアドレス",
+    "validatorName" : "バリデーター名",
     "rewardAmount" : "報酬額",
     "undelegatedAmount" : "デリゲート解除数",
     "memo" : "メモ"
