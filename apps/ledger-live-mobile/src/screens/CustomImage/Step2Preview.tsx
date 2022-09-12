@@ -92,7 +92,7 @@ const Step2Preview: React.FC<
   );
 
   useResizedImage({
-    targetDimensions: targetDimensions,
+    targetDimensions,
     imageFileUri: croppedImage?.imageFileUri,
     onError: handleError,
     onResult: handleResizeResult,
