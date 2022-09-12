@@ -5,6 +5,7 @@ import com.hwtransportreactnativeble.tasks.Queue
 import com.hwtransportreactnativeble.tasks.Runner
 import com.hwtransportreactnativeble.tasks.RunnerAction
 import com.ledger.live.ble.BleManagerFactory
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.net.URL
 import java.util.*
@@ -104,6 +105,9 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
                     // If we are here, it's a disconnect that might be expected
                     // to be handled somewhere else, if we have a disconnect callback
                     onDisconnectWrapper(it)
+                    if (!consumed){
+                        promise.reject("connectError", Exception(it))
+                    }
                 } else if (it === "Device connection lost" && retriesLeft > 0) {
                     // We shouldn't have `Device connection lost` here, we should only get a failure
                     // to connect, but the native part is throwing it, so hack away.
@@ -174,51 +178,72 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun queue(rawQueue: String, endpoint: String){
-        if (queueTask != null && !queueTask!!.isStopped) {
-            Timber.d("$tag: \t replacing rawQueue $rawQueue")
-            queueTask!!.setRawQueue(rawQueue)
-            return
-        }
-        Timber.d("$tag: \t starting new queue $rawQueue")
-
-        queueTask = Queue(rawQueue, endpoint, eventEmitter, bleManager)
-        onDisconnect = {e: String -> queueTask!!.onDisconnect(e)}
+    fun queue(rawQueue: String, endpoint: String) {
+        val scope = CoroutineScope(Dispatchers.Default + Job() )
+        scope.launch { startSuspendedQueue(rawQueue, endpoint) }
     }
 
     @ReactMethod
     fun runner(endpoint: String){
-        Timber.d("$tag: \t starting new runner $endpoint")
+        val resolvedURL = URL(endpoint.replace("wss://", "https://"))
+        val scope = CoroutineScope(Dispatchers.Default + Job() )
+        scope.launch { startSuspendedRunner(resolvedURL) }
+    }
 
-        runnerTask = Runner(
-            URL(endpoint.replace("wss://", "https://")),
-            "",
-            bleManager,
-            { },
-            { action: RunnerAction, data: WritableMap ->
-                if (action == RunnerAction.runProgress) {
-                    eventEmitter.dispatch(com.facebook.react.bridge.Arguments.createMap().apply {
+    private suspend fun startSuspendedQueue(rawQueue: String, endpoint: String){
+        withContext(Dispatchers.Default) {
+            if (queueTask != null && !queueTask!!.isStopped) {
+                Timber.d("$tag: \t replacing rawQueue $rawQueue")
+                queueTask!!.setRawQueue(rawQueue)
+            } else {
+                Timber.d("$tag: \t starting new queue $rawQueue")
+                queueTask = Queue(rawQueue, endpoint, eventEmitter, bleManager)
+            }
+        }
+    }
+
+    private suspend fun startSuspendedRunner(resolvedURL: URL) {
+        withContext(Dispatchers.Default) {
+            runnerTask = Runner(
+                resolvedURL,
+                "",
+                bleManager,
+                {
+                    eventEmitter.dispatch(Arguments.createMap().apply {
                         putString("event", "task")
-                        putString("type", com.hwtransportreactnativeble.tasks.RunnerAction.runBulkProgress.toString())
-                        putMap("data", data)
+                        putString("type", RunnerAction.runComplete.toString())
+                        putMap("data", null)
                     })
-                } else {
-                    eventEmitter.dispatch(com.facebook.react.bridge.Arguments.createMap().apply {
+                },
+                { action: RunnerAction, data: WritableMap ->
+                    if (action == RunnerAction.runProgress) {
+                        eventEmitter.dispatch(
+                            com.facebook.react.bridge.Arguments.createMap().apply {
+                                putString("event", "task")
+                                putString(
+                                    "type",
+                                    com.hwtransportreactnativeble.tasks.RunnerAction.runBulkProgress.toString()
+                                )
+                                putMap("data", data)
+                            })
+                    } else {
+                        eventEmitter.dispatch(Arguments.createMap().apply {
+                            putString("event", "task")
+                            putString("type", action.toString())
+                            putMap("data", data)
+                        })
+                    }
+                },
+                {
+                    eventEmitter.dispatch(Arguments.createMap().apply {
                         putString("event", "task")
-                        putString("type", action.toString())
-                        putMap("data", data)
+                        putString("type", RunnerAction.runComplete.toString())
+                        putMap("data", null)
                     })
                 }
-            },
-            {
-                eventEmitter.dispatch(Arguments.createMap().apply {
-                    putString("event", "task")
-                    putString("type", RunnerAction.runComplete.toString())
-                    putMap("data", null)
-                })
-            }
-        );
-        onDisconnect = {e: String -> runnerTask!!.onDisconnect(e)}
+
+            );
+        }
     }
 }
 

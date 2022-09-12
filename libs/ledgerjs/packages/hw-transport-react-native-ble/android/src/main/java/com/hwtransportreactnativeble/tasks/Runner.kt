@@ -82,7 +82,7 @@ class Runner(
                         },
                     )
                 })
-        } else if (isPendingOnDone) {
+        } else {
             onDone(lastHSMMessage)
         }
     }
@@ -174,6 +174,7 @@ class Runner(
                 APDUQueue.add(apdu)
             }
             bulkSize = APDUQueue.size
+            isPendingOnDone = true
         } else {
             isInBulkMode = false
             APDUQueue.clear()
