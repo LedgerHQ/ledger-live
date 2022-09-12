@@ -8,11 +8,11 @@ import { useTheme } from "@react-navigation/native";
 import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
 import StepHeader from "../../../../../components/StepHeader";
 import { ScreenName } from "../../../../../const";
-import WithdrawMethod from "./01-SelectValidator.js";
+import WithdrawMethod from "./01-SelectValidator";
 import WithdrawSelectDevice from "../../../../../screens/SelectDevice";
 import WithdrawConnectDevice from "../../../../../screens/ConnectDevice";
-import WithdrawValidationError from "./04-ValidationError.js";
-import WithdrawValidationSuccess from "./04-ValidationSuccess.js";
+import WithdrawValidationError from "./04-ValidationError";
+import WithdrawValidationSuccess from "./04-ValidationSuccess";
 
 const Stack = createStackNavigator();
 const totalSteps = "3";

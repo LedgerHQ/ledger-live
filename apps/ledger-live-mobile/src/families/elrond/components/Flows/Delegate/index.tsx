@@ -10,13 +10,13 @@ import {
 } from "../../../../../navigation/navigatorConfig";
 import StepHeader from "../../../../../components/StepHeader";
 import { ScreenName } from "../../../../../const";
-import DelegationStarted from "./01-Started.jsx";
-import DelegationSelectValidator from "./02-SelectValidator.jsx";
-import DelegationAmount from "../../../shared/02-SelectAmount.js";
+import DelegationStarted from "./01-Started";
+import DelegationSelectValidator from "./02-SelectValidator";
+import DelegationAmount from "../../../shared/02-SelectAmount";
 import SelectDevice from "../../../../../screens/SelectDevice";
 import ConnectDevice from "../../../../../screens/ConnectDevice";
-import DelegationValidationError from "./04-ValidationError.jsx";
-import DelegationValidationSuccess from "./04-ValidationSuccess.jsx";
+import DelegationValidationError from "./04-ValidationError";
+import DelegationValidationSuccess from "./04-ValidationSuccess";
 
 const totalSteps = "3";
 
