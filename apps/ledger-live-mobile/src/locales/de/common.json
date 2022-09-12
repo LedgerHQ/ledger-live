@@ -324,6 +324,14 @@
     "InvalidRecipient" : {
       "title" : "Ungültiger Empfänger"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Sprachinstallation auf dem Gerät abgelehnt",
+      "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
+    },
+    "LanguageNotFound" : {
+      "title" : "Die Sprache wurde nicht gefunden",
+      "description" : "Die Sprache, die Sie installieren möchten, wurde nicht gefunden. Bitte versuchen Sie, eine andere Sprache zu installieren."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Entschuldigung, es gibt nichts zu aktualisieren",
       "description" : "Bitte kontaktieren Sie den Ledger-Support, wenn Sie Ihr Gerät nicht verwenden können."
@@ -1820,7 +1828,8 @@
       "validatorsCount" : "Validatoren ({{number}})",
       "storageLimit" : "Speicherlimit",
       "gasLimit" : "Gaslimit",
-      "id" : "ID"
+      "id" : "ID",
+      "autoClaimedRewards" : "Automatisch beanspruchte Prämien"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -3531,6 +3540,19 @@
       "de" : "Deutsch"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Sprache",
+    "deviceLanguage" : "Geräte-Sprache",
+    "changeLanguage" : "Sprache wechseln",
+    "allowLanguageInstallation" : "Sprachinstallation zulassen",
+    "languageInstalled" : "Gerätesprache auf {{language}} gewechselt",
+    "installingLanguage" : "Sprache installieren",
+    "languages" : {
+      "english" : "Englisch",
+      "french" : "Französisch",
+      "spanish" : "Spanisch"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Kennung",
     "description" : "Bitte drücken Sie beide Tasten gleichzeitig auf Ihrem {{fullDeviceName}}, wenn es die gleiche Kennung anzeigt:"
@@ -3637,6 +3659,31 @@
       "available" : {
         "title" : "CELO verfügbar",
         "description" : "Dieser Betrag ist verfügbar."
+      }
+    }
+  },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO verfügbar"
+      },
+      "delegated" : {
+        "description" : "Übertragene Vermögenswerte werden für Osmosis-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
+      },
+      "undelegating" : {
+        "description" : "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 14 Tagen, bevor sie verfügbar sind."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Delegieren Sie Ihr OSMO, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
+            "steps" : {
+              "1" : "Sie müssen 14 Tage warten, bis die Delegierung vollständig beendet ist."
+            }
+          }
+        }
       }
     }
   },
@@ -4380,6 +4427,11 @@
         "redelegate" : "Sie müssen 21 Tage warten, bis die nicht delegierten Guthaben wieder auf dem verfügbaren Guthaben sind.",
         "undelegate" : "Sie müssen 21 Tage warten, bis die nicht delegierten Guthaben wieder auf dem verfügbaren Guthaben sind."
       },
+      "osmosis" : {
+        "claimReward" : "Wenn der ausgewählte Validator ausstehende Prämien hat, werden diese automatisch eingefordert.",
+        "redelegate" : "Sie müssen 14 Tage warten, bis die nicht delegierten Guthaben wieder auf dem verfügbaren Guthaben sind.",
+        "undelegate" : "Sie müssen 14 Tage warten, bis die nicht delegierten Guthaben wieder auf dem verfügbaren Guthaben sind."
+      },
       "lending" : "Überprüfen Sie die Vorgangsdetails auf Ihrem Gerät, bevor Sie sie senden."
     },
     "amount" : "Betrag",
@@ -4389,6 +4441,7 @@
     "redelegationAmount" : "Zurückdelegierter Betrag",
     "gas" : "Gas",
     "validatorAddress" : "Validator-Adresse",
+    "validatorName" : "Name des Validators",
     "rewardAmount" : "Prämienbetrag",
     "undelegatedAmount" : "Nicht delegierter Betrag",
     "memo" : "Memo"
