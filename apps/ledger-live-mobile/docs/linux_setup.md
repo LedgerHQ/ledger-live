@@ -56,6 +56,10 @@ gpg --armor --export YOUR_KEY_ID
 git config --global commit.gpgsign true
 ```
 
+Note: if you encounter this error when you commit
+`error: gpg failed to sign the data fatal: failed to write commit object`
+Add `export GPG_TTY=$(tty)` to your .zshrc or .bashrc
+
 3 - Install gh (Github cli)
 https://github.com/cli/cli
 ```bash
