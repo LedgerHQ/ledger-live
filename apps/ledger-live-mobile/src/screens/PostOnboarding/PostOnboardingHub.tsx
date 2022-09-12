@@ -11,8 +11,14 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { useFocusEffect } from "@react-navigation/native";
+import {
+  StackNavigationState,
+  EventListenerCallback,
+  EventMapCore,
+  useFocusEffect,
+} from "@react-navigation/native";
 import Animated, {
+  cancelAnimation,
   interpolate,
   runOnJS,
   useAnimatedStyle,
@@ -20,7 +26,10 @@ import Animated, {
   withDelay,
   withTiming,
 } from "react-native-reanimated";
-import { StackScreenProps } from "@react-navigation/stack";
+import {
+  StackNavigationEventMap,
+  StackScreenProps,
+} from "@react-navigation/stack";
 import {
   useAllPostOnboardingActionsCompleted,
   usePostOnboardingHubState,
@@ -102,7 +111,6 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
   }, [animationTimeout]);
 
   const triggerEndAnimation = useCallback(() => {
-    let dead = false;
     const onAnimEnd = () => {
       clearAnimationTimeout();
       animationTimeout.current = setTimeout(() => {
@@ -112,7 +120,7 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
     animDoneValue.value = withDelay(
       2000,
       withTiming(1, { duration: 1500 }, finished => {
-        if (finished && !dead) {
+        if (finished) {
           runOnJS(onAnimEnd)();
         }
       }),
@@ -127,14 +135,17 @@ const PostOnboardingHub: React.FC<StackScreenProps<Props>> = ({
     navigation.setOptions({ gestureEnabled: false, headerRight: () => null });
     navigation.getParent()?.setOptions({ gestureEnabled: false });
     allowClosingScreen.current = false;
-    navigation.addListener("beforeRemove", e => {
-      if (dead) return;
+    const beforeRemoveCallback: EventListenerCallback<
+      StackNavigationEventMap & EventMapCore<StackNavigationState<Props>>,
+      "beforeRemove"
+    > = e => {
       if (!allowClosingScreen.current) e.preventDefault();
-    });
-
+    };
+    navigation.addListener("beforeRemove", beforeRemoveCallback);
     return () => {
-      dead = true;
+      navigation.removeListener("beforeRemove", beforeRemoveCallback);
       clearAnimationTimeout();
+      cancelAnimation(animDoneValue);
     };
   }, [
     clearAnimationTimeout,
