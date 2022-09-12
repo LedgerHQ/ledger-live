@@ -4484,7 +4484,7 @@
       "title": "This may be too low. Please increase"
     },
     "MaxBaseFeeLow": {
-      "title": "Max base fee is lower than the network conditions. Your transaction might stay pending for a while"
+      "title": "Max base fee is too low. Your transaction might stay pending for a while"
     },
     "MaxBaseFeeHigh": {
       "title": "Your max base fee is overestimated. If applicable, you will be refunded by the network"
