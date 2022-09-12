@@ -1,6 +1,5 @@
 import type { DeviceAction } from "../../bot/types";
-import { deviceActionFlow } from "../../bot/specs";
-import { formatCurrencyUnit } from "../../currencies";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 import type { Transaction, Vote } from "./types";
 
 function subAccount(subAccountId, account) {
@@ -40,16 +39,9 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "Amount",
         button: "Rr",
         expectedValue: ({ account, status }) =>
-          formatCurrencyUnit(
-            {
-              ...account.unit,
-              code: account.currency.deviceTicker || account.unit.code,
-            },
-            status.amount,
-            {
-              disableRounding: true,
-            }
-          ),
+          formatDeviceAmount(account.currency, status.amount, {
+            hideCode: true,
+          }),
       },
       {
         title: "Token",
