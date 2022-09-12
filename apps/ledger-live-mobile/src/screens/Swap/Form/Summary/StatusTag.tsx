@@ -1,7 +1,6 @@
 import React from "react";
 import { Flex, Text, Icon } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { KYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 
 const statusThemeMap = {
   pending: {
@@ -26,15 +25,15 @@ const statusThemeMap = {
   },
 };
 
-export function StatusTag({ kyc }: { kyc?: KYCStatus }) {
+export function StatusTag({ kyc }: { kyc?: string }) {
   const { t } = useTranslation();
 
-  if (!kyc?.status) {
+  if (!kyc) {
     return null;
   }
 
   // @ts-expect-error something wrong with statusThemeMap
-  const { color, backgroundColor, icon } = statusThemeMap[kyc.status] || {
+  const { color, backgroundColor, icon } = statusThemeMap[kyc] || {
     color: null,
     backgroundColor: null,
     icon: null,
@@ -52,7 +51,7 @@ export function StatusTag({ kyc }: { kyc?: KYCStatus }) {
     >
       <Flex marginRight={2} borderRadius={4}>
         <Text variant="tiny" color={color}>
-          {t(`transfer.swap2.form.providers.kyc.status.${kyc.status}`)}
+          {t(`transfer.swap2.form.providers.kyc.status.${kyc}`)}
         </Text>
       </Flex>
       <Icon size={12} color={color} name={icon} />

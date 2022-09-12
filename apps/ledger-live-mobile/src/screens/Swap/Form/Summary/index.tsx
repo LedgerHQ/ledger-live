@@ -29,7 +29,7 @@ import { counterValueCurrencySelector } from "../../../../reducers/settings";
 interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
-  kyc?: KYCStatus;
+  kyc?: string;
 }
 
 export function Summary({
