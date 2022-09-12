@@ -324,6 +324,14 @@
     "InvalidRecipient" : {
       "title" : "Bénéficiaire non valide"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Installation de la langue refusée sur l’appareil",
+      "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Langue non trouvée",
+      "description" : "Impossible de trouver la langue que vous souhaitez installer. Veuillez essayer d’installer une autre langue."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Pas de mise à jour disponible",
       "description" : "Si vous ne pouvez pas utiliser votre appareil, contactez l’Assistance Ledger."
@@ -1160,7 +1168,7 @@
       "setup" : {
         "bullets" : {
           "0" : {
-            "title" : "Allumer le Nano",
+            "title" : "Allumez votre Nano",
             "nanoX" : {
               "label" : "Allumez votre appareil en appuyant sur le bouton noir pendant 1 seconde."
             },
@@ -1175,15 +1183,15 @@
             }
           },
           "1" : {
-            "title" : "Naviguer",
+            "title" : "Naviguez",
             "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
           },
           "2" : {
-            "title" : "Choisir \"Set up as new device\"",
+            "title" : "Choisissez \"Set up as new device\"",
             "label" : "Appuyez simultanément sur les deux boutons pour valider."
           },
           "3" : {
-            "title" : "Suivre les instructions",
+            "title" : "Suivez les instructions",
             "label" : "Revenez ici afin de suivre les instructions relatives à votre code PIN."
           }
         },
@@ -1198,12 +1206,12 @@
       "pinCodeSetup" : {
         "bullets" : {
           "0" : {
-            "title" : "Choisir un code PIN",
+            "title" : "Choisissez un code PIN",
             "label" : "Appuyez sur le bouton gauche ou droit pour changer le chiffre. Appuyez sur les deux boutons simultanément pour confirmer. Sélectionnez <1></1> pour confirmer votre code PIN. Sélectionnez <2></2> pour effacer un chiffre.",
             "desc" : "Appuyez sur le bouton gauche ou droit pour changer le chiffre. Appuyez sur les deux boutons simultanément pour confirmer. Sélectionnez <validIcon></validIcon> pour confirmer votre code PIN. Sélectionnez <cancelIcon></cancelIcon> pour effacer un chiffre."
           },
           "1" : {
-            "title" : "Confirmer le code PIN",
+            "title" : "Confirmez votre code PIN",
             "label" : "Saisissez à nouveau votre code PIN pour le confirmer.",
             "desc" : "Saisissez à nouveau votre code PIN pour le confirmer."
           }
@@ -1251,7 +1259,7 @@
           "title" : "Comment fonctionne une phrase de récupération ?",
           "desc" : "Votre phrase de récupération fonctionne comme une clé principale unique. Votre appareil Ledger l’utilise pour calculer les clés privées de chaque crypto-actif que vous possédez.",
           "desc_1" : "Pour récupérer l’accès à vos cryptos, n’importe quel wallet peut utiliser votre phrase de récupération pour retrouver vos clés privées.",
-          "link" : "En savoir plus sur la phrase de récupération",
+          "link" : "En savoir plus",
           "title_1" : "Qu’arrive-t-il si je perds l’accès à mon Nano ?",
           "bullets" : {
             "0" : {
@@ -1276,7 +1284,7 @@
             "label_1" : "Faites cela pour tous les mots affichés en gras en respectant scrupuleusement l’ordre et l’orthographe. Appuyez sur le bouton gauche de votre Nano pour vérifier et ne pas faire d’erreur."
           },
           "2" : {
-            "title" : "Confirmer votre phrase de récupération",
+            "title" : "Confirmez votre phrase de récupération",
             "label" : "Appuyez sur le bouton droit pour faire défiler les mots jusqu’à ce que vous trouviez le mot n°1 (\"Word #1\"). Validez en appuyant sur les deux boutons."
           },
           "3" : {
@@ -1341,7 +1349,7 @@
         "nextStep" : "Étape suivante",
         "bullets" : {
           "0" : {
-            "title" : "Allumer le Nano",
+            "title" : "Allumez votre Nano",
             "nanoX" : {
               "label" : "Allumez votre appareil en appuyant sur le bouton noir pendant 1 seconde."
             },
@@ -1356,7 +1364,7 @@
             }
           },
           "1" : {
-            "title" : "Naviguer",
+            "title" : "Naviguez",
             "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
           },
           "2" : {
@@ -1364,7 +1372,7 @@
             "label" : "Appuyez simultanément sur les deux boutons pour valider."
           },
           "3" : {
-            "title" : "Suivre les instructions",
+            "title" : "Suivez les instructions",
             "label" : "Revenez ici afin de suivre les instructions relatives à votre code PIN."
           }
         }
@@ -1376,18 +1384,18 @@
         "checkboxDesc" : "Je comprends que si je perds ma phrase de récupération, je ne pourrais plus accéder à mes cryptos au cas où je n’ai plus accès à mon Nano.",
         "bullets" : {
           "0" : {
-            "title" : "Prendre votre phrase de récupération"
+            "title" : "Prenez votre phrase de récupération"
           },
           "1" : {
             "title" : "Choisir la longueur de votre phrase de récupération",
             "label" : "Sélectionnez \"24 words\" (24 mots), \"18 words\" (18 mots) ou \"12 words\" (12 mots). Vous devez entrer tous les mots de votre phrase de récupération."
           },
           "2" : {
-            "title" : "Saisir le mot n°1 (\"Word #1\")",
+            "title" : "Saisissez le mot n°1 (\"Word #1\")",
             "label" : "Saisissez les premières lettres du \"Word #1\" (Mot n°1) en les sélectionnant avec le bouton droit ou gauche.  Appuyez sur les deux boutons pour valider chaque lettre."
           },
           "3" : {
-            "title" : "Valider le mot n°1 (\"Word #1\")",
+            "title" : "Validez le mot n°1 (\"Word #1\")",
             "label" : "Naviguez jusqu’au mot n°1 (\"Word #1\"). Appuyez sur les deux boutons pour valider."
           },
           "4" : {
@@ -1546,10 +1554,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Si ma phrase de récupération n’est plus en sécurité ou que quelqu’un la connaît :",
+        "title" : "Si quelqu’un connaît ma phrase de récupération ou elle n’est plus en sécurité :",
         "answers" : {
           "correct" : "Mes cryptos ne sont plus en sécurité et je dois les transférer en lieu sûr.",
-          "wrong" : "Pas de souci, Ledger m’en enverra une copie."
+          "wrong" : "Ledger m’en enverra une copie."
         },
         "modal" : {
           "text" : "Toute personne qui connaît votre phrase de récupération peut voler vos crypto-actifs.\nSi vous la perdez, vous devez rapidement mettre vos cryptos en lieu sûr.",
@@ -1820,7 +1828,8 @@
       "validatorsCount" : "Validateurs ({{number}})",
       "storageLimit" : "Limite de stockage",
       "gasLimit" : "Limite de gaz",
-      "id" : "Identifiant (ID)"
+      "id" : "Identifiant (ID)",
+      "autoClaimedRewards" : "Récompenses automatiques"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "tokenName" : "Nom du token",
@@ -3531,6 +3540,19 @@
       "de" : "Allemand"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Langue",
+    "deviceLanguage" : "Langue de l’appareil",
+    "changeLanguage" : "Changer la langue",
+    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
+    "languageInstalled" : "Votre appareil est maintenant en {{language}}.",
+    "installingLanguage" : "Installation de la langue",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Identifiant",
     "description" : "Merci d’appuyer sur les deux boutons simultanément sur votre {{fullDeviceName}} si le même identifiant apparaît :"
@@ -3637,6 +3659,31 @@
       "available" : {
         "title" : "CELO disponible",
         "description" : "Ce montant est disponible."
+      }
+    }
+  },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO disponibles"
+      },
+      "delegated" : {
+        "description" : "Les actifs délégués sont utilisés pour voter sur Osmosis. Cela représente votre nombre total de votes."
+      },
+      "undelegating" : {
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 14 jours."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Déléguez vos OSMO pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
+            "steps" : {
+              "1" : "Vous devrez attendre 14 jours pour que l’interruption de délégation soit terminée."
+            }
+          }
+        }
       }
     }
   },
@@ -4380,6 +4427,11 @@
         "redelegate" : "Vous devrez attendre 21 jours pour que les actifs non délégués soient versés sur votre solde disponible.",
         "undelegate" : "Vous devrez attendre 21 jours pour que les actifs non délégués soient versés sur votre solde disponible."
       },
+      "osmosis" : {
+        "claimReward" : "Si le validateur sélectionné a des récompenses en attente, elles seront automatiquement demandées.",
+        "redelegate" : "Vous devrez attendre 14 jours pour que les actifs non délégués soient versés sur votre solde disponible.",
+        "undelegate" : "Vous devrez attendre 14 jours pour que les actifs non délégués soient versés sur votre solde disponible."
+      },
       "lending" : "Vérifiez les détails de l’opération sur votre appareil avant de l’envoyer."
     },
     "amount" : "Montant",
@@ -4389,6 +4441,7 @@
     "redelegationAmount" : "Montant redélégué",
     "gas" : "Gaz",
     "validatorAddress" : "Adresse du validateur",
+    "validatorName" : "Nom du validateur",
     "rewardAmount" : "Montant de la récompense",
     "undelegatedAmount" : "Montant de la délégation interrompue",
     "memo" : "Mémo"
