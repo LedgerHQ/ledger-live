@@ -18,6 +18,9 @@ import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
 import FormatDate from "./FormatDate";
 import { track } from "../analytics";
+import { readOnlyModeEnabledSelector } from "../reducers/settings";
+import { useSelector } from "react-redux";
+import EmptyGraph from "../icons/EmptyGraph";
 
 type Props = {
   areAccountsEmpty: boolean;
@@ -51,6 +54,8 @@ function GraphCard({
   currentPositionY,
   graphCardEndPosition,
 }: Props) {
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
   const { countervalueChange, balanceHistory } = portfolio;
   const item = balanceHistory[balanceHistory.length - 1];
 
@@ -173,24 +178,30 @@ function GraphCard({
         </Animated.View>
       </Flex>
 
-      <Graph
-        isInteractive={isAvailable}
-        isLoading={!isAvailable}
-        height={110}
-        width={getWindowDimensions().width + 1}
-        color={colors.primary.c80}
-        data={balanceHistory}
-        onItemHover={onItemHover}
-        mapValue={mapGraphValue}
-        fill={colors.background.main}
-      />
-      <Flex paddingTop={6} background={colors.background.main}>
-        <GraphTabs
-          activeIndex={activeRangeIndex}
-          onChange={updateTimeRange}
-          labels={rangesLabels}
-        />
-      </Flex>
+      {readOnlyModeEnabled ? (
+        <EmptyGraph />
+      ) : (
+        <>
+          <Graph
+            isInteractive={isAvailable}
+            isLoading={!isAvailable}
+            height={110}
+            width={getWindowDimensions().width + 1}
+            color={colors.primary.c80}
+            data={balanceHistory}
+            onItemHover={onItemHover}
+            mapValue={mapGraphValue}
+            fill={colors.background.main}
+          />
+          <Flex paddingTop={6} background={colors.background.main}>
+            <GraphTabs
+              activeIndex={activeRangeIndex}
+              onChange={updateTimeRange}
+              labels={rangesLabels}
+            />
+          </Flex>
+        </>
+      )}
     </Flex>
   );
 }

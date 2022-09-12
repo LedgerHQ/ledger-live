@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import Svg, {
   Path,
   Defs,
@@ -16,9 +16,11 @@ import { useTheme } from "styled-components/native";
 function BackgroundGradient({
   currentPositionY,
   graphCardEndPosition,
+  color,
 }: {
   currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
+  color?: string;
 }) {
   const BackgroundOverlayOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -70,8 +72,8 @@ function BackgroundGradient({
             y2={454}
             gradientUnits="userSpaceOnUse"
           >
-            <Stop offset={0.380208} stopColor="#BE96FF" />
-            <Stop offset={0.864583} stopColor="#BE97FF" />
+            <Stop offset={0.380208} stopColor={color || "#BE96FF"} />
+            <Stop offset={0.864583} stopColor={color || "#BE97FF"} />
           </LinearGradient>
           <RadialGradient
             id="paint1_radial_9_2"
@@ -81,13 +83,13 @@ function BackgroundGradient({
             gradientUnits="userSpaceOnUse"
             gradientTransform="matrix(131.49984 186.99987 -218.94593 153.96457 172 252.5)"
           >
-            <Stop stopColor="#B7A6F5" />
+            <Stop stopColor={color || "#B7A6F5"} />
             <Stop
               offset={0.505208}
-              stopColor="#B09BF1"
+              stopColor={color || "#B09BF1"}
               stopOpacity={0.770833}
             />
-            <Stop offset={1} stopColor="#9678E3" stopOpacity={0} />
+            <Stop offset={1} stopColor={color || "#9678E3"} stopOpacity={0} />
           </RadialGradient>
           <RadialGradient
             id="paint2_radial_9_2"
@@ -97,9 +99,13 @@ function BackgroundGradient({
             gradientUnits="userSpaceOnUse"
             gradientTransform="matrix(-138.50157 186.49933 -184.81339 -137.24953 361.5 250)"
           >
-            <Stop stopColor="#8069D5" />
-            <Stop offset={0.576908} stopColor="#AC91F8" />
-            <Stop offset={0.973958} stopColor="#BE9BFD" stopOpacity={0} />
+            <Stop stopColor={color || "#8069D5"} />
+            <Stop offset={0.576908} stopColor={color || "#AC91F8"} />
+            <Stop
+              offset={0.973958}
+              stopColor={color || "#BE9BFD"}
+              stopOpacity={0}
+            />
           </RadialGradient>
           <LinearGradient
             id="paint3_linear_9_2"

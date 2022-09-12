@@ -214,6 +214,7 @@ function ReadOnlyPortfolio({ navigation }: Props) {
         <BackgroundGradient
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
+          color={colors.neutral.c30}
         />
         <AnimatedFlatListWithRefreshControl
           data={data}
