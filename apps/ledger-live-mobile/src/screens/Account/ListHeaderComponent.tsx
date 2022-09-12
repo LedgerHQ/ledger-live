@@ -89,6 +89,7 @@ export function getListHeaderComponents({
     perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
 
   const stickyHeaderIndices = empty ? [] : [0];
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { colors } = useTheme();
 
   return {
@@ -130,6 +131,7 @@ export function getListHeaderComponents({
       ...(!empty &&
       (AccountBalanceSummaryFooter ||
         (compoundSummary && account.type === "TokenAccount") ||
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         useAccountActions({ account, parentAccount }).secondaryActions.length)
         ? [
             <SectionContainer>

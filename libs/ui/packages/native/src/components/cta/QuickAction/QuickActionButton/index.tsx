@@ -7,7 +7,6 @@ import baseStyled, { BaseStyledProps } from "../../../styled";
 export type QuickActionButtonProps = TouchableOpacityProps &
   BaseStyledProps & {
     Icon: IconType;
-    iconPosition?: "right" | "left";
     disabled?: boolean;
     onPressWhenDisabled?: TouchableOpacityProps["onPress"];
   };

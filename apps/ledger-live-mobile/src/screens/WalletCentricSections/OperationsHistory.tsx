@@ -1,12 +1,11 @@
 import React, { memo, useMemo, useCallback } from "react";
-import { SectionList } from "react-native";
+import { SectionBase, SectionList } from "react-native";
 import { Button, Flex } from "@ledgerhq/native-ui";
-import { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import { AccountLikeArray, Operation } from "@ledgerhq/live-common/types/index";
 import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import { AccountLikeArray, Operation } from "@ledgerhq/types-live";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
@@ -49,6 +48,7 @@ const OperationsHistory = ({ accounts }: Props) => {
       section: SectionBase<any>;
     }) => {
       const account = accounts.find(a => a.id === item.accountId);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const parentAccount = useSelector(state =>
         parentAccountSelector(state, { account }),
       );

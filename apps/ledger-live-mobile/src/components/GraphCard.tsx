@@ -11,7 +11,6 @@ import Animated, {
 import Delta from "./Delta";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import { NavigatorName } from "../const";
 
 import { useTimeRange } from "../actions/settings";
 // eslint-disable-next-line import/no-unresolved
@@ -58,7 +57,7 @@ function GraphCard({
   const unit = counterValueCurrency.units[0];
 
   const [hoveredItem, setItemHover] = useState();
-  const [timeRange, setTimeRange, timeRangeItems] = useTimeRange();
+  const [, setTimeRange, timeRangeItems] = useTimeRange();
   const { colors } = useTheme();
 
   const updateTimeRange = useCallback(

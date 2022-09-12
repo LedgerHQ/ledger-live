@@ -5,8 +5,8 @@ import { ValueChange } from "@ledgerhq/types-live";
 import { Flex, Text, Tag, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
+import CurrencyUnitValue from "./CurrencyUnitValue";
+import CounterValue from "./CounterValue";
 
 type Props = {
   balance: BigNumber;

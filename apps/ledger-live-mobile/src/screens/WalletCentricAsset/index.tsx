@@ -64,6 +64,13 @@ const AssetScreen = ({ route }: Props) => {
   const cryptoAccounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
   );
+  const defaultAccount = useMemo(
+    () =>
+      cryptoAccounts && cryptoAccounts.length === 1
+        ? cryptoAccounts[0]
+        : undefined,
+    [cryptoAccounts],
+  );
 
   const assetPortfolio = usePortfolio(cryptoAccounts, {
     flattenSourceAccounts: false,
@@ -132,7 +139,11 @@ const AssetScreen = ({ route }: Props) => {
           title={t("account.quickActions")}
           containerProps={{ mb: 6 }}
         />
-        <FabAssetActions currency={currency} accounts={cryptoAccounts} />
+        <FabAssetActions
+          currency={currency}
+          accounts={cryptoAccounts}
+          defaultAccount={defaultAccount}
+        />
         {areCryptoAccountsEmpty ? (
           <EmptyAccountCard currencyTicker={currency.ticker} />
         ) : null}
