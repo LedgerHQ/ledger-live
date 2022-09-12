@@ -324,14 +324,6 @@
     "InvalidRecipient" : {
       "title" : "유효하지 않은 수령인"
     },
-    "LanguageInstallRefusedOnDevice" : {
-      "title" : "장치에서 언어 설치가 거부되었습니다",
-      "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
-    },
-    "LanguageNotFound" : {
-      "title" : "언어를 찾을 수 없습니다",
-      "description" : "설치하려는 언어를 찾을 수 없습니다. 다른 언어를 설치해 보세요."
-    },
     "LatestMCUInstalledError" : {
       "title" : "죄송하지만 업데이트가 필요한 항목이 없습니다",
       "description" : "장치를 사용할 수 없다면 Ledger 지원 부서에 문의하세요."
@@ -1828,8 +1820,7 @@
       "validatorsCount" : "검증인 ({{number}})",
       "storageLimit" : "저장공간 한계",
       "gasLimit" : "가스 한도",
-      "id" : "Id",
-      "autoClaimedRewards" : "자동으로 청구된 보상"
+      "id" : "Id"
     },
     "multipleAddresses" : "왜 주소가 여러 개인가요?",
     "tokenName" : "토큰명",
@@ -3540,19 +3531,6 @@
       "de" : "독일어"
     }
   },
-  "deviceLocalization" : {
-    "language" : "언어",
-    "deviceLanguage" : "장치 언어",
-    "changeLanguage" : "언어 변경",
-    "allowLanguageInstallation" : "언어 설치 허용",
-    "languageInstalled" : "장치 언어가 {{language}}로 변경되었습니다",
-    "installingLanguage" : "언어 설치 중",
-    "languages" : {
-      "english" : "영어",
-      "french" : "프랑스어",
-      "spanish" : "스페인어"
-    }
-  },
   "FirmwareUpdateCheckId" : {
     "title" : "식별자",
     "description" : "동일한 식별자가 표시되면 {{fullDeviceName}}에서 양쪽 버튼을 함께 누르세요:"
@@ -3659,31 +3637,6 @@
       "available" : {
         "title" : "CELO 이용 가능",
         "description" : "가처분 금액입니다."
-      }
-    }
-  },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO 사용 가능"
-      },
-      "delegated" : {
-        "description" : "위임된 자산은 오스모시스(Osmosis) 투표에 사용됩니다. 이는 사용차의 총 투표 수입니다."
-      },
-      "undelegating" : {
-        "description" : "위임 해제 자산은 14일 후 타임락이 해제되면 사용 가능합니다."
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "OSMO를 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
-            "steps" : {
-              "1" : "위임 해제가 완료되려면 14일을 기다려야 합니다."
-            }
-          }
-        }
       }
     }
   },
@@ -4427,11 +4380,6 @@
         "redelegate" : "위임 해제 자산은 21일 후에 가용 잔금으로 되돌아옵니다.",
         "undelegate" : "위임 해제 자산은 21일 후에 가용 잔금으로 되돌아옵니다."
       },
-      "osmosis" : {
-        "claimReward" : "선택된 검증인에게 대기 중 보상이 있으면, 자동으로 수령됩니다.",
-        "redelegate" : "위임 해제 자산은 14일 후에 이용 가능 잔액으로 되돌아옵니다.",
-        "undelegate" : "위임 해제 자산은 14일 후에 이용 가능 잔액으로 되돌아옵니다."
-      },
       "lending" : "장치에서 거래 세부사항을 확인한 후 전송하세요."
     },
     "amount" : "금액",
@@ -4441,7 +4389,6 @@
     "redelegationAmount" : "재위임된 금액",
     "gas" : "가스",
     "validatorAddress" : "검증인 주소",
-    "validatorName" : "검증인 이름",
     "rewardAmount" : "보상 금액",
     "undelegatedAmount" : "위임 해제 금액",
     "memo" : "메모"
@@ -4754,5 +4701,19 @@
     "chooseConstrast" : "Choose contrast",
     "uploadAnotherImage" : "다른 이미지 업로드",
     "selectContrast" : "컨트라스트 선택"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "좋습니다.\n설정이 모두 완료되었습니다.",
+      "allDoneTitle" : "잘 하셨습니다.\n이제 실행 중입니다.",
+      "subtitle" : "다음 단계:",
+      "skip" : "앱으로 건너뛰기",
+      "goToWallet" : "Ledger Live 지갑으로 바로가기",
+      "done" : "보다 안전한 미래를 준비하셨네요"
+    },
+    "walletCard" : {
+      "title" : "시작하기",
+      "description" : "여기를 클릭하여 Ledger Live로 귀하의 {{productName}} 장치 설정을 마치세요"
+    }
   }
 }

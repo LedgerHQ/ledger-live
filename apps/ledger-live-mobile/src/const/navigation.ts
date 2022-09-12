@@ -390,6 +390,10 @@ export const ScreenName = {
   CustomImageStep2Preview: "CustomImageStep2Preview",
   CustomImageStep3Transfer: "CustomImageStep3Transfer",
   CustomImageErrorScreen: "CustomImageErrorScreen",
+
+  PostOnboardingHub: "PostOnboardingHub",
+  PostOnboardingDebugScreen: "PostOnboardingDebugScreen",
+  PostOnboardingMockActionScreen: "PostOnboardingMockActionScreen",
 };
 export const NavigatorName = {
   // Stack
@@ -472,4 +476,6 @@ export const NavigatorName = {
   CustomImage: "CustomImage",
 
   WalletConnect: "WalletConnect",
+
+  PostOnboarding: "PostOnboarding",
 };

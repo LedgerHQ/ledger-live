@@ -324,14 +324,6 @@
     "InvalidRecipient" : {
       "title" : "Bénéficiaire non valide"
     },
-    "LanguageInstallRefusedOnDevice" : {
-      "title" : "Installation de la langue refusée sur l’appareil",
-      "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
-    },
-    "LanguageNotFound" : {
-      "title" : "Langue non trouvée",
-      "description" : "Impossible de trouver la langue que vous souhaitez installer. Veuillez essayer d’installer une autre langue."
-    },
     "LatestMCUInstalledError" : {
       "title" : "Pas de mise à jour disponible",
       "description" : "Si vous ne pouvez pas utiliser votre appareil, contactez l’Assistance Ledger."
@@ -1828,8 +1820,7 @@
       "validatorsCount" : "Validateurs ({{number}})",
       "storageLimit" : "Limite de stockage",
       "gasLimit" : "Limite de gaz",
-      "id" : "Identifiant (ID)",
-      "autoClaimedRewards" : "Récompenses automatiques"
+      "id" : "Identifiant (ID)"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "tokenName" : "Nom du token",
@@ -3540,19 +3531,6 @@
       "de" : "Allemand"
     }
   },
-  "deviceLocalization" : {
-    "language" : "Langue",
-    "deviceLanguage" : "Langue de l’appareil",
-    "changeLanguage" : "Changer la langue",
-    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
-    "languageInstalled" : "Votre appareil est maintenant en {{language}}.",
-    "installingLanguage" : "Installation de la langue",
-    "languages" : {
-      "english" : "English",
-      "french" : "Français",
-      "spanish" : "Español"
-    }
-  },
   "FirmwareUpdateCheckId" : {
     "title" : "Identifiant",
     "description" : "Merci d’appuyer sur les deux boutons simultanément sur votre {{fullDeviceName}} si le même identifiant apparaît :"
@@ -3659,31 +3637,6 @@
       "available" : {
         "title" : "CELO disponible",
         "description" : "Ce montant est disponible."
-      }
-    }
-  },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO disponibles"
-      },
-      "delegated" : {
-        "description" : "Les actifs délégués sont utilisés pour voter sur Osmosis. Cela représente votre nombre total de votes."
-      },
-      "undelegating" : {
-        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 14 jours."
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "Déléguez vos OSMO pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
-            "steps" : {
-              "1" : "Vous devrez attendre 14 jours pour que l’interruption de délégation soit terminée."
-            }
-          }
-        }
       }
     }
   },
@@ -4427,11 +4380,6 @@
         "redelegate" : "Vous devrez attendre 21 jours pour que les actifs non délégués soient versés sur votre solde disponible.",
         "undelegate" : "Vous devrez attendre 21 jours pour que les actifs non délégués soient versés sur votre solde disponible."
       },
-      "osmosis" : {
-        "claimReward" : "Si le validateur sélectionné a des récompenses en attente, elles seront automatiquement demandées.",
-        "redelegate" : "Vous devrez attendre 14 jours pour que les actifs non délégués soient versés sur votre solde disponible.",
-        "undelegate" : "Vous devrez attendre 14 jours pour que les actifs non délégués soient versés sur votre solde disponible."
-      },
       "lending" : "Vérifiez les détails de l’opération sur votre appareil avant de l’envoyer."
     },
     "amount" : "Montant",
@@ -4441,7 +4389,6 @@
     "redelegationAmount" : "Montant redélégué",
     "gas" : "Gaz",
     "validatorAddress" : "Adresse du validateur",
-    "validatorName" : "Nom du validateur",
     "rewardAmount" : "Montant de la récompense",
     "undelegatedAmount" : "Montant de la délégation interrompue",
     "memo" : "Mémo"
@@ -4754,5 +4701,19 @@
     "chooseConstrast" : "Choisissez un contraste",
     "uploadAnotherImage" : "Télécharger une autre image",
     "selectContrast" : "Sélectionnez le contraste voulu"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Voilà.\nTout est configuré.",
+      "allDoneTitle" : "Parfait.\nVous êtes fin prêt(e) !",
+      "subtitle" : "Vous pouvez maintenant :",
+      "skip" : "Accéder à l’app",
+      "goToWallet" : "Accéder à votre wallet Ledger Live",
+      "done" : "Vous venez de sécuriser votre avenir."
+    },
+    "walletCard" : {
+      "title" : "Premiers pas",
+      "description" : "Cliquez ici pour terminer la configuration de votre {{productName}} avec Ledger Live."
+    }
   }
 }

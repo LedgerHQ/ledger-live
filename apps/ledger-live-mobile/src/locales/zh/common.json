@@ -324,14 +324,6 @@
     "InvalidRecipient" : {
       "title" : "无效的接收方"
     },
-    "LanguageInstallRefusedOnDevice" : {
-      "title" : "语言安装被设备端拒绝",
-      "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
-    },
-    "LanguageNotFound" : {
-      "title" : "未找到语言",
-      "description" : "未找到您尝试安装的语言。请尝试安装其他语言。"
-    },
     "LatestMCUInstalledError" : {
       "title" : "对不起，没有可更新的内容",
       "description" : "如果设备无法使用，请联系 Ledger 客服。"
@@ -1828,8 +1820,7 @@
       "validatorsCount" : "验证者 ({{number}})",
       "storageLimit" : "存储空间限制",
       "gasLimit" : "矿工费限值",
-      "id" : "Id",
-      "autoClaimedRewards" : "自动领取的奖励"
+      "id" : "Id"
     },
     "multipleAddresses" : "为什么有多个地址？",
     "tokenName" : "代币名称",
@@ -3540,19 +3531,6 @@
       "de" : "Deutsch"
     }
   },
-  "deviceLocalization" : {
-    "language" : "语言",
-    "deviceLanguage" : "设备语言",
-    "changeLanguage" : "更改语言",
-    "allowLanguageInstallation" : "允许安装语言",
-    "languageInstalled" : "设备语言已更改为 {{language}}",
-    "installingLanguage" : "正在安装语言",
-    "languages" : {
-      "english" : "English",
-      "french" : "Français",
-      "spanish" : "Español"
-    }
-  },
   "FirmwareUpdateCheckId" : {
     "title" : "标识符（identifier）",
     "description" : "如果您的 {{fullDeviceName}} 上显示了同样的标识符，请同时按下两个按钮："
@@ -3659,31 +3637,6 @@
       "available" : {
         "title" : "CELO 可用",
         "description" : "该数额可自由支配。"
-      }
-    }
-  },
-  "osmosis" : {
-    "info" : {
-      "available" : {
-        "title" : "OSMO 现已推出"
-      },
-      "delegated" : {
-        "description" : "委托资产用于 Osmosis 投票。这是您的总得票数。"
-      },
-      "undelegating" : {
-        "description" : "取消委托的资产在 14 天锁定期才能使用。"
-      }
-    },
-    "delegation" : {
-      "flow" : {
-        "steps" : {
-          "starter" : {
-            "description" : "委托 OSMO 可安全赚取奖励，时刻掌控您的资产。",
-            "steps" : {
-              "1" : "取消委托过程必须等待 14 天才能完成。"
-            }
-          }
-        }
       }
     }
   },
@@ -4427,11 +4380,6 @@
         "redelegate" : "资产解除委托后，需要等待 21 天才能返还到可用余额。",
         "undelegate" : "资产解除委托后，需要等待 21 天才能返还到可用余额。"
       },
-      "osmosis" : {
-        "claimReward" : "如果已选的验证者有待领取的奖励，它们将被自动申领。",
-        "redelegate" : "取消委托的资产必须等待 14 天才能返还至可用余额。",
-        "undelegate" : "取消委托的资产必须等待 14 天才能返还至可用余额。"
-      },
       "lending" : "发送之前，请在您的设备上核对操作详情。"
     },
     "amount" : "数额",
@@ -4441,7 +4389,6 @@
     "redelegationAmount" : "已重新委托数额",
     "gas" : "Gas",
     "validatorAddress" : "验证者地址",
-    "validatorName" : "验证者名称",
     "rewardAmount" : "奖励金额",
     "undelegatedAmount" : "已解除委托的数额",
     "memo" : "Memo"
@@ -4754,5 +4701,19 @@
     "chooseConstrast" : "选择对比度",
     "uploadAnotherImage" : "上传另一张图片",
     "selectContrast" : "选择对比度"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "不错。\n一切准备就绪。",
+      "allDoneTitle" : "做得好。\n您现在可以开始使用了。",
+      "subtitle" : "以下是您后续可以执行的操作：",
+      "skip" : "跳到应用程序",
+      "goToWallet" : "转到 Ledger Live 钱包",
+      "done" : "您的未来有了保障"
+    },
+    "walletCard" : {
+      "title" : "快速入门",
+      "description" : "点击此处使用 Ledger Live 完成 {{productName}} 设置"
+    }
   }
 }
