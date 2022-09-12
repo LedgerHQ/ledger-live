@@ -9,7 +9,7 @@ const directDep = {};
 const reverseDep = {};
 
 // whitelist dependencies
-export const whitelistDependencies = ["Decred", "Decred Testnet", "Zcash"];
+export const whitelistDependencies = ["Decred", "Decred Test", "Zcash"];
 
 export function declareDep(name: string, dep: string) {
   if (whitelistDependencies.includes(name)) {
