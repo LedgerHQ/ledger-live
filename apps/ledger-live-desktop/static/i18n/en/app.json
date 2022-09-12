@@ -237,8 +237,8 @@
       "changeCTA": "Change",
       "rates": {
         "title": "Providers",
-        "registration": "Requires sign In",
-        "noRegistration": "Sign in not required",
+        "registration": "Registration required ",
+        "noRegistration": "No registration required",
         "fixed": "Fixed",
         "float": "Float",
         "update": "Rates update in",
