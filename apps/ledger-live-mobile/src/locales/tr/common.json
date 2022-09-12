@@ -324,6 +324,14 @@
     "InvalidRecipient" : {
       "title" : "Geçersiz alıcı"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Dil yüklemesi cihaz tarafından reddedildi",
+      "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+    },
+    "LanguageNotFound" : {
+      "title" : "Dil bulunamadı",
+      "description" : "Yüklemek istediğiniz dil bulunamadı. Lütfen farklı bir dil yüklemeyi deneyin."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Üzgünüz, güncellenecek bir şey yok",
       "description" : "Cihazınızı kullanamıyorsanız lütfen Ledger Destek ile iletişime geçin."
@@ -1595,27 +1603,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}} cihazınız aranıyor",
+        "description" : "Lütfen {{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "Cihazlar aranıyor",
+        "description" : "Lütfen cihazınızın açık olduğundan, kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "Zaten eşleştirilmiş"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}} ile eşleştirildi"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "Eşleştirme başarısız",
+        "subtitle" : "Bir sorun oluştu! Bluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun",
+        "retryCta" : "Tekrar deneyin"
       }
     }
   },
@@ -1820,7 +1828,8 @@
       "validatorsCount" : "Doğrulayıcılar ({{number}})",
       "storageLimit" : "Depolama Limiti",
       "gasLimit" : "Gas limiti",
-      "id" : "Kimlik (ID)"
+      "id" : "Kimlik (ID)",
+      "autoClaimedRewards" : "Otomatik Alınan Ödüller"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -3531,6 +3540,19 @@
       "de" : "Almanca"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Dil",
+    "deviceLanguage" : "Cihaz Dili",
+    "changeLanguage" : "Dili değiştir",
+    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
+    "languageInstalled" : "Cihaz dili {{language}} oldu",
+    "installingLanguage" : "Dil yükleniyor",
+    "languages" : {
+      "english" : "İngilizce",
+      "french" : "Fransızca",
+      "spanish" : "İspanyolca"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Tanımlayıcı",
     "description" : "Aynı tanımlayıcıyı gösteriyorsa lütfen {{fullDeviceName}} cihazınızda iki tuşa aynı anda basın:"
@@ -3637,6 +3659,31 @@
       "available" : {
         "title" : "CELO mevcut",
         "description" : "Bu tutar, kullanabileceğiniz fondur."
+      }
+    }
+  },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO mevcut"
+      },
+      "delegated" : {
+        "description" : "Yetkisi devredilen varlıklar Osmosis oylaması için kullanılır. Bu tutar toplam oy sayınızdır."
+      },
+      "undelegating" : {
+        "description" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce 14 gün boyunca zaman kilidinde tutulurlar."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "OSMO'larınızla yetki devri yaparak hem güvenle ödül kazanın hem de varlıklarınızın kontrolünü muhafaza edin edin.",
+            "steps" : {
+              "1" : "Yetki iptallerinin tamamlanması için 14 gün beklemeniz gerekir."
+            }
+          }
+        }
       }
     }
   },
@@ -4380,6 +4427,11 @@
         "redelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için 21 gün beklemeniz gerekir.",
         "undelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için 21 gün beklemeniz gerekir."
       },
+      "osmosis" : {
+        "claimReward" : "Seçilen doğrulayıcıda bekleyen ödüller varsa ödüller otomatik olarak alınır.",
+        "redelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için 14 gün beklemeniz gerekir.",
+        "undelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için 14 gün beklemeniz gerekir."
+      },
       "lending" : "Göndermeden önce işlem bilgilerini cihazınızdan doğrulayın."
     },
     "amount" : "Tutar",
@@ -4389,6 +4441,7 @@
     "redelegationAmount" : "Yetkisi devredilen tutar",
     "gas" : "Gas",
     "validatorAddress" : "Doğrulayıcı adresi",
+    "validatorName" : "Doğrulayıcı adı",
     "rewardAmount" : "Ödül tutarı",
     "undelegatedAmount" : "Yetkisi iptal edilen tutar",
     "memo" : "Memo"
@@ -4697,8 +4750,8 @@
         "uploadFromPhone" : "Telefonumdan yükle"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "Görüntüyü kırp",
+    "chooseConstrast" : "Kontrastı seç",
     "uploadAnotherImage" : "Başka bir görsel yükleyin",
     "selectContrast" : "Kontrastınızı seçin"
   },
