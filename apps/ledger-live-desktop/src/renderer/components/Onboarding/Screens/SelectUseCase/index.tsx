@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
+
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
@@ -24,7 +25,6 @@ import restorePhraseDark from "./assets/restorePhraseDark.png";
 import setupNanoDark from "./assets/setupNanoDark.png";
 
 import Illustration from "~/renderer/components/Illustration";
-import { getDeviceModel } from "~/../../../libs/ledgerjs/packages/devices/lib";
 
 registerAssets([
   connectNanoLight,
@@ -87,7 +87,6 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
   const { t } = useTranslation();
   const { deviceModelId } = useContext(OnboardingContext);
   const history = useHistory();
-  const device = deviceModelId ? getDeviceModel(deviceModelId) : undefined;
 
   return (
     <ScrollArea withHint>
@@ -99,7 +98,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               <Trans
                 i18nKey="onboarding.screens.selectUseCase.hasNoRecovery"
                 values={{
-                  deviceName: device?.productName,
+                  deviceName: t("devices." + deviceModelId),
                 }}
               />
             </LeftText>
@@ -112,7 +111,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 <Trans
                   i18nKey="onboarding.screens.selectUseCase.options.1.title"
                   values={{
-                    deviceName: device?.productName,
+                    deviceName: t("devices." + deviceModelId),
                   }}
                 />
               }
@@ -142,7 +141,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 <Trans
                   i18nKey="onboarding.screens.selectUseCase.options.2.title"
                   values={{
-                    deviceName: device?.productName,
+                    deviceName: t("devices." + deviceModelId),
                   }}
                 />
               }
@@ -168,7 +167,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 <Trans
                   i18nKey="onboarding.screens.selectUseCase.options.3.description"
                   values={{
-                    deviceName: device?.productName,
+                    deviceName: t("devices." + deviceModelId),
                   }}
                 />
               }
