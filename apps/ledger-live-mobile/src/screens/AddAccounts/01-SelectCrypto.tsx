@@ -26,6 +26,7 @@ type Props = {
   route: {
     params: {
       filterCurrencyIds?: string[];
+      currency?: string;
     };
   };
 };
@@ -45,8 +46,7 @@ const listSupportedTokens = () =>
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { filterCurrencyIds = [] } = route.params || {};
-
+  const { filterCurrencyIds = [], currency } = route.params || {};
   const osmo = useFeature("currencyOsmosisMobile");
   const fantom = useFeature("currencyFantomMobile");
   const moonbeam = useFeature("currencyMoonbeamMobile");
@@ -134,6 +134,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           list={sortedCryptoCurrencies}
           renderList={renderList}
           renderEmptySearch={renderEmptyList}
+          initialQuery={currency}
         />
       </View>
     </SafeAreaView>
