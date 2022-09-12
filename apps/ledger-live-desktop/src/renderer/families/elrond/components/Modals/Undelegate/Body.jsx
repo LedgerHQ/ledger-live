@@ -20,9 +20,8 @@ import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
 
-import type { AccountBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Operation } from "@ledgerhq/live-common/types/index";
 import type { ValidatorType } from "~/renderer/families/elrond/types";
 
 

@@ -119,9 +119,10 @@ const Validator = (props: Props) => {
   const recipient = route.params.recipient;
   const amount = route.params.amount;
 
-  const delegations = useMemo(() => route.params.delegations, [
-    route.params.delegations,
-  ]);
+  const delegations = useMemo(
+    () => route.params.delegations,
+    [route.params.delegations],
+  );
 
   const mainAccount = getMainAccount(account);
   const bridge = getAccountBridge(account);

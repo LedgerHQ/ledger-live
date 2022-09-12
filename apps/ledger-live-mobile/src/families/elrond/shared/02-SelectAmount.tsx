@@ -104,17 +104,17 @@ const Amount = (props: Props) => {
   const mode = route.params.mode || "delegation";
 
   const initialMax = useMemo(() => BigNumber(route.params.max || 0), [route]);
-  const initialValue = useMemo(() => BigNumber(route.params.value || 0), [
-    route,
-  ]);
+  const initialValue = useMemo(
+    () => BigNumber(route.params.value || 0),
+    [route],
+  );
 
   const [value, setValue] = useState(initialValue);
   const min = useMemo(() => route.params.min || BigNumber(0), [route]);
-  const max = useMemo(() => initialMax.minus(value.minus(initialValue)), [
-    initialValue,
-    initialMax,
-    value,
-  ]);
+  const max = useMemo(
+    () => initialMax.minus(value.minus(initialValue)),
+    [initialValue, initialMax, value],
+  );
 
   const onNext = useCallback(() => {
     const transaction = bridge.updateTransaction(route.params.transaction, {
@@ -134,10 +134,7 @@ const Amount = (props: Props) => {
   const [ratioButtons] = useState(
     [0.25, 0.5, 0.75, 1].map(ratio => ({
       label: `${ratio * 100}%`,
-      value: initialMax
-        .plus(initialValue)
-        .multipliedBy(ratio)
-        .integerValue(),
+      value: initialMax.plus(initialValue).multipliedBy(ratio).integerValue(),
     })),
   );
 
@@ -156,6 +153,8 @@ const Amount = (props: Props) => {
 
       return total.lt(BigNumber(nominate("1"))) && !total.isEqualTo(0);
     }
+
+    return null;
   }, [route.params.transaction, route.params.delegations, value]);
 
   const error = useMemo(() => max.lt(0) || value.lt(min), [value, max, min]);

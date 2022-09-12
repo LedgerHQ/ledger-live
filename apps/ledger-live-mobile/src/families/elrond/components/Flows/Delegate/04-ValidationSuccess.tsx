@@ -1,9 +1,11 @@
 // @flow
+
+import type { Operation } from "@ledgerhq/types-live";
+
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { Operation } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 
 import { accountScreenSelector } from "../../../../../reducers/accounts";
@@ -51,11 +53,9 @@ const Success = (props: Props) => {
     });
   }, [account, route.params, navigation]);
 
-  const mode = route.params.transaction.mode;
-
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ElrondClaimRewards" name="ValidationSuccess" />
+      <TrackScreen category="ElrondsDelegation" name="ValidationSuccess" />
 
       <PreventNativeBack />
 
@@ -63,14 +63,10 @@ const Success = (props: Props) => {
         onClose={onClose}
         onViewDetails={goToOperationDetails}
         title={
-          <Trans
-            i18nKey={`elrond.claimRewards.flow.steps.verification.success.title${
-              mode !== "claimRewards" ? "reDelegateRewards" : ""
-            }`}
-          />
+          <Trans i18nKey="elrond.delegation.flow.steps.verification.success.title" />
         }
         description={
-          <Trans i18nKey="elrond.claimRewards.flow.steps.verification.success.text" />
+          <Trans i18nKey="elrond.delegation.flow.steps.verification.success.text" />
         }
       />
     </View>

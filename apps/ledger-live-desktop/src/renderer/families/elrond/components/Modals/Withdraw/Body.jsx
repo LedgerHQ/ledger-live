@@ -22,9 +22,8 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/logger/logger";
 
-import type { AccountBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { Operation } from "@ledgerhq/live-common/types/index";
 import type { StepProps, St } from "./types";
 
 interface OwnProps {|

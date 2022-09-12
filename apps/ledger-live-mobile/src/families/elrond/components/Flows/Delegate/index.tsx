@@ -12,7 +12,7 @@ import StepHeader from "../../../../../components/StepHeader";
 import { ScreenName } from "../../../../../const";
 import DelegationStarted from "./01-Started.jsx";
 import DelegationSelectValidator from "./02-SelectValidator.jsx";
-import DelegationAmount from "../../../shared/02-SelectAmount.jsx";
+import DelegationAmount from "../../../shared/02-SelectAmount.js";
 import SelectDevice from "../../../../../screens/SelectDevice";
 import ConnectDevice from "../../../../../screens/ConnectDevice";
 import DelegationValidationError from "./04-ValidationError.jsx";
