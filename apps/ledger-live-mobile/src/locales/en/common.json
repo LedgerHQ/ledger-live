@@ -645,6 +645,9 @@
     },
     "CardanoMinAmountError": {
       "title": "Minimum {{amount}} ADA required"
+    },
+    "AvalancheInvalidDateTimeError": {
+      "title": "Invalid staking end date selected"
     }
   },
   "bluetooth": {
@@ -4018,7 +4021,45 @@
   "avalanchepchain": {
     "delegation": {
       "delegationEarn": "You can earn AVAX rewards by delegating your assets.",
-      "info": "How Delegation works"
+      "info": "How Delegation works",
+      "iDelegate": "I delegate",
+      "until": "until",
+      "validatorRemainingStake": "Available",
+      "stepperHeader": {
+        "starter": "Earn rewards",
+        "validator": "Delegate assets",
+        "amount": "Amount to delegate",
+        "endDate": "Delegation end date",
+        "summary": "Summary",
+        "verification": "Verification",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "available": "Total available",
+            "maxLabel": "Max"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated once the network confirms the transaction."
+            }
+          },
+          "starter": {
+            "description": "Delegate your AVAX to earn rewards securely, keeping control of your assets.",
+            "steps": {
+              "0": "You keep ownership of delegated assets",
+              "1": "Delegate using your Ledger device",
+              "2": "AVAX must be delegated for a minimum of 2 weeks"
+            },
+            "cta": "Continue"
+          },
+          "endDate": "The end date for this delegation must be between {{minEndDate}} and {{maxEndDate}}."
+        }
+      }
     },
     "info": {
       "available": {
@@ -4028,6 +4069,10 @@
       "delegated": {
         "title": "AVAX staked",
         "description": "Amount staked to validators."
+      },
+      "delegationUnavailable": {
+        "title": "Delegation unavailable",
+        "description": "Not enough available balance in your account to start a new delegation."
       }
     }
   },

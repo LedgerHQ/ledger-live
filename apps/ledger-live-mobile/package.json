@@ -84,6 +84,7 @@
     "@react-native-community/cli-platform-android": "^7.0.1",
     "@react-native-community/cli-platform-ios": "^7.0.1",
     "@react-native-community/clipboard": "^1.5.1",
+    "@react-native-community/datetimepicker": "^6.3.2",
     "@react-native-community/netinfo": "^6.0.1",
     "@react-native-firebase/app": "^14.3.1",
     "@react-native-firebase/remote-config": "^14.3.1",

@@ -367,6 +367,13 @@ export const ScreenName = {
   // avalanche
   AvalancheDelegationStarted: "AvalancheDelegationStarted",
   AvalancheDelegationValidator: "AvalancheDelegationValidator",
+  AvalancheDelegationValidatorSelect: "AvalancheDelegationValidatorSelect",
+  AvalancheDelegationAmount: "AvalancheDelegationAmount",
+  AvalancheDelegationEndDate: "AvalancheDelegationEndDate",
+  AvalancheDelegationSelectDevice: "AvalancheDelegationSelectDevice",
+  AvalancheDelegationConnectDevice: "AvalancheDelegationConnectDevice",
+  AvalancheDelegationValidationError: "AvalancheDelegationValidationError",
+  AvalancheDelegationValidationSuccess: "AvalancheDelegationValidationSuccess",
 };
 
 export const NavigatorName = {

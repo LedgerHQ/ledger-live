@@ -10,7 +10,7 @@ export const FIGMENT_AVALANCHE_VALIDATOR_NODES = [
 ];
 
 export const ONE_AVAX = 1000000000;
-// export const AVAX_MINIMUM_STAKE_AMOUNT = 1000000000; //fuji testnet
+// export const AVAX_MINIMUM_STAKE_AMOUNT = 1000000000; //"fuji" testnet
 export const AVAX_MINIMUM_STAKE_AMOUNT = 25000000000; //mainnet
 
 export const isDefaultValidatorNode = (nodeID: string): boolean =>
@@ -18,6 +18,15 @@ export const isDefaultValidatorNode = (nodeID: string): boolean =>
 
 export const canDelegate = (account: Account) =>
   account.spendableBalance.gt(AVAX_MINIMUM_STAKE_AMOUNT);
+
+export const getReadableDate = (unixTimestamp: number, locale: string) =>
+  new Date(unixTimestamp * 1000).toLocaleDateString(locale, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
 export const MINUTE = 60;
 export const FIVE_MINUTES = MINUTE * 5;
