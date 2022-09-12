@@ -100,6 +100,14 @@ function MarketDetail({
     [allAccounts],
   );
 
+  const defaultAccount = useMemo(
+    () =>
+      filteredAccounts && filteredAccounts.length === 1
+        ? filteredAccounts[0]
+        : undefined,
+    [filteredAccounts],
+  );
+
   const toggleStar = useCallback(() => {
     const action = isStarred ? removeStarredMarketCoins : addStarredMarketCoins;
     dispatch(action(currencyId));
@@ -242,6 +250,7 @@ function MarketDetail({
             {internalCurrency ? (
               <Flex mb={6}>
                 <FabMarketActions
+                  defaultAccount={defaultAccount}
                   currency={internalCurrency}
                   eventProperties={{ currencyName: name, page: "MarketCoin" }}
                   accounts={filteredAccounts}

@@ -12,7 +12,8 @@ import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
 } from "../../../reducers/settings";
-import { ActionButton } from "..";
+import { ActionButtonEvent } from "..";
+import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -30,7 +31,7 @@ export default function useAssetActions({
   currency,
   accounts,
 }: useAssetActionsProps): {
-  mainActions: ActionButton[];
+  mainActions: ActionButtonEvent[];
 } {
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -69,11 +70,12 @@ export default function useAssetActions({
     return [onRampProviders.length > 0, offRampProviders.length > 0];
   }, [rampCatalog.value, currency]);
 
-  const actions = useMemo<ActionButton[]>(
+  const actions = useMemo<ActionButtonEvent[]>(
     () => [
       ...(canBeBought
         ? [
             {
+              id: "buy",
               event: "TransferExchange",
               label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
@@ -92,6 +94,7 @@ export default function useAssetActions({
       ...(canBeSold
         ? [
             {
+              id: "sell",
               event: "TransferExchange",
               label: t("exchange.sell.tabTitle"),
               Icon: iconSell,
@@ -105,6 +108,9 @@ export default function useAssetActions({
                 },
               ],
               disabled: areAccountsBalanceEmpty,
+              modalOnDisabledClick: {
+                component: ZeroBalanceDisabledModalContent,
+              },
             },
           ]
         : []),
@@ -113,6 +119,7 @@ export default function useAssetActions({
             ...(availableOnSwap
               ? [
                   {
+                    id: "swap",
                     event: "TransferSwap",
                     label: t("transfer.swap.title"),
                     Icon: iconSwap,
@@ -124,10 +131,14 @@ export default function useAssetActions({
                       },
                     ],
                     disabled: areAccountsBalanceEmpty,
+                    modalOnDisabledClick: {
+                      component: ZeroBalanceDisabledModalContent,
+                    },
                   },
                 ]
               : []),
             {
+              id: "receive",
               event: "TransferReceive",
               label: t("transfer.receive.title"),
               Icon: iconReceive,
@@ -154,6 +165,7 @@ export default function useAssetActions({
               ],
             },
             {
+              id: "send",
               event: "TransferSend",
               label: t("transfer.send.title"),
               Icon: iconSend,
@@ -176,12 +188,16 @@ export default function useAssetActions({
                     },
               ],
               disabled: areAccountsBalanceEmpty,
+              modalOnDisabledClick: {
+                component: ZeroBalanceDisabledModalContent,
+              },
             },
           ]
         : [
             ...(!readOnlyModeEnabled
               ? [
                   {
+                    id: "add_account",
                     event: "TransferAddAccount",
                     label: t("addAccountsModal.ctaAdd"),
                     Icon: iconAddAccount,
@@ -202,6 +218,7 @@ export default function useAssetActions({
           ]),
     ],
     [
+      areAccountsBalanceEmpty,
       availableOnSwap,
       canBeBought,
       canBeSold,

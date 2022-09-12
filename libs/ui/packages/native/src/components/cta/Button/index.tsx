@@ -7,10 +7,11 @@ import { ctaIconSize, ctaTextType } from "../../cta/getCtaStyle";
 import Text from "../../Text";
 import { Icon as IconComponent } from "../../Icon";
 import baseStyled, { BaseStyledProps } from "../../styled";
+import { IconType } from "../../Icon/type";
 
 export type ButtonProps = TouchableOpacityProps &
   BaseStyledProps & {
-    Icon?: React.ComponentType<{ size: number; color: string }> | null;
+    Icon?: IconType;
     iconName?: string;
     type?: "main" | "shade" | "error" | "color" | "default";
     size?: "small" | "medium" | "large";

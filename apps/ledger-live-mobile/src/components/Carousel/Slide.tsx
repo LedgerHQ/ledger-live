@@ -9,7 +9,6 @@ import { useNavigation } from "@react-navigation/native";
 import Touchable from "../Touchable";
 // eslint-disable-next-line import/no-cycle
 import { track } from "../../analytics";
-import { SlideProps } from "./shared";
 
 const StyledTouchable = styled(Touchable)`
   flex: 1;

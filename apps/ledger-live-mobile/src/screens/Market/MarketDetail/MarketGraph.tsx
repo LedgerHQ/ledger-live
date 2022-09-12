@@ -8,7 +8,6 @@ import {
 } from "@ledgerhq/native-ui";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { useTranslation } from "react-i18next";
-import { Transition } from "@ledgerhq/native-ui/components/transitions";
 import Graph from "../../../components/Graph";
 // eslint-disable-next-line import/no-unresolved
 import getWindowDimensions from "../../../logic/getWindowDimensions";

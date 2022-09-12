@@ -27,6 +27,7 @@ import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 import Main from "./MainNavigator";
 // eslint-disable-next-line import/no-cycle
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
+// eslint-disable-next-line import/no-cycle
 import SettingsNavigator from "./SettingsNavigator";
 // eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";

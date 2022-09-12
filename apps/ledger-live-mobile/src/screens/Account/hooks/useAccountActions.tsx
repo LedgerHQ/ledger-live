@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -11,7 +11,6 @@ import { Icons } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { NavigatorName, ScreenName } from "../../../const";
-// eslint-disable-next-line import/named
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
@@ -19,7 +18,7 @@ import {
 import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
-import { ActionButton } from "../../../components/FabActions";
+import { ActionButtonEvent } from "../../../components/FabActions";
 
 type Props = {
   account: AccountLike;
@@ -36,8 +35,8 @@ export default function useAccountActions({
   parentAccount,
   colors,
 }: Props): {
-  mainActions: ActionButton[];
-  secondaryActions: ActionButton[];
+  mainActions: ActionButtonEvent[];
+  secondaryActions: ActionButtonEvent[];
 } {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const { t } = useTranslation();
@@ -96,7 +95,8 @@ export default function useAccountActions({
     [account, parentAccount, decorators],
   );
 
-  const actionButtonSwap: ActionButton = {
+  const actionButtonSwap: ActionButtonEvent = {
+    id: "swap",
     navigationParams: [
       NavigatorName.Swap,
       {
@@ -117,7 +117,8 @@ export default function useAccountActions({
     eventProperties: { currencyName: currency.name },
   };
 
-  const actionButtonBuy: ActionButton = {
+  const actionButtonBuy: ActionButtonEvent = {
+    id: "buy",
     navigationParams: [
       NavigatorName.Exchange,
       {
@@ -136,7 +137,8 @@ export default function useAccountActions({
     },
   };
 
-  const actionButtonSell: ActionButton = {
+  const actionButtonSell: ActionButtonEvent = {
+    id: "sell",
     navigationParams: [
       NavigatorName.Exchange,
       {
@@ -160,6 +162,7 @@ export default function useAccountActions({
   };
 
   const SendAction = {
+    id: "send",
     navigationParams: [
       NavigatorName.SendFunds,
       {
@@ -177,6 +180,7 @@ export default function useAccountActions({
   };
 
   const ReceiveAction = {
+    id: "receive",
     navigationParams: [
       NavigatorName.ReceiveFunds,
       {
@@ -215,6 +219,7 @@ export default function useAccountActions({
     ...(isEthereum
       ? [
           {
+            id: "stake",
             navigationParams: [
               NavigatorName.Base,
               {
@@ -235,6 +240,7 @@ export default function useAccountActions({
     ...(isWalletConnectSupported
       ? [
           {
+            id: "walletconnect",
             navigationParams: [
               NavigatorName.Base,
               {

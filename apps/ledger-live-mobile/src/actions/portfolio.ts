@@ -9,7 +9,7 @@ import {
   usePortfolio as usePortfolioCommon,
   useCurrencyPortfolio as useCurrencyPortfolioCommon,
 } from "@ledgerhq/live-common/portfolio/v2/react";
-import { GetPortfolioOptionsType } from "@ledgerhq/live-common/portfolio/v2";
+import { GetPortfolioOptionsType } from "@ledgerhq/live-common/portfolio/v2/index";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,
