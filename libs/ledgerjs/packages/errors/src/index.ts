@@ -210,6 +210,7 @@ export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
+export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
