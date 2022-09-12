@@ -1,4 +1,4 @@
-import React, { createContext, memo } from "react";
+import React, { memo } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { QuickActionList } from "@ledgerhq/native-ui";

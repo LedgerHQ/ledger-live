@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -7,12 +6,15 @@ import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike, Account } from "@ledgerhq/types-live";
-import { BalanceHistoryWithCountervalue } from "@ledgerhq/live-common/portfolio/v2/types";
+  getAccountName,
+} from "@ledgerhq/live-common/account/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import {
+  AccountLike,
+  Account,
+  BalanceHistoryWithCountervalue,
+} from "@ledgerhq/types-live";
 import Animated from "react-native-reanimated";
-import { getAccountName } from "@ledgerhq/live-common/account/index";
 import Touchable from "../../components/Touchable";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { track } from "../../analytics";

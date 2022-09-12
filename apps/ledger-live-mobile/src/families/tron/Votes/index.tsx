@@ -24,7 +24,6 @@ import Row from "./Row";
 import Header from "./Header";
 import LText from "../../../components/LText";
 import { NavigatorName, ScreenName } from "../../../const";
-import Info from "../../../icons/Info";
 import ArrowRight from "../../../icons/ArrowRight";
 import DateFromNow from "../../../components/DateFromNow";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";

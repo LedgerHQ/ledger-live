@@ -9,7 +9,7 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 
-import getWindowDimensions from "../../logic/getWindowDimensions";
+import getWindowDimensions from "../logic/getWindowDimensions";
 import CurrencyGradient from "./CurrencyGradient";
 
 function CurrencyHeaderLayout({

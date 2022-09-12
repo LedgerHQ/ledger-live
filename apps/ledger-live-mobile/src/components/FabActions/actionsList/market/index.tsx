@@ -3,7 +3,6 @@ import React, { memo } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import useAssetActions from "../../hooks/useAssetActions";
-import FabAccountButtonBar from "../account/FabAccountButtonBar";
 import { FabButtonBarProvider } from "../../index";
 import FabButtonBar from "../../FabButtonBar";
 

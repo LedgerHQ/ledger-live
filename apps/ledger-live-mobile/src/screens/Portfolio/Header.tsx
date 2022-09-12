@@ -14,7 +14,6 @@ import styled, { useTheme } from "styled-components/native";
 import Animated, {
   Extrapolate,
   interpolate,
-  SharedValue,
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
@@ -130,7 +129,6 @@ function PortfolioHeader({
     position: absolute;
   `;
 
-  const isAvailable = portfolio.balanceAvailable;
   const balanceHistory = portfolio.balanceHistory;
   const currentPortfolio = balanceHistory[balanceHistory.length - 1];
   const unit = counterValueCurrency.units[0];
