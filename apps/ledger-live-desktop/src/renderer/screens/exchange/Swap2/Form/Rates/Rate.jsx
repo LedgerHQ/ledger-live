@@ -8,12 +8,10 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   getProviderName,
-  registrationIsRequired,
+  isRegistrationRequired,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { rgba } from "~/renderer/styles/helpers";
 import type { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import IconLock from "~/renderer/icons/Lock";
-import IconLockOpen from "~/renderer/icons/LockOpen";
 import Price from "~/renderer/components/Price";
 import CounterValue from "~/renderer/components/CounterValue";
 import { iconByProviderName } from "../../utils";
@@ -69,7 +67,7 @@ function Rate({ value, selected, onSelect, fromCurrency, toCurrency }: Props) {
               <Text fontSize={3} color="palette.text.shade40">
                 <Trans
                   i18nKey={
-                    registrationIsRequired(value.provider)
+                    isRegistrationRequired(value.provider)
                       ? "swap2.form.rates.registration"
                       : "swap2.form.rates.noRegistration"
                   }

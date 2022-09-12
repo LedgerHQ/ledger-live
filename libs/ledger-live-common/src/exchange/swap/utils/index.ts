@@ -172,7 +172,7 @@ export const shouldShowKYCBanner = ({
   return kycStatus !== KYC_STATUS.approved;
 };
 
-export const registrationIsRequired = (provider: string): boolean => {
+export const isRegistrationRequired = (provider: string): boolean => {
   const { needsBearerToken, needsKYC } = getProviderConfig(provider);
   return needsBearerToken || needsKYC;
 };

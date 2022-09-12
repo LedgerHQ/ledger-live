@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Rate from "./Rate";
+import Countdown from './Countdown'
 import type {
   SwapSelectorStateType,
   RatesReducerState,
@@ -13,8 +14,6 @@ import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SWAP_VERSION } from "../../utils/index";
-import { context } from "~/renderer/drawers/Provider";
-import PlatformCatalogIllu from "~/renderer/images/subtract-clock.png";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
@@ -24,27 +23,23 @@ type Props = {
   toCurrency: $PropertyType<SwapSelectorStateType, "currency">,
   rates: $PropertyType<RatesReducerState, "value">,
   provider: ?string,
-  countdown: number,
-  loadingRates: boolean,
+  refreshTime: number,
 };
-export default function ProviderRateDrawer({
+export default function ProviderRate({
   fromCurrency,
   toCurrency,
   rates,
   provider,
-  countdown,
-  loadingRates,
   updateSelectedRate,
+  refreshTime,
 }: Props) {
   const dispatch = useDispatch();
   const selectedRate = useSelector(rateSelector);
-  const { setDrawer } = React.useContext(context);
 
   const setRate = useCallback(
     rate => {
       updateSelectedRate(rate);
       dispatch(updateRateAction(rate));
-      setDrawer(undefined);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch],
@@ -64,10 +59,6 @@ export default function ProviderRateDrawer({
   })`
     border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
   `;
-  const CountdownText: ThemedComponent<{}> = styled(Text).attrs()`
-    color: ${p => p.theme.colors.neutral.c70};
-  `;
-
   return (
     <Box height="100%" width="100%">
       <TrackPage
@@ -81,23 +72,7 @@ export default function ProviderRateDrawer({
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
         <Box horizontal fontSize={3}>
-          {Math.round(countdown) >= 0 ? (
-            <Box horizontal fontSize={3}>
-              <CountdownText>
-                <Trans i18nKey="swap2.form.rates.update" />
-              </CountdownText>
-              <Box horizontal fontSize={3} mx={1}>
-                <img src={PlatformCatalogIllu} height={"14px"} />
-              </Box>
-              <Box style={{ width: "28px" }}>
-                00:{Math.abs(countdown).toLocaleString("en-US", { minimumIntegerDigits: 2 })}
-              </Box>
-            </Box>
-          ) : (
-            <CountdownText>
-              <Trans i18nKey="swap2.form.rates.loading" />
-            </CountdownText>
-          )}
+          <Countdown refreshTime={refreshTime} rates={rates}/>
         </Box>
       </Box>
       <TableHeader>

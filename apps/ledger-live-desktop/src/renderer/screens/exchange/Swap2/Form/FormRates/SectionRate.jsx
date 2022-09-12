@@ -70,13 +70,13 @@ const SectionProvider = ({
   countdown,
   setSelectedRate,
   updateSelectedRate,
+  refreshTime,
 }: SectionProviderProps) => {
   const { t } = useTranslation();
   const ProviderIcon = provider && iconByProviderName[provider.toLowerCase()];
 
   const { setDrawer } = useContext(context);
   const rates = ratesState.value;
-  const loadingRates = ratesState.status === "loading";
 
   return (
     <ProvidersSection>
@@ -88,9 +88,9 @@ const SectionProvider = ({
             rates,
             provider,
             countdown,
-            loadingRates,
             setSelectedRate,
             updateSelectedRate,
+            refreshTime,
           }}
         />
       )) || (

@@ -10,7 +10,7 @@ import { genAccount } from "../../../mock/account";
 import {
   getAccountTuplesForCurrency,
   getAvailableAccountsById,
-  registrationIsRequired,
+  isRegistrationRequired,
   getProviderName,
   KYCStatus,
   shouldShowKYCBanner,
@@ -304,11 +304,11 @@ describe("swap/utils/shouldShowKYCBanner", () => {
   });
 });
 
-describe("swap/utils/registrationIsRequired", () => {
+describe("swap/utils/isRegistrationRequired", () => {
   test("should return registration is required for ftx", () => {
     const expectedResult = true;
 
-    const result = registrationIsRequired("ftx");
+    const result = isRegistrationRequired("ftx");
 
     expect(result).toBe(expectedResult);
   });
@@ -316,7 +316,7 @@ describe("swap/utils/registrationIsRequired", () => {
   test("should return registration is not required for changelly", () => {
     const expectedResult = false;
 
-    const result = registrationIsRequired("changelly");
+    const result = isRegistrationRequired("changelly");
 
     expect(result).toBe(expectedResult);
   });

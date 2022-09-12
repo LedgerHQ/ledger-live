@@ -12,7 +12,7 @@ import {
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
@@ -98,8 +98,6 @@ const SwapForm = () => {
   const [currentBanner, setCurrentBanner] = useState(null);
   const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
 
-  const [countdown, setCountdown] = useState(refreshTime);
-
   const [error, setError] = useState();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -169,19 +167,6 @@ const SwapForm = () => {
       clearInterval(refreshInterval);
     };
   }, [swapTransaction.swap.from.amount]);
-
-  useEffect(() => {
-    const startTime = new Date().getTime();
-    setCountdown(refreshTime);
-    const countdownInterval = setInterval(() => {
-      const now = new Date().getTime();
-      const newCountdown = refreshTime + startTime - now;
-      setCountdown(newCountdown);
-    }, 1000);
-    return () => {
-      clearInterval(countdownInterval);
-    };
-  }, [swapTransaction?.swap?.rates?.value]);
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
@@ -439,7 +424,7 @@ const SwapForm = () => {
           swap={swapTransaction.swap}
           kycStatus={kycStatus}
           provider={provider}
-          countdown={Math.round(countdown / 1000)}
+          refreshTime={refreshTime}
         />
 
         {currentBanner === "LOGIN" ? (
