@@ -45,7 +45,7 @@ const evmBasicMutations = ({ maxAccount }) => [
         "operation time to be older than 60s"
       );
       const estimatedGas = transaction.gasLimit.times(
-        transaction.gasPrice || 0
+        transaction.gasPrice || transaction.maxFeePerGas || 0
       );
       botTest("operation fee is not exceeding estimated gas", () =>
         expect(operation.fee.toNumber()).toBeLessThanOrEqual(
