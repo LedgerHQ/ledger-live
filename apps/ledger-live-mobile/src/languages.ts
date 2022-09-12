@@ -56,7 +56,14 @@ export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
  * or in the case of existing users, they will be prompted once to change their
  * Ledger Live language.
  */
-export const fullySupportedLocales: Locale[] = ["en", "fr", "ru", "es", "zh", "pt"];
+export const fullySupportedLocales: Locale[] = [
+  "en",
+  "fr",
+  "ru",
+  "es",
+  "zh",
+  "pt",
+];
 type LocaleIndexed<T> = { [key in Locale]?: T };
 
 export const locales = supportedLocales.reduce(
