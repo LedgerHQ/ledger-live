@@ -19,7 +19,7 @@ import ImageProcessor, {
   ProcessorPreviewResult,
   ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
-import { cropAspectRatio } from "./shared";
+import { targetDimensions } from "./shared";
 import { fitImageContain } from "../../components/CustomImage/imageUtils";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
@@ -92,7 +92,7 @@ const Step2Preview: React.FC<
   );
 
   useResizedImage({
-    targetDimensions: cropAspectRatio,
+    targetDimensions: targetDimensions,
     imageFileUri: croppedImage?.imageFileUri,
     onError: handleError,
     onResult: handleResizeResult,

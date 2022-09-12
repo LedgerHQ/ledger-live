@@ -13,7 +13,7 @@ import {
   ImageFileUri,
 } from "../../components/CustomImage/types";
 import { downloadImageToFile } from "../../components/CustomImage/imageUtils";
-import { cropAspectRatio } from "./shared";
+import { targetDimensions } from "./shared";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
@@ -121,7 +121,7 @@ const Step1Cropping: React.FC<
             <ImageCropper
               ref={cropperRef}
               imageFileUri={imageToCrop.imageFileUri}
-              aspectRatio={cropAspectRatio}
+              aspectRatio={targetDimensions}
               style={containerDimensions} // this native component needs absolute height & width values
               onError={handleError}
               onResult={handleCropResult}
