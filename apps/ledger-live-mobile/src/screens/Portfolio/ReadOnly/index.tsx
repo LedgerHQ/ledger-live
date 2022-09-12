@@ -34,7 +34,6 @@ import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
 import { screen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
-import ReadOnlyAssets from "./ReadOnlyAssets";
 import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
 import { useProviders } from "../../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
@@ -215,6 +214,7 @@ function ReadOnlyPortfolio({ navigation }: Props) {
         <BackgroundGradient
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
+          color={colors.neutral.c30}
         />
         <AnimatedFlatListWithRefreshControl
           data={data}
