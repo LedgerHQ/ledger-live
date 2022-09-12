@@ -10,7 +10,6 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
-import Ellipsis from "~/renderer/components/Ellipsis";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import {
@@ -112,7 +111,7 @@ type OperationDetailsExtraProps = {
 };
 
 const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
-  const { extra, type, account, operation } = props;
+  const { type, account, operation } = props;
 
   const unit = getAccountUnit(account);
   const discreet = useDiscreetMode();
@@ -247,23 +246,7 @@ const OperationDetailsExtra = (props: OperationDetailsExtraProps) => {
       break;
   }
 
-  return (
-    <Fragment>
-      {ret}
-
-      {extra.memo && (
-        <OpDetailsSection>
-          <OpDetailsTitle>
-            <Trans i18nKey="operationDetails.extra.memo" />
-          </OpDetailsTitle>
-
-          <OpDetailsData>
-            <Ellipsis ml={2}>{extra.memo}</Ellipsis>
-          </OpDetailsData>
-        </OpDetailsSection>
-      )}
-    </Fragment>
-  );
+  return ret;
 };
 
 type Props = {
@@ -273,10 +256,7 @@ type Props = {
 };
 
 const UndelegateAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount: BigNumber =
-    operation.extra && operation.extra.validators
-      ? BigNumber(operation.extra.validators[0].amount)
-      : BigNumber(0);
+  const amount: BigNumber = BigNumber(operation.extra.amount);
 
   return (
     !amount.isZero() && (

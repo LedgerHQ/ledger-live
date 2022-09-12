@@ -96,7 +96,7 @@ module.exports = {
     "eslint-comments/no-unlimited-disable": "warn",
     "eslint-comments/no-unused-disable": "warn",
     "react-native/no-inline-styles": "warn",
-    "react/jsx-fragments": 0,
+    "react/jsx-fragments": "warn",
     "react/no-deprecated": "warn",
 
     // Enables no-unused-vars only from TypeScript

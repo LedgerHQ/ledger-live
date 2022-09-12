@@ -308,7 +308,7 @@ dependencies {
 
     androidTestImplementation('com.wix:detox:+')
 
-    compile project(':react-native-video')
+    implementation project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
 
     // Adjust
