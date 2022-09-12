@@ -128,7 +128,6 @@ const Body = ({
 
     const transaction = bridge.updateTransaction(t, {
       mode: "stake",
-      recipient: FIGMENT_NEAR_VALIDATOR_ADDRESS,
     });
 
     return { account, parentAccount: undefined, transaction };

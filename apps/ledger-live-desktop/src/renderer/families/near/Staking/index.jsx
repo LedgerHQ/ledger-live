@@ -148,7 +148,7 @@ const Staking = ({ account }: Props) => {
               <Box mt={2}>
                 <LinkWithExternalIcon
                   label={<Trans i18nKey="near.stake.emptyState.info" />}
-                  onClick={() => openURL(urls.ledgerValidator)}
+                  onClick={() => openURL(urls.nearStakingRewards)}
                 />
               </Box>
             </Box>

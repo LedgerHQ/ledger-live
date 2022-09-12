@@ -54,14 +54,9 @@ const getTransactionStatus = async (
   const estimatedFees = t.fees || new BigNumber(0);
 
   const totalSpent = getTotalSpent(a, t, estimatedFees);
+  const maxAmount = getMaxAmount(a, t, estimatedFees);
 
-  const amount = useAllAmount
-    ? getMaxAmount(a, t, estimatedFees)
-    : new BigNumber(t.amount);
-
-  const stakingPosition = a.nearResources?.stakingPositions?.find(
-    (p) => p.validatorId === t.recipient
-  );
+  const amount = useAllAmount ? maxAmount : new BigNumber(t.amount);
 
   const stakingThreshold = getYoctoThreshold();
 
@@ -85,17 +80,9 @@ const getTransactionStatus = async (
     errors.amount = new NearStakingThresholdNotMet(undefined, {
       threshold: formattedStakingThreshold,
     });
-  } else if (
-    t.mode === "unstake" &&
-    stakingPosition &&
-    amount.gt(stakingPosition?.staked)
-  ) {
+  } else if (t.mode === "unstake" && amount.gt(maxAmount)) {
     errors.amount = new NearNotEnoughStaked();
-  } else if (
-    t.mode === "withdraw" &&
-    stakingPosition &&
-    amount.gt(stakingPosition?.available)
-  ) {
+  } else if (t.mode === "withdraw" && amount.gt(maxAmount)) {
     errors.amount = new NearNotEnoughAvailable();
   } else if (amount.lte(0) && !t.useAllAmount) {
     errors.amount = new AmountRequired();
