@@ -58,6 +58,14 @@ type EditSectionProps = {
   onChange: (_: string) => void;
 };
 
+const tryParse = (jsonString: string, fallback: any) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return fallback;
+  }
+};
+
 const EditSection = ({
   error,
   value,
@@ -86,7 +94,7 @@ const EditSection = ({
         renderRight={() => (
           <InputRenderRightContainer>
             <Switch
-              checked={JSON.parse(value)?.enabled}
+              checked={tryParse(value)?.enabled}
               onChange={handleSwitchChange}
             />
           </InputRenderRightContainer>
