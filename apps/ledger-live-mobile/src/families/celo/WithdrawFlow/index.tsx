@@ -1,4 +1,3 @@
-import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { useTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useMemo } from "react";
@@ -13,7 +12,7 @@ import WithdrawAmount from "./WithdrawAmount";
 import ValidationError from "./ValidationError";
 import ValidationSuccess from "./ValidationSuccess";
 
-const totalSteps = "3";     // Withdraw, Device, Confirmation
+const totalSteps = "3"; // Withdraw, Device, Confirmation
 
 function WithdrawFlow() {
   const { t } = useTranslation();
@@ -34,7 +33,8 @@ function WithdrawFlow() {
         component={WithdrawAmount}
         options={{
           headerTitle: () => (
-            <StepHeader title={t("celo.withdraw.title")}
+            <StepHeader
+              title={t("celo.withdraw.title")}
               subtitle={t("celo.vote.stepperHeader.stepRange", {
                 currentStep: "1",
                 totalSteps,

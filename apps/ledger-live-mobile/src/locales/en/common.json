@@ -151,6 +151,9 @@
     "CeloAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
+    "CeloMissingWithdrawalsError": {
+      "title": "Something went wrong, cannot fetch any funds to withdraw"
+    },
     "ClaimRewardsFeesWarning": {
       "title": "The rewards are smaller than the estimated fees to claim them.",
       "description": ""

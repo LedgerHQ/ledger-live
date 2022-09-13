@@ -10,14 +10,14 @@ import {
   CeloValidatorGroup,
   CeloVote,
   Transaction,
+  CeloAccount,
 } from "@ledgerhq/live-common/families/celo/types";
 import { revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
-import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
@@ -27,6 +27,8 @@ import Touchable from "../../../components/Touchable";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import Selectable from "../components/Selectable";
+import Line from "../components/Line";
+import Words from "../components/Words";
 
 type Props = {
   navigation: any;
@@ -199,10 +201,6 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
   },
-  summaryWords: {
-    marginRight: 6,
-    fontSize: 18,
-  },
   footer: {
     flexDirection: "column",
     alignItems: "center",
@@ -256,26 +254,3 @@ function SummaryWords({
     </>
   );
 }
-
-const Line = ({ children }: { children: ReactNode }) => (
-  <View style={styles.summaryLine}>{children}</View>
-);
-
-const Words = ({
-  children,
-  highlighted,
-  style,
-}: {
-  children: ReactNode;
-  highlighted?: boolean;
-  style?: any;
-}) => (
-  <Text
-    numberOfLines={1}
-    fontWeight={highlighted ? "bold" : "semiBold"}
-    style={[styles.summaryWords, style]}
-    color={highlighted ? "live" : "smoke"}
-  >
-    {children}
-  </Text>
-);

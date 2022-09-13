@@ -23,7 +23,7 @@ import {
 import {
   CeloAccount,
   CeloVote,
-} from "@ledgerhq/live-common/lib/families/celo/types";
+} from "@ledgerhq/live-common/families/celo/types";
 import Alert from "../../../components/Alert";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";

@@ -8,7 +8,7 @@ import { isDefaultValidatorGroupAddress } from "@ledgerhq/live-common/families/c
 import {
   CeloAccount,
   CeloVote,
-} from "@ledgerhq/live-common/lib/families/celo/types";
+} from "@ledgerhq/live-common/families/celo/types";
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";

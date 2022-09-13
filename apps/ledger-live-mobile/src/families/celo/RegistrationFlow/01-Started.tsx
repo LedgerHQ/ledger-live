@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";

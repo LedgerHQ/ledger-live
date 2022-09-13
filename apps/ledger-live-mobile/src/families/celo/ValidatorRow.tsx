@@ -8,7 +8,7 @@ import { StyleSheet, View } from "react-native";
 import {
   CeloValidatorGroup,
   CeloVote,
-} from "@ledgerhq/live-common/lib/families/celo/types";
+} from "@ledgerhq/live-common/families/celo/types";
 import { useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

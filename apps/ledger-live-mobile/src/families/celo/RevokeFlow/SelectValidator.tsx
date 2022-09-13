@@ -7,7 +7,7 @@ import {
   CeloAccount,
   CeloValidatorGroup,
   CeloVote,
-} from "@ledgerhq/live-common/lib/families/celo/types";
+} from "@ledgerhq/live-common/families/celo/types";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import {
   fallbackValidatorGroup,

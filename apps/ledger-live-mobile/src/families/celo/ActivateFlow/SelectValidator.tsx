@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import {
   CeloAccount,
   CeloValidatorGroup,
-} from "@ledgerhq/live-common/lib/families/celo/types";
+} from "@ledgerhq/live-common/families/celo/types";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import {
   activatableVotes,

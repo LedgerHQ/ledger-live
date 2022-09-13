@@ -88,7 +88,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, debouncedTransaction]);
+  }, [account, parentAccount, debouncedTransaction, bridge]);
 
   const onChange = useCallback(
     amount => {
@@ -104,11 +104,11 @@ export default function UnlockAmount({ navigation, route }: Props) {
 
     setTransaction(
       bridge.updateTransaction(transaction, {
-        amount: BigNumber(0),
+        amount: new BigNumber(0),
         useAllAmount: !transaction.useAllAmount,
       }),
     );
-  }, [setTransaction, account, parentAccount, transaction]);
+  }, [setTransaction, transaction, bridge]);
 
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.CeloUnlockSelectDevice, {
@@ -209,11 +209,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
                     </View>
                   ) : null}
                 </View>
-                <SendRowsFee
-                  account={account}
-                  parentAccount={parentAccount}
-                  transaction={transaction}
-                />
+                <SendRowsFee account={account} transaction={transaction} />
                 <View style={styles.continueWrapper}>
                   <Button
                     event="CeloUnlockAmountContinue"

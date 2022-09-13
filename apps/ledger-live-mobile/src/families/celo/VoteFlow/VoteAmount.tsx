@@ -41,7 +41,7 @@ type RouteParams = {
 
 export default function VoteAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account } = useSelector(accountScreenSelector(route));
 
   invariant(account?.type === "Account", "must be account");
 
@@ -178,11 +178,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                     </View>
                   ) : null}
                 </View>
-                <SendRowsFee
-                  account={account}
-                  parentAccount={parentAccount}
-                  transaction={transaction}
-                />
+                <SendRowsFee account={account} transaction={transaction} />
                 <View style={styles.continueWrapper}>
                   <Button
                     event="CeloVoteAmountContinue"

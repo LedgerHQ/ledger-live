@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { useTheme } from "@react-navigation/native";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import { themeSelector } from "../../reducers/settings";
+import { themeSelector } from "../../../reducers/settings";
 
 type Props = {
   isDisabled?: boolean;
