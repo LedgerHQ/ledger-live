@@ -179,13 +179,14 @@ class Queue(
         }
     }
 
-    private fun onErrorWrapper(e: Exception) {
+    fun onErrorWrapper(e: Exception) {
         eventEmitter.dispatch(Arguments.createMap().apply {
             putString("event", "task")
             putString("type", RunnerAction.runError.toString())
             putMap("data", Arguments.createMap().apply {
+                putString("code", e.localizedMessage)
                 putString("message", e.localizedMessage)
-            })
+            },)
         })
     }
 
@@ -204,4 +205,15 @@ class Queue(
         })
     }
 
+    fun onDisconnect(reason: String) {
+        Timber.d("$tag disconnect error")
+        eventEmitter.dispatch(Arguments.createMap().apply {
+            putString("event", "task")
+            putString("type", RunnerAction.runError.toString())
+            putMap("data", Arguments.createMap().apply {
+                putString("code", reason)
+                putString("message", reason)
+            })
+        })
+    }
 }
