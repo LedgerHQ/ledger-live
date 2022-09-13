@@ -280,14 +280,18 @@ export const SyncOnboarding = ({
     }
 
     switch (deviceOnboardingState?.currentOnboardingStep) {
+      case DeviceOnboardingStep.SetupChoice:
       case DeviceOnboardingStep.RestoreSeed:
       case DeviceOnboardingStep.SafetyWarning:
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
         setCompanionStepKey(CompanionStepKey.Seed);
         break;
-      case DeviceOnboardingStep.WelcomeScreen:
-      case DeviceOnboardingStep.SetupChoice:
+      case DeviceOnboardingStep.WelcomeScreen1:
+      case DeviceOnboardingStep.WelcomeScreen2:
+      case DeviceOnboardingStep.WelcomeScreen3:
+      case DeviceOnboardingStep.WelcomeScreen4:
+      case DeviceOnboardingStep.WelcomeScreenReminder:
         setCompanionStepKey(CompanionStepKey.Paired);
         break;
       case DeviceOnboardingStep.Pin:
