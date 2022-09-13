@@ -90,7 +90,9 @@ const Gallery = () => {
     if (isAtBottom && maxVisibleNFTs < account.nfts.length) {
       setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
     }
-  }, [isAtBottom, account.nfts.length, maxVisibleNFTs]);
+    // Exception to the rule, other deps must not be provided in this case
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAtBottom]);
 
   const [collectionsRender, isLoading] = useMemo(() => {
     const collectionsRender = [];

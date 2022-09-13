@@ -81,7 +81,9 @@ const Collection = () => {
     if (isAtBottom && maxVisibleNTFs < nfts.length) {
       setMaxVisibleNFTs(maxVisibleNTFs => maxVisibleNTFs + 5);
     }
-  }, [isAtBottom, maxVisibleNTFs, nfts.length]);
+    // Exception to the rule, other deps must not be provided in this case
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAtBottom]);
 
   const slicedNfts = useMemo(() => nfts.slice(0, maxVisibleNTFs), [nfts, maxVisibleNTFs]);
 
