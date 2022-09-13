@@ -2261,7 +2261,46 @@
     "experimental": {
       "title": "Experimental features",
       "desc": "Try out the Experimental features and let us know what you think.",
-      "disclaimer": "These are Experimental features provided on an \"as is\" basis for our community of tech enthusiasts. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk."
+      "disclaimer": "These are Experimental features provided on an \"as is\" basis for our community of tech enthusiasts. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk.",
+      "experimentalFeatures": {
+        "experimentalIntegrations": {
+          "title": "Experimental integrations",
+          "description": "Use available experimental crypto assets integrations."
+        },
+        "developerMode": {
+          "title": "Developer mode",
+          "description": "Show developer and testnet apps in the Manager."
+        },
+        "managerProvider": {
+          "title": "Manager provider",
+          "description": "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device."
+        },
+        "experimentalExplorers": {
+          "title": "Experimental Explorers API",
+          "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
+        },
+        "experimentalCountervalues": {
+          "title": "Experimental countervalues API",
+          "description": "This may cause the countervalues displayed for your accounts to become incorrect."
+        },
+        "experimentalSwap": {
+          "title": "New SWAP interface",
+          "description": "Use the new experimental swap interface"
+        }
+      },
+      "developerFeatures": {
+        "experimentalApps": {
+          "title": "Allow experimental apps",
+          "description": "Display and allow opening experimental tagged platform apps."
+        },
+        "staggingUrl": {
+          "title": "Learn staging URL",
+          "description": "Use the staging URL for the Learn page."
+        },
+        "platformManifest": {
+          "title": "Load Platform Manifest"
+        }
+      }
     },
     "developer": {
       "title": "Developer",
