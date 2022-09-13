@@ -76,7 +76,10 @@ class Runner(
                 onError = {
                     onEvent(
                         RunnerAction.runError,
-                        Arguments.fromBundle(bundleOf(Pair("error", it))),
+                        Arguments.createMap().apply {
+                            putString("code", it)
+                            putString("message", it)
+                        },
                     )
                 })
         } else if (isPendingOnDone) {
@@ -135,7 +138,10 @@ class Runner(
             Timber.d("$tag ws failed")
             onEvent(
                 RunnerAction.runError,
-                Arguments.fromBundle(bundleOf(Pair("error", text))),
+                Arguments.createMap().apply {
+                    putString("code", text)
+                    putString("message", text)
+                },
             )
             return
         }
@@ -174,10 +180,26 @@ class Runner(
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+        if (isInBulkMode) return // We don't care about the websocket if we are already passing the payload.
+
         Timber.d("$tag error %s", t.message)
         onEvent(
             RunnerAction.runError,
-            Arguments.fromBundle(bundleOf(Pair("error", "${t.message}"))),
+            Arguments.createMap().apply {
+                putString("code", t.message)
+                putString("message", t.message)
+            },
+        )
+    }
+
+    fun onDisconnect(error: String) {
+        Timber.d("$tag disconnect error")
+        onEvent(
+            RunnerAction.runError,
+            Arguments.createMap().apply {
+                putString("code", error)
+                putString("message", error)
+            },
         )
     }
 }

@@ -14,11 +14,11 @@ import kotlin.concurrent.timerTask
 class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
     private val tag: String = "BleTransport"
-    private var onDisconnect: ((Any) -> Void)? = null
+    private var onDisconnect: ((String) -> Unit)? = null
     private var retriesLeft = 1
     private var bleManager = BleManagerFactory.newInstance(reactContext)
     private var eventEmitter = EventEmitter.getInstance(reactContext)
-    private var queue: Queue? = null
+    private var queueTask: Queue? = null
     private var runnerTask: Runner? = null
     private var planted: Boolean = false
 
@@ -100,20 +100,20 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
                 }
             },
             onConnectError = {
-                if (it === "Device connection lost") {
+                if (retriesLeft == 0 || consumed) {
+                    // If we are here, it's a disconnect that might be expected
+                    // to be handled somewhere else, if we have a disconnect callback
+                    onDisconnectWrapper(it)
+                } else if (it === "Device connection lost" && retriesLeft > 0) {
                     // We shouldn't have `Device connection lost` here, we should only get a failure
-                    // to connect.
+                    // to connect, but the native part is throwing it, so hack away.
                     Timber.d("$tag: \t connection failure ignored, trying again")
-                    if (retriesLeft > 0) {
-                        retriesLeft -= 1
-                        connect(uuid, promise)
-                    }
+                    retriesLeft -= 1
+                    connect(uuid, promise)
                 } else if (!consumed) {
                     Timber.d("$tag: \t connection failure")
                     promise.reject("connectError", Exception(it))
                     consumed = true
-                } else {
-                    print("already consumed")
                 }
             })
     }
@@ -132,7 +132,7 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
         pendingEvent = Timer()
         pendingEvent!!.schedule(
             timerTask() {
-                queue?.stop()
+                queueTask?.stop()
                 if (!bleManager.isConnected) {
                     promise.resolve(true)
                 } else {
@@ -175,14 +175,15 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun queue(rawQueue: String, endpoint: String){
-        if (queue != null && !queue!!.isStopped) {
+        if (queueTask != null && !queueTask!!.isStopped) {
             Timber.d("$tag: \t replacing rawQueue $rawQueue")
-            queue!!.setRawQueue(rawQueue)
+            queueTask!!.setRawQueue(rawQueue)
             return
         }
         Timber.d("$tag: \t starting new queue $rawQueue")
 
-        queue = Queue(rawQueue, endpoint, eventEmitter, bleManager)
+        queueTask = Queue(rawQueue, endpoint, eventEmitter, bleManager)
+        onDisconnect = {e: String -> queueTask!!.onDisconnect(e)}
     }
 
     @ReactMethod
@@ -201,6 +202,12 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
                         putString("type", com.hwtransportreactnativeble.tasks.RunnerAction.runBulkProgress.toString())
                         putMap("data", data)
                     })
+                } else {
+                    eventEmitter.dispatch(com.facebook.react.bridge.Arguments.createMap().apply {
+                        putString("event", "task")
+                        putString("type", action.toString())
+                        putMap("data", data)
+                    })
                 }
             },
             {
@@ -211,6 +218,7 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
                 })
             }
         );
+        onDisconnect = {e: String -> runnerTask!!.onDisconnect(e)}
     }
 }
 
