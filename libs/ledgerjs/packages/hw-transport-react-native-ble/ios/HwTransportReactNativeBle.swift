@@ -221,6 +221,16 @@ class HwTransportReactNativeBle: RCTEventEmitter {
                         data: data
                     )
                 )
+            } else {
+                /// We could be more granular if we need to detect things like allow manager in this context.
+                /// Look at api/socket.ts for them, in theory progress and error should be enough.
+                EventEmitter.sharedInstance.dispatch(
+                    Payload(
+                        event: Event.task.rawValue,
+                        type: action.rawValue,
+                        data: data
+                    )
+                )
             }
         } onDone: { finalMessage in
             EventEmitter.sharedInstance.dispatch(
@@ -231,6 +241,11 @@ class HwTransportReactNativeBle: RCTEventEmitter {
                 )
             )
         }
+        
+        /// While running a queue, if the device disconnects we wouldn't be notified because we are already
+        /// dealing with a connected device and the callback will come from the -connect- from this file. In order
+        /// to handle this eventuality, register here what to do in that case.
+        self.rejectCallback = self.runnerTask?.onDisconnect
     }
     
     @objc func onAppStateChange(

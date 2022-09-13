@@ -295,4 +295,15 @@ class Runner: NSObject  {
             self.onFailedScriptRunner(.cantOpenDevice, error.localizedDescription)
         }
     }
+    
+    public func onDisconnect(_ code: String, _ message: String, _ error: NSError?) -> Void {
+        self.stop({ }) /// Empty because it's a dirty disconenct
+        EventEmitter.sharedInstance.dispatch(
+            Payload(
+                event: Event.task.rawValue,
+                type: RunnerAction.runError.rawValue,
+                data: ExtraData(code: code, message: message)
+            )
+        )
+    }
 }
