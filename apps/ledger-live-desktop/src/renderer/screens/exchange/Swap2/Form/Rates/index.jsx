@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Rate from "./Rate";
-import Countdown from './Countdown'
+import Countdown from "./Countdown";
 import type {
   SwapSelectorStateType,
   RatesReducerState,
@@ -74,7 +74,7 @@ export default function ProviderRate({
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
         <Box horizontal fontSize={3}>
-          <Countdown refreshTime={refreshTime} rates={rates}/>
+          <Countdown refreshTime={refreshTime} rates={rates} />
         </Box>
       </Box>
       <TableHeader>
@@ -124,7 +124,7 @@ export default function ProviderRate({
               </Box>
             }
           >
-            <Box  style={{ marginRight: 5}}>
+            <Box style={{ marginRight: 5 }}>
               <IconInfoCircle size={12} />
             </Box>
           </Tooltip>
