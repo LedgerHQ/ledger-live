@@ -508,12 +508,9 @@ export async function bot({
 
     const beforeOps = countOps(r.accountsBefore);
     const afterOps = countOps(r.accountsAfter);
-    const firstAccount = (r.accountsAfter || r.accountsBefore || [])[0];
-    appendBody(
-      `| ${r.spec.name} (${
-        (r.accountsBefore || []).filter((a) => a.used).length
-      }) `
-    );
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    const firstAccount = accounts[0];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) `);
     appendBody(
       `| ${afterOps || beforeOps}${
         afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
@@ -589,11 +586,8 @@ export async function bot({
   );
 
   results.forEach((r) => {
-    appendBody(
-      `| ${r.spec.name} (${
-        (r.accountsBefore || []).filter((a) => a.used).length
-      }) |`
-    );
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) |`);
     appendBody(`${formatTime(r.preloadDuration || 0)} |`);
     appendBody(`${formatTime(r.scanDuration || 0)} |`);
     appendBody(
