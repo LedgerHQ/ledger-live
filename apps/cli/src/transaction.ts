@@ -111,7 +111,7 @@ export async function inferTransactions(
 
   const inferTransactions =
     (specific && specific.inferTransactions) ||
-    ((transactions, _opts, _r) => transactions);
+    ((inferred, _opts, _r) => inferred.map(({ transaction }) => transaction));
 
   let all: any[] = await Promise.all(
     product(
