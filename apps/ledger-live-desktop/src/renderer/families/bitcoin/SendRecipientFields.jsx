@@ -12,9 +12,10 @@ class SendRecipientFields extends PureComponent {
   render() {
     const { confirmationsNb, account } = this.props;
     const pendingOperationError = new PendingOperation();
-    const atleastOneOperationPending = !account.pendingOperations
-      .concat(account.operations)
-      .every(op => isConfirmedOperation(op, account, confirmationsNb));
+    const operations = account.pendingOperations.concat(account.operations);
+    const atleastOneOperationPending = !operations.every(op =>
+      isConfirmedOperation(op, account, confirmationsNb),
+    );
     return (
       <div>
         {atleastOneOperationPending && (
@@ -28,10 +29,9 @@ class SendRecipientFields extends PureComponent {
 }
 
 const m = connect((state, props) => {
-  const currencySettings = confirmationsNbForCurrencySelector(state, {
+  const confirmationsNb = confirmationsNbForCurrencySelector(state, {
     currency: getMainAccount(props.account, props.parentAccount).currency,
   });
-  const confirmationsNb = currencySettings.confirmationsNb;
   return {
     ...props,
     confirmationsNb,
