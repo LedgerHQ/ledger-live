@@ -173,7 +173,7 @@ const SwapForm = () => {
     if (!showDetails && swapTransaction.swap.rates.status !== "loading") {
       setShowDetails(true);
     }
-  }, [swapTransaction.swap.rates.status]);
+  }, [swapTransaction.swap.rates.status, showDetails]);
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
