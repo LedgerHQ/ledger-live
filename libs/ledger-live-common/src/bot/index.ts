@@ -17,7 +17,7 @@ import {
   formatCurrencyUnit,
   getFiatCurrencyByTicker,
 } from "../currencies";
-import { isAccountEmpty, toAccountRaw } from "../account";
+import { formatAccount, isAccountEmpty, toAccountRaw } from "../account";
 import { runWithAppSpec } from "./engine";
 import { formatReportForConsole, formatError, formatTime } from "./formatters";
 import {
@@ -522,6 +522,11 @@ export async function bot({
     );
     appendBody("|\n");
   });
+
+  appendBody("\n```\n");
+  appendBody(allAccountsAfter.map((a) => formatAccount(a, "head")).join("\n"));
+  appendBody("\n```\n");
+
   appendBody("\n</details>\n\n");
 
   // Add performance details
