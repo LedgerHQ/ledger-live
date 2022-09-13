@@ -3525,17 +3525,21 @@ export function findCryptoCurrencyById(
 export const findCryptoCurrencyByKeyword = (
   keyword: string
 ): CryptoCurrency | null | undefined => {
-  const r = findCryptoCurrency((c) => {
-    const search = keyword.replace(/ /, "").toLowerCase();
-    return (
-      c.id === search ||
-      c.name.replace(/ /, "").toLowerCase() === search ||
-      (c.managerAppName &&
-        c.managerAppName.replace(/ /, "").toLowerCase() === search) ||
-      c.ticker.toLowerCase() === search
-    );
-  });
-  return r;
+  const search = keyword.replace(/ /, "").toLowerCase();
+
+  return (
+    // Try to find by id or name first
+    findCryptoCurrency(
+      (c) => c.id === search || c.name.replace(/ /, "").toLowerCase() === search
+    ) ||
+    // if it failed fallback to managerAppName
+    findCryptoCurrency(
+      (c) =>
+        (c.managerAppName &&
+          c.managerAppName.replace(/ /, "").toLowerCase() === search) ||
+        c.ticker.toLowerCase() === search
+    )
+  );
 };
 
 /**
