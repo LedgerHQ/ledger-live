@@ -2273,11 +2273,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live 中使用的已定义功能标志",
       "featureFlagsDesc" : "如果重新启动应用程序，将重置覆盖的值。仅接受有效的 JSON 字符串。",
-      "featureFlagsOverride" : "覆盖",
       "featureFlagsEdit" : "编辑",
-      "featureFlagsRestore" : "重置",
-      "featureFlagsDisplayValue" : "显示值",
-      "featureFlagsHideValue" : "隐藏值"
+      "featureFlagsRestore" : "重置"
     }
   },
   "notifications" : {
