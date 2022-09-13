@@ -183,7 +183,8 @@ export const SyncOnboarding = ({
     navigation.navigate(NavigatorName.Base as "Base", {
       screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
       params: {
-        filterByDeviceModelId: device.modelId,
+        // TODO: For now, don't do that because nanoFTS shows up as nanoX
+        // filterByDeviceModelId: device.modelId,
         areKnownDevicesDisplayed: false,
         onSuccessAddToKnownDevices: false,
         onSuccessNavigateToConfig: {
