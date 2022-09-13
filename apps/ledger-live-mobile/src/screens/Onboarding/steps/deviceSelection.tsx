@@ -55,7 +55,8 @@ function OnboardingStepDeviceSelection() {
       navigation.navigate(NavigatorName.Base as "Base", {
         screen: ScreenName.BleDevicePairingFlow as "BleDevicePairingFlow",
         params: {
-          filterByDeviceModelId: DeviceModelId.nanoFTS,
+          // TODO: for now we remove this
+          // filterByDeviceModelId: DeviceModelId.nanoFTS,
           areKnownDevicesDisplayed: false,
           onSuccessAddToKnownDevices: false,
           onSuccessNavigateToConfig: {
