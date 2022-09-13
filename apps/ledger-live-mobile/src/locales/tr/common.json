@@ -1603,27 +1603,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}} cihazınız aranıyor",
+        "description" : "Lütfen {{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "Cihazlar aranıyor",
+        "description" : "Lütfen cihazınızın açık olduğundan, kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "Zaten eşleştirilmiş"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}} ile eşleştirildi"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "Eşleştirme başarısız",
+        "subtitle" : "Bir sorun oluştu! Bluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun",
+        "retryCta" : "Tekrar deneyin"
       }
     }
   },
@@ -4750,9 +4750,23 @@
         "uploadFromPhone" : "Telefonumdan yükle"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "Görüntüyü kırp",
+    "chooseConstrast" : "Kontrastı seç",
     "uploadAnotherImage" : "Başka bir görsel yükleyin",
     "selectContrast" : "Kontrastınızı seçin"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Bravo.\nArtık tamamen hazırsınız.",
+      "allDoneTitle" : "İyi iş çıkardınız.\nHer şey tamam.",
+      "subtitle" : "Şimdi şunları yapabilirsiniz:",
+      "skip" : "Uygulamaya geç",
+      "goToWallet" : "Ledger Live cüzdanına git",
+      "done" : "Az önce geleceğinizi güvenceye almış oldunuz"
+    },
+    "walletCard" : {
+      "title" : "Başlarken",
+      "description" : "Ledger Live ile {{productName}} kurulumunu tamamlamak için buraya tıklayın"
+    }
   }
 }

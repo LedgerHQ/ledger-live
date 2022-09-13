@@ -1603,27 +1603,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}}を検出中",
+        "description" : "{{productName}}のロックが解除済みで、Bluetoothが有効であることを確認してください"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "デバイスを探しています",
+        "description" : "デバイスの電源が入っていて、ロックが解除されていて、Bluetooth が有効になっていることを確認してください"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "ペアリング済み"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}}とペアリング完了"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}}とペアリング中",
+        "subtitle" : "{{productName}}のコードを確認してください"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "ペアリング失敗",
+        "subtitle" : "何か問題が発生したようです。Bluetoothがオンになっていて、{{productName}}が近くにあることを確認してください",
+        "retryCta" : "再試行"
       }
     }
   },
@@ -4754,5 +4754,19 @@
     "chooseConstrast" : "コントラストを選択",
     "uploadAnotherImage" : "他の画像をアップロードする",
     "selectContrast" : "コントラストを選択する"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "素晴らしい。\nこれで準備完了です。",
+      "allDoneTitle" : "いい感じです。\nこれで準備が整いました。",
+      "subtitle" : "次にできること",
+      "skip" : "アプリにスキップする",
+      "goToWallet" : "Ledger Liveウォレットに移動する",
+      "done" : "将来を安全に保護しました"
+    },
+    "walletCard" : {
+      "title" : "ご利用ガイド",
+      "description" : "こちらをクリックして、Ledger Liveで{{productName}}を設定"
+    }
   }
 }

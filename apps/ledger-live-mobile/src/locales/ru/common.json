@@ -4754,5 +4754,19 @@
     "chooseConstrast" : "Указать контраст",
     "uploadAnotherImage" : "Загрузить другое изображение",
     "selectContrast" : "Выберите контрастность"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Отлично!\nВсё готово.",
+      "allDoneTitle" : "Хорошая работа!\nВы готовы приступить.",
+      "subtitle" : "Вот что вы можете сделать дальше:",
+      "skip" : "Перейти к приложению",
+      "goToWallet" : "Перейти к Ledger Live",
+      "done" : "Вы обеспечили свою безопасность"
+    },
+    "walletCard" : {
+      "title" : "Начало работы",
+      "description" : "Нажмите здесь, чтобы завершить настройку {{productName}} в Ledger Live"
+    }
   }
 }
