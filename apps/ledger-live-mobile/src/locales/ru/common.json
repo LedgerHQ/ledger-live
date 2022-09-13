@@ -2273,11 +2273,8 @@
     "debug" : {
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
-      "featureFlagsOverride" : "Переписать",
       "featureFlagsEdit" : "Редактировать",
-      "featureFlagsRestore" : "Восстановить",
-      "featureFlagsDisplayValue" : "Показать значение",
-      "featureFlagsHideValue" : "Скрыть значение"
+      "featureFlagsRestore" : "Восстановить"
     }
   },
   "notifications" : {
