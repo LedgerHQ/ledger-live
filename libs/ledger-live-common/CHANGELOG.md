@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.2.0-nightly.3
+
+### Patch Changes
+
+- [#1240](https://github.com/LedgerHQ/ledger-live/pull/1240) [`4d2149c2dc`](https://github.com/LedgerHQ/ledger-live/commit/4d2149c2dc47058aaf3d6e4bd9739e724103ab9a) Thanks [@gre](https://github.com/gre)! - bot: add formatDeviceAmount utility to simplify writing speculos-deviceActions
+
 ## 27.2.0-nightly.2
 
 ### Minor Changes
