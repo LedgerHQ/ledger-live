@@ -11,7 +11,6 @@ import type {
   RatesReducerState,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
-import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SWAP_VERSION } from "../../utils/index";
 import styled from "styled-components";

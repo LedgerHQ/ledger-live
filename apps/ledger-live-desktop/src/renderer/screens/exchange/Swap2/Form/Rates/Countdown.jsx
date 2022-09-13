@@ -7,7 +7,6 @@ import type { RatesReducerState } from "@ledgerhq/live-common/exchange/swap/hook
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import AnimatedCountdown from "~/renderer/components/AnimatedCountdown";
-import ClockSrc from "~/renderer/images/subtract-clock.png";
 
 export type Props = {
   rates: $PropertyType<RatesReducerState, "value">,
