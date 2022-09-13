@@ -2273,11 +2273,8 @@
     "debug" : {
       "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
       "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
-      "featureFlagsOverride" : "تجاوز",
       "featureFlagsEdit" : "تعديل",
-      "featureFlagsRestore" : "استعادة",
-      "featureFlagsDisplayValue" : "عرض القيمة",
-      "featureFlagsHideValue" : "إخفاء القيمة"
+      "featureFlagsRestore" : "استعادة"
     }
   },
   "notifications" : {
