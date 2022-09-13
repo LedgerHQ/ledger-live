@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.8.0-next.10
+
+### Patch Changes
+
+- [#1244](https://github.com/LedgerHQ/ledger-live/pull/1244) [`34eb4e7e29`](https://github.com/LedgerHQ/ledger-live/commit/34eb4e7e295c882574938791c828fe64a2dd329d) Thanks [@ThomasLaforge](https://github.com/ThomasLaforge)! - Adding Japanese, Korean, Turkish and Deutcsh to fully supported languages
+
 ## 3.8.0-next.9
 
 ### Patch Changes
