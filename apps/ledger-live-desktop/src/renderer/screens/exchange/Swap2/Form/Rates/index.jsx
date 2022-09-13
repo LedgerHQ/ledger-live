@@ -53,7 +53,8 @@ export default function ProviderRate({
     fontWeight: "500",
     fontSize: 3,
     color: "palette.text.shade40",
-    px: 3,
+    pl: 3,
+    pr: 2,
     mt: 3,
     pb: 10,
   })`
@@ -122,7 +123,9 @@ export default function ProviderRate({
               </Box>
             }
           >
-            <IconInfoCircle size={12} />
+            <Box  style={{ marginRight: 5}}>
+              <IconInfoCircle size={12} />
+            </Box>
           </Tooltip>
         </Box>
       </TableHeader>
