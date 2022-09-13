@@ -183,11 +183,14 @@ type DeviceAmountFormatOptions = {
   forceFloating: boolean;
   // device don't even display the code (unit ticker)
   hideCode: boolean;
+  // force the visibility of all digits of the amount
+  showAllDigits: boolean;
 };
 const defaultFormatOptions: DeviceAmountFormatOptions = {
   postfixCode: false,
   forceFloating: false,
   hideCode: false,
+  showAllDigits: false,
 };
 
 const sep = " ";
@@ -202,7 +205,10 @@ export function formatDeviceAmount(
     const { deviceTicker } = currency;
     if (deviceTicker) code = deviceTicker;
   }
-  let v = value.div(new BigNumber(10).pow(unit.magnitude)).toString(10);
+  const fValue = value.div(new BigNumber(10).pow(unit.magnitude));
+  let v = options.showAllDigits
+    ? fValue.toFixed(unit.magnitude)
+    : fValue.toString(10);
   if (options.forceFloating) {
     if (!v.includes(".")) {
       // if the value is pure integer, in the app it will automatically add an .0
