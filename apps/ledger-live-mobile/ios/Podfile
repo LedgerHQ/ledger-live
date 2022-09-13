@@ -57,8 +57,7 @@ target 'ledgerlivemobile' do
   
   # Double check if we need to be overriding this here
   pod 'Starscream', '~> 4.0.0'
-  pod 'BleTransport', :git => 'https://github.com/LedgerHQ/hw-transport-ios-ble.git', :branch => 'CoreBluetooth'
-  #pod 'Bluejay', :git => 'https://github.com/DantePuglisi/bluejay.git', branch: 'fail-when-wrong-characteristic-property'
+  pod 'BleTransport', :git => 'https://github.com/LedgerHQ/hw-transport-ios-ble.git', :tag => 'version-0.0.1'
     
   # Enables Flipper.
   #
