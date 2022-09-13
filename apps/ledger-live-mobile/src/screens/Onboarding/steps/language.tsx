@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { ScrollView } from "react-native";
+import { I18nManager, ScrollView, Alert } from "react-native";
 import { Trans } from "react-i18next";
 import {
   Flex,
@@ -10,25 +10,58 @@ import {
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useDispatch } from "react-redux";
+import i18next from "i18next";
 import { useLocale } from "../../../context/Locale";
 import { languages, supportedLocales } from "../../../languages";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage } from "../../../actions/settings";
+import { useReboot } from "../../../context/Reboot";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
+  const reboot = useReboot();
 
   const next = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
+  const changeLanguageRTL = useCallback(
+    async l => {
+      await dispatch(setLanguage(l));
+      I18nManager.forceRTL(true);
+      reboot();
+    },
+    [I18nManager, i18next, reboot],
+  );
+
   const changeLanguage = useCallback(
-    l => {
-      dispatch(setLanguage(l));
-      next();
+    async l => {
+      const newDirection = i18next.dir(l);
+      const currentDirection = I18nManager.isRTL ? "rtl" : "ltr";
+
+      if (newDirection !== currentDirection) {
+        Alert.alert(
+          "Restart required",
+          "The selected language requires the application to restart. Are you sure you want to continue?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "OK",
+              onPress: () => changeLanguageRTL(l),
+            },
+          ],
+        );
+      } else {
+        dispatch(setLanguage(l));
+      }
+      // dispatch(setLanguage(l));
+      // next();
     },
     [dispatch, next],
   );
