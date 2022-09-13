@@ -1603,27 +1603,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}} cihazınız aranıyor",
+        "description" : "Lütfen {{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "Cihazlar aranıyor",
+        "description" : "Lütfen cihazınızın açık olduğundan, kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "Zaten eşleştirilmiş"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}} ile eşleştirildi"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "Eşleştirme başarısız",
+        "subtitle" : "Bir sorun oluştu! Bluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun",
+        "retryCta" : "Tekrar deneyin"
       }
     }
   },
@@ -2273,11 +2273,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
-      "featureFlagsOverride" : "Geçersiz bırak",
       "featureFlagsEdit" : "Düzenle",
-      "featureFlagsRestore" : "Geri yükle",
-      "featureFlagsDisplayValue" : "Değeri göster",
-      "featureFlagsHideValue" : "Değeri gizle"
+      "featureFlagsRestore" : "Geri yükle"
     }
   },
   "notifications" : {
@@ -4750,8 +4747,8 @@
         "uploadFromPhone" : "Telefonumdan yükle"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "Görüntüyü kırp",
+    "chooseConstrast" : "Kontrastı seç",
     "uploadAnotherImage" : "Başka bir görsel yükleyin",
     "selectContrast" : "Kontrastınızı seçin"
   }
