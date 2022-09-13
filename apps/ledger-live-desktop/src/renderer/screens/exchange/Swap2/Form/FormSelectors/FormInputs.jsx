@@ -10,6 +10,7 @@ import ToRow from "./ToRow";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
+  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 type FormInputsProps = {
@@ -30,6 +31,7 @@ type FormInputsProps = {
   provider: ?string,
   loadingRates: boolean,
   isSendMaxLoading: boolean,
+  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
 };
 
 const RoundButton = styled(Button)`

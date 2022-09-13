@@ -16,6 +16,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
+  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   Container as InputContainer,
@@ -35,6 +36,7 @@ type Props = {
   toAmount: $PropertyType<SwapSelectorStateType, "amount">,
   provider: ?string,
   loadingRates: boolean,
+  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
 };
 
 const InputCurrencyContainer = styled(Box)`

@@ -9,6 +9,7 @@ import Countdown from './Countdown'
 import type {
   SwapSelectorStateType,
   RatesReducerState,
+  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -23,6 +24,7 @@ type Props = {
   rates: $PropertyType<RatesReducerState, "value">,
   provider: ?string,
   refreshTime: number,
+  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
 };
 export default function ProviderRate({
   fromCurrency,

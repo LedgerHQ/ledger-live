@@ -17,6 +17,7 @@ import { FormLabel } from "./FormLabel";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
+  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { track } from "~/renderer/analytics/segment";
 import { SWAP_VERSION } from "../../utils/index";
@@ -61,6 +62,7 @@ type Props = {
   fromAmountError?: Error,
   provider: ?string,
   isSendMaxLoading: boolean,
+  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
 };
 
 /* @dev: Yeah, Im sorry if you read this, design asked us to
