@@ -5,12 +5,11 @@ import uniqBy from "lodash/uniqBy";
 import shuffle from "lodash/shuffle";
 import flatMap from "lodash/flatMap";
 import { BigNumber } from "bignumber.js";
-import type {
-  Transaction,
-} from "@ledgerhq/live-common/generated/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
   Account,
   AccountLike,
+  AccountLikeArray,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
@@ -106,20 +105,34 @@ export async function inferTransactions(
   const bridge = getAccountBridge(mainAccount, null);
   const specific = perFamily[mainAccount.currency.family];
 
-  const inferAccounts =
+  const inferAccounts: (
+    account: Account,
+    opts: Record<string, any>
+  ) => AccountLikeArray =
     (specific && specific.inferAccounts) || ((account, _opts) => [account]);
 
-  const inferTransactions =
+  const inferTransactions: (
+    transactions: Array<{
+      account: AccountLike;
+      transaction: Transaction;
+    }>,
+    opts: Record<string, any>,
+    { inferAmount }: any
+  ) => Transaction[] =
     (specific && specific.inferTransactions) ||
     ((inferred, _opts, _r) => inferred.map(({ transaction }) => transaction));
 
-  let all: any[] = await Promise.all(
+  let all: Array<{
+    account: AccountLike;
+    transaction: Transaction;
+    mainAccount: Account;
+  }> = await Promise.all(
     product(
       inferAccounts(mainAccount, opts),
       opts.recipient || [
         opts["self-transaction"] ? mainAccount.freshAddress : "",
       ]
-    ).map(async ([account, recipient]) => {
+    ).map(async ([account, recipient]: [AccountLike, string]) => {
       const transaction = bridge.createTransaction(mainAccount);
       transaction.recipient = recipient;
       transaction.useAllAmount = !!opts["use-all-amount"];
@@ -148,21 +161,22 @@ export async function inferTransactions(
     all = shuffle(all);
   }
 
-  const transactions: [Transaction, TransactionStatusCommon][] = await Promise.all(
-    inferTransactions(all, opts, {
-      inferAmount,
-    }).map(async (transaction) => {
-      const tx = await bridge.prepareTransaction(mainAccount, transaction);
-      const status = await bridge.getTransactionStatus(mainAccount, tx);
-      const errorKeys = Object.keys(status.errors);
+  const transactions: [Transaction, TransactionStatusCommon][] =
+    await Promise.all(
+      inferTransactions(all, opts, {
+        inferAmount,
+      }).map(async (transaction) => {
+        const tx = await bridge.prepareTransaction(mainAccount, transaction);
+        const status = await bridge.getTransactionStatus(mainAccount, tx);
+        const errorKeys = Object.keys(status.errors);
 
-      if (errorKeys.length) {
-        throw status.errors[errorKeys[0]];
-      }
+        if (errorKeys.length) {
+          throw status.errors[errorKeys[0]];
+        }
 
-      return [tx, status];
-    })
-  );
+        return [tx, status];
+      })
+    );
 
   return transactions;
 }
