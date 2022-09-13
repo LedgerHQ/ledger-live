@@ -115,9 +115,10 @@ export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "LEDGER_COUNTERVALUES_API",
-    title: "Experimental countervalues API",
-    description:
-      "This may cause the countervalues displayed for your accounts to become incorrect.",
+    title: <Trans i18nKey="settings.experimental.features.experimentalCountervalues.title" />,
+    description: (
+      <Trans i18nKey="settings.experimental.features.experimentalCountervalues.description" />
+    ),
     valueOn: "https://countervalues-experimental.live.ledger.com",
     valueOff: "https://countervalues.live.ledger.com",
   },
