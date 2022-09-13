@@ -1,11 +1,11 @@
-import SHA224 from "crypto-js/sha224";
+import SHA224 from "crypto-js/SHA224";
 import { hexBuffer, intAsHexBytes } from "../../utils";
 import {
   EIP712Message,
   EIP712MessageTypesEntry,
   MessageFilters,
 } from "./EIP712.types";
-import fakeCAL from "./fakeCAL";
+import EIP712CAL from "@ledgerhq/cryptoassets/eip712";
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -282,12 +282,12 @@ export function isEIP712Message(
 export const getFiltersForMessage = (
   message: EIP712Message
 ): MessageFilters | undefined => {
-  const messageId = `${message.domain?.chainId ?? 0}:${
-    message.domain?.verifyingContract ?? NULL_ADDRESS
-  }`;
   const schemaHash = SHA224(
     JSON.stringify(message.types).replace(" ", "")
   ).toString();
+  const messageId = `${message.domain?.chainId ?? 0}:${
+    message.domain?.verifyingContract ?? NULL_ADDRESS
+  }:${schemaHash}`;
 
-  return fakeCAL[messageId]?.[schemaHash];
+  return EIP712CAL[messageId];
 };
