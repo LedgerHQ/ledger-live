@@ -150,7 +150,7 @@ function ReadOnlyAccount({ route }: Props) {
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
       <TrackScreen
         category="Account"
-        currency={currency}
+        currency={currency.name}
         operationsSize={0}
         source={source}
       />
