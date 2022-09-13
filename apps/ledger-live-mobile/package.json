@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.7.0",
+  "version": "3.8.0-next.6",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -90,6 +90,7 @@
     "@react-native-firebase/remote-config": "^14.11.1",
     "@react-native-masked-view/masked-view": "^0.2.6",
     "@react-navigation/bottom-tabs": "^6.0.9",
+    "@react-navigation/devtools": "^6.0.9",
     "@react-navigation/elements": "^1.2.1",
     "@react-navigation/material-top-tabs": "^6.0.6",
     "@react-navigation/native": "^6.0.6",
@@ -153,7 +154,6 @@
     "react-native-modal": "^13.0.0",
     "react-native-navigation-bar-color": "^2.0.1",
     "react-native-os": "^1.2.6",
-    "react-native-performance": "^2.1.0",
     "react-native-qrcode-svg": "6.1.1",
     "react-native-randombytes": "^3.6.1",
     "react-native-reanimated": "^2.8.0",
@@ -193,6 +193,7 @@
   "devDependencies": {
     "@actions/core": "^1.5.0",
     "@babel/core": "^7.12.9",
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
     "@types/color": "^3.0.3",
@@ -228,7 +229,6 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.2",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "flipper-plugin-rn-performance-android": "^0.1.0",
     "jest": "^28.1.1",
     "jest-circus": "^28.1.1",
     "jetifier": "^1.6.6",
@@ -241,7 +241,9 @@
     "metro-transform-worker": "^0.67.0",
     "prettier": "^2.7.1",
     "react-native-debugger-open": "^0.3.25",
-    "react-native-flipper-performance-plugin": "^0.2.1",
+    "react-native-flipper": "^0.162.0",
+    "react-native-performance": "^3.1.2",
+    "react-native-performance-flipper-reporter": "^3.0.0",
     "typescript": "^4.6.4",
     "ws": "^7.5.2"
   }

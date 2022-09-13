@@ -1,4 +1,6 @@
 import { combineReducers } from "redux";
+import { PostOnboardingState } from "@ledgerhq/types-live";
+import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import accounts from "./accounts";
 import settings from "./settings";
 import appstate from "./appstate";
@@ -6,12 +8,14 @@ import ble from "./ble";
 import ratings from "./ratings";
 import notifications from "./notifications";
 import swap, { SwapStateType } from "./swap";
+import walletconnect from "./walletconnect";
 import type { AccountsState } from "./accounts";
 import type { SettingsState } from "./settings";
 import type { AppState } from "./appstate";
 import type { BleState } from "./ble";
 import type { RatingsState } from "./ratings";
 import type { NotificationsState } from "./notifications";
+import type { WalletConnectState } from "./walletconnect";
 
 export type State = {
   accounts: AccountsState;
@@ -21,6 +25,8 @@ export type State = {
   ratings: RatingsState;
   notifications: NotificationsState;
   swap: SwapStateType;
+  walletconnect: WalletConnectState;
+  postOnboarding: PostOnboardingState;
 };
 
 const appReducer = combineReducers({
@@ -31,6 +37,8 @@ const appReducer = combineReducers({
   ratings,
   notifications,
   swap,
+  walletconnect,
+  postOnboarding,
 });
 
 const rootReducer = (state: State, action: any) => {

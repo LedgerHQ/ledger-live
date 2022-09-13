@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "سحب",
       "NOMINATE" : "ترشيح",
       "CHILL" : "حذف الترشيحات",
-      "SET_CONTROLLER" : "إعداد وحدة التحكم"
+      "SET_CONTROLLER" : "إعداد وحدة التحكم",
+      "LOCK" : "مُقفل",
+      "UNLOCK" : "غير مُقفل",
+      "WITHDRAW" : "مسحوب",
+      "REVOKE" : "مُبطل",
+      "ACTIVATE" : "تم التنشيط",
+      "REGISTER" : "مُسجّل"
     }
   },
   "byteSize" : {
@@ -198,7 +204,7 @@
     "menu" : "القائمة",
     "stars" : "الحسابات المفضلة",
     "accounts" : "الحسابات",
-    "manager" : "المدير",
+    "manager" : "My Ledger",
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
     "lend" : "إقراض",
@@ -384,13 +390,13 @@
     },
     "missingApp" : {
       "title" : "يرجى تثبيت تطبيق {{appName}} على جهازك",
-      "subtitle" : "انتقل إلى المدير وقم بتثبيت تطبيق {{appName}} لمبادلة الأصول.",
-      "cta" : "الانتقال إلى المدير"
+      "subtitle" : "Go to My Ledger and install {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "outdatedApp" : {
       "title" : "يرجى تثبيت تطبيق {{appName}} على جهازك",
-      "subtitle" : "انتقل إلى المدير وقم بتثبيت تطبيق {{appName}} لمبادلة الأصول.",
-      "cta" : "الانتقال إلى المدير"
+      "subtitle" : "Go to My Ledger and update {{appName}} app to swap assets.",
+      "cta" : "Go to My Ledger"
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -745,7 +751,19 @@
     "bandwidthTooltip" : "قم بتجميد الأصول لكسب نطاق ترددي (Bandwidth)",
     "energyTooltip" : "قم بتجميد الأصول لكسب الطاقة",
     "delegatedTooltip" : "الأصول المفوضة يتم استخدامها في عملية التصويت. هذا يمثل مجموع عدد أصواتك.",
-    "undelegatingTooltip" : "الأصول التي تم إلغاء تفويضها تكون في حظر زمني لمدة {{timelockInDays}} يوماً قبل أن تصبح متاحة."
+    "undelegatingTooltip" : "الأصول التي تم إلغاء تفويضها تكون في حظر زمني لمدة {{timelockInDays}} يوماً قبل أن تصبح متاحة.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "في حالة أنك لم تكن تعلم...",
+        "description" : "مدقق Ledger يقوم بالتكديس بعمولة منخفضة عن المدقق الذي تستخدمه.",
+        "cta" : "إعادة التفويض مع Ledger"
+      },
+      "delegation" : {
+        "title" : "في حالة أنك لم تكن تعلم...",
+        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "cta" : "قم بالتكديس مع Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "اختر من {{providerCount}} مزود",
@@ -959,7 +977,7 @@
       "terms" : {
         "title" : "إقراض الأصول المشفرة",
         "subtitle" : "إقراض الأصول على بروتوكول Compound",
-        "description" : "يسمح لك بروتوكول Compound بإقراض الأصول واقتراضها على شبكة إيثيريوم. يمكنك إقراض الأصول وكسب الفائدة مباشرةً من حسابك Ledger.",
+        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
         "switchLabel" : "<1>لقد قرأت وأوافق على </1><0>شروط الخدمة<0><1>.</1>"
       },
       "steps" : {
@@ -1202,9 +1220,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "قم بتثبيت التطبيقات على جهازك",
-      "desc" : "انتقل إلى المدير لتثبيت التطبيقات على جهازك. يمكنك إضافة الحسابات بمجرد أن يكون لديك تطبيقات على جهازك.",
+      "desc" : "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
       "buttons" : {
-        "installApp" : "الانتقال إلى المدير",
+        "installApp" : "Go to My Ledger",
         "help" : "مساعدة"
       }
     },
@@ -1213,7 +1231,7 @@
       "desc" : "أضف حساب لبدء إدارة أصولك المشفرة. يجب أن يكون لديك تطبيق لأصلك المشفر المُثبت على جهازك.",
       "buttons" : {
         "addAccount" : "إضافة حساب",
-        "installApp" : "الانتقال إلى المدير لتثبيت التطبيقات",
+        "installApp" : "Go to My Ledger to install apps",
         "help" : "مساعدة"
       }
     }
@@ -1536,12 +1554,12 @@
     "quitApp" : "الخروج من التطبيق على جهازك",
     "appNotInstalledTitle" : "التطبيق المطلوب غير موجود",
     "appNotInstalledTitle_plural" : "التطبيقات المطلوبة غير موجودة",
-    "appNotInstalled" : "تطبيق {{appName}} مطلوب لإكمال هذا الإجراء. يرجى الانتقال إلى المدير وتثبيته على جهازك",
-    "appNotInstalled_plural" : "تطبيقات {{appName}} مطلوبة لإكمال هذا الإجراء. يرجى الانتقال إلى المدير وتثبيتهم على جهازك",
-    "openManager" : "افتح المدير",
+    "appNotInstalled" : "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
+    "appNotInstalled_plural" : "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "openManager" : "Open My Ledger",
     "openOnboarding" : "إعداد الجهاز",
     "outdated" : "إصدار التطبيق قديم",
-    "outdatedDesc" : "هناك تحديث هام لتطبيق {{appName}} متاح على جهازك. يُرجى الانتقال إلى المدير لتحديثه.",
+    "outdatedDesc" : "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
     "installApp" : "تثبيت تطبيق {{appName}}",
     "installAppDescription" : "يُرجى الانتظار حتى الانتهاء من التثبيت",
     "listApps" : "التحقق من تبعيات التطبيق",
@@ -1584,8 +1602,8 @@
     },
     "disconnected" : {
       "title" : "يبدو أن هناك تطبيق مفتوح على جهازك",
-      "subtitle" : "إعادة فتح المدير سوف يغلق التطبيق على جهازك",
-      "ctaReopen" : "إعادة فتح المدير",
+      "subtitle" : "Reopening My Ledger will quit the app on your device",
+      "ctaReopen" : "Reopen My Ledger",
       "ctaPortfolio" : "الرجوع إلى المحفظة الاستثمارية"
     },
     "deviceStorage" : {
@@ -1628,7 +1646,7 @@
         "title_plural" : "التحديثات المتاحة",
         "progressTitle" : "{{number}} تحديث تطبيق",
         "progressTitle_plural" : "{{number}} تحديثات للتطبيق",
-        "progressWarning" : "لا تغادر المدير أثناء التحديث.",
+        "progressWarning" : "Do not quit My Ledger during update.",
         "progress" : "جارى تحديث الكل..."
       },
       "item" : {
@@ -1692,7 +1710,7 @@
       "updateBtn" : "قم بتحديث البرنامج الثابت",
       "banner" : {
         "warning" : "تحديث البرنامج الثابت إلى {{latestFirmware}} متاح",
-        "cta" : "الانتقال إلى المدير",
+        "cta" : "Go to My Ledger",
         "old" : {
           "warning" : "إصدار البرنامج الثابت للجهاز قديم للغاية ليتم تحديثه. تواصل مع دعم Ledger للحصول على بديل.",
           "cta" : "تواصل مع الدعم"
@@ -1748,7 +1766,7 @@
         "boot" : "اضغط مع الاستمرار على الزر الجانبي حتى يتم عرض {{option}}",
         "recoveryMode" : "اضغط على وضع {{mode}}. انتظر حتى تظهر اللوحة الرئيسية>",
         "third" : "3. إلغاء تثبيت جميع التطبيقات",
-        "openLive" : "افتح المدير في Ledger Live.",
+        "openLive" : "Open My Ledger in Ledger Live.",
         "uninstall" : "انقر على أيقونة سلة المهملات الرمادية لجميع التطبيقات المثبتة حالياً على {{deviceName}}. هذا يفسح المجال لمثبت البرنامج الثابت.",
         "disclaimer" : "ملاحظة: لا تتأثر أموالك بهذه العملية، المفاتيح الخاصة التي تُمكن من الوصول إلى أصولك المشفرة في سلسلة الكتل تظل آمنة على ورقة الاسترداد الخاصة بك."
       }
@@ -2108,6 +2126,272 @@
       "DEEP_OUTPUTS_FIRST" : "أقدم العملات أولاً (الأول دخولاً هو الأوّل خروجاً)",
       "OPTIMIZE_SIZE" : "تقليل الرسوم (تحقيق الحجم الأمثل)",
       "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)"
+    }
+  },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "تعمل بواسطة Figment",
+        "moreInfo" : "مزيد من المعلومات",
+        "drawerTitle" : "تعمل بواسطة Figment",
+        "title" : "رمز CELO متاح الآن في Ledger Live",
+        "description" : "يمكنك الآن بدء إدارة رموزك CELO وتأمينها من خلال Ledger Live.",
+        "description2" : "رمز Celo هو الرمز الأصلي لسلسلة Celo ويُستخدم لكل شيء مثل المعاملات، والتكديس والعديد من المميزات القادمة.",
+        "website" : "تعمل بواسطة Figment"
+      }
+    },
+    "lockedBalance" : "الرصيد المُقفل",
+    "lockedTooltip" : "يجب قفل الأصول والتصويت لها لمجموعات المدققين قبل كسب المكافآت.",
+    "nonvotingLockedBalance" : "رصيد مُقفل بدون تصويت",
+    "nonvotingLockedTooltip" : "رصيد الأصول المُقفلة المتاح للاستخدام في التصويت",
+    "withdrawableBalance" : "الرصيد القابل للسحب",
+    "withdrawableTooltip" : "Celo غير المُقفلة التي يمكنك سحبها إلى رصيدك المتاح",
+    "delegation" : {
+      "activeTooltip" : "التصويت النشط يولّد المكافآت",
+      "pendingTooltip" : "التصويت المُعلّق لا يولّد المكافآت ويحتاج لتنشيطه بعد 24 ساعة",
+      "awaitingActivationTooltip" : "يمكن تنشيط هذا التصويت المُعلّق الآن",
+      "listHeader" : "التفويضات",
+      "add" : "أضف",
+      "validatorGroup" : "مجموعة المدققين",
+      "manageMultipleVoteWarning" : "يجب عليك تنشيط أو إبطال الأصوات الأخرى في نفس مجموعة المدققين قبل إدارة هذا التصويت .",
+      "actions" : {
+        "activate" : "تفعيل",
+        "revoke" : "إبطال"
+      },
+      "emptyState" : {
+        "description" : "يمكنك كسب مكافآت CELO عن طريق تفويض أصولك.",
+        "info" : "كيف يعمل التفويض",
+        "delegation" : "اكسب المكافآت"
+      },
+      "earnRewards" : {
+        "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك CELO إلى مدقق.",
+        "bullet" : {
+          "0" : "أنت تحتفظ بملكية الأصول المفوضة",
+          "1" : "قم بالتفويض باستخدام جهازك Ledger",
+          "2" : "الأصول ستكون متاحة بعد إلغاء التفويض"
+        },
+        "warning" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المفوضة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق."
+      }
+    },
+    "manage" : {
+      "title" : "إدارة الأصول",
+      "titleWhenPendingRegistration" : "تسجيل الحساب مُعلّق",
+      "lock" : {
+        "title" : "إقفال",
+        "description" : "لكسب المكافآت، قم أولاً بقفل مبلغ. بعدها يجب عليك التصويت لمُدقّقك (مُدقّقيك)."
+      },
+      "unlock" : {
+        "title" : "إلغاء القفل",
+        "description" : "لإتاحة مبلغ مُقفل مرة أخرى، يجب عليك إلغاء قفله أولاً. يمكنك سحبه بعد انقضاء فترة إلغاء القفل الممتدة لمدة 3 أيام."
+      },
+      "withdraw" : {
+        "title" : "سحب",
+        "description" : "لإرجاع مبلغ تم إلغاء قفله إلى الرصيد المتاح مرة أخرى، سيكون عليك سحبه يدوياً."
+      },
+      "vote" : {
+        "title" : "تصويت",
+        "description" : "قم بالتصويت لمجموعات المدققين. تأكد من تنشيط تصويتاتك لتتمكن من كسب المكافآت.",
+        "descriptionMaxVotes" : "يمكنك التصويت لما يصل إلى {{maxVotes}} من مجموعات المدققين. قم بإبطال تصويت للتصويت لمجموعة مدققين جديدة"
+      },
+      "activate" : {
+        "title" : "تنشيط التصويت",
+        "description" : "تنشيط تصويتك لمجموعة مدققين"
+      },
+      "revoke" : {
+        "title" : "إبطال التصويت",
+        "description" : "إبطال تصويتك لمجموعة مدققين"
+      }
+    },
+    "lock" : {
+      "title" : "قفل الأصول",
+      "steps" : {
+        "amount" : {
+          "title" : "المبلغ",
+          "amountLabel" : "المبلغ المطلوب قفله",
+          "availableLabel" : "متاح",
+          "maxLabel" : "الحد الأقصى",
+          "info" : "يمكن إلغاء قفل الأصول المُقفلة في أي وقت، ولكن إلغاء القفل يستغرق 3 أيام."
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "تم قفل الأصول بنجاح",
+            "text" : "يمكنك التصويت للمدققين بمجرد أن تؤكد الشبكة المعاملة.",
+            "textVote" : "ستتمكن من التصويت للمدققين بمجرد أن تؤكد الشبكة معاملتك.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "pending" : {
+            "title" : "جاري قفل أصولك..."
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "إلغاء قفل الأصول",
+      "steps" : {
+        "amount" : {
+          "title" : "المبلغ",
+          "amountLabel" : "المبلغ المطلوب إلغاء قفله",
+          "availableLabel" : "مُقفل",
+          "maxLabel" : "الحد الأقصى",
+          "info" : "الأصول التي تم إلغاء قفلها يمكن سحبها بعد انقضاء فترة إلغاء القفل الممتدة لمدة 3 أيام.",
+          "learnMore" : "تعرّف على المزيد"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "label" : "تأكيد",
+          "success" : {
+            "title" : "تم إرسال معاملة إلغاء القفل بنجاح",
+            "text" : "يمكن سحب الأصول التي تم إلغاء قفلها بعد 3 أيام.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "pending" : {
+            "title" : "جاري إلغاء قفل أصولك..."
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "تسجيل حساب",
+          "description" : "",
+          "info" : "قبل قفل أي Celo تحتاج لتسجيل حسابك على سلسلة الكتل (on-chain)."
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "معلومات"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "label" : "تأكيد",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "تم تسجيل الحساب بنجاح",
+                "text" : "سترى معاملتك في السجل قريباً.",
+                "cta" : "إقفال"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "جاري بث المعاملة..."
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "سحب الأصول",
+      "steps" : {
+        "amount" : {
+          "title" : "سحب"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "",
+            "text" : "تم سحب أصولك بنجاح. سيتم إيداع المبلغ المسحوب في رصيدك المتاح.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "vote" : {
+      "title" : "تصويت",
+      "steps" : {
+        "amount" : {
+          "title" : "المبلغ"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "لقد قمت بالتصويت بنجاح",
+            "text" : "سترى معاملتك في السجل قريباً.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        },
+        "validatorGroup" : {
+          "title" : "مجموعة المدققين",
+          "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment",
+          "totalVotes" : "مجموع الأصوات",
+          "commission" : "العمولة"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "تنشيط الأصوات",
+      "steps" : {
+        "vote" : {
+          "title" : "تصويت"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "",
+            "text" : "تم تنشيط تصويتك بنجاح.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "إبطال التصويت",
+      "steps" : {
+        "amount" : {
+          "title" : "المبلغ",
+          "amountLabel" : "المبلغ المطلوب إبطاله",
+          "availableLabel" : "متاح",
+          "maxLabel" : "الحد الأقصى"
+        },
+        "connectDevice" : {
+          "title" : "جهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد",
+          "success" : {
+            "title" : "لقد أبطلت تصويتاتك بنجاح",
+            "text" : "سترى معاملتك في السجل قريباً.",
+            "cta" : "رؤية التفاصيل"
+          },
+          "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+        },
+        "vote" : {
+          "title" : "تصويت",
+          "active" : "نشِط",
+          "pending" : "مُعلقّة",
+          "awaitingActivation" : "بانتظار التنشيط",
+          "info" : "يتم عرض الأصوات القابلة للإبطال فقط على هذا المشروط"
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "لديك رصيد قابل للسحب",
+      "activatableVotes" : "لديك أصوات يمكن تنشيطها الآن."
     }
   },
   "cosmos" : {
@@ -2861,7 +3145,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "لقد قمت بتنشيط تفويضك بنجاح."
+                "title" : "You have successfully activated your delegation."
               }
             }
           }
@@ -2873,7 +3157,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "لقد قمت بإعادة تنشيط تفويضك بنجاح."
+                "title" : "You have successfully reactivated your delegation."
               }
             }
           }
@@ -3115,7 +3399,7 @@
         },
         "managerDevMode" : {
           "title" : "وضع المطور",
-          "description" : "اعرض تطبيقات المطوّر و testnet في المدير."
+          "description" : "Show developer and testnet apps in My Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "بحث موسع عن الحساب",
@@ -3130,8 +3414,8 @@
           "description" : "تخصيص حد الفجوة لجميع الحسابات. زيادة هذه القيمة فوق القيمة الافتراضية (20) يؤدي إلى مسح المزيد من العناوين العامة غير المستخدمة للعملات. للمستخدمين المتقدمين فقط، قد يؤدي ذلك إلى الإضرار بالتوافق عند استعادة حسابك."
         },
         "forceProvider" : {
-          "title" : "مزود المدير",
-          "description" : "تغيير مزود التطبيقات في المدير قد يجعله من المستحيل تثبيت أو إلغاء تثبيت التطبيقات على جهازك Ledger."
+          "title" : "My Ledger provider",
+          "description" : "Changing the app provider in My Ledger may make it impossible to install or uninstall apps on your Ledger device."
         },
         "testAnimations" : {
           "title" : "اختبر الرسوم المتحركة Lottie",
@@ -3996,7 +4280,9 @@
     "termsLabel" : "شروط الخدمة",
     "privacyLabel" : "سياسة الخصوصية",
     "switchLabel" : "لقد قرأت وأوافق على شروط الخدمة وسياسة الخصوصية",
-    "cta" : "أدخل تطبيق Ledger"
+    "cta" : "أدخل تطبيق Ledger",
+    "termsCheckboxLabel" : "لقد قرأت وأوافق على شروط الاستخدام",
+    "privacyCheckboxLabel" : "لقد قرأت وأوافق على سياسة الخصوصية"
   },
   "updatedTerms" : {
     "title" : "تحديث شروط الاستخدام",
@@ -4084,6 +4370,9 @@
     "NoAccessToCamera" : {
       "title" : "يرجى التأكد من أن نظامك يحتوي على كاميرا، وأنها ليست قيد الاستخدام من قِبل تطبيق آخر وأن Ledger Live لديه تصريح لاستخدامها.",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "المكافآت أصغر من الرسوم المقدرة للمطالبة بهم",
@@ -4383,7 +4672,7 @@
       "description" : "يرجى إعادة تشغيل جهازك دون لمس الأزرار عندما يظهر الشعار. تواصل مع دعم Ledger إذا استمرت المشكلة."
     },
     "UserRefusedAllowManager" : {
-      "title" : "تم رفض المدير على الجهاز"
+      "title" : "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "تم إلغاء التحديث على الجهاز",
@@ -4403,7 +4692,7 @@
     },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث التطبيق",
-      "description" : "قم بإزالة تطبيق {{managerAppName}} وأعد تثبيته من المدير"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "العودة إلى اللوحة الرئيسية",
@@ -4423,7 +4712,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "مطلوب تحديث التطبيق",
-      "description" : "قم بإزالة تطبيق {{managerAppName}} وأعد تثبيته في المدير"
+      "description" : "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
     },
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
@@ -4468,7 +4757,7 @@
       "list" : {
         "1" : "افصل كبل USB وأعد توصيله دون الضغط على أي أزرار.",
         "2" : "اضغط على كلا الزرين معاً ثلاث مرات لعرض اللوحة الرئيسية.",
-        "3" : "افتح المدير وانقر على \"Update firmware\" (تحديث البرنامج الثابت)."
+        "3" : "Open My Ledger and click Update firmware."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {

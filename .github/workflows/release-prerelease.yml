@@ -17,6 +17,17 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - uses: 8BitJonny/gh-get-current-pr@2.1.1
+        id: PR
+        with:
+          github-token: ${{ github.token }}
+          # Verbose setting SHA when using Pull_Request event trigger to fix #16. (For push even trigger this is not necessary.)
+          sha: ${{ github.event.pull_request.head.sha }}
+          # Only return if PR is still open. (By default it returns PRs in any state.)
+          filterOutClosed: true
+          # Only return if PR is not in draft state. (By default it returns PRs in any state.)
+          filterOutDraft: true
+
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' }}
         with:
@@ -56,7 +67,26 @@ jobs:
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
       - name: build libs
         run: pnpm run build:libs
-      - name: versioning
+      - name: Get changeset ignore value
+        id: get-ignore
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: ".changeset/config.json"
+          prop_path: "ignore.0"
+      - name: versioning desktop
+        if: ${{ contains(steps.PR.outputs.pr_title, 'LLD') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          [[ "${{ steps.get-ignore.outputs.prop }}" = "live-mobile" ]] && pnpm changeset version || pnpm changeset version --ignore live-mobile
+      - name: versioning mobile
+        if: ${{ contains(steps.PR.outputs.pr_title, 'LLM') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          [[ "${{ steps.get-ignore.outputs.prop }}" = "ledger-live-desktop" ]] && pnpm changeset version || pnpm changeset version --ignore ledger-live-desktop
+      - name: versioning all
+        if: ${{ !contains(steps.PR.outputs.pr_title, 'LLD') && !contains(steps.PR.outputs.pr_title, 'LLM') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
@@ -70,18 +100,24 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: commit (from release branch)
         if: ${{ startsWith(github.ref_name, 'release') || startsWith(github.event.inputs.ref, 'release') }}
+        env:
+          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
+          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":rocket: release prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
+          git commit -m ":rocket: release prerelease [${{ contains(steps.PR.outputs.pr_title, 'LLD') && env.LLD || env.LLM }}]" ||
           echo ""
       - name: commit (from hotfix branch)
         if: ${{ startsWith(github.event.inputs.ref, 'hotfix') }}
+        env:
+          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
+          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":fire: hotfix prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
+          git commit -m ":fire: hotfix prerelease [${{ contains(steps.PR.outputs.pr_title, 'LLD') && env.LLD || env.LLM }}]" ||
           echo ""
       - name: commit (from ${{ github.event.inputs.ref }} branch) workflow dispatch
-        if: ${{ !startsWith(github.ref_name, 'release') || !startsWith(github.ref_name, 'hotfix') }}
+        if: ${{ !startsWith(github.ref_name, 'release') && !startsWith(github.ref_name, 'hotfix') }}
         run: |
           git add .
           git commit -m ":rocket: ${{ github.event.inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||

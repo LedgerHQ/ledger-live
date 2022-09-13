@@ -91,6 +91,18 @@ export interface Pair {
   tradeMethod: string;
 }
 
+type TradeMethodGroup = {
+  methods: TradeMethod[];
+  pairs: {
+    [currencyIndex: number]: number[];
+  };
+};
+
+export type ProvidersResponseV4 = {
+  currencies: { [currencyIndex: number]: string };
+  providers: { [providerName: string]: TradeMethodGroup[] };
+};
+
 type CheckQuoteOkStatus = {
   codeName: "RATE_VALID";
 };

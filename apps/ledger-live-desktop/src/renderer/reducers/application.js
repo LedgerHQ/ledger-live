@@ -12,11 +12,9 @@ export type ApplicationState = {
   osDarkMode?: boolean,
   osLanguage?: LangAndRegion,
   navigationLocked?: boolean,
-  notSeededDeviceRelaunch?: boolean,
   debug: {
     alwaysShowSkeletons: boolean,
   },
-  onboardingRelaunched: boolean,
 };
 
 const { language, region } = getParsedSystemLocale();
@@ -32,11 +30,9 @@ const state: ApplicationState = {
   },
   hasPassword: false,
   dismissedCarousel: false,
-  notSeededDeviceRelaunch: false,
   debug: {
     alwaysShowSkeletons: false,
   },
-  onboardingRelaunched: false,
 };
 
 const handlers = {
@@ -44,15 +40,6 @@ const handlers = {
     ...state,
     ...payload,
   }),
-  RELAUNCH_ONBOARDING: (
-    state: ApplicationState,
-    { payload: onboardingRelaunched }: { payload: boolean },
-  ) => {
-    return {
-      ...state,
-      onboardingRelaunched,
-    };
-  },
 };
 
 // NOTE: V2 `lock` and `unlock` have been moved to actions/application.js
@@ -76,12 +63,6 @@ export const alwaysShowSkeletonsSelector = (state: { application: ApplicationSta
 
 export const osLangAndRegionSelector = (state: { application: ApplicationState }) =>
   state.application.osLanguage;
-
-export const notSeededDeviceRelaunchSelector = (state: { application: ApplicationState }) =>
-  state.application.notSeededDeviceRelaunch;
-
-export const onboardingRelaunchedSelector = (state: { application: ApplicationState }) =>
-  state.application.onboardingRelaunched;
 
 export const isNavigationLocked = (state: { application: ApplicationState }) =>
   state.application.navigationLocked;

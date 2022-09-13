@@ -1766,7 +1766,13 @@
       "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "Nomination",
       "CHILL": "Clear nominations",
-      "SET_CONTROLLER": "Set controller"
+      "SET_CONTROLLER": "Set controller",
+      "ACTIVATE": "Activated",
+      "LOCK": "Locked",
+      "UNLOCK": "Unlocked",
+      "REVOKE": "Revoked",
+      "REGISTER": "Registered",
+      "WITHDRAW": "Withdrawn"
     }
   },
   "operationDetails": {
@@ -2004,6 +2010,16 @@
       "noTransaction": {
         "title": "You don't have any transactions",
         "subtitle": "You'll need a device in order to buy or receive {{assetName}}"
+      }
+    },
+    "banner": {
+      "redelegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta": "Redelegate"
+      },
+      "delegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes your {{asset}} at a low commission.",
+        "cta": "Stake now"
       }
     }
   },
@@ -4410,6 +4426,7 @@
     "delegation": "Delegation",
     "viewDetails": "View details",
     "validator": "Validator",
+    "validatorGroup": "Validator Group",
     "validatorAddress": "Validator address",
     "delegatedAccount": "Delegated account",
     "duration": "Duration",
@@ -4820,5 +4837,19 @@
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
     "selectContrast": "Select your contrast"
+  },
+  "postOnboarding": {
+    "hub": {
+      "title": "Nice one.\nYou're all set.",
+      "allDoneTitle": "Nice work.\nYou're up and running.",
+      "subtitle": "Here is what you can do next:",
+      "skip": "Skip to the app",
+      "goToWallet": "Go to Ledger Live wallet",
+      "done": "You've just secured your future"
+    },
+    "walletCard": {
+      "title": "Getting started",
+      "description": "Click here to finish setting up your {{productName}} with Ledger Live"
+    }
   }
 }

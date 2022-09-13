@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/react-native-hw-transport-ble",
-  "version": "6.27.4",
+  "version": "6.27.5",
   "description": "Ledger Hardware Wallet Bluetooth BLE transport for React Native",
   "keywords": [
     "Ledger",

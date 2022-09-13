@@ -96,7 +96,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
 
   const handleHelp = useCallback(() => {
     openURL(urls.faq[locale in urls.faq ? locale : "en"]);
-  }, []);
+  }, [locale]);
 
   const { t } = useTranslation();
 

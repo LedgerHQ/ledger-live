@@ -184,7 +184,7 @@ export function canDelegate(account: CosmosAccount): boolean {
 
 export function canRedelegate(
   account: CosmosAccount,
-  delegation: CosmosDelegation
+  delegation: CosmosDelegation | CosmosValidatorItem
 ): boolean {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmosResources should exist");
