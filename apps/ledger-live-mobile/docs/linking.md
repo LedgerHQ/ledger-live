@@ -7,6 +7,17 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://` _or_ `ledgerlive://portfolio`
 
+  Account page accessible via several deeplinks
+
+- **_accounts?id_** 🠒 Accounts page
+
+  `ledgerlive://accounts` will redirect to accounts page
+
+  `ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will falback to the currency page found and if not to the list of accounts
+
+  `?currency` param can be name or ticker of the currency targeted
+  `?address` param requires currency to work, address of the account to select
+
 - **_account?currency_** 🠒 Account Page
 
   `ledgerlive://account` will redirect to accounts page
@@ -50,19 +61,10 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://swap` will redirect to swap page
 
-- **_add_account_** 🠒 Add Account Crypto Flow
+- **_add_account?currency_** 🠒 Add Account Crypto Flow
 
   `ledgerlive://add-account` will redirect to add account page
   `ledgerlive://add-account?currency=ethereum` will redirect to add account page with ethereum accounts search prefilled
-
-- **_accounts_** 🠒 Accounts page
-
-  `ledgerlive://accounts` will redirect to accounts page
-
-  `ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will falback to the currency page found and if not to the list of accounts
-
-  `?currency` param can be name or ticker of the currency targeted
-  `?address` param requires currency to work, address of the account to select
 
 - **_discover_** 🠒 Live discover catalog
 
