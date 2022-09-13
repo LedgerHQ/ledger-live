@@ -52,7 +52,7 @@ export const getStakingGas = (t?: Transaction, multiplier = 5): BigNumber => {
 export const getMaxAmount = (
   a: NearAccount,
   t: Transaction,
-  fees: BigNumber = new BigNumber(0)
+  fees?: BigNumber
 ): BigNumber => {
   let maxAmount;
   const selectedValidator = a.nearResources?.stakingPositions.find(
@@ -86,7 +86,11 @@ export const getMaxAmount = (
       maxAmount = selectedValidator?.available.minus(pendingWithdrawingAmount);
       break;
     default:
-      maxAmount = a.spendableBalance.minus(fees).minus(pendingDefaultAmount);
+      maxAmount = a.spendableBalance.minus(pendingDefaultAmount);
+
+      if (fees) {
+        maxAmount = maxAmount.minus(fees);
+      }
   }
 
   if (maxAmount.lt(0)) {

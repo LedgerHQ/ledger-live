@@ -53,17 +53,23 @@ const getTransactionStatus = async (
 
   const estimatedFees = t.fees || new BigNumber(0);
 
-  const totalSpent = getTotalSpent(a, t, estimatedFees);
   const maxAmount = getMaxAmount(a, t, estimatedFees);
-
-  const amount = useAllAmount ? maxAmount : new BigNumber(t.amount);
-
+  const maxAmountWithFees = getMaxAmount(a, t);
+  const spendableBalanceWithFees = getMaxAmount(a, { ...t, mode: "stake" });
   const stakingThreshold = getYoctoThreshold();
 
-  if (
-    totalSpent.gt(a.spendableBalance) ||
-    a.spendableBalance.lt(estimatedFees)
-  ) {
+  const totalSpent = getTotalSpent(a, t, estimatedFees);
+  const amount = useAllAmount ? maxAmount : new BigNumber(t.amount);
+
+  const isStakeAndNotEnoughBalance =
+    t.mode === "stake" &&
+    (totalSpent.gt(maxAmountWithFees) || maxAmountWithFees.lt(estimatedFees));
+  const isUnstakeOrWithdrawAndNotEnoughBalance =
+    ["unstake", "withdraw"].includes(t.mode) &&
+    (totalSpent.gt(spendableBalanceWithFees) ||
+      spendableBalanceWithFees.lt(estimatedFees));
+
+  if (isStakeAndNotEnoughBalance || isUnstakeOrWithdrawAndNotEnoughBalance) {
     errors.amount = new NotEnoughBalance();
   } else if (
     ["stake", "unstake", "withdraw"].includes(t.mode) &&
@@ -153,15 +159,12 @@ const getSendTransactionStatus = async (
   const estimatedFees = t.fees || new BigNumber(0);
 
   const totalSpent = getTotalSpent(a, t, estimatedFees);
+  const maxAmount = getMaxAmount(a, t, estimatedFees);
+  const maxAmountWithFees = getMaxAmount(a, t);
 
-  const amount = useAllAmount
-    ? getMaxAmount(a, t, estimatedFees)
-    : new BigNumber(t.amount);
+  const amount = useAllAmount ? maxAmount : new BigNumber(t.amount);
 
-  if (
-    totalSpent.gt(a.spendableBalance) ||
-    a.spendableBalance.lt(estimatedFees)
-  ) {
+  if (totalSpent.gt(maxAmountWithFees) || maxAmountWithFees.lt(estimatedFees)) {
     errors.amount = new NotEnoughBalance();
   } else if (amount.lte(0) && !t.useAllAmount) {
     errors.amount = new AmountRequired();
