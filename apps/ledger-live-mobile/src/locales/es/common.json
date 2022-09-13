@@ -19,6 +19,7 @@
     "device" : "Dispositivo",
     "cryptoAsset" : "Activo cripto",
     "skip" : "Omitir",
+    "next" : "Siguiente",
     "noCryptoFound" : "No se encontraron activos cripto",
     "needHelp" : "¿Necesitas ayuda?",
     "edit" : "Editar",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Desactiva la multifirma para realizar transacciones de Stellar."
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "Error al cargar la imagen de la galería",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageDownloadError" : {
+      "title" : "Error al descargar la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Error al cargar los metadatos de la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Imagen demasiado grande",
+      "description" : "Vuelve a intentarlo con una imagen más pequeña"
+    },
+    "ImageCropError" : {
+      "title" : "Error al recortar la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageResizeError" : {
+      "title" : "Error al cambiar el tamaño de la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImagePreviewError" : {
+      "title" : "Error al previsualizar la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
+    },
+    "ImageProcessingError" : {
+      "title" : "Error al procesar la imagen",
+      "description" : "Vuelve a intentarlo con otra imagen"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "Explora Ledger Live",
         "subtitle" : "Explora la aplicación y conoce sus ventajas "
+      },
+      "desktopSync" : {
+        "title" : "Sincronizar con aplicación Desktop",
+        "subtitle" : "Sincroniza tus activos desde Ledger Live Desktop con tu teléfono."
       }
     },
     "discoverLive" : {
@@ -1566,26 +1603,26 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "Buscando tu {{productName}}",
+        "description" : "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado"
       },
       "withoutProductName" : {
         "title" : "Buscando dispositivos",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "description" : "Asegúrate de que tu dispositivo esté encendido y desbloqueado, y de que el Bluetooth esté habilitado"
       },
       "alreadyPaired" : "Ya emparejado"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "Emparejado con {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "Emparejando con {{deviceName}}",
+        "subtitle" : "Confirma el código en tu {{productName}}"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "title" : "Emparejamiento fallido",
+        "subtitle" : "Parece que algo ha salido mal. Comprueba que el Bluetooth esté activado y tu {{productName}} esté cerca",
         "retryCta" : "Inténtalo de nuevo"
       }
     }
@@ -1725,7 +1762,13 @@
       "WITHDRAW_UNBONDED" : "Retiro",
       "NOMINATE" : "Nominación",
       "CHILL" : "Borrar nominaciones",
-      "SET_CONTROLLER" : "Definir controlador"
+      "SET_CONTROLLER" : "Definir controlador",
+      "ACTIVATE" : "Activado",
+      "LOCK" : "Bloqueado",
+      "UNLOCK" : "Desbloqueado",
+      "REVOKE" : "Revocado",
+      "REGISTER" : "Registrado",
+      "WITHDRAW" : "Retirado"
     }
   },
   "operationDetails" : {
@@ -1963,6 +2006,16 @@
       "noTransaction" : {
         "title" : "No tienes ninguna transacción",
         "subtitle" : "Necesitas un dispositivo para poder comprar o recibir {{assetName}}"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Por si no lo sabías, el validador de Ledger pone en participación con una comisión inferior a la del validador que estás utilizando.",
+        "cta" : "Redelegar"
+      },
+      "delegation" : {
+        "description" : "Por si no lo sabías, el validador de Ledger pone en participación tus {{asset}} con una comisión baja.",
+        "cta" : "Comienza a poner en participación ahora"
       }
     }
   },
@@ -4271,7 +4324,10 @@
       "info" : "Cómo funciona la delegación",
       "broadcastSuccessTitle" : "Operación enviada",
       "broadcastSuccessDescription" : "El estado de la delegación se actualizará cuando se confirme la transacción.",
-      "delegatedTo" : "Delegado a"
+      "delegatedTo" : "Delegado a",
+      "started" : {
+        "description" : "Puedes recibir recompensas delegando tus activos SOL a un validador."
+      }
     }
   },
   "delegation" : {
@@ -4291,6 +4347,7 @@
     "delegation" : "Delegación",
     "viewDetails" : "Ver detalles",
     "validator" : "Validador",
+    "validatorGroup" : "Grupo de validadores",
     "validatorAddress" : "Dirección del validador",
     "delegatedAccount" : "Cuenta delegada",
     "duration" : "Duración",
@@ -4685,5 +4742,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "No se puede confirmar tu dirección {{name}} en tu dispositivo Ledger. Si lo usas es bajo tu propio riesgo."
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "Elige una imagen",
+      "options" : {
+        "uploadFromPhone" : "Cargar desde mi teléfono"
+      }
+    },
+    "cropImage" : "Recortar imagen",
+    "chooseConstrast" : "Elegir contraste",
+    "uploadAnotherImage" : "Cargar otra imagen",
+    "selectContrast" : "Selecciona el contraste"
   }
 }

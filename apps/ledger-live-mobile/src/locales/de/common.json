@@ -19,6 +19,7 @@
     "device" : "Gerät",
     "cryptoAsset" : "Krypto-Vermögenswert",
     "skip" : "Überspringen",
+    "next" : "Weiter",
     "noCryptoFound" : "Keine Krypto-Werte gefunden",
     "needHelp" : "Brauchen Sie Hilfe?",
     "edit" : "Bearbeiten",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Bitte deaktivieren Sie Multisign, um Stellar-Transaktionen durchzuführen"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "Das Laden eines Bildes aus der Galerie ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageDownloadError" : {
+      "title" : "Bilddownload fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Laden der Bild-Metadaten fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Das Bild ist zu groß",
+      "description" : "Bitte versuchen Sie es mit einem kleineren Bild"
+    },
+    "ImageCropError" : {
+      "title" : "Das Zuschneiden des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageResizeError" : {
+      "title" : "Die Größenänderung des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImagePreviewError" : {
+      "title" : "Die Vorschau des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
+    },
+    "ImageProcessingError" : {
+      "title" : "Die Verarbeitung des Bildes ist fehlgeschlagen",
+      "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "Erkunden Sie Ledger Live",
         "subtitle" : "Erkunden Sie die App und erfahren Sie mehr über ihre Vorteile "
+      },
+      "desktopSync" : {
+        "title" : "Mit der Desktop-App synchronisieren",
+        "subtitle" : "Synchronisieren Sie Ihre Vermögenswerte in Ledger Live Desktop mit Ihrem Mobilgerät."
       }
     },
     "discoverLive" : {
@@ -1566,26 +1603,26 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "Nach Ihrer {{productName}} wird gesucht",
+        "description" : "Bitte stellen Sie sicher, dass Ihre {{productName}} entsperrt und Bluetooth aktiviert ist."
       },
       "withoutProductName" : {
         "title" : "Suche nach Geräten",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "description" : "Vergewissern Sie sich, dass Ihr Gerät eingeschaltet und entsperrt und Bluetooth aktiviert ist."
       },
       "alreadyPaired" : "Bereits gekoppelt"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "Gekoppelt mit {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "Koppeln mit {{deviceName}}",
+        "subtitle" : "Bestätigen Sie den Code auf Ihrer {{productName}}"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "title" : "Kopplung fehlgeschlagen",
+        "subtitle" : "Offenbar ist ein Problem aufgetreten. Überprüfen Sie, ob Bluetooth aktiviert ist und sich Ihre {{productName}} in der Nähe befindet.",
         "retryCta" : "Wiederholen"
       }
     }
@@ -1725,7 +1762,13 @@
       "WITHDRAW_UNBONDED" : "Abhebung",
       "NOMINATE" : "Nominierung",
       "CHILL" : "Nominierungen löschen",
-      "SET_CONTROLLER" : "Controller einstellen"
+      "SET_CONTROLLER" : "Controller einstellen",
+      "ACTIVATE" : "Aktiviert",
+      "LOCK" : "Gesperrt",
+      "UNLOCK" : "Entsperrt",
+      "REVOKE" : "Widerrufen",
+      "REGISTER" : "Registriert",
+      "WITHDRAW" : "Ausgezahlt"
     }
   },
   "operationDetails" : {
@@ -1963,6 +2006,16 @@
       "noTransaction" : {
         "title" : "Sie haben keine Transaktionen",
         "subtitle" : "Sie benötigen ein Gerät um {{assetName}} zu kaufen oder zu empfangen"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking zu einer günstigeren Provision als Ihr derzeitiger Validator.",
+        "cta" : "Erneut delegieren"
+      },
+      "delegation" : {
+        "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking Ihrer {{asset}} zu einer günstigen Provision.",
+        "cta" : "Jetzt staken"
       }
     }
   },
@@ -4271,7 +4324,10 @@
       "info" : "So funktioniert Delegation",
       "broadcastSuccessTitle" : "Vorgang gesendet",
       "broadcastSuccessDescription" : "Der Status der Delegation wird bei der Bestätigung der Transaktion aktualisiert.",
-      "delegatedTo" : "delegiert an"
+      "delegatedTo" : "delegiert an",
+      "started" : {
+        "description" : "Sie können Belohnungen verdienen, indem Sie Ihre SOL-Werte an einen Validator delegieren."
+      }
     }
   },
   "delegation" : {
@@ -4291,6 +4347,7 @@
     "delegation" : "Delegation",
     "viewDetails" : "Details anzeigen",
     "validator" : "Validator",
+    "validatorGroup" : "Validator-Gruppe",
     "validatorAddress" : "Validator-Adresse",
     "delegatedAccount" : "Delegiertes Konto",
     "duration" : "Dauer",
@@ -4685,5 +4742,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "Wählen Sie ein Bild aus",
+      "options" : {
+        "uploadFromPhone" : "Von meinem Mobiltelefon hochladen"
+      }
+    },
+    "cropImage" : "Bild zuschneiden",
+    "chooseConstrast" : "Kontrast auswählen",
+    "uploadAnotherImage" : "Ein weiteres Bild hochladen",
+    "selectContrast" : "Wählen Sie Ihren Kontrast"
   }
 }

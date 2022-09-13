@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "Retiro",
       "NOMINATE" : "Nominación",
       "CHILL" : "Borrar nominaciones",
-      "SET_CONTROLLER" : "Definir controlador"
+      "SET_CONTROLLER" : "Definir controlador",
+      "LOCK" : "Bloqueado",
+      "UNLOCK" : "Desbloqueado",
+      "WITHDRAW" : "Retirado",
+      "REVOKE" : "Revocado",
+      "ACTIVATE" : "Activado",
+      "REGISTER" : "Registrado"
     }
   },
   "byteSize" : {
@@ -745,7 +751,19 @@
     "bandwidthTooltip" : "Inmoviliza activos para ganar Ancho de banda",
     "energyTooltip" : "Inmoviliza activos para ganar Energía",
     "delegatedTooltip" : "Los activos delegados se utilizan en el proceso de votación. Esto representa tus votos totales.",
-    "undelegatingTooltip" : "Los activos desdelegados sufren un bloqueo temporal de {{timelockInDays}} días antes de estar disponibles."
+    "undelegatingTooltip" : "Los activos desdelegados sufren un bloqueo temporal de {{timelockInDays}} días antes de estar disponibles.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "Por si no lo sabías,",
+        "description" : "El validador de Ledger pone en participación con una comisión inferior a la del validador que estás utilizando.",
+        "cta" : "Redelegar con Ledger"
+      },
+      "delegation" : {
+        "title" : "Por si no lo sabías,",
+        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "cta" : "Participar con Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "Elegir de {{providerCount}} proveedor",
@@ -959,7 +977,7 @@
       "terms" : {
         "title" : "Prestar cripto",
         "subtitle" : "Presta activos sobre el protocolo Compound",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "El protocolo Compound permite prestar y tomar prestados activos en la red Ethereum. Puedes prestar activos y ganar intereses directamente desde tu cuenta de Ledger.",
         "switchLabel" : "<1>He leído y estoy de acuerdo con los </1><0>Términos de Uso</0><1>.</1>"
       },
       "steps" : {
@@ -2110,6 +2128,272 @@
       "MERGE_OUTPUTS" : "Minimizar las tarifas futuras (fusionar monedas)"
     }
   },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Con tecnología de Figment",
+        "moreInfo" : "Más información",
+        "drawerTitle" : "Con tecnología de Figment",
+        "title" : "El token CELO ya está disponible en Ledger Live",
+        "description" : "Ahora puedes gestionar tus tokens CELO y protegerlos con Ledger Live.",
+        "description2" : "El token Celo es nativo de la cadena Celo y se utiliza para todas las transacciones, puesta en participación y muchas características futuras.",
+        "website" : "Con tecnología de Figment"
+      }
+    },
+    "lockedBalance" : "Saldo bloqueado",
+    "lockedTooltip" : "Los activos deben estar bloqueados y votados para grupos de validadores antes de obtener recompensas.",
+    "nonvotingLockedBalance" : "Saldo bloqueado sin votación",
+    "nonvotingLockedTooltip" : "El saldo de activos bloqueados disponibles para usarlo para votación.",
+    "withdrawableBalance" : "Saldo retirable",
+    "withdrawableTooltip" : "Celo desbloqueado que puedes retirar a tu saldo disponible",
+    "delegation" : {
+      "activeTooltip" : "Un voto activo genera recompensas.",
+      "pendingTooltip" : "Un voto pendiente no genera recompensas y debe activarse después de 24 horas.",
+      "awaitingActivationTooltip" : "Este voto pendiente se puede activar ya.",
+      "listHeader" : "Delegaciones",
+      "add" : "Agregar",
+      "validatorGroup" : "Grupo de validadores",
+      "manageMultipleVoteWarning" : "Debes activar o revocar otros votos dentro del mismo grupo de validadores antes de gestionar este voto.",
+      "actions" : {
+        "activate" : "Activar",
+        "revoke" : "Revocar"
+      },
+      "emptyState" : {
+        "description" : "Puedes recibir recompensas CELO delegando tus activos.",
+        "info" : "Cómo funciona la delegación",
+        "delegation" : "Recibir recompensas"
+      },
+      "earnRewards" : {
+        "description" : "Puedes recibir recompensas delegando tus activos CELO a un validador.",
+        "bullet" : {
+          "0" : "Conservas la propiedad de los activos delegados",
+          "1" : "Delegar utilizando tu dispositivo Ledger",
+          "2" : "Los activos estarán disponibles después de la desdelegación"
+        },
+        "warning" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente."
+      }
+    },
+    "manage" : {
+      "title" : "Administrar activos",
+      "titleWhenPendingRegistration" : "Registro de cuenta pendiente",
+      "lock" : {
+        "title" : "Bloquear",
+        "description" : "Para recibir recompensas, primero debes bloquear un importe. Luego, debes nominar a tu validador o tus validadores."
+      },
+      "unlock" : {
+        "title" : "Desbloquear",
+        "description" : "Para hacer que un importe bloqueado esté disponible de nuevo, antes debes desbloquearlo. Podrás retirarlo después de un período de desbloqueo de 3 días."
+      },
+      "withdraw" : {
+        "title" : "Retirar",
+        "description" : "Para recuperar un importe desbloqueado en el saldo disponible, debes retirarlo manualmente."
+      },
+      "vote" : {
+        "title" : "Votar",
+        "description" : "Vota por grupos de validadores. Para obtener recompensas, asegúrate de que activas tus votos.",
+        "descriptionMaxVotes" : "Puedes votar por un máximo de {{maxVotes}} grupos de validadores. Revoca tu voto para votar por otro grupo de validadores"
+      },
+      "activate" : {
+        "title" : "Activar voto",
+        "description" : "Activa tu voto para el grupo de validadores"
+      },
+      "revoke" : {
+        "title" : "Revocar voto",
+        "description" : "Revoca tu voto para el grupo de validadores"
+      }
+    },
+    "lock" : {
+      "title" : "Bloquear activos",
+      "steps" : {
+        "amount" : {
+          "title" : "Importe",
+          "amountLabel" : "Cantidad para bloquear",
+          "availableLabel" : "Disponible",
+          "maxLabel" : "Máx.",
+          "info" : "Es posible desvincular los activos bloqueados en cualquier momento, pero el desbloqueo tarda 3 días."
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación",
+          "success" : {
+            "title" : "Activos bloqueados correctamente",
+            "text" : "Puedes votar por validadores una vez que la red haya confirmado la transacción.",
+            "textVote" : "Podrás votar por validadores una vez que la red haya confirmado tu transacción.",
+            "cta" : "Ver detalles"
+          },
+          "pending" : {
+            "title" : "Bloqueando tus activos..."
+          },
+          "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "Desbloquear activos",
+      "steps" : {
+        "amount" : {
+          "title" : "Importe",
+          "amountLabel" : "Cantidad para desbloquear",
+          "availableLabel" : "Bloqueado",
+          "maxLabel" : "Máx.",
+          "info" : "Los activos desbloqueados se pueden retirar después de un período de desbloqueo de 3 días.",
+          "learnMore" : "Más información"
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación",
+          "label" : "Confirmación",
+          "success" : {
+            "title" : "Transacción de desbloqueo enviada correctamente",
+            "text" : "Es posible retirar los activos desbloqueados después de 3 días.",
+            "cta" : "Ver detalles"
+          },
+          "pending" : {
+            "title" : "Desbloqueando tus activos..."
+          },
+          "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "Registrar cuenta",
+          "description" : "",
+          "info" : "Antes de bloquear tus Celo, debes registrar tu cuenta sobre la cadena."
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "Info"
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación",
+          "label" : "Confirmación",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "Cuenta registrada correctamente",
+                "text" : "Pronto verás tu operación en el historial.",
+                "cta" : "Bloquear"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "Transmitiendo transacción..."
+          },
+          "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "Retirar activos",
+      "steps" : {
+        "amount" : {
+          "title" : "Retirar"
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación",
+          "success" : {
+            "title" : "",
+            "text" : "Tus activos se han retirado correctamente. La cantidad retirada se agregará a tu saldo disponible.",
+            "cta" : "Ver detalles"
+          },
+          "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+        }
+      }
+    },
+    "vote" : {
+      "title" : "Votar",
+      "steps" : {
+        "amount" : {
+          "title" : "Importe"
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación",
+          "success" : {
+            "title" : "Has votado correctamente",
+            "text" : "Pronto verás tu operación en el historial.",
+            "cta" : "Ver detalles"
+          },
+          "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+        },
+        "validatorGroup" : {
+          "title" : "Grupo de validadores",
+          "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment",
+          "totalVotes" : "Total de votos",
+          "commission" : "Comisión"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "Activar votos",
+      "steps" : {
+        "vote" : {
+          "title" : "Votar"
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación",
+          "success" : {
+            "title" : "",
+            "text" : "Tu voto se ha activado correctamente.",
+            "cta" : "Ver detalles"
+          },
+          "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "Revocar voto",
+      "steps" : {
+        "amount" : {
+          "title" : "Importe",
+          "amountLabel" : "Cantidad para revocar",
+          "availableLabel" : "Disponible",
+          "maxLabel" : "Máx."
+        },
+        "connectDevice" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación",
+          "success" : {
+            "title" : "Has revocado tus votos correctamente",
+            "text" : "Pronto verás tu operación en el historial.",
+            "cta" : "Ver detalles"
+          },
+          "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+        },
+        "vote" : {
+          "title" : "Votar",
+          "active" : "Activo",
+          "pending" : "Pendiente",
+          "awaitingActivation" : "Esperando activación",
+          "info" : "En este modal solo se muestran los votos revocables"
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Tienes saldo retirable",
+      "activatableVotes" : "Tienes votos que pueden activarse."
+    }
+  },
   "cosmos" : {
     "delegation" : {
       "emptyState" : {
@@ -2861,7 +3145,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "Has activado correctamente tu delegación."
               }
             }
           }
@@ -2873,7 +3157,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "Has reactivado correctamente tu delegación."
               }
             }
           }
@@ -3336,6 +3620,7 @@
         "link" : "Más información acerca del funcionamiento de la Frase de recuperación",
         "title2" : "¿Qué pasa si pierdo el acceso a mi Nano?",
         "paragraph3" : "No te preocupes, sigue estos pasos:",
+        "paragraph4" : "Para restaurar el acceso a tus cripto, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
         "points" : {
           "1" : "Utiliza una billetera de hardware distinta.",
           "2" : "Selecciona “Restore recovery phrase on a new device” en la aplicación Ledger.",
@@ -3376,40 +3661,57 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "Bienvenidos a Ledger",
-        "description" : "Administra de manera segura tus cripto desde tu PC.",
-        "cta" : "Comenzar",
-        "noDevice" : "¿No tienes un dispositivo? <0>Compra un Ledger Nano X</0>",
-        "languageWarning" : {
-          "title" : "Comenzar en {{language}}",
-          "desc" : "Estamos añadiendo idiomas adicionales para ayudarte a utilizar Ledger. Ten en cuenta que actualmente el resto de la experiencia Ledger solo está disponible en inglés.",
-          "cta" : "Entendido"
+        "title" : "La billetera más segura para criptodivisas y NFTs",
+        "description" : "Gestiona, compra y haz crecer de forma segura tus criptomonedas y NFTs en Ledger Live.",
+        "nextButton" : "Comenzar",
+        "noDevice" : "¿No tienes un dispositivo?",
+        "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
+        "byTapping" : "Al tocar “Empezar” otorgas tu consentimiento y aceptas nuestros",
+        "termsAndConditions" : "Términos y condiciones",
+        "and" : "y",
+        "privacyPolicy" : "Política de Privacidad",
+        "steps" : {
+          "0" : {
+            "title" : "Accede a tus cripto",
+            "desc" : "Tus activos cripto se almacenan en la cadena de bloques. Usa tu clave privada para acceder a ellos y gestionarlos."
+          },
+          "1" : {
+            "title" : "No compartas tu clave privada",
+            "desc" : "Tu clave privada se almacena dentro de tu Nano.\nPara tener el control de tu dinero, solo tú debes tenerlo en propiedad."
+          },
+          "2" : {
+            "title" : "Mantente sin conexión",
+            "desc" : "Tu Nano funciona como una billetera de “almacenamiento frío”.\nEsto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación mientras está conectada a Internet."
+          },
+          "3" : {
+            "title" : "Validar transacciones",
+            "desc" : "Ledger Live te permite comprar, vender, gestionar, cambiar y ganar cripto con seguridad.\nDeberás validar cada transacción cripto con tu Nano."
+          },
+          "4" : {
+            "title" : "Vamos a configurar tu Nano.",
+            "desc" : "Empezaremos por configurar tu Nano."
+          }
         }
       },
       "selectDevice" : {
-        "title" : "¿Cuál es tu dispositivo?"
+        "title" : "Selecciona tu dispositivo",
+        "selectLabel" : "Seleccionar"
       },
       "selectUseCase" : {
-        "greetings" : "¡Hola!",
         "hasNoRecovery" : "¿Es la primera vez que utilizas tu {{deviceName}}?",
         "hasRecovery" : "¿Ya tienes una Frase de recuperación?",
-        "separator" : "O",
-        "switchDevice" : "Cambiar dispositivo",
         "options" : {
           "1" : {
-            "heading" : "Primera vez",
             "title" : "Configurar un nuevo {{deviceName}}",
-            "description" : "¡Comencemos y configuremos tu dispositivo!"
+            "description" : "Comencemos y configuremos tu dispositivo."
           },
           "2" : {
-            "heading" : "Conectar dispositivo",
             "title" : "Conecta tu {{deviceName}}",
             "description" : "¿Tu dispositivo ya está configurado? ¡Conéctalo a tu aplicación!"
           },
           "3" : {
-            "heading" : "Restaurar dispositivo",
             "title" : "Restaura tu Frase de recuperación a un nuevo dispositivo",
-            "description" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un {{deviceName}} nuevo!"
+            "description" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
           }
         }
       },
@@ -3442,6 +3744,10 @@
             "buttons" : {
               "next" : "De acuerdo, ¡todo listo!",
               "prev" : "Paso anterior"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "deviceHowTo" : {
@@ -3465,9 +3771,14 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "deviceHowTo2" : {
+            "title" : "Esta es la mejor manera de hacerlo:",
             "turnOn" : {
               "title" : "Encendido del Nano",
               "descr" : "Conecta tu dispositivo a tu PC mediante el cable USB."
@@ -3488,6 +3799,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "pinCode" : {
@@ -3498,6 +3813,10 @@
               "next" : "Establecer un código PIN",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "quizSuccess" : {
@@ -3511,10 +3830,14 @@
           },
           "quizFailure" : {
             "title" : "Pronto tendrás nivel de profesional...",
-            "paragraph" : "No te preocupes, Ledger está aquí para guiarte en este proceso. Pronto tendrás completa seguridad con respecto a la protección de tus cripto. ¡Solo te queda un breve paso",
+            "paragraph" : "No te preocupes, Ledger está aquí para guiarte en este proceso. Pronto te sentirás con completa seguridad con respecto a la protección de tus criptomonedas.\n\nSolo te queda un breve paso.",
             "buttons" : {
               "next" : "Siguiente paso",
               "prev" : "Paso anterior"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "pinCodeHowTo" : {
@@ -3530,6 +3853,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "existingRecoveryPhrase" : {
@@ -3544,7 +3871,7 @@
             },
             "warning" : {
               "title" : "No utilices una Frase de recuperación que no hayas generado tú mismo.",
-              "desc" : "Tú y solo tú debes inicializar el código PIN y la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla existente o un código PIN ya inicializado, no utilices el producto y ponte en contacto con el Soporte.",
+              "desc" : "Tú y solo tú debes crear el código PIN y generar la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla o un código PIN ya existentes,no utilices el producto y ponte en contacto con el Soporte.",
               "supportLink" : "Ponte en contacto con Soporte"
             }
           },
@@ -3561,6 +3888,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "newRecoveryPhrase" : {
@@ -3572,6 +3903,10 @@
               "next" : "Frase de recuperación",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "recoveryHowTo" : {
@@ -3597,6 +3932,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "recoveryHowTo3" : {
@@ -3611,6 +3950,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "genuineCheck" : {
@@ -3634,6 +3977,10 @@
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda",
               "learn" : "Aprende cómo ocultarla"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "pairMyNano" : {
@@ -3643,6 +3990,10 @@
               "next" : "Verificar mi Nano",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           }
         }
@@ -3668,9 +4019,9 @@
           "description" : "Ledger Live te permite comprar, vender, administrar, intercambiar y ganar cripto con seguridad. Deberás validar cada transacción cripto con tu Nano."
         },
         "setUpNanoWallet" : {
-          "title" : "¡Vamos a configurar tu Nano!",
+          "title" : "Vamos a configurar tu Nano.",
           "description" : "Empezaremos por configurar la seguridad de tu Nano.",
-          "CTA" : "¡Vamos!"
+          "CTA" : "Vamos."
         }
       }
     },
@@ -3929,7 +4280,9 @@
     "termsLabel" : "Términos del servicio",
     "privacyLabel" : "Política de privacidad",
     "switchLabel" : "He leído y acepto los Términos del Servicio y la Política de Privacidad",
-    "cta" : "Ingresa a la aplicación Ledger"
+    "cta" : "Ingresa a la aplicación Ledger",
+    "termsCheckboxLabel" : "He leído y acepto los Términos de uso.",
+    "privacyCheckboxLabel" : "He leído y acepto la Política de privacidad."
   },
   "updatedTerms" : {
     "title" : "Actualización de los términos de uso",
@@ -4017,6 +4370,9 @@
     "NoAccessToCamera" : {
       "title" : "Asegúrate de que tu sistema cuente con una cámara, de que la misma no esté siendo utilizada por otra aplicación y de que Ledger Live tenga permiso para usarla.",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Asegúrate de que tienes un saldo restante suficiente para cubrir las tarifas de transacciones futuras"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Las recompensas son inferiores a las tarifas estimadas para reclamarlas",

@@ -143,7 +143,9 @@ export const getOnboardingStatePolling = ({
   return delayedOnceOnboardingStateObservable.pipe(repeat());
 };
 
-export const isAllowedOnboardingStatePollingError = (error: Error): boolean => {
+export const isAllowedOnboardingStatePollingError = (
+  error: unknown
+): boolean => {
   if (
     error &&
     // Timeout error is thrown by rxjs's timeout

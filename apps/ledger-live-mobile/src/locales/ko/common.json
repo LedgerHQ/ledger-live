@@ -19,6 +19,7 @@
     "device" : "장치",
     "cryptoAsset" : "암호화폐",
     "skip" : "건너뛰기",
+    "next" : "다음",
     "noCryptoFound" : "암호화폐가 없습니다",
     "needHelp" : "도움이 필요하세요?",
     "edit" : "편집",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "갤러리 이미지 로딩 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageDownloadError" : {
+      "title" : "이미지 다운로드 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "이미지 메타데이터 로딩 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageTooLargeError" : {
+      "title" : "이미지 크기 초과",
+      "description" : "작은 이미지로 다시 시도하세요"
+    },
+    "ImageCropError" : {
+      "title" : "이미지 크롭 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageResizeError" : {
+      "title" : "이미지 사이즈 변경 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImagePreviewError" : {
+      "title" : "이미지 미리보기 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
+    },
+    "ImageProcessingError" : {
+      "title" : "이미지 처리 실패",
+      "description" : "다른 이미지로 다시 시도하세요"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "Ledger Live를 살펴보세요",
         "subtitle" : "앱을 살펴보고 어떤 이점이 있는지 알아보세요 "
+      },
+      "desktopSync" : {
+        "title" : "데스크탑 앱과 동기화하세요",
+        "subtitle" : "Ledger Live 데스크탑의 자산을 모바일과 동기화하세요."
       }
     },
     "discoverLive" : {
@@ -1725,7 +1762,13 @@
       "WITHDRAW_UNBONDED" : "출금",
       "NOMINATE" : "지명",
       "CHILL" : "지명 해제",
-      "SET_CONTROLLER" : "관리자 설정"
+      "SET_CONTROLLER" : "관리자 설정",
+      "ACTIVATE" : "활성화",
+      "LOCK" : "잠금",
+      "UNLOCK" : "잠금 해제",
+      "REVOKE" : "취소",
+      "REGISTER" : "등록 완료",
+      "WITHDRAW" : "출금됨"
     }
   },
   "operationDetails" : {
@@ -1963,6 +2006,16 @@
       "noTransaction" : {
         "title" : "아직 트랜잭션 내역이 없습니다.",
         "subtitle" : "{{assetName}} 구매 또는 수령에는 장치가 필요합니다"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "알고 계셨나요? Ledger 검증인의 스테이킹 수수료는 귀하의 현 검증인보다 저렴합니다.",
+        "cta" : "재위임"
+      },
+      "delegation" : {
+        "description" : "알고 계셨나요? Ledger 검증인은 {{asset}} 스테이킹 서비스를 저렴한 수수료로 제공합니다.",
+        "cta" : "지금 스테이킹하기"
       }
     }
   },
@@ -4271,7 +4324,10 @@
       "info" : "위임의 원리",
       "broadcastSuccessTitle" : "거래 전송됨",
       "broadcastSuccessDescription" : "거래 확인 후 위임 상태가 업데이트됩니다.",
-      "delegatedTo" : "다음에게 위임됨"
+      "delegatedTo" : "다음에게 위임됨",
+      "started" : {
+        "description" : "SOL 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다."
+      }
     }
   },
   "delegation" : {
@@ -4291,6 +4347,7 @@
     "delegation" : "위임",
     "viewDetails" : "세부사항 보기",
     "validator" : "검증인",
+    "validatorGroup" : "검증인 그룹",
     "validatorAddress" : "검증인 주소",
     "delegatedAccount" : "위임된 계정",
     "duration" : "기간",
@@ -4685,5 +4742,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "Ledger 장치에서 귀하의 {{name}} 주소를 확인할 수 없습니다. 사용은 본인의 책임입니다."
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "이미지 선택",
+      "options" : {
+        "uploadFromPhone" : "핸드폰에서 업로드"
+      }
+    },
+    "cropImage" : "Crop image",
+    "chooseConstrast" : "Choose contrast",
+    "uploadAnotherImage" : "다른 이미지 업로드",
+    "selectContrast" : "컨트라스트 선택"
   }
 }
