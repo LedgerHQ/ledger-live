@@ -1,4 +1,3 @@
-// @flow
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";

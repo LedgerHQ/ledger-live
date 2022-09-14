@@ -30,6 +30,10 @@ import { Transaction as ethereumTransaction } from "../families/ethereum/types";
 import { TransactionRaw as ethereumTransactionRaw } from "../families/ethereum/types";
 import { TransactionStatus as ethereumTransactionStatus } from "../families/ethereum/types";
 import { TransactionStatusRaw as ethereumTransactionStatusRaw } from "../families/ethereum/types";
+import { Transaction as evmTransaction } from "../families/evm/types";
+import { TransactionRaw as evmTransactionRaw } from "../families/evm/types";
+import { TransactionStatus as evmTransactionStatus } from "../families/evm/types";
+import { TransactionStatusRaw as evmTransactionStatusRaw } from "../families/evm/types";
 import { Transaction as filecoinTransaction } from "../families/filecoin/types";
 import { TransactionRaw as filecoinTransactionRaw } from "../families/filecoin/types";
 import { TransactionStatus as filecoinTransactionStatus } from "../families/filecoin/types";
@@ -42,6 +46,10 @@ import { Transaction as neoTransaction } from "../families/neo/types";
 import { TransactionRaw as neoTransactionRaw } from "../families/neo/types";
 import { TransactionStatus as neoTransactionStatus } from "../families/neo/types";
 import { TransactionStatusRaw as neoTransactionStatusRaw } from "../families/neo/types";
+import { Transaction as osmosisTransaction } from "../families/osmosis/types";
+import { TransactionRaw as osmosisTransactionRaw } from "../families/osmosis/types";
+import { TransactionStatus as osmosisTransactionStatus } from "../families/osmosis/types";
+import { TransactionStatusRaw as osmosisTransactionStatusRaw } from "../families/osmosis/types";
 import { Transaction as polkadotTransaction } from "../families/polkadot/types";
 import { TransactionRaw as polkadotTransactionRaw } from "../families/polkadot/types";
 import { TransactionStatus as polkadotTransactionStatus } from "../families/polkadot/types";
@@ -76,15 +84,18 @@ export type Transaction =
   | crypto_orgTransaction
   | elrondTransaction
   | ethereumTransaction
+  | evmTransaction
   | filecoinTransaction
   | hederaTransaction
   | neoTransaction
+  | osmosisTransaction
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction
+  | tronTransaction;
+
 export type TransactionRaw =
   | algorandTransactionRaw
   | bitcoinTransactionRaw
@@ -94,15 +105,18 @@ export type TransactionRaw =
   | crypto_orgTransactionRaw
   | elrondTransactionRaw
   | ethereumTransactionRaw
+  | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | neoTransactionRaw
+  | osmosisTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw
+  | tronTransactionRaw;
+
 export type TransactionStatus =
   | algorandTransactionStatus
   | bitcoinTransactionStatus
@@ -112,15 +126,18 @@ export type TransactionStatus =
   | crypto_orgTransactionStatus
   | elrondTransactionStatus
   | ethereumTransactionStatus
+  | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | neoTransactionStatus
+  | osmosisTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
-  | tronTransactionStatus
+  | tronTransactionStatus;
+
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
   | bitcoinTransactionStatusRaw
@@ -130,12 +147,14 @@ export type TransactionStatusRaw =
   | crypto_orgTransactionStatusRaw
   | elrondTransactionStatusRaw
   | ethereumTransactionStatusRaw
+  | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | neoTransactionStatusRaw
+  | osmosisTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
-  | tronTransactionStatusRaw
+  | tronTransactionStatusRaw;

@@ -19,6 +19,7 @@
     "device": "Device",
     "cryptoAsset": "Crypto asset",
     "skip": "Skip",
+    "next": "Next",
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Do you need help?",
     "edit": "Edit",
@@ -81,7 +82,8 @@
     "seeMore": "See more",
     "moreInfo": "More info",
     "buyEth": "Buy Ethereum",
-    "popular": "popular"
+    "popular": "popular",
+    "comingSoon": "Coming soon"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -321,6 +323,14 @@
     },
     "InvalidRecipient": {
       "title": "Invalid recipient"
+    },
+    "LanguageInstallRefusedOnDevice": {
+      "title": "Language installation refused on device",
+      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "LanguageNotFound": {
+      "title": "Language not found",
+      "description": "The language you are trying to install was not found. Please try installing another language."
     },
     "LatestMCUInstalledError": {
       "title": "Sorry, there's nothing to update",
@@ -677,6 +687,38 @@
     },
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
+    },
+    "ImageLoadFromGalleryError": {
+      "title": "Image loading from gallery failed",
+      "description": "Please try again with another image"
+    },
+    "ImageDownloadError": {
+      "title": "Image download failed",
+      "description": "Please try again with another image"
+    },
+    "ImageMetadataLoadingError": {
+      "title": "Image metadata loading failed",
+      "description": "Please try again with another image"
+    },
+    "ImageTooLargeError": {
+      "title": "Image too large",
+      "description": "Please try with a smaller image"
+    },
+    "ImageCropError": {
+      "title": "Cropping of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageResizeError": {
+      "title": "Resizing of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImagePreviewError": {
+      "title": "Preview of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageProcessingError": {
+      "title": "Processing of the image failed",
+      "description": "Please try again with another image"
     }
   },
   "bluetooth": {
@@ -1005,6 +1047,10 @@
       "discoverLedger": {
         "title": "Explore Ledger Live",
         "subtitle": "Explore the app and learn about its benefits "
+      },
+      "desktopSync": {
+        "title": "Sync with desktop app",
+        "subtitle": "Sync your assets from Ledger Live desktop with your mobile."
       }
     },
     "discoverLive": {
@@ -1554,6 +1600,33 @@
       }
     }
   },
+  "blePairingFlow": {
+    "scanning": {
+      "withProductName": {
+        "title": "Looking for your {{productName}}",
+        "description": "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+      },
+      "withoutProductName": {
+        "title": "Looking for devices",
+        "description": "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+      },
+      "alreadyPaired": "Already paired"
+    },
+    "pairing": {
+      "success": {
+        "title": "Paired with {{deviceName}}"
+      },
+      "loading": {
+        "title": "Pairing with {{deviceName}}",
+        "subtitle": "Confirm the code on your {{productName}}"
+      },
+      "error": {
+        "title": "Pairing unsucessful",
+        "subtitle": "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "retryCta": "Try again"
+      }
+    }
+  },
   "tabs": {
     "portfolio": "Wallet",
     "accounts": "Accounts",
@@ -1689,7 +1762,13 @@
       "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "Nomination",
       "CHILL": "Clear nominations",
-      "SET_CONTROLLER": "Set controller"
+      "SET_CONTROLLER": "Set controller",
+      "ACTIVATE": "Activated",
+      "LOCK": "Locked",
+      "UNLOCK": "Unlocked",
+      "REVOKE": "Revoked",
+      "REGISTER": "Registered",
+      "WITHDRAW": "Withdrawn"
     }
   },
   "operationDetails": {
@@ -1749,7 +1828,8 @@
       "validatorsCount": "Validators ({{number}})",
       "storageLimit": "Storage Limit",
       "gasLimit": "Gas Limit",
-      "id": "Id"
+      "id": "Id",
+      "autoClaimedRewards": "Auto Claimed Rewards"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",
@@ -1770,6 +1850,17 @@
     "subaccountCount_plural": "+{{count}} subaccounts"
   },
   "account": {
+    "subHeader": {
+      "moreInfo": "More info",
+      "cardTitle": "Powered by {{team}}",
+      "drawer": {
+        "title": "{{family}} integration",
+        "subTitle": "The {{family}} integration has been done by the {{team}} team",
+        "description": "Ledger Live is an open-source platform.",
+        "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
+        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
+      }
+    },
     "tokens": {
       "contractAddress": "Contract address",
       "viewInExplorer": "View in explorer",
@@ -1915,6 +2006,16 @@
       "noTransaction": {
         "title": "You don't have any transactions",
         "subtitle": "You'll need a device in order to buy or receive {{assetName}}"
+      }
+    },
+    "banner": {
+      "redelegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta": "Redelegate"
+      },
+      "delegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes your {{asset}} at a low commission.",
+        "cta": "Stake now"
       }
     }
   },
@@ -2107,6 +2208,36 @@
         "android": "Review in the Google Play store"
       }
     },
+    "notifications": {
+      "title": "Notifications",
+      "desc": "Manage your notifications",
+      "disabledNotifications": {
+        "title": "Your notifications are disabled",
+        "desc": "{{platform}} is blocking notifications from Ledger Live. To get notifications on your phone, visit your device’s settings to turn on Ledger Live notifications.",
+        "turnOnNotif": "Turn on notifications",
+        "goToSettings": "Go to system settings"
+      },
+      "allowed": {
+        "title": "Allow notifications",
+        "desc": "Receive notifications about your crypto, market tendencies and more"
+      },
+      "transactions": {
+        "title": "Transactions",
+        "desc": "Get notified when you receive or send crypto"
+      },
+      "market": {
+        "title": "Market",
+        "desc": "Receive significant market changes updates"
+      },
+      "announcement": {
+        "title": "Announcements",
+        "desc": "Receive important Ledger Live updates"
+      },
+      "price": {
+        "title": "Price Alerts",
+        "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
+      }
+    },
     "help": {
       "title": "Help",
       "header": "Help",
@@ -2138,6 +2269,23 @@
       "customManifest": {
         "title": "Load Custom Platform Manifest"
       }
+    },
+    "debug": {
+      "featureFlagsTitle": "Defined feature flags used in Ledger Live",
+      "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
+      "featureFlagsOverride": "Override",
+      "featureFlagsEdit": "Edit",
+      "featureFlagsRestore": "Restore",
+      "featureFlagsDisplayValue": "Display value",
+      "featureFlagsHideValue": "Hide value"
+    }
+  },
+  "notifications": {
+    "prompt": {
+      "title": "Turn notifications on",
+      "desc": "Get important updates on Ledger Live, Ledger products and security. Opt out anytime.",
+      "allow": "Allow notifications",
+      "later": "Maybe later"
     }
   },
   "migrateAccounts": {
@@ -2203,10 +2351,67 @@
       "verifyAgain": "Check again",
       "noAccount": "No account found",
       "address": "Address for account",
-      "copyAddress": "Copy address",
+      "copyAddress": "Copy",
       "shareAddress": "Share address",
-      "addressCopied": "Address copied!",
+      "addressCopied": "Copied",
       "taprootWarning": "Make sure the sender supports taproot",
+      "selectCrypto": {
+        "title": "Select a crypto"
+      },
+      "stepperHeader": {
+        "range": "Step {{currentStep}} of {{totalSteps}}",
+        "connectDevice": "Connect Device"
+      },
+      "selectAccount": {
+        "title": "Select an account",
+        "subtitle": "Your {{currencyTicker}} will be deposited into this account."
+      },
+      "addAccount": {
+        "title": "Searching the blockchain",
+        "subtitle": "Checking to see if you already own {{currencyTicker}} accounts.",
+        "foundAccounts": "{{count}} accounts found",
+        "stopSynchronization": "Stop synchronization"
+      },
+      "verifyAddress": {
+        "title": "Verify address",
+        "subtitle": "Verify that the address displayed on your device matches this one below. Once you’re sure you can click approve on your device.",
+        "cancel": {
+          "title": "You just denied this address",
+          "subtitle": "If this was done by mistake, you can retry by clicking the button below.",
+          "info": "If you are sure the addresses don’t match, your phone may be compromised. We recommend you <0>contact us as soon as possible.</0>"
+        }
+      },
+      "receiveConfirmation": {
+        "title": "Receive {{currencyTicker}}",
+        "addressVerified": "Address verified",
+        "verifyAddress": "Tap here to verify your address",
+        "adviceVerify": "We always recommend verifying your address with your Ledger device",
+        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss."
+      },
+      "securityVerify": {
+        "title": "For security we recommend verifying this address with your Ledger device.",
+        "subtitle1": "Verifying your address provides you security. The address displayed on your ledger device cannot be compromised.",
+        "subtitle2": "By verifying the address, you will be able to confirm that the address shown on your device is the same as the address shown in Ledger Live.",
+        "verifyCta": "Verify my address",
+        "dontVerifyCta": "Reveal my address without verifying"
+      },
+      "securityDontVerify": {
+        "title": "Are you sure?",
+        "subtitle": "The address displayed on Ledger Live will not be verified.",
+        "doNotRemindAgain": "Do not remind me again",
+        "no": "No",
+        "yes": "Yes"
+      },
+      "toastMessages": {
+        "accountImported": "We've imported a {{currencyTicker}} account for you. ",
+        "why": "Tell me why.",
+        "addressVerified": "Your address is verified"
+      },
+      "additionalInfoModal": {
+        "title": "Why we imported an account?",
+        "subtitle": "We detected that you had a previous {{currencyTicker}} account on your seed. We imported this account for you.",
+        "closeCta": "Ok, got it"
+      },
       "notSynced": {
         "text": "Synchronizing",
         "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."
@@ -2309,7 +2514,7 @@
       },
       "payoutModal": {
         "title": "Payout fees",
-        "description": "Payout fees are not shown on the device and substracted from the amount.",
+        "description": "Payout fees are not shown on the device and subtracted from the amount.",
         "cta": "Close"
       },
       "pendingOperation": {
@@ -3326,11 +3531,28 @@
     "no": "I prefer not to",
     "languages": {
       "en": "English",
-      "fr": "French",
-      "ru": "Russian",
-      "es": "Spanish",
-      "zh": "Chinese",
-      "de": "German"
+      "fr": "Français",
+      "ru": "Русский",
+      "es": "Español",
+      "zh": "中国人",
+      "de": "Deutsch",
+      "tr": "Türk",
+      "ja": "日本",
+      "ko": "한국인",
+      "pt": "Português"
+    }
+  },
+  "deviceLocalization": {
+    "language": "Language",
+    "deviceLanguage": "Device Language",
+    "changeLanguage": "Change language",
+    "allowLanguageInstallation": "Allow language installation",
+    "languageInstalled": "Device language changed to {{language}}",
+    "installingLanguage": "Installing language",
+    "languages": {
+      "english": "English",
+      "french": "French",
+      "spanish": "Spanish"
     }
   },
   "FirmwareUpdateCheckId": {
@@ -3439,6 +3661,31 @@
       "available": {
         "title": "CELO available",
         "description": "This amount is disposable."
+      }
+    }
+  },
+  "osmosis": {
+    "info": {
+      "available": {
+        "title": "OSMO available"
+      },
+      "delegated": {
+        "description": "Delegated assets are used for Osmosis voting. This is your total number of votes."
+      },
+      "undelegating": {
+        "description": "Undelegated assets are in a timelock of 14 days, before being available."
+      }
+    },
+    "delegation": {
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Delegate your OSMO to earn rewards securely, keeping control of your assets.",
+            "steps": {
+              "1": "You will have to wait 14 days for the undelegation to complete."
+            }
+          }
+        }
       }
     }
   },
@@ -3642,33 +3889,6 @@
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
           }
         }
-      }
-    }
-  },
-  "cryptoOrg": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Crypto.org",
-        "moreInfo": "More info",
-        "drawerTitle": "Crypto.org integration",
-        "title": "The Crypto.org (CRO) token is now available on Ledger Live",
-        "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
-        "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Cryptocurrency in every wallet"
-      }
-    }
-  },
-  "elrond": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Elrond",
-        "drawerTitle": "Elrond integration",
-        "moreInfo": "More info",
-        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
-        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
       }
     }
   },
@@ -4110,7 +4330,10 @@
       "info": "How Delegation works",
       "broadcastSuccessTitle": "Operation sent",
       "broadcastSuccessDescription": "The status of the delegation will be updated when the transaction is confirmed.",
-      "delegatedTo": "delegated to"
+      "delegatedTo": "delegated to",
+      "started": {
+        "description": "You may earn rewards by delegating your SOL assets to a validator."
+      }
     }
   },
   "delegation": {
@@ -4130,6 +4353,7 @@
     "delegation": "Delegation",
     "viewDetails": "View details",
     "validator": "Validator",
+    "validatorGroup": "Validator Group",
     "validatorAddress": "Validator address",
     "delegatedAccount": "Delegated account",
     "duration": "Duration",
@@ -4209,6 +4433,11 @@
         "redelegate": "You will have to wait 21 days for undelegated assets to return to the available balance.",
         "undelegate": "You will have to wait 21 days for undelegated assets to return to the available balance."
       },
+      "osmosis": {
+        "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
+        "redelegate": "You will have to wait 14 days for undelegated assets to return to the available balance.",
+        "undelegate": "You will have to wait 14 days for undelegated assets to return to the available balance."
+      },
       "lending": "Verify the operation details on your device before sending it."
     },
     "amount": "Amount",
@@ -4218,6 +4447,7 @@
     "redelegationAmount": "Redelegated amount",
     "gas": "Gas",
     "validatorAddress": "Validator address",
+    "validatorName": "Validator name",
     "rewardAmount": "Reward amount",
     "undelegatedAmount": "Undelegated amount",
     "memo": "Memo"
@@ -4521,6 +4751,32 @@
     },
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+    }
+  },
+  "customImage": {
+    "drawer": {
+      "title": "Choose an image",
+      "options": {
+        "uploadFromPhone": "Upload from my phone"
+      }
+    },
+    "cropImage": "Crop image",
+    "chooseConstrast": "Choose contrast",
+    "uploadAnotherImage": "Upload another image",
+    "selectContrast": "Select your contrast"
+  },
+  "postOnboarding": {
+    "hub": {
+      "title": "Nice one.\nYou're all set.",
+      "allDoneTitle": "Nice work.\nYou're up and running.",
+      "subtitle": "Here is what you can do next:",
+      "skip": "Skip to the app",
+      "goToWallet": "Go to Ledger Live wallet",
+      "done": "You've just secured your future"
+    },
+    "walletCard": {
+      "title": "Getting started",
+      "description": "Click here to finish setting up your {{productName}} with Ledger Live"
     }
   }
 }

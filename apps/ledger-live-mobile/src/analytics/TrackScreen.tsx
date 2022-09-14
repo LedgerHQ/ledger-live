@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useIsFocused } from "@react-navigation/native";
+// eslint-disable-next-line import/no-cycle
 import { screen } from "./segment";
 
 type Props = Partial<{

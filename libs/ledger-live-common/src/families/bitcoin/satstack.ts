@@ -258,7 +258,7 @@ export async function fetchSatStackStatus(): Promise<SatStackStatus> {
 
   const ce = getCurrencyExplorer(getCryptoCurrencyById("bitcoin"));
   const r = await network({
-    type: "GET",
+    method: "GET",
     url: `${ce.endpoint}/blockchain/${ce.version}/explorer/status`,
   }).catch(() => null);
 

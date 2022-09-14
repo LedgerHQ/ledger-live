@@ -1,4 +1,3 @@
-/* eslint-disable import/named */
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
 import { FlatList } from "react-native";
@@ -16,6 +15,7 @@ import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
+import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import {
@@ -44,6 +44,7 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -140,14 +141,16 @@ function PortfolioScreen({ navigation }: Props) {
   const discreetMode = useSelector(discreetModeSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
-  const openAddModal = useCallback(() => setAddModalOpened(true), [
-    setAddModalOpened,
-  ]);
+  const openAddModal = useCallback(
+    () => setAddModalOpened(true),
+    [setAddModalOpened],
+  );
   useProviders();
 
-  const closeAddModal = useCallback(() => setAddModalOpened(false), [
-    setAddModalOpened,
-  ]);
+  const closeAddModal = useCallback(
+    () => setAddModalOpened(false),
+    [setAddModalOpened],
+  );
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
@@ -162,16 +165,24 @@ function PortfolioScreen({ navigation }: Props) {
     setGraphCardEndPosition(y + height / 2);
   }, []);
 
-  const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
-    accounts,
-  ]);
+  const areAccountsEmpty = useMemo(
+    () => accounts.every(isAccountEmpty),
+    [accounts],
+  );
   const [showAssets, assetsToDisplay] = useMemo(
     () => [accounts.length > 0, accounts.slice(0, maxAssetsToDisplay)],
     [accounts],
   );
 
+  const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
+
   const data = useMemo(
     () => [
+      postOnboardingVisible && (
+        <Box m={6}>
+          <PostOnboardingEntryPointCard />
+        </Box>
+      ),
       !showAssets && (
         <Box mx={6} mt={3}>
           <AddAssetsCard />
@@ -271,6 +282,7 @@ function PortfolioScreen({ navigation }: Props) {
       closeAddModal,
       showCarousel,
       carouselVisibility,
+      postOnboardingVisible,
     ],
   );
 

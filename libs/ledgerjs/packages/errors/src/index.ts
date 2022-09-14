@@ -3,6 +3,7 @@ import {
   deserializeError,
   createCustomErrorClass,
   addCustomErrorDeserializer,
+  LedgerErrorConstructor,
 } from "./helpers";
 
 export {
@@ -25,9 +26,10 @@ export const CantOpenDevice = createCustomErrorClass("CantOpenDevice");
 export const CashAddrNotSupported = createCustomErrorClass(
   "CashAddrNotSupported"
 );
-export const CurrencyNotSupported = createCustomErrorClass(
-  "CurrencyNotSupported"
-);
+export const CurrencyNotSupported = createCustomErrorClass<
+  { currencyName: string },
+  LedgerErrorConstructor<{ currencyName: string }>
+>("CurrencyNotSupported");
 export const DeviceAppVerifyNotSupported = createCustomErrorClass(
   "DeviceAppVerifyNotSupported"
 );
@@ -218,6 +220,8 @@ export const FirmwareOrAppUpdateRequired = createCustomErrorClass(
   "FirmwareOrAppUpdateRequired"
 );
 
+export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
+
 // db stuff, no need to translate
 export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
 export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
@@ -227,13 +231,17 @@ export const DBNotReset = createCustomErrorClass("DBNotReset");
  * TransportError is used for any generic transport errors.
  * e.g. Error thrown when data received by exchanges are incorrect or if exchanged failed to communicate with the device for various reason.
  */
-export function TransportError(message: string, id: string): void {
-  this.name = "TransportError";
-  this.message = message;
-  this.stack = new Error().stack;
-  this.id = id;
+export class TransportError extends Error {
+  id: string;
+  constructor(message: string, id: string) {
+    const name = "TransportError";
+    super(message || name);
+    this.name = name;
+    this.message = message;
+    this.stack = new Error().stack;
+    this.id = id;
+  }
 }
-TransportError.prototype = new Error();
 
 addCustomErrorDeserializer(
   "TransportError",

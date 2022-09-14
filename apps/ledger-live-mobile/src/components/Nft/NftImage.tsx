@@ -39,7 +39,7 @@ const NotFound: React.FC<{
 };
 
 type Props = {
-  style?: Object;
+  style?: any;
   status: string;
   src: string;
   srcFallback: string;

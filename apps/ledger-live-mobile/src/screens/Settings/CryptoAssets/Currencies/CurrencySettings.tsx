@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { Trans, withTranslation, useTranslation } from "react-i18next";
-import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { Box, Flex, Slider, Text } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../../components/SettingsRow";
@@ -17,7 +17,7 @@ import CurrencyIcon from "../../../../components/CurrencyIcon";
 type Props = {
   confirmationsNb: number;
   navigation: any;
-  updateCurrencySettings: Function;
+  updateCurrencySettings: any;
   defaults: any;
   currency: CryptoCurrency;
 };

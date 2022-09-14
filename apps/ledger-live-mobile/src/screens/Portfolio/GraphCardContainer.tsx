@@ -4,8 +4,8 @@ import {
   Currency,
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
-import { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
+} from "@ledgerhq/types-cryptoassets";
+import { Portfolio } from "@ledgerhq/types-live";
 import { currenciesSelector } from "../../reducers/accounts";
 import CurrencyDownStatusAlert from "../../components/CurrencyDownStatusAlert";
 import GraphCard from "../../components/GraphCard";
@@ -22,9 +22,8 @@ const GraphCardContainer = ({
   areAccountsEmpty: boolean;
   counterValueCurrency: Currency;
 }) => {
-  const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(
-    currenciesSelector,
-  );
+  const currencies: Array<CryptoCurrency | TokenCurrency> =
+    useSelector(currenciesSelector);
 
   return (
     <>

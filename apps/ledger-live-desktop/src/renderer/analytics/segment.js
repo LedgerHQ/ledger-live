@@ -67,17 +67,22 @@ const extraProperties = store => {
 
 let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
 
+function getAnalytics() {
+  const { analytics } = window;
+  if (typeof analytics === "undefined") {
+    logger.critical(new Error("window.analytics must not be undefined!"));
+  }
+  return analytics;
+}
+
 export const start = async (store: *) => {
   if (!user || (!process.env.SEGMENT_TEST && (process.env.MOCK || process.env.PLAYWRIGHT_RUN)))
     return;
   const { id } = await user();
-  logger.analyticsStart(id, extraProperties(store));
   storeInstance = store;
-  const { analytics } = window;
-  if (typeof analytics === "undefined") {
-    logger.error("analytics is not available");
-    return;
-  }
+  const analytics = getAnalytics();
+  if (!analytics) return;
+  logger.analyticsStart(id, extraProperties(store));
   analytics.identify(id, extraProperties(store), {
     context: getContext(store),
   });
@@ -86,11 +91,8 @@ export const start = async (store: *) => {
 export const stop = () => {
   logger.analyticsStop();
   storeInstance = null;
-  const { analytics } = window;
-  if (typeof analytics === "undefined") {
-    logger.error("analytics is not available");
-    return;
-  }
+  const analytics = getAnalytics();
+  if (!analytics) return;
   analytics.reset();
 };
 
@@ -100,12 +102,8 @@ export const trackSubject = new ReplaySubject<{
 }>(10);
 
 function sendTrack(event, properties: ?Object, storeInstance: *) {
-  const { analytics } = window;
-  if (typeof analytics === "undefined") {
-    logger.error("analytics is not available");
-    return;
-  }
-
+  const analytics = getAnalytics();
+  if (!analytics) return;
   analytics.track(event, properties, {
     context: getContext(storeInstance),
   });

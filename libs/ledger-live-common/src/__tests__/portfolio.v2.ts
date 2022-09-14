@@ -29,7 +29,9 @@ import type {
   AccountLike,
   PortfolioRange,
 } from "@ledgerhq/types-live";
+
 setEnv("MOCK", "1");
+setEnv("MOCK_COUNTERVALUES", "1");
 describe("Portfolio", () => {
   const rangeCount: [PortfolioRange, number][] = [
     ["all", 52],

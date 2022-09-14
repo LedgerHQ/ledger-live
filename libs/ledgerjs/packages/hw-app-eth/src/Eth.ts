@@ -29,9 +29,10 @@ import {
   signEIP712HashedMessage,
   signEIP712Message,
   EIP712Message,
+  isEIP712Message,
 } from "./modules/EIP712";
 
-export { ledgerService };
+export { ledgerService, isEIP712Message };
 
 export type StarkQuantizationType =
   | "eth"
@@ -1205,9 +1206,6 @@ export default class Eth {
   }
 
   provideERC20TokenInformation({ data }: { data: Buffer }): Promise<boolean> {
-    console.warn(
-      "hw-app-eth: eth.provideERC20TokenInformation is deprecated. signTransaction solves this for you when providing it in `resolution`."
-    );
     return provideERC20TokenInformation(this.transport, data);
   }
 

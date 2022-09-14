@@ -1,7 +1,7 @@
 // @flow
 
 import { setDrawer } from "../Provider";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import SelectAccountAndCurrencyDrawer from "./SelectAccountAndCurrencyDrawer";
 
 type SelectAccountAndCurrencyResult = {

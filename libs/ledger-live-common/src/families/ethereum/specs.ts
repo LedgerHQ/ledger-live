@@ -13,12 +13,13 @@ import {
   getAccountCapabilities,
 } from "../../compound/logic";
 import { getSupplyMax } from "./modules/compound";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const testTimeout = 5 * 60 * 1000;
 
@@ -49,11 +50,15 @@ const ethereumBasicMutations = ({ maxAccount }) => [
       const estimatedGas = getGasLimit(transaction).times(
         transaction.gasPrice || 0
       );
-      expect(operation.fee.toNumber()).toBeLessThanOrEqual(
-        estimatedGas.toNumber()
+      botTest("operation fee is not exceeding estimated gas", () =>
+        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
+          estimatedGas.toNumber()
+        )
       );
-      expect(account.balance.toString()).toBe(
-        accountBeforeTransaction.balance.minus(operation.value).toString()
+      botTest("account balance moved with operation value", () =>
+        expect(account.balance.toString()).toBe(
+          accountBeforeTransaction.balance.minus(operation.value).toString()
+        )
       );
     },
   },
@@ -121,6 +126,7 @@ const ethereum: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
@@ -159,7 +165,9 @@ const ethereum: AppSpec<Transaction> = {
       },
       test: (arg) => {
         const { capabilities } = getCompoundResult(arg);
-        expect((capabilities as any).enabledAmountIsUnlimited).toBe(true);
+        botTest("enabledAmountIsUnlimited is true", () =>
+          expect((capabilities as any).enabledAmountIsUnlimited).toBe(true)
+        );
       },
     },
     {
@@ -192,11 +200,13 @@ const ethereum: AppSpec<Transaction> = {
           "could not find compound summary for account %s",
           transaction.subAccountId
         );
-        expect(
-          (summary as CompoundAccountSummary).totalSupplied.gt(
-            previous.summary?.totalSupplied || new BigNumber(0)
-          )
-        ).toBe(true);
+        botTest("totalSupplied matches", () =>
+          expect(
+            (summary as CompoundAccountSummary).totalSupplied.gt(
+              previous.summary?.totalSupplied || new BigNumber(0)
+            )
+          ).toBe(true)
+        );
       },
     },
     {
@@ -248,16 +258,20 @@ const ethereum: AppSpec<Transaction> = {
         );
 
         if (arg.transaction.useAllAmount) {
-          expect((summary as CompoundAccountSummary).totalSupplied.eq(0)).toBe(
-            true
+          botTest("totalSupplies matches (2)", () =>
+            expect(
+              (summary as CompoundAccountSummary).totalSupplied.eq(0)
+            ).toBe(true)
           );
         } else {
-          expect(
-            (summary as CompoundAccountSummary).totalSupplied.lt(
-              (previous.summary as CompoundAccountSummary).totalSupplied ||
-                new BigNumber(0)
-            )
-          ).toBe(true);
+          botTest("totalSupplies matches (3)", () =>
+            expect(
+              (summary as CompoundAccountSummary).totalSupplied.lt(
+                (previous.summary as CompoundAccountSummary).totalSupplied ||
+                  new BigNumber(0)
+              )
+            ).toBe(true)
+          );
         }
       },
     },
@@ -291,7 +305,9 @@ const ethereum: AppSpec<Transaction> = {
       },
       test: (arg) => {
         const { capabilities } = getCompoundResult(arg);
-        expect((capabilities as any).enabledAmount.eq(0)).toBe(true);
+        botTest("enabledAmount is zero", () =>
+          expect((capabilities as any).enabledAmount.eq(0)).toBe(true)
+        );
       },
     },
     {
@@ -341,10 +357,14 @@ const ethereum: AppSpec<Transaction> = {
         invariant(erc20account, "erc20 acc is still here");
 
         if (transaction.useAllAmount) {
-          expect(erc20account.balance.toString()).toBe("0");
+          botTest("erc20 account is empty", () =>
+            expect(erc20account.balance.toString()).toBe("0")
+          );
         } else {
-          expect(erc20account.balance.toString()).toBe(
-            erc20accountBefore.balance.minus(transaction.amount).toString()
+          botTest("account balance moved with tx amount", () =>
+            expect(erc20account.balance.toString()).toBe(
+              erc20accountBefore.balance.minus(transaction.amount).toString()
+            )
           );
         }
       },
@@ -358,6 +378,7 @@ const ethereumClassic: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Ethereum Classic",
   },
+  genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {
@@ -382,6 +403,7 @@ const ethereumGoerli: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
@@ -406,6 +428,7 @@ const bsc: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Binance Smart Chain",
   },
+  genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {
@@ -453,6 +476,7 @@ const polygon: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Polygon",
   },
+  genericDeviceAction: acceptTransaction,
   dependency: "Ethereum",
   testTimeout,
   transactionCheck: ({ maxSpendable }) => {

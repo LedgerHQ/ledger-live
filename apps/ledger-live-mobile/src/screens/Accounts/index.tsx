@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect, memo } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";

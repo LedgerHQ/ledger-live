@@ -53,7 +53,11 @@ const StepConfirmation = ({
           category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
           name="Step Confirmed"
         />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={
             <Trans

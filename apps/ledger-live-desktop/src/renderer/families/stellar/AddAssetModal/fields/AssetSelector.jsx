@@ -3,7 +3,7 @@ import React, { useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
-import type { TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 

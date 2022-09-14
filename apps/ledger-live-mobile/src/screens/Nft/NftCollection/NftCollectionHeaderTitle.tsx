@@ -5,7 +5,7 @@ import {
   useNftCollectionMetadata,
 } from "@ledgerhq/live-common/nft/index";
 import { useRoute, RouteProp } from "@react-navigation/native";
-import { ProtoNFT } from "@ledgerhq/live-common/types/index";
+import { ProtoNFT } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { scrollToTop } from "../../../navigation/utils";
 import NftMedia from "../../../components/Nft/NftMedia";

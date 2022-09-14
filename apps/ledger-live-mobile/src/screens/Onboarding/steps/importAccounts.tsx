@@ -76,8 +76,6 @@ function OnboardingStepPairNew() {
   }, [dispatch, navigation, resetCurrentStep]);
 
   const onNext = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(NavigatorName.ImportAccounts, {
       screen: ScreenName.ScanAccounts,
       params: {
@@ -87,8 +85,6 @@ function OnboardingStepPairNew() {
   }, [navigation, onFinish]);
 
   const nextPage = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingModalWarning, {
       screen: ScreenName.OnboardingModalSyncDesktopInformation,
       params: { onNext },

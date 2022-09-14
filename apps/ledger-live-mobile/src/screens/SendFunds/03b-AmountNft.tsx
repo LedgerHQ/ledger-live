@@ -14,9 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-
-import type { Transaction } from "@ledgerhq/live-common/types/index";
-
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TranslatedError from "../../components/TranslatedError";
 import KeyboardView from "../../components/KeyboardView";
@@ -27,13 +25,13 @@ import { ScreenName } from "../../const";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  navigation: any,
+  navigation: any;
   route: {
     params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  },
+      accountId: string;
+      transaction: Transaction;
+    };
+  };
 };
 
 const SendAmountNFT = ({ route }: Props) => {
@@ -43,20 +41,16 @@ const SendAmountNFT = ({ route }: Props) => {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
-  const bridge = useMemo(() => getAccountBridge(account, parentAccount), [
-    account,
-    parentAccount,
-  ]);
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-  } = useBridgeTransaction(() => ({
-    transaction: route.params.transaction,
-    account,
-    parentAccount,
-  }));
+  const bridge = useMemo(
+    () => getAccountBridge(account, parentAccount),
+    [account, parentAccount],
+  );
+  const { transaction, setTransaction, status, bridgePending } =
+    useBridgeTransaction(() => ({
+      transaction: route.params.transaction,
+      account,
+      parentAccount,
+    }));
 
   const onQuantityChange = useCallback(
     text => {
@@ -70,9 +64,10 @@ const SendAmountNFT = ({ route }: Props) => {
     },
     [bridge, setTransaction, transaction],
   );
-  const quantity = useMemo(() => transaction.quantities?.[0]?.toNumber(), [
-    transaction.quantities,
-  ]);
+  const quantity = useMemo(
+    () => transaction.quantities?.[0]?.toNumber(),
+    [transaction.quantities],
+  );
 
   const nft = useMemo(
     () =>
@@ -170,7 +165,7 @@ const SendAmountNFT = ({ route }: Props) => {
       </SafeAreaView>
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   root: {
@@ -215,4 +210,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(SendAmountNFT)
+export default memo(SendAmountNFT);

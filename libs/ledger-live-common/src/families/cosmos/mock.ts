@@ -197,7 +197,7 @@ function addRedelegationOperation(
       address: toDelegation.validatorAddress,
       amount,
     },
-    cosmosSourceValidator: fromDelegation.validatorAddress,
+    sourceValidator: fromDelegation.validatorAddress,
   };
   const delegations = cosmosResources.delegations
     .filter(

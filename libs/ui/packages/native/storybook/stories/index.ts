@@ -19,6 +19,7 @@ import "./Navigation/Stepper/Stepper.stories";
 import "./Icon/BoxedIcon.stories";
 import "./Icon/IconBox.stories";
 import "./Icon/AssetsIcons.stories";
+import "./Icon/CryptoIcons.stories";
 import "./Loader/ProgressLoader.stories";
 import "./Loader/InfiniteLoader.stories";
 import "./Form/Input/BaseInput.stories";

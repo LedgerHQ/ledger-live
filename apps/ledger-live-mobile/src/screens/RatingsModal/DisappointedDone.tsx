@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
@@ -6,7 +7,7 @@ import useRatings from "../../logic/ratings";
 import { track, TrackScreen } from "../../analytics";
 
 type Props = {
-  closeModal: Function;
+  closeModal: any;
 };
 
 const DisappointedDone = ({ closeModal }: Props) => {

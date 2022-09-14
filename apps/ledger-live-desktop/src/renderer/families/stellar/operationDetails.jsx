@@ -9,7 +9,7 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 type OperationDetailsExtraProps = {
   extra: { [key: string]: any },

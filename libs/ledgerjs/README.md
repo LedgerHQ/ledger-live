@@ -26,6 +26,7 @@ Welcome to Ledger's JavaScript libraries.
 | -------- | ---------------------- | --- | ------ | --------- |
 | Blue     | DEPRECATED<sup>1</sup> | YES | NO     | NO        |
 | Nano S   | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
+| Nano S Plus | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
 | Nano X   | DEPRECATED<sup>1</sup> | YES | YES    | YES       |
 
 1. U2F is deprecated. See https://github.com/LedgerHQ/ledger-live/wiki/LJS:MigrateWebUSB
@@ -67,7 +68,7 @@ Summary of implementations available per platform
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-web-ble.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-web-ble) [@ledgerhq/hw-transport-web-ble](./packages/hw-transport-web-ble) **[Web]** **(Bluetooth)** – [check browser support](https://caniuse.com/web-bluetooth).
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid) [@ledgerhq/hw-transport-node-hid](./packages/hw-transport-node-hid) **[Node]**/Electron **(HID)** – historical implementation – uses `node-hid` and `usb`.
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid-noevents.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid-noevents) [@ledgerhq/hw-transport-node-hid-noevents](./packages/hw-transport-node-hid-noevents) **[Node]**/Electron **(HID)** – uses **only** `node-hid`. Does not provide USB events.
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid-singleton.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid-singleton) [@ledgerhq/hw-transport-node-hid-singleton](./packages/hw-transport-node-hid-singleton) **[Node]**/Electron **(HID)** – uses `node-hid` and `usb-detection`. Focus on supporting one device at a time (potentially will have more robust events and less blocking cases)
+- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid-singleton.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid-singleton) [@ledgerhq/hw-transport-node-hid-singleton](./packages/hw-transport-node-hid-singleton) **[Node]**/Electron **(HID)** – uses `node-hid` and `node-usb`. Focus on supporting one device at a time (potentially will have more robust events and less blocking cases)
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-ble.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-ble) [@ledgerhq/hw-transport-node-ble](./packages/hw-transport-node-ble) **[Node]**/Electron **(BLE)** (experimental) – uses `@abandonware/noble`.
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/react-native-hw-transport-ble.svg)](https://www.npmjs.com/package/@ledgerhq/react-native-hw-transport-ble) [@ledgerhq/react-native-hw-transport-ble](./packages/react-native-hw-transport-ble) **[React Native]** **(Bluetooth)** – uses `react-native-ble-plx`
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/react-native-hid.svg)](https://www.npmjs.com/package/@ledgerhq/react-native-hid) [@ledgerhq/react-native-hid](./packages/react-native-hid) **[React Native]** **(HID)** _Android_ – Ledger's native implementation
@@ -215,7 +216,7 @@ This part of the repository is where you will add your blockchain to the cryptoa
 
 For a smooth and quick integration:
 - See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and 
-- Go on Discord to chat with developper support and the developper community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Blockchain channel](https://discord.com/channels/885256081289379850/907623688759803935).
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ## Are you adding Ledger device support to your web/mobile/desktop application?
 
@@ -223,6 +224,6 @@ This part of the repository contains the transport libraries that will be used t
 
 For a smooth and quick integration:
 - See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and 
-- Go on Discord to chat with developer support and the developer community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Connect your app channel](https://discord.com/channels/885256081289379850/907623611454619758).
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---

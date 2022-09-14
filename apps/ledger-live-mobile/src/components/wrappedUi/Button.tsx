@@ -5,10 +5,11 @@ import { track } from "../../analytics";
 
 export type WrappedButtonProps = ButtonProps & {
   event?: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   eventProperties?: Object;
 };
 
-export function Button({
+function Button({
   onPress,
   event,
   eventProperties,

@@ -1,26 +1,28 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useMemo, useContext } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "../../config/urls";
-// @ts-ignore issue with exports
 import { TrackScreen, track } from "../../analytics";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+// eslint-disable-next-line import/no-cycle
+import { AnalyticsContext } from "../../components/RootNavigator";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const learnImg = require("../../images/illustration/Shared/_Learn.png");
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const appsImg = require("../../images/illustration/Shared/_Apps.png");
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const earnImg = require("../../images/illustration/Shared/_Earn.png");
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const mintImg = require("../../images/illustration/Shared/_Mint.png");
 
 const StyledSafeAreaView = styled(TabBarSafeAreaView)`
@@ -84,8 +86,6 @@ function Discover() {
               });
               Linking.openURL(urls.discover.academy);
             } else {
-              // TODO: FIX @react-navigation/native using Typescript
-              // @ts-ignore next-line
               navigation.navigate(ScreenName.Learn);
             }
           },
@@ -120,9 +120,8 @@ function Discover() {
           subTitle: t("discover.sections.mint.desc"),
           onPress: () => {
             readOnlyTrack("Mint");
-              track("Discover - Mint - OpenUrl", { url: urls.discover.mint});
-              Linking.openURL(urls.discover.mint);
-
+            track("Discover - Mint - OpenUrl", { url: urls.discover.mint });
+            Linking.openURL(urls.discover.mint);
           },
           disabled: false,
           Image: (
@@ -135,6 +134,18 @@ function Discover() {
         },
       ].sort((a, b) => (b.disabled ? -1 : 0)),
     [learn?.enabled, navigation, readOnlyTrack, t],
+  );
+
+  const { setSource, setScreen } = useContext(AnalyticsContext);
+
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Discover");
+
+      return () => {
+        setSource("Discover");
+      };
+    }, [setSource, setScreen]),
   );
 
   return (
