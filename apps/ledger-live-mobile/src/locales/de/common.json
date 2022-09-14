@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Entschuldigung, Bluetooth ist deaktiviert",
-      "description" : "Bitte aktivieren Sie Bluetooth in den Einstellungen Ihres Telefons. ({{state}} Status)"
+      "description" : "Bitte aktivieren Sie Bluetooth in den Einstellungen Ihres Telefons."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "Firmware-Updates werden nur für Kabelverbindungen unterstützt"
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger greift nicht auf Ihre Standortinformationen zu."
   },
   "permissions" : {
-    "open" : "App-Berechtigungen öffnen"
+    "open" : "App-Berechtigungen öffnen",
+    "nearbyDevicesPermissionDenied" : "Zum Herstellen von Bluetooth-Verbindungen müssen Sie der Ledger Live-App die Berechtigung gewähren, Geräte in der Nähe zu erkennen."
   },
   "fees" : {
     "speed" : {
