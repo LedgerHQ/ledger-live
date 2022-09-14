@@ -10,7 +10,7 @@ export class AccountPage {
     this.page = page;
     this.buttonsGroup = page.locator("data-test-id=account-buttons-group");
     this.settingsButton = page.locator("data-test-id=account-settings-button");
-    this.buttonSend = page.locator(`text=Send`);
+    this.buttonSend = page.locator("data-test-id=account-send-button");
   }
 
   async clickBtnSend() {
