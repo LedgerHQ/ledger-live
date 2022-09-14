@@ -14,7 +14,7 @@ const transactionCheck =
   ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById(currencyId).units[0], "0.01")
+        parseCurrencyUnit(getCryptoCurrencyById(currencyId).units[0], "1")
       ),
       `${currencyId} balance is too low`
     );
@@ -122,7 +122,7 @@ const songbird: AppSpec<Transaction> = {
 };
 
 const flare: AppSpec<Transaction> = {
-  name: "Moonbeam",
+  name: "Flare",
   currency: getCryptoCurrencyById("flare"),
   appQuery: {
     model: DeviceModelId.nanoS,

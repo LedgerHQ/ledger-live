@@ -310,7 +310,6 @@ const bitcoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
 };
 const bitcoinTestnet: AppSpec<Transaction> = {
-  multipleRuns: 2,
   name: "Bitcoin Testnet",
   currency: getCryptoCurrencyById("bitcoin_testnet"),
   dependency: "Bitcoin",

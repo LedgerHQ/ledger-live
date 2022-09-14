@@ -4754,5 +4754,19 @@
     "chooseConstrast" : "选择对比度",
     "uploadAnotherImage" : "上传另一张图片",
     "selectContrast" : "选择对比度"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "不错。\n一切准备就绪。",
+      "allDoneTitle" : "做得好。\n您现在可以开始使用了。",
+      "subtitle" : "以下是您后续可以执行的操作：",
+      "skip" : "跳到应用程序",
+      "goToWallet" : "转到 Ledger Live 钱包",
+      "done" : "您的未来有了保障"
+    },
+    "walletCard" : {
+      "title" : "快速入门",
+      "description" : "点击此处使用 Ledger Live 完成 {{productName}} 设置"
+    }
   }
 }

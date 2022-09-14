@@ -17,7 +17,7 @@ import {
   formatCurrencyUnit,
   getFiatCurrencyByTicker,
 } from "../currencies";
-import { isAccountEmpty, toAccountRaw } from "../account";
+import { formatAccount, isAccountEmpty, toAccountRaw } from "../account";
 import { runWithAppSpec } from "./engine";
 import { formatReportForConsole, formatError, formatTime } from "./formatters";
 import {
@@ -508,12 +508,9 @@ export async function bot({
 
     const beforeOps = countOps(r.accountsBefore);
     const afterOps = countOps(r.accountsAfter);
-    const firstAccount = (r.accountsAfter || r.accountsBefore || [])[0];
-    appendBody(
-      `| ${r.spec.name} (${
-        (r.accountsBefore || []).filter((a) => a.used).length
-      }) `
-    );
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    const firstAccount = accounts[0];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) `);
     appendBody(
       `| ${afterOps || beforeOps}${
         afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
@@ -525,6 +522,11 @@ export async function bot({
     );
     appendBody("|\n");
   });
+
+  appendBody("\n```\n");
+  appendBody(allAccountsAfter.map((a) => formatAccount(a, "head")).join("\n"));
+  appendBody("\n```\n");
+
   appendBody("\n</details>\n\n");
 
   // Add performance details
@@ -589,11 +591,8 @@ export async function bot({
   );
 
   results.forEach((r) => {
-    appendBody(
-      `| ${r.spec.name} (${
-        (r.accountsBefore || []).filter((a) => a.used).length
-      }) |`
-    );
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) |`);
     appendBody(`${formatTime(r.preloadDuration || 0)} |`);
     appendBody(`${formatTime(r.scanDuration || 0)} |`);
     appendBody(

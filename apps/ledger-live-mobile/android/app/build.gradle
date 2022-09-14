@@ -3,8 +3,8 @@ apply plugin: 'com.google.gms.google-services'
 
 project.ext.envConfigFiles = [
     debug: ".env",
-    release: ".env.production",
-    stagingrelease: ".env.staging",
+    release: ".env.android.release",
+    stagingrelease: ".env.android.staging",
 ]
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
@@ -98,7 +98,11 @@ project.ext.sentryCli = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
+
+if (System.getenv("SENTRY_AUTH_TOKEN") != null) {
+  apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
+}
+
 
 /**
  * Set this to true to create two separate APKs instead of one:
