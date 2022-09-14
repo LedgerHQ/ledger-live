@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "عذراً، تم تعطيل البلوتوث",
-      "description" : "يرجى تفعيل البلوتوث في إعدادات هاتفك. (حالة {{state}})"
+      "description" : "يرجى تمكين خاصية البلوتوث في إعدادات هاتفك."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "تحديثات البرامج الثابتة مدعومة فقط للاتصالات السلكية"
@@ -713,7 +713,7 @@
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImagePreviewError" : {
-      "title" : "Preview of the image failed",
+      "title" : "فشل عرض الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImageProcessingError" : {
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger لا تقوم بالوصول إلى معلومات موقعك."
   },
   "permissions" : {
-    "open" : "فتح تصريحات التطبيق"
+    "open" : "فتح تصريحات التطبيق",
+    "nearbyDevicesPermissionDenied" : "للإقران من خلال البلوتوث، اسمح لتطبيق Ledger Live بمسح الأجهزة القريبة."
   },
   "fees" : {
     "speed" : {
@@ -4750,8 +4751,8 @@
         "uploadFromPhone" : "قم بالتحميل من هاتفك"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "قُصّ الصورة",
+    "chooseConstrast" : "اختر التباين",
     "uploadAnotherImage" : "قم بتحميل صورة أخرى",
     "selectContrast" : "اختر مستوى التباين"
   },
