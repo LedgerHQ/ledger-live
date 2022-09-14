@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Bluetooth está deshabilitado",
-      "description" : "Habilita Bluetooth en los ajustes del teléfono. (estado {{state}})"
+      "description" : "Habilita Bluetooth en los ajustes del teléfono."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "Las actualizaciones de firmware solo se pueden realizar con conexiones cableadas"
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger no accederá a tu información de ubicación."
   },
   "permissions" : {
-    "open" : "Abrir permisos de aplicación"
+    "open" : "Abrir permisos de aplicación",
+    "nearbyDevicesPermissionDenied" : "Para emparejar por Bluetooth, autoriza que la aplicación Ledger Live busque dispositivos cercanos."
   },
   "fees" : {
     "speed" : {
