@@ -3,6 +3,7 @@
     "cancel" : "İptal et",
     "apply" : "Uygula",
     "seeAll" : "Tümünü gör",
+    "seeAllWithNumber" : "Tümünü gör ({{number}})",
     "back" : "Geri",
     "delete" : "Sil",
     "paste" : "Yapıştır",
@@ -30,6 +31,7 @@
     "received" : "Alındı",
     "sent" : "Gönderildi",
     "or" : "VEYA",
+    "others" : "Diğerleri",
     "rename" : "Cihazın adını değiştir",
     "learnMore" : "Daha fazla bilgi",
     "checkItOut" : "Göz at",
@@ -1670,7 +1672,10 @@
         "addAccounts" : "Varlık ekle",
         "title" : "Hemen başla",
         "description" : "Ortaklarımızdan kripto satın alabilir veya cüzdanınızı kurabilirsiniz"
-      }
+      },
+      "title" : "Başlangıç olarak en çok kullandığınız varlıkları cüzdanınıza ekleyin",
+      "subtitle" : "Ledger 6.000'den fazla coin ve token'ı destekler",
+      "addAccount" : "veya bir hesap ekleyin"
     },
     "noOpState" : {
       "title" : "Henüz işlem yok mu?",
@@ -1682,6 +1687,13 @@
     "topGainers" : {
       "title" : "Yükselenler (24SA)",
       "seeMarket" : "Tümünü gör"
+    },
+    "walletBalance" : "Cüzdan bakiyesi",
+    "seelAllAssets" : "Tüm Varlıkları Gör",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}} piyasa fiyatı",
+      "currencyPrice" : "1 {{currencyTicker}} fiyatı",
+      "currencyPriceChange" : "Son 24 saatlik değişim"
     }
   },
   "addAccountsModal" : {
@@ -1907,7 +1919,8 @@
       "buttons" : {
         "receiveFunds" : "Al",
         "buyCrypto" : "Satın Al"
-      }
+      },
+      "addAccountCta" : "Hesap ekle"
     },
     "settings" : {
       "header" : "Hesap ayarları",
@@ -2008,6 +2021,15 @@
         "subtitle" : "{{assetName}} satın almak veya teslim almak için bir cihaza ihtiyacınız olacak"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Henüz elinizde {{currencyTicker}} yok",
+        "start" : "Başlamak için {{currencyTicker}} Satın Alın veya başka bir yerden cüzdanınıza Alın.",
+        "description" : "Bu hesapla {{actionName}} işlemi yapmak için elinizde {{currencyTicker}} olmalı."
+      }
+    },
+    "earn" : "Kazanın",
+    "quickActions" : "Hızlı işlemler",
     "banner" : {
       "redelegation" : {
         "description" : "Haberiniz olsun! Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
@@ -2021,6 +2043,7 @@
   },
   "accounts" : {
     "title" : "Hesaplar",
+    "cryptoAccountsTitle" : "{{currencyTicker}} hesapları",
     "importNotification" : {
       "message" : "Hesaplarınız başarıyla içe aktarıldı!"
     },
@@ -3072,6 +3095,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Yeni ekle",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
@@ -4741,6 +4765,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
+    }
+  },
+  "asset" : {
+    "title" : "{{assetName}} varlığınız",
+    "accountsSection" : {
+      "title" : "{{currencyName}} hesaplarınız"
     }
   },
   "customImage" : {
