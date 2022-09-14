@@ -82,8 +82,6 @@ if (Config.VERBOSE) {
   });
 }
 
-if (Config.BLE_LOG_LEVEL) BleTransport.setLogLevel(Config.BLE_LOG_LEVEL);
-
 if (Config.FORCE_PROVIDER) setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
 // Add support of HID (experimental until we stabilize it)
 registerTransportModule({
@@ -141,7 +139,9 @@ if (__DEV__ && Config.DEVICE_PROXY_URL) {
 }
 
 registerTransportModule(httpdebug);
+
 // BLE is always the fallback choice because we always keep raw id in it
+BleTransport.setGlobalListener();
 registerTransportModule({
   id: "ble-bim",
   open: id => BleTransport.open(id),

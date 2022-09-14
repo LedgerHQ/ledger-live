@@ -1,4 +1,3 @@
-// @ts-nocheck
 import scanScenarios from "./scan-scenarios";
 import remapErrorScenarios from "./remapError-scenarios";
 import {
@@ -29,51 +28,68 @@ jest.mock("react-native", () => ({
 }));
 
 import BleTransport, { isRunningBIMQueue } from "../BleTransport";
-class BleTransportWithExposedRemapError extends BleTransport {
-  remapErrorExposed(...args): string {
-    return super.remapError(...args);
-  }
-}
 
 describe("BleTransport transport", () => {
-  describe("Global", () => {
-    beforeEach(async () => {
-      MockEventListener.flush();
-    });
-
-    test.each(scanScenarios)("%s", (_, { rawGlobalEvents, expected }, done) => {
-      const testStopListening = async () => {
-        await BleTransport.stop();
-        // Ensure we clear the scanObserver
-        expect(BleTransport.scanObserver).toEqual(undefined);
-        done();
-      };
-
-      const expectedEvents = [...expected];
-      const observable = {
-        next: async (actualEvent) => {
-          const expectedEvent = expectedEvents.shift();
-          expect(actualEvent).toEqual(expectedEvent);
-          if (!expectedEvents.length) {
-            await testStopListening();
-          }
+  describe("Failsafe", () => {
+    test("No BLE error handling. Also covers non-explicit global events setup", (done) => {
+      const observable: any = {
+        error: () => {
+          done();
         },
       };
 
-      // We correctly set the observer
-      BleTransport.listen(observable);
-      expect(BleTransport.scanObserver).not.toEqual(undefined);
+      BleTransport.globalBridgeEventSubscription = undefined; // Force it to be undefined.
+      new BleTransport("wadus");
+      expect(BleTransport.globalBridgeEventSubscription).not.toEqual(undefined);
 
-      // Listen is resolved, we are supposed to start finding devices.
-      setTimeout(() => {
-        rawGlobalEvents.forEach((event) =>
-          mockedEvents.next(["BleTransport", event])
-        );
-      }, 100);
+      BleTransport.globalBridgeEventSubscription = undefined; // Force it to be undefined.
+      BleTransport.listen(observable);
+      expect(BleTransport.globalBridgeEventSubscription).not.toEqual(undefined);
+    });
+  });
+
+  describe("Global", () => {
+    beforeEach(async () => {
+      MockEventListener.flush();
+      BleTransport.setGlobalListener();
     });
 
+    test.each(scanScenarios)(
+      "%s",
+      (_, { rawGlobalEvents, expected }: any, done: any) => {
+        const testStopListening = async () => {
+          await BleTransport.stop();
+          // Ensure we clear the scanObserver
+          expect(BleTransport.scanObserver).toEqual(undefined);
+          done();
+        };
+
+        const expectedEvents = [...expected];
+        const observable: any = {
+          next: async (actualEvent) => {
+            const expectedEvent = expectedEvents.shift();
+            expect(actualEvent).toEqual(expectedEvent);
+            if (!expectedEvents.length) {
+              await testStopListening();
+            }
+          },
+        };
+
+        // We correctly set the observer
+        BleTransport.listen(observable);
+        expect(BleTransport.scanObserver).not.toEqual(undefined);
+
+        // Listen is resolved, we are supposed to start finding devices.
+        setTimeout(() => {
+          rawGlobalEvents.forEach((event) =>
+            mockedEvents.next(["BleTransport", event])
+          );
+        }, 100);
+      }
+    );
+
     test("Bluetooth State observing", (done) => {
-      const observable = {
+      const observable: any = {
         next: (anyEvent) => {
           expect(anyEvent).toEqual({ type: "PoweredOn" });
           done();
@@ -91,10 +107,14 @@ describe("BleTransport transport", () => {
       sub.unsubscribe();
     });
 
+    test("AppState observing", (done) => {
+      mockedEvents.next(["change", "active"]);
+      done();
+    });
+
     describe("Error mapping correctly", () => {
-      test.each(remapErrorScenarios)("%s", (_, input, output) => {
-        const mappedError =
-          BleTransportWithExposedRemapError.remapError(input).toString();
+      test.each(remapErrorScenarios)("%s", (_, input, output: any) => {
+        const mappedError = BleTransport.remapError(input).toString();
         expect(mappedError.startsWith(output)).toBe(true);
       });
     });
@@ -103,6 +123,7 @@ describe("BleTransport transport", () => {
   describe("Transport instances", () => {
     beforeEach(async () => {
       MockEventListener.flush();
+      BleTransport.setGlobalListener();
     });
 
     test("Static creation that resolves", async () => {
@@ -114,8 +135,8 @@ describe("BleTransport transport", () => {
     test("Static creation that fails", async () => {
       try {
         await BleTransport.open(badDeviceId);
-      } catch (catchedError) {
-        expect(catchedError).not.toBe(undefined);
+      } catch (caughtError) {
+        expect(caughtError).not.toBe(undefined);
       }
       return;
     });
@@ -128,21 +149,9 @@ describe("BleTransport transport", () => {
     test("Direct instantiation that fails", () => {
       try {
         new BleTransport("shouldFail");
-      } catch (catchedError) {
-        expect(catchedError).not.toBe(undefined);
+      } catch (caughtError) {
+        expect(caughtError).not.toBe(undefined);
       }
-    });
-
-    test("Instance receives AppState events", (done) => {
-      const transport = new BleTransport("12:34:45:67");
-      expect(transport.appState).toEqual("");
-
-      mockedEvents.next(["change", "background"]);
-      expect(transport.appState).toEqual("background");
-
-      mockedEvents.next(["change", "active"]);
-      expect(transport.appState).toEqual("active");
-      done();
     });
   });
 
@@ -150,10 +159,11 @@ describe("BleTransport transport", () => {
     beforeEach(async () => {
       MockEventListener.flush();
       await BleTransport.disconnect();
+      BleTransport.setGlobalListener();
     });
 
     test("Throws if we don't provide an endpoint", async () => {
-      const bleTransport = await BleTransport.open(deviceId);
+      const bleTransport: any = await BleTransport.open(deviceId);
 
       try {
         bleTransport.queue(undefined, "");
@@ -164,7 +174,7 @@ describe("BleTransport transport", () => {
     });
 
     test("Doesn't throw if we provide an endpoint", async () => {
-      const bleTransport = await BleTransport.open(deviceId);
+      const bleTransport: any = await BleTransport.open(deviceId);
       bleTransport.queue({ complete: () => {} }, "", "someEndpoint");
       expect(isRunningBIMQueue()).toBe(true);
       expect(true).toBe(true); // No fail if we don't throw.
@@ -176,7 +186,7 @@ describe("BleTransport transport", () => {
     });
 
     test("Can disconnect via static, and cleanup", async () => {
-      const bleTransport = await BleTransport.open(deviceId);
+      const bleTransport: any = await BleTransport.open(deviceId);
       await bleTransport.close();
 
       expect(true).toBe(true);
@@ -192,7 +202,7 @@ describe("BleTransport transport", () => {
 
     test("Observer handles bridge runProgress correctly", (done) => {
       BleTransport.open(deviceId).then((bleTransport) => {
-        const observable = {
+        const observable: any = {
           next: (anyEvent) => {
             expect(anyEvent).toEqual({
               type: "runProgress",
@@ -206,12 +216,6 @@ describe("BleTransport transport", () => {
           },
           complete: () => true,
         };
-        mockedEvents.next([
-          "BleTransport",
-          {
-            event: "task",
-          },
-        ]); // Nb shouldn't be handled, here for coverage.
         bleTransport.queue(observable, "rawQueue", "bimEndpoint");
         mockedEvents.next([
           "BleTransport",
@@ -226,7 +230,7 @@ describe("BleTransport transport", () => {
 
     test("Observer handles bridge runProgress (0) correctly", (done) => {
       BleTransport.open(deviceId).then((bleTransport) => {
-        const observable = {
+        const observable: any = {
           next: (anyEvent) => {
             expect(anyEvent).toEqual({
               type: "runProgress",
@@ -254,7 +258,7 @@ describe("BleTransport transport", () => {
 
     test("Observer handles bridge runComplete correctly", (done) => {
       BleTransport.open(deviceId).then((bleTransport) => {
-        const observable = {
+        const observable: any = {
           complete: () => {
             done();
           },
@@ -272,7 +276,7 @@ describe("BleTransport transport", () => {
 
     test("Observer handles bridge runError correctly", (done) => {
       BleTransport.open(deviceId).then((bleTransport) => {
-        const observable = {
+        const observable: any = {
           error: (_) => {
             done();
           },
@@ -291,7 +295,7 @@ describe("BleTransport transport", () => {
 
     test("Observer handles runStart", (done) => {
       BleTransport.open(deviceId).then((bleTransport) => {
-        const observable = {
+        const observable: any = {
           next: (anyEvent) => {
             expect(anyEvent).toEqual({
               type: "runStart",
@@ -318,7 +322,7 @@ describe("BleTransport transport", () => {
 
     test("Observer handles runSuccess", (done) => {
       BleTransport.open(deviceId).then((bleTransport) => {
-        const observable = {
+        const observable: any = {
           next: (anyEvent) => {
             expect(anyEvent).toEqual({
               type: "runSuccess",
@@ -344,7 +348,7 @@ describe("BleTransport transport", () => {
     });
     test("Observer handles runBulkProgress", (done) => {
       BleTransport.open(deviceId).then((bleTransport) => {
-        const observable = {
+        const observable: any = {
           next: (anyEvent) => {
             expect(anyEvent).toEqual({
               type: "bulk-progress",
@@ -372,7 +376,9 @@ describe("BleTransport transport", () => {
   describe("Direct exchanges", () => {
     test("Instance receives response from device", (done) => {
       BleTransport.open(deviceId).then(async (bleTransport) => {
-        const response = await bleTransport.exchange("b001000000");
+        const response = await bleTransport.exchange(
+          Buffer.from("b001000000", "hex")
+        );
         expect(response instanceof Buffer).toBe(true);
         expect(response.toString("hex")).toMatch(
           "0105424f4c4f5305312e362e3001029000"
@@ -383,8 +389,8 @@ describe("BleTransport transport", () => {
     test("Instance failed exchange throws error", (done) => {
       BleTransport.open(deviceId).then(async (bleTransport) => {
         try {
-          await bleTransport.exchange("some failed apdu");
-        } catch (error) {
+          await bleTransport.exchange(Buffer.from("7069706572"));
+        } catch (error: any) {
           expect(error.toString()).toMatch("CantOpenDevice: CantOpenDevice");
         }
         done();
