@@ -9,6 +9,8 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Portfolio } from "@ledgerhq/types-live";
 import { switchCountervalueFirst, useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -20,8 +22,6 @@ import FormatDate from "./FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "../analytics";
 import { countervalueFirstSelector } from "../reducers/settings";
-import { Currency } from "@ledgerhq/types-cryptoassets";
-import { Portfolio } from "@ledgerhq/types-live";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",

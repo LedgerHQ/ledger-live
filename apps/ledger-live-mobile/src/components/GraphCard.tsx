@@ -8,6 +8,7 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated";
+import { useSelector } from "react-redux";
 import Delta from "./Delta";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -19,7 +20,6 @@ import Graph from "./Graph";
 import FormatDate from "./FormatDate";
 import { track } from "../analytics";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
-import { useSelector } from "react-redux";
 import EmptyGraph from "../icons/EmptyGraph";
 
 const { width } = getWindowDimensions();
