@@ -53,7 +53,7 @@ function Rate({ value, selected, onSelect, fromCurrency, toCurrency }: Props) {
   const ProviderIcon = provider && iconByProviderName[provider.toLowerCase()];
 
   return (
-    <ProviderContainer p={3} mb={3} selected={selected} onClick={handleSelection}>
+    <ProviderContainer p={3} mb={3} fontWeight="400" selected={selected} onClick={handleSelection}>
       {ProviderIcon && (
         <Box mr={2}>
           <ProviderIcon size={28} />
