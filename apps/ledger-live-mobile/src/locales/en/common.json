@@ -1685,17 +1685,17 @@
     }
   },
   "addAccountsModal": {
+    "title": "Add account",
     "ctaAdd": "Add accounts",
     "ctaImport": "Import Desktop accounts",
-    "title": "Add Crypto",
-    "description": "You can choose to add crypto(s) directly with your Ledger, or import them from Ledger Live Desktop.",
+    "description": "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add": {
       "title": "With your Ledger",
-      "description": "Create or import asset(s) with your Ledger"
+      "description": "Create or import asset with your Ledger"
     },
     "import": {
       "title": "Import from desktop",
-      "description": "Import asset(s) from Ledger Live Desktop"
+      "description": "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize": {
