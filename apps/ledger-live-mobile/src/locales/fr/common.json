@@ -3,6 +3,7 @@
     "cancel" : "Annuler",
     "apply" : "Appliquer",
     "seeAll" : "Tout afficher",
+    "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
     "delete" : "Effacer",
     "paste" : "Coller",
@@ -30,6 +31,7 @@
     "received" : "Reçu",
     "sent" : "Envoyé",
     "or" : "OU",
+    "others" : "Autres",
     "rename" : "Renommer",
     "learnMore" : "En savoir plus",
     "checkItOut" : "Jeter un œil",
@@ -1670,7 +1672,10 @@
         "addAccounts" : "Ajouter un actif",
         "title" : "Commencer",
         "description" : "Vous pouvez acheter des cryptos auprès de nos partenaires ou configurer votre wallet."
-      }
+      },
+      "title" : "Commencez par ajouter vos actifs préférés à votre wallet",
+      "subtitle" : "Ledger prend en charge plus de 6 000 cryptos.",
+      "addAccount" : "ou ajoutez un compte"
     },
     "noOpState" : {
       "title" : "Pas encore d’opérations ?",
@@ -1682,6 +1687,13 @@
     "topGainers" : {
       "title" : "Palmarès marché (24H)",
       "seeMarket" : "Tout afficher"
+    },
+    "walletBalance" : "Solde total",
+    "seelAllAssets" : "Afficher tous les actifs",
+    "marketPriceSection" : {
+      "title" : "Cours du {{currencyTicker}}",
+      "currencyPrice" : "Prix de 1 {{currencyTicker}}",
+      "currencyPriceChange" : "Variation (24h)"
     }
   },
   "addAccountsModal" : {
@@ -1907,7 +1919,8 @@
       "buttons" : {
         "receiveFunds" : "Recevoir",
         "buyCrypto" : "Acheter"
-      }
+      },
+      "addAccountCta" : "Ajouter un compte"
     },
     "settings" : {
       "header" : "Paramètres du compte",
@@ -2008,6 +2021,15 @@
         "subtitle" : "Vous avez besoin d’un appareil pour acheter ou recevoir des {{assetName}}"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "Vous n’avez pas encore de {{currencyTicker}}",
+        "start" : "Achetez ou recevez des {{currencyTicker}} pour commencer.",
+        "description" : "Vous avez besoin de {{currencyTicker}} pour {{actionName}} avec ce compte."
+      }
+    },
+    "earn" : "Gagner",
+    "quickActions" : "Raccourcis",
     "banner" : {
       "redelegation" : {
         "description" : "Bon à savoir : le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
@@ -2021,6 +2043,7 @@
   },
   "accounts" : {
     "title" : "Comptes",
+    "cryptoAccountsTitle" : "Comptes {{currencyTicker}}",
     "importNotification" : {
       "message" : "Vos comptes ont bien été importés."
     },
@@ -3072,6 +3095,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Ajouter",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit ou Native SegWit ?"
     },
@@ -4741,6 +4765,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
+    }
+  },
+  "asset" : {
+    "title" : "Vos {{assetName}}",
+    "accountsSection" : {
+      "title" : "Vos comptes {{currencyName}}"
     }
   },
   "customImage" : {
