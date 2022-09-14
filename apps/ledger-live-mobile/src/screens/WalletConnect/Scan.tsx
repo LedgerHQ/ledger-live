@@ -3,7 +3,7 @@ import Config from "react-native-config";
 import Clipboard from "@react-native-community/clipboard";
 import { Trans } from "react-i18next";
 import Scanner from "../../components/Scanner";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 // eslint-disable-next-line import/named
 import { connect, context, STATUS } from "./Provider";
@@ -38,9 +38,12 @@ const ScanWalletConnect = ({ navigation, route }: Props) => {
     }
 
     connect(uri);
-    navigation.replace(ScreenName.WalletConnectConnect, {
-      uri,
-      accountId: route.params.accountId,
+    navigation.replace(NavigatorName.WalletConnect, {
+      screen: ScreenName.WalletConnectConnect,
+      params: {
+        uri,
+        accountId: route.params.accountId,
+      },
     });
   };
 

@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "Retiré",
       "NOMINATE" : "Nomination",
       "CHILL" : "Retirer les nominations",
-      "SET_CONTROLLER" : "Définir contrôleur"
+      "SET_CONTROLLER" : "Définir contrôleur",
+      "LOCK" : "Immobilisé",
+      "UNLOCK" : "Dégelé",
+      "WITHDRAW" : "Retiré",
+      "REVOKE" : "Révoqué",
+      "ACTIVATE" : "Activé",
+      "REGISTER" : "Enregistré"
     }
   },
   "byteSize" : {
@@ -198,7 +204,7 @@
     "menu" : "Menu",
     "stars" : "Comptes favoris",
     "accounts" : "Comptes",
-    "manager" : "Gestionnaire",
+    "manager" : "My Ledger",
     "exchange" : "Acheter / Vendre",
     "swap" : "Swap",
     "lend" : "Prêter",
@@ -384,13 +390,13 @@
     },
     "missingApp" : {
       "title" : "Merci d’installer l’application {{appName}} sur votre appareil.",
-      "subtitle" : "Accédez au Gestionnaire et installez l’application {{appName}} pour échanger vos actifs.",
-      "cta" : "Aller dans le Gestionnaire"
+      "subtitle" : "Accédez à My Ledger et installez l’application {{appName}} pour échanger vos actifs.",
+      "cta" : "Accéder à My Ledger"
     },
     "outdatedApp" : {
       "title" : "Merci de mettre à jour l’application {{appName}} sur votre appareil",
-      "subtitle" : "Accédez au Gestionnaire et installez l’application {{appName}} pour échanger vos actifs.",
-      "cta" : "Aller dans le Gestionnaire"
+      "subtitle" : "Accédez à My Ledger et mettez à jour l’application {{appName}} pour échanger vos actifs.",
+      "cta" : "Accéder à My Ledger"
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le swap",
@@ -701,7 +707,7 @@
       "moreInfo" : "Plus d’informations",
       "cardTitle" : "Propulsé par {{team}}",
       "drawer" : {
-        "title" : "Intégration :{{family}}",
+        "title" : "Intégration : {{family}}",
         "subTitle" : "L’intégration {{family}} a été réalisée par l’équipe {{team}}.",
         "description" : "Ledger Live est une plateforme open source.",
         "description2" : "Les développeurs du monde entier peuvent intégrer et construire sur Ledger Live.",
@@ -745,7 +751,19 @@
     "bandwidthTooltip" : "Geler des actifs pour gagner de la Bande passante",
     "energyTooltip" : "Geler des actifs pour gagner de l’Énergie",
     "delegatedTooltip" : "Les actifs délégués sont utilisés pour voter. Cela représente votre nombre total de votes.",
-    "undelegatingTooltip" : "Les actifs dont la délégation est interrompue sont disponibles après {{timelockInDays}} jours."
+    "undelegatingTooltip" : "Les actifs dont la délégation est interrompue sont disponibles après {{timelockInDays}} jours.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "Bon à savoir",
+        "description" : "Le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
+        "cta" : "Redéléguer avec Ledger"
+      },
+      "delegation" : {
+        "title" : "Bon à savoir",
+        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "cta" : "Staker avec Ledger"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "Choisissez parmi {{providerCount}} prestataire",
@@ -959,7 +977,7 @@
       "terms" : {
         "title" : "Prêter des cryptos",
         "subtitle" : "Prêter des actifs sur le protocole Compound",
-        "description" : "Le protocole Compound vous permet de prêter et d’emprunter des actifs sur le réseau Ethereum. Vous pouvez prêter vos actifs et gagner des intérêts directement depuis votre compte Ledger Live.",
+        "description" : "Le protocole Compound vous permet de prêter et d’emprunter des actifs sur le réseau Ethereum. Vous pouvez prêter vos actifs et gagner des intérêts directement depuis votre compte Ledger.",
         "switchLabel" : "<1>J’ai lu et accepte les </1><0>Conditions d’utilisation</0><1>.</1>"
       },
       "steps" : {
@@ -1202,9 +1220,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Installer des applications sur votre appareil",
-      "desc" : "Allez dans le Gestionnaire pour installer des applications sur votre appareil. Vous pouvez ajouter des comptes une fois que vous avez des applications sur votre appareil.",
+      "desc" : "Accédez à My Ledger pour installer des applications sur votre Ledger. Vous pouvez ajouter des comptes une fois que vous avez des applications sur votre Ledger.",
       "buttons" : {
-        "installApp" : "Aller dans le Gestionnaire",
+        "installApp" : "Accéder à My Ledger",
         "help" : "Aide"
       }
     },
@@ -1213,7 +1231,7 @@
       "desc" : "Ajoutez un compte pour commencer à gérer vos crypto-actifs. Vous devez avoir installé l’application correspondant à ce crypto-actif sur votre appareil.",
       "buttons" : {
         "addAccount" : "Ajouter un compte",
-        "installApp" : "Allez dans le Gestionnaire pour installer des applications",
+        "installApp" : "Accédez à My Ledger pour installer des applications",
         "help" : "Aide"
       }
     }
@@ -1536,12 +1554,12 @@
     "quitApp" : "Sortez de l’application sur votre appareil.",
     "appNotInstalledTitle" : "Application nécessaire manquante",
     "appNotInstalledTitle_plural" : "Applications nécessaires manquantes",
-    "appNotInstalled" : "L’application {{appName}} est nécessaire pour terminer cette action. Utilisez le Gestionnaire pour l’installer sur votre appareil.",
-    "appNotInstalled_plural" : "Les applications {{appName}} sont nécessaires pour terminer cette action. Utilisez le Gestionnaire pour les installer sur votre appareil.",
-    "openManager" : "Ouvrir le Gestionnaire",
+    "appNotInstalled" : "L’application {{appName}} est nécessaire pour terminer cette action. Accédez à My Ledger pour l’installer sur votre Ledger.",
+    "appNotInstalled_plural" : "Les applications {{appName}} sont nécessaires pour terminer cette action. Accédez à My Ledger pour les installer sur votre Ledger.",
+    "openManager" : "Ouvrir My Ledger",
     "openOnboarding" : "Configurer un appareil",
     "outdated" : "Version de l’application obsolète",
-    "outdatedDesc" : "Une mise à jour importante est disponible pour l’application {{appName}} sur votre appareil. Merci d’aller dans le Gestionnaire pour mettre à jour.",
+    "outdatedDesc" : "Une mise à jour importante est disponible pour l’application {{appName}} sur votre Ledger. Veuillez accéder à My Ledger pour la mettre à jour.",
     "installApp" : "Installation de l’application {{appName}}",
     "installAppDescription" : "Merci d’attendre la fin de l’installation.",
     "listApps" : "Vérification en cours des applications nécessaires",
@@ -1556,7 +1574,7 @@
       "provider" : "Prestataire",
       "payoutNetworkFees" : "Frais de réception",
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>."
     },
     "swap2" : {
       "amountSent" : "Montant à envoyer",
@@ -1584,8 +1602,8 @@
     },
     "disconnected" : {
       "title" : "Une application est ouverte sur votre appareil ?",
-      "subtitle" : "Rouvrir le Gestionnaire fermera l’application sur votre appareil.",
-      "ctaReopen" : "Rouvrir le Gestionnaire",
+      "subtitle" : "Rouvrir My Ledger fermera l’application sur votre appareil.",
+      "ctaReopen" : "Rouvrir My Ledger",
       "ctaPortfolio" : "Retour au Portefeuille"
     },
     "deviceStorage" : {
@@ -1628,7 +1646,7 @@
         "title_plural" : "Mises à jours disponibles",
         "progressTitle" : "{{number}} mise à jour d’application",
         "progressTitle_plural" : "{{number}} mises à jour d’applications",
-        "progressWarning" : "Ne sortez pas du Gestionnaire pendant la mise à jour.",
+        "progressWarning" : "Ne sortez pas de My Ledger pendant la mise à jour.",
         "progress" : "Mises à jour..."
       },
       "item" : {
@@ -1692,7 +1710,7 @@
       "updateBtn" : "Mettre à jour le micrologiciel",
       "banner" : {
         "warning" : "Mise à jour {{latestFirmware}} du micrologiciel disponible",
-        "cta" : "Accéder au Gestionnaire",
+        "cta" : "Accéder à My Ledger",
         "old" : {
           "warning" : "La version du micrologiciel de l’appareil est trop ancienne pour être mise à jour. Contactez l’Assistance Ledger pour le remplacer.",
           "cta" : "Contacter l’Assistance"
@@ -1748,7 +1766,7 @@
         "boot" : "Faites un appui long sur le bouton latéral jusqu’à ce que {{option}} apparaisse.",
         "recoveryMode" : "Appuyez sur le Mode {{mode}}. Patientez jusqu’à ce que le tableau de bord apparaisse.",
         "third" : "3. Désinstaller toutes les applications",
-        "openLive" : "Ouvrez le Gestionnaire dans Ledger Live.",
+        "openLive" : "Ouvrez My Ledger dans Ledger Live.",
         "uninstall" : "Appuyez sur l’icône grise de la corbeille pour supprimer toutes les applications actuellement installées sur votre {{deviceName}}. Cela permet de faire de la place pour le programme d’installation du micrologiciel.",
         "disclaimer" : "Remarque : vos fonds ne sont pas affectés par cette opération. Vos clés privées vous permettant d’accéder à vos crypto-actifs sont notées en toute sécurité sur votre feuille de récupération."
       }
@@ -2108,6 +2126,272 @@
       "DEEP_OUTPUTS_FIRST" : "Coins plus vieux en premier (FIFO)",
       "OPTIMIZE_SIZE" : "Réduire les frais (optimiser la taille)",
       "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)"
+    }
+  },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Propulsé par Figment",
+        "moreInfo" : "Plus d’informations",
+        "drawerTitle" : "Propulsé par Figment",
+        "title" : "Le token CELO désormais disponible sur Ledger Live",
+        "description" : "Vous pouvez maintenant gérer et sécuriser vos tokens CELO via Ledger Live.",
+        "description2" : "Le token Celo est natif de la chaîne Celo. Vous pouvez l’utiliser pour réaliser des transactions, le staking et de nombreuses fonctionnalités à venir.",
+        "website" : "Propulsé par Figment"
+      }
+    },
+    "lockedBalance" : "Solde immobilisé",
+    "lockedTooltip" : "Vous devez immobiliser des actifs puis voter pour des groupes de validateurs pour gagner des récompenses.",
+    "nonvotingLockedBalance" : "Solde immobilisé non utilisé pour voter",
+    "nonvotingLockedTooltip" : "Solde des actifs immobilisés pouvant être utilisés pour voter",
+    "withdrawableBalance" : "Solde pouvant être retiré",
+    "withdrawableTooltip" : "CELO dégelés et transférables sur votre solde disponible",
+    "delegation" : {
+      "activeTooltip" : "Un vote actif génère des récompenses",
+      "pendingTooltip" : "Un vote en attente ne génère pas de récompenses et doit être activé après 24h.",
+      "awaitingActivationTooltip" : "Ce vote en attente peut maintenant être activé.",
+      "listHeader" : "Délégations",
+      "add" : "Ajouter",
+      "validatorGroup" : "Groupe de validateurs",
+      "manageMultipleVoteWarning" : "Vous devez activer ou révoquer les autres votes du même groupe de validateurs avant de gérer ce vote.",
+      "actions" : {
+        "activate" : "Activer",
+        "revoke" : "Révoquer"
+      },
+      "emptyState" : {
+        "description" : "Vous pouvez gagner des récompenses CELO en déléguant vos actifs.",
+        "info" : "Fonctionnement de la délégation",
+        "delegation" : "Gagner des récompenses"
+      },
+      "earnRewards" : {
+        "description" : "Vous pouvez gagner des récompenses en déléguant vos CELO à un validateur.",
+        "bullet" : {
+          "0" : "Vous gardez la propriété de vos actifs délégués.",
+          "1" : "Déléguez avec votre appareil Ledger.",
+          "2" : "Les actifs seront disponibles une fois la délégation arrêtée."
+        },
+        "warning" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
+      }
+    },
+    "manage" : {
+      "title" : "Gérer les actifs",
+      "titleWhenPendingRegistration" : "Enregistrement du compte en attente",
+      "lock" : {
+        "title" : "Immobiliser",
+        "description" : "Pour gagner des récompenses, vous devez d’abord immobiliser un montant. Vous devez ensuite voter pour des validateurs."
+      },
+      "unlock" : {
+        "title" : "Dégeler",
+        "description" : "Pour libérer un montant immobilisé, vous devez d’abord le dégeler. Vous pourrez ensuite le retirer après la période de gel de 3 jours."
+      },
+      "withdraw" : {
+        "title" : "Retirer",
+        "description" : "Pour verser un montant dégelé sur votre solde disponible, vous devez le retirer manuellement."
+      },
+      "vote" : {
+        "title" : "Voter",
+        "description" : "Votez pour des groupes de validateurs. N’oubliez pas d’activer vos votes pour gagner des récompenses.",
+        "descriptionMaxVotes" : "Vous pouvez voter pour un maximum de {{maxVotes}} groupes de validateurs. Révoquez un vote pour voter pour un nouveau groupe validateur."
+      },
+      "activate" : {
+        "title" : "Activer le vote",
+        "description" : "Activez votre vote pour le groupe de validateurs."
+      },
+      "revoke" : {
+        "title" : "Révoquer le vote",
+        "description" : "Révoquez votre vote pour le groupe de validateurs."
+      }
+    },
+    "lock" : {
+      "title" : "Immobiliser des actifs",
+      "steps" : {
+        "amount" : {
+          "title" : "Montant",
+          "amountLabel" : "Montant à immobiliser",
+          "availableLabel" : "Disponible",
+          "maxLabel" : "Max",
+          "info" : "Les actifs immobilisés peuvent être dégelés à tout moment. Ils peuvent ensuite être retirés après 3 jours."
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "Actifs bien immobilisés",
+            "text" : "Vous pouvez voter pour des validateurs une fois que le réseau a confirmé votre transaction.",
+            "textVote" : "Vous pourrez voter pour des validateurs une fois que le réseau aura confirmé votre transaction.",
+            "cta" : "Voir les détails"
+          },
+          "pending" : {
+            "title" : "Immobilisation de vos actifs..."
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "Dégeler des actifs",
+      "steps" : {
+        "amount" : {
+          "title" : "Montant",
+          "amountLabel" : "Montant à dégeler",
+          "availableLabel" : "Immobilisé",
+          "maxLabel" : "Max",
+          "info" : "Les actifs dégelés peuvent être retirés après une période de 3 jours.",
+          "learnMore" : "En savoir plus"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "label" : "Confirmation",
+          "success" : {
+            "title" : "Transaction de dégel bien envoyée",
+            "text" : "Les actifs dégelés pourront être retirés après 3 jours.",
+            "cta" : "Voir les détails"
+          },
+          "pending" : {
+            "title" : "Dégel de vos actifs en cours..."
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "Enregistrer un compte",
+          "description" : "",
+          "info" : "Avant d’immobiliser des CELO, vous devez enregistrer votre compte sur la blockchain."
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "Informations"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "label" : "Confirmation",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "Compte bien enregistré",
+                "text" : "L’opération apparaîtra dans votre historique sous peu.",
+                "cta" : "Immobiliser"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "Diffusion de la transaction..."
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "Retirer des actifs",
+      "steps" : {
+        "amount" : {
+          "title" : "Retirer"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "",
+            "text" : "Vous avez bien retiré vos actifs. Le montant retiré sera crédité sur votre solde disponible.",
+            "cta" : "Voir les détails"
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "vote" : {
+      "title" : "Voter",
+      "steps" : {
+        "amount" : {
+          "title" : "Montant"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "Votre vote a bien été effectué.",
+            "text" : "L’opération apparaîtra dans votre historique sous peu.",
+            "cta" : "Voir les détails"
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        },
+        "validatorGroup" : {
+          "title" : "Groupe de validateurs",
+          "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment",
+          "totalVotes" : "Total des votes",
+          "commission" : "Commission"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "Activer les votes",
+      "steps" : {
+        "vote" : {
+          "title" : "Voter"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "",
+            "text" : "Votre vote a bien été activé.",
+            "cta" : "Voir les détails"
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "Révoquer le vote",
+      "steps" : {
+        "amount" : {
+          "title" : "Montant",
+          "amountLabel" : "Montant à révoquer",
+          "availableLabel" : "Disponible",
+          "maxLabel" : "Max"
+        },
+        "connectDevice" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation",
+          "success" : {
+            "title" : "Vos votes ont bien été révoqués.",
+            "text" : "L’opération apparaîtra dans votre historique sous peu.",
+            "cta" : "Voir les détails"
+          },
+          "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+        },
+        "vote" : {
+          "title" : "Voter",
+          "active" : "Actif",
+          "pending" : "En attente",
+          "awaitingActivation" : "En attente d’activation",
+          "info" : "Seuls les votes révocables sont affichés dans cette fenêtre."
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Vous pouvez effectuer un retrait.",
+      "activatableVotes" : "Vos votes peuvent maintenant être activés."
     }
   },
   "cosmos" : {
@@ -2876,24 +3160,6 @@
                 "title" : "Réactivation de la délégation effectuée"
               }
             }
-          },
-          "amount" : {
-            "title" : "Montant"
-          },
-          "validator" : {
-            "title" : "Validateurs"
-          },
-          "connectDevice" : {
-            "title" : "Appareil"
-          },
-          "confirmation" : {
-            "title" : "Confirmation",
-            "success" : {
-              "title" : "Actifs bien délégués",
-              "text" : "Le solde de votre compte sera mis à jour une fois que la blockchain aura confirmé la transaction.",
-              "cta" : "Voir les détails"
-            },
-            "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
           }
         }
       },
@@ -3133,7 +3399,7 @@
         },
         "managerDevMode" : {
           "title" : "Mode développeur",
-          "description" : "Affichez les applications développeurs et testnet dans le Gestionnaire."
+          "description" : "Affichez les applications développeurs et testnet dans My Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "Recherche de compte étendue",
@@ -3148,8 +3414,8 @@
           "description" : "Personnalisez la gap limit pour tous les comptes. Une valeur supérieure à la valeur par défaut (20) permet de rechercher des cryptos sur les adresses publiques inutilisées. Réservé aux utilisateurs avancés : potentiels problèmes de compatibilité lors de la restauration des comptes."
         },
         "forceProvider" : {
-          "title" : "Fournisseur du Gestionnaire",
-          "description" : "Changer le fournisseur d’applications dans le Gestionnaire peut rendre impossible l’installation ou désinstallation d’applications sur votre appareil Ledger."
+          "title" : "Fournisseur de My Ledger",
+          "description" : "Changer le fournisseur d’applications dans My Ledger peut rendre impossible l’installation ou désinstallation d’applications sur votre appareil Ledger."
         },
         "testAnimations" : {
           "title" : "Tester les animations Lottie",
@@ -3837,7 +4103,7 @@
     "backToPortfolio" : "Retour au Portefeuille",
     "steps" : {
       "entry" : {
-        "title" : "Dépanner la connexion USB",
+        "title" : "Réparer la connexion USB",
         "desc" : "Votre appareil semble avoir du mal à se connecter. Vous pouvez essayer les solutions suivantes jusqu’à ce que votre appareil se connecte.",
         "cta" : "Réparer",
         "back" : "Retour"
@@ -4014,7 +4280,9 @@
     "termsLabel" : "Conditions d’utilisation",
     "privacyLabel" : "Politique de confidentialité",
     "switchLabel" : "J’ai lu et accepte les Conditions d’utilisation et la Politique de confidentialité",
-    "cta" : "Entrer dans Ledger Live"
+    "cta" : "Entrer dans Ledger Live",
+    "termsCheckboxLabel" : "J’ai lu et accepte les Conditions d’utilisation.",
+    "privacyCheckboxLabel" : "J’ai lu et accepte la Politique de confidentialité."
   },
   "updatedTerms" : {
     "title" : "Mise à jour des Conditions d’utilisation",
@@ -4102,6 +4370,9 @@
     "NoAccessToCamera" : {
       "title" : "Veuillez vous assurer que votre système a un appareil photo qui n’est pas utilisé par une autre application, et que Ledger Live a les autorisations nécessaires pour l’utiliser.",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Les récompenses sont inférieures aux frais estimés pour les demander.",
@@ -4293,15 +4564,15 @@
       },
       "uninstall" : {
         "title" : "Finir la désinstallation de l’application en cours ?",
-        "description" : "Sortir du Gestionnaire interrompra les désinstallations des applications en cours.",
+        "description" : "Sortir de My Ledger interrompra les désinstallations des applications en cours.",
         "stay" : "Finir la désinstallation"
       },
       "update" : {
         "title" : "Finir les mises à jour d’applications en cours ?",
-        "description" : "Sortir du Gestionnaire interrompra les mises à jour d’applications en cours.",
+        "description" : "Sortir de My Ledger interrompra les mises à jour des applications en cours.",
         "stay" : "Finir les mises à jour"
       },
-      "quit" : "Sortir du Gestionnaire"
+      "quit" : "Sortir de My Ledger"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "Application nécessaire",
@@ -4309,6 +4580,10 @@
     },
     "NetworkDown" : {
       "title" : "Pas de connexion Internet",
+      "description" : "Veuillez vérifier votre connexion Internet."
+    },
+    "NetworkError" : {
+      "title" : "Erreur survenue lors de la synchronisation",
       "description" : "Veuillez vérifier votre connexion Internet."
     },
     "NoAddressesFound" : {
@@ -4397,7 +4672,7 @@
       "description" : "Redémarrez votre appareil sans toucher les boutons lorsque le logo apparaît. Si le problème persiste, merci de contacter l’Assistance Ledger."
     },
     "UserRefusedAllowManager" : {
-      "title" : "Gestionnaire (\"Manager\") refusé sur l’appareil"
+      "title" : "My Ledger refusé sur l’appareil"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Mises à jour annulées sur l’appareil",
@@ -4417,7 +4692,7 @@
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’application nécessaire",
-      "description" : "Désinstallez et réinstallez l’application {{managerAppName}} dans le Gestionnaire."
+      "description" : "Désinstallez et réinstallez l’application {{managerAppName}} dans My Ledger."
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Retourner au tableau de bord",
@@ -4437,7 +4712,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Mise à jour de l’application nécessaire",
-      "description" : "Désinstallez et réinstallez l’application {{managerAppName}} dans le Gestionnaire."
+      "description" : "Désinstallez et réinstallez l’application {{managerAppName}} dans My Ledger."
     },
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
@@ -4482,7 +4757,7 @@
       "list" : {
         "1" : "Déconnectez et reconnectez le câble USB sans appuyer sur aucun bouton.",
         "2" : "Appuyez sur les deux boutons simultanément trois fois pour afficher le tableau de bord.",
-        "3" : "Ouvrez le Gestionnaire et choisissez Mettre à jour le micrologiciel."
+        "3" : "Ouvrez My Ledger et choisissez Mettre à jour le micrologiciel."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {

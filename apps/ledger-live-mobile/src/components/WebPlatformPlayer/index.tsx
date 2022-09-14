@@ -29,7 +29,6 @@ import type {
   RawPlatformAccount,
 } from "@ledgerhq/live-common/platform/rawTypes";
 import { getEnv } from "@ledgerhq/live-common/env";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   isTokenAccount,
   flattenAccounts,
@@ -39,8 +38,9 @@ import {
   findCryptoCurrencyById,
   listAndFilterCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
-import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import {
   broadcastTransactionLogic,
   receiveOnAccountLogic,
@@ -49,7 +49,6 @@ import {
   CompleteExchangeUiRequest,
   signMessageLogic,
 } from "@ledgerhq/live-common/platform/logic";
-
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
 import {
@@ -70,6 +69,7 @@ import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
 import { track } from "../../analytics/segment";
+import prepareSignTransaction from "./liveSDKLogic";
 
 const tracking = trackingWrapper(track);
 
@@ -297,20 +297,16 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         { manifest, accounts, tracking },
         accountId,
         transaction,
-        (account: AccountLike, parentAccount: Account | null, { liveTx }) => {
-          const { recipient, ...txData } = liveTx;
-
-          const bridge = getAccountBridge(account, parentAccount);
-          const t = bridge.createTransaction(account);
-          const t2 = bridge.updateTransaction(t, {
-            recipient,
-            subAccountId: isTokenAccount(account) ? account.id : undefined,
-          });
-
-          const tx = bridge.updateTransaction(t2, {
-            userGasLimit: txData.gasLimit,
-            ...txData,
-          });
+        (
+          account: AccountLike,
+          parentAccount: Account | null,
+          {
+            liveTx,
+          }: {
+            liveTx: Partial<Transaction>;
+          },
+        ) => {
+          const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
           return new Promise((resolve, reject) => {
             navigation.navigate(NavigatorName.SignTransaction, {
@@ -611,6 +607,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       <WebView
         ref={targetRef}
         startInLoadingState={true}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         renderLoading={() => (
           <View style={styles.center}>
             <ActivityIndicator size="large" />
@@ -624,6 +622,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         onLoad={handleLoad}
         onMessage={handleMessage}
         onError={handleError}
+        overScrollMode="content"
+        bounces={false}
         mediaPlaybackRequiresUserAction={false}
         scalesPageToFitmediaPlaybackRequiresUserAction
         automaticallyAdjustContentInsets={false}

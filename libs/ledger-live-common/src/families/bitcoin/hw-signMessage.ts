@@ -1,7 +1,7 @@
 import Btc from "@ledgerhq/hw-app-btc";
-import type { Resolver } from "../../hw/signMessage/types";
+import type { SignMessage } from "../../hw/signMessage/types";
 
-const resolver: Resolver = async (transport, { path, message }) => {
+const signMessage: SignMessage = async (transport, { path, message }) => {
   const btc = new Btc(transport);
   const hexMessage = Buffer.from(message).toString("hex");
   const result = await btc.signMessageNew(path, hexMessage);
@@ -16,4 +16,4 @@ const resolver: Resolver = async (transport, { path, message }) => {
   };
 };
 
-export default resolver;
+export default { signMessage };

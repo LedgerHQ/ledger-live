@@ -12,8 +12,9 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Box, Flex, Button, Icons } from "@ledgerhq/native-ui";
 
-import { useTheme } from "styled-components/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { useTheme } from "styled-components/native";
+import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import {
   useDistribution,
   useRefreshAccountsOrdering,
@@ -49,6 +50,8 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
+import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
+import AddAssetsCard from "./AddAssetsCard";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -130,9 +133,22 @@ function PortfolioScreen({ navigation }: Props) {
     ],
     [distribution],
   );
+
+  const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
+
   const data = useMemo(
     () => [
-      <Box onLayout={onPortfolioCardLayout}>
+      postOnboardingVisible && (
+        <Box m={6}>
+          <PostOnboardingEntryPointCard />
+        </Box>
+      ),
+      !showAssets && (
+        <Box mx={6} mt={3}>
+          <AddAssetsCard />
+        </Box>
+      ),
+      <Box mt={3} onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
@@ -222,6 +238,7 @@ function PortfolioScreen({ navigation }: Props) {
       carouselVisibility,
       accounts,
       goToAssets,
+      postOnboardingVisible,
     ],
   );
 

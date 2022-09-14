@@ -28,6 +28,7 @@ const renderSectionHeader = ({ section }: { section: { day: Date } }) => (
 const OperationsHistory = ({ accounts }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+
   const { sections, completed } = useMemo(
     () =>
       groupAccountsOperationsByDay(accounts, {
@@ -73,7 +74,7 @@ const OperationsHistory = ({ accounts }: Props) => {
       button: "See All Transactions",
     });
     navigation.navigate(ScreenName.AnalyticsOperations, {
-      accountsIds: accounts.map(account => account.parentId || account.id),
+      accountsIds: accounts.map(account => account.id),
     });
   }, [navigation, accounts]);
 

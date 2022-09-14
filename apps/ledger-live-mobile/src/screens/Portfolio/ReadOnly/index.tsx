@@ -22,7 +22,6 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
 import {
   counterValueCurrencySelector,
-  discreetModeSelector,
   hasOrderedNanoSelector,
 } from "../../../reducers/settings";
 import { usePortfolio } from "../../../actions/portfolio";
@@ -32,7 +31,6 @@ import BackgroundGradient from "../../../components/BackgroundGradient";
 import GraphCardContainer from "../GraphCardContainer";
 import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
-import { screen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
 import MigrateAccountsBanner from "../../MigrateAccounts/Banner";
 import { useProviders } from "../../Swap/SwapEntry";
@@ -75,7 +73,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
   );
   const portfolio = usePortfolio();
   const { colors } = useTheme();
-  const discreetMode = useSelector(discreetModeSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   useProviders();
 
@@ -184,10 +181,6 @@ function ReadOnlyPortfolio({ navigation }: Props) {
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
-  useFocusEffect(() => {
-    screen("ReadOnly", "Wallet", { source });
-  });
-
   useFocusEffect(
     useCallback(() => {
       setScreen("Wallet");
@@ -206,11 +199,7 @@ function ReadOnlyPortfolio({ navigation }: Props) {
         </Flex>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
-        <TrackScreen
-          category="ReadOnlyPortfolio"
-          accountsLength={0}
-          discreet={discreetMode}
-        />
+        <TrackScreen category="Wallet" source={source} />
         <BackgroundGradient
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}

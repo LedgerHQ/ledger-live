@@ -22,6 +22,8 @@ import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import { useSelector } from "react-redux";
 import EmptyGraph from "../icons/EmptyGraph";
 
+const { width } = getWindowDimensions();
+
 type Props = {
   areAccountsEmpty: boolean;
   portfolio: Portfolio;
@@ -186,7 +188,7 @@ function GraphCard({
             isInteractive={isAvailable}
             isLoading={!isAvailable}
             height={110}
-            width={getWindowDimensions().width + 1}
+            width={width + 1}
             color={colors.primary.c80}
             data={balanceHistory}
             onItemHover={onItemHover}

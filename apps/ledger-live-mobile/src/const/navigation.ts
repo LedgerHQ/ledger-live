@@ -175,6 +175,7 @@ export const ScreenName = {
   CosmosDelegationConnectDevice: "CosmosDelegationConnectDevice",
   CosmosDelegationValidationError: "CosmosDelegationValidationError",
   CosmosDelegationValidationSuccess: "CosmosDelegationValidationSuccess",
+  CosmosDefaultRedelegationAmount: "CosmosDefaultRedelegationAmount",
   CosmosRedelegationValidator: "CosmosRedelegationValidator",
   CosmosRedelegationAmount: "CosmosRedelegationAmount",
   CosmosRedelegationSelectDevice: "CosmosRedelegationSelectDevice",
@@ -386,6 +387,15 @@ export const ScreenName = {
   CardanoEditMemo: "CardanoEditMemo",
   // hedera
   HederaEditMemo: "HederaEditMemo",
+
+  CustomImageStep1Crop: "CustomImageStep1Crop",
+  CustomImageStep2Preview: "CustomImageStep2Preview",
+  CustomImageStep3Transfer: "CustomImageStep3Transfer",
+  CustomImageErrorScreen: "CustomImageErrorScreen",
+
+  PostOnboardingHub: "PostOnboardingHub",
+  PostOnboardingDebugScreen: "PostOnboardingDebugScreen",
+  PostOnboardingMockActionScreen: "PostOnboardingMockActionScreen",
 };
 export const NavigatorName = {
   // Stack
@@ -463,4 +473,11 @@ export const NavigatorName = {
   // Root
   RootNavigator: "RootNavigator",
   Discover: "Discover",
+
+  // Custom Image
+  CustomImage: "CustomImage",
+
+  WalletConnect: "WalletConnect",
+
+  PostOnboarding: "PostOnboarding",
 };

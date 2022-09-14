@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -33,7 +33,6 @@ function BackgroundGradient({
 
   return (
     <Animated.View
-      height={"100%"}
       justifyContent={"center"}
       style={[
         BackgroundOverlayOpacity,

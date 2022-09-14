@@ -43,13 +43,14 @@ type Props = {
 
 export function Operations({ navigation, route }: Props) {
   const accountsIds = route?.params?.accountsIds;
+
   const [opCount, setOpCount] = useState(50);
 
   function onEndReached() {
     setOpCount(opCount + 50);
   }
 
-  const accountsFromState = useSelector(accountsSelector);
+  const accountsFromState = useSelector(flattenAccountsSelector);
   const accountsFiltered = useMemo(
     () =>
       accountsIds
@@ -98,7 +99,7 @@ export function Operations({ navigation, route }: Props) {
     const account = allAccounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type !== "Account"
-        ? accountsFiltered.find(a => a.id === account.parentId)
+        ? allAccounts.find(a => a.id === account.parentId)
         : null;
 
     if (!account) return null;

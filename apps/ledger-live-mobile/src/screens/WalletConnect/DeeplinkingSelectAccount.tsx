@@ -88,9 +88,12 @@ class SendFundsSelectAccount extends Component<Props, State> {
         style={styles.cardStyle}
         onPress={() => {
           WCconnect(this.props.route.params.uri);
-          this.props.navigation.replace(ScreenName.WalletConnectConnect, {
-            accountId: account.id,
-            uri: this.props.route.params.uri,
+          this.props.navigation.replace(NavigatorName.WalletConnect, {
+            screen: ScreenName.WalletConnectConnect,
+            params: {
+              accountId: account.id,
+              uri: this.props.route.params.uri,
+            },
           });
         }}
       />

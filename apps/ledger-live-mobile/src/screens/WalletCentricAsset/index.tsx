@@ -80,6 +80,7 @@ const AssetScreen = ({ route }: Props) => {
 
   useEffect(() => {
     selectCurrency(currency.id, currency, "24h");
+    return () => selectCurrency();
   }, [currency, selectCurrency]);
 
   const areCryptoAccountsEmpty = useMemo(
@@ -90,7 +91,7 @@ const AssetScreen = ({ route }: Props) => {
     counterValueCurrencySelector,
   );
 
-  const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
+  const [graphCardEndPosition, setGraphCardEndPosition] = useState(60);
   const currentPositionY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler(event => {
     currentPositionY.value = event.contentOffset.y;
@@ -176,7 +177,7 @@ const AssetScreen = ({ route }: Props) => {
                   currencyTicker: currency.ticker,
                 })}
               />
-              <Flex minHeight={"60px"}>
+              <Flex>
                 <MarketPriceSection
                   currency={currency}
                   selectedCoinData={selectedCoinData}

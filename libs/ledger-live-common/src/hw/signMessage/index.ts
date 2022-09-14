@@ -13,17 +13,29 @@ import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
-import type { MessageData, Resolver, Result } from "./types";
+import type { MessageData, SignMessage, Result } from "./types";
 import { DerivationMode } from "../../derivation";
 
 export const prepareMessageToSign = (
-  { currency, freshAddressPath, derivationMode }: Account,
+  account: Account,
   message: string
-): MessageData | null => {
+): MessageData => {
+  const { currency, freshAddressPath, derivationMode } = account;
+
   if (!perFamily[currency.family]) {
     throw new Error("Crypto does not support signMessage");
   }
 
+  if ("prepareMessageToSign" in perFamily[currency.family]) {
+    return perFamily[currency.family].prepareMessageToSign(
+      currency,
+      freshAddressPath,
+      derivationMode,
+      message
+    );
+  }
+
+  // Default implementation
   return {
     currency: currency,
     path: freshAddressPath,
@@ -33,9 +45,9 @@ export const prepareMessageToSign = (
   };
 };
 
-const dispatch: Resolver = (transport, opts) => {
+const signMessage: SignMessage = (transport, opts) => {
   const { currency, verify } = opts;
-  const signMessage = perFamily[currency.family];
+  const signMessage = perFamily[currency.family].signMessage;
   invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
   return signMessage(transport, opts)
     .then((result) => {
@@ -87,7 +99,7 @@ export const signMessageExec = ({
   deviceId,
 }: Input): Observable<Result> => {
   const result: Observable<Result> = withDevice(deviceId)((transport) =>
-    from(dispatch(transport, request.message))
+    from(signMessage(transport, request.message))
   );
   return result;
 };
@@ -99,8 +111,10 @@ const initialState: BaseState = {
 };
 
 export const createAction = (
-  connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
-  signMessage: (arg0: Input) => Observable<Result> = signMessageExec
+  connectAppExec: (
+    connectAppInput: ConnectAppInput
+  ) => Observable<ConnectAppEvent>,
+  signMessage: (input: Input) => Observable<Result> = signMessageExec
 ) => {
   const useHook = (
     reduxDevice: Device | null | undefined,
@@ -175,4 +189,4 @@ export const createAction = (
     }),
   };
 };
-export default dispatch;
+export default signMessage;

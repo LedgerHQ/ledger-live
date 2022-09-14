@@ -195,6 +195,11 @@ android {
         }
     }
 
+    // Needed for flipper https://github.com/facebook/flipper/issues/3397
+    configurations.all {
+        resolutionStrategy { force 'androidx.sqlite:sqlite-framework:2.1.0' }
+    }
+
     if (isNewArchitectureEnabled()) {
         // We configure the NDK build only if you decide to opt-in for the New Architecture.
         externalNativeBuild {

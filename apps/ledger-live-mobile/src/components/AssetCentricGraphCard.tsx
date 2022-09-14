@@ -20,6 +20,8 @@ import FormatDate from "./FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "../analytics";
 import { countervalueFirstSelector } from "../reducers/settings";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Portfolio } from "@ledgerhq/types-live";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
@@ -58,7 +60,7 @@ function AssetCentricGraphCard({
 }: Props) {
   const { colors } = useTheme();
   const dispatch = useDispatch();
-  const [itemRange, setTimeRange, timeRangeItems] = useTimeRange();
+  const [, setTimeRange, timeRangeItems] = useTimeRange();
   const { countervalueChange, balanceHistory } = assetPortfolio;
 
   const currencyUnitValue = balanceHistory[balanceHistory.length - 1];
@@ -111,7 +113,11 @@ function AssetCentricGraphCard({
     dispatch(switchCountervalueFirst());
   }, [dispatch, useCounterValue]);
 
-  const mapGraphValue = useCallback(d => d.value || 0, []);
+  const mapCryptoValue = useCallback(d => d.value || 0, []);
+  const mapCounterValue = useCallback(
+    d => (d.countervalue ? d.countervalue : 0),
+    [],
+  );
 
   const range = assetPortfolio.range;
   const isAvailable = assetPortfolio.balanceAvailable;
@@ -138,16 +144,12 @@ function AssetCentricGraphCard({
     colors.background.main,
   );
 
-  const onItemHover = useCallback(
-    (item: any) => {
-      track("graph_clicked", {
-        graph: "Asset Graph",
-        timeframe: itemRange,
-      });
-      setHoverItem(item);
-    },
-    [itemRange],
-  );
+  const handleGraphTouch = useCallback(() => {
+    track("graph_clicked", {
+      graph: "Account Graph",
+      timeframe: range,
+    });
+  }, [range]);
 
   return (
     <Flex flexDirection="column">
@@ -176,6 +178,7 @@ function AssetCentricGraphCard({
                       fontWeight={"medium"}
                       color={"neutral.c80"}
                       mt={3}
+                      minHeight={25}
                     >
                       {items[1].value !== undefined ? (
                         <CurrencyUnitValue {...items[1]} />
@@ -225,17 +228,19 @@ function AssetCentricGraphCard({
           </Flex>
         </Animated.View>
       </Flex>
-      <Graph
-        isInteractive={isAvailable}
-        isLoading={!isAvailable}
-        height={110}
-        width={getWindowDimensions().width + 1}
-        color={graphColor}
-        data={balanceHistory}
-        onItemHover={onItemHover}
-        mapValue={mapGraphValue}
-        fill={colors.background.main}
-      />
+      <Flex onTouchEnd={handleGraphTouch}>
+        <Graph
+          isInteractive={isAvailable}
+          isLoading={!isAvailable}
+          height={110}
+          width={getWindowDimensions().width + 1}
+          color={graphColor}
+          data={balanceHistory}
+          onItemHover={setHoverItem}
+          mapValue={!useCounterValue ? mapCounterValue : mapCryptoValue}
+          fill={colors.background.main}
+        />
+      </Flex>
       <Flex paddingTop={6} background={colors.background.main}>
         <GraphTabs
           activeIndex={activeRangeIndex}

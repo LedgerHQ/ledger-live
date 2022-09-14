@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "출금",
       "NOMINATE" : "지명",
       "CHILL" : "지명 해제",
-      "SET_CONTROLLER" : "관리자 설정"
+      "SET_CONTROLLER" : "관리자 설정",
+      "LOCK" : "잠금",
+      "UNLOCK" : "잠금 해제",
+      "WITHDRAW" : "출금됨",
+      "REVOKE" : "취소",
+      "ACTIVATE" : "활성화",
+      "REGISTER" : "등록 완료"
     }
   },
   "byteSize" : {
@@ -198,7 +204,7 @@
     "menu" : "메뉴",
     "stars" : "즐겨찾는 계정",
     "accounts" : "계정",
-    "manager" : "관리자",
+    "manager" : "내 Ledger",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "lend" : "대출",
@@ -384,13 +390,13 @@
     },
     "missingApp" : {
       "title" : "장치에 {{appName}} 앱을 설치하세요",
-      "subtitle" : "관리자로 이동하고 {{appName}} 앱을 설치하여 자산을 스왑하세요.",
-      "cta" : "관리자로 이동"
+      "subtitle" : "내 Ledger로 이동하여 {{appName}} 앱을 설치하고 자산을 스왑하세요.",
+      "cta" : "내 Ledger로 이동"
     },
     "outdatedApp" : {
       "title" : "장치에 {{appName}} 앱을 업데이트 하세요",
-      "subtitle" : "관리자로 이동하고 {{appName}} 앱을 업데이트 하여 자산을 스왑하세요.",
-      "cta" : "관리자로 이동"
+      "subtitle" : "내 Ledger로 이동하여 {{appName}} 앱을 업데이트하고 자산을 스왑하세요.",
+      "cta" : "내 Ledger로 이동"
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -745,7 +751,19 @@
     "bandwidthTooltip" : "자산을 동결하여 대역폭을 확보합니다",
     "energyTooltip" : "자산을 동결하여 에너지를 확보합니다",
     "delegatedTooltip" : "투표 과정에 위임 자산이 사용됩니다. 이는 총 투표 수를 나타내는 숫자입니다.",
-    "undelegatingTooltip" : "위임 해제 자산은 {{timelockInDays}}일 후 타임락이 해제되면 사용 가능합니다."
+    "undelegatingTooltip" : "위임 해제 자산은 {{timelockInDays}}일 후 타임락이 해제되면 사용 가능합니다.",
+    "banner" : {
+      "redelegation" : {
+        "title" : "알고 계셨나요?",
+        "description" : "Ledger 검증인의 스테이킹 수수료는 귀하의 현 검증인보다 저렴합니다",
+        "cta" : "Ledger로 재위임"
+      },
+      "delegation" : {
+        "title" : "알고 계셨나요?",
+        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "cta" : "Ledger를 통한 스테이킹"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "{{providerCount}} 제공자에서 선택",
@@ -959,7 +977,7 @@
       "terms" : {
         "title" : "암호화폐 대출",
         "subtitle" : "컴파운드 프로토콜에서 자산 대출",
-        "description" : "컴파운드 프로토콜로 이더리움 네트워크에서 자산을 대출해 주거나 받을 수 있습니다. Ledger 계정에서 바로 자산을 대출해 주고 이자를 받을 수 있습니다.",
+        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
         "switchLabel" : "<1></1><0>이용 약관</0><1>을 읽고 동의합니다.</1>"
       },
       "steps" : {
@@ -1202,9 +1220,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "장치에 앱을 설치하세요",
-      "desc" : "관리자로 이동해 보유한 장치에 앱을 설치하세요. 장치에 앱이 설치되면 계정을 추가할 수 있습니다.",
+      "desc" : "내 Ledger로 이동하여 장치에 앱을 설치합니다. 장치에 앱이 설치되면 계정을 추가할 수 있습니다.",
       "buttons" : {
-        "installApp" : "관리자로 이동",
+        "installApp" : "내 Ledger로 이동",
         "help" : "도움말"
       }
     },
@@ -1213,7 +1231,7 @@
       "desc" : "계정을 추가해서 암호화폐를 관리하세요. 장치에 암호화 자산 앱이 설치되어 있어야 합니다",
       "buttons" : {
         "addAccount" : "계정 추가",
-        "installApp" : "관리자로 이동하여 앱 설치",
+        "installApp" : "내 Ledger로 이동하여 앱을 설치합니다",
         "help" : "도움말"
       }
     }
@@ -1294,7 +1312,7 @@
       "noSearchResults" : "죄송합니다. 검색 결과를 찾지 못했습니다.",
       "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
       "retrySearchParams" : "다른 매개변수로 검색을 다시 시도해 주세요.",
-      "trackFavAssets" : "즐겨찾기를 찾아보세요",
+      "trackFavAssets" : "선호 항목 트래킹",
       "clickOnStarIcon" : "자산 옆에 있는 별 아이콘을 클릭하면 자산이 자동으로 즐겨찾기에 추가됩니다.",
       "browseAssets" : "자산 찾기"
     }
@@ -1536,12 +1554,12 @@
     "quitApp" : "장치에서 앱을 중단하세요",
     "appNotInstalledTitle" : "필수 앱 없음",
     "appNotInstalledTitle_plural" : "필수 앱 없음",
-    "appNotInstalled" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 관리자로 이동하여 장치에 앱을 설치하세요",
-    "appNotInstalled_plural" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 관리자로 이동해 장치에 앱을 설치하세요",
-    "openManager" : "관리자 열기",
+    "appNotInstalled" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 내 Ledger로 이동하여 장치에 앱을 설치하세요",
+    "appNotInstalled_plural" : "이 조치를 완료하려면 {{appName}} 앱이 필요합니다. 내 Ledger로 이동하여 장치에 앱을 설치하세요",
+    "openManager" : "내 Ledger 열기",
     "openOnboarding" : "장치 설정",
     "outdated" : "앱 버전이 오래됨",
-    "outdatedDesc" : "장치의 {{appName}} 앱에 중요한 업데이트가 있습니다. 관리자로 이동하여 업데이트하세요.",
+    "outdatedDesc" : "장치의 {{appName}} 앱에 중요한 업데이트가 있습니다. 내 Ledger로 이동하여 업데이트하세요.",
     "installApp" : "{{appName}} 앱 설치",
     "installAppDescription" : "설치가 완료될 때까지 기다려 주세요",
     "listApps" : "앱 의존성 확인",
@@ -1556,7 +1574,7 @@
       "provider" : "공급자",
       "payoutNetworkFees" : "지불금 비용",
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다."
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -1584,8 +1602,8 @@
     },
     "disconnected" : {
       "title" : "귀하의 장치에서 앱이 실행되고 있는 것 같습니다",
-      "subtitle" : "관리자를 다시 열면 장치에서 앱이 종료됩니다",
-      "ctaReopen" : "관리자 다시 열기",
+      "subtitle" : "내 Ledger를 다시 열면 장치에서 앱이 종료됩니다",
+      "ctaReopen" : "내 Ledger 다시 열기",
       "ctaPortfolio" : "포트폴리오로 돌아가기"
     },
     "deviceStorage" : {
@@ -1628,7 +1646,7 @@
         "title_plural" : "업데이트 이용 가능",
         "progressTitle" : "{{number}} 앱 업데이트",
         "progressTitle_plural" : "{{number}} 앱 업데이트",
-        "progressWarning" : "업데이트 중에 관리자를 중단하지 마세요.",
+        "progressWarning" : "업데이트 중에 내 Ledger를 중단하지 마세요.",
         "progress" : "모두 업데이트 중..."
       },
       "item" : {
@@ -1692,7 +1710,7 @@
       "updateBtn" : "펌웨어를 업데이트하세요",
       "banner" : {
         "warning" : "펌웨어 {{latestFirmware}}으로 업데이트하실 수 있습니다",
-        "cta" : "관리자로 이동",
+        "cta" : "내 Ledger로 이동",
         "old" : {
           "warning" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
           "cta" : "지원 부서 연락"
@@ -1748,7 +1766,7 @@
         "boot" : "{{option}}(이)가 표시될 때까지 길게 누르세요",
         "recoveryMode" : "{{mode}} 모드를 탭하세요. 대시보드가 나타날 때까지 기다려 주세요.",
         "third" : "3. 모든 앱 제거",
-        "openLive" : "Leddger Live에서 관리자 열기",
+        "openLive" : "Ledger Live에서 내 Ledger를 엽니다.",
         "uninstall" : "회색 휴지통 아이콘을 설치하여 현재 {{deviceName}}에 설치된 모든 앱을 표시하세요. 그러면 펌웨어 설치자를 위한 공간이 생깁니다.",
         "disclaimer" : "참고: 사용자의 자금은 이 거래의 영향을 받지 않으며, 블록체인의 사용자 암호화폐에 대한 접근 권한을 주는 개인 키는 복구 시트에 안전하게 있습니다."
       }
@@ -2108,6 +2126,272 @@
       "DEEP_OUTPUTS_FIRST" : "가장 오래된 코인 먼저(FIFO)",
       "OPTIMIZE_SIZE" : "수수료 최소화 (사이즈 최적화)",
       "MERGE_OUTPUTS" : "미래 수수료 최소화 (코인 머지)"
+    }
+  },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "자세한 정보",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "이제 Ledger Live에서 셀로 토큰을 사용할 수 있습니다.",
+        "description" : "이제 Ledger Live로 셀로 토큰을 관리하고 안전하게 보호할 수 있습니다.",
+        "description2" : "셀로 토큰은 셀로 체인의 네이티브 토큰이며 트랜잭션과 스테이킹을 비롯하여 앞으로 공개될 다양한 기능에 사용됩니다.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "lockedBalance" : "잠겨있는 잔액",
+    "lockedTooltip" : "자산을 잠그고 검증인에 투표해야 보상을 받을 수 있습니다.",
+    "nonvotingLockedBalance" : "잠겨있는 무의결 잔액",
+    "nonvotingLockedTooltip" : "투표에 사용할 수 있으며 잠겨 있는 자산 잔액",
+    "withdrawableBalance" : "인출 가능 잔액",
+    "withdrawableTooltip" : "잠금 해제된 셀로는 사용 가능한 잔액으로 출금할 수 있습니다",
+    "delegation" : {
+      "activeTooltip" : "적극적인 투표가 보상을 창출합니다.",
+      "pendingTooltip" : "보류 중인 투표는 보상을 생성하지 않으며 24시간 후에 활성화해야 합니다.",
+      "awaitingActivationTooltip" : "이 보류 중인 투표를 이제 활성화할 수 있습니다.",
+      "listHeader" : "위임",
+      "add" : "추가",
+      "validatorGroup" : "검증인 그룹",
+      "manageMultipleVoteWarning" : "동일한 검증자 그룹에서 다른 투표를 활성화하거나 취소하고 나서 이 투표를 처리해야 합니다.",
+      "actions" : {
+        "activate" : "활성화",
+        "revoke" : "취소"
+      },
+      "emptyState" : {
+        "description" : "자산을 위임하여 셀로 보상을 받을 수 있습니다.",
+        "info" : "위임은 어떤 원리인가요?",
+        "delegation" : "보상 받기"
+      },
+      "earnRewards" : {
+        "description" : "셀로 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
+        "bullet" : {
+          "0" : "위임된 자산의 소유권은 귀하가 갖습니다",
+          "1" : "Ledger 장치를 이용하여 위임하세요",
+          "2" : "자산은 위임 취소 후 사용 가능합니다"
+        },
+        "warning" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
+      }
+    },
+    "manage" : {
+      "title" : "자산 관리",
+      "titleWhenPendingRegistration" : "계정 등록 보류 중",
+      "lock" : {
+        "title" : "잠금",
+        "description" : "보상을 받으려면 우선 금액을 잠그세요. 그런 다음 검증인에게 투표해야 합니다."
+      },
+      "unlock" : {
+        "title" : "잠금 해제",
+        "description" : "잠긴 금액을 다시 이용하려면 우선 잠금을 해제해야 합니다. 3일의 잠금 해제 기간이 지나면 출금이 가능합니다."
+      },
+      "withdraw" : {
+        "title" : "출금",
+        "description" : "잠금이 해제된 금액을 다시 가용 잔금으로 가져오려면 직접 출금해야 합니다."
+      },
+      "vote" : {
+        "title" : "투표",
+        "description" : "검증자 그룹에 투표하세요. 투표를 활성화하여 보상을 받으세요.",
+        "descriptionMaxVotes" : "최대 {{maxVotes}} 검증인 그룹에 투표할 수 있습니다. 새로운 검증인 그룹에 투표하려면 기존 투표를 취소하세요"
+      },
+      "activate" : {
+        "title" : "투표 활성화",
+        "description" : "검증인 그룹에 대한 투표 활성화"
+      },
+      "revoke" : {
+        "title" : "투표 취소",
+        "description" : "검증인 그룹에 대한 투표 취소"
+      }
+    },
+    "lock" : {
+      "title" : "자산 잠금",
+      "steps" : {
+        "amount" : {
+          "title" : "금액",
+          "amountLabel" : "잠금할 금액",
+          "availableLabel" : "이용 가능",
+          "maxLabel" : "최대치",
+          "info" : "잠금한 자산은 언제든지 잠금을 해제할 수 있지만 잠금 해제에는 3일이 걸립니다."
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "success" : {
+            "title" : "자산이 성공적으로 잠겼습니다",
+            "text" : "사용자는 네트워크가 트랜잭션을 확인한 후에 검증인에 투표할 수 있습니다.",
+            "textVote" : "사용자는 네트워크가 트랜잭션을 확인한 후에 검증인에 투표할 수 있습니다.",
+            "cta" : "세부사항 보기"
+          },
+          "pending" : {
+            "title" : "자산을 잠그는 중..."
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "자산 잠금 해제",
+      "steps" : {
+        "amount" : {
+          "title" : "금액",
+          "amountLabel" : "잠금 해제할 금액",
+          "availableLabel" : "잠금",
+          "maxLabel" : "최대치",
+          "info" : "잠금 해제된 자산은 잠금 해제 기간 3일 후에 출금이 가능합니다.",
+          "learnMore" : "자세히 알아보기"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "label" : "확인",
+          "success" : {
+            "title" : "잠금해제된 트랜잭션이 성공적으로 전송되었습니다",
+            "text" : "잠금 해제된 자산은 3일 후 출금이 가능합니다.",
+            "cta" : "세부사항 보기"
+          },
+          "pending" : {
+            "title" : "자산 잠금 해제 중..."
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "계정 등록",
+          "description" : "",
+          "info" : "셀로를 잠그기 전에 계정을 온체인에 등록해야 합니다."
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "정보"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "label" : "확인",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "계정이 성공적으로 등록되었습니다",
+                "text" : "곧 내역에서 거래를 확인할 수 있습니다.",
+                "cta" : "잠금"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "트랜잭션 브로드캐스팅 중..."
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "자산 출금",
+      "steps" : {
+        "amount" : {
+          "title" : "출금"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "success" : {
+            "title" : "",
+            "text" : "자산이 성공적으로 출금되었습니다. 인출된 금액은 가용 잔액에 추가됩니다.",
+            "cta" : "세부사항 보기"
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
+    "vote" : {
+      "title" : "투표",
+      "steps" : {
+        "amount" : {
+          "title" : "금액"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "success" : {
+            "title" : "투표를 완료했습니다",
+            "text" : "곧 내역에서 거래를 확인할 수 있습니다.",
+            "cta" : "세부사항 보기"
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        },
+        "validatorGroup" : {
+          "title" : "검증인 그룹",
+          "ledgerByFigmentTC" : "Ledger by Figment 이용약관",
+          "totalVotes" : "총 투표수",
+          "commission" : "커미션"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "투표 활성화",
+      "steps" : {
+        "vote" : {
+          "title" : "투표"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "success" : {
+            "title" : "",
+            "text" : "투표가 성공적으로 활성화되었습니다.",
+            "cta" : "세부사항 보기"
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "투표 취소",
+      "steps" : {
+        "amount" : {
+          "title" : "금액",
+          "amountLabel" : "취소할 금액",
+          "availableLabel" : "이용 가능",
+          "maxLabel" : "최대치"
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "success" : {
+            "title" : "투표를 성공적으로 취소하셨습니다.",
+            "text" : "곧 내역에서 거래를 확인할 수 있습니다.",
+            "cta" : "세부사항 보기"
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        },
+        "vote" : {
+          "title" : "투표",
+          "active" : "활성",
+          "pending" : "대기 중",
+          "awaitingActivation" : "활성화 대기 중",
+          "info" : "이 모드에서는 취소가능한 투표만 표시됩니다."
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "인출 가능한 잔액이 있습니다.",
+      "activatableVotes" : "현재 활성화할 수 있는 투표가 있습니다."
     }
   },
   "cosmos" : {
@@ -2861,7 +3145,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "위임을 성공적으로 활성화했습니다."
+                "title" : "You have successfully activated your delegation."
               }
             }
           }
@@ -2873,7 +3157,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "위임을 성공적으로 재활성화했습니다."
+                "title" : "You have successfully reactivated your delegation."
               }
             }
           }
@@ -3047,7 +3331,7 @@
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
-      "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 재설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
+      "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
       "featureFlagsEdit" : "편집",
       "featureFlagsRestore" : "복구",
       "featureFlagsOverride" : "재정의",
@@ -3115,7 +3399,7 @@
         },
         "managerDevMode" : {
           "title" : "개발자 모드",
-          "description" : "관리자에 개발자 및 테스트넷 앱을 보여줍니다."
+          "description" : "내 Ledger에서 개발자 및 테스트넷 앱을 보여줍니다."
         },
         "scanForInvalidPaths" : {
           "title" : "확장 계정 검색",
@@ -3130,8 +3414,8 @@
           "description" : "모든 계정에 대한 맞춤형 갭 한도입니다. 기본값(20) 이상으로 이 값을 올리면 더 많은 미사용 공용 주소에서 코인을 스캔합니다. 숙련된 사용자만 이용하세요. 계정 복원 시 호환성 문제가 발생할 수 있습니다."
         },
         "forceProvider" : {
-          "title" : "관리자 공급자",
-          "description" : "관리자에서 앱 공급자를 변경하면 Ledger 기기에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
+          "title" : "내 Ledger 공급자",
+          "description" : "내 Ledger에서 앱 공급자를 변경하면 Ledger 장치에서 앱 설치 또는 삭제가 불가능해질 수 있습니다."
         },
         "testAnimations" : {
           "title" : "테스트 로티 애니메이션",
@@ -4052,7 +4336,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
-      "description" : "관리자에서 앱을 다시 설치해 보세요"
+      "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
     },
     "countervaluesUnavailable" : {
       "title" : "현재 이 자산에 대한 등가를 제공할 수 없습니다"
@@ -4086,6 +4370,9 @@
     "NoAccessToCamera" : {
       "title" : "귀하의 시스템에 다른 애플리케이션에서 사용되지 않는 카메라가 있는지 확인하시고 Ledger Live가 해당 카메라를 사용할 수 있도록 허용해주세요.",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "향후 트랜잭션 수수료 지불에 필요한 잔금을 충분히 남겨 두세요"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "추정된 수수료보다 수령하는 보상액이 적습니다",
@@ -4215,7 +4502,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "펌웨어나 앱 업데이트가 필요합니다",
-      "description" : "관리자를 사용하여 모든 앱을 삭제하고 펌웨어 업데이트가 가능한지 확인한 뒤 재설치하세요"
+      "description" : "내 Ledger를 사용하여 모든 앱을 삭제하고 펌웨어 업데이트가 가능한지 확인한 뒤 재설치하세요"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Nano 펌웨어 업데이트",
@@ -4272,20 +4559,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "진행 중인 앱 설치를 완료할까요?",
-        "description" : "관리자를 중단하면 앱 설치가 종료됩니다. 설치를 완료하여 대기 중인 앱을 설치하세요.",
+        "description" : "내 Ledger를 중단하면 앱 설치가 종료됩니다. 설치를 완료하여 대기 중인 앱을 설치하세요.",
         "stay" : "설치 완료"
       },
       "uninstall" : {
         "title" : "진행 중인 앱 삭제를 완료할까요?",
-        "description" : "관리자를 중단하면 진행 중인 앱 삭제가 종료됩니다.",
+        "description" : "내 Ledger를 중단하면 진행 중인 앱 삭제가 종료됩니다.",
         "stay" : "삭제 완료"
       },
       "update" : {
         "title" : "진행 중인 앱 업데이트를 완료할까요?",
-        "description" : "관리자를 중단하면 진행 중인 앱 업데이트가 종료됩니다.",
+        "description" : "내 Ledger를 중단하면 진행 중인 앱 업데이트가 종료됩니다.",
         "stay" : "업데이트 완료"
       },
-      "quit" : "관리자 종료"
+      "quit" : "내 Ledger 중단"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "죄송하지만 반드시 필요한 앱입니다",
@@ -4293,6 +4580,10 @@
     },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
+      "description" : "인터넷 연결을 확인하세요."
+    },
+    "NetworkError" : {
+      "title" : "동기화 중 오류가 발생했습니다",
       "description" : "인터넷 연결을 확인하세요."
     },
     "NoAddressesFound" : {
@@ -4381,7 +4672,7 @@
       "description" : "로고가 나타나면 버튼을 누르지 말고 장치를 재시작하세요. 문제가 지속되면 Ledger 고객 지원에 문의해주세요."
     },
     "UserRefusedAllowManager" : {
-      "title" : "장치에서 관리자가 거부됨"
+      "title" : "장치에서 내 Ledger가 거부됨"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "장치의 업데이트가 취소되었습니다",
@@ -4401,7 +4692,7 @@
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트가 필요합니다",
-      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요"
+      "description" : "내 Ledger에서 {{managerAppName}} 앱을 삭제하고 재설치하세요"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "대시보드로 돌아가기",
@@ -4421,7 +4712,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "앱 업데이트가 필요합니다",
-      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요"
+      "description" : "내 Ledger에서 {{managerAppName}} 앱을 삭제하고 재설치하세요"
     },
     "InvalidAddress" : {
       "title" : "유효한 {{currencyName}} 주소가 아닙니다"
@@ -4466,7 +4757,7 @@
       "list" : {
         "1" : "아무 버튼도 누르지 않은 채로 USB 케이블을 해제한 뒤 다시 연결하세요.",
         "2" : "양쪽 버튼을 동시에 3회 눌러 대시보드를 표시하세요.",
-        "3" : "관리자를 열고 '펌웨어 업데이트'를 클릭하세요."
+        "3" : "내 Ledger를 열고 '펌웨어 업데이트'를 클릭하세요."
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {

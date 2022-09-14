@@ -1,6 +1,14 @@
 name: "[Release](Hotfix) Create Branch"
 on:
   workflow_dispatch:
+    inputs:
+      app:
+        description: "App to release"
+        required: true
+        type: choice
+        options:
+          - LLD
+          - LLM
 
 jobs:
   create-hotfix:
@@ -30,12 +38,19 @@ jobs:
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: install dependencies
         run: pnpm i -F "ledger-live"
+      - name: Update changeset config
+        uses: jossef/action-set-json-field@v2
+        with:
+          file: .changeset/config.json
+          field: ignore
+          value: ${{ inputs.app == 'LLD' && '["live-mobile"]' || '["ledger-live-desktop"]' }}
+          parse_json: true
       - name: enter prerelease mode
         run: pnpm changeset pre enter hotfix
       - name: commit
         run: |
           git add .
-          git commit -m ":rocket: entering hotfix mode"
+          git commit -m ":rocket: entering ${{ inputs.app }} hotfix mode"
       - name: Get date
         id: date
         run: |
@@ -43,6 +58,6 @@ jobs:
       - name: push
         run: |
           git push origin hotfix
-          gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" -F ./.github/templates/hotfix.md --base main --head hotfix
+          gh pr create --title ":fire: Hotfix ${{ inputs.app }} ${{ steps.date.outputs.date }}" -F ./.github/templates/hotfix.md --base main --head hotfix
         env:
           GITHUB_TOKEN: ${{ github.token }}

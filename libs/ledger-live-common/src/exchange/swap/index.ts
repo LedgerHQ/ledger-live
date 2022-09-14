@@ -11,6 +11,7 @@ import {
   JSONRPCResponseError,
   NoIPHeaderError,
   NotImplementedError,
+  SwapGenericAPIError,
   TradeMethodNotSupportedError,
   UnexpectedError,
   ValidationError,
@@ -35,6 +36,19 @@ export const isSwapOperationPending: (status: string) => boolean = (status) =>
   !operationStatusList.finishedKO.includes(status);
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
+
+const SWAP_API_BASE_PATTERN = /.*\/v(?<version>\d+)\/*$/;
+const getSwapAPIVersion: () => number = () => {
+  const version = Number(
+    getSwapAPIBaseURL().match(SWAP_API_BASE_PATTERN)?.groups?.version
+  );
+  if (version == null || isNaN(version)) {
+    throw new SwapGenericAPIError(
+      "Configured swap API base URL is invalid, should end with /v<number>"
+    );
+  }
+  return version;
+};
 
 const ftx = {
   nameAndPubkey: Buffer.concat([
@@ -179,6 +193,7 @@ export const getSwapAPIError = (errorCode: number, errorMessage?: string) => {
 
 export {
   getSwapAPIBaseURL,
+  getSwapAPIVersion,
   getProviderConfig,
   getProviders,
   getExchangeRates,

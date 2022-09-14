@@ -54,6 +54,7 @@ import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftColle
 import { track } from "../../analytics";
 // eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 
 // TODO: types for each screens and navigators need to be set
 export type SettingsNavigatorStackParamList = {
@@ -351,6 +352,10 @@ export default function SettingsNavigator() {
           headerShown: true,
           headerTitle: t("onboarding.stepLanguage.title"),
         }}
+      />
+      <Stack.Screen
+        name={ScreenName.PostOnboardingDebugScreen}
+        component={PostOnboardingDebugScreen}
       />
     </Stack.Navigator>
   );
