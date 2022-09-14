@@ -13,6 +13,10 @@ export type Props = {
   refreshTime: number,
 };
 
+const CountdownText: ThemedComponent<{}> = styled(Text).attrs()`
+  color: ${p => p.theme.colors.neutral.c70};
+`;
+
 export default function Countdown({ refreshTime, rates }: Props) {
   const getSeconds = time => Math.round(time / 1000);
 
@@ -32,10 +36,6 @@ export default function Countdown({ refreshTime, rates }: Props) {
       clearInterval(countdownInterval);
     };
   }, [rates, refreshTime]);
-
-  const CountdownText: ThemedComponent<{}> = styled(Text).attrs()`
-    color: ${p => p.theme.colors.neutral.c70};
-  `;
 
   return (
     <>

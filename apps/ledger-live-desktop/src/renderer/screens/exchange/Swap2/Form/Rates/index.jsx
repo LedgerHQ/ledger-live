@@ -27,6 +27,23 @@ type Props = {
   updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
   countdown: boolean,
 };
+
+const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
+  horizontal: true,
+  alignItems: "center",
+  ff: "Inter|SemiBold",
+  justifyContent: "space-between",
+  fontWeight: "500",
+  fontSize: 3,
+  color: "palette.text.shade40",
+  pl: 3,
+  pr: 2,
+  mt: 3,
+  pb: 10,
+})`
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
+`;
+
 export default function ProviderRate({
   fromCurrency,
   toCurrency,
@@ -48,21 +65,6 @@ export default function ProviderRate({
     [dispatch],
   );
 
-  const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
-    horizontal: true,
-    alignItems: "center",
-    ff: "Inter|SemiBold",
-    justifyContent: "space-between",
-    fontWeight: "500",
-    fontSize: 3,
-    color: "palette.text.shade40",
-    pl: 3,
-    pr: 2,
-    mt: 3,
-    pb: 10,
-  })`
-    border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
-  `;
   return (
     <Box height="100%" width="100%">
       <TrackPage
