@@ -3,6 +3,7 @@
     "cancel" : "إلغاء",
     "apply" : "تطبيق",
     "seeAll" : "رؤية الكل",
+    "seeAllWithNumber" : "رؤية الكل ({{number}})",
     "back" : "عودة",
     "delete" : "حذف",
     "paste" : "لصق",
@@ -30,6 +31,7 @@
     "received" : "تم الاستلام",
     "sent" : "تم الإرسال",
     "or" : "أو",
+    "others" : "الأخرى",
     "rename" : "إعادة تسمية",
     "learnMore" : "تعرّف على المزيد",
     "checkItOut" : "تحقق من ذلك",
@@ -1670,7 +1672,10 @@
         "addAccounts" : "إضافة أصل",
         "title" : "بدء الاستخدام",
         "description" : "يمكنك إما شراء الأصول المشفرة من شركائنا أو إعداد محفظتك"
-      }
+      },
+      "title" : "ابدأ من خلال إضافة أصولك المفضلة إلى المحفظة",
+      "subtitle" : "Ledger تدعم ما يزيد عن 6,000 عملة ورمز توكن",
+      "addAccount" : "أو قم باضافة حساب"
     },
     "noOpState" : {
       "title" : "لا توجد أي عمليات بعد؟",
@@ -1682,6 +1687,13 @@
     "topGainers" : {
       "title" : "الرابحون في السوق (24 ساعة)",
       "seeMarket" : "رؤية الكل"
+    },
+    "walletBalance" : "رصيد المحفظة",
+    "seelAllAssets" : "رؤية جميع الأصول",
+    "marketPriceSection" : {
+      "title" : "سعر السوق لـ{{currencyTicker}}",
+      "currencyPrice" : "سعر 1 {{currencyTicker}}",
+      "currencyPriceChange" : "آخر تغيير خلال 24 ساعة"
     }
   },
   "addAccountsModal" : {
@@ -1907,7 +1919,8 @@
       "buttons" : {
         "receiveFunds" : "تلقي",
         "buyCrypto" : "شراء"
-      }
+      },
+      "addAccountCta" : "إضافة حساب"
     },
     "settings" : {
       "header" : "إعدادات الحساب",
@@ -2008,6 +2021,15 @@
         "subtitle" : "ستحتاج إلى جهاز لشراء أو تلقي {{assetName}}"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "ليس لديك {{currencyTicker}} بعد",
+        "start" : "قم بشراء أو تلقي بعض من {{currencyTicker}} لتبدأ.",
+        "description" : "تحتاج إلى بعض من {{currencyTicker}} لـ{{actionName}} باستخدام هذا الحساب."
+      }
+    },
+    "earn" : "اكسب",
+    "quickActions" : "إجراءات سريعة",
     "banner" : {
       "redelegation" : {
         "description" : "في حالة أنك لم تكن تعلم، مدقق Ledger يقوم بالتكديس بعمولة منخفضة عن المدقق الذي تستخدمه.",
@@ -2021,6 +2043,7 @@
   },
   "accounts" : {
     "title" : "الحسابات",
+    "cryptoAccountsTitle" : "حسابات {{currencyTicker}}",
     "importNotification" : {
       "message" : "تم استيراد حساباتك بنجاح!"
     },
@@ -3072,6 +3095,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "إضافة جديد",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit أم Native SegWit؟"
     },
@@ -4741,6 +4765,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
+    }
+  },
+  "asset" : {
+    "title" : "{{assetName}} خاصتك",
+    "accountsSection" : {
+      "title" : "حسابات {{currencyName}} خاصتك"
     }
   },
   "customImage" : {
