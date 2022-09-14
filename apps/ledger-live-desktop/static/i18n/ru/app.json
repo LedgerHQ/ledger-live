@@ -707,7 +707,7 @@
       "moreInfo" : "Подробнее...",
       "cardTitle" : "Powered by {{team}}",
       "drawer" : {
-        "title" : "интеграция {{family}}",
+        "title" : "Интеграция {{family}}",
         "subTitle" : "Интеграция {{family}} выполнена командой {{team}}",
         "description" : "Ledger Live – это платформа с открытым исходным кодом.",
         "description2" : "Разработчики из любой точки мира могут интегрироваться в наше приложение Ledger Live",
