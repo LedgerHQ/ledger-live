@@ -3,6 +3,7 @@
     "cancel" : "取消",
     "apply" : "应用",
     "seeAll" : "显示全部",
+    "seeAllWithNumber" : "查看全部 ({{number}})",
     "back" : "返回",
     "delete" : "删除",
     "paste" : "粘贴",
@@ -30,6 +31,7 @@
     "received" : "已接收",
     "sent" : "已发送",
     "or" : "或者",
+    "others" : "其他",
     "rename" : "重命名",
     "learnMore" : "了解更多",
     "checkItOut" : "一探究竟",
@@ -1670,7 +1672,10 @@
         "addAccounts" : "添加资产",
         "title" : "开始",
         "description" : "您可以通过我们的合作伙伴购买加密货币或设置您的钱包"
-      }
+      },
+      "title" : "首先将您喜欢的资产添加到您的钱包",
+      "subtitle" : "Ledger 支持超过 6,000 种币和代币",
+      "addAccount" : "或添加账户"
     },
     "noOpState" : {
       "title" : "尚无操作？",
@@ -1682,6 +1687,13 @@
     "topGainers" : {
       "title" : "市场获利者（24 小时）",
       "seeMarket" : "显示全部"
+    },
+    "walletBalance" : "钱包余额",
+    "seelAllAssets" : "查看所有资产",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}} 市场价格",
+      "currencyPrice" : "1 {{currencyTicker}} 价格",
+      "currencyPriceChange" : "最近 24 小时变化"
     }
   },
   "addAccountsModal" : {
@@ -1907,7 +1919,8 @@
       "buttons" : {
         "receiveFunds" : "接收",
         "buyCrypto" : "买入"
-      }
+      },
+      "addAccountCta" : "添加账户"
     },
     "settings" : {
       "header" : "账户设置",
@@ -2008,6 +2021,15 @@
         "subtitle" : "您需要有设备才能买入或接收 {{assetName}}"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "您还没有 {{currencyTicker}}",
+        "start" : "购买或接收一些 {{currencyTicker}} 即可开始。",
+        "description" : "您需要一些 {{currencyTicker}} 来使用此账户{{actionName}}。"
+      }
+    },
+    "earn" : "赚取",
+    "quickActions" : "快速操作",
     "banner" : {
       "redelegation" : {
         "description" : "您知道吗？Ledger 验证器权益质押的佣金低于您目前使用的验证器。",
@@ -2021,6 +2043,7 @@
   },
   "accounts" : {
     "title" : "Account（账户）",
+    "cryptoAccountsTitle" : "{{currencyTicker}} 账户",
     "importNotification" : {
       "message" : "账户导入成功！"
     },
@@ -3072,6 +3095,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "添加新的",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit 或 Native Segwit 地址格式？"
     },
@@ -4741,6 +4765,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
+    }
+  },
+  "asset" : {
+    "title" : "您的 {{assetName}}",
+    "accountsSection" : {
+      "title" : "您的 {{currencyName}} 账户"
     }
   },
   "customImage" : {
