@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Bluetoothが無効です。",
-      "description" : "スマートフォンの設定でBluetoothを有効にしてください。({{state}}状態)"
+      "description" : "スマートフォンの設定でBluetoothを有効にしてください。"
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "ファームウェアアップデートは有線接続にのみ対応しています"
@@ -740,7 +740,8 @@
     "noInfos" : "Ledgerがあなたの位置情報にアクセスすることはありません。"
   },
   "permissions" : {
-    "open" : "アプリの許可設定を開く"
+    "open" : "アプリの許可設定を開く",
+    "nearbyDevicesPermissionDenied" : "Bluetoothとペアリングするには、Ledger Liveアプリが近くのデバイスを検出することを許可してください。"
   },
   "fees" : {
     "speed" : {
