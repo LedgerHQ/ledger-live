@@ -25,6 +25,7 @@ type Props = {
   provider: ?string,
   refreshTime: number,
   updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
+  countdown: boolean,
 };
 export default function ProviderRate({
   fromCurrency,
@@ -33,6 +34,7 @@ export default function ProviderRate({
   provider,
   updateSelectedRate,
   refreshTime,
+  countdown,
 }: Props) {
   const dispatch = useDispatch();
   const selectedRate = useSelector(rateSelector);
@@ -73,9 +75,11 @@ export default function ProviderRate({
         <Text variant="h5" style={{ textTransform: "uppercase", fontFamily: "Alpha" }}>
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
-        <Box horizontal fontSize={3}>
-          <Countdown refreshTime={refreshTime} rates={rates} />
-        </Box>
+        {countdown && (
+          <Box horizontal fontSize={3}>
+            <Countdown refreshTime={refreshTime} rates={rates} />
+          </Box>
+        )}
       </Box>
       <TableHeader>
         <Box horizontal flex="1" alignItems="center" pr="38px">

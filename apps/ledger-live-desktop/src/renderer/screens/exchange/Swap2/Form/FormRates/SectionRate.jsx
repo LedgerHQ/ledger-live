@@ -18,6 +18,7 @@ export type SectionProviderProps = {
   toCurrency: $PropertyType<SwapSelectorStateType, "currency">,
   updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
   refreshTime: number,
+  countdown: boolean,
 };
 
 const SectionProvider = ({
@@ -28,6 +29,7 @@ const SectionProvider = ({
   ratesState,
   updateSelectedRate,
   refreshTime,
+  countdown,
 }: SectionProviderProps) => {
   const rates = ratesState.value;
 
@@ -42,6 +44,7 @@ const SectionProvider = ({
             provider,
             updateSelectedRate,
             refreshTime,
+            countdown,
           }}
         />
       )) || (

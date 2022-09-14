@@ -27,8 +27,15 @@ type SwapFormProvidersProps = {
   kycStatus?: $PropertyType<SectionProviderProps, "status">,
   provider?: string,
   refreshTime: number,
+  countdown: boolean,
 };
-const SwapFormProviders = ({ swap, kycStatus, provider, refreshTime }: SwapFormProvidersProps) => {
+const SwapFormProviders = ({
+  swap,
+  kycStatus,
+  provider,
+  refreshTime,
+  countdown,
+}: SwapFormProvidersProps) => {
   const { updateSelectedRate } = swap;
   const { currency: fromCurrency } = swap.from;
   const { currency: toCurrency } = swap.to;
@@ -48,6 +55,7 @@ const SwapFormProviders = ({ swap, kycStatus, provider, refreshTime }: SwapFormP
         ratesState={ratesState}
         updateSelectedRate={updateSelectedRate}
         refreshTime={refreshTime}
+        countdown={countdown}
       />
     </Form>
   );
