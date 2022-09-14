@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.48.0-nightly.4
+
+### Minor Changes
+
+- [#1246](https://github.com/LedgerHQ/ledger-live/pull/1246) [`41a31a0474`](https://github.com/LedgerHQ/ledger-live/commit/41a31a0474725d51d659142b292629c534b94338) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix duplicate Osmosis in the list during add accounts flow"
+
+### Patch Changes
+
+- [#1249](https://github.com/LedgerHQ/ledger-live/pull/1249) [`c197a3c16c`](https://github.com/LedgerHQ/ledger-live/commit/c197a3c16c1f549caf93805c14853bf8cd468666) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove unused assets & legacy code in the onboarding
+
+* [#1269](https://github.com/LedgerHQ/ledger-live/pull/1269) [`9a9173d982`](https://github.com/LedgerHQ/ledger-live/commit/9a9173d982fa9012b82fff4fb2cc1f7e134de02d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Text larger than box on pills in dashboard
+
+- [#1266](https://github.com/LedgerHQ/ledger-live/pull/1266) [`d9f9ba549c`](https://github.com/LedgerHQ/ledger-live/commit/d9f9ba549ce21aac9177392d88f1391aa6a43de1) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Fix hover effect troubleshoot USB button
+
+- Updated dependencies [[`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`41a31a0474`](https://github.com/LedgerHQ/ledger-live/commit/41a31a0474725d51d659142b292629c534b94338), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`8e8db41df4`](https://github.com/LedgerHQ/ledger-live/commit/8e8db41df4319d3406c7f29b8cce18d1b212f12f), [`8fa17173ed`](https://github.com/LedgerHQ/ledger-live/commit/8fa17173ed20415b17bfb6d84e8a14b602516054)]:
+  - @ledgerhq/live-common@27.2.0-nightly.4
+  - @ledgerhq/types-live@6.24.1-nightly.0
+
 ## 2.47.1-nightly.3
 
 ### Patch Changes
