@@ -3,6 +3,7 @@
     "cancel" : "キャンセル",
     "apply" : "適用",
     "seeAll" : "すべて表示",
+    "seeAllWithNumber" : "すべて表示（{{number}}）",
     "back" : "戻る",
     "delete" : "削除",
     "paste" : "貼り付け",
@@ -30,6 +31,7 @@
     "received" : "受取済み",
     "sent" : "送付済み",
     "or" : "または",
+    "others" : "その他",
     "rename" : "名前の変更",
     "learnMore" : "詳細はこちら",
     "checkItOut" : "確認する",
@@ -1670,7 +1672,10 @@
         "addAccounts" : "資産を追加",
         "title" : "ご利用ガイド",
         "description" : "パートナーから暗号資産を購入、またはウォレットをセットアップ可能です"
-      }
+      },
+      "title" : "ウォレットにお気に入りの資産を追加して始める",
+      "subtitle" : "Ledgerは6,000以上のコインやトークンに対応",
+      "addAccount" : "またはアカウントを追加"
     },
     "noOpState" : {
       "title" : "トランザクションがありません。",
@@ -1682,6 +1687,13 @@
     "topGainers" : {
       "title" : "トップ変動(24時間)",
       "seeMarket" : "すべて表示"
+    },
+    "walletBalance" : "ウォレット残高",
+    "seelAllAssets" : "すべての暗号資産を表示",
+    "marketPriceSection" : {
+      "title" : "{{currencyTicker}}の市場価格",
+      "currencyPrice" : "1 {{currencyTicker}}の価格",
+      "currencyPriceChange" : "24時間前の変更"
     }
   },
   "addAccountsModal" : {
@@ -1907,7 +1919,8 @@
       "buttons" : {
         "receiveFunds" : "受け取る",
         "buyCrypto" : "購入"
-      }
+      },
+      "addAccountCta" : "アカウントを追加"
     },
     "settings" : {
       "header" : "アカウント設定",
@@ -2008,6 +2021,15 @@
         "subtitle" : "{{assetName}}の購入と受け取りには、デバイスが必要です"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "{{currencyTicker}}はまだ所有していません",
+        "start" : "{{currencyTicker}}を購入または受け取ってから始めてください。",
+        "description" : "このアカウントでは、{{currencyTicker}}を{{actionName}}する必要があります。"
+      }
+    },
+    "earn" : "報酬獲得",
+    "quickActions" : "クイックアクション",
     "banner" : {
       "redelegation" : {
         "description" : "ご存知でしたか？Ledgerのバリデーターは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
@@ -2021,6 +2043,7 @@
   },
   "accounts" : {
     "title" : "アカウント",
+    "cryptoAccountsTitle" : "{{currencyTicker}}アカウント",
     "importNotification" : {
       "message" : "アカウントが正常にインポートされました！"
     },
@@ -3072,6 +3095,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "新規で追加",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegwitとNative Segwitとは？"
     },
@@ -4741,6 +4765,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    }
+  },
+  "asset" : {
+    "title" : "あなたの{{assetName}}",
+    "accountsSection" : {
+      "title" : "あなたの{{currencyName}}アカウント"
     }
   },
   "customImage" : {
