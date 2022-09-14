@@ -19,7 +19,6 @@
     "device" : "Appareil",
     "cryptoAsset" : "Crypto-actif",
     "skip" : "Passer",
-    "next" : "Suivant",
     "noCryptoFound" : "Aucun crypto-actif trouvé",
     "needHelp" : "Besoin d’aide ?",
     "edit" : "Modifier",
@@ -147,6 +146,9 @@
           "nanoX" : "Assurez-vous que votre {{productName}} est déverrouillé, avec le Bluetooth activé ou le câble branché."
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Les récompenses sont inférieures aux frais estimés pour les demander.",
@@ -687,38 +689,6 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Désactivez le multisig pour envoyer des transactions Stellar"
-    },
-    "ImageLoadFromGalleryError" : {
-      "title" : "Échec du chargement de l’image depuis la galerie",
-      "description" : "Veuillez réessayer avec une autre image."
-    },
-    "ImageDownloadError" : {
-      "title" : "Échec du téléchargement de l’image",
-      "description" : "Veuillez réessayer avec une autre image."
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "Échec du chargement des métadonnées de l’image",
-      "description" : "Veuillez réessayer avec une autre image."
-    },
-    "ImageTooLargeError" : {
-      "title" : "Image trop grande",
-      "description" : "Veuillez essayer avec une image plus petite."
-    },
-    "ImageCropError" : {
-      "title" : "Échec du recadrage de l’image",
-      "description" : "Veuillez réessayer avec une autre image."
-    },
-    "ImageResizeError" : {
-      "title" : "Échec du redimensionnement de l’image",
-      "description" : "Veuillez réessayer avec une autre image."
-    },
-    "ImagePreviewError" : {
-      "title" : "Aperçu de l’image indisponible",
-      "description" : "Veuillez réessayer avec une autre image."
-    },
-    "ImageProcessingError" : {
-      "title" : "Échec du traitement de l’image",
-      "description" : "Veuillez réessayer avec une autre image."
     }
   },
   "bluetooth" : {
@@ -1168,7 +1138,7 @@
       "setup" : {
         "bullets" : {
           "0" : {
-            "title" : "Allumer le Nano",
+            "title" : "Allumez votre Nano",
             "nanoX" : {
               "label" : "Allumez votre appareil en appuyant sur le bouton noir pendant 1 seconde."
             },
@@ -1183,15 +1153,15 @@
             }
           },
           "1" : {
-            "title" : "Naviguer",
+            "title" : "Naviguez",
             "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
           },
           "2" : {
-            "title" : "Choisir \"Set up as new device\"",
+            "title" : "Choisissez \"Set up as new device\"",
             "label" : "Appuyez simultanément sur les deux boutons pour valider."
           },
           "3" : {
-            "title" : "Suivre les instructions",
+            "title" : "Suivez les instructions",
             "label" : "Revenez ici afin de suivre les instructions relatives à votre code PIN."
           }
         },
@@ -1206,12 +1176,12 @@
       "pinCodeSetup" : {
         "bullets" : {
           "0" : {
-            "title" : "Choisir un code PIN",
+            "title" : "Choisissez un code PIN",
             "label" : "Appuyez sur le bouton gauche ou droit pour changer le chiffre. Appuyez sur les deux boutons simultanément pour confirmer. Sélectionnez <1></1> pour confirmer votre code PIN. Sélectionnez <2></2> pour effacer un chiffre.",
             "desc" : "Appuyez sur le bouton gauche ou droit pour changer le chiffre. Appuyez sur les deux boutons simultanément pour confirmer. Sélectionnez <validIcon></validIcon> pour confirmer votre code PIN. Sélectionnez <cancelIcon></cancelIcon> pour effacer un chiffre."
           },
           "1" : {
-            "title" : "Confirmer le code PIN",
+            "title" : "Confirmez votre code PIN",
             "label" : "Saisissez à nouveau votre code PIN pour le confirmer.",
             "desc" : "Saisissez à nouveau votre code PIN pour le confirmer."
           }
@@ -1259,7 +1229,7 @@
           "title" : "Comment fonctionne une phrase de récupération ?",
           "desc" : "Votre phrase de récupération fonctionne comme une clé principale unique. Votre appareil Ledger l’utilise pour calculer les clés privées de chaque crypto-actif que vous possédez.",
           "desc_1" : "Pour récupérer l’accès à vos cryptos, n’importe quel wallet peut utiliser votre phrase de récupération pour retrouver vos clés privées.",
-          "link" : "En savoir plus sur la phrase de récupération",
+          "link" : "En savoir plus",
           "title_1" : "Qu’arrive-t-il si je perds l’accès à mon Nano ?",
           "bullets" : {
             "0" : {
@@ -1284,7 +1254,7 @@
             "label_1" : "Faites cela pour tous les mots affichés en gras en respectant scrupuleusement l’ordre et l’orthographe. Appuyez sur le bouton gauche de votre Nano pour vérifier et ne pas faire d’erreur."
           },
           "2" : {
-            "title" : "Confirmer votre phrase de récupération",
+            "title" : "Confirmez votre phrase de récupération",
             "label" : "Appuyez sur le bouton droit pour faire défiler les mots jusqu’à ce que vous trouviez le mot n°1 (\"Word #1\"). Validez en appuyant sur les deux boutons."
           },
           "3" : {
@@ -1349,7 +1319,7 @@
         "nextStep" : "Étape suivante",
         "bullets" : {
           "0" : {
-            "title" : "Allumer le Nano",
+            "title" : "Allumez votre Nano",
             "nanoX" : {
               "label" : "Allumez votre appareil en appuyant sur le bouton noir pendant 1 seconde."
             },
@@ -1364,7 +1334,7 @@
             }
           },
           "1" : {
-            "title" : "Naviguer",
+            "title" : "Naviguez",
             "label" : "Apprenez à interagir avec votre appareil. Lisez les instructions à l’écran."
           },
           "2" : {
@@ -1372,7 +1342,7 @@
             "label" : "Appuyez simultanément sur les deux boutons pour valider."
           },
           "3" : {
-            "title" : "Suivre les instructions",
+            "title" : "Suivez les instructions",
             "label" : "Revenez ici afin de suivre les instructions relatives à votre code PIN."
           }
         }
@@ -1384,18 +1354,18 @@
         "checkboxDesc" : "Je comprends que si je perds ma phrase de récupération, je ne pourrais plus accéder à mes cryptos au cas où je n’ai plus accès à mon Nano.",
         "bullets" : {
           "0" : {
-            "title" : "Prendre votre phrase de récupération"
+            "title" : "Prenez votre phrase de récupération"
           },
           "1" : {
             "title" : "Choisir la longueur de votre phrase de récupération",
             "label" : "Sélectionnez \"24 words\" (24 mots), \"18 words\" (18 mots) ou \"12 words\" (12 mots). Vous devez entrer tous les mots de votre phrase de récupération."
           },
           "2" : {
-            "title" : "Saisir le mot n°1 (\"Word #1\")",
+            "title" : "Saisissez le mot n°1 (\"Word #1\")",
             "label" : "Saisissez les premières lettres du \"Word #1\" (Mot n°1) en les sélectionnant avec le bouton droit ou gauche.  Appuyez sur les deux boutons pour valider chaque lettre."
           },
           "3" : {
-            "title" : "Valider le mot n°1 (\"Word #1\")",
+            "title" : "Validez le mot n°1 (\"Word #1\")",
             "label" : "Naviguez jusqu’au mot n°1 (\"Word #1\"). Appuyez sur les deux boutons pour valider."
           },
           "4" : {
@@ -1554,10 +1524,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Si ma phrase de récupération n’est plus en sécurité ou que quelqu’un la connaît :",
+        "title" : "Si quelqu’un connaît ma phrase de récupération ou elle n’est plus en sécurité :",
         "answers" : {
           "correct" : "Mes cryptos ne sont plus en sécurité et je dois les transférer en lieu sûr.",
-          "wrong" : "Pas de souci, Ledger m’en enverra une copie."
+          "wrong" : "Ledger m’en enverra une copie."
         },
         "modal" : {
           "text" : "Toute personne qui connaît votre phrase de récupération peut voler vos crypto-actifs.\nSi vous la perdez, vous devez rapidement mettre vos cryptos en lieu sûr.",
@@ -2006,16 +1976,6 @@
       "noTransaction" : {
         "title" : "Aucune transaction pour le moment",
         "subtitle" : "Vous avez besoin d’un appareil pour acheter ou recevoir des {{assetName}}"
-      }
-    },
-    "banner" : {
-      "redelegation" : {
-        "description" : "Bon à savoir : le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
-        "cta" : "Redéléguer"
-      },
-      "delegation" : {
-        "description" : "Bon à savoir : en stakant vos {{asset}} via le validateur Ledger, vous bénéficiez de faibles frais.",
-        "cta" : "Staker maintenant"
       }
     }
   },
@@ -3659,7 +3619,255 @@
       "available" : {
         "title" : "CELO disponible",
         "description" : "Ce montant est disponible."
+      },
+      "lockedBalance" : {
+        "title" : "Solde immobilisé",
+        "description" : "Vous devez immobiliser des actifs puis voter pour des groupes de validateurs pour gagner des récompenses."
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "Solde immobilisé non utilisé pour voter",
+        "description" : "Solde des actifs immobilisés pouvant être utilisés pour voter"
+      },
+      "withdrawableBalance" : {
+        "title" : "Solde pouvant être retiré",
+        "description" : "CELO dégelés et transférables sur votre solde disponible."
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "Groupe de validateurs",
+      "totalVotes" : "Total des votes",
+      "actions" : {
+        "activate" : "Activer",
+        "revoke" : "Révoquer"
+      },
+      "delegationUnavailable" : {
+        "title" : "Fonds immobilisés insuffisants"
+      }
+    },
+    "manage" : {
+      "title" : "Gérer les actifs",
+      "titleWhenPendingRegistration" : "Enregistrement du compte en attente",
+      "lock" : {
+        "title" : "Immobiliser",
+        "description" : "Pour gagner des récompenses, vous devez d’abord immobiliser un montant. Vous devez ensuite voter pour des validateurs."
+      },
+      "unlock" : {
+        "title" : "Dégeler",
+        "description" : "Pour libérer un montant immobilisé, vous devez d’abord le dégeler. Vous pourrez ensuite le retirer après la période de gel de 3 jours."
+      },
+      "withdraw" : {
+        "title" : "Retirer",
+        "description" : "Pour verser un montant dégelé sur votre solde disponible, vous devez le retirer manuellement."
+      },
+      "vote" : {
+        "title" : "Voter",
+        "description" : "Votez pour des groupes de validateurs. N’oubliez pas d’activer vos votes pour gagner des récompenses."
+      },
+      "activate" : {
+        "title" : "Activer le vote",
+        "description" : "Activez votre vote pour le groupe de validateurs."
+      },
+      "revoke" : {
+        "title" : "Révoquer le vote",
+        "description" : "Révoquez votre vote pour le groupe de validateurs."
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "Dégeler des actifs",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Les actifs dégelés peuvent être retirés après une période de 3 jours.",
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Transaction de dégel bien envoyée",
+              "text" : "Les actifs dégelés pourront être retirés après 3 jours."
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "Retirer des actifs",
+      "stepperHeader" : {
+        "title" : "Voter",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Vous avez bien retiré vos actifs.",
+              "text" : "Le montant retiré sera crédité sur votre solde disponible."
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "Je vote",
+      "stepperHeader" : {
+        "title" : "Voter",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Vous pouvez gagner des récompenses en déléguant vos CELO à un validateur.",
+            "bullet" : {
+              "0" : "Vous gardez la propriété de vos actifs délégués.",
+              "1" : "Déléguez avec votre appareil Ledger.",
+              "2" : "Les actifs seront disponibles une fois la délégation arrêtée."
+            },
+            "warning" : {
+              "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
+            },
+            "cta" : "Continuer"
+          },
+          "amount" : {
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Votre vote a bien été effectué.",
+              "text" : "L’opération apparaîtra dans votre historique sous peu."
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "J’active mes votes",
+      "stepperHeader" : {
+        "title" : "Activer le vote",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "title" : "Activer les votes",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Activation réussie",
+              "text" : "Votre vote a bien été activé."
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "Je révoque",
+      "stepperHeader" : {
+        "title" : "Voter",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "Actif",
+            "pending" : "En attente"
+          },
+          "amount" : {
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Vos votes ont bien été révoqués.",
+              "text" : "L’opération apparaîtra dans votre historique sous peu."
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "Voter",
+        "active" : "Actif",
+        "pending" : "En attente",
+        "awaitingActivation" : "En attente d’activation",
+        "info" : "Seuls les votes révocables sont affichés dans cette fenêtre."
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "Enregistrer un compte",
+        "continue" : "Continuer",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "Avant d’immobiliser des CELO, vous devez enregistrer votre compte sur la blockchain."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Compte bien enregistré",
+              "text" : "L’opération apparaîtra dans votre historique sous peu."
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "Immobiliser des actifs",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Les actifs immobilisés peuvent être dégelés à tout moment. Ils peuvent ensuite être retirés après 3 jours.",
+            "available" : "Disponible",
+            "max" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien immobilisés",
+              "text" : "Vous pourrez voter pour des validateurs une fois que le réseau aura confirmé votre transaction."
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "Vous pouvez gagner des récompenses CELO en déléguant vos actifs.",
+      "info" : "Fonctionnement de la délégation",
+      "delegation" : "Gagner des récompenses"
+    },
+    "earnRewards" : {
+      "description" : "Vous pouvez gagner des récompenses en déléguant vos CELO à un validateur.",
+      "bullet" : {
+        "0" : "Vous gardez la propriété de vos actifs délégués.",
+        "1" : "Déléguez avec votre appareil Ledger.",
+        "2" : "Les actifs seront disponibles une fois la délégation arrêtée."
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Vous pouvez effectuer un retrait.",
+      "activatableVotes" : "Vos votes peuvent maintenant être activés."
     }
   },
   "osmosis" : {
@@ -4742,17 +4950,5 @@
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
     }
-  },
-  "customImage" : {
-    "drawer" : {
-      "title" : "Choisissez une image",
-      "options" : {
-        "uploadFromPhone" : "Télécharger à partir de mon téléphone"
-      }
-    },
-    "cropImage" : "Recadrez l’image",
-    "chooseConstrast" : "Choisissez un contraste",
-    "uploadAnotherImage" : "Télécharger une autre image",
-    "selectContrast" : "Sélectionnez le contraste voulu"
   }
 }
