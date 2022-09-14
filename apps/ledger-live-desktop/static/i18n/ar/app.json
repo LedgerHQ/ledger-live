@@ -977,7 +977,7 @@
       "terms" : {
         "title" : "إقراض الأصول المشفرة",
         "subtitle" : "إقراض الأصول على بروتوكول Compound",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "بروتوكول Compound يسمح لك بإقراض واقتراض الأصول على شبكة إيثيريوم. يمكنك إقراض الأصول وكسب الفائدة مباشرةً من حسابك Ledger.",
         "switchLabel" : "<1>لقد قرأت وأوافق على </1><0>شروط الخدمة<0><1>.</1>"
       },
       "steps" : {
@@ -3145,7 +3145,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "لقد قمت بتنشيط تفويضك بنجاح."
               }
             }
           }
@@ -3157,7 +3157,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "لقد قمت بإعادة تنشيط تفويضك بنجاح."
               }
             }
           }
