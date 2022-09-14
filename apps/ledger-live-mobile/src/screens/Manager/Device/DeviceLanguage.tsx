@@ -8,6 +8,7 @@ import BottomModal from "../../../components/BottomModal";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
 import { track } from "../../../analytics";
+import Touchable from "../../../components/Touchable";
 
 type Props = {
   pendingInstalls: boolean;
@@ -85,13 +86,21 @@ const DeviceLanguage: React.FC<Props> = ({
           </Text>
         </Flex>
         {availableLanguages.length ? (
-          <Button
-            disabled={pendingInstalls}
-            Icon={Icons.DropdownMedium}
-            onPress={openChangeLanguageModal}
+          <Touchable
+            onPress={pendingInstalls ? undefined : openChangeLanguageModal}
           >
-            {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
-          </Button>
+            <Flex flexDirection="row" alignItems="center" pr={2}>
+              <Text
+                variant="body"
+                color="primary.c80"
+                fontWeight="semiBold"
+                mr={2}
+              >
+                {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
+              </Text>
+              <Icons.ChevronRightMedium size={18} color="primary.c80" />
+            </Flex>
+          </Touchable>
         ) : (
           <Text>
             {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}

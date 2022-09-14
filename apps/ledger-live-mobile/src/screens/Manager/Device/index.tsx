@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { State, AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 
-import { Flex, Text, Button, Divider, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, Button, Divider } from "@ledgerhq/native-ui";
 import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
@@ -22,6 +22,7 @@ import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
 
 import DeviceLanguage from "./DeviceLanguage";
+import CustomLockScreen from "./CustomLockScreen";
 
 const illustrations = {
   nanoS: NanoS,
@@ -104,6 +105,13 @@ const DeviceCard = ({
     [deviceInfo.seVersion, deviceModel.id],
   );
 
+  const showDeviceLanguage =
+    deviceLocalizationFeatureFlag?.enabled &&
+    isLocalizationSupported &&
+    deviceInfo.languageId !== undefined;
+
+  const showCustomLockScreeImage = device.modelId === DeviceModelId.nanoFTS;
+
   return (
     <BorderCard>
       <Flex flexDirection={"row"} mt={24} mx={4} mb={8}>
@@ -146,19 +154,10 @@ const DeviceCard = ({
           </VersionContainer>
         </Flex>
       </Flex>
-      <Divider />
-      {device.modelId === DeviceModelId.nanoFTS && (
-        <Flex px={6} flexDirection="row">
-          <Icons.CoffeeMedium size={24} color="neutral.c80" />
-          <Text ml={2} variant="body" color="neutral.c80">
-            Lock screen picture
-          </Text>
-        </Flex>
-      )}
-      {deviceLocalizationFeatureFlag?.enabled &&
-        isLocalizationSupported &&
-        deviceInfo.languageId !== undefined && (
-          <Flex px={6}>
+      <Flex px={6}>
+        {showCustomLockScreeImage && <CustomLockScreen />}
+        {showDeviceLanguage && (
+          <Flex mt={showCustomLockScreeImage ? 4 : 0}>
             <DeviceLanguage
               pendingInstalls={pendingInstalls}
               currentDeviceLanguage={idsToLanguage[deviceInfo.languageId]}
@@ -168,7 +167,7 @@ const DeviceCard = ({
             />
           </Flex>
         )}
-
+      </Flex>
       <Divider />
       <DeviceAppStorage
         distribution={distribution}
