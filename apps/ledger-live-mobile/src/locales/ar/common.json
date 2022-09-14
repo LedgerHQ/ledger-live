@@ -19,6 +19,7 @@
     "device" : "جهاز",
     "cryptoAsset" : "الأصول المشفرة",
     "skip" : "تخطي",
+    "next" : "التالي",
     "noCryptoFound" : "لم يتم العثور على أي أصول مشفرة",
     "needHelp" : "هل تحتاج إلى مساعدة؟",
     "edit" : "تعديل",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "يرجى تعطيل التوقيع المتعدد لإجراء معاملات Stellar"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "فشل تحميل الصورة من المعرض",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageDownloadError" : {
+      "title" : "فشل تنزيل الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "فشل تحميل البيانات الوصفية للصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageTooLargeError" : {
+      "title" : "حجم الصورة كبير جداً",
+      "description" : "يُرجى المحاولة بصورة أصغر"
+    },
+    "ImageCropError" : {
+      "title" : "فشل قص الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageResizeError" : {
+      "title" : "فشل تغيير حجم الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImagePreviewError" : {
+      "title" : "Preview of the image failed",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
+    },
+    "ImageProcessingError" : {
+      "title" : "فشل معالجة الصورة",
+      "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "استكشف Ledger Live",
         "subtitle" : "استكشف التطبيق وتعرّف على مزاياه "
+      },
+      "desktopSync" : {
+        "title" : "المزامنة مع تطبيق سطح المكتب",
+        "subtitle" : "قم بمزامنة أصولك الموجودة على Ledger Live لسطح المكتب مع جوّالك."
       }
     },
     "discoverLive" : {
@@ -1035,8 +1072,8 @@
     "stepLanguage" : {
       "title" : "اختر لغتك",
       "cta" : "متابعة",
-      "changeDeviceLanguage" : "هل تريد تغير لغة جهازك؟",
-      "changeDeviceLanguageDescription" : "Ledger Live الآن باللغة {{language}}. هل ترغب في استخدام اللغة {{language}} على جهازك أيضاً؟",
+      "changeDeviceLanguage" : "اللغة {{language}} متاحة أيضاً لجهازك {{deviceName}}",
+      "changeDeviceLanguageDescription" : "هل ترغب في تغيير لغته إلى {{language}}؟",
       "warning" : {
         "title" : "ابدأ باللغة الإنجليزية",
         "cta" : "فهمت!",
@@ -1572,10 +1609,10 @@
         "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
+        "title" : "البحث عن الأجهزة",
         "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "تم الإقران بالفعل"
     },
     "pairing" : {
       "success" : {
@@ -1588,7 +1625,7 @@
       "error" : {
         "title" : "Pairing unsucessful",
         "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "retryCta" : "أعد المحاولة"
       }
     }
   },
@@ -3492,9 +3529,11 @@
   "deviceLocalization" : {
     "language" : "اللغة",
     "deviceLanguage" : "لغة الجهاز",
+    "chooseLanguage" : "اختر لغة لجهازك {{deviceName}}.",
     "changeLanguage" : "تغيير اللغة",
-    "allowLanguageInstallation" : "السماح بتثبيت اللغة",
-    "languageInstalled" : "تم تغيير لغة الجهاز إلى {{language}}",
+    "yesChangeLanguage" : "نعم، غيّر اللغة",
+    "allowLanguageInstallation" : "وافق على تثبيت اللغة على {{deviceName}}",
+    "languageInstalled" : "تم تغيير اللغة إلى {{language}}",
     "firmwareUpdatePrompt" : {
       "title" : "تعيين {{deviceName}} خاصتك باللغة {{language}}؟",
       "description" : "اللغة {{language}} متاحة الآن لجهازك {{deviceName}}. يمكنك تعيينها الآن، أو تغيير لغة جهازك في أي وقت من My Ledger."
@@ -4277,7 +4316,10 @@
       "info" : "كيف يعمل التفويض",
       "broadcastSuccessTitle" : "تم إرسال العملية",
       "broadcastSuccessDescription" : "ستُحدّث حالة التفويض عندما يتم تأكيد المعاملة.",
-      "delegatedTo" : "تم التفويض إلى"
+      "delegatedTo" : "تم التفويض إلى",
+      "started" : {
+        "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
+      }
     }
   },
   "delegation" : {
@@ -4691,5 +4733,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "اختر صورة",
+      "options" : {
+        "uploadFromPhone" : "قم بالتحميل من هاتفك"
+      }
+    },
+    "cropImage" : "Crop image",
+    "chooseConstrast" : "Choose contrast",
+    "uploadAnotherImage" : "قم بتحميل صورة أخرى",
+    "selectContrast" : "اختر مستوى التباين"
   }
 }
