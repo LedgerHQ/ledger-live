@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Üzgünüz, Bluetooth devre dışı",
-      "description" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin. ({{state}} durum)"
+      "description" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "Donanım yazılımı güncellemeleri sadece kablolu bağlantıyla desteklenir"
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
   "permissions" : {
-    "open" : "Uygulama izinlerini aç"
+    "open" : "Uygulama izinlerini aç",
+    "nearbyDevicesPermissionDenied" : "Bluetooth ile eşleştirmek için Ledger Live uygulamasına yakındaki cihazları tarama yetkisi verin."
   },
   "fees" : {
     "speed" : {
