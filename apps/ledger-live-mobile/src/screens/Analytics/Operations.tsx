@@ -12,10 +12,7 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
 import { useRefreshAccountsOrdering } from "../../actions/general";
-import {
-  accountsSelector,
-  flattenAccountsSelector,
-} from "../../reducers/accounts";
+import { flattenAccountsSelector } from "../../reducers/accounts";
 
 import NoOperationFooter from "../../components/NoOperationFooter";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
