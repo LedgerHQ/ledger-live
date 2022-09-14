@@ -41,7 +41,18 @@ export const supportedLocales = Config.LEDGER_DEBUG_ALL_LANGS
  * or in the case of existing users, they will be prompted once to change their
  * Ledger Live language.
  */
-export const fullySupportedLocales = ["en", "fr", "ru", "es", "zh", "pt"];
+export const fullySupportedLocales = [
+  "en",
+  "fr",
+  "es",
+  "ru",
+  "zh",
+  "de",
+  "tr",
+  "ja",
+  "ko",
+  "pt",
+];
 export const locales = supportedLocales.reduce((obj, key) => {
   obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
   return obj;

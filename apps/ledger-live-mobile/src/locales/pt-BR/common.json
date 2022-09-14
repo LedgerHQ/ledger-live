@@ -3533,11 +3533,15 @@
     "no" : "Eu prefiro que não",
     "languages" : {
       "en" : "Inglês",
-      "fr" : "Francês",
-      "ru" : "Russo",
-      "es" : "Espanhol",
-      "zh" : "Chinês",
-      "de" : "Alemão"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
