@@ -270,6 +270,33 @@ export function isEIP712Message(
   );
 }
 
+export const sortObjectAlphabetically = (
+  obj: Record<string, any>
+): Record<string, any> => {
+  const keys = Object.keys(obj).sort();
+
+  return keys.reduce((acc, curr) => {
+    const value = (() => {
+      if (Array.isArray(obj[curr])) {
+        return obj[curr].map((field) =>
+          sortObjectAlphabetically(field as Record<string, any>)
+        );
+      }
+      return obj[curr];
+    })();
+
+    acc[curr] = value;
+    return acc;
+  }, {});
+};
+
+export const getSchemaHashForMessage = (message: EIP712Message): string => {
+  const { types } = message;
+  const sortedTypes = sortObjectAlphabetically(types);
+
+  return SHA224(JSON.stringify(sortedTypes).replace(" ", "")).toString();
+};
+
 /**
  * @ignore for the README
  *
@@ -282,9 +309,7 @@ export function isEIP712Message(
 export const getFiltersForMessage = (
   message: EIP712Message
 ): MessageFilters | undefined => {
-  const schemaHash = SHA224(
-    JSON.stringify(message.types).replace(" ", "")
-  ).toString();
+  const schemaHash = getSchemaHashForMessage(message);
   const messageId = `${message.domain?.chainId ?? 0}:${
     message.domain?.verifyingContract ?? NULL_ADDRESS
   }:${schemaHash}`;

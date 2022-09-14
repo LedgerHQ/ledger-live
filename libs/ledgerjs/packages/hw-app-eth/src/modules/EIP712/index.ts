@@ -16,6 +16,7 @@ import {
   EIP712_TYPE_PROPERTIES,
   getFiltersForMessage,
   makeTypeEntryStructBuffer,
+  sortObjectAlphabetically,
 } from "./EIP712.utils";
 
 /**
@@ -393,7 +394,9 @@ export const signEIP712Message = async (
     P2_v0 = 0x00,
     P2_full = 0x01,
   }
-  const { primaryType, types, domain, message } = jsonMessage;
+  const { primaryType, types: unsortedTypes, domain, message } = jsonMessage;
+  // Types are sorted by alphabetical order in order to get the same schema hash no matter the JSON format
+  const types = sortObjectAlphabetically(unsortedTypes) as EIP712MessageTypes;
   const filters = getFiltersForMessage(jsonMessage);
 
   const typeEntries = Object.entries(types) as [
