@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Кажется, Bluetooth отключён",
-      "description" : "Пожалуйста, включите Bluetooth в настройках телефона. (статус {{state}})"
+      "description" : "Пожалуйста, включите Bluetooth в настройках смартфона."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "Обновление прошивки поддерживается только для проводных соединений"
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger не имеет доступа к информации о вашем местоположении."
   },
   "permissions" : {
-    "open" : "Открыть разрешения приложения"
+    "open" : "Открыть разрешения приложения",
+    "nearbyDevicesPermissionDenied" : "Для подключения по Bluetooth разрешите приложению Ledger Live сканировать находящиеся поблизости устройства."
   },
   "fees" : {
     "speed" : {
@@ -1854,7 +1855,7 @@
       "moreInfo" : "Подробнее...",
       "cardTitle" : "Powered by {{team}}",
       "drawer" : {
-        "title" : "интеграция {{family}}",
+        "title" : "Интеграция {{family}}",
         "subTitle" : "Интеграция {{family}} выполнена командой {{team}}",
         "description" : "Ledger Live – это платформа с открытым исходным кодом.",
         "description2" : "Разработчики из любой точки мира могут интегрироваться в наше приложение Ledger Live",
