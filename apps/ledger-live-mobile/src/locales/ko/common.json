@@ -19,7 +19,6 @@
     "device" : "장치",
     "cryptoAsset" : "암호화폐",
     "skip" : "건너뛰기",
-    "next" : "다음",
     "noCryptoFound" : "암호화폐가 없습니다",
     "needHelp" : "도움이 필요하세요?",
     "edit" : "편집",
@@ -147,6 +146,9 @@
           "nanoX" : "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 또는 블루투스가 활성화되어 있는지 확인하세요."
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "추정된 수수료보다 수령하는 보상액이 적습니다.",
@@ -687,38 +689,6 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
-    },
-    "ImageLoadFromGalleryError" : {
-      "title" : "갤러리 이미지 로딩 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
-    },
-    "ImageDownloadError" : {
-      "title" : "이미지 다운로드 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "이미지 메타데이터 로딩 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
-    },
-    "ImageTooLargeError" : {
-      "title" : "이미지 크기 초과",
-      "description" : "작은 이미지로 다시 시도하세요"
-    },
-    "ImageCropError" : {
-      "title" : "이미지 크롭 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
-    },
-    "ImageResizeError" : {
-      "title" : "이미지 사이즈 변경 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
-    },
-    "ImagePreviewError" : {
-      "title" : "이미지 미리보기 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
-    },
-    "ImageProcessingError" : {
-      "title" : "이미지 처리 실패",
-      "description" : "다른 이미지로 다시 시도하세요"
     }
   },
   "bluetooth" : {
@@ -1603,27 +1573,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}} 장치를 찾고 있습니다",
+        "description" : "{{productName}} 장치가 잠금 해제 상태이며 블루투스 기능이 켜져 있는지 확인하세요"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "장치 찾기",
+        "description" : "장치가 잠금 해제된 상태에서 켜져 있고 블루투스가 활성화되어 있는지 확인하세요"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "이미 페어링됨"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}} 장치와 페어링 완료"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}} 장치와 페어링",
+        "subtitle" : "{{productName}}에서 코드를 확인합니다"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "페어링 실패",
+        "subtitle" : "문제가 발생한 것 같습니다! 블루투스가 켜져 있고 {{productName}} 장치가 근처에 있는지 확인하세요",
+        "retryCta" : "다시 시도하세요"
       }
     }
   },
@@ -2006,16 +1976,6 @@
       "noTransaction" : {
         "title" : "아직 트랜잭션 내역이 없습니다.",
         "subtitle" : "{{assetName}} 구매 또는 수령에는 장치가 필요합니다"
-      }
-    },
-    "banner" : {
-      "redelegation" : {
-        "description" : "알고 계셨나요? Ledger 검증인의 스테이킹 수수료는 귀하의 현 검증인보다 저렴합니다.",
-        "cta" : "재위임"
-      },
-      "delegation" : {
-        "description" : "알고 계셨나요? Ledger 검증인은 {{asset}} 스테이킹 서비스를 저렴한 수수료로 제공합니다.",
-        "cta" : "지금 스테이킹하기"
       }
     }
   },
@@ -3659,7 +3619,255 @@
       "available" : {
         "title" : "CELO 이용 가능",
         "description" : "가처분 금액입니다."
+      },
+      "lockedBalance" : {
+        "title" : "잠겨있는 잔액",
+        "description" : "자산을 잠그고 검증인에 투표해야 보상을 받을 수 있습니다."
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "잠겨있는 무의결 잔액",
+        "description" : "투표에 사용할 수 있으며 잠겨 있는 자산 잔액"
+      },
+      "withdrawableBalance" : {
+        "title" : "출금 가능 잔액",
+        "description" : "잠금 해제된 셀로는 사용 가능한 잔액으로 출금할 수 있습니다."
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "검증인 그룹",
+      "totalVotes" : "총 투표수",
+      "actions" : {
+        "activate" : "활성화",
+        "revoke" : "취소"
+      },
+      "delegationUnavailable" : {
+        "title" : "잠겨 있는 자금이 충분하지 않습니다."
+      }
+    },
+    "manage" : {
+      "title" : "자산 관리",
+      "titleWhenPendingRegistration" : "계정 등록 보류 중",
+      "lock" : {
+        "title" : "잠금",
+        "description" : "보상을 받으려면 우선 금액을 잠그세요. 그런 다음 검증인에게 투표해야 합니다."
+      },
+      "unlock" : {
+        "title" : "잠금 해제",
+        "description" : "잠긴 금액을 다시 이용하려면 우선 잔액을 해제해야 합니다. 3일의 잠금 해제 기간이 지나면 출금이 가능합니다."
+      },
+      "withdraw" : {
+        "title" : "출금",
+        "description" : "잠금이 해제된 금액을 다시 이용 가능 잔액으로 가져오려면 직접 출금해야 합니다."
+      },
+      "vote" : {
+        "title" : "투표",
+        "description" : "검증자 그룹에 투표하세요. 투표를 활성화하여 보상을 받으세요."
+      },
+      "activate" : {
+        "title" : "투표 활성화",
+        "description" : "검증인 그룹에 대한 투표 활성화"
+      },
+      "revoke" : {
+        "title" : "투표 취소",
+        "description" : "검증인 그룹에 대한 투표 취소"
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "자산 잠금 해제",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "잠금 해제된 자산은 잠금 해제 기간 3일 후에 출금이 가능합니다.",
+            "available" : "이용 가능",
+            "max" : "최대치"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "잠금해제된 트랜잭션이 성공적으로 전송되었습니다",
+              "text" : "잠금 해제된 자산은 3일 후 출금이 가능합니다."
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "자산 출금",
+      "stepperHeader" : {
+        "title" : "투표",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "이용 가능",
+            "max" : "최대치"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 출금하였습니다.",
+              "text" : "출금된 금액은 이용 가능 잔액에 추가됩니다."
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "투표합니다",
+      "stepperHeader" : {
+        "title" : "투표",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "셀로 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
+            "bullet" : {
+              "0" : "위임된 자산의 소유권은 귀하가 갖습니다",
+              "1" : "Ledger 장치를 이용하여 위임하세요",
+              "2" : "자산은 위임 취소 후 사용 가능합니다"
+            },
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
+            },
+            "cta" : "계속"
+          },
+          "amount" : {
+            "available" : "이용 가능",
+            "max" : "최대치"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "투표를 완료했습니다",
+              "text" : "곧 내역에서 거래를 확인할 수 있습니다."
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "내 투표를 활성화합니다",
+      "stepperHeader" : {
+        "title" : "투표 활성화",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결"
+      },
+      "title" : "투표 활성화",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "활성화 성공",
+              "text" : "투표가 성공적으로 활성화되었습니다."
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "취소합니다",
+      "stepperHeader" : {
+        "title" : "투표",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "활성",
+            "pending" : "대기 중"
+          },
+          "amount" : {
+            "available" : "이용 가능",
+            "max" : "최대치"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "투표를 성공적으로 취소하셨습니다.",
+              "text" : "곧 내역에서 거래를 확인할 수 있습니다."
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "투표",
+        "active" : "활성",
+        "pending" : "대기 중",
+        "awaitingActivation" : "활성화 대기 중",
+        "info" : "이 모드에서는 취소가능한 투표만 표시됩니다."
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "계정 등록",
+        "continue" : "계속",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "셀로를 잠그기 전에 계정을 온체인에 등록해야 합니다."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "계정이 성공적으로 등록되었습니다",
+              "text" : "곧 내역에서 거래를 확인할 수 있습니다."
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "자산 잠금",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "잠금한 자산은 언제든지 잠금을 해제할 수 있지만 잠금 해제에는 3일이 걸립니다.",
+            "available" : "이용 가능",
+            "max" : "최대치"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산이 성공적으로 잠겼습니다",
+              "text" : "사용자는 네트워크가 트랜잭션을 확인한 후에 검증인에 투표할 수 있습니다."
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "자산을 위임하여 셀로 보상을 받을 수 있습니다.",
+      "info" : "위임은 어떤 원리인가요?",
+      "delegation" : "보상 받기"
+    },
+    "earnRewards" : {
+      "description" : "셀로 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
+      "bullet" : {
+        "0" : "위임된 자산의 소유권은 귀하가 갖습니다",
+        "1" : "Ledger 장치를 이용하여 위임하세요",
+        "2" : "자산은 위임 취소 후 사용 가능합니다"
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "출금 가능한 잔액이 있습니다.",
+      "activatableVotes" : "현재 활성화할 수 있는 투표가 있습니다."
     }
   },
   "osmosis" : {
@@ -4742,17 +4950,5 @@
     "currentAddress" : {
       "messageIfVirtual" : "Ledger 장치에서 귀하의 {{name}} 주소를 확인할 수 없습니다. 사용은 본인의 책임입니다."
     }
-  },
-  "customImage" : {
-    "drawer" : {
-      "title" : "이미지 선택",
-      "options" : {
-        "uploadFromPhone" : "핸드폰에서 업로드"
-      }
-    },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
-    "uploadAnotherImage" : "다른 이미지 업로드",
-    "selectContrast" : "컨트라스트 선택"
   }
 }
