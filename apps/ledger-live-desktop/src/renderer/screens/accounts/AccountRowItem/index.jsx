@@ -243,6 +243,7 @@ class AccountRowItem extends PureComponent<Props, State> {
         };
 
     const key = `${account.id}_${hideEmptyTokens ? "hide_empty_tokens" : ""}`;
+    const testID = mainAccount.name.replace(" ", "-").toLowerCase();
 
     return (
       <div
@@ -256,7 +257,7 @@ class AccountRowItem extends PureComponent<Props, State> {
           <Row expanded={expanded} tokens={showTokensIndicator} key={mainAccount.id}>
             <RowContent
               disabled={disabled}
-              className="accounts-account-row-item-content"
+              className={`${testID} accounts-account-row-item-content`}
               isSubAccountsExpanded={showTokensIndicator && expanded}
               onClick={this.onClick}
             >
