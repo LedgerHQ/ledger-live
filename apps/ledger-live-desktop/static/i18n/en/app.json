@@ -427,7 +427,13 @@
           "approved": "KYC Approved!",
           "closed": "KYC Rejected"
         }
-      }
+      },
+      "filter": {
+        "all": "All",
+        "centralised": "Centralised",
+        "dedentralised": "Decentralised"
+      },
+      "noQuote": "Quote available at the next step"
     },
     "ip": {
       "title": "Welcome to Swap",
