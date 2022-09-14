@@ -24,17 +24,17 @@ let instances: Array<Ble> = [];
 export const isRunningBIMQueue = (): boolean => !!runningQueue;
 
 class Ble extends Transport {
-  static scanObserver: Observer<DescriptorEvent<any>>;
-  static stateObserver: Observer<{ type: string }>;
+  static scanObserver: Observer<DescriptorEvent<any>> | undefined;
+  static stateObserver: Observer<{ type: string }> | undefined;
+
   static globalBridgeEventSubscription: EventSubscription;
+  static globalAppStateSubscription: EventSubscription;
   static disconnecting = false;
 
   queueObserver: Observer<RunnerEvent> | undefined;
-  appStateSubscription: EventSubscription;
   bridgeEventSubscription: EventSubscription;
 
   transportId = "BleTransport";
-  appState: "background" | "active" | "inactive" | "" = "";
   id: string;
 
   static log(...m: string[]): void {
@@ -42,33 +42,44 @@ class Ble extends Transport {
     log(tag, JSON.stringify([...m]));
   }
 
-  constructor(deviceId: string) {
-    super();
+  /**
+   * Making this call as early as possible, in the live-common-setup file allows us
+   * to avoid the cases where we start emitting events without having a registered
+   * listener.
+   */
+  static setGlobalListener(): void {
     const eventEmitter = new NativeEventEmitter(
       NativeModules.HwTransportReactNativeBle
     );
 
-    this.id = deviceId;
-    this.appStateSubscription = AppState.addEventListener(
-      "change",
-      this.onAppStateChanged
-    );
-    this.bridgeEventSubscription = eventEmitter.addListener(
+    Ble.log("Registering for global bridge events");
+    Ble.globalBridgeEventSubscription?.remove();
+    Ble.globalBridgeEventSubscription = eventEmitter.addListener(
       "BleTransport",
-      this.onBridgeEvent
+      Ble.onBridgeGlobalEvent
     );
+
+    Ble.log("Registering for app state changes");
+    Ble.globalAppStateSubscription?.remove();
+    Ble.globalAppStateSubscription = AppState.addEventListener(
+      "change",
+      (state) => {
+        NativeBle.onAppStateChange(state === "active");
+      }
+    );
+  }
+
+  constructor(deviceId: string) {
+    super();
+    this.id = deviceId;
+    if (!Ble.globalBridgeEventSubscription) {
+      Ble.log("Call BleTransport.setGlobalListener in live-common-setup.");
+      Ble.setGlobalListener();
+    }
 
     instances.push(this);
     Ble.log(`BleTransport(${String(this.id)})   `);
   }
-
-  private onAppStateChanged = (state) => {
-    if (this.appState !== state) {
-      Ble.log("appstate change detected", state);
-      this.appState = state;
-      NativeBle.onAppStateChange(state === "active");
-    }
-  };
 
   exchange = async (apdu: Buffer): Promise<Buffer> => {
     Ble.log("apdu", `=> ${apdu.toString("hex")}`);
@@ -131,6 +142,9 @@ class Ble extends Transport {
   static onBridgeGlobalEvent(rawEvent: GlobalBridgeEvent): void {
     const { event, type, data } = rawEvent;
     Ble.log("raw global bridge", JSON.stringify(rawEvent));
+    instances.forEach((instance) => {
+      instance.onBridgeEvent(rawEvent as unknown as RawRunnerEvent);
+    });
 
     switch (event) {
       case "replace": {
@@ -175,21 +189,7 @@ class Ble extends Transport {
     observer: Observer<{ type: string }>
   ): Subscription => {
     Ble.stateObserver = observer;
-    const eventEmitter = new NativeEventEmitter(
-      NativeModules.HwTransportReactNativeBle
-    );
-
-    Ble.globalBridgeEventSubscription = eventEmitter.addListener(
-      "BleTransport",
-      Ble.onBridgeGlobalEvent
-    );
-
     NativeBle.observeBluetooth(); // Nb currently we are still relying on the RequiresBluetooth cmp
-
-    // This is not the state, it's the app state, in case you are wondering.
-    AppState.addEventListener("change", (state) => {
-      NativeBle.onAppStateChange(state === "active");
-    });
 
     return {
       unsubscribe: () => {
@@ -201,16 +201,12 @@ class Ble extends Transport {
   static listen = (
     observer: Observer<DescriptorEvent<unknown>>
   ): Subscription => {
+    if (!Ble.globalBridgeEventSubscription) {
+      Ble.log("Call BleTransport.setGlobalListener in live-common-setup.");
+      Ble.setGlobalListener();
+    }
+
     Ble.scanObserver = observer;
-    const eventEmitter = new NativeEventEmitter(
-      NativeModules.HwTransportReactNativeBle
-    );
-
-    Ble.globalBridgeEventSubscription = eventEmitter.addListener(
-      "BleTransport",
-      Ble.onBridgeGlobalEvent
-    );
-
     NativeBle.listen()
       .then(() => {
         Ble.log("Start scanning devices");
@@ -223,8 +219,10 @@ class Ble extends Transport {
     return { unsubscribe: Ble.stop };
   };
 
-  private static stop = async (): Promise<void> => {
+  static stop = async (): Promise<void> => {
     Ble.globalBridgeEventSubscription?.remove();
+    Ble.scanObserver = undefined;
+
     await NativeBle.stop();
     Ble.log("Stop scanning devices");
   };
@@ -236,19 +234,32 @@ class Ble extends Transport {
   };
 
   static disconnect = async (): Promise<boolean> => {
-    if (Ble.disconnecting) {
-      Ble.log("already disconnecting, skipping disconnect");
+    if (!instances.length) {
+      Ble.log("already disconnected");
       return true;
+    }
+    if (Ble.disconnecting) {
+      Ble.log("disconnecting, give it a second and try again");
+      const promise = new Promise<boolean>((resolve) => {
+        setTimeout(
+          () =>
+            Ble.disconnect().then(() => {
+              resolve(true);
+            }),
+          1000
+        );
+      });
+      return promise;
     }
 
     Ble.disconnecting = true;
     Ble.log("disconnecting, and removing listeners");
 
     instances.forEach((instance) => {
-      instance.appStateSubscription?.remove();
       instance.bridgeEventSubscription?.remove();
       instance.queueObserver?.complete();
     });
+
     instances = [];
     runningQueue = false;
 
@@ -258,7 +269,7 @@ class Ble extends Transport {
     return true;
   };
 
-  protected static remapError = (error: any, extras?: unknown) => {
+  static remapError = (error: any, extras?: unknown): Error => {
     Ble.log(`raw error data ${JSON.stringify(error)}`);
 
     const mappedErrors = {
@@ -283,12 +294,11 @@ class Ble extends Transport {
     endpoint: string
   ): void => {
     if (!endpoint) throw new Error("No endpoint provided for BIM");
-    if (!instances.length) throw new Error("No transport instances");
 
     Ble.log("request to launch queue", rawQueue);
     this.queueObserver = observer;
     NativeBle.queue(rawQueue, endpoint);
-    runningQueue = true; // TODO there probably is a cleaner way of doing this.
+    runningQueue = true;
   };
 
   runner = (observer: Observer<RunnerEvent>, url: string): void => {
