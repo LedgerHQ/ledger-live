@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "죄송하지만 블루투스가 비활성 상태입니다",
-      "description" : "휴대폰 설정에서 블루투스를 활성화해주세요. ({{state}} 주)"
+      "description" : "휴대폰 설정에서 블루투스를 활성화해주세요."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "펌웨어 업데이트는 유선 연결로만 지원됩니다."
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
   },
   "permissions" : {
-    "open" : "앱 사용 권한 열기"
+    "open" : "앱 사용 권한 열기",
+    "nearbyDevicesPermissionDenied" : "블루투스와 페어링하려면 Ledger Live 앱에서 주변 장치를 스캔하도록 승인하세요."
   },
   "fees" : {
     "speed" : {
