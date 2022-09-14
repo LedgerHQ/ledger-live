@@ -19,7 +19,6 @@
     "device" : "Cihaz",
     "cryptoAsset" : "Kripto varlık",
     "skip" : "Atla",
-    "next" : "Sonraki",
     "noCryptoFound" : "Kripto varlık bulunamadı",
     "needHelp" : "Yardıma mı ihtiyacınız var?",
     "edit" : "Düzenle",
@@ -147,6 +146,9 @@
           "nanoX" : "{{productName}} cihazınızın kilidinin açıldığından ve kablo ile bağlı olduğundan veya Bluetooth'un etkin olduğundan emin olun."
         }
       }
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "Ödül miktarı, ödülü almak için gereken tahmini ağ ücretlerinden daha az.",
@@ -687,38 +689,6 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
-    },
-    "ImageLoadFromGalleryError" : {
-      "title" : "Galeriden görüntü yüklenemedi",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
-    },
-    "ImageDownloadError" : {
-      "title" : "Görüntü indirilemedi",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
-    },
-    "ImageMetadataLoadingError" : {
-      "title" : "Görüntü meta verileri yüklenemedi",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
-    },
-    "ImageTooLargeError" : {
-      "title" : "Görüntü çok büyük",
-      "description" : "Lütfen daha küçük bir görüntü seçmeyi deneyin"
-    },
-    "ImageCropError" : {
-      "title" : "Görüntü kırpılamadı",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
-    },
-    "ImageResizeError" : {
-      "title" : "Görüntü yeniden boyutlandırılamadı",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
-    },
-    "ImagePreviewError" : {
-      "title" : "Görüntü ön izlemesi yapılamadı",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
-    },
-    "ImageProcessingError" : {
-      "title" : "Görüntü işlenemedi",
-      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     }
   },
   "bluetooth" : {
@@ -1603,27 +1573,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}} cihazınız aranıyor",
+        "description" : "Lütfen {{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "Cihazlar aranıyor",
+        "description" : "Lütfen cihazınızın açık olduğundan, kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "Zaten eşleştirilmiş"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}} ile eşleştirildi"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "Eşleştirme başarısız",
+        "subtitle" : "Bir sorun oluştu! Bluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun",
+        "retryCta" : "Tekrar deneyin"
       }
     }
   },
@@ -2006,16 +1976,6 @@
       "noTransaction" : {
         "title" : "Hiçbir işleminiz yok",
         "subtitle" : "{{assetName}} satın almak veya teslim almak için bir cihaza ihtiyacınız olacak"
-      }
-    },
-    "banner" : {
-      "redelegation" : {
-        "description" : "Haberiniz olsun! Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
-        "cta" : "Yetki devret"
-      },
-      "delegation" : {
-        "description" : "Haberiniz olsun! Ledger doğrulayıcısı {{asset}} varlığınızı düşük bir komisyonla stake eder.",
-        "cta" : "Stake etmeye başla"
       }
     }
   },
@@ -3659,7 +3619,255 @@
       "available" : {
         "title" : "CELO mevcut",
         "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "lockedBalance" : {
+        "title" : "Kilitli bakiye",
+        "description" : "Ödül kazanmak için öncelikle varlıkların kilitlenmesi ve doğrulayıcı gruplarına oylanması gerekir."
+      },
+      "nonvotingLockedBalance" : {
+        "title" : "Oylanmayan kilitli bakiye",
+        "description" : "Oylama için kullanılabilecek kilitli varlıkların bakiyesi."
+      },
+      "withdrawableBalance" : {
+        "title" : "Çekilebilir bakiye",
+        "description" : "Mevcut Bakiyenize çekebileceğiniz, kilidi açık Celo varlıkları."
       }
+    },
+    "delegation" : {
+      "validatorGroup" : "Doğrulayıcı Grubu",
+      "totalVotes" : "Toplam Oy",
+      "actions" : {
+        "activate" : "Etkinleştir",
+        "revoke" : "İptal et"
+      },
+      "delegationUnavailable" : {
+        "title" : "Yetersiz Kilitli Fon"
+      }
+    },
+    "manage" : {
+      "title" : "Varlıkları yönet",
+      "titleWhenPendingRegistration" : "Hesap Kaydı Beklemede",
+      "lock" : {
+        "title" : "Kilitle",
+        "description" : "Ödül kazanmak için öncelikle belli bir miktarı kilitleyin. Ardından doğrulayıcılarınıza oy verin."
+      },
+      "unlock" : {
+        "title" : "Kilit açın",
+        "description" : "Kilitli bir tutarı yeniden kullanabilmek için öncelikle kilidini açmalısınız. 3 günlük kilit açma süresinin ardından çekebilirsiniz."
+      },
+      "withdraw" : {
+        "title" : "Çekim",
+        "description" : "Kilidi açılan varlıkları mevcut bakiyeye geri almak için manuel olarak çekim yapmanız gerekir."
+      },
+      "vote" : {
+        "title" : "Oylayın",
+        "description" : "Doğrulayıcı gruplarına oy verin. Ödül kazanmak için oylarınızı etkinleştirdiğinizden emin olun."
+      },
+      "activate" : {
+        "title" : "Oy etkinleştirin",
+        "description" : "Doğrulayıcı grubuna verdiğiniz oyu etkinleştirin"
+      },
+      "revoke" : {
+        "title" : "Oy iptal edin",
+        "description" : "Doğrulayıcı grubuna verdiğiniz oyu iptal edin"
+      }
+    },
+    "unlock" : {
+      "stepperHeader" : {
+        "title" : "Varlıkların kilidini açın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Kilidi açılan varlıklar, 3 günlük kilit açma süresinin ardından çekilebilir.",
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Kilit açma işlemi başarıyla gönderildi",
+              "text" : "Kilidi açılan varlıklar 3 gün sonra çekilebilir."
+            }
+          }
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "Varlık çekimi",
+      "stepperHeader" : {
+        "title" : "Oyla",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınız başarıyla çekildi",
+              "text" : "Çekilen tutar mevcut bakiyenize aktarılacaktır."
+            }
+          }
+        }
+      }
+    },
+    "vote" : {
+      "iVote" : "Oy veriyorum",
+      "stepperHeader" : {
+        "title" : "Oylayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+            "bullet" : {
+              "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+              "1" : "Ledger cihazınızı kullanarak yetki devredin.",
+              "2" : "Varlıklar yetki iptalinden sonra mevcut olacak"
+            },
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
+            },
+            "cta" : "Devam"
+          },
+          "amount" : {
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Başarıyla oy verdiniz",
+              "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek."
+            }
+          }
+        }
+      }
+    },
+    "activate" : {
+      "iActivate" : "Oylarımı etkinleştiriyorum",
+      "stepperHeader" : {
+        "title" : "Oy etkinleştirin",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "title" : "Oyları etkinleştirin",
+      "flow" : {
+        "steps" : {
+          "verification" : {
+            "success" : {
+              "title" : "Etkinleştirme başarılı",
+              "text" : "Oyunuz başarıyla etkinleştirildi."
+            }
+          }
+        }
+      }
+    },
+    "revoke" : {
+      "iRevoke" : "İptal ediyorum",
+      "stepperHeader" : {
+        "title" : "Oylayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "active" : "Aktif",
+            "pending" : "Beklemede"
+          },
+          "amount" : {
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Oylarınızı başarıyla iptal ettiniz",
+              "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek."
+            }
+          }
+        }
+      },
+      "vote" : {
+        "title" : "Oylayın",
+        "active" : "Aktif",
+        "pending" : "Beklemede",
+        "awaitingActivation" : "Etkinleştirme bekleniyor",
+        "info" : "Bu modda sadece iptal edebileceğiniz oylar gösterilir"
+      }
+    },
+    "register" : {
+      "stepperHeader" : {
+        "title" : "Hesap kaydet",
+        "continue" : "Devam",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "started" : {
+            "description" : "Celo varlıklarınızın kilidini açmadan önce hesabınızı on-chain (zincir içi) olarak kaydetmeniz gerekir."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Hesap başarıyla kaydedildi.",
+              "text" : "İşlem kısa süre içinde işlem geçmişinde görünecek."
+            }
+          }
+        }
+      }
+    },
+    "lock" : {
+      "stepperHeader" : {
+        "title" : "Varlıkları kilitleyin",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "info" : "Kilitli varlıkların kilidini istediğiniz zaman açabilirsiniz ancak kilit açma işlemi 3 günde tamamlanır.",
+            "available" : "Mevcut",
+            "max" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıkların kilidi başarıyla açıldı",
+              "text" : "İşleminiz ağ tarafından onaylandıktan sonra doğrulayıcılara oy verebileceksiniz."
+            }
+          }
+        }
+      }
+    },
+    "emptyState" : {
+      "description" : "Varlıklarınızın yetkisini devrederek CELO ödülleri kazanabilirsiniz.",
+      "info" : "Yetki Devri nasıl çalışır?",
+      "delegation" : "Ödüller kazanın"
+    },
+    "earnRewards" : {
+      "description" : "CELO varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+      "bullet" : {
+        "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+        "1" : "Ledger cihazınızı kullanarak yetki devredin.",
+        "2" : "Varlıklar yetki iptalinden sonra mevcut olacak"
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "Çekebileceğiniz bir miktar bakiyeniz var.",
+      "activatableVotes" : "Etkinleştirebileceğiniz oylar bulunuyor."
     }
   },
   "osmosis" : {
@@ -4742,17 +4950,5 @@
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
     }
-  },
-  "customImage" : {
-    "drawer" : {
-      "title" : "Bir görüntü seçin",
-      "options" : {
-        "uploadFromPhone" : "Telefonumdan yükle"
-      }
-    },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
-    "uploadAnotherImage" : "Başka bir görsel yükleyin",
-    "selectContrast" : "Kontrastınızı seçin"
   }
 }
