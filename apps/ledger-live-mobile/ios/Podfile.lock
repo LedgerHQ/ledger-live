@@ -427,6 +427,8 @@ PODS:
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
+  - react-native-restart (0.0.24):
+    - React-Core
   - react-native-safe-area-context (4.2.5):
     - RCT-Folly
     - RCTRequired
@@ -675,6 +677,7 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.68.2/node_modules/@react-native-community/netinfo`)"
   - "react-native-performance (from `../../../node_modules/.pnpm/react-native-performance@2.1.0_react-native@0.68.2/node_modules/react-native-performance/ios`)"
   - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
+  - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.24_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@4.2.5_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-safe-area-context`)"
   - "react-native-splash-screen (from `../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0.68.2/node_modules/react-native-splash-screen`)"
   - "react-native-text-input-mask (from `../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.68.2/node_modules/react-native-text-input-mask`)"
@@ -829,6 +832,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-performance@2.1.0_react-native@0.68.2/node_modules/react-native-performance/ios"
   react-native-randombytes:
     :path: "../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes"
+  react-native-restart:
+    :path: "../../../node_modules/.pnpm/react-native-restart@0.0.24_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../../../node_modules/.pnpm/react-native-safe-area-context@4.2.5_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-safe-area-context"
   react-native-splash-screen:
@@ -977,6 +982,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 3d3769f0d65de15c83a9bf1346f8be71de5a24bf
   react-native-performance: f4b6604a9d5a8a7407e34a82fab6c641d9a3ec12
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
+  react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e
   react-native-safe-area-context: ebf8c413eb8b5f7c392a036a315eb7b46b96845f
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395

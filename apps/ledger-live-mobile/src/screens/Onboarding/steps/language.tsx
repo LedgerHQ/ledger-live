@@ -11,31 +11,27 @@ import {
 import { StackScreenProps } from "@react-navigation/stack";
 import { useDispatch } from "react-redux";
 import i18next from "i18next";
+import RNRestart from "react-native-restart";
 import { useLocale } from "../../../context/Locale";
 import { languages, supportedLocales } from "../../../languages";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage } from "../../../actions/settings";
-import { useReboot } from "../../../context/Reboot";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
-  const reboot = useReboot();
 
   const next = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
-  const changeLanguageRTL = useCallback(
-    async l => {
-      await dispatch(setLanguage(l));
-      I18nManager.forceRTL(true);
-      reboot();
-    },
-    [I18nManager, i18next, reboot],
-  );
+  const changeLanguageRTL = useCallback(async l => {
+    await dispatch(setLanguage(l));
+    I18nManager.forceRTL(!I18nManager.isRTL);
+    RNRestart.Restart();
+  }, []);
 
   const changeLanguage = useCallback(
     async l => {
