@@ -19,6 +19,7 @@
     "device" : "Устройство",
     "cryptoAsset" : "Криптоактив",
     "skip" : "Пропустить",
+    "next" : "Далее",
     "noCryptoFound" : "Криптоактивы не найдены",
     "needHelp" : "Нужна помощь?",
     "edit" : "Редактировать",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Отключите функцию мультиподписи, чтобы проводить транзакции в Stellar"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "Не удалось загрузить изображение из галереи",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageDownloadError" : {
+      "title" : "Не удалось загрузить изображение",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Не удалось загрузить метаданные изображения",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Изображение слишком большое",
+      "description" : "Попробуйте использовать изображение меньшего размера"
+    },
+    "ImageCropError" : {
+      "title" : "Не удалось обрезать изображение",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageResizeError" : {
+      "title" : "Не удалось изменить размер изображения",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImagePreviewError" : {
+      "title" : "Предпросмотр изображения невозможен",
+      "description" : "Попробуйте другое изображение"
+    },
+    "ImageProcessingError" : {
+      "title" : "Не удалось обработать изображение",
+      "description" : "Попробуйте другое изображение"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "Ознакомиться с Ledger Live",
         "subtitle" : "Откройте для себя это приложение и узнайте о его преимуществах "
+      },
+      "desktopSync" : {
+        "title" : "Синхронизировать с настольным приложением",
+        "subtitle" : "Синхронизируйте криптоактивы из настольного приложения Ledger Live на мобильном устройстве."
       }
     },
     "discoverLive" : {
@@ -1035,8 +1072,8 @@
     "stepLanguage" : {
       "title" : "Выберите язык",
       "cta" : "Продолжить",
-      "changeDeviceLanguage" : "Поменять язык устройства?",
-      "changeDeviceLanguageDescription" : "Теперь язык Ledger Live — {{language}}. Хотели бы вы также использовать {{language}} язык на устройстве?",
+      "changeDeviceLanguage" : "{{language}} язык также доступен для {{deviceName}}.",
+      "changeDeviceLanguageDescription" : "Хотите сменить язык на {{language}}?",
       "warning" : {
         "title" : "Настроить на английском",
         "cta" : "Понятно!",
@@ -1568,27 +1605,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "Поиск {{productName}}",
+        "description" : "Обязательно разблокируйте {{productName}} и включите Bluetooth"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "Поиск устройств",
+        "description" : "Убедитесь, что ваше устройство включено и разблокировано, а Bluetooth — активирован"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "Уже сопряжено"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "Подключено к {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "Подключение к {{deviceName}}",
+        "subtitle" : "Подтвердите код на устройстве {{productName}}"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "Не удалось подключить устройство",
+        "subtitle" : "Похоже, что-то пошло не так. Убедитесь, что Bluetooth активирован, а устройство {{productName}} находится неподалёку",
+        "retryCta" : "Попробуйте ещё раз"
       }
     }
   },
@@ -1813,7 +1850,7 @@
       "moreInfo" : "Подробнее...",
       "cardTitle" : "Powered by {{team}}",
       "drawer" : {
-        "title" : "интеграция {{family}}",
+        "title" : "Интеграция {{family}}",
         "subTitle" : "Интеграция {{family}} выполнена командой {{team}}",
         "description" : "Ledger Live – это платформа с открытым исходным кодом.",
         "description2" : "Разработчики из любой точки мира могут интегрироваться в наше приложение Ledger Live",
@@ -3492,8 +3529,10 @@
   "deviceLocalization" : {
     "language" : "Язык интерфейса",
     "deviceLanguage" : "Язык устройства",
+    "chooseLanguage" : "Выберите язык для {{deviceName}}.",
     "changeLanguage" : "Поменять язык",
-    "allowLanguageInstallation" : "Разрешить установку языка",
+    "yesChangeLanguage" : "Да, поменять язык",
+    "allowLanguageInstallation" : "Разрешите установку языка на {{deviceName}}",
     "languageInstalled" : "Новый язык устройства — {{language}}",
     "firmwareUpdatePrompt" : {
       "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
@@ -4277,7 +4316,10 @@
       "info" : "Как работает делегирование",
       "broadcastSuccessTitle" : "Операция отправлена",
       "broadcastSuccessDescription" : "Статус делегирования обновится, когда транзакция будет подтверждена.",
-      "delegatedTo" : "Делегировано кому:"
+      "delegatedTo" : "Делегировано кому:",
+      "started" : {
+        "description" : "Вы можете получать вознаграждения, делегируя активы SOL валидатору."
+      }
     }
   },
   "delegation" : {
@@ -4691,5 +4733,17 @@
     "currentAddress" : {
       "messageIfVirtual" : "Адрес {{name}} не может быть подтверждён на устройстве Ledger. Вы принимаете на себя все последующие риски."
     }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "Выбрать изображение",
+      "options" : {
+        "uploadFromPhone" : "Загрузить с телефона"
+      }
+    },
+    "cropImage" : "Обрезать изображение",
+    "chooseConstrast" : "Указать контраст",
+    "uploadAnotherImage" : "Загрузить другое изображение",
+    "selectContrast" : "Выберите контрастность"
   }
 }
