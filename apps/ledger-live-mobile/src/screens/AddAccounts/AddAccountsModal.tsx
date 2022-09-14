@@ -57,6 +57,7 @@ export default function AddAccountsModal({
           subTitle={t("addAccountsModal.add.description")}
           onPress={onClickAdd}
           imageSource={setupLedgerImg}
+          hasMarginBottom
         />
       )}
 

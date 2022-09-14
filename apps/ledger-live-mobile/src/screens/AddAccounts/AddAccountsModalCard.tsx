@@ -8,12 +8,14 @@ type Props = {
   subTitle: string;
   onPress: () => void;
   imageSource: ImageSourcePropType;
+  hasMarginBottom?: boolean;
 };
 export default function AddAccountsModalCard({
   title,
   subTitle,
   onPress,
   imageSource,
+  hasMarginBottom = false,
 }: Props) {
   return (
     <DiscoverCard
@@ -24,6 +26,7 @@ export default function AddAccountsModalCard({
       onPress={onPress}
       cardProps={{
         mx: 0,
+        mb: hasMarginBottom ? "16px" : 0,
       }}
       Image={
         <Illustration
