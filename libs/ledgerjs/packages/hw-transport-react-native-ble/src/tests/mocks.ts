@@ -1,7 +1,6 @@
-// @ts-nocheck
 import { Subject } from "rxjs";
 
-export const mockedEvents = new Subject();
+export let mockedEvents = new Subject();
 const registeredAppStateCallbacks = [];
 const registeredEventBridgeCallbacks = [];
 
@@ -13,20 +12,22 @@ export class MockEventListener {
   };
   constructor() {
     mockedEvents.subscribe({
-      next: ([type, e]) => {
+      next: ([type, e]: any) => {
         const targets =
           type === "change"
             ? registeredAppStateCallbacks
             : registeredEventBridgeCallbacks;
-        targets.filter(Boolean).forEach((registeredCallbacks) => {
-          registeredCallbacks(e);
-        });
+        targets
+          .filter(Boolean)
+          .forEach((registeredCallback: (any) => unknown) => {
+            registeredCallback(e);
+          });
       },
     });
   }
 
   addListener = (type, callback): any => {
-    const target =
+    const target: any =
       type === "change"
         ? registeredAppStateCallbacks
         : registeredEventBridgeCallbacks;
@@ -51,13 +52,14 @@ export function Throwable(message) {
 
 export const NativeModules = (() => {
   let isConnected = false;
-  let failedFirsListen = false;
+  let shouldFailFirstAttempt = true;
+
   return {
     HwTransportReactNativeBle: {
       // Stubs since we don't interact with the Native side in these tests.
       listen: async (): Promise<boolean> => {
-        if (failedFirsListen) {
-          failedFirsListen = true;
+        if (shouldFailFirstAttempt) {
+          shouldFailFirstAttempt = false;
           throw new Throwable("cant-open-device");
         }
         return true;
