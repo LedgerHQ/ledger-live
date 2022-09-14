@@ -3,6 +3,7 @@
     "cancel" : "Отменить",
     "apply" : "Применить",
     "seeAll" : "Просмотреть все",
+    "seeAllWithNumber" : "Посмотреть все ({{number}})",
     "back" : "Назад",
     "delete" : "Удалить",
     "paste" : "Вставить",
@@ -30,6 +31,7 @@
     "received" : "Получение",
     "sent" : "Отправка",
     "or" : "ИЛИ",
+    "others" : "Другие",
     "rename" : "Переименовать",
     "learnMore" : "Подробнее",
     "checkItOut" : "Взгляните!",
@@ -1670,7 +1672,10 @@
         "addAccounts" : "Добавить актив",
         "title" : "Приступить",
         "description" : "Вы можете купить криптовалюту у наших партнёров или настроить кошелёк"
-      }
+      },
+      "title" : "Начните с добавления любимых активов в свой кошелёк",
+      "subtitle" : "Ledger поддерживает более 6000 монет и токенов",
+      "addAccount" : "либо добавьте счёт"
     },
     "noOpState" : {
       "title" : "Ещё не проводили операции?",
@@ -1682,6 +1687,13 @@
     "topGainers" : {
       "title" : "Самые прибыльные (24Ч)",
       "seeMarket" : "Просмотреть все"
+    },
+    "walletBalance" : "Баланс кошелька",
+    "seelAllAssets" : "Посмотреть все активы",
+    "marketPriceSection" : {
+      "title" : "Рыночная цена {{currencyTicker}}",
+      "currencyPrice" : "Цена одного {{currencyTicker}}",
+      "currencyPriceChange" : "Изменение за последние 24ч"
     }
   },
   "addAccountsModal" : {
@@ -1854,7 +1866,7 @@
       "moreInfo" : "Подробнее...",
       "cardTitle" : "Powered by {{team}}",
       "drawer" : {
-        "title" : "интеграция {{family}}",
+        "title" : "Интеграция {{family}}",
         "subTitle" : "Интеграция {{family}} выполнена командой {{team}}",
         "description" : "Ledger Live – это платформа с открытым исходным кодом.",
         "description2" : "Разработчики из любой точки мира могут интегрироваться в наше приложение Ledger Live",
@@ -1907,7 +1919,8 @@
       "buttons" : {
         "receiveFunds" : "Получить",
         "buyCrypto" : "Купить"
-      }
+      },
+      "addAccountCta" : "Добавить счёт"
     },
     "settings" : {
       "header" : "Настройки счёта",
@@ -2008,6 +2021,15 @@
         "subtitle" : "Для покупки или получения {{assetName}} вам понадобится устройство"
       }
     },
+    "modals" : {
+      "zeroBalanceDisabledAction" : {
+        "title" : "У вас пока нет {{currencyTicker}}",
+        "start" : "Купите или переведите {{currencyTicker}}, чтобы начать.",
+        "description" : "Вам нужно немного {{currencyTicker}}, чтобы {{actionName}} с помощью этого счёта."
+      }
+    },
+    "earn" : "Растите",
+    "quickActions" : "Быстрые действия",
     "banner" : {
       "redelegation" : {
         "description" : "Если вы не знали, комиссия за стейкинг у валидатора Ledger ниже, чем у используемого вами валидатора.",
@@ -2021,6 +2043,7 @@
   },
   "accounts" : {
     "title" : "Счета",
+    "cryptoAccountsTitle" : "Счета {{currencyTicker}}",
     "importNotification" : {
       "message" : "Счета успешно импортированы!"
     },
@@ -3072,6 +3095,7 @@
     }
   },
   "addAccounts" : {
+    "addNew" : "Добавить новый",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit или Native SegWit?"
     },
@@ -4741,6 +4765,12 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Адрес {{name}} не может быть подтверждён на устройстве Ledger. Вы принимаете на себя все последующие риски."
+    }
+  },
+  "asset" : {
+    "title" : "Ваши {{assetName}}",
+    "accountsSection" : {
+      "title" : "Ваши счета {{currencyName}}"
     }
   },
   "customImage" : {
