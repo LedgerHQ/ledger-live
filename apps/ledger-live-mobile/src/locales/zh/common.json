@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "抱歉，蓝牙已禁用",
-      "description" : "请在您的手机设置中启用蓝牙。({{state}} 状态)"
+      "description" : "请在您手机的设置中启用蓝牙。"
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "固件更新仅支持有线连接"
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger 并不会获取您的位置信息。"
   },
   "permissions" : {
-    "open" : "打开应用程序权限"
+    "open" : "打开应用程序权限",
+    "nearbyDevicesPermissionDenied" : "要用蓝牙配对，请授权 Ledger Live 应用程序扫描附近的设备。"
   },
   "fees" : {
     "speed" : {
