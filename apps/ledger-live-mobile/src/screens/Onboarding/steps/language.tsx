@@ -29,7 +29,7 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
 
   const changeLanguageRTL = useCallback(async l => {
     await dispatch(setLanguage(l));
-    I18nManager.forceRTL(true);
+    I18nManager.forceRTL(!I18nManager.isRTL);
     RNRestart.Restart();
   }, []);
 
