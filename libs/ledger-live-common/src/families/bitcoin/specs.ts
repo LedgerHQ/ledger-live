@@ -403,18 +403,6 @@ const qtum: AppSpec<Transaction> = {
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
-const stakenet: AppSpec<Transaction> = {
-  name: "Stakenet",
-  currency: getCryptoCurrencyById("stakenet"),
-  dependency: "Bitcoin",
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "XSN",
-  },
-  genericDeviceAction: acceptTransaction,
-  test: genericTest,
-  mutations: bitcoinLikeMutations(),
-};
 const vertcoin: AppSpec<Transaction> = {
   name: "Vertcoin",
   currency: getCryptoCurrencyById("vertcoin"),
@@ -592,7 +580,6 @@ export default {
   peercoin,
   pivx,
   qtum,
-  stakenet,
   vertcoin,
   viacoin,
   zcash,
