@@ -1,3 +1,5 @@
+import {TransactionStatusCommon, TransactionStatusCommonRaw} from "@ledgerhq/types-live";
+
 export interface EstimatedFeesRequest {
   to: string;
   from: string;

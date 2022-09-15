@@ -15,6 +15,7 @@ import osmosis from "../families/osmosis/transaction";
 import polkadot from "../families/polkadot/transaction";
 import ripple from "../families/ripple/transaction";
 import solana from "../families/solana/transaction";
+import stacks from "../families/stacks/transaction";
 import stellar from "../families/stellar/transaction";
 import tezos from "../families/tezos/transaction";
 import tron from "../families/tron/transaction";
@@ -37,6 +38,7 @@ export default {
   polkadot,
   ripple,
   solana,
+  stacks,
   stellar,
   tezos,
   tron,

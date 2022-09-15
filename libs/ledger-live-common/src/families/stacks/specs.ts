@@ -6,6 +6,7 @@ import type { Transaction } from "./types";
 import { getCryptoCurrencyById } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const MIN_SAFE = new BigNumber(1000000);
 const stacksSpecs: AppSpec<Transaction> = {
@@ -16,7 +17,7 @@ const stacksSpecs: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Stacks",
   },
-
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");

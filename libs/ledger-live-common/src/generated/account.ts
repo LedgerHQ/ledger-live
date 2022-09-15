@@ -7,6 +7,7 @@ import filecoin from "../families/filecoin/account";
 import near from "../families/near/account";
 import osmosis from "../families/osmosis/account";
 import polkadot from "../families/polkadot/account";
+import stacks from "../families/stacks/account";
 
 export default {
   algorand,
@@ -18,4 +19,5 @@ export default {
   near,
   osmosis,
   polkadot,
+  stacks,
 };
