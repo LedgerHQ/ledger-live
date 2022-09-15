@@ -3405,6 +3405,10 @@
           "title" : "Erweiterte Kontosuche",
           "description" : "Suchen Sie nach Konten mit fehlerhaften Ableitungspfaden. Bitte senden Sie potenziell gefundene Vermögenswerte an ein reguläres Konto."
         },
+        "experimentalCountervalues" : {
+          "title" : "Experimentelle Gegenwerte API",
+          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
+        },
         "experimentalExplorers" : {
           "title" : "Experimentelle Explorer-API",
           "description" : "Probieren Sie eine kommende Version von Ledgers Blockchain-Explorern aus. Das Ändern dieser Einstellung kann den Kontostand und die Synchronisation sowie die Sendefunktion beeinflussen.\n(<0></0>)"
@@ -4580,10 +4584,6 @@
     },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
-      "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
-    },
-    "NetworkError" : {
-      "title" : "Während der Synchronisierung ist ein Fehler aufgetreten",
       "description" : "Bitte überprüfen Sie Ihre Internetverbindung."
     },
     "NoAddressesFound" : {
