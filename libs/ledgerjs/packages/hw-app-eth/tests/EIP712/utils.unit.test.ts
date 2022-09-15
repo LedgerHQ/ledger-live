@@ -1,9 +1,31 @@
+import BigNumber from "bignumber.js";
 import {
   constructTypeDescByteString,
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
   makeTypeEntryStructBuffer,
 } from "../../src/modules/EIP712/EIP712.utils";
+
+const padHexString = (str: string) => {
+  return str.length % 2 ? "0" + str : str;
+};
+
+const convertTwosComplementToDecimalString = (
+  hex: string,
+  initialValue: string
+) => {
+  if (!initialValue?.startsWith("-")) {
+    return new BigNumber(padHexString(hex), 16).toFixed();
+  }
+
+  const hexAsBN = new BigNumber(padHexString(hex), 16);
+  const maskAsBN = new BigNumber(
+    Buffer.alloc(hex.length / 2, 0xff).toString("hex"),
+    16
+  );
+
+  return hexAsBN.minus(maskAsBN).minus(1).toFixed();
+};
 
 describe("EIP712", () => {
   describe("Utils", () => {
@@ -249,157 +271,88 @@ describe("EIP712", () => {
 
     describe("EIP712_TYPE_ENCODERS", () => {
       describe("INT", () => {
-        describe("from string", () => {
-          test("should return 00", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("0").toString("hex")).toEqual("00");
-          });
-          test("should return 01", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("1").toString("hex")).toEqual("01");
-          });
-          test("should return 0a", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("10").toString("hex")).toEqual(
-              "0a"
-            );
-          });
-          test("should return 64", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("100").toString("hex")).toEqual(
-              "64"
-            );
-          });
-          test("should return 0101", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("257").toString("hex")).toEqual(
-              "0101"
-            );
+        const defaultSizes = [8, 16, 32, 64, 128, 256];
+        const couples: [string, number[]][] = [
+          [
+            "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+            [256],
+          ],
+          [
+            "-57896044618658097711785492504343953926634992332820282019728792003956564819968",
+            [256],
+          ],
+          [
+            "57896044618658097711785492504343953926634992332820282019728792003956564819967",
+            [256],
+          ],
+          ["-170141183460469231731687303715884105728", [128, 256]],
+          ["170141183460469231731687303715884105727", [128, 256]],
+          ["-9223372036854775808", [64, 128, 256]],
+          ["9223372036854775807", [64, 128, 256]],
+          ["-2147483648", [32, 64, 128, 256]],
+          ["2147483647", [32, 64, 128, 256]],
+          ["-32768", [16, 32, 64, 128, 256]],
+          ["32767", [16, 32, 64, 128, 256]],
+          ["-256", defaultSizes],
+          ["256", defaultSizes],
+          ["-128", defaultSizes],
+          ["128", defaultSizes],
+          ["-64", defaultSizes],
+          ["64", defaultSizes],
+          ["32", defaultSizes],
+          ["-32", defaultSizes],
+          ["-16", defaultSizes],
+          ["16", defaultSizes],
+          ["8", defaultSizes],
+          ["-8", defaultSizes],
+          ["0", defaultSizes],
+        ];
+
+        describe("from decimal string", () => {
+          couples.forEach(([value, sizes]) => {
+            sizes.forEach((size) => {
+              test(`should have the right return for value: ${value} and size: ${size}`, () => {
+                const hexBuffer = EIP712_TYPE_ENCODERS.INT(value, size);
+
+                expect(
+                  convertTwosComplementToDecimalString(
+                    hexBuffer.toString("hex"),
+                    value
+                  )
+                ).toEqual(value);
+              });
+            });
           });
         });
 
-        describe("from number", () => {
-          test("should return 00", () => {
-            expect(EIP712_TYPE_ENCODERS.INT(0).toString("hex")).toEqual("00");
-          });
-          test("should return 01", () => {
-            expect(EIP712_TYPE_ENCODERS.INT(1).toString("hex")).toEqual("01");
-          });
-          test("should return 0a", () => {
-            expect(EIP712_TYPE_ENCODERS.INT(10).toString("hex")).toEqual("0a");
-          });
-          test("should return 64", () => {
-            expect(EIP712_TYPE_ENCODERS.INT(100).toString("hex")).toEqual("64");
-          });
-          test("should return 0101", () => {
-            expect(EIP712_TYPE_ENCODERS.INT(257).toString("hex")).toEqual(
-              "0101"
-            );
-          });
-        });
+        describe("from hex string", () => {
+          couples.forEach(([value, sizes]) => {
+            sizes.forEach((size) => {
+              test(`should have the right return for value: ${value} and size: ${size}`, () => {
+                const valueAsHex = EIP712_TYPE_ENCODERS.INT(
+                  value,
+                  size
+                ).toString("hex"); // Reusing valid values from a first run
 
-        describe("from hex", () => {
-          test("should return 00", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("0x00").toString("hex")).toEqual(
-              "00"
-            );
-          });
-          test("should return 01", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("0x01").toString("hex")).toEqual(
-              "01"
-            );
-          });
-          test("should return 0a", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("0x0a").toString("hex")).toEqual(
-              "0a"
-            );
-          });
-          test("should return 64", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("0x64").toString("hex")).toEqual(
-              "64"
-            );
-          });
-          test("should return 0101", () => {
-            expect(EIP712_TYPE_ENCODERS.INT("0x0101").toString("hex")).toEqual(
-              "0101"
-            );
+                const hexBuffer = EIP712_TYPE_ENCODERS.INT(
+                  "0x" + padHexString(valueAsHex),
+                  size
+                );
+
+                expect(
+                  convertTwosComplementToDecimalString(
+                    hexBuffer.toString("hex"),
+                    value
+                  )
+                ).toEqual(value);
+              });
+            });
           });
         });
       });
 
-      describe("UINT", () => {
-        describe("from string", () => {
-          test("should return 00", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("0").toString("hex")).toEqual(
-              "00"
-            );
-          });
-          test("should return 01", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("1").toString("hex")).toEqual(
-              "01"
-            );
-          });
-          test("should return 0a", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("10").toString("hex")).toEqual(
-              "0a"
-            );
-          });
-          test("should return 64", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("100").toString("hex")).toEqual(
-              "64"
-            );
-          });
-          test("should return 0101", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("257").toString("hex")).toEqual(
-              "0101"
-            );
-          });
-        });
-
-        describe("from number", () => {
-          test("should return 00", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT(0).toString("hex")).toEqual("00");
-          });
-          test("should return 01", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT(1).toString("hex")).toEqual("01");
-          });
-          test("should return 0a", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT(10).toString("hex")).toEqual("0a");
-          });
-          test("should return 64", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT(100).toString("hex")).toEqual(
-              "64"
-            );
-          });
-          test("should return 0101", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT(257).toString("hex")).toEqual(
-              "0101"
-            );
-          });
-        });
-
-        describe("from hex", () => {
-          test("should return 00", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("0x00").toString("hex")).toEqual(
-              "00"
-            );
-          });
-          test("should return 01", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("0x01").toString("hex")).toEqual(
-              "01"
-            );
-          });
-          test("should return 0a", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("0x0a").toString("hex")).toEqual(
-              "0a"
-            );
-          });
-          test("should return 64", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("0x64").toString("hex")).toEqual(
-              "64"
-            );
-          });
-          test("should return 0101", () => {
-            expect(EIP712_TYPE_ENCODERS.UINT("0x0101").toString("hex")).toEqual(
-              "0101"
-            );
-          });
-        });
+      describe.skip("UINT", () => {
+        // Testing is covered by INT
       });
 
       describe("BOOL", () => {

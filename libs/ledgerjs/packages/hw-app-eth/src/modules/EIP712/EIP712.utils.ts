@@ -6,6 +6,7 @@ import {
   MessageFilters,
 } from "./EIP712.types";
 import EIP712CAL from "@ledgerhq/cryptoassets/eip712";
+import BigNumber from "bignumber.js";
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -69,31 +70,44 @@ export const EIP712_TYPE_PROPERTIES: Record<
  * A Map of encoders to transform a value to formatted buffer
  */
 export const EIP712_TYPE_ENCODERS = {
-  INT(value: number | string | null): Buffer {
-    const failSafeValue = value ?? 0;
+  INT(value: string | null, sizeInBits = 256): Buffer {
+    const failSafeValue = value ?? "0";
 
     if (typeof failSafeValue === "string" && failSafeValue?.startsWith("0x")) {
       return hexBuffer(failSafeValue);
     }
 
-    const valueAsInt =
-      typeof failSafeValue === "string"
-        ? parseInt(failSafeValue, 10)
-        : failSafeValue;
+    let valueAsBN = new BigNumber(failSafeValue);
+    // If negative we'll use `two's complement` method to
+    // "reversibly convert a positive binary number into a negative binary number with equivalent (but negative) value".
+    // thx wikipedia
+    if (valueAsBN.lt(0)) {
+      const sizeInBytes = sizeInBits / 8;
+      // Creates BN from a buffer serving as a mask filled by maximum value 0xff
+      const maskAsBN = new BigNumber(
+        `0x${Buffer.alloc(sizeInBytes, 0xff).toString("hex")}`
+      );
 
-    const valueAsHexString = valueAsInt.toString(16);
+      // two's complement version of value
+      valueAsBN = maskAsBN.plus(valueAsBN).plus(1);
+    }
+
     const paddedHexString =
-      valueAsHexString.length % 2 ? "0" + valueAsHexString : valueAsHexString;
+      valueAsBN.toString(16).length % 2
+        ? "0" + valueAsBN.toString(16)
+        : valueAsBN.toString(16);
 
     return Buffer.from(paddedHexString, "hex");
   },
 
-  UINT(value: number | string): Buffer {
+  UINT(value: string): Buffer {
     return this.INT(value);
   },
 
   BOOL(value: number | string | boolean | null): Buffer {
-    return this.INT(typeof value === "boolean" ? Number(value) : value);
+    return this.INT(
+      typeof value === "boolean" ? Number(value).toString() : value
+    );
   },
 
   ADDRESS(value: string | null): Buffer {
