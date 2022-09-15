@@ -1,6 +1,6 @@
 import type { DeviceTransactionField } from "../../transaction";
-import type { Account, AccountLike, TransactionStatus } from "../../types";
-import type { Transaction } from "./types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField = {
   type: "stacks.memo";

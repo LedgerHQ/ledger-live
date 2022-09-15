@@ -6,6 +6,7 @@ import elrond from "../families/elrond/account";
 import filecoin from "../families/filecoin/account";
 import near from "../families/near/account";
 import polkadot from "@ledgerhq/coin-polkadot/account";
+import stacks from "../families/stacks/account";
 
 export default {
   algorand,
@@ -16,4 +17,5 @@ export default {
   filecoin,
   near,
   polkadot,
+  stacks,
 };

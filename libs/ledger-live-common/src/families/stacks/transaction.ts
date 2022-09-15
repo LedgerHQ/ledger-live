@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
 import { StacksNetworkName, StacksNetwork } from "@stacks/network/dist";
+import type { Account } from "@ledgerhq/types-live";
 
 import type { Transaction, TransactionRaw } from "./types";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
 } from "../../transaction/common";
-import type { Account } from "../../types";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 

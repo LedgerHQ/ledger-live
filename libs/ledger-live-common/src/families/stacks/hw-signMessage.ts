@@ -1,10 +1,9 @@
-import BlockstackApp from "@zondax/ledger-blockstack";
-import { log } from "@ledgerhq/logs";
+import BlockstackApp from "@zondax/ledger-stacks";
 
-import type { Resolver, Result } from "../../hw/signMessage/types";
+import type { SignMessage, Result } from "../../hw/signMessage/types";
 import { getBufferFromString, getPath, isError } from "./utils";
 
-const resolver: Resolver = async (
+const signMessage: SignMessage = async (
   transport,
   { path, message }
 ): Promise<Result> => {
@@ -27,4 +26,4 @@ const resolver: Resolver = async (
   };
 };
 
-export default resolver;
+export default { signMessage };

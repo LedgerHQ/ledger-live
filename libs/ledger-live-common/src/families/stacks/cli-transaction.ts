@@ -2,11 +2,12 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 
 import type {
-  Transaction,
   Account,
   AccountLike,
   AccountLikeArray,
-} from "../../types";
+} from "@ledgerhq/types-live";
+
+import type { Transaction } from "../../generated/types";
 
 const options = [];
 

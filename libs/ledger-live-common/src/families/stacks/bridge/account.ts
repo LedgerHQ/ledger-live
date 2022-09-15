@@ -1,8 +1,10 @@
-import BlockstackApp from "@zondax/ledger-blockstack";
+import BlockstackApp from "@zondax/ledger-stacks";
 import { c32address } from "c32check";
 import { getNonce } from "@stacks/transactions/dist/builders";
 import { txidFromData } from "@stacks/transactions/dist/utils";
 import { StacksNetwork, StacksMainnet } from "@stacks/network/dist";
+import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import {
   AmountRequired,
@@ -22,8 +24,6 @@ import {
   AddressVersion,
   TransactionVersion,
 } from "@stacks/transactions/dist/constants";
-import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
 
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 import {
@@ -34,9 +34,8 @@ import {
   Operation,
   SignOperationEvent,
   SignOperationFnSignature,
-  TransactionStatus,
-} from "../../../types";
-import { Transaction } from "../types";
+} from "@ledgerhq/types-live";
+import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape, getTxToBroadcast } from "./utils/utils";
 import { broadcastTx } from "./utils/api";
 import { getAddress } from "../../filecoin/bridge/utils/utils";
@@ -68,7 +67,7 @@ const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
   return { ...t, ...patch };
 };
 
-const sync = makeSync(getAccountShape);
+const sync = makeSync({ getAccountShape });
 
 const broadcast: BroadcastFnSignature = async ({
   signedOperation: { operation, signature },
@@ -128,7 +127,6 @@ const getTransactionStatus = async (
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
-  transaction,
 }: {
   account: AccountLike;
   parentAccount?: Account | null | undefined;
