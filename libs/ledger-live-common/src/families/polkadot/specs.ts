@@ -9,7 +9,11 @@ import type {
   Transaction,
 } from "../../families/polkadot/types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+  pickSiblings,
+} from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {
@@ -105,7 +109,9 @@ const polkadot: AppSpec<Transaction> = {
     {
       name: "bond - bondExtra",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ siblings, account, bridge }) => {
+        expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
+
         invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         invariant(canBond(account), "can't bond");
         invariant(
