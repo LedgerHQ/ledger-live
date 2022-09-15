@@ -760,7 +760,7 @@
       },
       "delegation" : {
         "title" : "Por si no lo sabías,",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "El validador de Ledger pone en participación tus {{asset}} con una comisión del {{commission}}%.",
         "cta" : "Participar con Ledger"
       }
     }
@@ -3405,6 +3405,10 @@
           "title" : "Búsqueda de cuenta extendida",
           "description" : "Busca cuentas con rutas de derivación incorrectas. Envía los activos que encuentres a una cuenta normal."
         },
+        "experimentalCountervalues" : {
+          "title" : "API experimental de contrapartes",
+          "description" : "Puede provocar que las contrapartes que se muestran de tus cuentas no sean las correctas."
+        },
         "experimentalExplorers" : {
           "title" : "API de Experimental Explorers",
           "description" : "Prueba la siguiente versión de los exploradores de cadena de bloques de Ledger. La modificación de esta configuración puede afectar el saldo de la cuenta y la sincronización, como así también la opción de envío.(<0></0>)"
@@ -4580,10 +4584,6 @@
     },
     "NetworkDown" : {
       "title" : "Parece que no hay conexión a Internet",
-      "description" : "Comprueba tu conexión a Internet."
-    },
-    "NetworkError" : {
-      "title" : "Se ha producido un error durante la sincronización",
       "description" : "Comprueba tu conexión a Internet."
     },
     "NoAddressesFound" : {
