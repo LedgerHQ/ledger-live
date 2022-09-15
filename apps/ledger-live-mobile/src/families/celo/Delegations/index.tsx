@@ -38,6 +38,7 @@ import Circle from "../../../components/Circle";
 import LText from "../../../components/LText";
 import NominateIcon from "../../../icons/Vote";
 import RevokeIcon from "../../../icons/VoteNay";
+import Info from "../../../icons/Info";
 import DelegationRow from "./Row";
 import DelegationLabelRight from "./LabelRight";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
@@ -279,6 +280,32 @@ function Delegations({ account }: Props) {
       revokeEnabled = status === "active";
     }
 
+    if (vote && !vote.activatable && !vote.revokable) {
+      return [
+        {
+          Icon: () => null,
+          disabled: true,
+        },
+        {
+          Icon: (props: IconProps) => (
+            <View style={styles.expandedInfo}>
+              <Circle {...props} bg={colors.lightFog}>
+                <Info color={colors.grey} size={24} />
+              </Circle>
+              <LText color={colors.grey} style={styles.expandedInfoText}>
+                <Trans i18nKey="celo.delegation.manageMultipleVoteWarning" />
+              </LText>
+            </View>
+          ),
+          disabled: true,
+        },
+        {
+          Icon: () => null,
+          disabled: true,
+        },
+      ];
+    }
+
     return vote
       ? [
           {
@@ -317,20 +344,7 @@ function Delegations({ account }: Props) {
           },
         ]
       : [];
-  }, [
-    vote,
-    account,
-    t,
-    onActivate,
-    onRevoke,
-    onWithdraw,
-    onVote,
-    colors.lightFog,
-    colors.fog,
-    colors.grey,
-    colors.yellow,
-    colors.alert,
-  ]);
+  }, [vote, account, t, onActivate, onRevoke, onWithdraw, onVote]);
 
   return (
     <View style={styles.root}>
@@ -430,7 +444,6 @@ const styles = StyleSheet.create({
     alignContent: "center",
     paddingVertical: 16,
     marginBottom: 16,
-
     borderRadius: 4,
   },
   label: {
@@ -465,5 +478,15 @@ const styles = StyleSheet.create({
   icon: {
     alignSelf: "flex-end",
     marginStart: 4,
+  },
+  expandedInfo: {
+    width: 280,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyItems: "center",
+  },
+  expandedInfoText: {
+    textAlign: "justify",
   },
 });

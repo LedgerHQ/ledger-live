@@ -3686,7 +3686,8 @@
       },
       "delegationUnavailable": {
         "title": "Insufficient Locked Funds"
-      }
+      },
+      "manageMultipleVoteWarning": "You need to Activate or Revoke other votes in the same validator group before managing this vote."
     },
     "manage": {
       "title": "Manage assets",
