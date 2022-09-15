@@ -271,5 +271,74 @@ describe.only("EIP712", () => {
         v: 27,
       });
     });
+
+    test("should sign correctly the 11.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(
+        getFilePath("apdu", "11-filtered"),
+        "utf-8"
+      );
+      const message = await fs
+        .readFile(getFilePath("message", "11"), "utf-8")
+        .then(JSON.parse);
+
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(`${apdusBuffer}`)
+      );
+
+      const eth = new Eth(transport);
+      const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+
+      expect(result).toEqual({
+        r: "d0259bc5208c369532c6161486d7533966d382fc725bcb781a190c0f1a53f771",
+        s: "7ebbf21c5569d2d2a480615d529b431d3b0dfce863f723d21e3370e860a8965c",
+        v: 28,
+      });
+    });
+
+    test("should sign correctly the 12.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(
+        getFilePath("apdu", "12-filtered"),
+        "utf-8"
+      );
+      const message = await fs
+        .readFile(getFilePath("message", "12"), "utf-8")
+        .then(JSON.parse);
+
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(`${apdusBuffer}`)
+      );
+
+      const eth = new Eth(transport);
+      const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+
+      expect(result).toEqual({
+        r: "4aef3aaff62fa0731f4e661c4dbb92a48f8c12d7225219fad74b55ef2ad0045b",
+        s: "46d7e01804c33a99c4dc7dd7b2ac5e63d07ee4641b01cd3a598cc91d74bbe3e0",
+        v: 28,
+      });
+    });
+
+    test("should sign correctly the 13.json sample message", async () => {
+      const apdusBuffer = await fs.readFile(
+        getFilePath("apdu", "13-filtered"),
+        "utf-8"
+      );
+      const message = await fs
+        .readFile(getFilePath("message", "13"), "utf-8")
+        .then(JSON.parse);
+
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(`${apdusBuffer}`)
+      );
+
+      const eth = new Eth(transport);
+      const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
+
+      expect(result).toEqual({
+        r: "daf758e25d9d7769adcab19c4d64953983d29fb44041e0ba4263a9d4686a3de3",
+        s: "03c52a566b18568ba71576e768ed321a6a90605365fe9766387db3bd24bebe96",
+        v: 28,
+      });
+    });
   });
 });
