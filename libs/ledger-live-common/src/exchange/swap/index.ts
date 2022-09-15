@@ -100,7 +100,7 @@ const swapProviders: Record<string, SwapProviderConfig> = {
 };
 
 const getProviderConfig = (providerName: string): SwapProviderConfig => {
-  const res = swapProviders[providerName.toLowerCase()];
+  const res = swapProviders[providerName.toLowerCase()] || {};
 
   if (!res) {
     throw new Error(`Unknown partner ${providerName}`);
@@ -169,6 +169,8 @@ const countries = {
   US: "United States",
 };
 
+const dex = ["oneinch", "paraswap"];
+
 const swapBackendErrorCodes = {
   "100": JSONRPCResponseError,
   "101": JSONDecodeError,
@@ -206,4 +208,5 @@ export {
   checkQuote,
   USStates,
   countries,
+  dex,
 };
