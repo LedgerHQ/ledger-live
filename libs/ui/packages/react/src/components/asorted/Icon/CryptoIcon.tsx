@@ -42,12 +42,21 @@ const Circle = styled(Flex).attrs((p: { size: number; backgroundColor: string })
   backgroundColor: p.backgroundColor,
 }))<{ size: number }>``;
 
-const TokenContainer = styled(Flex).attrs(() => ({
-  position: "absolute",
-  bottom: "-2px",
-  right: "-5px",
-}))<{ size: number }>``;
-
+const TokenContainer = styled(Flex).attrs(
+  (p: { size: number; borderColor: string; backgroundColor: string }) => ({
+    position: "absolute",
+    bottom: "-2px",
+    right: "-5px",
+    alignItems: "center",
+    justifyContent: "center",
+    heigth: p.size,
+    width: p.size,
+    borderRadius: "50%",
+    border: `2px solid ${p.borderColor}`,
+    backgroundColor: p.backgroundColor,
+    zIndex: 0,
+  }),
+)<{ size: number }>``;
 type IconBoxProps = {
   children: JSX.Element;
 } & Props;
@@ -71,8 +80,12 @@ export const IconBox = ({
       <Container size={size}>
         {children}
         {tokenIcon && (
-          <TokenContainer size={size / 1.5}>
-            <Component size={size} color={contrastedColor} />
+          <TokenContainer
+            size={size / 3}
+            borderColor={colors.background.main}
+            backgroundColor={contrastedColor}
+          >
+            <Component size={size} color={colors.background.main} />
           </TokenContainer>
         )}
       </Container>
@@ -114,7 +127,7 @@ const CryptoIcon = ({
 
     return (
       <IconBox size={size} tokenIcon={tokenIcon} color={color} disabled={disabled} name={name}>
-        {circleIcon ? (
+        {tokenIcon || circleIcon ? (
           <Circle backgroundColor={contrastedColor} size={size}>
             <Component size={size} color={colors.background.main} />
           </Circle>
