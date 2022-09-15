@@ -11,7 +11,10 @@ test("Settings", async ({ page }) => {
 
   await test.step("go to settings", async () => {
     await layout.goToSettings();
-    await expect(page).toHaveScreenshot("settings-general-page.png");
+    // await expect(page).toHaveScreenshot("settings-general-page.png");
+    await settingsPage.changeCounterValue();
+    await settingsPage.changeCounterValue();
+    await expect(settingsPage.counterValueSelector).toHaveText("Euro");
   });
 
   await test.step("go to settings -> accounts", async () => {
