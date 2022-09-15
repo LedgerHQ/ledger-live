@@ -45,7 +45,7 @@ type Props = {
   currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
   currency: Currency;
-  areAccountsEmpty: boolean;
+  accountsEmpty?: boolean;
   currencyBalance: number;
 };
 
@@ -55,7 +55,7 @@ function AssetCentricGraphCard({
   currentPositionY,
   graphCardEndPosition,
   currency,
-  areAccountsEmpty,
+  accountsEmpty,
   currencyBalance,
 }: Props) {
   const { colors } = useTheme();
@@ -73,11 +73,11 @@ function AssetCentricGraphCard({
     if (hoveredItem) {
       return { value: undefined, countervalue: hoveredItem.value };
     }
-    if (areAccountsEmpty) {
+    if (accountsEmpty) {
       return { value: 0, countervalue: 0 };
     }
     return { value: currencyBalance, countervalue: currencyUnitValue.value };
-  }, [hoveredItem, areAccountsEmpty, currencyBalance, currencyUnitValue.value]);
+  }, [hoveredItem, accountsEmpty, currencyBalance, currencyUnitValue.value]);
 
   const items = [
     {
@@ -228,26 +228,30 @@ function AssetCentricGraphCard({
           </Flex>
         </Animated.View>
       </Flex>
-      <Flex onTouchEnd={handleGraphTouch}>
-        <Graph
-          isInteractive={isAvailable}
-          isLoading={!isAvailable}
-          height={110}
-          width={getWindowDimensions().width + 1}
-          color={graphColor}
-          data={balanceHistory}
-          onItemHover={setHoverItem}
-          mapValue={!useCounterValue ? mapCounterValue : mapCryptoValue}
-          fill={colors.background.main}
-        />
-      </Flex>
-      <Flex paddingTop={6} background={colors.background.main}>
-        <GraphTabs
-          activeIndex={activeRangeIndex}
-          onChange={updateTimeRange}
-          labels={rangesLabels}
-        />
-      </Flex>
+      {accountsEmpty ? null : (
+        <>
+          <Flex onTouchEnd={handleGraphTouch}>
+            <Graph
+              isInteractive={isAvailable}
+              isLoading={!isAvailable}
+              height={110}
+              width={getWindowDimensions().width + 1}
+              color={graphColor}
+              data={balanceHistory}
+              onItemHover={setHoverItem}
+              mapValue={!useCounterValue ? mapCounterValue : mapCryptoValue}
+              fill={colors.background.main}
+            />
+          </Flex>
+          <Flex paddingTop={6} background={colors.background.main}>
+            <GraphTabs
+              activeIndex={activeRangeIndex}
+              onChange={updateTimeRange}
+              labels={rangesLabels}
+            />
+          </Flex>
+        </>
+      )}
     </Flex>
   );
 }

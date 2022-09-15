@@ -51,7 +51,6 @@ import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
-import AddAssetsCard from "./AddAssetsCard";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -141,11 +140,6 @@ function PortfolioScreen({ navigation }: Props) {
       postOnboardingVisible && (
         <Box m={6}>
           <PostOnboardingEntryPointCard />
-        </Box>
-      ),
-      !showAssets && (
-        <Box mx={6} mt={3}>
-          <AddAssetsCard />
         </Box>
       ),
       <Box mt={3} onLayout={onPortfolioCardLayout}>

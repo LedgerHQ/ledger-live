@@ -83,7 +83,7 @@ const AssetScreen = ({ route }: Props) => {
     return () => selectCurrency();
   }, [currency, selectCurrency]);
 
-  const areCryptoAccountsEmpty = useMemo(
+  const cryptoAccountsEmpty = useMemo(
     () => cryptoAccounts.every(account => isAccountEmpty(account)),
     [cryptoAccounts],
   );
@@ -132,7 +132,7 @@ const AssetScreen = ({ route }: Props) => {
           graphCardEndPosition={graphCardEndPosition}
           currency={currency}
           currencyBalance={currencyBalance}
-          areAccountsEmpty={areCryptoAccountsEmpty}
+          accountsEmpty={cryptoAccountsEmpty}
         />
       </Box>,
       <SectionContainer px={6}>
@@ -145,15 +145,14 @@ const AssetScreen = ({ route }: Props) => {
           accounts={cryptoAccounts}
           defaultAccount={defaultAccount}
         />
-        {areCryptoAccountsEmpty ? (
+        {cryptoAccountsEmpty ? (
           <EmptyAccountCard currencyTicker={currency.ticker} />
         ) : null}
       </SectionContainer>,
       <SectionContainer
         px={6}
         isLast={
-          (!isCryptoCurrency || !selectedCoinData?.price) &&
-          areCryptoAccountsEmpty
+          (!isCryptoCurrency || !selectedCoinData?.price) && cryptoAccountsEmpty
         }
       >
         <SectionTitle
@@ -171,7 +170,7 @@ const AssetScreen = ({ route }: Props) => {
       </SectionContainer>,
       ...(isCryptoCurrency && selectedCoinData?.price
         ? [
-            <SectionContainer px={6} isLast={areCryptoAccountsEmpty}>
+            <SectionContainer px={6} isLast={cryptoAccountsEmpty}>
               <SectionTitle
                 title={t("portfolio.marketPriceSection.title", {
                   currencyTicker: currency.ticker,
@@ -187,7 +186,7 @@ const AssetScreen = ({ route }: Props) => {
             </SectionContainer>,
           ]
         : []),
-      ...(!areCryptoAccountsEmpty
+      ...(!cryptoAccountsEmpty
         ? [
             <SectionContainer px={6} isLast>
               <SectionTitle title={t("analytics.operations.title")} />
@@ -204,7 +203,7 @@ const AssetScreen = ({ route }: Props) => {
       graphCardEndPosition,
       currency,
       currencyBalance,
-      areCryptoAccountsEmpty,
+      cryptoAccountsEmpty,
       t,
       cryptoAccounts,
       isCryptoCurrency,

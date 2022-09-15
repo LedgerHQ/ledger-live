@@ -61,11 +61,6 @@ function ReadOnlyGraphCard({ counterValueCurrency, headerText }: Props) {
           </>
         </Flex>
       </Flex>
-
-      <Graph
-        width={getWindowDimensions().width - 32}
-        color={colors.neutral.c40}
-      />
     </Flex>
   );
 }

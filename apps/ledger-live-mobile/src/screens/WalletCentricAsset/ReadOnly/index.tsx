@@ -93,7 +93,7 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
           graphCardEndPosition={graphCardEndPosition}
           currency={currency}
           currencyBalance={0}
-          areAccountsEmpty={true}
+          accountsEmpty={true}
         />
       </Box>,
       <SectionContainer px={6}>
