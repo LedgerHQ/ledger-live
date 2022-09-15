@@ -56,7 +56,6 @@ export function Modal({
 
   const onError = useCallback(
     ({ error, swapId }) => {
-      onClose();
       if (!exchangeRate) {
         return;
       }
@@ -65,7 +64,7 @@ export function Modal({
 
       setError(error);
     },
-    [exchangeRate, onClose],
+    [exchangeRate],
   );
 
   const resetError = useCallback(() => {
