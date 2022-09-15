@@ -67,4 +67,5 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "stacks",
 ]);
