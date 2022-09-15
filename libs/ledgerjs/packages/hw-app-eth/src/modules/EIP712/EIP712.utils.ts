@@ -5,7 +5,7 @@ import {
   EIP712MessageTypesEntry,
   MessageFilters,
 } from "./EIP712.types";
-import EIP712CAL from "@ledgerhq/cryptoassets/eip712";
+import EIP712CAL from "@ledgerhq/cryptoassets/data/eip712";
 import BigNumber from "bignumber.js";
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";

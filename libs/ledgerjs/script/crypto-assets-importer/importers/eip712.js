@@ -10,10 +10,10 @@ module.exports = {
     "dapps/ethereum_ropsten",
     "dapps/ethereum_goerli",
   ],
-  output: "eip712.js",
+  output: "data/eip712.js",
 
   outputTemplate: ([data]) => {
-    return `module.exports = ${JSON.stringify(data ? data : null)}`;
+    return `module.exports = ${JSON.stringify(data ? data : {})};\n`;
   },
 
   loader: async ({ signatureFolder, id }) => {
