@@ -760,7 +760,7 @@
       },
       "delegation" : {
         "title" : "您知道吗……",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "使用 Ledger 验证器权益质押 {{asset}}，仅需 {{commission}}% 的佣金。",
         "cta" : "使用 Ledger 进行权益质押"
       }
     }
@@ -3405,6 +3405,10 @@
           "title" : "扩展的账户搜索",
           "description" : "扫描有错误派生路径的账户。请将可能找到的资产发送到一个常规账户。"
         },
+        "experimentalCountervalues" : {
+          "title" : "Experimental countervalues API",
+          "description" : "This may cause the countervalues displayed for your accounts to become incorrect."
+        },
         "experimentalExplorers" : {
           "title" : "实验性浏览器 API 应用程序界面",
           "description" : "试用即将面世的新版 Ledger 区块链浏览器更改此设置可能会影响账户余额和同步以及发送功能。\n(<0></0>)"
@@ -4580,10 +4584,6 @@
     },
     "NetworkDown" : {
       "title" : "抱歉，网络连接似乎已断开",
-      "description" : "请检查您的网络连接。"
-    },
-    "NetworkError" : {
-      "title" : "同步期间发生错误",
       "description" : "请检查您的网络连接。"
     },
     "NoAddressesFound" : {
