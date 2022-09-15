@@ -1,0 +1,70 @@
+name: "[Testing] 'Dynamic cal importer'"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - LIVE-2174-dynamic-cal
+
+concurrency:
+  group: bot-dyn-cal
+
+jobs:
+  start-runner:
+    name: "start ec2 instance (Linux)"
+    if: ${{ always() }}
+    uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  stop-runner:
+    name: "stop ec2 instance (Linux)"
+    needs: [start-runner, run-bot]
+    uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
+    if: ${{ always() }}
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+
+  run-bot:
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    needs: [start-runner]
+    steps:
+      - name: prepare runner
+        run: |
+          sudo growpart /dev/nvme0n1 1
+          sudo resize2fs /dev/nvme0n1p1
+      - uses: actions/checkout@v3
+      - name: Retrieving crypto-assets
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          repository: LedgerHQ/crypto-assets
+          token: ${{ secrets.CI_BOT_TOKEN }}
+          path: crypto-assets
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: install and build
+        continue-on-error: true
+        run: |
+          pnpm i --filter="live-cli..." --filter="ledger-live" --filter="ledger-libs" --frozen-lockfile
+          pnpm build:ljs
+        shell: bash
+      - name: run script
+        run: |
+          mkdir calreport
+          node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets
+      - name: upload logs to github artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: calreport
+          path: libs/ledgerjs/packages/cryptoassets/data/

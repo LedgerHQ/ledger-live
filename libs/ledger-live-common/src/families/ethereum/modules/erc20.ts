@@ -12,7 +12,16 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "../../../account";
-import { findTokenById, formatCurrencyUnit } from "../../../currencies";
+import type {
+  TokenCurrency,
+  CryptoCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import {
+  findTokenById,
+  formatCurrencyUnit,
+  fetchERC20Tokens,
+  addTokens,
+} from "../../../currencies";
 import { getAccountCapabilities } from "../../../compound/logic";
 import { CompoundLowerAllowanceOfActiveAccountError } from "../../../errors";
 import { DeviceTransactionField } from "../../../transaction";
@@ -144,3 +153,23 @@ const erc20approve: ModeModule = {
 export const modes: Record<Modes, ModeModule> = {
   "erc20.approve": erc20approve,
 };
+
+export async function preload(
+  currency: CryptoCurrency
+): Promise<TokenCurrency[] | null | undefined> {
+  if (currency.id !== "ethereum") {
+    return Promise.resolve(null);
+  }
+
+  const tokens = await fetchERC20Tokens();
+  addTokens(tokens);
+  return tokens;
+}
+
+export function hydrate(
+  value: TokenCurrency[] | null | undefined,
+  currency: CryptoCurrency
+) {
+  if (currency.id !== "ethereum" || !value) return;
+  addTokens(value);
+}

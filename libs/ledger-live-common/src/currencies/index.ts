@@ -27,9 +27,11 @@ import {
   findTokenById,
   findTokenByAddress,
   hasTokenId,
-  getTokenById,
   findCompoundToken,
   getAbandonSeedAddress,
+  getTokenById,
+  tokenListByIds,
+  addTokens,
 } from "@ledgerhq/cryptoassets";
 export * from "./support";
 export * from "./helpers";
@@ -43,6 +45,7 @@ import { formatShort } from "./formatShort";
 import { valueFromUnit } from "./valueFromUnit";
 import { getCurrencyColor } from "./color";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { preloadTokens, fetchERC20Tokens } from "./tokens";
 
 const findCurrencyByTicker = (ticker: string): Currency | null | undefined =>
   findCryptoCurrencyByTicker(ticker) ||
@@ -66,7 +69,6 @@ export {
   findCryptoCurrencyByKeyword,
   findFiatCurrencyByTicker,
   hasFiatCurrencyTicker,
-  listTokens,
   listTokensForCryptoCurrency,
   listTokenTypesForCryptoCurrency,
   findTokenByAddress,
@@ -88,4 +90,9 @@ export {
   sanitizeValueString,
   getCurrencyColor,
   findCompoundToken,
+  listTokens,
+  preloadTokens,
+  tokenListByIds,
+  fetchERC20Tokens,
+  addTokens,
 };

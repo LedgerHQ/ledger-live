@@ -644,6 +644,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "use the staging URL for the learn page",
   },
+  DYNAMIC_CAL_ERC_20_URL: {
+    def: "", // to be defined once we got bucket s3
+    parser: stringParser,
+    desc: "bucket s3 of the dynamic cal ERC20 list",
+  },
 };
 
 const getDefinition = (name: string): EnvDef<any> | null | undefined =>

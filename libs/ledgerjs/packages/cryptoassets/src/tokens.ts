@@ -12,7 +12,7 @@ import asatokens from "../data/asa";
 import esdttokens from "../data/esdt";
 import cardanoNativeTokens from "../data/cardanoNative";
 import stellarTokens from "../data/stellar";
-//import spltokens from "../data/spl";
+import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
 const tokensArrayWithDelisted: TokenCurrency[] = [];
@@ -31,7 +31,7 @@ addTokens(asatokens.map(convertAlgorandASATokens));
 addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 addTokens(stellarTokens.map(convertStellarTokens));
-//addTokens(spltokens.map(convertSplTokens));
+addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
   withDelisted: boolean;
 };
@@ -47,6 +47,10 @@ export function listTokens(
 ): TokenCurrency[] {
   const { withDelisted } = { ...defaultTokenListOptions, ...options };
   return withDelisted ? tokensArrayWithDelisted : tokensArray;
+}
+
+export function tokenListByIds() {
+  return tokensById;
 }
 
 /**
@@ -153,7 +157,7 @@ function comparePriority(a: TokenCurrency, b: TokenCurrency) {
   return Number(!!b.disableCountervalue) - Number(!!a.disableCountervalue);
 }
 
-function addTokens(list: TokenCurrency[]) {
+export function addTokens(list: TokenCurrency[]) {
   list.forEach((token) => {
     if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
@@ -184,7 +188,7 @@ function addTokens(list: TokenCurrency[]) {
   });
 }
 
-function convertERC20([
+export function convertERC20([
   parentCurrencyId,
   token,
   ticker,
