@@ -1,6 +1,5 @@
 import React, { useState, useCallback, memo, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -11,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
-import { switchCountervalueFirst, useTimeRange } from "../actions/settings";
+import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import getWindowDimensions from "../logic/getWindowDimensions";
@@ -21,7 +20,6 @@ import ParentCurrencyIcon from "./ParentCurrencyIcon";
 import FormatDate from "./FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "../analytics";
-import { countervalueFirstSelector } from "../reducers/settings";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
@@ -59,7 +57,6 @@ function AssetCentricGraphCard({
   currencyBalance,
 }: Props) {
   const { colors } = useTheme();
-  const dispatch = useDispatch();
   const [, setTimeRange, timeRangeItems] = useTimeRange();
   const { countervalueChange, balanceHistory } = assetPortfolio;
 
@@ -90,10 +87,6 @@ function AssetCentricGraphCard({
       joinFragmentsSeparator: "",
     },
   ];
-  const useCounterValue = useSelector(countervalueFirstSelector);
-  if (useCounterValue || hoveredItem) {
-    items.reverse();
-  }
 
   const updateTimeRange = useCallback(
     index => {
@@ -105,19 +98,7 @@ function AssetCentricGraphCard({
     [setTimeRange, timeRangeItems],
   );
 
-  const onSwitchAccountCurrency = useCallback(() => {
-    track("button_clicked", {
-      button: "Switch Account Currency",
-      countervalue: useCounterValue,
-    });
-    dispatch(switchCountervalueFirst());
-  }, [dispatch, useCounterValue]);
-
-  const mapCryptoValue = useCallback(d => d.value || 0, []);
-  const mapCounterValue = useCallback(
-    d => (d.countervalue ? d.countervalue : 0),
-    [],
-  );
+  const mapCounterValue = useCallback(d => d.value || 0, []);
 
   const range = assetPortfolio.range;
   const isAvailable = assetPortfolio.balanceAvailable;
@@ -164,10 +145,7 @@ function AssetCentricGraphCard({
         <Animated.View style={[BalanceOpacity]}>
           <Flex alignItems="center">
             <ParentCurrencyIcon size={32} currency={currency} />
-            <TouchableOpacity
-              onPress={onSwitchAccountCurrency}
-              style={{ alignItems: "center" }}
-            >
+            <Flex alignItems="center">
               <Flex>
                 {!balanceHistory ? (
                   <BigPlaceholder mt="8px" />
@@ -224,7 +202,7 @@ function AssetCentricGraphCard({
                   </Flex>
                 )}
               </Flex>
-            </TouchableOpacity>
+            </Flex>
           </Flex>
         </Animated.View>
       </Flex>
@@ -239,7 +217,7 @@ function AssetCentricGraphCard({
               color={graphColor}
               data={balanceHistory}
               onItemHover={setHoverItem}
-              mapValue={!useCounterValue ? mapCounterValue : mapCryptoValue}
+              mapValue={mapCounterValue}
               fill={colors.background.main}
             />
           </Flex>

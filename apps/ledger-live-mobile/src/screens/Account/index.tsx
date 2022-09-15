@@ -40,6 +40,7 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import EmptyAccountCard from "./EmptyAccountCard";
+import useAccountActions from "./hooks/useAccountActions";
 
 type Props = {
   navigation: any;
@@ -127,6 +128,8 @@ const AccountScreenInner = ({
     setGraphCardEndPosition(y + height / 10);
   }, []);
 
+  const secondaryActions = useAccountActions({ account, parentAccount });
+
   const { listHeaderComponents } = useMemo(
     () =>
       getListHeaderComponents({
@@ -145,23 +148,27 @@ const AccountScreenInner = ({
         isCollapsed,
         setIsCollapsed,
         onAccountCardLayout,
+        colors,
+        secondaryActions,
         t,
       }),
     [
       account,
-      onAccountPress,
-      compoundSummary,
-      counterValueCurrency,
+      parentAccount,
       countervalueAvailable,
+      useCounterValue,
+      range,
+      history,
       countervalueChange,
       cryptoChange,
-      history,
+      onAccountPress,
+      counterValueCurrency,
+      onSwitchAccountCurrency,
+      compoundSummary,
       isCollapsed,
       onAccountCardLayout,
-      onSwitchAccountCurrency,
-      parentAccount,
-      range,
-      useCounterValue,
+      colors,
+      secondaryActions,
       t,
     ],
   );

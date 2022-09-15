@@ -8,10 +8,9 @@ import { AccountLike, Account, ValueChange } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 
-import { Box } from "@ledgerhq/native-ui";
+import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 
-import { useTheme } from "styled-components/native";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -24,11 +23,12 @@ import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
-import useAccountActions from "./hooks/useAccountActions";
+
 import {
   FabAccountActions,
   FabAccountMainActions,
 } from "../../components/FabActions/actionsList/account";
+import { ActionButtonEvent } from "../../components/FabActions";
 
 type Props = {
   account?: AccountLike;
@@ -44,8 +44,19 @@ type Props = {
   onSwitchAccountCurrency: () => void;
   compoundSummary?: CompoundAccountSummary;
   onAccountCardLayout: any;
+  colors: ColorPalette;
+  secondaryActions: ActionButtonEvent[];
   t: any;
 };
+
+type MaybeComponent =
+  | React.FunctionComponent<
+      Partial<{
+        account?: AccountLike;
+        parentAccount?: Account;
+      }>
+    >
+  | undefined;
 
 export function getListHeaderComponents({
   account,
@@ -61,6 +72,8 @@ export function getListHeaderComponents({
   onSwitchAccountCurrency,
   compoundSummary,
   onAccountCardLayout,
+  colors,
+  secondaryActions,
   t,
 }: Props): {
   listHeaderComponents: ReactNode[];
@@ -70,27 +83,36 @@ export function getListHeaderComponents({
     return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const family: string = mainAccount.currency.family;
 
   const empty = isAccountEmpty(account);
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
-  const AccountHeader = perFamilyAccountHeader[mainAccount.currency.family];
+  const AccountHeader = (
+    perFamilyAccountHeader as Record<string, MaybeComponent>
+  )[family];
+  const AccountHeaderRendered =
+    AccountHeader && AccountHeader({ account, parentAccount });
 
-  const AccountBodyHeader =
-    perFamilyAccountBodyHeader[mainAccount.currency.family];
+  const AccountBodyHeader = (
+    perFamilyAccountBodyHeader as Record<string, MaybeComponent>
+  )[family];
   // Pre-render component, cause we need to know if it return null so we don't render an empty border container (Tezos was doing it)
   const AccountBodyHeaderRendered =
     AccountBodyHeader && AccountBodyHeader({ account, parentAccount });
 
-  const AccountSubHeader =
-    perFamilyAccountSubHeader[mainAccount.currency.family];
+  const AccountSubHeader = (
+    perFamilyAccountSubHeader as Record<string, MaybeComponent>
+  )[family];
 
-  const AccountBalanceSummaryFooter =
-    perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
+  const AccountBalanceSummaryFooter = (
+    perFamilyAccountBalanceSummaryFooter as Record<string, MaybeComponent>
+  )[family];
+  const AccountBalanceSummaryFooterRendered =
+    AccountBalanceSummaryFooter &&
+    AccountBalanceSummaryFooter({ account, parentAccount });
 
   const stickyHeaderIndices = empty ? [] : [0];
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { colors } = useTheme();
 
   return {
     listHeaderComponents: [
@@ -106,13 +128,12 @@ export function getListHeaderComponents({
           countervalueAvailable={countervalueAvailable}
           counterValueCurrency={counterValueCurrency}
           onSwitchAccountCurrency={onSwitchAccountCurrency}
-          countervalueChange={countervalueChange}
           counterValueUnit={counterValueCurrency.units[0]}
           cryptoCurrencyUnit={getAccountUnit(account)}
           parentAccount={parentAccount}
         />
       </Box>,
-      <Header accountId={account.id} />,
+      <Header />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main}>
           <AccountSubHeader />
@@ -129,29 +150,26 @@ export function getListHeaderComponents({
         />
       </SectionContainer>,
       ...(!empty &&
-      (AccountBalanceSummaryFooter ||
+      (AccountHeaderRendered ||
+        AccountBalanceSummaryFooterRendered ||
         (compoundSummary && account.type === "TokenAccount") ||
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useAccountActions({ account, parentAccount }).secondaryActions.length)
+        secondaryActions.length > 0)
         ? [
             <SectionContainer>
+              <SectionTitle
+                title={t("account.earn")}
+                containerProps={{ mx: 6, mb: 6 }}
+              />
               <Box>
-                <SectionTitle
-                  title={t("account.earn")}
-                  containerProps={{ mx: 6, mb: 6 }}
-                />
-                {AccountHeader && (
+                {AccountHeaderRendered && (
                   <Box mx={6} mb={6}>
-                    <AccountHeader
-                      account={account}
-                      parentAccount={parentAccount}
-                    />
+                    {AccountHeaderRendered}
                   </Box>
                 )}
-                {AccountBalanceSummaryFooter && (
-                  <Box mb={6}>
-                    <AccountBalanceSummaryFooter account={account} />
-                  </Box>
+                {AccountBalanceSummaryFooterRendered && (
+                  <>
+                    <Box mb={6}>{AccountBalanceSummaryFooterRendered}</Box>
+                  </>
                 )}
                 {compoundSummary && account.type === "TokenAccount" && (
                   <Box>

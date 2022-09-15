@@ -33,7 +33,10 @@ import EmptyAccountCard from "../Account/EmptyAccountCard";
 import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
-import { usePortfolio } from "../../actions/portfolio";
+import {
+  usePortfolio,
+  useBalanceHistoryWithCountervalue,
+} from "../../actions/portfolio";
 import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
@@ -72,6 +75,10 @@ const AssetScreen = ({ route }: Props) => {
     [cryptoAccounts],
   );
 
+  const counterValueCurrency: Currency = useSelector(
+    counterValueCurrencySelector,
+  );
+
   const assetPortfolio = usePortfolio(cryptoAccounts, {
     flattenSourceAccounts: false,
   });
@@ -86,9 +93,6 @@ const AssetScreen = ({ route }: Props) => {
   const cryptoAccountsEmpty = useMemo(
     () => cryptoAccounts.every(account => isAccountEmpty(account)),
     [cryptoAccounts],
-  );
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
   );
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(60);
@@ -206,6 +210,7 @@ const AssetScreen = ({ route }: Props) => {
       cryptoAccountsEmpty,
       t,
       cryptoAccounts,
+      defaultAccount,
       isCryptoCurrency,
       selectedCoinData,
       onAddAccount,
