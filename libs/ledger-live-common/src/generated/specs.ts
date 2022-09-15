@@ -13,6 +13,7 @@ import osmosis from "../families/osmosis/specs";
 import polkadot from "../families/polkadot/specs";
 import ripple from "../families/ripple/specs";
 import solana from "../families/solana/specs";
+import stacks from "../families/stacks/specs";
 import stellar from "../families/stellar/specs";
 import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
@@ -33,6 +34,7 @@ export default {
   polkadot,
   ripple,
   solana,
+  stacks,
   stellar,
   tezos,
   tron,

@@ -12,6 +12,7 @@ import osmosis from "../families/osmosis/cli-transaction";
 import polkadot from "../families/polkadot/cli-transaction";
 import ripple from "../families/ripple/cli-transaction";
 import solana from "../families/solana/cli-transaction";
+import stacks from "../families/stacks/cli-transaction";
 import stellar from "../families/stellar/cli-transaction";
 import tezos from "../families/tezos/cli-transaction";
 import tron from "../families/tron/cli-transaction";
@@ -31,6 +32,7 @@ export default {
   polkadot,
   ripple,
   solana,
+  stacks,
   stellar,
   tezos,
   tron,
