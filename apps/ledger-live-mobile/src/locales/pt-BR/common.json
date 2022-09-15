@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Desculpe, Bluetooth desativado",
-      "description" : "Ative o Bluetooth nas configurações do seu telefone. (Estado {{state}})"
+      "description" : "Ative o Bluetooth nas configurações do seu telefone."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "As atualizações de firmware só são suportadas para conexões com fio"
@@ -740,7 +740,8 @@
     "noInfos" : "A Ledger não acessa suas informações de localização."
   },
   "permissions" : {
-    "open" : "Abrir permissões do aplicativo"
+    "open" : "Abrir permissões do aplicativo",
+    "nearbyDevicesPermissionDenied" : "Para emparelhar com Bluetooth, autorize o aplicativo Ledger Live a procurar dispositivos próximos."
   },
   "fees" : {
     "speed" : {
@@ -2273,11 +2274,8 @@
     "debug" : {
       "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
-      "featureFlagsOverride" : "Sobrepor",
       "featureFlagsEdit" : "Editar",
-      "featureFlagsRestore" : "Restaurar",
-      "featureFlagsDisplayValue" : "Exibir Valor",
-      "featureFlagsHideValue" : "Ocultar Valor"
+      "featureFlagsRestore" : "Restaurar"
     }
   },
   "notifications" : {
