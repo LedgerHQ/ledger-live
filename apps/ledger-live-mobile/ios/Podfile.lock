@@ -961,7 +961,7 @@ EXTERNAL SOURCES:
   react-native-version-number:
     :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-video:
-    :path: "../../../node_modules/.pnpm/react-native-video@5.2.0_patch_hash=lojvl6twgoj4rxeqeytmq4uduq/node_modules/react-native-video"
+    :path: "../../../node_modules/.pnpm/react-native-video@5.2.0/node_modules/react-native-video"
   react-native-webview:
     :path: "../../../node_modules/.pnpm/react-native-webview@11.26.1_patch_hash=no3vzt46yoww4w2wn7ciytbsoy_react-native@0.71.6_react@18.0.0/node_modules/react-native-webview"
   React-perflogger:
