@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/errors";
 import { AnchorMode } from "@stacks/transactions/dist";
 
-import type { DatasetTest } from "../../types";
+import type { DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { fromTransactionRaw } from "./transaction";
 
