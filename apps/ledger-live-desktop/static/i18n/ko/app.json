@@ -977,7 +977,7 @@
       "terms" : {
         "title" : "암호화폐 대출",
         "subtitle" : "컴파운드 프로토콜에서 자산 대출",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "컴파운드 프로토콜로 이더리움 네트워크에서 자산을 대출해 주거나 받을 수 있습니다. Ledger 계정에서 바로 자산을 대출해 주고 이자를 받을 수 있습니다.",
         "switchLabel" : "<1></1><0>이용 약관</0><1>을 읽고 동의합니다.</1>"
       },
       "steps" : {
@@ -3145,7 +3145,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "위임을 성공적으로 활성화했습니다."
               }
             }
           }
@@ -3157,7 +3157,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "위임을 성공적으로 재활성화했습니다."
               }
             }
           }
@@ -3404,6 +3404,10 @@
         "scanForInvalidPaths" : {
           "title" : "확장 계정 검색",
           "description" : "잘못된 파생 경로가 있는 계정을 스캔합니다. 잠재적으로 찾은 자산을 일반 계정으로 보내세요."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Experimental countervalues API",
+          "description" : "This may cause the countervalues displayed for your accounts to become incorrect."
         },
         "experimentalExplorers" : {
           "title" : "실험적 탐색기 API",
@@ -4580,10 +4584,6 @@
     },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
-      "description" : "인터넷 연결을 확인하세요."
-    },
-    "NetworkError" : {
-      "title" : "동기화 중 오류가 발생했습니다",
       "description" : "인터넷 연결을 확인하세요."
     },
     "NoAddressesFound" : {
