@@ -39,14 +39,22 @@ const ProviderContainer: ThemedComponent<{}> = styled(Box).attrs({
 `;
 
 export type Props = {
-  value: ExchangeRate,
+  value?: ExchangeRate,
   onSelect: ExchangeRate => void,
   selected?: boolean,
-  fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
-  toCurrency: $PropertyType<SwapSelectorStateType, "currency">,
+  fromCurrency?: $PropertyType<SwapSelectorStateType, "currency">,
+  toCurrency?: $PropertyType<SwapSelectorStateType, "currency">,
+  centralized?: boolean,
 };
 
-function Rate({ value, selected, onSelect, fromCurrency, toCurrency }: Props) {
+function Rate({
+  value = {},
+  selected,
+  onSelect,
+  fromCurrency,
+  toCurrency,
+  centralized = true,
+}: Props) {
   const handleSelection = useCallback(() => onSelect(value), [value, onSelect]);
 
   const { toAmount: amount, provider } = value;
@@ -76,48 +84,62 @@ function Rate({ value, selected, onSelect, fromCurrency, toCurrency }: Props) {
             </Box>
           </Box>
           <Box alignItems="center" flex={1}>
-            <Box>
-              <Box style={{ height: "19.5px", justifyContent: "center" }}>
-                <Price
-                  withEquality
-                  withIcon={false}
-                  from={fromCurrency}
-                  to={toCurrency}
-                  rate={value.magnitudeAwareRate}
-                  fontWeight="600"
-                />
+            {centralized && (
+              <Box>
+                <Box style={{ height: "19.5px", justifyContent: "center" }}>
+                  <Price
+                    withEquality
+                    withIcon={false}
+                    from={fromCurrency}
+                    to={toCurrency}
+                    rate={value.magnitudeAwareRate}
+                    fontWeight="600"
+                  />
+                </Box>
+                <Text fontSize={3} color="palette.text.shade40">
+                  <Trans
+                    i18nKey={
+                      value.tradeMethod === "fixed"
+                        ? "swap2.form.rates.fixed"
+                        : "swap2.form.rates.float"
+                    }
+                  />
+                </Text>
               </Box>
-              <Text fontSize={3} color="palette.text.shade40">
-                <Trans
-                  i18nKey={
-                    value.tradeMethod === "fixed"
-                      ? "swap2.form.rates.fixed"
-                      : "swap2.form.rates.float"
-                  }
-                />
-              </Text>
-            </Box>
+            )}
           </Box>
           <Box alignItems="flex-end" flex={1}>
-            <FormattedVal
-              inline
-              fontSize={4}
-              val={amount}
-              currency={toCurrency}
-              unit={toCurrency?.units[0]}
-              showCode={true}
-              color="palette.text.shade100"
-              fontWeight="600"
-            />
-            <CounterValue
-              fontSize={3}
-              inline
-              currency={toCurrency}
-              value={amount}
-              disableRounding
-              showCode
-              color="palette.text.shade40"
-            />
+            {centralized ? (
+              <>
+                <FormattedVal
+                  inline
+                  fontSize={4}
+                  val={amount}
+                  currency={toCurrency}
+                  unit={toCurrency?.units[0]}
+                  showCode={true}
+                  color="palette.text.shade100"
+                  fontWeight="600"
+                />
+                <CounterValue
+                  fontSize={3}
+                  inline
+                  currency={toCurrency}
+                  value={amount}
+                  disableRounding
+                  showCode
+                  color="palette.text.shade40"
+                />
+              </>
+            ) : (
+              <Text
+                fontSize={3}
+                color="palette.text.shade40"
+                style={{ width: "110px", textAlign: "right" }}
+              >
+                <Trans i18nKey={"swap.providers.noQuote"} />
+              </Text>
+            )}
           </Box>
         </Box>
       </Box>

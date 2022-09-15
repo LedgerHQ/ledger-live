@@ -28,6 +28,7 @@ type SwapFormProvidersProps = {
   provider?: string,
   refreshTime: number,
   countdown: boolean,
+  decentralizedSwapAvailable: boolean,
 };
 const SwapFormProviders = ({
   swap,
@@ -35,6 +36,7 @@ const SwapFormProviders = ({
   provider,
   refreshTime,
   countdown,
+  decentralizedSwapAvailable,
 }: SwapFormProvidersProps) => {
   const { updateSelectedRate } = swap;
   const { currency: fromCurrency } = swap.from;
@@ -56,6 +58,7 @@ const SwapFormProviders = ({
         updateSelectedRate={updateSelectedRate}
         refreshTime={refreshTime}
         countdown={countdown}
+        decentralizedSwapAvailable={decentralizedSwapAvailable}
       />
     </Form>
   );

@@ -17,6 +17,7 @@ import { SWAP_VERSION } from "../../utils/index";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
+import { DEX_PROVIDERS } from "../utils";
 
 type Props = {
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
@@ -26,6 +27,7 @@ type Props = {
   refreshTime: number,
   updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
   countdown: boolean,
+  decentralizedSwapAvailable: boolean,
 };
 
 const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
@@ -52,6 +54,7 @@ export default function ProviderRate({
   updateSelectedRate,
   refreshTime,
   countdown,
+  decentralizedSwapAvailable,
 }: Props) {
   const dispatch = useDispatch();
   const selectedRate = useSelector(rateSelector);
@@ -145,8 +148,19 @@ export default function ProviderRate({
             onSelect={setRate}
             fromCurrency={fromCurrency}
             toCurrency={toCurrency}
+            centralized={true}
           />
         ))}
+        {decentralizedSwapAvailable &&
+          DEX_PROVIDERS.map((rate, index) => (
+            <Rate
+              key={rate.rateId || index}
+              value={rate}
+              selected={rate.provider === selectedRate.provider}
+              onSelect={setRate}
+              centralized={false}
+            />
+          ))}
       </Box>
     </Box>
   );

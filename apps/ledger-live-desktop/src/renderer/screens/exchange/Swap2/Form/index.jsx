@@ -15,7 +15,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
 import {
@@ -38,7 +38,6 @@ import KYC from "../KYC";
 import Login from "../Login";
 import MFA from "../MFA";
 import { SWAP_VERSION, trackSwapError } from "../utils/index";
-import DexSwapAvailableAlert from "./DexSwapAvailableAlert";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import FormErrorBanner from "./FormErrorBanner";
 import FormKYCBanner from "./FormKYCBanner";
@@ -49,6 +48,7 @@ import FormNotAvailable from "./FormNotAvailable";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
+import { DEX_PROVIDERS } from "./utils";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -107,6 +107,7 @@ const SwapForm = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
+  const history = useHistory();
   const accounts = useSelector(shallowAccountsSelector);
   const { storedProviders, providers, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
@@ -126,6 +127,9 @@ const SwapForm = () => {
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
+  const dexProvider = DEX_PROVIDERS.find(item => item.provider === exchangeRate?.provider);
+  const navigation = dexProvider ? dexProvider.navigation : null;
+
   const provider = exchangeRate?.provider;
   const providerKYC = swapKYC?.[provider];
   const kycStatus = providerKYC?.status;
@@ -359,7 +363,18 @@ const SwapForm = () => {
       provider,
       swapVersion: SWAP_VERSION,
     });
-    setDrawer(ExchangeDrawer, { swapTransaction, exchangeRate }, { preventBackdropClick: true });
+    if (navigation) {
+      const { pathname, params } = navigation;
+      history.push({
+        pathname,
+        search: new URLSearchParams({
+          returnTo: "/swap",
+          ...params,
+        }).toString(),
+      });
+    } else {
+      setDrawer(ExchangeDrawer, { swapTransaction, exchangeRate }, { preventBackdropClick: true });
+    }
   };
 
   const sourceAccount = swapTransaction.swap.from.account;
@@ -468,7 +483,8 @@ const SwapForm = () => {
               kycStatus={kycStatus}
               provider={provider}
               refreshTime={refreshTime}
-              countdown={!swapError && !idleState}
+              countdown={!idleState}
+              decentralizedSwapAvailable={decentralizedSwapAvailable}
             />
 
             {currentBanner === "LOGIN" ? (
@@ -492,10 +508,9 @@ const SwapForm = () => {
         )}
 
         <Box>
-          <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
+          <Button primary onClick={onSubmit} data-test-id="exchange-button">
             {t("common.exchange")}
           </Button>
-          {showDetails && decentralizedSwapAvailable ? <DexSwapAvailableAlert /> : null}
         </Box>
       </Wrapper>
     );
@@ -505,9 +520,6 @@ const SwapForm = () => {
     return (
       <>
         <FormNotAvailable />
-        <Box px="18px" maxWidth="500px">
-          <DexSwapAvailableAlert />
-        </Box>
       </>
     );
   }
