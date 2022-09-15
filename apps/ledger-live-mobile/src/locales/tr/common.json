@@ -3533,11 +3533,15 @@
     "no" : "Şimdilik kalsın",
     "languages" : {
       "en" : "İngilizce",
-      "fr" : "Fransızca",
-      "ru" : "Rusça",
-      "es" : "İspanyolca",
-      "zh" : "Çince",
-      "de" : "Almanca"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {

@@ -1,44 +1,28 @@
 # live-common-tools
 
-## 0.2.7-nightly.4
+## 0.2.7
 
 ### Patch Changes
 
-- Updated dependencies [[`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`41a31a0474`](https://github.com/LedgerHQ/ledger-live/commit/41a31a0474725d51d659142b292629c534b94338), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`8e8db41df4`](https://github.com/LedgerHQ/ledger-live/commit/8e8db41df4319d3406c7f29b8cce18d1b212f12f), [`8fa17173ed`](https://github.com/LedgerHQ/ledger-live/commit/8fa17173ed20415b17bfb6d84e8a14b602516054)]:
-  - @ledgerhq/live-common@27.2.0-nightly.4
+- Updated dependencies [[`a089100d37`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668), [`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7), [`d70bb7042a`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
+  - @ledgerhq/live-common@27.2.0
+  - @ledgerhq/hw-transport@6.27.4
+  - @ledgerhq/hw-transport-http@6.27.4
+  - @ledgerhq/hw-transport-web-ble@6.27.4
+  - @ledgerhq/hw-transport-webhid@6.27.4
+  - @ledgerhq/hw-transport-webusb@6.27.4
 
-## 0.2.7-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`4d2149c2dc`](https://github.com/LedgerHQ/ledger-live/commit/4d2149c2dc47058aaf3d6e4bd9739e724103ab9a)]:
-  - @ledgerhq/live-common@27.2.0-nightly.3
-
-## 0.2.7-nightly.2
+## 0.2.7-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`3d2fa9adbb`](https://github.com/LedgerHQ/ledger-live/commit/3d2fa9adbbd408b4be3748f1d2180e90b83de536)]:
-  - @ledgerhq/live-common@27.2.0-nightly.2
-
-## 0.2.7-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7)]:
-  - @ledgerhq/live-common@27.2.0-nightly.1
-  - @ledgerhq/hw-transport@6.27.4-nightly.0
-  - @ledgerhq/hw-transport-http@6.27.4-nightly.0
-  - @ledgerhq/hw-transport-web-ble@6.27.4-nightly.0
-  - @ledgerhq/hw-transport-webhid@6.27.4-nightly.0
-  - @ledgerhq/hw-transport-webusb@6.27.4-nightly.0
-
-## 0.2.7-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`d70bb7042a`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
-  - @ledgerhq/live-common@27.2.0-nightly.0
+- Updated dependencies [[`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668), [`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7), [`d70bb7042`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
+  - @ledgerhq/live-common@27.2.0-next.0
+  - @ledgerhq/hw-transport@6.27.4-next.0
+  - @ledgerhq/hw-transport-http@6.27.4-next.0
+  - @ledgerhq/hw-transport-web-ble@6.27.4-next.0
+  - @ledgerhq/hw-transport-webhid@6.27.4-next.0
+  - @ledgerhq/hw-transport-webusb@6.27.4-next.0
 
 ## 0.2.6
 

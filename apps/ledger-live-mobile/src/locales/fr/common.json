@@ -3534,10 +3534,14 @@
     "languages" : {
       "en" : "Anglais",
       "fr" : "Français",
-      "ru" : "Russe",
-      "es" : "Espagnol",
-      "zh" : "Chinois",
-      "de" : "Allemand"
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {

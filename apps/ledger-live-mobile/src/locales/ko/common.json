@@ -3533,11 +3533,15 @@
     "no" : "다음을 선호하지 않습니다:",
     "languages" : {
       "en" : "영어",
-      "fr" : "프랑스어",
-      "ru" : "러시아어",
-      "es" : "스페인어",
-      "zh" : "중국어",
-      "de" : "독일어"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {

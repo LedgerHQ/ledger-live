@@ -1,57 +1,6 @@
 # @ledgerhq/live-common
 
-## 27.2.0-nightly.4
-
-### Minor Changes
-
-- [#1177](https://github.com/LedgerHQ/ledger-live/pull/1177) [`8e8db41df4`](https://github.com/LedgerHQ/ledger-live/commit/8e8db41df4319d3406c7f29b8cce18d1b212f12f) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - change tag values for alternative derivation schemes on filecoin
-
-* [#1104](https://github.com/LedgerHQ/ledger-live/pull/1104) [`8fa17173ed`](https://github.com/LedgerHQ/ledger-live/commit/8fa17173ed20415b17bfb6d84e8a14b602516054) Thanks [@grsoares21](https://github.com/grsoares21)! - Update the onboarding states according to the new firmware definitons
-
-### Patch Changes
-
-- [#943](https://github.com/LedgerHQ/ledger-live/pull/943) [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add react-redux and redux-actions peer dependencies
-
-* [#1246](https://github.com/LedgerHQ/ledger-live/pull/1246) [`41a31a0474`](https://github.com/LedgerHQ/ledger-live/commit/41a31a0474725d51d659142b292629c534b94338) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove duplicates from all lists passed to setSupportedCurrencies
-
-- [#943](https://github.com/LedgerHQ/ledger-live/pull/943) [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add post onboarding actions, reducers, hooks and provider logic
-
-## 27.2.0-nightly.3
-
-### Patch Changes
-
-- [#1240](https://github.com/LedgerHQ/ledger-live/pull/1240) [`4d2149c2dc`](https://github.com/LedgerHQ/ledger-live/commit/4d2149c2dc47058aaf3d6e4bd9739e724103ab9a) Thanks [@gre](https://github.com/gre)! - bot: add formatDeviceAmount utility to simplify writing speculos-deviceActions
-
-## 27.2.0-nightly.2
-
-### Minor Changes
-
-- [#1130](https://github.com/LedgerHQ/ledger-live/pull/1130) [`3d2fa9adbb`](https://github.com/LedgerHQ/ledger-live/commit/3d2fa9adbbd408b4be3748f1d2180e90b83de536) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Switch to swap backend API v4
-
-## 27.2.0-nightly.1
-
-### Patch Changes
-
-- [#1179](https://github.com/LedgerHQ/ledger-live/pull/1179) [`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7) Thanks [@gre](https://github.com/gre)! - Improve TypeScript of @ledgerhq/errors and fixes 2 bugs in swap and stellar on their error handling
-
-- Updated dependencies [[`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7)]:
-  - @ledgerhq/errors@6.10.2-nightly.0
-  - @ledgerhq/devices@7.0.1-nightly.0
-  - @ledgerhq/hw-app-algorand@6.27.4-nightly.0
-  - @ledgerhq/hw-app-cosmos@6.27.4-nightly.0
-  - @ledgerhq/hw-app-eth@6.29.7-nightly.1
-  - @ledgerhq/hw-app-polkadot@6.27.4-nightly.0
-  - @ledgerhq/hw-app-solana@6.27.4-nightly.0
-  - @ledgerhq/hw-app-trx@6.27.4-nightly.0
-  - @ledgerhq/hw-transport@6.27.4-nightly.0
-  - @ledgerhq/hw-transport-node-speculos@6.27.4-nightly.0
-  - @ledgerhq/hw-app-btc@8.0.2-nightly.0
-  - @ledgerhq/hw-app-str@6.27.4-nightly.0
-  - @ledgerhq/hw-app-tezos@6.27.4-nightly.0
-  - @ledgerhq/hw-app-xrp@6.27.4-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.4-nightly.0
-
-## 27.2.0-nightly.0
+## 27.2.0
 
 ### Minor Changes
 
@@ -59,8 +8,55 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`d70bb7042a`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
-  - @ledgerhq/hw-app-eth@6.29.7-nightly.0
+- [#743](https://github.com/LedgerHQ/ledger-live/pull/743) [`a089100d37`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add "customImage" feature flag.
+
+* [#1179](https://github.com/LedgerHQ/ledger-live/pull/1179) [`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7) Thanks [@gre](https://github.com/gre)! - Improve TypeScript of @ledgerhq/errors and fixes 2 bugs in swap and stellar on their error handling
+
+* Updated dependencies [[`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7), [`d70bb7042a`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
+  - @ledgerhq/errors@6.10.2
+  - @ledgerhq/hw-app-eth@6.29.7
+  - @ledgerhq/devices@7.0.1
+  - @ledgerhq/hw-app-algorand@6.27.4
+  - @ledgerhq/hw-app-cosmos@6.27.4
+  - @ledgerhq/hw-app-polkadot@6.27.4
+  - @ledgerhq/hw-app-solana@6.27.4
+  - @ledgerhq/hw-app-trx@6.27.4
+  - @ledgerhq/hw-transport@6.27.4
+  - @ledgerhq/hw-transport-node-speculos@6.27.4
+  - @ledgerhq/hw-app-btc@8.0.2
+  - @ledgerhq/hw-app-str@6.27.4
+  - @ledgerhq/hw-app-tezos@6.27.4
+  - @ledgerhq/hw-app-xrp@6.27.4
+  - @ledgerhq/hw-transport-mocker@6.27.4
+
+## 27.2.0-next.0
+
+### Minor Changes
+
+- [#892](https://github.com/LedgerHQ/ledger-live/pull/892) [`d70bb7042`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add EIP-712 capability when preparing message to sign
+
+### Patch Changes
+
+- [#743](https://github.com/LedgerHQ/ledger-live/pull/743) [`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add "customImage" feature flag.
+
+* [#1179](https://github.com/LedgerHQ/ledger-live/pull/1179) [`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7) Thanks [@gre](https://github.com/gre)! - Improve TypeScript of @ledgerhq/errors and fixes 2 bugs in swap and stellar on their error handling
+
+* Updated dependencies [[`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7), [`d70bb7042`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
+  - @ledgerhq/errors@6.10.2-next.0
+  - @ledgerhq/hw-app-eth@6.29.7-next.0
+  - @ledgerhq/devices@7.0.1-next.0
+  - @ledgerhq/hw-app-algorand@6.27.4-next.0
+  - @ledgerhq/hw-app-cosmos@6.27.4-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.4-next.0
+  - @ledgerhq/hw-app-solana@6.27.4-next.0
+  - @ledgerhq/hw-app-trx@6.27.4-next.0
+  - @ledgerhq/hw-transport@6.27.4-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.4-next.0
+  - @ledgerhq/hw-app-btc@8.0.2-next.0
+  - @ledgerhq/hw-app-str@6.27.4-next.0
+  - @ledgerhq/hw-app-tezos@6.27.4-next.0
+  - @ledgerhq/hw-app-xrp@6.27.4-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.4-next.0
 
 ## 27.1.0
 

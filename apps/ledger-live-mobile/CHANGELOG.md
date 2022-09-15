@@ -1,50 +1,6 @@
 # live-mobile
 
-## 3.8.0-nightly.11
-
-### Patch Changes
-
-- [#1258](https://github.com/LedgerHQ/ledger-live/pull/1258) [`8f64d0983a`](https://github.com/LedgerHQ/ledger-live/commit/8f64d0983adaf210cad688dfcc98ad8fc83859b7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Capitalize P for Português language in settings
-
-* [#943](https://github.com/LedgerHQ/ledger-live/pull/943) [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add post-onboarding hub (not used for any device model so far)
-
-- [#1250](https://github.com/LedgerHQ/ledger-live/pull/1250) [`d4fe263704`](https://github.com/LedgerHQ/ledger-live/commit/d4fe2637049b98453ac12ac965d945d59044ab54) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Update gpg doc
-
-* [#1265](https://github.com/LedgerHQ/ledger-live/pull/1265) [`e11d177678`](https://github.com/LedgerHQ/ledger-live/commit/e11d17767822c292e066e9c99e821114a55b7928) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wrap text when is too long in TabBar Tansfer
-
-* Updated dependencies [[`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`41a31a0474`](https://github.com/LedgerHQ/ledger-live/commit/41a31a0474725d51d659142b292629c534b94338), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835), [`8e8db41df4`](https://github.com/LedgerHQ/ledger-live/commit/8e8db41df4319d3406c7f29b8cce18d1b212f12f), [`8fa17173ed`](https://github.com/LedgerHQ/ledger-live/commit/8fa17173ed20415b17bfb6d84e8a14b602516054), [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835)]:
-  - @ledgerhq/live-common@27.2.0-nightly.4
-  - @ledgerhq/types-live@6.24.1-nightly.0
-  - @ledgerhq/native-ui@0.9.1-nightly.0
-
-## 3.8.0-nightly.10
-
-### Patch Changes
-
-- Updated dependencies [[`4d2149c2dc`](https://github.com/LedgerHQ/ledger-live/commit/4d2149c2dc47058aaf3d6e4bd9739e724103ab9a)]:
-  - @ledgerhq/live-common@27.2.0-nightly.3
-
-## 3.8.0-nightly.9
-
-### Patch Changes
-
-- Updated dependencies [[`3d2fa9adbb`](https://github.com/LedgerHQ/ledger-live/commit/3d2fa9adbbd408b4be3748f1d2180e90b83de536)]:
-  - @ledgerhq/live-common@27.2.0-nightly.2
-
-## 3.8.0-nightly.8
-
-### Patch Changes
-
-- Updated dependencies [[`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7)]:
-  - @ledgerhq/live-common@27.2.0-nightly.1
-  - @ledgerhq/errors@6.10.2-nightly.0
-  - @ledgerhq/devices@7.0.1-nightly.0
-  - @ledgerhq/hw-transport@6.27.4-nightly.0
-  - @ledgerhq/hw-transport-http@6.27.4-nightly.0
-  - @ledgerhq/react-native-hid@6.28.6-nightly.0
-  - @ledgerhq/react-native-hw-transport-ble@6.27.6-nightly.0
-
-## 3.8.0-nightly.7
+## 3.8.0
 
 ### Minor Changes
 
@@ -60,8 +16,113 @@
 
 - [#1105](https://github.com/LedgerHQ/ledger-live/pull/1105) [`8186d2efce`](https://github.com/LedgerHQ/ledger-live/commit/8186d2efcea2b270b162bd80f660bd64a76b837c) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Deeplinks updated for buy sell flows with live apps
 
-- Updated dependencies [[`d70bb7042a`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
-  - @ledgerhq/live-common@27.2.0-nightly.0
+* [#743](https://github.com/LedgerHQ/ledger-live/pull/743) [`a089100d37`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add custom image tool
+
+- [#1112](https://github.com/LedgerHQ/ledger-live/pull/1112) [`44516bce9f`](https://github.com/LedgerHQ/ledger-live/commit/44516bce9f2faae54989e508371785b50189399e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Support: LLM eslint rule no-unused-vars only from TS
+
+* [#1136](https://github.com/LedgerHQ/ledger-live/pull/1136) [`d66472e571`](https://github.com/LedgerHQ/ledger-live/commit/d66472e5716b2465835bfd332f895229acdc6b40) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fix several issues regarding analytics
+
+- [#1143](https://github.com/LedgerHQ/ledger-live/pull/1143) [`5f15da1746`](https://github.com/LedgerHQ/ledger-live/commit/5f15da174652ebc39ec8f07a0671ab265317214c) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix new BLE pairing flow, with more flexible options
+
+* [#1097](https://github.com/LedgerHQ/ledger-live/pull/1097) [`936b6dc545`](https://github.com/LedgerHQ/ledger-live/commit/936b6dc5450fcd69a31e03fa2040346d512c0912) Thanks [@alexandremgo](https://github.com/alexandremgo)! - New BLE pairing flow
+
+  Not yet used in production. Accessible from the debug menu.
+
+  Features:
+
+  - scanning and pairing: one screen to go to from anywhere
+  - navigate to after pairing success: configuration of the screen (and its associated navigator) with params and name of the route param that will have newly paired device info
+  - scanning: filtering on device models
+  - scanning: filtering out or displaying already known devices
+  - pairing: new animation for pairing (lotties placeholders for now)
+  - pairing: possibility to add (or not) the newly paired device to the "known devices" of the app (redux store)
+
+- [#1239](https://github.com/LedgerHQ/ledger-live/pull/1239) [`691ef324ff`](https://github.com/LedgerHQ/ledger-live/commit/691ef324ff02c3341b72c7dc9754537bd9f8b73a) Thanks [@ThomasLaforge](https://github.com/ThomasLaforge)! - use brazilian portuguese smartling translation and add some missing keys for system language available popup
+
+* [#1222](https://github.com/LedgerHQ/ledger-live/pull/1222) [`5df97cb448`](https://github.com/LedgerHQ/ledger-live/commit/5df97cb44863834fa16b28ffd20849500c92b652) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fix issue on lottie animations for nanoS nanoSP and blue
+
+- [#1000](https://github.com/LedgerHQ/ledger-live/pull/1000) [`dc3fd1841e`](https://github.com/LedgerHQ/ledger-live/commit/dc3fd1841e3e8b164f047fe84efd3776e16f8ff1) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Migration from JavaScript to TypeScript for LLM
+
+* [#1070](https://github.com/LedgerHQ/ledger-live/pull/1070) [`533e658dcd`](https://github.com/LedgerHQ/ledger-live/commit/533e658dcd7862d4e6c9cb1b55c400652c68ae26) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix crash when scanning for bluetooth devices
+
+- [#1244](https://github.com/LedgerHQ/ledger-live/pull/1244) [`34eb4e7e29`](https://github.com/LedgerHQ/ledger-live/commit/34eb4e7e295c882574938791c828fe64a2dd329d) Thanks [@ThomasLaforge](https://github.com/ThomasLaforge)! - Adding Japanese, Korean, Turkish and Deutcsh to fully supported languages
+
+- Updated dependencies [[`a089100d37`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668), [`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7), [`d70bb7042a`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
+  - @ledgerhq/live-common@27.2.0
+  - @ledgerhq/errors@6.10.2
+  - @ledgerhq/devices@7.0.1
+  - @ledgerhq/hw-transport@6.27.4
+  - @ledgerhq/hw-transport-http@6.27.4
+  - @ledgerhq/react-native-hid@6.28.6
+  - @ledgerhq/react-native-hw-transport-ble@6.27.6
+
+## 3.8.0-next.10
+
+### Patch Changes
+
+- [#1244](https://github.com/LedgerHQ/ledger-live/pull/1244) [`34eb4e7e29`](https://github.com/LedgerHQ/ledger-live/commit/34eb4e7e295c882574938791c828fe64a2dd329d) Thanks [@ThomasLaforge](https://github.com/ThomasLaforge)! - Adding Japanese, Korean, Turkish and Deutcsh to fully supported languages
+
+## 3.8.0-next.9
+
+### Patch Changes
+
+- [#1239](https://github.com/LedgerHQ/ledger-live/pull/1239) [`691ef324f`](https://github.com/LedgerHQ/ledger-live/commit/691ef324ff02c3341b72c7dc9754537bd9f8b73a) Thanks [@ThomasLaforge](https://github.com/ThomasLaforge)! - use brazilian portuguese smartling translation and add some missing keys for system language available popup
+
+## 3.8.0-next.8
+
+### Patch Changes
+
+- [#1222](https://github.com/LedgerHQ/ledger-live/pull/1222) [`5df97cb44`](https://github.com/LedgerHQ/ledger-live/commit/5df97cb44863834fa16b28ffd20849500c92b652) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fix issue on lottie animations for nanoS nanoSP and blue
+
+## 3.8.0-next.7
+
+### Minor Changes
+
+- [`c14ed5a94`](https://github.com/LedgerHQ/ledger-live/commit/c14ed5a942d65c92da96b0f6ad84b709a0884f25) Thanks [@Justkant](https://github.com/Justkant)! - Add Celo Staking
+
+* [#963](https://github.com/LedgerHQ/ledger-live/pull/963) [`80aa00871`](https://github.com/LedgerHQ/ledger-live/commit/80aa00871943788d730cc8bb95a6d57ea2e9be96) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Enable Filecoin integration on LLM
+
+- [#1017](https://github.com/LedgerHQ/ledger-live/pull/1017) [`21ed0bd52`](https://github.com/LedgerHQ/ledger-live/commit/21ed0bd5219a3629abc0bbb547fc4d75f5e71300) Thanks [@sarneijim](https://github.com/sarneijim)! - Add cosmos account banner in LLM
+
+* [#899](https://github.com/LedgerHQ/ledger-live/pull/899) [`6d4868849`](https://github.com/LedgerHQ/ledger-live/commit/6d48688498bb825aab1fab86739894ebe9ae4110) Thanks [@LFBarreto](https://github.com/LFBarreto)! - feat(LLM): Wallet connect as live app feature flag [LIVE-3254]
+
+### Patch Changes
+
+- [#1105](https://github.com/LedgerHQ/ledger-live/pull/1105) [`8186d2efc`](https://github.com/LedgerHQ/ledger-live/commit/8186d2efcea2b270b162bd80f660bd64a76b837c) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - Deeplinks updated for buy sell flows with live apps
+
+* [#743](https://github.com/LedgerHQ/ledger-live/pull/743) [`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add custom image tool
+
+- [#1112](https://github.com/LedgerHQ/ledger-live/pull/1112) [`44516bce9`](https://github.com/LedgerHQ/ledger-live/commit/44516bce9f2faae54989e508371785b50189399e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Support: LLM eslint rule no-unused-vars only from TS
+
+* [#1136](https://github.com/LedgerHQ/ledger-live/pull/1136) [`d66472e57`](https://github.com/LedgerHQ/ledger-live/commit/d66472e5716b2465835bfd332f895229acdc6b40) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLM - fix several issues regarding analytics
+
+- [#1143](https://github.com/LedgerHQ/ledger-live/pull/1143) [`5f15da174`](https://github.com/LedgerHQ/ledger-live/commit/5f15da174652ebc39ec8f07a0671ab265317214c) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix new BLE pairing flow, with more flexible options
+
+* [#1097](https://github.com/LedgerHQ/ledger-live/pull/1097) [`936b6dc54`](https://github.com/LedgerHQ/ledger-live/commit/936b6dc5450fcd69a31e03fa2040346d512c0912) Thanks [@alexandremgo](https://github.com/alexandremgo)! - New BLE pairing flow
+
+  Not yet used in production. Accessible from the debug menu.
+
+  Features:
+
+  - scanning and pairing: one screen to go to from anywhere
+  - navigate to after pairing success: configuration of the screen (and its associated navigator) with params and name of the route param that will have newly paired device info
+  - scanning: filtering on device models
+  - scanning: filtering out or displaying already known devices
+  - pairing: new animation for pairing (lotties placeholders for now)
+  - pairing: possibility to add (or not) the newly paired device to the "known devices" of the app (redux store)
+
+- [#1000](https://github.com/LedgerHQ/ledger-live/pull/1000) [`dc3fd1841`](https://github.com/LedgerHQ/ledger-live/commit/dc3fd1841e3e8b164f047fe84efd3776e16f8ff1) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Migration from JavaScript to TypeScript for LLM
+
+* [#1070](https://github.com/LedgerHQ/ledger-live/pull/1070) [`533e658dc`](https://github.com/LedgerHQ/ledger-live/commit/533e658dcd7862d4e6c9cb1b55c400652c68ae26) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix crash when scanning for bluetooth devices
+
+* Updated dependencies [[`a089100d3`](https://github.com/LedgerHQ/ledger-live/commit/a089100d37c2057210201e7faccab2c889a57668), [`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7), [`d70bb7042`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887)]:
+  - @ledgerhq/live-common@27.2.0-next.0
+  - @ledgerhq/errors@6.10.2-next.0
+  - @ledgerhq/devices@7.0.1-next.0
+  - @ledgerhq/hw-transport@6.27.4-next.0
+  - @ledgerhq/hw-transport-http@6.27.4-next.0
+  - @ledgerhq/react-native-hid@6.28.6-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.27.6-next.0
 
 ## 3.8.0-next.6
 

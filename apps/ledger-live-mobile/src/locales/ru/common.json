@@ -1854,7 +1854,7 @@
       "moreInfo" : "Подробнее...",
       "cardTitle" : "Powered by {{team}}",
       "drawer" : {
-        "title" : "интеграция {{family}}",
+        "title" : "Интеграция {{family}}",
         "subTitle" : "Интеграция {{family}} выполнена командой {{team}}",
         "description" : "Ledger Live – это платформа с открытым исходным кодом.",
         "description2" : "Разработчики из любой точки мира могут интегрироваться в наше приложение Ledger Live",
@@ -3536,8 +3536,12 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "简体中文",
-      "de" : "Deutsch"
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
