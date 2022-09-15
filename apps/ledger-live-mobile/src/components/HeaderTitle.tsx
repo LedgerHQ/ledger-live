@@ -6,7 +6,7 @@ import { scrollToTop } from "../navigation/utils";
 export default function HeaderTitle(props: any) {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
-      <Text {...props} variant={"h3"} mx={5} mt={1} />
+      <Text {...props} variant={"h5"} mx={5} mt={1} />
     </TouchableWithoutFeedback>
   );
 }

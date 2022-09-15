@@ -3,6 +3,7 @@ import { Flex, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
 import { CropView } from "react-native-image-crop-tools";
 import { useTranslation } from "react-i18next";
 import { StackScreenProps } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 import ImageCropper, {
   Props as ImageCropperProps,
   CropResult,
@@ -12,7 +13,7 @@ import {
   ImageFileUri,
 } from "../../components/CustomImage/types";
 import { downloadImageToFile } from "../../components/CustomImage/imageUtils";
-import { cropAspectRatio } from "./shared";
+import { targetDimensions } from "./shared";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
@@ -97,16 +98,12 @@ const Step1Cropping: React.FC<
 
   const [containerDimensions, setContainerDimensions] =
     useState<ImageDimensions | null>(null);
-  const onContainerLayout = useCallback(
-    ({ nativeEvent: { layout } }) => {
-      if (containerDimensions !== null) return;
-      setContainerDimensions({ height: layout.height, width: layout.width });
-    },
-    [containerDimensions],
-  );
+  const onContainerLayout = useCallback(({ nativeEvent: { layout } }) => {
+    setContainerDimensions({ height: layout.height, width: layout.width });
+  }, []);
 
   return (
-    <Flex flex={1}>
+    <SafeAreaView edges={["bottom"]} flex={1}>
       <Flex
         flex={1}
         flexDirection="column"
@@ -115,7 +112,7 @@ const Step1Cropping: React.FC<
       >
         <Flex
           flex={1}
-          onLayout={onContainerLayout}
+          onLayout={imageToCrop ? onContainerLayout : undefined}
           width="100%"
           justifyContent="center"
           alignItems="center"
@@ -124,7 +121,7 @@ const Step1Cropping: React.FC<
             <ImageCropper
               ref={cropperRef}
               imageFileUri={imageToCrop.imageFileUri}
-              aspectRatio={cropAspectRatio}
+              aspectRatio={targetDimensions}
               style={containerDimensions} // this native component needs absolute height & width values
               onError={handleError}
               onResult={handleCropResult}
@@ -161,7 +158,7 @@ const Step1Cropping: React.FC<
           </BottomContainer>
         ) : null}
       </Flex>
-    </Flex>
+    </SafeAreaView>
   );
 };
 
