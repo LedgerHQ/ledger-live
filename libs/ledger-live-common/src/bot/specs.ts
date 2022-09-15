@@ -4,7 +4,11 @@ import { log } from "@ledgerhq/logs";
 import expect from "expect";
 import sample from "lodash/sample";
 import { isAccountEmpty } from "../account";
-import type { DeviceAction, DeviceActionArg } from "./types";
+import type {
+  DeviceAction,
+  DeviceActionArg,
+  TransactionDestinationTestInput,
+} from "./types";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../generated/types";
 import { botTest } from "./bot-test-context";
@@ -240,3 +244,39 @@ export function expectSiblingsHaveSpendablePartGreaterThan(
     threshold
   );
 }
+
+export const genericTestDestination = <T>({
+  destination,
+  destinationBeforeTransaction,
+  sendingOperation,
+}: TransactionDestinationTestInput<T>): void => {
+  const amount = sendingOperation.value.minus(sendingOperation.fee);
+  botTest("account balance increased with transaction amount", () =>
+    expect(destination.balance.toString()).toBe(
+      destinationBeforeTransaction.balance.plus(amount).toString()
+    )
+  );
+  botTest("destination account received an operation", () =>
+    expect(destination.operations.length).toBe(
+      1 + destinationBeforeTransaction.operations.length
+    )
+  );
+  const [operation] = destination.operations;
+  botTest(
+    "last destination operation is consistent with sendingOperation",
+    () =>
+      expect({
+        amount: operation.value.toString(),
+        type: operation.type,
+        hash: operation.hash,
+        // blockHash: operation.blockHash,
+        // blockHeight: operation.blockHeight,
+      }).toMatchObject({
+        amount: amount.toString(),
+        type: "IN",
+        hash: sendingOperation.hash,
+        // blockHash: sendingOperation.blockHash,
+        // blockHeight: sendingOperation.blockHeight,
+      })
+  );
+};

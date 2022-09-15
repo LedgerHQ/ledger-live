@@ -11,7 +11,7 @@ import type {
   Transaction,
 } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
@@ -123,6 +123,8 @@ const genericTest = ({
   );
 };
 
+const testDestination = genericTestDestination;
+
 const genericMinimalAmount = new BigNumber(10000);
 
 const bitcoinLikeMutations = ({
@@ -159,6 +161,7 @@ const bitcoinLikeMutations = ({
         updates,
       };
     },
+    testDestination,
     recoverBadTransactionStatus,
   },
   {
@@ -187,6 +190,7 @@ const bitcoinLikeMutations = ({
         updates,
       };
     },
+    testDestination,
     recoverBadTransactionStatus,
   },
   {
@@ -228,6 +232,7 @@ const bitcoinLikeMutations = ({
       };
     },
     recoverBadTransactionStatus,
+    testDestination,
     test: ({ accountBeforeTransaction, account, operation, transaction }) => {
       const utxo = (
         (accountBeforeTransaction as BitcoinAccount).bitcoinResources?.utxos ||
@@ -285,6 +290,7 @@ const bitcoinLikeMutations = ({
       };
     },
     recoverBadTransactionStatus,
+    testDestination,
     test: ({ account }) => {
       botTest("total of utxos is zero", () =>
         expect(

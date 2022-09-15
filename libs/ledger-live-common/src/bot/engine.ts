@@ -127,6 +127,11 @@ export async function runWithAppSpec<T extends Transaction>(
     }
   }
 
+  // staticly assess if testDestination is necessary
+  const mutationThatProducedDestinationsWithoutTests: MutationSpec<any>[] = [];
+  const mutationWithDestinationTestsWithoutDestination: MutationSpec<any>[] =
+    [];
+
   try {
     device = await createSpeculosDevice(deviceParams);
     appReport.appPath = device.appPath;
@@ -259,6 +264,33 @@ export async function runWithAppSpec<T extends Transaction>(
             a.id === finalAccount.id ? finalAccount : a
           );
         }
+        if (report.finalDestination) {
+          // optim: no need to resync if all went well with finalDestination
+          const finalDestination: Account = report.finalDestination;
+          accountIdsNeedResync = accountIdsNeedResync.filter(
+            (id) => id !== finalDestination.id
+          );
+          accounts = accounts.map((a: Account) =>
+            a.id === finalDestination.id ? finalDestination : a
+          );
+        } else if (report.mutation) {
+          const { mutation } = report;
+          if (report.destination) {
+            if (
+              !mutation.testDestination &&
+              !mutationThatProducedDestinationsWithoutTests.includes(mutation)
+            ) {
+              mutationThatProducedDestinationsWithoutTests.push(mutation);
+            }
+          } else {
+            if (
+              mutation.testDestination &&
+              !mutationWithDestinationTestsWithoutDestination.includes(mutation)
+            ) {
+              mutationWithDestinationTestsWithoutDestination.push(mutation);
+            }
+          }
+        }
         // eslint-disable-next-line no-console
         console.log(formatReportForConsole(report));
         mutationReports.push(report);
@@ -287,6 +319,23 @@ export async function runWithAppSpec<T extends Transaction>(
     ) {
       hintWarnings.push(
         "No mutation were found possible. Yet there are funds in the accounts, please investigate."
+      );
+    }
+
+    if (mutationThatProducedDestinationsWithoutTests.length) {
+      hintWarnings.push(
+        "mutations should define a testDestination(): " +
+          mutationThatProducedDestinationsWithoutTests
+            .map((m) => m.name)
+            .join(", ")
+      );
+    }
+    if (mutationWithDestinationTestsWithoutDestination.length) {
+      hintWarnings.push(
+        "mutations should NOT define a testDestination() because there are no 'destination' sibling account found: " +
+          mutationWithDestinationTestsWithoutDestination
+            .map((m) => m.name)
+            .join(", ")
       );
     }
 
@@ -422,9 +471,10 @@ export async function runOnAccount<T extends Transaction>({
     }
 
     report.transaction = transaction;
-    report.destination = accounts.find(
+    const destination = accounts.find(
       (a) => a.freshAddress === transaction.recipient
     );
+    report.destination = destination;
     status = await accountBridge.getTransactionStatus(account, transaction);
     report.status = status;
     report.statusTime = now();
@@ -504,6 +554,8 @@ export async function runOnAccount<T extends Transaction>({
     if (report.destination) {
       accountIdsNeedResync.push(report.destination.id);
     }
+    // even if the test will actively sync the account, we need to pessimisticly assume it won't, we may not reach the final step of it.
+    // after the runOnAccount() call, we actively remove from accountIdsNeedResync the account.id if it is actually sucessful
     accountIdsNeedResync.push(account.id);
 
     // broadcast the transaction
@@ -528,12 +580,11 @@ export async function runOnAccount<T extends Transaction>({
     );
 
     // wait the condition are good (operation confirmed)
+    // test() is run over and over until either timeout is reach OR success
     const testBefore = now();
-
+    const timeOut = mutation.testTimeout || spec.testTimeout || 30 * 1000;
     const step = (account) => {
-      const timedOut =
-        now() - testBefore >
-        (mutation.testTimeout || spec.testTimeout || 30 * 1000);
+      const timedOut = now() - testBefore > timeOut;
       const operation = account.operations.find(
         (o) => o.id === optimisticOperation.id
       );
@@ -567,6 +618,7 @@ export async function runOnAccount<T extends Transaction>({
             throw e;
           }
 
+          log("bot", "failed confirm test. trying again. " + String(e));
           // We will try again
           return;
         }
@@ -575,17 +627,63 @@ export async function runOnAccount<T extends Transaction>({
       return operation;
     };
 
-    const result = await awaitAccountOperation({
-      account,
-      step,
-    });
-    report.finalAccount = result.account;
-    report.operation = result.operation;
+    const result = await awaitAccountOperation<Operation>({ account, step });
+    const { account: finalAccount, value: operation } = result;
+    report.finalAccount = finalAccount;
+    report.operation = operation;
     report.confirmedTime = now();
     log(
       "engine",
       `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`
     );
+
+    const destinationBeforeTransaction = destination;
+    if (destination && mutation.testDestination) {
+      const { testDestination } = mutation;
+      // test() is run over and over until either timeout is reach OR success
+      const ntestBefore = now();
+      const newTimeOut = Math.max(10000, timeOut - (ntestBefore - testBefore));
+      log(
+        "bot",
+        "remaining time to test destination: " +
+          (newTimeOut / 1000).toFixed(0) +
+          "s"
+      );
+      const step = (account) => {
+        const timedOut = now() - ntestBefore > newTimeOut;
+        try {
+          const arg = {
+            transaction,
+            status,
+            sendingAccount: finalAccount,
+            sendingOperation: operation,
+            destinationBeforeTransaction,
+            destination: account,
+          };
+          botTest("destination", () => testDestination(arg));
+          report.testDestinationDuration = now() - ntestBefore;
+        } catch (e) {
+          // We never reach the final test success
+          if (timedOut) {
+            report.testDestinationDuration = now() - ntestBefore;
+            throw e;
+          }
+          log(
+            "bot",
+            "failed destination confirm test. trying again. " + String(e)
+          );
+          // We will try again
+          return;
+        }
+        return true;
+      };
+      const result = await awaitAccountOperation({
+        account: destination,
+        step,
+      });
+      report.finalDestination = result.account;
+      report.destinationConfirmedTime = now();
+    }
   } catch (error: any) {
     if (process.env.CI) console.error(error);
     log("mutation-error", spec.name + ": " + formatError(error, true));
@@ -698,15 +796,15 @@ export function autoSignTransaction<T extends Transaction>({
   });
 }
 
-function awaitAccountOperation({
+function awaitAccountOperation<T>({
   account,
   step,
 }: {
   account: Account;
-  step: (arg0: Account) => Operation | null | undefined;
+  step: (arg0: Account) => T | null | undefined;
 }): Promise<{
   account: Account;
-  operation: Operation;
+  value: T;
 }> {
   log("engine", "awaitAccountOperation on " + account.name);
   let syncCounter = 0;
@@ -716,13 +814,12 @@ function awaitAccountOperation({
   const targetInterval = getEnv("SYNC_PENDING_INTERVAL");
 
   async function loop() {
-    const operation = step(acc);
+    const value = step(acc);
 
-    if (operation) {
-      log("engine", "found " + operation.id);
+    if (value) {
       return {
         account: acc,
-        operation,
+        value,
       };
     }
     const spent = now() - lastSync;

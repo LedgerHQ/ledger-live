@@ -5,6 +5,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
   pickSiblings,
 } from "../../bot/specs";
 import { AppSpec, TransactionTestInput } from "../../bot/types";
@@ -36,6 +37,7 @@ const solana: AppSpec<Transaction> = {
     {
       name: "Transfer ~50%",
       maxRun: 2,
+      testDestination: genericTestDestination,
       deviceAction: acceptTransferTransaction,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "balance is 0");
@@ -58,6 +60,7 @@ const solana: AppSpec<Transaction> = {
     {
       name: "Transfer Max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       deviceAction: acceptTransferTransaction,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "balance is 0");

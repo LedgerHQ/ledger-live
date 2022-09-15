@@ -10,6 +10,7 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
   pickSiblings,
 } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
@@ -48,6 +49,7 @@ const tron: AppSpec<Transaction> = {
     {
       name: "move 50% to another account",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
@@ -77,6 +79,7 @@ const tron: AppSpec<Transaction> = {
     {
       name: "send max to another account",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
