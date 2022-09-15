@@ -261,11 +261,6 @@ export async function runWithAppSpec<T extends Transaction>(
       mutationsCount = {};
     }
 
-    accounts = await promiseAllBatched(
-      getEnv("SYNC_MAX_CONCURRENT"),
-      accounts,
-      syncAccount
-    );
     appReport.mutations = mutationReports;
     appReport.accountsAfter = accounts;
   } catch (e: any) {
