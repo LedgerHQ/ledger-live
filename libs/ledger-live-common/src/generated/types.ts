@@ -58,6 +58,10 @@ import { Transaction as solanaTransaction } from "../families/solana/types";
 import { TransactionRaw as solanaTransactionRaw } from "../families/solana/types";
 import { TransactionStatus as solanaTransactionStatus } from "../families/solana/types";
 import { TransactionStatusRaw as solanaTransactionStatusRaw } from "../families/solana/types";
+import { Transaction as stacksTransaction } from "../families/stacks/types";
+import { TransactionRaw as stacksTransactionRaw } from "../families/stacks/types";
+import { TransactionStatus as stacksTransactionStatus } from "../families/stacks/types";
+import { TransactionStatusRaw as stacksTransactionStatusRaw } from "../families/stacks/types";
 import { Transaction as stellarTransaction } from "../families/stellar/types";
 import { TransactionRaw as stellarTransactionRaw } from "../families/stellar/types";
 import { TransactionStatus as stellarTransactionStatus } from "../families/stellar/types";
@@ -87,6 +91,7 @@ export type Transaction =
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
+  | stacksTransaction
   | stellarTransaction
   | tezosTransaction
   | tronTransaction;
@@ -107,6 +112,7 @@ export type TransactionRaw =
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
+  | stacksTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
   | tronTransactionRaw;
@@ -127,6 +133,7 @@ export type TransactionStatus =
   | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
+  | stacksTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
   | tronTransactionStatus;
@@ -147,6 +154,7 @@ export type TransactionStatusRaw =
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
+  | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
   | tronTransactionStatusRaw;

@@ -1,4 +1,4 @@
-import { ResponseAddress } from "@zondax/ledger-blockstack";
+import { ResponseAddress } from "@zondax/ledger-stacks";
 import { isValidBase64, isValidHex } from "../filecoin/utils";
 
 // TODO Filecoin - Use the new package @zondax/ledger-utils instead

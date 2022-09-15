@@ -1,6 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import { Account, Address, Operation } from "../../../../types";
+import { Account, Address, Operation } from "@ledgerhq/types-live";
+import {
+  makeUnsignedSTXTokenTransfer,
+  UnsignedTokenTransferOptions,
+  createMessageSignature,
+} from "@stacks/transactions/dist";
+
 import {
   GetAccountShape,
   GetAccountShapeArg0,
@@ -12,12 +18,10 @@ import {
   fetchTxs,
 } from "../../bridge/utils/api";
 import { TransactionResponse } from "./types";
-import { getCryptoCurrencyById } from "../../../../currencies";
 import {
-  makeUnsignedSTXTokenTransfer,
-  UnsignedTokenTransferOptions,
-  createMessageSignature,
-} from "@stacks/transactions/dist";
+  getCryptoCurrencyById,
+  parseCurrencyUnit,
+} from "../../../../currencies";
 
 export const getTxToBroadcast = async (
   operation: Operation,
@@ -42,7 +46,8 @@ export const getTxToBroadcast = async (
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
 
-  // @ts-ignore gjhjh
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore need to ignore the TS error here
   tx.auth.spendingCondition.signature = createMessageSignature(signature);
 
   return tx.serialize();
@@ -62,11 +67,11 @@ export const mapTxToOps =
     const { tx_id, fee_rate, block_height, burn_block_time } = tx.tx;
     const ops: Operation[] = [];
     const date = new Date(burn_block_time * 1000);
-    const value = new BigNumber(amount || 0);
+    const value = parseCurrencyUnit(getUnit(), amount);
+    const feeToUse = parseCurrencyUnit(getUnit(), fee_rate);
 
     const isSending = address === sender;
     const isReceiving = address === recipient;
-    const feeToUse = new BigNumber(fee_rate || 0);
 
     if (isSending) {
       ops.push({
@@ -106,14 +111,14 @@ export const mapTxToOps =
   };
 
 export const getAccountShape: GetAccountShape = async (info) => {
-  const { address, currency, rest = {} } = info;
+  const { address, currency, rest = {}, derivationMode } = info;
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
     xpubOrAddress: address,
-    derivationMode: "",
+    derivationMode,
   });
 
   const blockHeight = await fetchBlockHeight();

@@ -1,4 +1,4 @@
-import BlockstackApp from "@zondax/ledger-blockstack";
+import BlockstackApp from "@zondax/ledger-stacks";
 import { AddressVersion } from "@stacks/transactions/dist";
 import { log } from "@ledgerhq/logs";
 

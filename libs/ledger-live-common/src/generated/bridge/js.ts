@@ -12,6 +12,7 @@ import hedera from "../../families/hedera/bridge/js";
 import near from "../../families/near/bridge/js";
 import ripple from "../../families/ripple/bridge/js";
 import solana from "../../families/solana/bridge/js";
+import stacks from "../../families/stacks/bridge/js";
 import stellar from "../../families/stellar/bridge/js";
 import tezos from "../../families/tezos/bridge/js";
 import tron from "../../families/tron/bridge/js";
@@ -35,6 +36,7 @@ export default {
   near,
   ripple,
   solana,
+  stacks,
   stellar,
   tezos,
   tron,

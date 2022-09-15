@@ -7,7 +7,11 @@ import {
   Operation,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types";
+} from "@ledgerhq/types-live";
+import {
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
 
 type FamilyType = "stacks";
 
@@ -35,6 +39,10 @@ export type TransactionRaw = TransactionCommonRaw & {
   network: string;
   anchorMode: number;
 };
+
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
 

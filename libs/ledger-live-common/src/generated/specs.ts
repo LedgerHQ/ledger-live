@@ -12,6 +12,7 @@ import hedera from "../families/hedera/specs";
 import near from "../families/near/specs";
 import ripple from "../families/ripple/specs";
 import solana from "../families/solana/specs";
+import stacks from "../families/stacks/specs";
 import stellar from "../families/stellar/specs";
 import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
@@ -32,6 +33,7 @@ export default {
   near,
   ripple,
   solana,
+  stacks,
   stellar,
   tezos,
   tron,
