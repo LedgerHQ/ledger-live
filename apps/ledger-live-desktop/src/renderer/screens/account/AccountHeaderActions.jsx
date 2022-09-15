@@ -2,6 +2,7 @@
 
 import {
   canSend,
+  canReceive,
   getAccountCurrency,
   getMainAccount,
   isAccountEmpty,
@@ -315,10 +316,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       {availableOnBuy ? buyHeader : null}
       {/** don't show sell button if ptx smart routing is not enabled or sell not available */}
       {availableOnSell && ptxSmartRouting?.enabled ? sellHeader : null}
-      {canSend(account, parentAccount) ? (
+      {canSend(account, parentAccount, currency) ? (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
-      <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      {canReceive(currency) ? (
+        <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      ) : null}
     </FadeInButtonsContainer>
   );
 

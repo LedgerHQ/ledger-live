@@ -48,8 +48,11 @@ export const getReceiveFlowError = (
 };
 export function canSend(
   account: AccountLike,
-  parentAccount: Account | null | undefined
+  parentAccount: Account | null | undefined,
+  currency: CryptoCurrency
 ): boolean {
+  if (currency.id === "avalanchepchain") return false;
+
   try {
     getAccountBridge(account, parentAccount).createTransaction(
       getMainAccount(account, parentAccount)
@@ -58,6 +61,9 @@ export function canSend(
   } catch (e) {
     return false;
   }
+}
+export function canReceive(currency: CryptoCurrency): boolean {
+  return currency.id !== "avalanchepchain";
 }
 export function canBeMigrated(account: Account): boolean {
   try {

@@ -27,6 +27,7 @@ import {
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
   fromCeloResourcesRaw,
+  fromAvalanchePChainResourcesRaw,
   fromNFTRaw,
   toTronResourcesRaw,
   toCosmosResourcesRaw,
@@ -38,6 +39,7 @@ import {
   toCryptoOrgResourcesRaw,
   toSolanaResourcesRaw,
   toCeloResourcesRaw,
+  toAvalanchePChainResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
@@ -54,6 +56,10 @@ import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
 import { TronAccount, TronAccountRaw } from "./families/tron/types";
 import { CeloAccount, CeloAccountRaw } from "./families/celo/types";
+import {
+  AvalanchePChainAccount,
+  AvalanchePChainAccountRaw,
+} from "./families/avalanchepchain/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -508,6 +514,28 @@ export function patchAccount(
         (next as CeloAccount).celoResources = fromCeloResourcesRaw(
           celoUpdatedRaw.celoResources
         );
+        changed = true;
+      }
+      break;
+    }
+    case "avalanchepchain": {
+      const avalanchePChainAccount = account as AvalanchePChainAccount;
+      const avalanchePChainUpdatedRaw = updatedRaw as AvalanchePChainAccountRaw;
+
+      if (
+        avalanchePChainUpdatedRaw.avalanchePChainResources &&
+        (!avalanchePChainAccount.avalanchePChainResources ||
+          !areSameResources(
+            toAvalanchePChainResourcesRaw(
+              avalanchePChainAccount.avalanchePChainResources
+            ),
+            avalanchePChainUpdatedRaw.avalanchePChainResources
+          ))
+      ) {
+        (next as AvalanchePChainAccount).avalanchePChainResources =
+          fromAvalanchePChainResourcesRaw(
+            avalanchePChainUpdatedRaw.avalanchePChainResources
+          );
         changed = true;
       }
       break;
