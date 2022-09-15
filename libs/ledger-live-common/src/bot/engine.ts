@@ -116,12 +116,15 @@ export async function runWithAppSpec<T extends Transaction>(
   const hintWarnings: string[] = [];
   const appReport: SpecReport<T> = { spec, hintWarnings };
 
-  // staticly check that all mutations declared a test too
-  const list = spec.mutations.filter((m) => !m.test);
-  if (list.length > 0) {
-    hintWarnings.push(
-      "mutations should define a test(): " + list.map((m) => m.name).join(", ")
-    );
+  // staticly check that all mutations declared a test too (if no generic spec test)
+  if (!spec.test) {
+    const list = spec.mutations.filter((m) => !m.test);
+    if (list.length > 0) {
+      hintWarnings.push(
+        "mutations should define a test(): " +
+          list.map((m) => m.name).join(", ")
+      );
+    }
   }
 
   try {

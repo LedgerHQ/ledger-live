@@ -28,6 +28,7 @@ import {
 import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "./bot-test-context";
+
 type Arg = Partial<{
   currency: string;
   family: string;
@@ -387,7 +388,10 @@ export async function bot({
   if (specWithWarnings.length > 0) {
     appendBody("<details>\n");
     appendBody(
-      `<summary>⚠️ ${specWithWarnings.length} spec hints</summary>\n\n`
+      `<summary>⚠️ ${specWithWarnings.reduce(
+        (sum, s) => s.hintWarnings.length + sum,
+        0
+      )} spec hints</summary>\n\n`
     );
     specWithWarnings.forEach((s) => {
       appendBody(`- Spec ${s.spec.name}:\n`);
