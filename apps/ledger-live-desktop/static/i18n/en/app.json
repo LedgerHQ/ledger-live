@@ -3417,6 +3417,10 @@
           "title": "Extended account search",
           "description": "Scan for accounts with erroneous derivation paths. Please send potentially found assets to a regular account."
         },
+        "experimentalCountervalues": {
+          "title": "Experimental countervalues API",
+          "description": "This may cause the countervalues displayed for your accounts to become incorrect."
+        },
         "experimentalExplorers": {
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.\n(<0></0>)"
@@ -4598,10 +4602,6 @@
     },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
-      "description": "Please check your internet connection."
-    },
-    "NetworkError": {
-      "title": "An error occurred during synchronization",
       "description": "Please check your internet connection."
     },
     "NoAddressesFound": {

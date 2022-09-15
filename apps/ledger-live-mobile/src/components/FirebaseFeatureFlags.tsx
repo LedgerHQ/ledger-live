@@ -80,6 +80,11 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
           ...currentOverrides,
           [key]: overridenValue,
         }));
+      } else {
+        setLocalOverrides(currentOverrides => ({
+          ...currentOverrides,
+          [key]: undefined,
+        }));
       }
     },
     [appLanguage],

@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { acceptTransaction } from "./speculos-deviceActions";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
 
@@ -14,7 +14,7 @@ const transactionCheck =
   ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById(currencyId).units[0], "0.01")
+        parseCurrencyUnit(getCryptoCurrencyById(currencyId).units[0], "1")
       ),
       `${currencyId} balance is too low`
     );
@@ -45,13 +45,17 @@ const evmBasicMutations = ({ maxAccount }) => [
         "operation time to be older than 60s"
       );
       const estimatedGas = transaction.gasLimit.times(
-        transaction.gasPrice || 0
+        transaction.gasPrice || transaction.maxFeePerGas || 0
       );
-      expect(operation.fee.toNumber()).toBeLessThanOrEqual(
-        estimatedGas.toNumber()
+      botTest("operation fee is not exceeding estimated gas", () =>
+        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
+          estimatedGas.toNumber()
+        )
       );
-      expect(account.balance.toString()).toBe(
-        accountBeforeTransaction.balance.minus(operation.value).toString()
+      botTest("account balance moved with operation value", () =>
+        expect(account.balance.toString()).toBe(
+          accountBeforeTransaction.balance.minus(operation.value).toString()
+        )
       );
     },
   },
@@ -118,7 +122,7 @@ const songbird: AppSpec<Transaction> = {
 };
 
 const flare: AppSpec<Transaction> = {
-  name: "Moonbeam",
+  name: "Flare",
   currency: getCryptoCurrencyById("flare"),
   appQuery: {
     model: DeviceModelId.nanoS,

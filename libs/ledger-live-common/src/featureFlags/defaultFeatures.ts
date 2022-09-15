@@ -109,4 +109,7 @@ export const defaultFeatures: DefaultFeatures = {
   ptxSmartRoutingMobile: {
     enabled: false,
   },
+  mockFeature: {
+    enabled: false,
+  },
 };

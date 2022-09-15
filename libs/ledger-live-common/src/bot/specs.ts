@@ -8,6 +8,8 @@ import type { DeviceAction, DeviceActionArg } from "./types";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "../generated/types";
 import { botTest } from "./bot-test-context";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 
 export { botTest };
 
@@ -172,4 +174,47 @@ export function deviceActionFlow<T extends Transaction>(
       currentStep,
     };
   };
+}
+
+type DeviceAmountFormatOptions = {
+  // the ticker of the coin is AFTER the amount on the device (e.g. "600.1 USDT")
+  postfixCode: boolean;
+  // the device shows "42" as "42.0"
+  forceFloating: boolean;
+  // device don't even display the code (unit ticker)
+  hideCode: boolean;
+  // force the visibility of all digits of the amount
+  showAllDigits: boolean;
+};
+const defaultFormatOptions: DeviceAmountFormatOptions = {
+  postfixCode: false,
+  forceFloating: false,
+  hideCode: false,
+  showAllDigits: false,
+};
+
+const sep = " ";
+export function formatDeviceAmount(
+  currency: CryptoCurrency | TokenCurrency,
+  value: BigNumber,
+  options: Partial<DeviceAmountFormatOptions> = defaultFormatOptions
+): string {
+  const [unit] = currency.units;
+  let code = unit.code;
+  if (currency.type === "CryptoCurrency") {
+    const { deviceTicker } = currency;
+    if (deviceTicker) code = deviceTicker;
+  }
+  const fValue = value.div(new BigNumber(10).pow(unit.magnitude));
+  let v = options.showAllDigits
+    ? fValue.toFixed(unit.magnitude)
+    : fValue.toString(10);
+  if (options.forceFloating) {
+    if (!v.includes(".")) {
+      // if the value is pure integer, in the app it will automatically add an .0
+      v += ".0";
+    }
+  }
+  if (options.hideCode) return v;
+  return options.postfixCode ? v + sep + code : code + sep + v;
 }

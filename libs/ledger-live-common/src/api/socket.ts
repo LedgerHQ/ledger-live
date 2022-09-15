@@ -32,7 +32,7 @@ export const createDeviceSocket = (
   }
 ): Observable<SocketEvent> =>
   new Observable((o) => {
-    let deviceError = null; // the socket was interrupted by device problem
+    let deviceError: Error | null = null; // the socket was interrupted by device problem
 
     let unsubscribed = false; // subscriber wants to stops everything
 

@@ -1603,27 +1603,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "{{productName}} 장치를 찾고 있습니다",
+        "description" : "{{productName}} 장치가 잠금 해제 상태이며 블루투스 기능이 켜져 있는지 확인하세요"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "장치 찾기",
+        "description" : "장치가 잠금 해제된 상태에서 켜져 있고 블루투스가 활성화되어 있는지 확인하세요"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "이미 페어링됨"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "{{deviceName}} 장치와 페어링 완료"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "{{deviceName}} 장치와 페어링",
+        "subtitle" : "{{productName}}에서 코드를 확인합니다"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "페어링 실패",
+        "subtitle" : "문제가 발생한 것 같습니다! 블루투스가 켜져 있고 {{productName}} 장치가 근처에 있는지 확인하세요",
+        "retryCta" : "다시 시도하세요"
       }
     }
   },
@@ -3533,11 +3533,15 @@
     "no" : "다음을 선호하지 않습니다:",
     "languages" : {
       "en" : "영어",
-      "fr" : "프랑스어",
-      "ru" : "러시아어",
-      "es" : "스페인어",
-      "zh" : "중국어",
-      "de" : "독일어"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
@@ -4750,9 +4754,23 @@
         "uploadFromPhone" : "핸드폰에서 업로드"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "이미지 자르기",
+    "chooseConstrast" : "대비 선택",
     "uploadAnotherImage" : "다른 이미지 업로드",
     "selectContrast" : "컨트라스트 선택"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "좋습니다.\n설정이 모두 완료되었습니다.",
+      "allDoneTitle" : "잘 하셨습니다.\n이제 실행 중입니다.",
+      "subtitle" : "다음 단계:",
+      "skip" : "앱으로 건너뛰기",
+      "goToWallet" : "Ledger Live 지갑으로 바로가기",
+      "done" : "보다 안전한 미래를 준비하셨네요"
+    },
+    "walletCard" : {
+      "title" : "시작하기",
+      "description" : "여기를 클릭하여 Ledger Live로 귀하의 {{productName}} 장치 설정을 마치세요"
+    }
   }
 }

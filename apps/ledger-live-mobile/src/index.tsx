@@ -10,6 +10,7 @@ import React, {
   useEffect,
 } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
+import * as Sentry from "@sentry/react-native";
 import {
   StyleSheet,
   Text,
@@ -26,6 +27,7 @@ import {
   LinkingOptions,
   NavigationContainer,
 } from "@react-navigation/native";
+import { useFlipper } from "@react-navigation/devtools";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -42,8 +44,17 @@ import {
   useRemoteLiveAppContext,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+
+import { isEqual } from "lodash";
+import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import logger from "./logger";
-import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
+import {
+  saveAccounts,
+  saveBle,
+  saveSettings,
+  saveCountervalues,
+  savePostOnboardingState,
+} from "./db";
 import {
   exportSelector as settingsExportSelector,
   hasCompletedOnboardingSelector,
@@ -99,6 +110,7 @@ import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
+import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
 
 const themes = {
   light: lightTheme,
@@ -124,6 +136,9 @@ Text.defaultProps.allowFontScaling = false;
 type AppProps = {
   importDataString?: string;
 };
+
+export const routingInstrumentation =
+  new Sentry.ReactNavigationInstrumentation();
 
 function App({ importDataString }: AppProps) {
   useAppStateListener();
@@ -151,11 +166,16 @@ function App({ importDataString }: AppProps) {
             .map(a => a.id),
         };
       }
-
       return null;
     },
     [],
   );
+
+  const getPostOnboardingStateChanged = useCallback(
+    (a, b) => !isEqual(a.postOnboarding, b.postOnboarding),
+    [],
+  );
+
   const rawState = useCountervaluesExport();
   const trackingPairs = useTrackingPairs();
   const pairIds = useMemo(
@@ -189,6 +209,13 @@ function App({ importDataString }: AppProps) {
     getChangesStats: (a, b) => a.ble !== b.ble,
     lense: bleSelector,
   });
+  useDBSaveEffect({
+    save: savePostOnboardingState,
+    throttle: 500,
+    getChangesStats: getPostOnboardingStateChanged,
+    lense: postOnboardingSelector,
+  });
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
@@ -537,6 +564,8 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
     [theme, osTheme],
   );
 
+  useFlipper(navigationRef);
+
   if (!isReady) {
     return null;
   }
@@ -550,6 +579,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
         onReady={() => {
           isReadyRef.current = true;
           setTimeout(() => SplashScreen.hide(), 300);
+          routingInstrumentation.registerNavigationContainer(navigationRef);
         }}
       >
         {children}
@@ -631,20 +661,22 @@ export default class Root extends Component<
                                               value={true}
                                             >
                                               <OnboardingContextProvider>
-                                                <ToastProvider>
-                                                  <NotificationsProvider>
-                                                    <SnackbarContainer />
-                                                    <NftMetadataProvider>
-                                                      <MarketDataProvider>
-                                                        <App
-                                                          importDataString={
-                                                            importDataString
-                                                          }
-                                                        />
-                                                      </MarketDataProvider>
-                                                    </NftMetadataProvider>
-                                                  </NotificationsProvider>
-                                                </ToastProvider>
+                                                <PostOnboardingProviderWrapped>
+                                                  <ToastProvider>
+                                                    <NotificationsProvider>
+                                                      <SnackbarContainer />
+                                                      <NftMetadataProvider>
+                                                        <MarketDataProvider>
+                                                          <App
+                                                            importDataString={
+                                                              importDataString
+                                                            }
+                                                          />
+                                                        </MarketDataProvider>
+                                                      </NftMetadataProvider>
+                                                    </NotificationsProvider>
+                                                  </ToastProvider>
+                                                </PostOnboardingProviderWrapped>
                                               </OnboardingContextProvider>
                                             </ButtonUseTouchable.Provider>
                                           </CounterValuesProvider>
