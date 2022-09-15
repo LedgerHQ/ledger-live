@@ -2,7 +2,11 @@ import invariant from "invariant";
 import expect from "expect";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { botTest, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+  pickSiblings,
+} from "../../bot/specs";
 import { AppSpec, TransactionTestInput } from "../../bot/types";
 import { SolanaAccount, Transaction } from "./types";
 import {
@@ -78,7 +82,9 @@ const solana: AppSpec<Transaction> = {
       name: "Delegate",
       maxRun: 1,
       deviceAction: acceptStakeCreateAccountTransaction,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, siblings }) => {
+        expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
+
         const { solanaResources } = account as SolanaAccount;
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
