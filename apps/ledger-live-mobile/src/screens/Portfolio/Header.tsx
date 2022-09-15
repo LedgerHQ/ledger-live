@@ -174,8 +174,7 @@ function PortfolioHeader({
             <NotificationsMedium size={24} color={"neutral.c100"} />
           )}
         </Touchable>
-        {/**
-           <Flex ml={7}>
+        <Flex ml={7}>
           <Touchable
             onPress={onCardButtonPress}
             event="button_clicked"
@@ -187,7 +186,6 @@ function PortfolioHeader({
             <CardMedium size={24} color={"neutral.c100"} />
           </Touchable>
         </Flex>
-           */}
       </Flex>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <CenteredElement width={windowsWidth}>
@@ -196,7 +194,7 @@ function PortfolioHeader({
             justifyContent={"center"}
             style={[PortfolioValueAnimation]}
           >
-            <Flex flexDirection={"column"} alignItems={"center"}>
+            <Flex flexDirection={"column"} alignItems={"center"} mr={9}>
               {balanceHistory ? (
                 <>
                   <Text
@@ -234,7 +232,7 @@ function PortfolioHeader({
             justifyContent={"center"}
             style={[WalletTitleAnimation]}
           >
-            <Flex flexDirection={"row"} alignItems={"center"}>
+            <Flex flexDirection={"row"} alignItems={"center"} mr={9}>
               <Text
                 variant={"small"}
                 fontWeight={"semiBold"}
