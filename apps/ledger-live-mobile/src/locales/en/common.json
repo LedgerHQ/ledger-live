@@ -82,7 +82,9 @@
     "moreInfo": "More info",
     "buyEth": "Buy Ethereum",
     "popular": "popular",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "restart": "Restart"
+
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -1043,6 +1045,10 @@
         "title": "Get started in English",
         "cta": "Got it!",
         "desc": "We are introducing additional languages in order to help your onboarding with Ledger. Please be aware that the rest of the Ledger experience is currently only available in English."
+      },
+      "RestartModal": {
+        "title": "Restart required",
+        "paragraph": "The selected language requires the application to restart. Are you sure you want to continue?",
       }
     },
     "stepSelectDevice": {
