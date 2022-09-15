@@ -2,9 +2,10 @@ import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 
 import {
+  CardMedium,
   NotificationsMedium,
   NotificationsOnMedium,
   SettingsMedium,
@@ -68,6 +69,13 @@ function PortfolioHeader({
     });
     // @ts-expect-error navigation ts issue
     navigation.navigate(NavigatorName.Settings);
+  }, [navigation]);
+
+  const onCardButtonPress = useCallback(() => {
+    navigation.navigate(ScreenName.PlatformApp, {
+      platform: "cl-card",
+      name: "CL Card Powered by Ledger",
+    });
   }, [navigation]);
 
   const notificationsCount = allIds.length - seenIds.length;
@@ -158,7 +166,7 @@ function PortfolioHeader({
           BackgroundOpacity,
         ]}
       />
-      <Box>
+      <Flex flexDirection="row">
         <Touchable onPress={onNotificationButtonPress}>
           {notificationsCount > 0 ? (
             <NotificationsOnMedium size={24} color={"neutral.c100"} />
@@ -166,7 +174,21 @@ function PortfolioHeader({
             <NotificationsMedium size={24} color={"neutral.c100"} />
           )}
         </Touchable>
-      </Box>
+        {/**
+           <Flex ml={7}>
+          <Touchable
+            onPress={onCardButtonPress}
+            event="button_clicked"
+            eventProperties={{
+              button: "card",
+              screen: ScreenName.Portfolio,
+            }}
+          >
+            <CardMedium size={24} color={"neutral.c100"} />
+          </Touchable>
+        </Flex>
+           */}
+      </Flex>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <CenteredElement width={windowsWidth}>
           <Animated.View
@@ -224,21 +246,21 @@ function PortfolioHeader({
               </Text>
               {!hidePortfolio && <DiscreetModeButton size={20} />}
               {incidents.length > 0 && (
-                <Box pl={2}>
+                <Flex pl={2}>
                   <Touchable onPress={onStatusErrorButtonPress}>
                     <WarningMedium size={24} color={"warning.c100"} />
                   </Touchable>
-                </Box>
+                </Flex>
               )}
             </Flex>
           </Animated.View>
         </CenteredElement>
       </Flex>
-      <Box>
+      <Flex>
         <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
           <SettingsMedium size={24} color={"neutral.c100"} />
         </Touchable>
-      </Box>
+      </Flex>
     </Header>
   );
 }

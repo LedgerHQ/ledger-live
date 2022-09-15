@@ -180,7 +180,7 @@ const AssetScreen = ({ route }: Props) => {
                   currencyTicker: currency.ticker,
                 })}
               />
-              <Flex>
+              <Flex minHeight={65}>
                 <MarketPriceSection
                   currency={currency}
                   selectedCoinData={selectedCoinData}
