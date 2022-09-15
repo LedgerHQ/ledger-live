@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - LIVE-2174-dynamic-cal
+      - feat/LIVE-2174-dynamic-cal
 
 concurrency:
   group: bot-dyn-cal
@@ -61,10 +61,9 @@ jobs:
       - name: run script
         run: |
           mkdir calreport
-          node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets
+          node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets true
       - name: upload logs to github artifacts
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: calreport
-          path: libs/ledgerjs/packages/cryptoassets/data/
+          path: libs/ledgerjs/packages/cryptoassets/data/*.json
