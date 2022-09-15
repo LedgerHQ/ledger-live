@@ -9,12 +9,14 @@ import { AnchorMode } from "@stacks/transactions/dist";
 import type { DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { fromTransactionRaw } from "./transaction";
+import { testBridge } from "../../__tests__/test-helpers/bridge";
+import { CurrenciesData } from "@ledgerhq/types-live";
 
 const SEED_IDENTIFIER = "SP1QM16S93TEMM1Q9QHB8WV1EEEC3Z2Y3P0AE287S";
 const ACCOUNT_1 = "SP18S8PQ2JKPW8Z4TNB2C3WJ5FN5FJHZ41Q79NYVE";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const stacks = {
+const stacks: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [],
   scanAccounts: [
     {
@@ -130,4 +132,5 @@ const dataset: DatasetTest<Transaction> = {
     stacks,
   },
 };
-export default dataset;
+
+testBridge(dataset);
