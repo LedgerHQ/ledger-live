@@ -220,7 +220,6 @@ class Ble extends Transport {
   };
 
   static stop = async (): Promise<void> => {
-    Ble.globalBridgeEventSubscription?.remove();
     Ble.scanObserver = undefined;
 
     await NativeBle.stop();
