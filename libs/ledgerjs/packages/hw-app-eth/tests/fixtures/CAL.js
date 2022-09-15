@@ -65,6 +65,144 @@ module.exports = {
         },
       ],
     },
+  "1:0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC:7e916a5dd34dd8da7436fa22a4b79f250d77275e11273b38cdf5387c":
+    {
+      contractName: {
+        label: "Darth Vador",
+        signature:
+          "304402200f1c42bb335dabf7d4e70aff3c694acd5d583c55f67ac69353c7089c2f331008022027c8b41271e2d9a49cf7b8ea1f051446fde487cfddb6ae596af2339e547b7cb9",
+      },
+      fields: [
+        {
+          label: "Sender",
+          path: "from.name",
+          signature:
+            "3045022067c2da84e35ab7150d9b811ec10ee98c5a58927b7310cc1616be33672e4d0390022100f22b136e7cc5ec18001564749e773a209c9ccd09a097aba8ac29b43746dd976e",
+        },
+        {
+          label: "Recipient",
+          path: "to.members.[].name",
+          signature:
+            "3045022048084193d682f4085080db8f4878926ecda16ee99d8880f6fe8aec0ae82326f6022100983a85b4ccde51b6b6054207cde57af6e32ea0a69b997bad175bf02e28611173",
+        },
+        {
+          label: "Message",
+          path: "contents",
+          signature:
+            "304502206ac58f2720209633e0d7183b3e7d9aaf12fb99009ee865dcff2b528ecc6cdb31022100bee53af9d3d0b68a84bd72e772538af3def78e59ee70dec5a1c6df35dbf9e4f0",
+        },
+        {
+          label: "Attachment",
+          path: "attach.list.[].name",
+          signature:
+            "3045022013d1ea505a8b651a073781b134228c5945c30525ae1dbb90b60729cccae4cd6b0221008cd417efdd6e31f491354a3cad5e8aa3cc707081d83a13c0f4250ca793c0da6f",
+        },
+      ],
+    },
+  "0:0x0000000000000000000000000000000000000000:1b035bb23481b565164f6266cddba7d0a1de7819b7867218761e8a7d":
+    {
+      contractName: {
+        label: "Palpatine",
+        signature:
+          "3046022100cb0d41cb506d27433d8ca3ca5c0888bced039de132adedca66895a5116c3af9f022100e22b6902aa07a68d71da702dcc8d44deec0d5483f8e29ed5d0e830e40a95892e",
+      },
+      fields: [
+        {
+          label: "Timestamp",
+          path: "curDate",
+          signature:
+            "3045022100e9e974f4c04bdce33b81e5bc71d3b9d2f1c63d47f7b092d1cc0b5c52fb5d145f02204edacacfae8dc62c83836f31d3665a9104d40f2c1d34c24f3e4335eb493675de",
+        },
+        {
+          label: "Identifier",
+          path: "id",
+          signature:
+            "3045022100dd2ae125d66c0d53b8ff1cd869506aca393d7763766906894e072a9a0bccc6eb022056812867e63e2b81db36690111e922085db2d6390d6a5454c9ec3f248d969323",
+        },
+      ],
+    },
+  "1:0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC:8768c8db478d5e96fe52edadcd32dc5d182e48a9b51b4f166696f334":
+    {
+      contractName: {
+        label: "Dark Maul",
+        signature:
+          "3046022100a1ee24c39a79d92bf33f1018fa04721e52db94501e9d1d52d28d08860c7a807d0221008ca107c6a0bf1a560f471959e2641105eb3cd7ea6ed0eb386d9508c3a55f554b",
+      },
+      fields: [
+        {
+          label: "Negative 256",
+          path: "neg256",
+          signature:
+            "3046022100d4223b3a49c2719723fce18f32f1610d1af84f5a1e6cacd9f2ea31a08f25a3a5022100ff8be6d7bada8a9f991ebad771c4197a8d50b875b3794830bd9202ecf7dee291",
+        },
+        {
+          label: "Positive 256",
+          path: "pos256",
+          signature:
+            "3045022100812f27a5e993e89cbe2bf1662b226357272cbb6d37bec17ab1ccaf6666de1b48022078823c8c73802362e930146beee375bb6acdb6579c18a459b235e135a6197509",
+        },
+        {
+          label: "Negative 128",
+          path: "neg128",
+          signature:
+            "3046022100b34cb6b2300217ef2a1281bc69f89430735787637624861aa7848fdaa94ff5e102210099ad54641ec415e7ae26245f8eea52c7c4e97ee14ce9cb55505c80588df1de8f",
+        },
+        {
+          label: "Positive 128",
+          path: "pos128",
+          signature:
+            "304502210080453b062c7f7a47e1c4e58774682dde0023ad8646664a26fdb25e1de84c7392022069ade1e93ee8318d2c392b51fa6d088b19d8634188d792be58723a4dd5d2fde2",
+        },
+        {
+          label: "Negative 64",
+          path: "neg64",
+          signature:
+            "3045022022233aa92cd4deddfb1c09806e80cfabb238c2a5672c244d9af3778140e0f65f0221009ae16aee5f1b3b2bdfa1e2ec0518249333335584015ed444eafab4b3f1dba078",
+        },
+        {
+          label: "Positive 64",
+          path: "pos64",
+          signature:
+            "3044022024c209ad119ddd0939febd8eafd15e95f8e8923c7b35b4ca44206804f05eca7b0220665dfd4d143f497e263da7142ece011e3221d3acfb864e992d4e86df185331b0",
+        },
+        {
+          label: "Negative 32",
+          path: "neg32",
+          signature:
+            "3045022057c12e49d1a688ff7f1b4322015882b3c5bd6e7984d38d80b1659e4a8b736c0d022100fa74d3a71e237bfe46202b95afb2fe6ff93e7fd64a6a2b14a31465aec965bcb4",
+        },
+        {
+          label: "Positive 32",
+          path: "pos32",
+          signature:
+            "304502203b1ed09e5c5a892219b90f0b15894d516ab3f92d07c3d26dcc68e0630f4ec416022100eef30902bc4b97799ec60b5e8cf97209d93880bb3051f9e5d8c3182e9a98770a",
+        },
+        {
+          label: "Negative 16",
+          path: "neg16",
+          signature:
+            "304502210083072d1598238548b2dafb28ff8ed9f69ba039a0e202063b10d8f0825a106bd102202a98bd6012f2ece91be71e98e503614506aff3a9425e121fd00b87a69a5251d6",
+        },
+        {
+          label: "Positive 16",
+          path: "pos16",
+          signature:
+            "304402203f64e6f523779ce67e0b8aa3eef15093eebb9f1d9455e616d46faeb07e75d65602204fb4d652999e8be22acf7feb5014c5e2c8da6017bbed19239231b8a61194e528",
+        },
+        {
+          label: "Negative 8",
+          path: "neg8",
+          signature:
+            "3045022100e750bf41c848674a13aed18ec7675edad8d6e8e10428ebc6ba55eb764d74affd022050cbc317f5e062f7a8231cf810a854d1376c8cedc529d48ac5147c2430625a31",
+        },
+        {
+          label: "Positive 8",
+          path: "pos8",
+          signature:
+            "30450221009ac6447ea324722a93d97e0476e103d2e35401f9152693241f70777d215a320e02201c0a1ad742f3abde26ff1711fbf5d1d7a49765b074c812bbd94a0593dfbcac55",
+        },
+      ],
+    },
   "1:0x7f268357a8c2552623316e2562d90e642bb538e5:d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f":
     {
       contractName: {
@@ -183,6 +321,40 @@ module.exports = {
         },
       ],
     },
+  "5:0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC:7e916a5dd34dd8da7436fa22a4b79f250d77275e11273b38cdf5387c":
+    {
+      contractName: {
+        label: "C3P0",
+        signature:
+          "304502203b0768bde7f99183d3687336d63e314ea6806bf125dfa9261d55b7319ee18fa3022100f9b711b626ec116318ef2ee2ac96a31746cd071c5caac3655adfcc1934161d51",
+      },
+      fields: [
+        {
+          label: "Sender",
+          path: "from.name",
+          signature:
+            "3045022100ced76e0e61411b1ef5642586834e29ae9189974ce4338a9a9a2516e43edbde7302200a36170372164d778f873a4f5e95923ab09f48ac0cb9fa106f7f7d097e891eb9",
+        },
+        {
+          label: "Recipient",
+          path: "to.members.[].name",
+          signature:
+            "3044022100a9a05f12fbe643750f0c8a60b30dbc793077c2104dcf999a62303dba8458d65d021f6edd5f71a9c32b411f17df3fb1aa4721b356259cf77a48c4a44319806a5435",
+        },
+        {
+          label: "Message",
+          path: "contents",
+          signature:
+            "304502200f6f7be32f617791e4ed639ba294b8ab38e9a4f9c39e3fe415c4e03ab4674168022100853409de5fc10e80c2a406439ba184b28762dc74797e1e383b167676d8fae959",
+        },
+        {
+          label: "Attachment",
+          path: "attach.list.[].name",
+          signature:
+            "304502206650c083b2c895fba0fdb8edf952f56f443a6cdde0086aab469c38032f7aeb320221009c7acee25f280180c8cbf0038c1b3692a671cdab0651501948e6a2b59783c539",
+        },
+      ],
+    },
   "5:0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCccccccc1:5b2c066ad15a55058a74d5698b12785338559cb982cab547e5d93e3d":
     {
       contractName: {
@@ -239,37 +411,91 @@ module.exports = {
         },
       ],
     },
-  "5:0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC:7e916a5dd34dd8da7436fa22a4b79f250d77275e11273b38cdf5387c":
+  "1:0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC:0270aaaa8983a8ba018832814fadeb88ea930d63b4cc7acfa241cbff":
     {
       contractName: {
-        label: "C3P0",
+        label: "Dark Maul",
         signature:
-          "304502203b0768bde7f99183d3687336d63e314ea6806bf125dfa9261d55b7319ee18fa3022100f9b711b626ec116318ef2ee2ac96a31746cd071c5caac3655adfcc1934161d51",
+          "3045022100de39788362c05cb30910cb4c19968fa560b4542fb423cc235a544fce6f959a6902207cc3ee39f5f34ea6a653188ae6fc189b27950c837bedf7e6d243d904b3fc2bf5",
       },
       fields: [
         {
-          label: "Sender",
-          path: "from.name",
+          label: "Max UInt256",
+          path: "max",
           signature:
-            "3045022100ced76e0e61411b1ef5642586834e29ae9189974ce4338a9a9a2516e43edbde7302200a36170372164d778f873a4f5e95923ab09f48ac0cb9fa106f7f7d097e891eb9",
+            "3044022078c0dffd20a30d109a239d75967c72d3dc32992a202fecb66bef6392e6f9d537022071643b9700dc7a1306b1829fe66a583dda4db0d0980d273aade56ac917db89ff",
         },
         {
-          label: "Recipient",
-          path: "to.members.[].name",
+          label: "Min Int256",
+          path: "neg256",
           signature:
-            "3044022100a9a05f12fbe643750f0c8a60b30dbc793077c2104dcf999a62303dba8458d65d021f6edd5f71a9c32b411f17df3fb1aa4721b356259cf77a48c4a44319806a5435",
+            "3045022006564e0dfc69b6c264d591b8240225364b1b2ca59aa659fab9aa840894f17cf5022100b59e14e66978f433938ff6e267e8b3677e69265b30379e65a16458694586067c",
         },
         {
-          label: "Message",
-          path: "contents",
+          label: "Max Int256",
+          path: "pos256",
           signature:
-            "304502200f6f7be32f617791e4ed639ba294b8ab38e9a4f9c39e3fe415c4e03ab4674168022100853409de5fc10e80c2a406439ba184b28762dc74797e1e383b167676d8fae959",
+            "3046022100b400948769b2315d2eaa2b2cf1a954b939ea72633333eacd7eb48a4049d16668022100c303719ad330dda6b351aab92648d0b64c992229c657265bc0d338cc1987f0de",
         },
         {
-          label: "Attachment",
-          path: "attach.list.[].name",
+          label: "Min Int128",
+          path: "neg128",
           signature:
-            "304502206650c083b2c895fba0fdb8edf952f56f443a6cdde0086aab469c38032f7aeb320221009c7acee25f280180c8cbf0038c1b3692a671cdab0651501948e6a2b59783c539",
+            "3046022100a93da4fcbae42bdadabfd71d3e0ee2b01c5e444b389e67dbe27f5ec82bdc2c2b0221009f7bd6f88501340b627a04bdd7478e4bc93c0be206b9c3def2c9b07d6591d033",
+        },
+        {
+          label: "Max Int128",
+          path: "pos128",
+          signature:
+            "30460221009a7fef85d6c57a40ad0b7661322809a03fd62153277999688b54324f91245357022100923e53738e94b99af01819ad36c3f095fde94d7cf859118fbfa40ac25c3f422b",
+        },
+        {
+          label: "Min Int64",
+          path: "neg64",
+          signature:
+            "3045022100e159a15b0366603cb28f4a9646daab4ab42fd3fb4e0590b32f88192465df358702205cc164b3fe6bfe24007cd804f8d8053a51f53ff9f066e9c5cb9612c0ea69f240",
+        },
+        {
+          label: "Max Int64",
+          path: "pos64",
+          signature:
+            "30450221008a99fedd95c0c9f112b3448ebded92d031d000c9373eb85570ed0399d0fbe54d0220152e20a2ab45c88fd46de66b4a48f06eb2069285513849dce3240df048a42a93",
+        },
+        {
+          label: "Min Int32",
+          path: "neg32",
+          signature:
+            "3046022100dd364ea2741d7acaa54ba20319ac066bcbd0051841547efa3e902dd7ae139149022100eea484a02cda9ec353f4cbbd58e61f7514f3ae4e6c52e31ad111d4f1ad22627b",
+        },
+        {
+          label: "Max Int32",
+          path: "pos32",
+          signature:
+            "3046022100d989e8e665d4490fc5aead1c4580b594335a520edfb355eae7f861a2a479f69f022100aaea7e95cd9851fac86eb67cdbad1865d74dbb6e8655ea92814a7acf8c682e16",
+        },
+        {
+          label: "Min Int16",
+          path: "neg16",
+          signature:
+            "3046022100a9c3972100875d2ee99d9c7c4087cbc3d808650d73d48fd68bc42c4061317906022100f90ce13f28e4af7fe040b849ba89eb153a230e54439d313c1432234a81ffa2fe",
+        },
+        {
+          label: "Max Int16",
+          path: "pos16",
+          signature:
+            "3045022100ef489d1df222497dce64426a13c8fd78530eb22719eebcce1ee77ac745e77009022000b03f51200cc8c8e90a6d25d6f4ad82b3e5da70ce6e806386bce621e38d8a26",
+        },
+        {
+          label: "Min Int8",
+          path: "neg8",
+          signature:
+            "3046022100a3c1c24fd5b3705cbdc2e35e4de49147cd178554f32d33ef78b538c01e8c73d9022100aeb71d657345b52bd06a42d1a2099f5a9a6f42d5d06a9b50581e1959ab6ac772",
+        },
+        {
+          label: "Max Int8",
+          path: "pos8",
+          signature:
+            "3046022100c2761449f313cbfc55376fb31c12283833dfd5a49273a5ff4022645043a2a64b0221009640e0d52de7f9481b3157fa1b3ad05a7fc0b018d1539d526fbd299d9ba6471d",
         },
       ],
     },
