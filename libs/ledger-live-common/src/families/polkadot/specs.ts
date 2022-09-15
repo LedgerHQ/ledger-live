@@ -44,6 +44,7 @@ const polkadot: AppSpec<Transaction> = {
   },
   testTimeout: 2 * 60 * 1000,
   genericDeviceAction: acceptTransaction,
+  minViableAmount: POLKADOT_MIN_SAFE,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(POLKADOT_MIN_SAFE), "balance is too low");
   },

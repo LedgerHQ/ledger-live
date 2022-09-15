@@ -60,6 +60,7 @@ const cosmos: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: minAmount,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minAmount), "balance is too low");
   },

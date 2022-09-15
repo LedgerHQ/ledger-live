@@ -43,6 +43,7 @@ const tron: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: minimalAmount,
   mutations: [
     {
       name: "move 50% to another account",
