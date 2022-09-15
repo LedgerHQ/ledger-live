@@ -977,7 +977,7 @@
       "terms" : {
         "title" : "Emprestar Cripto",
         "subtitle" : "Empreste ativos no protocolo Compound",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "O protocolo Compound permite emprestar e pegar emprestado ativos na rede Ethereum. Você pode emprestar ativos e receber juros diretamente da sua conta Ledger.",
         "switchLabel" : "<1>Eu li e concordo com os </1><0>Termos de uso</0><1>.</1>"
       },
       "steps" : {
@@ -3145,7 +3145,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "Você ativou sua delegação com sucesso."
               }
             }
           }
@@ -3157,7 +3157,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "Você reativou sua delegação com sucesso."
               }
             }
           }
@@ -3404,6 +3404,10 @@
         "scanForInvalidPaths" : {
           "title" : "Pesquisa de contas ampliada",
           "description" : "Procure contas com caminhos de derivação incorretos. Envie os potenciais ativos encontrados para uma conta regular."
+        },
+        "experimentalCountervalues" : {
+          "title" : "Experimental countervalues API",
+          "description" : "This may cause the countervalues displayed for your accounts to become incorrect."
         },
         "experimentalExplorers" : {
           "title" : "API de exploradores experimentais",
@@ -4581,10 +4585,6 @@
     "NetworkDown" : {
       "title" : "A internet parece estar desconectada",
       "description" : "Verifique sua conexão à internet."
-    },
-    "NetworkError" : {
-      "title" : "Ocorreu um erro durante a sincronização",
-      "description" : "Verifique sua conexão de internet."
     },
     "NoAddressesFound" : {
       "title" : "Nenhuma conta encontrada",
