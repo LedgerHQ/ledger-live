@@ -79,11 +79,11 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
           title={
             <Trans i18nKey={"onboarding.stepLanguage.RestartModal.title"} />
           }
+          description={
+            <Trans i18nKey={"onboarding.stepLanguage.RestartModal.paragraph"} />
+          }
           onClose={closeModal}
         >
-          <Text variant="body" mb={8} textAlign="center" color="neutral.c80">
-            <Trans i18nKey={"onboarding.stepLanguage.RestartModal.paragraph"} />
-          </Text>
           <Flex flexDirection={"row"}>
             <Button
               event="ConfirmationModalCancel"

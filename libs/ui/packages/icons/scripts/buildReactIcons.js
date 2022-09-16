@@ -47,23 +47,6 @@ export default styled(Svg).attrs((props:  SvgProps) => ({
 }))\`\`;
 `;
 
-const RTLIcon = `
-import styled from "styled-components/native";
-import { system } from "styled-system";
-import Svg, { SvgProps } from "react-native-svg";
-
-const fillSystem = system({
-  fill: {
-    property: "fill",
-    scale: "colors",
-  },
-});
-
-export default styled(Svg).attrs((props:  SvgProps) => ({
-  ...fillSystem(props),
-}))\`\`;
-`;
-
 // Component template
 function reactTemplate({ template }, _, { imports, interfaces, componentName, __, jsx, exports }) {
   const plugins = ["typescript"];
