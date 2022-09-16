@@ -31,7 +31,8 @@ function codeToInject() {
     postDataToWebView({ type: "ERROR", payload: error.toString() });
   };
 
-  const log = (...args) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const log = (...args: any[]) => {
     postDataToWebView({ type: "LOG", payload: JSON.stringify(args) });
   };
 

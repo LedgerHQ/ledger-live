@@ -6,6 +6,11 @@ import {
   StackNavigationEventMap,
   StackScreenProps,
 } from "@react-navigation/stack";
+import {
+  EventListenerCallback,
+  EventMapCore,
+  StackNavigationState,
+} from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ImageCropper, {
   Props as ImageCropperProps,
@@ -25,11 +30,6 @@ import { ScreenName } from "../../const";
 import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
 import Touchable from "../../components/Touchable";
 import { ParamList } from "./types";
-import {
-  EventListenerCallback,
-  EventMapCore,
-  StackNavigationState,
-} from "@react-navigation/native";
 
 /**
  * UI component that loads the input image (from the route params) &
