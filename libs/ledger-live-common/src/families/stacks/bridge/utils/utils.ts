@@ -18,10 +18,7 @@ import {
   fetchTxs,
 } from "../../bridge/utils/api";
 import { TransactionResponse } from "./types";
-import {
-  getCryptoCurrencyById,
-  parseCurrencyUnit,
-} from "../../../../currencies";
+import { getCryptoCurrencyById } from "../../../../currencies";
 
 export const getTxToBroadcast = async (
   operation: Operation,
@@ -35,7 +32,7 @@ export const getTxToBroadcast = async (
   } = operation;
 
   const options: UnsignedTokenTransferOptions = {
-    amount: value.toFixed(),
+    amount: value.minus(fee).toFixed(),
     recipient: recipients[0],
     anchorMode,
     network,
