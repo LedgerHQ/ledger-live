@@ -13,16 +13,11 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-// import type { Transaction } from "@ledgerhq/live-common/families/avalanchepchain/types";
-import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
+import type { Transaction } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import {
   getAccountUnit,
-  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -48,7 +43,7 @@ type RouteParams = {
 
 export default function DelegationAmount({ navigation, route }: Props) {
     const { colors } = useTheme();
-    const { account, parentAccount } = useSelector(accountScreenSelector(route));
+    const { account } = useSelector(accountScreenSelector(route));
   
     invariant(account?.type === "Account", "must be account");
   
