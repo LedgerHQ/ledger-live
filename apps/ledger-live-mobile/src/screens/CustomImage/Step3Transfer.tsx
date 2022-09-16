@@ -105,21 +105,14 @@ const Step3Transfer: React.FC<
         {rawData?.hexData && (
           <>
             <Text variant="h3" py={4}>
-              Raw data (500 first characters):
+              Raw data (200 first characters):
             </Text>
             <Flex backgroundColor="neutral.c30">
               <Text>width: {rawData?.width}</Text>
               <Text>height: {rawData?.height}</Text>
-              <Text>{rawData?.hexData.slice(0, 500)}</Text>
+              <Text>{rawData?.hexData.slice(0, 200)}</Text>
             </Flex>
           </>
-        )}
-        {rawData && (
-          <ResultDataTester
-            {...rawData}
-            onPreviewResult={handlePreviewResult}
-            onError={handleError}
-          />
         )}
         <Flex
           flex={1}
@@ -131,20 +124,22 @@ const Step3Transfer: React.FC<
           <Text variant="h3" py={4} alignSelf="flex-start">
             Image reconstructed from raw data:
           </Text>
-          <Alert type="primary" title={infoMessage} />
+          {rawData && (
+            <ResultDataTester
+              {...rawData}
+              onPreviewResult={handlePreviewResult}
+              onError={handleError}
+            />
+          )}
           {reconstructedPreviewResult?.imageBase64DataUri ? (
-            <Flex mt={5} alignItems="center">
+            <Flex mb={5} alignItems="center">
               {isDataMatching ? (
                 <Alert type="success" title={successMessage} />
               ) : (
                 <Alert type="error" title={errorMessage} />
               )}
-              <Text>
-                {isDataMatching
-                  ? ""
-                  : "Press the image below to see the difference"}
-              </Text>
-              <Text>
+              <Text textAlign="center">
+                {"Press the image below to see the difference.\n"}
                 {showReconstructed
                   ? "Reconstructed image:"
                   : "Previewed image:"}
@@ -177,6 +172,7 @@ const Step3Transfer: React.FC<
           ) : (
             <InfiniteLoader />
           )}
+          <Alert type="primary" title={infoMessage} />
         </Flex>
       </Flex>
     </ScrollView>
