@@ -2275,11 +2275,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
-      "featureFlagsOverride" : "재정의",
       "featureFlagsEdit" : "편집",
-      "featureFlagsRestore" : "복구",
-      "featureFlagsDisplayValue" : "값 표시하기",
-      "featureFlagsHideValue" : "값 숨기기"
+      "featureFlagsRestore" : "복구"
     }
   },
   "notifications" : {
