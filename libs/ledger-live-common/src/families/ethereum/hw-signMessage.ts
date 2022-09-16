@@ -3,7 +3,6 @@ import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/EIP712.ty
 import Transport from "@ledgerhq/hw-transport";
 import { TypedDataUtils } from "eth-sig-util";
 import { bufferToHex } from "ethereumjs-util";
-import { getEnv } from "../../env";
 import type { MessageData, Result } from "../../hw/signMessage/types";
 import type { TypedMessageData } from "./types";
 import { DerivationMode } from "../../derivation";
@@ -103,13 +102,23 @@ const signMessage: EthSignMessage = async (
         : Buffer.from(parsedMessage).toString("hex") || ""
     );
   } else {
-    result = getEnv("EXPERIMENTAL_EIP712")
-      ? await eth.signEIP712Message(path, parsedMessage)
-      : await eth.signEIP712HashedMessage(
+    try {
+      result = await eth.signEIP712Message(path, parsedMessage);
+    } catch (e) {
+      if (
+        e instanceof Error &&
+        // @ts-expect-error TransportStatusError to be typed on ledgerjs
+        e.statusText === "INS_NOT_SUPPORTED"
+      ) {
+        result = await eth.signEIP712HashedMessage(
           path,
           bufferToHex(domainHash(parsedMessage)),
           bufferToHex(messageHash(parsedMessage))
         );
+      } else {
+        throw e;
+      }
+    }
   }
 
   let v = result.v.toString(16);

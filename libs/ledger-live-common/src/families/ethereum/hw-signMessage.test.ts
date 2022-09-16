@@ -3,8 +3,9 @@ import "../../__tests__/test-helpers/setup";
 import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712";
 import testEIP712Message from "@ledgerhq/hw-app-eth/tests/fixtures/messages/0.json";
 import ethSign from "./hw-signMessage";
-import { setEnv } from "../../env";
 import { createFixtureCryptoCurrency } from "../../mock/fixtures/cryptoCurrencies";
+import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
+import { fail } from "assert";
 
 const signPersonalMessage = jest.fn(() =>
   Promise.resolve({
@@ -29,9 +30,8 @@ const signEIP712Message = jest.fn(() =>
 );
 // We only need to mock the defaut class returned
 jest.mock("@ledgerhq/hw-app-eth", () => {
-  const originalModule = jest.requireActual("@ledgerhq/hw-app-eth");
   return {
-    ...originalModule,
+    ...jest.requireActual("@ledgerhq/hw-app-eth"),
     default: class {
       signPersonalMessage = signPersonalMessage;
       signEIP712HashedMessage = signEIP712HashedMessage;
@@ -118,42 +118,24 @@ describe("Eth hw-signMessage", () => {
       expect(signPersonalMessage).toHaveBeenCalledTimes(1);
     });
 
-    it("should be using the signEIP712HashedMessage method with stringified message", async () => {
+    it("should be using the signEIP712Message method with stringified message", async () => {
       await ethSign.signMessage({} as any, {
         path: "",
         message: JSON.stringify(testEIP712Message),
         rawMessage: "0xtest",
       });
 
-      expect(signEIP712HashedMessage).toHaveBeenCalledTimes(1);
+      expect(signEIP712Message).toHaveBeenCalledTimes(1);
     });
 
-    it("should be using the signEIP712HashedMessage method with EIP712Message message", async () => {
+    it("should be using the signEIP712Message method with EIP712Message message", async () => {
       await ethSign.signMessage({} as any, {
         path: "",
         message: testEIP712Message as EIP712Message,
         rawMessage: "0xtest",
       });
 
-      expect(signEIP712HashedMessage).toHaveBeenCalledTimes(1);
-    });
-
-    describe("when EXPERIMENTAL_EIP712 env variable is set to true", () => {
-      beforeAll(() => {
-        setEnv("EXPERIMENTAL_EIP712", true);
-      });
-
-      afterAll(() => {
-        setEnv("EXPERIMENTAL_EIP712", false);
-      });
-
-      it("should be using the signEIP712Message method with EIP712Message message", async () => {
-        await ethSign.signMessage({} as any, {
-          path: "",
-          message: testEIP712Message as EIP712Message,
-          rawMessage: "0xtest",
-        });
-      });
+      expect(signEIP712Message).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -179,8 +161,6 @@ describe("Eth hw-signMessage", () => {
     });
 
     it("should not be returning parity for signEIP712Message", async () => {
-      setEnv("EXPERIMENTAL_EIP712", true);
-
       const { rsv } = await ethSign.signMessage({} as any, {
         path: "",
         message: testEIP712Message,
@@ -188,7 +168,43 @@ describe("Eth hw-signMessage", () => {
       });
 
       expect(rsv.v).toBe(28);
-      setEnv("EXPERIMENTAL_EIP712", false);
+    });
+  });
+
+  describe("fallback", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should fallback to signEIP712HashedMessage if signEIP712Message throw an INS_NOT_SUPPORTED error", async () => {
+      signEIP712Message.mockImplementation(() => {
+        throw new TransportStatusError(StatusCodes.INS_NOT_SUPPORTED);
+      });
+
+      await ethSign.signMessage({} as any, {
+        path: "",
+        message: testEIP712Message,
+        rawMessage: "0xtest",
+      });
+
+      expect(signEIP712HashedMessage).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not fallback for any other error", async () => {
+      signEIP712Message.mockImplementation(() => {
+        throw new Error();
+      });
+
+      try {
+        await ethSign.signMessage({} as any, {
+          path: "",
+          message: testEIP712Message,
+          rawMessage: "0xtest",
+        });
+      } catch (e) {
+        return expect(signEIP712HashedMessage).not.toBeCalled();
+      }
+      fail("it should have thrown in the try catch");
     });
   });
 });
