@@ -164,9 +164,9 @@ export default function ProviderRate({
         {decentralizedSwapAvailable &&
           DEX_PROVIDERS.map((rate, index) => (
             <DecentralisedRate
-              key={rate.provider}
+              key={rate.id}
               value={rate}
-              selected={dexSelected && rate.provider === dexSelected.provider}
+              selected={dexSelected && rate.id === dexSelected.id}
               onSelect={setDexRate}
               icon={rate.icon}
             />

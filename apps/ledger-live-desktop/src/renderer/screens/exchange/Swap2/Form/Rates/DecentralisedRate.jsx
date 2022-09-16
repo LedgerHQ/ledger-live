@@ -19,7 +19,7 @@ function DecentralisedRate({ value = {}, selected, onSelect, icon }: Props) {
       selected={selected}
       onSelect={onSelect}
       icon={icon}
-      title={value.provider}
+      title={value.name}
       subtitle={<Trans i18nKey={"swap2.form.rates.noRegistration"} />}
       rightContainer={
         <Text

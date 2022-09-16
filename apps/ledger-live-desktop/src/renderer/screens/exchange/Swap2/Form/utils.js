@@ -1,6 +1,7 @@
 export const DEX_PROVIDERS = [
   {
-    provider: "1inch",
+    id: "oneinch",
+    name: "1inch",
     icon: "oneinch",
     navigation: {
       pathname: `/platform/1inch-lld`,
@@ -8,7 +9,8 @@ export const DEX_PROVIDERS = [
     },
   },
   {
-    provider: "paraswap",
+    id: "paraswap",
+    name: "Paraswap",
     icon: "paraswap",
     navigation: {
       pathname: `/platform/paraswap`,
