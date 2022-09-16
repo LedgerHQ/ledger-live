@@ -16,7 +16,7 @@ export const languages = {
   nl: "Nederlands",
   no: "Norsk",
   pl: "polski",
-  pt: "português",
+  pt: "Português",
   ru: "Русский",
   sr: "српски",
   sv: "svenska",
@@ -31,7 +31,7 @@ export const localeIds: string[] = Object.keys(allLocales);
  */
 export const supportedLocales = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
-  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
+  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
 
 /**
  * This is the list of languages that are supported in terms of in-app translations
@@ -41,16 +41,25 @@ export const supportedLocales = Config.LEDGER_DEBUG_ALL_LANGS
  * or in the case of existing users, they will be prompted once to change their
  * Ledger Live language.
  */
-export const fullySupportedLocales = ["en", "fr", "ru", "es", "zh"];
+export const fullySupportedLocales = [
+  "en",
+  "fr",
+  "es",
+  "ru",
+  "zh",
+  "de",
+  "tr",
+  "ja",
+  "ko",
+  "pt",
+];
 export const locales = supportedLocales.reduce((obj, key) => {
   obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
-
   return obj;
 }, {});
 
 /** For the "language" setting which is used for translations. */
 export const DEFAULT_LANGUAGE_LOCALE = "en";
-
 /** This allows us to have the language set by default to the system language
  * if & only if that language is supported.
  */
@@ -73,7 +82,7 @@ const languageLocaleToDefaultLocaleMap = {
   nl: "nl-NL",
   no: "no-NO",
   pl: "pl-PL",
-  pt: "pt-PT",
+  pt: "pt-BR",
   ru: "ru-RU",
   sr: "sr-SR",
   sv: "sv-SV",
@@ -83,7 +92,6 @@ const languageLocaleToDefaultLocaleMap = {
 
 /** For the "region" setting which is used for dates & numbers formatting. */
 export const DEFAULT_LOCALE = "en-US";
-
 /** This allows us to have the region set by default to the region corresponding
  * to the system language if & only if that language is supported. */
 export const getDefaultLocale = () => {

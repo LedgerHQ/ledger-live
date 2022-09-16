@@ -28,6 +28,7 @@ function expectRevealed(account) {
 const tezosUnit = getCryptoCurrencyById("tezos").units[0];
 
 const safeMinimumForDestinationNotCreated = parseCurrencyUnit(tezosUnit, "0.6");
+const strictMin = parseCurrencyUnit(tezosUnit, "0.02");
 
 const tezos: AppSpec<Transaction> = {
   name: "Tezos",
@@ -38,11 +39,9 @@ const tezos: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: strictMin,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(parseCurrencyUnit(tezosUnit, "0.02")),
-      "balance is too low"
-    );
+    invariant(maxSpendable.gt(strictMin), "balance is too low");
   },
   mutations: [
     {

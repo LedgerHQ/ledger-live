@@ -19,6 +19,7 @@
     "device" : "Cihaz",
     "cryptoAsset" : "Kripto varlık",
     "skip" : "Atla",
+    "next" : "Sonraki",
     "noCryptoFound" : "Kripto varlık bulunamadı",
     "needHelp" : "Yardıma mı ihtiyacınız var?",
     "edit" : "Düzenle",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "Galeriden görüntü yüklenemedi",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageDownloadError" : {
+      "title" : "Görüntü indirilemedi",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Görüntü meta verileri yüklenemedi",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Görüntü çok büyük",
+      "description" : "Lütfen daha küçük bir görüntü seçmeyi deneyin"
+    },
+    "ImageCropError" : {
+      "title" : "Görüntü kırpılamadı",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageResizeError" : {
+      "title" : "Görüntü yeniden boyutlandırılamadı",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImagePreviewError" : {
+      "title" : "Görüntü ön izlemesi yapılamadı",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
+    },
+    "ImageProcessingError" : {
+      "title" : "Görüntü işlenemedi",
+      "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "Ledger Live'ı keşfedin",
         "subtitle" : "Uygulamayı keşfedip ne gibi faydaları olduğunu öğrenin "
+      },
+      "desktopSync" : {
+        "title" : "Masaüstü uygulamasıyla senkronize edin",
+        "subtitle" : "Ledger Live Desktop uygulamasındaki varlıklarınızı mobil uygulamanızla senkronize edin."
       }
     },
     "discoverLive" : {
@@ -1563,6 +1600,33 @@
       }
     }
   },
+  "blePairingFlow" : {
+    "scanning" : {
+      "withProductName" : {
+        "title" : "{{productName}} cihazınız aranıyor",
+        "description" : "Lütfen {{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
+      },
+      "withoutProductName" : {
+        "title" : "Cihazlar aranıyor",
+        "description" : "Lütfen cihazınızın açık olduğundan, kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun"
+      },
+      "alreadyPaired" : "Zaten eşleştirilmiş"
+    },
+    "pairing" : {
+      "success" : {
+        "title" : "{{deviceName}} ile eşleştirildi"
+      },
+      "loading" : {
+        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "subtitle" : "{{productName}} cihazınızdaki kodu onaylayın"
+      },
+      "error" : {
+        "title" : "Eşleştirme başarısız",
+        "subtitle" : "Bir sorun oluştu! Bluetooth'unuzun açık ve {{productName}} cihazınızın yakında olduğundan emin olun",
+        "retryCta" : "Tekrar deneyin"
+      }
+    }
+  },
   "tabs" : {
     "portfolio" : "Cüzdan",
     "accounts" : "Hesaplar",
@@ -1698,7 +1762,13 @@
       "WITHDRAW_UNBONDED" : "Çekim",
       "NOMINATE" : "Aday gösterme",
       "CHILL" : "Aday gösterimi temizleme",
-      "SET_CONTROLLER" : "Denetleyici belirleme"
+      "SET_CONTROLLER" : "Denetleyici belirleme",
+      "ACTIVATE" : "Etkin",
+      "LOCK" : "Kilitli",
+      "UNLOCK" : "Kilidi Açık",
+      "REVOKE" : "İptal Edilmiş",
+      "REGISTER" : "Kaydedilmiş",
+      "WITHDRAW" : "Çekildi"
     }
   },
   "operationDetails" : {
@@ -1936,6 +2006,16 @@
       "noTransaction" : {
         "title" : "Hiçbir işleminiz yok",
         "subtitle" : "{{assetName}} satın almak veya teslim almak için bir cihaza ihtiyacınız olacak"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Haberiniz olsun! Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
+        "cta" : "Yetki devret"
+      },
+      "delegation" : {
+        "description" : "Haberiniz olsun! Ledger doğrulayıcısı {{asset}} varlığınızı düşük bir komisyonla stake eder.",
+        "cta" : "Stake etmeye başla"
       }
     }
   },
@@ -3453,11 +3533,15 @@
     "no" : "Şimdilik kalsın",
     "languages" : {
       "en" : "İngilizce",
-      "fr" : "Fransızca",
-      "ru" : "Rusça",
-      "es" : "İspanyolca",
-      "zh" : "Çince",
-      "de" : "Almanca"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
@@ -4244,7 +4328,10 @@
       "info" : "Yetki Devri nasıl çalışır?",
       "broadcastSuccessTitle" : "İşlem gönderildi",
       "broadcastSuccessDescription" : "İşlem onaylandığında yetki devrinin durumu güncellenir.",
-      "delegatedTo" : "yetkiyi devralan"
+      "delegatedTo" : "yetkiyi devralan",
+      "started" : {
+        "description" : "ATOM varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz."
+      }
     }
   },
   "delegation" : {
@@ -4264,6 +4351,7 @@
     "delegation" : "Yetki Devri",
     "viewDetails" : "Ayrıntıları göster",
     "validator" : "Doğrulayıcı",
+    "validatorGroup" : "Doğrulayıcı Grubu",
     "validatorAddress" : "Doğrulayıcı adresi",
     "delegatedAccount" : "Yetkisi devredilen hesap",
     "duration" : "Süre",
@@ -4657,6 +4745,32 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
+    }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "Bir görüntü seçin",
+      "options" : {
+        "uploadFromPhone" : "Telefonumdan yükle"
+      }
+    },
+    "cropImage" : "Görüntüyü kırp",
+    "chooseConstrast" : "Kontrastı seç",
+    "uploadAnotherImage" : "Başka bir görsel yükleyin",
+    "selectContrast" : "Kontrastınızı seçin"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Bravo.\nArtık tamamen hazırsınız.",
+      "allDoneTitle" : "İyi iş çıkardınız.\nHer şey tamam.",
+      "subtitle" : "Şimdi şunları yapabilirsiniz:",
+      "skip" : "Uygulamaya geç",
+      "goToWallet" : "Ledger Live cüzdanına git",
+      "done" : "Az önce geleceğinizi güvenceye almış oldunuz"
+    },
+    "walletCard" : {
+      "title" : "Başlarken",
+      "description" : "Ledger Live ile {{productName}} kurulumunu tamamlamak için buraya tıklayın"
     }
   }
 }

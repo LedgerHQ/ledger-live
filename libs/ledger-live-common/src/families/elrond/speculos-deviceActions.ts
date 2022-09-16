@@ -1,7 +1,8 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow } from "../../bot/specs";
 import { formatCurrencyUnit } from "../../currencies";
+import { deviceActionFlow } from "../../bot/specs";
+
 export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
@@ -18,9 +19,7 @@ export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
             showCode: true,
             disableRounding: true,
             joinFragmentsSeparator: " ",
-          })
-            .replace(/\s+/g, " ")
-            .replace("egld", "EGLD"), // FIXME
+          }).replace(/\s+/g, " "),
       },
       {
         title: "Fee",

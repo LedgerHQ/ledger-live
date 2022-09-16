@@ -11,14 +11,14 @@ export default function Animation({
 }: LottieProps & {
   style: ViewStyleProp;
 }) {
-  return (
+  return lottieProps.source ? (
     <Lottie
       {...lottieProps}
       style={[styles.default, style]}
       loop={lottieProps.loop ?? true}
       autoPlay={Config.MOCK ? false : lottieProps.autoplay ?? true}
     />
-  );
+  ) : null;
 }
 const styles = StyleSheet.create({
   default: {

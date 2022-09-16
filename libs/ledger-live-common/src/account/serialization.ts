@@ -40,6 +40,10 @@ import {
 } from "../families/solana/serialization";
 
 import {
+  toCeloResourcesRaw,
+  fromCeloResourcesRaw,
+} from "../families/celo/serialization";
+import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -92,6 +96,7 @@ import {
 } from "../families/crypto_org/types";
 import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
 import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
+import { CeloAccount, CeloAccountRaw } from "../families/celo/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
@@ -102,6 +107,7 @@ export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
+export { toCeloResourcesRaw, fromCeloResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -779,10 +785,9 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   switch (res.currency.family) {
     case "tron": {
       const tronResourcesRaw = (rawAccount as TronAccountRaw).tronResources;
-      if (tronResourcesRaw) {
+      if (tronResourcesRaw)
         (res as TronAccount).tronResources =
           fromTronResourcesRaw(tronResourcesRaw);
-      }
       break;
     }
     case "osmosis":
@@ -855,6 +860,13 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
       if (cryptoOrgResourcesRaw)
         (res as CryptoOrgAccount).cryptoOrgResources =
           fromCryptoOrgResourcesRaw(cryptoOrgResourcesRaw);
+      break;
+    }
+    case "celo": {
+      const celoResourcesRaw = (rawAccount as CeloAccountRaw).celoResources;
+      if (celoResourcesRaw)
+        (res as CeloAccount).celoResources =
+          fromCeloResourcesRaw(celoResourcesRaw);
       break;
     }
   }
@@ -1034,6 +1046,14 @@ export function toAccountRaw(account: Account): AccountRaw {
         (res as CryptoOrgAccountRaw).cryptoOrgResources =
           toCryptoOrgResourcesRaw(crytpoOrgAccount.cryptoOrgResources);
       }
+      break;
+    }
+    case "celo": {
+      const celoAccount = account as CeloAccount;
+      if (celoAccount.celoResources)
+        (res as CeloAccountRaw).celoResources = toCeloResourcesRaw(
+          celoAccount.celoResources
+        );
       break;
     }
   }

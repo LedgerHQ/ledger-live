@@ -38,6 +38,11 @@ const iconsComponent = {
   SET_CONTROLLER: Icons.ArrowFromBottomMedium,
   NFT_IN: Icons.ArrowBottomMedium,
   NFT_OUT: Icons.ArrowTopMedium,
+  ACTIVATE: Icons.ShieldCheckMedium,
+  LOCK: Icons.LockMedium,
+  UNLOCK: Icons.UnlockMedium,
+  REVOKE: Icons.VoteNoneMedium,
+  REGISTER: Icons.PlusMedium,
 };
 
 const OperationStatusIcon = ({

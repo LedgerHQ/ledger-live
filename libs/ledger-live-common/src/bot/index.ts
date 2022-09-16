@@ -9,7 +9,7 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
-import type { MutationReport, SpecReport } from "./types";
+import type { AppSpec, MutationReport, SpecReport } from "./types";
 import { promiseAllBatched } from "../promise";
 import {
   findCryptoCurrencyByKeyword,
@@ -17,7 +17,7 @@ import {
   formatCurrencyUnit,
   getFiatCurrencyByTicker,
 } from "../currencies";
-import { isAccountEmpty, toAccountRaw } from "../account";
+import { formatAccount, isAccountEmpty, toAccountRaw } from "../account";
 import { runWithAppSpec } from "./engine";
 import { formatReportForConsole, formatError, formatTime } from "./formatters";
 import {
@@ -28,6 +28,7 @@ import {
 import { getPortfolio } from "../portfolio/v2";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "./bot-test-context";
+
 type Arg = Partial<{
   currency: string;
   family: string;
@@ -71,7 +72,7 @@ export async function bot({
     }
 
     for (const key in familySpecs) {
-      let spec = familySpecs[key];
+      let spec: AppSpec<any> = familySpecs[key];
 
       if (!isCurrencySupported(spec.currency) || spec.disabled) {
         continue;
@@ -81,7 +82,7 @@ export async function bot({
         if (mutation) {
           spec = {
             ...spec,
-            mutations: spec.mutation.filter((m) =>
+            mutations: spec.mutations.filter((m) =>
               new RegExp(mutation).test(m.name)
             ),
           };
@@ -96,7 +97,7 @@ export async function bot({
   const results: Array<SpecReport<any>> = await promiseAllBatched(
     getEnv("BOT_MAX_CONCURRENT"),
     specs,
-    (spec) => {
+    (spec: AppSpec<any>) => {
       const logs: string[] = [];
       specsLogs.push(logs);
       return runWithAppSpec(spec, (message) => {
@@ -109,6 +110,7 @@ export async function bot({
         mutations: [],
         accountsBefore: [],
         accountsAfter: [],
+        hintWarnings: [],
       }));
     }
   );
@@ -249,6 +251,15 @@ export async function bot({
   const { GITHUB_RUN_ID, GITHUB_WORKFLOW } = process.env;
 
   let body = "";
+  let githubBody = "";
+  function appendBody(content) {
+    body += content;
+    githubBody += content;
+  }
+  function appendBodyFullOnly(content) {
+    body += content;
+  }
+
   let title = "";
   const runURL = `https://github.com/LedgerHQ/ledger-live/actions/runs/${String(
     GITHUB_RUN_ID
@@ -282,14 +293,14 @@ export async function bot({
   }
 
   let slackBody = "";
-  body += `## ${title}`;
+  appendBody(`## ${title}`);
 
   if (GITHUB_RUN_ID && GITHUB_WORKFLOW) {
-    body += ` for [**${GITHUB_WORKFLOW}**](${runURL})\n\n`;
+    appendBody(` for [**${GITHUB_WORKFLOW}**](${runURL})\n\n`);
   }
 
-  body += "\n\n";
-  body += subtitle;
+  appendBody("\n\n");
+  appendBody(subtitle);
 
   if (fullySuccessfulSpecs.length) {
     const msg = `> ✅ ${
@@ -297,7 +308,7 @@ export async function bot({
     } specs are successful: _${fullySuccessfulSpecs
       .map((o) => o.spec.name)
       .join(", ")}_\n`;
-    body += msg;
+    appendBody(msg);
     slackBody += msg;
   }
 
@@ -307,7 +318,7 @@ export async function bot({
     } specs have problems: _${specsWithErrors
       .map((o) => o.spec.name)
       .join(", ")}_\n`;
-    body += msg;
+    appendBody(msg);
     slackBody += msg;
   }
 
@@ -315,7 +326,7 @@ export async function bot({
     const missingFundsWarn = `> 💰 ${
       withoutFunds.length
     } specs may miss funds: _${withoutFunds.join(", ")}_\n`;
-    body += missingFundsWarn;
+    appendBody(missingFundsWarn);
     slackBody += missingFundsWarn;
   }
 
@@ -325,21 +336,23 @@ export async function bot({
     } specs may have issues: *${specsWithoutOperations
       .map((o) => o.spec.name)
       .join(", ")}*\n`;
-    body += warn;
+    appendBody(warn);
     slackBody += warn;
   }
 
-  body += "\n\n";
+  appendBody("\n\n");
 
   if (specFatals.length) {
-    body += "<details>\n";
-    body += `<summary>${specFatals.length} critical spec errors</summary>\n\n`;
+    appendBody("<details>\n");
+    appendBody(
+      `<summary>${specFatals.length} critical spec errors</summary>\n\n`
+    );
     specFatals.forEach(({ spec, fatalError }) => {
-      body += `**Spec ${spec.name} failed!**\n`;
-      body += "```\n" + formatError(fatalError, true) + "\n```\n\n";
+      appendBody(`**Spec ${spec.name} failed!**\n`);
+      appendBody("```\n" + formatError(fatalError, true) + "\n```\n\n");
       slackBody += `❌ *Spec ${spec.name}*: \`${formatError(fatalError)}\`\n`;
     });
-    body += "</details>\n\n";
+    appendBody("</details>\n\n");
   }
 
   // summarize the error causes
@@ -361,65 +374,95 @@ export async function bot({
   }
 
   if (errorCases.length) {
-    body += "<details>\n";
-    body += `<summary>${errorCases.length} mutation errors</summary>\n\n`;
+    appendBody("<details>\n");
+    appendBody(
+      `<summary>❌ ${errorCases.length} mutation errors</summary>\n\n`
+    );
     errorCases.forEach((c) => {
-      body += "```\n" + formatReportForConsole(c) + "\n```\n\n";
+      appendBody("```\n" + formatReportForConsole(c) + "\n```\n\n");
     });
-    body += "</details>\n\n";
+    appendBody("</details>\n\n");
   }
 
-  body += "<details>\n";
-  body += `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`;
+  const specWithWarnings = results.filter((s) => s.hintWarnings.length > 0);
+  if (specWithWarnings.length > 0) {
+    appendBody("<details>\n");
+    appendBody(
+      `<summary>⚠️ ${specWithWarnings.reduce(
+        (sum, s) => s.hintWarnings.length + sum,
+        0
+      )} spec hints</summary>\n\n`
+    );
+    specWithWarnings.forEach((s) => {
+      appendBody(`- Spec ${s.spec.name}:\n`);
+      s.hintWarnings.forEach((txt) => appendBody(`  - ${txt}\n`));
+    });
+    appendBody("</details>\n\n");
+  }
+
+  appendBodyFullOnly("<details>\n");
+
+  appendBodyFullOnly(
+    `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`
+  );
   results.forEach((r, i) => {
     const spec = specs[i];
     const logs = specsLogs[i];
-    body += `#### Spec ${spec.name} (${
-      r.mutations ? r.mutations.length : "failed"
-    })\n`;
-    body += "\n```\n";
-    body += logs.join("\n");
+    appendBodyFullOnly(
+      `#### Spec ${spec.name} (${
+        r.mutations ? r.mutations.length : "failed"
+      })\n`
+    );
+    appendBodyFullOnly("\n```\n");
+    appendBodyFullOnly(logs.join("\n"));
 
     if (r.mutations) {
       r.mutations.forEach((m) => {
         if (m.error || m.mutation) {
-          body += formatReportForConsole(m) + "\n";
+          appendBodyFullOnly(formatReportForConsole(m) + "\n");
         }
       });
     }
 
-    body += "\n```\n";
+    appendBodyFullOnly("\n```\n");
   });
-  body += "</details>\n\n";
+  appendBodyFullOnly("</details>\n\n");
 
   if (uncoveredMutations.length > 0) {
-    body += "<details>\n";
-    body += `<summary>Details of the ${uncoveredMutations.length} uncovered mutations</summary>\n\n`;
+    appendBodyFullOnly("<details>\n");
+    appendBodyFullOnly(
+      `<summary>Details of the ${uncoveredMutations.length} uncovered mutations</summary>\n\n`
+    );
     specsWithUncoveredMutations.forEach(({ spec, unavailableMutations }) => {
-      body += `#### Spec ${spec.name} (${unavailableMutations.length})\n`;
+      appendBodyFullOnly(
+        `#### Spec ${spec.name} (${unavailableMutations.length})\n`
+      );
       unavailableMutations.forEach((m) => {
         // FIXME: we definitely got to stop using Maybe types or | undefined | null
         if (!m) return;
         const msgs = groupBy(m.errors.map((e) => e.message));
-        body +=
+        appendBodyFullOnly(
           "- **" +
-          m.mutation.name +
-          "**: " +
-          Object.keys(msgs)
-            .map((msg) => `${msg} (${msgs[msg].length})`)
-            .join(", ") +
-          "\n";
+            m.mutation.name +
+            "**: " +
+            Object.keys(msgs)
+              .map((msg) => `${msg} (${msgs[msg].length})`)
+              .join(", ") +
+            "\n"
+        );
       });
     });
-    body += "</details>\n\n";
+    appendBodyFullOnly("</details>\n\n");
   }
 
-  body += "<details>\n";
-  body += `<summary>Portfolio ${
-    totalUSD ? " (" + totalUSD + ")" : ""
-  } – Details of the ${results.length} currencies</summary>\n\n`;
-  body += "| Spec (accounts) | Operations | Balance | funds? |\n";
-  body += "|-----------------|------------|---------|--------|\n";
+  appendBody("<details>\n");
+  appendBody(
+    `<summary>Portfolio ${
+      totalUSD ? " (" + totalUSD + ")" : ""
+    } – Details of the ${results.length} currencies</summary>\n\n`
+  );
+  appendBody("| Spec (accounts) | Operations | Balance | funds? |\n");
+  appendBody("|-----------------|------------|---------|--------|\n");
   results.forEach((r) => {
     function sumAccounts(all) {
       if (!all || all.length === 0) return;
@@ -485,23 +528,33 @@ export async function bot({
 
     const beforeOps = countOps(r.accountsBefore);
     const afterOps = countOps(r.accountsAfter);
-    const firstAccount = (r.accountsAfter || r.accountsBefore || [])[0];
-    body += `| ${r.spec.name} (${
-      (r.accountsBefore || []).filter((a) => a.used).length
-    }) `;
-    body += `| ${afterOps || beforeOps}${
-      afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
-    } `;
-    body += `| ${balance} `;
-    body += `| ${etaTxs} ${(firstAccount && firstAccount.freshAddress) || ""} `;
-    body += "|\n";
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    const firstAccount = accounts[0];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) `);
+    appendBody(
+      `| ${afterOps || beforeOps}${
+        afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
+      } `
+    );
+    appendBody(`| ${balance} `);
+    appendBody(
+      `| ${etaTxs} ${(firstAccount && firstAccount.freshAddress) || ""} `
+    );
+    appendBody("|\n");
   });
-  body += "\n</details>\n\n";
+
+  appendBody("\n```\n");
+  appendBody(allAccountsAfter.map((a) => formatAccount(a, "head")).join("\n"));
+  appendBody("\n```\n");
+
+  appendBody("\n</details>\n\n");
 
   // Add performance details
-  body += "<details>\n";
-  body += `<summary>Performance ⏲ ${formatTime(totalDuration)}</summary>\n\n`;
-  body += "**Time spent for each spec:** (total across mutations)\n";
+  appendBody("<details>\n");
+  appendBody(
+    `<summary>Performance ⏲ ${formatTime(totalDuration)}</summary>\n\n`
+  );
+  appendBody("**Time spent for each spec:** (total across mutations)\n");
 
   function sumMutation(mutations, f) {
     return mutations?.reduce((sum, m) => sum + (f(m) || 0), 0) || 0;
@@ -513,73 +566,95 @@ export async function bot({
     return sumResults((r) => sumMutation(r.mutations, f));
   }
 
-  body +=
-    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n";
-  body += "|---|---|---|---|---|---|---|---|\n";
+  appendBody(
+    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n"
+  );
+  appendBody("|---|---|---|---|---|---|---|---|\n");
 
-  body += "| **TOTAL** |";
-  body += `**${formatTime(sumResults((r) => r.preloadDuration))}** |`;
-  body += `**${formatTime(sumResults((r) => r.scanDuration))}** |`;
-  body += `**${formatTime(
-    sumResultsMutation((m) => m.resyncAccountsDuration || 0)
-  )}** |`;
-  body += `**${formatTime(
-    sumResultsMutation((m) =>
-      m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
-    )
-  )}** |`;
-  body += `**${formatTime(
-    sumResultsMutation((m) =>
-      m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
-    )
-  )}** |`;
-  body += `**${formatTime(
-    sumResultsMutation((m) =>
-      m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
-    )
-  )}** |`;
-  body += `**${formatTime(
-    sumResultsMutation((m) =>
-      m.broadcastedTime && m.confirmedTime
-        ? m.confirmedTime - m.broadcastedTime
-        : 0
-    )
-  )}** |\n`;
-
-  results.forEach((r) => {
-    body += `| ${r.spec.name} (${
-      (r.accountsBefore || []).filter((a) => a.used).length
-    }) |`;
-    body += `${formatTime(r.preloadDuration || 0)} |`;
-    body += `${formatTime(r.scanDuration || 0)} |`;
-    body += `${formatTime(
-      sumMutation(r.mutations, (m) => m.resyncAccountsDuration || 0)
-    )} |`;
-    body += `${formatTime(
-      sumMutation(r.mutations, (m) =>
+  appendBody("| **TOTAL** |");
+  appendBody(`**${formatTime(sumResults((r) => r.preloadDuration))}** |`);
+  appendBody(`**${formatTime(sumResults((r) => r.scanDuration))}** |`);
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) => m.resyncAccountsDuration || 0)
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) =>
         m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
       )
-    )} |`;
-    body += `${formatTime(
-      sumMutation(r.mutations, (m) =>
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) =>
         m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
       )
-    )} |`;
-    body += `${formatTime(
-      sumMutation(r.mutations, (m) =>
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) =>
         m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
       )
-    )} |`;
-    body += `${formatTime(
-      sumMutation(r.mutations, (m) =>
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) =>
         m.broadcastedTime && m.confirmedTime
           ? m.confirmedTime - m.broadcastedTime
           : 0
       )
-    )} |\n`;
+    )}** |\n`
+  );
+
+  results.forEach((r) => {
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) |`);
+    appendBody(`${formatTime(r.preloadDuration || 0)} |`);
+    appendBody(`${formatTime(r.scanDuration || 0)} |`);
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) => m.resyncAccountsDuration || 0)
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) =>
+          m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
+        )
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) =>
+          m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
+        )
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) =>
+          m.signedTime && m.broadcastedTime
+            ? m.broadcastedTime - m.signedTime
+            : 0
+        )
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) =>
+          m.broadcastedTime && m.confirmedTime
+            ? m.confirmedTime - m.broadcastedTime
+            : 0
+        )
+      )} |\n`
+    );
   });
 
-  body += "\n</details>\n\n";
+  appendBody("\n</details>\n\n");
 
   const { BOT_REPORT_FOLDER } = process.env;
 
@@ -589,6 +664,11 @@ export async function bot({
 
   if (BOT_REPORT_FOLDER) {
     await Promise.all([
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "github-report.md"),
+        githubBody,
+        "utf-8"
+      ),
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "full-report.md"),
         body,

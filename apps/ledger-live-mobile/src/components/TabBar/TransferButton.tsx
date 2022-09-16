@@ -87,6 +87,8 @@ export default function TransferButton({
           alignItems="flex-start"
           ml="16px"
           py="1px"
+          flexShrink={1}
+          flexWrap="wrap"
         >
           <Flex flexDirection="row">
             <Text variant="large" fontWeight="semiBold">

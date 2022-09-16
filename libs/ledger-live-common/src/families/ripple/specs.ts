@@ -19,6 +19,7 @@ const ripple: AppSpec<Transaction> = {
     appName: "XRP",
   },
   genericDeviceAction: acceptTransaction,
+  minViableAmount: minAmountCutoff,
   mutations: [
     {
       name: "move ~50%",
