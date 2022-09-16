@@ -108,9 +108,11 @@ export const fetchTxs = async (
 export const broadcastTx = async (
   message: BroadcastTransactionRequest
 ): Promise<BroadcastTransactionResponse> => {
-  const response = await sendRaw<BroadcastTransactionResponse>(
+  let response = await sendRaw<BroadcastTransactionResponse>(
     `/v2/transactions`,
     message
   );
+
+  if (response != "") response = `0x${response}`;
   return response; // TODO Validate if the response fits this interface
 };
