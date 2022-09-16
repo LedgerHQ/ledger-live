@@ -48,6 +48,7 @@ target 'ledgerlivemobile' do
   )
 
   pod 'React-RCTText', :path => rct_text, :modular_headers => true
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker/RNDateTimePicker.podspec'
 
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
