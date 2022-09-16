@@ -2,7 +2,7 @@ name: "[Bot] 'EVM Light Int on Phosphore'"
 on:
   push:
     branches:
-      - feat/evm
+      - feat/ethereum
 
 concurrency:
   group: bot-seed6
@@ -51,4 +51,4 @@ jobs:
           SLACK_CHANNEL: ci-eth-ll
           SLACK_ICON_EMOJI: ":bot-seed6:"
           SEED: ${{ secrets.SEED6 }}
-          BOT_FILTER_FAMILY: evm
+          BOT_FILTER_FAMILY: ethereum
