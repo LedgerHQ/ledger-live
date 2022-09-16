@@ -65,10 +65,12 @@ export const mapTxToOps =
   (tx: TransactionResponse): Operation[] => {
     const { sender, recipient, amount } = tx.stx_transfers[0];
     const { tx_id, fee_rate, block_height, burn_block_time } = tx.tx;
+
     const ops: Operation[] = [];
+
     const date = new Date(burn_block_time * 1000);
-    const value = parseCurrencyUnit(getUnit(), amount);
-    const feeToUse = parseCurrencyUnit(getUnit(), fee_rate);
+    const value = new BigNumber(amount || "0");
+    const feeToUse = new BigNumber(fee_rate || "0");
 
     const isSending = address === sender;
     const isReceiving = address === recipient;
