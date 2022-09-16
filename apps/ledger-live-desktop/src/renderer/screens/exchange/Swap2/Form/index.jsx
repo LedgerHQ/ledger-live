@@ -483,7 +483,7 @@ const SwapForm = () => {
               kycStatus={kycStatus}
               provider={provider}
               refreshTime={refreshTime}
-              countdown={!idleState}
+              countdown={!swapError && !idleState}
               decentralizedSwapAvailable={decentralizedSwapAvailable}
             />
 
@@ -508,7 +508,7 @@ const SwapForm = () => {
         )}
 
         <Box>
-          <Button primary onClick={onSubmit} data-test-id="exchange-button">
+          <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
             {t("common.exchange")}
           </Button>
         </Box>
