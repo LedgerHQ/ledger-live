@@ -50,6 +50,9 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     [account, parentAccount, decorators],
   );
 
+  const canSend = useMemo(() => currency.id !== "avalanchepchain", [currency]);
+  const canReceive = useMemo(() => currency.id !== "avalanchepchain", [currency]);
+
   const SendAction = {
     navigationParams: [
       NavigatorName.SendFunds,
@@ -60,7 +63,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     label: <Trans i18nKey="account.send" />,
     event: "AccountSend",
     Icon: Icons.ArrowTopMedium,
-    disabled: balance.lte(0),
+    disabled: balance.lte(0) || !canSend,
     ...extraSendActionParams,
   };
 
@@ -74,6 +77,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     label: <Trans i18nKey="account.receive" />,
     event: "AccountReceive",
     Icon: Icons.ArrowBottomMedium,
+    disabled: !canReceive,
     ...extraReceiveActionParams,
   };
 
