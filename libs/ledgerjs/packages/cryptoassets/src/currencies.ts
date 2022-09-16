@@ -3528,16 +3528,39 @@ export const findCryptoCurrencyByKeyword = (
   const search = keyword.replace(/ /, "").toLowerCase();
 
   return (
-    // Try to find by id or name first
-    findCryptoCurrency(
-      (c) => c.id === search || c.name.replace(/ /, "").toLowerCase() === search
+    // Try to find by the keywords list
+    findCryptoCurrency((c) =>
+      Boolean(
+        c?.keywords
+          ?.map((k) => k.replace(/ /, "").toLowerCase())
+          .includes(search)
+      )
     ) ||
-    // if it failed fallback to managerAppName
+    // Try to find by currency name
     findCryptoCurrency(
-      (c) =>
-        (c.managerAppName &&
-          c.managerAppName.replace(/ /, "").toLowerCase() === search) ||
-        c.ticker.toLowerCase() === search
+      (c) => c.name.replace(/ /, "").toLowerCase() === search
+    ) ||
+    // Try to find by id or name first
+    findCryptoCurrencyById(keyword.toLowerCase()) ||
+    // Try to find by ticker
+    findCryptoCurrencyByTicker(keyword.toUpperCase()) ||
+    // if it failed fallback to managerAppName
+    findCryptoCurrencyByManagerAppName(keyword)
+  );
+};
+
+export const findCryptoCurrencyByManagerAppName = (
+  managerAppName: string
+): CryptoCurrency | null | undefined => {
+  const search = managerAppName.replace(/ /, "").toLowerCase();
+
+  return (
+    findCryptoCurrency((c) => c.managerAppName === managerAppName) ||
+    findCryptoCurrency((c) =>
+      Boolean(
+        c.managerAppName &&
+          c.managerAppName.replace(/ /, "").toLowerCase() === search
+      )
     )
   );
 };
