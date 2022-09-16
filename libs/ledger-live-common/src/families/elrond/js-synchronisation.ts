@@ -13,6 +13,7 @@ import { FEES_BALANCE } from "./constants";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { computeDelegationBalance } from "./logic";
 import { getProviders } from "./api/sdk";
+import BigNumber from "bignumber.js";
 
 const getAccountShape: GetAccountShape = async (info) => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -25,7 +26,9 @@ const getAccountShape: GetAccountShape = async (info) => {
   });
   const oldOperations = initialAccount?.operations || [];
   // Needed for incremental synchronisation
-  const startAt = 0;
+  const startAt = oldOperations.length
+    ? Math.floor(oldOperations[0].date.valueOf() / 1000)
+    : 0;
 
   // get the current account balance state depending your api implementation
   const { blockHeight, balance, nonce } = await getAccount(address);
@@ -63,7 +66,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     balance: balance.plus(delegationBalance),
     spendableBalance: balance.gt(FEES_BALANCE)
       ? balance.minus(FEES_BALANCE)
-      : balance,
+      : new BigNumber(0),
     operationsCount: operations.length,
     blockHeight,
     elrondResources: {

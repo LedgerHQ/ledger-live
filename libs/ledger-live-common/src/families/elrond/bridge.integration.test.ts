@@ -142,7 +142,7 @@ const elrond: CurrenciesData<Transaction> = {
 };
 
 const dataset: DatasetTest<Transaction> = {
-  implementations: ["elrondjs"],
+  implementations: ["js"],
   currencies: {
     elrond,
   },

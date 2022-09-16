@@ -99,8 +99,30 @@ export type Transaction = TransactionCommon & {
   data?: string;
   tokenIdentifier?: string;
   tokenValue?: string;
-  action?: any;
-  operations?: any[];
+  action?: ElrondTransactionAction;
+  operations?: ElrondTransactionOperation[];
+};
+
+export type ElrondTransactionOperation = {
+  action: string;
+  type: string;
+  sender: string;
+  receiver: string;
+};
+
+export type ElrondTransactionAction = {
+  category: string;
+  name: string;
+  arguments: ElrondTransactionActionArguments;
+};
+
+export type ElrondTransactionActionArguments = {
+  transfers: ElrondTransactionActionArgumentsTransfers[];
+};
+
+export type ElrondTransactionActionArgumentsTransfers = {
+  token: string;
+  value: string;
 };
 
 export enum ElrondTransferOptions {
