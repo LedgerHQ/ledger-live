@@ -142,7 +142,7 @@ const SwapForm = () => {
 
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
-    if (error) {
+    if (error || navigation) {
       // Don't show any flow banner on error to avoid double banner display
       setCurrentBanner(null);
       return;
@@ -163,7 +163,7 @@ const SwapForm = () => {
     if (currentBanner !== "LOGIN" && shouldShowKYCBanner({ provider, kycStatus })) {
       setCurrentBanner("KYC");
     }
-  }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
+  }, [error, provider, providerKYC?.id, kycStatus, currentBanner, navigation]);
 
   const { setDrawer } = React.useContext(context);
 
