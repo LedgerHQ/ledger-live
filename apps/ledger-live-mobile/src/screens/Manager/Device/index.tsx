@@ -16,6 +16,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
+import NanoFTS from "../../../images/devices/NanoFTS";
 import NanoX from "../../../images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
@@ -29,11 +30,7 @@ const illustrations = {
   nanoSP: NanoS,
   nanoX: NanoX,
   blue: NanoS,
-  nanoFTS: p => (
-    <View style={{ borderWidth: 1, borderColor: "red" }}>
-      <NanoS {...p} />
-    </View>
-  ),
+  nanoFTS: NanoFTS,
 };
 
 type Props = {
