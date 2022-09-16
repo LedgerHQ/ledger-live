@@ -17,7 +17,7 @@ export const languages = {
   nl: "Nederlands",
   no: "Norsk",
   pl: "polski",
-  pt: "português",
+  pt: "Português",
   ru: "Русский",
   sr: "српски",
   sv: "svenska",
@@ -59,9 +59,13 @@ export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
 export const fullySupportedLocales: Locale[] = [
   "en",
   "fr",
-  "ru",
   "es",
+  "ru",
   "zh",
+  "de",
+  "tr",
+  "ja",
+  "ko",
   "pt",
 ];
 type LocaleIndexed<T> = { [key in Locale]?: T };

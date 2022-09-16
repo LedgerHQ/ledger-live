@@ -1,7 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit, findCompoundToken } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 function subAccount(subAccountId, account) {
   const sub = (account.subAccounts || []).find((a) => a.id === subAccountId);
@@ -10,28 +9,8 @@ function subAccount(subAccountId, account) {
   return sub;
 }
 
-function expectedCompoundToken(t) {
-  if (!t) {
-    throw new Error("compound token was expected");
-  }
-
-  return t;
-}
-
 const maxFeesExpectedValue = ({ account, status }) =>
-  formatCurrencyUnit(
-    {
-      ...account.unit,
-      code: account.currency.deviceTicker || account.unit.code,
-      prefixCode: true,
-    },
-    status.estimatedFees,
-    {
-      showCode: true,
-      disableRounding: true,
-      joinFragmentsSeparator: " ",
-    }
-  ).replace(/\s/g, " ");
+  formatDeviceAmount(account.currency, status.estimatedFees);
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -66,16 +45,6 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
             return "Unlimited " + a.token.ticker;
           }
 
-          const unit = !a
-            ? {
-                ...account.unit,
-                code: account.currency.deviceTicker || account.unit.code,
-              }
-            : (transaction.mode === "compound.withdraw" &&
-              transaction.useAllAmount
-                ? expectedCompoundToken(findCompoundToken(a.token))
-                : a.token
-              ).units[0];
           const amount =
             a &&
             a.compoundBalance &&
@@ -83,19 +52,20 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
             transaction.useAllAmount
               ? a.compoundBalance
               : status.amount;
-          return formatCurrencyUnit(
-            {
-              ...unit,
-              code: account.currency.deviceTicker || account.unit.code,
-              prefixCode: true,
-            },
-            amount,
-            {
-              showCode: true,
-              disableRounding: true,
-              joinFragmentsSeparator: " ",
-            }
-          ).replace(/\s/g, " ");
+
+          if (
+            a &&
+            transaction.mode === "compound.withdraw" &&
+            transaction.useAllAmount
+          ) {
+            return formatDeviceAmount(a.compoundBalance, amount);
+          }
+
+          if (a) {
+            return formatDeviceAmount(a.token, amount);
+          }
+
+          return formatDeviceAmount(account.currency, amount);
         },
       },
       {

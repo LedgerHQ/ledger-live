@@ -39,7 +39,7 @@ const ConnectTroubleshooting = ({
         </Text>
       </Box>
       <Box flex="1" />
-      <ConnectTroubleshootingHelpButton buttonProps={{ primary: true }} />
+      <ConnectTroubleshootingHelpButton />
     </Wrapper>
   ) : null;
 };

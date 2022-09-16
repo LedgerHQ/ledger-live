@@ -83,7 +83,7 @@ const cmd = ({
               listApps(transport, deviceInfo)
             );
           }),
-          catchError((e: Error) => {
+          catchError((e: unknown) => {
             if (
               e instanceof DeviceOnDashboardExpected ||
               (e &&

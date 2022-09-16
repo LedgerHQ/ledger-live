@@ -279,10 +279,17 @@ export const urls = {
   solana: {
     staking: "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
     recipient_info: "https://support.ledger.com",
-    ledgerByFigmentTC: "https://drive.google.com/file/d/1vlIh2gTwtbMon8_bzFQGjCLhTUqS5uQc",
+    ledgerByFigmentTC:
+      "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   },
   hedera: {
     supportArticleLink:
       "https://support.ledger.com/hc/en-us/articles/4494505217565-Create-a-Ledger-Hedera-HBAR-account-via-HashPack?docs=true",
+  },
+  celo: {
+    ledgerByFigmentTC:
+      "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
+    learnMore:
+      "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=celo",
   },
 };

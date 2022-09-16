@@ -23,13 +23,17 @@ import Config from "react-native-config";
 
 import { getEnv } from "@ledgerhq/live-common/env";
 import BackgroundRunnerService from "./services/BackgroundRunnerService";
-import App from "./src";
+import App, { routingInstrumentation } from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
 import { getAllDivergedFlags } from "./src/components/FirebaseFeatureFlags";
 import { enabledExperimentalFeatures } from "./src/experimental";
 import { languageSelector } from "./src/reducers/settings";
 import { store } from "./src/context/LedgerStore";
+
+if (__DEV__) {
+  require('react-native-performance-flipper-reporter').setupDefaultFlipperReporter();
+}
 
 // we exclude errors related to user's environment, not fixable by us
 const excludedErrorName = [
@@ -88,8 +92,12 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
     // release: `com.ledger.live@${pkg.version}+${VersionNumber.buildVersion}`,
     // dist: String(VersionNumber.buildVersion),
     sampleRate: 1,
-    tracesSampleRate: 0.02,
-    integrations: [],
+    tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.005,
+    integrations: [
+      new Sentry.ReactNativeTracing({
+        routingInstrumentation,
+      }),
+    ],
     beforeSend(event: any) {
       if (!getEnabled()) return null;
       // If the error matches excludedErrorName or excludedErrorDescription,
