@@ -3459,12 +3459,26 @@ for (const id in cryptocurrenciesById) {
  * @param {string} id
  * @param {CryptoCurrency} currency
  */
-export function registerCryptoCurrency(id: string, currency: CryptoCurrency) {
+export function registerCryptoCurrency(
+  id: string,
+  currency: CryptoCurrency
+): void {
   cryptocurrenciesById[currency.id] = currency;
   cryptocurrenciesByScheme[currency.scheme] = currency;
 
   if (!currency.isTestnetFor) {
-    cryptocurrenciesByTicker[currency.ticker] = currency;
+    const currencyAlreadySet = cryptocurrenciesByTicker[currency.ticker];
+    const curencyHasTickerinKeywords = Boolean(
+      currency?.keywords?.includes(currency.ticker)
+    );
+
+    if (
+      !currencyAlreadySet ||
+      // In case of duplicates, we prioritize currencies with the ticker as a keyword of the currency
+      (currencyAlreadySet && curencyHasTickerinKeywords)
+    ) {
+      cryptocurrenciesByTicker[currency.ticker] = currency;
+    }
     prodCryptoArray.push(currency);
 
     if (!currency.terminated) {
