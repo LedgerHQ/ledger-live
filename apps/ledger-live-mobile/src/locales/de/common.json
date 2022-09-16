@@ -2275,11 +2275,8 @@
     "debug" : {
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
       "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
-      "featureFlagsOverride" : "Überschreiben",
       "featureFlagsEdit" : "Bearbeiten",
-      "featureFlagsRestore" : "Wiederherstellen",
-      "featureFlagsDisplayValue" : "Wert anzeigen",
-      "featureFlagsHideValue" : "Wert ausblenden"
+      "featureFlagsRestore" : "Wiederherstellen"
     }
   },
   "notifications" : {
@@ -3535,15 +3532,15 @@
     "no" : "Lieber nicht",
     "languages" : {
       "en" : "Englisch",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
+      "fr" : "Französisch",
+      "ru" : "Russisch",
+      "es" : "Spanisch",
+      "zh" : "Chinesisch",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "tr" : "Türkisch",
+      "ja" : "Japanisch",
+      "ko" : "Koreanisch",
+      "pt" : "Portugiesisch"
     }
   },
   "deviceLocalization" : {
