@@ -25,7 +25,7 @@ export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> =
       {
         title: "Fee",
         button: "Rr",
-        // TODO: add a expectedValue fn
+        expectedValue: () => "50000",
       },
       {
         title: "Data",
@@ -70,7 +70,6 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> =
       {
         title: "Fee",
         button: "Rr",
-        // TODO: add a expectedValue fn
       },
       {
         title: "Sign",
