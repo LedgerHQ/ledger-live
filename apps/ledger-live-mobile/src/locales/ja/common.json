@@ -1072,8 +1072,8 @@
     "stepLanguage" : {
       "title" : "言語を選択",
       "cta" : "続行",
-      "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
-      "changeDeviceLanguageDescription" : "Ledger Liveの言語は現在、{{language}}です。{{language}}をデバイスでも使用しますか？",
+      "changeDeviceLanguage" : "{{language}}が{{deviceName}}でもご利用可能になりました",
+      "changeDeviceLanguageDescription" : "言語を{{language}}に変更しますか？",
       "warning" : {
         "title" : "ご利用ガイド（英語版）",
         "cta" : "了解！",
@@ -3549,9 +3549,11 @@
   "deviceLocalization" : {
     "language" : "言語",
     "deviceLanguage" : "デバイスの言語",
+    "chooseLanguage" : "{{deviceName}}の言語を選択してください。",
     "changeLanguage" : "言語の変更",
-    "allowLanguageInstallation" : "言語のインストールを許可する",
-    "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
+    "yesChangeLanguage" : "はい、言語を変更します。",
+    "allowLanguageInstallation" : "{{deviceName}}への言語のインストールを承認する",
+    "languageInstalled" : "言語が{{language}}に変更されました",
     "firmwareUpdatePrompt" : {
       "title" : "{{deviceName}}を{{language}}に設定しますか？",
       "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
