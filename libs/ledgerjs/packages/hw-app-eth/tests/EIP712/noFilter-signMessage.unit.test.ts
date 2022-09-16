@@ -16,7 +16,7 @@ const getFilePath = (type: "apdu" | "message", filename: string): string => {
 };
 
 // act like no message has filters
-jest.mock("@ledgerhq/cryptoassets/eip712", () => ({}));
+jest.mock("@ledgerhq/cryptoassets/data/eip712", () => ({}));
 
 describe("EIP712", () => {
   describe("SignEIP712Message without filters", () => {

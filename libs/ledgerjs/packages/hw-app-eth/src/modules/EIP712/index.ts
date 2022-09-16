@@ -371,7 +371,7 @@ async function sendFilteringInfo(
     primaryType: "Test",
     message: {contents: "Hello, Bob!"},
   })
- * 
+ *
  * @param {String} path derivationPath
  * @param {Object} jsonMessage message to sign
  * @param {Boolean} fullImplem use the legacy implementation
@@ -550,5 +550,5 @@ export const signEIP712HashedMessage = (
   });
 };
 
-export { EIP712Message } from "./EIP712.types";
+export type { EIP712Message } from "./EIP712.types";
 export { isEIP712Message } from "./EIP712.utils";

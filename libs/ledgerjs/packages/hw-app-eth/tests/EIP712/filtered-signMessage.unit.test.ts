@@ -15,7 +15,9 @@ const getFilePath = (type: "apdu" | "message", filename: string): string => {
   }
 };
 
-jest.mock("@ledgerhq/cryptoassets/eip712", () => require("../fixtures/CAL"));
+jest.mock("@ledgerhq/cryptoassets/data/eip712", () =>
+  require("../fixtures/CAL")
+);
 
 describe.only("EIP712", () => {
   describe("SignEIP712Message with filters", () => {
