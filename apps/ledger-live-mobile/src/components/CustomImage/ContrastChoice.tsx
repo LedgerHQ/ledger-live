@@ -26,7 +26,7 @@ const Round = styled(Box).attrs({
 const PillBackground = styled(Box).attrs({
   height: "20px",
   width: "20px",
-  backgroundColor: "background.drawer",
+  backgroundColor: "background.main",
 })``;
 
 const PillForeground = styled(Icons.CircledCheckSolidMedium).attrs({
