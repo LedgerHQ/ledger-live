@@ -4,6 +4,7 @@ import {
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
   makeTypeEntryStructBuffer,
+  sortObjectAlphabetically,
 } from "../../src/modules/EIP712/EIP712.utils";
 
 const padHexString = (str: string) => {
@@ -476,6 +477,65 @@ describe("EIP712", () => {
           });
         });
       });
+    });
+
+    describe("sortObjectAlphabetically", () => {
+      test("should order the object keys by alphabetical order", () => {
+        const obj = {
+          F: {
+            Q: 1,
+            P: 2,
+          },
+          E: {
+            O: 1,
+            N: 2,
+          },
+          D: {
+            M: 1,
+            L: 2,
+          },
+          C: {
+            K: 1,
+            J: 2,
+          },
+          B: {
+            I: 1,
+            H: 2,
+          },
+          A: {
+            G: 1,
+            F: 2,
+          },
+        }
+        const expectedObj = {
+          A: {
+            F: 2,
+            G: 1
+          },
+          B: {
+            H: 2,
+            I: 1
+          },
+          C: {
+            J: 2,
+            K: 1
+          },
+          D: {
+            L: 2,
+            M: 1
+          },
+          E: {
+            N: 2,
+            O: 1
+          },
+          F: {
+            P: 2,
+            Q: 1
+          },
+        }
+
+        expect(sortObjectAlphabetically(obj)).toEqual(expectedObj)
+      })
     });
   });
 });
