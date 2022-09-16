@@ -1,5 +1,4 @@
 import React, { useState, useCallback, memo, useMemo } from "react";
-import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
