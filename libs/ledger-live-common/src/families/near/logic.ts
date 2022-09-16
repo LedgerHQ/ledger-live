@@ -18,7 +18,6 @@ export const MIN_ACCOUNT_BALANCE_BUFFER = "50000000000000000000000";
 export const STAKING_GAS_BASE = "25000000000000";
 export const FIGMENT_NEAR_VALIDATOR_ADDRESS = "ledgerbyfigment.poolv1.near";
 export const FRACTIONAL_DIGITS = 5;
-export const NETWORK_ID = "W".charCodeAt(0);
 
 export const isValidAddress = (address: string): boolean => {
   const readableAddressRegex =
@@ -196,24 +195,4 @@ export const getStakingFees = (
     .plus(STAKING_GAS_BASE) // Buffer
     .multipliedBy(gasPrice)
     .dividedBy(10);
-};
-
-export const bip32PathToBytes = (path: string): Buffer => {
-  const parts = path.split("/");
-  return Buffer.concat(
-    parts
-      .map((part) =>
-        part.endsWith(`'`)
-          ? Math.abs(parseInt(part.slice(0, -1))) | 0x80000000
-          : Math.abs(parseInt(part))
-      )
-      .map((i32) =>
-        Buffer.from([
-          (i32 >> 24) & 0xff,
-          (i32 >> 16) & 0xff,
-          (i32 >> 8) & 0xff,
-          i32 & 0xff,
-        ])
-      )
-  );
 };
