@@ -75,9 +75,10 @@ const getAccountShape: GetAccountShape = async (info) => {
       providers,
     },
     subAccounts,
+    operations,
   };
 
-  return { ...shape, operations };
+  return shape;
 };
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
