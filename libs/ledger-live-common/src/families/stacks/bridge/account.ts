@@ -158,8 +158,6 @@ const prepareTransaction = async (
       network: t.network,
       publicKey: xpub,
       amount: t.amount.toFixed(),
-      fee: -1, // Set fee to avoid makeUnsignedSTXTokenTransfer to fetch fees internally
-      nonce: -1, // Set nonce to avoid makeUnsignedSTXTokenTransfer to fetch nonce internally
     };
 
     const tx = await makeUnsignedSTXTokenTransfer(options);
