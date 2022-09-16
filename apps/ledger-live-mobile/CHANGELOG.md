@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.8.1-nightly.0
+
+### Patch Changes
+
+- [#1243](https://github.com/LedgerHQ/ledger-live/pull/1243) [`3ab7ed642f`](https://github.com/LedgerHQ/ledger-live/commit/3ab7ed642fe9d8a6e9c914c8d87a732e1f9b911c) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Change the navigation header font variant from h3 (Alpha) to h5 (Inter)
+
+- Updated dependencies [[`900eea7642`](https://github.com/LedgerHQ/ledger-live/commit/900eea7642bda94c71e2a171b90d2b6cd4d6ac4e)]:
+  - @ledgerhq/live-common@27.3.0-nightly.0
+
 ## 3.8.0
 
 ### Minor Changes

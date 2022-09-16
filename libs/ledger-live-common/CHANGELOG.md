@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.3.0-nightly.0
+
+### Minor Changes
+
+- [#1225](https://github.com/LedgerHQ/ledger-live/pull/1225) [`900eea7642`](https://github.com/LedgerHQ/ledger-live/commit/900eea7642bda94c71e2a171b90d2b6cd4d6ac4e) Thanks [@sarneijim](https://github.com/sarneijim)! - Support selectedRate in useProviderRates and add isRegistrationRequired util
+
 ## 27.2.0
 
 ### Minor Changes

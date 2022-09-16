@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.48.0-nightly.5
+
+### Minor Changes
+
+- [#1225](https://github.com/LedgerHQ/ledger-live/pull/1225) [`900eea7642`](https://github.com/LedgerHQ/ledger-live/commit/900eea7642bda94c71e2a171b90d2b6cd4d6ac4e) Thanks [@sarneijim](https://github.com/sarneijim)! - Add provider list to main screen swap
+
+### Patch Changes
+
+- [#1271](https://github.com/LedgerHQ/ledger-live/pull/1271) [`e99e1768c9`](https://github.com/LedgerHQ/ledger-live/commit/e99e1768c9c560530ff610e427f91bb07b882fe6) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add i18nKey missing in Settings for Experimental Countervalues API
+
+- Updated dependencies [[`900eea7642`](https://github.com/LedgerHQ/ledger-live/commit/900eea7642bda94c71e2a171b90d2b6cd4d6ac4e)]:
+  - @ledgerhq/live-common@27.3.0-nightly.0
+
 ## 2.48.0-nightly.4
 
 ### Minor Changes
