@@ -1072,8 +1072,8 @@
     "stepLanguage" : {
       "title" : "Choisir la langue",
       "cta" : "Continuer",
-      "changeDeviceLanguage" : "Voulez-vous changer la langue de votre Ledger ?",
-      "changeDeviceLanguageDescription" : "Ledger Live est maintenant en {{language}}. Souhaitez-vous également utiliser votre Ledger en {{language}} ?",
+      "changeDeviceLanguage" : "Une autre langue est disponible pour votre {{deviceName}} : {{language}}.",
+      "changeDeviceLanguageDescription" : "Souhaitez-vous l’utiliser en {{language}} ?",
       "warning" : {
         "title" : "À noter",
         "cta" : "Compris",
@@ -2275,11 +2275,8 @@
     "debug" : {
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
-      "featureFlagsOverride" : "Remplacer",
       "featureFlagsEdit" : "Modifier",
-      "featureFlagsRestore" : "Restaurer",
-      "featureFlagsDisplayValue" : "Afficher le code",
-      "featureFlagsHideValue" : "Masquer le code"
+      "featureFlagsRestore" : "Restaurer"
     }
   },
   "notifications" : {
@@ -3538,20 +3535,22 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
+      "tr" : "Türkçe",
+      "ja" : "日本語",
+      "ko" : "한국어",
       "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "Langue",
     "deviceLanguage" : "Langue de l’appareil",
+    "chooseLanguage" : "Choisissez une langue pour votre {{deviceName}}.",
     "changeLanguage" : "Changer la langue",
-    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
-    "languageInstalled" : "Votre appareil est maintenant en {{language}}.",
+    "yesChangeLanguage" : "Oui, changer la langue",
+    "allowLanguageInstallation" : "Confirmez l’ajout de la langue sur votre {{deviceName}}",
+    "languageInstalled" : "Votre Ledger est maintenant en {{language}}.",
     "firmwareUpdatePrompt" : {
       "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
       "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
