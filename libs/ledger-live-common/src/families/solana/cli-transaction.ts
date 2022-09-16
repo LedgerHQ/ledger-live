@@ -1,12 +1,12 @@
 import { findTokenById, findTokenByTicker } from "@ledgerhq/cryptoassets";
+import type {
+  Account,
+  AccountLike,
+  AccountLikeArray,
+} from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { getAccountCurrency } from "../../account";
-import type {
-  Transaction,
-  AccountLike,
-  Account,
-  AccountLikeArray,
-} from "../../types";
+import type { Transaction } from "../../generated/types";
 import { Transaction as SolanaTransaction } from "./types";
 import { assertUnreachable } from "./utils";
 

@@ -3,7 +3,9 @@ import type { TFunction } from "react-i18next";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Step } from "~/renderer/components/Stepper";
 
-import type { Account, TransactionStatus, Operation } from "@ledgerhq/live-common/types/index";
+import type { Account, Operation } from "@ledgerhq/types-live";
+
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 import type { Transaction } from "@ledgerhq/live-common/families/algorand/types";
 

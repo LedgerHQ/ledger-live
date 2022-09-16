@@ -1,12 +1,15 @@
 import React, { useState, useCallback } from "react";
 import { Platform } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { ScreenName, NavigatorName } from "../const";
 import { Alert, BottomDrawer, Text } from "@ledgerhq/native-ui";
-import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
+import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { ScreenName, NavigatorName } from "../const";
 import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
@@ -14,9 +17,7 @@ import {
 } from "../reducers/settings";
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useLatestFirmware from "../hooks/useLatestFirmware";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { isFirmwareUpdateVersionSupported } from "../logic/firmwareUpdate";
 
 const FirmwareUpdateBanner = () => {
@@ -68,11 +69,18 @@ const FirmwareUpdateBanner = () => {
       lastSeenDevice.deviceInfo,
       lastSeenDevice.modelId,
     );
+  const isDeviceConnectedViaUSB = lastConnectedDevice?.wired === true;
   const usbFwUpdateActivated =
     usbFwUpdateFeatureFlag?.enabled &&
     Platform.OS === "android" &&
-    lastConnectedDevice?.wired &&
     isUsbFwVersionUpdateSupported;
+
+  const fwUpdateActivatedButNotWired =
+    usbFwUpdateActivated && !isDeviceConnectedViaUSB;
+
+  const deviceName = lastConnectedDevice
+    ? getDeviceModel(lastConnectedDevice.modelId).productName
+    : "";
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
@@ -80,7 +88,7 @@ const FirmwareUpdateBanner = () => {
         <Text flexShrink={1}>
           {t("FirmwareUpdate.newVersion", {
             version,
-            deviceName: lastConnectedDevice?.deviceName,
+            deviceName,
           })}
         </Text>
         <Button
@@ -89,7 +97,9 @@ const FirmwareUpdateBanner = () => {
           type="color"
           title={t("FirmwareUpdate.update")}
           onPress={
-            usbFwUpdateActivated ? onExperimentalFirmwareUpdate : onPress
+            usbFwUpdateActivated && isDeviceConnectedViaUSB
+              ? onExperimentalFirmwareUpdate
+              : onPress
           }
           outline={false}
         />
@@ -98,9 +108,19 @@ const FirmwareUpdateBanner = () => {
       <BottomDrawer
         isOpen={showDrawer}
         onClose={onCloseDrawer}
-        Icon={DownloadMedium}
-        title={t("FirmwareUpdate.drawerUpdate.title")}
-        description={t("FirmwareUpdate.drawerUpdate.description")}
+        Icon={fwUpdateActivatedButNotWired ? UsbMedium : DownloadMedium}
+        title={
+          fwUpdateActivatedButNotWired
+            ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbTitle")
+            : t("FirmwareUpdate.drawerUpdate.title")
+        }
+        description={
+          fwUpdateActivatedButNotWired
+            ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbDescription", {
+                deviceName,
+              })
+            : t("FirmwareUpdate.drawerUpdate.description")
+        }
         noCloseButton
       >
         <Button

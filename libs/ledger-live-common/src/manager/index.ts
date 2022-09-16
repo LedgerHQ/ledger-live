@@ -4,15 +4,16 @@ import semver from "semver";
 import chunk from "lodash/chunk";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { UnknownMCU } from "@ledgerhq/errors";
-import type {
-  ApplicationVersion,
-  DeviceInfo,
-  OsuFirmware,
-  FirmwareUpdateContext,
-} from "../types/manager";
 import { listCryptoCurrencies } from "../currencies";
 import ManagerAPI from "../api/Manager";
 import { getProviderId } from "./provider";
+import type {
+  Language,
+  ApplicationVersion,
+  DeviceInfo,
+  FirmwareUpdateContext,
+  OsuFirmware,
+} from "@ledgerhq/types-live";
 export { getProviderId };
 const ICONS_FALLBACK = {
   bitcoin_testnet: "bitcoin",
@@ -157,6 +158,21 @@ const CacheAPI = {
       osu,
       shouldFlashMCU,
     };
+  },
+  // get list of available languages for a given deviceInfo
+  getAvailableLanguagesDevice: async (
+    deviceInfo: DeviceInfo
+  ): Promise<Language[]> => {
+    const languagePackages = await ManagerAPI.getLanguagePackagesForDevice(
+      deviceInfo
+    );
+    const languages = languagePackages.map((pack) => pack.language);
+
+    if (!languages.includes("english")) {
+      languages.push("english"); // english is always available
+    }
+
+    return languages;
   },
   // get list of apps for a given deviceInfo
   getAppsList: async (

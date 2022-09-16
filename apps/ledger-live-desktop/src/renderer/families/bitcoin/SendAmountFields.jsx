@@ -4,12 +4,8 @@ import invariant from "invariant";
 import React, { useState, useCallback, useEffect } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import styled from "styled-components";
-import type {
-  Account,
-  Transaction,
-  TransactionStatus,
-  FeeStrategy,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, FeeStrategy } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { context } from "~/renderer/drawers/Provider";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Box from "~/renderer/components/Box";

@@ -1,8 +1,7 @@
 // @flow
 import type { TFunction } from "react-i18next";
 import type { Step } from "~/renderer/components/Stepper";
-
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 export type StepId = "paste" | "confirm";
 

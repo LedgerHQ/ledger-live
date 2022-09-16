@@ -8,8 +8,8 @@ import {
 } from "@ledgerhq/errors";
 import { validateRecipient } from "../transaction";
 import type { ModeModule, Transaction } from "../types";
+import type { Account } from "@ledgerhq/types-live";
 import { prepareTransaction } from "./erc721";
-import { Account } from "../../../types";
 
 const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
 const NotEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");

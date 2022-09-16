@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { Redirect } from "react-router";

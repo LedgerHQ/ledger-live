@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { space, layout, position } from "styled-system";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import type { Account, FloorPrice } from "@ledgerhq/live-common/types/index";
+import type { Account, FloorPrice } from "@ledgerhq/types-live";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";

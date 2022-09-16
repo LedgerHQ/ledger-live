@@ -1,11 +1,13 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useCallback } from "react";
-import { TouchableOpacity } from "react-native";
-import { Trans } from "react-i18next";
-import { Flex, Text, Button } from "@ledgerhq/native-ui";
+import { TouchableOpacity, Linking } from "react-native";
+import { Trans, useTranslation } from "react-i18next";
+import { Flex, Text, Button, Link } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import NoResultsFound from "../../icons/NoResultsFound";
 import { track, TrackScreen } from "../../analytics";
 import useRatings from "../../logic/ratings";
+import { urls } from "../../config/urls";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -14,11 +16,12 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  closeModal: Function;
-  setStep: Function;
+  closeModal: any;
+  setStep: any;
 };
 
 const Disappointed = ({ closeModal, setStep }: Props) => {
+  const { t } = useTranslation();
   const { ratingsFeatureParams, ratingsHappyMoment } = useRatings();
   const goToDisappointedForm = useCallback(() => {
     track("button_clicked", {
@@ -40,6 +43,9 @@ const Disappointed = ({ closeModal, setStep }: Props) => {
     });
     closeModal();
   }, [closeModal, ratingsFeatureParams, ratingsHappyMoment?.route_name]);
+  const goToLink = useCallback(() => {
+    Linking.openURL(urls.ratingsContact);
+  }, []);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center" mt={3}>
@@ -67,12 +73,15 @@ const Disappointed = ({ closeModal, setStep }: Props) => {
         fontWeight="medium"
         color="neutral.c70"
         textAlign="center"
-        my={6}
+        mt={6}
         lineHeight="23.8px"
       >
         <Trans i18nKey="ratings.disappointed.description" />
       </Text>
-      <Flex alignSelf="stretch" py={6}>
+      <Link type="main" onPress={goToLink}>
+        {t("ratings.disappointed.here")}
+      </Link>
+      <Flex alignSelf="stretch" mt={6} py={6}>
         <Button onPress={goToDisappointedForm} type="main" size="large">
           <Trans i18nKey="ratings.disappointed.cta.sendFeedback" />
         </Button>

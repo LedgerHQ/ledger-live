@@ -1,10 +1,16 @@
 import { BigNumber } from "bignumber.js";
-import type { AlgorandTransaction, AlgorandTransactionRaw } from "./types";
+import type {
+  AlgorandAccount,
+  AlgorandTransaction,
+  AlgorandTransactionRaw,
+} from "./types";
 import {
+  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
-import type { Account } from "../../types";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 export const formatTransaction = (
@@ -16,7 +22,7 @@ export const formatTransaction = (
     fees,
     useAllAmount,
   }: AlgorandTransaction,
-  mainAccount: Account
+  mainAccount: AlgorandAccount
 ): string => {
   const account =
     (subAccountId &&
@@ -78,4 +84,7 @@ export default {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+  formatTransactionStatus,
 };

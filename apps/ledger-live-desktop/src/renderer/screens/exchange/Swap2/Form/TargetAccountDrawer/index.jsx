@@ -7,7 +7,7 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountUnit,

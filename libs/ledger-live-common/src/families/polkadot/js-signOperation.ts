@@ -4,13 +4,13 @@ import { TypeRegistry } from "@polkadot/types";
 import { u8aConcat } from "@polkadot/util";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
-import type { Transaction } from "./types";
+import type { PolkadotAccount, Transaction } from "./types";
 import type {
   Account,
   Operation,
   OperationType,
   SignOperationEvent,
-} from "../../types";
+} from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import { buildTransaction } from "./js-buildTransaction";
@@ -41,7 +41,11 @@ const MODE_TO_PALLET_METHOD = {
   claimReward: "staking.payoutStakers",
 };
 
-const getExtra = (type: string, account: Account, transaction: Transaction) => {
+const getExtra = (
+  type: string,
+  account: PolkadotAccount,
+  transaction: Transaction
+) => {
   const extra = {
     palletMethod: MODE_TO_PALLET_METHOD[transaction.mode],
   };
@@ -78,7 +82,7 @@ const getExtra = (type: string, account: Account, transaction: Transaction) => {
 };
 
 const buildOptimisticOperation = (
-  account: Account,
+  account: PolkadotAccount,
   transaction: Transaction,
   fee: BigNumber
 ): Operation => {
@@ -173,12 +177,12 @@ const signOperation = ({
           const transactionToSign = {
             ...transaction,
             amount: calculateAmount({
-              a: account,
+              a: account as PolkadotAccount,
               t: transaction,
             }),
           };
           const { unsigned, registry } = await buildTransaction(
-            account,
+            account as PolkadotAccount,
             transactionToSign,
             true
           );
@@ -201,7 +205,7 @@ const signOperation = ({
             type: "device-signature-granted",
           });
           const operation = buildOptimisticOperation(
-            account,
+            account as PolkadotAccount,
             transactionToSign,
             transactionToSign.fees ?? new BigNumber(0)
           );

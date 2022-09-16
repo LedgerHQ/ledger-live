@@ -1,7 +1,6 @@
 import cashaddr from "cashaddrjs";
 import { Currency, isValidAddress } from "./wallet-btc";
 import { RecipientRequired, InvalidAddress } from "@ledgerhq/errors";
-import type { Account, CryptoCurrency, CryptoCurrencyIds } from "./../../types";
 import type {
   BitcoinOutput,
   BitcoinResources,
@@ -17,7 +16,9 @@ import type {
 } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "../../operation";
-import type { Operation, OperationType } from "../../types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { CryptoCurrencyIds } from "@ledgerhq/cryptoassets";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees = {

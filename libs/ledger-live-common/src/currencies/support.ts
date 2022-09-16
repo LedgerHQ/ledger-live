@@ -1,13 +1,10 @@
-import type {
-  FiatCurrency,
-  CryptoCurrency,
-  CryptoCurrencyIds,
-} from "@ledgerhq/cryptoassets";
 import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
   hasCryptoCurrencyId,
+  CryptoCurrencyIds,
 } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "../env";
 
 // set by user side effect to precise which currencies are considered supported (typically by live)
@@ -78,7 +75,8 @@ export function listSupportedFiats(): FiatCurrency[] {
   return userSupportedFiats;
 }
 export function setSupportedCurrencies(ids: CryptoCurrencyIds[]) {
-  userSupportedCurrencies = ids.map((id) => getCryptoCurrencyById(id));
+  userSupportedCurrencies = Array.from(new Set(ids)) // Make sure to remove duplicates
+    .map((id) => getCryptoCurrencyById(id));
 }
 
 function getExperimentalSupports() {

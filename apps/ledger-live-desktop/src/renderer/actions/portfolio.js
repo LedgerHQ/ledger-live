@@ -1,6 +1,7 @@
 // @flow
 import { useSelector } from "react-redux";
-import type { CryptoCurrency, TokenCurrency, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import {
   usePortfolio as usePortfolioRaw,

@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import type { Account } from "./../../types";
 import type { Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
 import { perCoinLogic } from "./logic";
+import type { Account } from "@ledgerhq/types-live";
 
 const getFeesForTransaction = async ({
   account,

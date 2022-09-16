@@ -1,8 +1,12 @@
 import type { BigNumber } from "bignumber.js";
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
 
 export type NetworkInfo = {
   family: "avalanchepchain";
@@ -10,6 +14,15 @@ export type NetworkInfo = {
 export type NetworkInfoRaw = {
   family: "avalanchepchain";
 };
+
+export type AvalanchePChainAccount = Account & {
+  avalanchePChainResources: AvalanchePChainResources;
+};
+
+export type AvalanchePChainAccountRaw = AccountRaw & {
+  avalanchePChainResources: AvalanchePChainResourcesRaw;
+};
+
 export type Transaction = TransactionCommon & {
   family: "avalanchepchain";
   fees: BigNumber | null;
@@ -27,6 +40,10 @@ export type TransactionRaw = TransactionCommonRaw & {
   endTime: string | null;
   maxEndTime: string | null;
 };
+
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type AvalanchePChainResources = {
   publicKey: string;

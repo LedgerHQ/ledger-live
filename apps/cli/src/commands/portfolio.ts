@@ -5,9 +5,11 @@ import { from } from "rxjs";
 import { reduce, concatMap, map } from "rxjs/operators";
 import type {
   Account,
-  Currency,
   PortfolioRange,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-live";
+import type {
+  Currency
+} from "@ledgerhq/types-cryptoassets";
 import {
   flattenAccounts,
   getAccountName,

@@ -5,14 +5,6 @@ import {
   listTokensForCryptoCurrency,
   findCompoundToken,
 } from "../currencies";
-import type {
-  TokenAccount,
-  Account,
-  AccountLike,
-  Operation,
-  CryptoCurrency,
-  TokenCurrency,
-} from "../types";
 import { getOperationAmountNumber } from "../operation";
 import {
   inferSubOperations,
@@ -23,6 +15,21 @@ import {
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 import { genHex, genAddress } from "./helpers";
 import perFamilyMock from "../generated/mock";
+import type {
+  Account,
+  AccountLike,
+  Operation,
+  TokenAccount,
+} from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import { CosmosAccount } from "../families/cosmos/types";
+import { BitcoinAccount } from "../families/bitcoin/types";
+import { AlgorandAccount } from "../families/algorand/types";
+import { PolkadotAccount } from "../families/polkadot/types";
+import { TezosAccount } from "../families/tezos/types";
 
 function ensureNoNegative(operations) {
   let total = new BigNumber(0);
@@ -191,7 +198,10 @@ const tickerApproxMarketPrice = {
 };
 // mock only use subset of cryptocurrencies to not affect tests when adding coins
 const currencies = listCryptoCurrencies().filter(
-  (c) => tickerApproxMarketPrice[c.ticker]
+  (c) =>
+    tickerApproxMarketPrice[c.ticker] &&
+    // take only "official" currencies, otherwise you might end up with ticker collisions
+    c.name === c.managerAppName
 );
 // TODO fix the mock to never generate negative balance...
 
@@ -429,7 +439,7 @@ export function genAccount(
   }
 
   if (currency.id === "cosmos") {
-    account.cosmosResources = {
+    (account as CosmosAccount).cosmosResources = {
       // TODO variation in these
       delegations: [],
       redelegations: [],
@@ -442,21 +452,21 @@ export function genAccount(
   }
 
   if (currency.family === "bitcoin") {
-    account.bitcoinResources = {
+    (account as BitcoinAccount).bitcoinResources = {
       utxos: [],
       walletAccount: undefined,
     };
   }
 
   if (currency.family === "algorand") {
-    account.algorandResources = {
+    (account as AlgorandAccount).algorandResources = {
       rewards: new BigNumber(0),
       nbAssets: account.subAccounts?.length ?? 0,
     };
   }
 
   if (currency.family === "polkadot") {
-    account.polkadotResources = {
+    (account as PolkadotAccount).polkadotResources = {
       stash: null,
       controller: null,
       nonce: 0,
@@ -466,6 +476,13 @@ export function genAccount(
       unlockings: [],
       nominations: [],
       numSlashingSpans: 0,
+    };
+  }
+
+  if (currency.family === "tezos") {
+    (account as TezosAccount).tezosResources = {
+      revealed: true,
+      counter: 0,
     };
   }
 

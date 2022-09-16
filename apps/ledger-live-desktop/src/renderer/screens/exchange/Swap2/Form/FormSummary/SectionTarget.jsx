@@ -7,7 +7,7 @@ import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
 import { useTranslation } from "react-i18next";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
-import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import SummarySection from "./SummarySection";
 import { openModal } from "~/renderer/actions/modals";
 import { context } from "~/renderer/drawers/Provider";

@@ -5,7 +5,7 @@ import { Trans, withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import type { TFunction } from "react-i18next";
 import { createStructuredSelector } from "reselect";
-import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Track from "~/renderer/analytics/Track";
 import { saveSettings } from "~/renderer/actions/settings";
 import {

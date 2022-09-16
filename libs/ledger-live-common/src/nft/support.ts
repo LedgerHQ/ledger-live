@@ -1,5 +1,7 @@
-import { Transaction, CryptoCurrency, ProtoNFT, NFTStandard } from "../types";
+import { Transaction } from "../generated/types";
 import { getEnv } from "../env";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { NFTStandard, ProtoNFT } from "@ledgerhq/types-live";
 
 export const isNftTransaction = (
   transaction: Transaction | undefined | null

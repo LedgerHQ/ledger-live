@@ -1,17 +1,11 @@
 import type { DeviceAction } from "../../bot/types";
 import type { AlgorandTransaction } from "./types";
-import { formatCurrencyUnit, findTokenById } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
+import { findTokenById } from "../../currencies";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 import { extractTokenId, addPrefixToken } from "./tokens";
 import { displayTokenValue } from "./deviceTransactionConfig";
 
-// Will be useful when unit is gonna be algo
-const expectedAmount = ({ account, status }) =>
-  formatCurrencyUnit(account.unit, status.amount, {
-    disableRounding: true,
-  });
-
-const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
+export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
   deviceActionFlow({
     steps: [
       {
@@ -32,9 +26,7 @@ const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
         title: "Fee",
         button: "Rr",
         expectedValue: ({ account, status }) =>
-          formatCurrencyUnit(account.unit, status.estimatedFees, {
-            disableRounding: true,
-          }),
+          formatDeviceAmount(account.currency, status.estimatedFees),
       },
       {
         title: "Asset ID",
@@ -75,10 +67,11 @@ const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
         expectedValue: ({ account, status, transaction }) =>
           transaction.mode === "claimReward"
             ? "0"
-            : expectedAmount({
-                account,
-                status,
-              }),
+            : formatDeviceAmount(account.currency, status.amount),
+      },
+      {
+        title: "APPROVE",
+        button: "LRlr",
       },
       {
         title: "Sign",
@@ -98,6 +91,3 @@ const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
       }, // Only on testnet
     ],
   });
-export default {
-  acceptTransaction,
-};

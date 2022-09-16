@@ -6,7 +6,7 @@ import type { ModalStatus } from "./types";
 import type { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import manager from "@ledgerhq/live-common/manager/index";
-import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DisclaimerModal from "~/renderer/modals/DisclaimerModal";
 import UpdateModal from "~/renderer/modals/UpdateFirmwareModal";

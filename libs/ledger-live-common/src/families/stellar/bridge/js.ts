@@ -1,9 +1,5 @@
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import type {
-  AccountBridge,
-  CryptoCurrency,
-  CurrencyBridge,
-} from "../../../types";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { scanAccounts, sync } from "../js-synchronization";
 import getTransactionStatus from "../js-getTransactionStatus";
@@ -12,6 +8,7 @@ import createTransaction from "../js-createTransaction";
 import prepareTransaction from "../js-prepareTransaction";
 import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const preload = async (): Promise<any> => {};
 

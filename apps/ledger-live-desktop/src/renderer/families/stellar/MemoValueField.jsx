@@ -4,7 +4,8 @@ import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
-import type { Account, Transaction, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 const MemoValueField = ({
   onChange,

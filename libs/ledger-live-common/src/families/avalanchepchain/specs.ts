@@ -1,5 +1,9 @@
 import invariant from "invariant";
-import type { AvalanchePChainResources, Transaction } from "./types";
+import type {
+  AvalanchePChainAccount,
+  AvalanchePChainResources,
+  Transaction,
+} from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -12,10 +16,11 @@ import {
   FIVE_MINUTES,
   MINUTE,
 } from "./utils";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("avalanchepchain");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "25");
-const validator = FIGMENT_AVALANCHE_VALIDATOR_NODES[0]; //TODO: just need to change this to an active validator and then I think the bot test should work
+const validator = FIGMENT_AVALANCHE_VALIDATOR_NODES[0];
 
 const avalanche: AppSpec<Transaction> = {
   name: "Avalanche",
@@ -24,6 +29,7 @@ const avalanche: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Avalanche",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   mutations: [
     {
@@ -31,12 +37,13 @@ const avalanche: AppSpec<Transaction> = {
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         invariant(canDelegate(account), "can delegate");
-        const { avalanchePChainResources } = account;
+        const {
+          avalanchePChainResources,
+        }: { avalanchePChainResources: AvalanchePChainResources } =
+          account as AvalanchePChainAccount;
         invariant(avalanchePChainResources, "avalanche");
 
-        let amount = new BigNumber(Math.floor(25 + (Math.random() * 5))).integerValue();
-        amount = parseCurrencyUnit(currency.units[0], amount.toString());
-
+        const amount = minimalAmount;
         const stakeStartTime = new BigNumber(
           Math.round(new Date().getTime() / 1000) + MINUTE
         );
@@ -60,16 +67,21 @@ const avalanche: AppSpec<Transaction> = {
         };
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
-        const { avalanchePChainResources } = account;
+        const {
+          avalanchePChainResources,
+        }: { avalanchePChainResources: AvalanchePChainResources } =
+          account as AvalanchePChainAccount;
         const {
           avalanchePChainResources: avalanchePChainResourcesBeforeTransaction,
-        } = accountBeforeTransaction;
+        } = accountBeforeTransaction as AvalanchePChainAccount;
         invariant(avalanchePChainResources, "avalanchepchain");
 
-        expect((avalanchePChainResources as AvalanchePChainResources).stakedBalance).toEqual(
-          (avalanchePChainResourcesBeforeTransaction as AvalanchePChainResources).stakedBalance.plus(
-            operation.extra.stakeValue
-          )
+        expect(
+          (avalanchePChainResources as AvalanchePChainResources).stakedBalance
+        ).toEqual(
+          (
+            avalanchePChainResourcesBeforeTransaction as AvalanchePChainResources
+          ).stakedBalance.plus(operation.extra.stakeValue)
         );
       },
     },

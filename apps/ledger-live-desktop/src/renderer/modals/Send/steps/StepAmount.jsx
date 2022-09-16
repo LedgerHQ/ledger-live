@@ -21,23 +21,25 @@ import SendAmountFields from "../SendAmountFields";
 import AmountField from "../fields/AmountField";
 import type { StepProps } from "../types";
 
-const StepAmount = ({
-  t,
-  account,
-  parentAccount,
-  transaction,
-  onChangeTransaction,
-  onChangeQuantities,
-  error,
-  status,
-  bridgePending,
-  maybeAmount,
-  onResetMaybeAmount,
-  updateTransaction,
-  currencyName,
-  isNFTSend,
-  walletConnectProxy,
-}: StepProps) => {
+const StepAmount = (props: StepProps) => {
+  const {
+    t,
+    account,
+    parentAccount,
+    transaction,
+    onChangeTransaction,
+    onChangeQuantities,
+    error,
+    status,
+    bridgePending,
+    maybeAmount,
+    onResetMaybeAmount,
+    updateTransaction,
+    currencyName,
+    isNFTSend,
+    walletConnectProxy,
+  } = props;
+
   const allNfts = useSelector(getAllNFTs);
   const nft = allNfts?.find(nft => nft.tokenId === transaction?.tokenIds?.[0]);
   if (!status) return null;

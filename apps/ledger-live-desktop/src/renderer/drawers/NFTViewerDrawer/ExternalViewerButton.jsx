@@ -12,7 +12,7 @@ import IconExternal from "~/renderer/icons/ExternalLink";
 import useNftLinks from "~/renderer/hooks/useNftLinks";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-import type { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/live-common/types/index";
+import type { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 const Separator: ThemedComponent<{}> = styled.div`

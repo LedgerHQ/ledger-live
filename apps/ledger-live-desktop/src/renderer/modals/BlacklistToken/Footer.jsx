@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import { useDispatch } from "react-redux";
 import { blacklistToken } from "~/renderer/actions/settings";
-import type { TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { TokenCurrency } from "@ledgerhq/types-live";
 
 const Footer = ({ onClose, token }: { onClose: () => void, token: TokenCurrency }) => {
   const dispatch = useDispatch();

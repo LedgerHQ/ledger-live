@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { getAccountCurrency, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import SelectAccountAndCurrency from "~/renderer/components/SelectAccountAndCurrency";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import type { DProps } from "~/renderer/screens/exchange";

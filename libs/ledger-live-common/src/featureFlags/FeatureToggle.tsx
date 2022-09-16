@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
 import useFeature from "./useFeature";
-import { FeatureId } from "./types";
+import type { FeatureId } from "@ledgerhq/types-live";
 
 type Props = {
   feature: FeatureId;

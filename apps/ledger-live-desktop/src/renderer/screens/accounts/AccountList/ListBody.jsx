@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Box from "~/renderer/components/Box";
 import AccountItem from "../AccountRowItem";

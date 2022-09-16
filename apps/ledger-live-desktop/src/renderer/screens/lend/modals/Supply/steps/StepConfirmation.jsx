@@ -50,7 +50,11 @@ function StepConfirmation({
           name="Supply Step 3 Success"
           eventProperties={{ currencyName: currency.name }}
         />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={t("lend.supply.steps.confirmation.success.title")}
           description={multiline(t("lend.supply.steps.confirmation.success.text"))}

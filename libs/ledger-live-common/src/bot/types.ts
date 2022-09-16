@@ -1,17 +1,16 @@
 import { BigNumber } from "bignumber.js";
 import Transport from "@ledgerhq/hw-transport";
-import type {
-  Account,
-  AccountBridge,
-  Transaction,
-  TransactionStatus,
-  SignedOperation,
-  Operation,
-  CryptoCurrency,
-  SignOperationEvent,
-} from "../types";
+import type { Transaction, TransactionStatus } from "../generated/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { AppCandidate } from "../load/speculos";
+import {
+  Account,
+  AccountBridge,
+  Operation,
+  SignedOperation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 export type { AppCandidate };
 type DeviceActionEvent = {
   text: string;
@@ -67,7 +66,7 @@ export type MutationSpec<T extends Transaction> = {
     account: Account;
     bridge: AccountBridge<T>;
   }) => T | null | undefined;
-  // Express the device actions to do (buttons,..) and validate the device screen
+  // Express the device actions to do (buttons,..) and validate the device screen. overrides genericDeviceAction
   deviceAction?: DeviceAction<T, any>;
   // how much time to wait in maximum to reach the final state
   testTimeout?: number;
@@ -103,17 +102,21 @@ export type AppSpec<T extends Transaction> = {
   transactionCheck?: (arg: TransactionArg<T>) => void;
   // Implement a test that also runs on each mutation after the operation is applied to the account
   test?: (arg0: TransactionTestInput<T>) => void;
+  // Express the device actions to do (buttons,..) and validate the device screen
+  genericDeviceAction: DeviceAction<T, any>;
 };
 export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;
-  scanTime?: number;
+  appPath?: string;
+  scanDuration?: number;
+  preloadDuration?: number;
   accountsBefore?: Account[];
   accountsAfter?: Account[];
   mutations?: MutationReport<T>[];
   fatalError?: Error;
 };
 export type MutationReport<T extends Transaction> = {
-  syncAllAccountsTime: number;
+  resyncAccountsDuration: number;
   spec: AppSpec<T>;
   appCandidate: AppCandidate;
   account?: Account;

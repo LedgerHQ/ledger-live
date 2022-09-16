@@ -1,8 +1,13 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import BigNumber from "bignumber.js";
-import { CurrenciesData, DatasetTest, encodeAccountId } from "../../types";
-import { SolanaStake, Transaction, TransactionModel } from "./types";
+import {
+  SolanaAccount,
+  SolanaStake,
+  Transaction,
+  TransactionModel,
+  TransactionStatus,
+} from "./types";
 import scanAccounts1 from "./datasets/solana.scanAccounts.1";
 import {
   AmountRequired,
@@ -32,7 +37,6 @@ import createTransaction from "./js-createTransaction";
 import { compact } from "lodash/fp";
 import { assertUnreachable } from "./utils";
 import { getEnv } from "../../env";
-import { Account, TransactionStatus } from "../../types";
 import { ChainAPI } from "./api";
 import {
   SolanaStakeAccountIsNotDelegatable,
@@ -40,6 +44,12 @@ import {
 } from "./errors";
 import getTransactionStatus from "./js-getTransactionStatus";
 import { prepareTransaction } from "./js-prepareTransaction";
+import type {
+  Account,
+  CurrenciesData,
+  DatasetTest,
+} from "@ledgerhq/types-live";
+import { encodeAccountId } from "../../account";
 
 // do not change real properties or the test will break
 const testOnChainData = {
@@ -1051,7 +1061,7 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
     },
   } as ChainAPI;
 
-  const account: Account = {
+  const account: SolanaAccount = {
     ...baseAccount,
     solanaResources: {
       stakes: [

@@ -12,7 +12,7 @@ import {
   reducer,
 } from "@ledgerhq/live-common/apps/index";
 
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import type { State, Action } from "@ledgerhq/live-common/apps/types";
 
 import CollapsibleCard from "~/renderer/components/CollapsibleCard";

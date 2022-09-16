@@ -14,7 +14,7 @@ import type {
   PolkadotNomination,
   PolkadotUnlocking,
 } from "@ledgerhq/live-common/families/polkadot/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 import { TableLine } from "./Header";
 

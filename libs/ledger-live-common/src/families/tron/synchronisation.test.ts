@@ -4,7 +4,8 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { syncAccount } from "../../__tests__/test-helpers/bridge";
 import { defaultTronResources } from "./utils";
 import bridge from "./bridge/js";
-import { Account } from "../../types";
+import { Account } from "@ledgerhq/types-live";
+import { TronAccount } from "./types";
 
 jest.setTimeout(30000);
 
@@ -61,6 +62,8 @@ describe("Tron Accounts", () => {
       defaultSyncConfig
     );
 
-    expect(account.tronResources).toEqual(defaultTronResources);
+    expect((account as TronAccount).tronResources).toEqual(
+      defaultTronResources
+    );
   });
 });

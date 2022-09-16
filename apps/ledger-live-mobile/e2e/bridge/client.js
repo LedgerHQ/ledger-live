@@ -1,8 +1,7 @@
-// @flow
 import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs/Subject";
-import type { AccountRaw } from "@ledgerhq/live-common/types/index";
+import type { AccountRaw } from "@ledgerhq/types-live";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
 import { setAccounts } from "../../src/actions/accounts";
@@ -62,24 +61,7 @@ async function onMessage(event: { data: mixed }) {
   }
 }
 
-export const e2eBridgeSubject = new Subject<E2EBridgeSubjectMessage>();
-
-type Message<T: string, P = any> = {
-  type: T,
-  payload: P,
-};
-
-type E2EBridgeSubjectMessage =
-  | Message<"add", { id: string, name: string }>
-  | Message<"open", ?*>;
-
-export type E2EBridgeMessage =
-  | E2EBridgeSubjectMessage
-  | Message<"setGlobals", { [key: string]: any }>
-  | Message<"importAccounts", { data: AccountRaw, version: number }[]>
-  | Message<"importSettngs", { [key: string]: any }>
-  | Message<"acceptTerms", ?*>
-  | Message<"navigate", string>;
+export const e2eBridgeSubject = new Subject();
 
 function log(message: string) {
   // eslint-disable-next-line no-console

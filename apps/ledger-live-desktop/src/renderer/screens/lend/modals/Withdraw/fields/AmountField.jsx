@@ -10,8 +10,8 @@ import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/lo
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import type { TFunction } from "react-i18next";
-import type { Account, TokenAccount, TransactionStatus } from "@ledgerhq/live-common/types/index";
-import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
 
 import Label from "~/renderer/components/Label";
 import Box from "~/renderer/components/Box";

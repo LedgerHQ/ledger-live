@@ -1,16 +1,16 @@
+import type {
+  Account,
+  AccountLike,
+  NFTStandard,
+  Operation,
+} from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { decodeAccountId } from "./account";
 import { encodeNftId } from "./nft";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "./nft/nftOperationId";
-import {
-  Account,
-  AccountLike,
-  decodeAccountId,
-  NFTStandard,
-  Operation,
-} from "./types";
 
 const nftOperationIdEncoderPerStandard: Record<
   NFTStandard,
@@ -178,6 +178,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "REWARD":
     case "REWARD_PAYOUT":
     case "SUPPLY":
+    case "WITHDRAW":
       return op.value;
 
     case "OUT":
@@ -191,6 +192,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "OPT_OUT":
     case "REDEEM":
     case "SLASH":
+    case "LOCK":
       return op.value.negated();
 
     case "FREEZE":
@@ -202,6 +204,10 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "SET_CONTROLLER":
     case "NOMINATE":
     case "CHILL":
+    case "REVOKE":
+    case "APPROVE":
+    case "ACTIVATE":
+    case "UNLOCK":
       return op.fee.negated();
 
     default:

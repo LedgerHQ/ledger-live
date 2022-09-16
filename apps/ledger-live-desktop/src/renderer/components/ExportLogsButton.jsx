@@ -6,7 +6,7 @@ import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { getAllEnvs } from "@ledgerhq/live-common/env";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import KeyHandler from "react-key-handler";
 import logger from "~/logger";
 import getUser from "~/helpers/user";

@@ -22,7 +22,7 @@ import {
   sweetch,
   tupleOfUnion,
 } from "@ledgerhq/live-common/families/solana/utils";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -112,13 +112,12 @@ function Delegations({ account }: Props) {
     }
   };
 
-  const formatAmount = (amount: number) => {
-    return formatCurrencyUnit(unit, new BigNumber(amount), {
+  const formatAmount = (amount: number) =>
+    formatCurrencyUnit(unit, new BigNumber(amount), {
       disableRounding: true,
       alwaysShowSign: false,
       showCode: true,
     });
-  };
 
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     if (selectedStakeWithMeta === undefined) {

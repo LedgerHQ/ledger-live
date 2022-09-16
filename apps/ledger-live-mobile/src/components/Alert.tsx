@@ -24,7 +24,7 @@ type IconType = React.ComponentType<{ size: number; color: string }>;
 type Props = {
   id?: string;
   type: AlertType;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   title?: string;
   noIcon?: boolean;
   onLearnMore?: () => any;
@@ -171,10 +171,10 @@ export default function Alert(props: Props) {
     [onLearnMore, learnMoreUrl],
   );
 
-  const isDismissed = useMemo(() => dismissedBanners.includes(id), [
-    dismissedBanners,
-    id,
-  ]);
+  const isDismissed = useMemo(
+    () => dismissedBanners.includes(id),
+    [dismissedBanners, id],
+  );
 
   return !isDismissed ? (
     <BaseAlert

@@ -5,7 +5,7 @@ import { sortFilterApps } from "./filtering";
 import { setSupportedCurrencies } from "../currencies/support";
 import { setPlatformVersion } from "../platform/version";
 
-setPlatformVersion("0.0.1");
+setPlatformVersion("1.1.0");
 
 type FilteringScenario = {
   name: string;

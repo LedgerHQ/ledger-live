@@ -138,7 +138,7 @@ export default class StepSummary extends PureComponent<StepProps> {
           </Box>
           <Separator />
           {memo && (
-            <Box horizontal alignItems="center" mb={2}>
+            <Box horizontal justifyContent="space-between" alignItems="center" mb={2}>
               <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
                 <Trans i18nKey="operationDetails.extra.memo" />
               </Text>

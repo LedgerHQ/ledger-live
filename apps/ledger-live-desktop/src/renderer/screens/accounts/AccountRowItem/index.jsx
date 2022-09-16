@@ -7,9 +7,7 @@ import { createStructuredSelector } from "reselect";
 import styled from "styled-components";
 import { listSubAccounts } from "@ledgerhq/live-common/account/helpers";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import type { Account, TokenAccount, AccountLike } from "@ledgerhq/live-common/types/account";
-import type { PortfolioRange } from "@ledgerhq/live-common/types/portfolio";
-
+import type { Account, TokenAccount, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
 import Text from "~/renderer/components/Text";

@@ -1,4 +1,4 @@
-import { NFTMetadata, NFTMediaSizes } from "@ledgerhq/live-common/types/index";
+import { NFTMetadata, NFTMediaSize } from "@ledgerhq/types-live";
 
 const mimeTypesMap = {
   video: ["video/mp4", "video/webm", "video/ogg"],
@@ -10,10 +10,24 @@ const mimeTypesCategories = Object.keys(mimeTypesMap) as Array<
 
 export const getMetadataMediaType = (
   metadata: NFTMetadata,
-  mediaFormat: NFTMediaSizes = "preview",
+  mediaFormat: NFTMediaSize = "preview",
 ): keyof typeof mimeTypesMap | undefined => {
   const { mediaType } = metadata?.medias?.[mediaFormat] || {};
   return mimeTypesCategories.find(type =>
     mimeTypesMap[type].includes(mediaType),
   );
+};
+
+export const getMetadataMediaTypes = (
+  metadata: NFTMetadata,
+): Record<NFTMediaSize, keyof typeof mimeTypesMap | undefined> => {
+  const sizes: NFTMediaSize[] = ["preview", "big", "original"];
+  const sizeToTypeMap = sizes.map(size => [
+    size,
+    getMetadataMediaType(metadata, size),
+  ]);
+  return Object.fromEntries(sizeToTypeMap) as Record<
+    NFTMediaSize,
+    keyof typeof mimeTypesMap | undefined
+  >;
 };

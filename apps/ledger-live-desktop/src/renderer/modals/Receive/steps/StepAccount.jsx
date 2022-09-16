@@ -2,12 +2,8 @@
 
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
-import type {
-  Account,
-  AccountLike,
-  TokenCurrency,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   getAccountCurrency,
   getMainAccount,

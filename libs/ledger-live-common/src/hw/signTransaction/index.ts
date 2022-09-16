@@ -1,5 +1,5 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Transport from "@ledgerhq/hw-transport";
-import type { CryptoCurrency } from "../../types";
 import ripple from "./ripple";
 import tron from "./tron";
 // TODO deprecate this approach

@@ -2,7 +2,7 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { flattenAccounts } from "@ledgerhq/live-common/account/helpers";
 import type { Transaction, UPDATE_PROVIDERS_TYPE } from "@ledgerhq/live-common/exchange/swap/types";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import memoize from "lodash/memoize";
 import { createAction } from "redux-actions";
 import type { OutputSelector } from "reselect";

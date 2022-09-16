@@ -4,7 +4,6 @@ import { BigNumber } from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { Account, Operation, DerivationMode } from "../../types";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { findCurrencyExplorer } from "../../api/Ledger";
@@ -13,12 +12,16 @@ import {
   isSegwitDerivationMode,
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
+  DerivationMode,
 } from "../../derivation";
-import { BitcoinOutput } from "./types";
+import { BitcoinAccount, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { getAddressWithBtcInstance } from "./hw-getAddress";
 import { mapTxToOperations } from "./logic";
+import { Account, Operation } from "@ledgerhq/types-live";
+import { decodeAccountId } from "../../account/accountId";
+import { startSpan } from "../../performance";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (
@@ -79,6 +82,7 @@ const deduplicateOperations = (
 };
 
 const getAccountShape: GetAccountShape = async (info) => {
+  let span;
   const {
     transport,
     currency,
@@ -93,7 +97,9 @@ const getAccountShape: GetAccountShape = async (info) => {
   const rootPath = derivationPath.split("/", 2).join("/");
   const accountPath = `${rootPath}/${index}'`;
 
-  const paramXpub = initialAccount?.xpub;
+  const paramXpub = initialAccount
+    ? decodeAccountId(initialAccount.id).xpubOrAddress
+    : undefined;
 
   let generatedXpub;
   if (!paramXpub) {
@@ -123,7 +129,9 @@ const getAccountShape: GetAccountShape = async (info) => {
   });
 
   const walletNetwork = toWalletNetwork(currency.id);
-  const walletDerivationMode = toWalletDerivationMode(derivationMode);
+  const walletDerivationMode = toWalletDerivationMode(
+    derivationMode as DerivationMode
+  );
   const explorer = findCurrencyExplorer(currency);
   if (!explorer) {
     throw new Error(`No explorer found for currency ${currency.name}`);
@@ -132,8 +140,9 @@ const getAccountShape: GetAccountShape = async (info) => {
     throw new Error(`Unsupported explorer version ${explorer.version}`);
   }
 
+  span = startSpan("sync", "generateAccount");
   const walletAccount =
-    initialAccount?.bitcoinResources?.walletAccount ||
+    (initialAccount as BitcoinAccount)?.bitcoinResources?.walletAccount ||
     (await wallet.generateAccount({
       xpub,
       path: rootPath,
@@ -146,6 +155,7 @@ const getAccountShape: GetAccountShape = async (info) => {
       storage: "mock",
       storageParams: [],
     }));
+  span.finish();
 
   const oldOperations = initialAccount?.operations || [];
   await wallet.syncAccount(walletAccount);
@@ -153,22 +163,29 @@ const getAccountShape: GetAccountShape = async (info) => {
   const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
   const blockHeight = currentBlock?.height;
 
+  span = startSpan("sync", "getAccountTransactions");
   // @ts-expect-error return from wallet-btc should be typed
   const { txs: transactions } = await wallet.getAccountTransactions(
     walletAccount
   );
+  span.finish();
 
+  span = startSpan("sync", "getXpubAddresses");
   const accountAddresses: Set<string> = new Set<string>();
   const accountAddressesWithInfo = await walletAccount.xpub.getXpubAddresses();
   accountAddressesWithInfo.forEach((a) => accountAddresses.add(a.address));
+  span.finish();
 
+  span = startSpan("sync", "getUniquesAddresses");
   const changeAddresses: Set<string> = new Set<string>();
   const changeAddressesWithInfo =
     await walletAccount.xpub.storage.getUniquesAddresses({
       account: 1,
     });
   changeAddressesWithInfo.forEach((a) => changeAddresses.add(a.address));
+  span.finish();
 
+  span = startSpan("sync", "mapTxToOperations");
   const newOperations = transactions
     ?.map((tx) =>
       mapTxToOperations(
@@ -180,10 +197,18 @@ const getAccountShape: GetAccountShape = async (info) => {
       )
     )
     .flat();
+  span.finish();
+
+  span = startSpan("sync", "unify operations");
   const newUniqueOperations = deduplicateOperations(newOperations);
   const operations = mergeOps(oldOperations, newUniqueOperations);
+  span.finish();
+
+  span = startSpan("sync", "gather utxos");
   const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
   const utxos = rawUtxos.map((utxo) => fromWalletUtxo(utxo, changeAddresses));
+  span.finish();
+
   return {
     id: accountId,
     xpub,
@@ -204,36 +229,35 @@ const getAccountShape: GetAccountShape = async (info) => {
 const postSync = (initial: Account, synced: Account) => {
   log("bitcoin/postSync", "bitcoinResources");
   const perCoin = perCoinLogic[synced.currency.id];
-
+  const syncedBtc = synced as BitcoinAccount;
   if (perCoin) {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
     if (postBuildBitcoinResources) {
-      synced.bitcoinResources = postBuildBitcoinResources(
-        synced,
-        synced.bitcoinResources
+      syncedBtc.bitcoinResources = postBuildBitcoinResources(
+        syncedBtc,
+        syncedBtc.bitcoinResources
       );
     }
 
     if (syncReplaceAddress) {
-      synced.freshAddress = syncReplaceAddress(synced.freshAddress);
-      synced.freshAddresses = synced.freshAddresses.map((a) => ({
+      syncedBtc.freshAddress = syncReplaceAddress(syncedBtc.freshAddress);
+      syncedBtc.freshAddresses = syncedBtc.freshAddresses.map((a) => ({
         ...a,
         address: syncReplaceAddress(a.address),
       }));
-      if (synced.bitcoinResources) {
-        synced.bitcoinResources.utxos = synced.bitcoinResources?.utxos.map(
-          (u) => ({
+      if (syncedBtc.bitcoinResources) {
+        syncedBtc.bitcoinResources.utxos =
+          syncedBtc.bitcoinResources?.utxos.map((u) => ({
             ...u,
             address: u.address && syncReplaceAddress(u.address),
-          })
-        );
+          }));
       }
     }
   }
 
   log("bitcoin/postSync", "bitcoinResources DONE");
-  return synced;
+  return syncedBtc;
 };
 
 const getAddressFn = (transport) => {

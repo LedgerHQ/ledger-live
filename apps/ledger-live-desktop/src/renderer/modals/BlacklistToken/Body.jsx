@@ -6,7 +6,7 @@ import Text from "~/renderer/components/Text";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import React from "react";
 import Footer from "~/renderer/modals/BlacklistToken/Footer";
-import type { TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const Body = ({ onClose, token }: { onClose: () => void, token: TokenCurrency }) => {
   const { t } = useTranslation();

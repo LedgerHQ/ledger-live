@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "../types";
 import { prefixFormat, suffixFormat } from "./localeUtility";
 import { toLocaleString } from "./BigNumberToLocaleString";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 const nonBreakableSpace = " ";
 const defaultFormatOptions = {
   locale: "en-EN",

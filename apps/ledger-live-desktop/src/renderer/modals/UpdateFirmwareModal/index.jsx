@@ -5,7 +5,7 @@ import type { TFunction } from "react-i18next";
 import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { UserRefusedFirmwareUpdate } from "@ledgerhq/errors";
-import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import logger from "~/logger";

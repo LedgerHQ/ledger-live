@@ -1,6 +1,6 @@
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import BigNumber from "bignumber.js";
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
 // NOTE: Hedera declares stable fees in USD
@@ -31,7 +31,7 @@ export async function calculateAmount({
 }
 
 // NOTE: convert from the non-url-safe version of base64 to the url-safe version (that the explorer uses)
-export function base64ToUrlSafeBase64(data: string) {
+export function base64ToUrlSafeBase64(data: string): string {
   // Might be nice to use this alternative if .nvmrc changes to >= Node v14.18.0
   // base64url encoding option isn't supported until then
   // Buffer.from(data, "base64").toString("base64url");

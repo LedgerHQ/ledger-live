@@ -1,11 +1,7 @@
 // @flow
 import React from "react";
-import type {
-  Account,
-  Transaction,
-  TransactionStatus,
-  FeeStrategy,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, FeeStrategy } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 import byFamily from "~/renderer/generated/SendAmountFields";
 

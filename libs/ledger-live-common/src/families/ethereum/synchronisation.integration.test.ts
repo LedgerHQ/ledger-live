@@ -2,7 +2,7 @@ import "../../__tests__/test-helpers/setup";
 import { reduce } from "rxjs/operators";
 import { fromAccountRaw } from "../../account";
 import { getAccountCurrency } from "../../account/helpers";
-import type { Account, OperationRaw, SubAccount } from "../../types";
+import type { Account, SubAccount, OperationRaw } from "@ledgerhq/types-live";
 import { getAccountBridge } from "../../bridge";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { ethereum1 } from "./datasets/ethereum1";

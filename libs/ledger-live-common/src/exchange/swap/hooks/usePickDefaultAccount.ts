@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { Account, TokenAccount } from "../../../types";
 import { useCurrenciesByMarketcap } from "../../../currencies/sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from "../../../currencies";
 import { getAvailableAccountsById } from "../utils";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 
 // Pick a default source account if none are selected.
 export const usePickDefaultAccount = (

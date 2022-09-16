@@ -1,9 +1,9 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import jwtDecode from "jwt-decode";
 import { getProviderConfig } from "../";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
 import { getEnv } from "../../../env";
-import { Account, SubAccount, TokenAccount } from "../../../types";
+import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import type { CheckQuoteStatus } from "../types";
 
 // Note: looks like we can't use an enum because this is used in LLD js code

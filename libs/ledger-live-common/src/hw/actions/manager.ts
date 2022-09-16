@@ -19,7 +19,6 @@ import {
 } from "rxjs/operators";
 import { useEffect, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import type { DeviceInfo } from "../../types/manager";
 import type { ListAppsResult } from "../../apps/types";
 import { useReplaySubject } from "../../observable";
 import manager from "../../manager";
@@ -36,6 +35,7 @@ import {
   DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
 import { getDeviceModel } from "@ledgerhq/devices";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 
 type State = {
   isLoading: boolean;

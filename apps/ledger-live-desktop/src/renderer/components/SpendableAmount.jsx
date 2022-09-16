@@ -1,6 +1,7 @@
 // @flow
 import React, { useEffect, useState } from "react";
-import type { Account, AccountLike, Transaction } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useDebounce } from "@ledgerhq/live-common//hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

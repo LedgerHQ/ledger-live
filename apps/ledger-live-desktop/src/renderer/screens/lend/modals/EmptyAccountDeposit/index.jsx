@@ -5,7 +5,8 @@ import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { getTokenCurrencyIcon } from "@ledgerhq/live-common/react";
-import type { Account, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 
 import Modal, { ModalBody } from "~/renderer/components/Modal/index";
@@ -14,6 +15,8 @@ import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import { supportedBuyCurrenciesIds } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const AmountUpWrapper = styled.div`
   padding: ${p => p.theme.space[3]}px;
@@ -36,6 +39,9 @@ const NoEthereumAccountModal = ({ currency, account, ...rest }: Props) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
+
   const handleClose = useCallback(() => {
     dispatch(closeModal("MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT"));
   }, [dispatch]);
@@ -48,14 +54,28 @@ const NoEthereumAccountModal = ({ currency, account, ...rest }: Props) => {
   const handleBuy = useCallback(() => {
     handleClose();
     setTrackingSource("lending deposit");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        tab: 0,
-        defaultCurrency: currency,
-      },
-    });
-  }, [history, handleClose, currency]);
+    // PTX smart routing redirect to live app or to native implementation
+    if (ptxSmartRouting?.enabled) {
+      const params = {
+        currency: currency?.id,
+        mode: "buy", // buy or sell
+      };
+
+      history.push({
+        // replace 'multibuy' in case live app id changes
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+        state: params,
+      });
+    } else {
+      history.push({
+        pathname: "/exchange",
+        state: {
+          mode: "onRamp",
+          currencyId: currency.id,
+        },
+      });
+    }
+  }, [currency, handleClose, history, ptxSmartRouting]);
 
   const TokenCurrencyIcon = getTokenCurrencyIcon(currency);
   const buyAvailable = supportedBuyCurrenciesIds.includes(currency.id);

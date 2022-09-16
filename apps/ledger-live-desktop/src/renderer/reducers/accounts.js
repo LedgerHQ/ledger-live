@@ -2,13 +2,8 @@
 import { createSelector, createSelectorCreator, defaultMemoize } from "reselect";
 import type { OutputSelector } from "reselect";
 import { handleActions } from "redux-actions";
-import type {
-  Account,
-  AccountLike,
-  CryptoCurrency,
-  TokenCurrency,
-  NFT,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, NFT } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   flattenAccounts,
   clearAccount,

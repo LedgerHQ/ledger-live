@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/account";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import Text from "~/renderer/components/Text";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import IconChevronRight from "~/renderer/icons/ChevronRightSmall";

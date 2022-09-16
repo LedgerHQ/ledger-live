@@ -2,7 +2,7 @@
 import { ipcRenderer } from "electron";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import logger from "~/logger";
 
 export function clearBridgeCache() {

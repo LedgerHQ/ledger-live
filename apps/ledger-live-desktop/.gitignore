@@ -12,6 +12,9 @@ dbdata/
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+# Output of pnpm run test:jest
+report.json
+
 # Runtime data
 pids
 *.pid
@@ -117,6 +120,7 @@ src/renderer/generated/
 tests/coverage/
 tests/artifacts/*
 !tests/artifacts/.gitkeep
+tests/utils/dummy-live-app/build
 
 # Yalc
 .yalc

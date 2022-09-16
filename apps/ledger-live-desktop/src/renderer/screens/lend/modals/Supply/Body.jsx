@@ -11,13 +11,8 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { getSupplyMax } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type {
-  Account,
-  Operation,
-  TokenAccount,
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { getCurrentDevice } from "~/renderer/reducers/devices";

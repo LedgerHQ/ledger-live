@@ -13,7 +13,7 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import Box from "~/renderer/components/Box";
 import useTheme from "~/renderer/hooks/useTheme";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
-import type { Account, AccountLike, SubAccount } from "@ledgerhq/live-common/types/account";
+import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 const OptionContainer: ThemedComponent<{}> = styled.div`

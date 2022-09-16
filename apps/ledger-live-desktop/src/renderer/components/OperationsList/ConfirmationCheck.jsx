@@ -3,7 +3,7 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 
-import type { OperationType } from "@ledgerhq/live-common/types/index";
+import type { OperationType } from "@ledgerhq/types-live";
 
 import { rgba, mix } from "~/renderer/styles/helpers";
 
@@ -122,6 +122,12 @@ const iconsComponent = {
   CHILL: VoteNay,
   REWARD_PAYOUT: ClaimRewards,
   SET_CONTROLLER: IconSend,
+  LOCK: IconLink,
+  UNLOCK: IconUndelegate,
+  WITHDRAW: ClaimRewards,
+  REVOKE: VoteNay,
+  ACTIVATE: Vote,
+  REGISTER: IconPlus,
 };
 
 class ConfirmationCheck extends PureComponent<{

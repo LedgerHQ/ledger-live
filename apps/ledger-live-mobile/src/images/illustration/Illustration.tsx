@@ -2,15 +2,19 @@ import React from "react";
 import { Image, ImageProps, ImageSourcePropType } from "react-native";
 import { useTheme } from "styled-components/native";
 
-export const Illustration = ({
+const Illustration = ({
   lightSource,
   darkSource,
   size,
+  width,
+  height,
   ...othersProps
 }: Omit<ImageProps, "source"> & {
   lightSource: ImageSourcePropType;
   darkSource: ImageSourcePropType;
-  size: number;
+  size?: number;
+  width?: number;
+  height?: number;
 }) => {
   const { theme } = useTheme();
 
@@ -19,7 +23,7 @@ export const Illustration = ({
       {...othersProps}
       source={theme === "dark" ? darkSource : lightSource}
       resizeMode="contain"
-      style={{ width: size, height: size }}
+      style={{ width: width || size, height: height || size }}
     />
   );
 };

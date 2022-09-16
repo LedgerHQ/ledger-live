@@ -67,6 +67,13 @@ function readPackage(pkg, context) {
         So we are going to patch these until the maintainers fix their own stuff…
         Feel free to make PRs if you feel like it :).
       */
+      /*
+        Remove react-native/react-dom from react-redux optional peer dependencies.
+        Without this, using react-redux code in LLM from LLC will fail because the package will get duplicated.
+      */
+      removeDependencies("react-redux", ["react-native", "react-dom"], {
+        kind: "peerDependencies",
+      }),
       /* Storybook packages */
       addDependencies("@storybook/webpack-config", { "resolve-from": "*" }),
       addDependencies("@storybook/addon-knobs", {
@@ -148,6 +155,14 @@ function readPackage(pkg, context) {
       addDependencies("react-native-locale", {
         fbjs: "*",
       }),
+      addDependencies("react-native-tcp", {
+        "stream-browserify": "*",
+      }),
+      addDependencies("postcss-loader", {
+        "postcss-flexbugs-fixes": "*",
+        "postcss-preset-env": "*",
+        "postcss-normalize": "*",
+      }),
       addPeerDependencies("any-observable", {
         rxjs: "*",
       }),
@@ -163,6 +178,7 @@ function readPackage(pkg, context) {
       addPeerDependencies("react-lottie", {
         "prop-types": "*",
       }),
+      addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
       // I'm not adding it as a dependency because if I did,

@@ -1,8 +1,8 @@
 // Perform a genuine check. error is fails. complete on success.
 import Transport from "@ledgerhq/hw-transport";
+import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { Observable, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import type { DeviceInfo, SocketEvent } from "../types/manager";
 import ManagerAPI from "../api/Manager";
 import { getProviderId } from "../manager";
 export default (

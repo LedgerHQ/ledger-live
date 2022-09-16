@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 import type { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import { Rotating } from "~/renderer/components/Spinner";

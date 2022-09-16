@@ -3,7 +3,7 @@ import { Linking, TouchableOpacity } from "react-native";
 
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
 
-import { ExplorerView } from "@ledgerhq/live-common/types/index";
+import { ExplorerView } from "@ledgerhq/types-cryptoassets";
 
 import { Box, BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";

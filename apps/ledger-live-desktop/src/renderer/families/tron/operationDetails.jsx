@@ -4,7 +4,8 @@ import React, { useCallback } from "react";
 
 import { BigNumber } from "bignumber.js";
 
-import type { Currency, Unit, Operation, Account } from "@ledgerhq/live-common/types/index";
+import type { Operation, Account } from "@ledgerhq/types-live";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { Vote } from "@ledgerhq/live-common/families/tron/types";
 
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";

@@ -7,16 +7,19 @@ import {
 } from "../../bridge/jsHelpers";
 import { getAccount, getOperations, getDelegations } from "./api";
 import { HDHelper } from "./hdhelper";
+import { AvalanchePChainAccount } from "./types";
 
 const getAccountShape: GetAccountShape = async (info) => {
   const { address, initialAccount, currency, derivationMode } = info;
 
   const publicKey =
     info.rest?.publicKey ||
-    info.initialAccount?.avalanchePChainResources?.publicKey;
+    (info.initialAccount as AvalanchePChainAccount)?.avalanchePChainResources
+      ?.publicKey;
   const chainCode =
     info.rest?.chainCode ||
-    info.initialAccount?.avalanchePChainResources?.chainCode;
+    (info.initialAccount as AvalanchePChainAccount)?.avalanchePChainResources
+      ?.chainCode;
 
   const oldOperations = initialAccount?.operations || [];
 

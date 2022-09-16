@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import type { Operation, Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Operation, Account, AccountLike } from "@ledgerhq/types-live";
 import keyBy from "lodash/keyBy";
 import {
   groupAccountOperationsByDay,

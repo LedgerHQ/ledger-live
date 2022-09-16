@@ -1,5 +1,5 @@
 import type { Transaction } from "./types";
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import { Units, utils } from "@crypto-com/chain-jslib";
 import { getAccountParams } from "./api/sdk";
 import { getCroSdk } from "./logic";

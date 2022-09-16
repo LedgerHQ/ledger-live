@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BehaviorSubject, Observable } from "rxjs";
 import { SolanaPreloadDataV1 } from "./types";
 

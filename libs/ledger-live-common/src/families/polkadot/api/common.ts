@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import type { OperationType } from "../../../types";
+import type { OperationType } from "@ledgerhq/types-live";
 
 /**
  * Returns the operation type by using his palletMethod

@@ -23,7 +23,8 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector, migratableAccountsSelector } from "~/renderer/reducers/accounts";
 import { replaceAccounts } from "~/renderer/actions/accounts";
 import { closeModal } from "~/renderer/actions/modals";
-import type { Account, CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/live-common/generated/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 type ScanStatus = "idle" | "scanning" | "error" | "finished" | "finished-empty";

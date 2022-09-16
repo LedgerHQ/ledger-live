@@ -9,7 +9,8 @@ import { Trans } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import {
   MAX_NOMINATIONS,
   hasMinimumBondBalance,

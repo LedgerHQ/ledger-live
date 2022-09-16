@@ -6,7 +6,7 @@ import { listen } from "@ledgerhq/logs";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
-setPlatformVersion("0.0.1");
+setPlatformVersion("1.1.0");
 
 setSupportedCurrencies([
   "bitcoin",
@@ -47,6 +47,10 @@ setSupportedCurrencies([
   "celo",
   "hedera",
   "cardano",
+  "solana",
+  "osmosis",
+  "fantom",
+  "moonbeam",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

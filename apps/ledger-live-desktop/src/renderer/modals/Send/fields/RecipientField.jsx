@@ -2,7 +2,8 @@
 import React, { useCallback, useEffect } from "react";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Account, Transaction, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { TFunction } from "react-i18next";
 
 import Box from "~/renderer/components/Box";

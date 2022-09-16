@@ -1,6 +1,5 @@
 import { stringCamelCase } from "@polkadot/util";
-import type { Transaction } from "./types";
-import type { Account } from "../../types";
+import type { PolkadotAccount, Transaction } from "./types";
 import { getRegistry, getTransactionParams } from "./cache";
 import { isFirstBond, getNonce } from "./logic";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
@@ -11,7 +10,7 @@ const DEFAULTS = {
   eraPeriod: 64,
 };
 
-const getExtrinsicParams = (a: Account, t: Transaction) => {
+const getExtrinsicParams = (a: PolkadotAccount, t: Transaction) => {
   const validator = t.validators ? t.validators[0] : null;
 
   switch (t.mode) {
@@ -137,7 +136,7 @@ const getExtrinsicParams = (a: Account, t: Transaction) => {
  * @param {boolean} forceLatestParams - forces the use of latest transaction params
  */
 export const buildTransaction = async (
-  a: Account,
+  a: PolkadotAccount,
   t: Transaction,
   forceLatestParams = false
 ) => {

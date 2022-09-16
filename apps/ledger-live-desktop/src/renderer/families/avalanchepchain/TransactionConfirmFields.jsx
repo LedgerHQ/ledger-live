@@ -4,21 +4,16 @@ import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
-
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
-
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
 import Box from "~/renderer/components/Box";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-
 import { openURL } from "~/renderer/linking";
-
 import FormattedVal from "~/renderer/components/FormattedVal";
 import moment from "moment";
 
@@ -116,6 +111,7 @@ export const AvalancheValidatorAmountField = ({
           val={amount}
           fontSize={3}
           showCode
+          showAllDigits
         />
       </FieldText>
     </TransactionConfirmField>
@@ -126,7 +122,12 @@ export const AvalancheStakeStartField = ({ transaction, field }: FieldComponentP
   invariant(transaction.family === "avalanchepchain", "not an avalanchepchain family transaction");
 
   const { startTime } = transaction;
-  const stakeStartTime = startTime && moment.unix(transaction.startTime).utc().format("YYYY-MM-DD HH:mm:ss UTC");
+  const stakeStartTime =
+    startTime &&
+    moment
+      .unix(transaction.startTime)
+      .utc()
+      .format("YYYY-MM-DD HH:mm:ss UTC");
 
   return stakeStartTime ? (
     <TransactionConfirmField label={field.label}>
@@ -138,19 +139,24 @@ export const AvalancheStakeStartField = ({ transaction, field }: FieldComponentP
 };
 
 export const AvalancheStakeEndField = ({ transaction, field }: FieldComponentProps) => {
-    invariant(transaction.family === "avalanchepchain", "not an avalanchepchain family transaction");
-  
-    const { endTime } = transaction;
-    const stakeEndTime = endTime && moment.unix(transaction.endTime).utc().format("YYYY-MM-DD HH:mm:ss UTC");
-  
-    return stakeEndTime ? (
-      <TransactionConfirmField label={field.label}>
-        <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
-          {stakeEndTime}
-        </Text>
-      </TransactionConfirmField>
-    ) : null;
-  };
+  invariant(transaction.family === "avalanchepchain", "not an avalanchepchain family transaction");
+
+  const { endTime } = transaction;
+  const stakeEndTime =
+    endTime &&
+    moment
+      .unix(transaction.endTime)
+      .utc()
+      .format("YYYY-MM-DD HH:mm:ss UTC");
+
+  return stakeEndTime ? (
+    <TransactionConfirmField label={field.label}>
+      <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+        {stakeEndTime}
+      </Text>
+    </TransactionConfirmField>
+  ) : null;
+};
 
 export const Warning = ({
   transaction,

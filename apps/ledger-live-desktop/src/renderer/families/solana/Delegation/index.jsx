@@ -2,7 +2,7 @@
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import type { SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";

@@ -3,7 +3,7 @@ import React, { useMemo, useCallback } from "react";
 import { Trans } from "react-i18next";
 
 import type { Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 
 import { listTokens, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import manager from "@ledgerhq/live-common/manager/index";

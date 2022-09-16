@@ -1,4 +1,4 @@
-import type { AccountBridge, CurrencyBridge } from "../../../types";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import getTransactionStatus from "../js-getTransactionStatus";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";

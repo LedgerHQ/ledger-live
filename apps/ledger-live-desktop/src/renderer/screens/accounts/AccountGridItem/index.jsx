@@ -1,7 +1,7 @@
 // @flow
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/types/index";
+import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Box from "~/renderer/components/Box";
 import AccountCardHeader from "./Header";

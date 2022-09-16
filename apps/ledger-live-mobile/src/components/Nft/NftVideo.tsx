@@ -6,7 +6,7 @@ import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
 
 type Props = {
-  style?: Object;
+  style?: any;
   status: string;
   src: string;
   srcFallback: string;

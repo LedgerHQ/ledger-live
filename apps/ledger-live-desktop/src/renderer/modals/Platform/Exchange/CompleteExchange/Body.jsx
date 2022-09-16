@@ -5,7 +5,8 @@ import { toExchangeRaw } from "@ledgerhq/live-common/exchange/platform/serializa
 import type { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
 
 import { toTransactionRaw } from "@ledgerhq/live-common/transaction/index";
-import type { Transaction, Operation } from "@ledgerhq/live-common/types/index";
+import type { Operation } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 
 import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
 import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";

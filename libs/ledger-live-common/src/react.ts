@@ -1,6 +1,9 @@
 import * as icons from "./data/icons/react";
 import * as flags from "./data/flags/react";
-import type { CryptoCurrency, TokenCurrency } from "./types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 type Icon = React.ComponentType<{
   size: number;
   color?: string;

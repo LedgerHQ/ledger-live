@@ -1,8 +1,8 @@
 import invariant from "invariant";
-import type { Account } from "../../types";
 import type { Transaction } from "./types";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import { inferFeePerByte } from "./logic";
+import { Account } from "@ledgerhq/types-live";
 
 const prepareTransaction = async (
   a: Account,

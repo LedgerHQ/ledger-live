@@ -12,7 +12,7 @@ import noop from "lodash/noop";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import Select from "~/renderer/components/Select";
-import type { Unit } from "@ledgerhq/live-common/types/index";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 const unitGetOptionValue = unit => unit.magnitude;
 

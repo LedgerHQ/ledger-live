@@ -16,6 +16,7 @@ import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage } from "../../../actions/settings";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
@@ -54,7 +55,8 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
 
 export function OnboardingStepLanguageGetStarted({
   navigation,
-}: StackScreenProps<{}>) {
+}: // eslint-disable-next-line @typescript-eslint/ban-types
+StackScreenProps<{}>) {
   const next = () => {
     navigation.getParent()?.replace(ScreenName.OnboardingTermsOfUse);
   };

@@ -4,7 +4,7 @@ import fs from "fs";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import { toAccountRaw } from "@ledgerhq/live-common/account/serialization";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 export default {
   description: "utility for Ledger Live app.json file",
   args: [

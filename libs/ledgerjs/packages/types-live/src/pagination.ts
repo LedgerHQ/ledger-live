@@ -13,6 +13,10 @@ export type PaginationConfig = {
   // this will be the operations count used
   operations?: number;
 };
+
+/**
+ *
+ */
 export type SyncConfig = {
   paginationConfig: PaginationConfig;
   // allows to disable the synchronization part – typically to only paginate more

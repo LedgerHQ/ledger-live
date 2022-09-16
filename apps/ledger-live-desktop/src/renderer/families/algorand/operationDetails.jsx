@@ -7,7 +7,8 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { Currency, Unit, Operation, Account } from "@ledgerhq/live-common/types/index";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Operation, Account } from "@ledgerhq/types-live";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { TFunction } from "react-i18next";
 import {

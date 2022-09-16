@@ -7,7 +7,7 @@ import {
   stakeActivePercent,
 } from "@ledgerhq/live-common/families/solana/logic";
 import type { SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";

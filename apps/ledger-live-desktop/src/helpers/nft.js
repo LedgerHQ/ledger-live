@@ -1,5 +1,5 @@
 // @flow
-import type { NFTMetadata, NFTMediaSizes } from "@ledgerhq/live-common/types/index";
+import type { NFTMetadata, NFTMediaSizes } from "@ledgerhq/types-live";
 
 const mimeTypesMap = {
   video: ["video/mp4", "video/webm", "video/ogg"],

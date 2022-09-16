@@ -15,9 +15,6 @@ import {
 } from "~/renderer/reducers/settings";
 import type { State } from "~/renderer/reducers";
 
-// load analytics
-import "./inject-in-window";
-
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 
 const os = require("os");
@@ -57,7 +54,7 @@ const extraProperties = store => {
     appVersion: __APP_VERSION__,
     language,
     region,
-    environment: __DEV__ ? "development" : "production",
+    environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
     systemLanguage: systemLocale.language,
     systemRegion: systemLocale.region,
     osType,
@@ -70,16 +67,22 @@ const extraProperties = store => {
 
 let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
 
-export const start = async (store: *) => {
-  if (!user || process.env.MOCK || process.env.PLAYWRIGHT_RUN) return;
-  const { id } = await user();
-  logger.analyticsStart(id, extraProperties(store));
-  storeInstance = store;
+function getAnalytics() {
   const { analytics } = window;
   if (typeof analytics === "undefined") {
-    logger.error("analytics is not available");
-    return;
+    logger.critical(new Error("window.analytics must not be undefined!"));
   }
+  return analytics;
+}
+
+export const start = async (store: *) => {
+  if (!user || (!process.env.SEGMENT_TEST && (process.env.MOCK || process.env.PLAYWRIGHT_RUN)))
+    return;
+  const { id } = await user();
+  storeInstance = store;
+  const analytics = getAnalytics();
+  if (!analytics) return;
+  logger.analyticsStart(id, extraProperties(store));
   analytics.identify(id, extraProperties(store), {
     context: getContext(store),
   });
@@ -88,11 +91,8 @@ export const start = async (store: *) => {
 export const stop = () => {
   logger.analyticsStop();
   storeInstance = null;
-  const { analytics } = window;
-  if (typeof analytics === "undefined") {
-    logger.error("analytics is not available");
-    return;
-  }
+  const analytics = getAnalytics();
+  if (!analytics) return;
   analytics.reset();
 };
 
@@ -102,12 +102,8 @@ export const trackSubject = new ReplaySubject<{
 }>(10);
 
 function sendTrack(event, properties: ?Object, storeInstance: *) {
-  const { analytics } = window;
-  if (typeof analytics === "undefined") {
-    logger.error("analytics is not available");
-    return;
-  }
-
+  const analytics = getAnalytics();
+  if (!analytics) return;
   analytics.track(event, properties, {
     context: getContext(storeInstance),
   });

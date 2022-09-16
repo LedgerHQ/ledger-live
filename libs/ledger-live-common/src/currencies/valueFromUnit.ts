@@ -1,5 +1,5 @@
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "../types";
 
 /**
  * convert a value in a given unit to a normalized value

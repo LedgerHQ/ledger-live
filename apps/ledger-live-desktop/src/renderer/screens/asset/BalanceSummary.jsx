@@ -3,12 +3,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
-import type {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, Currency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";

@@ -1,9 +1,10 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { Account, Operation, Unit } from "../../types";
+import type { Operation } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { PolkadotResources } from "./types";
+import { PolkadotAccount, PolkadotResources } from "./types";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(
   op: Operation,
@@ -52,7 +53,7 @@ function formatOperationSpecifics(
   return str;
 }
 
-function formatAccountSpecifics(account: Account): string {
+function formatAccountSpecifics(account: PolkadotAccount): string {
   const { polkadotResources } = account;
   invariant(polkadotResources, "polkadot account expected");
   const unit = getAccountUnit(account);

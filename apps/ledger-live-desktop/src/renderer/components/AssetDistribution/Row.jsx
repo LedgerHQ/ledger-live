@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/currencies";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import styled from "styled-components";
 import CounterValue, { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";

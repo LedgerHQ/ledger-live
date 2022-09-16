@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountUnit,

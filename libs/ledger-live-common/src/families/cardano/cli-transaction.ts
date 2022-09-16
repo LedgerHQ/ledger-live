@@ -1,9 +1,9 @@
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getAccountCurrency } from "../../account";
-import type { AccountLike, Account } from "../../types";
 import { TokenAccount } from "../solana/api/chain/account/token";
-import { Transaction } from "./types";
+import { CardanoAccount, Transaction } from "./types";
 
 const options = [
   {
@@ -59,7 +59,10 @@ function inferTransactions(
       throw new Error("transaction is not of type cardano");
     }
 
-    if (account.type === "Account" && !account.cardanoResources) {
+    if (
+      account.type === "Account" &&
+      !(account as CardanoAccount).cardanoResources
+    ) {
       throw new Error("unactivated account");
     }
 

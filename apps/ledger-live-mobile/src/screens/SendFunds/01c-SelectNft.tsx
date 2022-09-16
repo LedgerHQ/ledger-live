@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/live-common/types/index";
+import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   View,
@@ -115,10 +115,10 @@ const SendFundsSelectNft = ({ route }: Props) => {
   const { colors } = useTheme();
 
   const [nftCount, setNftCount] = useState(MAX_NFTS_FIRST_RENDER);
-  const nftsSlice = useMemo(() => collection?.slice(0, nftCount) || [], [
-    collection,
-    nftCount,
-  ]);
+  const nftsSlice = useMemo(
+    () => collection?.slice(0, nftCount) || [],
+    [collection, nftCount],
+  );
   const onEndReached = useCallback(
     () => setNftCount(nftCount + NFTS_TO_ADD_ON_LIST_END_REACHED),
     [nftCount, setNftCount],

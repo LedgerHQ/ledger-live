@@ -3,7 +3,8 @@
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import type { Account, CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import FakeLink from "~/renderer/components/FakeLink";

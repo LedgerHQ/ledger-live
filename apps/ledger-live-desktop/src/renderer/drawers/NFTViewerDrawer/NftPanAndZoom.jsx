@@ -3,7 +3,7 @@
 import React, { memo } from "react";
 import { createPortal } from "react-dom";
 
-import type { NFTMetadata } from "@ledgerhq/live-common/types/index";
+import type { NFTMetadata } from "@ledgerhq/types-live";
 import IconCross from "~/renderer/icons/Cross";
 import Media from "~/renderer/components/Nft/Media";
 

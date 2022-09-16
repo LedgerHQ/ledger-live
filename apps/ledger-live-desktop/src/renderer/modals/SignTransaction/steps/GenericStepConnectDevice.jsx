@@ -7,13 +7,8 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-  TransactionStatus,
-  SignedOperation,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { command } from "~/renderer/commands";
 import { getEnv } from "@ledgerhq/live-common/env";

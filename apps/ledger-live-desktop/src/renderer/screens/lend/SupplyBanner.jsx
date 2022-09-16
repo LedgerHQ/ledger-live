@@ -2,7 +2,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { urls } from "~/config/urls";
 

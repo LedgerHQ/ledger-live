@@ -4,11 +4,12 @@ import sampleSize from "lodash/sampleSize";
 import { BigNumber } from "bignumber.js";
 import { getCurrentPolkadotPreloadData } from "../../families/polkadot/preload";
 import type {
+  PolkadotAccount,
   PolkadotResources,
   Transaction,
 } from "../../families/polkadot/types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {
@@ -17,15 +18,19 @@ import {
   canNominate,
   isFirstBond,
   hasMinimumBondBalance,
+  getMinimumBalance,
 } from "../../families/polkadot/logic";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
 
+const maxAccounts = 32;
 const currency = getCryptoCurrencyById("polkadot");
 // FIXME Should be replaced with EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN in logic.ts
 const POLKADOT_MIN_SAFE = parseCurrencyUnit(currency.units[0], "0.1");
 // FIXME Should be replaced with EXISTENTIAL_DEPOSIT in logic.ts
 const EXISTENTIAL_DEPOSIT = parseCurrencyUnit(currency.units[0], "1.0");
 const MIN_LOCKED_BALANCE_REQ = parseCurrencyUnit(currency.units[0], "1.0");
+
 const polkadot: AppSpec<Transaction> = {
   name: "Polkadot",
   currency: getCryptoCurrencyById("polkadot"),
@@ -34,6 +39,7 @@ const polkadot: AppSpec<Transaction> = {
     appName: "Polkadot",
   },
   testTimeout: 2 * 60 * 1000,
+  genericDeviceAction: acceptTransaction,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(POLKADOT_MIN_SAFE), "balance is too low");
   },
@@ -46,15 +52,17 @@ const polkadot: AppSpec<Transaction> = {
     delete opExpected.date;
     delete opExpected.blockHash;
     delete opExpected.blockHeight;
-    expect(toOperationRaw(operation)).toMatchObject(opExpected);
+    botTest("optimistic operation matches", () =>
+      expect(toOperationRaw(operation)).toMatchObject(opExpected)
+    );
   },
   mutations: [
     {
       name: "send 50%~",
-      maxRun: 2,
+      maxRun: 4,
       transaction: ({ account, siblings, bridge }) => {
-        invariant(account.polkadotResources, "polkadot");
-        const sibling = pickSiblings(siblings, 2);
+        invariant((account as PolkadotAccount).polkadotResources, "polkadot");
+        const sibling = pickSiblings(siblings, maxAccounts);
         let amount = account.spendableBalance
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
@@ -69,11 +77,23 @@ const polkadot: AppSpec<Transaction> = {
           amount = EXISTENTIAL_DEPOSIT.plus(POLKADOT_MIN_SAFE);
         }
 
+        const minimumBalanceExistential = getMinimumBalance(account);
+        const leftover = account.spendableBalance.minus(
+          amount.plus(POLKADOT_MIN_SAFE)
+        );
+        if (
+          minimumBalanceExistential.gt(0) &&
+          leftover.lt(minimumBalanceExistential) &&
+          leftover.gt(0)
+        ) {
+          throw new Error("risk of PolkadotDoMaxSendInstead");
+        }
+
         return {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: pickSiblings(siblings, 1).freshAddress,
+              recipient: sibling.freshAddress,
             },
             {
               amount,
@@ -86,16 +106,19 @@ const polkadot: AppSpec<Transaction> = {
       name: "bond - bondExtra",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        invariant(account.polkadotResources, "polkadot");
+        invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         invariant(canBond(account), "can't bond");
-        invariant(hasMinimumBondBalance(account), "not enough balance to bond");
+        invariant(
+          hasMinimumBondBalance(account as PolkadotAccount),
+          "not enough balance to bond"
+        );
         const options: {
           recipient?: string;
           rewardDestination?: string;
           amount?: BigNumber;
         }[] = [];
 
-        if (isFirstBond(account)) {
+        if (isFirstBond(account as PolkadotAccount)) {
           invariant(
             account.balance.gt(EXISTENTIAL_DEPOSIT.plus(POLKADOT_MIN_SAFE)),
             "cant cover fee + bonding amount"
@@ -132,9 +155,9 @@ const polkadot: AppSpec<Transaction> = {
       name: "unbond",
       maxRun: 2,
       transaction: ({ account, bridge }) => {
-        const { polkadotResources } = account;
+        const { polkadotResources } = account as PolkadotAccount;
         invariant(polkadotResources, "polkadot");
-        invariant(canUnbond(account), "can't unbond");
+        invariant(canUnbond(account as PolkadotAccount), "can't unbond");
         invariant(
           account.spendableBalance.gt(POLKADOT_MIN_SAFE),
           "can't cover fee"
@@ -159,7 +182,7 @@ const polkadot: AppSpec<Transaction> = {
       name: "rebond",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        const { polkadotResources } = account;
+        const { polkadotResources } = account as PolkadotAccount;
         invariant(polkadotResources, "polkadot");
         invariant(
           polkadotResources?.unlockingBalance.gt(MIN_LOCKED_BALANCE_REQ),
@@ -190,8 +213,8 @@ const polkadot: AppSpec<Transaction> = {
       name: "nominate",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        invariant(account.polkadotResources, "polkadot");
-        invariant(canNominate(account), "can't nominate");
+        invariant((account as PolkadotAccount).polkadotResources, "polkadot");
+        invariant(canNominate(account as PolkadotAccount), "can't nominate");
         invariant(
           account.spendableBalance.gt(POLKADOT_MIN_SAFE),
           "cant cover fee"
@@ -218,7 +241,7 @@ const polkadot: AppSpec<Transaction> = {
       name: "withdraw",
       maxRun: 2,
       transaction: ({ account, bridge }) => {
-        const { polkadotResources } = account;
+        const { polkadotResources } = account as PolkadotAccount;
         invariant(polkadotResources, "polkadot");
         invariant(
           polkadotResources?.unlockedBalance.gt(0),

@@ -3,7 +3,7 @@ import { testBridge } from "../../__tests__/test-helpers/bridge";
 
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { AccountRaw, DatasetTest } from "../../types";
+import type { AccountRaw, DatasetTest } from "@ledgerhq/types-live";
 import {
   FeeTooHigh,
   GasLessThanEstimate,

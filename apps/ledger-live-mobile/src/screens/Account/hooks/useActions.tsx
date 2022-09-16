@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -68,7 +68,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     navigationParams: [
       NavigatorName.ReceiveFunds,
       {
-        screen: ScreenName.ReceiveConnectDevice,
+        screen: ScreenName.ReceiveConfirmation,
       },
     ],
     label: <Trans i18nKey="account.receive" />,
@@ -117,9 +117,12 @@ export default function useActions({ account, parentAccount, colors }: Props) {
             navigationParams: [
               NavigatorName.Base,
               {
-                screen: ScreenName.WalletConnectScan,
+                screen: NavigatorName.WalletConnect,
                 params: {
-                  accountId: account?.id,
+                  screen: ScreenName.WalletConnectScan,
+                  params: {
+                    accountId: account?.id,
+                  },
                 },
               },
             ],

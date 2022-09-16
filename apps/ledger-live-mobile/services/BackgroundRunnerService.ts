@@ -5,7 +5,7 @@ import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import { NativeModules } from "react-native";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import { FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 
@@ -51,12 +51,11 @@ const BackgroundRunnerService = async ({
     NativeModules.BackgroundRunner.stop();
   };
 
-  const waitForOnlineDevice = (maxWait: number) => {
-    return withDevicePolling(deviceId)(
+  const waitForOnlineDevice = (maxWait: number) =>
+    withDevicePolling(deviceId)(
       transport => from(getDeviceInfo(transport)),
       () => true,
     ).pipe(timeout(maxWait));
-  };
 
   prepareFirmwareUpdate(deviceId, latestFirmware).subscribe({
     next: ({ progress, displayedOnDevice }) => {

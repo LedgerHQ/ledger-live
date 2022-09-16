@@ -1,10 +1,11 @@
 import { RecipientRequired } from "@ledgerhq/errors";
 import { makeLRUCache } from "./../../cache";
-import type { Account, CryptoCurrency } from "./../../types";
 import type { Transaction } from "./types";
 import getFeesForTransaction from "./js-getFeesForTransaction";
 import { isValidRecipient } from "./logic";
 import { Currency, isTaprootAddress } from "./wallet-btc";
+import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const getCacheKeyForCalculateFees = ({
   a,
@@ -67,9 +68,9 @@ export const validateRecipient: (
         recipientError: null,
         recipientWarning,
       };
-    } catch (recipientError) {
+    } catch (e) {
       return {
-        recipientError,
+        recipientError: e instanceof Error ? e : null,
         recipientWarning: null,
       };
     }

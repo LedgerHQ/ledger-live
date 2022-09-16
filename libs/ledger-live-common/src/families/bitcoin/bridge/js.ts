@@ -1,4 +1,3 @@
-import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import type { Transaction } from "../types";
 import { sync, scanAccounts } from "../js-synchronisation";
 import createTransaction from "../js-createTransaction";
@@ -11,6 +10,7 @@ import { calculateFees } from "./../cache";
 import { perCoinLogic } from "../logic";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import * as explorerConfigAPI from "../../../api/explorerConfig";
+import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 
 const receive = makeAccountBridgeReceive({
   injectGetAddressParams: (account) => {

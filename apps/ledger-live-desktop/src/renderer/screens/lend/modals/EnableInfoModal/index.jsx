@@ -5,12 +5,8 @@ import styled from "styled-components";
 
 import { useDispatch } from "react-redux";
 
-import type {
-  Account,
-  AccountLike,
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { urls } from "~/config/urls";
 import LendingTermsIllu from "~/renderer/images/lending-terms.svg";
 import LendingTermsIllu1 from "~/renderer/images/lending-illu-1.svg";

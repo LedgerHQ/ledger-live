@@ -7,8 +7,8 @@ import {
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
 import { AvalancheInvalidDateTimeError } from "./errors";
-import { Account, TransactionStatus } from "../../types";
-import { Transaction } from "./types";
+import { Account } from "@ledgerhq/types-live";
+import { Transaction, TransactionStatus } from "./types";
 import { FIVE_MINUTES, TWO_WEEKS, AVAX_MINIMUM_STAKE_AMOUNT } from "./utils";
 
 const getTransactionStatus = async (

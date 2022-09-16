@@ -10,27 +10,18 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-
-import {
-  Account,
-  Operation,
-  AccountLike,
-} from "@ledgerhq/live-common/types/index";
-
+import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-
 import debounce from "lodash/debounce";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
-
 import OperationIcon from "./OperationIcon";
 import { ScreenName } from "../const";
 import OperationRowDate from "./OperationRowDate";
 import OperationRowNftName from "./OperationRowNftName";
-
 import perFamilyOperationDetails from "../generated/operationDetails";
 
-const ContainerTouchable = styled(Flex).attrs(p => ({
+const ContainerTouchable = styled(Flex).attrs(_ => ({
   height: "64px",
   flexDirection: "row",
   alignItems: "center",

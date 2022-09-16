@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import {
   SendActionDefault,

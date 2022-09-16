@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import type { AccountLikeArray } from "@ledgerhq/live-common/types/index";
+import type { AccountLikeArray } from "@ledgerhq/types-live";
 import type { CurrentRate } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

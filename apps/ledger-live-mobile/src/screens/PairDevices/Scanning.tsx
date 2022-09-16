@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Observable } from "rxjs";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
-import { DeviceModelId } from "@ledgerhq/devices/src/index";
-import { getInfosForServiceUuid } from "@ledgerhq/devices";
+import { getInfosForServiceUuid, DeviceModelId } from "@ledgerhq/devices";
+import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import logger from "../../logger";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
 import { knownDevicesSelector } from "../../reducers/ble";
@@ -16,7 +16,7 @@ import ScanningHeader from "./ScanningHeader";
 
 type Props = {
   onSelect: (device: Device, deviceMeta: any) => Promise<void>;
-  onError: (error: Error) => void;
+  onError: (_: Error) => void;
   onTimeout: () => void;
 };
 
@@ -61,7 +61,7 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
     }, BLE_SCANNING_NOTHING_TIMEOUT);
 
     const sub = Observable.create(TransportBLE.listen).subscribe({
-      next: (e: { type: string; descriptor: any }) => {
+      next: (e: DescriptorEvent<Device>) => {
         if (e.type === "add") {
           clearTimeout(timeout);
           const device = e.descriptor;

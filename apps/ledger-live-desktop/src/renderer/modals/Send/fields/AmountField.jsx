@@ -3,12 +3,8 @@ import React, { useCallback, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { TFunction } from "react-i18next";
 
 import Box from "~/renderer/components/Box";

@@ -1,3 +1,8 @@
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency, getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -7,13 +12,13 @@ import {
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
 import network from "../../network";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-  Transaction,
-  Unit,
-} from "../../types";
-import { getAvailableProviders, getSwapAPIBaseURL, getSwapAPIError } from "./";
+import type { Transaction } from "../../generated/types";
+import {
+  getAvailableProviders,
+  getSwapAPIBaseURL,
+  getSwapAPIError,
+  getSwapAPIVersion,
+} from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";
 
@@ -26,8 +31,7 @@ const getExchangeRates: GetExchangeRates = async (
   if (getEnv("MOCK"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
 
-  // Rely on the api base to determine the version logic
-  const usesV3 = getSwapAPIBaseURL().endsWith("v3");
+  const usesV3 = getSwapAPIVersion() >= 3;
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
   const unitTo =

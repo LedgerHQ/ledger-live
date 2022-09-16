@@ -49,6 +49,7 @@ export async function createSpeculosDevice(
 ): Promise<{
   transport: SpeculosTransport;
   id: string;
+  appPath: string;
 }> {
   const { model, firmware, appName, appVersion, seed, coinapps, dependency } =
     arg;
@@ -202,6 +203,7 @@ export async function createSpeculosDevice(
   return {
     id: speculosID,
     transport,
+    appPath,
   };
 }
 export type AppCandidate = {
@@ -316,9 +318,7 @@ export function appCandidatesMatches(
           hackBadSemver(appCandidate.firmware),
           searchFirmware
         ))) &&
-    ((!search.appVersion &&
-      !appCandidate.appVersion.includes("prerelease") &&
-      !appCandidate.appVersion.includes("rc")) ||
+    ((!search.appVersion && !appCandidate.appVersion.includes("-")) ||
       (search.appVersion &&
         semver.satisfies(appCandidate.appVersion, search.appVersion)))
   );

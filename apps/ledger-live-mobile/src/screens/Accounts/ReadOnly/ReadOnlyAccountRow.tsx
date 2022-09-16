@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
-import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../../const";
 import AccountRowLayout from "../../../components/AccountRowLayout";
-import { BigNumber } from "bignumber.js";
 import { track } from "../../../analytics";
 
 type Props = {

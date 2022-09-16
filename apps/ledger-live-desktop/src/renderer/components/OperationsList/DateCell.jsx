@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import type { Operation } from "@ledgerhq/live-common/types/index";
+import type { Operation } from "@ledgerhq/types-live";
 import type { TFunction } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import OperationDate from "./OperationDate";

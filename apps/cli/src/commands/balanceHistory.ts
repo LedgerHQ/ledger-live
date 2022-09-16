@@ -3,7 +3,6 @@ import asciichart from "asciichart";
 import invariant from "invariant";
 import { map } from "rxjs/operators";
 import { toBalanceHistoryRaw } from "@ledgerhq/live-common/account/index";
-import type { PortfolioRange } from "@ledgerhq/live-common/types/index";
 import {
   getBalanceHistory,
   getPortfolioCount,
@@ -12,6 +11,7 @@ import { getRanges } from "@ledgerhq/live-common/portfolio/v2/range";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
+import type { PortfolioRange } from "@ledgerhq/types-live";
 const histoFormatters = {
   default: (histo, account) =>
     histo

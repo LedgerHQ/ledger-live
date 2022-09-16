@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
-import type { Unit } from "@ledgerhq/live-common/types/index";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { Range } from "@ledgerhq/live-common/range";
 import { reverseRangeIndex, projectRangeIndex } from "@ledgerhq/live-common/range";

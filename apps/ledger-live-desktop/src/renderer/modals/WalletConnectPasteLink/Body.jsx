@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useState } from "react";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import Track from "~/renderer/analytics/Track";
 import { Trans, useTranslation } from "react-i18next";
 import StepPaste, { StepPasteFooter } from "./steps/StepPaste";

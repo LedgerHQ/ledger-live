@@ -10,9 +10,9 @@ import {
 } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
-import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
 import { getBTCValues } from "../countervalues/mock";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { App, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 
 export const deviceInfo155 = {
   version: "1.5.5",
@@ -99,7 +99,11 @@ export function mockListAppsResult(
       const dependencies = whitelistDependencies.includes(name)
         ? []
         : getDependencies(name);
-      const currency = findCryptoCurrency((c) => c.managerAppName === name);
+      const currency =
+        // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
+        findCryptoCurrency((c) => c.name === name) ||
+        // Else take the first one with that manager app
+        findCryptoCurrency((c) => c.managerAppName === name);
       const indexOfMarketCap = currency
         ? tickersByMarketCap.indexOf(currency.ticker)
         : -1;

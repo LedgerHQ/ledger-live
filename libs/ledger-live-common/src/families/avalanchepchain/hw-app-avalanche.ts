@@ -3,6 +3,7 @@ import BIPPath from "bip32-path";
 import bech32 from "bech32";
 import secp256k1 from "secp256k1";
 import { createHash } from "crypto";
+import { AVAX_HRP } from "./utils";
 
 const CLA = 0x80;
 const INS = {
@@ -96,7 +97,10 @@ export default class Avalanche {
       p2,
       buffer
     );
-    const address = bech32.encode("avax", bech32.toWords(result.slice(0, -2)));
+    const address = bech32.encode(
+      AVAX_HRP,
+      bech32.toWords(result.slice(0, -2))
+    );
 
     const { publicKey, chainCode } = await this.getPublicKey(display);
 
@@ -125,7 +129,7 @@ export default class Avalanche {
     };
 
     const eatWhile = (input, f) => {
-      for (var i = 0; i < input.length; i++) {
+      for (let i = 0; i < input.length; i++) {
         if (!f(input[i])) {
           return [input.slice(0, i), input.slice(i)];
         }
@@ -259,11 +263,11 @@ export default class Avalanche {
     p1NotDone: number,
     p1Done: number
   ) {
-    let resultMap: Map<string, Buffer> = new Map();
+    const resultMap: Map<string, Buffer> = new Map();
     for (let ix = 0; ix < suffixes.length; ix++) {
       const suffix = suffixes[ix];
       const message: Buffer = this.encodeBip32Path(suffix);
-      const isLastMessage: Boolean = ix >= suffixes.length - 1;
+      const isLastMessage: boolean = ix >= suffixes.length - 1;
       const signatureData = await this.transport.send(
         CLA,
         ins,
@@ -277,13 +281,13 @@ export default class Avalanche {
   }
 
   uInt8Buffer(uint8: number): Buffer {
-    let buff = Buffer.alloc(1);
+    const buff = Buffer.alloc(1);
     buff.writeUInt8(uint8);
     return buff;
   }
 
   uInt32BEBuffer(uint32: number): Buffer {
-    let buff = Buffer.alloc(4);
+    const buff = Buffer.alloc(4);
     buff.writeUInt32BE(uint32);
     return buff;
   }

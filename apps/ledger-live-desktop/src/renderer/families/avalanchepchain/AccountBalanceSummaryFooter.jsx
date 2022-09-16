@@ -3,17 +3,12 @@
 import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-
 import { Trans } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-
 import { localeSelector } from "~/renderer/reducers/settings";
-
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
-
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
@@ -60,10 +55,9 @@ const AmountValue = styled(Text).attrs(() => ({
 
 type Props = {
   account: any,
-  countervalue: any,
 };
 
-const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
 

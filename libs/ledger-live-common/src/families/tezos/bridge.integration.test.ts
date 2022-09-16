@@ -5,7 +5,7 @@ import { loadAccountDelegation, listBakers } from "./bakers";
 import whitelist from "./bakers.whitelist-default";
 
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
-import type { DatasetTest } from "../../types";
+import type { DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
 import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1";

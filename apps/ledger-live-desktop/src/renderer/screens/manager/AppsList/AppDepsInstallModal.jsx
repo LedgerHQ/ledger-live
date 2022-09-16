@@ -3,7 +3,7 @@ import React, { memo, useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import type { Action } from "@ledgerhq/live-common/apps/types";
 
 import manager from "@ledgerhq/live-common/manager/index";

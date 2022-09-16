@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { darken } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

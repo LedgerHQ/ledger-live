@@ -5,7 +5,7 @@ import styled, { css } from "styled-components";
 import { BigNumber } from "bignumber.js";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { Unit } from "@ledgerhq/live-common/types/index";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";

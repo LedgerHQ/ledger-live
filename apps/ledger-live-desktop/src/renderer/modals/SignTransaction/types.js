@@ -2,13 +2,8 @@
 
 import type { TFunction } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-  TransactionStatus,
-  SignedOperation,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Step } from "~/renderer/components/Stepper";
 

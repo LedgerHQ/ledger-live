@@ -3,7 +3,8 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
-import type { Currency, Unit, Operation } from "@ledgerhq/live-common/types/index";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Operation } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";

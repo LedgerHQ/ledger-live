@@ -1,4 +1,3 @@
-import { string } from "superstruct";
 import type { DeviceTransactionField } from "../../transaction";
 
 export type ExtraDeviceTransactionField =

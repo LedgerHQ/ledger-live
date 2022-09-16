@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import type { Currency, Unit } from "@ledgerhq/live-common/types/currencies";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";

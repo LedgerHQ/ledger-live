@@ -2,7 +2,8 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";

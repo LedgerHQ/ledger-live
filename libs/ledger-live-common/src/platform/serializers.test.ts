@@ -1,6 +1,6 @@
+import type { SignedOperation, SignedOperationRaw } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
-import { SignedOperation, SignedOperationRaw } from "../types";
 import "../__tests__/test-helpers/setup";
 
 import {

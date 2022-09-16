@@ -11,7 +11,7 @@ import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useSpoilerForTransaction } from "~/renderer/hooks/useSpoilerForTransaction";
 import { useSupplyMax, useSupplyMaxChoiceButtons } from "@ledgerhq/live-common/compound/react";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import TrackPage from "~/renderer/analytics/TrackPage";

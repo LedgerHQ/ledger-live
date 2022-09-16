@@ -5,7 +5,7 @@ import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import {

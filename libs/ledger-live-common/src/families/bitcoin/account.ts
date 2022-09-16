@@ -1,12 +1,11 @@
-import type { Account } from "../../types";
-import type { BitcoinOutput, BitcoinInput } from "./types";
+import type { BitcoinOutput, BitcoinInput, BitcoinAccount } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { getEnv } from "../../env";
 import { perCoinLogic } from "./logic";
 
 const sortUTXO = (a, b) => b.value.minus(a.value).toNumber();
 
-function injectGetAddressParams(account: Account) {
+function injectGetAddressParams(account: BitcoinAccount) {
   const perCoin = perCoinLogic[account.currency.id];
 
   if (perCoin && perCoin.injectGetAddressParams) {
@@ -14,7 +13,10 @@ function injectGetAddressParams(account: Account) {
   }
 }
 
-export function formatInput(account: Account, input: BitcoinInput): string {
+export function formatInput(
+  account: BitcoinAccount,
+  input: BitcoinInput
+): string {
   return `${(input.value
     ? formatCurrencyUnit(account.unit, input.value, {
         showCode: false,
@@ -24,7 +26,10 @@ export function formatInput(account: Account, input: BitcoinInput): string {
     input.previousOutputIndex
   }`;
 }
-export function formatOutput(account: Account, o: BitcoinOutput): string {
+export function formatOutput(
+  account: BitcoinAccount,
+  o: BitcoinOutput
+): string {
   return [
     formatCurrencyUnit(account.unit, o.value, {
       showCode: false,
@@ -41,7 +46,7 @@ export function formatOutput(account: Account, o: BitcoinOutput): string {
     .join(" ");
 }
 
-function formatAccountSpecifics(account: Account): string {
+function formatAccountSpecifics(account: BitcoinAccount): string {
   if (!account.bitcoinResources) return "";
   const { utxos } = account.bitcoinResources;
   let str = `\n${utxos.length} UTXOs`;

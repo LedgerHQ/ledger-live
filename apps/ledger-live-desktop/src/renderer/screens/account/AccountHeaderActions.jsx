@@ -10,7 +10,7 @@ import {
 import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import type { TFunction } from "react-i18next";
 import { Trans, withTranslation } from "react-i18next";
@@ -38,9 +38,11 @@ import {
   ActionDefault,
   BuyActionDefault,
   ReceiveActionDefault,
+  SellActionDefault,
   SendActionDefault,
   SwapActionDefault,
 } from "./AccountActionsDefault";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const ButtonSettings: ThemedComponent<{ disabled?: boolean }> = styled(Tabbable).attrs(() => ({
   alignItems: "center",
@@ -132,6 +134,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const contrastText = useTheme("colors.palette.text.shade60");
 
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
+
   const decorators = perFamilyAccountActions[mainAccount.currency.family];
   const manage = perFamilyManageActions[mainAccount.currency.family];
   let manageList = [];
@@ -178,17 +183,35 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   const history = useHistory();
 
-  const onBuy = useCallback(() => {
-    setTrackingSource("account header actions");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        mode: "onRamp",
-        currencyId: currency.id,
-        accountId: mainAccount.id,
-      },
-    });
-  }, [currency, history, mainAccount]);
+  const onBuySell = useCallback(
+    (mode = "buy") => {
+      setTrackingSource("account header actions");
+      // PTX smart routing redirect to live app or to native implementation
+      if (ptxSmartRouting?.enabled) {
+        const params = {
+          currency: currency?.id,
+          account: mainAccount?.id,
+          mode, // buy or sell
+        };
+
+        history.push({
+          // replace 'multibuy' in case live app id changes
+          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+          state: params,
+        });
+      } else {
+        history.push({
+          pathname: "/exchange",
+          state: {
+            mode: "onRamp",
+            currencyId: currency.id,
+            accountId: mainAccount.id,
+          },
+        });
+      }
+    },
+    [currency, history, mainAccount, ptxSmartRouting],
+  );
 
   const onLend = useCallback(() => {
     openModal("MODAL_LEND_MANAGE", {
@@ -278,23 +301,27 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       : []),
   ];
 
-  const BuyHeader = <BuyActionDefault onClick={onBuy} />;
+  const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
 
-  const SwapHeader = <SwapActionDefault onClick={onSwap} />;
+  const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
 
-  const ManageActionsHeader = manageActions.map(item => renderAction(item));
+  const swapHeader = <SwapActionDefault onClick={onSwap} />;
+
+  const manageActionsHeader = manageActions.map(item => renderAction(item));
 
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>
-      {manageActions.length > 0 && ManageActionsHeader}
-      {availableOnSwap && SwapHeader}
-      {availableOnBuy && BuyHeader}
-      {canSend(account, parentAccount, currency) && (
+      {manageActions.length > 0 ? manageActionsHeader : null}
+      {availableOnSwap ? swapHeader : null}
+      {availableOnBuy ? buyHeader : null}
+      {/** don't show sell button if ptx smart routing is not enabled or sell not available */}
+      {availableOnSell && ptxSmartRouting?.enabled ? sellHeader : null}
+      {canSend(account, parentAccount, currency) ? (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
-      )}
-      {canReceive(currency) && (
+      ) : null}
+      {canReceive(currency) ? (
         <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
-      )}
+      ) : null}
     </FadeInButtonsContainer>
   );
 

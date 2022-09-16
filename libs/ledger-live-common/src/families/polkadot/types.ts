@@ -1,8 +1,12 @@
-import type { BigNumber } from "bignumber.js";
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
+} from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
 
 export type RewardDestinationType =
   | "Staked"
@@ -104,3 +108,11 @@ export type PolkadotPreloadData = {
 export type PolkadotSearchFilter = (
   query: string
 ) => (validator: PolkadotValidator) => boolean;
+export type PolkadotAccount = Account & {
+  polkadotResources: PolkadotResources;
+};
+export type PolkadotAccountRaw = AccountRaw & {
+  polkadotResources: PolkadotResourcesRaw;
+};
+export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

@@ -15,7 +15,7 @@ import {
   getTransactionExplorer,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Delegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { openURL } from "~/renderer/linking";
 import CounterValue from "~/renderer/components/CounterValue";

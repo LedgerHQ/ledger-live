@@ -1,15 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import { useEffect, useReducer, useCallback, useRef } from "react";
 import { log } from "@ledgerhq/logs";
-import type {
-  Transaction,
-  TransactionStatus,
-  Account,
-  AccountLike,
-} from "../types";
 import { getAccountBridge } from ".";
 import { getMainAccount } from "../account";
 import { delay } from "../promise";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "../generated/types";
 export type State = {
   account: AccountLike | null | undefined;
   parentAccount: Account | null | undefined;

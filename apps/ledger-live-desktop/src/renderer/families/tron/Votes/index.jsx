@@ -4,7 +4,7 @@ import invariant from "invariant";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 
 import {
   useTronSuperRepresentatives,

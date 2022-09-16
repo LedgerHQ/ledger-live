@@ -2,7 +2,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import type { Account, AccountLike, Transaction } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
 
 import Alert from "./Alert";
@@ -15,7 +15,7 @@ const TextContent = styled.div`
 
 type Props = {
   account: AccountLike,
-  transaction: Transaction,
+  transaction: TransactionCommon,
   parentAccount: ?Account,
 };
 

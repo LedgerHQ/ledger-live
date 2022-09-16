@@ -1,7 +1,7 @@
 // @flow
 import React, { useMemo, useEffect, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/helpers";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";

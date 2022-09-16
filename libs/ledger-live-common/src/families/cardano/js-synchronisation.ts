@@ -1,4 +1,3 @@
-import type { Operation, TokenAccount } from "../../types";
 import {
   GetAccountShape,
   makeScanAccounts,
@@ -12,7 +11,7 @@ import Ada from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { APITransaction } from "./api/api-types";
-import { CardanoOutput, PaymentCredential } from "./types";
+import { CardanoAccount, CardanoOutput, PaymentCredential } from "./types";
 import {
   getAccountChange,
   getAccountStakeCredential,
@@ -21,6 +20,7 @@ import {
   getMemoFromTx,
   getOperationType,
   isHexString,
+  mergeTokens,
 } from "./logic";
 import { encodeOperationId } from "../../operation";
 import { getNetworkParameters } from "./networks";
@@ -28,6 +28,10 @@ import { getNetworkInfo } from "./api/getNetworkInfo";
 import uniqBy from "lodash/uniqBy";
 import postSyncPatch from "./postSyncPatch";
 import { getTransactions } from "./api/getTransactions";
+import type { Operation, TokenAccount } from "@ledgerhq/types-live";
+import { buildSubAccounts } from "./buildSubAccounts";
+import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
+import { listTokensForCryptoCurrency } from "../../currencies";
 
 function mapTxToAccountOperation(
   tx: APITransaction,
@@ -43,6 +47,10 @@ function mapTxToAccountOperation(
 
   const subOperations = inferSubOperations(tx.hash, subAccounts);
   const memo = getMemoFromTx(tx);
+  const extra = {};
+  if (memo) {
+    extra["memo"] = memo;
+  }
 
   return {
     accountId,
@@ -64,14 +72,12 @@ function mapTxToAccountOperation(
     subOperations,
     blockHeight: tx.blockHeight,
     date: new Date(tx.timestamp),
-    extra: {
-      memo,
-    },
+    extra: extra,
     blockHash: undefined,
   };
 }
 
-function syncUtxos(
+function prepareUtxos(
   newTransactions: Array<APITransaction>,
   stableUtxos: Array<CardanoOutput>,
   accountCredentialsMap: Record<string, PaymentCredential>
@@ -116,7 +122,10 @@ function syncUtxos(
   return utxos;
 }
 
-export const getAccountShape: GetAccountShape = async (info) => {
+export const getAccountShape: GetAccountShape = async (
+  info,
+  { blacklistedTokenIds }
+) => {
   const {
     transport,
     currency,
@@ -152,16 +161,27 @@ export const getAccountShape: GetAccountShape = async (info) => {
     derivationMode,
   });
 
+  // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
+  const syncHash =
+    JSON.stringify(blacklistedTokenIds || []) +
+    "_" +
+    listTokensForCryptoCurrency(currency, {
+      withDelisted: true,
+    }).length;
+  const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
+
   const requiredConfirmations = 90;
 
   const oldOperations = initialAccount?.operations || [];
   const lastBlockHeight = oldOperations.length
     ? (oldOperations[0].blockHeight || 0) + 1
     : 0;
-  const syncFromBlockHeight =
-    lastBlockHeight > requiredConfirmations
-      ? lastBlockHeight - requiredConfirmations
-      : 0;
+
+  const syncFromBlockHeight = outdatedSyncHash
+    ? 0
+    : lastBlockHeight > requiredConfirmations
+    ? lastBlockHeight - requiredConfirmations
+    : 0;
 
   const {
     transactions: newTransactions,
@@ -171,7 +191,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
   } = await getTransactions(
     xpub,
     accountIndex,
-    initialAccount,
+    initialAccount as CardanoAccount,
     syncFromBlockHeight,
     currency
   );
@@ -191,25 +211,28 @@ export const getAccountShape: GetAccountShape = async (info) => {
     }
   });
 
-  const stableUtxos = (initialAccount?.cardanoResources?.utxos || []).filter(
-    (u) => stableOperationsByIds[u.hash]
-  );
+  const stableUtxos = (
+    (initialAccount as CardanoAccount)?.cardanoResources?.utxos || []
+  ).filter((u) => stableOperationsByIds[u.hash]);
 
-  const utxos = syncUtxos(newTransactions, stableUtxos, accountCredentialsMap);
+  const utxos = prepareUtxos(
+    newTransactions,
+    stableUtxos,
+    accountCredentialsMap
+  );
   const accountBalance = utxos.reduce(
     (total, u) => total.plus(u.amount),
     new BigNumber(0)
   );
-  // const tokenBalance = mergeTokens(utxos.map((u) => u.tokens).flat());
-  // const subAccounts = buildSubAccounts({
-  //   initialAccount,
-  //   parentAccountId: accountId,
-  //   parentCurrency: currency,
-  //   newTransactions,
-  //   tokens: tokenBalance,
-  //   accountCredentialsMap,
-  // });
-  const subAccounts = [];
+  const tokenBalance = mergeTokens(utxos.map((u) => u.tokens).flat());
+  const subAccounts = buildSubAccounts({
+    initialAccount,
+    parentAccountId: accountId,
+    parentCurrency: currency,
+    newTransactions,
+    tokens: tokenBalance,
+    accountCredentialsMap,
+  });
 
   const newOperations = newTransactions.map((t) =>
     mapTxToAccountOperation(t, accountId, accountCredentialsMap, subAccounts)
@@ -232,14 +255,25 @@ export const getAccountShape: GetAccountShape = async (info) => {
         stakeCred: stakeCredential,
       }).getBech32(),
     }));
-  const cardanoNetworkInfo = await getNetworkInfo(initialAccount, currency);
+  const cardanoNetworkInfo = await getNetworkInfo(
+    initialAccount as CardanoAccount,
+    currency
+  );
+  const minAdaBalanceForTokens = tokenBalance.length
+    ? calculateMinUtxoAmount(
+        tokenBalance,
+        new BigNumber(cardanoNetworkInfo.protocolParams.lovelacePerUtxoWord),
+        false
+      )
+    : new BigNumber(0);
 
   return {
     id: accountId,
     xpub,
     balance: accountBalance,
-    spendableBalance: accountBalance,
+    spendableBalance: accountBalance.minus(minAdaBalanceForTokens),
     operations: operations,
+    syncHash,
     subAccounts,
     freshAddresses,
     freshAddress: freshAddresses[0].address,

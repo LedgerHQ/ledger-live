@@ -11,7 +11,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -24,7 +24,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 
 import Label from "~/renderer/components/Label";
 import ChevronRight from "~/renderer/icons/ChevronRightSmall";
-import CosmosLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosLedgerValidatorIcon";
+import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 
@@ -73,9 +73,9 @@ export default function StepValidators({
   const sourceValidator = useMemo(
     () =>
       account.cosmosResources?.delegations.find(
-        d => d.validatorAddress === transaction.cosmosSourceValidator,
+        d => d.validatorAddress === transaction.sourceValidator,
       ),
-    [account, transaction.cosmosSourceValidator],
+    [account, transaction.sourceValidator],
   );
 
   const updateRedelegation = useCallback(
@@ -86,13 +86,13 @@ export default function StepValidators({
   );
 
   const updateSourceValidator = useCallback(
-    ({ validatorAddress: cosmosSourceValidator, ...r }) => {
+    ({ validatorAddress: sourceValidator, ...r }) => {
       const source = account.cosmosResources?.delegations.find(
-        d => d.validatorAddress === cosmosSourceValidator,
+        d => d.validatorAddress === sourceValidator,
       );
       updateRedelegation({
         ...transaction,
-        cosmosSourceValidator,
+        sourceValidator,
         validators:
           transaction.validators && transaction.validators.length > 0
             ? [
@@ -132,7 +132,8 @@ export default function StepValidators({
     selectedValidator,
   ]);
 
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
 
   const selectedValidatorData = useMemo(
     () =>
@@ -166,7 +167,7 @@ export default function StepValidators({
           <Box flex="1" horizontal alignItems="center" justifyContent="space-between">
             {selectedValidatorData ? (
               <Box horizontal alignItems="center">
-                <CosmosLedgerValidatorIcon validator={selectedValidatorData} />
+                <CosmosFamilyLedgerValidatorIcon validator={selectedValidatorData} />
                 <Text ff="Inter|Medium" ml={2}>
                   {selectedValidatorData.name || selectedValidatorData.validatorAddress}
                 </Text>

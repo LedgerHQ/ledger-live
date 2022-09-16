@@ -5,6 +5,7 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 
 import { Box, Flex, Switch } from "@ledgerhq/native-ui";
 import Track from "../../../analytics/Track";
+// eslint-disable-next-line import/no-unresolved
 import getFontStyle from "../../../components/LText/getFontStyle";
 
 type Props = {
@@ -67,9 +68,7 @@ const FeatureInteger = ({
     return () => {
       if (Platform.OS === "android") {
         // Deprecated: https://reactnative.dev/docs/keyboard#removelistener
-        // @ts-ignore
         Keyboard.removeListener("keyboardDidShow", onKeyboardShow);
-        // @ts-ignore
         Keyboard.removeListener("keyboardDidHide", onKeyboardHide);
       }
     };

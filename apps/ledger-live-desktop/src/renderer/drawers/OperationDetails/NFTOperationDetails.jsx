@@ -11,7 +11,7 @@ import {
   TextEllipsis,
   HashContainer,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import type { Operation } from "@ledgerhq/live-common/types/index";
+import type { Operation } from "@ledgerhq/types-live";
 import Media from "~/renderer/components/Nft/Media";
 import Box from "~/renderer/components/Box";
 import {

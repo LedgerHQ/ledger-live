@@ -6,12 +6,7 @@ import {
   getAccountName,
   listSubAccounts,
 } from "@ledgerhq/live-common/account/helpers";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-  TokenAccount,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Text from "~/renderer/components/Text";
 import { GenericBox } from "../index";

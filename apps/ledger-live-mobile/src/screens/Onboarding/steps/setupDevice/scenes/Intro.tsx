@@ -42,8 +42,6 @@ const Next = ({ onNext }: { onNext: () => void }) => {
   const navigation = useNavigation();
 
   const next = () => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingModalWarning, {
       onNext,
     });

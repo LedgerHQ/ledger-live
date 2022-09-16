@@ -10,7 +10,7 @@ import {
 import { BigNumber } from "bignumber.js";
 import network from "../../../network";
 import { getCroSdk, isTestNet } from "../logic";
-import type { Operation, OperationType } from "../../../types";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
 const PAGINATION_LIMIT = 200;

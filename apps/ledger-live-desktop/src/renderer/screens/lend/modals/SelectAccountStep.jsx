@@ -11,13 +11,9 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
 
-import type {
-  Account,
-  AccountLike,
-  TokenAccount,
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";

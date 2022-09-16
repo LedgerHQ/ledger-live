@@ -2,7 +2,7 @@ import type { Transaction } from "./types";
 import { BN } from "avalanche";
 import { avalancheClient } from "./api/client";
 import { HDHelper } from "./hdhelper";
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 
 const buildTransaction = async (
   account: Account,
@@ -21,14 +21,6 @@ const buildTransaction = async (
   const stakeAmount: BN = transaction.useAllAmount
     ? new BN(account.spendableBalance.minus(transaction.fees || 0).toString())
     : new BN(amount.toString());
-
-  //for testing
-  //   const info = avalancheClient().Info();
-  //   const nodeId = await info.getNodeID();
-  //  const startTime: BN = UnixNow().add(new BN(FIVE_MINUTES));
-  //   const endTime: BN = startTime.add(new BN(1814400)); //TODO: get this from UI
-  //   console.log("UTXOs:", utxos);
-  //   console.log("ADDRESSES: ", utxos.getAllUTXOStrings());
 
   const pChain = avalancheClient().PChain();
 

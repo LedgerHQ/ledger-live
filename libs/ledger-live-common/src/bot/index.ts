@@ -2,13 +2,13 @@
 import fs from "fs";
 import path from "path";
 import { BigNumber } from "bignumber.js";
+import uniq from "lodash/uniq";
 import groupBy from "lodash/groupBy";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
-import { Account } from "../types";
 import type { MutationReport, SpecReport } from "./types";
 import { promiseAllBatched } from "../promise";
 import {
@@ -17,15 +17,17 @@ import {
   formatCurrencyUnit,
   getFiatCurrencyByTicker,
 } from "../currencies";
-import { isAccountEmpty, toAccountRaw } from "../account";
+import { formatAccount, isAccountEmpty, toAccountRaw } from "../account";
 import { runWithAppSpec } from "./engine";
-import { formatReportForConsole, formatError } from "./formatters";
+import { formatReportForConsole, formatError, formatTime } from "./formatters";
 import {
   initialState,
   loadCountervalues,
   inferTrackingPairForAccounts,
 } from "../countervalues/logic";
 import { getPortfolio } from "../portfolio/v2";
+import { Account } from "@ledgerhq/types-live";
+import { getContext } from "./bot-test-context";
 type Arg = Partial<{
   currency: string;
   family: string;
@@ -48,7 +50,11 @@ function makeAppJSON(accounts: Account[]) {
   return JSON.stringify(jsondata);
 }
 
-export async function bot({ currency, family, mutation }: Arg = {}) {
+export async function bot({
+  currency,
+  family,
+  mutation,
+}: Arg = {}): Promise<void> {
   const SEED = getEnv("SEED");
   invariant(SEED, "SEED required");
   const specs: any[] = [];
@@ -86,6 +92,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     }
   }
 
+  const timeBefore = Date.now();
   const results: Array<SpecReport<any>> = await promiseAllBatched(
     getEnv("BOT_MAX_CONCURRENT"),
     specs,
@@ -94,7 +101,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       specsLogs.push(logs);
       return runWithAppSpec(spec, (message) => {
         log("bot", message);
-        console.log(message);
+        if (process.env.CI) console.log(message);
         logs.push(message);
       }).catch((fatalError) => ({
         spec,
@@ -105,14 +112,15 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       }));
     }
   );
-  const allAccountsBefore = flatMap(results, (r) => r.accountsBefore || []);
+  const totalDuration = Date.now() - timeBefore;
+  const allAppPaths = uniq(results.map((r) => r.appPath || "").sort());
   const allAccountsAfter = flatMap(results, (r) => r.accountsAfter || []);
   let countervaluesError;
   const countervaluesState = await loadCountervalues(initialState, {
     trackingPairs: inferTrackingPairForAccounts(allAccountsAfter, usd),
     autofillGaps: true,
   }).catch((e) => {
-    console.error(e);
+    if (process.env.CI) console.error(e);
     countervaluesError = e;
     return null;
   });
@@ -174,7 +182,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     (s) => s.unavailableMutations
   );
 
-  if (specFatals.length) {
+  if (specFatals.length && process.env.CI) {
     console.error(`================== SPEC ERRORS =====================\n`);
     specFatals.forEach((c) => {
       console.error(c.fatalError);
@@ -182,7 +190,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     });
   }
 
-  if (errorCases.length) {
+  if (errorCases.length && process.env.CI) {
     console.error(`================== MUTATION ERRORS =====================\n`);
     errorCases.forEach((c) => {
       console.error(formatReportForConsole(c));
@@ -194,22 +202,69 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     );
   }
 
-  const withoutFunds = results
+  const specsWithoutFunds = results.filter(
+    (s) =>
+      !s.fatalError &&
+      ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
+        (s.mutations && s.mutations.every((r) => !r.mutation)))
+  );
+
+  const fullySuccessfulSpecs = results.filter(
+    (s) =>
+      !s.fatalError &&
+      s.mutations &&
+      !specsWithoutFunds.includes(s) &&
+      s.mutations.every((r) => !r.mutation || r.operation)
+  );
+
+  const specsWithErrors = results.filter(
+    (s) =>
+      !s.fatalError &&
+      s.mutations &&
+      !specsWithoutFunds.includes(s) &&
+      s.mutations.some((r) => r.mutation && !r.operation)
+  );
+
+  const specsWithoutOperations = results.filter(
+    (s) =>
+      !s.fatalError &&
+      !specsWithoutFunds.includes(s) &&
+      !specsWithErrors.includes(s) &&
+      s.mutations &&
+      s.mutations.every((r) => !r.operation)
+  );
+
+  const withoutFunds = specsWithoutFunds
     .filter(
       (s) =>
-        !s.fatalError &&
-        ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
-          (s.mutations && s.mutations.every((r) => !r.mutation)))
+        // ignore coin that are backed by testnet that have funds
+        !results.some(
+          (o) =>
+            o.spec.currency.isTestnetFor === s.spec.currency.id &&
+            !specsWithoutFunds.includes(o)
+        )
     )
     .map((s) => s.spec.name);
+
   const { GITHUB_RUN_ID, GITHUB_WORKFLOW } = process.env;
 
   let body = "";
+  let githubBody = "";
+  function appendBody(content) {
+    body += content;
+    githubBody += content;
+  }
+  function appendBodyFullOnly(content) {
+    body += content;
+  }
+
   let title = "";
-  const runURL = `https://github.com/LedgerHQ/ledger-live-common/actions/runs/${String(
+  const runURL = `https://github.com/LedgerHQ/ledger-live/actions/runs/${String(
     GITHUB_RUN_ID
   )}`;
   const success = mutationReports.length - errorCases.length;
+
+  title += `⏲ ${formatTime(totalDuration)} `;
 
   if (success > 0) {
     title += `✅ ${success} txs `;
@@ -236,103 +291,158 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   }
 
   let slackBody = "";
-  body += `## ${title}`;
+  appendBody(`## ${title}`);
 
   if (GITHUB_RUN_ID && GITHUB_WORKFLOW) {
-    body += ` for [**${GITHUB_WORKFLOW}**](${runURL})\n\n`;
+    appendBody(` for [**${GITHUB_WORKFLOW}**](${runURL})\n\n`);
   }
 
-  body += "\n\n";
-  body += subtitle;
+  appendBody("\n\n");
+  appendBody(subtitle);
 
-  if (uncoveredMutations.length) {
-    body += `> ⚠️ ${uncoveredMutations.length} mutations uncovered\n`;
+  if (fullySuccessfulSpecs.length) {
+    const msg = `> ✅ ${
+      fullySuccessfulSpecs.length
+    } specs are successful: _${fullySuccessfulSpecs
+      .map((o) => o.spec.name)
+      .join(", ")}_\n`;
+    appendBody(msg);
+    slackBody += msg;
   }
 
-  body += "\n\n";
+  if (specsWithErrors.length) {
+    const msg = `> ❌ ${
+      specsWithErrors.length
+    } specs have problems: _${specsWithErrors
+      .map((o) => o.spec.name)
+      .join(", ")}_\n`;
+    appendBody(msg);
+    slackBody += msg;
+  }
+
+  if (withoutFunds.length) {
+    const missingFundsWarn = `> 💰 ${
+      withoutFunds.length
+    } specs may miss funds: _${withoutFunds.join(", ")}_\n`;
+    appendBody(missingFundsWarn);
+    slackBody += missingFundsWarn;
+  }
+
+  if (specsWithoutOperations.length) {
+    const warn = `> ⚠️ ${
+      specsWithoutOperations.length
+    } specs may have issues: *${specsWithoutOperations
+      .map((o) => o.spec.name)
+      .join(", ")}*\n`;
+    appendBody(warn);
+    slackBody += warn;
+  }
+
+  appendBody("\n\n");
 
   if (specFatals.length) {
-    body += "<details>\n";
-    body += `<summary>${specFatals.length} critical spec errors</summary>\n\n`;
+    appendBody("<details>\n");
+    appendBody(
+      `<summary>${specFatals.length} critical spec errors</summary>\n\n`
+    );
     specFatals.forEach(({ spec, fatalError }) => {
-      body += `**Spec ${spec.name} failed!**\n`;
-      body += "```\n" + formatError(fatalError) + "\n```\n\n";
+      appendBody(`**Spec ${spec.name} failed!**\n`);
+      appendBody("```\n" + formatError(fatalError, true) + "\n```\n\n");
       slackBody += `❌ *Spec ${spec.name}*: \`${formatError(fatalError)}\`\n`;
     });
-    body += "</details>\n\n";
+    appendBody("</details>\n\n");
+  }
+
+  // summarize the error causes
+  const dedupedErrorCauses: string[] = [];
+  errorCases.forEach((m) => {
+    if (!m.error) return;
+    const ctx = getContext(m.error);
+    if (!ctx) return;
+    const cause = m.spec.name + " > " + ctx;
+    if (!dedupedErrorCauses.includes(cause)) {
+      dedupedErrorCauses.push(cause);
+    }
+  });
+  if (dedupedErrorCauses.length > 0) {
+    slackBody += "*Hints:*\n";
+    dedupedErrorCauses.forEach((cause) => {
+      slackBody += `- ${cause}\n`;
+    });
   }
 
   if (errorCases.length) {
-    body += "<details>\n";
-    body += `<summary>${errorCases.length} mutation errors</summary>\n\n`;
+    appendBody("<details>\n");
+    appendBody(`<summary>${errorCases.length} mutation errors</summary>\n\n`);
     errorCases.forEach((c) => {
-      body +=
-        "```\n" +
-        formatReportForConsole(c) +
-        "\n" +
-        formatError(c.error) +
-        "\n```\n\n";
+      appendBody("```\n" + formatReportForConsole(c) + "\n```\n\n");
     });
-    body += "</details>\n\n";
+    appendBody("</details>\n\n");
   }
 
-  body += "<details>\n";
-  body += `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`;
+  appendBodyFullOnly("<details>\n");
+
+  appendBodyFullOnly(
+    `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`
+  );
   results.forEach((r, i) => {
     const spec = specs[i];
     const logs = specsLogs[i];
-    body += `#### Spec ${spec.name} (${
-      r.mutations ? r.mutations.length : "failed"
-    })\n`;
-    body += "\n```\n";
-    body += logs.join("\n");
+    appendBodyFullOnly(
+      `#### Spec ${spec.name} (${
+        r.mutations ? r.mutations.length : "failed"
+      })\n`
+    );
+    appendBodyFullOnly("\n```\n");
+    appendBodyFullOnly(logs.join("\n"));
 
     if (r.mutations) {
       r.mutations.forEach((m) => {
         if (m.error || m.mutation) {
-          body += formatReportForConsole(m) + "\n";
+          appendBodyFullOnly(formatReportForConsole(m) + "\n");
         }
       });
     }
 
-    body += "\n```\n";
+    appendBodyFullOnly("\n```\n");
   });
-  body += "</details>\n\n";
+  appendBodyFullOnly("</details>\n\n");
 
   if (uncoveredMutations.length > 0) {
-    body += "<details>\n";
-    body += `<summary>Details of the ${uncoveredMutations.length} uncovered mutations</summary>\n\n`;
+    appendBodyFullOnly("<details>\n");
+    appendBodyFullOnly(
+      `<summary>Details of the ${uncoveredMutations.length} uncovered mutations</summary>\n\n`
+    );
     specsWithUncoveredMutations.forEach(({ spec, unavailableMutations }) => {
-      body += `#### Spec ${spec.name} (${unavailableMutations.length})\n`;
+      appendBodyFullOnly(
+        `#### Spec ${spec.name} (${unavailableMutations.length})\n`
+      );
       unavailableMutations.forEach((m) => {
         // FIXME: we definitely got to stop using Maybe types or | undefined | null
         if (!m) return;
         const msgs = groupBy(m.errors.map((e) => e.message));
-        body +=
+        appendBodyFullOnly(
           "- **" +
-          m.mutation.name +
-          "**: " +
-          Object.keys(msgs)
-            .map((msg) => `${msg} (${msgs[msg].length})`)
-            .join(", ") +
-          "\n";
+            m.mutation.name +
+            "**: " +
+            Object.keys(msgs)
+              .map((msg) => `${msg} (${msgs[msg].length})`)
+              .join(", ") +
+            "\n"
+        );
       });
     });
-    body += "</details>\n\n";
+    appendBodyFullOnly("</details>\n\n");
   }
 
-  body += "### Portfolio" + (totalUSD ? " (" + totalUSD + ")" : "") + "\n\n";
-
-  if (withoutFunds.length) {
-    body += `> ⚠️ ${
-      withoutFunds.length
-    } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
-  }
-
-  body += "<details>\n";
-  body += `<summary>Details of the ${results.length} currencies</summary>\n\n`;
-  body += "| Spec (accounts) | Operations | Balance | funds? |\n";
-  body += "|-----------------|------------|---------|--------|\n";
+  appendBody("<details>\n");
+  appendBody(
+    `<summary>Portfolio ${
+      totalUSD ? " (" + totalUSD + ")" : ""
+    } – Details of the ${results.length} currencies</summary>\n\n`
+  );
+  appendBody("| Spec (accounts) | Operations | Balance | funds? |\n");
+  appendBody("|-----------------|------------|---------|--------|\n");
   results.forEach((r) => {
     function sumAccounts(all) {
       if (!all || all.length === 0) return;
@@ -398,18 +508,133 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
 
     const beforeOps = countOps(r.accountsBefore);
     const afterOps = countOps(r.accountsAfter);
-    const firstAccount = (r.accountsAfter || r.accountsBefore || [])[0];
-    body += `| ${r.spec.name} (${
-      (r.accountsBefore || []).filter((a) => a.used).length
-    }) `;
-    body += `| ${afterOps || beforeOps}${
-      afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
-    } `;
-    body += `| ${balance} `;
-    body += `| ${etaTxs} ${(firstAccount && firstAccount.freshAddress) || ""} `;
-    body += "|\n";
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    const firstAccount = accounts[0];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) `);
+    appendBody(
+      `| ${afterOps || beforeOps}${
+        afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
+      } `
+    );
+    appendBody(`| ${balance} `);
+    appendBody(
+      `| ${etaTxs} ${(firstAccount && firstAccount.freshAddress) || ""} `
+    );
+    appendBody("|\n");
   });
-  body += "\n</details>\n\n";
+
+  appendBody("\n```\n");
+  appendBody(allAccountsAfter.map((a) => formatAccount(a, "head")).join("\n"));
+  appendBody("\n```\n");
+
+  appendBody("\n</details>\n\n");
+
+  // Add performance details
+  appendBody("<details>\n");
+  appendBody(
+    `<summary>Performance ⏲ ${formatTime(totalDuration)}</summary>\n\n`
+  );
+  appendBody("**Time spent for each spec:** (total across mutations)\n");
+
+  function sumMutation(mutations, f) {
+    return mutations?.reduce((sum, m) => sum + (f(m) || 0), 0) || 0;
+  }
+  function sumResults(f) {
+    return results.reduce((sum, r) => sum + (f(r) || 0), 0);
+  }
+  function sumResultsMutation(f) {
+    return sumResults((r) => sumMutation(r.mutations, f));
+  }
+
+  appendBody(
+    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n"
+  );
+  appendBody("|---|---|---|---|---|---|---|---|\n");
+
+  appendBody("| **TOTAL** |");
+  appendBody(`**${formatTime(sumResults((r) => r.preloadDuration))}** |`);
+  appendBody(`**${formatTime(sumResults((r) => r.scanDuration))}** |`);
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) => m.resyncAccountsDuration || 0)
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) =>
+        m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
+      )
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) =>
+        m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
+      )
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) =>
+        m.signedTime && m.broadcastedTime ? m.broadcastedTime - m.signedTime : 0
+      )
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) =>
+        m.broadcastedTime && m.confirmedTime
+          ? m.confirmedTime - m.broadcastedTime
+          : 0
+      )
+    )}** |\n`
+  );
+
+  results.forEach((r) => {
+    const accounts = r.accountsAfter || r.accountsBefore || [];
+    appendBody(`| ${r.spec.name} (${accounts.filter((a) => a.used).length}) |`);
+    appendBody(`${formatTime(r.preloadDuration || 0)} |`);
+    appendBody(`${formatTime(r.scanDuration || 0)} |`);
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) => m.resyncAccountsDuration || 0)
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) =>
+          m.mutationTime && m.statusTime ? m.statusTime - m.mutationTime : 0
+        )
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) =>
+          m.statusTime && m.signedTime ? m.signedTime - m.statusTime : 0
+        )
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) =>
+          m.signedTime && m.broadcastedTime
+            ? m.broadcastedTime - m.signedTime
+            : 0
+        )
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) =>
+          m.broadcastedTime && m.confirmedTime
+            ? m.confirmedTime - m.broadcastedTime
+            : 0
+        )
+      )} |\n`
+    );
+  });
+
+  appendBody("\n</details>\n\n");
 
   const { BOT_REPORT_FOLDER } = process.env;
 
@@ -419,6 +644,11 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
 
   if (BOT_REPORT_FOLDER) {
     await Promise.all([
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "github-report.md"),
+        githubBody,
+        "utf-8"
+      ),
       fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, "full-report.md"),
         body,
@@ -430,13 +660,13 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         "utf-8"
       ),
       fs.promises.writeFile(
-        path.join(BOT_REPORT_FOLDER, "before-app.json"),
-        makeAppJSON(allAccountsBefore),
+        path.join(BOT_REPORT_FOLDER, "app.json"),
+        makeAppJSON(allAccountsAfter),
         "utf-8"
       ),
       fs.promises.writeFile(
-        path.join(BOT_REPORT_FOLDER, "after-app.json"),
-        makeAppJSON(allAccountsAfter),
+        path.join(BOT_REPORT_FOLDER, "coin-apps.json"),
+        JSON.stringify(allAppPaths),
         "utf-8"
       ),
     ]);

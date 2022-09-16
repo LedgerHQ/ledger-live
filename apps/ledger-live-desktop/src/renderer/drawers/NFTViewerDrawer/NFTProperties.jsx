@@ -6,7 +6,7 @@ import Text from "~/renderer/components/Text";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { useTranslation } from "react-i18next";
 
-import type { NFTMetadata } from "@ledgerhq/live-common/types/index";
+import type { NFTMetadata } from "@ledgerhq/types-live";
 
 const NFTProperty = styled.div`
   display: inline-flex;

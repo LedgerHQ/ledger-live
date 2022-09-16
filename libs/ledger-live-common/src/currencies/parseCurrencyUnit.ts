@@ -1,5 +1,5 @@
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "../types";
 // parse a value that was formatted with formatCurrencyUnit
 // NB this function parse a subset of formats because it it locale independant.
 // make sure you have at least following options set on the formatter:

@@ -3,7 +3,7 @@
 import React, { memo } from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { Account, NFT } from "@ledgerhq/live-common/types/index";
+import type { Account, NFT } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import { useSelector } from "react-redux";
 import { nftsViewModeSelector } from "~/renderer/reducers/settings";

@@ -5,7 +5,7 @@ import React from "react";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
 import type { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import type { Transaction } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 
 const addressStyle = {
   wordBreak: "break-all",

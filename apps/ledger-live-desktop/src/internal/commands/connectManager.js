@@ -7,4 +7,6 @@ import type { Input, ConnectManagerEvent } from "@ledgerhq/live-common/hw/connec
 
 const cmd = (input: Input): Observable<ConnectManagerEvent> => from(connectManager(input));
 
+cmd.inferSentryTransaction = input => ({ data: input });
+
 export default cmd;

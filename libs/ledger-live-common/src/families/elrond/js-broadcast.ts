@@ -1,4 +1,4 @@
-import type { Operation, SignedOperation } from "../../types";
+import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "../../operation";
 import { broadcastTransaction } from "./api";
 

@@ -5,7 +5,7 @@ import { encode } from "@ledgerhq/live-common/cross";
 import { asQR } from "../qr";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 export default {
   description: "Export given accounts to Live QR or console for importing",
   args: [

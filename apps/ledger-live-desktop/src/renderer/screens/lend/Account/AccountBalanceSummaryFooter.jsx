@@ -11,7 +11,8 @@ import { listCurrentRates } from "@ledgerhq/live-common/families/ethereum/module
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { Account, TokenAccount, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";

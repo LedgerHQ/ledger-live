@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 
 import manager from "@ledgerhq/live-common/manager/index";
 
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import type { Action } from "@ledgerhq/live-common/apps/types";
 
 import ConfirmModal from "~/renderer/modals/ConfirmModal/index";

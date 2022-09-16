@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";

@@ -3,7 +3,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { isAccountBalanceUnconfirmed } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "./../reducers/accounts";
 import IconClock from "~/renderer/icons/Clock";

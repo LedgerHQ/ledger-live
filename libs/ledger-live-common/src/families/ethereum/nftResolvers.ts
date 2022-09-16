@@ -2,7 +2,7 @@ import {
   CurrencyBridge,
   NFTCollectionMetadataResponse,
   NFTMetadataResponse,
-} from "../../types";
+} from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "../../currencies";
 import { metadataCallBatcher } from "../../nft";
 

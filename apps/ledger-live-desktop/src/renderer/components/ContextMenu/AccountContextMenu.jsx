@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/account";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { openModal } from "~/renderer/actions/modals";
 import IconReceive from "~/renderer/icons/Receive";
@@ -18,6 +18,8 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { swapSelectableCurrenciesSelector } from "~/renderer/reducers/settings";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   account: AccountLike,
@@ -38,6 +40,9 @@ export default function AccountContextMenu({
   const dispatch = useDispatch();
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
+
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   const menuItems = useMemo(() => {
     const currency = getAccountCurrency(account);
@@ -63,13 +68,27 @@ export default function AccountContextMenu({
         Icon: IconBuy,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: "/exchange",
-            state: {
-              defaultCurrency: currency,
-              defaultAccount: mainAccount,
-            },
-          });
+          if (ptxSmartRouting?.enabled) {
+            const params = {
+              currency: currency?.id,
+              account: mainAccount?.id,
+              mode: "buy", // buy or sell
+            };
+
+            history.push({
+              // replace 'multibuy' in case live app id changes
+              pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+              state: params,
+            });
+          } else {
+            history.push({
+              pathname: "/exchange",
+              state: {
+                defaultCurrency: currency,
+                defaultAccount: mainAccount,
+              },
+            });
+          }
         },
       });
     }
@@ -81,14 +100,27 @@ export default function AccountContextMenu({
         Icon: IconBuy,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: "/exchange",
-            state: {
-              tab: 1,
-              defaultCurrency: currency,
-              defaultAccount: mainAccount,
-            },
-          });
+          if (ptxSmartRouting?.enabled) {
+            const params = {
+              currency: currency?.id,
+              account: mainAccount?.id,
+              mode: "sell", // buy or sell
+            };
+
+            history.push({
+              // replace 'multibuy' in case live app id changes
+              pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+              state: params,
+            });
+          } else {
+            history.push({
+              pathname: "/exchange",
+              state: {
+                defaultCurrency: currency,
+                defaultAccount: mainAccount,
+              },
+            });
+          }
         },
       });
     }
@@ -145,12 +177,13 @@ export default function AccountContextMenu({
     return items;
   }, [
     account,
-    history,
     parentAccount,
+    swapSelectableCurrencies,
     withStar,
     dispatch,
+    ptxSmartRouting,
+    history,
     refreshAccountsOrdering,
-    swapSelectableCurrencies,
   ]);
 
   const currency = getAccountCurrency(account);

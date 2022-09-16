@@ -63,10 +63,10 @@ function StepEndDate({
   const { validators } = useAvalanchePChainPreloadData();
   const selectedValidator = validators.find(v => v.nodeID === transaction.recipient);
 
-  const stakeStartTime = moment().unix() + FIVE_MINUTES;
-  const unixMinEndDate = stakeStartTime + TWO_WEEKS;
-  const unixMaxEndDate = Math.min(stakeStartTime + YEAR, Number(selectedValidator.endTime));
-  const unixDefaultEndDate = Math.min(stakeStartTime + THREE_WEEKS + MINUTE, unixMaxEndDate);
+  const unixStakeStartTime = moment().unix() + FIVE_MINUTES;
+  const unixMinEndDate = unixStakeStartTime + TWO_WEEKS;
+  const unixMaxEndDate = Math.min(unixStakeStartTime + YEAR, Number(selectedValidator.endTime));
+  const unixDefaultEndDate = Math.min(unixStakeStartTime + THREE_WEEKS + MINUTE, unixMaxEndDate);
 
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
@@ -81,18 +81,18 @@ function StepEndDate({
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(tx => {
       return bridge.updateTransaction(tx, {
-        startTime: new BigNumber(stakeStartTime),
+        startTime: new BigNumber(unixStakeStartTime),
+        endTime: new BigNumber(unixDefaultEndDate),
+        maxEndTime: new BigNumber(unixMaxEndDate)
       });
     });
   }, []);
 
-  const updateEndDate = endTime => {
+  const updateEndTime = endTime => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(tx => {
       return bridge.updateTransaction(tx, {
-        startTime: new BigNumber(stakeStartTime),
         endTime: new BigNumber(moment(endTime).unix()),
-        maxEndTime: new BigNumber(unixMaxEndDate),
       });
     });
   };
@@ -117,7 +117,7 @@ function StepEndDate({
           type="datetime-local"
           min={minEndDate}
           max={maxEndDate}
-          onChange={updateEndDate}
+          onChange={updateEndTime}
         ></Input>
         <ErrorContainer hasError={hasErrors}>
           {hasErrors && (

@@ -1,16 +1,16 @@
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import React, { useCallback } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native";
+import React, { useCallback, useState } from "react";
+import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorHead from "../shared/ValidatorHead";
 import ValidatorRow from "../shared/ValidatorRow";
+import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 
 type Props = {
   navigation: any;
@@ -29,7 +29,12 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const validators = useLedgerFirstShuffledValidatorsCosmos();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    "cosmos",
+    searchQuery,
+  );
 
   const onItemPress = useCallback(
     (validator: CosmosValidatorItem) => {
@@ -51,6 +56,10 @@ export default function SelectValidator({ navigation, route }: Props) {
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
+      <SelectValidatorSearchBox
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
       <View style={styles.header}>
         <ValidatorHead />
       </View>

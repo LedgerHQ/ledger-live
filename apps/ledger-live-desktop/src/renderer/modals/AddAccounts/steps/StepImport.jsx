@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { concat, from } from "rxjs";
 import { ignoreElements, filter, map } from "rxjs/operators";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty, groupAddAccounts } from "@ledgerhq/live-common/account/index";
 import { openModal } from "~/renderer/actions/modals";
 import { DeviceShouldStayInApp } from "@ledgerhq/errors";

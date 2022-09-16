@@ -1,8 +1,6 @@
 // @flow
 import React from "react";
-
 import type { Operation, Account } from "@ledgerhq/live-common/types";
-
 import {
   OpDetailsTitle,
   OpDetailsSection,
@@ -23,9 +21,7 @@ type OperationDetailsExtraProps = {
 const OperationDetailsExtra = ({ extra, operation, type, account }: OperationDetailsExtraProps) => {
   const { stakeValue, validator } = extra;
   const { avalanchePChainResources } = account;
-  const { delegations } = avalanchePChainResources;
-  const delegation = delegations.find(d => d.txID === operation.hash);
-  const validatorNode = validator || delegation?.nodeID;
+  const validatorNode = validator || operation.recipients
 
   switch (type) {
     case "DELEGATE":
@@ -43,6 +39,7 @@ const OperationDetailsExtra = ({ extra, operation, type, account }: OperationDet
                   showCode
                   fontSize={4}
                   color="palette.text.shade60"
+                  showAllDigits
                 />
               </Box>
             </OpDetailsData>
@@ -54,7 +51,7 @@ const OperationDetailsExtra = ({ extra, operation, type, account }: OperationDet
               </OpDetailsTitle>
               <OpDetailsData>
                 <Box>
-                  <Text ff="Inter|SemiBold">{validatorNode}</Text>
+                  <Text ff="Inter|Regular">{validatorNode}</Text>
                 </Box>
               </OpDetailsData>
             </OpDetailsSection>

@@ -1,14 +1,16 @@
-import { BigNumber } from "bignumber.js";
 import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import {
+  Account,
+  AccountLike,
   AccountRaw,
   AccountRawLike,
-  CryptoCurrency,
   Operation,
-  TokenCurrency,
-  Transaction,
-  TransactionRaw,
-} from "../../types";
-import type { Account, AccountLike } from "../../types/account";
+} from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import type { Transaction, TransactionRaw } from "../../generated/types";
 
 /// v3 changes here, move me to another folder soon
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
@@ -79,6 +81,17 @@ export type AvailableProviderV2 = {
 export type AvailableProviderV3 = {
   provider: string;
   pairs: Array<{ from: string; to: string; tradeMethod: string }>;
+};
+
+type TradeMethodGroup = {
+  methods: TradeMethod[];
+  pairs: {
+    [currencyIndex: number]: number[];
+  };
+};
+export type ProvidersResponseV4 = {
+  currencies: { [currencyIndex: number]: string };
+  providers: { [providerName: string]: TradeMethodGroup[] };
 };
 
 type CheckQuoteOkStatus = {

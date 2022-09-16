@@ -1,6 +1,6 @@
-import type { Account, SubAccount } from "../../types";
 import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
+import type { SubAccount, Account } from "@ledgerhq/types-live";
 import type {
   SwapOperation,
   SwapStatusRequest,

@@ -7,8 +7,7 @@ import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
-import type { CryptoCurrency, TokenCurrency, Transaction } from "../../types";
-import { getSwapAPIBaseURL } from "./";
+import { getSwapAPIVersion } from "./";
 import type {
   CheckQuote,
   Exchange,
@@ -21,6 +20,11 @@ import type {
   SwapRequestEvent,
   ValidKYCStatus,
 } from "./types";
+import type { Transaction } from "../../generated/types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 export const getMockExchangeRate = ({
   provider = "ftx",
@@ -125,7 +129,7 @@ export const mockInitSwap = (
 export const mockGetProviders: GetProviders = async () => {
   //Fake delay to show loading UI
   await new Promise((r) => setTimeout(r, 800));
-  const usesV3 = getSwapAPIBaseURL().endsWith("v3");
+  const usesV3 = getSwapAPIVersion() >= 3;
 
   return usesV3
     ? [

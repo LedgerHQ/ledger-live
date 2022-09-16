@@ -38,7 +38,11 @@ function StepConfirmation({
     return (
       <Container>
         <TrackPage category="Solana Delegation Withdraw" name="Step Confirmation" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        <SyncOneAccountOnMount
+          reason="transaction-flow-confirmation"
+          priority={10}
+          accountId={optimisticOperation.accountId}
+        />
         <SuccessDisplay
           title={
             <Trans i18nKey="solana.delegation.withdraw.flow.steps.confirmation.success.title" />

@@ -3,7 +3,7 @@ import type {
   CurrencyBridge,
   Operation,
   SignedOperation,
-} from "../../../types";
+} from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { patchOperationWithHash } from "../../../operation";

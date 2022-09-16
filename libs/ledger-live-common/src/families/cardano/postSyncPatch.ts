@@ -2,7 +2,7 @@
  *  Code reference taken from src/families/ethereum/postSyncPatch.ts
  */
 
-import type { AccountLike, Account, Operation } from "../../types";
+import type { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 
 // we need to preserve ADA pendingOperations because there is no mempool to do this
 // we assume we need to preserve until:

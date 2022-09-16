@@ -4,7 +4,7 @@ import {
   useNftCollectionMetadata,
   useNftMetadata,
 } from "@ledgerhq/live-common/nft/index";
-import { ProtoNFT } from "@ledgerhq/live-common/types/index";
+import { ProtoNFT } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";
@@ -27,10 +27,8 @@ function NftCollectionRow({
     nft?.tokenId,
     nft?.currencyId,
   );
-  const {
-    status: collectionStatus,
-    metadata: collectionMetadata,
-  } = useNftCollectionMetadata(nft?.contract, nft?.currencyId);
+  const { status: collectionStatus, metadata: collectionMetadata } =
+    useNftCollectionMetadata(nft?.contract, nft?.currencyId);
 
   const loading = nftStatus === "loading" || collectionStatus === "loading";
 

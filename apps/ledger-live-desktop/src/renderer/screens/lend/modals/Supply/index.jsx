@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback, useState } from "react";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import type { StepId } from "./types";

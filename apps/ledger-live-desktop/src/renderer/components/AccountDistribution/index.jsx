@@ -5,7 +5,7 @@ import { BigNumber } from "bignumber.js";
 import Text from "~/renderer/components/Text";
 import Card from "~/renderer/components/Box/Card";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import Header from "./Header";
 import Row from "./Row";

@@ -87,3 +87,16 @@ Globally disconnect a BLE device by its ID
 ##### Parameters
 
 -   `id` **any** 
+
+---
+
+## Are you adding Ledger support to your software wallet?
+
+You may be using this package to open a Bluetooth connexion between your web application and the device.
+
+For a smooth and quick integration:
+
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
+- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
+
+---

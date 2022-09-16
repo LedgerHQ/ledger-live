@@ -6,7 +6,7 @@ import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import type { Unit } from "@ledgerhq/live-common/types/index";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   marketIndicatorSelector,

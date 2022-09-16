@@ -2,12 +2,7 @@
 import invariant from "invariant";
 import { useCallback } from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type {
-  SignedOperation,
-  Operation,
-  AccountLike,
-  Account,
-} from "@ledgerhq/live-common/types/index";
+import type { SignedOperation, Operation, AccountLike, Account } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-common/env";

@@ -2,7 +2,7 @@
 import React from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { NFTMetadata } from "@ledgerhq/live-common/types/index";
+import type { NFTMetadata } from "@ledgerhq/types-live";
 import Skeleton from "./Skeleton";
 import Placeholder from "./Placeholder";
 

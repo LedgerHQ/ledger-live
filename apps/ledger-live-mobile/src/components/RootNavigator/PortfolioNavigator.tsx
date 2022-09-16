@@ -1,16 +1,12 @@
-/* eslint-disable import/no-unresolved */
-// @flow
-
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
-// $FlowFixMe
-// $FlowFixMe
-// $FlowFixMe
 import Portfolio from "../../screens/Portfolio";
+// eslint-disable-next-line import/no-cycle
 import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
+// eslint-disable-next-line import/no-cycle
 import AccountsNavigator from "./AccountsNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
