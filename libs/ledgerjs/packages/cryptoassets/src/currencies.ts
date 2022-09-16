@@ -3536,35 +3536,40 @@ export function findCryptoCurrencyById(
   return cryptocurrenciesById[id];
 }
 
+const testsMap = {
+  keywords: (s) =>
+    findCryptoCurrency((c) =>
+      Boolean(
+        c?.keywords?.map((k) => k.replace(/ /, "").toLowerCase()).includes(s)
+      )
+    ),
+  name: (s) =>
+    findCryptoCurrency((c) => c.name.replace(/ /, "").toLowerCase() === s),
+  id: (s) => findCryptoCurrencyById(s.toLowerCase()),
+  ticker: (s) => findCryptoCurrencyByTicker(s.toUpperCase()),
+  manager: (s) => findCryptoCurrencyByManagerAppName(s),
+};
+
 /**
  *
  * @param {*} keyword
  */
 export const findCryptoCurrencyByKeyword = (
-  keyword: string
+  keyword: string,
+  tests = ["keywords", "name", "id", "ticker", "manager"]
 ): CryptoCurrency | null | undefined => {
   const search = keyword.replace(/ /, "").toLowerCase();
 
-  return (
-    // Try to find by the keywords list
-    findCryptoCurrency((c) =>
-      Boolean(
-        c?.keywords
-          ?.map((k) => k.replace(/ /, "").toLowerCase())
-          .includes(search)
-      )
-    ) ||
-    // Try to find by currency name
-    findCryptoCurrency(
-      (c) => c.name.replace(/ /, "").toLowerCase() === search
-    ) ||
-    // Try to find by id or name first
-    findCryptoCurrencyById(keyword.toLowerCase()) ||
-    // Try to find by ticker
-    findCryptoCurrencyByTicker(keyword.toUpperCase()) ||
-    // if it failed fallback to managerAppName
-    findCryptoCurrencyByManagerAppName(keyword)
-  );
+  const conditions: Array<(string) => CryptoCurrency | null | undefined> =
+    tests.map((t) => testsMap[t]);
+
+  for (const condition of conditions) {
+    const currency = condition(search);
+
+    if (currency) {
+      return currency;
+    }
+  }
 };
 
 export const findCryptoCurrencyByManagerAppName = (
