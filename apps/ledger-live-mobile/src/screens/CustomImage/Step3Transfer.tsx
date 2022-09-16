@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ProcessorPreviewResult } from "../../components/CustomImage/ImageProcessor";
 import ResultDataTester from "../../components/CustomImage/ResultDataTester";
 import { fitImageContain } from "../../components/CustomImage/imageUtils";
@@ -82,8 +83,10 @@ const Step3Transfer: React.FC<
     [reconstructedPreviewResult?.height, reconstructedPreviewResult?.width],
   );
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom }}>
       <Flex p={6}>
         {rawData?.hexData && (
           <>

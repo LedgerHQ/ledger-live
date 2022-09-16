@@ -15,7 +15,7 @@ import ClockIcon from "~/renderer/icons/Clock";
 import ExclamationCircleIcon from "~/renderer/icons/ExclamationCircle";
 import { rgba } from "~/renderer/styles/helpers";
 import { iconByProviderName } from "../../utils";
-import RatesDrawer from "../RatesDrawer";
+import Rates from "../Rates";
 import SummaryLabel from "./SummaryLabel";
 import SummarySection from "./SummarySection";
 import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
@@ -79,7 +79,7 @@ const SectionProvider = ({
       rates &&
       rates.length > 1 &&
       (() =>
-        setDrawer(RatesDrawer, {
+        setDrawer(Rates, {
           fromCurrency,
           toCurrency,
           rates,

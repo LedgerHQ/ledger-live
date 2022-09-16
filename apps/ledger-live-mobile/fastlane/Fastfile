@@ -154,7 +154,7 @@ platform :ios do
       if (options[:ci])
         sh(
           <<-SHELL
-          echo "IOS_BUILD_NUMBER=#{build_number}" >> $GITHUB_ENV
+          echo "IOS_BUILD_NUMBER=#{build_number+1}" >> $GITHUB_ENV
           SHELL
         )
       end

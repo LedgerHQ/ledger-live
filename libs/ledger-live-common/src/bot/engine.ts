@@ -113,9 +113,19 @@ export async function runWithAppSpec<T extends Transaction>(
     coinapps,
   };
   let device;
-  const appReport: SpecReport<T> = {
-    spec,
-  };
+  const hintWarnings: string[] = [];
+  const appReport: SpecReport<T> = { spec, hintWarnings };
+
+  // staticly check that all mutations declared a test too (if no generic spec test)
+  if (!spec.test) {
+    const list = spec.mutations.filter((m) => !m.test);
+    if (list.length > 0) {
+      hintWarnings.push(
+        "mutations should define a test(): " +
+          list.map((m) => m.name).join(", ")
+      );
+    }
+  }
 
   try {
     device = await createSpeculosDevice(deviceParams);
@@ -150,6 +160,16 @@ export async function runWithAppSpec<T extends Transaction>(
       )
       .toPromise();
     appReport.scanDuration = now() - beforeScanTime;
+
+    // check if there are more accounts than mutation declared as a hint for the dev
+    if (accounts.length <= spec.mutations.length) {
+      hintWarnings.push(
+        "There are not enough accounts to cover all mutations. Please increase the account target to at least " +
+          (spec.mutations.length + 1) +
+          " accounts"
+      );
+    }
+
     // "Migrate" the FIRST and every {crossAccountFrequency} account to simulate an export/import (same logic as export to mobile) – default to every 10
     // this is made a subset of the accounts to help identify problem that would be specific to the "cross" or not.
     for (
@@ -261,11 +281,15 @@ export async function runWithAppSpec<T extends Transaction>(
       mutationsCount = {};
     }
 
-    accounts = await promiseAllBatched(
-      getEnv("SYNC_MAX_CONCURRENT"),
-      accounts,
-      syncAccount
-    );
+    if (
+      mutationReports.every((r) => !r.mutation) &&
+      accounts.some((a) => a.spendableBalance.gt(spec.minViableAmount || 0))
+    ) {
+      hintWarnings.push(
+        "No mutation were found possible. Yet there are funds in the accounts, please investigate."
+      );
+    }
+
     appReport.mutations = mutationReports;
     appReport.accountsAfter = accounts;
   } catch (e: any) {

@@ -9,6 +9,7 @@ import {
   Pressable,
 } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context";
 import useResizedImage, {
   Params as ImageResizerParams,
   ResizeResult,
@@ -18,7 +19,7 @@ import ImageProcessor, {
   ProcessorPreviewResult,
   ProcessorRawResult,
 } from "../../components/CustomImage/ImageProcessor";
-import { cropAspectRatio } from "./shared";
+import { targetDimensions } from "./shared";
 import { fitImageContain } from "../../components/CustomImage/imageUtils";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
@@ -91,7 +92,7 @@ const Step2Preview: React.FC<
   );
 
   useResizedImage({
-    targetDimensions: cropAspectRatio,
+    targetDimensions,
     imageFileUri: croppedImage?.imageFileUri,
     onError: handleError,
     onResult: handleResizeResult,
@@ -154,7 +155,7 @@ const Step2Preview: React.FC<
   );
 
   return (
-    <Flex flex={1}>
+    <SafeAreaView edges={["bottom"]} flex={1}>
       {resizedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}
@@ -211,7 +212,7 @@ const Step2Preview: React.FC<
           {t("common.confirm")}
         </Button>
       </BottomButtonsContainer>
-    </Flex>
+    </SafeAreaView>
   );
 };
 

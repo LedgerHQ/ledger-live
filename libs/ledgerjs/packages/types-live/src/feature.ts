@@ -20,6 +20,7 @@ export type FeatureId =
   | "currencySongbirdMobile"
   | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
+  | "mockFeature"
   | "walletConnectLiveApp"
   | "customImage";
 

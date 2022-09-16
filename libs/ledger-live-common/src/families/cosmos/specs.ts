@@ -13,7 +13,11 @@ import type {
 } from "../../families/cosmos/types";
 import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData";
 import { getCryptoCurrencyById } from "../../currencies";
-import { pickSiblings, botTest } from "../../bot/specs";
+import {
+  pickSiblings,
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+} from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {
@@ -56,6 +60,7 @@ const cosmos: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: minAmount,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minAmount), "balance is too low");
   },
@@ -145,7 +150,8 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "delegate new validators",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, siblings }) => {
+        expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
         invariant(
           account.index % 2 > 0,
           "only one out of 2 accounts is not going to delegate"

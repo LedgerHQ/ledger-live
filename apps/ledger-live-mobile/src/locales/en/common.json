@@ -2273,11 +2273,8 @@
     "debug": {
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
-      "featureFlagsOverride": "Override",
       "featureFlagsEdit": "Edit",
-      "featureFlagsRestore": "Restore",
-      "featureFlagsDisplayValue": "Display value",
-      "featureFlagsHideValue": "Hide value"
+      "featureFlagsRestore": "Restore"
     }
   },
   "notifications": {
@@ -3531,11 +3528,15 @@
     "no": "I prefer not to",
     "languages": {
       "en": "English",
-      "fr": "French",
-      "ru": "Russian",
-      "es": "Spanish",
-      "zh": "Chinese",
-      "de": "German"
+      "fr": "Français",
+      "ru": "Русский",
+      "es": "Español",
+      "zh": "中国人",
+      "de": "Deutsch",
+      "tr": "Türk",
+      "ja": "日本",
+      "ko": "한국인",
+      "pt": "Português"
     }
   },
   "deviceLocalization": {
@@ -4760,5 +4761,19 @@
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
     "selectContrast": "Select your contrast"
+  },
+  "postOnboarding": {
+    "hub": {
+      "title": "Nice one.\nYou're all set.",
+      "allDoneTitle": "Nice work.\nYou're up and running.",
+      "subtitle": "Here is what you can do next:",
+      "skip": "Skip to the app",
+      "goToWallet": "Go to Ledger Live wallet",
+      "done": "You've just secured your future"
+    },
+    "walletCard": {
+      "title": "Getting started",
+      "description": "Click here to finish setting up your {{productName}} with Ledger Live"
+    }
   }
 }
