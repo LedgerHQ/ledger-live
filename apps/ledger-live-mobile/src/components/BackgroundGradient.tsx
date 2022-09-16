@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import Svg, {
   Path,
   Defs,
@@ -13,15 +13,17 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 
+type Props = {
+  currentPositionY: Animated.SharedValue<number>;
+  graphCardEndPosition: number;
+  color?: string;
+};
+
 function BackgroundGradient({
   currentPositionY,
   graphCardEndPosition,
   color,
-}: {
-  currentPositionY: Animated.SharedValue<number>;
-  graphCardEndPosition: number;
-  color?: string;
-}) {
+}: Props) {
   const BackgroundOverlayOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
       currentPositionY.value,
@@ -128,4 +130,4 @@ function BackgroundGradient({
   );
 }
 
-export default BackgroundGradient;
+export default memo<Props>(BackgroundGradient);

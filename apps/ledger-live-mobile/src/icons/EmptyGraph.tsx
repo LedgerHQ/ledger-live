@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import Svg, { Path } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 
@@ -26,4 +26,4 @@ const SvgComponent = () => {
   );
 };
 
-export default SvgComponent;
+export default memo(SvgComponent);

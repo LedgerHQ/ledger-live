@@ -33,10 +33,7 @@ import EmptyAccountCard from "../Account/EmptyAccountCard";
 import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
 import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
 import Header from "./Header";
-import {
-  usePortfolio,
-  useBalanceHistoryWithCountervalue,
-} from "../../actions/portfolio";
+import { usePortfolio } from "../../actions/portfolio";
 import {
   counterValueCurrencySelector,
   countervalueFirstSelector,
