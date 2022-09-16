@@ -174,7 +174,7 @@ function Delegations({ account }: Props) {
             }
           />
           {delegations.map((d, i) => (
-            <View key={d.nodeID} style={[styles.delegationsWrapper]}>
+            <View key={d.txID} style={[styles.delegationsWrapper]}>
               <DelegationRow
                 account={account}
                 delegation={d}
