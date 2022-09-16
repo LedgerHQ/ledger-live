@@ -6,7 +6,10 @@ import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
 import { setEnv } from "@ledgerhq/live-common/env";
-import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import {
+  preloadTokens,
+  setSupportedCurrencies,
+} from "@ledgerhq/live-common/currencies/index";
 import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import type { TransportModule } from "@ledgerhq/live-common/hw/index";
@@ -155,3 +158,5 @@ if (process.env.NODE_ENV === "production") {
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));
+
+preloadTokens();

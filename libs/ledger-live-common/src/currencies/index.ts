@@ -30,7 +30,6 @@ import {
   findCompoundToken,
   getAbandonSeedAddress,
   getTokenById,
-  tokenListByIds,
   addTokens,
 } from "@ledgerhq/cryptoassets";
 export * from "./support";
@@ -92,7 +91,6 @@ export {
   findCompoundToken,
   listTokens,
   preloadTokens,
-  tokenListByIds,
   fetchERC20Tokens,
   addTokens,
 };
