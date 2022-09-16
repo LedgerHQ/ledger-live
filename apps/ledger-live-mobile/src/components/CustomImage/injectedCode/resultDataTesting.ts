@@ -31,6 +31,10 @@ function codeToInject() {
     postDataToWebView({ type: "ERROR", payload: error.toString() });
   };
 
+  const log = (...args) => {
+    postDataToWebView({ type: "LOG", payload: JSON.stringify(args) });
+  };
+
   /**
    * store functions as a property of window so we can access them easily after minification
    * */
@@ -47,14 +51,27 @@ function codeToInject() {
 
       const numLevelsOfGray = 16;
       const rgbStep = 255 / (numLevelsOfGray - 1);
-      hexData.split("").forEach(char => {
+
+      const pixels256 = Array.from(Array(height), () => Array(width));
+
+      hexData.split("").forEach((char, index) => {
+        /** running from top right to bottom left, column after column */
+        const y = index % height;
+        const x = width - 1 - (index - y) / height;
         const numericVal16 = Number.parseInt(char, 16);
         const numericVal256 = numericVal16 * rgbStep;
-        imageData.push(numericVal256); // R
-        imageData.push(numericVal256); // G
-        imageData.push(numericVal256); // B
-        imageData.push(255);
+        pixels256[y][x] = numericVal256;
       });
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const val = pixels256[y][x];
+          imageData.push(val); // R
+          imageData.push(val); // G
+          imageData.push(val); // B
+          imageData.push(255);
+        }
+      }
 
       context.putImageData(
         new ImageData(Uint8ClampedArray.from(imageData), width, height), // eslint-disable-line no-undef

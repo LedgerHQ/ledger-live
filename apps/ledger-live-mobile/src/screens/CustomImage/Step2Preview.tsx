@@ -31,7 +31,6 @@ export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",
 })`
   align-self: center;
-  margin: 16px;
   width: 200px;
   height: 200px;
 `;

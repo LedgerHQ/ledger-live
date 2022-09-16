@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Dimensions, ScrollView } from "react-native";
+import { Dimensions, Pressable, ScrollView } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -85,6 +85,20 @@ const Step3Transfer: React.FC<
 
   const insets = useSafeAreaInsets();
 
+  const [showReconstructed, setShowReconstructed] = useState(true);
+  const handlePressIn = useCallback(
+    () => setShowReconstructed(false),
+    [setShowReconstructed],
+  );
+  const handlePressOut = useCallback(
+    () => setShowReconstructed(true),
+    [setShowReconstructed],
+  );
+
+  const isDataMatching =
+    reconstructedPreviewResult?.imageBase64DataUri ===
+    previewData?.imageBase64DataUri;
+
   return (
     <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom }}>
       <Flex p={6}>
@@ -119,22 +133,46 @@ const Step3Transfer: React.FC<
           </Text>
           <Alert type="primary" title={infoMessage} />
           {reconstructedPreviewResult?.imageBase64DataUri ? (
-            <Flex mt={5}>
-              {reconstructedPreviewResult?.imageBase64DataUri ===
-              previewData?.imageBase64DataUri ? (
+            <Flex mt={5} alignItems="center">
+              {isDataMatching ? (
                 <Alert type="success" title={successMessage} />
               ) : (
                 <Alert type="error" title={errorMessage} />
               )}
-              <PreviewImage
-                source={{
-                  uri: reconstructedPreviewResult.imageBase64DataUri,
-                }}
+              <Text>
+                {isDataMatching
+                  ? ""
+                  : "Press the image below to see the difference"}
+              </Text>
+              <Text>
+                {showReconstructed
+                  ? "Reconstructed image:"
+                  : "Previewed image:"}
+              </Text>
+              <Pressable
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}
                 style={{
-                  height: previewDimensions?.height,
-                  width: previewDimensions?.width,
+                  ...previewDimensions,
                 }}
-              />
+              >
+                <Flex position="absolute">
+                  <PreviewImage
+                    source={{
+                      uri: previewData.imageBase64DataUri,
+                    }}
+                    style={previewDimensions}
+                  />
+                </Flex>
+                <Flex position="absolute" opacity={showReconstructed ? 1 : 0}>
+                  <PreviewImage
+                    source={{
+                      uri: reconstructedPreviewResult.imageBase64DataUri,
+                    }}
+                    style={previewDimensions}
+                  />
+                </Flex>
+              </Pressable>
             </Flex>
           ) : (
             <InfiniteLoader />
