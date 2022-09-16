@@ -17,15 +17,11 @@ class SendRecipientFields extends PureComponent {
       operations.find(
         op => op.type === "IN" && !isConfirmedOperation(op, account, confirmationsNb),
       ) != null;
-    return (
-      <div>
-        {incomingTransactionPending && (
-          <Alert type={"warning"} mt={4}>
-            <TranslatedError error={pendingOperationError} field="description" />
-          </Alert>
-        )}
-      </div>
-    );
+    return incomingTransactionPending ? (
+      <Alert type={"warning"} mt={4}>
+        <TranslatedError error={pendingOperationError} field="description" />
+      </Alert>
+    ) : null;
   }
 }
 
