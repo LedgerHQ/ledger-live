@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { I18nManager, ScrollView, Alert } from "react-native";
+import React, { useCallback, useState } from "react";
+import { I18nManager, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
 import {
   Flex,
@@ -7,6 +7,7 @@ import {
   IconBox,
   Icons,
   Text,
+  BottomDrawer,
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useDispatch } from "react-redux";
@@ -23,41 +24,35 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
 
+  const [isOpened, setOpened] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+
+  const toggleModal = useCallback(() => setOpened(!isOpened), [isOpened]);
+  const closeModal = () => {
+    setOpened(false);
+  };
+
   const next = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
-  const changeLanguageRTL = useCallback(async l => {
-    await dispatch(setLanguage(l));
+  const changeLanguageRTL = useCallback(() => {
+    dispatch(setLanguage(selectedLanguage));
     I18nManager.forceRTL(!I18nManager.isRTL);
     RNRestart.Restart();
-  }, []);
+  }, [selectedLanguage, dispatch]);
 
   const changeLanguage = useCallback(
     async l => {
       const newDirection = i18next.dir(l);
       const currentDirection = I18nManager.isRTL ? "rtl" : "ltr";
-
       if (newDirection !== currentDirection) {
-        Alert.alert(
-          "Restart required",
-          "The selected language requires the application to restart. Are you sure you want to continue?",
-          [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "OK",
-              onPress: () => changeLanguageRTL(l),
-            },
-          ],
-        );
+        setSelectedLanguage(l);
+        toggleModal();
       } else {
         dispatch(setLanguage(l));
+        next();
       }
-      // dispatch(setLanguage(l));
-      // next();
     },
     [dispatch, next],
   );
@@ -77,6 +72,36 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
             ))}
           </SelectableList>
         </Flex>
+        <BottomDrawer
+          id="ContractAddress"
+          isOpen={isOpened}
+          preventBackdropClick={false}
+          title={
+            <Trans i18nKey={"onboarding.stepLanguage.RestartModal.title"} />
+          }
+          description={
+            <Trans i18nKey={"onboarding.stepLanguage.RestartModal.paragraph"} />
+          }
+          onClose={closeModal}
+        >
+          <Flex flexDirection={"row"}>
+            <Button
+              event="ConfirmationModalCancel"
+              type="secondary"
+              flexGrow="1"
+              title={<Trans i18nKey="common.cancel" />}
+              onPress={closeModal}
+              marginRight={4}
+            />
+            <Button
+              event="ConfirmationModalConfirm"
+              type={"primary"}
+              flexGrow="1"
+              title={<Trans i18nKey="common.restart" />}
+              onPress={changeLanguageRTL}
+            />
+          </Flex>
+        </BottomDrawer>
       </ScrollView>
     </Flex>
   );
