@@ -218,3 +218,25 @@ export function formatDeviceAmount(
   if (options.hideCode) return v;
   return options.postfixCode ? v + sep + code : code + sep + v;
 }
+
+// this function throw if the portion of undelegated funds is smaller than the threshold
+// where threshold is a value from 0.0 to 1.0, percentage of the total amount of funds
+// Usage: put these in your spec, on the mutation transaction functions that intend to do more "delegations"
+export function expectSiblingsHaveSpendablePartGreaterThan(
+  siblings: Account[],
+  threshold: number
+): void {
+  const spendableTotal = siblings.reduce(
+    (acc, a) => acc.plus(a.spendableBalance),
+    new BigNumber(0)
+  );
+  const total = siblings.reduce(
+    (acc, a) => acc.plus(a.balance),
+    new BigNumber(0)
+  );
+  invariant(
+    spendableTotal.div(total).gt(threshold),
+    "the spendable part of accounts is sufficient (threshold: %s)",
+    threshold
+  );
+}
