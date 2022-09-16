@@ -2275,11 +2275,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
       "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
-      "featureFlagsOverride" : "上書き",
       "featureFlagsEdit" : "編集",
-      "featureFlagsRestore" : "復元",
-      "featureFlagsDisplayValue" : "値を表示",
-      "featureFlagsHideValue" : "値を非表示"
+      "featureFlagsRestore" : "復元"
     }
   },
   "notifications" : {
