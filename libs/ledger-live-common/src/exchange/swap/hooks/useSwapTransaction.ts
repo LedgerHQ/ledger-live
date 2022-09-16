@@ -10,7 +10,7 @@ import {
 import useBridgeTransaction, {
   Result as UseBridgeTransactionReturnType,
 } from "../../../bridge/useBridgeTransaction";
-import { DexRate, ExchangeRate } from "../types";
+import { ExchangeRate } from "../types";
 import { useReverseAccounts } from "./useReverseAccounts";
 import type {
   CryptoCurrency,
@@ -63,7 +63,7 @@ export type OnNoRatesCallback = (arg: {
   toState: SwapSelectorStateType;
 }) => void;
 export type SetExchangeRateCallback = (
-  exchangeRate?: ExchangeRate | DexRate | null
+  exchangeRate?: ExchangeRate | null
 ) => void;
 export type SetIsSendMaxLoading = (boolean) => void;
 

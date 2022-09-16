@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
@@ -9,7 +9,6 @@ import Countdown from "./Countdown";
 import type {
   SwapSelectorStateType,
   RatesReducerState,
-  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -25,7 +24,7 @@ type Props = {
   rates: $PropertyType<RatesReducerState, "value">,
   provider: ?string,
   refreshTime: number,
-  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
+  updateSelection: () => void,
   countdown: boolean,
   decentralizedSwapAvailable: boolean,
 };
@@ -51,21 +50,31 @@ export default function ProviderRate({
   toCurrency,
   rates,
   provider,
-  updateSelectedRate,
+  updateSelection,
   refreshTime,
   countdown,
   decentralizedSwapAvailable,
 }: Props) {
   const dispatch = useDispatch();
+  const [dexSelected, setDexSelected] = useState(null);
   const selectedRate = useSelector(rateSelector);
 
   const setRate = useCallback(
     rate => {
-      updateSelectedRate(rate);
+      setDexSelected(null);
+      updateSelection(rate);
       dispatch(updateRateAction(rate));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch],
+  );
+
+  const setDexRate = useCallback(
+    provider => {
+      setDexSelected(provider);
+      updateSelection(provider);
+    },
+    [updateSelection],
   );
 
   return (
@@ -144,7 +153,7 @@ export default function ProviderRate({
           <Rate
             key={rate.rateId || index}
             value={rate}
-            selected={rate === selectedRate}
+            selected={!dexSelected && rate === selectedRate}
             onSelect={setRate}
             fromCurrency={fromCurrency}
             toCurrency={toCurrency}
@@ -156,8 +165,8 @@ export default function ProviderRate({
             <Rate
               key={rate.rateId || index}
               value={rate}
-              selected={rate.provider === selectedRate.provider}
-              onSelect={setRate}
+              selected={dexSelected && rate.provider === dexSelected.provider}
+              onSelect={setDexRate}
               centralized={false}
               icon={rate.icon}
             />

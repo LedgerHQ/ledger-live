@@ -72,12 +72,14 @@ function Rate({
       <Box flex={1}>
         <Box horizontal color="palette.text.shade100" fontSize={4}>
           <Box flex={1}>
-            <Text fontWeight="600">{getProviderName(value.provider)}</Text>
+            <Text fontWeight="600">
+              {centralized ? getProviderName(value.provider) : value.provider}
+            </Text>
             <Box>
               <Text fontSize={3} color="palette.text.shade40">
                 <Trans
                   i18nKey={
-                    isRegistrationRequired(value.provider)
+                    centralized && isRegistrationRequired(value.provider)
                       ? "swap2.form.rates.registration"
                       : "swap2.form.rates.noRegistration"
                   }

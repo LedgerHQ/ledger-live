@@ -2,7 +2,6 @@
 import type {
   RatesReducerState,
   SwapSelectorStateType,
-  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { KYCStatus } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React from "react";
@@ -16,7 +15,7 @@ export type SectionProviderProps = {
   ratesState: RatesReducerState,
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
   toCurrency: $PropertyType<SwapSelectorStateType, "currency">,
-  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
+  updateSelection: () => void,
   refreshTime: number,
   countdown: boolean,
   decentralizedSwapAvailable: boolean,
@@ -28,7 +27,7 @@ const SectionProvider = ({
   fromCurrency,
   toCurrency,
   ratesState,
-  updateSelectedRate,
+  updateSelection,
   refreshTime,
   countdown,
   decentralizedSwapAvailable,
@@ -44,7 +43,7 @@ const SectionProvider = ({
             toCurrency,
             rates,
             provider,
-            updateSelectedRate,
+            updateSelection,
             refreshTime,
             countdown,
             decentralizedSwapAvailable,

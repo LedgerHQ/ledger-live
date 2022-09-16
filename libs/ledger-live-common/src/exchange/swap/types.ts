@@ -47,9 +47,6 @@ export type ExchangeRaw = {
   toParentAccount: AccountRaw | null | undefined;
   toAccount: AccountRawLike;
 };
-export type DexRate = {
-  provider: string;
-};
 export type ExchangeRate = {
   rate: BigNumber;
   // NB Raw rate, for display

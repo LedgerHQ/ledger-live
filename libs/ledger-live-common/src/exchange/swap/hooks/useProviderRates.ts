@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
-import { dex, getExchangeRates } from "..";
+import { getExchangeRates } from "..";
 import { Transaction } from "../../../generated/types";
 import type { CustomMinOrMaxError, Exchange, ExchangeRate } from "../types";
 import {
@@ -162,11 +162,6 @@ export const useProviderRates = ({
                 (rate) =>
                   rate.provider === provider && rate.tradeMethod === tradeMethod
               );
-              if (dex.includes(provider)) {
-                return {
-                  provider,
-                };
-              }
               return rate ? rate : rates[0];
             };
             setExchangeRate && setExchangeRate(getRate());

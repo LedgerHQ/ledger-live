@@ -48,7 +48,6 @@ import FormNotAvailable from "./FormNotAvailable";
 import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
-import { DEX_PROVIDERS } from "./utils";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -127,8 +126,7 @@ const SwapForm = () => {
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
-  const dexProvider = DEX_PROVIDERS.find(item => item.provider === exchangeRate?.provider);
-  const navigation = dexProvider ? dexProvider.navigation : null;
+  const [navigation, setNavigation] = useState(null);
 
   const provider = exchangeRate?.provider;
   const providerKYC = swapKYC?.[provider];
@@ -384,6 +382,19 @@ const SwapForm = () => {
   const sourceCurrency = swapTransaction.swap.from.currency;
   const targetCurrency = swapTransaction.swap.to.currency;
 
+  const updateSelection = useCallback(
+    payload => {
+      const { navigation } = payload;
+      if (navigation) {
+        setNavigation(navigation);
+      } else {
+        setNavigation(null);
+        swapTransaction.swap.updateSelectedRate(payload);
+      }
+    },
+    [swapTransaction?.swap],
+  );
+
   // We check if a decentralized swap is available to conditionnaly render an Alert below.
   // All Ethereum related currencies are considered available
   const decentralizedSwapAvailable = useMemo(() => {
@@ -428,21 +439,25 @@ const SwapForm = () => {
   }
 
   const setFromAccount = currency => {
+    setNavigation(null);
     setShowDetails(false);
     swapTransaction.setFromAccount(currency);
   };
 
   const setFromAmount = currency => {
+    setNavigation(null);
     setShowDetails(false);
     swapTransaction.setFromAmount(currency);
   };
 
   const setToAccount = account => {
+    setNavigation(null);
     setShowDetails(false);
     swapTransaction.setToAccount(account);
   };
 
   const setToCurrency = currency => {
+    setNavigation(null);
     setShowDetails(false);
     swapTransaction.setToCurrency(currency);
   };
@@ -485,6 +500,7 @@ const SwapForm = () => {
               refreshTime={refreshTime}
               countdown={!swapError && !idleState}
               decentralizedSwapAvailable={decentralizedSwapAvailable}
+              updateSelection={updateSelection}
             />
 
             {currentBanner === "LOGIN" ? (
