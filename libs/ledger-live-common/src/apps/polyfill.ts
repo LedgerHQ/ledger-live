@@ -3,6 +3,7 @@ import uniq from "lodash/uniq";
 import {
   listCryptoCurrencies,
   findCryptoCurrencyById,
+  getCryptoCurrencyById,
 } from "@ledgerhq/cryptoassets";
 import { App, Application } from "@ledgerhq/types-live";
 const directDep = {};
@@ -58,18 +59,30 @@ export const whitelistDependencies = ["Decred", "Decred Testnet"];
   ["Alkemi", "Ethereum"],
   ["[ L ] Market", "Ethereum"],
 ].forEach(([name, dep]) => declareDep(name, dep));
+
 export const getDependencies = (appName: string): string[] =>
   directDep[appName] || [];
+
 export const getDependents = (appName: string): string[] =>
   reverseDep[appName] || [];
+
+const forceAppToCurrencyMapping = {
+  Ethereum: "ethereum",
+};
+
 export const polyfillApplication = (app: Application): Application => {
-  const crypto = listCryptoCurrencies(true, true).find(
-    (crypto) =>
-      app.name.toLowerCase() === crypto.managerAppName.toLowerCase() &&
-      (crypto.managerAppName !== "Ethereum" ||
-        // if it's ethereum, we have a specific case that we must only allow the Ethereum app
-        app.name === "Ethereum")
-  );
+  let crypto;
+  if (app.name in forceAppToCurrencyMapping) {
+    // as many currency uses Ethereum app, we force 'ethereum' to be the default currency
+    crypto = getCryptoCurrencyById(forceAppToCurrencyMapping[app.name]);
+  } else {
+    // as a fallback, we try to infer a 1:1 main relationship by looking at the first managerAppName that matches
+    // in future, backend needs to tell what is the "main currency id" to consider
+    // context: https://ledgerhq.atlassian.net/browse/BACK-390
+    crypto = listCryptoCurrencies(true, true).find(
+      (crypto) => app.name.toLowerCase() === crypto.managerAppName.toLowerCase()
+    );
+  }
   let o = app;
 
   if (crypto && !app.currencyId) {
