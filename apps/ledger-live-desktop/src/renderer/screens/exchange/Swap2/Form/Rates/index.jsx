@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import Rate from "./Rate";
+import DecentralisedRate from "./DecentralisedRate";
+import CentralisedRate from "./CentralisedRate";
 import Countdown from "./Countdown";
 import type {
   SwapSelectorStateType,
@@ -150,8 +151,8 @@ export default function ProviderRate({
       </TableHeader>
       <Box mt={3}>
         {rates?.map((rate, index) => (
-          <Rate
-            key={rate.rateId || index}
+          <CentralisedRate
+            key={`${rate.provider}-${rate.tradeMethod}`}
             value={rate}
             selected={!dexSelected && rate === selectedRate}
             onSelect={setRate}
@@ -162,12 +163,11 @@ export default function ProviderRate({
         ))}
         {decentralizedSwapAvailable &&
           DEX_PROVIDERS.map((rate, index) => (
-            <Rate
-              key={rate.rateId || index}
+            <DecentralisedRate
+              key={rate.provider}
               value={rate}
               selected={dexSelected && rate.provider === dexSelected.provider}
               onSelect={setDexRate}
-              centralized={false}
               icon={rate.icon}
             />
           ))}
