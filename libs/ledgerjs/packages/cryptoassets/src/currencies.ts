@@ -95,6 +95,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
+    keywords: ["near"],
   },
   aeternity: {
     type: "CryptoCurrency",
@@ -188,6 +189,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://algoexplorer.io/tx/$hash",
       },
     ],
+    keywords: ["algo", "algorand"],
   },
   arbitrum: {
     type: "CryptoCurrency",
@@ -288,6 +290,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
           "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["avax", "avalanche"],
   },
   banano: {
     type: "CryptoCurrency",
@@ -338,6 +341,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://blockchain.info/btc/tx/$hash",
       },
     ],
+    keywords: ["btc", "bitcoin"],
   },
   bitcoin_cash: {
     type: "CryptoCurrency",
@@ -503,6 +507,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         token: "https://bscscan.com/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["bsc", "bnb", "binance", "binance smart chain", "binance chain"],
   },
   callisto: {
     type: "CryptoCurrency",
@@ -552,6 +557,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://cardanoscan.io/address/$address",
       },
     ],
+    keywords: ["ada", "cardano"],
   },
   cardano_testnet: {
     type: "CryptoCurrency",
@@ -678,6 +684,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://www.mintscan.io/cosmos/validators/$address",
       },
     ],
+    keywords: ["atom", "cosmos"],
   },
   cosmos_testnet: {
     type: "CryptoCurrency",
@@ -922,6 +929,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://dogechain.info/address/$address",
       },
     ],
+    keywords: ["doge", "dogecoin"],
   },
   elastos: {
     type: "CryptoCurrency",
@@ -1054,6 +1062,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         token: "https://etherscan.io/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["eth", "ethereum"],
   },
   ethereum_classic: {
     type: "CryptoCurrency",
@@ -1080,6 +1089,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
           "https://blockscout.com/etc/mainnet/address/$address/transactions",
       },
     ],
+    keywords: ["etc", "ethereum classic"],
   },
   ether1: {
     type: "CryptoCurrency",
@@ -1697,6 +1707,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://live.blockcypher.com/ltc/address/$address",
       },
     ],
+    keywords: ["ltc", "litecoin"],
   },
   lisk: {
     type: "CryptoCurrency",
@@ -1761,6 +1772,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://moneroblocks.info/tx/$hash",
       },
     ],
+    keywords: ["xmr", "monero"],
   },
   moonbeam: {
     type: "CryptoCurrency",
@@ -2194,6 +2206,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://polkascan.io/polkadot/transaction/$hash",
       },
     ],
+    keywords: ["dot", "polkadot"],
   },
   polygon: {
     type: "CryptoCurrency",
@@ -2224,6 +2237,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         token: "https://polygonscan.com/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["matic", "polygon"],
   },
   poswallet: {
     type: "CryptoCurrency",
@@ -2417,6 +2431,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://bithomp.com/explorer/$address",
       },
     ],
+    keywords: ["xrp", "ripple"],
   },
   rise: {
     type: "CryptoCurrency",
@@ -2521,6 +2536,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://solanabeach.io/transaction/$hash",
       },
     ],
+    keywords: ["sol", "solana"],
   },
   stakenet: {
     type: "CryptoCurrency",
@@ -2663,6 +2679,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         tx: "https://stellar.expert/explorer/public/tx/$hash",
       },
     ],
+    keywords: ["xlm", "stellar"],
   },
   osmosis: {
     type: "CryptoCurrency",
@@ -2821,6 +2838,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://tronscan.org/#/address/$address",
       },
     ],
+    keywords: ["trx", "tron"],
   },
   ubiq: {
     type: "CryptoCurrency",
