@@ -80,8 +80,9 @@ function reactNativeTemplate(
   return tpl.ast`
     ${imports}
     import Svg from "./StyledSvg";
+    import { StyleProp, ViewStyle } from "react-native"
 
-    type Props = { size?: number | string; color?: string; style?: object };
+    type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
 
     ${interfaces}
 
@@ -105,9 +106,9 @@ function reactNativeRTLTemplate(
     ${imports}
     import Svg from "./StyledSvg";
     import styled from "styled-components";
-    import { I18nManager } from "react-native";
+    import { I18nManager, StyleProp, ViewStyle } from "react-native";
 
-    type Props = { size?: number | string; color?: string; style?: object };
+    type Props = { size?: number | string; color?: string; style?: StyleProp<ViewStyle> };
 
     ${interfaces}
 

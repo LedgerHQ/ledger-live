@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { I18nManager, ScrollView, Alert } from "react-native";
+import { I18nManager, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
 import {
   Flex,
