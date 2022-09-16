@@ -15,7 +15,7 @@ import {
 import { getSupplyMax } from "./modules/compound";
 import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
-import { getGasLimit } from "./transaction";
+import { EIP1559ShouldBeUsed, getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
@@ -47,14 +47,17 @@ const ethereumBasicMutations = ({ maxAccount }) => [
         Date.now() - operation.date > 60000,
         "operation time to be older than 60s"
       );
-      const estimatedGas = getGasLimit(transaction).times(
-        transaction.gasPrice || 0
-      );
+      let gasPrice = EIP1559ShouldBeUsed(account.currency)
+        ? transaction.maxBaseFeePerGas.plus(transaction.maxPriorityFeePerGas)
+        : transaction.gasPrice;
+      gasPrice = gasPrice || 0;
+      const estimatedGas = getGasLimit(transaction).times(gasPrice);
       botTest("operation fee is not exceeding estimated gas", () =>
         expect(operation.fee.toNumber()).toBeLessThanOrEqual(
           estimatedGas.toNumber()
         )
       );
+
       botTest("account balance moved with operation value", () =>
         expect(account.balance.toString()).toBe(
           accountBeforeTransaction.balance.minus(operation.value).toString()

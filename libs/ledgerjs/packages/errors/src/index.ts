@@ -134,6 +134,10 @@ export const NotSupportedLegacyAddress = createCustomErrorClass(
 export const GasLessThanEstimate = createCustomErrorClass(
   "GasLessThanEstimate"
 );
+export const MaxBaseFeeLow = createCustomErrorClass("MaxBaseFeeLow");
+export const MaxBaseFeeHigh = createCustomErrorClass("MaxBaseFeeHigh");
+export const PriorityFeeTooLow = createCustomErrorClass("PriorityFeeTooLow");
+export const PriorityFeeTooHigh = createCustomErrorClass("PriorityFeeTooHigh");
 export const PasswordsDontMatchError =
   createCustomErrorClass("PasswordsDontMatch");
 export const PasswordIncorrectError =

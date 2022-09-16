@@ -177,6 +177,8 @@
   "time": {
     "minute": "Minute",
     "minute_plural": "Minutes",
+    "minute_short": "min",
+    "second_short": "sec",
     "hour": "Hour",
     "hour_plural": "Hours",
     "range": {
@@ -1952,7 +1954,7 @@
       "amount": {
         "title": "Amount",
         "banner": "Maximum spendable amount is",
-        "fees": "Fees",
+        "fees": "Max estimated fee",
         "standard": "Standard",
         "advanced": "Advanced",
         "nftQuantity": "Quantity"
@@ -1975,8 +1977,13 @@
         "useMax": "Send Max",
         "rippleTag": "Tag",
         "rippleTagPlaceholder": "Optional",
+        "edit": "Edit",
         "ethereumGasLimit": "Gas limit",
         "ethereumGasPrice": "Gas price",
+        "ethereumMaxBaseFee": "Max Base Fee ({{unitName}})",
+        "ethereumPriorityFee": "Priority Fee ({{unitName}})",
+        "nextBlock": "Next block: {{nextBaseFee}}",
+        "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}} {{unitName}}",
         "unitPerByte": "{{unit}} per byte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
@@ -2006,7 +2013,8 @@
       }
     },
     "footer": {
-      "estimatedFees": "Network fees"
+      "estimatedFees": "Network fees",
+      "totalToDebit": "Total to debit"
     }
   },
   "sign": {
@@ -4783,6 +4791,18 @@
     },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
+    },
+    "MaxBaseFeeLow": {
+      "title": "Max base fee is too low. Your transaction might stay pending for a while"
+    },
+    "MaxBaseFeeHigh": {
+      "title": "Your max base fee is overestimated. If applicable, you will be refunded by the network"
+    },
+    "PriorityFeeTooLow": {
+      "title": "Priority fee is lower than the recommended value"
+    },
+    "PriorityFeeTooHigh": {
+      "title": "Priority fee is higher than necessary. You might be overpaying"
     },
     "UnknownMCU": {
       "title": "Unknown MCU version",

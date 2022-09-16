@@ -392,6 +392,12 @@
       "title": "Sorry, this app is needed",
       "description": "Uninstall the Bitcoin or Ethereum app last."
     },
+    "MaxBaseFeeHigh": {
+      "title": "Your max base fee is overestimated. If applicable, you will be refunded by the network"
+    },
+    "MaxBaseFeeLow": {
+      "title": "Max base fee is too low. Your transaction might stay pending for a while"
+    },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
       "description": "Please check your internet connection."
@@ -434,6 +440,12 @@
     "PasswordsDontMatch": {
       "title": "Password does not match",
       "description": "Please try again."
+    },
+    "PriorityFeeTooHigh": {
+      "title": "Priority fee is higher than necessary. You might be overpaying"
+    },
+    "PriorityFeeTooLow": {
+      "title": "Priority fee is lower than the recommended value"
     },
     "SelectExchangesLoadError": {
       "title": "Unable to load",
@@ -2903,9 +2915,14 @@
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
+      "maxBaseFee" : "Max base fee",
+      "priorityFee" : "Priority fee",
+      "nextBlock": "Next block: {{nextBaseFee}}",
+      "suggestedPriorityFee": "Suggested: {{lowPriorityFee}} - {{highPriorityFee}}",
       "maxFees": "Max fees",
       "validateGasLimit": "Validate gas limit",
       "fees": "Fees",
+      "maxEstimatedFee": "Max estimated fee",
       "validateFees": "Validate Fees",
       "customizeFees": "Customize Fees",
       "memo": {

@@ -14,7 +14,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
-const GasSlider = React.memo(({ value, onChange, range }: any) => {
+const FeeSlider = React.memo(({ value, onChange, range }: any) => {
   const { colors } = useTheme();
   const index = reverseRangeIndex(range, value);
   const setValueIndex = useCallback(
@@ -37,22 +37,28 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
-  gasPrice: BigNumber;
+  feeAmount: BigNumber;
   onChange: (..._: Array<any>) => any;
   range: any;
+  title: string;
 };
 export default function EditFeeUnitEthereum({
   account,
   parentAccount,
   transaction,
-  gasPrice,
+  feeAmount,
   onChange,
   range,
+  title,
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
+  const { units } = mainAccount.currency;
+  const unit = units.length > 1 ? units[1] : units[0];
+
   const feeCustomUnit = transaction.feeCustomUnit;
+
   const onChangeF = useCallback(
     value => {
       onChange(value);
@@ -72,37 +78,25 @@ export default function EditFeeUnitEthereum({
           },
         ]}
       >
-        <View style={styles.gasPriceHeader}>
-          <LText style={styles.gasPriceLabel} semiBold>
-            {t("send.summary.gasPrice")}
+        <View style={styles.feeHeader}>
+          <LText style={styles.feeLabel} semiBold>
+            {t(title)}
           </LText>
           <View
-            style={[
-              styles.gasPrice,
-              {
-                backgroundColor: colors.lightLive,
-              },
-            ]}
+            style={[styles.gasPrice, { backgroundColor: colors.lightLive }]}
           >
-            <LText
-              style={[
-                styles.currencyUnitText,
-                {
-                  color: colors.live,
-                },
-              ]}
-            >
+            <LText style={[styles.currencyUnitText, { color: colors.live }]}>
               <CurrencyUnitValue
-                unit={mainAccount.unit || feeCustomUnit}
-                value={gasPrice}
+                unit={unit || feeCustomUnit}
+                value={feeAmount}
               />
             </LText>
           </View>
         </View>
         <View style={styles.container}>
-          <GasSlider
+          <FeeSlider
             defaultGas={serverGas}
-            value={gasPrice}
+            value={feeAmount}
             range={range}
             onChange={onChangeF}
           />
@@ -123,15 +117,15 @@ const styles = StyleSheet.create({
   sliderContainer: {
     paddingLeft: 0,
   },
-  gasPriceHeader: {
+  feeHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  gasPriceLabel: {
+  feeLabel: {
     fontSize: 20,
   },
-  gasPrice: {
+  feeAmount: {
     paddingVertical: 4,
     paddingHorizontal: 8,
   },

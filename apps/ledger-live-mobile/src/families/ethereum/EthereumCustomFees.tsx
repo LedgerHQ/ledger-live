@@ -1,19 +1,25 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { inferDynamicRange } from "@ledgerhq/live-common/range";
+import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
+import {
+  getGasLimit,
+  EIP1559ShouldBeUsed,
+} from "@ledgerhq/live-common/families/ethereum/transaction";
+
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { accountScreenSelector } from "../../reducers/accounts";
 import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
 import SectionSeparator from "../../components/SectionSeparator";
 import Button from "../../components/Button";
 import EthereumGasLimit from "./SendRowGasLimit";
 import type { RouteParams } from "../../screens/SendFunds/04-Summary";
+import LText from "../../components/LText";
 
 type Props = {
   navigation: any;
@@ -25,8 +31,12 @@ const options = {
   title: <Trans i18nKey="send.summary.fees" />,
   headerLeft: null,
 };
-const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
-let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
+const fallbackGasPrice = inferDynamicRange(new BigNumber(10e9));
+const fallbackMaxBaseFee = new BigNumber(10e9);
+// local cache of last values to prevent extra blinks
+let lastNetworkGasPrice: Range;
+let lastNetworkMaxBaseFee: BigNumber;
+let lastNetworkPriorityFee: Range;
 
 export default function EthereumCustomFees({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -37,14 +47,81 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   const networkGasPrice =
     transaction.networkInfo && transaction.networkInfo.gasPrice;
 
+  const { units } = (parentAccount || account).currency;
+  const feeUnit = units.length > 1 ? units[1] : units[0];
+
   if (!lastNetworkGasPrice && networkGasPrice) {
     lastNetworkGasPrice = networkGasPrice;
   }
-
-  const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
+  const gasPriceRange =
+    networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
   const [gasPrice, setGasPrice] = useState(
-    transaction.gasPrice || range.initial,
+    transaction.gasPrice || gasPriceRange.initial,
   );
+
+  const networkMaxBaseFee =
+    transaction.networkInfo && transaction.networkInfo.nextBaseFeePerGas;
+  if (!lastNetworkMaxBaseFee && networkMaxBaseFee) {
+    lastNetworkMaxBaseFee = networkMaxBaseFee;
+  }
+
+  const initialMaxBaseFee =
+    networkMaxBaseFee || lastNetworkMaxBaseFee || fallbackMaxBaseFee;
+  const maxBaseFeeMaxRangeMultiplier = 4;
+  const maxBaseFeeRange = inferDynamicRange(initialMaxBaseFee, {
+    minValue: new BigNumber(0),
+    maxValue: initialMaxBaseFee.times(maxBaseFeeMaxRangeMultiplier),
+  });
+
+  const [maxBaseFee, setMaxBaseFee] = useState(
+    transaction.maxBaseFeePerGas ||
+      networkMaxBaseFee ||
+      lastNetworkMaxBaseFee ||
+      fallbackMaxBaseFee,
+  );
+
+  const upperLimitMaxBaseFeeMultiplier = 2;
+  const maxBaseFeeError = useMemo(
+    () =>
+      maxBaseFee.isLessThan(lastNetworkMaxBaseFee)
+        ? "MaxBaseFeeLow"
+        : maxBaseFee.isGreaterThan(
+            lastNetworkMaxBaseFee.times(upperLimitMaxBaseFeeMultiplier),
+          )
+        ? "MaxBaseFeeHigh"
+        : null,
+    [maxBaseFee],
+  );
+
+  const networkPriorityFee =
+    transaction.networkInfo && transaction.networkInfo.maxPriorityFeePerGas;
+  if (!lastNetworkPriorityFee && networkPriorityFee) {
+    lastNetworkPriorityFee = networkPriorityFee;
+  }
+  const maxPriorityFeeMaxRangeMultiplier = new BigNumber(1.25);
+  const maxPriorityFeeRange =
+    networkPriorityFee || lastNetworkPriorityFee || fallbackGasPrice;
+  const maxPriorityFeeExtendedRange = inferDynamicRange(
+    maxPriorityFeeRange.initial,
+    {
+      minValue: new BigNumber(0),
+      maxValue: maxPriorityFeeRange.max.times(maxPriorityFeeMaxRangeMultiplier),
+    },
+  );
+  const [priorityFee, setPriorityFee] = useState(
+    transaction.maxPriorityFeePerGas || maxPriorityFeeRange.initial,
+  );
+
+  const priorityFeeError = useMemo(
+    () =>
+      priorityFee.isLessThan(maxPriorityFeeRange.min)
+        ? "PriorityFeeTooLow"
+        : priorityFee.isGreaterThan(maxPriorityFeeRange.max)
+        ? "PriorityFeeTooHigh"
+        : null,
+    [priorityFee],
+  );
+
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
   const onValidate = useCallback(() => {
     const bridge = getAccountBridge(account, parentAccount);
@@ -54,8 +131,10 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction: bridge.updateTransaction(transaction, {
-        userGasLimit: BigNumber(gasLimit || 0),
+        userGasLimit: new BigNumber(gasLimit || 0),
         gasPrice,
+        maxBaseFeePerGas: maxBaseFee,
+        maxPriorityFeePerGas: priorityFee,
         feesStrategy: "custom",
       }),
     });
@@ -67,19 +146,96 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
     route.params,
     transaction,
     gasPrice,
+    maxBaseFee,
+    priorityFee,
   ]);
   return (
     <View style={styles.root}>
-      <EditFeeUnitEthereum
-        account={account}
-        parentAccount={parentAccount}
-        transaction={transaction}
-        gasPrice={gasPrice}
-        range={range}
-        onChange={value => {
-          setGasPrice(value);
-        }}
-      />
+      {EIP1559ShouldBeUsed((parentAccount || account).currency) ? (
+        <>
+          <EditFeeUnitEthereum
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            feeAmount={maxBaseFee}
+            range={maxBaseFeeRange}
+            onChange={value => {
+              setMaxBaseFee(value);
+            }}
+            title={"send.summary.maxBaseFee"}
+          />
+          {maxBaseFeeError ? (
+            <LText style={styles.warning} color="orange">
+              <Trans i18nKey={`errors.${maxBaseFeeError}.title`} />
+            </LText>
+          ) : null}
+          <View style={styles.infoLabel}>
+            <LText color="grey">
+              <Trans
+                i18nKey="send.summary.nextBlock"
+                values={{
+                  nextBaseFee: formatCurrencyUnit(
+                    feeUnit,
+                    lastNetworkMaxBaseFee,
+                    {
+                      showCode: true,
+                      disableRounding: true,
+                    },
+                  ),
+                }}
+              />
+            </LText>
+          </View>
+          <EditFeeUnitEthereum
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            feeAmount={priorityFee}
+            range={maxPriorityFeeExtendedRange}
+            onChange={value => {
+              setPriorityFee(value);
+            }}
+            title={"send.summary.priorityFee"}
+          />
+          {priorityFeeError ? (
+            <LText style={styles.warning} color="orange">
+              <Trans i18nKey={`errors.${priorityFeeError}.title`} />
+            </LText>
+          ) : null}
+          <View style={styles.sectionSeparator}>
+            <LText color="grey">
+              <Trans
+                i18nKey="send.summary.suggestedPriorityFee"
+                values={{
+                  lowPriorityFee: formatCurrencyUnit(
+                    feeUnit,
+                    maxPriorityFeeRange.min,
+                  ),
+                  highPriorityFee: formatCurrencyUnit(
+                    feeUnit,
+                    maxPriorityFeeRange.max,
+                    {
+                      showCode: true,
+                    },
+                  ),
+                }}
+              />
+            </LText>
+          </View>
+        </>
+      ) : (
+        <EditFeeUnitEthereum
+          account={account}
+          parentAccount={parentAccount}
+          transaction={transaction}
+          feeAmount={gasPrice}
+          range={gasPriceRange}
+          onChange={value => {
+            setGasPrice(value);
+          }}
+          title={"send.summary.gasPrice"}
+        />
+      )}
 
       <SectionSeparator
         style={styles.sectionSeparator}
@@ -122,6 +278,9 @@ const styles = StyleSheet.create({
   sectionSeparator: {
     marginTop: 16,
   },
+  infoLabel: {
+    marginVertical: 16,
+  },
   accountContainer: {
     flex: 1,
     flexDirection: "row",
@@ -133,6 +292,10 @@ const styles = StyleSheet.create({
     textDecorationStyle: "solid",
     textDecorationLine: "underline",
     marginLeft: 8,
+  },
+  warning: {
+    fontSize: 14,
+    marginTop: 16,
   },
   flex: {
     flex: 1,

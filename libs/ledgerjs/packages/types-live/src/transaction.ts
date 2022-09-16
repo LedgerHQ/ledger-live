@@ -105,6 +105,7 @@ export type FeeStrategy = {
   label: string;
   unit?: Unit;
 };
+
 /**
  * TransactionStatus is a view of Transaction with general info to be used on the UI and status info.
  */

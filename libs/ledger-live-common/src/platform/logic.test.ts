@@ -168,6 +168,8 @@ describe("completeExchangeLogic", () => {
         nonce: 8,
         data: Buffer.from("Some data...", "hex"),
         gasPrice: new BigNumber("700000"),
+        maxBaseFeePerGas: null,
+        maxPriorityFeePerGas: null,
         userGasLimit: new BigNumber("1200000"),
         feesStrategy: "medium",
         estimatedGasLimit: null,
