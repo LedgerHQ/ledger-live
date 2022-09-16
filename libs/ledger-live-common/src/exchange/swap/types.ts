@@ -49,7 +49,7 @@ export type ExchangeRaw = {
 };
 export type DexRate = {
   provider: string;
-}
+};
 export type ExchangeRate = {
   rate: BigNumber;
   // NB Raw rate, for display
