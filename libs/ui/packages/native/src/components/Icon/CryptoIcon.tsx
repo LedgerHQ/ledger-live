@@ -14,7 +14,15 @@ export type Props = {
   circleIcon?: boolean;
   disabled?: boolean;
   tokenIcon?: string;
-  fallbackIcon?: React.ReactNode;
+  fallbackIcon?: JSX.Element;
+};
+
+type IconBoxProps = {
+  children: JSX.Element;
+} & Props;
+
+type FallbackProps = {
+  name: string;
 };
 
 export const iconNames = Array.from(
@@ -59,11 +67,15 @@ const TokenContainer = styled(Flex).attrs(
   }),
 )<{ size: number }>``;
 
-type IconBoxProps = {
-  children: JSX.Element;
-} & Props;
+function Fallback({ name }: FallbackProps) {
+  return (
+    <Text uppercase color="neutral.c70">
+      {name.slice(0, 1)}
+    </Text>
+  );
+}
 
-export const IconBox = ({
+const IconBox = ({
   children,
   color,
   backgroundColor,
@@ -95,18 +107,6 @@ export const IconBox = ({
   }
   return children;
 };
-
-type FallbackProps = {
-  name: string;
-};
-
-function Fallback({ name }: FallbackProps) {
-  return (
-    <Text uppercase color="neutral.c70">
-      {name.slice(0, 1)}
-    </Text>
-  );
-}
 
 const CryptoIcon = ({
   name,
@@ -140,7 +140,7 @@ const CryptoIcon = ({
     );
   }
   if (fallbackIcon) {
-    return <>{fallbackIcon}</>;
+    return fallbackIcon;
   }
   return <Fallback name={name} />;
 };
