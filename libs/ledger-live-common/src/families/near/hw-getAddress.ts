@@ -1,6 +1,6 @@
 import type { Resolver } from "../../hw/getAddress/types";
 
-import Near from "./hw-app-near";
+import Near from "@ledgerhq/hw-app-near";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
   const near = new Near(transport);

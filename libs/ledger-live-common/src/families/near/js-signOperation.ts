@@ -10,7 +10,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { open, close } from "../../hw";
 import { encodeOperationId } from "../../operation";
-import Near from "./hw-app-near";
+import Near from "@ledgerhq/hw-app-near";
 import { buildTransaction } from "./js-buildTransaction";
 
 const buildOptimisticOperation = (
