@@ -129,6 +129,7 @@ const SwapForm = () => {
   const provider = exchangeRate?.provider;
   const providerKYC = swapKYC?.[provider];
   const kycStatus = providerKYC?.status;
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   let idleTimeout = 0;
 
   // On provider change, reset banner and flow
@@ -172,7 +173,7 @@ const SwapForm = () => {
     return () => {
       clearInterval(refreshInterval);
     };
-  }, [swapTransaction.swap.from.amount]);
+  }, [swapError, swapTransaction?.swap]);
 
   const refreshIdle = () => {
     idleStateRef.current && setIdleState(false);
@@ -220,7 +221,6 @@ const SwapForm = () => {
     },
     [dispatch],
   );
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
 
   // Track errors
   useEffect(
