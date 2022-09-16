@@ -159,6 +159,7 @@ export default function ProviderRate({
               selected={rate.provider === selectedRate.provider}
               onSelect={setRate}
               centralized={false}
+              icon={rate.icon}
             />
           ))}
       </Box>

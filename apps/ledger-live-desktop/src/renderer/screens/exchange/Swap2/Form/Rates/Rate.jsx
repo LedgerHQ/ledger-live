@@ -45,6 +45,7 @@ export type Props = {
   fromCurrency?: $PropertyType<SwapSelectorStateType, "currency">,
   toCurrency?: $PropertyType<SwapSelectorStateType, "currency">,
   centralized?: boolean,
+  icon?: string,
 };
 
 function Rate({
@@ -54,11 +55,12 @@ function Rate({
   fromCurrency,
   toCurrency,
   centralized = true,
+  icon,
 }: Props) {
   const handleSelection = useCallback(() => onSelect(value), [value, onSelect]);
 
   const { toAmount: amount, provider } = value;
-  const ProviderIcon = provider && iconByProviderName[provider.toLowerCase()];
+  const ProviderIcon = provider && iconByProviderName[icon || provider.toLowerCase()];
 
   return (
     <ProviderContainer p={3} mb={3} fontWeight="500" selected={selected} onClick={handleSelection}>

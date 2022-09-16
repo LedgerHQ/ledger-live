@@ -169,7 +169,7 @@ const countries = {
   US: "United States",
 };
 
-const dex = ["oneinch", "paraswap"];
+const dex = ["1inch", "paraswap"];
 
 const swapBackendErrorCodes = {
   "100": JSONRPCResponseError,
