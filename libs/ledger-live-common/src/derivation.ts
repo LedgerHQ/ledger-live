@@ -181,6 +181,11 @@ const modes = Object.freeze({
     purpose: 1852,
     overridesDerivation: "1852'/1815'/<account>'/<node>/<address>",
   },
+  stacks_wallet: {
+    overridesDerivation: "44'/5757'/0'/0/<account>",
+    startsAt: 1,
+    tag: "third-party",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
@@ -199,6 +204,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   filecoin: ["gliflegacy", "glif"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
+  stacks: ["stacks_wallet"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
