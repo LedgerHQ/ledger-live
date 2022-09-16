@@ -1,23 +1,34 @@
-import BigNumber from "bignumber.js";
 import network from "../../../network";
-import { BinaryUtils } from "../utils/binary.utils";
-import {
-  HASH_TRANSACTION,
-  METACHAIN_SHARD,
-  MAX_PAGINATION_SIZE,
-  GAS,
-} from "../constants";
+import { METACHAIN_SHARD, MAX_PAGINATION_SIZE } from "../constants";
 import {
   ElrondDelegation,
-  ElrondProtocolTransaction,
   ElrondProvider,
+  ElrondTransactionAction,
   ElrondTransferOptions,
   ESDTToken,
   NetworkInfo,
   Transaction,
 } from "../types";
-import { decodeTransaction } from "./sdk";
-import { Operation } from "@ledgerhq/types-live";
+import { SignedOperation } from "@ledgerhq/types-live";
+
+const decodeTransactionMode = (action: ElrondTransactionAction): string => {
+  if (!action) {
+    return "send";
+  }
+
+  if (!action.category) {
+    return "send";
+  }
+
+  if (action.category !== "stake") {
+    return "send";
+  }
+
+  const mode = action.name;
+
+  return mode;
+};
+
 export default class ElrondApi {
   private API_URL: string;
   private DELEGATION_API_URL: string;
@@ -79,63 +90,10 @@ export default class ElrondApi {
     };
   }
 
-  async submit(operation: Operation, signature: string): Promise<string> {
-    const networkConfig: NetworkInfo = await this.getNetworkConfig();
-    const { chainID, gasPrice } = networkConfig;
-    let gasLimit = networkConfig.gasLimit;
-
-    const {
-      senders: [sender],
-      recipients: [receiver],
-      transactionSequenceNumber: nonce,
-      extra: { data },
-    } = operation;
-    let { value } = operation;
-
-    if (data) {
-      const dataDecoded = BinaryUtils.base64Decode(data);
-
-      const funcName: string = dataDecoded.split("@")[0];
-      switch (funcName) {
-        case "ESDTTransfer":
-          value = new BigNumber(0);
-          gasLimit = GAS.ESDT_TRANSFER;
-          break;
-        case "delegate":
-          gasLimit = GAS.DELEGATE;
-          break;
-        case "claimRewards":
-          value = new BigNumber(0);
-          gasLimit = GAS.CLAIM;
-          break;
-        case "withdraw":
-          value = new BigNumber(0);
-          gasLimit = GAS.DELEGATE;
-          break;
-        case "reDelegateRewards":
-          value = new BigNumber(0);
-          gasLimit = GAS.DELEGATE;
-          break;
-        case "unDelegate":
-          value = new BigNumber(0);
-          gasLimit = GAS.DELEGATE;
-          break;
-        default:
-          throw new Error(`Invalid function name ${funcName}`);
-      }
-    }
-
-    const transaction: ElrondProtocolTransaction = {
-      nonce: nonce ?? 0,
-      value: value.toString(),
-      receiver,
-      sender,
-      gasPrice,
-      gasLimit,
-      chainID,
-      signature,
-      data,
-      ...HASH_TRANSACTION,
+  async submit(signedOperation: SignedOperation): Promise<string> {
+    const transaction = {
+      ...signedOperation.signatureRaw,
+      signature: signedOperation.signature,
     };
 
     const {
@@ -161,14 +119,14 @@ export default class ElrondApi {
     let from = 0;
     let before = Math.floor(Date.now() / 1000);
     while (from < transactionsCount) {
-      let { data: transactions } = await network({
+      const { data: transactions } = await network({
         method: "GET",
         url: `${this.API_URL}/accounts/${addr}/transactions?after=${startAt}&before=${before}&size=${MAX_PAGINATION_SIZE}&withOperations=true&withScResults=true`,
       });
 
-      transactions = transactions.map((transaction) =>
-        decodeTransaction(transaction)
-      );
+      for (const transaction of transactions) {
+        transaction.mode = decodeTransactionMode(transaction.action);
+      }
 
       allTransactions = [...allTransactions, ...transactions];
 
@@ -191,11 +149,12 @@ export default class ElrondApi {
 
   async getESDTTransactionsForAddress(
     addr: string,
-    token: string
+    token: string,
+    startAt: number
   ): Promise<Transaction[]> {
     const { data: tokenTransactionsCount } = await network({
       method: "GET",
-      url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}`,
+      url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}&after=${startAt}`,
     });
 
     let allTokenTransactions: Transaction[] = [];
@@ -204,7 +163,7 @@ export default class ElrondApi {
     while (from <= tokenTransactionsCount) {
       const { data: tokenTransactions } = await network({
         method: "GET",
-        url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&before=${before}&size=${MAX_PAGINATION_SIZE}`,
+        url: `${this.API_URL}/accounts/${addr}/transactions?token=${token}&before=${before}&after=${startAt}&size=${MAX_PAGINATION_SIZE}`,
       });
 
       allTokenTransactions = [...allTokenTransactions, ...tokenTransactions];

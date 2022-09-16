@@ -55,9 +55,9 @@ export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
 };
 
 export const computeTransactionValue = async (
-  t: Transaction,
-  a: ElrondAccount,
-  ta: SubAccount | null
+  transaction: Transaction,
+  account: ElrondAccount,
+  tokenAccount: SubAccount | null
 ): Promise<{
   amount: BigNumber;
   totalSpent: BigNumber;
@@ -65,22 +65,24 @@ export const computeTransactionValue = async (
 }> => {
   let amount, totalSpent;
 
-  await buildTransaction(a, ta, t);
+  await buildTransaction(account, tokenAccount, transaction);
 
-  const estimatedFees = await getEstimatedFees(t);
+  const estimatedFees = await getEstimatedFees(transaction);
 
-  if (ta) {
-    amount = t.useAllAmount ? ta.balance : t.amount;
+  if (tokenAccount) {
+    amount = transaction.useAllAmount
+      ? tokenAccount.balance
+      : transaction.amount;
 
     totalSpent = amount;
   } else {
-    totalSpent = t.useAllAmount
-      ? a.spendableBalance
-      : new BigNumber(t.amount).plus(estimatedFees);
+    totalSpent = transaction.useAllAmount
+      ? account.spendableBalance
+      : new BigNumber(transaction.amount).plus(estimatedFees);
 
-    amount = t.useAllAmount
-      ? a.spendableBalance.minus(estimatedFees)
-      : new BigNumber(t.amount);
+    amount = transaction.useAllAmount
+      ? account.spendableBalance.minus(estimatedFees)
+      : new BigNumber(transaction.amount);
   }
 
   return { amount, totalSpent, estimatedFees };

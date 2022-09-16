@@ -7,7 +7,11 @@ import {
   ESDTToken,
   Transaction,
 } from "../types";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import type {
+  Operation,
+  OperationType,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
 import {
@@ -261,11 +265,13 @@ export const hasESDTTokens = async (address: string): Promise<boolean> => {
 export const getAccountESDTOperations = async (
   accountId: string,
   address: string,
-  tokenIdentifier: string
+  tokenIdentifier: string,
+  startAt: number
 ): Promise<Operation[]> => {
   const accountESDTTransactions = await api.getESDTTransactionsForAddress(
     address,
-    tokenIdentifier
+    tokenIdentifier,
+    startAt
   );
 
   return accountESDTTransactions.map((transaction) =>
@@ -295,26 +301,7 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
  * Broadcast blob to blockchain
  */
 export const broadcastTransaction = async (
-  operation: Operation,
-  signature: string
+  signedOperation: SignedOperation
 ): Promise<string> => {
-  return await api.submit(operation, signature);
-};
-
-export const decodeTransaction = (transaction: any): Transaction => {
-  if (!transaction.action) {
-    return transaction;
-  }
-
-  if (!transaction.action.category) {
-    return transaction;
-  }
-
-  if (transaction.action.category !== "stake") {
-    return transaction;
-  }
-
-  transaction.mode = transaction.action.name;
-
-  return transaction;
+  return await api.submit(signedOperation);
 };

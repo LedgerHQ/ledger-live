@@ -3,8 +3,6 @@ import { getMainAccount } from "../../account";
 import type { Transaction } from "./types";
 import { createTransaction } from "./js-transaction";
 import getEstimatedFees from "./js-getFeesForTransaction";
-import { GAS } from "./constants";
-import { ElrondEncodeTransaction } from "./encode";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 
 /**
@@ -35,38 +33,6 @@ const estimateMaxSpendable = async ({
 
   if (tokenAccount) {
     return tokenAccount.balance;
-  }
-
-  switch (tx?.mode) {
-    case "reDelegateRewards":
-      tx.gasLimit = GAS.DELEGATE;
-
-      tx.data = ElrondEncodeTransaction.reDelegateRewards();
-      break;
-    case "withdraw":
-      tx.gasLimit = GAS.DELEGATE;
-
-      tx.data = ElrondEncodeTransaction.withdraw();
-      break;
-    case "unDelegate":
-      tx.gasLimit = GAS.DELEGATE;
-
-      tx.data = ElrondEncodeTransaction.unDelegate(tx);
-      break;
-    case "delegate":
-      tx.gasLimit = GAS.DELEGATE;
-
-      tx.data = ElrondEncodeTransaction.delegate();
-      break;
-
-    case "claimRewards":
-      tx.gasLimit = GAS.CLAIM;
-
-      tx.data = ElrondEncodeTransaction.claimRewards();
-      break;
-
-    default:
-      break;
   }
 
   const fees = await getEstimatedFees(tx);

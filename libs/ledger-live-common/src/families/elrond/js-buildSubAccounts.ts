@@ -6,6 +6,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "../../account";
+import { mergeOps } from "../../bridge/jsHelpers";
 import { getAccountESDTOperations, getAccountESDTTokens } from "./api";
 
 async function buildElrondESDTTokenAccount({
@@ -27,7 +28,8 @@ async function buildElrondESDTTokenAccount({
   const operations = await getAccountESDTOperations(
     parentAccountId,
     accountAddress,
-    tokenIdentifier
+    tokenIdentifier,
+    0
   );
 
   const tokenAccount: TokenAccount = {
@@ -51,6 +53,35 @@ async function buildElrondESDTTokenAccount({
   return tokenAccount;
 }
 
+async function syncESDTTokenAccountOperations(
+  tokenAccount: TokenAccount,
+  address: string
+): Promise<TokenAccount> {
+  const oldOperations = tokenAccount?.operations || [];
+  // Needed for incremental synchronisation
+  const startAt = oldOperations.length
+    ? Math.floor(oldOperations[0].date.valueOf() / 1000)
+    : 0;
+
+  const extractedId = tokenAccount.token.id;
+  const tokenIdentifierHex = extractedId.split("/")[2];
+  const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
+
+  // Merge new operations with the previously synced ones
+  const newOperations = await getAccountESDTOperations(
+    tokenAccount.parentId,
+    address,
+    tokenIdentifier,
+    startAt
+  );
+  const operations = mergeOps(oldOperations, newOperations);
+
+  tokenAccount.operations = operations;
+  tokenAccount.operationsCount = operations.length;
+
+  return tokenAccount;
+}
+
 async function elrondBuildESDTTokenAccounts({
   currency,
   accountId,
@@ -71,7 +102,7 @@ async function elrondBuildESDTTokenAccounts({
 
   const tokenAccounts: TokenAccount[] = [];
 
-  const existingAccountByTicker = {}; // used for fast lookup
+  const existingAccountByTicker: { [key: string]: TokenAccount } = {}; // used for fast lookup
 
   const existingAccountTickers: string[] = []; // used to keep track of ordering
 
@@ -94,12 +125,20 @@ async function elrondBuildESDTTokenAccounts({
     const token = findTokenById(`elrond/esdt/${esdtIdentifierHex}`);
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
-      const tokenAccount = await buildElrondESDTTokenAccount({
-        parentAccountId: accountId,
-        accountAddress,
-        token,
-        balance: new BigNumber(esdt.balance),
-      });
+      let tokenAccount = existingAccountByTicker[token.ticker];
+      if (!tokenAccount) {
+        tokenAccount = await buildElrondESDTTokenAccount({
+          parentAccountId: accountId,
+          accountAddress,
+          token,
+          balance: new BigNumber(esdt.balance),
+        });
+      } else {
+        tokenAccount = await syncESDTTokenAccountOperations(
+          tokenAccount,
+          accountAddress
+        );
+      }
 
       if (tokenAccount) {
         tokenAccounts.push(tokenAccount);
