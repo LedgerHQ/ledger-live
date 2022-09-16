@@ -2275,11 +2275,8 @@
     "debug" : {
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
-      "featureFlagsOverride" : "Remplacer",
       "featureFlagsEdit" : "Modifier",
-      "featureFlagsRestore" : "Restaurer",
-      "featureFlagsDisplayValue" : "Afficher le code",
-      "featureFlagsHideValue" : "Masquer le code"
+      "featureFlagsRestore" : "Restaurer"
     }
   },
   "notifications" : {
@@ -3538,11 +3535,11 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
+      "tr" : "Türkçe",
+      "ja" : "日本語",
+      "ko" : "한국어",
       "pt" : "Português"
     }
   },
