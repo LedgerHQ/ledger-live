@@ -1072,8 +1072,8 @@
     "stepLanguage" : {
       "title" : "Выберите язык",
       "cta" : "Продолжить",
-      "changeDeviceLanguage" : "Поменять язык устройства?",
-      "changeDeviceLanguageDescription" : "Теперь язык Ledger Live — {{language}}. Хотели бы вы также использовать {{language}} язык на устройстве?",
+      "changeDeviceLanguage" : "{{language}} язык также доступен для {{deviceName}}.",
+      "changeDeviceLanguageDescription" : "Хотите сменить язык на {{language}}?",
       "warning" : {
         "title" : "Настроить на английском",
         "cta" : "Понятно!",
@@ -2275,11 +2275,8 @@
     "debug" : {
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
-      "featureFlagsOverride" : "Переписать",
       "featureFlagsEdit" : "Редактировать",
-      "featureFlagsRestore" : "Восстановить",
-      "featureFlagsDisplayValue" : "Показать значение",
-      "featureFlagsHideValue" : "Скрыть значение"
+      "featureFlagsRestore" : "Восстановить"
     }
   },
   "notifications" : {
@@ -3538,9 +3535,9 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Türk",
+      "tr" : "Türkçe",
       "ja" : "日本",
       "ko" : "한국인",
       "pt" : "Português"
@@ -3549,8 +3546,10 @@
   "deviceLocalization" : {
     "language" : "Язык интерфейса",
     "deviceLanguage" : "Язык устройства",
+    "chooseLanguage" : "Выберите язык для {{deviceName}}.",
     "changeLanguage" : "Поменять язык",
-    "allowLanguageInstallation" : "Разрешить установку языка",
+    "yesChangeLanguage" : "Да, поменять язык",
+    "allowLanguageInstallation" : "Разрешите установку языка на {{deviceName}}",
     "languageInstalled" : "Новый язык устройства — {{language}}",
     "firmwareUpdatePrompt" : {
       "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
