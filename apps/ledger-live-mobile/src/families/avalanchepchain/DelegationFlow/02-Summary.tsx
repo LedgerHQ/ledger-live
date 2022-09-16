@@ -129,6 +129,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         amount: new BigNumber(route.params.amount ?? new BigNumber(0)),
         recipient: chosenValidator.nodeID,
         endTime: new BigNumber(route.params.endTime ?? unixDefaultEndDate),
+        maxEndTime: new BigNumber(unixMaxEndDate),
       }),
     );
   }, [
