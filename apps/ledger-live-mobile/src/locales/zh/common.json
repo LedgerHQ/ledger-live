@@ -1072,8 +1072,8 @@
     "stepLanguage" : {
       "title" : "选择您的语言",
       "cta" : "继续",
-      "changeDeviceLanguage" : "要更改您的设备语言？",
-      "changeDeviceLanguageDescription" : "Ledger Live 现在支持{{language}}。您也想在设备上使用{{language}}吗？",
+      "changeDeviceLanguage" : "{{language}}同样适用于您的 {{deviceName}}",
+      "changeDeviceLanguageDescription" : "是否要将语言更改为{{language}}？",
       "warning" : {
         "title" : "以英语开始",
         "cta" : "知道了！",
@@ -2275,11 +2275,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live 中使用的已定义功能标志",
       "featureFlagsDesc" : "如果重新启动应用程序，将重置覆盖的值。仅接受有效的 JSON 字符串。",
-      "featureFlagsOverride" : "覆盖",
       "featureFlagsEdit" : "编辑",
-      "featureFlagsRestore" : "重置",
-      "featureFlagsDisplayValue" : "显示值",
-      "featureFlagsHideValue" : "隐藏值"
+      "featureFlagsRestore" : "重置"
     }
   },
   "notifications" : {
@@ -3538,10 +3535,10 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
       "tr" : "Türk",
-      "ja" : "日本",
+      "ja" : "日本語",
       "ko" : "한국인",
       "pt" : "Português"
     }
@@ -3549,9 +3546,11 @@
   "deviceLocalization" : {
     "language" : "语言",
     "deviceLanguage" : "设备语言",
+    "chooseLanguage" : "为您的 {{deviceName}} 选择语言。",
     "changeLanguage" : "更改语言",
-    "allowLanguageInstallation" : "允许安装语言",
-    "languageInstalled" : "设备语言已更改为 {{language}}",
+    "yesChangeLanguage" : "是，更改语言",
+    "allowLanguageInstallation" : "批准在 {{deviceName}} 上安装语言",
+    "languageInstalled" : "语言已更改为{{language}}",
     "firmwareUpdatePrompt" : {
       "title" : "将您的 {{deviceName}} 设置为 {{language}}？",
       "description" : "您的 {{deviceName}} 现已可以使用 {{language}}。您可以立即设置语言，或随时在 My Ledger（我的 Ledger）中更改设备语言。"
