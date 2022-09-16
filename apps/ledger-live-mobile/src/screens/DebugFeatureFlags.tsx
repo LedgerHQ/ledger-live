@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
   defaultFeatures,
@@ -7,8 +7,23 @@ import {
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
-import { BaseInput, Text, Flex, Button, Box, Tag } from "@ledgerhq/native-ui";
+import {
+  BaseInput,
+  Text,
+  Flex,
+  Button,
+  Box,
+  Tag,
+  SearchInput,
+  Switch,
+  Icons,
+} from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
+import { includes, lowerCase } from "lodash";
+import {
+  InputRenderLeftContainer,
+  InputRenderRightContainer,
+} from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Alert from "../components/Alert";
 
@@ -43,6 +58,14 @@ type EditSectionProps = {
   onChange: (_: string) => void;
 };
 
+const tryParse = (jsonString: string, fallback: any) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return fallback;
+  }
+};
+
 const EditSection = ({
   error,
   value,
@@ -52,86 +75,123 @@ const EditSection = ({
   disabled,
 }: EditSectionProps) => {
   const { t } = useTranslation();
+  const handleSwitchChange = useCallback(
+    newVal => {
+      onChange(JSON.stringify({ ...JSON.parse(value), enabled: newVal }));
+    },
+    [value, onChange],
+  );
   return (
-    <Flex p={3}>
+    <Flex>
       {error ? (
         <Flex mb={5}>
           <Alert type="warning">{error.toString()}</Alert>
         </Flex>
       ) : null}
-      <BaseInput value={value} onChange={onChange} />
+      <BaseInput
+        value={value}
+        onChange={onChange}
+        renderRight={() => (
+          <InputRenderRightContainer>
+            <Switch
+              checked={tryParse(value)?.enabled}
+              onChange={handleSwitchChange}
+            />
+          </InputRenderRightContainer>
+        )}
+      />
       <Flex flexDirection="row" mt={3}>
-        <Button onPress={onRestore}>
+        <Button type="main" outline onPress={onRestore}>
           {t("settings.debug.featureFlagsRestore")}
         </Button>
         <Button disabled={disabled} type="main" onPress={onOverride} ml="3">
-          {t("settings.debug.featureFlagsOverride")}
+          {t("common.apply")}
         </Button>
       </Flex>
     </Flex>
   );
 };
-export default function DebugPlayground() {
+
+export default function DebugFeatureFlags() {
   const { t } = useTranslation();
   const featureFlagsProvider = useFeatureFlags();
   const [error, setError] = useState<unknown | null>(null);
-  const [name, setName] = useState<FeatureId | null>(null);
-  const [prettyPrintedName, setPrettyPrintedName] = useState<FeatureId | null>(
-    null,
-  );
+  const [focusedName, setFocusedName] = useState<string | null>(null);
+  const [hiddenFlagName, setHiddenFlagName] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
   const [inputValues, setInputValues] = useState<{
-    // eslint-disable-next-line no-unused-vars
-    [key in FeatureId]?: string | undefined;
+    [key in FeatureId | string]?: string | undefined;
   }>({});
 
   const featureFlags = useMemo(() => {
-    // eslint-disable-next-line no-unused-vars
-    const features: { [key in FeatureId]: Feature } = {};
-    Object.keys(defaultFeatures).forEach((key: FeatureId) => {
-      const value = featureFlagsProvider.getFeature(key);
+    const features: { [key in FeatureId | string]: Feature } = {};
+    const featureKeys = Object.keys(defaultFeatures);
+    if (hiddenFlagName && !featureKeys.includes(hiddenFlagName))
+      featureKeys.push(hiddenFlagName);
+    featureKeys.forEach((key: FeatureId | string) => {
+      const value = featureFlagsProvider.getFeature(key as FeatureId);
       if (value) {
         features[key] = value;
       }
     });
     return features;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, featureFlagsProvider]);
+  }, [focusedName, featureFlagsProvider, hiddenFlagName]);
 
   const handleInputChange = useCallback(
     value => {
       setError(null);
-      if (!name) return;
+      if (!focusedName) return;
       setInputValues(currentValues => ({
         ...currentValues,
-        [name]: value,
+        [focusedName]: value,
       }));
     },
-    [name],
+    [focusedName],
   );
 
   const handleRestoreFeature = useCallback(() => {
     setError(null);
-    if (!name) return;
+    if (!focusedName) return;
     setInputValues(currentValues => ({
       ...currentValues,
-      [name]: undefined,
+      [focusedName]: undefined,
     }));
-    featureFlagsProvider.resetFeature(name);
-    setName(null);
-  }, [featureFlagsProvider, name]);
+    featureFlagsProvider.resetFeature(focusedName);
+  }, [featureFlagsProvider, focusedName]);
 
   const handleOverrideFeature = useCallback(() => {
     setError(null);
-    if (!name) return;
+    if (!focusedName) return;
     try {
       // Nb if value is invalid or missing, JSON parse will fail
-      const newValue = JSON.parse(inputValues[name]);
-      featureFlagsProvider.overrideFeature(name, newValue);
-      setName(null);
+      const newValue = JSON.parse(inputValues[focusedName]);
+      featureFlagsProvider.overrideFeature(focusedName as FeatureId, newValue);
     } catch (e) {
       setError(e);
     }
-  }, [inputValues, name, featureFlagsProvider]);
+  }, [inputValues, focusedName, featureFlagsProvider]);
+
+  const handleAddHiddenFlag = useCallback(
+    value => {
+      setHiddenFlagName(value);
+      setSearchInput(value);
+    },
+    [setSearchInput, setHiddenFlagName],
+  );
+
+  const handleSearch = useCallback(value => {
+    setSearchInput(value);
+  }, []);
+
+  const filteredFlags = useMemo(() => {
+    return Object.entries(featureFlags)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .filter(
+        ([name]) =>
+          !searchInput || includes(lowerCase(name), lowerCase(searchInput)),
+      );
+  }, [featureFlags, searchInput]);
 
   return (
     <NavigationScrollView>
@@ -143,11 +203,36 @@ export default function DebugPlayground() {
           <TagDisabled mx={2}>disabled flag</TagDisabled>
         </Flex>
         <Divider />
-        {Object.entries(featureFlags)
-          .sort((a, b) => a[0].localeCompare(b[0]))
-          .map(([flagName, value], index, arr) => (
+        <SearchInput
+          value={searchInput}
+          placeholder="Search flag"
+          onChange={handleSearch}
+          autoCapitalize="none"
+        />
+        <Flex mb={3} />
+        <BaseInput
+          value={undefined}
+          renderLeft={() => (
+            <InputRenderLeftContainer>
+              <Icons.PlusMedium color="neutral.c70" />
+            </InputRenderLeftContainer>
+          )}
+          placeholder="Add missing flag"
+          onChange={handleAddHiddenFlag}
+          autoCapitalize="none"
+        />
+        <Divider />
+        {filteredFlags.length === 0 ? (
+          <Text>{`No flag matching "${searchInput}"`}</Text>
+        ) : null}
+        {filteredFlags.map(([flagName, value], index, arr) => {
+          const isFocused = focusedName === flagName;
+          const isLast = index === arr.length - 1;
+          return (
             <View key={flagName}>
-              <Flex flexDirection="column" py={1}>
+              <Pressable
+                onPress={() => setFocusedName(isFocused ? null : flagName)}
+              >
                 <Flex
                   flexDirection="row"
                   alignItems="center"
@@ -170,18 +255,8 @@ export default function DebugPlayground() {
                     </Tag>
                   )}
                 </Flex>
-                {name !== flagName ? (
-                  <Button
-                    type="main"
-                    onPress={() => {
-                      setName(flagName);
-                    }}
-                  >
-                    {t("settings.debug.featureFlagsEdit")}
-                  </Button>
-                ) : null}
-              </Flex>
-              {name === flagName ? (
+              </Pressable>
+              {isFocused ? (
                 <EditSection
                   value={
                     inputValues[flagName] ||
@@ -194,35 +269,19 @@ export default function DebugPlayground() {
                   onRestore={handleRestoreFeature}
                 />
               ) : null}
-              {prettyPrintedName !== flagName ? (
-                <Button
-                  type="main"
-                  outline
-                  onPress={() => setPrettyPrintedName(flagName)}
-                >
-                  {t("settings.debug.featureFlagsDisplayValue")}
-                </Button>
-              ) : (
-                <Button
-                  type="main"
-                  outline
-                  onPress={() => setPrettyPrintedName("")}
-                >
-                  {t("settings.debug.featureFlagsHideValue")}
-                </Button>
-              )}
-              {prettyPrintedName === flagName && (
-                <Flex backgroundColor="neutral.c30">
+              {isFocused && (
+                <Flex mt={3} backgroundColor="neutral.c30">
                   <ScrollView horizontal>
-                    <Text>
+                    <Text selectable>
                       {JSON.stringify(featureFlags[flagName], null, 2)}
                     </Text>
                   </ScrollView>
                 </Flex>
               )}
-              {index < arr.length - 1 && <Divider />}
+              {!isLast && isFocused ? <Divider /> : null}
             </View>
-          ))}
+          );
+        })}
       </View>
     </NavigationScrollView>
   );

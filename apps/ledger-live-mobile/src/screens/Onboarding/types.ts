@@ -37,6 +37,5 @@ export type OnboardingContextProviderProps = {
 };
 type OnboardingMode = "full" | "alreadyInitialized" | "restore" | "qr";
 export type DeviceNames = "nanoS" | "nanoX" | "blue";
-// eslint-disable-next-line no-unused-vars
 type StepNavigateType = (arg0: any, arg1: any) => void;
 type Noop = (_: any) => any;

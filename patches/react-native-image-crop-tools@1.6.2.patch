@@ -1,0 +1,69 @@
+diff --git a/android/src/main/java/com/parsempo/ImageCropTools/ImageCropViewManager.kt b/android/src/main/java/com/parsempo/ImageCropTools/ImageCropViewManager.kt
+index be9b96b89df8c6d151e5199202e4c4cf16c04888..02c27023754f2b4969800394f619ddf2545498a4 100644
+--- a/android/src/main/java/com/parsempo/ImageCropTools/ImageCropViewManager.kt
++++ b/android/src/main/java/com/parsempo/ImageCropTools/ImageCropViewManager.kt
+@@ -2,6 +2,7 @@ package com.parsempo.ImageCropTools
+ 
+ import android.graphics.Bitmap
+ import android.net.Uri
++import com.canhub.cropper.CropImageView
+ import com.facebook.react.bridge.Arguments
+ import com.facebook.react.bridge.ReadableArray
+ import com.facebook.react.bridge.ReadableMap
+@@ -9,7 +10,6 @@ import com.facebook.react.common.MapBuilder
+ import com.facebook.react.uimanager.SimpleViewManager
+ import com.facebook.react.uimanager.ThemedReactContext
+ import com.facebook.react.uimanager.annotations.ReactProp
+-import com.canhub.cropper.CropImageView
+ import com.facebook.react.uimanager.events.RCTEventEmitter
+ import java.io.File
+ import java.util.*
+@@ -21,6 +21,7 @@ class ImageCropViewManager: SimpleViewManager<CropImageView>() {
+         const val SOURCE_URL_PROP = "sourceUrl"
+         const val KEEP_ASPECT_RATIO_PROP = "keepAspectRatio"
+         const val ASPECT_RATIO_PROP = "cropAspectRatio"
++        const val SCALE_TYPE_PROP = "scaleType"
+         const val SAVE_IMAGE_COMMAND = 1
+         const val ROTATE_IMAGE_COMMAND = 2
+         const val SAVE_IMAGE_COMMAND_NAME = "saveImage"
+@@ -105,4 +106,11 @@ class ImageCropViewManager: SimpleViewManager<CropImageView>() {
+             view.clearAspectRatio()
+         }
+     }
++
++    @ReactProp(name = SCALE_TYPE_PROP)
++    fun setScaleType(view: CropImageView, scaleType: Int) {
++        try {
++            view.scaleType = CropImageView.ScaleType.values()[scaleType]
++        } catch (e: Exception) {}
++    }
+ }
+diff --git a/dist/crop-view.component.d.ts b/dist/crop-view.component.d.ts
+index b6099fb1b2fad259cc103b6f8e0c0eae6580a7d3..322e4e462e51fe8775bfcb3fcc71f9188ea345ff 100644
+--- a/dist/crop-view.component.d.ts
++++ b/dist/crop-view.component.d.ts
+@@ -14,6 +14,7 @@ declare type Props = {
+         width: number;
+         height: number;
+     };
++    scaleType?: number;
+ };
+ declare class CropView extends React.PureComponent<Props> {
+     static defaultProps: {
+diff --git a/dist/crop-view.component.js b/dist/crop-view.component.js
+index 7c93dc5ec66293e607ac74945acb1db0e33d0f1f..13fadae3df73a77afeb67ee17b000022a0f4b20b 100644
+--- a/dist/crop-view.component.js
++++ b/dist/crop-view.component.js
+@@ -13,10 +13,10 @@ class CropView extends React.PureComponent {
+         };
+     }
+     render() {
+-        const { sourceUrl, style, onImageCrop, keepAspectRatio, aspectRatio } = this.props;
++        const { sourceUrl, style, onImageCrop, keepAspectRatio, aspectRatio, scaleType } = this.props;
+         return (React.createElement(RCTCropView, { ref: this.viewRef, sourceUrl: sourceUrl, style: style, onImageSaved: (event) => {
+                 onImageCrop(event.nativeEvent);
+-            }, keepAspectRatio: keepAspectRatio, cropAspectRatio: aspectRatio }));
++            }, keepAspectRatio: keepAspectRatio, cropAspectRatio: aspectRatio, scaleType }));
+     }
+ }
+ CropView.defaultProps = {

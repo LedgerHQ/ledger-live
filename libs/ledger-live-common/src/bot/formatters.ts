@@ -8,6 +8,7 @@ import {
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
 import type { Transaction } from "../generated/types";
+import { getContext } from "./bot-test-context";
 
 const formatTimeMinSec = (t: number) => {
   const totalsecs = Math.round(t / 1000);
@@ -18,7 +19,9 @@ const formatTimeMinSec = (t: number) => {
 };
 
 export const formatTime = (t: number): string =>
-  t > 3000
+  !t
+    ? "N/A"
+    : t > 3000
     ? t > 100000
       ? formatTimeMinSec(t)
       : `${Math.round(t / 100) / 10}s`
@@ -26,19 +29,29 @@ export const formatTime = (t: number): string =>
 
 const formatDt = (from, to) => (from && to ? formatTime(to - from) : "?");
 
-export function formatAppCandidate(appCandidate: AppCandidate) {
+export function formatAppCandidate(appCandidate: AppCandidate): string {
   return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
 }
 
-export function formatError(e: any) {
-  if (!e || typeof e !== "object" || e instanceof Error) return String(e);
-  let out;
-  try {
-    out = "raw object: " + JSON.stringify(e);
-  } catch (_e) {
+export function formatError(e: unknown, longform = false): string {
+  let out = "";
+  if (!e || typeof e !== "object") {
     out = String(e);
+  } else if (e instanceof Error) {
+    const ctx = getContext(e);
+    if (ctx) out += `TEST ${ctx}\n`;
+    out += String(e);
+  } else {
+    try {
+      out = "raw object: " + JSON.stringify(e);
+    } catch (_e) {
+      out = String(e);
+    }
   }
-  return out.replace(/\n/g, " ").slice(0, 400);
+  if (longform) {
+    return out.slice(0, 500);
+  }
+  return out.replace(/[`]/g, "").replace(/\n/g, " ").slice(0, 200);
 }
 
 export function formatReportForConsole<T extends Transaction>({
@@ -162,7 +175,7 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (error) {
-    str += `⚠️ ${formatError(error)}\n`;
+    str += `⚠️ ${formatError(error, true)}\n`;
   }
 
   return str;

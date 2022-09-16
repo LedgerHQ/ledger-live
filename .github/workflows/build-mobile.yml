@@ -110,6 +110,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -186,6 +187,7 @@ jobs:
         uses: ./tools/actions/turborepo-gh-cache
         with:
           server-token: "yolo"
+          cleanup-cache-folder: "true"
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -228,5 +230,13 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
+      - name: Cache LLM pods
+        uses: actions/cache@v3
+        with:
+          path: |
+            apps/ledger-live-mobile/ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm

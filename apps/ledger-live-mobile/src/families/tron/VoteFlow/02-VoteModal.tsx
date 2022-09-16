@@ -21,9 +21,7 @@ type Props = {
   vote: Vote;
   name: string;
   tronPower: number;
-  // eslint-disable-next-line no-unused-vars
   onChange: (vote: Vote) => void;
-  // eslint-disable-next-line no-unused-vars
   onRemove: (vote: Vote) => void;
   onClose: () => void;
   votes: Vote[];

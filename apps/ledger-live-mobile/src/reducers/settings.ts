@@ -402,7 +402,10 @@ const handlers: Record<string, any> = {
     ...state,
     sensitiveAnalytics: action.enabled,
   }),
-  SET_FIRST_CONNECTION_HAS_DEVICE: (state: SettingsState, payload) => ({
+  SET_FIRST_CONNECTION_HAS_DEVICE: (
+    state: SettingsState,
+    payload?: boolean,
+  ) => ({
     ...state,
     firstConnectionHasDevice: payload,
   }),

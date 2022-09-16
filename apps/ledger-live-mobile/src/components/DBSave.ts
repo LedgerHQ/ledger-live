@@ -7,9 +7,7 @@ import type { State } from "../reducers";
 type Props<Data, Stats> = {
   throttle: number;
   lense: (_: State) => Data;
-  // eslint-disable-next-line no-unused-vars
   getChangesStats: (next: State, prev: State) => Stats;
-  // eslint-disable-next-line no-unused-vars
   save: (data: Data, changedStats: Stats) => Promise<void>;
 };
 export default function useDBSaveEffect<D, S>({

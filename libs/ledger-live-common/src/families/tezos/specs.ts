@@ -8,6 +8,7 @@ import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getAccountDelegationSync, isAccountDelegating } from "./bakers";
 import whitelist from "./bakers.whitelist-default";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const maxAccount = 12;
 
@@ -27,6 +28,7 @@ function expectRevealed(account) {
 const tezosUnit = getCryptoCurrencyById("tezos").units[0];
 
 const safeMinimumForDestinationNotCreated = parseCurrencyUnit(tezosUnit, "0.6");
+const strictMin = parseCurrencyUnit(tezosUnit, "0.02");
 
 const tezos: AppSpec<Transaction> = {
   name: "Tezos",
@@ -35,12 +37,11 @@ const tezos: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "TezosWallet",
   },
+  genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: strictMin,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(parseCurrencyUnit(tezosUnit, "0.02")),
-      "balance is too low"
-    );
+    invariant(maxSpendable.gt(strictMin), "balance is too low");
   },
   mutations: [
     {

@@ -6,7 +6,6 @@ import { track } from "../../analytics";
 
 type Props = {
   search?: string;
-  // eslint-disable-next-line no-unused-vars
   refresh: (params: any) => void;
 };
 

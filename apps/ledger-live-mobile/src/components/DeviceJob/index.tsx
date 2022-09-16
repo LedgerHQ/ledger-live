@@ -76,12 +76,10 @@ class DeviceJob extends Component<
     // as soon as meta is set, the DeviceJob starts
     meta: Device | null | undefined;
     steps: Step[];
-    // eslint-disable-next-line no-unused-vars
     onDone: (arg0: Record<string, any>) => void;
     onCancel: () => void;
     editMode?: boolean;
     deviceModelId: DeviceNames;
-    // eslint-disable-next-line no-unused-vars
     onStepEntered?: (arg0: number, arg1: Record<string, any>) => void;
   },
   {

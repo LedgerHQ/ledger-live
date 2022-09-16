@@ -1,4 +1,4 @@
-import { info, saveState, setOutput } from "@actions/core";
+import { info, saveState, setOutput, getInput } from "@actions/core";
 import { spawn } from "child_process";
 import * as path from "path";
 import * as fs from "fs-extra";
@@ -7,6 +7,12 @@ import {
   logFileName,
   portFileName,
 } from "./utils/constants";
+
+const cleanupCacheFolder = getInput("cleanup-cache-folder", {
+  required: true,
+  trimWhitespace: true,
+});
+saveState("cleanupCacheFolder", cleanupCacheFolder);
 
 (async () => {
   fs.ensureDirSync(absoluteCacheDirectory);
@@ -23,6 +29,7 @@ import {
   subprocess.unref();
 
   let interval = null;
+  let timeout = null;
 
   try {
     await Promise.race<string | void>([
@@ -40,12 +47,15 @@ import {
           }
         }, 1000);
       }),
-      new Promise((_, reject) => setTimeout(reject, 10000)),
+      new Promise((_, reject) => {
+        timeout = setTimeout(reject, 10000);
+      }),
     ]);
   } catch (error) {
     console.error("Timeout while waiting for the server to boot.");
   } finally {
     clearInterval(interval);
+    clearTimeout(timeout);
   }
 
   info(`Server PID: ${subprocess.pid}`);

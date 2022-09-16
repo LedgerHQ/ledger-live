@@ -189,6 +189,35 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  arbitrum: {
+    type: "CryptoCurrency",
+    id: "arbitrum",
+    coinType: 60,
+    name: "Arbitrum",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "arbitrum",
+    color: "#28a0f0",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 42161,
+      networkId: 42161,
+      rpc: "https://arb1.arbitrum.io/rpc",
+      explorer: {
+        uri: "https://api.arbiscan.io",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://arbiscan.io/tx/$hash",
+        address: "https://arbiscan.io/address/$address",
+        token: "https://arbiscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   ark: {
     type: "CryptoCurrency",
     id: "ark",
@@ -576,10 +605,6 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "http://hubble.figment.io/celo/chains/celo/transactions/$hash",
-        address: "https://hubble.figment.io/celo/chains/celo/accounts/$address",
-      },
-      {
         tx: "https://explorer.celo.org/tx/$hash",
         address: "https://explorer.celo.org/address/$address",
       },
@@ -684,6 +709,42 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       {
         tx: "https://testnet.mintscan.io/txs/$hash",
         address: "https://testnet.mintscan.io/validators/$address",
+      },
+    ],
+  },
+  cronos: {
+    type: "CryptoCurrency",
+    id: "cronos",
+    coinType: 60,
+    name: "Cronos",
+    managerAppName: "Ethereum",
+    deviceTicker: "ETH", // FIXME this is a limiation of the app?
+    ticker: "CRO",
+    scheme: "cro",
+    color: "#002D74",
+    family: "evm",
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 25,
+      networkId: 25,
+      rpc: "https://evm.cronos.org",
+      explorer: {
+        uri: "https://api.cronoscan.com",
+        type: "etherscan",
+      },
+    },
+    units: [
+      {
+        name: "CRO",
+        code: "CRO",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://cronoscan.com/tx/$hash",
+        address: "https://cronoscan.com/address/$address",
+        token: "https://cronoscan.com/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -911,6 +972,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     color: "#1b46c2",
     family: "elrond",
     blockAvgTime: 6,
+    deviceTicker: "EGLD",
     units: [
       {
         name: "EGLD",
@@ -1112,6 +1174,35 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
+  fantom: {
+    type: "CryptoCurrency",
+    id: "fantom",
+    coinType: 60,
+    name: "Fantom",
+    managerAppName: "Ethereum",
+    ticker: "FTM",
+    scheme: "fantom",
+    color: "#1969ff",
+    family: "evm",
+    units: ethereumUnits("FTM", "FTM"),
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 250,
+      networkId: 250,
+      rpc: "https://rpcapi.fantom.network",
+      explorer: {
+        uri: "https://api.ftmscan.com",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://ftmscan.com/tx/$hash",
+        address: "https://ftmscan.com/address/$address",
+        token: "https://ftmscan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   fic: {
     type: "CryptoCurrency",
     id: "fic",
@@ -1130,6 +1221,36 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
+  },
+  flare: {
+    type: "CryptoCurrency",
+    id: "flare",
+    coinType: 60,
+    name: "Flare",
+    managerAppName: "Ethereum",
+    deviceTicker: "ETH", // FIXME this is a limiation of the app?
+    ticker: "FLR",
+    scheme: "flare",
+    color: "#D95F6C",
+    family: "evm",
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 14,
+      networkId: 14,
+      rpc: "https://flare-api.flare.network/ext/bc/C/rpc",
+      explorer: {
+        uri: "https://flare-explorer.flare.network",
+        type: "blockscout",
+      },
+    },
+    units: ethereumUnits("FLR", "FLR"),
+    explorerViews: [
+      {
+        tx: "https://flare-explorer.flare.network/tx/$hash/internal-transactions",
+        address:
+          "https://flare-explorer.flare.network/address/$address/transactions",
+      },
+    ],
   },
   flow: {
     type: "CryptoCurrency",
@@ -1646,11 +1767,12 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     id: "moonbeam",
     coinType: 60,
     name: "Moonbeam",
-    managerAppName: "Moonbeam",
+    managerAppName: "Ethereum",
+    deviceTicker: "ETH", // FIXME this is a limiation of the app?
     ticker: "GLMR",
     scheme: "moonbeam",
-    color: "#3D1D5A",
-    family: "ethereum",
+    color: "#5FC0C1",
+    family: "evm",
     units: [
       {
         name: "GLMR",
@@ -1660,6 +1782,12 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     ethereumLikeInfo: {
       chainId: 1284,
+      networkId: 1284,
+      rpc: "https://rpc.api.moonbeam.network",
+      explorer: {
+        uri: "https://api-moonbeam.moonscan.io",
+        type: "etherscan",
+      },
     },
     explorerViews: [
       {
@@ -2198,16 +2326,21 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     id: "songbird",
     coinType: 60,
     name: "Songbird",
-    managerAppName: "Songbird",
+    managerAppName: "Ethereum",
+    deviceTicker: "ETH", // FIXME this is a limiation of the app?
     ticker: "SGB",
     scheme: "songbird",
-    color: "#000000",
-    family: "ethereum",
+    color: "#61ACD4",
+    family: "evm",
     ethereumLikeInfo: {
       baseChain: "mainnet",
       chainId: 19,
       networkId: 19,
-      hardfork: "berlin",
+      rpc: "https://songbird.towolabs.com/rpc",
+      explorer: {
+        uri: "https://songbird-explorer.flare.network",
+        type: "blockscout",
+      },
     },
     units: ethereumUnits("SGB", "SGB"),
     explorerViews: [
@@ -2618,7 +2751,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "Thundercore",
     ticker: "TT",
     scheme: "thundercore",
-    color: "#000",
+    color: "#0844D2",
     family: "ethereum",
     ethereumLikeInfo: {
       chainId: 108,
@@ -2630,7 +2763,12 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 18,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://viewblock.io/thundercore/tx/$hash",
+        address: "https://viewblock.io/thundercore/address/$address",
+      },
+    ],
   },
   tomo: {
     type: "CryptoCurrency",
@@ -3003,7 +3141,7 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     managerAppName: "Zilliqa",
     ticker: "ZIL",
     scheme: "zilliqa",
-    color: "#000",
+    color: "#2CC0BE",
     family: "zilliqa",
     units: [
       {
@@ -3012,7 +3150,12 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         magnitude: 12,
       },
     ],
-    explorerViews: [],
+    explorerViews: [
+      {
+        tx: "https://viewblock.io/zilliqa/tx/$hash",
+        address: "https://viewblock.io/zilliqa/address/$address",
+      },
+    ],
   },
   crypto_org: {
     type: "CryptoCurrency",
