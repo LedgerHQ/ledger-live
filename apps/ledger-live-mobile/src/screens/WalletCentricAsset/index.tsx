@@ -53,6 +53,12 @@ type Props = {
   route: { params: RouteParams };
 };
 
+// @FIXME workarround for main tokens
+const tokenIDToMarketID = {
+  "ethereum/erc20/usd_tether__erc20_": "tether",
+  "ethereum/erc20/usd__coin": "usd",
+};
+
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
 );
@@ -86,7 +92,11 @@ const AssetScreen = ({ route }: Props) => {
     useSingleCoinMarketData();
 
   useEffect(() => {
-    selectCurrency(currency.id, currency, "24h");
+    selectCurrency(
+      tokenIDToMarketID[currency.id] || currency.id,
+      currency,
+      "24h",
+    );
     return () => selectCurrency();
   }, [currency, selectCurrency]);
 
@@ -172,7 +182,7 @@ const AssetScreen = ({ route }: Props) => {
           currencyTicker={currency.ticker}
         />
       </SectionContainer>,
-      ...(isCryptoCurrency && selectedCoinData?.price
+      ...(selectedCoinData?.price
         ? [
             <SectionContainer px={6} isLast={cryptoAccountsEmpty}>
               <SectionTitle

@@ -24,7 +24,7 @@ export default function PostBuyDeviceSetupNanoWallScreen() {
         screen: ScreenName.OnboardingDeviceSelection,
       },
     });
-  }, [navigation]);
+  }, [navigation, setFirstTimeOnboarding, setShowWelcome]);
 
   return (
     <SafeAreaView

@@ -104,7 +104,7 @@ export const FabButtonBarProvider = ({
         },
       });
     },
-    [navigation],
+    [navigation, navigationProps],
   );
 
   const onPress = useCallback(

@@ -52,23 +52,32 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
 );
 
+// @FIXME workarround for main tokens
+const tokenIDToMarketID = {
+  "ethereum/erc20/usd_tether__erc20_": "tether",
+  "ethereum/erc20/usd__coin": "usd",
+};
+
 const ReadOnlyAssetScreen = ({ route }: Props) => {
   const { t } = useTranslation();
   const currency = route?.params?.currency;
   const { colors } = useTheme();
   const useCounterValue = useSelector(countervalueFirstSelector);
-  const isCryptoCurrency = currency?.type === "CryptoCurrency";
 
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
 
-  const assetPortfolio = usePortfolio();
+  const assetPortfolio = usePortfolio([], {});
   const { selectedCoinData, selectCurrency, counterCurrency } =
     useSingleCoinMarketData();
 
   useEffect(() => {
-    selectCurrency(currency.id, currency, "24h");
+    selectCurrency(
+      tokenIDToMarketID[currency.id] || currency.id,
+      currency,
+      "24h",
+    );
   }, [currency, selectCurrency]);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
@@ -104,7 +113,7 @@ const ReadOnlyAssetScreen = ({ route }: Props) => {
         <FabAssetActions currency={currency} />
         <EmptyAccountCard currencyTicker={currency.ticker} />
       </SectionContainer>,
-      ...(isCryptoCurrency && selectedCoinData?.price
+      ...(selectedCoinData?.price
         ? [
             <SectionContainer px={6}>
               <SectionTitle

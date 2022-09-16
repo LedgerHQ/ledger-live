@@ -108,9 +108,11 @@ export default function useAssetActions({
                 },
               ],
               disabled: areAccountsBalanceEmpty,
-              modalOnDisabledClick: {
-                component: ZeroBalanceDisabledModalContent,
-              },
+              modalOnDisabledClick: !readOnlyModeEnabled
+                ? {
+                    component: ZeroBalanceDisabledModalContent,
+                  }
+                : undefined,
             },
           ]
         : []),
