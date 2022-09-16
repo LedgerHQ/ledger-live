@@ -1,4 +1,4 @@
-name: "[Bot] 'EVM Light Int on Phosphore'"
+name: "[Bot] 'Ethereum on Phosphore'"
 on:
   push:
     branches:
