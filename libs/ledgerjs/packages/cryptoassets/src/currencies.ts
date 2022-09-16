@@ -3160,6 +3160,11 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         code: "STX",
         magnitude: 6,
       },
+      {
+        name: "uSTX",
+        code: "uSTX",
+        magnitude: 0,
+      },
     ],
     explorerViews: [
       {
