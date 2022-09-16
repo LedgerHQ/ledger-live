@@ -713,7 +713,7 @@
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImagePreviewError" : {
-      "title" : "Preview of the image failed",
+      "title" : "فشل عرض الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImageProcessingError" : {
@@ -1072,8 +1072,8 @@
     "stepLanguage" : {
       "title" : "اختر لغتك",
       "cta" : "متابعة",
-      "changeDeviceLanguage" : "هل تريد تغير لغة جهازك؟",
-      "changeDeviceLanguageDescription" : "Ledger Live الآن باللغة {{language}}. هل ترغب في استخدام اللغة {{language}} على جهازك أيضاً؟",
+      "changeDeviceLanguage" : "اللغة {{language}} متاحة أيضاً لجهازك {{deviceName}}",
+      "changeDeviceLanguageDescription" : "هل ترغب في تغيير لغته إلى {{language}}؟",
       "warning" : {
         "title" : "ابدأ باللغة الإنجليزية",
         "cta" : "فهمت!",
@@ -1605,26 +1605,26 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "هل تبحث عن {{productName}} خاصتك",
+        "description" : "يرجى التأكد من إلغاء قفل {{productName}} خاصتك وأنه تم تمكين البلوتوث"
       },
       "withoutProductName" : {
         "title" : "البحث عن الأجهزة",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "description" : "يرجى التأكد من تشغيل جهازك وإلغاء قفله وتمكين البلوتوث"
       },
       "alreadyPaired" : "تم الإقران بالفعل"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "تم الإقران مع {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "جارٍ الإقران مع {{deviceName}}",
+        "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "title" : "لم يتم إجراء الإقران بنجاح",
+        "subtitle" : "يبدو أنه قد حدث خطأ ما! تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة",
         "retryCta" : "أعد المحاولة"
       }
     }
@@ -2275,11 +2275,8 @@
     "debug" : {
       "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
       "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
-      "featureFlagsOverride" : "تجاوز",
       "featureFlagsEdit" : "تعديل",
-      "featureFlagsRestore" : "استعادة",
-      "featureFlagsDisplayValue" : "عرض القيمة",
-      "featureFlagsHideValue" : "إخفاء القيمة"
+      "featureFlagsRestore" : "استعادة"
     }
   },
   "notifications" : {
@@ -3549,9 +3546,11 @@
   "deviceLocalization" : {
     "language" : "اللغة",
     "deviceLanguage" : "لغة الجهاز",
+    "chooseLanguage" : "اختر لغة لجهازك {{deviceName}}.",
     "changeLanguage" : "تغيير اللغة",
-    "allowLanguageInstallation" : "السماح بتثبيت اللغة",
-    "languageInstalled" : "تم تغيير لغة الجهاز إلى {{language}}",
+    "yesChangeLanguage" : "نعم، غيّر اللغة",
+    "allowLanguageInstallation" : "وافق على تثبيت اللغة على {{deviceName}}",
+    "languageInstalled" : "تم تغيير اللغة إلى {{language}}",
     "firmwareUpdatePrompt" : {
       "title" : "تعيين {{deviceName}} خاصتك باللغة {{language}}؟",
       "description" : "اللغة {{language}} متاحة الآن لجهازك {{deviceName}}. يمكنك تعيينها الآن، أو تغيير لغة جهازك في أي وقت من My Ledger."
@@ -4760,8 +4759,8 @@
         "uploadFromPhone" : "قم بالتحميل من هاتفك"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "قُصّ الصورة",
+    "chooseConstrast" : "اختر التباين",
     "uploadAnotherImage" : "قم بتحميل صورة أخرى",
     "selectContrast" : "اختر مستوى التباين"
   },
