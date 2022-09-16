@@ -8,6 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { FlexBoxProps } from "../../Layout/Flex";
 import { Flex } from "../../Layout";
+import { I18nManager } from "react-native";
 
 export interface StoryBarProps {
   /**
@@ -80,7 +81,18 @@ function StoryBar({ full = false, isActive, duration }: StoryBarProps) {
 function StoriesIndicator({ activeIndex, slidesLength, duration }: StoriesIndicatorProps) {
   const storiesArray = useMemo(() => new Array(slidesLength).fill(0), [slidesLength]);
   return (
-    <Flex flexDirection={"row"} alignItems={"stretch"} width={"100%"}>
+    <Flex
+      flexDirection={"row"}
+      alignItems={"stretch"}
+      width={"100%"}
+      style={
+        I18nManager.isRTL
+          ? {
+              transform: [{ scaleX: -1 }],
+            }
+          : undefined
+      }
+    >
       {storiesArray.map((_, storyIndex) => (
         <StoryBar
           key={storyIndex}
