@@ -1071,7 +1071,7 @@
     },
     "stepLanguage": {
       "title": "Select your language",
-      "cta": "Continue",        
+      "cta": "Continue", 
       "changeDeviceLanguage": "{{language}} is also available for your {{deviceName}}",
       "changeDeviceLanguageDescription": "Would you like to change its language to {{language}}?",
       "warning": {
