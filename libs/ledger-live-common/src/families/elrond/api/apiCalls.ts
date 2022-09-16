@@ -1,13 +1,13 @@
 import network from "../../../network";
 import { METACHAIN_SHARD, MAX_PAGINATION_SIZE } from "../constants";
 import {
+  ElrondApiTransaction,
   ElrondDelegation,
   ElrondProvider,
   ElrondTransactionAction,
   ElrondTransferOptions,
   ESDTToken,
   NetworkInfo,
-  Transaction,
 } from "../types";
 import { SignedOperation } from "@ledgerhq/types-live";
 
@@ -109,13 +109,16 @@ export default class ElrondApi {
     return hash;
   }
 
-  async getHistory(addr: string, startAt: number): Promise<Transaction[]> {
+  async getHistory(
+    addr: string,
+    startAt: number
+  ): Promise<ElrondApiTransaction[]> {
     const { data: transactionsCount } = await network({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${startAt}`,
     });
 
-    let allTransactions: Transaction[] = [];
+    let allTransactions: ElrondApiTransaction[] = [];
     let from = 0;
     let before = Math.floor(Date.now() / 1000);
     while (from < transactionsCount) {
@@ -151,13 +154,13 @@ export default class ElrondApi {
     addr: string,
     token: string,
     startAt: number
-  ): Promise<Transaction[]> {
+  ): Promise<ElrondApiTransaction[]> {
     const { data: tokenTransactionsCount } = await network({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?token=${token}&after=${startAt}`,
     });
 
-    let allTokenTransactions: Transaction[] = [];
+    let allTokenTransactions: ElrondApiTransaction[] = [];
     let from = 0;
     let before = Math.floor(Date.now() / 1000);
     while (from <= tokenTransactionsCount) {

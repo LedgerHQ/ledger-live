@@ -80,9 +80,16 @@ export type ElrondTransactionMode =
  */
 export type Transaction = TransactionCommon & {
   mode: ElrondTransactionMode;
-  transfer?: ElrondTransferOptions;
   family: "elrond";
   fees: BigNumber | null | undefined;
+  data?: string;
+  gasLimit: number;
+};
+
+export type ElrondApiTransaction = {
+  mode: ElrondTransactionMode;
+  fees: BigNumber | null | undefined;
+  transfer?: ElrondTransferOptions;
   txHash?: string;
   sender?: string;
   receiver?: string;

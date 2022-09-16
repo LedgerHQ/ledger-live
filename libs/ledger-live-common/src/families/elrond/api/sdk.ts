@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import ElrondApi from "./apiCalls";
 import {
+  ElrondApiTransaction,
   ElrondDelegation,
   ElrondProvider,
   ElrondTransferOptions,
@@ -69,7 +70,7 @@ export const getAccountNonce = async (addr: string): Promise<Nonce> => {
 /**
  * Returns true if account is the signer
  */
-function isSender(transaction: Transaction, addr: string): boolean {
+function isSender(transaction: ElrondApiTransaction, addr: string): boolean {
   return transaction.sender === addr;
 }
 
@@ -77,7 +78,7 @@ function isSender(transaction: Transaction, addr: string): boolean {
  * Map transaction to an Operation Type
  */
 function getOperationType(
-  transaction: Transaction,
+  transaction: ElrondApiTransaction,
   addr: string
 ): OperationType {
   if (transaction.action && transaction.action.category == "stake") {
@@ -102,7 +103,7 @@ function getOperationType(
  * Map transaction to a correct Operation Value (affecting account balance)
  */
 function getOperationValue(
-  transaction: Transaction,
+  transaction: ElrondApiTransaction,
   addr: string,
   tokenIdentifier?: string
 ): BigNumber {
@@ -146,7 +147,7 @@ function getOperationValue(
 function transactionToOperation(
   accountId: string,
   addr: string,
-  transaction: Transaction,
+  transaction: ElrondApiTransaction,
   tokenIdentifier?: string
 ): Operation {
   const type = getOperationType(transaction, addr);
@@ -192,7 +193,7 @@ function transactionToOperation(
 
 export const getDelegationOperationAmount = (
   address: string,
-  transaction: Transaction
+  transaction: ElrondApiTransaction
 ): BigNumber | undefined => {
   if (transaction.mode === "send") {
     return undefined;
@@ -287,7 +288,7 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
 
   const transaction = new ElrondSdkTransaction({
     data: new TransactionPayload(t.data),
-    receiver: new Address(t.receiver),
+    receiver: new Address(t.recipient),
     chainID: NetworkConfig.getDefault().ChainID,
     gasLimit: new GasLimit(t.gasLimit),
   });

@@ -19,7 +19,7 @@ import {
   SignedOperation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-import { getDelegationOperationAmount } from "./api/sdk";
+import { BinaryUtils } from "./utils/binary.utils";
 
 function getOptimisticOperationType(
   transactionMode: ElrondTransactionMode
@@ -37,6 +37,23 @@ function getOptimisticOperationType(
       return "DELEGATE";
     default:
       return "OUT";
+  }
+}
+
+function getOptimisticOperationDelegationAmount(
+  transaction: Transaction
+): BigNumber | undefined {
+  let dataDecoded;
+  switch (transaction.mode) {
+    case "delegate":
+      return transaction.amount;
+
+    case "unDelegate":
+      dataDecoded = BinaryUtils.base64Decode(transaction.data ?? "");
+      return new BigNumber(`0x${dataDecoded.split("@")[1]}`);
+
+    default:
+      return undefined;
   }
 }
 
@@ -61,10 +78,7 @@ const buildOptimisticOperation = (
     value = transaction.amount;
   }
 
-  const delegationAmount = getDelegationOperationAmount(
-    account.freshAddress,
-    transaction
-  );
+  const delegationAmount = getOptimisticOperationDelegationAmount(transaction);
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
