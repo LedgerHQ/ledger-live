@@ -1,4 +1,4 @@
-import SHA224 from "crypto-js/SHA224";
+import SHA224 from "crypto-js/sha224";
 import { hexBuffer, intAsHexBytes } from "../../utils";
 import {
   EIP712Message,
