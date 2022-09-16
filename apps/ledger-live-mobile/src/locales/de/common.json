@@ -1072,8 +1072,8 @@
     "stepLanguage" : {
       "title" : "Wählen Sie Ihre Sprache",
       "cta" : "Weiter",
-      "changeDeviceLanguage" : "Möchten Sie die Sprache Ihres Geräts ändern?",
-      "changeDeviceLanguageDescription" : "Ledger Live ist jetzt auf {{language}}. Möchten Sie auch {{language}} auf Ihrem Gerät verwenden?",
+      "changeDeviceLanguage" : "{{language}} ist jetzt für {{deviceName}} verfügbar.",
+      "changeDeviceLanguageDescription" : "Möchten Sie die Sprache auf {{language}} umstellen?",
       "warning" : {
         "title" : "Erste Schritte auf Englisch",
         "cta" : "Verstanden!",
@@ -2275,11 +2275,8 @@
     "debug" : {
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
       "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
-      "featureFlagsOverride" : "Überschreiben",
       "featureFlagsEdit" : "Bearbeiten",
-      "featureFlagsRestore" : "Wiederherstellen",
-      "featureFlagsDisplayValue" : "Wert anzeigen",
-      "featureFlagsHideValue" : "Wert ausblenden"
+      "featureFlagsRestore" : "Wiederherstellen"
     }
   },
   "notifications" : {
@@ -3535,23 +3532,25 @@
     "no" : "Lieber nicht",
     "languages" : {
       "en" : "Englisch",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
+      "fr" : "Französisch",
+      "ru" : "Russisch",
+      "es" : "Spanisch",
+      "zh" : "Chinesisch",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "tr" : "Türkisch",
+      "ja" : "Japanisch",
+      "ko" : "Koreanisch",
+      "pt" : "Portugiesisch"
     }
   },
   "deviceLocalization" : {
     "language" : "Sprache",
     "deviceLanguage" : "Geräte-Sprache",
+    "chooseLanguage" : "Wählen Sie eine Sprache für {{deviceName}} aus.",
     "changeLanguage" : "Sprache wechseln",
-    "allowLanguageInstallation" : "Sprachinstallation zulassen",
-    "languageInstalled" : "Gerätesprache auf {{language}} gewechselt",
+    "yesChangeLanguage" : "Ja, Sprache umstellen",
+    "allowLanguageInstallation" : "Sprachinstallation auf {{deviceName}} genehmigen",
+    "languageInstalled" : "Sprache umgestellt auf {{language}}",
     "firmwareUpdatePrompt" : {
       "title" : "Ihr {{deviceName}} auf {{language}} einstellen?",
       "description" : "{{language}} ist jetzt für {{deviceName}} verfügbar. Sie können die Sprache Ihres Geräts jetzt einstellen oder jederzeit über My Ledger ändern."
