@@ -5,7 +5,6 @@ import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
-  Switch,
   Keyboard,
   SafeAreaView,
 } from "react-native";
@@ -13,10 +12,8 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -33,7 +30,6 @@ import {
   getReadableDate
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
-import { localeSelector } from "../../../reducers/settings";
 
 type Props = {
   navigation: any;

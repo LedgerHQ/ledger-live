@@ -10,7 +10,7 @@ import {
   getCurrencyColor,
 } from "@ledgerhq/live-common/currencies/index";
 import { useAvalancheFilteredValidators } from "@ledgerhq/live-common/families/avalanchepchain/react";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -44,13 +44,12 @@ import {
 import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 import {
   FIVE_MINUTES,
-  TWO_WEEKS,
   THREE_WEEKS,
   MINUTE,
   YEAR,
   getReadableDate,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { AccountLike } from "@ledgerhq/types-live";
 import { localeSelector } from "../../../reducers/settings";
 
 type Props = {

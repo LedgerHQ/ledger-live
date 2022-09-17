@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { AvalancheDelegation } from "@ledgerhq/live-common/families/avalanchepchain/types";
-import { Currency } from "@ledgerhq/live-common/types/index";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import CounterValue from "../../../components/CounterValue";
@@ -13,7 +13,7 @@ import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanche
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 
 type Props = {
   account: Account;

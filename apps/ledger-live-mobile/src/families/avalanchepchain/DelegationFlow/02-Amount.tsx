@@ -27,7 +27,6 @@ import Button from "../../../components/Button";
 import KeyboardView from "../../../components/KeyboardView";
 import CurrencyInput from "../../../components/CurrencyInput";
 import TranslatedError from "../../../components/TranslatedError";
-
 import { getFirstStatusError } from "../../helpers";
 
 type Props = {

@@ -10,7 +10,6 @@ import {
 import { Account, OperationType } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-
 import Section from "../../screens/OperationDetails/Section";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 

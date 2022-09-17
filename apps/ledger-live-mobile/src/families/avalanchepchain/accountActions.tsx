@@ -1,5 +1,5 @@
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { canDelegate } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 
 import { Icons } from "@ledgerhq/native-ui";

@@ -2,10 +2,9 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
-
 import ExternalLink from "../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import NavigationScrollView from "../../../components/NavigationScrollView";
@@ -34,7 +33,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, [navigation, route.params]);
 
   const howDelegationWorks = useCallback(() => {
-    Linking.openURL(urls.cosmosStakingRewards);
+    Linking.openURL(urls.avalanche.staking);
   }, []);
 
   return (
