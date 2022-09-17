@@ -101,9 +101,13 @@ export type AppSpec<T extends Transaction> = {
   // can implement generic invariants for a mutation transaction to be possible
   transactionCheck?: (arg: TransactionArg<T>) => void;
   // Implement a test that also runs on each mutation after the operation is applied to the account
+  // this allows to verify the effect of the transaction is correctly applied on the account
   test?: (arg0: TransactionTestInput<T>) => void;
   // Express the device actions to do (buttons,..) and validate the device screen
   genericDeviceAction: DeviceAction<T, any>;
+  // indicates to the engine what's the generally minimal amount we use to opt out from doing a transaction
+  // NB: at the moment it's purely informative and help inferring good "hints", but we could eventually automate it
+  minViableAmount?: BigNumber;
 };
 export type SpecReport<T extends Transaction> = {
   spec: AppSpec<T>;
@@ -114,6 +118,8 @@ export type SpecReport<T extends Transaction> = {
   accountsAfter?: Account[];
   mutations?: MutationReport<T>[];
   fatalError?: Error;
+  // express hints for the spec developers on things that could be improved
+  hintWarnings: string[];
 };
 export type MutationReport<T extends Transaction> = {
   resyncAccountsDuration: number;

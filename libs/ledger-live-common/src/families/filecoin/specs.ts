@@ -20,6 +20,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 5 * 60 * 1000,
+  minViableAmount: MIN_SAFE,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
   },

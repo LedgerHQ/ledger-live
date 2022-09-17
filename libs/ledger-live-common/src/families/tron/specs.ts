@@ -7,7 +7,11 @@ import sampleSize from "lodash/sampleSize";
 import get from "lodash/get";
 import type { Transaction, TronAccount } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+  pickSiblings,
+} from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -39,6 +43,7 @@ const tron: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: minimalAmount,
   mutations: [
     {
       name: "move 50% to another account",
@@ -97,7 +102,9 @@ const tron: AppSpec<Transaction> = {
     {
       name: "freeze 25% to bandwidth | energy",
       maxRun: 1,
-      transaction: ({ account, bridge, maxSpendable }) => {
+      transaction: ({ siblings, account, bridge, maxSpendable }) => {
+        expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
+
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         let amount = getDecimalPart(
           maxSpendable.div(4),

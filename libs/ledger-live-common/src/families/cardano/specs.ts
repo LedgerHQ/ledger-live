@@ -28,6 +28,7 @@ const cardano: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "CardanoADA",
   },
+  minViableAmount: minBalanceRequired,
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   mutations: [
