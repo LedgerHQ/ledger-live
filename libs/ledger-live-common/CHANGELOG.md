@@ -1,5 +1,30 @@
 # @ledgerhq/live-common
 
+## 27.3.0-nightly.1
+
+### Minor Changes
+
+- [#836](https://github.com/LedgerHQ/ledger-live/pull/836) [`68a0b01efc`](https://github.com/LedgerHQ/ledger-live/commit/68a0b01efcfd481cb8fe71ec22a2fc7217f25ec9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Support zcash v5 format transaction
+
+### Patch Changes
+
+- Updated dependencies [[`68a0b01efc`](https://github.com/LedgerHQ/ledger-live/commit/68a0b01efcfd481cb8fe71ec22a2fc7217f25ec9), [`e0915b34ba`](https://github.com/LedgerHQ/ledger-live/commit/e0915b34ba37d9906b6c65e7e42f87893c088325), [`4f66046ef7`](https://github.com/LedgerHQ/ledger-live/commit/4f66046ef78ebcd14e6d63639f54834e90e6547a)]:
+  - @ledgerhq/hw-app-btc@8.1.0-nightly.0
+  - @ledgerhq/devices@7.0.2-nightly.0
+  - @ledgerhq/cryptoassets@6.35.0-nightly.0
+  - @ledgerhq/hw-transport@6.27.5-nightly.0
+  - @ledgerhq/hw-app-eth@6.29.8-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.5-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.27.5-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.5-nightly.0
+  - @ledgerhq/hw-app-solana@6.27.5-nightly.0
+  - @ledgerhq/hw-app-str@6.27.5-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.5-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.5-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.5-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.5-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.5-nightly.0
+
 ## 27.3.0-nightly.0
 
 ### Minor Changes
