@@ -15,7 +15,11 @@ const getActions = ({ account }: { account: Account }) => {
       navigationParams: [
         NavigatorName.AvalancheDelegationFlow,
         {
-          screen: (account.avalanchePChainResources && account.avalanchePChainResources?.delegations.length > 0) ? ScreenName.AvalancheDelegationValidator : ScreenName.AvalancheDelegationStarted,
+          screen:
+            account.avalanchePChainResources &&
+            account.avalanchePChainResources?.delegations.length > 0
+              ? ScreenName.AvalancheDelegationValidator
+              : ScreenName.AvalancheDelegationStarted,
         },
       ],
       label: <Trans i18nKey="account.stake" />,

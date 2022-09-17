@@ -12,7 +12,14 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { Account } from "@ledgerhq/types-live";
-import { canDelegate } from "@ledgerhq/live-common/families/avalanchepchain/utils";
+import {
+  canDelegate,
+  isDefaultValidatorNode,
+} from "@ledgerhq/live-common/families/avalanchepchain/utils";
+import {
+  AvalancheDelegation,
+  AvalanchePChainAccount,
+} from "@ledgerhq/live-common/families/avalanchepchain/types";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
@@ -24,10 +31,7 @@ import LText from "../../../components/LText";
 import DelegationRow from "./Row";
 import DelegationLabelRight from "./LabelRight";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
-import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import { AvalancheDelegation } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import Alert from "../../../components/Alert";
-import { AvalanchePChainAccount } from "@ledgerhq/live-common/lib/families/avalanchepchain/types";
 
 type Props = {
   account: Account;

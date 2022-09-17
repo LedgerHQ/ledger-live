@@ -6,8 +6,8 @@ import LText from "../../../components/LText";
 import InfoModal from "../../../modals/Info";
 
 type Props = {
-  disabled?: boolean,
-  onPress: () => void,
+  disabled?: boolean;
+  onPress: () => void;
 };
 
 export default function DelegationLabelRight({ onPress, disabled }: Props) {
@@ -33,7 +33,9 @@ export default function DelegationLabelRight({ onPress, disabled }: Props) {
         data={[
           {
             title: t("avalanchepchain.info.delegationUnavailable.title"),
-            description: t("avalanchepchain.info.delegationUnavailable.description"),
+            description: t(
+              "avalanchepchain.info.delegationUnavailable.description",
+            ),
           },
         ]}
       />

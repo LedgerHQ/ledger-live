@@ -14,6 +14,14 @@ import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import {
+  FIVE_MINUTES,
+  TWO_WEEKS,
+  YEAR,
+  getReadableDate,
+} from "@ledgerhq/live-common/families/avalanchepchain/utils";
+import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -21,15 +29,7 @@ import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import KeyboardView from "../../../components/KeyboardView";
 import TranslatedError from "../../../components/TranslatedError";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { getFirstStatusError } from "../../helpers";
-import {
-  FIVE_MINUTES,
-  TWO_WEEKS,
-  YEAR,
-  getReadableDate
-} from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
 
 type Props = {
   navigation: any;
@@ -51,21 +51,17 @@ export default function DelegationEndDate({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account);
 
-  const {
-    transaction,
-    setTransaction,
-    status,
-    bridgePending,
-  } = useBridgeTransaction(() => {
-    return {
-      account,
-      transaction: {
-        ...route.params.transaction,
-        amount: new BigNumber(route.params.amount ?? 0),
-        mode: "delegate",
-      },
-    };
-  });
+  const { transaction, setTransaction, status, bridgePending } =
+    useBridgeTransaction(() => {
+      return {
+        account,
+        transaction: {
+          ...route.params.transaction,
+          amount: new BigNumber(route.params.amount ?? 0),
+          mode: "delegate",
+        },
+      };
+    });
 
   invariant(transaction, "transaction must be defined");
 

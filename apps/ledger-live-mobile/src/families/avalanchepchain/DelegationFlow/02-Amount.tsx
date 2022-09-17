@@ -14,9 +14,7 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction } from "@ledgerhq/live-common/families/avalanchepchain/types";
-import {
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
@@ -41,73 +39,73 @@ type RouteParams = {
 };
 
 export default function DelegationAmount({ navigation, route }: Props) {
-    const { colors } = useTheme();
-    const { account } = useSelector(accountScreenSelector(route));
-  
-    invariant(account?.type === "Account", "must be account");
-  
-    const [maxSpendable, setMaxSpendable] = useState(0);
-  
-    const bridge = getAccountBridge(account);
-  
-    const { transaction, setTransaction, status, bridgePending } =
-      useBridgeTransaction(() => {
-        return {
-          account,
-          transaction: {
-            ...route.params.transaction,
-            amount: new BigNumber(route.params.amount ?? 0),
-            mode: "delegate",
-          },
-        };
-      });
-  
-    invariant(transaction, "transaction must be defined");
-  
-    useEffect(() => {
-      let cancelled = false;
-      bridge.estimateMaxSpendable({ account, transaction }).then(estimate => {
-        if (cancelled) return;
-        setMaxSpendable(estimate.toNumber());
-      });
-  
-      return () => {
-        cancelled = true;
-      };
-    }, [transaction, setMaxSpendable]);
-  
-    const onChange = (amount: BigNumber) => {
-      console.log("AMOUNT: ", amount);
-      setTransaction(bridge.updateTransaction(transaction, { amount }));
-    };
+  const { colors } = useTheme();
+  const { account } = useSelector(accountScreenSelector(route));
 
-    console.log("STATUS: ", status);
-  
-    const toggleUseAllAmount = () => {
-      setTransaction(
-        bridge.updateTransaction(transaction, {
-          useAllAmount: !transaction.useAllAmount,
-        }),
-      );
+  invariant(account?.type === "Account", "must be account");
+
+  const [maxSpendable, setMaxSpendable] = useState(0);
+
+  const bridge = getAccountBridge(account);
+
+  const { transaction, setTransaction, status, bridgePending } =
+    useBridgeTransaction(() => {
+      return {
+        account,
+        transaction: {
+          ...route.params.transaction,
+          amount: new BigNumber(route.params.amount ?? 0),
+          mode: "delegate",
+        },
+      };
+    });
+
+  invariant(transaction, "transaction must be defined");
+
+  useEffect(() => {
+    let cancelled = false;
+    bridge.estimateMaxSpendable({ account, transaction }).then(estimate => {
+      if (cancelled) return;
+      setMaxSpendable(estimate.toNumber());
+    });
+
+    return () => {
+      cancelled = true;
     };
-  
-    const onContinue = () => {
-      navigation.navigate(ScreenName.AvalancheDelegationValidator, {
-        ...route.params,
-        amount: status.amount,
-      });
-    };
-  
-    const blur = useCallback(() => Keyboard.dismiss(), []);
-  
-    const { useAllAmount } = transaction;
-    const { amount } = status;
-    const unit = getAccountUnit(account);
-    const error =
-      amount.eq(0) || bridgePending
-        ? null
-        : getFirstStatusError(status, "errors");
-    const warning = getFirstStatusError(status, "warnings");
+  }, [transaction, setMaxSpendable]);
+
+  const onChange = (amount: BigNumber) => {
+    console.log("AMOUNT: ", amount);
+    setTransaction(bridge.updateTransaction(transaction, { amount }));
+  };
+
+  console.log("STATUS: ", status);
+
+  const toggleUseAllAmount = () => {
+    setTransaction(
+      bridge.updateTransaction(transaction, {
+        useAllAmount: !transaction.useAllAmount,
+      }),
+    );
+  };
+
+  const onContinue = () => {
+    navigation.navigate(ScreenName.AvalancheDelegationValidator, {
+      ...route.params,
+      amount: status.amount,
+    });
+  };
+
+  const blur = useCallback(() => Keyboard.dismiss(), []);
+
+  const { useAllAmount } = transaction;
+  const { amount } = status;
+  const unit = getAccountUnit(account);
+  const error =
+    amount.eq(0) || bridgePending
+      ? null
+      : getFirstStatusError(status, "errors");
+  const warning = getFirstStatusError(status, "warnings");
 
   return (
     <>
@@ -186,11 +184,7 @@ export default function DelegationAmount({ navigation, route }: Props) {
                   <Button
                     event="AvalancheDelegateAmountContinue"
                     type="primary"
-                    title={
-                      <Trans
-                        i18nKey={"common.continue"}
-                      />
-                    }
+                    title={<Trans i18nKey={"common.continue"} />}
                     onPress={onContinue}
                     disabled={!!status.errors.amount || bridgePending}
                   />

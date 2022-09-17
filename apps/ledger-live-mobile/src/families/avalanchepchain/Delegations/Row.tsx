@@ -5,15 +5,15 @@ import { AvalancheDelegation } from "@ledgerhq/live-common/families/avalanchepch
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import CounterValue from "../../../components/CounterValue";
-import ArrowRight from "../../../icons/ArrowRight";
-import LText from "../../../components/LText";
-import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
+import ValidatorImage from "../../cosmos/shared/ValidatorImage";
+import LText from "../../../components/LText";
+import ArrowRight from "../../../icons/ArrowRight";
+import CounterValue from "../../../components/CounterValue";
 
 type Props = {
   account: Account;

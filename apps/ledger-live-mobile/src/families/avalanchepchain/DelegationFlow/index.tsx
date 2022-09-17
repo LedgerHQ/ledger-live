@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
+import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
 import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
@@ -15,7 +16,6 @@ import SelectValidator from "../SelectValidator";
 import DelegationSummary from "./02-Summary";
 import DelegationValidationError from "./04-ValidationError";
 import DelegationValidationSuccess from "./04-ValidationSuccess";
-import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
 
 const totalSteps = "3";
 
@@ -81,9 +81,7 @@ function DelegationFlow() {
           headerRight: null,
           headerTitle: () => (
             <StepHeader
-              title={t(
-                "avalanchepchain.delegation.stepperHeader.amount",
-              )}
+              title={t("avalanchepchain.delegation.stepperHeader.amount")}
             />
           ),
         })}

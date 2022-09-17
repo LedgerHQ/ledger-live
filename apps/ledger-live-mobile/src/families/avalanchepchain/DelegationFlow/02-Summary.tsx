@@ -10,7 +10,7 @@ import {
   getCurrencyColor,
 } from "@ledgerhq/live-common/currencies/index";
 import { useAvalancheFilteredValidators } from "@ledgerhq/live-common/families/avalanchepchain/react";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -26,6 +26,18 @@ import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { useSelector } from "react-redux";
+import {
+  AvalanchePChainValidator,
+  Transaction,
+} from "@ledgerhq/live-common/families/avalanchepchain/types";
+import {
+  isDefaultValidatorNode,
+  FIVE_MINUTES,
+  THREE_WEEKS,
+  MINUTE,
+  YEAR,
+  getReadableDate,
+} from "@ledgerhq/live-common/families/avalanchepchain/utils";
 import { TrackScreen } from "../../../analytics";
 import { rgba } from "../../../colors";
 import Button from "../../../components/Button";
@@ -37,19 +49,6 @@ import { ScreenName } from "../../../const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorImage from "../ValidatorImage";
-import {
-  AvalanchePChainValidator,
-  Transaction,
-} from "@ledgerhq/live-common/families/avalanchepchain/types";
-import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import {
-  FIVE_MINUTES,
-  THREE_WEEKS,
-  MINUTE,
-  YEAR,
-  getReadableDate,
-} from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import { AccountLike } from "@ledgerhq/types-live";
 import { localeSelector } from "../../../reducers/settings";
 
 type Props = {

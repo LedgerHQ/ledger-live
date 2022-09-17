@@ -3,24 +3,20 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { useTheme } from "@react-navigation/native";
-import BigNumber from "bignumber.js";
+import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
+import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Touchable from "../../components/Touchable";
 import ValidatorImage from "./ValidatorImage";
-import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
-import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 
 const ValidatorRow = ({
   onPress,
   validator,
   account,
-  amount,
 }: {
   onPress: (validator: AvalanchePChainValidator) => void;
   validator: AvalanchePChainValidator;
   account: AccountLike;
-  amount: BigNumber;
 }) => {
   const onPressT = useCallback(() => {
     onPress(validator);

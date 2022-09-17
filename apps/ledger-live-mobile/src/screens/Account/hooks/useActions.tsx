@@ -51,7 +51,10 @@ export default function useActions({ account, parentAccount, colors }: Props) {
   );
 
   const canSend = useMemo(() => currency.id !== "avalanchepchain", [currency]);
-  const canReceive = useMemo(() => currency.id !== "avalanchepchain", [currency]);
+  const canReceive = useMemo(
+    () => currency.id !== "avalanchepchain",
+    [currency],
+  );
 
   const SendAction = {
     navigationParams: [

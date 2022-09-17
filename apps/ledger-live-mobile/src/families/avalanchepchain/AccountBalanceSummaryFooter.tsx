@@ -8,14 +8,14 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { AvalanchePChainAccount } from "@ledgerhq/live-common/lib/families/avalanchepchain/types";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
-import { AvalanchePChainAccount } from "@ledgerhq/live-common/lib/families/avalanchepchain/types";
 
 type Props = {
-  account: Account,
+  account: Account;
 };
 
 type InfoName = "available" | "delegated";
@@ -25,7 +25,8 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo();
 
-  const { spendableBalance, avalanchePChainResources } = account as AvalanchePChainAccount;
+  const { spendableBalance, avalanchePChainResources } =
+    account as AvalanchePChainAccount;
   const { stakedBalance } = avalanchePChainResources || {};
 
   const unit = getAccountUnit(account);
@@ -80,7 +81,11 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 }
 
 export default function AccountBalanceFooter({ account }: Props) {
-  if (!(account as AvalanchePChainAccount).avalanchePChainResources || account.balance.lte(0)) return null;
+  if (
+    !(account as AvalanchePChainAccount).avalanchePChainResources ||
+    account.balance.lte(0)
+  )
+    return null;
 
   return <AccountBalanceSummaryFooter account={account} />;
 }

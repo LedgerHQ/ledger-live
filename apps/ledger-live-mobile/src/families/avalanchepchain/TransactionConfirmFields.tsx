@@ -17,9 +17,9 @@ import {
 import Info from "../../icons/Info";
 
 type FieldProps = {
-  account: Account,
-  transaction: Transaction,
-  field: DeviceTransactionField,
+  account: Account;
+  transaction: Transaction;
+  field: DeviceTransactionField;
 };
 
 const getAvalancheAppDate = (unixTimestamp: number) =>
