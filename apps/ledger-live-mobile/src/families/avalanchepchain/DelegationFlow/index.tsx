@@ -3,7 +3,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
-import { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
 import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
@@ -73,18 +72,14 @@ function DelegationFlow() {
       <Stack.Screen
         name={ScreenName.AvalancheDelegationAmount}
         component={DelegationAmount}
-        options={({
-          route,
-        }: {
-          route: { params: { validator: AvalanchePChainValidator } };
-        }) => ({
-          headerRight: null,
+        options={{
+          headerRight: undefined,
           headerTitle: () => (
             <StepHeader
               title={t("avalanchepchain.delegation.stepperHeader.amount")}
             />
           ),
-        })}
+        }}
       />
 
       <Stack.Screen
