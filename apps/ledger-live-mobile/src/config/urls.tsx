@@ -143,7 +143,9 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
   },
   avalanche: {
-    staking: "https://support.ledger.com/hc/en-us/articles/360020765779"
+    staking: "https://support.ledger.com/hc/en-us/articles/360020765779",
+    learnMoreStakingParameters:
+      "https://docs.avax.network/nodes/validate/staking#staking-parameters-on-avalanche",
   },
   resources: {
     gettingStarted:
