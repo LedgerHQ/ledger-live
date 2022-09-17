@@ -45,7 +45,7 @@ type RouteParams = {
 
 export default function DelegationEndDate({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account } = useSelector(accountScreenSelector(route));
 
   invariant(account?.type === "Account", "must be account");
 

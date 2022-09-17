@@ -75,11 +75,8 @@ export default function DelegationAmount({ navigation, route }: Props) {
   }, [transaction, setMaxSpendable]);
 
   const onChange = (amount: BigNumber) => {
-    console.log("AMOUNT: ", amount);
     setTransaction(bridge.updateTransaction(transaction, { amount }));
   };
-
-  console.log("STATUS: ", status);
 
   const toggleUseAllAmount = () => {
     setTransaction(

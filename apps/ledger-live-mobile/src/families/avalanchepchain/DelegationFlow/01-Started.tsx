@@ -25,7 +25,6 @@ type Props = {
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.AvalancheDelegationValidator, {
       ...route.params,
