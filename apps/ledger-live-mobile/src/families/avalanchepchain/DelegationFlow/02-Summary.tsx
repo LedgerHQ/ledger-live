@@ -389,7 +389,7 @@ function SummaryWords({
     alwaysShowSign: false,
     showCode: true,
   });
-  const readableDate = getReadableDate(endTime, locale);
+  const readableDate = getReadableDate(endTime.toNumber(), locale);
   return (
     <>
       <Line>

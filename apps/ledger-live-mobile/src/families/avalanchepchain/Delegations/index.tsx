@@ -154,7 +154,7 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <ValidatorImage
-            isLedger={isDefaultValidatorNode(delegation?.nodeID)}
+            isLedger={isDefaultValidatorNode(delegation?.nodeID ?? "")}
             name={delegation?.nodeID.split("-")[1] ?? ""}
             size={size}
           />
@@ -204,7 +204,8 @@ function Delegations({ account }: Props) {
 }
 
 export default function AvalancheDelegations({ account }: Props) {
-  if (!account.avalanchePChainResources) return null;
+  if (!(account as AvalanchePChainAccount).avalanchePChainResources)
+    return null;
   return <Delegations account={account} />;
 }
 

@@ -30,6 +30,7 @@ import Button from "../../../components/Button";
 import KeyboardView from "../../../components/KeyboardView";
 import TranslatedError from "../../../components/TranslatedError";
 import { getFirstStatusError } from "../../helpers";
+import { localeSelector } from "../../../reducers/settings";
 
 type Props = {
   navigation: any;
@@ -46,6 +47,7 @@ type RouteParams = {
 export default function DelegationEndDate({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  const locale = useSelector(localeSelector);
 
   invariant(account?.type === "Account", "must be account");
 
@@ -92,8 +94,8 @@ export default function DelegationEndDate({ navigation, route }: Props) {
     Number(route.params.chosenValidator.endTime),
   );
 
-  const readableMinEndDate = getReadableDate(unixMinEndDate);
-  const readableMaxEndDate = getReadableDate(unixMaxEndDate);
+  const readableMinEndDate = getReadableDate(unixMinEndDate, locale);
+  const readableMaxEndDate = getReadableDate(unixMaxEndDate, locale);
 
   return (
     <>

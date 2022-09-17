@@ -4,6 +4,7 @@ import { canDelegate } from "@ledgerhq/live-common/families/avalanchepchain/util
 
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
+import { AvalanchePChainAccount } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import { NavigatorName, ScreenName } from "../../const";
 
 const getActions = ({ account }: { account: Account }) => {
@@ -16,8 +17,9 @@ const getActions = ({ account }: { account: Account }) => {
         NavigatorName.AvalancheDelegationFlow,
         {
           screen:
-            account.avalanchePChainResources &&
-            account.avalanchePChainResources?.delegations.length > 0
+            (account as AvalanchePChainAccount).avalanchePChainResources &&
+            (account as AvalanchePChainAccount).avalanchePChainResources
+              ?.delegations.length > 0
               ? ScreenName.AvalancheDelegationValidator
               : ScreenName.AvalancheDelegationStarted,
         },

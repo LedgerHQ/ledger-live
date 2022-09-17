@@ -8,6 +8,7 @@ import { Account } from "@ledgerhq/types-live";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import type { Transaction } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import { useTheme } from "@react-navigation/native";
+import BigNumber from "bignumber.js";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import {
@@ -22,8 +23,8 @@ type FieldProps = {
   field: DeviceTransactionField;
 };
 
-const getAvalancheAppDate = (unixTimestamp: number) =>
-  `${new Date(unixTimestamp * 1000)
+const getAvalancheAppDate = (unixTimestamp: BigNumber) =>
+  `${new Date(unixTimestamp.toNumber() * 1000)
     .toISOString()
     .split(".")[0]
     .replace("T", " ")} UTC`;
