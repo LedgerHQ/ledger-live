@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useMemo, ElementProps } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
@@ -11,7 +11,7 @@ import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { canDelegate } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
@@ -26,6 +26,8 @@ import DelegationLabelRight from "./LabelRight";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 import { AvalancheDelegation } from "@ledgerhq/live-common/families/avalanchepchain/types";
+import Alert from "../../../components/Alert";
+import { AvalanchePChainAccount } from "@ledgerhq/live-common/lib/families/avalanchepchain/types";
 
 type Props = {
   account: Account;
@@ -39,7 +41,7 @@ function Delegations({ account }: Props) {
   const currency = getAccountCurrency(mainAccount);
   const navigation = useNavigation();
 
-  const { avalanchePChainResources } = mainAccount;
+  const { avalanchePChainResources } = mainAccount as AvalanchePChainAccount;
   const delegations =
     (avalanchePChainResources && avalanchePChainResources.delegations) ?? [];
 
@@ -135,6 +137,13 @@ function Delegations({ account }: Props) {
 
   return (
     <View style={styles.root}>
+      {!canDelegate(account) && (
+        <Alert
+          type="warning"
+          learnMoreUrl={urls.avalanche.learnMoreStakingParameters}
+          title={t("avalanchepchain.delegation.notEnoughToDelegate")}
+        />
+      )}
       <DelegationDrawer
         isOpen={data && data.length > 0}
         onClose={onCloseDrawer}
