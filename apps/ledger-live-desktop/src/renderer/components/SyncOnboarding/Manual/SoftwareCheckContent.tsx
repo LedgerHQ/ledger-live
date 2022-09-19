@@ -22,6 +22,7 @@ const SoftwareCheckContent = ({
   return (
     <>
       <Bullet
+        mb={7}
         bulletText="1"
         status={genuineCheckStatus}
         text={

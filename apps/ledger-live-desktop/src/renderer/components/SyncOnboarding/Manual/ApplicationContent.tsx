@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Button, Flex, Text } from "@ledgerhq/react-ui";
 
 import Illustration from "~/renderer/components/Illustration";
-import { Bullet, Status } from "./shared";
+import { Bullet, Status, StepText } from "./shared";
 import Coins from "./assets/coins.png";
 
 export type Props = {
@@ -20,9 +20,7 @@ const InstallingApplicationContent = () => {
         <Bullet bulletText="2" status={Status.active} text={"Ethereum"} />
         <Bullet bulletText="3" status={Status.inactive} text={"Polygon"} />
       </Flex>
-      <Text color="palette.neutral.c70" variant="paragraph">
-        {t("syncOnboarding.manual.installApplications.info")}
-      </Text>
+      <StepText>{t("syncOnboarding.manual.installApplications.info")}</StepText>
     </Flex>
   );
 };
@@ -40,9 +38,7 @@ const ApplicationContent = ({ onComplete }: Props) => {
     <Flex flexDirection="column" alignItems="center" rowGap="24px">
       <Illustration lightSource={Coins} darkSource={Coins} size={106} height={40} />
       <Text variant="h5">{"Nano uses apps to enable secure blockchain transactions"}</Text>
-      <Text color="palette.neutral.c70" variant="paragraph">
-        {t("syncOnboarding.manual.installApplications.title")}
-      </Text>
+      <StepText>{t("syncOnboarding.manual.installApplications.title")}</StepText>
       <Flex flex="1" justifyContent="space-around" width="100%">
         <Button
           variant="main"

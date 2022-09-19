@@ -20,6 +20,7 @@ import RecoveryContent from "./RecoveryContent";
 import ApplicationContent from "./ApplicationContent";
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
+import { StepText } from "./shared";
 
 const shortResyncDelay = 1000;
 const longResyncDelay = 10000;
@@ -88,9 +89,12 @@ const SyncOnboardingManual = () => {
         status: "active",
         title: "Nano is connected",
         renderBody: () => (
-          <Text>
-            {`Continue setup on Nano This screen will change dynamically to provide you with relevant information while you set up Nano`}
-          </Text>
+          <Flex flexDirection="column">
+            <StepText mb={6}>{`Continue setup on Nano`}</StepText>
+            <StepText>
+              {`This screen will change dynamically to provide you with relevant information while you set up your Nano`}
+            </StepText>
+          </Flex>
         ),
       },
       {
@@ -98,9 +102,12 @@ const SyncOnboardingManual = () => {
         status: "inactive",
         title: "Set your PIN",
         renderBody: () => (
-          <Text>
-            {`Your PIN can be 4 to 8 digits long. Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
-          </Text>
+          <Flex flexDirection="column">
+            <StepText mb={6}>{`Your PIN can be 4 to 8 digits long`}</StepText>
+            <StepText>
+              {`Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
+            </StepText>
+          </Flex>
         ),
         estimatedTime: 120,
       },
@@ -137,7 +144,7 @@ const SyncOnboardingManual = () => {
         title: "Nano is ready",
       },
     ],
-    [t, handleSoftwareCheckComplete],
+    [t, handleSoftwareCheckComplete, handleInstallRecommendedApplicationComplete],
   );
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
@@ -264,7 +271,7 @@ const SyncOnboardingManual = () => {
         isOpen={isTroubleshootingDrawerOpen}
         onClose={() => setTroubleshootingDrawerOpen(false)}
       />
-      <Flex flex={1} px={8} py={4} alignItems="center">
+      <Flex flex={1} px="120px" py={0} alignItems="center">
         <Flex flex={1} flexDirection="column">
           <Flex alignItems="center" mb={8}>
             <Text variant="h4" fontSize="24px" fontWeight="semiBold">
@@ -282,7 +289,7 @@ const SyncOnboardingManual = () => {
         <Flex flex={1} justifyContent="center" alignItems="center">
           <Illustration
             style={{
-              height: 540,
+              height: 360,
               width: 240,
               backgroundSize: "contain",
             }}
