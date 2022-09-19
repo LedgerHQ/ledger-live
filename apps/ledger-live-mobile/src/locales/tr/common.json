@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Dilinizi seçin",
       "cta" : "Devam",
+      "changeDeviceLanguage" : "{{deviceName}} cihazınızı {{language}} dilinde de kullanabilirsiniz",
+      "changeDeviceLanguageDescription" : "Dili {{language}} yapmak ister misiniz?",
       "warning" : {
         "title" : "İngilizce olarak başlayın",
         "cta" : "Anladım!",
@@ -3547,9 +3549,15 @@
   "deviceLocalization" : {
     "language" : "Dil",
     "deviceLanguage" : "Cihaz Dili",
+    "chooseLanguage" : "{{deviceName}} cihazınız için bir dil seçin.",
     "changeLanguage" : "Dili değiştir",
-    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
-    "languageInstalled" : "Cihaz dili {{language}} oldu",
+    "yesChangeLanguage" : "Evet, dili değiştir",
+    "allowLanguageInstallation" : "{{deviceName}} cihazına dilin yüklenmesini onaylayın",
+    "languageInstalled" : "Dil {{language}} oldu",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
+      "description" : "{{deviceName}} cihazınızı artık {{language}} kullanabilirsiniz. Cihaz dilini şimdi ayarlayabilir ya da daha sonra My Ledger'dan istediğiniz zaman değiştirebilirsiniz."
+    },
     "installingLanguage" : "Dil yükleniyor",
     "languages" : {
       "english" : "İngilizce",
