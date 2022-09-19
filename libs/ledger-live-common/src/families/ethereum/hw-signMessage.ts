@@ -1,5 +1,6 @@
 import Eth, { isEIP712Message } from "@ledgerhq/hw-app-eth";
 import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/EIP712.types";
+import { getFiltersForMessage } from "@ledgerhq/hw-app-eth";
 import Transport from "@ledgerhq/hw-transport";
 import { TypedDataUtils } from "eth-sig-util";
 import { bufferToHex } from "ethereumjs-util";
@@ -133,4 +134,149 @@ const signMessage: EthSignMessage = async (
   };
 };
 
-export default { prepareMessageToSign, signMessage };
+/**
+ * Get the value at a specific path of an object and return it as a string or as an array of string
+ * Used recursively by getValueFromPath
+ *
+ * @see getValueFromPath
+ */
+const getValue = (
+  path: string,
+  value: Record<string, any> | Array<any> | string
+): Record<string, any> | Array<any> | string => {
+  if (typeof value === "object") {
+    if (Array.isArray(value)) {
+      return value.map((v) => getValue(path, v)).flat();
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(value, path)) {
+      throw new Error();
+    }
+    const result = value[path];
+    return typeof result === "object" ? result : result.toString();
+  }
+
+  return value.toString();
+};
+
+/**
+ * Using a path as a string, returns the value(s) of a json key without worrying about depth or arrays
+ * (e.g: 'to.wallets.[]' => ["0x123", "0x456"])
+ */
+const getValueFromPath = (
+  path: string,
+  eip721Message: EIP712Message
+): string | string[] => {
+  const splittedPath = path.split(".");
+  const { message } = eip721Message;
+
+  let value: any = message;
+  for (let i = 0; i <= splittedPath.length - 1; i++) {
+    const subPath = splittedPath[i];
+    const isLastElement = i >= splittedPath.length - 1;
+    if (subPath === "[]" && !isLastElement) continue;
+
+    value = getValue(subPath, value);
+  }
+
+  if (value === message) {
+    throw new Error();
+  }
+
+  return value as string | string[];
+};
+
+/**
+ * Gets the fields visible on the nano for a specific EIP712 message
+ */
+export const getNanoDisplayedInfosFor712 = (
+  message: Record<string, any>
+): { label: string; value: string | string[] }[] | null => {
+  if (!isEIP712Message(message)) {
+    return null;
+  }
+
+  const displayedInfos: { label: string; value: string | string[] }[] = [];
+  const filters = getFiltersForMessage(message);
+
+  if (!filters) {
+    const { types } = message;
+    const domainFields = types["EIP712Domain"].map(({ name }) => name);
+
+    if (domainFields.includes("name") && message.domain.name) {
+      displayedInfos.push({
+        label: "name",
+        value: message.domain.name,
+      });
+    }
+
+    if (domainFields.includes("version") && message.domain.version) {
+      displayedInfos.push({
+        label: "version",
+        value: message.domain.version,
+      });
+    }
+
+    if (domainFields.includes("chainId") && message.domain.chainId) {
+      displayedInfos.push({
+        label: "chainId",
+        value: message.domain.chainId.toString(),
+      });
+    }
+
+    if (
+      domainFields.includes("verifyingContract") &&
+      message.domain.verifyingContract
+    ) {
+      displayedInfos.push({
+        label: "verifyingContract",
+        value: message.domain.verifyingContract.toString(),
+      });
+    }
+
+    if (domainFields.includes("salt") && message.domain.salt) {
+      displayedInfos.push({
+        label: "salt",
+        value: message.domain.salt.toString(),
+      });
+    }
+
+    displayedInfos.push({
+      label: "Message hash",
+      value: "0x" + messageHash(message).toString("hex"),
+    });
+
+    return displayedInfos;
+  }
+
+  const { contractName, fields } = filters;
+  if (contractName && contractName.label) {
+    displayedInfos.push({
+      label: "Contract",
+      value: contractName.label,
+    });
+  }
+
+  if (message.domain.version) {
+    displayedInfos.push({
+      label: "version",
+      value: message.domain.version.toString(),
+    });
+  }
+
+  for (const field of fields) {
+    displayedInfos.push({
+      label: field.label,
+      value: getValueFromPath(field.path, message),
+    });
+  }
+
+  return displayedInfos;
+};
+
+export { isEIP712Message, getFiltersForMessage };
+
+export default {
+  prepareMessageToSign,
+  signMessage,
+};
