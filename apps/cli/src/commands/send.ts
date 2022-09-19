@@ -81,7 +81,6 @@ export default {
                           deviceId: opts.device || "",
                         })
                         .pipe(
-                          map(toSignOperationEventRaw),
                           // @ts-expect-error more voodoo stuff
                           ...(opts["disable-broadcast"] ||
                           getEnv("DISABLE_TRANSACTION_BROADCAST")
