@@ -8,7 +8,7 @@ import Rates from "../Rates";
 import ProvidersSection from "./ProvidersSection";
 import ProvidersValue, { NoValuePlaceholder } from "./ProvidersValue";
 
-export type SectionProviderProps = {
+export type SectionRateProps = {
   provider?: string,
   ratesState: RatesReducerState,
   fromCurrency: $PropertyType<SwapSelectorStateType, "currency">,
@@ -19,7 +19,7 @@ export type SectionProviderProps = {
   decentralizedSwapAvailable: boolean,
 };
 
-const SectionProvider = ({
+const SectionRate = ({
   provider,
   fromCurrency,
   toCurrency,
@@ -28,7 +28,7 @@ const SectionProvider = ({
   refreshTime,
   countdown,
   decentralizedSwapAvailable,
-}: SectionProviderProps) => {
+}: SectionRateProps) => {
   const rates = ratesState.value;
 
   return (
@@ -55,4 +55,4 @@ const SectionProvider = ({
   );
 };
 
-export default React.memo<SectionProviderProps>(SectionProvider);
+export default React.memo<SectionRateProps>(SectionRate);
