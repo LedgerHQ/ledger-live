@@ -11,7 +11,7 @@ import {
   GetAccountShape,
   GetAccountShapeArg0,
 } from "../../../../bridge/jsHelpers";
-import { encodeAccountId } from "../../../../account";
+import { decodeAccountId, encodeAccountId } from "../../../../account";
 import {
   fetchBalances,
   fetchBlockHeight,
@@ -110,13 +110,13 @@ export const mapTxToOps =
   };
 
 export const getAccountShape: GetAccountShape = async (info) => {
-  const { address, currency, rest = {}, derivationMode } = info;
+  const { initialAccount, address, currency, rest = {}, derivationMode } = info;
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress: address,
+    xpubOrAddress: reconciliatePublicKey(rest.publicKey, initialAccount),
     derivationMode,
   });
 
@@ -126,7 +126,6 @@ export const getAccountShape: GetAccountShape = async (info) => {
 
   const result = {
     id: accountId,
-    xpub: rest["publicKey"], // This field come from hw-getAddress result...
     balance: new BigNumber(balance.balance),
     spendableBalance: new BigNumber(balance.balance),
     operations: flatMap(rawTxs, mapTxToOps(accountId, info)),
@@ -135,3 +134,15 @@ export const getAccountShape: GetAccountShape = async (info) => {
 
   return result;
 };
+
+function reconciliatePublicKey(
+  publicKey: string | undefined,
+  initialAccount: Account | undefined
+): string {
+  if (publicKey) return publicKey;
+  if (initialAccount) {
+    const { xpubOrAddress } = decodeAccountId(initialAccount.id);
+    return xpubOrAddress;
+  }
+  throw new Error("publicKey wasn't properly restored");
+}
