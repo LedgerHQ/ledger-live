@@ -13,10 +13,9 @@ class SendRecipientFields extends PureComponent {
     const { confirmationsNb, account } = this.props;
     const pendingOperationError = new PendingOperation();
     const operations = account.pendingOperations.concat(account.operations);
-    const incomingTransactionPending =
-      operations.find(
-        op => op.type === "IN" && !isConfirmedOperation(op, account, confirmationsNb),
-      ) != null;
+    const incomingTransactionPending = operations.some(
+      op => op.type === "IN" && !isConfirmedOperation(op, account, confirmationsNb),
+    );
     return incomingTransactionPending ? (
       <Alert type={"warning"} mt={4}>
         <TranslatedError error={pendingOperationError} field="description" />
