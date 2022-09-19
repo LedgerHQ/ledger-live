@@ -22,9 +22,10 @@ const SelectDeviceContainer = styled(Flex).attrs({
 
 const TitleText = styled(Text).attrs({
   color: "neutral.c100",
+  fontSize: 32,
 })`
   position: absolute;
-  top: 90px;
+  top: 110px;
   align-self: center;
   pointer-events: none;
 `;
@@ -57,9 +58,7 @@ export function SelectDevice() {
         }
       />
       <DeviceSelector onClick={handleDeviceSelect} />
-      <TitleText variant="h3" fontSize="28px">
-        {t("onboarding.screens.selectDevice.title")}
-      </TitleText>
+      <TitleText variant="h1">{t("onboarding.screens.selectDevice.title")}</TitleText>
     </SelectDeviceContainer>
   );
 }

@@ -1,10 +1,14 @@
 import React from "react";
-import { Flex, Text, InfiniteLoader } from "@ledgerhq/react-ui";
-import { useTranslation } from "react-i18next";
+import { Flex, Text, InfiniteLoader, FlexBoxProps, Icons } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 
-import Check from "~/renderer/icons/Check";
 import InfoCircle from "~/renderer/icons/InfoCircle";
+
+export const StepText = styled(Text).attrs({
+  color: "neutral.c90",
+  variant: "body",
+  fontWeight: "medium",
+})``;
 
 export const BorderFlex = styled(Flex)`
   background-color: ${p => p.theme.colors.palette.neutral.c30};
@@ -12,8 +16,8 @@ export const BorderFlex = styled(Flex)`
 `;
 
 export const IconContainer = styled(BorderFlex).attrs({
-  width: 60,
-  height: 60,
+  width: 40,
+  height: 40,
   flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
@@ -52,39 +56,32 @@ export type StatusType =
   | "completed"
   | "failed";
 
-export const Bullet = ({
-  status,
-  bulletText,
-  text,
-  subText,
-}: {
+export type BulletProps = FlexBoxProps & {
   status: StatusType;
   bulletText?: string | number;
   text: string;
   subText?: string;
-}) => {
-  const theme = useTheme();
+};
+
+export const Bullet = ({ status, bulletText, text, subText, ...props }: BulletProps) => {
+  const { colors } = useTheme();
 
   return (
-    <Row mb={8}>
+    <Row {...props}>
       <IconContainer>
         {status === Status.active ? (
-          <InfiniteLoader />
+          <InfiniteLoader color="primary.c80" size={24} />
         ) : status === Status.completed ? (
-          <Check size={24} color={theme.colors.palette.success.c50} />
+          <Icons.CircledCheckSolidMedium size={24} color={colors.success.c60} />
         ) : status === Status.updateAvailable ? (
-          <InfoCircle size={24} color={theme.colors.palette.constant.purple} />
+          <InfoCircle size={24} color={colors.constant.purple} />
         ) : (
-          <Text fontSize="20px">{bulletText}</Text>
+          <Text variant="body">{bulletText}</Text>
         )}
       </IconContainer>
       <Column flex="1" ml={4}>
-        <Text variant="body">{text}</Text>
-        {subText && (
-          <Text mt={2} variant="small" color="palette.neutral.c80">
-            {subText}
-          </Text>
-        )}
+        <StepText>{text}</StepText>
+        {subText && <StepText variant="small">{subText}</StepText>}
       </Column>
     </Row>
   );
