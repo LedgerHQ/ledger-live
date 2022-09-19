@@ -47,7 +47,8 @@ export function filterServiceStatusIncidents(
   incidents: Incident[],
   tickers: string[] = []
 ): Incident[] {
-  if (!tickers || tickers.length === 0) return [];
+  if (!tickers || tickers.length === 0 || !incidents || incidents.length === 0)
+    return [];
 
   const tickersRegex = new RegExp(escapeRegExp(tickers.join("|")), "i");
   return incidents.filter(
