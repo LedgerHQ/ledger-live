@@ -149,12 +149,7 @@ const prepareTransaction = async (
   const { xpub } = a;
   const { recipient } = t;
 
-  if (
-    xpub &&
-    recipient &&
-    validateAddress(recipient).isValid &&
-    validateAddress(xpub).isValid
-  ) {
+  if (xpub && recipient && validateAddress(recipient).isValid) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
     // Check if recipient is valid
