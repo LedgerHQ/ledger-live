@@ -12,17 +12,17 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  RecipientRequired,
+  RecipientRequired
 } from "@ledgerhq/errors";
 import {
   AnchorMode,
   UnsignedTokenTransferOptions,
   estimateTransfer,
-  makeUnsignedSTXTokenTransfer,
+  makeUnsignedSTXTokenTransfer
 } from "@stacks/transactions/dist";
 import {
   AddressVersion,
-  TransactionVersion,
+  TransactionVersion
 } from "@stacks/transactions/dist/constants";
 
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
@@ -33,7 +33,7 @@ import {
   BroadcastFnSignature,
   Operation,
   SignOperationEvent,
-  SignOperationFnSignature,
+  SignOperationFnSignature
 } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape, getTxToBroadcast } from "./utils/utils";
@@ -45,6 +45,7 @@ import { getPath, isError } from "../utils";
 import { getMainAccount } from "../../../account";
 import { fetchBalances } from "./utils/api";
 import { patchOperationWithHash } from "../../../operation";
+import { validateAddress } from "./utils/addresses";
 
 const receive = makeAccountBridgeReceive();
 
@@ -57,7 +58,7 @@ const createTransaction = (): Transaction => {
     amount: new BigNumber(0),
     network: "mainnet",
     anchorMode: AnchorMode.Any,
-    useAllAmount: false,
+    useAllAmount: false
   };
 };
 
@@ -70,7 +71,7 @@ const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
 const sync = makeSync({ getAccountShape });
 
 const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { operation, signature },
+  signedOperation: { operation, signature }
 }) => {
   // log("debug", "[broadcast] start fn");
 
@@ -99,11 +100,11 @@ const getTransactionStatus = async (
   let { amount } = t;
 
   if (!recipient) errors.recipient = new RecipientRequired();
+  else if (!validateAddress(recipient).isValid)
+    errors.recipient = new InvalidAddress();
   else if (address === recipient)
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   else if (!fee || fee.eq(0)) errors.gas = new FeeNotLoaded();
-
-  // FIXME Stacks - validate addresses if it is possible
 
   const estimatedFees = fee || new BigNumber(0);
 
@@ -120,13 +121,13 @@ const getTransactionStatus = async (
     warnings,
     estimatedFees,
     amount,
-    totalSpent,
+    totalSpent
   };
 };
 
 const estimateMaxSpendable = async ({
   account,
-  parentAccount,
+  parentAccount
 }: {
   account: AccountLike;
   parentAccount?: Account | null | undefined;
@@ -148,16 +149,22 @@ const prepareTransaction = async (
   const { xpub } = a;
   const { recipient } = t;
 
-  if (recipient && xpub) {
+  if (
+    xpub &&
+    recipient &&
+    validateAddress(recipient).isValid &&
+    validateAddress(xpub).isValid
+  ) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
+    // Check if recipient is valid
     const options: UnsignedTokenTransferOptions = {
       recipient,
       anchorMode: t.anchorMode,
       memo: t.memo,
       network: t.network,
       publicKey: xpub,
-      amount: t.amount.toFixed(),
+      amount: t.amount.toFixed()
     };
 
     const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -189,19 +196,25 @@ const prepareTransaction = async (
 const signOperation: SignOperationFnSignature<Transaction> = ({
   account,
   deviceId,
-  transaction,
+  transaction
 }): Observable<SignOperationEvent> =>
   withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
+    transport =>
+      new Observable(o => {
         async function main() {
           // log("debug", "[signOperation] start fn");
 
           const { id: accountId, balance, xpub } = account;
           const { address, derivationPath } = getAddress(account);
 
-          const { recipient, fee, useAllAmount, anchorMode, network, memo } =
-            transaction;
+          const {
+            recipient,
+            fee,
+            useAllAmount,
+            anchorMode,
+            network,
+            memo
+          } = transaction;
           let { amount, nonce } = transaction;
 
           if (!xpub) {
@@ -220,7 +233,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
           try {
             o.next({
-              type: "device-signature-requested",
+              type: "device-signature-requested"
             });
 
             if (useAllAmount) amount = balance.minus(fee);
@@ -233,7 +246,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               memo,
               publicKey: xpub,
               fee: fee.toString(),
-              nonce: nonce.toString(),
+              nonce: nonce.toString()
             };
 
             const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -255,7 +268,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             isError(result);
 
             o.next({
-              type: "device-signature-granted",
+              type: "device-signature-granted"
             });
 
             const txHash = txidFromData(serializedTx);
@@ -280,8 +293,8 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
                 xpub,
                 network,
                 anchorMode,
-                signatureType: 1,
-              },
+                signatureType: 1
+              }
             };
 
             o.next({
@@ -289,8 +302,8 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               signedOperation: {
                 operation,
                 signature,
-                expirationDate: null,
-              },
+                expirationDate: null
+              }
             });
           } finally {
             close(transport, deviceId);
@@ -301,7 +314,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
         main().then(
           () => o.complete(),
-          (e) => o.error(e)
+          e => o.error(e)
         );
       })
   );
@@ -315,5 +328,5 @@ export const accountBridge: AccountBridge<Transaction> = {
   signOperation,
   sync,
   receive,
-  broadcast,
+  broadcast
 };
