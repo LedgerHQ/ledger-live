@@ -66,8 +66,7 @@ export default function ProviderRate({
       updateSelection(rate);
       dispatch(updateRateAction(rate));
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dispatch],
+    [updateSelection, dispatch],
   );
 
   const setDexRate = useCallback(
@@ -158,7 +157,6 @@ export default function ProviderRate({
             onSelect={setRate}
             fromCurrency={fromCurrency}
             toCurrency={toCurrency}
-            centralized={true}
           />
         ))}
         {decentralizedSwapAvailable &&
