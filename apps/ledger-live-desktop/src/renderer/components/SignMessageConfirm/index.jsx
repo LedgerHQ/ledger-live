@@ -4,6 +4,10 @@ import invariant from "invariant";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import {
+  isEIP712Message,
+  getNanoDisplayedInfosFor712,
+} from "@ledgerhq/live-common/families/ethereum/hw-signMessage";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
@@ -55,43 +59,68 @@ type Props = {
   signMessageRequested: TypedMessageData | MessageData,
 };
 
-const SignMessageConfirm = ({ device, account, signMessageRequested: message }: Props) => {
+const SignMessageConfirm = ({ device, account, signMessageRequested }: Props) => {
   const type = useTheme("colors.palette.type");
   const { t } = useTranslation();
 
   if (!device) return null;
+  const inferredNanoFields = (() => {
+    try {
+      if (account.currency.family === "ethereum") {
+        const parsedMessage =
+          typeof signMessageRequested.message === "string"
+            ? JSON.parse(signMessageRequested.message)
+            : signMessageRequested.message;
 
-  const fields = [];
+        return isEIP712Message(signMessageRequested.message)
+          ? getNanoDisplayedInfosFor712(parsedMessage)
+          : null;
+      }
+      throw new Error();
+    } catch (e) {
+      return null;
+    }
+  })();
 
-  if (message.hashes && message.hashes.domainHash) {
+  let fields = [];
+  if (Array.isArray(inferredNanoFields)) {
+    fields = inferredNanoFields.map(field => ({
+      ...field,
+      type: "text",
+      value: Array.isArray(field.value) ? field.value.join(",\n") : field.value,
+    }));
+  } else {
+    const { hashes, message } = signMessageRequested;
+    if (hashes && hashes.domainHash) {
+      fields.push({
+        type: "text",
+        label: t("SignMessageConfirm.domainHash"),
+        // $FlowFixMe
+        value: hashes.domainHash,
+      });
+    }
+    if (hashes && hashes.messageHash) {
+      fields.push({
+        type: "text",
+        label: t("SignMessageConfirm.messageHash"),
+        // $FlowFixMe
+        value: hashes.messageHash,
+      });
+    }
+    if (hashes && hashes.stringHash) {
+      fields.push({
+        type: "text",
+        label: t("SignMessageConfirm.stringHash"),
+        // $FlowFixMe
+        value: hashes.stringHash,
+      });
+    }
     fields.push({
       type: "text",
-      label: t("SignMessageConfirm.domainHash"),
-      // $FlowFixMe
-      value: message.hashes.domainHash,
+      label: t("SignMessageConfirm.message"),
+      value: message,
     });
   }
-  if (message.hashes && message.hashes.messageHash) {
-    fields.push({
-      type: "text",
-      label: t("SignMessageConfirm.messageHash"),
-      // $FlowFixMe
-      value: message.hashes.messageHash,
-    });
-  }
-  if (message.hashes && message.hashes.stringHash) {
-    fields.push({
-      type: "text",
-      label: t("SignMessageConfirm.stringHash"),
-      // $FlowFixMe
-      value: message.hashes.stringHash,
-    });
-  }
-  fields.push({
-    type: "text",
-    label: t("SignMessageConfirm.message"),
-    value: message.message.domain ? JSON.stringify(message.message) : message.message,
-  });
 
   return (
     <Container>
