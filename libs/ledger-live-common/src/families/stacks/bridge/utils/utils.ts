@@ -4,12 +4,12 @@ import { Account, Address, Operation } from "@ledgerhq/types-live";
 import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
-  createMessageSignature,
+  createMessageSignature
 } from "@stacks/transactions/dist";
 
 import {
   GetAccountShape,
-  GetAccountShapeArg0,
+  GetAccountShapeArg0
 } from "../../../../bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "../../../../account";
 import {
@@ -28,7 +28,7 @@ export const getTxToBroadcast = async (
     value,
     recipients,
     fee,
-    extra: { xpub, nonce, anchorMode, network },
+    extra: { xpub, nonce, anchorMode, network }
   } = operation;
 
   const options: UnsignedTokenTransferOptions = {
@@ -38,7 +38,7 @@ export const getTxToBroadcast = async (
     network,
     publicKey: xpub,
     fee: fee.toFixed(),
-    nonce: nonce.toFixed(),
+    nonce: nonce.toFixed()
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -57,59 +57,59 @@ export const getAddress = (a: Account): Address =>
     ? a.freshAddresses[0]
     : { address: a.freshAddress, derivationPath: a.freshAddressPath };
 
-export const mapTxToOps =
-  (id, { address }: GetAccountShapeArg0) =>
-  (tx: TransactionResponse): Operation[] => {
-    const { sender, recipient, amount } = tx.stx_transfers[0];
-    const { tx_id, fee_rate, block_height, burn_block_time } = tx.tx;
+export const mapTxToOps = (id, { address }: GetAccountShapeArg0) => (
+  tx: TransactionResponse
+): Operation[] => {
+  const { sender, recipient, amount } = tx.stx_transfers[0];
+  const { tx_id, fee_rate, block_height, burn_block_time } = tx.tx;
 
-    const ops: Operation[] = [];
+  const ops: Operation[] = [];
 
-    const date = new Date(burn_block_time * 1000);
-    const value = new BigNumber(amount || "0");
-    const feeToUse = new BigNumber(fee_rate || "0");
+  const date = new Date(burn_block_time * 1000);
+  const value = new BigNumber(amount || "0");
+  const feeToUse = new BigNumber(fee_rate || "0");
 
-    const isSending = address === sender;
-    const isReceiving = address === recipient;
+  const isSending = address === sender;
+  const isReceiving = address === recipient;
 
-    if (isSending) {
-      ops.push({
-        id: `${id}-${tx_id}-OUT`,
-        hash: tx_id,
-        type: "OUT",
-        value: value.plus(feeToUse),
-        fee: feeToUse,
-        blockHeight: block_height,
-        blockHash: null,
-        accountId: id,
-        senders: [sender],
-        recipients: [recipient],
-        date,
-        extra: {},
-      });
-    }
+  if (isSending) {
+    ops.push({
+      id: `${id}-${tx_id}-OUT`,
+      hash: tx_id,
+      type: "OUT",
+      value: value.plus(feeToUse),
+      fee: feeToUse,
+      blockHeight: block_height,
+      blockHash: null,
+      accountId: id,
+      senders: [sender],
+      recipients: [recipient],
+      date,
+      extra: {}
+    });
+  }
 
-    if (isReceiving) {
-      ops.push({
-        id: `${id}-${tx_id}-IN`,
-        hash: tx_id,
-        type: "IN",
-        value,
-        fee: feeToUse,
-        blockHeight: block_height,
-        blockHash: null,
-        accountId: id,
-        senders: [sender],
-        recipients: [recipient],
-        date,
-        extra: {},
-      });
-    }
+  if (isReceiving) {
+    ops.push({
+      id: `${id}-${tx_id}-IN`,
+      hash: tx_id,
+      type: "IN",
+      value,
+      fee: feeToUse,
+      blockHeight: block_height,
+      blockHash: null,
+      accountId: id,
+      senders: [sender],
+      recipients: [recipient],
+      date,
+      extra: {}
+    });
+  }
 
-    return ops;
-  };
+  return ops;
+};
 
-export const getAccountShape: GetAccountShape = async (info) => {
+export const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, address, currency, rest = {}, derivationMode } = info;
 
   const accountId = encodeAccountId({
@@ -117,7 +117,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     version: "2",
     currencyId: currency.id,
     xpubOrAddress: reconciliatePublicKey(rest.publicKey, initialAccount),
-    derivationMode,
+    derivationMode
   });
 
   const blockHeight = await fetchBlockHeight();
@@ -129,7 +129,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     balance: new BigNumber(balance.balance),
     spendableBalance: new BigNumber(balance.balance),
     operations: flatMap(rawTxs, mapTxToOps(accountId, info)),
-    blockHeight: blockHeight.chain_tip.block_height,
+    blockHeight: blockHeight.chain_tip.block_height
   };
 
   return result;
