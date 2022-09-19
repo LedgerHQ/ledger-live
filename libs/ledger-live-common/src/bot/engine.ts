@@ -655,7 +655,7 @@ export async function runOnAccount<T extends Transaction>({
         const timedOut = now() - ntestBefore > newTimeOut;
         let operation;
         try {
-          operation = destination.operations.find(
+          operation = account.operations.find(
             (op) => op.hash === sendingOperation.hash
           );
           botTest(
