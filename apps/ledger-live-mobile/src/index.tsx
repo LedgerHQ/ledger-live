@@ -89,12 +89,7 @@ import RootNavigator from "./components/RootNavigator";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 import CounterValuesProvider from "./components/CounterValuesProvider";
 import type { State } from "./reducers";
-import {
-  navigationRef,
-  isReadyRef,
-  previousRouteNameRef,
-  currentRouteNameRef,
-} from "./rootnavigation";
+import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
@@ -526,8 +521,9 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
       hasCompletedOnboarding,
       wcContext.initDone,
       wcContext.session.session,
-      filteredManifests,
+      dispatch,
       liveAppProviderInitialized,
+      filteredManifests,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
@@ -553,7 +549,7 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     compareOsTheme();
 
-    const osThemeChangeHandler = nextAppState =>
+    const osThemeChangeHandler = (nextAppState: string) =>
       nextAppState === "active" && compareOsTheme();
 
     const sub = AppState.addEventListener("change", osThemeChangeHandler);
@@ -580,11 +576,6 @@ const DeepLinkingNavigator = ({ children }: { children: React.ReactNode }) => {
         onReady={() => {
           isReadyRef.current = true;
           setTimeout(() => SplashScreen.hide(), 300);
-        }}
-        onStateChange={() => {
-          previousRouteNameRef.current = currentRouteNameRef.current;
-          currentRouteNameRef.current =
-            navigationRef.current.getCurrentRoute().name;
         }}
       >
         {children}

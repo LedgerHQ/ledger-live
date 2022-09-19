@@ -33,12 +33,11 @@ import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
 import type { State } from "../reducers";
 import { NavigatorName } from "../const";
-import { previousRouteNameRef, currentRouteNameRef } from "../rootnavigation";
+import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 
 const sessionId = uuid();
-const appVersion = `${VersionNumber.appVersion || ""} (${
-  VersionNumber.buildVersion || ""
-})`;
+const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""
+  })`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 const extraProperties = store => {
@@ -55,14 +54,12 @@ const extraProperties = store => {
     lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
     ? {
-        deviceVersion: lastDevice.deviceInfo?.version,
-        appLength: lastDevice?.appsInstalled,
-        modelId: lastDevice.modelId,
-      }
+      deviceVersion: lastDevice.deviceInfo?.version,
+      appLength: lastDevice?.appsInstalled,
+      modelId: lastDevice.modelId,
+    }
     : {};
   const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
-  const screen = currentRouteNameRef.current;
-  const source = previousRouteNameRef.current;
 
   return {
     appVersion,
@@ -77,13 +74,11 @@ const extraProperties = store => {
     sessionId,
     devicesCount: devices.length,
     firstConnectionHasDevice,
-    screen,
-    source,
     // $FlowFixMe
     ...(satisfaction
       ? {
-          satisfaction,
-        }
+        satisfaction,
+      }
       : {}),
     ...deviceInfo,
   };
@@ -171,7 +166,10 @@ export const track = (
     return;
   }
 
-  const allProperties = { ...extraProperties(storeInstance), ...properties };
+  const screen = currentRouteNameRef.current;
+
+
+  const allProperties = { screen, ...extraProperties(storeInstance), ...properties };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
   trackSubject.next({
     event,
@@ -241,7 +239,9 @@ export const screen = (
     return;
   }
 
-  const allProperties = { ...extraProperties(storeInstance), ...properties };
+  const source = previousRouteNameRef.current;
+
+  const allProperties = { source, ...extraProperties(storeInstance), ...properties };
   if (ANALYTICS_LOGS)
     console.log("analytics:screen", category, name, allProperties);
   trackSubject.next({
