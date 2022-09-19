@@ -85,6 +85,7 @@ const ignoreErrors = [
   "TransactionRefusedOnDevice",
   "Please reimport your Tezos accounts",
   "failed to find a healthy working node", // LIVE-3506 workaround
+  "Transaction simulation failed", // LIVE-3506
 ];
 
 export function init(Sentry: any, opts: any) {
