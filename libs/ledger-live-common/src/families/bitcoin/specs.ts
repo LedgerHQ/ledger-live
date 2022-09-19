@@ -485,7 +485,6 @@ const minZcash = parseCurrencyUnit(
 const zcash: AppSpec<Transaction> = {
   name: "ZCash",
   currency: getCryptoCurrencyById("zcash"),
-  dependency: "Bitcoin",
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Zcash",
