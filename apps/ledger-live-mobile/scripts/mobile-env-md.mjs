@@ -19,6 +19,15 @@ function gen() {
   md +=
     "> This self generated file documents all environments we have on our different mobile OS (iOS, Android) and targets (release, staging, nightly). What we call 'staging' refers to any custom build done on 'ledger-live-build'.\n";
 
+  md +=
+    "By default, building the app locally will use a local file called '.env' which won't have any environment.\n";
+  md += "In other cases, these env files will be used:\n\n";
+
+  md += genTable(({ os, target }) => `.env.${os}.${target}`);
+
+  md +=
+    "\n\n![](https://user-images.githubusercontent.com/211411/189141826-8b65b7cb-fc7f-47e5-854c-25995cfcb225.png)\n";
+
   // add all the env you want documented
 
   md += "# App name\n";
@@ -71,7 +80,7 @@ function genTable(getCell) {
             .map(os => {
               const env = readEnv(false, os, target);
               const fastlaneEnv = readEnv(true, os, target);
-              return getCell({ fastlaneEnv, env });
+              return getCell({ fastlaneEnv, env, os, target });
             })
             .join("|") +
           "|",
