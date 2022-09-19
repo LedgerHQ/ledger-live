@@ -386,8 +386,10 @@ const SwapForm = () => {
     payload => {
       const { navigation } = payload;
       if (navigation) {
+        // Means a DEX provider is selected
         setNavigation(navigation);
       } else {
+        // Means a CEX provider is selected
         setNavigation(null);
         swapTransaction.swap.updateSelectedRate(payload);
       }
