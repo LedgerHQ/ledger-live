@@ -1170,6 +1170,13 @@
         "paragraph2": "We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your Nano.",
         "checkDeviceButton": "Check device"
       },
+      "genuineCheckCancelModal": {
+        "title": "Authenticity Check",
+        "paragraph1": "The genuine check was cancelled",
+        "paragraph2": "This check is very important to make sure your Ledger Nano is safe to use.",
+        "checkDeviceButton": "Run check again",
+        "cancelButton": "Maybe later"
+      },
       "helpDrawer": {
         "title": "Need some help with your setup manual?",
         "description": "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
