@@ -140,7 +140,7 @@ const ethereum: AppSpec<Transaction> = {
   },
   // @ts-expect-error seriously we have to do somehting
   mutations: ethereumBasicMutations({
-    maxAccount: 3,
+    maxAccount: 7,
   }).concat([
     {
       name: "allow MAX a compound token",

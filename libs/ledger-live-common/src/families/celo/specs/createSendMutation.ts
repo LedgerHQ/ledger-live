@@ -4,7 +4,7 @@ import { genericTestDestination, pickSiblings } from "../../../bot/specs";
 import { MutationSpec } from "../../../bot/types";
 import type { Transaction } from "../types";
 
-const maxAccount = 3;
+const maxAccount = 10;
 const currency = getCryptoCurrencyById("celo");
 export const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 
