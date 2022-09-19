@@ -18,7 +18,7 @@ const stacksSpecs: AppSpec<Transaction> = {
     appName: "Stacks",
   },
   genericDeviceAction: acceptTransaction,
-  testTimeout: 10 * 60 * 1000,
+  testTimeout: 20 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
   },
