@@ -4,13 +4,13 @@ import BigNumber from "bignumber.js";
 
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { pickSiblings, botTest } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 
-const MIN_SAFE = new BigNumber(1000000);
+const MIN_SAFE = new BigNumber(10000);
 const stacksSpecs: AppSpec<Transaction> = {
-  disabled: true,
+  disabled: false,
   name: "Stacks",
   currency: getCryptoCurrencyById("stacks"),
   appQuery: {
@@ -18,7 +18,7 @@ const stacksSpecs: AppSpec<Transaction> = {
     appName: "Stacks",
   },
   genericDeviceAction: acceptTransaction,
-  testTimeout: 2 * 60 * 1000,
+  testTimeout: 10 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
   },
@@ -28,6 +28,8 @@ const stacksSpecs: AppSpec<Transaction> = {
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, 2);
+        const recipient = sibling.freshAddress;
+
         let amount = account.spendableBalance
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
@@ -40,33 +42,35 @@ const stacksSpecs: AppSpec<Transaction> = {
           amount = MIN_SAFE;
         }
 
+        const transaction = bridge.createTransaction(account);
+        const updates = [{ recipient }, { amount }];
+
         return {
-          transaction: bridge.createTransaction(account),
-          updates: [
-            {
-              recipient: pickSiblings(siblings, 2).freshAddress,
-            },
-            {
-              amount,
-            },
-          ],
+          transaction,
+          updates,
         };
+      },
+      test: ({ account, accountBeforeTransaction, operation }) => {
+        botTest("account balance decreased with operation value", () =>
+          expect(account.balance.toFixed()).toBe(
+            accountBeforeTransaction.balance.minus(operation.value).toFixed()
+          )
+        );
       },
     },
     {
       name: "Transfer Max",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
+        const sibling = pickSiblings(siblings, 2);
+        const recipient = sibling.freshAddress;
+
+        const transaction = bridge.createTransaction(account);
+        const updates = [{ recipient }, { useAllAmount: true }];
+
         return {
-          transaction: bridge.createTransaction(account),
-          updates: [
-            {
-              recipient: pickSiblings(siblings, 2).freshAddress,
-            },
-            {
-              useAllAmount: true,
-            },
-          ],
+          transaction,
+          updates,
         };
       },
     },
