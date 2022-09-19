@@ -49,13 +49,20 @@ const Container = styled(Flex).attrs((p: BorderProps) => ({
 `;
 
 const ContentContainer = styled(Flex).attrs({
+  paddingTop: 16,
   flex: 1,
   flexDirection: "column",
   alignItems: "center",
   alignSelf: "center",
 })``;
 
-const DeviceName = styled(Text).attrs({ color: "neutral.c100" })``;
+const DeviceName = styled(Text).attrs({
+  color: "neutral.c100",
+  variant: "h4",
+  fontSize: 24,
+  fontWeight: "semiBold",
+  fontFamily: "Inter",
+})``;
 
 interface DeviceSelectOptionProps {
   label: string;
