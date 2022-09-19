@@ -401,6 +401,7 @@ export async function runOnAccount<T extends Transaction>({
       mutation: MutationSpec<T>;
       tx: T;
       updates: Array<Partial<T> | null | undefined>;
+      destination: Account | undefined;
     }> = [];
     const unavailableMutationReasons: Array<{
       mutation: MutationSpec<T>;
@@ -430,6 +431,7 @@ export async function runOnAccount<T extends Transaction>({
           tx: r.transaction,
           // $FlowFixMe what the hell
           updates: r.updates,
+          destination: r.destination,
         });
       } catch (error: any) {
         if (process.env.CI) console.error(error);
@@ -472,9 +474,9 @@ export async function runOnAccount<T extends Transaction>({
     }
 
     report.transaction = transaction;
-    const destination = accounts.find(
-      (a) => a.freshAddress === transaction.recipient
-    );
+    const destination =
+      candidate.destination ||
+      accounts.find((a) => a.freshAddress === transaction.recipient);
     report.destination = destination;
     status = await accountBridge.getTransactionStatus(account, transaction);
     report.status = status;

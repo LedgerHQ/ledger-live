@@ -59,6 +59,7 @@ export type TransactionArg<T extends Transaction> = {
 export type TransactionRes<T extends Transaction> = {
   transaction: T;
   updates: Array<Partial<T> | null | undefined>;
+  destination?: Account;
 };
 export type MutationSpec<T extends Transaction> = {
   // Name what this mutation is doing

@@ -159,6 +159,7 @@ const bitcoinLikeMutations = ({
       return {
         transaction,
         updates,
+        destination: sibling,
       };
     },
     testDestination,
