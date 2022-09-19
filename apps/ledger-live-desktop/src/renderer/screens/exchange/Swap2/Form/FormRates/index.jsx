@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-import type { SectionProviderProps } from "./SectionRate";
 import SectionRate from "./SectionRate";
 
 const Form: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
@@ -24,7 +23,6 @@ const Form: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
 
 type SwapFormProvidersProps = {
   swap: SwapTransactionType,
-  kycStatus?: $PropertyType<SectionProviderProps, "status">,
   provider?: string,
   refreshTime: number,
   countdown: boolean,
@@ -33,7 +31,6 @@ type SwapFormProvidersProps = {
 };
 const SwapFormProviders = ({
   swap,
-  kycStatus,
   provider,
   refreshTime,
   countdown,
@@ -52,7 +49,6 @@ const SwapFormProviders = ({
     <Form ready={hasFetchedRates}>
       <SectionRate
         provider={provider}
-        status={kycStatus}
         fromCurrency={fromCurrency}
         toCurrency={toCurrency}
         ratesState={ratesState}

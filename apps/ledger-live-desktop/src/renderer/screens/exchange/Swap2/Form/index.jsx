@@ -497,7 +497,6 @@ const SwapForm = () => {
             />
             <SwapFormRates
               swap={swapTransaction.swap}
-              kycStatus={kycStatus}
               provider={provider}
               refreshTime={refreshTime}
               countdown={!swapError && !idleState}
