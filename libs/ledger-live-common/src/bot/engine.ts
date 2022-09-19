@@ -656,7 +656,7 @@ export async function runOnAccount<T extends Transaction>({
         let operation;
         try {
           operation = destination.operations.find(
-            (op) => op.hash === operation.hash
+            (op) => op.hash === sendingOperation.hash
           );
           botTest(
             "destination account should receive an operation (by tx hash)",
