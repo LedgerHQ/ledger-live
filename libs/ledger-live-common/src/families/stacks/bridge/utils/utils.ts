@@ -15,7 +15,7 @@ import { encodeAccountId } from "../../../../account";
 import {
   fetchBalances,
   fetchBlockHeight,
-  fetchTxs,
+  fetchFullTxs
 } from "../../bridge/utils/api";
 import { TransactionResponse } from "./types";
 import { getCryptoCurrencyById } from "../../../../currencies";
@@ -122,7 +122,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
 
   const blockHeight = await fetchBlockHeight();
   const balance = await fetchBalances(address);
-  const rawTxs = await fetchTxs(address);
+  const rawTxs = await fetchFullTxs(address);
 
   const result = {
     id: accountId,
