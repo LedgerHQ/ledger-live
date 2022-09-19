@@ -12,7 +12,7 @@ import asatokens from "../data/asa";
 import esdttokens from "../data/esdt";
 import cardanoNativeTokens from "../data/cardanoNative";
 import stellarTokens from "../data/stellar";
-import spltokens from "../data/spl";
+// import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
 const tokensArrayWithDelisted: TokenCurrency[] = [];
@@ -31,7 +31,7 @@ addTokens(asatokens.map(convertAlgorandASATokens));
 addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 addTokens(stellarTokens.map(convertStellarTokens));
-addTokens(spltokens.map(convertSplTokens));
+// addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
   withDelisted: boolean;
 };
