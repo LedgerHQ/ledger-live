@@ -76,6 +76,7 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "stacks"
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
@@ -83,7 +84,7 @@ for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
 const { VERBOSE, VERBOSE_FILE } = process.env;
 const logger = winston.createLogger({
   level: "debug",
-  transports: [],
+  transports: []
 });
 const { format } = winston;
 const { combine, timestamp, json } = format;
@@ -94,7 +95,7 @@ if (VERBOSE_FILE) {
     new winston.transports.File({
       format: winstonFormat,
       filename: VERBOSE_FILE,
-      level: "debug",
+      level: "debug"
     })
   );
 }
@@ -102,7 +103,7 @@ if (VERBOSE_FILE) {
 logger.add(
   new winston.transports.Console({
     format: winstonFormat,
-    silent: !VERBOSE,
+    silent: !VERBOSE
   })
 );
 // eslint-disable-next-line no-unused-vars
@@ -110,7 +111,7 @@ listen(({ type, message, ...rest }) => {
   logger.log("debug", {
     message: type + (message ? ": " + message : ""),
     // $FlowFixMe
-    ...rest,
+    ...rest
   });
 });
 
