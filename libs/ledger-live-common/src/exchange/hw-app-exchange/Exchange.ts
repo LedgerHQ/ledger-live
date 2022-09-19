@@ -139,8 +139,8 @@ export default class Exchange {
     invariant(addressParameters.length <= 255, "Address parameter is too big.");
     invariant(
       currencyConfigSignature.length >= 67 &&
-        currencyConfigSignature.length <= 72,
-      "Signature should be DER serialized and have length in [67, 72] bytes."
+        currencyConfigSignature.length <= 73,
+      "Signature should be DER serialized and have length in [67, 73] bytes."
     );
     const bufferToSend: Buffer = Buffer.concat([
       Buffer.from([payoutCurrencyConfig.length]),
@@ -171,8 +171,8 @@ export default class Exchange {
     invariant(addressParameters.length <= 255, "Address parameter is too big.");
     invariant(
       currencyConfigSignature.length >= 67 &&
-        currencyConfigSignature.length <= 72,
-      "Signature should be DER serialized and have length in [67, 72] bytes."
+        currencyConfigSignature.length <= 73,
+      "Signature should be DER serialized and have length in [67, 73] bytes."
     );
     const bufferToSend: Buffer = Buffer.concat([
       Buffer.from([refundCurrencyConfig.length]),
