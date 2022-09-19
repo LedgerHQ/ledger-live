@@ -841,14 +841,14 @@ function transactionTest<T>({
   optimisticOperation,
   account,
 }: TransactionTestInput<T>) {
-  const timingThreshold = 30 * 60 * 1000;
-  // FIXME: .valueOf to do arithmetic operations on date with typescript
-  const dt = Date.now().valueOf() - operation.date.valueOf();
+  const dt = Date.now() - operation.date.getTime();
+  const lowerThreshold = -60 * 1000; // -1mn accepted
+  const upperThreshold = 30 * 60 * 1000; // 30mn up
   botTest("operation.date must not be in future", () =>
-    expect(dt).toBeGreaterThanOrEqual(0)
+    expect(dt).toBeGreaterThan(lowerThreshold)
   );
   botTest("operation.date less than 30mn ago", () =>
-    expect(dt).toBeLessThan(timingThreshold)
+    expect(dt).toBeLessThan(upperThreshold)
   );
   botTest("operation must not failed", () => {
     expect(!operation.hasFailed).toBe(true);
@@ -858,7 +858,7 @@ function transactionTest<T>({
 
   if (blockAvgTime && account.blockHeight) {
     const expected = getOperationConfirmationNumber(operation, account);
-    const expectedMax = Math.ceil(timingThreshold / blockAvgTime);
+    const expectedMax = Math.ceil(upperThreshold / blockAvgTime);
     botTest("low amount of confirmations", () =>
       invariant(
         expected <= expectedMax,
