@@ -11,8 +11,8 @@ const SafeAreaContainer = styled.SafeAreaView`
   align-items: center;
   justify-content: center;
   background-color: ${p => p.theme.colors.background.main};
-  margin-left: 24px;
-  margin-right: 24px;
+  margin-left: ${p => `${p.theme.space[4]}px`};
+  margin-right: ${p => `${p.theme.space[4]}px`};
 `;
 
 function BluetoothDisabled() {
