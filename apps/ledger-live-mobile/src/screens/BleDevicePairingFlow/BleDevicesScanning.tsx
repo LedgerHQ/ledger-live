@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BleErrorCode } from "react-native-ble-plx";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { useNavigation } from "@react-navigation/native";
@@ -11,25 +10,16 @@ import { ScannedDevice } from "@ledgerhq/live-common/ble/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import TransportBLE from "@ledgerhq/react-native-hw-transport-ble";
-import { useTheme } from "styled-components/native";
 
+import Animation from "../../components/Animation";
 import { knownDevicesSelector } from "../../reducers/ble";
 import LocationRequired from "../LocationRequired";
 import BleDeviceItem from "./BleDeviceItem";
 import type { BleDevicePairingFlowProps } from "./index";
+import BleSearchingAnimation from "../../animations/bleSearching.json";
 
 const BluetoothLogo = () => {
-  const { colors } = useTheme();
-
-  return (
-    <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
-      <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={4}>
-        <Flex borderRadius="9999px" backgroundColor="#0082FC4D" padding={3}>
-          <BluetoothMedium size={48} color={colors.constant.white} />
-        </Flex>
-      </Flex>
-    </Flex>
-  );
+  return <Animation source={BleSearchingAnimation} />;
 };
 
 export type FilterByDeviceModelId = null | DeviceModelId;
