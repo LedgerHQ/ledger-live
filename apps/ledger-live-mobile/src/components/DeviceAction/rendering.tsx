@@ -16,6 +16,7 @@ import {
 } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
