@@ -1,16 +1,17 @@
+import { CurrenciesData } from "@ledgerhq/types-live";
+import { AnchorMode } from "@stacks/transactions/dist";
+import type { DatasetTest } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
-import { AnchorMode } from "@stacks/transactions/dist";
 
-import type { DatasetTest } from "@ledgerhq/types-live";
+import "../../__tests__/test-helpers/setup";
 import type { Transaction } from "./types";
 import { fromTransactionRaw } from "./transaction";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
-import { CurrenciesData } from "@ledgerhq/types-live";
 
 const SEED_IDENTIFIER = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
 const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
