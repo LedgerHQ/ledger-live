@@ -42,7 +42,7 @@ import { getAddress } from "../../filecoin/bridge/utils/utils";
 import { withDevice } from "../../../hw/deviceAccess";
 import { close } from "../../../hw";
 import { getPath, isError } from "../utils";
-import { getMainAccount } from "../../../account";
+import { decodeAccountId, getMainAccount } from "../../../account";
 import { fetchBalances } from "./utils/api";
 import { patchOperationWithHash } from "../../../operation";
 import { validateAddress } from "./utils/addresses";
@@ -146,8 +146,9 @@ const prepareTransaction = async (
 ): Promise<Transaction> => {
   // log("debug", "[prepareTransaction] start fn");
 
-  const { xpub } = a;
+  const { id: accountID } = a;
   const { recipient } = t;
+  const { xpubOrAddress: xpub } = decodeAccountId(accountID);
 
   if (xpub && recipient && validateAddress(recipient).isValid) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
@@ -199,8 +200,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
         async function main() {
           // log("debug", "[signOperation] start fn");
 
-          const { id: accountId, balance, xpub } = account;
+          const { id: accountId, balance } = account;
           const { address, derivationPath } = getAddress(account);
+          const { xpubOrAddress: xpub } = decodeAccountId(accountId);
 
           const {
             recipient,
