@@ -247,6 +247,7 @@ export function expectSiblingsHaveSpendablePartGreaterThan(
 
 export const genericTestDestination = <T>({
   destination,
+  operation,
   destinationBeforeTransaction,
   sendingOperation,
 }: TransactionDestinationTestInput<T>): void => {
@@ -256,27 +257,13 @@ export const genericTestDestination = <T>({
       destinationBeforeTransaction.balance.plus(amount).toString()
     )
   );
-  botTest("destination account received an operation", () =>
-    expect(destination.operations.length).toBe(
-      1 + destinationBeforeTransaction.operations.length
-    )
-  );
-  const [operation] = destination.operations;
-  botTest(
-    "last destination operation is consistent with sendingOperation",
-    () =>
-      expect({
-        amount: operation.value.toString(),
-        type: operation.type,
-        hash: operation.hash,
-        // blockHash: operation.blockHash,
-        // blockHeight: operation.blockHeight,
-      }).toMatchObject({
-        amount: amount.toString(),
-        type: "IN",
-        hash: sendingOperation.hash,
-        // blockHash: sendingOperation.blockHash,
-        // blockHeight: sendingOperation.blockHeight,
-      })
+  botTest("operation amount is consistent with sendingOperation", () =>
+    expect({
+      type: operation.type,
+      amount: operation.value.toString(),
+    }).toMatchObject({
+      type: "IN",
+      amount: amount.toString(),
+    })
   );
 };

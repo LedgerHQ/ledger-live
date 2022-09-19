@@ -41,6 +41,7 @@ import type {
   TransactionTestInput,
   TransactionArg,
   TransactionRes,
+  TransactionDestinationTestInput,
 } from "./types";
 import { makeBridgeCacheSystem } from "../bridge/cache";
 import { accountDataToAccount, accountToAccountData } from "../cross";
@@ -649,14 +650,30 @@ export async function runOnAccount<T extends Transaction>({
           (newTimeOut / 1000).toFixed(0) +
           "s"
       );
+      const sendingOperation = operation;
       const step = (account) => {
         const timedOut = now() - ntestBefore > newTimeOut;
+        let operation;
         try {
-          const arg = {
+          operation = destination.operations.find(
+            (op) => op.hash === operation.hash
+          );
+          botTest(
+            "destination account should receive an operation (by tx hash)",
+            () =>
+              invariant(
+                operation,
+                "no operation found with hash %s",
+                operation.hash
+              )
+          );
+          if (!operation) throw new Error();
+          const arg: TransactionDestinationTestInput<T> = {
             transaction,
             status,
             sendingAccount: finalAccount,
-            sendingOperation: operation,
+            sendingOperation,
+            operation,
             destinationBeforeTransaction,
             destination: account,
           };
@@ -675,13 +692,14 @@ export async function runOnAccount<T extends Transaction>({
           // We will try again
           return;
         }
-        return true;
+        return operation;
       };
-      const result = await awaitAccountOperation({
+      const result = await awaitAccountOperation<Operation>({
         account: destination,
         step,
       });
       report.finalDestination = result.account;
+      report.finalDestinationOperation = result.value;
       report.destinationConfirmedTime = now();
     }
   } catch (error: any) {

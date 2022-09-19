@@ -29,6 +29,7 @@ export type TransactionDestinationTestInput<T> = {
   sendingAccount: Account;
   sendingOperation: Operation;
   destinationBeforeTransaction: Account;
+  operation: Operation;
   destination: Account;
   transaction: T;
   status: TransactionStatus;
@@ -162,6 +163,7 @@ export type MutationReport<T extends Transaction> = {
   testDuration?: number;
   destinationConfirmedTime?: number;
   finalDestination?: Account;
+  finalDestinationOperation?: Operation;
   testDestinationDuration?: number;
   error?: Error;
 };

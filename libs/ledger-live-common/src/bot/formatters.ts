@@ -75,6 +75,7 @@ export function formatReportForConsole<T extends Transaction>({
   confirmedTime,
   finalAccount,
   finalDestination,
+  finalDestinationOperation,
   testDestinationDuration,
   testDuration,
   error,
@@ -169,19 +170,21 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (finalAccount) {
-    str += `✔️ ${formatAccount(finalAccount, "basic")}\n`;
+    str += `✔️ ${formatAccount(finalAccount, "basic")}`;
   }
 
   if (testDuration) {
-    str += `(reached in ${formatTime(testDuration)})\n`;
+    str += `(in ${formatTime(testDuration)})\n`;
   }
 
-  if (finalDestination) {
-    str += `✔️ destination ${formatAccount(finalDestination, "basic")}\n`;
+  if (finalDestination && finalDestinationOperation) {
+    str += `✔️ destination operation ${formatOperation(finalDestination)(
+      finalDestinationOperation
+    )}\n`;
   }
 
   if (testDestinationDuration) {
-    str += `(reached in ${formatTime(testDestinationDuration)})\n`;
+    str += `(in ${formatTime(testDestinationDuration)})\n`;
   }
 
   if (error) {
