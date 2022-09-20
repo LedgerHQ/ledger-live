@@ -16,12 +16,9 @@ const ReadOnlyAccountRow = ({ navigation, currency, screen }: Props) => {
 
   const onAccountPress = useCallback(() => {
     track("account_clicked", { currency: name, screen });
-    navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.Account,
-      params: {
-        currencyId: id,
-        currencyType: type,
-      },
+    navigation.navigate(ScreenName.Account, {
+      currencyId: id,
+      currencyType: type,
     });
   }, [name, screen, navigation, id, type]);
 

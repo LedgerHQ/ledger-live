@@ -56,20 +56,6 @@ export type DataOfUser = {
 const pushNotificationsDataOfUserAsyncStorageKey =
   "pushNotificationsDataOfUser";
 
-const getCurrentRouteName = (
-  state: NavigationState | Required<NavigationState["routes"][0]>["state"],
-): Routes | undefined => {
-  if (state.index === undefined || state.index < 0) {
-    return undefined;
-  }
-
-  const nestedState = state.routes[state.index].state;
-  if (nestedState !== undefined) {
-    return getCurrentRouteName(nestedState);
-  }
-  return state.routes[state.index].name;
-};
-
 async function getPushNotificationsDataOfUserFromStorage() {
   const dataOfUser = await AsyncStorage.getItem(
     pushNotificationsDataOfUserAsyncStorageKey,
@@ -266,7 +252,7 @@ const useNotifications = () => {
     [pushNotificationsOldRoute],
   );
 
-  const onRouteChange = useCallback(
+  const onPushNotificationsRouteChange = useCallback(
     newRoute => {
       if (pushNotificationsEventTriggered?.timeout) {
         clearTimeout(pushNotificationsEventTriggered?.timeout);
@@ -311,18 +297,6 @@ const useNotifications = () => {
     [dispatch],
   );
 
-  const initPushNotifications = useCallback(() => {
-    if (!pushNotificationsFeature?.enabled) return;
-
-    navigation.addListener("state", e => {
-      const navState = e?.data?.state;
-      if (navState && navState.routeNames) {
-        const currentRouteName = getCurrentRouteName(navState);
-        onRouteChange(currentRouteName);
-      }
-    });
-  }, [navigation, pushNotificationsFeature?.enabled, onRouteChange]);
-
   const initPushNotificationsData = useCallback(() => {
     getPushNotificationsDataOfUserFromStorage().then(dataOfUser => {
       updatePushNotificationsDataOfUserInStateAndStore({
@@ -332,10 +306,6 @@ const useNotifications = () => {
       });
     });
   }, []);
-
-  const cleanPushNotifications = useCallback(() => {
-    navigation.removeListener("state");
-  }, [navigation]);
 
   const triggerMarketPushNotificationModal = useCallback(() => {
     if (
@@ -473,9 +443,8 @@ const useNotifications = () => {
   ]);
 
   return {
-    initPushNotifications,
     initPushNotificationsData,
-    cleanPushNotifications,
+    onPushNotificationsRouteChange,
     pushNotificationsOldRoute,
     pushNotificationsModalType,
     isPushNotificationsModalOpen,

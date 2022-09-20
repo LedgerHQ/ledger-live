@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
 import OperationDetails, {
@@ -58,6 +59,7 @@ import AnalyticsOperations from "../../screens/Analytics/Operations";
 import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
+import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import styles from "../../navigation/styles";
 import HeaderRightClose from "../HeaderRightClose";
@@ -97,6 +99,10 @@ import {
   BleDevicePairingFlow,
   BleDevicePairingFlowParams,
 } from "../../screens/BleDevicePairingFlow/index";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { accountsSelector } from "../../reducers/accounts";
+import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderTitle";
+import ReadOnlyAccountHeaderRight from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderRight";
 
 // TODO: types for each screens and navigators need to be set
 export type BaseNavigatorStackParamList = {
@@ -123,6 +129,9 @@ export default function BaseNavigator() {
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
+  const accounts = useSelector(accountsSelector);
+  const readOnlyModeEnabled =
+    useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
 
   return (
     <Stack.Navigator
@@ -565,8 +574,24 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={Account}
-        options={{ headerShown: false }}
+        component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
+        options={({ route, navigation }) => ({
+          headerLeft: () => (
+            <BackButton navigation={navigation} route={route} />
+          ),
+          headerTitle: () =>
+            readOnlyModeEnabled ? (
+              <ReadOnlyAccountHeaderTitle />
+            ) : (
+              <AccountHeaderTitle />
+            ),
+          headerRight: () =>
+            readOnlyModeEnabled ? (
+              <ReadOnlyAccountHeaderRight />
+            ) : (
+              <AccountHeaderRight />
+            ),
+        })}
       />
       <Stack.Screen
         name={ScreenName.ScanRecipient}
