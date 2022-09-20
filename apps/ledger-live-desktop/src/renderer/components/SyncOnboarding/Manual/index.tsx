@@ -25,6 +25,7 @@ import ApplicationContent from "./ApplicationContent";
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import { StepText } from "./shared";
+import Header from "./Header";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -167,6 +168,15 @@ const SyncOnboardingManual = () => {
   const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
   const [lastKnownDeviceId, setLastKnownDeviceId] = useState<DeviceModelId>(DeviceModelId.nanoX);
 
+  const handleClose = useCallback(() => {
+    history.push("/onboarding/select-device");
+  }, [history]);
+
+  const handleTroubleshootingDrawerClose = useCallback(() => {
+    setTroubleshootingDrawerOpen(false);
+    setStopPolling(false);
+  }, []);
+
   const handleDeviceReady = useCallback(() => {
     history.push("/sync-onboarding/completion");
   }, [history]);
@@ -259,11 +269,9 @@ const SyncOnboardingManual = () => {
 
   useEffect(() => {
     if (!fatalError) {
-      // TODO: commented because of damned linter
-      // return;
+      return;
     }
-    // TODO: handle fatal errors
-    // setTroubleshootingDrawerOpen(true);
+    setTroubleshootingDrawerOpen(true);
   }, [fatalError]);
 
   useEffect(() => {
@@ -283,39 +291,35 @@ const SyncOnboardingManual = () => {
 
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
-      <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
-      <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} />
+      <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
         lastKnownDeviceId={lastKnownDeviceId}
         isOpen={isTroubleshootingDrawerOpen}
-        onClose={() => setTroubleshootingDrawerOpen(false)}
+        onClose={handleTroubleshootingDrawerClose}
       />
-      <Flex flex={1} px="120px" py={0} alignItems="center">
-        <Flex flex={1} flexDirection="column">
-          <Flex alignItems="center" mb={8}>
-            <Text variant="h4" fontSize="24px" fontWeight="semiBold">
-              Setup Manual
-            </Text>
-            <Button
-              data-test-id="manual-help-button"
-              ml={4}
-              Icon={() => <HelpMedium color="neutral.c80" size={24} />}
-              onClick={() => setHelpDrawerOpen(true)}
+      <Flex flex={1} position="relative">
+        <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} />
+        <Flex flex={1} px="120px" py={0} alignItems="center">
+          <Flex flex={1} flexDirection="column">
+            <Flex alignItems="center" mb={12}>
+              <Text variant="h3" fontSize="28px" fontWeight="semiBold">
+                Setup {deviceName}
+              </Text>
+            </Flex>
+            <VerticalTimeline steps={steps} />
+          </Flex>
+          <Flex flex={1} justifyContent="center" alignItems="center">
+            <Illustration
+              style={{
+                height: 360,
+                width: 240,
+                backgroundSize: "contain",
+              }}
+              lightSource={nanoX}
+              darkSource={nanoXDark}
             />
           </Flex>
-          <VerticalTimeline steps={steps} />
-        </Flex>
-        <Flex flex={1} justifyContent="center" alignItems="center">
-          <Illustration
-            style={{
-              height: 360,
-              width: 240,
-              backgroundSize: "contain",
-            }}
-            lightSource={nanoX}
-            darkSource={nanoXDark}
-          />
         </Flex>
       </Flex>
     </Flex>
