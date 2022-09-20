@@ -567,9 +567,9 @@ export async function bot({
   }
 
   appendBody(
-    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | mutation confirm |\n"
+    "| Spec (accounts) | preload | scan | re-sync | tx status | sign op | broadcast | test | destination test |\n"
   );
-  appendBody("|---|---|---|---|---|---|---|---|\n");
+  appendBody("|---|---|---|---|---|---|---|---|---|\n");
 
   appendBody("| **TOTAL** |");
   appendBody(`**${formatTime(sumResults((r) => r.preloadDuration))}** |`);
@@ -607,6 +607,11 @@ export async function bot({
           ? m.confirmedTime - m.broadcastedTime
           : 0
       )
+    )}** |`
+  );
+  appendBody(
+    `**${formatTime(
+      sumResultsMutation((m) => m.testDestinationDuration || 0)
     )}** |\n`
   );
 
@@ -650,6 +655,11 @@ export async function bot({
             ? m.confirmedTime - m.broadcastedTime
             : 0
         )
+      )} |`
+    );
+    appendBody(
+      `${formatTime(
+        sumMutation(r.mutations, (m) => m.testDestinationDuration || 0)
       )} |\n`
     );
   });
