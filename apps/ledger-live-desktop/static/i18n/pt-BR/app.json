@@ -235,10 +235,26 @@
     },
     "form" : {
       "changeCTA" : "Alterar",
-      "ratesDrawer" : {
-        "title" : "Taxa",
-        "quote" : "Cotação",
-        "receive" : "Receber"
+      "rates" : {
+        "title" : "Providers",
+        "registration" : "Registration required ",
+        "noRegistration" : "No registration required",
+        "fixed" : "Fixed",
+        "float" : "Float",
+        "update" : "Rates update in",
+        "loading" : "Loading...",
+        "name" : {
+          "title" : "Provider",
+          "tooltip" : "Depending on the provider, you have to sign in with them by creating an account."
+        },
+        "rate" : {
+          "title" : "Exchange rate",
+          "tooltip" : "A <0>floating rate</0> fluctuates depending on market conditions, so you might receive more or less than what you estimated.<br/><br/>A <0>fixed rate</0> matches the amount displayed at the beginning of the exchange."
+        },
+        "receive" : {
+          "title" : "Receive",
+          "tooltip" : "The estimated amount you’ll receive after the exchange."
+        }
       },
       "details" : {
         "label" : {
@@ -411,7 +427,13 @@
           "approved" : "KYC Aprovado!",
           "closed" : "KYC Rejeitado"
         }
-      }
+      },
+      "filter" : {
+        "all" : "All",
+        "centralised" : "Centralised",
+        "dedentralised" : "Decentralised"
+      },
+      "noQuote" : "Quote available at the next step"
     },
     "ip" : {
       "title" : "Boas-vindas à Troca",
@@ -760,7 +782,7 @@
       },
       "delegation" : {
         "title" : "Caso você não saiba...",
-        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "description" : "O validador da Ledger faz staking do seu {{asset}} por uma comissão menor que {{commission}}%.",
         "cta" : "Faça staking com a Ledger"
       }
     }
@@ -977,7 +999,7 @@
       "terms" : {
         "title" : "Emprestar Cripto",
         "subtitle" : "Empreste ativos no protocolo Compound",
-        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
+        "description" : "O protocolo Compound permite emprestar e pegar emprestado ativos na rede Ethereum. Você pode emprestar ativos e receber juros diretamente da sua conta Ledger.",
         "switchLabel" : "<1>Eu li e concordo com os </1><0>Termos de uso</0><1>.</1>"
       },
       "steps" : {
@@ -3145,7 +3167,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully activated your delegation."
+                "title" : "Você ativou sua delegação com sucesso."
               }
             }
           }
@@ -3157,7 +3179,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "You have successfully reactivated your delegation."
+                "title" : "Você reativou sua delegação com sucesso."
               }
             }
           }
@@ -3404,6 +3426,10 @@
         "scanForInvalidPaths" : {
           "title" : "Pesquisa de contas ampliada",
           "description" : "Procure contas com caminhos de derivação incorretos. Envie os potenciais ativos encontrados para uma conta regular."
+        },
+        "experimentalCountervalues" : {
+          "title" : "API de Contravalores Experimentais",
+          "description" : "Isso pode fazer com que contravalores incorretos sejam exibidos nas suas contas."
         },
         "experimentalExplorers" : {
           "title" : "API de exploradores experimentais",
@@ -4338,6 +4364,9 @@
       "title" : "O aplicativo {{appName}} não pode ser encontrado para sua configuração específica.",
       "description" : "Tente reinstalar o aplicativo através do My Ledger"
     },
+    "PendingOperation" : {
+      "description" : "Você tem transações de entrada pendentes. Atenção: transações pendentes podem ser revertidas."
+    },
     "countervaluesUnavailable" : {
       "title" : "Não foi possível fornecer um contravalor para este ativo no momento"
     },
@@ -4581,10 +4610,6 @@
     "NetworkDown" : {
       "title" : "A internet parece estar desconectada",
       "description" : "Verifique sua conexão à internet."
-    },
-    "NetworkError" : {
-      "title" : "Ocorreu um erro durante a sincronização",
-      "description" : "Verifique sua conexão de internet."
     },
     "NoAddressesFound" : {
       "title" : "Nenhuma conta encontrada",
