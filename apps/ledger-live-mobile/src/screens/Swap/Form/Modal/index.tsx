@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import {
   SwapTransactionType,
   ExchangeRate,

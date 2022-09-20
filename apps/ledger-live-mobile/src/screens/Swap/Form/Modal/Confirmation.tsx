@@ -25,7 +25,6 @@ import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHisto
 import {
   addPendingOperation,
   getMainAccount,
-  getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { AccountLike, DeviceInfo } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
