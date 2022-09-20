@@ -4344,6 +4344,8 @@
       "until": "until",
       "validatorRemainingStake": "Available",
       "validator": "NodeID",
+      "startTime": "Start Time",
+      "endTime": "End Time",
       "notEnoughToDelegate": "You must have at least 25 AVAX available on the P chain to become a delegator.",
       "stepperHeader": {
         "starter": "Earn rewards",

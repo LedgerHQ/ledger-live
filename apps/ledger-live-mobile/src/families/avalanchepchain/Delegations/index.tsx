@@ -15,6 +15,7 @@ import { Account } from "@ledgerhq/types-live";
 import {
   canDelegate,
   isDefaultValidatorNode,
+  getReadableDate,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 import {
   AvalancheDelegation,
@@ -130,6 +131,34 @@ function Delegations({ account }: Props) {
                 color="live"
               >
                 {account.name}{" "}
+              </LText>
+            ),
+          },
+          {
+            label: t("avalanchepchain.delegation.startTime"),
+            Component: (
+              <LText
+                numberOfLines={2}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText]}
+                color="live"
+              >
+                {getReadableDate(d.startTime)}
+              </LText>
+            ),
+          },
+          {
+            label: t("avalanchepchain.delegation.endTime"),
+            Component: (
+              <LText
+                numberOfLines={2}
+                semiBold
+                ellipsizeMode="tail"
+                style={[styles.valueText]}
+                color="live"
+              >
+                {getReadableDate(d.endTime)}
               </LText>
             ),
           },
