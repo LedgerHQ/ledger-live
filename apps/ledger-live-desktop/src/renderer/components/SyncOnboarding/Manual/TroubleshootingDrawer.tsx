@@ -1,9 +1,8 @@
 import React from "react";
-import { Drawer, Flex, Text, Button, Link } from "@ledgerhq/react-ui";
+import { Drawer, Flex, Text, Button } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
-import { ExternalLinkMedium } from "@ledgerhq/react-ui/assets/icons";
 import { DeviceModelId } from "@ledgerhq/devices";
 
 import Animation from "~/renderer/animations";
@@ -25,33 +24,27 @@ const TroubleshootingDrawer = ({ isOpen, onClose, lastKnownDeviceId }: Props) =>
       <Flex position="relative" flexDirection="column" height="100%" px={6}>
         <Flex flexDirection="column" flex={1}>
           <Animation
-            width="230px"
-            height="288px"
+            height="300px"
             animation={getDeviceAnimation(
               lastKnownDeviceId,
               theme.theme as "light" | "dark",
               "plugAndPinCode",
             )}
           />
-          <Text variant="h4" fontSize={24} fontWeight="semiBold">
+          <Text variant="h4" textAlign="center" fontSize={24} fontWeight="semiBold">
             {t("syncOnboarding.manual.troubleshootingDrawer.title")}
           </Text>
-          <Text variant="body" mt={8}>
+          <Text variant="large" textAlign="center" mt={6} color="neutral.c70">
             {t("syncOnboarding.manual.troubleshootingDrawer.description")}
           </Text>
         </Flex>
-        <Flex flexDirection="column">
-          <Button
-            variant="main"
-            Icon={ExternalLinkMedium}
-            iconSize={18}
-            onClick={() => history.push("/USBTroubleshooting")}
-          >
+        <Flex flexDirection="column" px={16}>
+          <Button variant="main" iconSize={18} onClick={() => history.push("/USBTroubleshooting")}>
             {t("syncOnboarding.manual.troubleshootingDrawer.fixButton")}
           </Button>
-          <Link Icon={ExternalLinkMedium} mt={8} onClick={onClose}>
+          <Button mt={6} onClick={onClose}>
             {t("syncOnboarding.manual.troubleshootingDrawer.closeButton")}
-          </Link>
+          </Button>
         </Flex>
       </Flex>
     </Drawer>
