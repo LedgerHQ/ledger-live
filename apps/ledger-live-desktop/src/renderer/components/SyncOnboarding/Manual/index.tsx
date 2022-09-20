@@ -13,15 +13,12 @@ import {
 import { command } from "~/renderer/commands";
 import { useHistory } from "react-router-dom";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import RecoveryContent from "./RecoveryContent";
 import ApplicationContent from "./ApplicationContent";
-import nanoX from "~/renderer/images/nanoX.v3.svg";
-import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import { StepText } from "./shared";
 import Header from "./Header";
 import Animation from "~/renderer/animations";
