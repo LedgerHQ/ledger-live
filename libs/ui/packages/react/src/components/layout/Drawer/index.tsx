@@ -5,6 +5,7 @@ import FlexBox, { FlexBoxProps } from "../Flex";
 import Divider, { Props as DividerProps } from "../../asorted/Divider";
 import Close from "@ledgerhq/icons-ui/react/CloseMedium";
 import ArrowLeft from "@ledgerhq/icons-ui/react/ArrowLeftRegular";
+
 import TransitionSlide from "../../transitions/TransitionSlide";
 import TransitionInOut from "../../transitions/TransitionInOut";
 import Text from "../../asorted/Text";
@@ -52,11 +53,7 @@ const ScrollWrapper = styled(FlexBox)`
 `;
 
 const ButtonPlaceholder = styled.div`
-  min-width: ${(p) => p.theme.space[13]}px;
-`;
-
-const IconButton = styled(Button)`
-  background-color: ${(p) => p.theme.colors.neutral.c30};
+  min-width: ${(p) => p.theme.space[12]}px;
 `;
 
 export interface DrawerProps {
@@ -156,7 +153,7 @@ const DrawerContent = React.forwardRef(
                   {!hideNavigation && (
                     <>
                       {onBack != null ? (
-                        <IconButton onClick={onBack} Icon={ArrowLeft} />
+                        <Button variant="neutral" onClick={onBack} Icon={ArrowLeft} />
                       ) : (
                         <ButtonPlaceholder />
                       )}
@@ -168,7 +165,7 @@ const DrawerContent = React.forwardRef(
                     </Text>
                   ) || <div />}
                   <FlexBox alignSelf="flex-start">
-                    <IconButton onClick={onClose} Icon={Close} />
+                    <Button variant="neutral" onClick={onClose} Icon={Close} />
                   </FlexBox>
                 </FlexBox>
                 <ScrollWrapper
