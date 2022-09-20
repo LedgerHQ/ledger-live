@@ -3588,7 +3588,11 @@
       "ru": "Russian",
       "es": "Spanish",
       "zh": "Chinese",
-      "de": "German"
+      "de": "German",
+      "tr": "Turkish",
+      "ja": "Japanese", 
+      "ko": "Korean", 
+      "pt": "Portuguese"
     }
   },
   "theme": {
