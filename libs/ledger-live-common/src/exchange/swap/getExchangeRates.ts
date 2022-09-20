@@ -126,15 +126,22 @@ const inferError = (
     maxAmountFrom: string;
     errorCode?: number;
     errorMessage?: string;
+    status: string;
   }
 ): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
-  const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage } =
-    responseData;
+  const {
+    amountTo,
+    minAmountFrom,
+    maxAmountFrom,
+    errorCode = 0,
+    errorMessage,
+    status,
+  } = responseData;
 
   if (!amountTo) {
     // We are in an error case regardless of api version.
-    if (errorCode) {
+    if (status === "error") {
       return getSwapAPIError(errorCode, errorMessage);
     }
 
