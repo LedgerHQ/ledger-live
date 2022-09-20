@@ -139,7 +139,8 @@ const inferError = (
     }
 
     // For out of range errors we will have a min/max pairing
-    if (minAmountFrom || maxAmountFrom) {
+    const hasAmountLimit = minAmountFrom || maxAmountFrom;
+    if (hasAmountLimit) {
       const isTooSmall = minAmountFrom
         ? new BigNumber(apiAmount).lte(minAmountFrom)
         : false;
