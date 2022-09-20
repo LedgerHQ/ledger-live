@@ -1648,15 +1648,7 @@
       "title": "Which device do you own?",
       "subtitle": "Choose which Ledger wallet you want to setup with Ledger Live",
       "brand": "Ledger",
-      "setupTime": "{{time}} mins",
-      "nanoX": {
-        "title": "Nano X",
-        "description": "We'll guide your every step to secure your crypto and NFTs"
-      },
-      "nanoFTS": {
-        "title": "Nano FTS",
-        "description": "We'll guide your every step to secure your crypto and NFTs"
-      }
+      "setupTime": "{{time}} mins"
     },
     "scanning": {
       "title": "Looking for your {{productName}}",
