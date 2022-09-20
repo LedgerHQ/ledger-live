@@ -208,6 +208,7 @@ const SyncOnboardingManual = () => {
       case DeviceOnboardingStep.WelcomeScreen3:
       case DeviceOnboardingStep.WelcomeScreen4:
       case DeviceOnboardingStep.WelcomeScreenReminder:
+      case DeviceOnboardingStep.ChooseName:
         setStepKey(StepKey.Paired);
         break;
       case DeviceOnboardingStep.Pin:
