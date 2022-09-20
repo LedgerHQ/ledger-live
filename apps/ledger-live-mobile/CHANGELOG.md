@@ -1,5 +1,23 @@
 # live-mobile
 
+## 3.9.0-nightly.2
+
+### Minor Changes
+
+- [#742](https://github.com/LedgerHQ/ledger-live/pull/742) [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371) Thanks [@grsoares21](https://github.com/grsoares21)! - Adds a device language change feature under feature flag
+
+* [#742](https://github.com/LedgerHQ/ledger-live/pull/742) [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371) Thanks [@grsoares21](https://github.com/grsoares21)! - Add prompt to change device language when live language is changed
+
+### Patch Changes
+
+- [#1277](https://github.com/LedgerHQ/ledger-live/pull/1277) [`11d59178fe`](https://github.com/LedgerHQ/ledger-live/commit/11d59178fe11787b2a7209723eaef4713bfcd7ef) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update text and ui for Add Account modal
+
+- Updated dependencies [[`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371), [`671700de22`](https://github.com/LedgerHQ/ledger-live/commit/671700de22dbfe7e59a0bee2b7cae243d5b22260), [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371), [`b4be83ac62`](https://github.com/LedgerHQ/ledger-live/commit/b4be83ac62b3977c16e0c375e26973b05ae4cd9e), [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a), [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371), [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a)]:
+  - @ledgerhq/native-ui@0.10.0-nightly.1
+  - @ledgerhq/live-common@27.3.0-nightly.2
+  - @ledgerhq/types-cryptoassets@6.23.1-nightly.0
+  - @ledgerhq/types-live@6.24.1-nightly.0
+
 ## 3.8.1-nightly.1
 
 ### Patch Changes

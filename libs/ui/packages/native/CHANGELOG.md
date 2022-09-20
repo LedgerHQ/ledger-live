@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.10.0-nightly.1
+
+### Minor Changes
+
+- [#742](https://github.com/LedgerHQ/ledger-live/pull/742) [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371) Thanks [@grsoares21](https://github.com/grsoares21)! - Add a Divider component to the UI lib
+
 ## 0.9.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.48.0-nightly.7
+
+### Minor Changes
+
+- [#975](https://github.com/LedgerHQ/ledger-live/pull/975) [`db69b7f95b`](https://github.com/LedgerHQ/ledger-live/commit/db69b7f95b2bd8364619389ae79487e189ccdd98) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Move divider after operationDetails
+
+### Patch Changes
+
+- [#1312](https://github.com/LedgerHQ/ledger-live/pull/1312) [`ddc3a8b4d5`](https://github.com/LedgerHQ/ledger-live/commit/ddc3a8b4d5646492ba567f3fef1800f042efa073) Thanks [@Justkant](https://github.com/Justkant)! - fix: sidebar & topbar over walletconnect
+
+- Updated dependencies [[`671700de22`](https://github.com/LedgerHQ/ledger-live/commit/671700de22dbfe7e59a0bee2b7cae243d5b22260), [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371), [`b4be83ac62`](https://github.com/LedgerHQ/ledger-live/commit/b4be83ac62b3977c16e0c375e26973b05ae4cd9e), [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a), [`56068b813c`](https://github.com/LedgerHQ/ledger-live/commit/56068b813ce301a37b9d08bd55273b3d934c7371), [`df76dd28c1`](https://github.com/LedgerHQ/ledger-live/commit/df76dd28c15d0cd5b7b57ee3f78aa0bd4170a44a)]:
+  - @ledgerhq/live-common@27.3.0-nightly.2
+  - @ledgerhq/types-cryptoassets@6.23.1-nightly.0
+  - @ledgerhq/types-live@6.24.1-nightly.0
+
 ## 2.48.0-nightly.6
 
 ### Patch Changes
