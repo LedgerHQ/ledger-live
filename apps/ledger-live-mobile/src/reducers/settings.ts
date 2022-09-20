@@ -366,6 +366,13 @@ const handlers: Record<string, any> = {
     ...state,
     lastSeenDevice: { ...(state.lastSeenDevice || {}), ...dmi },
   }),
+  LAST_SEEN_DEVICE: (
+    state: SettingsState,
+    { payload }: { payload: { deviceInfo: DeviceInfo } },
+  ) => ({
+    ...state,
+    lastSeenDevice: { ...state.lastSeenDevice, deviceInfo: payload.deviceInfo },
+  }),
   ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: [...state.starredMarketCoins, payload],
@@ -402,7 +409,10 @@ const handlers: Record<string, any> = {
     ...state,
     sensitiveAnalytics: action.enabled,
   }),
-  SET_FIRST_CONNECTION_HAS_DEVICE: (state: SettingsState, payload) => ({
+  SET_FIRST_CONNECTION_HAS_DEVICE: (
+    state: SettingsState,
+    payload?: boolean,
+  ) => ({
     ...state,
     firstConnectionHasDevice: payload,
   }),

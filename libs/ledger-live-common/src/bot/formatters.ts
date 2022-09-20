@@ -19,7 +19,9 @@ const formatTimeMinSec = (t: number) => {
 };
 
 export const formatTime = (t: number): string =>
-  t > 3000
+  !t
+    ? "N/A"
+    : t > 3000
     ? t > 100000
       ? formatTimeMinSec(t)
       : `${Math.round(t / 100) / 10}s`
@@ -31,7 +33,7 @@ export function formatAppCandidate(appCandidate: AppCandidate): string {
   return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
 }
 
-export function formatError(e: any, longform = false): string {
+export function formatError(e: unknown, longform = false): string {
   let out = "";
   if (!e || typeof e !== "object") {
     out = String(e);
@@ -72,6 +74,9 @@ export function formatReportForConsole<T extends Transaction>({
   operation,
   confirmedTime,
   finalAccount,
+  finalDestination,
+  finalDestinationOperation,
+  testDestinationDuration,
   testDuration,
   error,
 }: MutationReport<T>): string {
@@ -165,11 +170,21 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (finalAccount) {
-    str += `✔️ ${formatAccount(finalAccount, "basic")}\n`;
+    str += `✔️ ${formatAccount(finalAccount, "basic")}`;
   }
 
   if (testDuration) {
-    str += `(final state reached in ${formatTime(testDuration)})\n`;
+    str += `(in ${formatTime(testDuration)})\n`;
+  }
+
+  if (finalDestination && finalDestinationOperation) {
+    str += `✔️ destination operation ${formatOperation(finalDestination)(
+      finalDestinationOperation
+    )}\n`;
+  }
+
+  if (testDestinationDuration) {
+    str += `(in ${formatTime(testDestinationDuration)})\n`;
   }
 
   if (error) {

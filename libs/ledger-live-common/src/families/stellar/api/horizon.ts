@@ -3,7 +3,7 @@ import StellarSdk, {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
   NotFoundError,
-  NetworkError as StellarSdkNetworkError,
+  NetworkError,
 } from "stellar-sdk";
 import { getEnv } from "../../../env";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
@@ -14,7 +14,7 @@ import {
   rawOperationsToOperations,
   getReservedBalance,
 } from "../logic";
-import { LedgerAPI4xx, LedgerAPI5xx, NetworkError } from "@ledgerhq/errors";
+import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 import { requestInterceptor, responseInterceptor } from "../../../network";
 import type { BalanceAsset } from "../types";
 import { NetworkCongestionLevel, Signer } from "../types";
@@ -127,12 +127,8 @@ export const fetchAccount = async (
     assets = account.balances?.filter((balance) => {
       return balance.asset_type !== "native";
     });
-  } catch (e: any) {
-    if (e instanceof NotFoundError || e?.response?.status === 400) {
-      balance.balance = "0";
-    } else {
-      throw new NetworkError();
-    }
+  } catch (e) {
+    balance.balance = "0";
   }
 
   const formattedBalance = parseCurrencyUnit(
@@ -191,29 +187,29 @@ export const fetchOperations = async ({
       .includeFailed(true)
       .join("transactions")
       .call();
-  } catch (e: any) {
+  } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)
-    const errorMsg = e ? e.toString() : "";
+    const errorMsg = e ? String(e) : "";
 
     if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
       return [];
     }
 
     if (errorMsg.match(/status code 4[0-9]{2}/)) {
-      return new LedgerAPI4xx();
+      throw new LedgerAPI4xx();
     }
 
     if (errorMsg.match(/status code 5[0-9]{2}/)) {
-      return new LedgerAPI5xx();
+      throw new LedgerAPI5xx();
     }
 
     if (
-      e instanceof StellarSdkNetworkError ||
+      e instanceof NetworkError ||
       errorMsg.match(/ECONNRESET|ECONNREFUSED|ENOTFOUND|EPIPE|ETIMEDOUT/) ||
       errorMsg.match(/undefined is not an object/)
     ) {
-      throw new NetworkError();
+      throw new NetworkDown();
     }
 
     throw e;

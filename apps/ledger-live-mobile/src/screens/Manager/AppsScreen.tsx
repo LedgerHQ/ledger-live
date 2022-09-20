@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useMemo, memo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import {
   listTokens,
   isCurrencySupported,
 } from "@ledgerhq/live-common/currencies/index";
 import { distribute, Action, State } from "@ledgerhq/live-common/apps/index";
-import { App } from "@ledgerhq/types-live";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
 import { Text, Flex } from "@ledgerhq/native-ui";
@@ -13,7 +13,8 @@ import { Text, Flex } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 // eslint-disable-next-line import/no-cycle
-import { ManagerTab } from "./Manager";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { ManagerTab } from "../../const/manager";
 
 import AppFilter from "./AppsList/AppFilter";
 
@@ -29,6 +30,7 @@ import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "../../components/Search";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 
 type Props = {
   state: State;
@@ -39,13 +41,15 @@ type Props = {
   deviceId: string;
   initialDeviceName: string;
   navigation: any;
-  blockNavigation: boolean;
-  deviceInfo: any;
+  pendingInstalls: boolean;
+  deviceInfo: DeviceInfo;
+  device: Device;
   searchQuery?: string;
   updateModalOpened?: boolean;
   tab: ManagerTab;
   optimisticState: State;
   result: ListAppsResult;
+  onLanguageChange: () => void;
 };
 
 const AppsScreen = ({
@@ -57,12 +61,14 @@ const AppsScreen = ({
   updateModalOpened,
   deviceId,
   initialDeviceName,
+  device,
   navigation,
-  blockNavigation,
+  pendingInstalls,
   deviceInfo,
   searchQuery,
   optimisticState,
   result,
+  onLanguageChange,
 }: Props) => {
   const distribution = distribute(state);
 
@@ -80,7 +86,11 @@ const AppsScreen = ({
 
   const [query, setQuery] = useState(searchQuery || "");
 
-  const { update, device, catalog } = useAppsSections(state, {
+  const {
+    update,
+    device: deviceApps,
+    catalog,
+  } = useAppsSections(state, {
     query: "",
     appFilter,
     sort: sortOptions,
@@ -254,11 +264,13 @@ const AppsScreen = ({
               result={result}
               deviceId={deviceId}
               initialDeviceName={initialDeviceName}
-              blockNavigation={blockNavigation}
+              pendingInstalls={pendingInstalls}
               deviceInfo={deviceInfo}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               dispatch={dispatch}
-              appList={device}
+              device={device}
+              appList={deviceApps}
+              onLanguageChange={onLanguageChange}
             />
             <Flex mt={6}>
               <FirmwareUpdateBanner />
@@ -293,11 +305,12 @@ const AppsScreen = ({
         ListEmptyComponent={renderNoResults}
         keyExtractor={item => item.name}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
       />
     ),
     [
       appFilter,
-      blockNavigation,
+      pendingInstalls,
       device,
       deviceId,
       deviceInfo,
@@ -338,5 +351,11 @@ const AppsScreen = ({
     </Flex>
   );
 };
+
+const styles = StyleSheet.create({
+  list: {
+    paddingBottom: TAB_BAR_SAFE_HEIGHT,
+  },
+});
 
 export default memo<Props>(AppsScreen);

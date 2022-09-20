@@ -17,8 +17,10 @@ const asUint4be = (n) => {
 module.exports = {
   paths: [
     "tokens/ethereum/erc20",
-    "tokens/ethereum_ropsten/erc20",
     "tokens/ethereum_goerli/erc20",
+    "tokens/ethereum_rinkeby/erc20",
+    "tokens/ethereum_ropsten/erc20",
+    "tokens/ethereum_sepolia/erc20",
     "tokens/bsc/bep20",
     "tokens/polygon/erc20",
   ],

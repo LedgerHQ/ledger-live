@@ -2,12 +2,15 @@ import expect from "expect";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
+
 const currency = getCryptoCurrencyById("ripple");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
 const reserve = parseCurrencyUnit(currency.units[0], "20");
+
 const ripple: AppSpec<Transaction> = {
   name: "XRP",
   currency,
@@ -15,10 +18,13 @@ const ripple: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "XRP",
   },
+  genericDeviceAction: acceptTransaction,
+  minViableAmount: minAmountCutoff,
   mutations: [
     {
       name: "move ~50%",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
         const transaction = bridge.createTransaction(account);

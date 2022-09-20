@@ -11,12 +11,14 @@ import type {
   Transaction,
 } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
 import { getMinRelayFee, getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
+
 type Arg = Partial<{
   minimalAmount: BigNumber;
   targetAccountSize: number;
@@ -81,23 +83,27 @@ const genericTest = ({
     recipients: opShape.recipients.slice(0).sort(),
   });
 
-  botTest("operation matches tx senders and recipients", () =>
+  botTest("operation matches tx senders and recipients", () => {
+    let expectedSenders = nonDeterministicPicking
+      ? operation.senders
+      : txInputs.map((t) => t.address).filter(Boolean);
+    let expectedRecipients = txOutputs
+      .filter((o) => o.address && !o.isChange)
+      .map((o) => o.address)
+      .filter(Boolean);
+    if (account.currency.id === "bitcoin_cash") {
+      expectedSenders = expectedSenders.map(bchToCashaddrAddressWithoutPrefix);
+      expectedRecipients = expectedRecipients.map(
+        bchToCashaddrAddressWithoutPrefix
+      );
+    }
     expect(asSorted(operation)).toMatchObject(
       asSorted({
-        senders: nonDeterministicPicking
-          ? operation.senders
-          : txInputs.map((t) => t.address).filter(Boolean),
-        recipients: txOutputs
-          .filter((o) => o.address && !o.isChange)
-          .map((o) =>
-            account.currency.id === "bitcoin_cash"
-              ? bchToCashaddrAddressWithoutPrefix(o.address)
-              : o.address
-          )
-          .filter(Boolean),
+        senders: expectedSenders,
+        recipients: expectedRecipients,
       })
-    )
-  );
+    );
+  });
   const utxosPicked = (status.txInputs || [])
     .map(({ previousTxHash, previousOutputIndex }) =>
       bitcoinResources.utxos.find(
@@ -117,8 +123,12 @@ const genericTest = ({
   );
 };
 
+const testDestination = genericTestDestination;
+
+const genericMinimalAmount = new BigNumber(10000);
+
 const bitcoinLikeMutations = ({
-  minimalAmount = new BigNumber("10000"),
+  minimalAmount = genericMinimalAmount,
   targetAccountSize = 3,
   recipientVariation = (recipient) => recipient,
 }: Arg = {}): MutationSpec<Transaction>[] => [
@@ -149,8 +159,10 @@ const bitcoinLikeMutations = ({
       return {
         transaction,
         updates,
+        destination: sibling,
       };
     },
+    testDestination,
     recoverBadTransactionStatus,
   },
   {
@@ -177,8 +189,10 @@ const bitcoinLikeMutations = ({
       return {
         transaction,
         updates,
+        destination: sibling,
       };
     },
+    testDestination,
     recoverBadTransactionStatus,
   },
   {
@@ -217,9 +231,11 @@ const bitcoinLikeMutations = ({
             useAllAmount: true,
           },
         ],
+        destination: sibling,
       };
     },
     recoverBadTransactionStatus,
+    testDestination,
     test: ({ accountBeforeTransaction, account, operation, transaction }) => {
       const utxo = (
         (accountBeforeTransaction as BitcoinAccount).bitcoinResources?.utxos ||
@@ -231,11 +247,15 @@ const bitcoinLikeMutations = ({
           )
       );
       invariant(utxo, "utxo available");
-      botTest("sender is only the utxo address", () =>
+      botTest("sender is only the utxo address", () => {
+        let expectedSender = (utxo as BitcoinOutput).address;
+        if (account.currency.id === "bitcoin_cash") {
+          expectedSender = bchToCashaddrAddressWithoutPrefix(expectedSender);
+        }
         expect(operation).toMatchObject({
-          senders: [(utxo as BitcoinOutput).address],
-        })
-      );
+          senders: [expectedSender],
+        });
+      });
       botTest("utxo has been consumed", () =>
         expect(
           (account as BitcoinAccount).bitcoinResources?.utxos.find(
@@ -270,9 +290,11 @@ const bitcoinLikeMutations = ({
             useAllAmount: true,
           },
         ],
+        destination: sibling,
       };
     },
     recoverBadTransactionStatus,
+    testDestination,
     test: ({ account }) => {
       botTest("total of utxos is zero", () =>
         expect(
@@ -295,11 +317,12 @@ const bitcoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
+  minViableAmount: genericMinimalAmount,
 };
 const bitcoinTestnet: AppSpec<Transaction> = {
-  multipleRuns: 2,
   name: "Bitcoin Testnet",
   currency: getCryptoCurrencyById("bitcoin_testnet"),
   dependency: "Bitcoin",
@@ -307,14 +330,10 @@ const bitcoinTestnet: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin Test",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
-  mutations: bitcoinLikeMutations({
-    targetAccountSize: 8,
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("bitcoin_testnet").units[0],
-      "0.0001"
-    ),
-  }),
+  mutations: bitcoinLikeMutations({ targetAccountSize: 8 }),
+  minViableAmount: genericMinimalAmount,
 };
 const bitcoinGold: AppSpec<Transaction> = {
   name: "Bitcoin Gold",
@@ -324,8 +343,10 @@ const bitcoinGold: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "BitcoinGold",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
+  minViableAmount: genericMinimalAmount,
 };
 
 const bchToCashaddrAddressWithoutPrefix = (recipient) =>
@@ -339,6 +360,7 @@ const bitcoinCash: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "BitcoinCash",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
@@ -353,6 +375,7 @@ const bitcoinCash: AppSpec<Transaction> = {
       return addr;
     },
   }),
+  minViableAmount: genericMinimalAmount,
 };
 const peercoin: AppSpec<Transaction> = {
   name: "Peercoin",
@@ -362,8 +385,10 @@ const peercoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Peercoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
+  minViableAmount: genericMinimalAmount,
 };
 const pivx: AppSpec<Transaction> = {
   name: "PivX",
@@ -373,8 +398,10 @@ const pivx: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "PivX",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
+  minViableAmount: genericMinimalAmount,
 };
 const qtum: AppSpec<Transaction> = {
   name: "Qtum",
@@ -384,19 +411,10 @@ const qtum: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Qtum",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
-};
-const stakenet: AppSpec<Transaction> = {
-  name: "Stakenet",
-  currency: getCryptoCurrencyById("stakenet"),
-  dependency: "Bitcoin",
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "XSN",
-  },
-  test: genericTest,
-  mutations: bitcoinLikeMutations(),
+  minViableAmount: genericMinimalAmount,
 };
 const vertcoin: AppSpec<Transaction> = {
   name: "Vertcoin",
@@ -406,8 +424,10 @@ const vertcoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Vertcoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
+  minViableAmount: genericMinimalAmount,
 };
 const viacoin: AppSpec<Transaction> = {
   name: "Viacoin",
@@ -417,9 +437,15 @@ const viacoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Viacoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations(),
+  minViableAmount: genericMinimalAmount,
 };
+const minDash = parseCurrencyUnit(
+  getCryptoCurrencyById("dash").units[0],
+  "0.001"
+);
 const dash: AppSpec<Transaction> = {
   name: "Dash",
   currency: getCryptoCurrencyById("dash"),
@@ -428,15 +454,18 @@ const dash: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Dash",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("dash").units[0],
-      "0.001"
-    ),
+    minimalAmount: minDash,
   }),
+  minViableAmount: minDash,
 };
+const minDoge = parseCurrencyUnit(
+  getCryptoCurrencyById("dogecoin").units[0],
+  "1"
+);
 const dogecoin: AppSpec<Transaction> = {
   name: "DogeCoin",
   currency: getCryptoCurrencyById("dogecoin"),
@@ -445,31 +474,36 @@ const dogecoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Dogecoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("dogecoin").units[0],
-      "1"
-    ),
+    minimalAmount: minDoge,
   }),
+  minViableAmount: minDoge,
 };
+const minZcash = parseCurrencyUnit(
+  getCryptoCurrencyById("zcash").units[0],
+  "0.0002"
+);
 const zcash: AppSpec<Transaction> = {
   name: "ZCash",
   currency: getCryptoCurrencyById("zcash"),
-  dependency: "Bitcoin",
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Zcash",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("zcash").units[0],
-      "0.0002"
-    ),
+    minimalAmount: minZcash,
   }),
+  minViableAmount: minZcash,
 };
+const minHorizen = parseCurrencyUnit(
+  getCryptoCurrencyById("zencash").units[0],
+  "0.01"
+);
 const zencash: AppSpec<Transaction> = {
   name: "Horizen",
   currency: getCryptoCurrencyById("zencash"),
@@ -478,14 +512,17 @@ const zencash: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Horizen",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("zencash").units[0],
-      "0.01"
-    ),
+    minimalAmount: minHorizen,
   }),
+  minViableAmount: minHorizen,
 };
+const minDigibyte = parseCurrencyUnit(
+  getCryptoCurrencyById("digibyte").units[0],
+  "0.1"
+);
 const digibyte: AppSpec<Transaction> = {
   name: "Digibyte",
   currency: getCryptoCurrencyById("digibyte"),
@@ -494,15 +531,18 @@ const digibyte: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Digibyte",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("digibyte").units[0],
-      "0.1"
-    ),
+    minimalAmount: minDigibyte,
   }),
+  minViableAmount: minDigibyte,
 };
+const minKomodo = parseCurrencyUnit(
+  getCryptoCurrencyById("komodo").units[0],
+  "0.1"
+);
 const komodo: AppSpec<Transaction> = {
   name: "Komodo",
   currency: getCryptoCurrencyById("komodo"),
@@ -511,14 +551,17 @@ const komodo: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Komodo",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("komodo").units[0],
-      "0.1"
-    ),
+    minimalAmount: minKomodo,
   }),
+  minViableAmount: minKomodo,
 };
+const minDecred = parseCurrencyUnit(
+  getCryptoCurrencyById("decred").units[0],
+  "0.0001"
+);
 const decred: AppSpec<Transaction> = {
   name: "Decred",
   currency: getCryptoCurrencyById("decred"),
@@ -526,14 +569,17 @@ const decred: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Decred",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("decred").units[0],
-      "0.0001"
-    ),
+    minimalAmount: minDecred,
   }),
+  minViableAmount: minDecred,
 };
+const minLitecoin = parseCurrencyUnit(
+  getCryptoCurrencyById("litecoin").units[0],
+  "0.001"
+);
 const litecoin: AppSpec<Transaction> = {
   name: "Litecoin",
   currency: getCryptoCurrencyById("litecoin"),
@@ -542,14 +588,13 @@ const litecoin: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Litecoin",
   },
+  genericDeviceAction: acceptTransaction,
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("litecoin").units[0],
-      "0.001"
-    ),
+    minimalAmount: minLitecoin,
   }),
+  minViableAmount: minLitecoin,
 };
 
 export default {
@@ -565,7 +610,6 @@ export default {
   peercoin,
   pivx,
   qtum,
-  stakenet,
   vertcoin,
   viacoin,
   zcash,

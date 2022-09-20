@@ -9,7 +9,12 @@ import type {
   Transaction,
 } from "../../families/polkadot/types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
+  pickSiblings,
+} from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {
@@ -18,8 +23,10 @@ import {
   canNominate,
   isFirstBond,
   hasMinimumBondBalance,
+  getMinimumBalance,
 } from "../../families/polkadot/logic";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const maxAccounts = 32;
 const currency = getCryptoCurrencyById("polkadot");
@@ -28,6 +35,7 @@ const POLKADOT_MIN_SAFE = parseCurrencyUnit(currency.units[0], "0.1");
 // FIXME Should be replaced with EXISTENTIAL_DEPOSIT in logic.ts
 const EXISTENTIAL_DEPOSIT = parseCurrencyUnit(currency.units[0], "1.0");
 const MIN_LOCKED_BALANCE_REQ = parseCurrencyUnit(currency.units[0], "1.0");
+
 const polkadot: AppSpec<Transaction> = {
   name: "Polkadot",
   currency: getCryptoCurrencyById("polkadot"),
@@ -36,6 +44,8 @@ const polkadot: AppSpec<Transaction> = {
     appName: "Polkadot",
   },
   testTimeout: 2 * 60 * 1000,
+  genericDeviceAction: acceptTransaction,
+  minViableAmount: POLKADOT_MIN_SAFE,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(POLKADOT_MIN_SAFE), "balance is too low");
   },
@@ -56,6 +66,7 @@ const polkadot: AppSpec<Transaction> = {
     {
       name: "send 50%~",
       maxRun: 4,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         const sibling = pickSiblings(siblings, maxAccounts);
@@ -71,6 +82,18 @@ const polkadot: AppSpec<Transaction> = {
             "send is too low to activate account"
           );
           amount = EXISTENTIAL_DEPOSIT.plus(POLKADOT_MIN_SAFE);
+        }
+
+        const minimumBalanceExistential = getMinimumBalance(account);
+        const leftover = account.spendableBalance.minus(
+          amount.plus(POLKADOT_MIN_SAFE)
+        );
+        if (
+          minimumBalanceExistential.gt(0) &&
+          leftover.lt(minimumBalanceExistential) &&
+          leftover.gt(0)
+        ) {
+          throw new Error("risk of PolkadotDoMaxSendInstead");
         }
 
         return {
@@ -89,7 +112,9 @@ const polkadot: AppSpec<Transaction> = {
     {
       name: "bond - bondExtra",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ siblings, account, bridge }) => {
+        expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
+
         invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         invariant(canBond(account), "can't bond");
         invariant(

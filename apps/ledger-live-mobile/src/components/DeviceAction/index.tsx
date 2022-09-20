@@ -5,6 +5,7 @@ import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
@@ -24,9 +25,11 @@ import {
   renderConfirmSell,
   LoadingAppInstall,
   AutoRepair,
+  renderAllowLanguageInstallation,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
+import DeviceActionProgress from "../DeviceActionProgress";
 
 type Props<R, H, P> = {
   onResult?: (_: any) => Promise<void> | void;
@@ -79,6 +82,8 @@ export default function DeviceAction<R, H, P>({
     initSwapRequested,
     initSwapError,
     initSwapResult,
+    installingLanguage,
+    languageInstallationRequested,
     signMessageRequested,
     allowOpeningGranted,
     completeExchangeStarted,
@@ -101,6 +106,12 @@ export default function DeviceAction<R, H, P>({
       );
     }
   }, [dispatch, device, deviceInfo]);
+
+  useEffect(() => {
+    if (error && onError) {
+      onError(error);
+    }
+  }, [error]);
 
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
@@ -133,6 +144,17 @@ export default function DeviceAction<R, H, P>({
       colors,
       theme,
     });
+  }
+
+  if (installingLanguage) {
+    return (
+      <Flex>
+        <DeviceActionProgress progress={progress} />
+        <Flex mt={5}>
+          <Text variant="h4">{t("deviceLocalization.installingLanguage")}</Text>
+        </Flex>
+      </Flex>
+    );
   }
 
   if (installingApp) {
@@ -172,6 +194,14 @@ export default function DeviceAction<R, H, P>({
       wording,
       colors,
       theme,
+    });
+  }
+
+  if (languageInstallationRequested) {
+    return renderAllowLanguageInstallation({
+      t,
+      theme,
+      device: selectedDevice,
     });
   }
 
@@ -246,7 +276,6 @@ export default function DeviceAction<R, H, P>({
   if (!isLoading && error) {
     /** @TODO Put that back if the app is still crashing */
     // track("DeviceActionError", error);
-    onError && onError(error);
 
     // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
     // into another handled case.

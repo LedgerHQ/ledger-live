@@ -1,5 +1,81 @@
 # @ledgerhq/hw-app-eth
 
+## 6.29.7
+
+### Patch Changes
+
+- [#892](https://github.com/LedgerHQ/ledger-live/pull/892) [`d70bb7042a`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add EIP-712 capability when preparing message to sign
+
+- Updated dependencies [[`ae5e33e15e`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7)]:
+  - @ledgerhq/errors@6.10.2
+  - @ledgerhq/hw-transport@6.27.4
+  - @ledgerhq/hw-transport-mocker@6.27.4
+
+## 6.29.7-next.0
+
+### Patch Changes
+
+- [#892](https://github.com/LedgerHQ/ledger-live/pull/892) [`d70bb7042`](https://github.com/LedgerHQ/ledger-live/commit/d70bb7042a01de2191b59337d8a1574e22bd8887) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add EIP-712 capability when preparing message to sign
+
+- Updated dependencies [[`ae5e33e15`](https://github.com/LedgerHQ/ledger-live/commit/ae5e33e15e8a107d0ba8a3688a63eda2c0d43ce7)]:
+  - @ledgerhq/errors@6.10.2-next.0
+  - @ledgerhq/hw-transport@6.27.4-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.4-next.0
+
+## 6.29.6
+
+### Patch Changes
+
+- Updated dependencies [[`b615140ba2`](https://github.com/LedgerHQ/ledger-live/commit/b615140ba2e326e1466d15f123d412ea90db3754), [`e80336b28`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710), [`318e80452`](https://github.com/LedgerHQ/ledger-live/commit/318e80452569a0f91c4363ae50d2664419251dbd), [`e80336b28`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710), [`5dd957b3c`](https://github.com/LedgerHQ/ledger-live/commit/5dd957b3cb893668f044497d25b6eee69b05b2f0)]:
+  - @ledgerhq/cryptoassets@6.34.0
+
+## 6.29.6-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`b615140ba2`](https://github.com/LedgerHQ/ledger-live/commit/b615140ba2e326e1466d15f123d412ea90db3754)]:
+  - @ledgerhq/cryptoassets@6.34.0-next.1
+
+## 6.29.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710), [`318e804525`](https://github.com/LedgerHQ/ledger-live/commit/318e80452569a0f91c4363ae50d2664419251dbd), [`e80336b284`](https://github.com/LedgerHQ/ledger-live/commit/e80336b28478b3eca7a1c477b43cc512ba38a710), [`5dd957b3cb`](https://github.com/LedgerHQ/ledger-live/commit/5dd957b3cb893668f044497d25b6eee69b05b2f0)]:
+  - @ledgerhq/cryptoassets@6.34.0-next.0
+
+||||||| merged common ancestors
+
+## 6.29.4
+
+### Patch Changes
+
+- Updated dependencies [[`134355d561`](https://github.com/LedgerHQ/ledger-live/commit/134355d561bd8d576123d51f99cb5058be5721a4), [`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1), [`e2a9cfad63`](https://github.com/LedgerHQ/ledger-live/commit/e2a9cfad63f3c8fddf4660942a53545eabb03d6b)]:
+  - @ledgerhq/cryptoassets@6.32.0
+
+## 6.29.5
+
+### Patch Changes
+
+- Updated dependencies [[`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1), [`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/cryptoassets@6.33.0
+  - @ledgerhq/hw-transport@6.27.3
+  - @ledgerhq/hw-transport-mocker@6.27.3
+
+## 6.29.5-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`0c12f3e897`](https://github.com/LedgerHQ/ledger-live/commit/0c12f3e897527265ec86f688368d6d46340759a1)]:
+  - @ledgerhq/cryptoassets@6.33.0-next.0
+
+## 6.29.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
+  - @ledgerhq/hw-transport@6.27.3-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.3-next.0
+
 ## 6.29.4
 
 ### Patch Changes

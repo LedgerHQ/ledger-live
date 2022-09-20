@@ -4,8 +4,9 @@ import BigNumber from "bignumber.js";
 
 import type { Transaction } from "../../families/filecoin/types";
 import { getCryptoCurrencyById } from "../../currencies";
-import { pickSiblings } from "../../bot/specs";
+import { genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const MIN_SAFE = new BigNumber(100000);
 const maxAccount = 6;
@@ -17,8 +18,9 @@ const filecoinSpecs: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Filecoin",
   },
-
+  genericDeviceAction: acceptTransaction,
   testTimeout: 5 * 60 * 1000,
+  minViableAmount: MIN_SAFE,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
   },
@@ -26,6 +28,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
     {
       name: "Send 50%~",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, maxAccount);
         let amount = account.spendableBalance
@@ -56,6 +59,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
     {
       name: "Transfer Max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         return {
           transaction: bridge.createTransaction(account),

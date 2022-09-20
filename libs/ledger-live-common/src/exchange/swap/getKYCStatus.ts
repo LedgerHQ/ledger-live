@@ -4,6 +4,7 @@ import type { GetKYCStatus } from "./types";
 import { SwapCheckKYCStatusFailed } from "../../errors";
 import { getEnv } from "../../env";
 import { mockGetKYCStatus } from "./mock";
+
 export const getKYCStatus: GetKYCStatus = async (
   provider: string,
   id: string
@@ -17,7 +18,7 @@ export const getKYCStatus: GetKYCStatus = async (
   });
 
   if (!res.data?.status) {
-    return new SwapCheckKYCStatusFailed(id);
+    throw new SwapCheckKYCStatusFailed(id);
   }
 
   const { status } = res.data;
@@ -26,4 +27,5 @@ export const getKYCStatus: GetKYCStatus = async (
     status,
   };
 };
+
 export default getKYCStatus;

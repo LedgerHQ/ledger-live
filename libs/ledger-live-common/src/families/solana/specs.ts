@@ -2,7 +2,12 @@ import invariant from "invariant";
 import expect from "expect";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { botTest, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
+  pickSiblings,
+} from "../../bot/specs";
 import { AppSpec, TransactionTestInput } from "../../bot/types";
 import { SolanaAccount, Transaction } from "./types";
 import {
@@ -17,6 +22,8 @@ import { getCurrentSolanaPreloadData } from "./js-preload-data";
 import { sample } from "lodash/fp";
 import BigNumber from "bignumber.js";
 
+const maxAccount = 9;
+
 const solana: AppSpec<Transaction> = {
   name: "Solana",
   appQuery: {
@@ -25,17 +32,19 @@ const solana: AppSpec<Transaction> = {
     appVersion: "1.2.0",
     appName: "solana",
   },
+  genericDeviceAction: acceptTransferTransaction,
   testTimeout: 2 * 60 * 1000,
   currency: getCryptoCurrencyById("solana"),
   mutations: [
     {
       name: "Transfer ~50%",
       maxRun: 2,
+      testDestination: genericTestDestination,
       deviceAction: acceptTransferTransaction,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "balance is 0");
         const transaction = bridge.createTransaction(account);
-        const sibling = pickSiblings(siblings);
+        const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         const amount = account.spendableBalance
           .div(1.9 + 0.2 * Math.random())
@@ -53,11 +62,12 @@ const solana: AppSpec<Transaction> = {
     {
       name: "Transfer Max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       deviceAction: acceptTransferTransaction,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "balance is 0");
         const transaction = bridge.createTransaction(account);
-        const sibling = pickSiblings(siblings);
+        const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         return {
           transaction,
@@ -77,7 +87,9 @@ const solana: AppSpec<Transaction> = {
       name: "Delegate",
       maxRun: 1,
       deviceAction: acceptStakeCreateAccountTransaction,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, siblings }) => {
+        expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
+
         const { solanaResources } = account as SolanaAccount;
         if (solanaResources === undefined) {
           throw new Error("solana resources required");

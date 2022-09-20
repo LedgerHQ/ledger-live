@@ -11,7 +11,6 @@ const targets = [
   "bridge/mock.ts",
   "cli-transaction.ts",
   "specs.ts",
-  "speculos-deviceActions.ts",
   "deviceTransactionConfig.ts",
   "mock.ts",
   "account.ts",

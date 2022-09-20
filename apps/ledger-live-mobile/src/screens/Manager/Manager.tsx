@@ -1,12 +1,15 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import type { DeviceInfo } from "@ledgerhq/types-live";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { DeviceInfo } from "@ledgerhq/types-live";
+import { from } from "rxjs";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { useApps } from "./shared";
 // eslint-disable-next-line import/no-cycle
 import AppsScreen from "./AppsScreen";
@@ -22,13 +25,7 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
-
-export const MANAGER_TABS = {
-  CATALOG: "CATALOG",
-  INSTALLED_APPS: "INSTALLED_APPS",
-};
-
-export type ManagerTab = keyof typeof MANAGER_TABS;
+import { ManagerTab, MANAGER_TABS } from "../../const/manager";
 
 type Props = {
   navigation: StackNavigationProp<any>;
@@ -62,12 +59,19 @@ const Manager = ({ navigation, route }: Props) => {
   const [state, dispatch] = useApps(result, deviceId, appsToRestore);
   const reduxDispatch = useDispatch();
 
+  const refreshDeviceInfo = useCallback(() => {
+    withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
+      .toPromise()
+      .then(deviceInfo => {
+        navigation.setParams({ deviceInfo });
+      });
+  }, [deviceId, navigation]);
+
   const { apps, currentError, installQueue, uninstallQueue } = state;
-  const blockNavigation = installQueue.length + uninstallQueue.length > 0;
+  const pendingInstalls = installQueue.length + uninstallQueue.length > 0;
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const latestFirmware = useLatestFirmware(deviceInfo);
-
   const [quitManagerAction, setQuitManagerAction] = useState<any>(null);
 
   const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(false);
@@ -99,7 +103,7 @@ const Manager = ({ navigation, route }: Props) => {
   }, [setError, currentError]);
 
   // send informations to main router in order to lock navigation
-  useLockNavigation(blockNavigation, setQuitManagerAction, navigation);
+  useLockNavigation(pendingInstalls, setQuitManagerAction, navigation);
 
   // Save last seen device
   useEffect(() => {
@@ -151,6 +155,7 @@ const Manager = ({ navigation, route }: Props) => {
   const onCloseFirmwareUpdate = useCallback(
     (restoreApps?: boolean) => {
       setIsFirmwareUpdateOpen(false);
+      refreshDeviceInfo();
 
       // removes the firmwareUpdate param from the stack navigation so we don't open the modal again
       // if the user comes back to this page within the stack
@@ -170,7 +175,7 @@ const Manager = ({ navigation, route }: Props) => {
         });
       }
     },
-    [installedApps, navigation],
+    [installedApps, navigation, refreshDeviceInfo],
   );
 
   return (
@@ -186,6 +191,7 @@ const Manager = ({ navigation, route }: Props) => {
       <AppsScreen
         state={state}
         dispatch={dispatch}
+        device={device}
         navigation={navigation}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
@@ -193,13 +199,14 @@ const Manager = ({ navigation, route }: Props) => {
         managerTabs={MANAGER_TABS}
         deviceId={deviceId}
         initialDeviceName={deviceName}
-        blockNavigation={blockNavigation}
+        pendingInstalls={pendingInstalls}
         deviceInfo={deviceInfo}
         searchQuery={searchQuery}
         updateModalOpened={updateModalOpened}
         optimisticState={optimisticState}
         tab={tab}
         result={result}
+        onLanguageChange={refreshDeviceInfo}
       />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal

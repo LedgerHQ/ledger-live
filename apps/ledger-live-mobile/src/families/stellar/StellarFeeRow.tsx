@@ -81,7 +81,6 @@ export default function StellarFeeRow({
     label: React.ReactNode;
     isSelected: boolean;
     fee: BigNumber | null;
-    // eslint-disable-next-line no-unused-vars
     onSelect: (isCustom: boolean) => void;
   }) => (
     <TouchableOpacity

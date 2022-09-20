@@ -21,9 +21,7 @@ type Props = {
   value: BigNumber | null | undefined;
   showVal?: boolean;
   onSelect: (
-    // eslint-disable-next-line no-unused-vars
     validator: CosmosValidatorItem,
-    // eslint-disable-next-line no-unused-vars
     value: BigNumber | null | undefined,
   ) => void;
   unit: Unit;

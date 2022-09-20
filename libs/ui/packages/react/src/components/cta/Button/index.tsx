@@ -21,6 +21,7 @@ interface BaseProps extends BaseStyledProps, BordersProps {
   iconPosition?: IconPosition;
   iconButton?: boolean;
   disabled?: boolean;
+  whiteSpace?: string;
 }
 
 export interface ButtonProps extends BaseProps, React.RefAttributes<HTMLButtonElement> {
@@ -164,7 +165,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   overflow: hidden;
   ${(p) => buttonSizeStyle[p.size || "medium"]}
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: ${(p) => (p.whiteSpace ? p.whiteSpace : "nowrap")};
   max-width: 100%;
   position: relative;
   cursor: ${(p) => (p.disabled ? "default" : "pointer")};

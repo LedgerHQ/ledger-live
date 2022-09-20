@@ -3,7 +3,7 @@ import invariant from "invariant";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { isAccountEmpty } from "../../account";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { BigNumber } from "bignumber.js";
 import sample from "lodash/sample";
@@ -11,6 +11,8 @@ import { listTokensForCryptoCurrency } from "../../currencies";
 import { extractTokenId } from "./tokens";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Account } from "@ledgerhq/types-live";
+import { acceptTransaction } from "./speculos-deviceActions";
+
 const currency = getCryptoCurrencyById("algorand");
 // Minimum balance required for a new non-ASA account
 const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
@@ -72,10 +74,12 @@ const algorand: AppSpec<AlgorandTransaction> = {
     model: DeviceModelId.nanoS,
     appName: "Algorand",
   },
+  genericDeviceAction: acceptTransaction,
   mutations: [
     {
       name: "move ~50%",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const sibling = pickSiblings(siblings, 4);
@@ -112,6 +116,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
     {
       name: "send max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const sibling = pickSiblings(siblings, 4);

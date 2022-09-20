@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { Icons, Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
@@ -46,7 +47,10 @@ export default function ExchangeLiveAppNavigator({ route }: any) {
                 platform:
                   ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
                 mode: "buy",
-                currency: _props.route.params?.defaultCurrencyId,
+                currency: _props.route.params?.currency
+                  ? findCryptoCurrencyByKeyword(_props.route.params?.currency)
+                      ?.id
+                  : _props.route.params?.defaultCurrencyId,
                 account: _props.route.params?.defaultAccountId,
               },
             }}
@@ -75,7 +79,10 @@ export default function ExchangeLiveAppNavigator({ route }: any) {
                 platform:
                   ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
                 mode: "sell",
-                currency: _props.route.params?.defaultCurrencyId,
+                currency: _props.route.params?.currency
+                  ? findCryptoCurrencyByKeyword(_props.route.params?.currency)
+                      ?.id
+                  : _props.route.params?.defaultCurrencyId,
                 account: _props.route.params?.defaultAccountId,
               },
             }}

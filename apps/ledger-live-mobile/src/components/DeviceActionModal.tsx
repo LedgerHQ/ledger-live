@@ -18,8 +18,8 @@ type Props = {
   // TODO: fix request type
   request?: any;
   onClose?: () => void;
+  onError?: (error: Error) => void;
   onModalHide?: () => void;
-  // eslint-disable-next-line no-unused-vars
   onResult?: (payload: any) => Promise<void> | void;
   renderOnResult?: (_: any) => React.ReactNode;
   onSelectDeviceLink?: () => void;
@@ -32,6 +32,7 @@ export default function DeviceActionModal({
   request,
   onClose,
   onResult,
+  onError,
   renderOnResult,
   onModalHide,
   onSelectDeviceLink,
@@ -59,11 +60,12 @@ export default function DeviceActionModal({
       {onResult && result
         ? null
         : device && (
-            <Flex>
+            <Flex alignItems="center">
               <DeviceActionContainer marginBottom={showAlert ? "16px" : 0}>
                 <DeviceAction
                   action={action}
                   device={device}
+                  onError={onError}
                   request={request}
                   onResult={onResult ? p => setResult(p) : undefined}
                   renderOnResult={renderOnResult}
