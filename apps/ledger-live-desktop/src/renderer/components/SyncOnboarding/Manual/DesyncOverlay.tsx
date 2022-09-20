@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Flex, InfiniteLoader, Text, Box } from "@ledgerhq/react-ui";
-import { useTheme } from "styled-components";
-import { CloseMedium } from "@ledgerhq/react-ui/assets/icons";
+import { Flex, InfiniteLoader, Text, Box } from "@ledgerhq/react-ui";
+import styled, { useTheme } from "styled-components";
+
+const Overlay = styled(Flex)`
+  background: linear-gradient(rgba(0, 0, 0, 0) 0%, ${p => p.theme.colors.constant.overlay} 25%);
+`;
 
 type Props = {
   isOpen: boolean;
@@ -31,21 +34,15 @@ export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
   }
 
   return (
-    <Flex
+    <Overlay
       zIndex={100}
       position="absolute"
-      backgroundColor={colors.constant.overlay}
       top={0}
       left={0}
       height="100%"
       width="100%"
       flexDirection="column"
     >
-      <Flex justifyContent="flex-end" mr={6} mt={6}>
-        <Box backgroundColor={colors.neutral.c30} borderRadius="9999px">
-          <Button Icon={CloseMedium} iconSize={24} />
-        </Box>
-      </Flex>
       <Flex position="absolute" width="100%" justifyContent="flex-end" bottom={0} padding={4}>
         <Flex
           width="400px"
@@ -65,6 +62,6 @@ export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
           <InfiniteLoader color="black" size={24} />
         </Flex>
       </Flex>
-    </Flex>
+    </Overlay>
   );
 };
