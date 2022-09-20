@@ -32,6 +32,8 @@ type CurrencyCommon = {
   delisted?: boolean;
   // some countervalue will have a ticker alias
   countervalueTicker?: string;
+  // keywords to be able to find currency from "obvious" terms
+  keywords?: string[];
 };
 
 /**

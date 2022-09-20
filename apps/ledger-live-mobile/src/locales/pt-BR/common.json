@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Selecione seu idioma",
       "cta" : "Continuar",
+      "changeDeviceLanguage" : "{{language}} também está disponível para a sua {{deviceName}}",
+      "changeDeviceLanguageDescription" : "Você gostaria de mudar o seu idioma para {{language}}?",
       "warning" : {
         "title" : "Começar em inglês",
         "cta" : "Entendi!",
@@ -3547,9 +3549,15 @@
   "deviceLocalization" : {
     "language" : "Idioma",
     "deviceLanguage" : "Idioma do dispositivo",
+    "chooseLanguage" : "Escolha um idioma para sua {{deviceName}}.",
     "changeLanguage" : "Mudar Idioma",
-    "allowLanguageInstallation" : "Permitir instalação do idioma",
-    "languageInstalled" : "O idioma do dispositivo mudou para {{language}}.",
+    "yesChangeLanguage" : "Sim, mudar idioma",
+    "allowLanguageInstallation" : "Permitir a instalação do idioma na {{deviceName}}",
+    "languageInstalled" : "Idioma alterado para {{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "Colocar sua {{deviceName}} em {{language}}?",
+      "description" : "{{language}} agora está disponível para sua {{deviceName}}. Você pode configurar agora ou mudar o idioma do seu dispositivo a qualquer momento no My Ledger."
+    },
     "installingLanguage" : "Instalando Idioma",
     "languages" : {
       "english" : "Inglês",
