@@ -1,13 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  Button,
-  Text,
-  Icons,
-  IconBox,
-  ScrollContainer,
-} from "@ledgerhq/native-ui";
+import { Flex, Button, Icons, ScrollContainer } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
 
