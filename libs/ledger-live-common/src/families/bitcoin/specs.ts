@@ -189,6 +189,7 @@ const bitcoinLikeMutations = ({
       return {
         transaction,
         updates,
+        destination: sibling,
       };
     },
     testDestination,
@@ -230,6 +231,7 @@ const bitcoinLikeMutations = ({
             useAllAmount: true,
           },
         ],
+        destination: sibling,
       };
     },
     recoverBadTransactionStatus,
@@ -288,6 +290,7 @@ const bitcoinLikeMutations = ({
             useAllAmount: true,
           },
         ],
+        destination: sibling,
       };
     },
     recoverBadTransactionStatus,
