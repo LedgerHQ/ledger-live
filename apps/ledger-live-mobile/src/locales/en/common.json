@@ -1071,7 +1071,7 @@
     },
     "stepLanguage": {
       "title": "Select your language",
-      "cta": "Continue", 
+      "cta": "Continue",
       "changeDeviceLanguage": "{{language}} is also available for your {{deviceName}}",
       "changeDeviceLanguageDescription": "Would you like to change its language to {{language}}?",
       "warning": {
@@ -3352,6 +3352,7 @@
       "appsInstalled": "<0>{{number}}</0> app",
       "appsInstalled_plural": "<0>{{number}}</0> apps",
       "storageAvailable": "available",
+      "noFreeSpace": "No storage left",
       "appsToUpdate": "<0>{{number}}</0> update",
       "appsToUpdate_plural": "<0>{{number}}</0> updates"
     },
