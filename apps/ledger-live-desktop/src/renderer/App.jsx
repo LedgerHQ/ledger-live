@@ -35,6 +35,7 @@ import { themeSelector } from "./actions/general";
 import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrapper";
 // $FlowFixMe
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
+import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/Logic/PostOnboardingProviderWrapped";
 
 const reloadApp = event => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -81,17 +82,19 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: * }) => {
                   <ToastProvider>
                     <AnnouncementProviderWrapper>
                       <Router>
-                        <WalletConnectProvider>
-                          <PlatformAppProviderWrapper>
-                            <DrawerProvider>
-                              <NftMetadataProvider>
-                                <MarketDataProvider>
-                                  <Default />
-                                </MarketDataProvider>
-                              </NftMetadataProvider>
-                            </DrawerProvider>
-                          </PlatformAppProviderWrapper>
-                        </WalletConnectProvider>
+                        <PostOnboardingProviderWrapped>
+                          <WalletConnectProvider>
+                            <PlatformAppProviderWrapper>
+                              <DrawerProvider>
+                                <NftMetadataProvider>
+                                  <MarketDataProvider>
+                                    <Default />
+                                  </MarketDataProvider>
+                                </NftMetadataProvider>
+                              </DrawerProvider>
+                            </PlatformAppProviderWrapper>
+                          </WalletConnectProvider>
+                        </PostOnboardingProviderWrapped>
                       </Router>
                     </AnnouncementProviderWrapper>
                   </ToastProvider>
