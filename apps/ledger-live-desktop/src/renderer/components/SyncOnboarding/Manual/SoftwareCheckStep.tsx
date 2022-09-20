@@ -10,6 +10,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import SoftwareCheckContent from "./SoftwareCheckContent";
 import GenuineCheckModal from "./GenuineCheckModal";
 import GenuineCheckAnimationModal from "./GenuineCheckAnimationModal";
+import GenuineCheckCancelModal from "./GenuineCheckCancelModal";
 import { Status as SoftwareCheckStatus } from "./shared";
 
 const UIDelay = 2500;
@@ -65,6 +66,10 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
       return;
     }
 
+    if (devicePermissionState === "refused") {
+      setGenuineCheckStatus(SoftwareCheckStatus.cancelled);
+    }
+
     if (genuineCheckStatus === SoftwareCheckStatus.inactive) {
       setGenuineCheckStatus(SoftwareCheckStatus.requested);
     }
@@ -79,7 +84,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
     ) {
       setFirmwareUpdateStatus(SoftwareCheckStatus.requested);
     }
-  }, [isDisplayed, genuineCheckStatus, genuineState]);
+  }, [isDisplayed, genuineCheckStatus, genuineState, devicePermissionState]);
 
   useEffect(() => {
     if (!isDisplayed) {
@@ -112,6 +117,17 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
       <GenuineCheckModal
         isOpen={genuineCheckStatus === "requested"}
         onClose={() => setGenuineCheckStatus(SoftwareCheckStatus.active)}
+      />
+      <GenuineCheckCancelModal
+        isOpen={genuineCheckStatus === "cancelled"}
+        onClose={() => {
+          resetGenuineCheckState();
+          setGenuineCheckStatus(SoftwareCheckStatus.requested);
+        }}
+        onSkip={() => {
+          resetGenuineCheckState();
+          setGenuineCheckStatus(SoftwareCheckStatus.failed);
+        }}
       />
       <GenuineCheckAnimationModal
         isOpen={devicePermissionState === "unlock-needed" || devicePermissionState === "requested"}
