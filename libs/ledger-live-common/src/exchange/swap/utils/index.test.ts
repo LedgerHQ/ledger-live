@@ -10,6 +10,7 @@ import { genAccount } from "../../../mock/account";
 import {
   getAccountTuplesForCurrency,
   getAvailableAccountsById,
+  isRegistrationRequired,
   getProviderName,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
@@ -300,6 +301,24 @@ describe("swap/utils/shouldShowKYCBanner", () => {
         expect(result).toBe(false);
       });
     });
+  });
+});
+
+describe("swap/utils/isRegistrationRequired", () => {
+  test("should return registration is required for ftx", () => {
+    const expectedResult = true;
+
+    const result = isRegistrationRequired("ftx");
+
+    expect(result).toBe(expectedResult);
+  });
+
+  test("should return registration is not required for changelly", () => {
+    const expectedResult = false;
+
+    const result = isRegistrationRequired("changelly");
+
+    expect(result).toBe(expectedResult);
   });
 });
 

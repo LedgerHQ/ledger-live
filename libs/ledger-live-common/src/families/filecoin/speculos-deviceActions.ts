@@ -26,6 +26,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         expectedValue: ({ account, status }) =>
           formatDeviceAmount(account.currency, status.amount, {
             hideCode: true,
+            showAllDigits: true,
           }),
       },
       {
@@ -39,6 +40,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         expectedValue: ({ account, transaction }) =>
           formatDeviceAmount(account.currency, transaction.gasPremium, {
             hideCode: true,
+            showAllDigits: true,
           }),
       },
       {
@@ -47,6 +49,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         expectedValue: ({ account, transaction }) =>
           formatDeviceAmount(account.currency, transaction.gasFeeCap, {
             hideCode: true,
+            showAllDigits: true,
           }),
       },
       {

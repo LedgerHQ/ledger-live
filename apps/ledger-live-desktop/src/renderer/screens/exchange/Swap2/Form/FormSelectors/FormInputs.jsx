@@ -10,6 +10,7 @@ import ToRow from "./ToRow";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
+  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 
 type FormInputsProps = {
@@ -30,6 +31,7 @@ type FormInputsProps = {
   provider: ?string,
   loadingRates: boolean,
   isSendMaxLoading: boolean,
+  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
 };
 
 const RoundButton = styled(Button)`
@@ -41,7 +43,7 @@ const RoundButton = styled(Button)`
 const Main: ThemedComponent<{}> = styled.section`
   display: flex;
   flex-direction: column;
-  row-gap: 50px;
+  row-gap: 12px;
   margin-bottom: 5px;
 `;
 
@@ -75,6 +77,7 @@ export default function FormInputs({
   provider,
   loadingRates,
   isSendMaxLoading,
+  updateSelectedRate,
 }: FormInputsProps) {
   return (
     <Main>
@@ -89,6 +92,7 @@ export default function FormInputs({
           fromAmountError={fromAmountError}
           provider={provider}
           isSendMaxLoading={isSendMaxLoading}
+          updateSelectedRate={updateSelectedRate}
         />
       </Box>
       <Box horizontal justifyContent="center" alignContent="center">
@@ -104,6 +108,7 @@ export default function FormInputs({
           provider={provider}
           toAccount={toAccount}
           loadingRates={loadingRates}
+          updateSelectedRate={updateSelectedRate}
         />
       </Box>
     </Main>

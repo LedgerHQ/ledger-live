@@ -85,6 +85,7 @@
     "lock": "Lock",
     "showMore": "Show more",
     "back": "Back",
+    "adjustFees": "Adjust fees",
     "reset": "Reset",
     "retry": "Retry",
     "range": "Range",
@@ -235,10 +236,26 @@
     },
     "form": {
       "changeCTA": "Change",
-      "ratesDrawer": {
-        "title": "Rate",
-        "quote": "Quote",
-        "receive": "Receive"
+      "rates": {
+        "title": "Providers",
+        "registration": "Registration required ",
+        "noRegistration": "No registration required",
+        "fixed": "Fixed",
+        "float": "Float",
+        "update": "Rates update in",
+        "loading": "Loading...",
+        "name": {
+          "title": "Provider",
+          "tooltip": "Depending on the provider, you have to sign in with them by creating an account."
+        },
+        "rate": {
+          "title": "Exchange rate",
+          "tooltip": "A <0>floating rate</0> fluctuates depending on market conditions, so you might receive more or less than what you estimated.<br/><br/>A <0>fixed rate</0> matches the amount displayed at the beginning of the exchange."
+        },
+        "receive": {
+          "title": "Receive",
+          "tooltip": "The estimated amount you’ll receive after the exchange."
+        }
       },
       "details": {
         "label": {
@@ -411,7 +428,13 @@
           "approved": "KYC Approved!",
           "closed": "KYC Rejected"
         }
-      }
+      },
+      "filter": {
+        "all": "All",
+        "centralised": "Centralised",
+        "dedentralised": "Decentralised"
+      },
+      "noQuote": "Quote available at the next step"
     },
     "ip": {
       "title": "Welcome to Swap",
@@ -3417,6 +3440,10 @@
           "title": "Extended account search",
           "description": "Scan for accounts with erroneous derivation paths. Please send potentially found assets to a regular account."
         },
+        "experimentalCountervalues": {
+          "title": "Experimental countervalues API",
+          "description": "This may cause the countervalues displayed for your accounts to become incorrect."
+        },
         "experimentalExplorers": {
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.\n(<0></0>)"
@@ -4353,6 +4380,9 @@
       "title": "The {{appName}} app cannot be found for your specific configuration.",
       "description": "Try reinstalling the app from My Ledger"
     },
+    "PendingOperation": {
+      "description": "You have incoming transactions pending. Please beware pending transactions can be reversed."
+    },
     "countervaluesUnavailable": {
       "title": "We're not able to provide a countervalue for this asset at the moment"
     },
@@ -4595,10 +4625,6 @@
     },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
-      "description": "Please check your internet connection."
-    },
-    "NetworkError": {
-      "title": "An error occurred during synchronization",
       "description": "Please check your internet connection."
     },
     "NoAddressesFound": {

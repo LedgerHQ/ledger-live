@@ -1075,7 +1075,9 @@
     },
     "stepLanguage": {
       "title": "Select your language",
-      "cta": "Continue",
+      "cta": "Continue", 
+      "changeDeviceLanguage": "{{language}} is also available for your {{deviceName}}",
+      "changeDeviceLanguageDescription": "Would you like to change its language to {{language}}?",
       "warning": {
         "title": "Get started in English",
         "cta": "Got it!",
@@ -1689,17 +1691,17 @@
     }
   },
   "addAccountsModal": {
+    "title": "Add account",
     "ctaAdd": "Add accounts",
     "ctaImport": "Import Desktop accounts",
-    "title": "Add Crypto",
-    "description": "You can choose to add crypto(s) directly with your Ledger, or import them from Ledger Live Desktop.",
+    "description": "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add": {
       "title": "With your Ledger",
-      "description": "Create or import asset(s) with your Ledger"
+      "description": "Create or import asset with your Ledger"
     },
     "import": {
       "title": "Import from desktop",
-      "description": "Import asset(s) from Ledger Live Desktop"
+      "description": "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize": {
@@ -2281,11 +2283,8 @@
     "debug": {
       "featureFlagsTitle": "Defined feature flags used in Ledger Live",
       "featureFlagsDesc": "Overridden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
-      "featureFlagsOverride": "Override",
       "featureFlagsEdit": "Edit",
-      "featureFlagsRestore": "Restore",
-      "featureFlagsDisplayValue": "Display value",
-      "featureFlagsHideValue": "Hide value"
+      "featureFlagsRestore": "Restore"
     }
   },
   "notifications": {
@@ -3608,19 +3607,29 @@
     "no": "I prefer not to",
     "languages": {
       "en": "English",
-      "fr": "French",
-      "ru": "Russian",
-      "es": "Spanish",
-      "zh": "Chinese",
-      "de": "German"
+      "fr": "Français",
+      "ru": "Русский",
+      "es": "Español",
+      "zh": "中国人",
+      "de": "Deutsch",
+      "tr": "Türk",
+      "ja": "日本",
+      "ko": "한국인",
+      "pt": "Português"
     }
   },
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Device Language",
+    "chooseLanguage": "Choose a language for your {{deviceName}}.",
     "changeLanguage": "Change language",
-    "allowLanguageInstallation": "Allow language installation",
-    "languageInstalled": "Device language changed to {{language}}",
+    "yesChangeLanguage": "Yes, change language",
+    "allowLanguageInstallation": "Approve language installation on {{deviceName}}",
+    "languageInstalled": "Language changed to {{language}}",
+    "firmwareUpdatePrompt": {
+      "title": "Set your {{deviceName}} in {{language}}?",
+      "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
+    },
     "installingLanguage": "Installing language",
     "languages": {
       "english": "English",

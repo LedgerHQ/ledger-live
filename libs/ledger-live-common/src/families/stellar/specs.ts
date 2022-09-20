@@ -36,6 +36,7 @@ const stellar: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  minViableAmount: minAmountCutoff,
   mutations: [
     {
       name: "move ~50% XLM",

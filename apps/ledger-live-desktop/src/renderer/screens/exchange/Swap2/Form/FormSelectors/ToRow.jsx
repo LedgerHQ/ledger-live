@@ -16,6 +16,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
+  SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   Container as InputContainer,
@@ -35,6 +36,7 @@ type Props = {
   toAmount: $PropertyType<SwapSelectorStateType, "amount">,
   provider: ?string,
   loadingRates: boolean,
+  updateSelectedRate: $PropertyType<SwapDataType, "updateSelectedRate">,
 };
 
 const InputCurrencyContainer = styled(Box)`
@@ -60,6 +62,7 @@ function ToRow({
   provider,
   toAccount,
   loadingRates,
+  updateSelectedRate,
 }: Props) {
   const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : null;
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
@@ -74,6 +77,7 @@ function ToRow({
       swapVersion: SWAP_VERSION,
     });
   const setCurrencyAndTrack = currency => {
+    updateSelectedRate();
     track("Page Swap Form - New Target Currency", {
       provider,
       swapVersion: SWAP_VERSION,

@@ -28,6 +28,7 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/lib/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
@@ -409,14 +410,18 @@ export function renderAllowLanguageInstallation({
 }: RawProps & {
   device: Device;
 }) {
+  const deviceName = getDeviceModel(device.modelId).productName;
+
   return (
     <Wrapper>
+      <Text variant="h4" textAlign="center">
+        {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
+      </Text>
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ device, key: "validate", theme })}
         />
       </AnimationContainer>
-      <Log>{t("deviceLocalization.allowLanguageInstallation")}</Log>
     </Wrapper>
   );
 }

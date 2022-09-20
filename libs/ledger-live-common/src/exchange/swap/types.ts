@@ -316,6 +316,7 @@ export type SwapDataType = {
   isSwapReversable: boolean;
   rates: RatesReducerState;
   refetchRates: () => void;
+  updateSelectedRate: (selected?: ExchangeRate) => void;
   targetAccounts?: Account[];
 };
 

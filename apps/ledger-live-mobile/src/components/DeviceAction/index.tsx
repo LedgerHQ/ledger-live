@@ -5,7 +5,7 @@ import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Flex, Log } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
@@ -107,6 +107,12 @@ export default function DeviceAction<R, H, P>({
     }
   }, [dispatch, device, deviceInfo]);
 
+  useEffect(() => {
+    if (error && onError) {
+      onError(error);
+    }
+  }, [error]);
+
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
       t,
@@ -145,7 +151,7 @@ export default function DeviceAction<R, H, P>({
       <Flex>
         <DeviceActionProgress progress={progress} />
         <Flex mt={5}>
-          <Log>{t("deviceLocalization.installingLanguage")}</Log>
+          <Text variant="h4">{t("deviceLocalization.installingLanguage")}</Text>
         </Flex>
       </Flex>
     );
@@ -272,7 +278,6 @@ export default function DeviceAction<R, H, P>({
   if (!isLoading && error) {
     /** @TODO Put that back if the app is still crashing */
     // track("DeviceActionError", error);
-    onError && onError(error);
 
     // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
     // into another handled case.

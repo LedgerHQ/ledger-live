@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "Dilinizi seçin",
       "cta" : "Devam",
+      "changeDeviceLanguage" : "{{deviceName}} cihazınızı {{language}} dilinde de kullanabilirsiniz",
+      "changeDeviceLanguageDescription" : "Dili {{language}} yapmak ister misiniz?",
       "warning" : {
         "title" : "İngilizce olarak başlayın",
         "cta" : "Anladım!",
@@ -3533,19 +3535,29 @@
     "no" : "Şimdilik kalsın",
     "languages" : {
       "en" : "İngilizce",
-      "fr" : "Fransızca",
-      "ru" : "Rusça",
-      "es" : "İspanyolca",
-      "zh" : "Çince",
-      "de" : "Almanca"
+      "fr" : "Français",
+      "ru" : "Русский",
+      "es" : "Español",
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "Dil",
     "deviceLanguage" : "Cihaz Dili",
+    "chooseLanguage" : "{{deviceName}} cihazınız için bir dil seçin.",
     "changeLanguage" : "Dili değiştir",
-    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
-    "languageInstalled" : "Cihaz dili {{language}} oldu",
+    "yesChangeLanguage" : "Evet, dili değiştir",
+    "allowLanguageInstallation" : "{{deviceName}} cihazına dilin yüklenmesini onaylayın",
+    "languageInstalled" : "Dil {{language}} oldu",
+    "firmwareUpdatePrompt" : {
+      "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
+      "description" : "{{deviceName}} cihazınızı artık {{language}} kullanabilirsiniz. Cihaz dilini şimdi ayarlayabilir ya da daha sonra My Ledger'dan istediğiniz zaman değiştirebilirsiniz."
+    },
     "installingLanguage" : "Dil yükleniyor",
     "languages" : {
       "english" : "İngilizce",
