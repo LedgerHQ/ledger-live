@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "عذراً، تم تعطيل البلوتوث",
-      "description" : "يرجى تفعيل البلوتوث في إعدادات هاتفك. (حالة {{state}})"
+      "description" : "يرجى تمكين خاصية البلوتوث في إعدادات هاتفك."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "تحديثات البرامج الثابتة مدعومة فقط للاتصالات السلكية"
@@ -713,7 +713,7 @@
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImagePreviewError" : {
-      "title" : "Preview of the image failed",
+      "title" : "فشل عرض الصورة",
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImageProcessingError" : {
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger لا تقوم بالوصول إلى معلومات موقعك."
   },
   "permissions" : {
-    "open" : "فتح تصريحات التطبيق"
+    "open" : "فتح تصريحات التطبيق",
+    "nearbyDevicesPermissionDenied" : "للإقران من خلال البلوتوث، اسمح لتطبيق Ledger Live بمسح الأجهزة القريبة."
   },
   "fees" : {
     "speed" : {
@@ -1605,26 +1606,26 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "هل تبحث عن {{productName}} خاصتك",
+        "description" : "يرجى التأكد من إلغاء قفل {{productName}} خاصتك وأنه تم تمكين البلوتوث"
       },
       "withoutProductName" : {
         "title" : "البحث عن الأجهزة",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "description" : "يرجى التأكد من تشغيل جهازك وإلغاء قفله وتمكين البلوتوث"
       },
       "alreadyPaired" : "تم الإقران بالفعل"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "تم الإقران مع {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "جارٍ الإقران مع {{deviceName}}",
+        "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
+        "title" : "لم يتم إجراء الإقران بنجاح",
+        "subtitle" : "يبدو أنه قد حدث خطأ ما! تأكد من تشغيل البلوتوث لديك وأن {{productName}} خاصتك قريبة",
         "retryCta" : "أعد المحاولة"
       }
     }
@@ -1687,17 +1688,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "إضافة حساب",
     "ctaAdd" : "إضافة حسابات",
     "ctaImport" : "استيراد حسابات سطح المكتب",
-    "title" : "إضافة الأصول المشفرة",
-    "description" : "يمكنك اختيار إضافة أصل (أصول) مشفر مباشرةً عن طريق Ledger الخاصة بك، أو استيرادهم من Ledger Live لسطح المكتب.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "مع Ledger خاصتك",
-      "description" : "إنشاء أو استيراد أصل (أصول) عن طريق Ledger الخاصة بك"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "قم بالاستيراد من سطح المكتب",
-      "description" : "استيراد أصل (أصول) من Ledger Live لسطح المكتب"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2275,11 +2276,8 @@
     "debug" : {
       "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
       "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
-      "featureFlagsOverride" : "تجاوز",
       "featureFlagsEdit" : "تعديل",
-      "featureFlagsRestore" : "استعادة",
-      "featureFlagsDisplayValue" : "عرض القيمة",
-      "featureFlagsHideValue" : "إخفاء القيمة"
+      "featureFlagsRestore" : "استعادة"
     }
   },
   "notifications" : {
@@ -4762,8 +4760,8 @@
         "uploadFromPhone" : "قم بالتحميل من هاتفك"
       }
     },
-    "cropImage" : "Crop image",
-    "chooseConstrast" : "Choose contrast",
+    "cropImage" : "قُصّ الصورة",
+    "chooseConstrast" : "اختر التباين",
     "uploadAnotherImage" : "قم بتحميل صورة أخرى",
     "selectContrast" : "اختر مستوى التباين"
   },
