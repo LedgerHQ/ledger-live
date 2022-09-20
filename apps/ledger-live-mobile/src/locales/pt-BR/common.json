@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Desculpe, Bluetooth desativado",
-      "description" : "Ative o Bluetooth nas configurações do seu telefone. (Estado {{state}})"
+      "description" : "Ative o Bluetooth nas configurações do seu telefone."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "As atualizações de firmware só são suportadas para conexões com fio"
@@ -740,7 +740,8 @@
     "noInfos" : "A Ledger não acessa suas informações de localização."
   },
   "permissions" : {
-    "open" : "Abrir permissões do aplicativo"
+    "open" : "Abrir permissões do aplicativo",
+    "nearbyDevicesPermissionDenied" : "Para emparelhar com Bluetooth, autorize o aplicativo Ledger Live a procurar dispositivos próximos."
   },
   "fees" : {
     "speed" : {
@@ -1687,17 +1688,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Add account",
     "ctaAdd" : "Adicionar contas",
     "ctaImport" : "Importar contas do desktop",
-    "title" : "Adicionar Cripto",
-    "description" : "Você pode escolher adicionar criptoativos diretamente com sua Ledger, ou importá-los do Ledger Live de desktop.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "Com sua Ledger",
-      "description" : "Crie ou importe ativos com sua Ledger"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "Importar do desktop",
-      "description" : "Importe ativos do Ledger Live Desktop"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2275,11 +2276,8 @@
     "debug" : {
       "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
-      "featureFlagsOverride" : "Sobrepor",
       "featureFlagsEdit" : "Editar",
-      "featureFlagsRestore" : "Restaurar",
-      "featureFlagsDisplayValue" : "Exibir Valor",
-      "featureFlagsHideValue" : "Ocultar Valor"
+      "featureFlagsRestore" : "Restaurar"
     }
   },
   "notifications" : {
