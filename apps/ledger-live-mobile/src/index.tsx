@@ -26,18 +26,12 @@ import {
   getStateFromPath,
   LinkingOptions,
   NavigationContainer,
-  NavigationState,
-  useNavigation,
 } from "@react-navigation/native";
 import { useFlipper } from "@react-navigation/devtools";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
-import {
-  FeatureToggle,
-  useFeature,
-} from "@ledgerhq/live-common/featureFlags/index";
 import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
@@ -99,8 +93,7 @@ import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
-import PushNotificationsModal from "./screens/PushNotificationsModal";
-import RatingsModal from "./screens/RatingsModal";
+import Modals from "./screens/Modals";
 import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
@@ -116,21 +109,6 @@ import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import { useFilteredManifests } from "./screens/Platform/shared";
 import { setWallectConnectUri } from "./actions/walletconnect";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
-import useRatings from "./logic/ratings";
-import useNotifications from "./logic/notifications";
-
-const getCurrentRouteName = (
-  state: NavigationState | Required<NavigationState["routes"][0]>["state"],
-): Routes | undefined => {
-  if (state.index === undefined || state.index < 0) {
-    return undefined;
-  }
-  const nestedState = state.routes[state.index].state;
-  if (nestedState !== undefined) {
-    return getCurrentRouteName(nestedState);
-  }
-  return state.routes[state.index].name;
-};
 
 const themes = {
   light: lightTheme,
@@ -236,41 +214,6 @@ function App({ importDataString }: AppProps) {
     lense: postOnboardingSelector,
   });
 
-
-  const navigation = useNavigation();
-
-  const pushNotificationsFeature = useFeature("pushNotifications");
-  const { onPushNotificationsRouteChange } = useNotifications();
-
-  const ratingsFeature = useFeature("ratings");
-  const { onRatingsRouteChange } = useRatings();
-
-  useEffect(() => {
-    if (pushNotificationsFeature?.enabled || ratingsFeature?.enabled) return;
-
-    navigation.removeListener("state");
-    navigation.addListener("state", e => {
-      const navState = e?.data?.state;
-      if (navState && navState.routeNames) {
-        const currentRouteName = getCurrentRouteName(navState);
-        if (pushNotificationsFeature?.enabled) {
-          onPushNotificationsRouteChange(currentRouteName);
-        }
-        if (ratingsFeature?.enabled) {
-          onRatingsRouteChange(currentRouteName);
-        }
-      }
-    });
-
-    return () => navigation.removeListener("state");
-  }, [
-    navigation,
-    onPushNotificationsRouteChange,
-    onRatingsRouteChange,
-    pushNotificationsFeature?.enabled,
-    ratingsFeature?.enabled,
-  ]);
-
   return (
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
@@ -280,12 +223,7 @@ function App({ importDataString }: AppProps) {
 
       <AnalyticsConsole />
       <ThemeDebug />
-      <FeatureToggle feature="pushNotifications">
-        <PushNotificationsModal />
-      </FeatureToggle>
-      <FeatureToggle feature="ratings">
-        <RatingsModal />
-      </FeatureToggle>
+      <Modals />
     </GestureHandlerRootView>
   );
 }
