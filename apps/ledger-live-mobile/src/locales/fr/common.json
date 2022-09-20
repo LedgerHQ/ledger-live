@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Bluetooth désactivé",
-      "description" : "Activez le Bluetooth dans les paramètres de votre téléphone (état {{state}})."
+      "description" : "Merci d’activer le Bluetooth dans les Paramètres de votre téléphone."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "Les mises à jour du micrologiciel sont uniquement prises en charge pour les connexions filaires."
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger n’utilise pas vos données de localisation."
   },
   "permissions" : {
-    "open" : "Ouvrir autorisa. des apps"
+    "open" : "Ouvrir autorisa. des apps",
+    "nearbyDevicesPermissionDenied" : "Pour le couplage par Bluetooth, autorisez l’application Ledger Live à rechercher les appareils à proximité."
   },
   "fees" : {
     "speed" : {
@@ -1687,17 +1688,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Ajouter un compte",
     "ctaAdd" : "Ajouter des comptes",
     "ctaImport" : "Importer les comptes de l’ordinateur",
-    "title" : "Ajouter une crypto",
-    "description" : "Vous pouvez choisir d’ajouter des cryptos directement avec votre Ledger, ou les importer depuis Ledger Live pour l’ordinateur.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "Avec votre Ledger",
-      "description" : "Ajoutez ou importez des actifs avec votre Ledger."
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "Importer depuis l’ordinateur",
-      "description" : "Importez vos actifs depuis Ledger Live pour l’ordinateur."
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2275,11 +2276,8 @@
     "debug" : {
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
-      "featureFlagsOverride" : "Remplacer",
       "featureFlagsEdit" : "Modifier",
-      "featureFlagsRestore" : "Restaurer",
-      "featureFlagsDisplayValue" : "Afficher le code",
-      "featureFlagsHideValue" : "Masquer le code"
+      "featureFlagsRestore" : "Restaurer"
     }
   },
   "notifications" : {
@@ -3538,11 +3536,11 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
+      "tr" : "Türkçe",
+      "ja" : "日本語",
+      "ko" : "한국어",
       "pt" : "Português"
     }
   },
