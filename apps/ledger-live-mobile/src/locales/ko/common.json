@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "죄송하지만 블루투스가 비활성 상태입니다",
-      "description" : "휴대폰 설정에서 블루투스를 활성화해주세요. ({{state}} 주)"
+      "description" : "휴대폰 설정에서 블루투스를 활성화해주세요."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "펌웨어 업데이트는 유선 연결로만 지원됩니다."
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
   },
   "permissions" : {
-    "open" : "앱 사용 권한 열기"
+    "open" : "앱 사용 권한 열기",
+    "nearbyDevicesPermissionDenied" : "블루투스와 페어링하려면 Ledger Live 앱에서 주변 장치를 스캔하도록 승인하세요."
   },
   "fees" : {
     "speed" : {
@@ -1687,17 +1688,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Add account",
     "ctaAdd" : "계정 추가",
     "ctaImport" : "데스크탑 계정 가져오기",
-    "title" : "암호화폐 추가",
-    "description" : "Ledger에 직접 암호화폐를 추가하거나 Ledger Live 데스크탑에서 가져올 수 있습니다.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "Ledger를 통해",
-      "description" : "Ledger를 통해 자산 생성 또는 가져오기"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "데스크탑에서 가져오기",
-      "description" : "Ledger Live 데스크탑에서 자산 가져오기"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2275,11 +2276,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
-      "featureFlagsOverride" : "재정의",
       "featureFlagsEdit" : "편집",
-      "featureFlagsRestore" : "복구",
-      "featureFlagsDisplayValue" : "값 표시하기",
-      "featureFlagsHideValue" : "값 숨기기"
+      "featureFlagsRestore" : "복구"
     }
   },
   "notifications" : {
