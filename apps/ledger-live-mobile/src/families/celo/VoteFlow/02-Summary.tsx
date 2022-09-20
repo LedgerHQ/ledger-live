@@ -20,13 +20,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
@@ -43,6 +37,8 @@ import DelegatingContainer from "../../tezos/DelegatingContainer";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorImage from "../ValidatorImage";
 import Selectable from "../components/Selectable";
+import Line from "../components/Line";
+import Words from "../components/Words";
 
 type Props = {
   navigation: any;
@@ -294,16 +290,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 30,
   },
-  summaryLine: {
-    marginVertical: 10,
-    flexDirection: "row",
-    height: 40,
-    alignItems: "center",
-  },
-  summaryWords: {
-    marginRight: 6,
-    fontSize: 18,
-  },
   footer: {
     flexDirection: "column",
     alignItems: "center",
@@ -385,26 +371,3 @@ const ChangeDelegator = () => {
     </Circle>
   );
 };
-
-const Line = ({ children }: { children: ReactNode }) => (
-  <View style={styles.summaryLine}>{children}</View>
-);
-
-const Words = ({
-  children,
-  highlighted,
-  style,
-}: {
-  children: ReactNode;
-  highlighted?: boolean;
-  style?: any;
-}) => (
-  <Text
-    numberOfLines={1}
-    fontWeight={highlighted ? "bold" : "semiBold"}
-    style={[styles.summaryWords, style]}
-    color={highlighted ? "live" : "smoke"}
-  >
-    {children}
-  </Text>
-);

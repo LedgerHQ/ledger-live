@@ -201,6 +201,11 @@ export const ScreenName = {
   CeloRevokeValidatorSelect: "CeloRevokeValidatorSelect",
   CeloRevokeSelectDevice: "CeloRevokeSelectDevice",
   CeloRevokeConnectDevice: "CeloRevokeConnectDevice",
+  CeloWithdrawValidationSuccess: "CeloWithdrawValidationSuccess",
+  CeloWithdrawValidationError: "CeloWithdrawValidationError",
+  CeloWithdrawSelectDevice: "CeloWithdrawSelectDevice",
+  CeloWithdrawConnectDevice: "CeloWithdrawConnectDevice",
+  CeloWithdrawAmount: "CeloWithdrawAmount",
 
   // cosmos
   CosmosFamilyEditMemo: "CosmosFamilyEditMemo",
@@ -509,6 +514,7 @@ export const NavigatorName = {
   CeloVoteFlow: "CeloVoteFlow",
   CeloActivateFlow: "CeloActivateFlow",
   CeloRevokeFlow: "CeloRevokeFlow",
+  CeloWithdrawFlow: "CeloWithdrawFlow",
   // Tab
   Main: "Main",
   // Root

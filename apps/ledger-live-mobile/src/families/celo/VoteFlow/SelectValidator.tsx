@@ -3,7 +3,7 @@ import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
-import { CeloValidatorGroup } from "@ledgerhq/live-common/lib/families/celo/types";
+import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";

@@ -210,11 +210,7 @@ export default function LockAmount({ navigation, route }: Props) {
                     </View>
                   ) : null}
                 </View>
-                <SendRowsFee
-                  account={account}
-                  parentAccount={parentAccount}
-                  transaction={transaction}
-                />
+                <SendRowsFee account={account} transaction={transaction} />
                 <View style={styles.continueWrapper}>
                   <Button
                     event="CeloLockAmountContinue"

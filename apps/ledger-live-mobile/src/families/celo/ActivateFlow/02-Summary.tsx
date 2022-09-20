@@ -8,10 +8,9 @@ import {
   CeloAccount,
 } from "@ledgerhq/live-common/families/celo/types";
 import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
-import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
@@ -21,6 +20,9 @@ import Touchable from "../../../components/Touchable";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import Selectable from "../components/Selectable";
+import Line from "../components/Line";
+import Words from "../components/Words";
+import ErrorAndWarning from "../components/ErrorAndWarning";
 
 type Props = {
   navigation: any;
@@ -109,11 +111,18 @@ export default function ActivateSummary({ navigation, route }: Props) {
   }, [status, account, parentAccount, navigation, transaction]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
+  const error =
+    status.errors &&
+    Object.keys(status.errors).length > 0 &&
+    Object.values(status.errors)[0];
+  const warning =
+    status.warnings &&
+    Object.keys(status.warnings).length > 0 &&
+    Object.values(status.warnings)[0];
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="ActivateFlow" name="Summary" />
-
       <View style={styles.body}>
         <View style={styles.summary}>
           <SummaryWords
@@ -123,6 +132,12 @@ export default function ActivateSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
+        {!!(error && error instanceof Error) && (
+          <ErrorAndWarning error={error} />
+        )}
+        {!!(warning && warning instanceof Error) && (
+          <ErrorAndWarning warning={warning} />
+        )}
         <Button
           event="SummaryContinue"
           type="primary"
@@ -150,16 +165,6 @@ const styles = StyleSheet.create({
   summary: {
     alignItems: "center",
     marginVertical: 30,
-  },
-  summaryLine: {
-    marginVertical: 10,
-    flexDirection: "row",
-    height: 40,
-    alignItems: "center",
-  },
-  summaryWords: {
-    marginRight: 6,
-    fontSize: 18,
   },
   validatorSelection: {
     flexDirection: "row",
@@ -218,26 +223,3 @@ function SummaryWords({
     </>
   );
 }
-
-const Line = ({ children }: { children: ReactNode }) => (
-  <View style={styles.summaryLine}>{children}</View>
-);
-
-const Words = ({
-  children,
-  highlighted,
-  style,
-}: {
-  children: ReactNode;
-  highlighted?: boolean;
-  style?: any;
-}) => (
-  <Text
-    numberOfLines={1}
-    fontWeight={highlighted ? "bold" : "semiBold"}
-    style={[styles.summaryWords, style]}
-    color={highlighted ? "live" : "smoke"}
-  >
-    {children}
-  </Text>
-);

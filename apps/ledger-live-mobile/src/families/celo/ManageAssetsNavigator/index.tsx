@@ -3,9 +3,10 @@ import { View, StyleSheet } from "react-native";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { CeloAccount } from "@ledgerhq/live-common/lib/families/celo/types";
+import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
+  availablePendingWithdrawals,
   hasActivatableVotes,
   hasRevokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
@@ -48,7 +49,6 @@ function ManageAssetsNavigator() {
       screen: ScreenName.CeloRegistrationStarted,
       params: {
         accountId: account?.id,
-        // any other relevant param
       },
     });
   }, [onNavigate, account]);
@@ -59,7 +59,6 @@ function ManageAssetsNavigator() {
       screen: ScreenName.CeloLockAmount,
       params: {
         accountId: account?.id,
-        // any other relevant param
       },
     });
   }, [onNavigate, account]);
@@ -79,14 +78,13 @@ function ManageAssetsNavigator() {
     });
   }, [onNavigate]);
 
-  // const onWithdraw = useCallback(() => {
-  //   onNavigate({
-  //     route: NavigatorName.CosmosDelegationFlow,
-  //     screen: ScreenName.CosmosDelegationStarted,
-  //     params: {},
-  //   });
-
-  // }, [onNavigate]);
+  const onWithdraw = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.CeloWithdrawFlow,
+      screen: ScreenName.CeloWithdrawAmount,
+      params: {},
+    });
+  }, [onNavigate]);
 
   const onVote = useCallback(() => {
     onNavigate({
@@ -113,6 +111,9 @@ function ManageAssetsNavigator() {
   const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
   const activatingEnabled = hasActivatableVotes(account as CeloAccount);
   const revokingEnabled = hasRevokableVotes(account as CeloAccount);
+  const withdrawEnabled = availablePendingWithdrawals(
+    account as CeloAccount,
+  ).length;
 
   return (
     <SafeAreaView
@@ -148,11 +149,11 @@ function ManageAssetsNavigator() {
         />
         <Button
           event="Celo Withdraw Click"
-          onPress={onLock}
+          onPress={onWithdraw}
           type="main"
           title={t("celo.manage.withdraw.title")}
           containerStyle={styles.button}
-          disabled={true}
+          disabled={!withdrawEnabled}
         />
         <Button
           event="Celo Vote Click"

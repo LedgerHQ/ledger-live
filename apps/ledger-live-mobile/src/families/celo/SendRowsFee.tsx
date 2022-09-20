@@ -40,14 +40,12 @@ export default function CeloFeeRow({ account, transaction }: Props) {
         </View>
       }
     >
-      <View style={{ alignItems: "flex-end" }}>
-        <View style={styles.accountContainer}>
-          {fees ? (
-            <LText style={styles.valueText}>
-              <CurrencyUnitValue unit={unit} value={fees} />
-            </LText>
-          ) : null}
-        </View>
+      <View style={styles.accountContainer}>
+        {fees ? (
+          <LText semiBold style={styles.valueText}>
+            <CurrencyUnitValue unit={unit} value={fees} />
+          </LText>
+        ) : null}
         <LText style={styles.countervalue} color="grey">
           {fees ? (
             <CounterValue before="≈ " value={fees} currency={currency} />
@@ -62,11 +60,17 @@ const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,
     flexDirection: "row",
+    height: 18,
+    justifyContent: "flex-end",
   },
   countervalue: {
+    paddingLeft: 6,
+    paddingRight: 4,
     fontSize: 12,
+    alignSelf: "center",
   },
   valueText: {
-    fontSize: 16,
+    alignSelf: "center",
+    fontSize: 14,
   },
 });
