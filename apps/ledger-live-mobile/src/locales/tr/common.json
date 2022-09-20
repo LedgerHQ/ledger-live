@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Üzgünüz, Bluetooth devre dışı",
-      "description" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin. ({{state}} durum)"
+      "description" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "Donanım yazılımı güncellemeleri sadece kablolu bağlantıyla desteklenir"
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
   "permissions" : {
-    "open" : "Uygulama izinlerini aç"
+    "open" : "Uygulama izinlerini aç",
+    "nearbyDevicesPermissionDenied" : "Bluetooth ile eşleştirmek için Ledger Live uygulamasına yakındaki cihazları tarama yetkisi verin."
   },
   "fees" : {
     "speed" : {
@@ -1687,17 +1688,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Add account",
     "ctaAdd" : "Hesap ekle",
     "ctaImport" : "Masaüstü hesaplarını içe aktar",
-    "title" : "Kripto Ekle",
-    "description" : "Kriptoları doğrudan Ledger'ınızla eklemeyi seçebilir veya bunları Ledger Live Desktop'tan içe aktarabilirsiniz.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "Ledger'ınızla ekleyin",
-      "description" : "Varlıkları Ledger'ınızla ekleyin veya içe aktarın"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "Masaüstünden içe aktarın",
-      "description" : "Varlıkları Ledger Live Desktop'tan içe aktarın"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2275,11 +2276,8 @@
     "debug" : {
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
-      "featureFlagsOverride" : "Geçersiz bırak",
       "featureFlagsEdit" : "Düzenle",
-      "featureFlagsRestore" : "Geri yükle",
-      "featureFlagsDisplayValue" : "Değeri göster",
-      "featureFlagsHideValue" : "Değeri gizle"
+      "featureFlagsRestore" : "Geri yükle"
     }
   },
   "notifications" : {
@@ -3535,15 +3533,15 @@
     "no" : "Şimdilik kalsın",
     "languages" : {
       "en" : "İngilizce",
-      "fr" : "Français",
-      "ru" : "Русский",
-      "es" : "Español",
-      "zh" : "中国人",
-      "de" : "Deutsch",
-      "tr" : "Türk",
-      "ja" : "日本",
-      "ko" : "한국인",
-      "pt" : "Português"
+      "fr" : "Fransızca",
+      "ru" : "Rusça",
+      "es" : "İspanyolca",
+      "zh" : "Çince",
+      "de" : "Almanca",
+      "tr" : "Türkçe",
+      "ja" : "Japonca",
+      "ko" : "Korece",
+      "pt" : "Portekizce"
     }
   },
   "deviceLocalization" : {
