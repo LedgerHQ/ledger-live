@@ -5,7 +5,8 @@ import { CryptoIcons } from "../../../src/assets";
 import { BTC, ETH, DOT } from "../../../src/assets/cryptoIcons";
 import { useTheme } from "styled-components/native";
 import * as cryptoIcons from "@ledgerhq/crypto-icons-ui/native";
-import { number, select, color } from "@storybook/addon-knobs";
+import { number, select, color, boolean, text } from "@storybook/addon-knobs";
+import CryptoIcon from "../../../src/components/Icon/CryptoIcon";
 
 const IconSample = () => (
   <View>
@@ -28,9 +29,21 @@ const SingleCryptoIcon = () => {
   const size = number("size", 128);
   const colorValue = color("color", theme.colors.primary.c100);
 
-  const TagName = cryptoIcons[name] || "BTC";
+  const disabled = boolean("disabled", false);
+  const circleIcon = boolean("circleIcon", false);
 
-  return <TagName color={colorValue} size={size} />;
+  const tokenIcon = text("tokenIcon", "");
+
+  return (
+    <CryptoIcon
+      name={name}
+      size={size}
+      color={colorValue}
+      disabled={disabled}
+      circleIcon={circleIcon}
+      tokenIcon={tokenIcon}
+    />
+  );
 };
 
 storiesOf((story) =>

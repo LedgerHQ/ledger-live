@@ -85,6 +85,7 @@
     "lock": "Lock",
     "showMore": "Show more",
     "back": "Back",
+    "adjustFees": "Adjust fees",
     "reset": "Reset",
     "retry": "Retry",
     "range": "Range",
@@ -4378,6 +4379,9 @@
     "NoSuchAppOnProvider": {
       "title": "The {{appName}} app cannot be found for your specific configuration.",
       "description": "Try reinstalling the app from My Ledger"
+    },
+    "PendingOperation": {
+      "description": "You have incoming transactions pending. Please beware pending transactions can be reversed."
     },
     "countervaluesUnavailable": {
       "title": "We're not able to provide a countervalue for this asset at the moment"

@@ -9,7 +9,12 @@ import type {
   Transaction,
 } from "../../families/polkadot/types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import {
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
+  pickSiblings,
+} from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import {
@@ -40,6 +45,7 @@ const polkadot: AppSpec<Transaction> = {
   },
   testTimeout: 2 * 60 * 1000,
   genericDeviceAction: acceptTransaction,
+  minViableAmount: POLKADOT_MIN_SAFE,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(POLKADOT_MIN_SAFE), "balance is too low");
   },
@@ -60,6 +66,7 @@ const polkadot: AppSpec<Transaction> = {
     {
       name: "send 50%~",
       maxRun: 4,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         const sibling = pickSiblings(siblings, maxAccounts);
@@ -105,7 +112,9 @@ const polkadot: AppSpec<Transaction> = {
     {
       name: "bond - bondExtra",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ siblings, account, bridge }) => {
+        expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
+
         invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         invariant(canBond(account), "can't bond");
         invariant(

@@ -6,6 +6,14 @@ import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
 
+const minAmount = parseCurrencyUnit(
+  getCryptoCurrencyById("crypto_org").units[0],
+  "0.01"
+);
+const transactionCheck = ({ maxSpendable }) => {
+  invariant(maxSpendable.gt(minAmount), "balance is too low");
+};
+
 const sharedMutations = ({ maxAccount }) => [
   {
     name: "move 50%",
@@ -31,17 +39,8 @@ const crypto_org_croeseid: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 4 * 60 * 1000,
-  transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(
-          getCryptoCurrencyById("crypto_org_croeseid").units[0],
-          "0.01"
-        )
-      ),
-      "balance is too low"
-    );
-  },
+  minViableAmount: minAmount,
+  transactionCheck,
   mutations: sharedMutations({ maxAccount: 5 }),
 };
 
@@ -54,14 +53,8 @@ const crypto_org: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 4 * 60 * 1000,
-  transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById("crypto_org").units[0], "0.01")
-      ),
-      "balance is too low"
-    );
-  },
+  minViableAmount: minAmount,
+  transactionCheck,
   mutations: sharedMutations({ maxAccount: 5 }),
 };
 
