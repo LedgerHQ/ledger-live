@@ -77,22 +77,8 @@ jobs:
         run: pnpm mobile detox clean-framework-cache && pnpm mobile detox build-framework-cache
       - name: Build iOS app for Detox test run
         run: pnpm mobile e2e:build -c ios.sim.release
-      - name: Create Simulator Log
-        # With a little delay so the detox test below has time to spawn it, missing the first part of boot is fine
-        # If you boot the simulator separately from detox, some other race fails and detox testee never sends ready to proxy
-        continue-on-error: true
-        run: nohup sh -c "sleep 15 && xcrun simctl spawn booted log stream --style compact > simulator.log 2>&1 &"
       - name: Test iOS app
         run: pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing --record-performance all
-      - name: Compress Simulator Log
-        if: always()
-        run: gzip -9 simulator.log
-      - name: Upload Simulator Log
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: simulator_log
-          path: simulator.log.gz
       - name: Upload test artifacts
         uses: actions/upload-artifact@v2
         if: always()
