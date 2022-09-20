@@ -106,7 +106,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Кажется, Bluetooth отключён",
-      "description" : "Пожалуйста, включите Bluetooth в настройках телефона. (статус {{state}})"
+      "description" : "Пожалуйста, включите Bluetooth в настройках смартфона."
     },
     "FwUpdateBluetoothNotSupported" : {
       "title" : "Обновление прошивки поддерживается только для проводных соединений"
@@ -740,7 +740,8 @@
     "noInfos" : "Ledger не имеет доступа к информации о вашем местоположении."
   },
   "permissions" : {
-    "open" : "Открыть разрешения приложения"
+    "open" : "Открыть разрешения приложения",
+    "nearbyDevicesPermissionDenied" : "Для подключения по Bluetooth разрешите приложению Ledger Live сканировать находящиеся поблизости устройства."
   },
   "fees" : {
     "speed" : {
@@ -1687,17 +1688,17 @@
     }
   },
   "addAccountsModal" : {
+    "title" : "Add account",
     "ctaAdd" : "Добавить счета",
     "ctaImport" : "Импорт из настольного приложения",
-    "title" : "Добавляйте криптовалюту",
-    "description" : "Вы можете добавить криптовалюту прямо в Ledger, либо импортировать счёт из настольной версии Ledger Live.",
+    "description" : "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add" : {
       "title" : "При помощи Ledger",
-      "description" : "Создайте или импортируйте активы при помощи кошелька Ledger"
+      "description" : "Create or import asset with your Ledger"
     },
     "import" : {
       "title" : "Импорт из настольного приложения",
-      "description" : "Импортируйте активы из настольного приложения Ledger Live"
+      "description" : "Import asset from Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2275,11 +2276,8 @@
     "debug" : {
       "featureFlagsTitle" : "Определённые фича-флаги (feature flags), используемые в Ledger Live",
       "featureFlagsDesc" : "Переписанные значения будут сброшены в случае перезапуска приложения. Принимаются лишь валидные строки JSON.",
-      "featureFlagsOverride" : "Переписать",
       "featureFlagsEdit" : "Редактировать",
-      "featureFlagsRestore" : "Восстановить",
-      "featureFlagsDisplayValue" : "Показать значение",
-      "featureFlagsHideValue" : "Скрыть значение"
+      "featureFlagsRestore" : "Восстановить"
     }
   },
   "notifications" : {
@@ -3538,9 +3536,9 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中国人",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Türk",
+      "tr" : "Türkçe",
       "ja" : "日本",
       "ko" : "한국인",
       "pt" : "Português"
