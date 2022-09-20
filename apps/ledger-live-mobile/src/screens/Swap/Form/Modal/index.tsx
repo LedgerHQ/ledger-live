@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import {
   SwapTransactionType,
   ExchangeRate,
@@ -11,7 +11,6 @@ import { Terms } from "./Terms";
 import { swapAcceptProvider } from "../../../../actions/settings";
 
 export function Modal({
-  provider,
   confirmed,
   onClose,
   termsAccepted,
@@ -19,7 +18,6 @@ export function Modal({
   deviceMeta,
   exchangeRate,
 }: {
-  provider?: string;
   confirmed: boolean;
   termsAccepted: boolean;
   onClose: () => void;
@@ -29,6 +27,7 @@ export function Modal({
 }) {
   const dispatch = useDispatch();
   const [error, setError] = useState<Error>();
+  const provider = exchangeRate?.provider;
 
   const target = useMemo(() => {
     if (!confirmed) {
@@ -87,10 +86,9 @@ export function Modal({
         />
       )}
 
-      {deviceMeta && confirmed && (
+      {deviceMeta && confirmed && !error && (
         <Confirmation
           isOpen={confirmed}
-          provider={provider}
           onCancel={onClose}
           swapTx={swapTx}
           exchangeRate={exchangeRate}
@@ -106,10 +104,8 @@ export function Modal({
   );
 }
 
-/*  eslint-disable no-unused-vars */
 enum Target {
   Terms,
   Confirmation,
   None,
 }
-/*  eslint-enable no-unused-vars */

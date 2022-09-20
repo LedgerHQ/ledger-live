@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -48,7 +54,6 @@ export type DeviceMeta = {
 interface Props {
   swapTx: SwapTransactionType;
   exchangeRate?: ExchangeRate;
-  provider: string;
   deviceMeta: DeviceMeta;
   onError: (_error: { error: Error; swapId: string }) => void;
   onCancel: () => void;
@@ -56,18 +61,22 @@ interface Props {
 }
 
 export function Confirmation({
-  swapTx,
-  exchangeRate,
-  provider,
+  swapTx: swapTxProp,
+  exchangeRate: exchangeRateProp,
   onError,
   onCancel,
   deviceMeta,
   isOpen,
 }: Props) {
+  // tx should not change once user enter device action flow.
+  const swapTx = useRef(swapTxProp);
+  const exchangeRate = useRef(exchangeRateProp);
+  const provider = exchangeRate.current.provider;
+
   const {
     from: { account: fromAccount, parentAccount: fromParentAccount },
     to: { account: toAccount, parentAccount: toParentAccount },
-  } = swapTx.swap;
+  } = swapTx.current.swap;
 
   const exchange = useMemo<Exchange>(
     () => ({
@@ -93,27 +102,20 @@ export function Confirmation({
     fromAccount && fromAccount.type === "TokenAccount"
       ? fromAccount.token
       : null;
-  const targetCurrency = useMemo(
-    () => toAccount && getAccountCurrency(toAccount),
-    [toAccount],
-  );
   const navigation = useNavigation();
 
   const onComplete = useCallback(
     result => {
-      if (!fromAccount || !targetCurrency || !exchangeRate) {
-        return;
-      }
       const { operation, swapId } = result;
       /**
        * If transaction broadcast are disabled, consider the swap as cancelled
        * since the partner will never receive the funds
        */
       if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        postSwapCancelled({ provider: exchangeRate.provider, swapId });
+        postSwapCancelled({ provider, swapId });
       } else {
         postSwapAccepted({
-          provider: exchangeRate.provider,
+          provider,
           swapId,
           transactionId: operation.hash,
         });
@@ -128,10 +130,10 @@ export function Confirmation({
             addToSwapHistory({
               account,
               operation,
-              transaction: swapTx.transaction as Transaction,
+              transaction: swapTx.current.transaction as Transaction,
               swap: {
                 exchange,
-                exchangeRate,
+                exchangeRate: exchangeRate.current,
               },
               swapId,
             }),
@@ -152,24 +154,20 @@ export function Confirmation({
           provider,
           swapId,
           status: "pending",
-          fromAmount: swapTx.swap.from.amount,
-          toAmount: exchangeRate.toAmount,
+          fromAmount: swapTx.current.swap.from.amount,
+          toAmount: exchangeRate.current.toAmount,
         },
       });
     },
     [
+      toAccount,
       fromAccount,
       fromParentAccount,
       dispatch,
       navigation,
-      exchangeRate,
-      targetCurrency,
-      swapTx.transaction,
-      swapTx.swap,
       exchange,
-      provider,
-      toAccount,
       toParentAccount,
+      provider,
     ],
   );
 
@@ -210,8 +208,8 @@ export function Confirmation({
                 onError={onError}
                 request={{
                   exchange,
-                  exchangeRate: exchangeRate as ExchangeRate,
-                  transaction: swapTx.transaction as SwapTransaction,
+                  exchangeRate: exchangeRate.current as ExchangeRate,
+                  transaction: swapTx.current.transaction as SwapTransaction,
                   userId: providerKYC?.id,
                 }}
                 onResult={({ initSwapResult, initSwapError, swapId }) => {
@@ -228,7 +226,7 @@ export function Confirmation({
                 action={silentSigningAction}
                 device={deviceMeta.device}
                 request={{
-                  status: swapTx.status,
+                  status: swapTx.current.status,
                   tokenCurrency,
                   parentAccount: fromParentAccount,
                   account: fromAccount as AccountLike,

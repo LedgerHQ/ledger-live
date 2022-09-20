@@ -432,12 +432,12 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
         <Modal
           swapTx={swapTransaction}
-          provider={provider}
           confirmed={confirmed}
           termsAccepted={termsAccepted}
           onClose={onCloseModal}
           deviceMeta={deviceMeta}
           exchangeRate={exchangeRate}
+          setError={setError}
         />
       </KeyboardAwareScrollView>
     );
