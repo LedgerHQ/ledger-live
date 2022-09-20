@@ -75,6 +75,8 @@ export const Bullet = ({ status, bulletText, text, subText, ...props }: BulletPr
           <Icons.CircledCheckSolidMedium size={24} color={colors.success.c60} />
         ) : status === Status.updateAvailable ? (
           <InfoCircle size={24} color={colors.constant.purple} />
+        ) : status === Status.failed ? (
+          <Icons.CircledCrossSolidMedium size={24} color={colors.error.c80} />
         ) : (
           <Text variant="body">{bulletText}</Text>
         )}
