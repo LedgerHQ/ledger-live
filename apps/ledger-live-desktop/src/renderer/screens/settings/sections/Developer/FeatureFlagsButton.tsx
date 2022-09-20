@@ -7,7 +7,7 @@ import { Text, Input, Icons, Flex, Tag, SearchInput } from "@ledgerhq/react-ui";
 import {
   InputRenderLeftContainer,
   InputRenderRightContainer,
-} from "@ledgerhq/react-ui/components/form/BaseInput";
+} from "@ledgerhq/react-ui/components/form/BaseInput/index";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { includes, lowerCase } from "lodash";
 import Box from "~/renderer/components/Box";
