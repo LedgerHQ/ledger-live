@@ -48,8 +48,7 @@ export type OperationType =
   | "NFT_OUT"
   // NEAR
   | "STAKE"
-  | "UNSTAKE"
-  | "WITHDRAW";
+  | "UNSTAKE";
 
 /**
  *
