@@ -1,20 +1,18 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { Button, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
-import { HelpMedium } from "@ledgerhq/react-ui/assets/icons";
+import { Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-
-import { command } from "~/renderer/commands";
-import { useHistory, useRouteMatch } from "react-router-dom";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { useTheme } from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 
-import OnboardingNavHeader from "../../Onboarding/OnboardingNavHeader";
+import { command } from "~/renderer/commands";
+import { useHistory } from "react-router-dom";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Illustration from "~/renderer/components/Illustration";
 import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
@@ -26,6 +24,8 @@ import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import { StepText } from "./shared";
 import Header from "./Header";
+import Animation from "~/renderer/animations";
+import { getDeviceAnimation } from "../../DeviceAction/animations";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -65,6 +65,7 @@ function nextStepKey(step: StepKey): StepKey {
 
 const SyncOnboardingManual = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const history = useHistory();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
 
@@ -298,26 +299,27 @@ const SyncOnboardingManual = () => {
         isOpen={isTroubleshootingDrawerOpen}
         onClose={handleTroubleshootingDrawerClose}
       />
-      <Flex flex={1} position="relative">
+      <Flex flex={1} position="relative" overflow="hidden">
         <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} />
-        <Flex flex={1} px="120px" py={0} alignItems="center">
-          <Flex flex={1} flexDirection="column">
-            <Flex alignItems="center" mb={12}>
+        <Flex flex={1} px="120px" py={0}>
+          <Flex flex={1} flexDirection="column" overflow="hidden" justifyContent="center">
+            <Flex flex={1} flexGrow={0} alignItems="center" mb={12}>
               <Text variant="h3" fontSize="28px" fontWeight="semiBold">
                 Setup {deviceName}
               </Text>
             </Flex>
-            <VerticalTimeline steps={steps} />
+            <Flex flexShrink={1} overflowY="scroll">
+              <VerticalTimeline flex={1} steps={steps} />
+            </Flex>
           </Flex>
           <Flex flex={1} justifyContent="center" alignItems="center">
-            <Illustration
-              style={{
-                height: 360,
-                width: 240,
-                backgroundSize: "contain",
-              }}
-              lightSource={nanoX}
-              darkSource={nanoXDark}
+            <Animation
+              height="540px"
+              animation={getDeviceAnimation(
+                device?.modelId || ("nanoFTS" as DeviceModelId),
+                theme.theme as "light" | "dark",
+                "placeHolder",
+              )}
             />
           </Flex>
         </Flex>

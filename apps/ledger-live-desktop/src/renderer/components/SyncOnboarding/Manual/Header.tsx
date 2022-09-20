@@ -8,6 +8,7 @@ import { rgba } from "~/renderer/styles/helpers";
 
 // TODO: remove this when the lang switcher is properly reworked
 const LangSwitcherButtonLikeWrapper = styled(Flex)`
+  padding-top: 2px;
   border-radius: 9999px;
   :hover {
     box-shadow: 0 0 0 2px ${p => rgba(p.theme.colors.primary.c60, 0.4)};

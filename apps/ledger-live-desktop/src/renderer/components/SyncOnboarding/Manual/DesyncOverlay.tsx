@@ -43,7 +43,7 @@ export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
       width="100%"
       flexDirection="column"
     >
-      <Flex position="absolute" width="100%" justifyContent="flex-end" bottom={0} padding={4}>
+      <Flex alignItems="flex-end" justifyContent="center" flex={1} padding={4}>
         <Flex
           width="400px"
           backgroundColor={colors.warning}
@@ -55,7 +55,7 @@ export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
           alignItems="center"
         >
           <Box flexShrink={1}>
-            <Text pr={3} variant="body" color={colors.palette.constant.black}>
+            <Text pr={3} variant="body" color={colors.constant.black}>
               {`It looks like connection to your Nano was lost. We're trying to reconnect.`}
             </Text>
           </Box>
