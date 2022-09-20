@@ -123,7 +123,6 @@ const FeatureFlagsButton = () => {
       [focusedName]: undefined,
     }));
     featureFlagsProvider.resetFeature(focusedName);
-    setFocusedName();
   }, [featureFlagsProvider, focusedName]);
 
   const handleOverrideFeature = useCallback(() => {
