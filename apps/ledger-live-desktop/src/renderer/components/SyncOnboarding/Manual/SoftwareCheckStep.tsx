@@ -45,21 +45,11 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
     deviceId,
   });
 
-  console.log(
-    `🏴‍☠️🧙‍♂️: genuineState = ${genuineState}, devicePermissionState = ${devicePermissionState}, error = ${error}`,
-  );
-
   const { latestFirmware /*, error */, status } = useGetLatestAvailableFirmware({
     getLatestAvailableFirmwareFromDeviceId: getLatestAvailableFirmwareFromDeviceIdCommand,
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
   });
-
-  console.log(
-    `🏝: latestFirmware = ${JSON.stringify(
-      latestFirmware,
-    )}, status = ${status}, error = remove above comment`,
-  );
 
   useEffect(() => {
     if (!isDisplayed) {
@@ -71,7 +61,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
     }
 
     if (genuineCheckStatus === SoftwareCheckStatus.inactive) {
-      setGenuineCheckStatus(SoftwareCheckStatus.requested);
+      setTimeout(() => setGenuineCheckStatus(SoftwareCheckStatus.requested), UIDelay);
     }
 
     if (genuineState === "genuine") {
