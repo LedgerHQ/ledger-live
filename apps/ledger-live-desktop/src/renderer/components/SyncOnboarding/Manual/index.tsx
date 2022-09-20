@@ -9,6 +9,10 @@ import { command } from "~/renderer/commands";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import {
+  OnboardingStep as DeviceOnboardingStep,
+  fromSeedPhraseTypeToNbOfSeedWords,
+} from "@ledgerhq/live-common/hw/extractOnboardingState";
 
 import OnboardingNavHeader from "../../Onboarding/OnboardingNavHeader";
 import Illustration from "~/renderer/components/Illustration";
@@ -22,23 +26,12 @@ import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import { StepText } from "./shared";
 
-const shortResyncDelay = 1000;
-const longResyncDelay = 10000;
-const readyRedirectDelay = 2500;
-const pollingTimeoutMs = 60000;
+const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
-
-// TODO: remove this and import it
-enum DeviceOnboardingStep {
-  WelcomeScreen = "WELCOME_SCREEN",
-  SetupChoice = "SETUP_CHOICE",
-  Pin = "PIN",
-  NewDevice = "NEW_DEVICE",
-  NewDeviceConfirming = "NEW_DEVICE_CONFIRMING",
-  RestoreSeed = "RESTORE_SEED",
-  SafetyWarning = "SAFETY WARNING",
-  Ready = "READY",
-}
+const desyncTimeoutMs = 60000;
+const longDesyncTimeoutMs = 100000;
+const resyncDelayMs = 1000;
+const longResyncDelayMs = 30000;
 
 enum StepKey {
   Paired = 0,
@@ -150,6 +143,8 @@ const SyncOnboardingManual = () => {
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [desyncTimer, setDesyncTimer] = useState<NodeJS.Timeout | null>(null);
+  const [resyncDelay, setResyncDelay] = useState<number>(resyncDelayMs);
+  const [desyncTimeout, setDesyncTimeout] = useState<number>(desyncTimeoutMs);
   const device = useSelector(getCurrentDevice);
 
   const productName = device
@@ -193,14 +188,18 @@ const SyncOnboardingManual = () => {
     }
 
     switch (deviceOnboardingState?.currentOnboardingStep) {
+      case DeviceOnboardingStep.SetupChoice:
       case DeviceOnboardingStep.RestoreSeed:
       case DeviceOnboardingStep.SafetyWarning:
       case DeviceOnboardingStep.NewDevice:
       case DeviceOnboardingStep.NewDeviceConfirming:
         setStepKey(StepKey.Seed);
         break;
-      case DeviceOnboardingStep.WelcomeScreen:
-      case DeviceOnboardingStep.SetupChoice:
+      case DeviceOnboardingStep.WelcomeScreen1:
+      case DeviceOnboardingStep.WelcomeScreen2:
+      case DeviceOnboardingStep.WelcomeScreen3:
+      case DeviceOnboardingStep.WelcomeScreen4:
+      case DeviceOnboardingStep.WelcomeScreenReminder:
         setStepKey(StepKey.Paired);
         break;
       case DeviceOnboardingStep.Pin:
@@ -211,17 +210,38 @@ const SyncOnboardingManual = () => {
     }
   }, [deviceOnboardingState]);
 
+  // When the user gets close to the seed generation step, sets the lost synchronization delay
+  // and timers to a higher value. It avoids having a warning message while the connection is lost
+  // because the device is generating the seed.
+  useEffect(() => {
+    if (
+      deviceOnboardingState?.seedPhraseType &&
+      [DeviceOnboardingStep.NewDeviceConfirming, DeviceOnboardingStep.RestoreSeed].includes(
+        deviceOnboardingState?.currentOnboardingStep,
+      )
+    ) {
+      const nbOfSeedWords = fromSeedPhraseTypeToNbOfSeedWords.get(
+        deviceOnboardingState.seedPhraseType,
+      );
+
+      if (nbOfSeedWords && deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2) {
+        setResyncDelay(longResyncDelayMs);
+        setDesyncTimeout(longDesyncTimeoutMs);
+      }
+    }
+  }, [deviceOnboardingState]);
+
   useEffect(() => {
     if (stepKey >= StepKey.SoftwareCheck) {
       setStopPolling(true);
     }
 
     if (stepKey === StepKey.Ready) {
-      setTimeout(() => setStepKey(StepKey.Exit), readyRedirectDelay / 2);
+      setTimeout(() => setStepKey(StepKey.Exit), readyRedirectDelayMs / 2);
     }
 
     if (stepKey === StepKey.Exit) {
-      setTimeout(handleDeviceReady, readyRedirectDelay / 2);
+      setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
     }
 
     setSteps(
@@ -247,13 +267,13 @@ const SyncOnboardingManual = () => {
   }, [fatalError]);
 
   useEffect(() => {
-    if (allowedError && !desyncTimer) {
-      setDesyncTimer(setTimeout(handleDesyncTimerRunsOut, pollingTimeoutMs));
-    } else if (!allowedError && desyncTimer) {
+    if ((!device || allowedError) && !desyncTimer) {
+      setDesyncTimer(setTimeout(handleDesyncTimerRunsOut, desyncTimeout));
+    } else if (!!device && !allowedError && desyncTimer) {
       clearTimeout(desyncTimer);
       setDesyncTimer(null);
     }
-  }, [allowedError, handleDesyncTimerRunsOut, desyncTimer]);
+  }, [device, allowedError, handleDesyncTimerRunsOut, desyncTimer, desyncTimeout]);
 
   useEffect(() => {
     if (isTroubleshootingDrawerOpen) {
@@ -264,7 +284,7 @@ const SyncOnboardingManual = () => {
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
       <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
-      <DesyncOverlay isOpen={!!desyncTimer} delay={shortResyncDelay} />
+      <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} />
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
         lastKnownDeviceId={lastKnownDeviceId}
