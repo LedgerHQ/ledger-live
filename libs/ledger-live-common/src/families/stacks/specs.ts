@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
+import expect from "expect";
 
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById } from "../../currencies";
@@ -18,7 +19,7 @@ const stacksSpecs: AppSpec<Transaction> = {
     appName: "Stacks",
   },
   genericDeviceAction: acceptTransaction,
-  testTimeout: 20 * 60 * 1000,
+  testTimeout: 25 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
   },
