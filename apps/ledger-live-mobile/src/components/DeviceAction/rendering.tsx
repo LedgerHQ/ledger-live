@@ -15,7 +15,6 @@ import {
   Log,
 } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setModalLock } from "../../actions/appstate";
@@ -460,6 +459,7 @@ export function renderDeviceNotOnboarded({
   navigation: any;
 }) {
   const navigateToOnboarding = () => {
+    console.log({ navigating: device.modelId });
     // TODO: do better
     if (device.modelId === "nanoFTS") {
       // On pairing success, navigate to the Sync Onboarding Companion
