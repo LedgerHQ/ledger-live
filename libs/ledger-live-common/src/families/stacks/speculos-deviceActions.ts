@@ -25,7 +25,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "Amount uSTX",
         button: "Rr",
-        expectedValue: ({ transaction }) => transaction.amount.toFixed(),
+        expectedValue: ({ status }) => status.amount.toFixed(),
       },
       {
         title: "To",
