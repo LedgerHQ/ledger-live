@@ -19,6 +19,7 @@ import {
 } from "../../bridge/utils/api";
 import { TransactionResponse } from "./types";
 import { getCryptoCurrencyById } from "../../../../currencies";
+import { encodeOperationId } from "../../../../operation";
 
 export const getTxToBroadcast = async (
   operation: Operation,
@@ -57,7 +58,7 @@ export const getAddress = (a: Account): Address =>
     ? a.freshAddresses[0]
     : { address: a.freshAddress, derivationPath: a.freshAddressPath };
 
-export const mapTxToOps = (id, { address }: GetAccountShapeArg0) => (
+export const mapTxToOps = (accountID, { address }: GetAccountShapeArg0) => (
   tx: TransactionResponse
 ): Operation[] => {
   const { sender, recipient, amount } = tx.stx_transfers[0];
@@ -74,14 +75,14 @@ export const mapTxToOps = (id, { address }: GetAccountShapeArg0) => (
 
   if (isSending) {
     ops.push({
-      id: `${id}-${tx_id}-OUT`,
+      id: encodeOperationId(accountID, tx_id, "OUT"),
       hash: tx_id,
       type: "OUT",
       value: value.plus(feeToUse),
       fee: feeToUse,
       blockHeight: block_height,
       blockHash: null,
-      accountId: id,
+      accountId: accountID,
       senders: [sender],
       recipients: [recipient],
       date,
@@ -91,14 +92,14 @@ export const mapTxToOps = (id, { address }: GetAccountShapeArg0) => (
 
   if (isReceiving) {
     ops.push({
-      id: `${id}-${tx_id}-IN`,
+      id: encodeOperationId(accountID, tx_id, "IN"),
       hash: tx_id,
       type: "IN",
       value,
       fee: feeToUse,
       blockHeight: block_height,
       blockHash: null,
-      accountId: id,
+      accountId: accountID,
       senders: [sender],
       recipients: [recipient],
       date,
