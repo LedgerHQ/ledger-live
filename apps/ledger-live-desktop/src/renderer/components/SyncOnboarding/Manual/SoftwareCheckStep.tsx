@@ -124,6 +124,10 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete }: Props) => {
           resetGenuineCheckState();
           setGenuineCheckStatus(SoftwareCheckStatus.requested);
         }}
+        onSkip={() => {
+          resetGenuineCheckState();
+          setGenuineCheckStatus(SoftwareCheckStatus.failed);
+        }}
       />
       <GenuineCheckAnimationModal
         isOpen={devicePermissionState === "unlock-needed" || devicePermissionState === "requested"}

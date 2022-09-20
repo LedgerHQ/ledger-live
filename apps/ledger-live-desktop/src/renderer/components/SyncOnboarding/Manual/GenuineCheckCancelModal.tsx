@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 export type Props = {
   isOpen: boolean;
   onClose: () => void;
+  onSkip: () => void;
 };
 
-const GenuineCheckCancelModal = ({ isOpen, onClose }: Props) => {
+const GenuineCheckCancelModal = ({ isOpen, onClose, onSkip }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -32,7 +33,7 @@ const GenuineCheckCancelModal = ({ isOpen, onClose }: Props) => {
           <Button variant="main" width="100%" onClick={onClose} marginBottom="20px">
             {t("syncOnboarding.manual.genuineCheckCancelModal.checkDeviceButton")}
           </Button>
-          <Button width="100%">
+          <Button width="100%" onClick={onSkip}>
             {t("syncOnboarding.manual.genuineCheckCancelModal.cancelButton")}
           </Button>
         </Flex>
