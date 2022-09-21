@@ -5,6 +5,7 @@ import com.hwtransportreactnativeble.tasks.Queue
 import com.hwtransportreactnativeble.tasks.Runner
 import com.hwtransportreactnativeble.tasks.RunnerAction
 import com.ledger.live.ble.BleManagerFactory
+import com.ledger.live.ble.model.BleError
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.net.URL
@@ -104,11 +105,11 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
                 if (retriesLeft == 0 || consumed) {
                     // If we are here, it's a disconnect that might be expected
                     // to be handled somewhere else, if we have a disconnect callback
-                    onDisconnectWrapper(it)
+                    onDisconnectWrapper(it.message)
                     if (!consumed){
-                        promise.reject("connectError", Exception(it))
+                        promise.reject("connectError", Exception(it.message))
                     }
-                } else if (it === "Device connection lost" && retriesLeft > 0) {
+                } else if (it == BleError.UNKNOWN && retriesLeft > 0) {
                     // We shouldn't have `Device connection lost` here, we should only get a failure
                     // to connect, but the native part is throwing it, so hack away.
                     Timber.d("$tag: \t connection failure ignored, trying again")
@@ -116,7 +117,7 @@ class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
                     connect(uuid, promise)
                 } else if (!consumed) {
                     Timber.d("$tag: \t connection failure")
-                    promise.reject("connectError", Exception(it))
+                    promise.reject("connectError", Exception(it.message))
                     consumed = true
                 }
             })
