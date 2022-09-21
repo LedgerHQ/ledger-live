@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.9.1-next.0
+
+### Patch Changes
+
+- [#1293](https://github.com/LedgerHQ/ledger-live/pull/1293) [`b0a7e35a0f`](https://github.com/LedgerHQ/ledger-live/commit/b0a7e35a0f7a85732d1f7bef6ae3144fdf0b8b24) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improvements for the crypto icons library
+
 ## 0.9.0
 
 ### Minor Changes

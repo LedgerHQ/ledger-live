@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.11.0-next.0
+
+### Minor Changes
+
+- [#1253](https://github.com/LedgerHQ/ledger-live/pull/1253) [`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Warning when btc transactions are pending in send flow
+
 ## 6.10.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.24.1-next.0
+
+### Patch Changes
+
+- [#943](https://github.com/LedgerHQ/ledger-live/pull/943) [`8465b5e317`](https://github.com/LedgerHQ/ledger-live/commit/8465b5e317baecaf8f893b9c090537d2d03ac835) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add postOnboarding types
+
 ## 6.24.0
 
 ### Minor Changes
