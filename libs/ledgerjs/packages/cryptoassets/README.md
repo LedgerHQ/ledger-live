@@ -85,6 +85,8 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 *   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `currency` **CryptoCurrency** 
 
+Returns **void** 
+
 ### listCryptoCurrencies
 
 #### Parameters
@@ -131,6 +133,7 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 #### Parameters
 
 *   `keyword` **any** 
+*   `tests`   (optional, default `["keywords","name","id","ticker","manager"]`)
 
 Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 

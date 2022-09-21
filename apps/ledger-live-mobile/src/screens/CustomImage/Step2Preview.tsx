@@ -31,7 +31,6 @@ export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",
 })`
   align-self: center;
-  margin: 16px;
   width: 200px;
   height: 200px;
 `;
@@ -59,6 +58,7 @@ const Step2Preview: React.FC<
   StackScreenProps<ParamList, "CustomImageStep2Preview">
 > = ({ navigation, route }) => {
   const imageProcessorRef = useRef<ImageProcessor>(null);
+  const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
   const [contrast, setContrast] = useState(1);
   const [processorPreviewImage, setProcessorPreviewImage] =
@@ -104,6 +104,7 @@ const Step2Preview: React.FC<
     useCallback(
       data => {
         setProcessorPreviewImage(data);
+        setLoading(false);
       },
       [setProcessorPreviewImage],
     );
@@ -193,8 +194,21 @@ const Step2Preview: React.FC<
         {resizedImage?.imageBase64DataUri && (
           <Flex flexDirection="row" my={6} justifyContent="space-between">
             {contrasts.map(({ val, color }) => (
-              <Pressable key={val} onPress={() => setContrast(val)}>
-                <ContrastChoice selected={contrast === val} color={color} />
+              <Pressable
+                disabled={loading}
+                key={val}
+                onPress={() => {
+                  if (contrast !== val) {
+                    setLoading(true);
+                    setContrast(val);
+                  }
+                }}
+              >
+                <ContrastChoice
+                  selected={contrast === val}
+                  loading={loading}
+                  color={color}
+                />
               </Pressable>
             ))}
           </Flex>

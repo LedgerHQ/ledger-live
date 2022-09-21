@@ -1,7 +1,7 @@
 import expect from "expect";
 import type { AppSpec } from "../../bot/types";
 import type { CardanoAccount, CardanoResources, Transaction } from "./types";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
@@ -27,11 +27,14 @@ const cardano: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "CardanoADA",
+    appVersion: "4",
   },
+  minViableAmount: minBalanceRequired,
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   mutations: [
     {
+      testDestination: genericTestDestination,
       name: "move ~50%",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -73,6 +76,7 @@ const cardano: AppSpec<Transaction> = {
     {
       name: "send max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(
           maxSpendable.gt(minBalanceRequiredForMaxSend),
