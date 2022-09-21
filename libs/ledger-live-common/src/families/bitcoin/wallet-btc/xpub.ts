@@ -58,7 +58,7 @@ class Xpub extends EventEmitter {
     this.freshAddressIndex = 0;
   }
 
-  async syncAddress(account: number, index: number) {
+  async syncAddress(account: number, index: number): Promise<boolean> {
     const address = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
@@ -117,14 +117,14 @@ class Xpub extends EventEmitter {
     return !!lastTx;
   }
 
-  async checkAddressesBlock(account: number, index: number) {
+  async checkAddressesBlock(account: number, index: number): Promise<boolean> {
     const addressesResults = await Promise.all(
       range(this.GAP).map((_, key) => this.syncAddress(account, index + key))
     );
     return some(addressesResults, (lastTx) => !!lastTx);
   }
 
-  async syncAccount(account: number) {
+  async syncAccount(account: number): Promise<number> {
     await this.whenSynced("account", account.toString());
 
     this.emitSyncing({
@@ -159,7 +159,7 @@ class Xpub extends EventEmitter {
   }
 
   // TODO : test fail case + incremental
-  async sync() {
+  async sync(): Promise<number> {
     await this.whenSynced("all");
     this.emitSyncing({ type: "all" });
     this.freshAddressIndex = 0;
@@ -185,7 +185,7 @@ class Xpub extends EventEmitter {
     return account;
   }
 
-  async getXpubBalance() {
+  async getXpubBalance(): Promise<BigNumber> {
     await this.whenSynced("all");
 
     const addresses = await this.getXpubAddresses();
@@ -193,7 +193,7 @@ class Xpub extends EventEmitter {
     return this.getAddressesBalance(addresses);
   }
 
-  async getAccountBalance(account: number) {
+  async getAccountBalance(account: number): Promise<BigNumber> {
     await this.whenSynced("account", account.toString());
 
     const addresses = await this.getAccountAddresses(account);
@@ -201,7 +201,7 @@ class Xpub extends EventEmitter {
     return this.getAddressesBalance(addresses);
   }
 
-  async getAddressBalance(address: Address) {
+  async getAddressBalance(address: Address): Promise<BigNumber> {
     await this.whenSynced("address", address.address);
 
     const unspentUtxos = this.storage.getAddressUnspentUtxos(address);
@@ -318,9 +318,12 @@ class Xpub extends EventEmitter {
       };
     });
     const associatedDerivations: [number, number][] = unspentUtxoSelected.map(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      (utxo, index) => [txs[index].account, txs[index].index]
+      (utxo, index) => {
+        if (txs[index] == null) {
+          throw new Error("Invalid index in txs[index]");
+        }
+        return [txs[index]?.account || 0, txs[index]?.index || 0];
+      }
     );
 
     const txSize = utils.maxTxSizeCeil(
@@ -405,8 +408,6 @@ class Xpub extends EventEmitter {
             this.removeListener("synced", handler);
           }
         };
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         this.on("synced", handler);
       }
     });

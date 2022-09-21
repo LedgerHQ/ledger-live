@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { flatten } from "lodash";
 import BigNumber from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
@@ -39,7 +37,10 @@ class BitcoinLikeWallet {
     mock: () => new BitcoinLikeStorage(),
   };
 
-  getExplorer(explorer: "ledgerv3" | "ledgerv2", explorerURI: string) {
+  getExplorer(
+    explorer: "ledgerv3" | "ledgerv2",
+    explorerURI: string
+  ): IExplorer {
     const id = `explorer-${explorer}-uri-${explorerURI}`;
     this.explorerInstances[id] =
       this.explorerInstances[id] || this.explorers[explorer](explorerURI);
@@ -225,7 +226,7 @@ class BitcoinLikeWallet {
       total: number;
       index: number;
     }) => void;
-  }) {
+  }): Promise<string> {
     const {
       btc,
       fromAccount,

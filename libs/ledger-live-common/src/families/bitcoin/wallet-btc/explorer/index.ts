@@ -82,7 +82,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     client.interceptors.response.use(responseInterceptor, errorInterceptor);
   }
 
-  async broadcast(tx: string) {
+  async broadcast(tx: string): Promise<any> {
     const url = "/transactions/send";
     const client = await this.client.acquire();
     const res = await client.client.post(url, { tx });
@@ -90,7 +90,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return res;
   }
 
-  async getTxHex(txId: string) {
+  async getTxHex(txId: string): Promise<string> {
     const url = `/transactions/${txId}/hex`;
 
     this.emit("fetching-transaction-tx", { url, txId });
@@ -105,7 +105,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return res[0].hex;
   }
 
-  async getCurrentBlock() {
+  async getCurrentBlock(): Promise<Block | null> {
     const url = `/blocks/current`;
 
     this.emit("fetching-block", { url });
@@ -129,7 +129,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return block;
   }
 
-  async getBlockByHeight(height: number) {
+  async getBlockByHeight(height: number): Promise<Block | null> {
     const url = `/blocks/${height}`;
 
     this.emit("fetching-block", { url, height });
@@ -153,7 +153,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return block;
   }
 
-  async getFees() {
+  async getFees(): Promise<any> {
     const url = `/fees`;
 
     this.emit("fetching-fees", { url });
@@ -168,14 +168,14 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return fees;
   }
 
-  async getRelayFee() {
+  async getRelayFee(): Promise<number> {
     const client = await this.client.acquire();
     const fees = (await client.client.get(`/network`)).data;
     await this.client.release(client);
     return parseFloat(fees["relay_fee"]);
   }
 
-  async getPendings(address: Address, nbMax?: number) {
+  async getPendings(address: Address, nbMax?: number): Promise<TX[]> {
     const params: {
       no_token?: string;
       noToken?: string;
@@ -233,8 +233,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     return res;
   }
 
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-explicit-any
-  hydrateTx(address: Address, tx: TX) {
+  hydrateTx(address: Address, tx: TX): void {
     // no need to keep those as they change
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -281,7 +280,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     batchSize: number,
     address: Address,
     lastTx: TX | undefined
-  ) {
+  ): Promise<TX[]> {
     const params: {
       no_token?: string;
       noToken?: string;

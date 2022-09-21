@@ -1,6 +1,5 @@
 import bs58check from "bs58check";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { DerivationModes } from "../types";
 import Base from "./base";
 import * as bjs from "bitcoinjs-lib";
 
@@ -62,12 +61,7 @@ class Zen extends Base {
     return await this.getLegacyAddress(xpub, account, index);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getDerivationMode(address: string) {
-    return DerivationModes.LEGACY;
-  }
-
-  toOutputScript(address: string) {
+  toOutputScript(address: string): Buffer {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();
     }

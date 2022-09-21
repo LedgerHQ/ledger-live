@@ -3,7 +3,6 @@ import bchaddr from "bchaddrjs";
 // @ts-ignore
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { DerivationModes } from "../types";
 import Base from "./base";
 
 // a mock explorer class that just use js objects
@@ -41,12 +40,7 @@ class BitcoinCash extends Base {
     return await this.getLegacyBitcoinCashAddress(xpub, account, index);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getDerivationMode(address: string) {
-    return DerivationModes.LEGACY;
-  }
-
-  toOutputScript(address: string) {
+  toOutputScript(address: string): Buffer {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();
     }
