@@ -3,11 +3,16 @@ import { useDispatch } from "react-redux";
 import { Button, Flex, Text } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { getPostOnboardingAction } from "./Logic";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import PostOnboardingHub from ".";
 
-const PostOnboardingMockActionScreen = props => {
-  // eslint-disable-next-line react/prop-types
-  const { id } = props.location.state;
+type Props = {
+  id: PostOnboardingActionId;
+};
+
+const PostOnboardingMockAction = ({ id }: Props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const action = getPostOnboardingAction(id);
@@ -16,14 +21,20 @@ const PostOnboardingMockActionScreen = props => {
     () => dispatch(setPostOnboardingActionCompleted({ actionId: id })),
     [dispatch, id],
   );
-
+  console.log(history);
   const navigateToDashboard = useCallback(() => {
-    history.push("/");
+    setDrawer();
+    if (history.location.pathname !== "/") {
+      history.push("/");
+    }
   }, [history]);
 
   const navigateToHub = useCallback(() => {
-    history.push("/post-onboarding");
-  }, [history]);
+    setDrawer(undefined);
+    if (history.location.pathname === "/") {
+      setDrawer(PostOnboardingHub);
+    }
+  }, [history.location.pathname]);
 
   const handleCompleteAndGoToDashboard = useCallback(() => {
     completeAction();
@@ -51,4 +62,4 @@ const PostOnboardingMockActionScreen = props => {
   );
 };
 
-export default PostOnboardingMockActionScreen;
+export default PostOnboardingMockAction;

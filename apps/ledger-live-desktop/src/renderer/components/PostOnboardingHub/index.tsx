@@ -13,13 +13,13 @@ import {
 } from "@ledgerhq/live-common/postOnboarding/actions";
 
 import PostOnboardingActionRow from "./PostOnboardingActionRow";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 type Props = {
   isInsideDrawer?: boolean;
-  onClose?: () => void;
 };
 
-const PostOnboardingHub = ({ isInsideDrawer, onClose }: Props) => {
+const PostOnboardingHub = ({ isInsideDrawer }: Props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
@@ -28,15 +28,6 @@ const PostOnboardingHub = ({ isInsideDrawer, onClose }: Props) => {
   const clearLastActionCompleted = useCallback(() => {
     dispatch(clearPostOnboardingLastActionCompleted());
   }, [dispatch]);
-
-  const goToMockActionScreen = useCallback(
-    id =>
-      history.push({
-        pathname: "/post-onboarding-mock-action-screen",
-        state: { id: id },
-      }),
-    [history],
-  );
 
   return (
     <Flex flexDirection="column" justifyContent="center" height="100%">
@@ -55,14 +46,20 @@ const PostOnboardingHub = ({ isInsideDrawer, onClose }: Props) => {
       </Text>
       {actionsState.map((action, index, arr) => (
         <React.Fragment key={index}>
-          <Box onClick={() => goToMockActionScreen(action.id)}>
+          <Box
+            onClick={() => {
+              console.log("ok", action);
+              if (action.navigationParams) history.push(...action.navigationParams);
+              else if (action.startAction) action.startAction();
+            }}
+          >
             <PostOnboardingActionRow {...action} />
           </Box>
         </React.Fragment>
       ))}
 
       <Button
-        onClick={() => (isInsideDrawer && onClose ? onClose() : history.push("/"))}
+        onClick={() => (isInsideDrawer ? setDrawer() : history.push("/"))}
         color="primary.c80"
       >
         {isInsideDrawer ? "Skip to the app" : "I'll do this later"}

@@ -1,6 +1,8 @@
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/react-ui";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import PostOnboardingMockAction from "~/renderer/components/PostOnboardingHub/PostOnboardingMockAction";
 
 const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
@@ -10,7 +12,7 @@ const claimMock: PostOnboardingAction = {
   tagLabel: "Free",
   actionCompletedPopupLabel: "NFT claimed",
   actionCompletedHubTitle: "Kickstart your Web3 journey.",
-  navigationParams: [],
+  startAction: () => setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.claimMock }),
 };
 
 const personalizeMock: PostOnboardingAction = {
@@ -21,7 +23,8 @@ const personalizeMock: PostOnboardingAction = {
   description: "By customizing the screen.",
   actionCompletedPopupLabel: "Device personalized",
   actionCompletedHubTitle: "That screen is looking neat.",
-  navigationParams: [],
+  startAction: () =>
+    setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.personalizeMock }),
 };
 
 const migrateAssetsMock: PostOnboardingAction = {
@@ -31,7 +34,8 @@ const migrateAssetsMock: PostOnboardingAction = {
   description: "Easily secure assets from coinbase or another exchange.",
   actionCompletedPopupLabel: "Assets transfered",
   actionCompletedHubTitle: "Something about being a crypto pro.",
-  navigationParams: [],
+  startAction: () =>
+    setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.migrateAssetsMock }),
 };
 
 /**
