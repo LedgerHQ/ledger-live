@@ -16,7 +16,11 @@ const fromBitsToSeedPhraseType = new Map<number, SeedPhraseType>([
 ]);
 
 export enum OnboardingStep {
-  WelcomeScreen = "WELCOME_SCREEN",
+  WelcomeScreen1 = "WELCOME_SCREEN_1",
+  WelcomeScreen2 = "WELCOME_SCREEN_2",
+  WelcomeScreen3 = "WELCOME_SCREEN_3",
+  WelcomeScreen4 = "WELCOME_SCREEN_4",
+  WelcomeScreenReminder = "WELCOME_SCREEN_REMINDER",
   SetupChoice = "SETUP_CHOICE",
   Pin = "PIN",
   NewDevice = "NEW_DEVICE", // path "new device" & currentSeedWordIndex available
@@ -24,17 +28,23 @@ export enum OnboardingStep {
   RestoreSeed = "RESTORE_SEED", // path "restore seed" & currentSeedWordIndex available
   SafetyWarning = "SAFETY WARNING",
   Ready = "READY",
+  ChooseName = "CHOOSE_NAME",
 }
 
 const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
-  [0, OnboardingStep.WelcomeScreen],
-  [1, OnboardingStep.SetupChoice],
-  [2, OnboardingStep.Pin],
-  [3, OnboardingStep.NewDevice],
-  [4, OnboardingStep.NewDeviceConfirming],
-  [5, OnboardingStep.RestoreSeed],
-  [6, OnboardingStep.SafetyWarning],
-  [7, OnboardingStep.Ready],
+  [0, OnboardingStep.WelcomeScreen1],
+  [1, OnboardingStep.WelcomeScreen2],
+  [2, OnboardingStep.WelcomeScreen3],
+  [3, OnboardingStep.WelcomeScreen4],
+  [4, OnboardingStep.WelcomeScreenReminder],
+  [5, OnboardingStep.SetupChoice],
+  [6, OnboardingStep.Pin],
+  [7, OnboardingStep.NewDevice],
+  [8, OnboardingStep.NewDeviceConfirming],
+  [9, OnboardingStep.RestoreSeed],
+  [10, OnboardingStep.SafetyWarning],
+  [11, OnboardingStep.Ready],
+  [12, OnboardingStep.ChooseName],
 ]);
 
 export type OnboardingState = {

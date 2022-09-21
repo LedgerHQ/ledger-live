@@ -194,96 +194,100 @@ export default function Default() {
               </Route>
               {hasCompletedOnboarding && (
                 <Route>
-                  <Route exact path="/walletconnect">
-                    <WalletConnect />
-                  </Route>
-                  <IsNewVersion />
-                  <IsSystemLanguageAvailable />
-                  <IsTermOfUseUpdated />
-                  <SyncNewAccounts priority={2} />
+                  <Switch>
+                    <Route exact path="/walletconnect">
+                      <WalletConnect />
+                    </Route>
+                    <Route>
+                      <IsNewVersion />
+                      <IsSystemLanguageAvailable />
+                      <IsTermOfUseUpdated />
+                      <SyncNewAccounts priority={2} />
 
-                  <Box
-                    grow
-                    horizontal
-                    bg="palette.background.default"
-                    color="palette.text.shade60"
-                    style={{ width: "100%", height: "100%" }}
-                  >
-                    <MainSideBar />
-                    <Page>
-                      <TopBannerContainer>
-                        <UpdateBanner />
-                        <FirmwareUpdateBanner />
-                      </TopBannerContainer>
-                      <Switch>
-                        <Route path="/" exact render={props => <Dashboard {...props} />} />
-                        <Route path="/settings" render={props => <Settings {...props} />} />
-                        <Route path="/accounts" render={props => <Accounts {...props} />} />
-                        <Route path="/card" render={props => <Card {...props} />} />
-                        <Redirect from="/manager/reload" to="/manager" />
-                        <Route path="/manager" render={props => <Manager {...props} />} />
-                        <Route
-                          path="/platform"
-                          render={(props: any) => <PlatformCatalog {...props} />}
-                          exact
-                        />
-                        <Route
-                          path="/platform/:appId?"
-                          render={(props: any) => <PlatformApp {...props} />}
-                        />
-                        <Route path="/lend" render={props => <Lend {...props} />} />
-                        <Route path="/exchange" render={(props: any) => <Exchange />} />
-                        <Route
-                          exact
-                          path="/account/:id/nft-collection"
-                          render={props => <NFTGallery {...props} />}
-                        />
-                        <Route
-                          path="/account/:id/nft-collection/:collectionAddress?"
-                          render={props => <NFTCollection {...props} />}
-                        />
-                        <Route
-                          path="/account/:parentId/:id"
-                          render={props => <Account {...props} />}
-                        />
-                        <Route path="/account/:id" render={props => <Account {...props} />} />
-                        <Route
-                          path="/asset/:assetId+"
-                          render={(props: any) => <Asset {...props} />}
-                        />
-                        <Route path="/swap" render={props => <Swap2 {...props} />} />
+                      <Box
+                        grow
+                        horizontal
+                        bg="palette.background.default"
+                        color="palette.text.shade60"
+                        style={{ width: "100%", height: "100%" }}
+                      >
+                        <MainSideBar />
+                        <Page>
+                          <TopBannerContainer>
+                            <UpdateBanner />
+                            <FirmwareUpdateBanner />
+                          </TopBannerContainer>
+                          <Switch>
+                            <Route path="/" exact render={props => <Dashboard {...props} />} />
+                            <Route path="/settings" render={props => <Settings {...props} />} />
+                            <Route path="/accounts" render={props => <Accounts {...props} />} />
+                            <Route path="/card" render={props => <Card {...props} />} />
+                            <Redirect from="/manager/reload" to="/manager" />
+                            <Route path="/manager" render={props => <Manager {...props} />} />
+                            <Route
+                              path="/platform"
+                              render={(props: any) => <PlatformCatalog {...props} />}
+                              exact
+                            />
+                            <Route
+                              path="/platform/:appId?"
+                              render={(props: any) => <PlatformApp {...props} />}
+                            />
+                            <Route path="/lend" render={props => <Lend {...props} />} />
+                            <Route path="/exchange" render={(props: any) => <Exchange />} />
+                            <Route
+                              exact
+                              path="/account/:id/nft-collection"
+                              render={props => <NFTGallery {...props} />}
+                            />
+                            <Route
+                              path="/account/:id/nft-collection/:collectionAddress?"
+                              render={props => <NFTCollection {...props} />}
+                            />
+                            <Route
+                              path="/account/:parentId/:id"
+                              render={props => <Account {...props} />}
+                            />
+                            <Route path="/account/:id" render={props => <Account {...props} />} />
+                            <Route
+                              path="/asset/:assetId+"
+                              render={(props: any) => <Asset {...props} />}
+                            />
+                            <Route path="/swap" render={props => <Swap2 {...props} />} />
 
-                        <Route
-                          path="/market/:currencyId"
-                          render={props => <MarketCoinScreen {...props} />}
-                        />
-                        <Route path="/market" render={props => <Market {...props} />} />
-                        <FeatureToggle feature="learn">
-                          <Route path="/learn" render={props => <Learn {...props} />} />
-                        </FeatureToggle>
-                      </Switch>
-                    </Page>
-                    <Drawer />
-                    <ToastOverlay />
-                  </Box>
+                            <Route
+                              path="/market/:currencyId"
+                              render={props => <MarketCoinScreen {...props} />}
+                            />
+                            <Route path="/market" render={props => <Market {...props} />} />
+                            <FeatureToggle feature="learn">
+                              <Route path="/learn" render={props => <Learn {...props} />} />
+                            </FeatureToggle>
+                          </Switch>
+                        </Page>
+                        <Drawer />
+                        <ToastOverlay />
+                      </Box>
 
-                  {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
-                    <NightlyLayer />
-                  ) : null}
+                      {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
+                        <NightlyLayer />
+                      ) : null}
 
-                  <DeviceBusyIndicator />
-                  <KeyboardContent sequence="BJBJBJ">
-                    <PerfIndicator />
-                  </KeyboardContent>
-                  <KeyboardContent sequence="CRASH_TEST">
-                    <LetThisCrashForCrashTest />
-                  </KeyboardContent>
-                  <KeyboardContent sequence="CRASH_MAIN">
-                    <LetMainSendCrashTest />
-                  </KeyboardContent>
-                  <KeyboardContent sequence="CRASH_INTERNAL">
-                    <LetInternalSendCrashTest />
-                  </KeyboardContent>
+                      <DeviceBusyIndicator />
+                      <KeyboardContent sequence="BJBJBJ">
+                        <PerfIndicator />
+                      </KeyboardContent>
+                      <KeyboardContent sequence="CRASH_TEST">
+                        <LetThisCrashForCrashTest />
+                      </KeyboardContent>
+                      <KeyboardContent sequence="CRASH_MAIN">
+                        <LetMainSendCrashTest />
+                      </KeyboardContent>
+                      <KeyboardContent sequence="CRASH_INTERNAL">
+                        <LetInternalSendCrashTest />
+                      </KeyboardContent>
+                    </Route>
+                  </Switch>
                 </Route>
               )}
             </Switch>

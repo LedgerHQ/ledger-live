@@ -1,7 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 function subAccount(subAccountId, account) {
   const sub = (account.subAccounts || []).find((a) => a.id === subAccountId);
@@ -11,19 +10,7 @@ function subAccount(subAccountId, account) {
 }
 
 const maxFeesExpectedValue = ({ account, status }) =>
-  formatCurrencyUnit(
-    {
-      ...account.unit,
-      code: account.currency.deviceTicker || account.unit.code,
-      prefixCode: true,
-    },
-    status.estimatedFees,
-    {
-      showCode: true,
-      disableRounding: true,
-      joinFragmentsSeparator: " ",
-    }
-  ).replace(/\s/g, " ");
+  formatDeviceAmount(account.currency, status.estimatedFees);
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -44,26 +31,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
             ? subAccount(transaction.subAccountId, account)
             : null;
 
-          const unit = !a
-            ? {
-                ...account.unit,
-                code: account.currency.deviceTicker || account.unit.code,
-              }
-            : a.token.units[0];
-          const amount = status.amount;
-          return formatCurrencyUnit(
-            {
-              ...unit,
-              code: account.currency.deviceTicker || account.unit.code,
-              prefixCode: true,
-            },
-            amount,
-            {
-              showCode: true,
-              disableRounding: true,
-              joinFragmentsSeparator: " ",
-            }
-          ).replace(/\s/g, " ");
+          if (a) {
+            return formatDeviceAmount(a.token, status.amount);
+          }
+
+          return formatDeviceAmount(account.currency, status.amount);
         },
       },
       {

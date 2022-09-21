@@ -1,19 +1,17 @@
 // @flow
 import type { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import type { KYCStatus } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import SectionFees from "./SectionFees";
-import type { SectionProviderProps } from "./SectionProvider";
-import SectionProvider from "./SectionProvider";
-import SectionRate from "./SectionRate";
 import SectionTarget from "./SectionTarget";
 
 const Form: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
   style: ready ? { opacity: 1, maxHeight: "100vh", overflow: "auto" } : {},
 }))`
   display: grid;
-  row-gap: 1.375rem;
+  row-gap: 1.25rem;
   color: white;
   transition: max-height 800ms cubic-bezier(0.47, 0, 0.75, 0.72),
     opacity 400ms 400ms cubic-bezier(0.47, 0, 0.75, 0.72);
@@ -26,7 +24,7 @@ const Form: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
 
 type SwapFormSummaryProps = {
   swapTransaction: SwapTransactionType,
-  kycStatus?: $PropertyType<SectionProviderProps, "status">,
+  kycStatus?: KYCStatus,
   provider?: string,
 };
 const SwapFormSummary = ({ swapTransaction, kycStatus, provider }: SwapFormSummaryProps) => {
@@ -46,7 +44,6 @@ const SwapFormSummary = ({ swapTransaction, kycStatus, provider }: SwapFormSumma
   const { currency: toCurrency, account: toAccount } = swapTransaction.swap.to;
   const ratesState = swapTransaction.swap.rates;
   const hasRates = ratesState?.value?.length > 0;
-  const refetchRates = swapTransaction.swap.refetchRates;
 
   const [hasFetchedRates, setHasFetchedRates] = useState(hasRates);
 
@@ -54,19 +51,12 @@ const SwapFormSummary = ({ swapTransaction, kycStatus, provider }: SwapFormSumma
 
   return (
     <Form ready={hasFetchedRates}>
-      <SectionProvider
-        provider={provider}
-        status={kycStatus}
-        fromCurrency={fromCurrency}
-        toCurrency={toCurrency}
-        ratesState={ratesState}
-      />
-      <SectionRate
-        fromCurrency={fromCurrency}
-        toCurrency={toCurrency}
-        ratesState={ratesState}
-        refetchRates={refetchRates}
-        provider={provider}
+      <SectionTarget
+        account={toAccount}
+        currency={toCurrency}
+        setToAccount={setToAccount}
+        targetAccounts={targetAccounts}
+        hasRates={hasRates}
       />
       <SectionFees
         transaction={transaction}
@@ -77,13 +67,6 @@ const SwapFormSummary = ({ swapTransaction, kycStatus, provider }: SwapFormSumma
         updateTransaction={updateTransaction}
         setTransaction={setTransaction}
         provider={provider}
-        hasRates={hasRates}
-      />
-      <SectionTarget
-        account={toAccount}
-        currency={toCurrency}
-        setToAccount={setToAccount}
-        targetAccounts={targetAccounts}
         hasRates={hasRates}
       />
     </Form>

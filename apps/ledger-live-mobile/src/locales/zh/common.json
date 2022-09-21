@@ -1072,6 +1072,8 @@
     "stepLanguage" : {
       "title" : "选择您的语言",
       "cta" : "继续",
+      "changeDeviceLanguage" : "{{language}}同样适用于您的 {{deviceName}}",
+      "changeDeviceLanguageDescription" : "是否要将语言更改为{{language}}？",
       "warning" : {
         "title" : "以英语开始",
         "cta" : "知道了！",
@@ -3533,19 +3535,29 @@
     "no" : "我不愿意",
     "languages" : {
       "en" : "English",
-      "fr" : "法国",
+      "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中文（简体）",
-      "de" : "Deutsch"
+      "zh" : "中国人",
+      "de" : "Deutsch",
+      "tr" : "Türk",
+      "ja" : "日本",
+      "ko" : "한국인",
+      "pt" : "Português"
     }
   },
   "deviceLocalization" : {
     "language" : "语言",
     "deviceLanguage" : "设备语言",
+    "chooseLanguage" : "为您的 {{deviceName}} 选择语言。",
     "changeLanguage" : "更改语言",
-    "allowLanguageInstallation" : "允许安装语言",
-    "languageInstalled" : "设备语言已更改为 {{language}}",
+    "yesChangeLanguage" : "是，更改语言",
+    "allowLanguageInstallation" : "批准在 {{deviceName}} 上安装语言",
+    "languageInstalled" : "语言已更改为{{language}}",
+    "firmwareUpdatePrompt" : {
+      "title" : "将您的 {{deviceName}} 设置为 {{language}}？",
+      "description" : "您的 {{deviceName}} 现已可以使用 {{language}}。您可以立即设置语言，或随时在 My Ledger（我的 Ledger）中更改设备语言。"
+    },
     "installingLanguage" : "正在安装语言",
     "languages" : {
       "english" : "English",
@@ -4754,5 +4766,19 @@
     "chooseConstrast" : "选择对比度",
     "uploadAnotherImage" : "上传另一张图片",
     "selectContrast" : "选择对比度"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "不错。\n一切准备就绪。",
+      "allDoneTitle" : "做得好。\n您现在可以开始使用了。",
+      "subtitle" : "以下是您后续可以执行的操作：",
+      "skip" : "跳到应用程序",
+      "goToWallet" : "转到 Ledger Live 钱包",
+      "done" : "您的未来有了保障"
+    },
+    "walletCard" : {
+      "title" : "快速入门",
+      "description" : "点击此处使用 Ledger Live 完成 {{productName}} 设置"
+    }
   }
 }

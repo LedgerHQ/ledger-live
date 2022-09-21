@@ -15,6 +15,7 @@ import {
 } from "@react-navigation/native";
 import { snakeCase } from "lodash";
 import { useCallback } from "react";
+import { idsToLanguage } from "@ledgerhq/types-live";
 import {
   getAndroidArchitecture,
   getAndroidVersionCode,
@@ -55,6 +56,10 @@ const extraProperties = store => {
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
+        deviceLanguage:
+          lastDevice.deviceInfo?.languageId !== undefined
+            ? idsToLanguage[lastDevice.deviceInfo.languageId]
+            : undefined,
         appLength: lastDevice?.appsInstalled,
         modelId: lastDevice.modelId,
       }
@@ -148,8 +153,8 @@ export const trackSubject: any = new ReplaySubject<{
 }>(10);
 export const track = (
   event: string,
-  properties: Record<string, any> | null | undefined,
-  mandatory?: boolean | null | undefined,
+  properties?: Record<string, any> | null,
+  mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
