@@ -9,7 +9,7 @@ import {
   Popin,
   InfiniteLoader,
 } from "@ledgerhq/react-ui";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { Switch, Route, useHistory, useLocation } from "react-router-dom";
@@ -229,7 +229,7 @@ export default function Tutorial({ useCase }: Props) {
 
   const [connectedDevice, setConnectedDevice] = useState(null);
 
-  const [continueButtonLoading, setContinueButtonLoading] = useState(false);
+  const [onboardingDone, setOnboardingDone] = useState(false);
 
   const [helpPinCode, setHelpPinCode] = useState(false);
   const [helpRecoveryPhrase, setHelpRecoveryPhrase] = useState(false);
@@ -484,14 +484,36 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          setContinueButtonLoading(true);
-          history.push("/");
+          setOnboardingDone(true);
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
       },
     ],
-    [connectedDevice, history, path, useCase, userChosePinCodeHimself, userUnderstandConsequences],
+    [
+      connectedDevice,
+      history,
+      path,
+      useCase,
+      userChosePinCodeHimself,
+      userUnderstandConsequences,
+      setOnboardingDone,
+    ],
   );
+
+  useEffect(() => {
+    if (onboardingDone) {
+      /**
+       * There is a lag if we call history.push("/") directly.
+       * To improve the UX in that situation, we have to first commit a "loading"
+       * state and then when that state is rendered (which will be when this
+       * block is executed), on the following commit we can call
+       * history.push("/").
+       */
+      setTimeout(() => {
+        if (history.location.pathname !== "/") history.push("/");
+      }, 0);
+    }
+  }, [history, onboardingDone]);
 
   const steps = useMemo(() => {
     const stepList = [
@@ -662,7 +684,7 @@ export default function Tutorial({ useCase }: Props) {
           )
         }
         continueLabel={CurrentScreen.continueLabel}
-        continueLoading={continueButtonLoading}
+        continueLoading={onboardingDone}
         handleContinue={next}
         handleBack={previous}
       >
