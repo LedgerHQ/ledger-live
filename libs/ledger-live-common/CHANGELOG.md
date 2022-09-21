@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 27.3.0-next.1
+
+### Patch Changes
+
+- [#1330](https://github.com/LedgerHQ/ledger-live/pull/1330) [`692feed2b9`](https://github.com/LedgerHQ/ledger-live/commit/692feed2b95a246f43347695c3e8ab6e64ffd1f5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Revert minimum version for Ethereum nano app from 1.9.20 to 1.9.17
+
 ## 27.3.0-next.0
 
 ### Minor Changes
