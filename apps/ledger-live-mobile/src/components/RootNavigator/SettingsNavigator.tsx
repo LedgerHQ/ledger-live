@@ -52,7 +52,9 @@ import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import { track } from "../../analytics";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
+// eslint-disable-next-line import/no-cycle
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 
 // TODO: types for each screens and navigators need to be set
 export type SettingsNavigatorStackParamList = {
@@ -76,15 +78,14 @@ export default function SettingsNavigator() {
   );
 
   const navigation = useNavigation();
-  const currentRoute = useCurrentRouteName();
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   const goBackFromNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Back Arrow",
-      screen: currentRoute,
     });
     navigation.goBack();
-  }, [navigation, currentRoute]);
+  }, [navigation]);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -174,6 +175,7 @@ export default function SettingsNavigator() {
           title: route.params.headerTitle,
           headerRight: null,
         })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.RepairDevice}
@@ -350,6 +352,10 @@ export default function SettingsNavigator() {
           headerShown: true,
           headerTitle: t("onboarding.stepLanguage.title"),
         }}
+      />
+      <Stack.Screen
+        name={ScreenName.PostOnboardingDebugScreen}
+        component={PostOnboardingDebugScreen}
       />
     </Stack.Navigator>
   );

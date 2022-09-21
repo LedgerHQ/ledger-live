@@ -18,15 +18,13 @@ import OperationDetails, {
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
 import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
-import WalletConnectScan from "../../screens/WalletConnect/Scan";
-import WalletConnectConnect from "../../screens/WalletConnect/Connect";
-import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
 // eslint-disable-next-line import/no-unresolved
 import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 // eslint-disable-next-line import/no-cycle
 import Main from "./MainNavigator";
 // eslint-disable-next-line import/no-cycle
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
+// eslint-disable-next-line import/no-cycle
 import SettingsNavigator from "./SettingsNavigator";
 // eslint-disable-next-line import/no-cycle
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
@@ -55,7 +53,8 @@ import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
 import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
 import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsNavigator from "./AnalyticsNavigator";
+import AnalyticsAllocation from "../../screens/Analytics/Allocation";
+import AnalyticsOperations from "../../screens/Analytics/Operations";
 import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
@@ -63,8 +62,6 @@ import TransparentHeaderNavigationOptions from "../../navigation/TransparentHead
 import styles from "../../navigation/styles";
 import HeaderRightClose from "../HeaderRightClose";
 import StepHeader from "../StepHeader";
-import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
-import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
@@ -89,6 +86,12 @@ import Learn from "../../screens/Learn";
 // eslint-disable-next-line import/no-cycle
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
+import MarketDetail from "../../screens/Market/MarketDetail";
+import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
+import WalletConnectNavigator from "./WalletConnectNavigator";
+import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
+import CustomImageNavigator from "./CustomImageNavigator";
+import PostOnboardingNavigator from "./PostOnboardingNavigator";
 
 import {
   BleDevicePairingFlow,
@@ -118,6 +121,7 @@ export default function BaseNavigator() {
   const learn = useFeature("learn");
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
+  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
@@ -157,7 +161,7 @@ export default function BaseNavigator() {
           cardStyle: { opacity: 1 },
           gestureEnabled: true,
           headerTitle: null,
-          headerRight: null,
+          headerRight: () => null,
           headerBackTitleVisible: false,
           title: null,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
@@ -168,14 +172,23 @@ export default function BaseNavigator() {
         component={PostBuyDeviceScreen}
         options={{
           title: t("postBuyDevice.headerTitle"),
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: () => null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
         name={NavigatorName.Settings}
         component={SettingsNavigator}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.CurrencySettings}
+        component={CurrencySettings}
+        options={({ route }) => ({
+          title: route.params.headerTitle,
+          headerRight: () => null,
+        })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.ReceiveFunds}
@@ -228,7 +241,7 @@ export default function BaseNavigator() {
         component={SwapNavigator}
         options={{
           ...stackNavigationConfig,
-          headerLeft: null,
+          headerLeft: () => null,
           title: t("transfer.swap.form.tab"),
         }}
       />
@@ -245,7 +258,7 @@ export default function BaseNavigator() {
               }
             />
           ),
-          headerRight: null,
+          headerRight: () => null,
         })}
       />
       <Stack.Screen
@@ -253,7 +266,7 @@ export default function BaseNavigator() {
         component={SwapOperationDetails}
         options={{
           title: t("transfer.swap.form.tab"),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -261,7 +274,7 @@ export default function BaseNavigator() {
         component={SwapFormSelectCurrency}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.form.to")} />,
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -271,7 +284,7 @@ export default function BaseNavigator() {
           headerTitle: () => (
             <StepHeader title={t("transfer.swap.form.summary.method")} />
           ),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -281,7 +294,7 @@ export default function BaseNavigator() {
           headerTitle: () => (
             <StepHeader title={t("transfer.swap.form.summary.fees")} />
           ),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
@@ -290,7 +303,7 @@ export default function BaseNavigator() {
         options={{
           ...stackNavigationConfig,
           headerStyle: styles.headerNoShadow,
-          headerLeft: null,
+          headerLeft: () => null,
           title: t("transfer.lending.title"),
         }}
       />
@@ -362,7 +375,7 @@ export default function BaseNavigator() {
         name={ScreenName.VerifyAccount}
         component={VerifyAccount}
         options={{
-          headerLeft: null,
+          headerLeft: () => null,
           title: t("transfer.receive.headerTitle"),
         }}
         listeners={({ route }) => ({
@@ -390,7 +403,7 @@ export default function BaseNavigator() {
         options={
           ptxSmartRoutingMobile?.enabled
             ? { headerShown: false }
-            : { headerStyle: styles.headerNoShadow, headerLeft: null }
+            : { headerStyle: styles.headerNoShadow, headerLeft: () => null }
         }
         {...noNanoBuyNanoWallScreenOptions}
       />
@@ -461,7 +474,7 @@ export default function BaseNavigator() {
               />
             ),
             headerLeft: () => <BackButton navigation={navigation} />,
-            headerRight: null,
+            headerRight: () => null,
           };
         }}
       />
@@ -496,7 +509,7 @@ export default function BaseNavigator() {
         component={EditDeviceName}
         options={{
           title: t("EditDeviceName.title"),
-          headerLeft: null,
+          headerLeft: () => null,
           ...TransitionPresets.ModalPresentationIOS,
         }}
       />
@@ -516,11 +529,20 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={NavigatorName.Analytics}
-        component={AnalyticsNavigator}
+        name={ScreenName.AnalyticsAllocation}
+        component={AnalyticsAllocation}
         options={{
-          title: t("analytics.title"),
-          headerRight: null,
+          title: t("analytics.allocation.title"),
+          headerRight: () => null,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AnalyticsOperations}
+        component={AnalyticsOperations}
+        options={{
+          title: t("analytics.operations.title"),
+          headerRight: () => null,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         }}
       />
@@ -529,7 +551,7 @@ export default function BaseNavigator() {
         component={MarketCurrencySelect}
         options={{
           title: t("market.filters.currency"),
-          headerLeft: null,
+          headerLeft: () => null,
           unmountOnBlur: true,
         }}
       />
@@ -538,19 +560,13 @@ export default function BaseNavigator() {
         component={PortfolioHistory}
         options={{
           headerTitle: t("analytics.operations.title"),
-          headerRight: null,
+          headerRight: () => null,
         }}
       />
       <Stack.Screen
         name={ScreenName.Account}
         component={Account}
-        options={({ route, navigation }) => ({
-          headerLeft: () => (
-            <BackButton navigation={navigation} route={route} />
-          ),
-          headerTitle: () => <AccountHeaderTitle />,
-          headerRight: () => <AccountHeaderRight />,
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.ScanRecipient}
@@ -559,39 +575,23 @@ export default function BaseNavigator() {
           ...TransparentHeaderNavigationOptions,
           title: t("send.scan.title"),
           headerRight: () => (
-            <HeaderRightClose color={colors.white} preferDismiss={false} />
+            <HeaderRightClose
+              color={colors.constant.white}
+              preferDismiss={false}
+            />
           ),
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen
-        name={ScreenName.WalletConnectScan}
-        component={WalletConnectScan}
+        name={NavigatorName.WalletConnect}
+        component={
+          walletConnectLiveApp?.enabled
+            ? WalletConnectLiveAppNavigator
+            : WalletConnectNavigator
+        }
         options={{
-          ...TransparentHeaderNavigationOptions,
-          title: "Wallet Connect",
-          headerRight: () => (
-            <HeaderRightClose color={colors.white} preferDismiss={false} />
-          ),
-          headerLeft: null,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.WalletConnectDeeplinkingSelectAccount}
-        component={WalletConnectDeeplinkingSelectAccount}
-        options={{
-          title: t("walletconnect.deeplinkingTitle"),
-          headerRight: () => <HeaderRightClose preferDismiss={false} />,
-          headerLeft: null,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.WalletConnectConnect}
-        component={WalletConnectConnect}
-        options={{
-          title: "Wallet Connect",
-          headerLeft: null,
-          gestureEnabled: false,
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -599,7 +599,7 @@ export default function BaseNavigator() {
         component={FallbackCameraSend}
         options={{
           title: t("send.scan.fallback.header"),
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen
@@ -607,7 +607,7 @@ export default function BaseNavigator() {
         component={NotificationCenterNavigator}
         options={({ navigation }) => ({
           title: t("notificationCenter.title"),
-          headerLeft: null,
+          headerLeft: () => null,
           headerRight: () => <CloseButton navigation={navigation} />,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         })}
@@ -620,6 +620,18 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.Accounts}
         component={AccountsNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.MarketDetail}
+        component={MarketDetail}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={NavigatorName.CustomImage}
+        component={CustomImageNavigator}
         options={{ headerShown: false }}
       />
       {Object.keys(families).map(name => {
@@ -639,6 +651,11 @@ export default function BaseNavigator() {
         options={{
           title: "",
         }}
+      />
+      <Stack.Screen
+        name={NavigatorName.PostOnboarding}
+        options={{ headerShown: false }}
+        component={PostOnboardingNavigator}
       />
     </Stack.Navigator>
   );

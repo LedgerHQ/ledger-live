@@ -69,14 +69,14 @@ To run nested scripts which are not covered at the root, you should **not** chan
 Every package has an **alias** defined (see application or library tables or check out the [`package.json`](https://github.com/LedgerHQ/ledger-live/blob/develop/package.json) file) that you can use as a prefix when running the script from the root.
 
 ```sh
-# `pnpm desktop` is one of the shorthands written to to avoid changing the working directory.
+# `pnpm desktop` is one of the shorthands written to avoid changing the working directory.
 
 # The following command will run the nested `test` script.
 # `test` is defined inside the `./apps/ledger-live-desktop/package.json` file.
 pnpm desktop test
 ```
 
-**Note that when using these kind of scripts you will have to make sure that the dependencies are built beforehand.**
+**Note that when using these kinds of scripts you will have to make sure that the dependencies are built beforehand.**
 
 ### Scoping
 
@@ -190,7 +190,7 @@ A tool can be a github action, a shell script or a piece of JavaScript code that
 
 Please check the general guidelines for contributing to Ledger Live projects: [`CONTRIBUTING.md`](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md).
 
-Each separate project may also contain specific guidelines inside their own folder.
+Each separate project may also contain specific guidelines inside its own folder.
 
 In the meantime here are some important highlights:
 
@@ -216,7 +216,7 @@ For more information on the nightly releases, have a look at our [wiki](https://
 
 ### Libraries
 
-Nightly version of library packages are pushed every night to npm.
+Nightly versions of library packages are pushed every night to npm.
 
 To install a nightly library use the `@nightly` dist-tag.
 

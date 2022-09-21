@@ -160,7 +160,13 @@
       "WITHDRAW_UNBONDED" : "引き出す",
       "NOMINATE" : "ノミネート",
       "CHILL" : "ノミネートを解除する",
-      "SET_CONTROLLER" : "コントローラーを設定"
+      "SET_CONTROLLER" : "コントローラーを設定",
+      "LOCK" : "ロックされました",
+      "UNLOCK" : "ロック解除されました",
+      "WITHDRAW" : "引き出し済み",
+      "REVOKE" : "取り消されました",
+      "ACTIVATE" : "有効化されました",
+      "REGISTER" : "登録されました"
     }
   },
   "byteSize" : {
@@ -198,7 +204,7 @@
     "menu" : "メニュー",
     "stars" : "お気に入りアカウント",
     "accounts" : "アカウント",
-    "manager" : "管理",
+    "manager" : "My Ledger",
     "exchange" : "購入/売却",
     "swap" : "スワップ",
     "lend" : "レンディング",
@@ -384,13 +390,13 @@
     },
     "missingApp" : {
       "title" : "デバイスに{{appName}}アプリをインストールしてください。",
-      "subtitle" : "暗号資産をスワップするには、管理ページから{{appName}}アプリをインストールしてください。",
-      "cta" : "マネージャーを開く"
+      "subtitle" : "暗号資産をスワップするには、My Ledgerから{{appName}}アプリをインストールしてください。",
+      "cta" : "My Ledgerに移動"
     },
     "outdatedApp" : {
       "title" : "デバイス上の{{appName}}アプリをアップデートしてください。",
-      "subtitle" : "暗号資産をスワップするには、管理ページから{{appName}}アプリをインストールしてください。",
-      "cta" : "マネージャーを開く"
+      "subtitle" : "暗号資産をスワップするには、My Ledgerから{{appName}}アプリをアップデートしてください。",
+      "cta" : "My Ledgerに移動"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -745,7 +751,19 @@
     "bandwidthTooltip" : "資産を凍結して、バンド幅を獲得",
     "energyTooltip" : "資産を凍結して、エネルギーを獲得",
     "delegatedTooltip" : "デリゲートされた資産は、投票プロセスで使用されます。これは、投票の総数を表します。",
-    "undelegatingTooltip" : "デリゲートを解除した資産は、{{timelockInDays}}日間のロック期間後に再び利用可能になります。"
+    "undelegatingTooltip" : "デリゲートを解除した資産は、{{timelockInDays}}日間のロック期間後に再び利用可能になります。",
+    "banner" : {
+      "redelegation" : {
+        "title" : "ご存知でしたか？",
+        "description" : "Ledgerのバリデータは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
+        "cta" : "Ledgerで再デリゲート"
+      },
+      "delegation" : {
+        "title" : "ご存知でしたか？",
+        "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
+        "cta" : "Ledgerでステーキング"
+      }
+    }
   },
   "exchange" : {
     "chooseProvider" : "{{providerCount}}プロバイダーから選択",
@@ -959,7 +977,7 @@
       "terms" : {
         "title" : "暗号資産をレンディング",
         "subtitle" : "コンパウンド・プロトコルで資産をレンディング",
-        "description" : "コンパウンド・プロトコルを使用すると、イーサリアムネットワーク上で資産の貸し出しや借り入れを行うことができます。Ledgerアカウントから直接、資産の貸し出しや利息を得ることが可能です。",
+        "description" : "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger account.",
         "switchLabel" : "<1>私は<0>利用規約</0>を読み</1>、内容に同意しました<1>。</1>"
       },
       "steps" : {
@@ -1202,9 +1220,9 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "デバイスにアプリをインストールする",
-      "desc" : "デバイスにアプリをインストールするには、管理画面に移動してください。デバイスにアプリを入手後、アカウントの追加が可能になります。",
+      "desc" : "My Ledgerに移動して、デバイスにアプリをインストールします。デバイスにアプリを入手後、アカウントを追加できます。",
       "buttons" : {
-        "installApp" : "「管理」に移動",
+        "installApp" : "My Ledgerに移動",
         "help" : "ヘルプ"
       }
     },
@@ -1213,7 +1231,7 @@
       "desc" : "暗号資産の管理を開始するにはアカウントを追加してください。デバイスに暗号資産のアプリがインストールされている必要があります。",
       "buttons" : {
         "addAccount" : "アカウントを追加",
-        "installApp" : "「管理」に移動してアプリをインストール",
+        "installApp" : "My Ledgerに移動して、アプリをインストール",
         "help" : "ヘルプ"
       }
     }
@@ -1536,12 +1554,12 @@
     "quitApp" : "デバイスのアプリケーションを終了する",
     "appNotInstalledTitle" : "必要なアプリが揃っていません。",
     "appNotInstalledTitle_plural" : "必要なアプリが揃っていません。",
-    "appNotInstalled" : "操作を完了するには、{{appName}}アプリが必要です。管理ページに移動して、デバイスにインストールしてください。",
-    "appNotInstalled_plural" : "操作を完了するには、{{appName}}アプリが必要です。管理ページに移動して、デバイスにインストールしてください",
-    "openManager" : "管理画面を開く",
+    "appNotInstalled" : "この操作を完了するには、{{appName}}アプリが必要です。My Ledgerに移動して、デバイスにインストールしてください。",
+    "appNotInstalled_plural" : "この操作を完了するには、{{appName}}アプリが必要です。My Ledgerに移動して、デバイスにインストールしてください",
+    "openManager" : "My Ledgerを開く",
     "openOnboarding" : "デバイスをセットアップ",
     "outdated" : "アプリのバージョンが最新ではありません。",
-    "outdatedDesc" : "お使いのデバイス上の{{appName}}アプリに重要なアップデートがあります。「管理」からアップデートしてください。",
+    "outdatedDesc" : "デバイスの{{appName}}アプリに重要なアップデートがあります。My Ledgerに移動してアップデートしてください。",
     "installApp" : "{{appName}}アプリのインストール",
     "installAppDescription" : "インストールが完了するまでお待ちください。",
     "listApps" : "アプリの依存関係を確認しています。",
@@ -1584,8 +1602,8 @@
     },
     "disconnected" : {
       "title" : "デバイスでアプリが開いているようです",
-      "subtitle" : "Manager(管理)を再度開くと、デバイスのアプリが終了します",
-      "ctaReopen" : "管理を再度開く",
+      "subtitle" : "My Ledgerを再度開くと、デバイスのアプリが終了します",
+      "ctaReopen" : "My Ledgerを再度開く",
       "ctaPortfolio" : "ポートフォリオに戻る"
     },
     "deviceStorage" : {
@@ -1628,7 +1646,7 @@
         "title_plural" : "アップデートが利用可能です。",
         "progressTitle" : "{{number}}アプリのアップデート",
         "progressTitle_plural" : "{{number}}アプリのアップデート",
-        "progressWarning" : "アップデート中に管理ページを終了しないでください。",
+        "progressWarning" : "アップデート中にMy Ledgerを終了しないでください。",
         "progress" : "すべてのアプリをアップデート中…"
       },
       "item" : {
@@ -1692,7 +1710,7 @@
       "updateBtn" : "ファームウェアをアップデート",
       "banner" : {
         "warning" : "ファームウェアを{{latestFirmware}}にアップデートできます",
-        "cta" : "管理画面を開く",
+        "cta" : "My Ledgerに移動",
         "old" : {
           "warning" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
           "cta" : "サポートへのお問い合わせ"
@@ -1748,7 +1766,7 @@
         "boot" : "画面に{{option}}と表示されるまでサイドボタンを長押しする。",
         "recoveryMode" : "[{{mode}}モード]をタップ。ダッシュボードが表示されるまで待つ。",
         "third" : "3.全アプリをアンインストールする",
-        "openLive" : "Ledger Liveで管理画面を開く。",
+        "openLive" : "Ledger LiveでMy Ledgerを開く。",
         "uninstall" : "{{deviceName}}にインストールされているアプリの横にある、グレーのゴミ箱アイコンをクリックする。これにより、ファームウェアのインストーラー用の空き容量が確保されます。",
         "disclaimer" : "注意：ブロックチェーン上の暗号資産にアクセスするための秘密鍵はリカバリーシートに安全に保管されているため、この処理を行っても保有している暗号資産に影響はありません。"
       }
@@ -2108,6 +2126,272 @@
       "DEEP_OUTPUTS_FIRST" : "先入れ先出し方式(FIFO)",
       "OPTIMIZE_SIZE" : "手数料の最小化(サイズの最適化)",
       "MERGE_OUTPUTS" : "今後の手数料を最小限に抑える(コインを統合)"
+    }
+  },
+  "celo" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "詳細はこちら",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "CELOトークンがLedger Liveでご利用可能になりました",
+        "description" : "CELOトークンを管理して、Ledger Liveで保護できるようになりました。",
+        "description2" : "CeloチェーンのネイティブトークンであるCeloトークンは、トランザクション、ステーキングに利用されています。今後さらに多くの機能へ対応予定です。",
+        "website" : "Powered by Figment"
+      }
+    },
+    "lockedBalance" : "ロックされた残高",
+    "lockedTooltip" : "報酬を得るには、資産をロックし、バリデーターグループに投票する必要があります。",
+    "nonvotingLockedBalance" : "非投票のロックされた残高",
+    "nonvotingLockedTooltip" : "投票に使用できるロックされた資産の残高",
+    "withdrawableBalance" : "出金可能残高",
+    "withdrawableTooltip" : "ロック解除されたCeloは、利用可能残高に引き出すことができます",
+    "delegation" : {
+      "activeTooltip" : "積極的な投票が報酬を生み出します",
+      "pendingTooltip" : "保留中の投票は報酬を生成しないため、24時間後に有効にする必要があります",
+      "awaitingActivationTooltip" : "この保留中の投票を有効にできるようになりました",
+      "listHeader" : "デリゲート",
+      "add" : "追加",
+      "validatorGroup" : "バリデーターグループ",
+      "manageMultipleVoteWarning" : "この投票を管理する前に、同じバリデーターグループの他の投票を有効化するか、取り消す必要があります。",
+      "actions" : {
+        "activate" : "有効化",
+        "revoke" : "取り消す"
+      },
+      "emptyState" : {
+        "description" : "資産をデリゲートすることで、CELOの報酬を獲得できます。",
+        "info" : "デリゲートの仕組み",
+        "delegation" : "報酬を獲得する"
+      },
+      "earnRewards" : {
+        "description" : "CELO資産をバリデーターにデリゲートすることで報酬を得ることができます。",
+        "bullet" : {
+          "0" : "デリゲートされた資産の所有権を保持する",
+          "1" : "Ledgerデバイスを使ってデリゲートしましょう",
+          "2" : "資産はデリゲート解除後に使用可能"
+        },
+        "warning" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
+      }
+    },
+    "manage" : {
+      "title" : "資産管理",
+      "titleWhenPendingRegistration" : "アカウント登録保留中",
+      "lock" : {
+        "title" : "ロック",
+        "description" : "報酬を獲得するには、まず任意の金額をロックします。次に、バリデーター(複数)に投票する必要があります。"
+      },
+      "unlock" : {
+        "title" : "ロック解除",
+        "description" : "ロックされた金額を再び引き出せるようにするには、まずロックを解除する必要があります。3日間のロック解除期間が過ぎると、引き出すことが可能となります。"
+      },
+      "withdraw" : {
+        "title" : "引き出し",
+        "description" : "ロック解除済み金額を利用可能残高に戻すには、手動で引き出す必要があります。"
+      },
+      "vote" : {
+        "title" : "投票",
+        "description" : "バリデーターグループに投票します。投票を有効にして報酬を獲得してください。",
+        "descriptionMaxVotes" : "最大{{maxVotes}}までバリデーターグループに投票できます。今のバリデーターグループへの投票を取り消して、新しいバリデーターグループに投票する"
+      },
+      "activate" : {
+        "title" : "投票を有効にする",
+        "description" : "バリデーターグループへの投票を有効にする"
+      },
+      "revoke" : {
+        "title" : "投票を取り消す",
+        "description" : "バリデーターグループへの投票を取り消す"
+      }
+    },
+    "lock" : {
+      "title" : "資産をロック",
+      "steps" : {
+        "amount" : {
+          "title" : "数量",
+          "amountLabel" : "ロックする金額",
+          "availableLabel" : "利用可能",
+          "maxLabel" : "最大",
+          "info" : "ロックされた資産はいつでも解除できますが、ロック解除には3日かかります。"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "資産が正常にロックされました",
+            "text" : "ネットワークによるトランザクションの承認後、バリデーターに投票できます。",
+            "textVote" : "ネットワークによるトランザクションの承認後、バリデーターに投票できるようになります。",
+            "cta" : "詳細を表示"
+          },
+          "pending" : {
+            "title" : "資産をロックしています..."
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "unlock" : {
+      "title" : "資産のロック解除",
+      "steps" : {
+        "amount" : {
+          "title" : "数量",
+          "amountLabel" : "ロック解除する金額",
+          "availableLabel" : "ロックされました",
+          "maxLabel" : "最大",
+          "info" : "ロック解除された資産は、3日間のロック解除期間後に引き出せるようになります。",
+          "learnMore" : "詳細はこちら"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "label" : "確認",
+          "success" : {
+            "title" : "ロック解除されたトランザクションが正常に送信されました",
+            "text" : "ロック解除された資産は3日後に引き出せるようになります。",
+            "cta" : "詳細を表示"
+          },
+          "pending" : {
+            "title" : "資産のロックを解除しています..."
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "simpleOperation" : {
+      "modes" : {
+        "register" : {
+          "title" : "アカウントの登録",
+          "description" : "",
+          "info" : "Celoをロックする前に、オンチェーンにアカウントを登録する必要があります。"
+        }
+      },
+      "steps" : {
+        "info" : {
+          "title" : "情報"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "label" : "確認",
+          "modes" : {
+            "register" : {
+              "success" : {
+                "title" : "アカウントが正常に登録されました",
+                "text" : "操作は、すぐに履歴で確認できます。",
+                "cta" : "ロック"
+              }
+            }
+          },
+          "pending" : {
+            "title" : "トランザクションをブロードキャスト中…"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "withdraw" : {
+      "title" : "資産を引き出す",
+      "steps" : {
+        "amount" : {
+          "title" : "引き出し"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "",
+            "text" : "資産が正常に引き出されました。引き出された金額は、利用可能残高に加算されます。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "vote" : {
+      "title" : "投票",
+      "steps" : {
+        "amount" : {
+          "title" : "数量"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "投票に成功しました",
+            "text" : "操作は、すぐに履歴で確認できます。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        },
+        "validatorGroup" : {
+          "title" : "バリデーターグループ",
+          "ledgerByFigmentTC" : "Ledger by Figment T&Cs",
+          "totalVotes" : "総投票数",
+          "commission" : "コミッション"
+        }
+      }
+    },
+    "activate" : {
+      "title" : "投票を有効にする",
+      "steps" : {
+        "vote" : {
+          "title" : "投票"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "",
+            "text" : "投票は正常に有効になりました。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        }
+      }
+    },
+    "revoke" : {
+      "title" : "投票を取り消す",
+      "steps" : {
+        "amount" : {
+          "title" : "数量",
+          "amountLabel" : "取り消す金額",
+          "availableLabel" : "利用可能",
+          "maxLabel" : "最大"
+        },
+        "connectDevice" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認",
+          "success" : {
+            "title" : "投票の取り消しに成功しました",
+            "text" : "操作は、すぐに履歴で確認できます。",
+            "cta" : "詳細を表示"
+          },
+          "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+        },
+        "vote" : {
+          "title" : "投票",
+          "active" : "アクティブ",
+          "pending" : "保留状態",
+          "awaitingActivation" : "有効化を待っています",
+          "info" : "このモーダルには、取り消し可能な投票のみが表示されます。"
+        }
+      }
+    },
+    "alerts" : {
+      "withdrawableAssets" : "引き出し可能な残高があります",
+      "activatableVotes" : "有効化できるようになった投票があります。"
     }
   },
   "cosmos" : {
@@ -2861,7 +3145,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "デリゲートが正常に有効化されました。"
+                "title" : "You have successfully activated your delegation."
               }
             }
           }
@@ -2873,7 +3157,7 @@
           "steps" : {
             "confirmation" : {
               "success" : {
-                "title" : "デリゲートが正常に再有効化されました。"
+                "title" : "You have successfully reactivated your delegation."
               }
             }
           }
@@ -3046,11 +3330,11 @@
       "catalogServerDesc" : "複数のプラットフォームアプリのソースを切り替える",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
       "enablePlatformDevToolsDesc" : "プラットフォームアプリの開発ツールウィンドウ表示を有効化",
-      "featureFlagsTitle" : "Defined feature flags used in Ledger Live",
-      "featureFlagsDesc" : "Overriden values will be reset if the app is relaunched. Only valid JSON strings will be accepted.",
-      "featureFlagsEdit" : "Edit",
-      "featureFlagsRestore" : "Restore",
-      "featureFlagsOverride" : "Override",
+      "featureFlagsTitle" : "Ledger Liveで使用される定義済みの機能フラグ",
+      "featureFlagsDesc" : "上書きされた値は、アプリが再起動されるとリセットされます。有効なJSON文字列のみが受け入れられます。",
+      "featureFlagsEdit" : "編集",
+      "featureFlagsRestore" : "復元",
+      "featureFlagsOverride" : "上書き",
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
       "addLocalAppButton" : "画面をチェックする",
@@ -3115,7 +3399,7 @@
         },
         "managerDevMode" : {
           "title" : "デベロッパーモード",
-          "description" : "開発者用アプリとテストネットアプリを管理画面に表示します。"
+          "description" : "開発者用アプリとテストネットアプリをMy Ledgerに表示する。"
         },
         "scanForInvalidPaths" : {
           "title" : "拡張アカウント検索",
@@ -3130,8 +3414,8 @@
           "description" : "全てのアカウントのギャップリミットを設定。この値をデフォルト（20）より大きくすると、さらに多くの未使用パブリックアドレスがスキャンされるようになります。ただし、アカウントを復元する際に互換性が失われる可能性があるため、詳しい知識のあるユーザー以外はこの値を変更しないでください。"
         },
         "forceProvider" : {
-          "title" : "プロバイダー管理",
-          "description" : "プロバイダー管理でアプリプロバイダーを変更すると、Ledgerデバイスにアプリをインストールまたはアンインストールできなくなる場合があります。"
+          "title" : "My Ledgerプロバイダー",
+          "description" : "My Ledgerでアプリプロバイダーを変更すると、Ledgerデバイスにアプリをインストールまたはアンインストールできなくなる場合があります。"
         },
         "testAnimations" : {
           "title" : "Lottieアニメーションのテスト",
@@ -4052,7 +4336,7 @@
   "errors" : {
     "NoSuchAppOnProvider" : {
       "title" : "特定の設定に必要な{{appName}}アプリが見つかりません。",
-      "description" : "管理画面からアプリの再インストールを試す"
+      "description" : "My Ledgerからアプリの再インストールを試す"
     },
     "countervaluesUnavailable" : {
       "title" : "現在、この資産のカウンターバリューを提供できません。"
@@ -4086,6 +4370,9 @@
     "NoAccessToCamera" : {
       "title" : "システムにカメラがあり、別のアプリケーションで使用されていないこと、およびLedger Liveが使用する権限を持っていることを確認してください。",
       "description" : ""
+    },
+    "CeloAllFundsWarning" : {
+      "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
     },
     "ClaimRewardsFeesWarning" : {
       "title" : "報酬額が、申請に必要な推定手数料を下回っています。",
@@ -4215,7 +4502,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "ファームウェアまたはアプリのアップデートが必要です。",
-      "description" : "「管理」からすべてのアプリをアンインストール後、ファームウェアのアップデートが利用可能かどうかを確認してから、アプリを再インストールしてください。"
+      "description" : "My Ledgerからすべてのアプリをアンインストール後、ファームウェアのアップデートが利用可能かどうかを確認してから、アプリを再インストールしてください。"
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Nanoファームウェアのアップデート",
@@ -4272,20 +4559,20 @@
     "ManagerQuitPage" : {
       "install" : {
         "title" : "アプリのインストールを終了しますか？",
-        "description" : "管理画面を終了するとアプリのインストールが終了します。待機中アプリのインストールを完了してください。",
+        "description" : "My Ledgerを終了するとアプリのインストールが終了します。待機中アプリのインストールを完了してください。",
         "stay" : "インストールを完了"
       },
       "uninstall" : {
         "title" : "アプリのインストールを終了しますか？",
-        "description" : "管理画面を終了すると、アンインストールも終了します。",
+        "description" : "My Ledgerを終了すると、進行中のアンインストールも終了します。",
         "stay" : "アンインストールを終了"
       },
       "update" : {
         "title" : "アプリのアップデートを終了しますか？",
-        "description" : "管理を終了すると、アップデートも終了します。",
+        "description" : "My Ledgerを終了すると、進行中のアップデートも終了します。",
         "stay" : "アップデートを終了"
       },
-      "quit" : "管理画面を終了"
+      "quit" : "My Ledgerを終了する"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "このアプリは必須です。",
@@ -4293,6 +4580,10 @@
     },
     "NetworkDown" : {
       "title" : "インターネットがダウンしているようです。",
+      "description" : "インターネット接続を確認してください。"
+    },
+    "NetworkError" : {
+      "title" : "同期中にエラーが発生しました",
       "description" : "インターネット接続を確認してください。"
     },
     "NoAddressesFound" : {
@@ -4381,7 +4672,7 @@
       "description" : "ロゴが表示されたら、ボタンを押さずにデバイスを再起動してください。Ledgerサポートにお問い合わせください。"
     },
     "UserRefusedAllowManager" : {
-      "title" : "デバイスのManagerが却下されました。"
+      "title" : "My Ledgerがデバイスで拒否されました"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "デバイス上でアップデートがキャンセルされました。",
@@ -4401,7 +4692,7 @@
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
-      "description" : "管理ページで{{managerAppName}}アプリをアンインストール後、再インストールしてください。"
+      "description" : "My Ledgerで{{managerAppName}}アプリをアンインストール後、再インストールしてください。"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "ダッシュボードに戻る",
@@ -4421,7 +4712,7 @@
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "アプリのアップデートが必要です。",
-      "description" : "管理ページで{{managerAppName}}アプリをアンインストール後、再インストールしてください。"
+      "description" : "My Ledgerで{{managerAppName}}アプリをアンインストール後、再インストールしてください。"
     },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
@@ -4466,7 +4757,7 @@
       "list" : {
         "1" : "ボタンを押さずにUSBケーブルの取り外しや再接続をしてください。",
         "2" : "両方のボタンを同時に3回押すと、ダッシュボードが表示されます。",
-        "3" : "管理ページを開き、ファームウェアをアップデートをクリック。"
+        "3" : "My Ledgerを開き、「ファームウェアをアップデート」をクリック。"
       }
     },
     "UnavailableTezosOriginatedAccountReceive" : {

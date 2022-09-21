@@ -2,12 +2,14 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BottomDrawer } from "@ledgerhq/native-ui";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import Illustration from "../../images/illustration/Illustration";
 import NanoXFolded from "../../images/devices/NanoXFolded";
 
 import ChoiceCard from "../../components/ChoiceCard";
+import { track, TrackScreen } from "../../analytics";
 
 const images = {
   light: {
@@ -24,33 +26,61 @@ type Props = {
   navigation: any;
   isOpened: boolean;
   onClose: () => void;
+  currency?: CryptoCurrency | TokenCurrency | null;
 };
 
 export default function AddAccountsModal({
   navigation,
   onClose,
   isOpened,
+  currency,
 }: Props) {
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onClickAdd = useCallback(() => {
+    track("button_clicked", {
+      button: "With your Ledger",
+      drawer: "AddAccountsModal",
+    });
     navigation.navigate(NavigatorName.AddAccounts);
+    if (currency?.type === "TokenCurrency") {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        token: currency,
+      });
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        currency,
+      });
+    }
     onClose();
-  }, [navigation, onClose]);
+  }, [navigation, currency, onClose]);
 
   const onClickImport = useCallback(() => {
+    track("button_clicked", {
+      button: "Import from Desktop",
+      drawer: "AddAccountsModal",
+    });
     navigation.navigate(NavigatorName.ImportAccounts);
     onClose();
   }, [navigation, onClose]);
+
+  const onPressClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      drawer: "AddAccountsModal",
+    });
+    onClose();
+  }, [onClose]);
 
   return (
     <BottomDrawer
       testId="AddAccountsModal"
       isOpen={isOpened}
-      onClose={onClose}
+      onClose={onPressClose}
       title={t("portfolio.emptyState.addAccounts.addAccounts")}
     >
+      <TrackScreen category="Add/Import accounts" type="drawer" />
       {!readOnlyModeEnabled && (
         <ChoiceCard
           title={t("addAccountsModal.add.title")}

@@ -19,6 +19,7 @@
     "device" : "Dispositivo",
     "cryptoAsset" : "Criptoativo",
     "skip" : "Pular",
+    "next" : "Próximo",
     "noCryptoFound" : "Nenhum criptoativo encontrado",
     "needHelp" : "Precisa de ajuda?",
     "edit" : "Editar",
@@ -686,6 +687,38 @@
     },
     "StellarSourceHasMultiSign" : {
       "title" : "Desabilite a multiassinatura para fazer transações Stellar"
+    },
+    "ImageLoadFromGalleryError" : {
+      "title" : "Falha no carregamento da imagem da galeria",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageDownloadError" : {
+      "title" : "Falha no download da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageMetadataLoadingError" : {
+      "title" : "Falha no carregamento dos metadados da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageTooLargeError" : {
+      "title" : "Imagem muito grande",
+      "description" : "Tente com uma imagem menor"
+    },
+    "ImageCropError" : {
+      "title" : "Falha no corte da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageResizeError" : {
+      "title" : "Falha no redimensionamento da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImagePreviewError" : {
+      "title" : "Falha na pré-visualização da imagem",
+      "description" : "Tente novamente com outra imagem"
+    },
+    "ImageProcessingError" : {
+      "title" : "Falha no processamento da imagem",
+      "description" : "Tente novamente com outra imagem"
     }
   },
   "bluetooth" : {
@@ -1014,6 +1047,10 @@
       "discoverLedger" : {
         "title" : "Explorar o Ledger Live",
         "subtitle" : "Explore o aplicativo e saiba mais sobre seus benefícios "
+      },
+      "desktopSync" : {
+        "title" : "Sincronizar com o aplicativo desktop",
+        "subtitle" : "Sincronize seus ativos do Ledger Live desktop com seu celular."
       }
     },
     "discoverLive" : {
@@ -1566,27 +1603,27 @@
   "blePairingFlow" : {
     "scanning" : {
       "withProductName" : {
-        "title" : "Looking for your {{productName}}",
-        "description" : "Please make sure your {{productName}} is unlocked and Bluetooth is enabled"
+        "title" : "Buscando sua {{productName}}",
+        "description" : "Verifique se sua {{productName}} está desbloqueada e se o Bluetooth está habilitado"
       },
       "withoutProductName" : {
-        "title" : "Looking for devices",
-        "description" : "Please make sure your device is switched on, unlocked, and bluetooth is enabled"
+        "title" : "Buscando dispositivos",
+        "description" : "Certifique-se de que o seu dispositivo está ligado, desbloqueado e que o bluetooth está ativado"
       },
-      "alreadyPaired" : "Already paired"
+      "alreadyPaired" : "Já emparelhado"
     },
     "pairing" : {
       "success" : {
-        "title" : "Paired with {{deviceName}}"
+        "title" : "Emparelhado com {{deviceName}}"
       },
       "loading" : {
-        "title" : "Pairing with {{deviceName}}",
-        "subtitle" : "Confirm the code on your {{productName}}"
+        "title" : "Emparelhando com {{deviceName}}",
+        "subtitle" : "Confirme o código em sua {{productName}}"
       },
       "error" : {
-        "title" : "Pairing unsucessful",
-        "subtitle" : "Looks like something went wrong! Check that your bluetooth is on and your {{productName}} is nearby",
-        "retryCta" : "Try again"
+        "title" : "Emparelhamento sem sucesso",
+        "subtitle" : "Parece que algo deu errado! Verifique se o seu bluetooth está ativado e se sua {{productName}} está próxima",
+        "retryCta" : "Tente novamente"
       }
     }
   },
@@ -1725,7 +1762,13 @@
       "WITHDRAW_UNBONDED" : "Saque",
       "NOMINATE" : "Nomeação",
       "CHILL" : "Limpar Nomeações",
-      "SET_CONTROLLER" : "Definir controlador"
+      "SET_CONTROLLER" : "Definir controlador",
+      "ACTIVATE" : "Ativado",
+      "LOCK" : "Bloqueado",
+      "UNLOCK" : "Desbloqueado",
+      "REVOKE" : "Revogado",
+      "REGISTER" : "Registrado",
+      "WITHDRAW" : "Sacado"
     }
   },
   "operationDetails" : {
@@ -1963,6 +2006,16 @@
       "noTransaction" : {
         "title" : "Você não tem nenhuma transação",
         "subtitle" : "Você precisará de um dispositivo para poder comprar ou receber {{assetName}}"
+      }
+    },
+    "banner" : {
+      "redelegation" : {
+        "description" : "Caso você não saiba, o validador Ledger faz staking por uma comissão menor do que o validador que você está utilizando.",
+        "cta" : "Redelegar"
+      },
+      "delegation" : {
+        "description" : "Caso você não saiba, o validador Ledger faz staking de seu {{asset}} por uma comissão menor.",
+        "cta" : "Aplicar agora"
       }
     }
   },
@@ -4271,7 +4324,10 @@
       "info" : "Como funciona a delegação",
       "broadcastSuccessTitle" : "Operação Enviada",
       "broadcastSuccessDescription" : "O estado da delegação será atualizado quando a transação for confirmada.",
-      "delegatedTo" : "delegado a"
+      "delegatedTo" : "delegado a",
+      "started" : {
+        "description" : "Você pode receber recompensas delegando seus ativos SOL a um validador."
+      }
     }
   },
   "delegation" : {
@@ -4291,6 +4347,7 @@
     "delegation" : "Delegação",
     "viewDetails" : "Ver Detalhes",
     "validator" : "Validador",
+    "validatorGroup" : "Grupo de validadores",
     "validatorAddress" : "Endereço do validador",
     "delegatedAccount" : "Conta Delegada",
     "duration" : "Duração",
@@ -4684,6 +4741,32 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Seu endereço {{name}} não pode ser confirmado no seu dispositivo Ledger. Use por sua própria conta e risco."
+    }
+  },
+  "customImage" : {
+    "drawer" : {
+      "title" : "Escolha uma imagem",
+      "options" : {
+        "uploadFromPhone" : "Enviar do meu telefone"
+      }
+    },
+    "cropImage" : "Cortar imagem",
+    "chooseConstrast" : "Escolher contraste",
+    "uploadAnotherImage" : "Enviar outra imagem",
+    "selectContrast" : "Selecione o contraste"
+  },
+  "postOnboarding" : {
+    "hub" : {
+      "title" : "Muito bom.\nTudo pronto.",
+      "allDoneTitle" : "Bom trabalho.\nTudo está em pleno funcionamento.",
+      "subtitle" : "Aqui está o que você pode fazer a seguir.",
+      "skip" : "Pular para o aplicativo.",
+      "goToWallet" : "Ir para a carteira Ledger Live",
+      "done" : "Você tornou seu futuro mais seguro."
+    },
+    "walletCard" : {
+      "title" : "Como Começar",
+      "description" : "Clique aqui para finalizar a configuração da sua {{productName}} com a Ledger Live"
     }
   }
 }

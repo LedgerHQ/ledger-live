@@ -201,8 +201,9 @@ export const setSensitiveAnalytics = (enabled: boolean) => ({
   type: "SET_SENSITIVE_ANALYTICS",
   enabled,
 });
-export const setFirstConnectionHasDevice = () => ({
+export const setFirstConnectionHasDevice = (payload?: boolean) => ({
   type: "SET_FIRST_CONNECTION_HAS_DEVICE",
+  payload,
 });
 export const setNotifications = (payload: any) => ({
   type: "SET_NOTIFICATIONS",
@@ -224,7 +225,7 @@ export function useTimeRange() {
     },
     [dispatch],
   );
-  const ranges: PortfolioRange[] = ["all", "year", "month", "week", "day"];
+  const ranges: PortfolioRange[] = ["day", "week", "month", "year", "all"];
   const options = ranges.map<PortfolioRangeOption>(key => ({
     key,
     value: t(`common:time.${key}`),

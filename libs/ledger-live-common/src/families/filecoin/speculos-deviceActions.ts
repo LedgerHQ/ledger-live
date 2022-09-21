@@ -1,7 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow } from "../../bot/specs";
-import { formatCurrencyUnit } from "../../currencies";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
@@ -25,9 +24,8 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "Value",
         button: "Rr",
         expectedValue: ({ account, status }) =>
-          formatCurrencyUnit(account.unit, status.amount, {
-            disableRounding: true,
-            showAllDigits: true,
+          formatDeviceAmount(account.currency, status.amount, {
+            hideCode: true,
           }),
       },
       {
@@ -39,18 +37,16 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "Gas Premium",
         button: "Rr",
         expectedValue: ({ account, transaction }) =>
-          formatCurrencyUnit(account.unit, transaction.gasPremium, {
-            disableRounding: true,
-            showAllDigits: true,
+          formatDeviceAmount(account.currency, transaction.gasPremium, {
+            hideCode: true,
           }),
       },
       {
         title: "Gas Fee Cap",
         button: "Rr",
         expectedValue: ({ account, transaction }) =>
-          formatCurrencyUnit(account.unit, transaction.gasFeeCap, {
-            disableRounding: true,
-            showAllDigits: true,
+          formatDeviceAmount(account.currency, transaction.gasFeeCap, {
+            hideCode: true,
           }),
       },
       {

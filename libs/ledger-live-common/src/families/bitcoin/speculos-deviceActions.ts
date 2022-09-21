@@ -1,7 +1,6 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount } from "../../bot/specs";
 import { perCoinLogic } from "./logic";
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
@@ -11,37 +10,15 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "Amount",
         button: "Rr",
         ignoreAssertionFailure: true,
-        // https://ledgerhq.atlassian.net/browse/LLC-676
         expectedValue: ({ account, status }) =>
-          formatCurrencyUnit(
-            {
-              ...account.unit,
-              code: account.currency.deviceTicker || account.unit.code,
-            },
-            status.amount,
-            {
-              showCode: true,
-              disableRounding: true,
-            }
-          ).replace(/\s/g, " "),
+          formatDeviceAmount(account.currency, status.amount),
       },
       {
         title: "Fees",
         button: "Rr",
         ignoreAssertionFailure: true,
-        // https://ledgerhq.atlassian.net/browse/LLC-676
         expectedValue: ({ account, status }) =>
-          formatCurrencyUnit(
-            {
-              ...account.unit,
-              code: account.currency.deviceTicker || account.unit.code,
-            },
-            status.estimatedFees,
-            {
-              showCode: true,
-              disableRounding: true,
-            }
-          ).replace(/\s/g, " "),
+          formatDeviceAmount(account.currency, status.estimatedFees),
       },
       {
         title: "Address",

@@ -1,5 +1,5 @@
 import { hexBuffer, intAsHexBytes } from "../../utils";
-import { EIP712MessageTypesEntry } from "./EIP712.types";
+import { EIP712Message, EIP712MessageTypesEntry } from "./EIP712.types";
 
 /**
  * @ignore for the README
@@ -249,3 +249,15 @@ export const makeTypeEntryStructBuffer = ({
 
   return Buffer.concat(bufferArray);
 };
+
+// As defined in [spec](https://eips.ethereum.org/EIPS/eip-712), the properties below are all required.
+export function isEIP712Message(
+  message: Record<string, unknown>
+): message is EIP712Message {
+  return (
+    "types" in message &&
+    "primaryType" in message &&
+    "domain" in message &&
+    "message" in message
+  );
+}

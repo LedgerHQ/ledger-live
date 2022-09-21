@@ -3,6 +3,7 @@
     "cancel": "Cancel",
     "apply": "Apply",
     "seeAll": "See all",
+    "seeAllWithNumber": "See all ({{number}})",
     "back": "Back",
     "delete": "Delete",
     "paste": "Paste",
@@ -19,6 +20,7 @@
     "device": "Device",
     "cryptoAsset": "Crypto asset",
     "skip": "Skip",
+    "next": "Next",
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Do you need help?",
     "edit": "Edit",
@@ -29,6 +31,7 @@
     "received": "Received",
     "sent": "Sent",
     "or": "OR",
+    "others": "Others",
     "rename": "Rename",
     "learnMore": "Learn more",
     "checkItOut": "Check it out",
@@ -688,6 +691,38 @@
     },
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
+    },
+    "ImageLoadFromGalleryError": {
+      "title": "Image loading from gallery failed",
+      "description": "Please try again with another image"
+    },
+    "ImageDownloadError": {
+      "title": "Image download failed",
+      "description": "Please try again with another image"
+    },
+    "ImageMetadataLoadingError": {
+      "title": "Image metadata loading failed",
+      "description": "Please try again with another image"
+    },
+    "ImageTooLargeError": {
+      "title": "Image too large",
+      "description": "Please try with a smaller image"
+    },
+    "ImageCropError": {
+      "title": "Cropping of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageResizeError": {
+      "title": "Resizing of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImagePreviewError": {
+      "title": "Preview of the image failed",
+      "description": "Please try again with another image"
+    },
+    "ImageProcessingError": {
+      "title": "Processing of the image failed",
+      "description": "Please try again with another image"
     }
   },
   "bluetooth": {
@@ -1643,7 +1678,10 @@
         "addAccounts": "Add asset",
         "title": "Get started",
         "description": "You can either purchase crypto from our partners or setup your wallet"
-      }
+      },
+      "title": "Start by adding your favorite assets to your wallet",
+      "subtitle": "Ledger supports more than 6,000 coins and tokens",
+      "addAccount": "or add an account"
     },
     "noOpState": {
       "title": "No operations yet?",
@@ -1655,6 +1693,13 @@
     "topGainers": {
       "title": "Market gainers (24H)",
       "seeMarket": "See all"
+    },
+    "walletBalance": "Wallet balance",
+    "seelAllAssets": "See All Assets",
+    "marketPriceSection": {
+      "title": "{{currencyTicker}} market price",
+      "currencyPrice": "1 {{currencyTicker}} price",
+      "currencyPriceChange": "Last 24h change"
     }
   },
   "addAccountsModal": {
@@ -1735,7 +1780,13 @@
       "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "Nomination",
       "CHILL": "Clear nominations",
-      "SET_CONTROLLER": "Set controller"
+      "SET_CONTROLLER": "Set controller",
+      "ACTIVATE": "Activated",
+      "LOCK": "Locked",
+      "UNLOCK": "Unlocked",
+      "REVOKE": "Revoked",
+      "REGISTER": "Registered",
+      "WITHDRAW": "Withdrawn"
     }
   },
   "operationDetails": {
@@ -1874,7 +1925,8 @@
       "buttons": {
         "receiveFunds": "Receive",
         "buyCrypto": "Buy"
-      }
+      },
+      "addAccountCta": "Add Account"
     },
     "settings": {
       "header": "Account settings",
@@ -1974,10 +2026,30 @@
         "title": "You don't have any transactions",
         "subtitle": "You'll need a device in order to buy or receive {{assetName}}"
       }
+    },
+    "modals": {
+      "zeroBalanceDisabledAction": {
+        "title": "You have no {{currencyTicker}} yet",
+        "start": "Buy or Receive some {{currencyTicker}} to start.",
+        "description": "You need some {{currencyTicker}} to {{actionName}} with this account."
+      }
+    },
+    "earn": "Earn",
+    "quickActions": "Quick actions",
+    "banner": {
+      "redelegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
+        "cta": "Redelegate"
+      },
+      "delegation": {
+        "description": "In case you didn’t know, the Ledger validator stakes your {{asset}} at a low commission.",
+        "cta": "Stake now"
+      }
     }
   },
   "accounts": {
     "title": "Accounts",
+    "cryptoAccountsTitle": "{{currencyTicker}} accounts",
     "importNotification": {
       "message": "Your accounts were imported successfully!"
     },
@@ -3027,6 +3099,7 @@
     }
   },
   "addAccounts": {
+    "addNew": "Add new",
     "supportLinks": {
       "segwit_or_native_segwit": "Segwit or Native segwit?"
     },
@@ -4306,6 +4379,7 @@
     "delegation": "Delegation",
     "viewDetails": "View details",
     "validator": "Validator",
+    "validatorGroup": "Validator Group",
     "validatorAddress": "Validator address",
     "delegatedAccount": "Delegated account",
     "duration": "Duration",
@@ -4703,6 +4777,38 @@
     },
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+    }
+  },
+  "asset": {
+    "title": "Your {{assetName}}",
+    "accountsSection": {
+      "title": "Your {{currencyName}} accounts"
+    }
+  },
+  "customImage": {
+    "drawer": {
+      "title": "Choose an image",
+      "options": {
+        "uploadFromPhone": "Upload from my phone"
+      }
+    },
+    "cropImage": "Crop image",
+    "chooseConstrast": "Choose contrast",
+    "uploadAnotherImage": "Upload another image",
+    "selectContrast": "Select your contrast"
+  },
+  "postOnboarding": {
+    "hub": {
+      "title": "Nice one.\nYou're all set.",
+      "allDoneTitle": "Nice work.\nYou're up and running.",
+      "subtitle": "Here is what you can do next:",
+      "skip": "Skip to the app",
+      "goToWallet": "Go to Ledger Live wallet",
+      "done": "You've just secured your future"
+    },
+    "walletCard": {
+      "title": "Getting started",
+      "description": "Click here to finish setting up your {{productName}} with Ledger Live"
     }
   }
 }

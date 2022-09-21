@@ -1,4 +1,4 @@
-import "./Button/Button.stories";
+import "./Cta/Button/Button.stories";
 import "./Text/Text.stories";
 import "./Text/TextOverview.stories";
 import "./Layout/Modal/Modal.stories";
