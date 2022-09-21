@@ -133,6 +133,7 @@ class Runner: NSObject  {
             RunnerAction.runError,
             ExtraData(code: code.rawValue, message: message)
         )
+        self.endBackgroundTask()
         self.pendingRequest?.cancel()
         self.stop(){
             print("BIM runner failed.")
@@ -278,21 +279,19 @@ class Runner: NSObject  {
             let data = response.dropLast(4)
             let status = response.suffix(4)
 
-            if self.isInBulkMode {
-                if status != "9000" {
-                    self.onEmit!(
-                        RunnerAction.runError,
-                        ExtraData(code: "transport-error", message: "transport-error (\(status))")
-                    )
-                } else {
-                    let index = self.APDUMaxCount - self.APDUQueue.count
-                    let progress = ((Double(index))/Double(self.APDUMaxCount))
-                    self.onEmit!(
-                        RunnerAction.runProgress,
-                        ExtraData(progress: progress, index: index, total: self.APDUMaxCount)
-                    )
-                    self.handleNextAPDU()
-                }
+            if status != "9000" {
+                self.onEmit!(
+                    RunnerAction.runError,
+                    ExtraData(code: "transport-error", message: "transport-error (\(status))")
+                )
+            } else if self.isInBulkMode {
+                let index = self.APDUMaxCount - self.APDUQueue.count
+                let progress = ((Double(index))/Double(self.APDUMaxCount))
+                self.onEmit!(
+                    RunnerAction.runProgress,
+                    ExtraData(progress: progress, index: index, total: self.APDUMaxCount)
+                )
+                self.handleNextAPDU()
             } else {
                 /// Send message back to the scriptrunner
                 let response = "{\"nonce\":\(self.HSMNonce),\"response\":\"success\",\"data\":\"\(data)\"}"

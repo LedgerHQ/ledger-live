@@ -97,34 +97,34 @@ class Runner(
     private fun onDeviceResponse(response: String) {
         // Nb Remove the status code from the response, script-runner only wants the data.
         val data = response.dropLast(4)
+        val status = response.takeLast(4)
         Timber.d("$tag <= $response")
+        if (status != "9000") {
+            // bulk progress should fail if the status is not 9000
+            onEvent(
+                RunnerAction.runError,
+                Arguments.fromBundle(
+                    bundleOf(
+                        Pair("message", "transport-error (${status})"),
+                        Pair("code", "transport-error")
+                    )
+                ),
+            )
+        }
+
         if (isInBulkMode) {
-            val status = response.takeLast(4)
-            if (status != "9000") {
-                // bulk progress should fail if the status is not 9000
-                onEvent(
-                    RunnerAction.runError,
-                    Arguments.fromBundle(
-                        bundleOf(
-                            Pair("message", "transport-error (${status})"),
-                            Pair("code", "transport-error")
-                        )
-                    ),
-                )
-            } else {
-                val progress: Double = (bulkSize - APDUQueue.size) / bulkSize.toDouble()
-                onEvent(
-                    RunnerAction.runProgress,
-                    Arguments.fromBundle(
-                        bundleOf(
-                            Pair("progress", progress),
-                            Pair("index", bulkSize - APDUQueue.size),
-                            Pair("total", bulkSize)
-                        )
-                    ),
-                )
-                handleNextAPDU()
-            }
+            val progress: Double = (bulkSize - APDUQueue.size) / bulkSize.toDouble()
+            onEvent(
+                RunnerAction.runProgress,
+                Arguments.fromBundle(
+                    bundleOf(
+                        Pair("progress", progress),
+                        Pair("index", bulkSize - APDUQueue.size),
+                        Pair("total", bulkSize)
+                    )
+                ),
+            )
+            handleNextAPDU()
         } else {
             val out = """{"nonce":$nonce, "response":"success","data":"$data"}"""
             Timber.d("$tag -> $out")
