@@ -86,92 +86,95 @@ jobs:
           name: test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
 
-  # detox-tests-android:
-  #   name: "Ledger Live Mobile - Android Detox Tests"
-  #   runs-on: macos-latest
-  #   env:
-  #     NODE_OPTIONS: "--max-old-space-size=7168"
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v3
-  #     - uses: pnpm/action-setup@v2.1.0
-  #       with:
-  #         version: latest
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 16.x
-  #         cache: pnpm
-  #         cache-dependency-path: "**/pnpm-lock.yaml"
-  #     - name: bump npm
-  #       run: npm i -g npm@8.12.2
-  #     - uses: ruby/setup-ruby@v1
-  #       with:
-  #         ruby-version: 2.7
-  #       env:
-  #         ImageOS: ubuntu20
-  #     - name: setup JDK 11
-  #       uses: actions/setup-java@v3
-  #       with:
-  #         distribution: 'zulu'
-  #         java-version: '11'
-  #         cache: 'gradle'
-  #     - name: setup Android SDK
-  #       uses: android-actions/setup-android@v2.0.8
-  #     - name: Install dependencies
-  #       run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-  #     - name: Build dependencies
-  #       run: pnpm build:llm:deps     
-  #     # May be taken care of by the `setup-java` action caching
-  #     - name: Gradle cache
-  #       uses: gradle/gradle-build-action@v2
-  #     - name: Clear and build detox cache # investigate how to properly cache this
-  #       run: pnpm mobile detox clean-framework-cache && pnpm mobile detox build-framework-cache
-  #     - name: AVD cache
-  #       uses: actions/cache@v3
-  #       id: avd-cache
-  #       with:
-  #         path: |
-  #           ~/.android/avd/*
-  #           ~/.android/adb*
-  #         key: avd-30
-  #     - name: create AVD and generate snapshot for caching
-  #       if: steps.avd-cache.outputs.cache-hit != 'true'
-  #       uses: reactivecircus/android-emulator-runner@v2
-  #       with:
-  #         api-level: 30
-  #         arch: x86_64
-  #         force-avd-creation: false
-  #         # emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-  #         # disable-animations: false
-  #         ram-size: 4096M
-  #         script: echo "Generated AVD snapshot for caching."
-  #     - name: Build Android app for Detox test run
-  #       run: pnpm mobile e2e:build -c android.emu.release       
-  #     - name: Run Android tests
-  #       uses: reactivecircus/android-emulator-runner@v2
-  #       timeout-minutes: 15
-  #       with:
-  #         api-level: 30
-  #         arch: x86_64
-  #         avd-name: Nexus_6
-  #         # emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-  #         ram-size: 4096M
-  #         script: |
-  #           nohup sh -c "/Users/runner/Library/Android/sdk/platform-tools/adb logcat '*:D' > adb-log.txt" &
-  #           pnpm mobile e2e:test -c android.emu.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing
-  #     - name: Compress Emulator Log
-  #       if: always()
-  #       run: gzip -9 adb-log.txt
-  #       shell: bash
-  #     - name: Upload Emulator Log
-  #       uses: actions/upload-artifact@v2
-  #       if: always()
-  #       with:
-  #         name: adb_logs
-  #         path: adb-log.txt.gz
-  #     - name: Upload test artifacts
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: test-android-artifacts
-  #         path: apps/ledger-live-mobile/e2e/artifacts
+  detox-tests-android:
+    name: "Ledger Live Mobile - Android Detox Tests"
+    runs-on: macos-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: bump npm
+        run: npm i -g npm@8.12.2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+        env:
+          ImageOS: ubuntu20
+      - name: setup JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: 'gradle'
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.8
+      - name: Install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - name: Build dependencies
+        run: pnpm build:llm:deps     
+      # May be taken care of by the `setup-java` action caching
+      - name: Gradle cache
+        uses: gradle/gradle-build-action@v2
+      - name: Clear and build detox cache # investigate how to properly cache this
+        run: pnpm mobile detox clean-framework-cache && pnpm mobile detox build-framework-cache
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-30
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          target: default
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          ram-size: 4096M
+          script: echo "Generated AVD snapshot for caching."
+      - name: Build Android app for Detox test run
+        run: pnpm mobile e2e:build -c android.emu.release       
+      - name: Run Android tests
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 20
+        with:
+          api-level: 30
+          arch: x86_64
+          target: default
+          avd-name: Nexus_6
+          emulator-options: -verbose -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          ram-size: 4096M
+          script: |
+            nohup sh -c "/Users/runner/Library/Android/sdk/platform-tools/adb logcat '*:D' > adb-log.txt" &
+            pnpm mobile e2e:test -c android.emu.release --loglevel verbose --record-logs all --record-timeline all --take-screenshots all --record-videos failing --forceExit
+      - name: Compress Emulator Log
+        if: always()
+        run: gzip -9 adb-log.txt
+        shell: bash
+      - name: Upload Emulator Log
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: adb_logs
+          path: adb-log.txt.gz
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-android-artifacts
+          path: apps/ledger-live-mobile/artifacts/
           

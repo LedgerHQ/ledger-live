@@ -11,7 +11,7 @@ beforeAll(async () => {
       locale: "en-US",
     },
   });
-});
+}, 350000);
 
 afterAll(async () => {
   bridge.close();

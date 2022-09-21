@@ -5,7 +5,7 @@
   "maxWorkers": 1,
   "testEnvironment": "./environment",
   "testRunner": "jest-circus/runner",
-  "testTimeout": 120000,
+  "testTimeout": 600000,
   "testRegex": "\\.spec\\.ts$",
   "transform": {
     "\\.(j|t)sx?$": "ts-jest"
