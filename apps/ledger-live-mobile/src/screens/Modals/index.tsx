@@ -57,7 +57,8 @@ const Modals = () => {
   );
 
   useEffect(() => {
-    if (!pushNotificationsFeature?.enabled && !ratingsFeature?.enabled) return;
+    if (!pushNotificationsFeature?.enabled && !ratingsFeature?.enabled)
+      return undefined;
 
     navigation.removeListener("state", onRouteChange);
     navigation.addListener("state", onRouteChange);

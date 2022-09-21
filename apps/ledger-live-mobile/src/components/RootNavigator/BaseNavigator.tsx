@@ -59,6 +59,7 @@ import AnalyticsOperations from "../../screens/Analytics/Operations";
 import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
+// eslint-disable-next-line import/no-cycle
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import styles from "../../navigation/styles";
