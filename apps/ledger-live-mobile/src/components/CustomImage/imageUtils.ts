@@ -12,8 +12,8 @@ import {
 /**
  * Call this to prompt the user to pick an image from its phone.
  *
- * @returns (a promise) null if the user cancelled, otherwise an containing
- * the chosen image file URI as well as the image dimensions
+ * @returns (a promise) null if the user cancelled, otherwise an object
+ * containing the chosen image file URI as well as the image dimensions
  */
 export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null> {
   try {

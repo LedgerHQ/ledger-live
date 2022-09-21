@@ -25,6 +25,15 @@ export type TransactionTestInput<T> = {
   optimisticOperation: Operation;
   operation: Operation;
 };
+export type TransactionDestinationTestInput<T> = {
+  sendingAccount: Account;
+  sendingOperation: Operation;
+  destinationBeforeTransaction: Account;
+  operation: Operation;
+  destination: Account;
+  transaction: T;
+  status: TransactionStatus;
+};
 export type DeviceActionArg<T extends Transaction, S> = {
   appCandidate: AppCandidate;
   account: Account;
@@ -50,6 +59,7 @@ export type TransactionArg<T extends Transaction> = {
 export type TransactionRes<T extends Transaction> = {
   transaction: T;
   updates: Array<Partial<T> | null | undefined>;
+  destination?: Account;
 };
 export type MutationSpec<T extends Transaction> = {
   // Name what this mutation is doing
@@ -71,7 +81,9 @@ export type MutationSpec<T extends Transaction> = {
   // how much time to wait in maximum to reach the final state
   testTimeout?: number;
   // Implement a test that runs after the operation is applied to the account
-  test?: (arg0: TransactionTestInput<T>) => void;
+  test?: (input: TransactionTestInput<T>) => void;
+  // Implement a second test that allows to test the effect of the transaction on the DESTINATION account (matched by recipient)
+  testDestination?: (input: TransactionDestinationTestInput<T>) => void;
 };
 
 export type AppSpec<T extends Transaction> = {
@@ -150,5 +162,9 @@ export type MutationReport<T extends Transaction> = {
   confirmedTime?: number;
   finalAccount?: Account;
   testDuration?: number;
+  destinationConfirmedTime?: number;
+  finalDestination?: Account;
+  finalDestinationOperation?: Operation;
+  testDestinationDuration?: number;
   error?: Error;
 };

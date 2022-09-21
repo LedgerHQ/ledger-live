@@ -85,6 +85,7 @@
     "lock": "Lock",
     "showMore": "Show more",
     "back": "Back",
+    "adjustFees": "Adjust fees",
     "reset": "Reset",
     "retry": "Retry",
     "range": "Range",
@@ -3588,7 +3589,11 @@
       "ru": "Russian",
       "es": "Spanish",
       "zh": "Chinese",
-      "de": "German"
+      "de": "German",
+      "tr": "Turkish",
+      "ja": "Japanese", 
+      "ko": "Korean", 
+      "pt": "Portuguese"
     }
   },
   "theme": {
@@ -4379,6 +4384,9 @@
       "title": "The {{appName}} app cannot be found for your specific configuration.",
       "description": "Try reinstalling the app from My Ledger"
     },
+    "PendingOperation": {
+      "description": "You have incoming transactions pending. Please beware pending transactions can be reversed."
+    },
     "countervaluesUnavailable": {
       "title": "We're not able to provide a countervalue for this asset at the moment"
     },
@@ -4770,7 +4778,7 @@
     },
     "EthAppNftNotSupported": {
       "title": "Operation not available for this device",
-      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S or S Plus."
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"
