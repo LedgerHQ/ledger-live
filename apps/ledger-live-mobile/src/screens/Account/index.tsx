@@ -117,7 +117,7 @@ const AccountScreenInner = ({
 
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
+  const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
   const currentPositionY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler(event => {
     currentPositionY.value = event.contentOffset.y;
