@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.9.0-nightly.3
+
+### Patch Changes
+
+- [`fb0128bb89`](https://github.com/LedgerHQ/ledger-live/commit/fb0128bb898adb5cf11a0337e180ea537e9fca9b) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Inconsistency in languages display names
+
+* [#1259](https://github.com/LedgerHQ/ledger-live/pull/1259) [`134ec2ab52`](https://github.com/LedgerHQ/ledger-live/commit/134ec2ab520f331df9251ac80ba4f89a633f8e62) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Added translation for Settings and experimental features
+
+- [#1285](https://github.com/LedgerHQ/ledger-live/pull/1285) [`368f26a7f4`](https://github.com/LedgerHQ/ledger-live/commit/368f26a7f43612f8595eab79db3475306974a2b9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update error message when trying to send NFTs with LNS
+
+* [#1316](https://github.com/LedgerHQ/ledger-live/pull/1316) [`d3be8877e3`](https://github.com/LedgerHQ/ledger-live/commit/d3be8877e30eb48943942a7dfd31c19085b4f89e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wrong message when LNX storage is full
+
+- [#1297](https://github.com/LedgerHQ/ledger-live/pull/1297) [`e315e556ae`](https://github.com/LedgerHQ/ledger-live/commit/e315e556ae714b0f8780fd691987b90f241b7fda) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - UX and functional fixes in custom image flow
+
+- Updated dependencies [[`5f003287f8`](https://github.com/LedgerHQ/ledger-live/commit/5f003287f85974d160cc230c8e5d7c442b0eb639), [`1a23c232fa`](https://github.com/LedgerHQ/ledger-live/commit/1a23c232fa21557ccd48568f4f577263bd6fc6e6), [`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6), [`99acc1ad22`](https://github.com/LedgerHQ/ledger-live/commit/99acc1ad22bbb76b91c2cbdc1b8ed67c691b4233), [`b0a7e35a0f`](https://github.com/LedgerHQ/ledger-live/commit/b0a7e35a0f7a85732d1f7bef6ae3144fdf0b8b24)]:
+  - @ledgerhq/live-common@27.3.0-nightly.3
+  - @ledgerhq/errors@6.11.0-nightly.0
+  - @ledgerhq/native-ui@0.10.0-nightly.2
+  - @ledgerhq/devices@7.0.2-nightly.1
+  - @ledgerhq/hw-transport@6.27.5-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.5-nightly.1
+  - @ledgerhq/react-native-hid@6.28.7-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.27.7-nightly.1
+
 ## 3.9.0-nightly.2
 
 ### Minor Changes

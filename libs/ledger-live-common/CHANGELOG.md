@@ -1,5 +1,34 @@
 # @ledgerhq/live-common
 
+## 27.3.0-nightly.3
+
+### Minor Changes
+
+- [#1318](https://github.com/LedgerHQ/ledger-live/pull/1318) [`99acc1ad22`](https://github.com/LedgerHQ/ledger-live/commit/99acc1ad22bbb76b91c2cbdc1b8ed67c691b4233) Thanks [@sarneijim](https://github.com/sarneijim)! - Filter provider swap list by status
+
+### Patch Changes
+
+- [#1302](https://github.com/LedgerHQ/ledger-live/pull/1302) [`5f003287f8`](https://github.com/LedgerHQ/ledger-live/commit/5f003287f85974d160cc230c8e5d7c442b0eb639) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Force Ethereum nano app minimum version to 1.9.20
+
+* [#1314](https://github.com/LedgerHQ/ledger-live/pull/1314) [`1a23c232fa`](https://github.com/LedgerHQ/ledger-live/commit/1a23c232fa21557ccd48568f4f577263bd6fc6e6) Thanks [@grsoares21](https://github.com/grsoares21)! - Add new onboarding state for the sync onboarding
+
+* Updated dependencies [[`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6)]:
+  - @ledgerhq/errors@6.11.0-nightly.0
+  - @ledgerhq/devices@7.0.2-nightly.1
+  - @ledgerhq/hw-app-algorand@6.27.5-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.27.5-nightly.1
+  - @ledgerhq/hw-app-eth@6.29.8-nightly.2
+  - @ledgerhq/hw-app-polkadot@6.27.5-nightly.1
+  - @ledgerhq/hw-app-solana@6.27.5-nightly.1
+  - @ledgerhq/hw-app-trx@6.27.5-nightly.1
+  - @ledgerhq/hw-transport@6.27.5-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.27.5-nightly.1
+  - @ledgerhq/hw-app-btc@8.1.0-nightly.1
+  - @ledgerhq/hw-app-str@6.27.5-nightly.1
+  - @ledgerhq/hw-app-tezos@6.27.5-nightly.1
+  - @ledgerhq/hw-app-xrp@6.27.5-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.5-nightly.1
+
 ## 27.3.0-nightly.2
 
 ### Minor Changes

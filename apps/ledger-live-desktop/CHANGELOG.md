@@ -1,5 +1,32 @@
 # ledger-live-desktop
 
+## 2.48.0-nightly.8
+
+### Minor Changes
+
+- [#1270](https://github.com/LedgerHQ/ledger-live/pull/1270) [`fcfd00b604`](https://github.com/LedgerHQ/ledger-live/commit/fcfd00b604f12efbb59b8477f5aa6523e667d177) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add connection check on add account
+
+* [#1291](https://github.com/LedgerHQ/ledger-live/pull/1291) [`673a66eec8`](https://github.com/LedgerHQ/ledger-live/commit/673a66eec8c6996fa5f71188683a3e38be5e1838) Thanks [@sarneijim](https://github.com/sarneijim)! - Add DEX to provider list
+
+- [#1253](https://github.com/LedgerHQ/ledger-live/pull/1253) [`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Warning when btc transactions are pending in send flow
+
+* [#908](https://github.com/LedgerHQ/ledger-live/pull/908) [`6065c3f974`](https://github.com/LedgerHQ/ledger-live/commit/6065c3f97446ac4132cf8707b879e006a2f30d2c) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change back button to edit fees in platform modal
+
+### Patch Changes
+
+- [#1309](https://github.com/LedgerHQ/ledger-live/pull/1309) [`04fb3f491e`](https://github.com/LedgerHQ/ledger-live/commit/04fb3f491efb89776d966e678b28d7417e89c34e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Inconsistency in languages display names
+
+* [#1285](https://github.com/LedgerHQ/ledger-live/pull/1285) [`368f26a7f4`](https://github.com/LedgerHQ/ledger-live/commit/368f26a7f43612f8595eab79db3475306974a2b9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update error message when trying to send NFTs with LNS
+
+* Updated dependencies [[`5f003287f8`](https://github.com/LedgerHQ/ledger-live/commit/5f003287f85974d160cc230c8e5d7c442b0eb639), [`1a23c232fa`](https://github.com/LedgerHQ/ledger-live/commit/1a23c232fa21557ccd48568f4f577263bd6fc6e6), [`1a94cbf28a`](https://github.com/LedgerHQ/ledger-live/commit/1a94cbf28aaa2917c70719e22f446148cd66cef6), [`99acc1ad22`](https://github.com/LedgerHQ/ledger-live/commit/99acc1ad22bbb76b91c2cbdc1b8ed67c691b4233), [`b0a7e35a0f`](https://github.com/LedgerHQ/ledger-live/commit/b0a7e35a0f7a85732d1f7bef6ae3144fdf0b8b24)]:
+  - @ledgerhq/live-common@27.3.0-nightly.3
+  - @ledgerhq/errors@6.11.0-nightly.0
+  - @ledgerhq/react-ui@0.9.1-nightly.0
+  - @ledgerhq/devices@7.0.2-nightly.1
+  - @ledgerhq/hw-transport@6.27.5-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.5-nightly.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.1-nightly.1
+
 ## 2.48.0-nightly.7
 
 ### Minor Changes
