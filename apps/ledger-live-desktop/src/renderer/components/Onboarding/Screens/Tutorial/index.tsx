@@ -509,9 +509,12 @@ export default function Tutorial({ useCase }: Props) {
        * block is executed), on the following commit we can call
        * history.push("/").
        */
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         if (history.location.pathname !== "/") history.push("/");
       }, 0);
+      return () => {
+        clearTimeout(timeout);
+      };
     }
   }, [history, onboardingDone]);
 
