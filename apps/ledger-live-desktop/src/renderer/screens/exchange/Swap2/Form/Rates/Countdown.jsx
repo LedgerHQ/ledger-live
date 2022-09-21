@@ -13,7 +13,7 @@ export type Props = {
   refreshTime: number,
 };
 
-const CountdownText: ThemedComponent<{}> = styled(Text).attrs()`
+const CountdownText: ThemedComponent<{}> = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
 

@@ -5,7 +5,6 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { rgba } from "~/renderer/styles/helpers";
 import { iconByProviderName } from "../../utils";
 
 const ProviderContainer: ThemedComponent<{}> = styled(Box).attrs({
@@ -20,13 +19,17 @@ const ProviderContainer: ThemedComponent<{}> = styled(Box).attrs({
     p.selected
       ? `
     border-color: ${p.theme.colors.palette.primary.main};
-    box-shadow: 0px 0px 0px 4px ${rgba(p.theme.colors.palette.primary.main, 0.8)};
-    background-color: ${rgba(p.theme.colors.palette.primary.main, 0.2)};
+    box-shadow: 0px 0px 0px 4px ${p.theme.colors.primary.c60};
+    background-color: ${p.theme.colors.primary.c20};
     `
       : `
     :hover {
       box-shadow: 0px 0px 2px 1px ${p.theme.colors.palette.divider};
     }`}
+`;
+
+const SecondaryText: ThemedComponent<{}> = styled(Text)`
+  color: ${p => p.theme.colors.neutral.c70};
 `;
 
 export type Props = {
@@ -60,13 +63,11 @@ function Rate({
         </Box>
       )}
       <Box flex={1}>
-        <Box horizontal color="palette.text.shade100" fontSize={4}>
+        <Box horizontal fontSize={4}>
           <Box flex={1}>
             <Text fontWeight="600">{title}</Text>
             <Box>
-              <Text fontSize={3} color="palette.text.shade40">
-                {subtitle}
-              </Text>
+              <SecondaryText fontSize={3}>{subtitle}</SecondaryText>
             </Box>
           </Box>
           <Box alignItems="center" flex={1}>
