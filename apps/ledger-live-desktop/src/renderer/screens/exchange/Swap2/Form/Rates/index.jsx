@@ -96,7 +96,7 @@ export default function ProviderRate({
         )}
       </Box>
       <TableHeader>
-        <Box horizontal flex="1" alignItems="center" pr="38px">
+        <Box horizontal width="215px" alignItems="center" pr="38px">
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.name.title" />
           </Text>
@@ -110,7 +110,7 @@ export default function ProviderRate({
             <IconInfoCircle size={12} />
           </Tooltip>
         </Box>
-        <Box horizontal flex="1" alignItems="center" justifyContent="center">
+        <Box horizontal flex="1" alignItems="center" justifyContent="flex-start">
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.rate.title" />
           </Text>

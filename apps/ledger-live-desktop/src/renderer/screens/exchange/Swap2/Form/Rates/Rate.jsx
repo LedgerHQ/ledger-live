@@ -64,13 +64,13 @@ function Rate({
       )}
       <Box flex={1}>
         <Box horizontal fontSize={4}>
-          <Box flex={1}>
+          <Box width={175}>
             <Text fontWeight="600">{title}</Text>
             <Box>
               <SecondaryText fontSize={3}>{subtitle}</SecondaryText>
             </Box>
           </Box>
-          <Box alignItems="center" flex={1}>
+          <Box alignItems="flex-start" flex={1}>
             {centerContainer}
           </Box>
           <Box alignItems="flex-end" flex={1}>
