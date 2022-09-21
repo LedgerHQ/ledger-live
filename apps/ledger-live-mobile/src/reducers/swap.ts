@@ -21,7 +21,7 @@ const initialState: SwapStateType = {
   exchangeRateExpiration: undefined,
 };
 
-export const ratesExpirationThreshold = 60000;
+export const ratesExpirationThreshold = 30000;
 
 export const flattenPairs = (
   acc: Array<{ from: string; to: string }>,
@@ -55,10 +55,9 @@ const handlers = {
   ) => ({
     ...state,
     exchangeRate: payload,
-    exchangeRateExpiration:
-      payload?.tradeMethod === "fixed"
-        ? new Date(new Date().getTime() + ratesExpirationThreshold)
-        : null,
+    exchangeRateExpiration: new Date(
+      new Date().getTime() + ratesExpirationThreshold,
+    ),
   }),
   RESET_STATE: () => ({ ...initialState }),
 };
