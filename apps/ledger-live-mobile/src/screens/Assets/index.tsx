@@ -23,6 +23,7 @@ import TabBarSafeAreaView, {
 import AssetsNavigationHeader from "./AssetsNavigationHeader";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 
 const List = globalSyncRefreshControl(FlatList);
 
@@ -30,9 +31,12 @@ function Assets() {
   const navigation = useNavigation();
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
+  const hideEmptyTokenAccountsEnabled = getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
   const { t } = useTranslation();
-  const distribution = useDistribution({ showEmptyAccounts: true });
+  const distribution = useDistribution({
+    showEmptyAccounts: !hideEmptyTokenAccountsEnabled,
+  });
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);

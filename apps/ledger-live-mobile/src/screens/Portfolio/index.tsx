@@ -51,6 +51,7 @@ import AllocationsSection from "../WalletCentricSections/Allocations";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import { track } from "../../analytics";
 import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -75,7 +76,10 @@ function PortfolioScreen({ navigation }: Props) {
     () => Object.values(carouselVisibility).some(Boolean),
     [carouselVisibility],
   );
-  const distribution = useDistribution({ showEmptyAccounts: true });
+  const hideEmptyTokenAccountsEnabled = getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
+  const distribution = useDistribution({
+    showEmptyAccounts: !hideEmptyTokenAccountsEnabled,
+  });
   const accounts = useSelector(accountsSelector);
 
   const counterValueCurrency: Currency = useSelector(
