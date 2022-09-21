@@ -31,7 +31,6 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     <Flex
       flexDirection="row"
       alignItems="center"
-      justifyContent="space-between"
       backgroundColor="neutral.c30"
       borderRadius="8px"
       marginBottom="10px"

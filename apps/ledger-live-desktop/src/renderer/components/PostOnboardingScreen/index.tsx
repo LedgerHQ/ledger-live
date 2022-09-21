@@ -10,18 +10,18 @@ const PostOnboardingScreen = () => {
         <Text variant="paragraph" fontSize="48px">
           {"Nice one."}
         </Text>
-        <Text variant="paragraph" fontSize="48px">
+        <Text variant="paragraph" fontSize="48px" mb="25px">
           {"You're all set."}
         </Text>
-        <Text variant="paragraph" fontSize="14px" color="neutral.c70">
+        <Text variant="paragraph" fontSize="14px" color="neutral.c70" mb="25px">
           {"Cheers for setting up your Nano!"}
         </Text>
-        <Text variant="paragraph" fontSize="14px" color="neutral.c70">
+        <Text variant="paragraph" fontSize="14px" color="neutral.c70" mb="25px">
           {
             "We have prepared for you some steps to start with. If you feel like exploring Ledger Live on your own, don't hesitate to skip this step, you can always come back to it."
           }
         </Text>
-        <Text variant="paragraph" fontSize="14px" color="neutral.c70">
+        <Text variant="paragraph" fontSize="14px" color="neutral.c70" mb="25px">
           {"Enjoy your travel into the Web3 securely with Ledger Live."}
         </Text>
       </Flex>

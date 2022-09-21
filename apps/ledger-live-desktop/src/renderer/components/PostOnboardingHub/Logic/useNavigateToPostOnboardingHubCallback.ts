@@ -5,6 +5,6 @@ export function useNavigateToPostOnboardingHubCallback() {
   const history = useHistory();
 
   return useCallback(() => {
-    history.push("/sync-onboarding/post-onboarding");
+    history.push("/post-onboarding");
   }, [history]);
 }
