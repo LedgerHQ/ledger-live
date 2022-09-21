@@ -135,10 +135,10 @@ Ledger Live main types.
 *   [AssetsDistribution](#assetsdistribution)
     *   [Properties](#properties-43)
 *   [PostOnboardingActionId](#postonboardingactionid)
+*   [navigationParams](#navigationparams)
+*   [startAction](#startaction)
 *   [PostOnboardingAction](#postonboardingaction)
-    *   [Properties](#properties-44)
     *   [featureFlagId](#featureflagid)
-    *   [navigationParams](#navigationparams)
     *   [Icon](#icon)
     *   [title](#title)
     *   [description](#description)
@@ -148,37 +148,37 @@ Ledger Live main types.
     *   [startEvent](#startevent)
     *   [startEventProperties](#starteventproperties)
 *   [PostOnboardingActionState](#postonboardingactionstate)
-    *   [Properties](#properties-45)
+    *   [Properties](#properties-44)
     *   [completed](#completed)
 *   [PostOnboardingState](#postonboardingstate)
-    *   [Properties](#properties-46)
+    *   [Properties](#properties-45)
     *   [deviceModelId](#devicemodelid)
     *   [walletEntryPointDismissed](#walletentrypointdismissed)
     *   [actionsToComplete](#actionstocomplete)
     *   [actionsCompleted](#actionscompleted)
     *   [lastActionCompleted](#lastactioncompleted)
 *   [PostOnboardingHubState](#postonboardinghubstate)
-    *   [Properties](#properties-47)
+    *   [Properties](#properties-46)
 *   [SwapOperation](#swapoperation)
-    *   [Properties](#properties-48)
+    *   [Properties](#properties-47)
 *   [SwapOperationRaw](#swapoperationraw)
-    *   [Properties](#properties-49)
+    *   [Properties](#properties-48)
 *   [SignedOperation](#signedoperation)
-    *   [Properties](#properties-50)
+    *   [Properties](#properties-49)
 *   [SignedOperationRaw](#signedoperationraw)
-    *   [Properties](#properties-51)
+    *   [Properties](#properties-50)
 *   [SignOperationEvent](#signoperationevent)
 *   [SignOperationEventRaw](#signoperationeventraw)
 *   [TransactionCommon](#transactioncommon)
-    *   [Properties](#properties-52)
+    *   [Properties](#properties-51)
 *   [TransactionCommonRaw](#transactioncommonraw)
-    *   [Properties](#properties-53)
+    *   [Properties](#properties-52)
 *   [FeeStrategy](#feestrategy)
-    *   [Properties](#properties-54)
+    *   [Properties](#properties-53)
 *   [TransactionStatusCommon](#transactionstatuscommon)
-    *   [Properties](#properties-55)
+    *   [Properties](#properties-54)
 *   [TransactionStatusCommonRaw](#transactionstatuscommonraw)
-    *   [Properties](#properties-56)
+    *   [Properties](#properties-55)
 
 ### TokenAccount
 
@@ -1073,35 +1073,7 @@ Type: {isAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/
 
 Unique identifier of a post onboarding action.
 
-### PostOnboardingAction
-
-All necessary information for complete integration of a post onboarding
-action.
-
-Type: {id: [PostOnboardingActionId](#postonboardingactionid), featureFlagId: [FeatureId](#featureid)?, navigationParams: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>?, Icon: function (props: {size: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): any, title: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), description: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), tagLabel: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, actionCompletedPopupLabel: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), actionCompletedHubTitle: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), startEvent: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, startEventProperties: any?}
-
-#### Properties
-
-*   `id` **[PostOnboardingActionId](#postonboardingactionid)** 
-*   `featureFlagId` **[FeatureId](#featureid)?** 
-*   `navigationParams` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>?** 
-*   `Icon` **function (props: {size: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): any** 
-*   `title` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `description` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `tagLabel` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
-*   `actionCompletedPopupLabel` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `actionCompletedHubTitle` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `startEvent` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
-*   `startEventProperties` **any?** 
-
-#### featureFlagId
-
-If this action is linked to a feature that is enabled by a feature flag,
-use this property to identify the feature flag.
-
-Type: [FeatureId](#featureid)
-
-#### navigationParams
+### navigationParams
 
 Navigation params when the user presses the button for this action
 
@@ -1111,6 +1083,26 @@ Navigation params when the user presses the button for this action
     `history.push(...navigationParams)`
 
 Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>
+
+### startAction
+
+The function to call when the user presses the button for this action
+
+Type: function (): void
+
+### PostOnboardingAction
+
+All necessary information for complete integration of a post onboarding
+action.
+
+Type: any
+
+#### featureFlagId
+
+If this action is linked to a feature that is enabled by a feature flag,
+use this property to identify the feature flag.
+
+Type: [FeatureId](#featureid)
 
 #### Icon
 
