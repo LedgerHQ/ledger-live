@@ -128,21 +128,26 @@ export default function ProviderRate({
             <IconInfoCircle size={12} />
           </Tooltip>
         </Box>
-        <Box horizontal flex="1" alignItems="center" justifyContent="flex-end">
+        <Box
+          horizontal
+          flex="1"
+          alignItems="center"
+          justifyContent="flex-end"
+          style={{ marginRight: 5 }}
+        >
           <Text alignItems="center" display="flex" mr={1}>
             <Trans i18nKey="swap2.form.rates.receive.title" />
           </Text>
           <Tooltip
-            placement={"top-end"}
             content={
               <Box style={{ maxWidth: 150 }}>
-                <Text style={{ textAlign: "right" }}>
+                <Text>
                   <Trans i18nKey="swap2.form.rates.receive.tooltip" />
                 </Text>
               </Box>
             }
           >
-            <Box style={{ marginRight: 5 }}>
+            <Box>
               <IconInfoCircle size={12} />
             </Box>
           </Tooltip>
