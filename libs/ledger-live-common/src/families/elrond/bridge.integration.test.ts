@@ -27,10 +27,6 @@ const elrond: CurrenciesData<Transaction> = {
     `,
     },
   ],
-  FIXME_ignoreAccountFields: [
-    "elrondResources.nonce",
-    "elrondResources.delegations",
-  ],
   accounts: [
     {
       raw: {
