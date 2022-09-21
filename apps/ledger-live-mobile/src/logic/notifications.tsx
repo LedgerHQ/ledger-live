@@ -253,13 +253,13 @@ const useNotifications = () => {
   );
 
   const onPushNotificationsRouteChange = useCallback(
-    newRoute => {
+    (newRoute, isOtherModalOpened = false) => {
       if (pushNotificationsEventTriggered?.timeout) {
         clearTimeout(pushNotificationsEventTriggered?.timeout);
         dispatch(setRatingsModalLocked(false));
       }
 
-      if (isPushNotificationsModalLocked || !areConditionsMet()) return;
+      if (isOtherModalOpened || !areConditionsMet()) return false;
 
       for (const eventTrigger of pushNotificationsFeature?.params
         ?.trigger_events) {
@@ -274,9 +274,12 @@ const useNotifications = () => {
               timeout,
             }),
           );
+          dispatch(setNotificationsCurrentRouteName(newRoute));
+          return true;
         }
       }
       dispatch(setNotificationsCurrentRouteName(newRoute));
+      return false;
     },
     [
       areConditionsMet,
@@ -285,7 +288,6 @@ const useNotifications = () => {
       pushNotificationsFeature?.params?.trigger_events,
       isEventTriggered,
       setPushNotificationsModalOpenCallback,
-      isPushNotificationsModalLocked,
     ],
   );
 

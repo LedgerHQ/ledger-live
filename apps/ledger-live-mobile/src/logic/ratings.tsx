@@ -89,12 +89,12 @@ const useRatings = () => {
       if (!isRatingsModalOpen) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(false));
-      } else if (!isRatingsModalLocked) {
+      } else {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(true));
       }
     },
-    [dispatch, isRatingsModalLocked],
+    [dispatch],
   );
 
   const areRatingsConditionsMet = useCallback(() => {
@@ -179,13 +179,13 @@ const useRatings = () => {
   );
 
   const onRatingsRouteChange = useCallback(
-    ratingsNewRoute => {
+    (ratingsNewRoute, isOtherModalOpened = false) => {
       if (ratingsHappyMoment?.timeout) {
         dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
       }
 
-      if (isRatingsModalLocked || !areRatingsConditionsMet()) return;
+      if (isOtherModalOpened || !areRatingsConditionsMet()) return false;
 
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
@@ -199,12 +199,14 @@ const useRatings = () => {
               timeout,
             }),
           );
+          dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
+          return true;
         }
       }
       dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
+      return false;
     },
     [
-      isRatingsModalLocked,
       areRatingsConditionsMet,
       ratingsHappyMoment?.timeout,
       dispatch,

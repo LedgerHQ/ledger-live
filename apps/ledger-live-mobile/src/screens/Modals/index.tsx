@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { NavigationState, useNavigation } from "@react-navigation/native";
 import {
   FeatureToggle,
@@ -31,28 +31,41 @@ const Modals = () => {
   const ratingsFeature = useFeature("ratings");
   const { onRatingsRouteChange } = useRatings();
 
-  useEffect(() => {
-    if (!pushNotificationsFeature?.enabled && !ratingsFeature?.enabled) return;
-
-    navigation.removeListener("state");
-    navigation.addListener("state", e => {
+  const onRouteChange = useCallback(
+    e => {
       const navState = e?.data?.state;
       if (navState && navState.routeNames) {
         const currentRouteName = getCurrentRouteName(navState);
+        let isModalOpened = false;
         if (pushNotificationsFeature?.enabled) {
-          onPushNotificationsRouteChange(currentRouteName);
+          isModalOpened = onPushNotificationsRouteChange(
+            currentRouteName,
+            isModalOpened,
+          );
         }
         if (ratingsFeature?.enabled) {
-          onRatingsRouteChange(currentRouteName);
+          onRatingsRouteChange(currentRouteName, isModalOpened);
         }
       }
-    });
+    },
+    [
+      onPushNotificationsRouteChange,
+      onRatingsRouteChange,
+      pushNotificationsFeature?.enabled,
+      ratingsFeature?.enabled,
+    ],
+  );
 
-    return () => navigation.removeListener("state");
+  useEffect(() => {
+    if (!pushNotificationsFeature?.enabled && !ratingsFeature?.enabled) return;
+
+    navigation.removeListener("state", onRouteChange);
+    navigation.addListener("state", onRouteChange);
+
+    return () => navigation.removeListener("state", onRouteChange);
   }, [
     navigation,
-    onPushNotificationsRouteChange,
-    onRatingsRouteChange,
+    onRouteChange,
     pushNotificationsFeature?.enabled,
     ratingsFeature?.enabled,
   ]);
