@@ -98,6 +98,7 @@ const ModalHeader = ({
   children,
   subTitle,
   onBack,
+  backButtonComponent,
   onClose,
   style = {},
 }: {
@@ -106,6 +107,7 @@ const ModalHeader = ({
   onBack?: void => void,
   onClose?: void => void,
   style?: *,
+  backButtonComponent?: React$Node,
 }) => {
   const { t } = useTranslation();
   return (
@@ -113,9 +115,13 @@ const ModalHeader = ({
       {onBack ? (
         <ModalHeaderAction onClick={onBack} data-test-id="modal-back-button">
           <IconAngleLeft size={12} />
-          <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
-            {t("common.back")}
-          </Text>
+          {backButtonComponent ? (
+            backButtonComponent
+          ) : (
+            <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
+              {t("common.back")}
+            </Text>
+          )}
         </ModalHeaderAction>
       ) : (
         <div />

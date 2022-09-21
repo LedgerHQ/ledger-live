@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type {
@@ -90,6 +90,7 @@ const osmosis: AppSpec<Transaction> = {
     {
       name: "move 50% to another account",
       maxRun: 2,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
@@ -112,6 +113,7 @@ const osmosis: AppSpec<Transaction> = {
     {
       name: "send max to another account",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);

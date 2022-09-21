@@ -17,6 +17,7 @@ import {
   pickSiblings,
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
 } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
@@ -97,6 +98,7 @@ const cosmos: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send some",
+      testDestination: genericTestDestination,
       test: ({ account, accountBeforeTransaction, operation }) => {
         expect(account.balance.toString()).toBe(
           accountBeforeTransaction.balance.minus(operation.value).toString()
@@ -128,6 +130,7 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "send max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         return {
           transaction: bridge.createTransaction(account),

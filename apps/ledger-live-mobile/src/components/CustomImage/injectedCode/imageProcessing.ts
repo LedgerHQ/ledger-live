@@ -34,8 +34,8 @@ function codeToInject() {
 
   "show source";
 
-  function clampRGB(val: number) {
-    return Math.min(255, Math.max(val, 0));
+  function clamp(val: number, min: number, max: number) {
+    return Math.min(max, Math.max(min, val));
   }
 
   function contrastRGB(rgbVal: number, contrastVal: number) {
@@ -44,42 +44,97 @@ function codeToInject() {
 
   // simutaneously apply grayscale and contrast to the image
   function applyFilter(
-    imageData: Uint8ClampedArray,
+    imageData: ImageData,
     contrastAmount: number,
+    dither = true,
   ): { imageDataResult: Uint8ClampedArray; hexRawResult: string } {
     let hexRawResult = "";
     const filteredImageData = [];
 
+    const data = imageData.data;
+
     const numLevelsOfGray = 16;
     const rgbStep = 255 / (numLevelsOfGray - 1);
 
-    for (let i = 0; i < imageData.length; i += 4) {
-      /** gray rgb value for the pixel, in [0, 255] */
+    const { width, height } = imageData;
+
+    const pixels256: number[][] = Array.from(Array(height), () => Array(width));
+    const pixels16: number[][] = Array.from(Array(height), () => Array(width));
+
+    for (let pxIndex = 0; pxIndex < data.length / 4; pxIndex += 1) {
+      const x = pxIndex % width;
+      const y = (pxIndex - x) / width;
+
+      const [redIndex, greenIndex, blueIndex] = [
+        4 * pxIndex,
+        4 * pxIndex + 1,
+        4 * pxIndex + 2,
+      ];
       const gray256 =
-        0.299 * imageData[i] +
-        0.587 * imageData[i + 1] +
-        0.114 * imageData[i + 2];
+        0.299 * data[redIndex] +
+        0.587 * data[greenIndex] +
+        0.114 * data[blueIndex];
 
-      /** gray rgb value after applying the contrast, in [0, 15] */
-      const contrastedGray16 = Math.floor(
-        clampRGB(contrastRGB(gray256, contrastAmount)) / rgbStep,
-      );
+      /** gray rgb value after applying the contrast */
+      pixels256[y][x] = clamp(contrastRGB(gray256, contrastAmount), 0, 255);
+    }
 
-      /** gray rgb value after applying the contrast, in [0,255] */
-      const contrastedGray256 = contrastedGray16 * rgbStep;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const oldpixel = pixels256[y][x];
+        const posterizedGray16 = Math.floor(oldpixel / rgbStep);
+        const posterizedGray256 = posterizedGray16 * rgbStep;
+        /**
+         * Floyd-Steinberg dithering
+         * https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
+         *         x - 1  |   x    |  x + 1
+         *   y            |   *    | 7 / 16
+         * y + 1  3 / 16  | 5 / 16 | 1 / 16
+         */
+        const newpixel = posterizedGray256;
+        pixels256[y][x] = newpixel;
+        if (dither) {
+          const quantError = oldpixel - newpixel;
+          if (x < width - 1) {
+            pixels256[y][x + 1] = Math.floor(
+              pixels256[y][x + 1] + quantError * (7 / 16),
+            );
+          }
+          if (x > 0 && y < height - 1) {
+            pixels256[y + 1][x - 1] = Math.floor(
+              pixels256[y + 1][x - 1] + quantError * (3 / 16),
+            );
+          }
+          if (y < height - 1) {
+            pixels256[y + 1][x] = Math.floor(
+              pixels256[y + 1][x] + quantError * (5 / 16),
+            );
+          }
+          if (x < width - 1 && y < height - 1) {
+            pixels256[y + 1][x + 1] = Math.floor(
+              pixels256[y + 1][x + 1] + quantError * (1 / 16),
+            );
+          }
+        }
 
-      const grayHex = contrastedGray16.toString(16);
+        const val16 = clamp(Math.floor(pixels256[y][x] / rgbStep), 0, 16 - 1);
+        pixels16[y][x] = val16;
+        /** gray rgb value after applying the contrast, in [0,255] */
+        const val256 = val16 * rgbStep;
+        filteredImageData.push(val256); // R
+        filteredImageData.push(val256); // G
+        filteredImageData.push(val256); // B
+        filteredImageData.push(255); // alpha
+      }
+    }
 
-      hexRawResult = hexRawResult.concat(grayHex);
-      // adding hexadecimal value of this pixel
-
-      filteredImageData.push(contrastedGray256);
-      filteredImageData.push(contrastedGray256);
-      filteredImageData.push(contrastedGray256);
-      // push 3 bytes for color (all the same == gray)
-
-      filteredImageData.push(255);
-      // push alpha = max = 255
+    // Raw data -> by column, from right to left, from top to bottom
+    for (let x = width - 1; x >= 0; x--) {
+      for (let y = 0; y < height; y++) {
+        const val16 = pixels16[y][x];
+        const grayHex = val16.toString(16);
+        hexRawResult = hexRawResult.concat(grayHex);
+      }
     }
 
     return {
@@ -111,7 +166,7 @@ function codeToInject() {
 
     // 2. applying filter to the image data
     const { imageDataResult: grayData, hexRawResult } = applyFilter(
-      imageData.data,
+      imageData,
       contrastAmount,
     );
 

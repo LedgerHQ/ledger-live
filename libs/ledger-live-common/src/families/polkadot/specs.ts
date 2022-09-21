@@ -12,6 +12,7 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
   pickSiblings,
 } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
@@ -65,6 +66,7 @@ const polkadot: AppSpec<Transaction> = {
     {
       name: "send 50%~",
       maxRun: 4,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         invariant((account as PolkadotAccount).polkadotResources, "polkadot");
         const sibling = pickSiblings(siblings, maxAccounts);
