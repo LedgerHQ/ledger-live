@@ -193,7 +193,6 @@ export default function Default() {
             ) : null}
             <Switch>
               <Route path="/onboarding" render={props => <Onboarding {...props} />} />
-              <Route path="/sync-onboarding" render={props => <SyncOnboarding {...props} />} />
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
               </Route>

@@ -131,6 +131,7 @@
     "nanoS": "Nano S",
     "nanoSP": "Nano S Plus",
     "nanoX": "Nano X",
+    "nanoFTS": "Nano FTS",
     "blue": "Blue"
   },
   "operation": {
@@ -1135,7 +1136,8 @@
   "syncOnboarding": {
     "connection": {
       "searching": {
-        "title": "Connect {{deviceModelName}} to your computer"
+        "title": "Connect {{deviceModelName}} to your computer",
+        "connectionTrouble": "Having trouble connecting your device?"
       },
       "success": {
         "title": "Connected to {{ deviceName }}"

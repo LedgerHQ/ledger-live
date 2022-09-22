@@ -16,7 +16,7 @@ const CompletionScreen = () => {
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
     setTimeout(
-      () => history.push("/sync-onboarding/post-onboarding"),
+      () => history.push("/onboarding/sync/post-onboarding"),
       GO_TO_POSTONBOARDING_TIMEOUT,
     );
   }, [history, dispatch]);
