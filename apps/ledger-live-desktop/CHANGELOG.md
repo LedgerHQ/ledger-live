@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.48.0-next.2
+
+### Patch Changes
+
+- [#1342](https://github.com/LedgerHQ/ledger-live/pull/1342) [`dacdf1b3e7`](https://github.com/LedgerHQ/ledger-live/commit/dacdf1b3e7fd363130df42c1313b41829d238ed7) Thanks [@ThomasLaforge](https://github.com/ThomasLaforge)! - fix os language available modal appearing when language is in english
+
 ## 2.48.0-next.1
 
 ### Patch Changes
