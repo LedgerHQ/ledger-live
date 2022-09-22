@@ -61,11 +61,15 @@ pnpm dev:llm -- --reset-cache
 or `open ios/ledgerlivemobile.xcworkspace` in XCode
 
 Note:
-In some case if you never run `pnpm mobile start` or `pnpm dev:llm` you will probably encounter an error.
+In some case if you never run `pnpm dev:llm` you will probably encounter an error while building it.
 Try to run `pnpm dev:llm` then `pnpm mobile ios`
 
 ### `pnpm mobile android`
 or open `android/` in Android Studio.
+
+Note:
+In some case if you never run `pnpm dev:llm` you will probably encounter an error while building it.
+Try to run `pnpm dev:llm` then `pnpm mobile android`
 
 ### `pnpm mobile android:clean`
 
